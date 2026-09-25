@@ -5,7 +5,8 @@ and MSIX (`.msix`). It runs on Windows and on Linux.
 
 ## What it is
 
-- One declarative source file in, one x64 `.msi` (with an embedded CAB) or `.msix` out.
+- One declarative source file in, one `.msi` (with an embedded CAB) or `.msix` out.
+  Target architectures: x64, Arm64, x86. Several MSIX architectures can go into one `.msixbundle`.
 - Covers everyday installer work: install and remove files, create and remove folders,
   registry values, shortcuts, environment variables, services, file associations, upgrades,
   launch conditions, custom actions, built-in installer dialogs.
@@ -17,18 +18,24 @@ and MSIX (`.msix`). It runs on Windows and on Linux.
 ## What it is not
 
 - Not a WiX front end and not WiX-compatible. It does not read `.wxs` files.
-- Not a 32-bit tool, and it does not produce 32-bit packages.
+- The tool itself is 64-bit only (it still builds x86 packages).
 - No patches (`.msp`), transforms (`.mst`), merge-module authoring, or bootstrapper bundles.
 
 ## Stack
 
 C23 on proven_c_lib (vendored). Win32 API on Windows,
-POSIX on Linux. 64-bit only. Every file format (compound file, MSI database, CAB, deflate,
+POSIX on Linux. The tool is 64-bit only. Every file format (compound file, MSI database, CAB, deflate,
 ZIP/OPC, block map) is implemented in this repository from public specifications.
 
 ## Status
 
 Planning. The design is written; implementation has not started.
+
+## Text encoding
+
+Package text is Unicode end to end: MSI databases are written with code page 65001 (UTF-8),
+which Windows Installer converts to UTF-16 when it installs. File names, folders, registry
+values, and shortcuts can use any script.
 
 ## Build (planned)
 
