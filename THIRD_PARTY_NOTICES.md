@@ -2,8 +2,8 @@
 
 ## Vendored code
 
-- `vendor/proven/` (planned): proven_c_lib, MIT License, same author. Its own `LICENSE`
-  travels with the copy.
+- `vendor/proven/`: proven_c_lib v0.1.1, MIT License, same author. Its own `LICENSE` and
+  notices travel with the copy; `vendor/proven/VENDORED.md` records the snapshot.
 
 ## Clean-room statement
 

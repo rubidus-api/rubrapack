@@ -31,7 +31,9 @@ ZIP/OPC, block map) is implemented in this repository from public specifications
 
 ## Status
 
-Planning. The design is written; implementation has not started.
+Early implementation. The command-line skeleton builds and runs on Linux and Windows
+(`rubrapack version`, `rubrapack help`); package commands are listed but report
+"not implemented yet" and exit with status 2.
 
 ## Text encoding
 
@@ -39,15 +41,21 @@ Package text is Unicode end to end: MSI databases are written with code page 650
 which Windows Installer converts to UTF-16 when it installs. File names, folders, registry
 values, and shortcuts can use any script.
 
-## Build (planned)
+## Build
 
 ```sh
-# Linux (gcc 14+ or clang 18+)
+# Linux (gcc 14+ or clang 18+): builds build/native/rubrapack
 cc -std=c23 -o nob nob.c && ./nob
 
-# Windows (MinGW-w64 UCRT)
+# Windows (MinGW-w64 UCRT): builds build/native/rubrapack.exe
 gcc -std=c23 -o nob.exe nob.c && nob.exe
+
+# Linux -> Windows x64 cross build: builds build/win64/rubrapack.exe
+./nob --target=win64
 ```
+
+`nob.c` needs nothing but a C23 compiler. Options: `--sanitize` (AddressSanitizer and
+UBSan), `--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers.
 
 ## License
 
