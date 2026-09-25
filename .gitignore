@@ -1,0 +1,27 @@
+# Public surface is a WHITELIST: everything is ignored unless listed below.
+# Development material (operating docs, RFCs, docs/, scripts/, tests/, .agents/,
+# DECISIONS.md, CHANGELOG.md) lives in ../rubrapack_private/. Its entries may appear
+# here as untracked symlinks and must never be committed.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/LICENSE
+!/THIRD_PARTY_NOTICES.md
+!/nob.c
+!/nob.h
+!/include/
+!/src/
+!/vendor/
+!/resources/
+/resources/*
+!/resources/ui/
+!/manual/
+
+# Build output, even inside whitelisted folders.
+*.o
+*.obj
+*.exe
+*.msi
+*.msix
+*.cab
