@@ -54,7 +54,8 @@ gcc -std=c23 -o nob.exe nob.c && nob.exe
 ./nob --target=win64
 ```
 
-`nob.c` needs nothing but a C23 compiler. Options: `--sanitize` (AddressSanitizer and
+`nob.c` needs nothing but a C23 compiler. The Linux build and the Linux -> Windows cross build are
+tested; a native build on a Windows host is not yet. Options: `--sanitize` (AddressSanitizer and
 UBSan), `--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers.
 
 ## License
