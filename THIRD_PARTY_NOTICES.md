@@ -23,4 +23,5 @@ against Windows.
   description alone. No code, names, or comments are taken from them.
 
 Code ported from lowent_lang (MIT, same author) is marked in the source file header
-and listed here when it lands.
+and listed here when it lands. Planned ports: DER, X.509, big integers, RSA verification,
+P-256/P-384, ECDSA, HMAC, SHA-512, AES, GCM/AEAD, X25519, TLS 1.3 client.
