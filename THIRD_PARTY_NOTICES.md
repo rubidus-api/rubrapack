@@ -16,9 +16,11 @@ against Windows.
   projects. In particular, no source, schema, dialog layout, UI text, or artwork was taken
   from WiX Toolset, msitools/libmsi/wixl, gcab, libgsf, Wine, osslsigncode, libmspack,
   cabextract, ms-compress, wimlib, 7-Zip, or MSIX Hero.
-- Permissively licensed projects (MIT, Apache-2.0) may be read to confirm format facts.
-  No code is copied from them; if that ever changes, the copied part and its license are
-  listed in this file.
+- MIT-licensed projects may be read to confirm format facts. No code is copied from them;
+  if that ever changes, the copied part and its license are listed in this file.
+- Apache-2.0 signing tools (jsign, relic) are used, if at all, only indirectly: a written
+  description of a method is made first, and the implementation is written from that
+  description alone. No code, names, or comments are taken from them.
 
 Code ported from lowent_lang (MIT, same author) is marked in the source file header
 and listed here when it lands.
