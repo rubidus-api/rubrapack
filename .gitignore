@@ -16,12 +16,14 @@
 !/resources/
 /resources/*
 !/resources/ui/
+!/resources/bin/
 !/manual/
 
 # Build output, even inside whitelisted folders.
 *.o
 *.obj
 *.exe
+!/resources/bin/**/*.exe
 *.msi
 *.msix
 *.cab
