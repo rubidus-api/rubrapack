@@ -14,6 +14,8 @@ and MSIX (`.msix`). It runs on Windows and on Linux.
   with RFC 3161 timestamps.
 - Built-in inspection: `inspect`, `extract`, `lint`, `verify`, so results can be checked
   without other tools.
+- No run-time dependencies beyond the operating system: formats, compression, signing
+  crypto, HTTP and TLS are all implemented in this repository.
 
 ## What it is not
 
