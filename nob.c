@@ -37,10 +37,12 @@
 static const char *const core_sources[] = {
     "src/cli/cli.c",
     "src/container/cfb.c",
+    "src/container/cfb_write.c",
     "src/core/buf.c",
     "src/core/diag.c",
     "src/core/limits.c",
     "src/msi/db.c",
+    "src/msi/db_write.c",
     "src/msi/suminfo.c",
     "src/text/utf.c",
 };

@@ -69,4 +69,20 @@ void rp_cfb_close(rp_cfb_t *cfb);
 // Copies a whole stream into dst (cap >= entries[id].size).
 [[nodiscard]] proven_err_t rp_cfb_read(const rp_cfb_t *cfb, uint32_t id, uint8_t *dst, size_t cap);
 
+// ---- writer ----------------------------------------------------------------------------------
+
+typedef struct {
+    const uint16_t *name;       // UTF-16, at most 31 units
+    size_t          name_len;
+    const uint8_t  *data;
+    size_t          size;
+} rp_cfb_stream_t;
+
+// Writes a compound file holding `streams` directly under the root, with the root CLSID given.
+// sector_shift 9 = version 3 (512-byte sectors), 12 = version 4 (4096). Deterministic: all times
+// are zero and the directory tree depends only on the names. Names must be distinct.
+[[nodiscard]] proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const uint8_t clsid[16],
+                                        const rp_cfb_stream_t *streams, size_t count, const rp_limits_t *limits,
+                                        uint8_t **out, size_t *len);
+
 #endif // RUBRAPACK_CFB_H

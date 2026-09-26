@@ -96,4 +96,40 @@ void rp_msi_rows_free(const rp_msi_t *msi, rp_msi_rows_t *rows);
 // the U+4840 prefix.
 [[nodiscard]] proven_err_t rp_msi_unpack_name(const uint16_t *name, size_t len, char *out, size_t cap, bool *table);
 
+// ---- writer ----------------------------------------------------------------------------------
+
+typedef struct {
+    uint8_t        kind;    // RP_MSI_NULL, RP_MSI_INT, RP_MSI_STR, RP_MSI_BINARY
+    int32_t        i;       // RP_MSI_INT
+    const uint8_t *bytes;   // RP_MSI_STR: string bytes in the pool code page; RP_MSI_BINARY: stream bytes
+    size_t         len;     // an empty string is stored as null, as msi.dll does
+} rp_msi_cell_t;
+
+typedef struct {
+    const char *name;       // column name (identifier)
+    uint16_t    type;       // _Columns.Type bits
+} rp_msi_wcolumn_t;
+
+typedef struct {
+    const char             *name;
+    const rp_msi_wcolumn_t *columns;
+    size_t                  column_count;
+    const rp_msi_cell_t    *cells;      // row-major, row_count * column_count
+    size_t                  row_count;
+} rp_msi_wtable_t;
+
+typedef struct {
+    uint32_t               codepage;    // string pool code page (65001)
+    const rp_msi_wtable_t *tables;
+    size_t                 table_count;
+    const uint8_t         *summary;     // optional `\005SummaryInformation` stream bytes
+    size_t                 summary_len;
+} rp_msi_wdb_t;
+
+// Writes a database (format notes F2; DECISIONS 2026-09-26 "P1b writer"): string ids sorted by
+// UTF-8 bytes, reference words counted, rows sorted by stored key values, one stream per
+// non-empty table and per binary cell (`Table.key`). Deterministic for the same input.
+[[nodiscard]] proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
+                                        const rp_limits_t *limits, uint8_t **out, size_t *len);
+
 #endif // RUBRAPACK_MSI_H

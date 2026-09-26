@@ -40,4 +40,11 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_suminfo_export_idt(const rp_suminfo_t *si, proven_allocator_t alloc, uint8_t **out,
                                                  size_t *len);
 
+// Writes a summary information stream from props (in the order given; callers pass them in
+// property id order). VT_LPSTR bytes are written as given plus a terminator: one zero byte, or
+// two when utf16 is true (code page 1200, MS-OLEPS CodePageString: Size counts bytes including
+// the terminator). Values are padded to 4 bytes. Deterministic.
+[[nodiscard]] proven_err_t rp_suminfo_write(const rp_suminfo_t *si, bool utf16, proven_allocator_t alloc, uint8_t **out,
+                                            size_t *len);
+
 #endif // RUBRAPACK_SUMINFO_H

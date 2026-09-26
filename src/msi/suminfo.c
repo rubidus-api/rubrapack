@@ -90,3 +90,61 @@ proven_err_t rp_suminfo_export_idt(const rp_suminfo_t *si, proven_allocator_t al
     }
     return rp_buf_take(&b, out, len);
 }
+
+proven_err_t rp_suminfo_write(const rp_suminfo_t *si, bool utf16, proven_allocator_t alloc, uint8_t **out, size_t *len) {
+    if (si == NULL || out == NULL || len == NULL || si->count > RP_SUMINFO_MAX) return PROVEN_ERR_INVALID_ARG;
+    // Value sizes first, to lay out the offset table.
+    size_t sizes[RP_SUMINFO_MAX];
+    size_t term = utf16 ? 2 : 1;
+    for (size_t k = 0; k < si->count; ++k) {
+        const rp_suminfo_prop_t *p = &si->props[k];
+        switch (p->type) {
+        case RP_VT_I2:
+        case RP_VT_I4: sizes[k] = 8; break;
+        case RP_VT_FILETIME: sizes[k] = 12; break;
+        case RP_VT_LPSTR:
+            if (p->str_len > 0xFFFF || (p->str_len && p->str == NULL)) return PROVEN_ERR_INVALID_ARG;
+            sizes[k] = 8 + ((p->str_len + term + 3) & ~(size_t)3);
+            break;
+        default: return PROVEN_ERR_UNSUPPORTED;
+        }
+    }
+    size_t section = 8 + 8 * si->count;
+    for (size_t k = 0; k < si->count; ++k) section += sizes[k];
+
+    rp_buf_t b = rp_buf_new(alloc, 1u << 20);
+    rp_buf_u16le(&b, 0xFFFE);
+    rp_buf_u16le(&b, 0);                    // version 0, as msi.dll writes
+    rp_buf_u32le(&b, 0x00020206);           // OS field seen from msi.dll
+    rp_buf_zero(&b, 16);                    // CLSID
+    rp_buf_u32le(&b, 1);                    // one section
+    rp_buf_put(&b, fmtid_summary, 16);
+    rp_buf_u32le(&b, 48);
+    rp_buf_u32le(&b, (uint32_t)section);
+    rp_buf_u32le(&b, (uint32_t)si->count);
+    size_t off = 8 + 8 * si->count;
+    for (size_t k = 0; k < si->count; ++k) {
+        rp_buf_u32le(&b, si->props[k].pid);
+        rp_buf_u32le(&b, (uint32_t)off);
+        off += sizes[k];
+    }
+    for (size_t k = 0; k < si->count; ++k) {
+        const rp_suminfo_prop_t *p = &si->props[k];
+        rp_buf_u32le(&b, p->type);
+        switch (p->type) {
+        case RP_VT_I2:
+            rp_buf_u16le(&b, (uint16_t)p->i);
+            rp_buf_u16le(&b, 0);
+            break;
+        case RP_VT_I4: rp_buf_u32le(&b, (uint32_t)p->i); break;
+        case RP_VT_FILETIME: rp_buf_u64le(&b, p->filetime); break;
+        default: {
+            size_t n = p->str_len + term;
+            rp_buf_u32le(&b, (uint32_t)n);
+            rp_buf_put(&b, p->str, p->str_len);
+            rp_buf_zero(&b, sizes[k] - 8 - p->str_len);
+        }
+        }
+    }
+    return rp_buf_take(&b, out, len);
+}
