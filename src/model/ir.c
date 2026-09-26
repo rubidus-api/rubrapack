@@ -360,9 +360,9 @@ static bool known_folder(const char *s) {
 
 static const char *const top_kinds[] = { "package", "define", "arp", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
-                                          "shortcut", "remove", "copy", "env", "ini", "require", "search", NULL };
-static const char *const later_kinds[] = { "service",
-                                           "assoc", "protocol", "font", "permission",
+                                          "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission", NULL };
+static const char *const later_kinds[] = {
+                                           "assoc", "protocol",
                                            "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
@@ -613,9 +613,15 @@ static void parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
     d->feature = get_str(c, t, "feature", false, NULL);
     char *path = get_str(c, t, "path", true, NULL);
     if (path == NULL) return;
-    // base/part/part...
+    // base/part/part..., or a known folder alone (the folder itself, e.g. "Fonts")
     size_t count = 1;
     for (const char *p = path; *p; ++p) count += *p == '/';
+    if (count == 1 && known_folder(path)) {
+        d->base = path;
+        d->parts = rp_mem_alloc(c->alloc, 1, sizeof *d->parts);     // non-NULL: a valid dir with no parts
+        if (d->parts == NULL) c->nomem = true;
+        return;
+    }
     if (count < 2 || strchr(path, '\\')) {
         ERR(c, key_pos(t, "path"), "RP1308", "path must be \"Base/relative/path\" with '/' (Base is a known folder or a dir ID)");
         rp_mem_free(c->alloc, path);
@@ -1352,6 +1358,97 @@ static void parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
     }
 }
 
+static int ascii_casecmp(const char *a, const char *b) {
+    for (;; ++a, ++b) {
+        char x = (char)(*a >= 'A' && *a <= 'Z' ? *a + 32 : *a), y = (char)(*b >= 'A' && *b <= 'Z' ? *b + 32 : *b);
+        if (x != y || x == 0) return x - y;
+    }
+}
+
+static void parse_service(ctx_t *c, const rp_ttable_t *t, rp_ir_service_t *x) {
+    static const char *const keys[] = { "file", "name", "display-name", "description", "start", "account", "args",
+                                        "start-on-install", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    char *file = get_str(c, t, "file", true, NULL);
+    if (file) {
+        if (strncmp(file, "file:", 5) != 0 || file[5] == '\0') ERR(c, key_pos(t, "file"), "RP1315", "file must be \"file:<ID>\"");
+        else x->file = dup(c, file + 5);
+        rp_mem_free(c->alloc, file);
+    }
+    x->name = get_str(c, t, "name", true, NULL);
+    if (x->name && (strpbrk(x->name, "/\\") || has_control(x->name) || strlen(x->name) > 256)) {
+        ERR(c, key_pos(t, "name"), "RP1316", "a service name may not contain '/' or '\\' (at most 256 characters)");
+    }
+    x->display_name = get_str(c, t, "display-name", false, NULL);
+    x->description = get_str(c, t, "description", false, NULL);
+    x->args = get_str(c, t, "args", false, NULL);
+    x->start = 3;
+    char *start = get_str(c, t, "start", false, NULL);
+    if (start) {
+        if (strcmp(start, "auto") == 0) x->start = 2;
+        else if (strcmp(start, "demand") == 0) x->start = 3;
+        else if (strcmp(start, "disabled") == 0) x->start = 4;
+        else ERR(c, key_pos(t, "start"), "RP1316", "start must be auto, demand or disabled");
+        rp_mem_free(c->alloc, start);
+    }
+    char *account = get_str(c, t, "account", false, NULL);
+    if (account) {
+        if (strcmp(account, "LocalSystem") == 0) x->account = 0;
+        else if (strcmp(account, "LocalService") == 0) x->account = 1;
+        else if (strcmp(account, "NetworkService") == 0) x->account = 2;
+        else ERR(c, key_pos(t, "account"), "RP1316", "account must be LocalSystem, LocalService or NetworkService");
+        rp_mem_free(c->alloc, account);
+    }
+    x->start_on_install = get_bool(c, t, "start-on-install", false);
+    if (x->start_on_install && x->start == 4) ERR(c, key_pos(t, "start-on-install"), "RP1316", "a disabled service cannot be started");
+}
+
+static void parse_permission(ctx_t *c, const rp_ttable_t *t, rp_ir_permission_t *x) {
+    static const char *const keys[] = { "target", "sddl", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    char *target = get_str(c, t, "target", true, NULL);
+    if (target) {
+        static const char *const prefixes[] = { "dir:", "file:", "registry:" };
+        x->kind = -1;
+        for (int k = 0; k < 3; ++k) {
+            size_t n = strlen(prefixes[k]);
+            if (strncmp(target, prefixes[k], n) == 0 && target[n]) {
+                x->kind = k;
+                x->target = dup(c, target + n);
+            }
+        }
+        if (x->kind < 0) ERR(c, key_pos(t, "target"), "RP1315", "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\"");
+        rp_mem_free(c->alloc, target);
+    }
+    x->sddl = get_str(c, t, "sddl", true, NULL);
+    if (x->sddl) {
+        bool ok = strlen(x->sddl) >= 3 && strchr("DOGS", x->sddl[0]) && x->sddl[1] == ':';
+        for (const char *p = x->sddl; ok && *p; ++p) ok = *p > ' ' && *p < 127 && *p != '[' && *p != ']';
+        if (!ok) ERR(c, key_pos(t, "sddl"), "RP1316", "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\"");
+    }
+}
+
+static void parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x) {
+    static const char *const keys[] = { "file", "title", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    char *file = get_str(c, t, "file", true, NULL);
+    if (file) {
+        if (strncmp(file, "file:", 5) != 0 || file[5] == '\0') ERR(c, key_pos(t, "file"), "RP1315", "file must be \"file:<ID>\"");
+        else x->file = dup(c, file + 5);
+        rp_mem_free(c->alloc, file);
+    }
+    x->title = get_str(c, t, "title", false, NULL);
+}
+
 static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     static const char *const keys[] = { "name", "value", "mode", "keep", "feature", NULL };
     check_keys(c, t, keys);
@@ -1425,7 +1522,7 @@ static void cross_checks(ctx_t *c) {
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
                ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count +
-               ir->require_count + ir->search_count;
+               ir->require_count + ir->search_count + ir->service_count + ir->font_count + ir->permission_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1443,6 +1540,9 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->ini_count; ++k) ids[m++] = (idpos_t){ ir->inis[k].id, ir->inis[k].pos };
     for (size_t k = 0; k < ir->require_count; ++k) ids[m++] = (idpos_t){ ir->requires[k].id, ir->requires[k].pos };
     for (size_t k = 0; k < ir->search_count; ++k) ids[m++] = (idpos_t){ ir->searches[k].id, ir->searches[k].pos };
+    for (size_t k = 0; k < ir->service_count; ++k) ids[m++] = (idpos_t){ ir->services[k].id, ir->services[k].pos };
+    for (size_t k = 0; k < ir->font_count; ++k) ids[m++] = (idpos_t){ ir->fonts[k].id, ir->fonts[k].pos };
+    for (size_t k = 0; k < ir->permission_count; ++k) ids[m++] = (idpos_t){ ir->permissions[k].id, ir->permissions[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
@@ -1638,6 +1738,74 @@ static void cross_checks(ctx_t *c) {
             else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", r->id);
         }
     }
+    // Permissions: the target exists, once per target; a registry target must write a value.
+    for (size_t k = 0; k < ir->permission_count; ++k) {
+        rp_ir_permission_t *x = &ir->permissions[k];
+        if (x->target == NULL) continue;
+        bool found = false;
+        if (x->kind == 0) {
+            const rp_ir_dir_t *d = find_dir(ir, x->target);
+            found = d != NULL;
+            if (d && d->part_count == 0) ERR(c, x->pos, "RP1316", "a known folder itself ('%s') cannot get permissions", x->target);
+            if (d) x->feature = dup(c, d->feature ? d->feature : declared ? NULL : "Main");
+            if (d && x->feature == NULL) ERR(c, x->pos, "RP1202", "[permission.%s] needs its dir to have a feature", x->id);
+        } else if (x->kind == 1) {
+            for (size_t j = 0; j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, x->target) == 0;
+        } else {
+            for (size_t j = 0; j < ir->registry_count; ++j) {
+                if (strcmp(ir->registries[j].id, x->target) == 0) {
+                    found = true;
+                    if (ir->registries[j].remove) ERR(c, x->pos, "RP1316", "registry '%s' removes a value; it has nothing to protect", x->target);
+                }
+            }
+        }
+        if (!found) ERR(c, x->pos, "RP1315", "target '%s' does not exist", x->target);
+        for (size_t j = 0; j < k; ++j) {
+            if (ir->permissions[j].kind == x->kind && ir->permissions[j].target && strcmp(ir->permissions[j].target, x->target) == 0) {
+                ERR(c, x->pos, "RP1301", "'%s' already has permissions", x->target);
+            }
+        }
+    }
+    // Fonts: a file installed directly in the Fonts folder ([dir.X] path = "Fonts"), once.
+    for (size_t k = 0; k < ir->font_count; ++k) {
+        const rp_ir_font_t *x = &ir->fonts[k];
+        const rp_ir_file_t *f = NULL;
+        for (size_t j = 0; x->file && j < ir->file_count; ++j) {
+            if (strcmp(ir->files[j].id, x->file) == 0) f = &ir->files[j];
+        }
+        const rp_ir_dir_t *d = f && f->dir ? find_dir(ir, f->dir) : NULL;
+        if (x->file && f == NULL) {
+            ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", x->file);
+        } else if (f && !(d && d->part_count == 0 && d->base && strcmp(d->base, "Fonts") == 0)) {
+            ERR(c, x->pos, "RP1316", "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")", x->file);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            if (x->file && ir->fonts[j].file && strcmp(ir->fonts[j].file, x->file) == 0) {
+                ERR(c, x->pos, "RP1301", "file '%s' is already registered as a font", x->file);
+            }
+        }
+    }
+    // Services: an exe of this package that its machines can run; one service per file and name.
+    for (size_t k = 0; k < ir->service_count; ++k) {
+        const rp_ir_service_t *x = &ir->services[k];
+        const rp_ir_file_t *f = NULL;
+        for (size_t j = 0; x->file && j < ir->file_count; ++j) {
+            if (strcmp(ir->files[j].id, x->file) == 0) f = &ir->files[j];
+        }
+        if (x->file && f == NULL) {
+            ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", x->file);
+        } else if (f && (f->pe_machine == 0 || f->pe_is_dll)) {
+            ERR(c, x->pos, "RP1315", "'%s' is not a program (.exe)", f->source);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            if (x->file && ir->services[j].file && strcmp(ir->services[j].file, x->file) == 0) {
+                ERR(c, x->pos, "RP1316", "file '%s' already runs service '%s'", x->file, ir->services[j].id);
+            }
+            if (x->name && ir->services[j].name && ascii_casecmp(ir->services[j].name, x->name) == 0) {
+                ERR(c, x->pos, "RP1301", "service name '%s' is already used", x->name);
+            }
+        }
+    }
     // Launch conditions are keyed by their text; search properties are unique and not a
     // [property.*] of the package.
     for (size_t k = 0; k < ir->require_count; ++k) {
@@ -1756,7 +1924,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
@@ -1796,6 +1964,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "ini") == 0) ++nini;
         else if (strcmp(t->kind, "require") == 0) ++nreq;
         else if (strcmp(t->kind, "search") == 0) ++nsearch;
+        else if (strcmp(t->kind, "service") == 0) ++nsvc;
+        else if (strcmp(t->kind, "font") == 0) ++nfont;
+        else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
@@ -1830,6 +2001,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->inis = rp_mem_alloc(alloc, nini + 1, sizeof *ir->inis);
     ir->requires = rp_mem_alloc(alloc, nreq + 1, sizeof *ir->requires);
     ir->searches = rp_mem_alloc(alloc, nsearch + 1, sizeof *ir->searches);
+    ir->services = rp_mem_alloc(alloc, nsvc + 1, sizeof *ir->services);
+    ir->fonts = rp_mem_alloc(alloc, nfont + 1, sizeof *ir->fonts);
+    ir->permissions = rp_mem_alloc(alloc, nperm + 1, sizeof *ir->permissions);
+    if (ir->services == NULL || ir->fonts == NULL || ir->permissions == NULL) c.nomem = true;
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
         ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL || ir->requires == NULL ||
         ir->searches == NULL) {
@@ -1895,6 +2070,18 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_search_t *x = &ir->searches[ir->search_count++];
             memset(x, 0, sizeof *x);
             parse_search(&c, t, x);
+        } else if (strcmp(t->kind, "service") == 0) {
+            rp_ir_service_t *x = &ir->services[ir->service_count++];
+            memset(x, 0, sizeof *x);
+            parse_service(&c, t, x);
+        } else if (strcmp(t->kind, "font") == 0) {
+            rp_ir_font_t *x = &ir->fonts[ir->font_count++];
+            memset(x, 0, sizeof *x);
+            parse_font(&c, t, x);
+        } else if (strcmp(t->kind, "permission") == 0) {
+            rp_ir_permission_t *x = &ir->permissions[ir->permission_count++];
+            memset(x, 0, sizeof *x);
+            parse_permission(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -1924,6 +2111,27 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_action_t t = ir->actions[j];
             ir->actions[j] = ir->actions[j - 1];
             ir->actions[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->permission_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->permissions[j - 1].id, ir->permissions[j].id) > 0; --j) {
+            rp_ir_permission_t t = ir->permissions[j];
+            ir->permissions[j] = ir->permissions[j - 1];
+            ir->permissions[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->font_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->fonts[j - 1].id, ir->fonts[j].id) > 0; --j) {
+            rp_ir_font_t t = ir->fonts[j];
+            ir->fonts[j] = ir->fonts[j - 1];
+            ir->fonts[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->service_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->services[j - 1].id, ir->services[j].id) > 0; --j) {
+            rp_ir_service_t t = ir->services[j];
+            ir->services[j] = ir->services[j - 1];
+            ir->services[j - 1] = t;
         }
     }
     for (size_t i = 1; !c.nomem && i < ir->require_count; ++i) {
@@ -2085,6 +2293,24 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->searches);
+    for (size_t k = 0; k < ir->service_count; ++k) {
+        rp_ir_service_t *x = &ir->services[k];
+        char *xs[] = { x->id, x->file, x->name, x->display_name, x->description, x->args };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->services);
+    for (size_t k = 0; k < ir->font_count; ++k) {
+        rp_mem_free(a, ir->fonts[k].id);
+        rp_mem_free(a, ir->fonts[k].file);
+        rp_mem_free(a, ir->fonts[k].title);
+    }
+    rp_mem_free(a, ir->fonts);
+    for (size_t k = 0; k < ir->permission_count; ++k) {
+        rp_ir_permission_t *x = &ir->permissions[k];
+        char *xs[] = { x->id, x->target, x->sddl, x->feature };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->permissions);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
@@ -2282,6 +2508,40 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_puts(&b, r->id);
         kv(&b, "condition", r->condition);
         kv(&b, "message", r->message);
+        rp_buf_byte(&b, '\n');
+    }
+    static const char *const pkinds[] = { "dir", "file", "registry" };
+    for (size_t k = 0; k < ir->permission_count; ++k) {
+        const rp_ir_permission_t *x = &ir->permissions[k];
+        rp_buf_puts(&b, "permission ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "kind", x->kind >= 0 && x->kind < 3 ? pkinds[x->kind] : "-");
+        kv(&b, "target", x->target);
+        kv(&b, "sddl", x->sddl);
+        kv(&b, "feature", x->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->font_count; ++k) {
+        rp_buf_puts(&b, "font ");
+        rp_buf_puts(&b, ir->fonts[k].id);
+        kv(&b, "file", ir->fonts[k].file);
+        kv(&b, "title", ir->fonts[k].title);
+        rp_buf_byte(&b, '\n');
+    }
+    static const char *const starts[] = { "-", "-", "auto", "demand", "disabled" };
+    static const char *const accounts[] = { "LocalSystem", "LocalService", "NetworkService" };
+    for (size_t k = 0; k < ir->service_count; ++k) {
+        const rp_ir_service_t *x = &ir->services[k];
+        rp_buf_puts(&b, "service ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "file", x->file);
+        kv(&b, "name", x->name);
+        kv(&b, "display-name", x->display_name);
+        kv(&b, "description", x->description);
+        kv(&b, "start", starts[x->start]);
+        kv(&b, "account", accounts[x->account]);
+        kv(&b, "args", x->args);
+        kv(&b, "start-on-install", x->start_on_install ? "1" : "0");
         rp_buf_byte(&b, '\n');
     }
     static const char *const skinds[] = { "registry", "file", "dir", "component" };

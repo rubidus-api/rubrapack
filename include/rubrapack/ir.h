@@ -140,6 +140,38 @@ typedef struct {
     rp_pos_t         pos;
 } rp_ir_search_t;
 
+// [service.ID] (RFC-0004): a Windows service run from an installed exe.
+typedef struct {
+    char    *id;
+    char    *file;              // file ID of the exe
+    char    *name;              // service name (literal)
+    char    *display_name;      // literal, or NULL = name
+    char    *description;       // literal, or NULL
+    int      start;             // 2 auto, 3 demand, 4 disabled (ServiceInstall.StartType)
+    int      account;           // 0 LocalSystem, 1 LocalService, 2 NetworkService
+    char    *args;              // formatted, or NULL
+    bool     start_on_install;
+    rp_pos_t pos;
+} rp_ir_service_t;
+
+// [font.ID] (RFC-0004): registers a font file of this package installed in the Fonts folder.
+typedef struct {
+    char    *id;
+    char    *file;              // file ID
+    char    *title;             // NULL: the engine reads it from a TrueType/OpenType file
+    rp_pos_t pos;
+} rp_ir_font_t;
+
+// [permission.ID] (RFC-0004): an SDDL security descriptor set on a folder, file or registry value.
+typedef struct {
+    char    *id;
+    int      kind;              // 0 dir, 1 file, 2 registry
+    char    *target;            // the dir, file or registry ID
+    char    *sddl;
+    char    *feature;           // dir: resolved (G2)
+    rp_pos_t pos;
+} rp_ir_permission_t;
+
 // [env.ID] (RFC-0004): a system environment variable.
 typedef struct {
     char    *id;
@@ -220,6 +252,12 @@ typedef struct {
     size_t            require_count;
     rp_ir_search_t   *searches;
     size_t            search_count;
+    rp_ir_service_t  *services;
+    size_t            service_count;
+    rp_ir_font_t     *fonts;
+    size_t            font_count;
+    rp_ir_permission_t *permissions;
+    size_t            permission_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

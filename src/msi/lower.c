@@ -197,6 +197,17 @@ static const rp_msi_wcolumn_t signature_cols[] = { { "Signature", KEY_S(72) }, {
                                                    { "MaxVersion", S_N(20) }, { "MinSize", I4_N }, { "MaxSize", I4_N },
                                                    { "MinDate", I4_N }, { "MaxDate", I4_N }, { "Languages", S_N(255) } };
 static const rp_msi_wcolumn_t complocator_cols[] = { { "Signature_", KEY_S(72) }, { "ComponentId", S(38) }, { "Type", I2_N } };
+static const rp_msi_wcolumn_t svcinstall_cols[] = { { "ServiceInstall", KEY_S(72) }, { "Name", S(255) }, { "DisplayName", L_N(255) },
+                                                    { "ServiceType", I4 }, { "StartType", I4 }, { "ErrorControl", I4 },
+                                                    { "LoadOrderGroup", S_N(255) }, { "Dependencies", S_N(255) },
+                                                    { "StartName", S_N(255) }, { "Password", S_N(255) },
+                                                    { "Arguments", S_N(255) }, { "Component_", S(72) },
+                                                    { "Description", L_N(255) } };
+static const rp_msi_wcolumn_t svccontrol_cols[] = { { "ServiceControl", KEY_S(72) }, { "Name", L(255) }, { "Event", I2 },
+                                                    { "Arguments", S_N(255) }, { "Wait", I2_N }, { "Component_", S(72) } };
+static const rp_msi_wcolumn_t font_cols[] = { { "File_", KEY_S(72) }, { "FontTitle", S_N(128) } };
+static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_S(72) }, { "LockObject", S(72) },
+                                                  { "Table", S(32) }, { "SDDL", S(0) }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -395,12 +406,25 @@ static size_t name_cell_excess(const char *short_name, const char *long_name, si
     return name_cell_excess_w(short_name, long_name, 255, most);
 }
 
-// The Directory key a shortcut goes to: a known folder's standard property, or its dir ID.
-static const char *shortcut_dir_key(const rp_ir_shortcut_t *sc, rp_arch_t arch) {
-    const char *std = standard_folder(sc->dir, arch);
+// The Directory key of a dir ID: a [dir.*] that is a known folder itself (path = "Fonts") has no
+// row of its own and stands for the standard folder property.
+static const char *dkey(const rp_ir_t *ir, const char *id) {
+    for (size_t i = 0; id && i < ir->dir_count; ++i) {
+        const rp_ir_dir_t *d = &ir->dirs[i];
+        if (d->part_count == 0 && d->base && strcmp(d->id, id) == 0) {
+            const char *std = standard_folder(d->base, ir->arch);
+            return std ? std : id;
+        }
+    }
+    return id;
+}
+
+// The Directory key a shortcut goes to: a known folder's standard property, or its dir.
+static const char *shortcut_dir_key(const rp_ir_t *ir, const rp_ir_shortcut_t *sc) {
+    const char *std = standard_folder(sc->dir, ir->arch);
     bool known = strcmp(sc->dir, "Programs") == 0 || strcmp(sc->dir, "Desktop") == 0 || strcmp(sc->dir, "StartMenu") == 0 ||
                  strcmp(sc->dir, "Startup") == 0;
-    return known && std ? std : sc->dir;
+    return known && std ? std : dkey(ir, sc->dir);
 }
 
 static int cmp_keys(const lfile_t *a, const lfile_t *b) { return strcmp(a->key, b->key); }
@@ -434,7 +458,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
-        appsearch, reglocator, drlocator, signature, complocator;
+        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -462,11 +486,15 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&drlocator, alloc, "DrLocator", drlocator_cols, 4);
     rows_init(&signature, alloc, "Signature", signature_cols, 9);
     rows_init(&complocator, alloc, "CompLocator", complocator_cols, 3);
+    rows_init(&svcinstall, alloc, "ServiceInstall", svcinstall_cols, 13);
+    rows_init(&svccontrol, alloc, "ServiceControl", svccontrol_cols, 6);
+    rows_init(&font, alloc, "Font", font_cols, 2);
+    rows_init(&lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
                       &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
-                      &drlocator, &signature, &complocator };
+                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm };
     const size_t always = 13;
 
     // Property
@@ -657,18 +685,18 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             reg_bad = true;
             break;
         }
-        const char *dkey = shortcut_dir_key(sc, ir->arch);
+        const char *sdir = shortcut_dir_key(ir, sc);
         const char *shortn = dirs->sc_short[i];
         s_(&shortcut, sc->id);
-        s_(&shortcut, dkey);
+        s_(&shortcut, sdir);
         s_(&shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
         s_(&shortcut, target->comp);
         s_(&shortcut, kprintf(k, "[#%s]", target->key, NULL));
         s_(&shortcut, sc->args);                                            // formatted (H2)
         s_(&shortcut, sc->description);                                     // Text, not formatted
         null_(&shortcut); null_(&shortcut); null_(&shortcut); null_(&shortcut);
-        s_(&shortcut, sc->working_dir);
-        for (const dnode_t *n = find_node(dirs, dkey); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
+        s_(&shortcut, dkey(ir, sc->working_dir));
+        for (const dnode_t *n = find_node(dirs, sdir); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
             char rk[23];
             rp_key_derive('R', kprintf(k, "shortcut-folder:%s", n->key, NULL), rk);
             bool seen = false;
@@ -691,10 +719,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, r->dir);
+        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, dkey(ir, r->dir));
         i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
         s_(&featurecomp, r->feature); s_(&featurecomp, ckey);
-        s_(&removefile, r->id); s_(&removefile, ckey); s_(&removefile, r->name); s_(&removefile, r->dir);
+        s_(&removefile, r->id); s_(&removefile, ckey); s_(&removefile, r->name); s_(&removefile, dkey(ir, r->dir));
         i_(&removefile, r->mode);
     }
 
@@ -731,17 +759,70 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "ini", x->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, x->dir);
+        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, dkey(ir, x->dir));
         i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
         s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
         const char *shortn = dirs->ini_short[i];
         const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
         rows_t *t = x->mode == 2 ? &removeini : &inifile;
-        s_(t, x->id); s_(t, fname); s_(t, x->dir);
+        s_(t, x->id); s_(t, fname); s_(t, dkey(ir, x->dir));
         s_(t, escape_formatted(k, x->section)); s_(t, escape_formatted(k, x->key));
         s_(t, x->value);                                            // formatted (H2); NULL for remove
         i_(t, x->mode == 0 ? 0 : x->mode == 1 ? 3 : 2);             // addLine, addTag, removeLine
         s_(t, ckey);
+    }
+
+    // [service.*] (RFC-0004): in the exe's component. Stopped before files change at install and at
+    // removal, deleted at removal, optionally started after installation; waits for each step.
+    for (size_t i = 0; i < ir->service_count; ++i) {
+        const rp_ir_service_t *x = &ir->services[i];
+        const lfile_t *exe = NULL;
+        for (size_t j = 0; j < nfiles; ++j) {
+            if (strcmp(files[j].key, x->file) == 0) exe = &files[j];
+        }
+        if (exe == NULL) {
+            reg_bad = true;
+            break;
+        }
+        static const char *const accounts[] = { NULL, "NT AUTHORITY\\LocalService", "NT AUTHORITY\\NetworkService" };
+        const char *name = escape_formatted(k, x->name);
+        s_(&svcinstall, x->id); s_(&svcinstall, name);
+        s_(&svcinstall, x->display_name ? escape_formatted(k, x->display_name) : NULL);
+        i_(&svcinstall, 0x10); i_(&svcinstall, x->start); i_(&svcinstall, 1);    // own process, normal errors
+        null_(&svcinstall); null_(&svcinstall);
+        s_(&svcinstall, accounts[x->account]); null_(&svcinstall);
+        s_(&svcinstall, x->args); s_(&svcinstall, exe->comp);
+        s_(&svcinstall, x->description);                                    // Text, not formatted
+        int event = 0x2 | 0x20 | 0x80 | (x->start_on_install ? 0x1 : 0);         // stop (both), delete (remove), start
+        s_(&svccontrol, x->id); s_(&svccontrol, name); i_(&svccontrol, event); null_(&svccontrol);
+        i_(&svccontrol, 1); s_(&svccontrol, exe->comp);
+    }
+
+    // [permission.*] (RFC-0004): MsiLockPermissionsEx on a File, a Registry row, or a CreateFolder row
+    // (a folder gets its own component that creates it). Applied by InstallFiles, WriteRegistryValues,
+    // CreateFolders.
+    for (size_t i = 0; i < ir->permission_count; ++i) {
+        const rp_ir_permission_t *x = &ir->permissions[i];
+        static const char *const tables[] = { "CreateFolder", "File", "Registry" };
+        const char *lock = x->target;
+        if (x->kind == 0) {
+            char comp[23], guid[39];
+            rp_key_derive('C', kprintf(k, "permission:%s", x->id, NULL), comp);
+            const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), x->target, "permission", x->id };
+            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            const char *ckey = kdup(k, comp);
+            lock = dkey(ir, x->target);
+            s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, lock);
+            i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
+            s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
+            s_(&createfolder, lock); s_(&createfolder, ckey);
+        }
+        s_(&lockperm, x->id); s_(&lockperm, lock); s_(&lockperm, tables[x->kind]); s_(&lockperm, x->sddl); null_(&lockperm);
+    }
+
+    // [font.*] (RFC-0004): the file is already in FontsFolder; the Font row registers it.
+    for (size_t i = 0; i < ir->font_count; ++i) {
+        s_(&font, ir->fonts[i].file); s_(&font, ir->fonts[i].title);
     }
 
     // [require.*] and [search.*] (RFC-0004).
@@ -789,7 +870,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *shortn = dirs->cp_short[i];
         s_(&duplicate, cp->id); s_(&duplicate, src->comp); s_(&duplicate, src->key);
         s_(&duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
-        s_(&duplicate, cp->dir);
+        s_(&duplicate, dkey(ir, cp->dir));
     }
 
     // Folders: CreateFolder, one component each, the folder itself as the key path.
@@ -875,6 +956,16 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->font_count) {           // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "UnregisterFonts"); null_(&iexec); i_(&iexec, 2500);
+        s_(&iexec, "RegisterFonts"); null_(&iexec); i_(&iexec, 5300);
+    }
+    if (ir->service_count) {        // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "StopServices"); null_(&iexec); i_(&iexec, 1900);
+        s_(&iexec, "DeleteServices"); null_(&iexec); i_(&iexec, 2000);
+        s_(&iexec, "InstallServices"); null_(&iexec); i_(&iexec, 5800);
+        s_(&iexec, "StartServices"); null_(&iexec); i_(&iexec, 5900);
     }
     if (ir->search_count) {         // before the launch conditions, which may test the results
         s_(&iexec, "AppSearch"); null_(&iexec); i_(&iexec, 50);
@@ -965,7 +1056,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     const char *app = "rubrapack " RUBRAPACK_VERSION_STRING;
     struct { uint32_t pid; const char *s; int32_t i; } props[] = {
         { 2, "Installation Database", 0 }, { 3, subject, 0 }, { 4, author, 0 }, { 5, "Installer", 0 },
-        { 7, tmpl, 0 }, { 9, package_code, 0 }, { 14, NULL, ir->arch == RP_ARCH_ARM64 ? 500 : 200 },
+        { 7, tmpl, 0 }, { 9, package_code, 0 }, { 14, NULL, ir->arch == RP_ARCH_ARM64 || ir->permission_count ? 500 : 200 },
         { 15, NULL, 2 }, { 18, app, 0 },
     };
     for (size_t i = 0; i < sizeof props / sizeof props[0]; ++i) {
@@ -1077,7 +1168,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             err = PROVEN_ERR_INVALID_ARG;
             break;
         }
-        add_node(&dirs, kdup(&k, f->id), kdup(&k, f->dir), kprintf(&k, "%s/%s", parent_logical, f->name), kdup(&k, f->name));
+        add_node(&dirs, kdup(&k, f->id), kdup(&k, dkey(ir, f->dir)), kprintf(&k, "%s/%s", parent_logical, f->name), kdup(&k, f->name));
         if (find_node(&dirs, f->id)) find_node(&dirs, f->id)->pos = f->pos;
     }
 
@@ -1090,7 +1181,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         char comp[23];
         rp_key_derive('C', f->id, comp);
         lf->comp = kdup(&k, comp);
-        lf->dir_key = kdup(&k, f->dir);
+        lf->dir_key = kdup(&k, dkey(ir, f->dir));
         size_t n = 0;
         if (rp_pal_read_file(alloc, f->source_path, limits->max_output, &lf->data, &n) != PROVEN_OK) {
             rp_srcdiag_add(diags, f->pos, "RP1509", false, "cannot read source file '%s'", f->source);
@@ -1121,7 +1212,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     for (size_t i = 0; err == PROVEN_OK && i < ir->copy_count; ++i) dirs.cp_short[i] = NULL;
     for (size_t i = 0; err == PROVEN_OK && i < ir->shortcut_count; ++i) {
         dirs.sc_short[i] = NULL;
-        const char *key = shortcut_dir_key(&ir->shortcuts[i], ir->arch);
+        const char *key = shortcut_dir_key(ir, &ir->shortcuts[i]);
         if (find_node(&dirs, key) == NULL) add_node(&dirs, kdup(&k, key), "TARGETDIR", kdup(&k, key), NULL);
     }
 
@@ -1131,9 +1222,9 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         size_t n = 0;
         for (size_t j = 0; j < dirs.count; ++j) n += dirs.v[j].parent && dirs.v[j].long_name && strcmp(dirs.v[j].parent, folder) == 0;
         for (size_t j = 0; j < ir->file_count; ++j) n += strcmp(files[j].dir_key, folder) == 0;
-        for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0;
-        for (size_t j = 0; j < ir->copy_count; ++j) n += strcmp(ir->copies[j].dir, folder) == 0;
-        for (size_t j = 0; j < ir->ini_count; ++j) n += strcmp(ir->inis[j].dir, folder) == 0;
+        for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(ir, &ir->shortcuts[j]), folder) == 0;
+        for (size_t j = 0; j < ir->copy_count; ++j) n += strcmp(dkey(ir, ir->copies[j].dir), folder) == 0;
+        for (size_t j = 0; j < ir->ini_count; ++j) n += strcmp(dkey(ir, ir->inis[j].dir), folder) == 0;
         if (n == 0) continue;
         sib_t *s = rp_mem_alloc(alloc, n, sizeof *s);
         if (s == NULL) {
@@ -1150,12 +1241,12 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             if (strcmp(files[j].dir_key, folder) == 0) s[m++] = (sib_t){ files[j].f->name, &files[j].short_name };
         }
         for (size_t j = 0; j < ir->shortcut_count; ++j) {
-            if (strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0) {
+            if (strcmp(shortcut_dir_key(ir, &ir->shortcuts[j]), folder) == 0) {
                 s[m++] = (sib_t){ ir->shortcuts[j].name, &dirs.sc_short[j] };
             }
         }
         for (size_t j = 0; j < ir->copy_count; ++j) {
-            if (strcmp(ir->copies[j].dir, folder) != 0) continue;
+            if (strcmp(dkey(ir, ir->copies[j].dir), folder) != 0) continue;
             const char *longn = ir->copies[j].name;
             for (size_t f = 0; longn == NULL && f < ir->file_count; ++f) {
                 if (strcmp(ir->files[f].id, ir->copies[j].source_file) == 0) longn = ir->files[f].name;
@@ -1166,10 +1257,10 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         // (filled in below); only new INI files take part in the assignment.
         for (size_t j = 0; j < ir->ini_count; ++j) {
             const rp_ir_ini_t *x = &ir->inis[j];
-            if (strcmp(x->dir, folder) != 0) continue;
+            if (strcmp(dkey(ir, x->dir), folder) != 0) continue;
             bool shared = false;
             for (size_t f = 0; f < ir->file_count; ++f) shared |= strcmp(files[f].dir_key, folder) == 0 && strcmp(files[f].f->name, x->file) == 0;
-            for (size_t e = 0; e < j; ++e) shared |= strcmp(ir->inis[e].dir, folder) == 0 && strcmp(ir->inis[e].file, x->file) == 0;
+            for (size_t e = 0; e < j; ++e) shared |= strcmp(dkey(ir, ir->inis[e].dir), folder) == 0 && strcmp(ir->inis[e].file, x->file) == 0;
             if (!shared) s[m++] = (sib_t){ x->file, &dirs.ini_short[j] };
         }
         assign_short(&k, s, m);
@@ -1179,7 +1270,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     for (size_t j = 0; err == PROVEN_OK && j < ir->ini_count; ++j) {     // the shared INI short names
         const rp_ir_ini_t *x = &ir->inis[j];
         for (size_t f = 0; dirs.ini_short[j] == NULL && f < ir->file_count; ++f) {
-            if (strcmp(files[f].dir_key, x->dir) == 0 && strcmp(files[f].f->name, x->file) == 0) dirs.ini_short[j] = files[f].short_name;
+            if (strcmp(files[f].dir_key, dkey(ir, x->dir)) == 0 && strcmp(files[f].f->name, x->file) == 0) dirs.ini_short[j] = files[f].short_name;
         }
         for (size_t e = 0; dirs.ini_short[j] == NULL && e < j; ++e) {
             if (strcmp(ir->inis[e].dir, x->dir) == 0 && strcmp(ir->inis[e].file, x->file) == 0) dirs.ini_short[j] = dirs.ini_short[e];
