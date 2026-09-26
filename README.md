@@ -38,6 +38,13 @@ prints any MSI's tables in the IDT archive format. The same source gives the sam
 and Windows with `--reproducible`. Commands that are not built yet report "not implemented yet"
 and exit with status 2.
 
+## Documentation
+
+- [`manual/rpk.md`](manual/rpk.md) - writing `.rpk` sources and using the command line.
+- [`manual/formats/`](manual/formats/README.md) - the package formats explained for implementers:
+  compound files, the MSI database encoding, summary information, the minimal installable
+  package, cabinets/MSZIP/deflate, deterministic identities, and how to verify against Windows.
+
 ## Text encoding
 
 Package text is Unicode end to end: MSI databases are written with code page 65001 (UTF-8),
