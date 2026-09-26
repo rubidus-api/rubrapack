@@ -520,7 +520,11 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     s_(&property, "Manufacturer"); s_(&property, ir->manufacturer);
     s_(&property, "ProductLanguage"); s_(&property, kdup(k, lang));
     s_(&property, "UpgradeCode"); s_(&property, ir->upgrade_code);
-    s_(&property, "ALLUSERS"); s_(&property, "1");
+    // Scope (RFC-0004 H3): machine ALLUSERS=1; user and dual use the single-package form ALLUSERS=2
+    // with MSIINSTALLPERUSER=1 (per-user by default; dual installs per machine with ALLUSERS=1
+    // MSIINSTALLPERUSER="" on the command line).
+    if (ir->scope == 0) { s_(&property, "ALLUSERS"); s_(&property, "1"); }
+    else { s_(&property, "ALLUSERS"); s_(&property, "2"); s_(&property, "MSIINSTALLPERUSER"); s_(&property, "1"); }
     if (ir->reboot_suppress) { s_(&property, "REBOOT"); s_(&property, "ReallySuppress"); }
     // Never close the user's programs to free a file (RFC-0003 X4): at /qn Restart Manager shuts
     // down every process holding a file, and fails the installation if one does not close. It is
@@ -639,8 +643,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             char comp[23], guid[39];
             const char *ident = kprintf(k, "registry:%s", r->id, NULL);
             rp_key_derive('C', ident, comp);
-            static const char *const roots[] = { "HKCR", "HKCU", "HKLM" };
-            const char *logical = kprintf(k, "%s\\%s", roots[r->root], r->key);
+            static const char *const roots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };  // index root + 1
+            const char *logical = kprintf(k, "%s\\%s", roots[r->root + 1], r->key);
             logical = kprintf(k, "%s\\%s", logical, r->name ? r->name : "");
             const char *fields[] = { ir->upgrade_code, "machine", r->view32 ? "x86" : arch_text(ir->arch), logical, "registry", r->id };
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
@@ -751,7 +755,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, "TARGETDIR");
         i_(&component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); null_(&component); null_(&component);
         s_(&featurecomp, e->feature); s_(&featurecomp, ckey);
-        const char *prefix = !e->keep ? "=-*" : "=*";
+        const char *prefix = ir->scope == 1 ? (!e->keep ? "=-" : "=") : (!e->keep ? "=-*" : "=*");  // no '*': user variable
         const char *value = e->mode == 1 ? kprintf(k, "[~];%s", e->value, NULL)
                           : e->mode == 2 ? kprintf(k, "%s;[~]", e->value, NULL)
                                          : e->value;
@@ -838,8 +842,15 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
 
     // [require.*] and [search.*] (RFC-0004).
+    // Launch conditions only guard a first installation: repair and removal must never be blocked
+    // (the engine even deletes MSIINSTALLPERUSER once a per-user product is installed - observed).
     for (size_t i = 0; i < ir->require_count; ++i) {
-        s_(&launch, ir->requires[i].condition); s_(&launch, ir->requires[i].message);
+        s_(&launch, kprintf(k, "Installed OR (%s)", ir->requires[i].condition, NULL)); s_(&launch, ir->requires[i].message);
+    }
+    if (ir->scope == 1) {           // a per-user package stays per user
+        s_(&launch, "Installed OR MSIINSTALLPERUSER = 1");
+        s_(&launch, ir->language == 1042 ? "[ProductName]은(는) 사용자별로만 설치합니다(MSIINSTALLPERUSER=1)."
+                                         : "[ProductName] installs for the current user only (MSIINSTALLPERUSER=1).");
     }
     for (size_t i = 0; i < ir->search_count; ++i) {
         const rp_ir_search_t *x = &ir->searches[i];
@@ -1015,7 +1026,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&iexec, "AppSearch"); null_(&iexec); i_(&iexec, 50);
         s_(&iui, "AppSearch"); null_(&iui); i_(&iui, 50);
     }
-    if (ir->require_count) {
+    if (ir->require_count || ir->scope == 1) {
         s_(&iexec, "LaunchConditions"); null_(&iexec); i_(&iexec, 100);
         s_(&iui, "LaunchConditions"); null_(&iui); i_(&iui, 100);
     }
@@ -1066,7 +1077,9 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fresh = kprintf(k, "$%s>2 AND ?%s<>3", run->comp, run->comp);
         const char *again = kprintf(k, "$%s>2 AND ?%s=3", run->comp, run->comp);
         const char *remove = kprintf(k, "$%s=2 AND ?%s=3", run->comp, run->comp);
-        enum { FORWARD = 18 | 0x400 | 0x800, ROLLBACK = 18 | 0x100 | 0x400 | 0x800 | 0x40 };
+        // Per machine the pair runs elevated (not impersonated); per user, as the user.
+        const int noimp = ir->scope == 0 ? 0x800 : 0;
+        const int FORWARD = 18 | 0x400 | noimp, ROLLBACK = 18 | 0x100 | 0x400 | noimp | 0x40;
         struct { const char *suffix; int type; const char *args; const char *cond; int seq; } rows[] = {
             { "UndoRollback", ROLLBACK, do_args, remove, 3400 + 2 * (int)(na - 1 - i) },
             { "Undo", FORWARD, undo_args, remove, 3401 + 2 * (int)(na - 1 - i) },
@@ -1124,7 +1137,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     struct { uint32_t pid; const char *s; int32_t i; } props[] = {
         { 2, "Installation Database", 0 }, { 3, subject, 0 }, { 4, author, 0 }, { 5, "Installer", 0 },
         { 7, tmpl, 0 }, { 9, package_code, 0 }, { 14, NULL, ir->arch == RP_ARCH_ARM64 || ir->permission_count ? 500 : 200 },
-        { 15, NULL, 2 }, { 18, app, 0 },
+        { 15, NULL, ir->scope ? 2 | 8 : 2 }, { 18, app, 0 },
     };
     for (size_t i = 0; i < sizeof props / sizeof props[0]; ++i) {
         rp_suminfo_prop_t *p = &si.props[si.count++];

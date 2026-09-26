@@ -539,12 +539,10 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     }
 
     char *scope = get_str(c, t, "scope", false, NULL);
-    if (scope && strcmp(scope, "machine") != 0) {
-        if (strcmp(scope, "user") == 0 || strcmp(scope, "dual") == 0) {
-            ERR(c, key_pos(t, "scope"), "RP1901", "scope \"%s\" is not supported yet (planned for P3)", scope);
-        } else {
-            ERR(c, key_pos(t, "scope"), "RP1308", "scope must be \"machine\", \"user\" or \"dual\"");
-        }
+    if (scope && strcmp(scope, "user") == 0) ir->scope = 1;
+    else if (scope && strcmp(scope, "dual") == 0) ir->scope = 2;
+    else if (scope && strcmp(scope, "machine") != 0) {
+        ERR(c, key_pos(t, "scope"), "RP1308", "scope must be \"machine\", \"user\" or \"dual\"");
     }
     rp_mem_free(c->alloc, scope);
 
@@ -1047,12 +1045,20 @@ static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) 
     r->pos = t->pos;
     char *root = get_str(c, t, "root", true, NULL);
     if (root) {
+        // Per scope: machine HKLM/HKCR/HKMU, user HKCU/HKCR/HKMU, dual HKMU/HKCR (HKMU = HKLM for a
+        // per-machine installation, HKCU for a per-user one).
+        int scope = c->ir->scope;
         if (strcmp(root, "HKLM") == 0) r->root = RP_ROOT_HKLM;
         else if (strcmp(root, "HKCR") == 0) r->root = RP_ROOT_HKCR;
-        else if (strcmp(root, "HKCU") == 0) {
-            ERR(c, key_pos(t, "root"), "RP1901", "HKCU needs a per-user package, which is not supported yet (planned for P3)");
-        } else {
-            ERR(c, key_pos(t, "root"), "RP1316", "root must be \"HKLM\", \"HKCR\" or \"HKCU\" (got '%s')", root);
+        else if (strcmp(root, "HKCU") == 0) r->root = RP_ROOT_HKCU;
+        else if (strcmp(root, "HKMU") == 0) r->root = RP_ROOT_HKMU;
+        else ERR(c, key_pos(t, "root"), "RP1316", "root must be HKLM, HKCU, HKCR or HKMU (got '%s')", root);
+        if (r->root == RP_ROOT_HKCU && scope == 0) {
+            ERR(c, key_pos(t, "root"), "RP1316", "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\"");
+        } else if (r->root == RP_ROOT_HKLM && scope != 0) {
+            ERR(c, key_pos(t, "root"), "RP1316", "a %s package cannot write HKLM; use HKMU", scope == 1 ? "per-user" : "dual");
+        } else if (r->root == RP_ROOT_HKCU && scope == 2) {
+            ERR(c, key_pos(t, "root"), "RP1316", "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU");
         }
         rp_mem_free(c->alloc, root);
     }
@@ -1285,7 +1291,7 @@ static void parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
     if (r->condition && !condition_ok(r->condition)) {
         ERR(c, key_pos(t, "condition"), "RP1316", "condition has an unclosed quote or unbalanced parentheses");
     }
-    if (r->condition && strlen(r->condition) > 255) ERR(c, key_pos(t, "condition"), "RP1316", "condition is longer than 255 characters");
+    if (r->condition && strlen(r->condition) > 240) ERR(c, key_pos(t, "condition"), "RP1316", "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")");
     r->message = get_str(c, t, "message", true, NULL);
 }
 
@@ -1739,6 +1745,23 @@ static void cross_checks(ctx_t *c) {
             if (d && d->feature) r->feature = dup(c, d->feature);
             else if (!declared) r->feature = dup(c, "Main");
             else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", r->id);
+        }
+    }
+    // Scope (RFC-0004 H3): what needs a per-machine installation.
+    if (ir->scope != 0) {
+        static const char *const scopes[] = { "machine", "user", "dual" };
+        const char *sc = scopes[ir->scope];
+        for (size_t k = 0; k < ir->service_count; ++k) ERR(c, ir->services[k].pos, "RP1316", "services need scope = \"machine\" (this is %s)", sc);
+        for (size_t k = 0; k < ir->font_count; ++k) ERR(c, ir->fonts[k].pos, "RP1316", "fonts need scope = \"machine\" (this is %s)", sc);
+        for (size_t k = 0; k < ir->permission_count; ++k) ERR(c, ir->permissions[k].pos, "RP1316", "permissions need scope = \"machine\" (this is %s)", sc);
+        if (ir->scope == 2) {
+            for (size_t k = 0; k < ir->env_count; ++k) ERR(c, ir->envs[k].pos, "RP1316", "a dual package cannot choose between a user and a system variable");
+        }
+        for (size_t k = 0; k < ir->dir_count; ++k) {
+            const char *b = ir->dirs[k].base;
+            if (b && (strcmp(b, "Windows") == 0 || strcmp(b, "System") == 0 || strcmp(b, "Fonts") == 0 || strcmp(b, "CommonAppData") == 0)) {
+                ERR(c, ir->dirs[k].pos, "RP1316", "'%s' is a machine folder; a %s package cannot write there", b, sc);
+            }
         }
     }
     // Permissions: the target exists, once per target; a registry target must write a value.
@@ -2356,6 +2379,12 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "downgrade-message", ir->downgrade_message);
     snprintf(num, sizeof num, "%d", ir->compress);
     kv(&b, "compress", ir->compress < 0 ? "none" : num);
+    if (ir->scope) kv(&b, "scope", ir->scope == 1 ? "user" : "dual");      // only when set: older goldens stay
+    if (ir->cab_external || ir->cab_max) {
+        kv(&b, "cab", ir->cab_external ? "external" : "embed");
+        snprintf(num, sizeof num, "%llu", (unsigned long long)(ir->cab_max >> 20));
+        kv(&b, "cab-max-size", num);
+    }
     if (ir->refuse_below) {         // only when set: older goldens stay as they are
         kv(&b, "refuse-upgrade-below", ir->refuse_below);
         kv(&b, "refuse-upgrade-message", ir->refuse_message);
@@ -2475,13 +2504,13 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "check", a->check_args);
         rp_buf_byte(&b, '\n');
     }
-    static const char *const roots[] = { "HKCR", "HKCU", "HKLM" };
+    static const char *const roots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };     // index root + 1
     static const char *const rtypes[] = { "string", "expand", "dword", "binary", "multi" };
     for (size_t k = 0; k < ir->registry_count; ++k) {
         const rp_ir_registry_t *r = &ir->registries[k];
         rp_buf_puts(&b, "registry ");
         rp_buf_puts(&b, r->id);
-        kv(&b, "root", roots[r->root]);
+        kv(&b, "root", roots[r->root + 1]);
         kv(&b, "key", r->key);
         kv(&b, "name", r->name);
         kv(&b, "type", rtypes[r->type]);

@@ -54,7 +54,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
@@ -64,7 +64,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[arp]` | no-modify, no-repair, help (URL), about (URL) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
-| `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
+| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
 | `[require.ID]` | **condition**, **message** |
@@ -160,8 +160,8 @@ files an older version left behind.
 A search runs before anything else and puts what it found into a public property (empty when
 nothing is found): a registry value's data, the full path of a file (`path` = a known folder and a
 relative path, like `System` or `ProgramFiles/Example`; `min-version` for program files), a folder,
-or the key file of another product's component. A requirement stops the installation with its
-message when its `condition` is false; conditions use Windows Installer's syntax
+or the key file of another product's component. A requirement stops a first installation with its
+message when its `condition` is false (repair and removal are never blocked); conditions use Windows Installer's syntax
 (`VersionNT >= 603`, `FOUND_TOOL`, `NOT OLDSETTING`) and may test search results.
 
 ```toml
@@ -184,6 +184,17 @@ change and at uninstall, deleted at uninstall, and started after installation wi
 Fonts folder; without `title` Windows reads the name from the TrueType/OpenType file.
 `[permission.ID]` sets an SDDL security descriptor on a folder the package creates, one of its
 files, or a registry value it writes (this raises the package to Windows Installer 5.0).
+
+### Per-user and dual packages: `scope`
+
+`scope = "machine"` (default) installs for everyone and needs administrator rights. `scope = "user"`
+installs for the current user without elevation: `ProgramFiles` becomes
+`%LOCALAPPDATA%\Programs`, `Programs` and `Desktop` are the user's, registry values go to `HKCU`
+(or `HKMU`), environment variables are the user's, and do/undo actions run as the user; asking for
+a per-machine installation is refused. `scope = "dual"` installs per user by default and per
+machine from an elevated prompt with `msiexec /i x.msi ALLUSERS=1 MSIINSTALLPERUSER=""`; its
+registry values use `HKMU`, which is `HKLM` or `HKCU` as installed. Services, fonts, permissions
+and the machine folders (`Windows`, `System`, `Fonts`, `CommonAppData`) need `scope = "machine"`.
 
 ### Cabinets
 

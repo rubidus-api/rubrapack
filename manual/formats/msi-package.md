@@ -217,6 +217,17 @@ InstallAdminPackage 3900, InstallFiles 4000, InstallFinalize 6600) and `AdminUIS
 (CostInitialize, CostFinalize, InstallValidate, InstallInitialize, PublishFeatures 6300,
 PublishProduct 6400, InstallFinalize) makes `msiexec /jm` advertise the product. [observed]
 
+## Per-user and dual packages
+
+The single-package form: `ALLUSERS=2` with `MSIINSTALLPERUSER=1` installs per user - the engine
+points `ProgramFilesFolder`/`ProgramFiles64Folder` at `%LOCALAPPDATA%\Programs` and the menu and
+desktop folders at the user's - and `ALLUSERS=1 MSIINSTALLPERUSER=""` installs per machine.
+Summary Word Count bit 8 says no elevation is needed. Registry Root -1 (HKMU) is HKCU per user and
+HKLM per machine; an Environment name without `*` is a user variable. Once a per-user product is
+installed the engine deletes `MSIINSTALLPERUSER`, so a launch condition that tests it must read
+`Installed OR ...` or the product can no longer be removed; in general, write every launch
+condition as `Installed OR (...)`. [observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

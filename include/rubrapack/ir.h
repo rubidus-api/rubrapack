@@ -62,7 +62,7 @@ typedef struct {
 } rp_ir_folder_t;
 
 typedef enum { RP_REG_STRING, RP_REG_EXPAND, RP_REG_DWORD, RP_REG_BINARY, RP_REG_MULTI } rp_reg_type_t;
-typedef enum { RP_ROOT_HKCR = 0, RP_ROOT_HKCU = 1, RP_ROOT_HKLM = 2 } rp_reg_root_t;
+typedef enum { RP_ROOT_HKMU = -1, RP_ROOT_HKCR = 0, RP_ROOT_HKCU = 1, RP_ROOT_HKLM = 2 } rp_reg_root_t;
 
 // [registry.ID] (RFC-0004): one value (or, with remove, a value or key removed at install).
 typedef struct {
@@ -219,6 +219,7 @@ typedef struct {
     char     *product_code;     // NULL = derive
     uint16_t  language;         // 1033 or 1042
     bool      reboot_suppress;
+    int       scope;            // 0 machine, 1 user, 2 dual (per-user by default, ALLUSERS=1 for machine)
     char     *downgrade_message;
     char     *refuse_below;     // refuse-upgrade-below (versions below it are refused), or NULL
     char     *refuse_message;   // may be NULL
