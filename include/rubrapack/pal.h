@@ -31,4 +31,20 @@ typedef enum {
 [[nodiscard]] proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8,
                                             size_t max_bytes, uint8_t **data, size_t *len);
 
+typedef enum {
+    RP_FS_NONE,         // does not exist (or cannot be seen)
+    RP_FS_FILE,
+    RP_FS_DIR,
+    RP_FS_LINK,         // symlink or reparse point - never followed (RFC-0002 8.1)
+    RP_FS_OTHER,
+} rp_fskind_t;
+
+// What a UTF-8 path names, without following links. *size is set for files.
+[[nodiscard]] rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_t *size);
+
+// Writes `data` to a temporary file next to `path_utf8`, then renames it over `path_utf8`, so a
+// failure never leaves a half-written output (RFC-0001 7.1).
+[[nodiscard]] proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path_utf8,
+                                                    const uint8_t *data, size_t len);
+
 #endif // RUBRAPACK_PAL_H

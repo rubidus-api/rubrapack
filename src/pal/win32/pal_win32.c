@@ -96,3 +96,60 @@ proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8, s
     *len = (size_t)size.QuadPart;
     return PROVEN_OK;
 }
+
+static proven_err_t wide_path(proven_allocator_t alloc, const char *path_utf8, proven_u16str_t *out) {
+    proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
+    rp_text_result_t t = rp_utf8_to_u16str(alloc, view, out);
+    return t.err;
+}
+
+rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_t *size) {
+    proven_u16str_t w = { 0 };
+    if (path_utf8 == NULL || wide_path(alloc, path_utf8, &w) != PROVEN_OK) return RP_FS_NONE;
+    WIN32_FILE_ATTRIBUTE_DATA a;
+    BOOL ok = GetFileAttributesExW((const wchar_t *)proven_u16str_as_ptr(&w), GetFileExInfoStandard, &a);
+    proven_u16str_destroy(alloc, &w);
+    if (!ok) return RP_FS_NONE;
+    if (a.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) return RP_FS_LINK;
+    if (a.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return RP_FS_DIR;
+    if (size) *size = ((uint64_t)a.nFileSizeHigh << 32) | a.nFileSizeLow;
+    return RP_FS_FILE;
+}
+
+proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
+    if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
+    proven_u16str_t w = { 0 }, t = { 0 };
+    size_t n = strlen(path_utf8);
+    char *tmp = rp_mem_alloc(alloc, n + 16, 1);
+    if (tmp == NULL) return PROVEN_ERR_NOMEM;
+    memcpy(tmp, path_utf8, n);
+    memcpy(tmp + n, ".rp-tmp", 8);
+    proven_err_t err = wide_path(alloc, path_utf8, &w);
+    if (err == PROVEN_OK) err = wide_path(alloc, tmp, &t);
+    rp_mem_free(alloc, tmp);
+    if (err != PROVEN_OK) {
+        proven_u16str_destroy(alloc, &w);
+        return err;
+    }
+    const wchar_t *wt = (const wchar_t *)proven_u16str_as_ptr(&t);
+    HANDLE h = CreateFileW(wt, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+        err = PROVEN_ERR_IO;
+    } else {
+        for (size_t off = 0; err == PROVEN_OK && off < len;) {
+            DWORD chunk = (len - off) > 0x10000000u ? 0x10000000u : (DWORD)(len - off), done = 0;
+            if (!WriteFile(h, data + off, chunk, &done, NULL) || done == 0) err = PROVEN_ERR_IO;
+            off += done;
+        }
+        if (!FlushFileBuffers(h)) err = PROVEN_ERR_IO;
+        CloseHandle(h);
+        if (err == PROVEN_OK &&
+            !MoveFileExW(wt, (const wchar_t *)proven_u16str_as_ptr(&w), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+            err = PROVEN_ERR_IO;
+        }
+        if (err != PROVEN_OK) DeleteFileW(wt);
+    }
+    proven_u16str_destroy(alloc, &w);
+    proven_u16str_destroy(alloc, &t);
+    return err;
+}
