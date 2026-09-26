@@ -61,6 +61,37 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_folder_t;
 
+typedef enum { RP_REG_STRING, RP_REG_EXPAND, RP_REG_DWORD, RP_REG_BINARY, RP_REG_MULTI } rp_reg_type_t;
+typedef enum { RP_ROOT_HKCR = 0, RP_ROOT_HKCU = 1, RP_ROOT_HKLM = 2 } rp_reg_root_t;
+
+// [registry.ID] (RFC-0004): one value (or, with remove, a value or key removed at install).
+typedef struct {
+    char         *id;
+    rp_reg_root_t root;
+    char         *key;          // literal
+    char         *name;         // literal; NULL = the key's default value
+    rp_reg_type_t type;
+    char         *value;        // string/expand: formatted text; dword: decimal; binary: hex digits
+    char        **items;        // multi: formatted strings
+    size_t        item_count;
+    bool          remove, keep, view32;
+    char         *with_file;    // file ID whose component carries it, or NULL (own component)
+    char         *feature;      // resolved (G2) when with_file is NULL
+    rp_pos_t      pos;
+} rp_ir_registry_t;
+
+// [shortcut.ID] (RFC-0004): lives in its target file's component.
+typedef struct {
+    char    *id;
+    char    *dir;               // dir ID, or a known folder: Programs, Desktop, StartMenu, Startup
+    char    *name;              // literal, without ".lnk"
+    char    *target_file;       // file ID
+    char    *args;              // formatted, or NULL
+    char    *description;       // literal, or NULL
+    char    *working_dir;       // dir ID, or NULL
+    rp_pos_t pos;
+} rp_ir_shortcut_t;
+
 typedef struct {
     char    *id;                // public property name (upper case)
     char    *value;
@@ -106,6 +137,10 @@ typedef struct {
     size_t            property_count;
     rp_ir_action_t   *actions;
     size_t            action_count;
+    rp_ir_registry_t *registries;
+    size_t            registry_count;
+    rp_ir_shortcut_t *shortcuts;
+    size_t            shortcut_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

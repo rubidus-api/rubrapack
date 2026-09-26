@@ -166,6 +166,16 @@ static const rp_msi_wcolumn_t upgrade_cols[] = { { "UpgradeCode", KEY_S(38) }, {
                                                  { "ActionProperty", S(72) } };
 static const rp_msi_wcolumn_t customaction_cols[] = { { "Action", KEY_S(72) }, { "Type", I2 }, { "Source", S_N(72) },
                                                       { "Target", S_N(255) } };
+static const rp_msi_wcolumn_t registry_cols[] = { { "Registry", KEY_S(72) }, { "Root", I2 }, { "Key", L(255) },
+                                                  { "Name", L_N(255) }, { "Value", L_N(0) }, { "Component_", S(72) } };
+static const rp_msi_wcolumn_t removereg_cols[] = { { "RemoveRegistry", KEY_S(72) }, { "Root", I2 }, { "Key", L(255) },
+                                                   { "Name", L_N(255) }, { "Component_", S(72) } };
+static const rp_msi_wcolumn_t shortcut_cols[] = { { "Shortcut", KEY_S(72) }, { "Directory_", S(72) }, { "Name", L(128) },
+                                                  { "Component_", S(72) }, { "Target", S(72) }, { "Arguments", S_N(255) },
+                                                  { "Description", L_N(255) }, { "Hotkey", I2_N }, { "Icon_", S_N(72) },
+                                                  { "IconIndex", I2_N }, { "ShowCmd", I2_N }, { "WkDir", S_N(72) } };
+static const rp_msi_wcolumn_t removefile_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "FileName", L_N(255) },
+                                                    { "DirProperty", S(72) }, { "InstallMode", I2 } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -184,6 +194,7 @@ typedef struct {
     dnode_t       *v;
     size_t         count, cap;
     const rp_ir_t *ir;
+    char         **sc_short;    // short names of ir->shortcuts, same order
 } dirs_t;
 
 static dnode_t *find_node(dirs_t *d, const char *key) {
@@ -223,6 +234,7 @@ static const char *standard_folder(const char *base, rp_arch_t arch) {
         { "StartMenu", "StartMenuFolder", "StartMenuFolder" },
         { "Programs", "ProgramMenuFolder", "ProgramMenuFolder" },
         { "Desktop", "DesktopFolder", "DesktopFolder" },
+        { "Startup", "StartupFolder", "StartupFolder" },
         { "Windows", "WindowsFolder", "WindowsFolder" },
         { "System", "System64Folder", "SystemFolder" },
         { "Fonts", "FontsFolder", "FontsFolder" },
@@ -346,13 +358,26 @@ typedef struct {
     size_t              size;
 } lfile_t;
 
-// `SHORT|Long` (or Long alone when it is its own short name) must fit a 255-wide column. Returns
-// 0 when it fits, else the long name's length; *most is the longest name that would fit.
-static size_t name_cell_excess(const char *short_name, const char *long_name, size_t *most) {
+// `SHORT|Long` (or Long alone when it is its own short name) must fit a `width`-wide column
+// (255; Shortcut.Name 128). Returns 0 when it fits, else the long name's length; *most is the
+// longest name that would fit.
+static size_t name_cell_excess_w(const char *short_name, const char *long_name, size_t width, size_t *most) {
     rp_text_result_t a = rp_utf8_to_utf16((const uint8_t *)long_name, strlen(long_name), NULL, 0);
     size_t extra = strcmp(short_name, long_name) != 0 ? strlen(short_name) + 1 : 0;   // ASCII short name and '|'
-    *most = 255 - extra;
-    return a.err == PROVEN_OK && a.units + extra <= 255 ? 0 : a.units;
+    *most = width - extra;
+    return a.err == PROVEN_OK && a.units + extra <= width ? 0 : a.units;
+}
+
+static size_t name_cell_excess(const char *short_name, const char *long_name, size_t *most) {
+    return name_cell_excess_w(short_name, long_name, 255, most);
+}
+
+// The Directory key a shortcut goes to: a known folder's standard property, or its dir ID.
+static const char *shortcut_dir_key(const rp_ir_shortcut_t *sc, rp_arch_t arch) {
+    const char *std = standard_folder(sc->dir, arch);
+    bool known = strcmp(sc->dir, "Programs") == 0 || strcmp(sc->dir, "Desktop") == 0 || strcmp(sc->dir, "StartMenu") == 0 ||
+                 strcmp(sc->dir, "Startup") == 0;
+    return known && std ? std : sc->dir;
 }
 
 static int cmp_keys(const lfile_t *a, const lfile_t *b) { return strcmp(a->key, b->key); }
@@ -385,7 +410,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder;
+        createfolder, registry, removereg, shortcut, removefile;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -399,8 +424,15 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&iexec, alloc, "InstallExecuteSequence", sequence_cols, 3);
     rows_init(&iui, alloc, "InstallUISequence", sequence_cols, 3);
     rows_init(&createfolder, alloc, "CreateFolder", createfolder_cols, 2);
+    rows_init(&registry, alloc, "Registry", registry_cols, 6);
+    rows_init(&removereg, alloc, "RemoveRegistry", removereg_cols, 5);
+    rows_init(&shortcut, alloc, "Shortcut", shortcut_cols, 12);
+    rows_init(&removefile, alloc, "RemoveFile", removefile_cols, 5);
+    // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
-                      &upgrade, &customaction, &iexec, &iui, &createfolder };
+                      &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
+                      &removefile };
+    const size_t always = 13;
 
     // Property
     char version3[24];
@@ -518,6 +550,102 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         }
     }
 
+    // [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
+    bool any_write = false, any_remove = false, reg_bad = false;
+    for (size_t i = 0; i < ir->registry_count; ++i) {
+        const rp_ir_registry_t *r = &ir->registries[i];
+        const char *ckey = NULL;
+        if (r->with_file) {
+            for (size_t j = 0; j < nfiles; ++j) {
+                if (strcmp(files[j].key, r->with_file) == 0) ckey = files[j].comp;
+            }
+        } else {
+            char comp[23], guid[39];
+            const char *ident = kprintf(k, "registry:%s", r->id, NULL);
+            rp_key_derive('C', ident, comp);
+            static const char *const roots[] = { "HKCR", "HKCU", "HKLM" };
+            const char *logical = kprintf(k, "%s\\%s", roots[r->root], r->key);
+            logical = kprintf(k, "%s\\%s", logical, r->name ? r->name : "");
+            const char *fields[] = { ir->upgrade_code, "machine", r->view32 ? "x86" : arch_text(ir->arch), logical, "registry", r->id };
+            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            ckey = kdup(k, comp);
+            int32_t attr = (r->remove ? 0 : 4) | (ir->arch != RP_ARCH_X86 && !r->view32 ? 256 : 0) | (r->keep ? 16 : 0);
+            s_(&component, ckey);
+            s_(&component, kdup(k, guid));
+            s_(&component, "TARGETDIR");
+            i_(&component, attr);
+            null_(&component);
+            if (r->remove) null_(&component);
+            else s_(&component, r->id);
+            s_(&featurecomp, r->feature);
+            s_(&featurecomp, ckey);
+        }
+        if (ckey == NULL) {
+            reg_bad = true;                     // the IR checked `with`; unreachable
+            break;
+        }
+        const char *key = escape_formatted(k, r->key);
+        const char *name = r->name ? escape_formatted(k, r->name) : NULL;
+        if (r->remove) {
+            s_(&removereg, r->id); i_(&removereg, (int32_t)r->root); s_(&removereg, key);
+            s_(&removereg, name ? name : "-");  // no name: the whole key
+            s_(&removereg, ckey);
+            any_remove = true;
+            continue;
+        }
+        const char *value = NULL;
+        switch (r->type) {
+        case RP_REG_STRING: value = r->value[0] == '#' ? kprintf(k, "#%s", r->value, NULL) : r->value; break;
+        case RP_REG_EXPAND: value = kprintf(k, "#%%%s", r->value, NULL); break;
+        case RP_REG_DWORD: value = kprintf(k, "#%s", r->value, NULL); break;
+        case RP_REG_BINARY: value = kprintf(k, "#x%s", r->value, NULL); break;
+        case RP_REG_MULTI:
+            value = "[~]";
+            for (size_t j = 0; j < r->item_count; ++j) value = kprintf(k, "%s%s[~]", value, r->items[j]);
+            break;
+        }
+        s_(&registry, r->id); i_(&registry, (int32_t)r->root); s_(&registry, key); s_(&registry, name);
+        s_(&registry, value); s_(&registry, ckey);
+        any_write = true;
+    }
+
+    // [shortcut.*] (RFC-0004): in the target file's component; folders made for them are removed
+    // again at uninstall (RemoveFile, mode 2), from the shortcut's folder up to the known folder.
+    for (size_t i = 0; i < ir->shortcut_count; ++i) {
+        const rp_ir_shortcut_t *sc = &ir->shortcuts[i];
+        const lfile_t *target = NULL;
+        for (size_t j = 0; j < nfiles; ++j) {
+            if (strcmp(files[j].key, sc->target_file) == 0) target = &files[j];
+        }
+        if (target == NULL) {
+            reg_bad = true;
+            break;
+        }
+        const char *dkey = shortcut_dir_key(sc, ir->arch);
+        const char *shortn = dirs->sc_short[i];
+        s_(&shortcut, sc->id);
+        s_(&shortcut, dkey);
+        s_(&shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
+        s_(&shortcut, target->comp);
+        s_(&shortcut, kprintf(k, "[#%s]", target->key, NULL));
+        s_(&shortcut, sc->args);                                            // formatted (H2)
+        s_(&shortcut, sc->description);                                     // Text, not formatted
+        null_(&shortcut); null_(&shortcut); null_(&shortcut); null_(&shortcut);
+        s_(&shortcut, sc->working_dir);
+        for (const dnode_t *n = find_node(dirs, dkey); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
+            char rk[23];
+            rp_key_derive('R', kprintf(k, "shortcut-folder:%s", n->key, NULL), rk);
+            bool seen = false;
+            for (size_t r = 0; r + 5 <= removefile.filled; r += 5) {
+                const rp_msi_cell_t *c0 = &removefile.cells[r];
+                seen |= c0->len == strlen(rk) && memcmp(c0->bytes, rk, c0->len) == 0;
+            }
+            if (seen) continue;
+            s_(&removefile, kdup(k, rk)); s_(&removefile, target->comp); null_(&removefile);
+            s_(&removefile, n->key); i_(&removefile, 2);
+        }
+    }
+
     // Folders: CreateFolder, one component each, the folder itself as the key path.
     for (size_t i = 0; i < ir->folder_count; ++i) {
         const rp_ir_folder_t *f = &ir->folders[i];
@@ -542,7 +670,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     // Media and the cabinet
     uint8_t *cab = NULL;
     size_t cab_len = 0;
-    proven_err_t err = PROVEN_OK;
+    proven_err_t err = reg_bad ? PROVEN_ERR_INVALID_ARG : PROVEN_OK;
     i_(&media, 1);
     i_(&media, (int32_t)nfiles);
     null_(&media);
@@ -601,6 +729,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "RemoveShortcuts"); null_(&iexec); i_(&iexec, 3200);
+        s_(&iexec, "CreateShortcuts"); null_(&iexec); i_(&iexec, 4500);
+    }
+    if (any_write || any_remove) {  // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "RemoveRegistryValues"); null_(&iexec); i_(&iexec, 2600);
+        s_(&iexec, "WriteRegistryValues"); null_(&iexec); i_(&iexec, 5000);
     }
     if (ir->refuse_below) {
         s_(&iexec, "RP_RefuseOld"); s_(&iexec, "RP_REFUSED_OLD"); i_(&iexec, 31);
@@ -690,9 +826,12 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     if (err == PROVEN_OK && nomem) err = PROVEN_ERR_NOMEM;
     if (err == PROVEN_OK) {
         rp_msi_wtable_t tables[sizeof all / sizeof all[0]];
-        for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) tables[i] = all[i]->t;
+        size_t nt = 0;
+        for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+            if (i < always || all[i]->t.row_count > 0) tables[nt++] = all[i]->t;
+        }
         rp_msi_wstream_t cabstream = { "cab1.cab", cab, cab_len };
-        rp_msi_wdb_t db = { 65001, tables, sizeof all / sizeof all[0], summary, summary_len, &cabstream, nfiles ? 1 : 0 };
+        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, &cabstream, nfiles ? 1 : 0 };
         err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
         if (err == PROVEN_OK) err = rp_msi_write(alloc, &db, 12, limits, out, len);
     }
@@ -807,12 +946,22 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
     }
 
-    // Short names per folder: its sub folders and its files share one namespace.
+    // Shortcuts into a known folder need that folder's Directory row.
+    dirs.sc_short = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *dirs.sc_short);
+    if (dirs.sc_short == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0; err == PROVEN_OK && i < ir->shortcut_count; ++i) {
+        dirs.sc_short[i] = NULL;
+        const char *key = shortcut_dir_key(&ir->shortcuts[i], ir->arch);
+        if (find_node(&dirs, key) == NULL) add_node(&dirs, kdup(&k, key), "TARGETDIR", kdup(&k, key), NULL);
+    }
+
+    // Short names per folder: its sub folders, its files and its shortcuts share one namespace.
     for (size_t i = 0; err == PROVEN_OK && i < dirs.count; ++i) {
         const char *folder = dirs.v[i].key;
         size_t n = 0;
         for (size_t j = 0; j < dirs.count; ++j) n += dirs.v[j].parent && dirs.v[j].long_name && strcmp(dirs.v[j].parent, folder) == 0;
         for (size_t j = 0; j < ir->file_count; ++j) n += strcmp(files[j].dir_key, folder) == 0;
+        for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0;
         if (n == 0) continue;
         sib_t *s = rp_mem_alloc(alloc, n, sizeof *s);
         if (s == NULL) {
@@ -828,6 +977,11 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         for (size_t j = 0; j < ir->file_count; ++j) {
             if (strcmp(files[j].dir_key, folder) == 0) s[m++] = (sib_t){ files[j].f->name, &files[j].short_name };
         }
+        for (size_t j = 0; j < ir->shortcut_count; ++j) {
+            if (strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0) {
+                s[m++] = (sib_t){ ir->shortcuts[j].name, &dirs.sc_short[j] };
+            }
+        }
         assign_short(&k, s, m);
         rp_mem_free(alloc, s);
     }
@@ -838,6 +992,14 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         if ((units = name_cell_excess(files[i].short_name, files[i].f->name, &most)) != 0) {
             rp_srcdiag_add(diags, files[i].f->pos, "RP1514", false,
                            "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+            err = PROVEN_ERR_INVALID_FORMAT;
+        }
+    }
+    for (size_t i = 0, units, most; err == PROVEN_OK && i < ir->shortcut_count; ++i) {
+        const rp_ir_shortcut_t *sc = &ir->shortcuts[i];
+        if (dirs.sc_short[i] && (units = name_cell_excess_w(dirs.sc_short[i], sc->name, 128, &most)) != 0) {
+            rp_srcdiag_add(diags, sc->pos, "RP1514", false,
+                           "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
             err = PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -892,6 +1054,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     for (size_t i = 0; files && i < ir->file_count; ++i) rp_mem_free(alloc, files[i].data);
     rp_mem_free(alloc, files);
     rp_mem_free(alloc, final_logical);
+    rp_mem_free(alloc, dirs.sc_short);
     rp_mem_free(alloc, dirs.v);
     keep_free(&k);
     if (err == PROVEN_OK && k.nomem) err = PROVEN_ERR_NOMEM;

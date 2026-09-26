@@ -127,6 +127,33 @@ package's own `…UndoRollback` registers the old program again. [observed]
 `RemoveExistingProducts`**: with any deferred or rollback custom action there, every upgrade stops
 with error 2613 ("RemoveExistingProducts action sequenced incorrectly"). [observed]
 
+## Registry values
+
+`Registry` (**Registry** s72, Root i2, Key l255, Name L255, Value L0, Component_ s72) is written by
+`WriteRegistryValues` (5000) and undone at uninstall; `RemoveRegistry` (same columns without Value)
+by `RemoveRegistryValues` (2600). Root 0 = HKCR, 1 = HKCU, 2 = HKLM. The value's first characters
+choose its type: `#x` binary (hex), `#%` expandable string, `#` followed by digits a DWORD (up to
+`#4294967295`), `[~]` anywhere a multi-string (`[~]a[~]b[~]`); a plain string that starts with `#`
+is written as `##`. A Name of `-` in RemoveRegistry deletes the whole key. A failed installation
+restores overwritten values and removed keys. [observed]
+
+A component whose key path is a registry value has attribute 4 and `KeyPath` = the Registry row.
+The component's 64-bit attribute (256) chooses the registry view: without it, a 64-bit package
+writes to the 32-bit view (`WOW6432Node`). A 32-bit component in a 64-bit package is legal; a
+64-bit component in a 32-bit package is not.
+
+## Shortcuts
+
+`Shortcut` (**Shortcut** s72, Directory_ s72, Name l128 `SHORT|Long` without `.lnk`, Component_ s72,
+Target `[#FileKey]` for a non-advertised shortcut, Arguments (formatted), Description (plain text),
+Hotkey, Icon_, IconIndex, ShowCmd, WkDir = a Directory key) is written by `CreateShortcuts` (4500)
+and removed by `RemoveShortcuts` (3200). Put the shortcut in its target file's component. A folder
+made only for shortcuts is not removed by itself: add a `RemoveFile` row (FileName null,
+DirProperty = the folder, InstallMode 2) for it and each parent below the standard folder. With
+`ALLUSERS=1`, `ProgramMenuFolder` and `DesktopFolder` are the all-users Start menu and the Public
+Desktop. A failed installation leaves no shortcut or folder; repair recreates a deleted one.
+[observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

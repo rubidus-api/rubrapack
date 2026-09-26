@@ -17,7 +17,7 @@
 // RP2010 a required property is missing
 // RP2011 file sequence numbers and media do not agree
 // RP2012 standard actions out of order
-// RP2013 component bitness does not match the summary's platform
+// RP2013 a 64-bit component in a 32-bit (Intel) package
 // RP2014 a component's key path is not one of its own files
 // RP2015 an upgrade property is not public or not in SecureCustomProperties
 // RP2016 a rollback twin (`<Action>Rollback`) is sequenced after its forward action

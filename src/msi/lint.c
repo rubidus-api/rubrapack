@@ -220,6 +220,7 @@ static const fk_t foreign_keys[] = {
     { "File", "Component_", "Component" },            { "CreateFolder", "Directory_", "Directory" },
     { "CreateFolder", "Component_", "Component" },    { "MsiFileHash", "File_", "File" },
     { "RemoveFile", "Component_", "Component" },      { "Registry", "Component_", "Component" },
+    { "RemoveRegistry", "Component_", "Component" },
     { "Shortcut", "Component_", "Component" },        { "Shortcut", "Directory_", "Directory" },
 };
 
@@ -288,7 +289,7 @@ static void lint_properties(lint_t *l, const index_t *props) {
     if (pc && uc && cell_eq(pc, uc)) finding(l, "RP2008", t, SIZE_MAX, "ProductCode and UpgradeCode are the same GUID");
 }
 
-static void lint_components(lint_t *l, const index_t *files) {
+static void lint_components(lint_t *l, const index_t *files, const index_t *regs) {
     const rp_msi_wtable_t *t = table(l, "Component");
     if (t == NULL) return;
     size_t cid = column(t, "ComponentId"), attr = column(t, "Attributes"), kp = column(t, "KeyPath");
@@ -320,7 +321,18 @@ static void lint_components(lint_t *l, const index_t *files) {
     for (size_t row = 0; row < t->row_count; ++row) {
         const rp_msi_cell_t *v = cell(t, row, kp), *a = cell(t, row, attr);
         int32_t flags = a->kind == RP_MSI_INT ? a->i : 0;
-        if (is_null(v) || (flags & (0x4 | 0x20))) continue;     // folder, registry or ODBC key path
+        if (!is_null(v) && (flags & 0x4)) {                     // registry key path: a Registry row of this component
+            const rp_msi_wtable_t *rt = table(l, "Registry");
+            size_t rrow = regs ? index_find1(regs, v) : SIZE_MAX;
+            size_t rcomp = rt ? column(rt, "Component_") : SIZE_MAX;
+            if (rrow == SIZE_MAX || rcomp == SIZE_MAX) {
+                finding(l, "RP2014", t, row, "KeyPath '%.*s' is not in Registry", (int)v->len, (const char *)v->bytes);
+            } else if (!cell_eq(cell(rt, rrow, rcomp), cell(t, row, 0))) {
+                finding(l, "RP2014", t, row, "KeyPath '%.*s' belongs to another component", (int)v->len, (const char *)v->bytes);
+            }
+            continue;
+        }
+        if (is_null(v) || (flags & 0x20)) continue;             // folder or ODBC key path
         size_t frow = files ? index_find1(files, v) : SIZE_MAX;
         if (frow == SIZE_MAX || fcomp == SIZE_MAX) {
             finding(l, "RP2014", t, row, "KeyPath '%.*s' is not in File", (int)v->len, (const char *)v->bytes);
@@ -459,7 +471,9 @@ static void lint_platform(lint_t *l) {
     for (size_t row = 0; row < t->row_count; ++row) {
         const rp_msi_cell_t *a = cell(t, row, attr);
         bool comp64 = a->kind == RP_MSI_INT && (a->i & 0x100);
-        if (comp64 != is64) {
+        // A 32-bit component in a 64-bit package is legal (32-bit registry view, RFC-0001 9.2);
+        // a 64-bit component cannot be installed by a 32-bit package.
+        if (comp64 && !is64) {
             finding(l, "RP2013", t, row, "%s component, but the package platform is %.*s", comp64 ? "64-bit" : "32-bit",
                     (int)n, (const char *)tmpl->str);
         }
@@ -562,7 +576,8 @@ proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_sr
     lint_t l = { .alloc = alloc, .db = db, .diags = diags };
     for (size_t i = 0; i < db->table_count; ++i) lint_cells(&l, &db->tables[i]);
 
-    static const char *const indexed[] = { "Property", "Directory", "Component", "Feature", "File", "CustomAction", "Dialog" };
+    static const char *const indexed[] = { "Property", "Directory", "Component", "Feature", "File", "CustomAction", "Dialog",
+                                           "Registry" };
     enum { NIX = sizeof indexed / sizeof indexed[0] };
     named_index_t ix[NIX];
     for (size_t i = 0; i < NIX; ++i) {
@@ -584,7 +599,7 @@ proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_sr
     const index_t *dialogs = find_index(ix, NIX, "Dialog");
     lint_foreign_keys(&l, ix, NIX);
     lint_properties(&l, props);
-    lint_components(&l, find_index(ix, NIX, "File"));
+    lint_components(&l, find_index(ix, NIX, "File"), find_index(ix, NIX, "Registry"));
     lint_media(&l);
     static const char *const sequences[] = { "InstallExecuteSequence", "InstallUISequence", "AdminExecuteSequence",
                                              "AdminUISequence", "AdvtExecuteSequence" };

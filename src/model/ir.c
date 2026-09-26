@@ -346,7 +346,7 @@ static void fold(const char *s, char *out, size_t cap) {
 
 static const char *const known_folders[] = {
     "ProgramFiles", "ProgramFiles32", "CommonFiles", "AppData", "LocalAppData", "CommonAppData", "StartMenu",
-    "Programs", "Desktop", "Windows", "System", "Fonts", "Temp", NULL,
+    "Programs", "Desktop", "Startup", "Windows", "System", "Fonts", "Temp", NULL,
 };
 
 static bool known_folder(const char *s) {
@@ -359,8 +359,9 @@ static bool known_folder(const char *s) {
 // ---- tables ----------------------------------------------------------------------------------
 
 static const char *const top_kinds[] = { "package", "define", "arp", NULL };
-static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", NULL };
-static const char *const later_kinds[] = { "registry", "shortcut", "env", "ini", "service",
+static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
+                                          "shortcut", NULL };
+static const char *const later_kinds[] = { "env", "ini", "service",
                                            "assoc", "protocol", "font", "permission", "require", "search",
                                            "remove", "copy", "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
@@ -1028,6 +1029,151 @@ static void parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     }
 }
 
+static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
+    static const char *const keys[] = { "root", "key", "name", "value", "type", "remove", "keep", "view", "with",
+                                        "feature", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    r->id = dup(c, t->id);
+    r->pos = t->pos;
+    char *root = get_str(c, t, "root", true, NULL);
+    if (root) {
+        if (strcmp(root, "HKLM") == 0) r->root = RP_ROOT_HKLM;
+        else if (strcmp(root, "HKCR") == 0) r->root = RP_ROOT_HKCR;
+        else if (strcmp(root, "HKCU") == 0) {
+            ERR(c, key_pos(t, "root"), "RP1901", "HKCU needs a per-user package, which is not supported yet (planned for P3)");
+        } else {
+            ERR(c, key_pos(t, "root"), "RP1316", "root must be \"HKLM\", \"HKCR\" or \"HKCU\" (got '%s')", root);
+        }
+        rp_mem_free(c->alloc, root);
+    }
+    r->key = get_str(c, t, "key", true, NULL);
+    if (r->key && (r->key[0] == '\\' || r->key[strlen(r->key) - 1] == '\\' || strstr(r->key, "\\\\") || has_control(r->key))) {
+        ERR(c, key_pos(t, "key"), "RP1316", "key '%s' must not start or end with '\\' or contain an empty part", r->key);
+    }
+    r->name = get_str(c, t, "name", false, NULL);
+    if (r->name && r->name[0] == '\0') {        // "" is the default value, as omitting it
+        rp_mem_free(c->alloc, r->name);
+        r->name = NULL;
+    }
+    r->remove = get_bool(c, t, "remove", false);
+    r->keep = get_bool(c, t, "keep", false);
+    char *view = get_str(c, t, "view", false, NULL);
+    if (view) {
+        if (strcmp(view, "32") == 0 && c->ir->arch != RP_ARCH_X86) r->view32 = true;
+        else if (strcmp(view, "32") != 0 && strcmp(view, "64") != 0) {
+            ERR(c, key_pos(t, "view"), "RP1316", "view must be \"32\" or \"64\"");
+        } else if (strcmp(view, "64") == 0 && c->ir->arch == RP_ARCH_X86) {
+            ERR(c, key_pos(t, "view"), "RP1316", "an x86 package writes the 32-bit registry view only");
+        }
+        rp_mem_free(c->alloc, view);
+    }
+    char *with = get_str(c, t, "with", false, NULL);
+    if (with) {
+        if (strncmp(with, "file:", 5) != 0 || with[5] == '\0') ERR(c, key_pos(t, "with"), "RP1315", "with must be \"file:<ID>\"");
+        else r->with_file = dup(c, with + 5);
+        rp_mem_free(c->alloc, with);
+    }
+    r->feature = get_str(c, t, "feature", false, NULL);
+    if (r->with_file && r->feature) ERR(c, key_pos(t, "feature"), "RP1316", "a value that goes 'with' a file takes that file's feature");
+
+    char *type = get_str(c, t, "type", false, NULL);
+    static const char *const types[] = { "string", "expand", "dword", "binary", "multi" };
+    r->type = RP_REG_STRING;
+    if (type) {
+        bool known = false;
+        for (int k = 0; k < 5; ++k) {
+            if (strcmp(type, types[k]) == 0) r->type = (rp_reg_type_t)k, known = true;
+        }
+        if (!known) {
+            ERR(c, key_pos(t, "type"), strcmp(type, "qword") == 0 ? "RP1901" : "RP1316",
+                strcmp(type, "qword") == 0 ? "qword needs the helper action, which is not supported yet (planned for P3)"
+                                           : "type must be string, expand, dword, binary or multi (got '%s')", type);
+        }
+        rp_mem_free(c->alloc, type);
+    }
+    const rp_tkey_t *v = find_key(t, "value");
+    if (v == NULL) {
+        if (!r->remove) ERR(c, t->pos, "RP1202", "[registry.%s] needs 'value' (or remove = true)", t->id);
+        return;
+    }
+    if (r->remove) {
+        ERR(c, v->pos, "RP1316", "remove = true removes the value at install; it takes no 'value'");
+        return;
+    }
+    char num[24];
+    switch (r->type) {
+    case RP_REG_DWORD:
+        if (v->val.kind != RP_TV_INT || v->val.i < 0 || v->val.i > 0xFFFFFFFFll) {
+            ERR(c, v->pos, "RP1316", "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)");
+            return;
+        }
+        snprintf(num, sizeof num, "%lld", (long long)v->val.i);
+        r->value = dup(c, num);
+        return;
+    case RP_REG_MULTI:
+        if (v->val.kind != RP_TV_ARRAY || v->val.count == 0) {
+            ERR(c, v->pos, "RP1316", "a multi value is a non-empty array of strings");
+            return;
+        }
+        r->items = rp_mem_alloc(c->alloc, v->val.count, sizeof *r->items);
+        if (r->items == NULL) {
+            c->nomem = true;
+            return;
+        }
+        for (size_t k = 0; k < v->val.count; ++k) {
+            if (v->val.items[k].kind != RP_TV_STRING) {
+                ERR(c, v->pos, "RP1316", "a multi value is an array of strings");
+                break;
+            }
+            r->items[r->item_count++] = subst(c, &v->val.items[k]);
+        }
+        return;
+    default:
+        break;
+    }
+    r->value = get_str(c, t, "value", false, NULL);
+    if (r->value && (r->type == RP_REG_STRING || r->type == RP_REG_EXPAND) && strstr(r->value, "[~]")) {
+        ERR(c, v->pos, "RP1316", "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array");
+    }
+    if (r->value && r->type == RP_REG_BINARY) {
+        size_t n = strlen(r->value);
+        bool ok = n > 0 && n % 2 == 0;
+        for (size_t k = 0; ok && k < n; ++k) ok = is_hex(r->value[k]);
+        if (!ok) ERR(c, v->pos, "RP1316", "a binary value is an even number of hex digits, like \"01A0FF\"");
+        for (size_t k = 0; ok && k < n; ++k) {
+            if (r->value[k] >= 'a' && r->value[k] <= 'f') r->value[k] = (char)(r->value[k] - 32);
+        }
+    }
+}
+
+static bool shortcut_folder(const char *s) {
+    return strcmp(s, "Programs") == 0 || strcmp(s, "Desktop") == 0 || strcmp(s, "StartMenu") == 0 || strcmp(s, "Startup") == 0;
+}
+
+static void parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
+    static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    s->id = dup(c, t->id);
+    s->pos = t->pos;
+    s->dir = get_str(c, t, "dir", true, NULL);
+    s->name = get_str(c, t, "name", true, NULL);
+    if (s->name) target_name_ok(c, s->name, key_pos(t, "name"));
+    char *target = get_str(c, t, "target", true, NULL);
+    if (target) {
+        if (strncmp(target, "file:", 5) != 0 || target[5] == '\0') {
+            ERR(c, key_pos(t, "target"), "RP1315", "target must be \"file:<ID>\" naming a [file.*] of this package");
+        } else {
+            s->target_file = dup(c, target + 5);
+        }
+        rp_mem_free(c->alloc, target);
+    }
+    s->args = get_str(c, t, "args", false, NULL);
+    s->description = get_str(c, t, "description", false, NULL);
+    s->working_dir = get_str(c, t, "working-dir", false, NULL);
+}
+
 // ---- cross checks --------------------------------------------------------------------------
 
 static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) {
@@ -1073,7 +1219,7 @@ static void cross_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     // IDs unique across dir, file and feature (RFC-0002 2).
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
-    size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count;
+    size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count + ir->shortcut_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1083,6 +1229,8 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->dir_count; ++k) ids[m++] = (idpos_t){ ir->dirs[k].id, ir->dirs[k].pos };
     for (size_t k = 0; k < ir->file_count; ++k) ids[m++] = (idpos_t){ ir->files[k].id, ir->files[k].pos };
     for (size_t k = 0; k < ir->folder_count; ++k) ids[m++] = (idpos_t){ ir->folders[k].id, ir->folders[k].pos };
+    for (size_t k = 0; k < ir->registry_count; ++k) ids[m++] = (idpos_t){ ir->registries[k].id, ir->registries[k].pos };
+    for (size_t k = 0; k < ir->shortcut_count; ++k) ids[m++] = (idpos_t){ ir->shortcuts[k].id, ir->shortcuts[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
@@ -1244,6 +1392,37 @@ static void cross_checks(ctx_t *c) {
             }
         }
     }
+    // Registry values: `with` names a file; otherwise the feature resolves like a file's (G2).
+    for (size_t k = 0; k < ir->registry_count; ++k) {
+        rp_ir_registry_t *r = &ir->registries[k];
+        if (r->with_file) {
+            bool found = false;
+            for (size_t j = 0; j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, r->with_file) == 0;
+            if (!found) ERR(c, r->pos, "RP1315", "with: file '%s' is not a [file.*] of this package", r->with_file);
+            if (r->view32 != (ir->arch == RP_ARCH_X86)) {
+                // a component has one bitness: a 32-bit view value cannot share a 64-bit file's component
+                if (r->view32) ERR(c, r->pos, "RP1316", "view = \"32\" cannot go 'with' a file of a 64-bit package");
+            }
+        } else if (r->feature && !find_feature(ir, r->feature)) {
+            ERR(c, r->pos, "RP1307", "feature '%s' is not defined", r->feature);
+        } else if (r->feature == NULL) {
+            if (!declared) r->feature = dup(c, "Main");
+            else ERR(c, r->pos, "RP1202", "registry value '%s' needs a feature", r->id);
+        }
+    }
+    // Shortcuts: target file and folders exist.
+    for (size_t k = 0; k < ir->shortcut_count; ++k) {
+        const rp_ir_shortcut_t *sc = &ir->shortcuts[k];
+        bool found = false;
+        for (size_t j = 0; sc->target_file && j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, sc->target_file) == 0;
+        if (sc->target_file && !found) ERR(c, sc->pos, "RP1315", "target: file '%s' is not a [file.*] of this package", sc->target_file);
+        if (sc->dir && !shortcut_folder(sc->dir) && !find_dir(ir, sc->dir)) {
+            ERR(c, sc->pos, "RP1315", "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup", sc->dir);
+        }
+        if (sc->working_dir && !find_dir(ir, sc->working_dir)) {
+            ERR(c, sc->pos, "RP1315", "working-dir '%s' is not a dir ID", sc->working_dir);
+        }
+    }
     // Actions: run names an exe of this package that the package's machines can start.
     for (size_t k = 0; k < ir->action_count; ++k) {
         const rp_ir_action_t *a = &ir->actions[k];
@@ -1296,7 +1475,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
@@ -1328,6 +1507,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "folder") == 0) ++nfolder;
         else if (strcmp(t->kind, "property") == 0) ++nprop;
         else if (strcmp(t->kind, "action") == 0) ++naction;
+        else if (strcmp(t->kind, "registry") == 0) ++nreg;
+        else if (strcmp(t->kind, "shortcut") == 0) ++nshort;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
@@ -1354,7 +1535,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->folders = rp_mem_alloc(alloc, nfolder, sizeof *ir->folders);
     ir->properties = rp_mem_alloc(alloc, nprop + 1, sizeof *ir->properties);
     ir->actions = rp_mem_alloc(alloc, naction + 1, sizeof *ir->actions);
-    if (ir->properties == NULL || ir->actions == NULL) c.nomem = true;
+    ir->registries = rp_mem_alloc(alloc, nreg + 1, sizeof *ir->registries);
+    ir->shortcuts = rp_mem_alloc(alloc, nshort + 1, sizeof *ir->shortcuts);
+    if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL) c.nomem = true;
     (void)ndir;
     (void)nfile;
     if (ir->features == NULL || ir->folders == NULL) c.nomem = true;
@@ -1383,6 +1566,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_action_t *a = &ir->actions[ir->action_count++];
             memset(a, 0, sizeof *a);
             parse_action(&c, t, a);
+        } else if (strcmp(t->kind, "registry") == 0) {
+            rp_ir_registry_t *r = &ir->registries[ir->registry_count++];
+            memset(r, 0, sizeof *r);
+            parse_registry(&c, t, r);
+        } else if (strcmp(t->kind, "shortcut") == 0) {
+            rp_ir_shortcut_t *sc = &ir->shortcuts[ir->shortcut_count++];
+            memset(sc, 0, sizeof *sc);
+            parse_shortcut(&c, t, sc);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -1412,6 +1603,20 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_action_t t = ir->actions[j];
             ir->actions[j] = ir->actions[j - 1];
             ir->actions[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->shortcut_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->shortcuts[j - 1].id, ir->shortcuts[j].id) > 0; --j) {
+            rp_ir_shortcut_t t = ir->shortcuts[j];
+            ir->shortcuts[j] = ir->shortcuts[j - 1];
+            ir->shortcuts[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->registry_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->registries[j - 1].id, ir->registries[j].id) > 0; --j) {
+            rp_ir_registry_t t = ir->registries[j];
+            ir->registries[j] = ir->registries[j - 1];
+            ir->registries[j - 1] = t;
         }
     }
     if (!c.nomem) cross_checks(&c);
@@ -1469,6 +1674,20 @@ void rp_ir_free(rp_ir_t *ir) {
         char *xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
+    for (size_t k = 0; k < ir->registry_count; ++k) {
+        rp_ir_registry_t *r = &ir->registries[k];
+        char *rs[] = { r->id, r->key, r->name, r->value, r->with_file, r->feature };
+        for (size_t j = 0; j < sizeof rs / sizeof rs[0]; ++j) rp_mem_free(a, rs[j]);
+        for (size_t j = 0; j < r->item_count; ++j) rp_mem_free(a, r->items[j]);
+        rp_mem_free(a, r->items);
+    }
+    rp_mem_free(a, ir->registries);
+    for (size_t k = 0; k < ir->shortcut_count; ++k) {
+        rp_ir_shortcut_t *sc = &ir->shortcuts[k];
+        char *ss[] = { sc->id, sc->dir, sc->name, sc->target_file, sc->args, sc->description, sc->working_dir };
+        for (size_t j = 0; j < sizeof ss / sizeof ss[0]; ++j) rp_mem_free(a, ss[j]);
+    }
+    rp_mem_free(a, ir->shortcuts);
     rp_mem_free(a, ir->properties);
     rp_mem_free(a, ir->actions);
     rp_mem_free(a, ir->arp_help);
@@ -1626,6 +1845,37 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "do", a->do_args);
         kv(&b, "undo", a->undo_args);
         kv(&b, "check", a->check_args);
+        rp_buf_byte(&b, '\n');
+    }
+    static const char *const roots[] = { "HKCR", "HKCU", "HKLM" };
+    static const char *const rtypes[] = { "string", "expand", "dword", "binary", "multi" };
+    for (size_t k = 0; k < ir->registry_count; ++k) {
+        const rp_ir_registry_t *r = &ir->registries[k];
+        rp_buf_puts(&b, "registry ");
+        rp_buf_puts(&b, r->id);
+        kv(&b, "root", roots[r->root]);
+        kv(&b, "key", r->key);
+        kv(&b, "name", r->name);
+        kv(&b, "type", rtypes[r->type]);
+        kv(&b, "value", r->value);
+        for (size_t j = 0; j < r->item_count; ++j) kv(&b, "item", r->items[j]);
+        kv(&b, "remove", r->remove ? "1" : "0");
+        kv(&b, "keep", r->keep ? "1" : "0");
+        kv(&b, "view", r->view32 ? "32" : "native");
+        kv(&b, "with", r->with_file);
+        kv(&b, "feature", r->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->shortcut_count; ++k) {
+        const rp_ir_shortcut_t *sc = &ir->shortcuts[k];
+        rp_buf_puts(&b, "shortcut ");
+        rp_buf_puts(&b, sc->id);
+        kv(&b, "dir", sc->dir);
+        kv(&b, "name", sc->name);
+        kv(&b, "target", sc->target_file);
+        kv(&b, "args", sc->args);
+        kv(&b, "description", sc->description);
+        kv(&b, "working-dir", sc->working_dir);
         rp_buf_byte(&b, '\n');
     }
     return rp_buf_take(&b, out, len);

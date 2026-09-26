@@ -64,6 +64,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[arp]` | no-modify, no-repair, help (URL), about (URL) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
+| `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
+| `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -87,6 +89,44 @@ upgrade are all-or-nothing: if anything fails later (or `do`/`undo` itself exits
 files come back and the other command restores the registration. Both commands must be safe to run
 twice and must finish without asking anything - they run without a window, and nothing waits for a
 user. `check` names an optional command that exits 0 when the registration is in place.
+
+### Registry values: `[registry.ID]`
+
+```toml
+[registry.InstallDir]
+root = "HKLM"
+key = 'SOFTWARE\Example'          # literal strings keep the backslashes
+name = "InstallDir"               # omit it for the key's default value
+value = "[INSTALLDIR]"            # an MSI formatted string: [PROPERTY], [#FileID], [\[] for "["
+```
+
+`type` is `string` (default), `expand`, `dword` (an integer, 0 to 0xFFFFFFFF), `binary` (hex
+digits) or `multi` (an array of strings). Each value is its own component, removed at uninstall
+(`keep = true` leaves it); `with = "file:ID"` puts it in that file's component instead. In a 64-bit
+package values go to the 64-bit registry view; `view = "32"` writes to the 32-bit view.
+`remove = true` (without `value`) deletes the named value - or the whole key when `name` is
+omitted - during installation. `HKCU` waits for per-user packages; `qword` for a later helper.
+
+### Shortcuts: `[shortcut.ID]`
+
+```toml
+[dir.Menu]
+path = "Programs/Example"         # Start menu > Example
+
+[shortcut.Settings]
+dir = "Menu"
+name = "Example settings"         # ".lnk" is added
+target = "file:MainExe"
+args = "--settings \"[INSTALLDIR]\""
+```
+
+A shortcut belongs to its target file (and its feature); folders created for it are removed at
+uninstall. In a per-machine package `Programs` and `Desktop` are the all-users Start menu and the
+Public Desktop.
+
+Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
+and later environment and INI values, service arguments, and conditions. Everywhere else rubrapack
+writes the text exactly as given.
 
 ### Installed apps entry and properties
 
