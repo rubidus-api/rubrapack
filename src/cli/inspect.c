@@ -1,4 +1,4 @@
-// src/cli/inspect.c - `rubrapack inspect <file.msi> [table|--summary|--streams]` (RFC-0001 7).
+// src/cli/inspect.c - `rubrapack inspect <file.msi> [table|--summary|--files|--streams]` (RFC-0001 7).
 // Results go to stdout as UTF-8 (IDT for tables, as MsiDatabaseExport writes it); diagnostics
 // to stderr.
 
@@ -82,7 +82,12 @@ static int overview(const rp_msi_t *msi, const rp_suminfo_t *si, proven_allocato
         rp_buf_long(&b, p->pid);
         rp_buf_puts(&b, " = ");
         if (p->type == RP_VT_LPSTR) rp_buf_put(&b, p->str, p->str_len);
-        else if (p->type == RP_VT_FILETIME) rp_buf_puts(&b, "(date)");
+        else if (p->type == RP_VT_FILETIME) {
+            char t[20];
+            rp_filetime_text(p->filetime, t);
+            rp_buf_puts(&b, t);
+            rp_buf_puts(&b, " UTC");
+        }
         else rp_buf_long(&b, p->i);
         rp_buf_puts(&b, "\n");
     }
@@ -114,18 +119,191 @@ static int streams(const rp_cfb_t *cfb, proven_allocator_t alloc) {
     return emit_buf(&b);
 }
 
+// ---- --files -------------------------------------------------------------------------------
+
+typedef struct {
+    rp_msi_rows_t rows;
+    size_t        table;
+    bool          present;
+} tab_t;
+
+static bool load_table(const rp_msi_t *msi, const char *name, tab_t *t) {
+    memset(t, 0, sizeof *t);
+    if (rp_msi_find_table(msi, name, &t->table) != PROVEN_OK) return true;     // absent is fine
+    t->present = true;
+    return rp_msi_read_rows(msi, t->table, &t->rows) == PROVEN_OK;
+}
+
+static int column_of(const rp_msi_t *msi, const tab_t *t, const char *name) {
+    if (!t->present) return -1;
+    const rp_msi_table_t *tb = &msi->tables[t->table];
+    size_t n = strlen(name);
+    for (size_t c = 0; c < tb->column_count; ++c) {
+        const uint8_t *p;
+        size_t len;
+        if (rp_msi_string(msi, tb->columns[c].name, &p, &len) == PROVEN_OK && len == n && memcmp(p, name, n) == 0) {
+            return (int)c;
+        }
+    }
+    return -1;
+}
+
+static rp_msi_value_t cell(const tab_t *t, size_t row, int col) {
+    return t->rows.cells[row * t->rows.column_count + (size_t)col];
+}
+
+// The long name of a "short|long" or "target:source" name field.
+static void long_name(const rp_msi_t *msi, rp_msi_value_t v, const uint8_t **p, size_t *n) {
+    *p = (const uint8_t *)"";
+    *n = 0;
+    if (v.kind != RP_MSI_STR || rp_msi_string(msi, v.s, p, n) != PROVEN_OK) return;
+    const uint8_t *colon = memchr(*p, ':', *n);
+    if (colon) *n = (size_t)(colon - *p);
+    const uint8_t *bar = memchr(*p, '|', *n);
+    if (bar) {
+        *n -= (size_t)(bar + 1 - *p);
+        *p = bar + 1;
+    }
+}
+
+// Directory keys that Windows Installer resolves itself (system folder properties).
+static bool standard_folder(const uint8_t *p, size_t n) {
+    static const char *const names[] = {
+        "AdminToolsFolder", "AppDataFolder", "CommonAppDataFolder", "CommonFiles64Folder", "CommonFilesFolder",
+        "DesktopFolder", "FavoritesFolder", "FontsFolder", "LocalAppDataFolder", "MyPicturesFolder",
+        "NetHoodFolder", "PersonalFolder", "PrintHoodFolder", "ProgramFiles64Folder", "ProgramFilesFolder",
+        "ProgramMenuFolder", "RecentFolder", "SendToFolder", "StartMenuFolder", "StartupFolder",
+        "System16Folder", "System64Folder", "SystemFolder", "TempFolder", "TemplateFolder",
+        "WindowsFolder", "WindowsVolume",
+    };
+    for (size_t i = 0; i < sizeof names / sizeof names[0]; ++i) {
+        if (strlen(names[i]) == n && memcmp(names[i], p, n) == 0) return true;
+    }
+    return false;
+}
+
+// Appends the target path of directory row `row` (parents first). Roots - TARGETDIR and the
+// system folder properties - print as [Name].
+static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_parent, int c_default, size_t row,
+                     rp_buf_t *b, size_t depth) {
+    if (depth > dir->rows.row_count) return false;      // the parent chain loops
+    rp_msi_value_t parent = cell(dir, row, c_parent), key = cell(dir, row, c_key);
+    const uint8_t *p;
+    size_t n;
+    (void)rp_msi_string(msi, key.s, &p, &n);
+    bool root = parent.kind != RP_MSI_STR || parent.s == key.s || standard_folder(p, n);
+    if (root) {
+        rp_buf_byte(b, '[');
+        rp_buf_put(b, p, n);
+        rp_buf_byte(b, ']');
+        return true;
+    }
+    size_t prow = SIZE_MAX;
+    for (size_t r = 0; r < dir->rows.row_count; ++r) {
+        rp_msi_value_t k = cell(dir, r, c_key);
+        if (k.kind == RP_MSI_STR && k.s == parent.s) prow = r;
+    }
+    if (prow == SIZE_MAX) return false;
+    if (!dir_path(msi, dir, c_key, c_parent, c_default, prow, b, depth + 1)) return false;
+    long_name(msi, cell(dir, row, c_default), &p, &n);
+    if (!(n == 1 && p[0] == '.')) {
+        rp_buf_byte(b, '\\');
+        rp_buf_put(b, p, n);
+    }
+    return true;
+}
+
+static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
+    tab_t file, comp, dir;
+    int rc = RP_EXIT_OK;
+    if (!load_table(msi, "File", &file) || !load_table(msi, "Component", &comp) || !load_table(msi, "Directory", &dir)) {
+        rc = RP_EXIT_IO;
+    }
+    int f_key = column_of(msi, &file, "File"), f_comp = column_of(msi, &file, "Component_"),
+        f_name = column_of(msi, &file, "FileName"), f_size = column_of(msi, &file, "FileSize");
+    int c_key = column_of(msi, &comp, "Component"), c_dir = column_of(msi, &comp, "Directory_");
+    int d_key = column_of(msi, &dir, "Directory"), d_parent = column_of(msi, &dir, "Directory_Parent"),
+        d_default = column_of(msi, &dir, "DefaultDir");
+    if (rc == RP_EXIT_OK && file.present &&
+        (f_key < 0 || f_comp < 0 || f_name < 0 || f_size < 0 || c_key < 0 || c_dir < 0 || d_key < 0 || d_parent < 0 ||
+         d_default < 0)) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "File, Component or Directory table lacks a standard column");
+        rc = RP_EXIT_IO;
+    }
+    // One line per file: path, size, File key, Component; sorted by bytes.
+    size_t n = file.present ? file.rows.row_count : 0;
+    rp_buf_t *lines = rp_mem_alloc(alloc, n, sizeof *lines);
+    for (size_t r = 0; rc == RP_EXIT_OK && r < n; ++r) {
+        lines[r] = rp_buf_new(alloc, 1u << 16);
+        rp_msi_value_t compref = cell(&file, r, f_comp);
+        size_t crow = SIZE_MAX;
+        for (size_t k = 0; k < comp.rows.row_count; ++k) {
+            rp_msi_value_t v = cell(&comp, k, c_key);
+            if (v.kind == RP_MSI_STR && compref.kind == RP_MSI_STR && v.s == compref.s) crow = k;
+        }
+        size_t drow = SIZE_MAX;
+        if (crow != SIZE_MAX) {
+            rp_msi_value_t dref = cell(&comp, crow, c_dir);
+            for (size_t k = 0; k < dir.rows.row_count; ++k) {
+                rp_msi_value_t v = cell(&dir, k, d_key);
+                if (v.kind == RP_MSI_STR && dref.kind == RP_MSI_STR && v.s == dref.s) drow = k;
+            }
+        }
+        if (drow == SIZE_MAX || !dir_path(msi, &dir, d_key, d_parent, d_default, drow, &lines[r], 0)) {
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "a file's component or directory chain is broken");
+            rc = RP_EXIT_IO;
+            break;
+        }
+        const uint8_t *p;
+        size_t len;
+        long_name(msi, cell(&file, r, f_name), &p, &len);
+        rp_buf_byte(&lines[r], '\\');
+        rp_buf_put(&lines[r], p, len);
+        rp_buf_byte(&lines[r], '\t');
+        rp_msi_value_t size = cell(&file, r, f_size);
+        if (size.kind == RP_MSI_INT) rp_buf_long(&lines[r], size.i);
+        rp_buf_byte(&lines[r], '\t');
+        (void)rp_msi_string(msi, cell(&file, r, f_key).s, &p, &len);
+        rp_buf_put(&lines[r], p, len);
+        rp_buf_byte(&lines[r], '\t');
+        (void)rp_msi_string(msi, compref.s, &p, &len);
+        rp_buf_put(&lines[r], p, len);
+        rp_buf_byte(&lines[r], '\n');
+    }
+    if (rc == RP_EXIT_OK) {
+        // insertion sort by bytes (file counts are modest)
+        for (size_t i = 1; i < n; ++i) {
+            for (size_t j = i; j > 0; --j) {
+                rp_buf_t *a = &lines[j - 1], *b = &lines[j];
+                size_t m = a->len < b->len ? a->len : b->len;
+                int c = memcmp(a->data, b->data, m);
+                if (c < 0 || (c == 0 && a->len <= b->len)) break;
+                rp_buf_t t = *a;
+                *a = *b;
+                *b = t;
+            }
+        }
+        rp_buf_t out = rp_buf_new(alloc, (size_t)1 << 26);
+        for (size_t i = 0; i < n; ++i) rp_buf_put(&out, lines[i].data, lines[i].len);
+        rc = emit_buf(&out);
+    }
+    for (size_t i = 0; lines && i < n; ++i) rp_buf_free(&lines[i]);
+    rp_mem_free(alloc, lines);
+    rp_msi_rows_free(msi, &file.rows);
+    rp_msi_rows_free(msi, &comp.rows);
+    rp_msi_rows_free(msi, &dir.rows);
+    return rc;
+}
+
 int rp_cmd_inspect(int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--streams]");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams]");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;
-    if (what && strcmp(what, "--files") == 0) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "inspect --files is not implemented yet");
-        return RP_EXIT_USAGE;
-    }
-    if (what && what[0] == '-' && strcmp(what, "--summary") != 0 && strcmp(what, "--streams") != 0) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown inspect option (use a table name, --summary or --streams)");
+    if (what && what[0] == '-' && strcmp(what, "--summary") != 0 && strcmp(what, "--streams") != 0 &&
+        strcmp(what, "--files") != 0) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown inspect option (use a table name, --summary, --files or --streams)");
         return RP_EXIT_USAGE;
     }
 
@@ -166,6 +344,8 @@ int rp_cmd_inspect(int argc, char **argv) {
         rc = RP_EXIT_IO;
     } else if (what == NULL) {
         rc = overview(&msi, &si, heap);
+    } else if (strcmp(what, "--files") == 0) {
+        rc = files(&msi, heap);
     } else if (strcmp(what, "--summary") == 0) {
         uint8_t *out;
         size_t n;

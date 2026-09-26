@@ -3,6 +3,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/suminfo.h"
 
+#include <stdio.h>
 #include <string.h>
 
 // FMTID_SummaryInformation {F29F85E0-4FF9-1068-AB91-08002B27B3D9} as stored.
@@ -60,6 +61,31 @@ proven_err_t rp_suminfo_parse(const uint8_t *data, size_t len, rp_suminfo_t *out
     return PROVEN_OK;
 }
 
+void rp_filetime_text(uint64_t ft, char out[20]) {
+    int64_t secs = (int64_t)(ft / 10000000u) - INT64_C(11644473600);   // to Unix time
+    int64_t days = secs >= 0 ? secs / 86400 : -((-secs + 86399) / 86400);
+    int64_t rem = secs - days * 86400;
+    // Civil date from days since 1970-01-01 (proleptic Gregorian).
+    int64_t z = days + 719468, era = (z >= 0 ? z : z - 146096) / 146097;
+    int64_t doe = z - era * 146097, yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    int64_t y = yoe + era * 400, doy = doe - (365 * yoe + yoe / 4 - yoe / 100), mp = (5 * doy + 2) / 153;
+    int64_t d = doy - (153 * mp + 2) / 5 + 1, m = mp < 10 ? mp + 3 : mp - 9;
+    if (m <= 2) ++y;
+    if (y < 0 || y > 9999) y = 0;       // out of range: printed as year 0000
+    int64_t parts[6] = { y, m, d, rem / 3600, rem % 3600 / 60, rem % 60 };
+    static const char seps[6] = { '/', '/', ' ', ':', ':', 0 };
+    size_t o = 0;
+    for (int k = 0; k < 6; ++k) {
+        int width = k == 0 ? 4 : 2;
+        for (int w = width - 1; w >= 0; --w) {
+            int64_t v = parts[k];
+            for (int q = 0; q < w; ++q) v /= 10;
+            out[o++] = (char)('0' + v % 10);
+        }
+        out[o++] = seps[k];
+    }
+}
+
 proven_err_t rp_suminfo_export_idt(const rp_suminfo_t *si, proven_allocator_t alloc, uint8_t **out, size_t *len) {
     if (si == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
     // Rows go out in property id order.
@@ -81,8 +107,9 @@ proven_err_t rp_suminfo_export_idt(const rp_suminfo_t *si, proven_allocator_t al
         if (p->type == RP_VT_LPSTR) {
             rp_buf_put(&b, p->str, p->str_len);
         } else if (p->type == RP_VT_FILETIME) {
-            rp_buf_free(&b);
-            return PROVEN_ERR_UNSUPPORTED;      // no oracle yet for the date text
+            char t[20];
+            rp_filetime_text(p->filetime, t);
+            rp_buf_puts(&b, t);
         } else {
             rp_buf_long(&b, p->i);
         }
