@@ -154,6 +154,16 @@ DirProperty = the folder, InstallMode 2) for it and each parent below the standa
 Desktop. A failed installation leaves no shortcut or folder; repair recreates a deleted one.
 [observed]
 
+## Removing files and duplicating them
+
+`RemoveFile` (**FileKey** s72, Component_ s72, FileName L255 with `*`/`?` or null for the folder,
+DirProperty s72, InstallMode i2: 1 install, 2 uninstall, 3 both) runs in `RemoveFiles` when its
+component is installed (1) or removed (2). A component with no key path file and a `Directory_`
+works as the carrier. `DuplicateFile` (**FileKey** s72, Component_ s72 = the source's component,
+File_ s72, DestName L255 `SHORT|Long`, DestFolder S72) runs in `DuplicateFiles` (4210) and
+`RemoveDuplicateFiles`. Files removed at install come back when the installation fails; a folder
+that existed before the installation is left in place at uninstall, even when empty. [observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

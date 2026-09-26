@@ -221,6 +221,8 @@ static const fk_t foreign_keys[] = {
     { "CreateFolder", "Component_", "Component" },    { "MsiFileHash", "File_", "File" },
     { "RemoveFile", "Component_", "Component" },      { "Registry", "Component_", "Component" },
     { "RemoveRegistry", "Component_", "Component" },
+    { "DuplicateFile", "Component_", "Component" },   { "DuplicateFile", "File_", "File" },
+    { "DuplicateFile", "DestFolder", "Directory" },   { "RemoveFile", "DirProperty", "Directory" },
     { "Shortcut", "Component_", "Component" },        { "Shortcut", "Directory_", "Directory" },
 };
 

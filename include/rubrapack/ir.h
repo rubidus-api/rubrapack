@@ -92,6 +92,25 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_shortcut_t;
 
+// [remove.ID] (RFC-0004): files matching `name` (or the folder itself) removed at install,
+// uninstall or both. [copy.ID]: a second copy of an installed file.
+typedef struct {
+    char    *id;
+    char    *dir;               // dir ID
+    char    *name;              // pattern with * and ?, or NULL = the folder itself
+    int      mode;              // 1 install, 2 uninstall, 3 both (RemoveFile.InstallMode)
+    char    *feature;           // resolved (G2)
+    rp_pos_t pos;
+} rp_ir_remove_t;
+
+typedef struct {
+    char    *id;
+    char    *source_file;       // file ID
+    char    *dir;               // dir ID
+    char    *name;              // target name; the source's name when omitted
+    rp_pos_t pos;
+} rp_ir_copy_t;
+
 typedef struct {
     char    *id;                // public property name (upper case)
     char    *value;
@@ -141,6 +160,10 @@ typedef struct {
     size_t            registry_count;
     rp_ir_shortcut_t *shortcuts;
     size_t            shortcut_count;
+    rp_ir_remove_t   *removes;
+    size_t            remove_count;
+    rp_ir_copy_t     *copies;
+    size_t            copy_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

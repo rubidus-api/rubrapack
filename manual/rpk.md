@@ -65,6 +65,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 | `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
+| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
+| `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
@@ -123,6 +125,14 @@ args = "--settings \"[INSTALLDIR]\""
 A shortcut belongs to its target file (and its feature); folders created for it are removed at
 uninstall. In a per-machine package `Programs` and `Desktop` are the all-users Start menu and the
 Public Desktop.
+
+### Removing and copying: `[remove.ID]`, `[copy.ID]`
+
+`[remove.ID]` deletes files matching `name` in `dir` - for example `*.log` an older version left, at
+`on = "install"`, or files the program writes at run time, at `on = "uninstall"`. Without `name` it
+removes the folder itself when it is empty. A failed installation puts removed files back.
+`[copy.ID]` installs a second copy of a file of this package into another folder; it goes and comes
+with its source. Folders that existed before the installation are never removed.
 
 Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
 and later environment and INI values, service arguments, and conditions. Everywhere else rubrapack

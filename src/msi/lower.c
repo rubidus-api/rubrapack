@@ -176,6 +176,8 @@ static const rp_msi_wcolumn_t shortcut_cols[] = { { "Shortcut", KEY_S(72) }, { "
                                                   { "IconIndex", I2_N }, { "ShowCmd", I2_N }, { "WkDir", S_N(72) } };
 static const rp_msi_wcolumn_t removefile_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "FileName", L_N(255) },
                                                     { "DirProperty", S(72) }, { "InstallMode", I2 } };
+static const rp_msi_wcolumn_t duplicate_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "File_", S(72) },
+                                                   { "DestName", L_N(255) }, { "DestFolder", S_N(72) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -195,6 +197,7 @@ typedef struct {
     size_t         count, cap;
     const rp_ir_t *ir;
     char         **sc_short;    // short names of ir->shortcuts, same order
+    char         **cp_short;    // short names of ir->copies, same order
 } dirs_t;
 
 static dnode_t *find_node(dirs_t *d, const char *key) {
@@ -410,7 +413,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder, registry, removereg, shortcut, removefile;
+        createfolder, registry, removereg, shortcut, removefile, duplicate;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -428,10 +431,11 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&removereg, alloc, "RemoveRegistry", removereg_cols, 5);
     rows_init(&shortcut, alloc, "Shortcut", shortcut_cols, 12);
     rows_init(&removefile, alloc, "RemoveFile", removefile_cols, 5);
+    rows_init(&duplicate, alloc, "DuplicateFile", duplicate_cols, 5);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
-                      &removefile };
+                      &removefile, &duplicate };
     const size_t always = 13;
 
     // Property
@@ -646,6 +650,40 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         }
     }
 
+    // [remove.*] (RFC-0004): own component in that folder (no key path file), one RemoveFile row.
+    for (size_t i = 0; i < ir->remove_count; ++i) {
+        const rp_ir_remove_t *r = &ir->removes[i];
+        char comp[23], guid[39];
+        rp_key_derive('C', kprintf(k, "remove:%s", r->id, NULL), comp);
+        const char *logical = kprintf(k, "%s/%s", r->dir, r->name ? r->name : "");
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
+        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        const char *ckey = kdup(k, comp);
+        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, r->dir);
+        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
+        s_(&featurecomp, r->feature); s_(&featurecomp, ckey);
+        s_(&removefile, r->id); s_(&removefile, ckey); s_(&removefile, r->name); s_(&removefile, r->dir);
+        i_(&removefile, r->mode);
+    }
+
+    // [copy.*] (RFC-0004): DuplicateFile in the source file's component.
+    for (size_t i = 0; i < ir->copy_count; ++i) {
+        const rp_ir_copy_t *cp = &ir->copies[i];
+        const lfile_t *src = NULL;
+        for (size_t j = 0; j < nfiles; ++j) {
+            if (strcmp(files[j].key, cp->source_file) == 0) src = &files[j];
+        }
+        if (src == NULL) {
+            reg_bad = true;
+            break;
+        }
+        const char *longn = cp->name ? cp->name : src->f->name;
+        const char *shortn = dirs->cp_short[i];
+        s_(&duplicate, cp->id); s_(&duplicate, src->comp); s_(&duplicate, src->key);
+        s_(&duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
+        s_(&duplicate, cp->dir);
+    }
+
     // Folders: CreateFolder, one component each, the folder itself as the key path.
     for (size_t i = 0; i < ir->folder_count; ++i) {
         const rp_ir_folder_t *f = &ir->folders[i];
@@ -729,6 +767,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->copy_count) {           // MS Learn "Suggested InstallExecuteSequence" (3400 is used by our Undo pairs)
+        s_(&iexec, "RemoveDuplicateFiles"); null_(&iexec); i_(&iexec, 3300);
+        s_(&iexec, "DuplicateFiles"); null_(&iexec); i_(&iexec, 4210);
     }
     if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
         s_(&iexec, "RemoveShortcuts"); null_(&iexec); i_(&iexec, 3200);
@@ -948,7 +990,9 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
 
     // Shortcuts into a known folder need that folder's Directory row.
     dirs.sc_short = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *dirs.sc_short);
-    if (dirs.sc_short == NULL) err = PROVEN_ERR_NOMEM;
+    dirs.cp_short = rp_mem_alloc(alloc, ir->copy_count + 1, sizeof *dirs.cp_short);
+    if (dirs.sc_short == NULL || dirs.cp_short == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0; err == PROVEN_OK && i < ir->copy_count; ++i) dirs.cp_short[i] = NULL;
     for (size_t i = 0; err == PROVEN_OK && i < ir->shortcut_count; ++i) {
         dirs.sc_short[i] = NULL;
         const char *key = shortcut_dir_key(&ir->shortcuts[i], ir->arch);
@@ -962,6 +1006,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         for (size_t j = 0; j < dirs.count; ++j) n += dirs.v[j].parent && dirs.v[j].long_name && strcmp(dirs.v[j].parent, folder) == 0;
         for (size_t j = 0; j < ir->file_count; ++j) n += strcmp(files[j].dir_key, folder) == 0;
         for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0;
+        for (size_t j = 0; j < ir->copy_count; ++j) n += strcmp(ir->copies[j].dir, folder) == 0;
         if (n == 0) continue;
         sib_t *s = rp_mem_alloc(alloc, n, sizeof *s);
         if (s == NULL) {
@@ -981,6 +1026,14 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             if (strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0) {
                 s[m++] = (sib_t){ ir->shortcuts[j].name, &dirs.sc_short[j] };
             }
+        }
+        for (size_t j = 0; j < ir->copy_count; ++j) {
+            if (strcmp(ir->copies[j].dir, folder) != 0) continue;
+            const char *longn = ir->copies[j].name;
+            for (size_t f = 0; longn == NULL && f < ir->file_count; ++f) {
+                if (strcmp(ir->files[f].id, ir->copies[j].source_file) == 0) longn = ir->files[f].name;
+            }
+            s[m++] = (sib_t){ longn ? longn : ir->copies[j].id, &dirs.cp_short[j] };
         }
         assign_short(&k, s, m);
         rp_mem_free(alloc, s);
@@ -1055,6 +1108,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     rp_mem_free(alloc, files);
     rp_mem_free(alloc, final_logical);
     rp_mem_free(alloc, dirs.sc_short);
+    rp_mem_free(alloc, dirs.cp_short);
     rp_mem_free(alloc, dirs.v);
     keep_free(&k);
     if (err == PROVEN_OK && k.nomem) err = PROVEN_ERR_NOMEM;
