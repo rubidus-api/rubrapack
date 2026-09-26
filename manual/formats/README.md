@@ -11,6 +11,7 @@ tool from them without reading rubrapack's code - or check rubrapack's code agai
 | [`msi-database.md`](msi-database.md) | Streams, string pool, system tables, table encoding, IDT export |
 | [`msi-summary.md`](msi-summary.md) | The summary information stream and its code page trap |
 | [`msi-package.md`](msi-package.md) | The smallest table set that installs, upgrades, repairs and uninstalls |
+| [`pe.md`](pe.md) | Program files: machine type and version resource |
 | [`cab-mszip.md`](cab-mszip.md) | Cabinet files, MSZIP blocks, the deflate encoder |
 | [`identity.md`](identity.md) | Deterministic GUIDs and keys, reproducible builds |
 | [`verify.md`](verify.md) | How to check your output with Windows' own components |

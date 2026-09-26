@@ -11,6 +11,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/version.h"
 
@@ -454,10 +455,22 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (strcmp(lf->short_name, lf->f->name) == 0) s_(&file, lf->f->name);
         else s_(&file, kprintf(k, "%s|%s", lf->short_name, lf->f->name));
         i_(&file, (int32_t)lf->size);
-        null_(&file);
-        null_(&file);
+        // Versioned files carry their version and language; the others get a hash row.
+        rp_pe_info_t pi;
+        bool versioned = rp_pe_read(lf->data, lf->size, &pi) == PROVEN_OK && pi.has_version;
+        if (versioned) {
+            char vtext[32], ltext[8];
+            snprintf(vtext, sizeof vtext, "%u.%u.%u.%u", pi.version[0], pi.version[1], pi.version[2], pi.version[3]);
+            snprintf(ltext, sizeof ltext, "%u", pi.language);
+            s_(&file, kdup(k, vtext));
+            s_(&file, kdup(k, ltext));
+        } else {
+            null_(&file);
+            null_(&file);
+        }
         i_(&file, lf->f->vital ? 512 : 0);
         i_(&file, (int32_t)(i + 1));
+        if (versioned) continue;
 
         uint8_t d[16];
         rp_md5(lf->data, lf->size, d);

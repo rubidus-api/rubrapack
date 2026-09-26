@@ -79,6 +79,13 @@ declared, every file needs one: its own `feature` key, or the `feature` of its d
 then `[define]`. The result is not read again (a value containing `$(X)` stays literal).
 `$$` is a literal `$`. An undefined name is an error.
 
+### Program files
+
+Files that are Portable Executables (`.exe`, `.dll`, ...) are checked: their machine type must
+match `arch` (an x86 helper in an x64 package needs `any-arch = true`), and their version resource
+becomes the file's version in the package, which is how Windows Installer decides whether to
+replace an installed file.
+
 ### Paths
 
 Source paths are relative to the `.rpk` file and use `/`. Absolute paths, `\`, symbolic links and

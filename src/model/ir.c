@@ -4,6 +4,7 @@
 #include "rubrapack/ir.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/pe.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -738,14 +739,23 @@ static void cross_checks(ctx_t *c) {
                 }
             }
         }
-        // PE files need the version reader (later in P2); refuse rather than package them wrongly.
+        // PE files: the machine type must match the package architecture unless any-arch
+        // (RFC-0001 9.2); a malformed PE is refused.
         if (f->source_path && f->size >= 2) {
             uint8_t *data;
             size_t len;
             if (rp_pal_read_file(c->alloc, f->source_path, (size_t)f->size, &data, &len) == PROVEN_OK) {
-                if (len >= 2 && data[0] == 'M' && data[1] == 'Z') {
-                    ERR(c, f->pos, "RP1901", "'%s' is a program file (PE); version and machine checks come later in P2",
+                rp_pe_info_t pi;
+                if (rp_pe_read(data, len, &pi) != PROVEN_OK) {
+                    ERR(c, f->pos, "RP1513", "'%s' looks like a program file (PE) but its headers or resources are damaged",
                         f->source);
+                } else if (pi.is_pe && !f->any_arch) {
+                    uint16_t want = ir->arch == RP_ARCH_X64 ? RP_PE_AMD64 : ir->arch == RP_ARCH_ARM64 ? RP_PE_ARM64 : RP_PE_I386;
+                    if (pi.machine != want) {
+                        ERR(c, f->pos, "RP1512",
+                            "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended",
+                            f->source, pi.machine);
+                    }
                 }
                 rp_mem_free(c->alloc, data);
             }

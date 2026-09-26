@@ -54,6 +54,7 @@ static const char *const core_sources[] = {
     "src/msi/db_write.c",
     "src/msi/lower.c",
     "src/msi/suminfo.c",
+    "src/pe/pe.c",
     "src/text/utf.c",
 };
 
