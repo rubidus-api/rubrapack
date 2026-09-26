@@ -173,6 +173,16 @@ Value `[~];x` appends `;x`, `x;[~]` prepends. With `-`, uninstall deletes a set 
 only the appended or prepended part out of a variable that existed before; without `-` nothing is
 undone. A failed installation restores the previous values. [observed]
 
+## INI files
+
+`IniFile` (**IniFile** s72, FileName l255 `SHORT|Long`, DirProperty S72, Section l96, Key l128, Value
+l255 formatted, Action i2: 0 add line, 1 create line, 3 add tag, Component_ s72) is applied by
+`WriteIniValues` (5100) and undone when the component is removed; `RemoveIniFile` (same columns,
+Value nullable, Action 2 remove line, 4 remove tag) by `RemoveIniValues`, which runs before
+`InstallFiles`. An add tag appends `,value` to a comma list and uninstall removes just that item.
+Non-ASCII file, section, key and value names work. A failed installation restores the file.
+[observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

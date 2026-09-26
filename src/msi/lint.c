@@ -222,6 +222,8 @@ static const fk_t foreign_keys[] = {
     { "RemoveFile", "Component_", "Component" },      { "Registry", "Component_", "Component" },
     { "RemoveRegistry", "Component_", "Component" },
     { "Environment", "Component_", "Component" },
+    { "IniFile", "Component_", "Component" },         { "RemoveIniFile", "Component_", "Component" },
+    { "IniFile", "DirProperty", "Directory" },        { "RemoveIniFile", "DirProperty", "Directory" },
     { "DuplicateFile", "Component_", "Component" },   { "DuplicateFile", "File_", "File" },
     { "DuplicateFile", "DestFolder", "Directory" },   { "RemoveFile", "DirProperty", "Directory" },
     { "Shortcut", "Component_", "Component" },        { "Shortcut", "Directory_", "Directory" },

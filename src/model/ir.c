@@ -360,8 +360,8 @@ static bool known_folder(const char *s) {
 
 static const char *const top_kinds[] = { "package", "define", "arp", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
-                                          "shortcut", "remove", "copy", "env", NULL };
-static const char *const later_kinds[] = { "ini", "service",
+                                          "shortcut", "remove", "copy", "env", "ini", NULL };
+static const char *const later_kinds[] = { "service",
                                            "assoc", "protocol", "font", "permission", "require", "search",
                                            "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
@@ -1225,6 +1225,35 @@ static void parse_copy(ctx_t *c, const rp_ttable_t *t, rp_ir_copy_t *cp) {
     if (cp->name) target_name_ok(c, cp->name, key_pos(t, "name"));
 }
 
+static void parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
+    static const char *const keys[] = { "dir", "file", "section", "key", "value", "mode", "feature", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    x->dir = get_str(c, t, "dir", true, NULL);
+    x->file = get_str(c, t, "file", true, NULL);
+    if (x->file) target_name_ok(c, x->file, key_pos(t, "file"));
+    x->section = get_str(c, t, "section", true, NULL);
+    x->key = get_str(c, t, "key", true, NULL);
+    if ((x->section && (strchr(x->section, ']') || has_control(x->section))) || (x->key && (strchr(x->key, '=') || has_control(x->key)))) {
+        ERR(c, t->pos, "RP1316", "an INI section may not contain ']' and a key may not contain '='");
+    }
+    char *mode = get_str(c, t, "mode", false, NULL);
+    if (mode) {
+        if (strcmp(mode, "set") == 0) x->mode = 0;
+        else if (strcmp(mode, "add") == 0) x->mode = 1;
+        else if (strcmp(mode, "remove") == 0) x->mode = 2;
+        else ERR(c, key_pos(t, "mode"), "RP1316", "mode must be \"set\", \"add\" or \"remove\"");
+        rp_mem_free(c->alloc, mode);
+    }
+    bool has_value = false;
+    x->value = get_str(c, t, "value", false, &has_value);
+    if (x->mode != 2 && !has_value) ERR(c, t->pos, "RP1202", "[ini.%s] needs 'value'", t->id);
+    if (x->mode == 2 && has_value) ERR(c, key_pos(t, "value"), "RP1316", "mode = \"remove\" removes the key; it takes no 'value'");
+    x->feature = get_str(c, t, "feature", false, NULL);
+}
+
 static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     static const char *const keys[] = { "name", "value", "mode", "keep", "feature", NULL };
     check_keys(c, t, keys);
@@ -1297,7 +1326,7 @@ static void cross_checks(ctx_t *c) {
     // IDs unique across dir, file and feature (RFC-0002 2).
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
-               ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count;
+               ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1312,6 +1341,7 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->remove_count; ++k) ids[m++] = (idpos_t){ ir->removes[k].id, ir->removes[k].pos };
     for (size_t k = 0; k < ir->copy_count; ++k) ids[m++] = (idpos_t){ ir->copies[k].id, ir->copies[k].pos };
     for (size_t k = 0; k < ir->env_count; ++k) ids[m++] = (idpos_t){ ir->envs[k].id, ir->envs[k].pos };
+    for (size_t k = 0; k < ir->ini_count; ++k) ids[m++] = (idpos_t){ ir->inis[k].id, ir->inis[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
@@ -1507,6 +1537,21 @@ static void cross_checks(ctx_t *c) {
             else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", r->id);
         }
     }
+    for (size_t k = 0; k < ir->ini_count; ++k) {
+        rp_ir_ini_t *x = &ir->inis[k];
+        const rp_ir_dir_t *d = x->dir ? find_dir(ir, x->dir) : NULL;
+        if (x->dir && d == NULL) {
+            ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->dir);
+            continue;
+        }
+        if (x->feature && !find_feature(ir, x->feature)) {
+            ERR(c, x->pos, "RP1307", "feature '%s' is not defined", x->feature);
+        } else if (x->feature == NULL) {
+            if (d && d->feature) x->feature = dup(c, d->feature);
+            else if (!declared) x->feature = dup(c, "Main");
+            else ERR(c, x->pos, "RP1202", "[ini.%s] needs a feature: set 'feature' here or on its dir", x->id);
+        }
+    }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
         if (e->feature && !find_feature(ir, e->feature)) {
@@ -1588,7 +1633,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
@@ -1625,6 +1670,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "remove") == 0) ++nrem;
         else if (strcmp(t->kind, "copy") == 0) ++ncopy;
         else if (strcmp(t->kind, "env") == 0) ++nenv;
+        else if (strcmp(t->kind, "ini") == 0) ++nini;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
@@ -1656,8 +1702,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->removes = rp_mem_alloc(alloc, nrem + 1, sizeof *ir->removes);
     ir->copies = rp_mem_alloc(alloc, ncopy + 1, sizeof *ir->copies);
     ir->envs = rp_mem_alloc(alloc, nenv + 1, sizeof *ir->envs);
+    ir->inis = rp_mem_alloc(alloc, nini + 1, sizeof *ir->inis);
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
-        ir->removes == NULL || ir->copies == NULL || ir->envs == NULL) {
+        ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL) {
         c.nomem = true;
     }
     (void)ndir;
@@ -1708,6 +1755,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_env_t *e = &ir->envs[ir->env_count++];
             memset(e, 0, sizeof *e);
             parse_env(&c, t, e);
+        } else if (strcmp(t->kind, "ini") == 0) {
+            rp_ir_ini_t *x = &ir->inis[ir->ini_count++];
+            memset(x, 0, sizeof *x);
+            parse_ini(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -1737,6 +1788,13 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_action_t t = ir->actions[j];
             ir->actions[j] = ir->actions[j - 1];
             ir->actions[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->ini_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->inis[j - 1].id, ir->inis[j].id) > 0; --j) {
+            rp_ir_ini_t t = ir->inis[j];
+            ir->inis[j] = ir->inis[j - 1];
+            ir->inis[j - 1] = t;
         }
     }
     for (size_t i = 1; !c.nomem && i < ir->env_count; ++i) {
@@ -1859,6 +1917,12 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->envs);
+    for (size_t k = 0; k < ir->ini_count; ++k) {
+        rp_ir_ini_t *x = &ir->inis[k];
+        char *xs[] = { x->id, x->dir, x->file, x->section, x->key, x->value, x->feature };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->inis);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
@@ -2048,6 +2112,20 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "name", r->name);
         kv(&b, "on", modes[r->mode & 3]);
         kv(&b, "feature", r->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    static const char *const imodes[] = { "set", "add", "remove" };
+    for (size_t k = 0; k < ir->ini_count; ++k) {
+        const rp_ir_ini_t *x = &ir->inis[k];
+        rp_buf_puts(&b, "ini ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "dir", x->dir);
+        kv(&b, "file", x->file);
+        kv(&b, "section", x->section);
+        kv(&b, "key", x->key);
+        kv(&b, "value", x->value);
+        kv(&b, "mode", imodes[x->mode]);
+        kv(&b, "feature", x->feature);
         rp_buf_byte(&b, '\n');
     }
     static const char *const emodes[] = { "set", "append", "prepend" };

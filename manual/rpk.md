@@ -66,6 +66,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 | `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
+| `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
@@ -141,8 +142,15 @@ A system (machine-wide) variable. `mode = "set"` (default) replaces it, `append`
 `;value` to the end or `value;` to the front of what is there. Uninstall undoes exactly that: a set
 variable is deleted, an appended part is taken out and the rest kept. `keep = true` leaves it.
 
+### INI files: `[ini.ID]`
+
+`mode = "set"` (default) writes `key=value` in `[section]` of the file, `add` appends the value to a
+comma-separated list (`a` becomes `a,b`), `remove` deletes the key during installation. Uninstall
+takes out what `set` and `add` wrote. `remove` runs before files are installed, so it is for INI
+files an older version left behind.
+
 Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
-environment `value`, and later INI values, service arguments, and conditions. Everywhere else rubrapack
+environment `value`, INI `value`, and later service arguments and conditions. Everywhere else rubrapack
 writes the text exactly as given.
 
 ### Installed apps entry and properties

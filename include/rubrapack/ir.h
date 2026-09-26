@@ -103,6 +103,18 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_remove_t;
 
+// [ini.ID] (RFC-0004): one key of an INI file.
+typedef struct {
+    char    *id;
+    char    *dir;               // dir ID
+    char    *file;              // INI file name (literal)
+    char    *section, *key;     // literal
+    char    *value;             // formatted; NULL for remove
+    int      mode;              // 0 set, 1 add (to a comma list), 2 remove (at install)
+    char    *feature;           // resolved (G2)
+    rp_pos_t pos;
+} rp_ir_ini_t;
+
 // [env.ID] (RFC-0004): a system environment variable.
 typedef struct {
     char    *id;
@@ -177,6 +189,8 @@ typedef struct {
     size_t            copy_count;
     rp_ir_env_t      *envs;
     size_t            env_count;
+    rp_ir_ini_t      *inis;
+    size_t            ini_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

@@ -180,6 +180,12 @@ static const rp_msi_wcolumn_t duplicate_cols[] = { { "FileKey", KEY_S(72) }, { "
                                                    { "DestName", L_N(255) }, { "DestFolder", S_N(72) } };
 static const rp_msi_wcolumn_t environment_cols[] = { { "Environment", KEY_S(72) }, { "Name", L(255) }, { "Value", L_N(255) },
                                                      { "Component_", S(72) } };
+static const rp_msi_wcolumn_t inifile_cols[] = { { "IniFile", KEY_S(72) }, { "FileName", L(255) }, { "DirProperty", S_N(72) },
+                                                 { "Section", L(96) }, { "Key", L(128) }, { "Value", L(255) },
+                                                 { "Action", I2 }, { "Component_", S(72) } };
+static const rp_msi_wcolumn_t removeini_cols[] = { { "RemoveIniFile", KEY_S(72) }, { "FileName", L(255) },
+                                                   { "DirProperty", S_N(72) }, { "Section", L(96) }, { "Key", L(128) },
+                                                   { "Value", L_N(255) }, { "Action", I2 }, { "Component_", S(72) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -200,6 +206,7 @@ typedef struct {
     const rp_ir_t *ir;
     char         **sc_short;    // short names of ir->shortcuts, same order
     char         **cp_short;    // short names of ir->copies, same order
+    char         **ini_short;   // short names of ir->inis' files, same order
 } dirs_t;
 
 static dnode_t *find_node(dirs_t *d, const char *key) {
@@ -415,7 +422,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder, registry, removereg, shortcut, removefile, duplicate, environment;
+        createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -435,10 +442,12 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&removefile, alloc, "RemoveFile", removefile_cols, 5);
     rows_init(&duplicate, alloc, "DuplicateFile", duplicate_cols, 5);
     rows_init(&environment, alloc, "Environment", environment_cols, 4);
+    rows_init(&inifile, alloc, "IniFile", inifile_cols, 8);
+    rows_init(&removeini, alloc, "RemoveIniFile", removeini_cols, 8);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
-                      &removefile, &duplicate, &environment };
+                      &removefile, &duplicate, &environment, &inifile, &removeini };
     const size_t always = 13;
 
     // Property
@@ -690,6 +699,31 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&environment, value); s_(&environment, ckey);
     }
 
+    // [ini.*] (RFC-0004): one component per entry in the INI file's folder. IniFile rows are undone
+    // at uninstall by the engine; mode remove is a RemoveIniFile row applied at install.
+    for (size_t i = 0; i < ir->ini_count; ++i) {
+        const rp_ir_ini_t *x = &ir->inis[i];
+        char comp[23], guid[39];
+        rp_key_derive('C', kprintf(k, "ini:%s", x->id, NULL), comp);
+        const char *logical = kprintf(k, "%s/%s", x->dir, x->file);
+        logical = kprintf(k, "%s[%s]", logical, x->section);
+        logical = kprintf(k, "%s%s", logical, x->key);
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "ini", x->id };
+        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        const char *ckey = kdup(k, comp);
+        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, x->dir);
+        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
+        s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
+        const char *shortn = dirs->ini_short[i];
+        const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
+        rows_t *t = x->mode == 2 ? &removeini : &inifile;
+        s_(t, x->id); s_(t, fname); s_(t, x->dir);
+        s_(t, escape_formatted(k, x->section)); s_(t, escape_formatted(k, x->key));
+        s_(t, x->value);                                            // formatted (H2); NULL for remove
+        i_(t, x->mode == 0 ? 0 : x->mode == 1 ? 3 : 2);             // addLine, addTag, removeLine
+        s_(t, ckey);
+    }
+
     // [copy.*] (RFC-0004): DuplicateFile in the source file's component.
     for (size_t i = 0; i < ir->copy_count; ++i) {
         const rp_ir_copy_t *cp = &ir->copies[i];
@@ -791,6 +825,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->ini_count) {            // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "RemoveIniValues"); null_(&iexec); i_(&iexec, 3320);
+        s_(&iexec, "WriteIniValues"); null_(&iexec); i_(&iexec, 5100);
     }
     if (ir->env_count) {            // MS Learn "Suggested InstallExecuteSequence"
         s_(&iexec, "RemoveEnvironmentStrings"); null_(&iexec); i_(&iexec, 3310);
@@ -1019,7 +1057,9 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     // Shortcuts into a known folder need that folder's Directory row.
     dirs.sc_short = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *dirs.sc_short);
     dirs.cp_short = rp_mem_alloc(alloc, ir->copy_count + 1, sizeof *dirs.cp_short);
-    if (dirs.sc_short == NULL || dirs.cp_short == NULL) err = PROVEN_ERR_NOMEM;
+    dirs.ini_short = rp_mem_alloc(alloc, ir->ini_count + 1, sizeof *dirs.ini_short);
+    if (dirs.sc_short == NULL || dirs.cp_short == NULL || dirs.ini_short == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0; err == PROVEN_OK && i < ir->ini_count; ++i) dirs.ini_short[i] = NULL;
     for (size_t i = 0; err == PROVEN_OK && i < ir->copy_count; ++i) dirs.cp_short[i] = NULL;
     for (size_t i = 0; err == PROVEN_OK && i < ir->shortcut_count; ++i) {
         dirs.sc_short[i] = NULL;
@@ -1035,6 +1075,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         for (size_t j = 0; j < ir->file_count; ++j) n += strcmp(files[j].dir_key, folder) == 0;
         for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(&ir->shortcuts[j], ir->arch), folder) == 0;
         for (size_t j = 0; j < ir->copy_count; ++j) n += strcmp(ir->copies[j].dir, folder) == 0;
+        for (size_t j = 0; j < ir->ini_count; ++j) n += strcmp(ir->inis[j].dir, folder) == 0;
         if (n == 0) continue;
         sib_t *s = rp_mem_alloc(alloc, n, sizeof *s);
         if (s == NULL) {
@@ -1063,8 +1104,28 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             }
             s[m++] = (sib_t){ longn ? longn : ir->copies[j].id, &dirs.cp_short[j] };
         }
+        // An INI file that is also installed here, or named by an earlier entry, shares that short name
+        // (filled in below); only new INI files take part in the assignment.
+        for (size_t j = 0; j < ir->ini_count; ++j) {
+            const rp_ir_ini_t *x = &ir->inis[j];
+            if (strcmp(x->dir, folder) != 0) continue;
+            bool shared = false;
+            for (size_t f = 0; f < ir->file_count; ++f) shared |= strcmp(files[f].dir_key, folder) == 0 && strcmp(files[f].f->name, x->file) == 0;
+            for (size_t e = 0; e < j; ++e) shared |= strcmp(ir->inis[e].dir, folder) == 0 && strcmp(ir->inis[e].file, x->file) == 0;
+            if (!shared) s[m++] = (sib_t){ x->file, &dirs.ini_short[j] };
+        }
         assign_short(&k, s, m);
         rp_mem_free(alloc, s);
+    }
+
+    for (size_t j = 0; err == PROVEN_OK && j < ir->ini_count; ++j) {     // the shared INI short names
+        const rp_ir_ini_t *x = &ir->inis[j];
+        for (size_t f = 0; dirs.ini_short[j] == NULL && f < ir->file_count; ++f) {
+            if (strcmp(files[f].dir_key, x->dir) == 0 && strcmp(files[f].f->name, x->file) == 0) dirs.ini_short[j] = files[f].short_name;
+        }
+        for (size_t e = 0; dirs.ini_short[j] == NULL && e < j; ++e) {
+            if (strcmp(ir->inis[e].dir, x->dir) == 0 && strcmp(ir->inis[e].file, x->file) == 0) dirs.ini_short[j] = dirs.ini_short[e];
+        }
     }
 
     // File.FileName and Directory.DefaultDir hold `SHORT|Long` in 255 UTF-16 units, so a long name
@@ -1137,6 +1198,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     rp_mem_free(alloc, final_logical);
     rp_mem_free(alloc, dirs.sc_short);
     rp_mem_free(alloc, dirs.cp_short);
+    rp_mem_free(alloc, dirs.ini_short);
     rp_mem_free(alloc, dirs.v);
     keep_free(&k);
     if (err == PROVEN_OK && k.nomem) err = PROVEN_ERR_NOMEM;
