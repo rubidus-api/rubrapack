@@ -183,6 +183,16 @@ Value nullable, Action 2 remove line, 4 remove tag) by `RemoveIniValues`, which 
 Non-ASCII file, section, key and value names work. A failed installation restores the file.
 [observed]
 
+## Searches and launch conditions
+
+`AppSearch` (**Property**, **Signature_**) at 50 in both sequences sets the property from a locator
+with the same signature: `RegLocator` (Root, Key, Name, Type 2 = raw value, +16 = 64-bit view),
+`DrLocator` (Path may start with a folder property, like `[System64Folder]`) with a `Signature` row
+for a file (FileName, MinVersion), or `CompLocator` (ComponentId, Type 1 = key file). The property
+must be public and listed in `SecureCustomProperties` to reach the server side. `LaunchCondition`
+(**Condition**, Description formatted) at 100 in both sequences stops the installation with the
+description when a condition is false. [observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

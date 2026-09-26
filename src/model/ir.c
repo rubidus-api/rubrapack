@@ -360,9 +360,9 @@ static bool known_folder(const char *s) {
 
 static const char *const top_kinds[] = { "package", "define", "arp", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
-                                          "shortcut", "remove", "copy", "env", "ini", NULL };
+                                          "shortcut", "remove", "copy", "env", "ini", "require", "search", NULL };
 static const char *const later_kinds[] = { "service",
-                                           "assoc", "protocol", "font", "permission", "require", "search",
+                                           "assoc", "protocol", "font", "permission",
                                            "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
@@ -1254,6 +1254,104 @@ static void parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
     x->feature = get_str(c, t, "feature", false, NULL);
 }
 
+// A basic shape check of an MSI condition (RFC-0001 9.7): quotes close, brackets balance.
+static bool condition_ok(const char *s) {
+    int depth = 0;
+    bool quote = false;
+    for (const char *p = s; *p; ++p) {
+        if (*p == '"') quote = !quote;
+        else if (!quote && *p == '(') ++depth;
+        else if (!quote && *p == ')' && --depth < 0) return false;
+    }
+    return !quote && depth == 0 && s[0] != '\0';
+}
+
+static void parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
+    static const char *const keys[] = { "condition", "message", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    r->id = dup(c, t->id);
+    r->pos = t->pos;
+    r->condition = get_str(c, t, "condition", true, NULL);
+    if (r->condition && !condition_ok(r->condition)) {
+        ERR(c, key_pos(t, "condition"), "RP1316", "condition has an unclosed quote or unbalanced parentheses");
+    }
+    if (r->condition && strlen(r->condition) > 255) ERR(c, key_pos(t, "condition"), "RP1316", "condition is longer than 255 characters");
+    r->message = get_str(c, t, "message", true, NULL);
+}
+
+static void parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
+    static const char *const keys[] = { "property", "kind", "root", "key", "name", "view", "path", "file", "min-version",
+                                        "component-guid", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    x->property = get_str(c, t, "property", true, NULL);
+    if (x->property) {
+        bool upper = true;
+        for (const char *p = x->property; *p; ++p) upper &= (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_';
+        if (!upper || tool_property(x->property)) {
+            ERR(c, key_pos(t, "property"), "RP1310", "search property '%s' must be a public name of your own (upper case)", x->property);
+        }
+    }
+    char *kind = get_str(c, t, "kind", true, NULL);
+    if (kind == NULL) return;
+    if (strcmp(kind, "registry") == 0) x->kind = RP_SEARCH_REGISTRY;
+    else if (strcmp(kind, "file") == 0) x->kind = RP_SEARCH_FILE;
+    else if (strcmp(kind, "dir") == 0) x->kind = RP_SEARCH_DIR;
+    else if (strcmp(kind, "component") == 0) x->kind = RP_SEARCH_COMPONENT;
+    else ERR(c, key_pos(t, "kind"), "RP1316", "kind must be registry, file, dir or component");
+    rp_mem_free(c->alloc, kind);
+    if (x->kind == RP_SEARCH_REGISTRY) {
+        char *root = get_str(c, t, "root", true, NULL);
+        if (root) {
+            if (strcmp(root, "HKLM") == 0) x->root = RP_ROOT_HKLM;
+            else if (strcmp(root, "HKCR") == 0) x->root = RP_ROOT_HKCR;
+            else if (strcmp(root, "HKCU") == 0) x->root = RP_ROOT_HKCU;
+            else ERR(c, key_pos(t, "root"), "RP1316", "root must be HKLM, HKCR or HKCU");
+            rp_mem_free(c->alloc, root);
+        }
+        x->key = get_str(c, t, "key", true, NULL);
+        x->name = get_str(c, t, "name", false, NULL);
+        char *view = get_str(c, t, "view", false, NULL);
+        if (view) {
+            if (strcmp(view, "32") == 0) x->view32 = true;
+            else if (strcmp(view, "64") != 0) ERR(c, key_pos(t, "view"), "RP1316", "view must be \"32\" or \"64\"");
+            rp_mem_free(c->alloc, view);
+        }
+        if (c->ir->arch == RP_ARCH_X86) x->view32 = true;
+    } else if (x->kind == RP_SEARCH_COMPONENT) {
+        x->component_guid = get_str(c, t, "component-guid", true, NULL);
+        if (x->component_guid && !guid_ok(x->component_guid)) ERR(c, key_pos(t, "component-guid"), "RP1308", "component-guid must be a GUID");
+    } else {
+        char *path = get_str(c, t, "path", true, NULL);    // Base or Base/rel/path, like [dir.*]
+        if (path) {
+            char *slash = strchr(path, '/');
+            x->base = slash ? dup_n(c, path, (size_t)(slash - path)) : dup(c, path);
+            if (x->base && !known_folder(x->base)) ERR(c, key_pos(t, "path"), "RP1316", "path must start with a known folder (like ProgramFiles or System)");
+            if (slash && slash[1]) {
+                x->path = dup(c, slash + 1);
+                for (char *p = x->path; p && *p; ++p) {
+                    if (*p == '/') *p = '\\';
+                }
+            }
+            if (strchr(path, '\\')) ERR(c, key_pos(t, "path"), "RP1502", "use '/' in path");
+            rp_mem_free(c->alloc, path);
+        }
+        if (x->kind == RP_SEARCH_FILE) {
+            x->file_name = get_str(c, t, "file", true, NULL);
+            if (x->file_name) target_name_ok(c, x->file_name, key_pos(t, "file"));
+            x->min_version = get_str(c, t, "min-version", false, NULL);
+            uint16_t parts[4];
+            size_t n = 0;
+            if (x->min_version && !parse_version(x->min_version, parts, &n)) {
+                ERR(c, key_pos(t, "min-version"), "RP1308", "min-version must be a version like 1.2.3");
+            }
+        }
+    }
+}
+
 static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     static const char *const keys[] = { "name", "value", "mode", "keep", "feature", NULL };
     check_keys(c, t, keys);
@@ -1326,7 +1424,8 @@ static void cross_checks(ctx_t *c) {
     // IDs unique across dir, file and feature (RFC-0002 2).
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
-               ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count;
+               ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count +
+               ir->require_count + ir->search_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1342,13 +1441,15 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->copy_count; ++k) ids[m++] = (idpos_t){ ir->copies[k].id, ir->copies[k].pos };
     for (size_t k = 0; k < ir->env_count; ++k) ids[m++] = (idpos_t){ ir->envs[k].id, ir->envs[k].pos };
     for (size_t k = 0; k < ir->ini_count; ++k) ids[m++] = (idpos_t){ ir->inis[k].id, ir->inis[k].pos };
+    for (size_t k = 0; k < ir->require_count; ++k) ids[m++] = (idpos_t){ ir->requires[k].id, ir->requires[k].pos };
+    for (size_t k = 0; k < ir->search_count; ++k) ids[m++] = (idpos_t){ ir->searches[k].id, ir->searches[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
     for (size_t a = 0; a < m; ++a) {
         for (size_t b = a + 1; b < m; ++b) {
             if (ids[a].id && ids[b].id && strcmp(ids[a].id, ids[b].id) == 0) {
-                ERR(c, ids[b].pos, "RP1301", "ID '%s' is already used (line %u); dir, file and feature IDs must differ",
+                ERR(c, ids[b].pos, "RP1301", "ID '%s' is already used (line %u); IDs must differ across all tables",
                     ids[b].id, (unsigned)ids[a].pos.line);
             }
         }
@@ -1537,6 +1638,28 @@ static void cross_checks(ctx_t *c) {
             else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", r->id);
         }
     }
+    // Launch conditions are keyed by their text; search properties are unique and not a
+    // [property.*] of the package.
+    for (size_t k = 0; k < ir->require_count; ++k) {
+        for (size_t j = 0; j < k; ++j) {
+            if (ir->requires[k].condition && ir->requires[j].condition && strcmp(ir->requires[k].condition, ir->requires[j].condition) == 0) {
+                ERR(c, ir->requires[k].pos, "RP1301", "the same condition is already required (line %u)", (unsigned)ir->requires[j].pos.line);
+            }
+        }
+    }
+    for (size_t k = 0; k < ir->search_count; ++k) {
+        const rp_ir_search_t *x = &ir->searches[k];
+        if (x->property == NULL) continue;
+        for (size_t j = 0; j < k; ++j) {
+            if (ir->searches[j].property && strcmp(ir->searches[j].property, x->property) == 0) {
+                ERR(c, x->pos, "RP1301", "property '%s' is already searched (line %u)", x->property, (unsigned)ir->searches[j].pos.line);
+            }
+        }
+        for (size_t j = 0; j < ir->property_count; ++j) {
+            if (strcmp(ir->properties[j].id, x->property) == 0) ERR(c, x->pos, "RP1310", "'%s' is also a [property.*]", x->property);
+        }
+        if (find_dir(ir, x->property)) ERR(c, x->pos, "RP1310", "'%s' is the name of a dir", x->property);
+    }
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
         const rp_ir_dir_t *d = x->dir ? find_dir(ir, x->dir) : NULL;
@@ -1633,7 +1756,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
@@ -1671,6 +1794,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "copy") == 0) ++ncopy;
         else if (strcmp(t->kind, "env") == 0) ++nenv;
         else if (strcmp(t->kind, "ini") == 0) ++nini;
+        else if (strcmp(t->kind, "require") == 0) ++nreq;
+        else if (strcmp(t->kind, "search") == 0) ++nsearch;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
@@ -1703,8 +1828,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->copies = rp_mem_alloc(alloc, ncopy + 1, sizeof *ir->copies);
     ir->envs = rp_mem_alloc(alloc, nenv + 1, sizeof *ir->envs);
     ir->inis = rp_mem_alloc(alloc, nini + 1, sizeof *ir->inis);
+    ir->requires = rp_mem_alloc(alloc, nreq + 1, sizeof *ir->requires);
+    ir->searches = rp_mem_alloc(alloc, nsearch + 1, sizeof *ir->searches);
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
-        ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL) {
+        ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL || ir->requires == NULL ||
+        ir->searches == NULL) {
         c.nomem = true;
     }
     (void)ndir;
@@ -1759,6 +1887,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_ini_t *x = &ir->inis[ir->ini_count++];
             memset(x, 0, sizeof *x);
             parse_ini(&c, t, x);
+        } else if (strcmp(t->kind, "require") == 0) {
+            rp_ir_require_t *r = &ir->requires[ir->require_count++];
+            memset(r, 0, sizeof *r);
+            parse_require(&c, t, r);
+        } else if (strcmp(t->kind, "search") == 0) {
+            rp_ir_search_t *x = &ir->searches[ir->search_count++];
+            memset(x, 0, sizeof *x);
+            parse_search(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -1788,6 +1924,20 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_action_t t = ir->actions[j];
             ir->actions[j] = ir->actions[j - 1];
             ir->actions[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->require_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->requires[j - 1].id, ir->requires[j].id) > 0; --j) {
+            rp_ir_require_t t = ir->requires[j];
+            ir->requires[j] = ir->requires[j - 1];
+            ir->requires[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->search_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->searches[j - 1].id, ir->searches[j].id) > 0; --j) {
+            rp_ir_search_t t = ir->searches[j];
+            ir->searches[j] = ir->searches[j - 1];
+            ir->searches[j - 1] = t;
         }
     }
     for (size_t i = 1; !c.nomem && i < ir->ini_count; ++i) {
@@ -1923,6 +2073,18 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->inis);
+    for (size_t k = 0; k < ir->require_count; ++k) {
+        rp_mem_free(a, ir->requires[k].id);
+        rp_mem_free(a, ir->requires[k].condition);
+        rp_mem_free(a, ir->requires[k].message);
+    }
+    rp_mem_free(a, ir->requires);
+    for (size_t k = 0; k < ir->search_count; ++k) {
+        rp_ir_search_t *x = &ir->searches[k];
+        char *xs[] = { x->id, x->property, x->key, x->name, x->base, x->path, x->file_name, x->min_version, x->component_guid };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->searches);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
@@ -2112,6 +2274,35 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "name", r->name);
         kv(&b, "on", modes[r->mode & 3]);
         kv(&b, "feature", r->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->require_count; ++k) {
+        const rp_ir_require_t *r = &ir->requires[k];
+        rp_buf_puts(&b, "require ");
+        rp_buf_puts(&b, r->id);
+        kv(&b, "condition", r->condition);
+        kv(&b, "message", r->message);
+        rp_buf_byte(&b, '\n');
+    }
+    static const char *const skinds[] = { "registry", "file", "dir", "component" };
+    static const char *const sroots[] = { "HKCR", "HKCU", "HKLM" };
+    for (size_t k = 0; k < ir->search_count; ++k) {
+        const rp_ir_search_t *x = &ir->searches[k];
+        rp_buf_puts(&b, "search ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "property", x->property);
+        kv(&b, "kind", skinds[x->kind]);
+        if (x->kind == RP_SEARCH_REGISTRY) {
+            kv(&b, "root", sroots[x->root]);
+            kv(&b, "key", x->key);
+            kv(&b, "name", x->name);
+            kv(&b, "view", x->view32 ? "32" : "native");
+        }
+        kv(&b, "base", x->base);
+        kv(&b, "path", x->path);
+        kv(&b, "file", x->file_name);
+        kv(&b, "min-version", x->min_version);
+        kv(&b, "component-guid", x->component_guid);
         rp_buf_byte(&b, '\n');
     }
     static const char *const imodes[] = { "set", "add", "remove" };

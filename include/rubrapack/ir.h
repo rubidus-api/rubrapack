@@ -115,6 +115,31 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_ini_t;
 
+// [require.ID] (RFC-0004): a launch condition. [search.ID]: AppSearch into a public property.
+typedef struct {
+    char    *id;
+    char    *condition;         // MSI conditional expression
+    char    *message;           // formatted
+    rp_pos_t pos;
+} rp_ir_require_t;
+
+typedef enum { RP_SEARCH_REGISTRY, RP_SEARCH_FILE, RP_SEARCH_DIR, RP_SEARCH_COMPONENT } rp_search_kind_t;
+
+typedef struct {
+    char            *id;
+    char            *property;      // upper case
+    rp_search_kind_t kind;
+    rp_reg_root_t    root;          // registry
+    char            *key, *name;    // registry (literal; name NULL = default value)
+    bool             view32;        // registry
+    char            *base;          // file/dir: known folder (ProgramFiles, System, ...)
+    char            *path;          // file/dir: relative path below base with '\', or NULL
+    char            *file_name;     // file
+    char            *min_version;   // file, or NULL
+    char            *component_guid;// component
+    rp_pos_t         pos;
+} rp_ir_search_t;
+
 // [env.ID] (RFC-0004): a system environment variable.
 typedef struct {
     char    *id;
@@ -191,6 +216,10 @@ typedef struct {
     size_t            env_count;
     rp_ir_ini_t      *inis;
     size_t            ini_count;
+    rp_ir_require_t  *requires;
+    size_t            require_count;
+    rp_ir_search_t   *searches;
+    size_t            search_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

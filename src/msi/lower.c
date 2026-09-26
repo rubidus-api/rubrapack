@@ -138,6 +138,7 @@ static void rows_finish(rows_t *r) {
 #define I2_N      0x1502u
 #define KEY_I2    0x2502u
 #define I4        0x0104u
+#define I4_N      0x1104u
 #define KEY_I4    0x2104u
 #define KEY_S_N(n) (0x3D00u | (n))
 
@@ -186,6 +187,16 @@ static const rp_msi_wcolumn_t inifile_cols[] = { { "IniFile", KEY_S(72) }, { "Fi
 static const rp_msi_wcolumn_t removeini_cols[] = { { "RemoveIniFile", KEY_S(72) }, { "FileName", L(255) },
                                                    { "DirProperty", S_N(72) }, { "Section", L(96) }, { "Key", L(128) },
                                                    { "Value", L_N(255) }, { "Action", I2 }, { "Component_", S(72) } };
+static const rp_msi_wcolumn_t launch_cols[] = { { "Condition", KEY_S(255) }, { "Description", L(255) } };
+static const rp_msi_wcolumn_t appsearch_cols[] = { { "Property", KEY_S(72) }, { "Signature_", KEY_S(72) } };
+static const rp_msi_wcolumn_t reglocator_cols[] = { { "Signature_", KEY_S(72) }, { "Root", I2 }, { "Key", S(255) },
+                                                    { "Name", S_N(255) }, { "Type", I2_N } };
+static const rp_msi_wcolumn_t drlocator_cols[] = { { "Signature_", KEY_S(72) }, { "Parent", KEY_S_N(72) },
+                                                   { "Path", KEY_S_N(255) }, { "Depth", I2_N } };
+static const rp_msi_wcolumn_t signature_cols[] = { { "Signature", KEY_S(72) }, { "FileName", S(255) }, { "MinVersion", S_N(20) },
+                                                   { "MaxVersion", S_N(20) }, { "MinSize", I4_N }, { "MaxSize", I4_N },
+                                                   { "MinDate", I4_N }, { "MaxDate", I4_N }, { "Languages", S_N(255) } };
+static const rp_msi_wcolumn_t complocator_cols[] = { { "Signature_", KEY_S(72) }, { "ComponentId", S(38) }, { "Type", I2_N } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -422,7 +433,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini;
+        createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
+        appsearch, reglocator, drlocator, signature, complocator;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -444,10 +456,17 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&environment, alloc, "Environment", environment_cols, 4);
     rows_init(&inifile, alloc, "IniFile", inifile_cols, 8);
     rows_init(&removeini, alloc, "RemoveIniFile", removeini_cols, 8);
+    rows_init(&launch, alloc, "LaunchCondition", launch_cols, 2);
+    rows_init(&appsearch, alloc, "AppSearch", appsearch_cols, 2);
+    rows_init(&reglocator, alloc, "RegLocator", reglocator_cols, 5);
+    rows_init(&drlocator, alloc, "DrLocator", drlocator_cols, 4);
+    rows_init(&signature, alloc, "Signature", signature_cols, 9);
+    rows_init(&complocator, alloc, "CompLocator", complocator_cols, 3);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
-                      &removefile, &duplicate, &environment, &inifile, &removeini };
+                      &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
+                      &drlocator, &signature, &complocator };
     const size_t always = 13;
 
     // Property
@@ -482,6 +501,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (p->secure) secure = kprintf(k, "%s;%s", secure, p->id);
         if (p->hidden) hidden = hidden ? kprintf(k, "%s;%s", hidden, p->id) : kdup(k, p->id);
     }
+    for (size_t i = 0; i < ir->search_count; ++i) secure = kprintf(k, "%s;%s", secure, ir->searches[i].property);
     s_(&property, "SecureCustomProperties"); s_(&property, secure);
     if (hidden) { s_(&property, "MsiHiddenProperties"); s_(&property, hidden); }
 
@@ -724,6 +744,36 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(t, ckey);
     }
 
+    // [require.*] and [search.*] (RFC-0004).
+    for (size_t i = 0; i < ir->require_count; ++i) {
+        s_(&launch, ir->requires[i].condition); s_(&launch, ir->requires[i].message);
+    }
+    for (size_t i = 0; i < ir->search_count; ++i) {
+        const rp_ir_search_t *x = &ir->searches[i];
+        s_(&appsearch, x->property); s_(&appsearch, x->id);
+        switch (x->kind) {
+        case RP_SEARCH_REGISTRY:    // type 2 = the raw value; +16 = the 64-bit view
+            s_(&reglocator, x->id); i_(&reglocator, (int32_t)x->root); s_(&reglocator, escape_formatted(k, x->key));
+            s_(&reglocator, x->name ? escape_formatted(k, x->name) : NULL);
+            i_(&reglocator, 2 | (x->view32 ? 0 : 16));
+            break;
+        case RP_SEARCH_FILE:
+        case RP_SEARCH_DIR: {
+            const char *std = standard_folder(x->base, ir->arch);
+            const char *path = x->path ? kprintf(k, "[%s]%s", std, x->path) : kprintf(k, "[%s]", std, NULL);
+            s_(&drlocator, x->id); null_(&drlocator); s_(&drlocator, path); i_(&drlocator, 0);
+            if (x->kind == RP_SEARCH_FILE) {
+                s_(&signature, x->id); s_(&signature, x->file_name); s_(&signature, x->min_version);
+                for (int n = 0; n < 6; ++n) null_(&signature);
+            }
+            break;
+        }
+        case RP_SEARCH_COMPONENT:   // type 1 = the full path of the component's key file
+            s_(&complocator, x->id); s_(&complocator, x->component_guid); i_(&complocator, 1);
+            break;
+        }
+    }
+
     // [copy.*] (RFC-0004): DuplicateFile in the source file's component.
     for (size_t i = 0; i < ir->copy_count; ++i) {
         const rp_ir_copy_t *cp = &ir->copies[i];
@@ -825,6 +875,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->search_count) {         // before the launch conditions, which may test the results
+        s_(&iexec, "AppSearch"); null_(&iexec); i_(&iexec, 50);
+        s_(&iui, "AppSearch"); null_(&iui); i_(&iui, 50);
+    }
+    if (ir->require_count) {
+        s_(&iexec, "LaunchConditions"); null_(&iexec); i_(&iexec, 100);
+        s_(&iui, "LaunchConditions"); null_(&iui); i_(&iui, 100);
     }
     if (ir->ini_count) {            // MS Learn "Suggested InstallExecuteSequence"
         s_(&iexec, "RemoveIniValues"); null_(&iexec); i_(&iexec, 3320);

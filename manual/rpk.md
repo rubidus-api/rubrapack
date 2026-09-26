@@ -67,6 +67,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
+| `[require.ID]` | **condition**, **message** |
+| `[search.ID]` | **property**, **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
@@ -149,8 +151,29 @@ comma-separated list (`a` becomes `a,b`), `remove` deletes the key during instal
 takes out what `set` and `add` wrote. `remove` runs before files are installed, so it is for INI
 files an older version left behind.
 
+### Searching and requiring: `[search.ID]`, `[require.ID]`
+
+A search runs before anything else and puts what it found into a public property (empty when
+nothing is found): a registry value's data, the full path of a file (`path` = a known folder and a
+relative path, like `System` or `ProgramFiles/Example`; `min-version` for program files), a folder,
+or the key file of another product's component. A requirement stops the installation with its
+message when its `condition` is false; conditions use Windows Installer's syntax
+(`VersionNT >= 603`, `FOUND_TOOL`, `NOT OLDSETTING`) and may test search results.
+
+```toml
+[search.Tool]
+property = "FOUND_TOOL"
+kind = "file"
+path = "System"
+file = "tool.exe"
+
+[require.Tool]
+condition = "FOUND_TOOL"
+message = "[ProductName] needs tool.exe."
+```
+
 Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
-environment `value`, INI `value`, and later service arguments and conditions. Everywhere else rubrapack
+environment `value`, INI `value`, requirement `message`, and later service arguments. Everywhere else rubrapack
 writes the text exactly as given.
 
 ### Installed apps entry and properties
