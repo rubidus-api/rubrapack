@@ -498,6 +498,63 @@ static void lint_upgrade(lint_t *l, const index_t *props) {
     }
 }
 
+// Custom actions (RFC-0003 2): run-from-file sources exist, no asynchronous rollback, and a
+// rollback twin named `<Action>Rollback` is scheduled before `<Action>` so it covers it.
+static void lint_custom_actions(lint_t *l, const index_t *files, const index_t *cas) {
+    const rp_msi_wtable_t *t = table(l, "CustomAction");
+    if (t == NULL) return;
+    size_t type = column(t, "Type"), source = column(t, "Source");
+    if (type == SIZE_MAX || source == SIZE_MAX) return;
+    for (size_t row = 0; row < t->row_count; ++row) {
+        const rp_msi_cell_t *ty = cell(t, row, type), *src = cell(t, row, source);
+        if (ty->kind != RP_MSI_INT) continue;
+        int32_t v = ty->i;
+        if ((v & 0x30) == 0x10 && (v & 0x0F) != 0x03 && (v & 0x07) != 0x07) {    // source is a File key (not 19/23)
+            if (is_null(src) || files == NULL || index_find1(files, src) == SIZE_MAX) {
+                finding(l, "RP2018", t, row, "Source must name a File row for type %ld", (long)v);
+            }
+        }
+        if ((v & 0x100) && (v & 0x80)) finding(l, "RP2017", t, row, "a rollback action cannot be asynchronous");
+    }
+    const rp_msi_wtable_t *seq = table(l, "InstallExecuteSequence");
+    if (seq == NULL) return;
+    size_t act = column(seq, "Action"), num = column(seq, "Sequence");
+    if (act == SIZE_MAX || num == SIZE_MAX) return;
+    // RemoveExistingProducts right after InstallInitialize must come before anything that writes
+    // to the script; msi.dll stops with error 2613 otherwise (observed).
+    int32_t init = -1, rep = -1;
+    for (size_t row = 0; row < seq->row_count; ++row) {
+        const rp_msi_cell_t *n = cell(seq, row, num);
+        if (n->kind != RP_MSI_INT) continue;
+        if (str_is(cell(seq, row, act), "InstallInitialize")) init = n->i;
+        if (str_is(cell(seq, row, act), "RemoveExistingProducts")) rep = n->i;
+    }
+    for (size_t row = 0; init >= 0 && rep > init && row < seq->row_count; ++row) {
+        const rp_msi_cell_t *n = cell(seq, row, num);
+        if (n->kind != RP_MSI_INT || n->i <= init || n->i >= rep) continue;
+        size_t ca = index_find1(cas, cell(seq, row, act));
+        if (ca != SIZE_MAX && cell(t, ca, type)->kind == RP_MSI_INT && (cell(t, ca, type)->i & 0x400)) {
+            finding(l, "RP2019", seq, row, "a script action between InstallInitialize and RemoveExistingProducts (error 2613)");
+        }
+    }
+
+    for (size_t row = 0; row < seq->row_count; ++row) {
+        const rp_msi_cell_t *name = cell(seq, row, act), *n = cell(seq, row, num);
+        const char suffix[] = "Rollback";
+        size_t sl = sizeof suffix - 1;
+        if (name->kind != RP_MSI_STR || name->len <= sl || n->kind != RP_MSI_INT) continue;
+        if (memcmp(name->bytes + name->len - sl, suffix, sl) != 0) continue;
+        for (size_t other = 0; other < seq->row_count; ++other) {
+            const rp_msi_cell_t *o = cell(seq, other, act), *on = cell(seq, other, num);
+            if (o->kind == RP_MSI_STR && o->len == name->len - sl && memcmp(o->bytes, name->bytes, o->len) == 0 &&
+                on->kind == RP_MSI_INT && on->i <= n->i) {
+                finding(l, "RP2016", seq, row, "rollback twin must come before %.*s (%ld <= %ld)", (int)o->len,
+                        (const char *)o->bytes, (long)on->i, (long)n->i);
+            }
+        }
+    }
+}
+
 // ---- entry -----------------------------------------------------------------------------------
 
 proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_srcdiags_t *diags) {
@@ -535,6 +592,7 @@ proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_sr
         lint_sequence(&l, sequences[i], cas->slot ? cas : NULL, dialogs->slot ? dialogs : NULL);
     }
     lint_platform(&l);
+    lint_custom_actions(&l, find_index(ix, NIX, "File"), cas);
     lint_upgrade(&l, props);
 
     for (size_t i = 0; i < NIX; ++i) index_free(&l, &ix[i].x);

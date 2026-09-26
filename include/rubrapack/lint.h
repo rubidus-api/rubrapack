@@ -20,6 +20,10 @@
 // RP2013 component bitness does not match the summary's platform
 // RP2014 a component's key path is not one of its own files
 // RP2015 an upgrade property is not public or not in SecureCustomProperties
+// RP2016 a rollback twin (`<Action>Rollback`) is sequenced after its forward action
+// RP2017 an asynchronous custom action is also a rollback action
+// RP2018 a custom action that runs a file names no File row
+// RP2019 a deferred (script) custom action between InstallInitialize and RemoveExistingProducts
 
 #include "proven/allocator.h"
 #include "proven/types.h"

@@ -19,6 +19,7 @@ enum {
 typedef struct {
     bool     is_pe;             // "MZ" + a valid "PE\0\0" header
     uint16_t machine;           // COFF machine
+    bool     is_dll;            // COFF characteristics IMAGE_FILE_DLL (0x2000)
     bool     has_version;       // VS_FIXEDFILEINFO found
     uint16_t version[4];        // file version a.b.c.d
     uint16_t language;          // first Translation language, else the resource language, else 0

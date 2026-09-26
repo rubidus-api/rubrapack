@@ -83,6 +83,7 @@ proven_err_t rp_pe_read(const uint8_t *data, size_t len, rp_pe_info_t *info) {
     info->is_pe = true;
     const uint8_t *coff = data + pe_off + 4;
     info->machine = rd16(coff);
+    info->is_dll = (rd16(coff + 18) & 0x2000) != 0;
     uint16_t nsections = rd16(coff + 2), opt_size = rd16(coff + 16);
     size_t opt = pe_off + 24u;
     if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) return PROVEN_ERR_INVALID_FORMAT;

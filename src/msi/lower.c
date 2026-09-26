@@ -415,7 +415,21 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     s_(&property, "UpgradeCode"); s_(&property, ir->upgrade_code);
     s_(&property, "ALLUSERS"); s_(&property, "1");
     if (ir->reboot_suppress) { s_(&property, "REBOOT"); s_(&property, "ReallySuppress"); }
-    s_(&property, "SecureCustomProperties"); s_(&property, "RP_NEWER_FOUND;RP_OLDER_FOUND");
+    // [arp] and [property.*] (RFC-0003 1). Secure and hidden properties are listed for the engine.
+    if (ir->arp_no_modify) { s_(&property, "ARPNOMODIFY"); s_(&property, "1"); }
+    if (ir->arp_no_repair) { s_(&property, "ARPNOREPAIR"); s_(&property, "1"); }
+    if (ir->arp_help) { s_(&property, "ARPHELPLINK"); s_(&property, ir->arp_help); }
+    if (ir->arp_about) { s_(&property, "ARPURLINFOABOUT"); s_(&property, ir->arp_about); }
+    char *secure = kdup(k, "RP_NEWER_FOUND;RP_OLDER_FOUND"), *hidden = NULL;
+    for (size_t i = 0; i < ir->property_count; ++i) {
+        const rp_ir_property_t *p = &ir->properties[i];
+        s_(&property, p->id);
+        s_(&property, p->value);
+        if (p->secure) secure = kprintf(k, "%s;%s", secure, p->id);
+        if (p->hidden) hidden = hidden ? kprintf(k, "%s;%s", hidden, p->id) : kdup(k, p->id);
+    }
+    s_(&property, "SecureCustomProperties"); s_(&property, secure);
+    if (hidden) { s_(&property, "MsiHiddenProperties"); s_(&property, hidden); }
 
     // Directory
     for (size_t i = 0; i < dirs->count; ++i) {
@@ -562,8 +576,49 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         { "RegisterUser", NULL, 6000 }, { "RegisterProduct", NULL, 6100 }, { "PublishFeatures", NULL, 6300 },
         { "PublishProduct", NULL, 6400 }, { "InstallFinalize", NULL, 6600 },
     };
+    // [action.*] do/undo pairs (RFC-0003 2). Nothing that writes script may sit between
+    // InstallInitialize and RemoveExistingProducts (error 2613 on the VM, lint RP2019).
+    size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    for (size_t i = 0; i < na; ++i) {
+        const rp_ir_action_t *a = &ir->actions[i];
+        const lfile_t *run = NULL;
+        for (size_t j = 0; j < nfiles; ++j) {
+            if (strcmp(files[j].key, a->run_file) == 0) run = &files[j];
+        }
+        if (run == NULL) {
+            err = PROVEN_ERR_INVALID_ARG;       // the IR checked it; unreachable
+            break;
+        }
+        const char *do_args = escape_formatted(k, a->do_args), *undo_args = escape_formatted(k, a->undo_args);
+        if (do_args == NULL || undo_args == NULL) break;
+        size_t longest = strlen(do_args) > strlen(undo_args) ? strlen(do_args) : strlen(undo_args);
+        if (longest > 255) {
+            rp_srcdiag_add(diags, a->pos, "RP1313", false, "do/undo arguments are longer than 255 characters");
+            err = PROVEN_ERR_INVALID_FORMAT;
+            break;
+        }
+        // $C: what this installation does to the exe's component; ?C: its state before.
+        const char *install = kprintf(k, "$%s>2", run->comp, NULL);
+        const char *fresh = kprintf(k, "$%s>2 AND ?%s<>3", run->comp, run->comp);
+        const char *again = kprintf(k, "$%s>2 AND ?%s=3", run->comp, run->comp);
+        const char *remove = kprintf(k, "$%s=2 AND ?%s=3", run->comp, run->comp);
+        enum { FORWARD = 18 | 0x400 | 0x800, ROLLBACK = 18 | 0x100 | 0x400 | 0x800 | 0x40 };
+        struct { const char *suffix; int type; const char *args; const char *cond; int seq; } rows[] = {
+            { "UndoRollback", ROLLBACK, do_args, remove, 3400 + 2 * (int)(na - 1 - i) },
+            { "Undo", FORWARD, undo_args, remove, 3401 + 2 * (int)(na - 1 - i) },
+            { "DoRollback", ROLLBACK, undo_args, fresh, 4001 + 3 * (int)i },
+            { "RedoRollback", ROLLBACK, do_args, again, 4002 + 3 * (int)i },
+            { "Do", FORWARD, do_args, install, 4003 + 3 * (int)i },
+        };
+        for (size_t r = 0; r < sizeof rows / sizeof rows[0]; ++r) {
+            const char *name = kprintf(k, "RP_%s_%s", a->id, rows[r].suffix);
+            s_(&customaction, name); i_(&customaction, rows[r].type); s_(&customaction, run->key);
+            s_(&customaction, rows[r].args);
+            s_(&iexec, name); s_(&iexec, rows[r].cond); i_(&iexec, rows[r].seq);
+        }
     }
     static const struct { const char *action; const char *cond; int seq; } ui[] = {
         { "FindRelatedProducts", NULL, 25 }, { "RP_RefuseDowngrade", "RP_NEWER_FOUND", 30 },

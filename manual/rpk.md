@@ -61,6 +61,9 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
+| `[arp]` | no-modify, no-repair, help (URL), about (URL) - how the product shows in Installed apps |
+| `[property.ID]` | **value**, secure, hidden - an upper-case public property |
+| `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -69,6 +72,41 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
 dirs, files and features. Registry, shortcuts, services, dialogs and the rest are planned; their
 tables are refused with "not supported yet" until they are implemented.
+
+### Registering with an installed program: `[action.ID]`
+
+```toml
+[action.Tip]
+run = "file:MainExe"      # an .exe this package installs
+do = "--register"         # run after the files are installed, and again on repair
+undo = "--unregister"     # run on removal, before the files are removed
+```
+
+rubrapack turns the pair into deferred, elevated actions with their rollback twins, so removal and
+upgrade are all-or-nothing: if anything fails later (or `do`/`undo` itself exits non-zero), the
+files come back and the other command restores the registration. Both commands must be safe to run
+twice and must finish without asking anything - they run without a window, and nothing waits for a
+user. `check` names an optional command that exits 0 when the registration is in place.
+
+### Installed apps entry and properties
+
+`[arp]` sets how the product appears in Settings > Installed apps (`no-modify`, `no-repair`,
+`help`, `about`). `[property.NAME]` adds a public property; `secure = true` lets it reach the
+elevated part of the installation, `hidden = true` keeps its value out of logs. Names the installer
+or rubrapack set themselves (`ARP*`, `MSI*`, `RP_*`, `ALLUSERS`, `REBOOT`, ...) are refused.
+
+### Installing without a window
+
+Every package rubrapack builds installs, repairs, upgrades and uninstalls from the command line with
+no user interface:
+
+```text
+msiexec /i example.msi /qn /l*v install.log
+msiexec /x {ProductCode} /qn
+```
+
+Exit code 0 is success, 3010 success with a restart needed (rubrapack never restarts the machine
+itself), anything else a failure after which the machine is as before.
 
 ### Architectures and upgrade families
 

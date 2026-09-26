@@ -358,13 +358,13 @@ static bool known_folder(const char *s) {
 
 // ---- tables ----------------------------------------------------------------------------------
 
-static const char *const top_kinds[] = { "package", "define", NULL };
-static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", NULL };
+static const char *const top_kinds[] = { "package", "define", "arp", NULL };
+static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", NULL };
 static const char *const later_kinds[] = { "registry", "shortcut", "env", "ini", "service",
                                            "assoc", "protocol", "font", "permission", "require", "search",
-                                           "remove", "copy", "action", "arp", "ui", "ui-text", "msix",
+                                           "remove", "copy", "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
-static const char *const all_kinds[] = { "package", "define", "feature", "dir", "file", "files", "folder",
+static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
                                          "arp", "ui", "ui-text", "msix", "msix-app", "msix-extension", NULL };
@@ -937,6 +937,68 @@ static void parse_folder(ctx_t *c, const rp_ttable_t *t, rp_ir_folder_t *f) {
     if (f->name) target_name_ok(c, f->name, key_pos(t, "name"));
 }
 
+// Properties the tool writes itself, or that belong to the engine (RFC-0003 1).
+static bool tool_property(const char *s) {
+    static const char *const names[] = { "ALLUSERS", "REBOOT", "SECURECUSTOMPROPERTIES", "MSIHIDDENPROPERTIES",
+                                         "INSTALLLEVEL", "REMOVE", "REINSTALL", "ADDLOCAL", "TARGETDIR", "PRODUCTCODE",
+                                         "UPGRADECODE", NULL };
+    for (size_t k = 0; names[k]; ++k) {
+        if (strcmp(s, names[k]) == 0) return true;
+    }
+    return strncmp(s, "ARP", 3) == 0 || strncmp(s, "RP_", 3) == 0 || strncmp(s, "MSI", 3) == 0;
+}
+
+static void parse_arp(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "no-modify", "no-repair", "help", "about", "icon", NULL };
+    check_keys(c, t, keys);
+    c->ir->arp_no_modify = get_bool(c, t, "no-modify", false);
+    c->ir->arp_no_repair = get_bool(c, t, "no-repair", false);
+    c->ir->arp_help = get_str(c, t, "help", false, NULL);
+    c->ir->arp_about = get_str(c, t, "about", false, NULL);
+    if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1901", "icon is not supported yet (planned for P3)");
+}
+
+static void parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
+    static const char *const keys[] = { "value", "secure", "hidden", NULL };
+    check_keys(c, t, keys);
+    p->id = dup(c, t->id);
+    p->pos = t->pos;
+    bool upper = t->id[0] != '\0' && strlen(t->id) <= 72;
+    for (const char *s = t->id; *s; ++s) upper &= (*s >= 'A' && *s <= 'Z') || (*s >= '0' && *s <= '9') || *s == '_';
+    if (!upper || (t->id[0] >= '0' && t->id[0] <= '9')) {
+        ERR(c, t->pos, "RP1310", "property '%s' must be a public name: upper-case letters, digits and '_'", t->id);
+    } else if (tool_property(t->id)) {
+        ERR(c, t->pos, "RP1310", "property '%s' is set by rubrapack or the installer and cannot be defined here", t->id);
+    }
+    p->value = get_str(c, t, "value", true, NULL);
+    p->secure = get_bool(c, t, "secure", false);
+    p->hidden = get_bool(c, t, "hidden", false);
+}
+
+static void parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
+    static const char *const keys[] = { "run", "do", "undo", "check", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 40);            // leaves room for the RP_<ID>_<Suffix> keys (72)
+    a->id = dup(c, t->id);
+    a->pos = t->pos;
+    char *run = get_str(c, t, "run", true, NULL);
+    if (run) {
+        if (strncmp(run, "file:", 5) != 0 || run[5] == '\0') {
+            ERR(c, key_pos(t, "run"), "RP1311", "run must be \"file:<ID>\" naming a [file.*] of this package");
+        } else {
+            a->run_file = dup(c, run + 5);
+        }
+        rp_mem_free(c->alloc, run);
+    }
+    bool has_do = false, has_undo = false;
+    a->do_args = get_str(c, t, "do", false, &has_do);
+    a->undo_args = get_str(c, t, "undo", false, &has_undo);
+    a->check_args = get_str(c, t, "check", false, NULL);
+    if (!has_do || !has_undo) {
+        ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
+    }
+}
+
 // ---- cross checks --------------------------------------------------------------------------
 
 static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) {
@@ -1092,7 +1154,12 @@ static void cross_checks(ctx_t *c) {
             size_t len;
             if (rp_pal_read_file(c->alloc, f->source_path, (size_t)f->size, &data, &len) == PROVEN_OK) {
                 rp_pe_info_t pi;
-                if (rp_pe_read(data, len, &pi) != PROVEN_OK) {
+                proven_err_t pe_err = rp_pe_read(data, len, &pi);
+                if (pe_err == PROVEN_OK && pi.is_pe) {
+                    f->pe_machine = pi.machine;
+                    f->pe_is_dll = pi.is_dll;
+                }
+                if (pe_err != PROVEN_OK) {
                     ERR(c, f->pos, "RP1513", "'%s' looks like a program file (PE) but its headers or resources are damaged",
                         f->source);
                 } else if (pi.is_pe && !f->any_arch) {
@@ -1136,6 +1203,43 @@ static void cross_checks(ctx_t *c) {
             }
         }
     }
+    // Properties: not a dir/file/feature/folder ID (every directory is a property too).
+    for (size_t k = 0; k < ir->property_count; ++k) {
+        const rp_ir_property_t *p = &ir->properties[k];
+        if (find_dir(ir, p->id) || find_feature(ir, p->id)) {
+            ERR(c, p->pos, "RP1310", "property '%s' has the name of a dir or feature", p->id);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            if (strcmp(ir->properties[j].id, p->id) == 0) {
+                ERR(c, p->pos, "RP1301", "property '%s' is already defined (line %u)", p->id, (unsigned)ir->properties[j].pos.line);
+            }
+        }
+    }
+    // Actions: run names an exe of this package that the package's machines can start.
+    for (size_t k = 0; k < ir->action_count; ++k) {
+        const rp_ir_action_t *a = &ir->actions[k];
+        if (a->run_file == NULL) continue;
+        const rp_ir_file_t *f = NULL;
+        for (size_t j = 0; j < ir->file_count; ++j) {
+            if (strcmp(ir->files[j].id, a->run_file) == 0) f = &ir->files[j];
+        }
+        if (f == NULL) {
+            ERR(c, a->pos, "RP1311", "run: file '%s' is not a [file.*] of this package", a->run_file);
+            continue;
+        }
+        bool runs = f->pe_machine == RP_PE_I386 ||
+                    (f->pe_machine == RP_PE_AMD64 && ir->arch != RP_ARCH_X86) ||
+                    (f->pe_machine == RP_PE_ARM64 && ir->arch == RP_ARCH_ARM64);
+        if (f->pe_machine == 0 || f->pe_is_dll) {
+            ERR(c, a->pos, "RP1311", "run: '%s' is not a program (.exe)", f->source ? f->source : f->id);
+        } else if (!runs) {
+            ERR(c, a->pos, "RP1311", "run: '%s' (machine 0x%04X) cannot run on this package's machines", f->source, f->pe_machine);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            if (strcmp(ir->actions[j].id, a->id) == 0) ERR(c, a->pos, "RP1301", "action '%s' is already defined", a->id);
+        }
+    }
+
     for (size_t a = 0; folded && a < nf; ++a) {
         for (size_t b = a + 1; b < nf; ++b) {
             if (folded[a] && folded[b] && strcmp(folded[a], folded[b]) == 0) {
@@ -1153,6 +1257,8 @@ static void cross_checks(ctx_t *c) {
 
 // ---- build -----------------------------------------------------------------------------------
 
+static int cmp_str(const char *a, const char *b) { return strcmp(a ? a : "", b ? b : ""); }
+
 proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt, rp_ir_t *ir,
                          rp_srcdiags_t *diags) {
     if (doc == NULL || opt == NULL || ir == NULL || diags == NULL) return PROVEN_ERR_INVALID_ARG;
@@ -1161,7 +1267,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0;
+    const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
         if (!in_list(t->kind, all_kinds)) {
@@ -1190,6 +1297,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "dir") == 0) ++ndir;
         else if (strcmp(t->kind, "file") == 0) ++nfile;
         else if (strcmp(t->kind, "folder") == 0) ++nfolder;
+        else if (strcmp(t->kind, "property") == 0) ++nprop;
+        else if (strcmp(t->kind, "action") == 0) ++naction;
+        else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
     if (c.define) {
@@ -1205,9 +1315,17 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     } else {
         parse_package(&c, package);
     }
+    if (arp) parse_arp(&c, arp);
+    if (naction > 50) {         // the Undo pairs fill 3400..3499 (RFC-0003 2)
+        rp_pos_t top = { 1, 1 };
+        ERR(&c, top, "RP1313", "at most 50 [action.*] tables (this file has %zu)", naction);
+    }
 
     ir->features = rp_mem_alloc(alloc, nfeat + 1, sizeof *ir->features);
     ir->folders = rp_mem_alloc(alloc, nfolder, sizeof *ir->folders);
+    ir->properties = rp_mem_alloc(alloc, nprop + 1, sizeof *ir->properties);
+    ir->actions = rp_mem_alloc(alloc, naction + 1, sizeof *ir->actions);
+    if (ir->properties == NULL || ir->actions == NULL) c.nomem = true;
     (void)ndir;
     (void)nfile;
     if (ir->features == NULL || ir->folders == NULL) c.nomem = true;
@@ -1228,6 +1346,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_folder_t *f = &ir->folders[ir->folder_count++];
             memset(f, 0, sizeof *f);
             parse_folder(&c, t, f);
+        } else if (strcmp(t->kind, "property") == 0) {
+            rp_ir_property_t *p = &ir->properties[ir->property_count++];
+            memset(p, 0, sizeof *p);
+            parse_property(&c, t, p);
+        } else if (strcmp(t->kind, "action") == 0) {
+            rp_ir_action_t *a = &ir->actions[ir->action_count++];
+            memset(a, 0, sizeof *a);
+            parse_action(&c, t, a);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -1243,6 +1369,21 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         f->level = 1;
         f->hidden = true;
         f->implicit = true;
+    }
+    // Properties and actions in ID order: the output never depends on the order of tables.
+    for (size_t i = 1; !c.nomem && i < ir->property_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->properties[j - 1].id, ir->properties[j].id) > 0; --j) {
+            rp_ir_property_t t = ir->properties[j];
+            ir->properties[j] = ir->properties[j - 1];
+            ir->properties[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->action_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->actions[j - 1].id, ir->actions[j].id) > 0; --j) {
+            rp_ir_action_t t = ir->actions[j];
+            ir->actions[j] = ir->actions[j - 1];
+            ir->actions[j - 1] = t;
+        }
     }
     if (!c.nomem) cross_checks(&c);
     if (c.nomem) {
@@ -1290,6 +1431,19 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, f->name);
         rp_mem_free(a, f->feature);
     }
+    for (size_t k = 0; k < ir->property_count; ++k) {
+        rp_mem_free(a, ir->properties[k].id);
+        rp_mem_free(a, ir->properties[k].value);
+    }
+    for (size_t k = 0; k < ir->action_count; ++k) {
+        rp_ir_action_t *x = &ir->actions[k];
+        char *xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->properties);
+    rp_mem_free(a, ir->actions);
+    rp_mem_free(a, ir->arp_help);
+    rp_mem_free(a, ir->arp_about);
     rp_mem_free(a, ir->folders);
     rp_mem_free(a, ir->features);
     rp_mem_free(a, ir->dirs);
@@ -1307,7 +1461,6 @@ static void kv(rp_buf_t *b, const char *k, const char *v) {
     rp_buf_puts(b, v ? v : "-");
 }
 
-static int cmp_str(const char *a, const char *b) { return strcmp(a ? a : "", b ? b : ""); }
 
 proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **out, size_t *len) {
     static const char *const archs[] = { "x64", "arm64", "x86" };
@@ -1413,6 +1566,34 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
             rp_buf_byte(&b, '\n');
         }
         rp_mem_free(alloc, order);
+    }
+    // RFC-0003 items, only when present (older goldens stay as they are).
+    if (ir->arp_no_modify || ir->arp_no_repair || ir->arp_help || ir->arp_about) {
+        rp_buf_puts(&b, "arp");
+        kv(&b, "no-modify", ir->arp_no_modify ? "1" : "0");
+        kv(&b, "no-repair", ir->arp_no_repair ? "1" : "0");
+        kv(&b, "help", ir->arp_help);
+        kv(&b, "about", ir->arp_about);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->property_count; ++k) {
+        const rp_ir_property_t *p = &ir->properties[k];
+        rp_buf_puts(&b, "property ");
+        rp_buf_puts(&b, p->id);
+        kv(&b, "value", p->value);
+        kv(&b, "secure", p->secure ? "1" : "0");
+        kv(&b, "hidden", p->hidden ? "1" : "0");
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->action_count; ++k) {
+        const rp_ir_action_t *a = &ir->actions[k];
+        rp_buf_puts(&b, "action ");
+        rp_buf_puts(&b, a->id);
+        kv(&b, "run", a->run_file);
+        kv(&b, "do", a->do_args);
+        kv(&b, "undo", a->undo_args);
+        kv(&b, "check", a->check_args);
+        rp_buf_byte(&b, '\n');
     }
     return rp_buf_take(&b, out, len);
 }

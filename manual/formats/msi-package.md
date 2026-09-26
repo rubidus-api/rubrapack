@@ -97,6 +97,35 @@ works) conditioned on `NEWER_FOUND` stops the installation with error 1603 when 
 version is present. Every version needs a new `ProductCode` (and every package file a new package
 code).
 
+## Running an installed program to register and unregister
+
+Some products must register themselves (an input method, a shell extension) through their own
+program rather than through table rows. The pattern that keeps install, repair, upgrade and removal
+atomic uses the component action state of that program's component `C` (`$C` = what this
+installation does to it, `?C` = its state before; 2 absent, 3 local) [spec], with type 18 actions
+(`Source` = the program's File key, `Target` = its arguments), all deferred (0x400) and not
+impersonated (0x800):
+
+| Action | Type | Where | Condition | Runs |
+|---|---|---|---|---|
+| `…UndoRollback` | 18+0x100+0x400+0x800+0x40 | before `RemoveFiles` | `$C=2 AND ?C=3` | register (rollback of the next row) |
+| `…Undo` | 18+0x400+0x800 | after it, before `RemoveFiles` | `$C=2 AND ?C=3` | unregister |
+| `…DoRollback` | 18+0x100+0x400+0x800+0x40 | after `InstallFiles` | `$C>2 AND ?C<>3` | unregister |
+| `…RedoRollback` | same | after it | `$C>2 AND ?C=3` | register |
+| `…Do` | 18+0x400+0x800 | after both | `$C>2` | register |
+
+A rollback action must be sequenced *before* the action it undoes: rollback runs the script
+backwards, and only rollback actions already in the script are run. Rollback actions ignore their
+exit code (0x40); forward actions do not, so a failing register or unregister fails the
+installation and rolls it back. Observed on Windows 11: repair runs `…Do` again; a failing
+unregister rolls the removal back and the program (still present) registers again; when an upgrade
+fails, the new package's `…DoRollback` runs, then the old version's files return and the old
+package's own `…UndoRollback` registers the old program again. [observed]
+
+**Nothing that writes to the script may stand between `InstallInitialize` and
+`RemoveExistingProducts`**: with any deferred or rollback custom action there, every upgrade stops
+with error 2613 ("RemoveExistingProducts action sequenced incorrectly"). [observed]
+
 ## Sequences
 
 InstallExecuteSequence (conditions in brackets):
@@ -121,6 +150,6 @@ installation leaves no files and no registration.]
 
 ## What this recipe does not cover yet
 
-Registry, shortcuts, services, custom actions beyond the error type, dialogs, per-user and
+Registry, shortcuts, services, custom actions other than the error type and the register pair above, dialogs, per-user and
 dual-scope packages, administrative and advertised installation sequences, and `_Validation`
 (needed by validation tools, not by the installer). These pages grow as rubrapack implements them.

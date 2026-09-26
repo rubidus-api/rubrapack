@@ -45,6 +45,8 @@ typedef struct {
     char    *name;              // target file name
     uint64_t size;
     bool     any_arch, keep, vital;
+    uint16_t pe_machine;        // 0 when the file is not a PE program (checked in rp_ir_build)
+    bool     pe_is_dll;
     char    *feature;           // resolved (G2): never NULL
     char    *component_guid;    // user-fixed GUID or NULL
     rp_pos_t pos;
@@ -58,6 +60,23 @@ typedef struct {
     char    *feature;           // resolved (G2)
     rp_pos_t pos;
 } rp_ir_folder_t;
+
+typedef struct {
+    char    *id;                // public property name (upper case)
+    char    *value;
+    bool     secure, hidden;    // SecureCustomProperties / MsiHiddenProperties
+    rp_pos_t pos;
+} rp_ir_property_t;
+
+// A do/undo pair run from an installed exe (RFC-0003): `do` at install and repair, `undo` at
+// removal; the lowering adds conditions, order and rollback twins.
+typedef struct {
+    char    *id;
+    char    *run_file;          // file ID of the exe (from run = "file:ID")
+    char    *do_args, *undo_args;
+    char    *check_args;        // may be NULL
+    rp_pos_t pos;
+} rp_ir_action_t;
 
 typedef struct {
     // [package]
@@ -81,6 +100,13 @@ typedef struct {
     size_t           file_count;
     rp_ir_folder_t  *folders;
     size_t           folder_count;
+    rp_ir_property_t *properties;
+    size_t            property_count;
+    rp_ir_action_t   *actions;
+    size_t            action_count;
+    // [arp]
+    bool      arp_no_modify, arp_no_repair;
+    char     *arp_help, *arp_about;     // may be NULL
     proven_allocator_t alloc;
 } rp_ir_t;
 
