@@ -453,9 +453,18 @@ static char *escape_formatted(keep_t *k, const char *s) {
     return keep(k, (char *)out);
 }
 
+void rp_build_files_free(proven_allocator_t alloc, rp_build_file_t *files, size_t count) {
+    for (size_t i = 0; files && i < count; ++i) {
+        rp_mem_free(alloc, files[i].name);
+        rp_mem_free(alloc, files[i].data);
+    }
+    rp_mem_free(alloc, files);
+}
+
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
-                                  const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
+                                  const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
+                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm;
@@ -894,25 +903,57 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&createfolder, ckey);
     }
 
-    // Media and the cabinet
-    uint8_t *cab = NULL;
-    size_t cab_len = 0;
+    // Media and the cabinets: files in sequence order, a new cabinet when the next file would pass
+    // cab-max-size (a file larger than that gets a cabinet of its own). One Media row per cabinet.
     proven_err_t err = reg_bad ? PROVEN_ERR_INVALID_ARG : PROVEN_OK;
-    i_(&media, 1);
-    i_(&media, (int32_t)nfiles);
-    null_(&media);
-    if (nfiles) s_(&media, "#cab1.cab");
-    else null_(&media);
-    null_(&media);
-    null_(&media);
-    if (nfiles) {
-        rp_cab_file_t *cf = rp_mem_alloc(alloc, nfiles, sizeof *cf);
+    size_t ngroups = 0, *group_end = rp_mem_alloc(alloc, nfiles + 1, sizeof *group_end);
+    rp_msi_wstream_t *streams = rp_mem_alloc(alloc, nfiles + 1, sizeof *streams);
+    rp_build_file_t *ext = ir->cab_external ? rp_mem_alloc(alloc, nfiles + 1, sizeof *ext) : NULL;
+    if (group_end == NULL || streams == NULL || (ir->cab_external && ext == NULL)) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0, used = 0; err == PROVEN_OK && i < nfiles; ++i) {
+        if (ir->cab_max && used > 0 && used + files[i].size > ir->cab_max) {
+            group_end[ngroups++] = i;
+            used = 0;
+        }
+        used += files[i].size;
+    }
+    if (err == PROVEN_OK && nfiles) group_end[ngroups++] = nfiles;
+    if (nfiles == 0) {
+        i_(&media, 1); i_(&media, 0); null_(&media); null_(&media); null_(&media); null_(&media);
+    }
+    size_t nstreams = 0;
+    for (size_t g = 0, start = 0; err == PROVEN_OK && g < ngroups; start = group_end[g++]) {
+        char num[24];
+        snprintf(num, sizeof num, "%zu", g + 1);
+        const char *name = !ir->cab_external ? kprintf(k, "cab%s.cab", num, NULL)
+                           : ngroups == 1    ? kprintf(k, "%s.cab", cab_stem, NULL)
+                                             : kprintf(k, "%s-%s.cab", cab_stem, num);
+        i_(&media, (int32_t)(g + 1)); i_(&media, (int32_t)group_end[g]); null_(&media);
+        s_(&media, ir->cab_external ? name : kprintf(k, "#%s", name, NULL)); null_(&media); null_(&media);
+        size_t n = group_end[g] - start;
+        rp_cab_file_t *cf = rp_mem_alloc(alloc, n, sizeof *cf);
+        uint8_t *cab = NULL;
+        size_t cab_len = 0;
         if (cf == NULL) {
             err = PROVEN_ERR_NOMEM;
+            break;
+        }
+        for (size_t i = 0; i < n; ++i) cf[i] = (rp_cab_file_t){ files[start + i].key, files[start + i].data, files[start + i].size };
+        err = rp_cab_write(alloc, cf, n, ir->compress, limits, &cab, &cab_len);
+        rp_mem_free(alloc, cf);
+        if (err != PROVEN_OK) break;
+        if (ir->cab_external) {
+            size_t nl = strlen(name) + 1;
+            char *copy = rp_mem_alloc(alloc, nl, 1);
+            if (copy == NULL) {
+                rp_mem_free(alloc, cab);
+                err = PROVEN_ERR_NOMEM;
+                break;
+            }
+            memcpy(copy, name, nl);
+            ext[nstreams++] = (rp_build_file_t){ copy, cab, cab_len };
         } else {
-            for (size_t i = 0; i < nfiles; ++i) cf[i] = (rp_cab_file_t){ files[i].key, files[i].data, files[i].size };
-            err = rp_cab_write(alloc, cf, nfiles, ir->compress, limits, &cab, &cab_len);
-            rp_mem_free(alloc, cf);
+            streams[nstreams++] = (rp_msi_wstream_t){ name, cab, cab_len };
         }
     }
 
@@ -1087,20 +1128,38 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
             if (i < always || all[i]->t.row_count > 0) tables[nt++] = all[i]->t;
         }
-        rp_msi_wstream_t cabstream = { "cab1.cab", cab, cab_len };
-        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, &cabstream, nfiles ? 1 : 0 };
+        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, streams, ir->cab_external ? 0 : nstreams };
         err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
         if (err == PROVEN_OK) err = rp_msi_write(alloc, &db, 12, limits, out, len);
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
-    rp_mem_free(alloc, cab);
+    if (!ir->cab_external) {
+        for (size_t i = 0; i < nstreams; ++i) rp_mem_free(alloc, (void *)streams[i].data);
+    }
+    rp_mem_free(alloc, streams);
+    rp_mem_free(alloc, group_end);
     rp_mem_free(alloc, summary);
+    if (ir->cab_external) {
+        if (err == PROVEN_OK) {
+            *xcabs = ext;
+            *nxcabs = nstreams;
+        } else {
+            rp_build_files_free(alloc, ext, nstreams);
+        }
+    }
     return err;
 }
 
 proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_build_options_t *opt,
-                            const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
-    if (ir == NULL || opt == NULL || limits == NULL || out == NULL || len == NULL || diags == NULL) return PROVEN_ERR_INVALID_ARG;
+                            const rp_limits_t *limits, uint8_t **out, size_t *len,
+                            rp_build_file_t **cabs, size_t *cab_count, rp_srcdiags_t *diags) {
+    if (ir == NULL || opt == NULL || limits == NULL || out == NULL || len == NULL || cabs == NULL || cab_count == NULL ||
+        diags == NULL) {
+        return PROVEN_ERR_INVALID_ARG;
+    }
+    *cabs = NULL;
+    *cab_count = 0;
+    const char *stem = opt->cab_stem ? opt->cab_stem : "cab";
     keep_t k = { .alloc = alloc };
     dirs_t dirs = { .k = &k, .ir = ir };
     lfile_t *files = rp_mem_alloc(alloc, ir->file_count, sizeof *files);
@@ -1316,13 +1375,24 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
         if (opt->reproducible) {
             // First pass with a zero package code; the package code is derived from those bytes.
+            // External cabinets are part of the content: hash the package and every cabinet.
             uint8_t *first = NULL;
             size_t first_len = 0;
+            rp_build_file_t *fcabs = NULL;
+            size_t nfcabs = 0;
             err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code,
-                                "{00000000-0000-0000-0000-000000000000}", limits, &first, &first_len, diags);
+                                "{00000000-0000-0000-0000-000000000000}", limits, &first, &first_len, diags, stem,
+                                &fcabs, &nfcabs);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
+                for (size_t i = 0; i < nfcabs; ++i) {
+                    uint8_t both[2 * PROVEN_SHA256_SIZE];
+                    memcpy(both, d, PROVEN_SHA256_SIZE);
+                    proven_sha256((proven_mem_view_t){ fcabs[i].data, fcabs[i].len }, both + PROVEN_SHA256_SIZE);
+                    proven_sha256((proven_mem_view_t){ both, sizeof both }, d);
+                }
+                rp_build_files_free(alloc, fcabs, nfcabs);
                 char hex[65];
                 for (int i = 0; i < 32; ++i) snprintf(hex + 2 * i, 3, "%02x", d[i]);
                 const char *fields[] = { hex };
@@ -1335,7 +1405,8 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     }
     if (err == PROVEN_OK) {
         err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
-                            opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags);  // the first pass reported already
+                            opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
+                            stem, cabs, cab_count);
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,

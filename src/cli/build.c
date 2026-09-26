@@ -128,15 +128,43 @@ int rp_cmd_build(int argc, char **argv) {
         rp_mem_free(heap, text);
         if (err == PROVEN_OK) {
             rp_limits_t limits = rp_limits_default();
-            rp_build_options_t bopt = { reproducible };
+            // External cabinets are named after the package: <stem>.cab next to <stem>.msi.
+            char stem[512], cabpath[1536];
+            const char *base = strrchr(out, '/');
+#if defined(_WIN32)
+            const char *bs = strrchr(out, '\\');
+            if (bs && (!base || bs > base)) base = bs;
+#endif
+            base = base ? base + 1 : out;
+            snprintf(stem, sizeof stem, "%.*s", (int)(strlen(base) - 4), base);
+            size_t outdir = (size_t)(base - out);
+            rp_build_options_t bopt = { reproducible, stem };
             uint8_t *msi = NULL;
             size_t msi_len = 0;
-            err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &d);
+            rp_build_file_t *cabs = NULL;
+            size_t ncabs = 0;
+            err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
             rp_ir_free(&ir);
+            // RFC-0001 7.1: never overwrite part of an earlier multi-file output; cabinets first, the
+            // package last, so a package on disk always has its cabinets.
+            for (size_t i = 0; err == PROVEN_OK && i < ncabs; ++i) {
+                snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
+                uint64_t size = 0;
+                if (rp_pal_stat(heap, cabpath, &size) != RP_FS_NONE) {
+                    rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; remove it or build into another folder", cabpath);
+                    err = PROVEN_ERR_IO;
+                }
+            }
+            for (size_t i = 0; err == PROVEN_OK && i < ncabs; ++i) {
+                snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
+                err = rp_pal_write_file_atomic(heap, cabpath, cabs[i].data, cabs[i].len);
+                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", cabpath);
+            }
             if (err == PROVEN_OK) {
                 err = rp_pal_write_file_atomic(heap, out, msi, msi_len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             }
+            rp_build_files_free(heap, cabs, ncabs);
             rp_mem_free(heap, msi);
             rp_srcdiag_print(&d, src);
             rc = err == PROVEN_OK                  ? RP_EXIT_OK

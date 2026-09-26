@@ -223,6 +223,8 @@ typedef struct {
     char     *refuse_below;     // refuse-upgrade-below (versions below it are refused), or NULL
     char     *refuse_message;   // may be NULL
     int       compress;         // -1 none, 0-9 MSZIP level
+    bool      cab_external;     // cab = "external": cabinets next to the package
+    uint64_t  cab_max;          // cab-max-size in bytes of input per cabinet, 0 = one cabinet
 
     rp_ir_feature_t *features;
     size_t           feature_count;

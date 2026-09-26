@@ -14,13 +14,25 @@
 #include "rubrapack/srcdiag.h"
 
 typedef struct {
-    bool reproducible;      // package code from the content instead of random (RFC-0001 14.2)
+    bool        reproducible;   // package code from the content instead of random (RFC-0001 14.2)
+    const char *cab_stem;       // external cabinets are named <stem>.cab / <stem>-N.cab (cab = "external")
 } rp_build_options_t;
 
-// Reads every source file, then writes the MSI bytes to *out (free with rp_mem_free).
+// A file written next to the package (an external cabinet). Free with rp_build_files_free.
+typedef struct {
+    char    *name;
+    uint8_t *data;
+    size_t   len;
+} rp_build_file_t;
+
+void rp_build_files_free(proven_allocator_t alloc, rp_build_file_t *files, size_t count);
+
+// Reads every source file, then writes the MSI bytes to *out (free with rp_mem_free) and, with
+// cab = "external", the cabinets to *cabs (to be written next to the package before it).
 // Problems found while lowering (unreadable file, too many files, ...) go to `diags`, and so do
 // lint findings (rubrapack/lint.h), which return PROVEN_ERR_INVALID_STATE and write nothing.
 [[nodiscard]] proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_build_options_t *opt,
-                                          const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags);
+                                          const rp_limits_t *limits, uint8_t **out, size_t *len,
+                                          rp_build_file_t **cabs, size_t *cab_count, rp_srcdiags_t *diags);
 
 #endif // RUBRAPACK_BUILD_H

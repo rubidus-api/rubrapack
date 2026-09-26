@@ -444,7 +444,7 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "name", "summary-name", "manufacturer", "version", "arch", "upgrade-code",
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
-                                        "downgrade-message", "compress", "cab", "refuse-upgrade-below",
+                                        "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
                                         "refuse-upgrade-message", NULL };
     rp_ir_t *ir = c->ir;
     check_keys(c, t, keys);
@@ -583,11 +583,14 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
         rp_mem_free(c->alloc, comp);
     }
     char *cab = get_str(c, t, "cab", false, NULL);
-    if (cab && strcmp(cab, "embed") != 0) {
-        ERR(c, key_pos(t, "cab"), strcmp(cab, "external") == 0 ? "RP1901" : "RP1308",
-            "cab must be \"embed\" for now (external cabinets are planned for P3)");
+    if (cab && strcmp(cab, "external") == 0) {
+        ir->cab_external = true;
+    } else if (cab && strcmp(cab, "embed") != 0) {
+        ERR(c, key_pos(t, "cab"), "RP1308", "cab must be \"embed\" or \"external\"");
     }
     rp_mem_free(c->alloc, cab);
+    // Split: at most this many MiB of (uncompressed) files per cabinet; a larger file gets its own.
+    ir->cab_max = (uint64_t)get_int(c, t, "cab-max-size", 0, 1, 2047) << 20;
 }
 
 static void parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
