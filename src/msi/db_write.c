@@ -366,6 +366,17 @@ proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsi
         rp_mem_free(alloc, idx);
     }
 
+    for (size_t k = 0; err == PROVEN_OK && k < db->stream_count; ++k) {
+        out_stream_t *s = add_stream(&streams);
+        if (s == NULL) {
+            err = PROVEN_ERR_NOMEM;
+            break;
+        }
+        err = rp_msi_stream_name(db->streams[k].name, false, s->name, &s->name_len);
+        s->borrowed = db->streams[k].data;
+        s->size = db->streams[k].len;
+    }
+
     if (err == PROVEN_OK && db->summary != NULL) {
         out_stream_t *s = add_stream(&streams);
         if (s == NULL) {

@@ -31,11 +31,12 @@ ZIP/OPC, block map) is implemented in this repository from public specifications
 
 ## Status
 
-Early implementation. The Windows Installer database layer is in place: rubrapack reads and
-writes MSI files (compound file, string pool, tables, streams, summary information) and
-`rubrapack inspect <file.msi> [table|--summary|--streams]` prints tables in the IDT archive
-format. Building packages from a source file is not there yet; commands that are not built
-report "not implemented yet" and exit with status 2.
+Early implementation. `rubrapack build app.rpk -o app.msi` builds an installable MSI from a
+source file (files, folders, features, major upgrades with downgrade refusal; the cabinet is
+stored uncompressed for now), and `rubrapack inspect <file.msi> [table|--summary|--files|--streams]`
+prints any MSI's tables in the IDT archive format. The same source gives the same bytes on Linux
+and Windows with `--reproducible`. Commands that are not built yet report "not implemented yet"
+and exit with status 2.
 
 ## Text encoding
 

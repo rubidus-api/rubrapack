@@ -35,6 +35,7 @@
 
 // rubrapack sources shared by every platform.
 static const char *const core_sources[] = {
+    "src/cli/build.c",
     "src/cli/cli.c",
     "src/cli/inspect.c",
     "src/codec/md5.c",
@@ -46,9 +47,11 @@ static const char *const core_sources[] = {
     "src/core/limits.c",
     "src/core/srcdiag.c",
     "src/lang/toml.c",
+    "src/model/ident.c",
     "src/model/ir.c",
     "src/msi/db.c",
     "src/msi/db_write.c",
+    "src/msi/lower.c",
     "src/msi/suminfo.c",
     "src/text/utf.c",
 };
@@ -66,11 +69,14 @@ static const char *const win32_sources[] = {
 // The parts of proven_c_lib rubrapack links, relative to vendor/proven/.
 static const char *const proven_sources[] = {
     "src/proven/buffer.c",
+    "src/proven/hash.c",
     "src/proven/heap.c",
     "src/proven/memory.c",
+    "src/proven/random.c",
     "src/proven/u16str.c",
     "src/proven/u8str.c",
     "platform/proven_sys_mem.c",
+    "platform/proven_sys_random.c",
 };
 
 #define COUNT(a) (sizeof(a) / sizeof((a)[0]))

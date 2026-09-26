@@ -119,11 +119,19 @@ typedef struct {
 } rp_msi_wtable_t;
 
 typedef struct {
+    const char    *name;    // stream name before packing (e.g. "cab1.cab"); not a table
+    const uint8_t *data;
+    size_t         len;
+} rp_msi_wstream_t;
+
+typedef struct {
     uint32_t               codepage;    // string pool code page (65001)
     const rp_msi_wtable_t *tables;
     size_t                 table_count;
     const uint8_t         *summary;     // optional `\005SummaryInformation` stream bytes
     size_t                 summary_len;
+    const rp_msi_wstream_t *streams;    // other streams (embedded cabinets)
+    size_t                 stream_count;
 } rp_msi_wdb_t;
 
 // Writes a database (format notes F2; DECISIONS 2026-09-26 "P1b writer"): string ids sorted by

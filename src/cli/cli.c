@@ -21,8 +21,8 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [options]",
-                 "build a package from a source file", false },
+    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--reproducible]",
+                 "build a package from a source file", true },
     { "sign",    "sign <file> [signing options]", "sign an existing package or PE file", false },
     { "verify",  "verify <file> [--trust <cert>] [--system-roots]",
                  "check structure, digests, and signatures", false },
@@ -146,6 +146,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "version") == 0) return cmd_version(argc);
     if (strcmp(name, "help") == 0) return cmd_help(argc, argv);
     if (strcmp(name, "inspect") == 0) return rp_cmd_inspect(argc, argv);
+    if (strcmp(name, "build") == 0) return rp_cmd_build(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);
