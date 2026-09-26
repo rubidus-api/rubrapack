@@ -487,7 +487,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             err = PROVEN_ERR_NOMEM;
         } else {
             for (size_t i = 0; i < nfiles; ++i) cf[i] = (rp_cab_file_t){ files[i].key, files[i].data, files[i].size };
-            err = rp_cab_write(alloc, cf, nfiles, limits, &cab, &cab_len);
+            err = rp_cab_write(alloc, cf, nfiles, ir->compress, limits, &cab, &cab_len);
             rp_mem_free(alloc, cf);
         }
     }

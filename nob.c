@@ -38,6 +38,7 @@ static const char *const core_sources[] = {
     "src/cli/build.c",
     "src/cli/cli.c",
     "src/cli/inspect.c",
+    "src/codec/deflate.c",
     "src/codec/md5.c",
     "src/container/cab.c",
     "src/container/cfb.c",

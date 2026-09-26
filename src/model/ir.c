@@ -479,10 +479,6 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
         else ERR(c, key_pos(t, "compress"), "RP1308", "compress must be \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\"");
         rp_mem_free(c->alloc, comp);
     }
-    if (ir->compress >= 0) {
-        ERR(c, key_pos(t, "compress"), "RP1901",
-            "MSZIP compression is not implemented yet (later in P2); set compress = \"none\" for now");
-    }
     char *cab = get_str(c, t, "cab", false, NULL);
     if (cab && strcmp(cab, "embed") != 0) {
         ERR(c, key_pos(t, "cab"), strcmp(cab, "external") == 0 ? "RP1901" : "RP1308",
