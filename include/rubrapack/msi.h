@@ -24,7 +24,8 @@
 typedef struct {
     uint32_t offset;        // into the string data
     uint32_t length;        // bytes
-    uint16_t refcount;      // 0 = free id
+    uint16_t refcount;      // 0 = free id (low 15 bits of the pool word)
+    bool     non_ascii;     // pool word bit 15: the string has a byte >= 0x80
 } rp_msi_string_t;
 
 typedef struct {

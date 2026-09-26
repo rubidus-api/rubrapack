@@ -276,13 +276,14 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
         uint32_t length = rd16(pool + i);
         uint16_t refs = rd16(pool + i + 2);
         i += 4;
-        if (length == 0 && refs != 0) {     // long string: refcount carries 0x8000, u32 length follows
+        if (length == 0 && refs != 0) {     // long string: the u32 byte length follows
             length = rd32(pool + i);
-            refs &= 0x7FFF;
             i += 4;
-            if (refs == 0) FAIL(PROVEN_ERR_INVALID_FORMAT, "long string without references");
         }
-        msi->strings[id] = (rp_msi_string_t){ .offset = (uint32_t)offset, .length = length, .refcount = refs };
+        // Bit 15 of the reference word marks a string with non-ASCII bytes (format notes F2).
+        msi->strings[id] = (rp_msi_string_t){ .offset = (uint32_t)offset, .length = length,
+                                              .refcount = (uint16_t)(refs & 0x7FFF), .non_ascii = (refs & 0x8000) != 0 };
+        if (length != 0 && msi->strings[id].refcount == 0) FAIL(PROVEN_ERR_INVALID_FORMAT, "string without references");
         offset += length;
         if (offset > msi->string_data_len) FAIL(PROVEN_ERR_INVALID_FORMAT, "string lengths exceed the string data");
     }
