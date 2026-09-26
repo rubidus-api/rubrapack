@@ -7,6 +7,7 @@
 #include "rubrapack/build.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/ident.h"
+#include "rubrapack/lint.h"
 #include "rubrapack/md5.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
@@ -371,7 +372,7 @@ static char *escape_formatted(keep_t *k, const char *s) {
 
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
-                                  const rp_limits_t *limits, uint8_t **out, size_t *len) {
+                                  const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         createfolder;
     rows_init(&property, alloc, "Property", property_cols, 2);
@@ -602,7 +603,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) tables[i] = all[i]->t;
         rp_msi_wstream_t cabstream = { "cab1.cab", cab, cab_len };
         rp_msi_wdb_t db = { 65001, tables, sizeof all / sizeof all[0], summary, summary_len, &cabstream, nfiles ? 1 : 0 };
-        err = rp_msi_write(alloc, &db, 12, limits, out, len);
+        err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
+        if (err == PROVEN_OK) err = rp_msi_write(alloc, &db, 12, limits, out, len);
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
     rp_mem_free(alloc, cab);
@@ -755,7 +757,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             uint8_t *first = NULL;
             size_t first_len = 0;
             err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code,
-                                "{00000000-0000-0000-0000-000000000000}", limits, &first, &first_len);
+                                "{00000000-0000-0000-0000-000000000000}", limits, &first, &first_len, diags);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
@@ -770,10 +772,11 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
     }
     if (err == PROVEN_OK) {
-        err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len);
+        err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
+                            opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags);  // the first pass reported already
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
-        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP2001", true,
+        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
                        "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'");
     }
 

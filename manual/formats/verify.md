@@ -28,10 +28,36 @@ returns an error code:
 | repair | delete one installed file, `MsiReinstallProduct(ProductCode, ...)` | file back, same name |
 | upgrade | install version N+1 over N | old ProductCode gone, new one installed |
 | downgrade | install version N again | refused (1603, the log names your refusing action) |
+| features | `MsiQueryFeatureState`; `MsiConfigureFeature(..., INSTALLSTATE_LOCAL)` | levels above `INSTALLLEVEL` absent until turned on |
+| rollback | copy of version N+1 with a deferred custom action that fails after `InstallFiles` (type 34 + 1024, `"[SystemFolder]cmd.exe" /c exit 1`) and a new package code, installed over N | 1603 (log: error 1722); N still registered, its files unchanged |
 | uninstall | `MsiConfigureProduct(ProductCode, ..., INSTALLSTATE_ABSENT)` | 0; folders, keys and registration gone |
 
 Per-machine installs need an elevated process. Keep test products on their own UpgradeCodes and
 remove them in the same run.
+
+## Checks before writing
+
+`msi.dll` accepts many broken databases and only fails at install time, if at all (it does not
+even enforce column widths). A writer should check its own tables first. rubrapack's `build`
+refuses to write a package that breaks any of these (diagnostics `RP2001`-`RP2015`):
+
+- every cell has the column's kind; no null in a non-nullable column; strings no longer than the
+  column width, counted in UTF-16 units (a non-BMP character counts two), and valid UTF-8;
+  16-bit integers within -32767..32767 and 32-bit ones not -2147483648 (those values mean null);
+- no duplicate primary keys; references (`Component.Directory_`, `File.Component_`,
+  `FeatureComponents`, `CreateFolder`, `MsiFileHash.File_`, `Directory_Parent`, `Feature_Parent`)
+  point at existing rows; every sequence action is a standard action, a `CustomAction` or a
+  `Dialog`;
+- `ProductCode`, `ProductName`, `ProductVersion`, `Manufacturer`, `ProductLanguage` are present;
+  GUIDs are upper case in braces, component GUIDs are unique, ProductCode differs from UpgradeCode;
+- each `File.Sequence` is unique and covered by a `Media.LastSequence`;
+- standard actions keep their order (costing before `InstallValidate`, file actions between
+  `InstallInitialize` and `InstallFinalize`);
+- the 64-bit component attribute (256) matches the summary Template platform (`x64`/`Arm64` vs
+  `Intel`);
+- a file key path is a file of the same component;
+- each `Upgrade.ActionProperty` is upper case (public) and listed in `SecureCustomProperties` -
+  otherwise a per-machine install does not pass it to the server side.
 
 ## Things that look fine but are not
 

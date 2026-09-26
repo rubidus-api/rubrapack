@@ -89,13 +89,13 @@ a symbolic link, or the output file itself among the matches is an error.
 ### Empty folders: `[folder.ID]`
 
 Creates the folder `name` inside `dir` even when no file goes there. With `keep = true` the folder
-is meant to stay after uninstall (for data the program writes); this is not yet verified on
-Windows.
+stays after uninstall (for data the program writes).
 
 ### Features
 
 Without any `[feature.*]` table everything goes into one hidden feature. As soon as one feature is
-declared, every file needs one: its own `feature` key, or the `feature` of its dir.
+declared, every file needs one: its own `feature` key, or the `feature` of its dir. A feature with
+a `level` above 1 is not installed by default.
 
 ### Variables
 
@@ -134,5 +134,7 @@ rubrapack version | help [command]
   `--files` lists every file with its installed path.
 - Diagnostics look like `example.rpk:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you
   mean 'name'?)`.
+- Before writing, `build` checks the finished tables (`RP20xx` diagnostics, exit code 5); these
+  checks guard rubrapack itself, so a source that passes the `RP1xxx` checks should never meet them.
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.

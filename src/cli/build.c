@@ -139,7 +139,10 @@ int rp_cmd_build(int argc, char **argv) {
             }
             rp_mem_free(heap, msi);
             rp_srcdiag_print(&d, src);
-            rc = err == PROVEN_OK ? RP_EXIT_OK : (d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO);
+            rc = err == PROVEN_OK                  ? RP_EXIT_OK
+                 : err == PROVEN_ERR_INVALID_STATE ? RP_EXIT_LINT     // rp_msi_lint refused the tables
+                 : d.errors                        ? RP_EXIT_SOURCE
+                                                   : RP_EXIT_IO;
         } else {
             rp_srcdiag_print(&d, src);
             rc = err == PROVEN_ERR_INVALID_FORMAT ? RP_EXIT_SOURCE : RP_EXIT_IO;

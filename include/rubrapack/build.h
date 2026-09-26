@@ -18,7 +18,8 @@ typedef struct {
 } rp_build_options_t;
 
 // Reads every source file, then writes the MSI bytes to *out (free with rp_mem_free).
-// Problems found while lowering (unreadable file, too many files, ...) go to `diags`.
+// Problems found while lowering (unreadable file, too many files, ...) go to `diags`, and so do
+// lint findings (rubrapack/lint.h), which return PROVEN_ERR_INVALID_STATE and write nothing.
 [[nodiscard]] proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_build_options_t *opt,
                                           const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags);
 

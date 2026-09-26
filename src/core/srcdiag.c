@@ -36,8 +36,12 @@ void rp_srcdiag_print(const rp_srcdiags_t *d, const char *path) {
     char line[1024];
     for (size_t i = 0; i < d->count; ++i) {
         const rp_srcdiag_t *e = &d->items[i];
-        snprintf(line, sizeof line, "%s:%u:%u: %s[%s]: %s\n", path, (unsigned)e->pos.line, (unsigned)e->pos.col,
-                 e->warning ? "warning" : "error", e->code, e->msg);
+        if (e->pos.line == 0) {         // about the output as a whole, not a source line
+            snprintf(line, sizeof line, "%s: %s[%s]: %s\n", path, e->warning ? "warning" : "error", e->code, e->msg);
+        } else {
+            snprintf(line, sizeof line, "%s:%u:%u: %s[%s]: %s\n", path, (unsigned)e->pos.line, (unsigned)e->pos.col,
+                     e->warning ? "warning" : "error", e->code, e->msg);
+        }
         (void)rp_pal_puts(RP_OUT_STDERR, line);
     }
     if (d->dropped) {

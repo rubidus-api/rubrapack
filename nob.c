@@ -52,6 +52,7 @@ static const char *const core_sources[] = {
     "src/model/ir.c",
     "src/msi/db.c",
     "src/msi/db_write.c",
+    "src/msi/lint.c",
     "src/msi/lower.c",
     "src/msi/suminfo.c",
     "src/pe/pe.c",

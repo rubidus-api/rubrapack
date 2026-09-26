@@ -52,6 +52,9 @@ fourth part is allowed but ignored when versions are compared), `Manufacturer`, 
   same for the same resource at the same place for the life of the product (see
   [identity.md](identity.md)). `Attributes` 256 (64-bit) for x64 and Arm64 packages, 0 for x86.
 - A feature with `Level` 1; `Display` 0 hides it. Map every component in `FeatureComponents`.
+  A child feature names its parent in `Feature_Parent`. A feature whose `Level` is above
+  `INSTALLLEVEL` (1 unless the package sets it) is not installed by default; `MsiConfigureFeature`
+  can add it later, and its files then arrive. [observed]
 - `File.FileName` is `SHORT|Long` like DefaultDir. `Attributes` 512 marks the file vital.
   `Sequence` numbers 1..n are the order of the files inside the cabinet.
 - Files without a version resource need an **MsiFileHash** row: the MD5 of the file, read as four
@@ -64,8 +67,9 @@ fourth part is allowed but ignored when versions are compared), `Manufacturer`, 
 A folder that must exist without files gets its own Directory row, a component whose `Directory_`
 is that folder and whose `KeyPath` is null (the folder itself is the key path), a
 `CreateFolder` row pointing at both, and a `FeatureComponents` row. `CreateFolders` makes it at
-install time; `RemoveFolders` removes it at uninstall if it is empty. [observed] Component
-attribute 16 (permanent) should keep it after uninstall. [spec - not yet verified by installing]
+install time; `RemoveFolders` removes it at uninstall if it is empty. [observed] With component
+attribute 16 (permanent) the folder stays after uninstall while everything else is removed.
+[observed]
 
 ## Media and the cabinet
 
@@ -111,6 +115,9 @@ CostInitialize 800, FileCost 900, CostFinalize 1000, MigrateFeatureStates 1200, 
 
 `RemoveExistingProducts` right after `InstallInitialize` puts the removal of the old version
 inside the new installation's transaction, so a failed upgrade rolls back to the old version.
+[observed: a deferred custom action that fails right after `InstallFiles` makes the upgrade end
+with 1603, and the old version is registered again with its files byte for byte; a failed first
+installation leaves no files and no registration.]
 
 ## What this recipe does not cover yet
 
