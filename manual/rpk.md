@@ -81,7 +81,8 @@ a symbolic link, or the output file itself among the matches is an error.
 ### Empty folders: `[folder.ID]`
 
 Creates the folder `name` inside `dir` even when no file goes there. With `keep = true` the folder
-stays after uninstall (for data the program writes).
+is meant to stay after uninstall (for data the program writes); this is not yet verified on
+Windows.
 
 ### Features
 

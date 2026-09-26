@@ -64,8 +64,8 @@ fourth part is allowed but ignored when versions are compared), `Manufacturer`, 
 A folder that must exist without files gets its own Directory row, a component whose `Directory_`
 is that folder and whose `KeyPath` is null (the folder itself is the key path), a
 `CreateFolder` row pointing at both, and a `FeatureComponents` row. `CreateFolders` makes it at
-install time; `RemoveFolders` removes it at uninstall if it is empty. Component attribute 16
-(permanent) keeps it after uninstall.
+install time; `RemoveFolders` removes it at uninstall if it is empty. [observed] Component
+attribute 16 (permanent) should keep it after uninstall. [spec - not yet verified by installing]
 
 ## Media and the cabinet
 
