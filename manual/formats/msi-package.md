@@ -193,6 +193,30 @@ must be public and listed in `SecureCustomProperties` to reach the server side. 
 (**Condition**, Description formatted) at 100 in both sequences stops the installation with the
 description when a condition is false. [observed]
 
+## Services, fonts, permissions
+
+`ServiceInstall` (Name, DisplayName and Description formatted, ServiceType 0x10, StartType 2/3/4,
+ErrorControl 1, StartName null or `NT AUTHORITY\LocalService`, Arguments formatted, Component_ =
+the exe's component) with `InstallServices` (5800); `ServiceControl` Event flags 0x1 start on
+install, 0x2 stop on install, 0x20 stop on removal, 0x80 delete on removal, Wait 1, with
+`StopServices` (1900), `DeleteServices` (2000), `StartServices` (5900). `Font` (File_, FontTitle
+null = read from the font) with `RegisterFonts`/`UnregisterFonts`; the file must be in
+`FontsFolder` itself. `MsiLockPermissionsEx` (**MsiLockPermissionsEx**, LockObject, Table =
+`CreateFolder`, `File`, `Registry` or `ServiceInstall`, **SDDLText** (the column name), Condition)
+needs Windows Installer 5.0 (summary page count 500); a folder gets it through a CreateFolder row.
+A failed installation leaves no service or font. [observed]
+
+## Cabinets, administrative images, advertisement
+
+Several cabinets: one `Media` row each (DiskId 1..n, LastSequence = the last file's sequence in
+it); embedded ones are streams named in `Cabinet` with `#`, external ones are files next to the
+package named in `Cabinet` without `#` (long names work). `AdminExecuteSequence` (CostInitialize
+800, FileCost 900, CostFinalize 1000, InstallValidate 1400, InstallInitialize 1500,
+InstallAdminPackage 3900, InstallFiles 4000, InstallFinalize 6600) and `AdminUISequence` make
+`msiexec /a` write an uncompressed image that installs like the original; `AdvtExecuteSequence`
+(CostInitialize, CostFinalize, InstallValidate, InstallInitialize, PublishFeatures 6300,
+PublishProduct 6400, InstallFinalize) makes `msiexec /jm` advertise the product. [observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

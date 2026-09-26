@@ -54,7 +54,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed`), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
@@ -69,13 +69,17 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**, **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
+| `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
+| `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "Fonts"`), title |
+| `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
-`StartMenu`, `Programs`, `Desktop`, `Windows`, `System`, `Fonts`, `Temp`.
+`StartMenu`, `Programs`, `Desktop`, `Startup`, `Windows`, `System`, `Fonts`, `Temp`. A path may
+also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
 dirs, files and features. Registry, shortcuts, services, dialogs and the rest are planned; their
@@ -172,8 +176,26 @@ condition = "FOUND_TOOL"
 message = "[ProductName] needs tool.exe."
 ```
 
+### Services, fonts and permissions
+
+`[service.ID]` installs a service run by an `.exe` of the package: it is stopped before its files
+change and at uninstall, deleted at uninstall, and started after installation with
+`start-on-install = true`. `[font.ID]` registers a font file that the package installs into the
+Fonts folder; without `title` Windows reads the name from the TrueType/OpenType file.
+`[permission.ID]` sets an SDDL security descriptor on a folder the package creates, one of its
+files, or a registry value it writes (this raises the package to Windows Installer 5.0).
+
+### Cabinets
+
+Files are compressed into one cabinet embedded in the package. `cab-max-size = N` starts a new
+cabinet after N MiB of files; `cab = "external"` writes the cabinets next to the package as
+`<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it. rubrapack never
+overwrites an existing cabinet and writes the package last. Every package also carries the
+administrative (`msiexec /a`, an uncompressed network image) and advertisement (`msiexec /jm`)
+sequences.
+
 Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
-environment `value`, INI `value`, requirement `message`, and later service arguments. Everywhere else rubrapack
+environment `value`, INI `value`, requirement `message`, service `args`. Everywhere else rubrapack
 writes the text exactly as given.
 
 ### Installed apps entry and properties

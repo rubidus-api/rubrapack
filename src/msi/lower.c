@@ -207,7 +207,7 @@ static const rp_msi_wcolumn_t svccontrol_cols[] = { { "ServiceControl", KEY_S(72
                                                     { "Arguments", S_N(255) }, { "Wait", I2_N }, { "Component_", S(72) } };
 static const rp_msi_wcolumn_t font_cols[] = { { "File_", KEY_S(72) }, { "FontTitle", S_N(128) } };
 static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_S(72) }, { "LockObject", S(72) },
-                                                  { "Table", S(32) }, { "SDDL", S(0) }, { "Condition", S_N(255) } };
+                                                  { "Table", S(32) }, { "SDDLText", S(0) }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -466,7 +466,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
+        aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
@@ -480,6 +480,9 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&customaction, alloc, "CustomAction", customaction_cols, 4);
     rows_init(&iexec, alloc, "InstallExecuteSequence", sequence_cols, 3);
     rows_init(&iui, alloc, "InstallUISequence", sequence_cols, 3);
+    rows_init(&aexec, alloc, "AdminExecuteSequence", sequence_cols, 3);
+    rows_init(&aui, alloc, "AdminUISequence", sequence_cols, 3);
+    rows_init(&advt, alloc, "AdvtExecuteSequence", sequence_cols, 3);
     rows_init(&createfolder, alloc, "CreateFolder", createfolder_cols, 2);
     rows_init(&registry, alloc, "Registry", registry_cols, 6);
     rows_init(&removereg, alloc, "RemoveRegistry", removereg_cols, 5);
@@ -501,10 +504,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
-                      &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
+                      &upgrade, &customaction, &iexec, &iui, &createfolder, &aexec, &aui, &advt, &registry, &removereg, &shortcut,
                       &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
                       &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm };
-    const size_t always = 13;
+    const size_t always = 16;
 
     // Property
     char version3[24];
@@ -801,7 +804,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         null_(&svcinstall); null_(&svcinstall);
         s_(&svcinstall, accounts[x->account]); null_(&svcinstall);
         s_(&svcinstall, x->args); s_(&svcinstall, exe->comp);
-        s_(&svcinstall, x->description);                                    // Text, not formatted
+        s_(&svcinstall, x->description ? escape_formatted(k, x->description) : NULL);   // formatted (observed)
         int event = 0x2 | 0x20 | 0x80 | (x->start_on_install ? 0x1 : 0);         // stop (both), delete (remove), start
         s_(&svccontrol, x->id); s_(&svccontrol, name); i_(&svccontrol, event); null_(&svccontrol);
         i_(&svccontrol, 1); s_(&svccontrol, exe->comp);
@@ -1085,6 +1088,29 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     };
     for (size_t i = 0; i < sizeof ui / sizeof ui[0]; ++i) {
         s_(&iui, ui[i].action); s_(&iui, ui[i].cond); i_(&iui, ui[i].seq);
+    }
+    // Administrative installation (msiexec /a: an uncompressed network image) and advertisement
+    // (msiexec /jm), from MS Learn "Suggested AdminExecuteSequence / AdvtExecuteSequence" (RFC-0001
+    // 9.1, P3). None of the package's own actions run there.
+    static const struct { const char *action; int seq; } admin_exec[] = {
+        { "CostInitialize", 800 }, { "FileCost", 900 }, { "CostFinalize", 1000 }, { "InstallValidate", 1400 },
+        { "InstallInitialize", 1500 }, { "InstallAdminPackage", 3900 }, { "InstallFiles", 4000 }, { "InstallFinalize", 6600 },
+    };
+    for (size_t i = 0; i < sizeof admin_exec / sizeof admin_exec[0]; ++i) {
+        s_(&aexec, admin_exec[i].action); null_(&aexec); i_(&aexec, admin_exec[i].seq);
+    }
+    static const struct { const char *action; int seq; } admin_ui[] = {
+        { "CostInitialize", 800 }, { "FileCost", 900 }, { "CostFinalize", 1000 }, { "ExecuteAction", 1300 },
+    };
+    for (size_t i = 0; i < sizeof admin_ui / sizeof admin_ui[0]; ++i) {
+        s_(&aui, admin_ui[i].action); null_(&aui); i_(&aui, admin_ui[i].seq);
+    }
+    static const struct { const char *action; int seq; } advt_exec[] = {
+        { "CostInitialize", 800 }, { "CostFinalize", 1000 }, { "InstallValidate", 1400 }, { "InstallInitialize", 1500 },
+        { "PublishFeatures", 6300 }, { "PublishProduct", 6400 }, { "InstallFinalize", 6600 },
+    };
+    for (size_t i = 0; i < sizeof advt_exec / sizeof advt_exec[0]; ++i) {
+        s_(&advt, advt_exec[i].action); null_(&advt); i_(&advt, advt_exec[i].seq);
     }
 
     // Summary information: ASCII strings only, no code page (DECISIONS P1a/P1b).
