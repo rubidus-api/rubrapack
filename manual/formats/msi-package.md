@@ -32,8 +32,9 @@ files.
 
 `ProductCode`, `ProductName`, `ProductVersion` (`a.b.c`, a and b up to 255, c up to 65535; a
 fourth part is allowed but ignored when versions are compared), `Manufacturer`, `ProductLanguage`
-(1033, 1042, ...), `UpgradeCode`, `ALLUSERS=1` (per machine), `REBOOT=ReallySuppress`, and
-`SecureCustomProperties` listing the two upgrade properties below.
+(1033, 1042, ...), `UpgradeCode`, `ALLUSERS=1` (per machine), `REBOOT=ReallySuppress`,
+`MSIRESTARTMANAGERCONTROL=Disable` (see "Files in use" below), and `SecureCustomProperties` listing
+the two upgrade properties below.
 
 ## Directory
 
@@ -125,6 +126,21 @@ package's own `…UndoRollback` registers the old program again. [observed]
 **Nothing that writes to the script may stand between `InstallInitialize` and
 `RemoveExistingProducts`**: with any deferred or rollback custom action there, every upgrade stops
 with error 2613 ("RemoveExistingProducts action sequenced incorrectly"). [observed]
+
+## Files in use
+
+When a file to be replaced or removed is held by a running program (a DLL loaded into it):
+
+- With Restart Manager, the default, Windows Installer tries to **shut down every program holding
+  such a file, even in a silent installation** (`/qn`), and restarts it afterwards; if one does not
+  close, the whole installation fails (1601). [observed]
+- With `MSIRESTARTMANAGERCONTROL=Disable` in the Property table, the engine moves the held file
+  aside (`C:\Config.Msi\*.rbf`), puts the new file in place at once and returns 0; the program keeps
+  running on the old copy, programs started afterwards load the new file, and the old copy is
+  deleted at the next restart. [observed]
+- A property given on the command line reaches only the package being installed. During an
+  upgrade, the removal of the old version follows **the old package's** Property table - author
+  the property from the first version on. [observed]
 
 ## Sequences
 

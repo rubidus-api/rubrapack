@@ -415,6 +415,11 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     s_(&property, "UpgradeCode"); s_(&property, ir->upgrade_code);
     s_(&property, "ALLUSERS"); s_(&property, "1");
     if (ir->reboot_suppress) { s_(&property, "REBOOT"); s_(&property, "ReallySuppress"); }
+    // Never close the user's programs to free a file (RFC-0003 X4): at /qn Restart Manager shuts
+    // down every process holding a file, and fails the installation if one does not close. It is
+    // authored here, not passed on the command line, so the old package's removal inside an
+    // upgrade obeys it too (observed).
+    s_(&property, "MSIRESTARTMANAGERCONTROL"); s_(&property, "Disable");
     // [arp] and [property.*] (RFC-0003 1). Secure and hidden properties are listed for the engine.
     if (ir->arp_no_modify) { s_(&property, "ARPNOMODIFY"); s_(&property, "1"); }
     if (ir->arp_no_repair) { s_(&property, "ARPNOREPAIR"); s_(&property, "1"); }
