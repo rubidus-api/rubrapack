@@ -264,7 +264,8 @@ PublishProduct 6400, InstallFinalize 6600
 ```
 
 InstallUISequence: FindRelatedProducts 25, the refuse-downgrade action 30 [NEWER_FOUND],
-CostInitialize 800, FileCost 900, CostFinalize 1000, MigrateFeatureStates 1200, ExecuteAction 1300.
+CostInitialize 800, FileCost 900, CostFinalize 1000, MigrateFeatureStates 1200, ExecuteAction 1300
+(and the dialogs, see [Dialogs](#dialogs)).
 
 `RemoveExistingProducts` right after `InstallInitialize` puts the removal of the old version
 inside the new installation's transaction, so a failed upgrade rolls back to the old version.
@@ -272,8 +273,52 @@ inside the new installation's transaction, so a failed upgrade rolls back to the
 with 1603, and the old version is registered again with its files byte for byte; a failed first
 installation leaves no files and no registration.]
 
+## Dialogs
+
+A package with dialogs carries these tables (types as above):
+
+| Table | Columns |
+|---|---|
+| Dialog | **Dialog** s72, HCentering i2, VCentering i2, Width i2, Height i2, Attributes I4, Title L128, Control_First s50, Control_Default S50, Control_Cancel S50 |
+| Control | **Dialog_** s72, **Control** s50, Type s20, X i2, Y i2, Width i2, Height i2, Attributes I4, Property S72, Text L0, Control_Next S50, Help L50 |
+| ControlEvent | **Dialog_** s72, **Control_** s50, **Event** s50, **Argument** s255, **Condition** S255, Ordering I2 |
+| ControlCondition | **Dialog_** s72, **Control_** s50, **Action** s50, **Condition** s255 |
+| EventMapping | **Dialog_** s72, **Control_** s50, **Event** s50, Attribute s50 |
+| TextStyle | **TextStyle** s72, FaceName s32, Size i2, Color I4, StyleBits I2 |
+| UIText | **Key** s72, Text L255 |
+| Binary | **Name** s72, Data v0 (a stream) |
+
+What the engine checks when it shows a dialog (each seen as an error dialog carrying the number):
+
+- **Tab order.** `Control_Next` must form one cycle through every control that has one, starting
+  at `Control_First`. A chain that leaves a control out, or ends at a control whose `Control_Next`
+  is empty, stops the installation with 2810 or 2809. Static text takes no part in the cycle.
+  [observed] rubrapack checks every dialog it builds and refuses to write a broken one (RP0010).
+- **The error dialog.** The dialog named by the `ErrorDialog` property needs a `Text` control
+  named `ErrorText` and an `Icon` control named `ErrorIcon` (2835 otherwise); its Attributes carry
+  the error-dialog bit (0x10000), and push buttons named `A`, `C`, `I`, `N`, `O`, `R`, `Y` with
+  `EndDialog` arguments `ErrorAbort` .. `ErrorYes` are shown as the message needs. [observed]
+- **Brackets in texts.** `Text` is a formatted string: `[Next]` is read as a property and shows as
+  nothing. [observed] Quote button names in running text instead.
+- **Elevation.** A per-machine installation started interactively by a non-elevated user asks for
+  consent (UAC) when the execute sequence starts, on the secure desktop. [observed]
+- **Code page.** With the database code page 65001, Korean titles, texts and RTF license text show
+  correctly under a Korean and under an English (1252) system locale. [observed, see
+  [msi-database.md](msi-database.md#code-page)]
+
+rubrapack's sets: every dialog is 370 x 270 dialog units with a banner strip (a `Bitmap` control
+0,0,370,44 whose picture is `Binary.RpBanner`), the title in bold (`{\RpTitle}`, a TextStyle) and a
+line of description in it, a `Line` at 44 and at 234, and Back / Next / Cancel at y 243. The
+InstallUISequence adds the welcome (1230, `NOT Installed`) or the maintenance dialog (1240,
+`Installed AND NOT RESUME AND NOT Preselected`), the progress dialog (1280, modeless, subscribed to
+`ActionText` and `SetProgress` through EventMapping) and the three exit dialogs at -1 (success), -2
+(cancelled) and -3 (fatal). The install folder dialog puts the folder's Directory key in a
+`PathEdit`, and its Next runs `SetTargetPath` before `NewDialog`, which checks the path. The
+license text is a `ScrollableText` control holding RTF: plain text becomes `\uN?` escapes
+(characters above U+FFFF as a surrogate pair), one `\par` per line.
+
 ## What this recipe does not cover yet
 
-Registry, shortcuts, services, custom actions other than the error type and the register pair above, dialogs, per-user and
-dual-scope packages, administrative and advertised installation sequences, and `_Validation`
-(needed by validation tools, not by the installer). These pages grow as rubrapack implements them.
+Custom actions other than the error type, the register pair and the REG_QWORD helper above;
+author-defined dialogs; and `_Validation` (needed by validation tools, not by the installer). These
+pages grow as rubrapack implements them.

@@ -28,6 +28,7 @@ enum {
 #define RP_DIAG_INPUT           "RP0007"
 #define RP_DIAG_BAD_PACKAGE     "RP0008"
 #define RP_DIAG_NO_TABLE        "RP0009"
+#define RP_DIAG_INTERNAL        "RP0010"   // a check of rubrapack's own output failed: a bug to report
 
 // MinGW checks `printf` formats against the MS runtime, which rejects %zu; the UCRT that
 // rubrapack links accepts C99 formats, so check against GNU rules there.

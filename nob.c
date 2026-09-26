@@ -60,6 +60,7 @@ static const char *const core_sources[] = {
     "src/msi/lint.c",
     "src/msi/lower.c",
     "src/msi/suminfo.c",
+    "src/msi/ui.c",
     "src/pe/pe.c",
     "src/text/utf.c",
 };

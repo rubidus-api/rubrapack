@@ -193,6 +193,12 @@ typedef struct {
 } rp_ir_copy_t;
 
 typedef struct {
+    char    *id;                // a text ID of the dialog sets (rp_ui_text_known)
+    char    *text;              // formatted
+    rp_pos_t pos;
+} rp_ir_ui_text_t;
+
+typedef struct {
     char    *id;                // public property name (upper case)
     char    *value;
     bool     secure, hidden;    // SecureCustomProperties / MsiHiddenProperties
@@ -260,6 +266,14 @@ typedef struct {
     size_t            service_count;
     rp_ir_font_t     *fonts;
     size_t            font_count;
+    // P4 dialogs (RFC-0005)
+    int               ui;                   // RP_UI_* (rubrapack/ui.h)
+    char             *license_source;       // path to open (joined with the .rpk directory), or NULL
+    char             *license_shown;        // as written
+    char             *banner_source;        // [ui] banner BMP, or NULL
+    char             *ui_install_dir;       // [ui] install-dir (dir ID), or NULL
+    rp_ir_ui_text_t  *ui_texts;
+    size_t            ui_text_count;
     rp_ir_permission_t *permissions;
     size_t            permission_count;
     // [arp]

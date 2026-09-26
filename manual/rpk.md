@@ -54,7 +54,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
@@ -74,6 +74,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`) |
+| `[ui-text.ID]` | **text** - replaces one built-in dialog text |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
@@ -82,8 +84,8 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
-dirs, files and features. Registry, shortcuts, services, dialogs and the rest are planned; their
-tables are refused with "not supported yet" until they are implemented.
+dirs, files and features. Tables that are planned but not implemented yet (`[dialog.ID]`, the MSIX
+tables) are refused with "not supported yet".
 
 ### Registering with an installed program: `[action.ID]`
 
@@ -230,6 +232,49 @@ msiexec /x {ProductCode} /qn
 
 Exit code 0 is success, 3010 success with a restart needed (rubrapack never restarts the machine
 itself), anything else a failure after which the machine is as before.
+
+### Dialogs: `ui`
+
+`ui` in `[package]` picks one of the built-in dialog sets. Without it (`none`) the package shows
+only Windows Installer's own progress bar.
+
+| `ui` | Installing | Already installed |
+|---|---|---|
+| `basic` | progress, then finished (or error) | progress, finished |
+| `minimal` | welcome, the license if there is one, progress, finished | repair or remove |
+| `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | repair or remove |
+| `features` | as `installdir`, plus a feature tree and the disk space it needs | repair or remove |
+
+Every set also has the cancel question, the error dialog, the files-in-use list and the
+out-of-disk-space warning. The dialogs only collect values that all have defaults, so `/qn` still
+installs without a window.
+
+```toml
+[package]
+ui = "installdir"
+license = "LICENSE.txt"           # the Install/Next button stays disabled until it is accepted
+language = "ko-KR"                # the built-in texts are Korean for ko-KR, English otherwise
+
+[ui]
+install-dir = "APPDIR"            # the dir the user may change (default INSTALLDIR)
+banner = "banner.bmp"             # the strip at the top; about 493 x 58 pixels
+
+[ui-text.WelcomeText]
+text = "This will install [ProductName]. Close other programs first."
+```
+
+A `.txt` or `.md` license is shown as plain text (Korean, emoji and any other characters are kept);
+an `.rtf` license is used as it is. Without `banner` the strip is plain white. `[ui-text.ID]`
+replaces one text; the texts are MSI formatted strings, so `[ProductName]` is replaced and a literal
+`[` is written `[\[]`. The IDs are: `Back`, `Next`, `Cancel`, `Install`, `Finish`, `OK`, `Yes`, `No`,
+`Retry`, `Ignore`, `Abort`, `Exit`, `Browse`, `WelcomeTitle`, `WelcomeText`, `LicenseTitle`,
+`LicenseText`, `LicenseAccept`, `DirTitle`, `DirText`, `DirLabel`, `BrowseTitle`, `BrowseText`,
+`BrowseLookIn`, `BrowseFolder`, `BrowseUp`, `BrowseNew`, `CustomizeTitle`, `CustomizeText`,
+`Reset`, `DiskCost`, `DiskCostTitle`, `DiskCostText`, `ReadyTitle`, `ReadyText`, `ProgressTitle`,
+`ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`, `UserExitTitle`, `UserExitText`,
+`FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`, `OutOfDiskTitle`,
+`OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`. In
+button texts `&` marks the access key (`&Next` is Alt+N).
 
 ### Architectures and upgrade families
 

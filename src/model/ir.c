@@ -7,6 +7,7 @@
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
 #include "rubrapack/text.h"
+#include "rubrapack/ui.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -359,12 +360,13 @@ static bool known_folder(const char *s) {
 
 // ---- tables ----------------------------------------------------------------------------------
 
-static const char *const top_kinds[] = { "package", "define", "arp", NULL };
+static const char *const top_kinds[] = { "package", "define", "arp", "ui", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
-                                          "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission", NULL };
+                                          "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
+                                          "ui-text", NULL };
 static const char *const later_kinds[] = {
                                            "assoc", "protocol",
-                                           "ui", "ui-text", "msix",
+                                           "msix",
                                            "msix-app", "msix-extension", NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
@@ -556,11 +558,17 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     }
 
     char *ui = get_str(c, t, "ui", false, NULL);
-    if (ui && strcmp(ui, "none") != 0) {
-        ERR(c, key_pos(t, "ui"), "RP1901", "ui \"%s\" is not supported yet (planned for P4); use \"none\"", ui);
+    static const char *const sets[] = { "none", "basic", "minimal", "installdir", "features" };
+    for (int k = 0; ui && k < 5; ++k) {
+        if (strcmp(ui, sets[k]) == 0) {
+            ir->ui = k;
+            rp_mem_free(c->alloc, ui);
+            ui = NULL;
+        }
     }
+    if (ui) ERR(c, key_pos(t, "ui"), "RP1316", "ui must be none, basic, minimal, installdir or features (got '%s')", ui);
     rp_mem_free(c->alloc, ui);
-    if (find_key(t, "license")) ERR(c, key_pos(t, "license"), "RP1901", "license is not supported yet (planned for P4)");
+    ir->license_shown = get_str(c, t, "license", false, NULL);      // checked in ui_checks (RFC-0005 K3)
     if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1901", "icon is not supported yet (planned for P3)");
 
     ir->reboot_suppress = true;
@@ -1499,6 +1507,68 @@ static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     e->feature = get_str(c, t, "feature", false, NULL);
 }
 
+// ---- dialogs (RFC-0005) ------------------------------------------------------------------------
+
+static bool source_path_ok(ctx_t *c, const char *s, rp_pos_t pos);
+static char *join(ctx_t *c, const char *a, const char *b);
+
+static bool ends_with_ci(const char *s, const char *suffix) {
+    size_t n = strlen(s), m = strlen(suffix);
+    if (n < m) return false;
+    for (size_t k = 0; k < m; ++k) {
+        char a = s[n - m + k];
+        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
+        if (a != suffix[k]) return false;
+    }
+    return true;
+}
+
+// A source file named by a key (license, banner): relative, existing, a regular file.
+static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
+    if (!source_path_ok(c, shown, pos)) return NULL;
+    char *path = join(c, c->opt->source_dir, shown);
+    uint64_t size = 0;
+    if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
+        ERR(c, pos, "RP1509", "cannot read '%s'", shown);
+        rp_mem_free(c->alloc, path);
+        return NULL;
+    }
+    return path;
+}
+
+static void parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
+    static const char *const keys[] = { "text", NULL };
+    check_keys(c, t, keys);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    x->text = get_str(c, t, "text", true, NULL);
+    if (!rp_ui_text_known(t->id)) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", t->id);
+}
+
+static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
+    rp_ir_t *ir = c->ir;
+    if (ir->license_shown) {
+        rp_pos_t pos = key_pos(pkg, "license");
+        if (ir->ui == 0 || ir->ui == 1) ERR(c, pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
+        else if (!ends_with_ci(ir->license_shown, ".txt") && !ends_with_ci(ir->license_shown, ".rtf") && !ends_with_ci(ir->license_shown, ".md")) {
+            ERR(c, pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
+        } else {
+            ir->license_source = ui_source(c, ir->license_shown, pos);
+        }
+    }
+    if (uit == NULL) return;
+    static const char *const keys[] = { "banner", "install-dir", NULL };
+    check_keys(c, uit, keys);
+    if (ir->ui == 0) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package]");
+    char *banner = get_str(c, uit, "banner", false, NULL);
+    if (banner) {
+        if (!ends_with_ci(banner, ".bmp")) ERR(c, key_pos(uit, "banner"), "RP1316", "banner must be a .bmp file (Windows Installer shows BMP only)");
+        else ir->banner_source = ui_source(c, banner, key_pos(uit, "banner"));
+        rp_mem_free(c->alloc, banner);
+    }
+    ir->ui_install_dir = get_str(c, uit, "install-dir", false, NULL);
+}
+
 // ---- cross checks --------------------------------------------------------------------------
 
 static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) {
@@ -1779,6 +1849,23 @@ static void cross_checks(ctx_t *c) {
             }
         }
     }
+    // Dialogs: the folder the user may change is a dir of this package (default: INSTALLDIR).
+    if (ir->ui >= 3) {
+        const char *d = ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR";
+        if (!find_dir(ir, d)) {
+            rp_pos_t top = { 1, 1 };
+            ERR(c, top, "RP1315", "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)",
+                ir->ui == 3 ? "installdir" : "features", d);
+        }
+    }
+    if (ir->ui == 4) {
+        bool any = false;
+        for (size_t k = 0; k < ir->feature_count; ++k) any |= !ir->features[k].implicit;
+        if (!any) {
+            rp_pos_t top = { 1, 1 };
+            ERR(c, top, "RP1316", "ui = \"features\" needs [feature.*] tables to choose from");
+        }
+    }
     // Permissions: the target exists, once per target; a registry target must write a value.
     for (size_t k = 0; k < ir->permission_count; ++k) {
         rp_ir_permission_t *x = &ir->permissions[k];
@@ -1965,7 +2052,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0;
+    const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
@@ -2008,6 +2096,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "service") == 0) ++nsvc;
         else if (strcmp(t->kind, "font") == 0) ++nfont;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
+        else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
+        else if (strcmp(t->kind, "ui") == 0) uit = t;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
     (void)item_kinds;
@@ -2045,6 +2135,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->services = rp_mem_alloc(alloc, nsvc + 1, sizeof *ir->services);
     ir->fonts = rp_mem_alloc(alloc, nfont + 1, sizeof *ir->fonts);
     ir->permissions = rp_mem_alloc(alloc, nperm + 1, sizeof *ir->permissions);
+    ir->ui_texts = rp_mem_alloc(alloc, nuitext + 1, sizeof *ir->ui_texts);
+    if (ir->ui_texts == NULL) c.nomem = true;
     if (ir->services == NULL || ir->fonts == NULL || ir->permissions == NULL) c.nomem = true;
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
         ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL || ir->requires == NULL ||
@@ -2123,6 +2215,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_permission_t *x = &ir->permissions[ir->permission_count++];
             memset(x, 0, sizeof *x);
             parse_permission(&c, t, x);
+        } else if (strcmp(t->kind, "ui-text") == 0) {
+            rp_ir_ui_text_t *x = &ir->ui_texts[ir->ui_text_count++];
+            memset(x, 0, sizeof *x);
+            parse_ui_text(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -2229,6 +2325,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_registry_t t = ir->registries[j];
             ir->registries[j] = ir->registries[j - 1];
             ir->registries[j - 1] = t;
+        }
+    }
+    if (!c.nomem && package) ui_checks(&c, uit, package);
+    for (size_t i = 1; !c.nomem && i < ir->ui_text_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->ui_texts[j - 1].id, ir->ui_texts[j].id) > 0; --j) {
+            rp_ir_ui_text_t t = ir->ui_texts[j];
+            ir->ui_texts[j] = ir->ui_texts[j - 1];
+            ir->ui_texts[j - 1] = t;
         }
     }
     if (!c.nomem) cross_checks(&c);
@@ -2352,6 +2456,13 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->permissions);
+    for (size_t k = 0; k < ir->ui_text_count; ++k) {
+        rp_mem_free(a, ir->ui_texts[k].id);
+        rp_mem_free(a, ir->ui_texts[k].text);
+    }
+    rp_mem_free(a, ir->ui_texts);
+    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir };
+    for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
@@ -2395,6 +2506,12 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     snprintf(num, sizeof num, "%d", ir->compress);
     kv(&b, "compress", ir->compress < 0 ? "none" : num);
     if (ir->scope) kv(&b, "scope", ir->scope == 1 ? "user" : "dual");      // only when set: older goldens stay
+    if (ir->ui) {
+        static const char *const sets[] = { "none", "basic", "minimal", "installdir", "features" };
+        kv(&b, "ui", sets[ir->ui]);
+        kv(&b, "license", ir->license_shown);
+        kv(&b, "install-dir", ir->ui_install_dir);
+    }
     if (ir->cab_external || ir->cab_max) {
         kv(&b, "cab", ir->cab_external ? "external" : "embed");
         snprintf(num, sizeof num, "%llu", (unsigned long long)(ir->cab_max >> 20));
@@ -2566,6 +2683,12 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "target", x->target);
         kv(&b, "sddl", x->sddl);
         kv(&b, "feature", x->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->ui_text_count; ++k) {
+        rp_buf_puts(&b, "ui-text ");
+        rp_buf_puts(&b, ir->ui_texts[k].id);
+        kv(&b, "text", ir->ui_texts[k].text);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->font_count; ++k) {

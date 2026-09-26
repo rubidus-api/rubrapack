@@ -68,8 +68,9 @@ The database code page is the pool header's low bits: 0 when never set, otherwis
 through the `_ForceCodepage` import. **65001 (UTF-8) works for every table** on current Windows:
 Korean, Japanese and supplementary-plane (e.g. U+20000, U+1F600) file and folder names, registry
 keys and values, shortcut names and the product name all install with exactly the right UTF-16
-text, and built-in dialogs display them. A UTF-16 code page (1200) is not possible here: the pool
-holds single-byte-unit strings. [observed]
+text, and dialogs display them - also under a system locale whose ANSI code page cannot hold
+Korean (en-US, 1252), so no separate Unicode setup program is needed. A UTF-16 code page (1200) is
+not possible here: the pool holds single-byte-unit strings. [observed]
 
 ## System tables
 

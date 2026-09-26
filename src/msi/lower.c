@@ -16,6 +16,7 @@
 #include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
+#include "rubrapack/ui.h"
 #include "rubrapack/version.h"
 
 #include <stdio.h>
@@ -1148,13 +1149,13 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             s_(&iexec, name); s_(&iexec, rows[r].cond); i_(&iexec, rows[r].seq);
         }
     }
-    static const struct { const char *action; const char *cond; int seq; } ui[] = {
+    static const struct { const char *action; const char *cond; int seq; } ui_rows[] = {
         { "FindRelatedProducts", NULL, 25 }, { "RP_RefuseDowngrade", "RP_NEWER_FOUND", 30 },
         { "CostInitialize", NULL, 800 }, { "FileCost", NULL, 900 }, { "CostFinalize", NULL, 1000 },
         { "MigrateFeatureStates", NULL, 1200 }, { "ExecuteAction", NULL, 1300 },
     };
-    for (size_t i = 0; i < sizeof ui / sizeof ui[0]; ++i) {
-        s_(&iui, ui[i].action); s_(&iui, ui[i].cond); i_(&iui, ui[i].seq);
+    for (size_t i = 0; i < sizeof ui_rows / sizeof ui_rows[0]; ++i) {
+        s_(&iui, ui_rows[i].action); s_(&iui, ui_rows[i].cond); i_(&iui, ui_rows[i].seq);
     }
     // Administrative installation (msiexec /a: an uncompressed network image) and advertisement
     // (msiexec /jm), from MS Learn "Suggested AdminExecuteSequence / AdvtExecuteSequence" (RFC-0001
@@ -1178,6 +1179,51 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     };
     for (size_t i = 0; i < sizeof advt_exec / sizeof advt_exec[0]; ++i) {
         s_(&advt, advt_exec[i].action); null_(&advt); i_(&advt, advt_exec[i].seq);
+    }
+
+    // Dialog sets (RFC-0005): the tables come from ui.c; its Property, InstallUISequence and Binary
+    // rows join ours.
+    rp_ui_t *ui = NULL;
+    uint8_t *lic = NULL, *rtf = NULL, *banner = NULL;
+    size_t lic_len = 0, rtf_len = 0, banner_len = 0;
+    if (ir->ui != RP_UI_NONE && err == PROVEN_OK) {
+        if (ir->license_source) {
+            err = rp_pal_read_file(alloc, ir->license_source, 1u << 22, &lic, &lic_len);
+            if (err == PROVEN_OK) {
+                size_t n = strlen(ir->license_source);
+                bool is_rtf = n > 4 && (ir->license_source[n - 1] | 32) == 'f' && (ir->license_source[n - 2] | 32) == 't' &&
+                              (ir->license_source[n - 3] | 32) == 'r' && ir->license_source[n - 4] == '.';
+                if (is_rtf) {
+                    rtf = lic;
+                    rtf_len = lic_len;
+                    lic = NULL;
+                } else {
+                    err = rp_ui_text_to_rtf(alloc, lic, lic_len, ir->language == 1042, &rtf, &rtf_len);
+                }
+            }
+        }
+        if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &banner, &banner_len);
+        if (err == PROVEN_OK) {
+            rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), rtf, rtf_len, banner, banner_len };
+            err = rp_ui_build(alloc, ir, &in, &ui);
+            if (err == PROVEN_ERR_INVALID_STATE)    // ui.c's own check of its tab orders: our bug, not the input's
+                rp_diag_error(RP_DIAG_INTERNAL, "internal error: a built-in dialog has a broken tab order; please report it");
+        }
+        for (size_t i = 0; ui && i < ui->prop_count; ++i) {
+            if (ui->props[i].value) { s_(&property, ui->props[i].name); s_(&property, ui->props[i].value); }
+        }
+        for (size_t i = 0; ui && i < ui->seq_count; ++i) {
+            s_(&iui, ui->seqs[i].action); s_(&iui, ui->seqs[i].condition); i_(&iui, ui->seqs[i].sequence);
+        }
+        for (size_t t = 0; ui && t < ui->table_count; ++t) {      // ui's Binary rows into ours
+            const rp_msi_wtable_t *wt = &ui->tables[t];
+            if (strcmp(wt->name, "Binary") != 0) continue;
+            for (size_t r = 0; r < wt->row_count; ++r) {
+                const rp_msi_cell_t *c0 = &wt->cells[r * 2], *c1 = &wt->cells[r * 2 + 1];
+                s_(&binary, (const char *)c0->bytes);          // a NUL-terminated literal in ui.c
+                b_(&binary, c1->bytes, c1->len);
+            }
+        }
     }
 
     // Summary information: ASCII strings only, no code page (DECISIONS P1a/P1b).
@@ -1216,10 +1262,13 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
     if (err == PROVEN_OK && nomem) err = PROVEN_ERR_NOMEM;
     if (err == PROVEN_OK) {
-        rp_msi_wtable_t tables[sizeof all / sizeof all[0]];
+        rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 8];
         size_t nt = 0;
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
             if (i < always || all[i]->t.row_count > 0) tables[nt++] = all[i]->t;
+        }
+        for (size_t t = 0; ui && t < ui->table_count; ++t) {
+            if (strcmp(ui->tables[t].name, "Binary") != 0) tables[nt++] = ui->tables[t];
         }
         rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, streams, ir->cab_external ? 0 : nstreams };
         err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
@@ -1231,6 +1280,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
     rp_mem_free(alloc, streams);
     rp_mem_free(alloc, group_end);
+    rp_ui_free(alloc, ui);
+    rp_mem_free(alloc, lic);
+    rp_mem_free(alloc, rtf);
+    rp_mem_free(alloc, banner);
     rp_mem_free(alloc, summary);
     if (ir->cab_external) {
         if (err == PROVEN_OK) {
