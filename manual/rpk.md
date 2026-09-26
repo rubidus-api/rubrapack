@@ -115,7 +115,10 @@ replace an installed file.
 Source paths are relative to the `.rpk` file and use `/`. Absolute paths, `\`, symbolic links and
 missing files are errors. Target names may use any Unicode text except what Windows forbids
 (`< > : " / \ | ? *`, control characters, trailing dot or space, device names such as `CON`), and two
-names in one folder may not differ only by letter case.
+names in one folder may not differ only by letter case. Windows Installer stores a name together
+with its 8.3 short name in 255 UTF-16 units, so a long name may use only what the short name
+leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name without one
+(NTFS would accept 255). A longer name is refused with RP1514.
 
 ## Command line
 

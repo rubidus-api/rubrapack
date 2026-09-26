@@ -14,6 +14,7 @@
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
+#include "rubrapack/text.h"
 #include "rubrapack/version.h"
 
 #include <stdio.h>
@@ -175,6 +176,7 @@ typedef struct {
     char *logical;          // stable path text used for derived keys
     char *long_name;        // NULL for TARGETDIR and standard folders
     char *short_name;
+    rp_pos_t pos;           // the [dir.*] or [folder.*] that made it (for diagnostics)
 } dnode_t;
 
 typedef struct {
@@ -205,7 +207,7 @@ static dnode_t *add_node(dirs_t *d, char *key, char *parent, char *logical, char
         d->cap = ncap;
     }
     dnode_t *n = &d->v[d->count++];
-    *n = (dnode_t){ key, parent, logical, long_name, NULL };
+    *n = (dnode_t){ key, parent, logical, long_name, NULL, { 0, 0 } };
     return n;
 }
 
@@ -343,6 +345,15 @@ typedef struct {
     uint8_t            *data;
     size_t              size;
 } lfile_t;
+
+// `SHORT|Long` (or Long alone when it is its own short name) must fit a 255-wide column. Returns
+// 0 when it fits, else the long name's length; *most is the longest name that would fit.
+static size_t name_cell_excess(const char *short_name, const char *long_name, size_t *most) {
+    rp_text_result_t a = rp_utf8_to_utf16((const uint8_t *)long_name, strlen(long_name), NULL, 0);
+    size_t extra = strcmp(short_name, long_name) != 0 ? strlen(short_name) + 1 : 0;   // ASCII short name and '|'
+    *most = 255 - extra;
+    return a.err == PROVEN_OK && a.units + extra <= 255 ? 0 : a.units;
+}
 
 static int cmp_keys(const lfile_t *a, const lfile_t *b) { return strcmp(a->key, b->key); }
 
@@ -665,10 +676,10 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                 key = derived;
             }
             if (find_node(&dirs, key) == NULL) add_node(&dirs, kdup(&k, key), (char *)parent, logical, name);
+            if (find_node(&dirs, key) && find_node(&dirs, key)->pos.line == 0) find_node(&dirs, key)->pos = d->pos;
             parent = find_node(&dirs, key) ? find_node(&dirs, key)->key : parent;
             p = next ? next : p + strlen(p);
         }
-        (void)d;
     }
 
     // Folders to create are directory nodes below their dir.
@@ -683,6 +694,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             break;
         }
         add_node(&dirs, kdup(&k, f->id), kdup(&k, f->dir), kprintf(&k, "%s/%s", parent_logical, f->name), kdup(&k, f->name));
+        if (find_node(&dirs, f->id)) find_node(&dirs, f->id)->pos = f->pos;
     }
 
     // Files: keys, components, contents.
@@ -739,6 +751,24 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
         assign_short(&k, s, m);
         rp_mem_free(alloc, s);
+    }
+
+    // File.FileName and Directory.DefaultDir hold `SHORT|Long` in 255 UTF-16 units, so a long name
+    // that NTFS accepts can still not fit; say so at the source line (lint would only see the cell).
+    for (size_t i = 0, units, most; err == PROVEN_OK && i < ir->file_count; ++i) {
+        if ((units = name_cell_excess(files[i].short_name, files[i].f->name, &most)) != 0) {
+            rp_srcdiag_add(diags, files[i].f->pos, "RP1514", false,
+                           "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+            err = PROVEN_ERR_INVALID_FORMAT;
+        }
+    }
+    for (size_t i = 0, units, most; err == PROVEN_OK && i < dirs.count; ++i) {
+        const dnode_t *n = &dirs.v[i];
+        if (n->long_name && n->short_name && (units = name_cell_excess(n->short_name, n->long_name, &most)) != 0) {
+            rp_srcdiag_add(diags, n->pos, "RP1514", false,
+                           "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu", units, most);
+            err = PROVEN_ERR_INVALID_FORMAT;
+        }
     }
 
     // Identity.
