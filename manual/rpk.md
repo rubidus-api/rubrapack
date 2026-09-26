@@ -110,12 +110,14 @@ name = "InstallDir"               # omit it for the key's default value
 value = "[INSTALLDIR]"            # an MSI formatted string: [PROPERTY], [#FileID], [\[] for "["
 ```
 
-`type` is `string` (default), `expand`, `dword` (an integer, 0 to 0xFFFFFFFF), `binary` (hex
-digits) or `multi` (an array of strings). Each value is its own component, removed at uninstall
+`type` is `string` (default), `expand`, `dword` (an integer, 0 to 0xFFFFFFFF), `qword` (an
+integer, or `"0x"` and up to 16 hex digits), `binary` (hex digits) or `multi` (an array of strings).
+Windows Installer cannot write REG_QWORD itself; rubrapack adds its small helper DLL to the package
+for it, which also restores the previous value if the installation fails. Each value is its own component, removed at uninstall
 (`keep = true` leaves it); `with = "file:ID"` puts it in that file's component instead. In a 64-bit
 package values go to the 64-bit registry view; `view = "32"` writes to the 32-bit view.
 `remove = true` (without `value`) deletes the named value - or the whole key when `name` is
-omitted - during installation. `HKCU` waits for per-user packages; `qword` for a later helper.
+omitted - during installation.
 
 ### Shortcuts: `[shortcut.ID]`
 

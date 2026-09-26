@@ -9,6 +9,7 @@
 #include "rubrapack/text.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct {
@@ -1093,18 +1094,14 @@ static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) 
     if (r->with_file && r->feature) ERR(c, key_pos(t, "feature"), "RP1316", "a value that goes 'with' a file takes that file's feature");
 
     char *type = get_str(c, t, "type", false, NULL);
-    static const char *const types[] = { "string", "expand", "dword", "binary", "multi" };
+    static const char *const types[] = { "string", "expand", "dword", "binary", "multi", "qword" };
     r->type = RP_REG_STRING;
     if (type) {
         bool known = false;
-        for (int k = 0; k < 5; ++k) {
+        for (int k = 0; k < 6; ++k) {
             if (strcmp(type, types[k]) == 0) r->type = (rp_reg_type_t)k, known = true;
         }
-        if (!known) {
-            ERR(c, key_pos(t, "type"), strcmp(type, "qword") == 0 ? "RP1901" : "RP1316",
-                strcmp(type, "qword") == 0 ? "qword needs the helper action, which is not supported yet (planned for P3)"
-                                           : "type must be string, expand, dword, binary or multi (got '%s')", type);
-        }
+        if (!known) ERR(c, key_pos(t, "type"), "RP1316", "type must be string, expand, dword, qword, binary or multi (got '%s')", type);
         rp_mem_free(c->alloc, type);
     }
     const rp_tkey_t *v = find_key(t, "value");
@@ -1118,6 +1115,24 @@ static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) 
     }
     char num[24];
     switch (r->type) {
+    case RP_REG_QWORD:              // an integer, or "0x" and up to 16 hex digits for values past 2^63
+        if (v->val.kind == RP_TV_INT && v->val.i >= 0) {
+            snprintf(num, sizeof num, "%016llX", (unsigned long long)v->val.i);
+        } else if (v->val.kind == RP_TV_STRING && v->val.str[0] == '0' && (v->val.str[1] | 32) == 'x' && v->val.len > 2 && v->val.len <= 18) {
+            bool ok = true;
+            for (size_t k = 2; k < v->val.len; ++k) ok &= is_hex(v->val.str[k]);
+            if (!ok) {
+                ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
+                return;
+            }
+            unsigned long long q = strtoull(v->val.str + 2, NULL, 16);
+            snprintf(num, sizeof num, "%016llX", q);
+        } else {
+            ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
+            return;
+        }
+        r->value = dup(c, num);
+        return;
     case RP_REG_DWORD:
         if (v->val.kind != RP_TV_INT || v->val.i < 0 || v->val.i > 0xFFFFFFFFll) {
             ERR(c, v->pos, "RP1316", "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)");
@@ -2505,7 +2520,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_byte(&b, '\n');
     }
     static const char *const roots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };     // index root + 1
-    static const char *const rtypes[] = { "string", "expand", "dword", "binary", "multi" };
+    static const char *const rtypes[] = { "string", "expand", "dword", "binary", "multi", "qword" };
     for (size_t k = 0; k < ir->registry_count; ++k) {
         const rp_ir_registry_t *r = &ir->registries[k];
         rp_buf_puts(&b, "registry ");

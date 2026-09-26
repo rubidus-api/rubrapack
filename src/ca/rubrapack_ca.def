@@ -1,0 +1,5 @@
+LIBRARY rubrapack_ca
+EXPORTS
+    RpQwordPrepare
+    RpQwordApply
+    RpQwordRollback

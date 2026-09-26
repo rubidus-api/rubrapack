@@ -61,7 +61,7 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_folder_t;
 
-typedef enum { RP_REG_STRING, RP_REG_EXPAND, RP_REG_DWORD, RP_REG_BINARY, RP_REG_MULTI } rp_reg_type_t;
+typedef enum { RP_REG_STRING, RP_REG_EXPAND, RP_REG_DWORD, RP_REG_BINARY, RP_REG_MULTI, RP_REG_QWORD } rp_reg_type_t;
 typedef enum { RP_ROOT_HKMU = -1, RP_ROOT_HKCR = 0, RP_ROOT_HKCU = 1, RP_ROOT_HKLM = 2 } rp_reg_root_t;
 
 // [registry.ID] (RFC-0004): one value (or, with remove, a value or key removed at install).
@@ -71,7 +71,8 @@ typedef struct {
     char         *key;          // literal
     char         *name;         // literal; NULL = the key's default value
     rp_reg_type_t type;
-    char         *value;        // string/expand: formatted text; dword: decimal; binary: hex digits
+    char         *value;        // string/expand: formatted text; dword: decimal; binary: hex digits;
+                                // qword: 16 hex digits (written by the helper DLL, RFC-0001 9.6)
     char        **items;        // multi: formatted strings
     size_t        item_count;
     bool          remove, keep, view32;

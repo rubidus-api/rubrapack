@@ -5,6 +5,14 @@
 - `vendor/proven/`: proven_c_lib v0.1.1, MIT License, same author. Its own `LICENSE` and
   notices travel with the copy; `vendor/proven/VENDORED.md` records the snapshot.
 
+## Prebuilt helper DLLs
+
+`resources/bin/rubrapack_ca-{x64,x86,arm64}.dll` are built from `src/ca/` by `./nob parts` with
+llvm-mingw 20260922 (LLVM, Apache-2.0 with LLVM exception; mingw-w64 runtime, permissive licenses:
+its startup code and import libraries are linked into the DLLs). They import only Windows
+components (kernel32, advapi32, msi and the Universal CRT). `resources/bin/SHA256SUMS` lists their
+hashes; the same toolchain rebuilds them byte for byte.
+
 ## Clean-room statement
 
 rubrapack is MIT-licensed and its implementation is original. The formats it reads and

@@ -142,6 +142,13 @@ The component's 64-bit attribute (256) chooses the registry view: without it, a 
 writes to the 32-bit view (`WOW6432Node`). A 32-bit component in a 64-bit package is legal; a
 64-bit component in a 32-bit package is not.
 
+REG_QWORD cannot be expressed in the Registry table. rubrapack writes it with a DLL custom action
+from the `Binary` table (type 1): an immediate action reads the component action states and the
+current values and passes two lists as `CustomActionData` - one to a deferred action that writes
+or deletes, one to its rollback twin that restores what was there. The DLL's bitness must match
+the package (the engine loads it into a custom action server of the package's architecture).
+[observed: x64 and x86]
+
 ## Shortcuts
 
 `Shortcut` (**Shortcut** s72, Directory_ s72, Name l128 `SHORT|Long` without `.lnk`, Component_ s72,

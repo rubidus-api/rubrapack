@@ -12,6 +12,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/parts.h"
 #include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
@@ -122,6 +123,14 @@ static void i_(rows_t *r, int32_t v) {
 
 static void null_(rows_t *r) { (void)next_cell(r); }
 
+static void b_(rows_t *r, const uint8_t *data, size_t len) {  // binary (stream) cell
+    rp_msi_cell_t *c = next_cell(r);
+    if (c == NULL) return;
+    c->kind = RP_MSI_BINARY;
+    c->bytes = data;
+    c->len = len;
+}
+
 static void rows_finish(rows_t *r) {
     r->t.cells = r->cells;
     r->t.row_count = r->t.column_count ? r->filled / r->t.column_count : 0;
@@ -208,6 +217,7 @@ static const rp_msi_wcolumn_t svccontrol_cols[] = { { "ServiceControl", KEY_S(72
 static const rp_msi_wcolumn_t font_cols[] = { { "File_", KEY_S(72) }, { "FontTitle", S_N(128) } };
 static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_S(72) }, { "LockObject", S(72) },
                                                   { "Table", S(32) }, { "SDDLText", S(0) }, { "Condition", S_N(255) } };
+static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -467,7 +477,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
-        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm;
+        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -502,11 +512,12 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&svccontrol, alloc, "ServiceControl", svccontrol_cols, 6);
     rows_init(&font, alloc, "Font", font_cols, 2);
     rows_init(&lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
+    rows_init(&binary, alloc, "Binary", binary_cols, 2);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &aexec, &aui, &advt, &registry, &removereg, &shortcut,
                       &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
-                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm };
+                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm, &binary };
     const size_t always = 16;
 
     // Property
@@ -631,7 +642,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
 
     // [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
-    bool any_write = false, any_remove = false, reg_bad = false;
+    bool any_write = false, any_remove = false, reg_bad = false, any_qword = false;
+    const char *qplan = "RPQ1";
     for (size_t i = 0; i < ir->registry_count; ++i) {
         const rp_ir_registry_t *r = &ir->registries[i];
         const char *ckey = NULL;
@@ -649,13 +661,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             const char *fields[] = { ir->upgrade_code, "machine", r->view32 ? "x86" : arch_text(ir->arch), logical, "registry", r->id };
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
             ckey = kdup(k, comp);
-            int32_t attr = (r->remove ? 0 : 4) | (ir->arch != RP_ARCH_X86 && !r->view32 ? 256 : 0) | (r->keep ? 16 : 0);
+            bool keypath = !r->remove && r->type != RP_REG_QWORD;     // a qword has no Registry row
+            int32_t attr = (keypath ? 4 : 0) | (ir->arch != RP_ARCH_X86 && !r->view32 ? 256 : 0) | (r->keep ? 16 : 0);
             s_(&component, ckey);
             s_(&component, kdup(k, guid));
             s_(&component, "TARGETDIR");
             i_(&component, attr);
             null_(&component);
-            if (r->remove) null_(&component);
+            if (!keypath) null_(&component);
             else s_(&component, r->id);
             s_(&featurecomp, r->feature);
             s_(&featurecomp, ckey);
@@ -673,8 +686,23 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             any_remove = true;
             continue;
         }
+        if (r->type == RP_REG_QWORD) {      // RFC-0001 9.6: the helper DLL writes it (RP_QWORDS plan)
+            static const char *const proots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };
+            const char *fields[] = { proots[r->root + 1], r->view32 || ir->arch == RP_ARCH_X86 ? "32" : "64", r->key,
+                                     r->name ? r->name : "", r->value, ckey, r->keep ? "1" : "0" };
+            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) {
+                rp_text_result_t u = rp_utf8_to_utf16((const uint8_t *)fields[f], strlen(fields[f]), NULL, 0);
+                char head[24];
+                snprintf(head, sizeof head, "%zu:", u.units);
+                qplan = kprintf(k, "%s%s", qplan, head);
+                qplan = kprintf(k, "%s%s", qplan, fields[f]);
+            }
+            any_qword = true;
+            continue;
+        }
         const char *value = NULL;
         switch (r->type) {
+        case RP_REG_QWORD: break;
         case RP_REG_STRING: value = r->value[0] == '#' ? kprintf(k, "#%s", r->value, NULL) : r->value; break;
         case RP_REG_EXPAND: value = kprintf(k, "#%%%s", r->value, NULL); break;
         case RP_REG_DWORD: value = kprintf(k, "#%s", r->value, NULL); break;
@@ -812,6 +840,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         int event = 0x2 | 0x20 | 0x80 | (x->start_on_install ? 0x1 : 0);         // stop (both), delete (remove), start
         s_(&svccontrol, x->id); s_(&svccontrol, name); i_(&svccontrol, event); null_(&svccontrol);
         i_(&svccontrol, 1); s_(&svccontrol, exe->comp);
+    }
+
+    // The helper DLL for qword values (RFC-0001 9.6): Binary "RpCa" with the part for this
+    // architecture, the plan in RP_QWORDS, and prepare (immediate) -> rollback twin -> apply.
+    if (any_qword) {
+        const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
+        size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
+        if (part_len == 0) {
+            rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
+                           "type = \"qword\" needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
+                           arch_text(ir->arch));
+            reg_bad = true;
+        }
+        s_(&binary, "RpCa"); b_(&binary, part, part_len);
+        s_(&property, "RP_QWORDS"); s_(&property, qplan);
+        const int noimp = ir->scope == 0 ? 0x800 : 0;
+        s_(&customaction, "RP_QwordPrepare"); i_(&customaction, 1); s_(&customaction, "RpCa"); s_(&customaction, "RpQwordPrepare");
+        s_(&customaction, "RP_QwordApplyRollback"); i_(&customaction, 1 | 0x100 | 0x400 | noimp | 0x40);
+        s_(&customaction, "RpCa"); s_(&customaction, "RpQwordRollback");
+        s_(&customaction, "RP_QwordApply"); i_(&customaction, 1 | 0x400 | noimp); s_(&customaction, "RpCa");
+        s_(&customaction, "RpQwordApply");
     }
 
     // [permission.*] (RFC-0004): MsiLockPermissionsEx on a File, a Registry row, or a CreateFolder row
@@ -1045,6 +1094,11 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
         s_(&iexec, "RemoveShortcuts"); null_(&iexec); i_(&iexec, 3200);
         s_(&iexec, "CreateShortcuts"); null_(&iexec); i_(&iexec, 4500);
+    }
+    if (any_qword) {                // after WriteRegistryValues; the prepare step reads component states
+        s_(&iexec, "RP_QwordPrepare"); null_(&iexec); i_(&iexec, 5010);
+        s_(&iexec, "RP_QwordApplyRollback"); null_(&iexec); i_(&iexec, 5011);
+        s_(&iexec, "RP_QwordApply"); null_(&iexec); i_(&iexec, 5012);
     }
     if (any_write || any_remove) {  // MS Learn "Suggested InstallExecuteSequence"
         s_(&iexec, "RemoveRegistryValues"); null_(&iexec); i_(&iexec, 2600);
