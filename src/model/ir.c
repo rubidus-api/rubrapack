@@ -423,6 +423,7 @@ static rp_ir_file_t *push_file(ctx_t *c) {
 
 static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "name", "summary-name", "manufacturer", "version", "arch", "upgrade-code",
+                                        "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", NULL };
     rp_ir_t *ir = c->ir;
@@ -457,19 +458,51 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
         ir->version_count = n;
     }
 
-    char *arch = c->opt->arch ? dup(c, c->opt->arch) : get_str(c, t, "arch", true, NULL);
+    // The source's arch is its home architecture; --arch may build another one (DECISIONS
+    // 2026-09-26 "Upgrade family per architecture").
+    char *home = get_str(c, t, "arch", true, NULL);
+    char *arch = c->opt->arch ? dup(c, c->opt->arch) : (home ? dup(c, home) : NULL);
     if (arch) {
         if (strcmp(arch, "x64") == 0) ir->arch = RP_ARCH_X64;
         else if (strcmp(arch, "arm64") == 0) ir->arch = RP_ARCH_ARM64;
         else if (strcmp(arch, "x86") == 0) ir->arch = RP_ARCH_X86;
         else ERR(c, key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", arch);
-        rp_mem_free(c->alloc, arch);
+    }
+    if (home && strcmp(home, "x64") != 0 && strcmp(home, "arm64") != 0 && strcmp(home, "x86") != 0) {
+        ERR(c, key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", home);
     }
 
     ir->upgrade_code = get_str(c, t, "upgrade-code", true, NULL);
     if (ir->upgrade_code && !guid_ok(ir->upgrade_code)) {
         ERR(c, key_pos(t, "upgrade-code"), "RP1308", "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}");
     }
+    // Each architecture is its own upgrade family: a build for another architecture than the
+    // source's own needs upgrade-code-<arch>, so one UpgradeCode never spans two architectures.
+    char code_key[32];
+    snprintf(code_key, sizeof code_key, "upgrade-code-%s", arch ? arch : "");
+    char *own = arch ? get_str(c, t, code_key, false, NULL) : NULL;
+    if (own && !guid_ok(own)) ERR(c, key_pos(t, code_key), "RP1308", "%s must be a GUID", code_key);
+    if (own) {
+        if (ir->upgrade_code && strcmp(own, ir->upgrade_code) == 0 && home && arch && strcmp(home, arch) != 0) {
+            ERR(c, key_pos(t, code_key), "RP1309", "%s must differ from upgrade-code (one upgrade family per architecture)", code_key);
+        }
+        rp_mem_free(c->alloc, ir->upgrade_code);
+        ir->upgrade_code = own;
+    } else if (home && arch && strcmp(home, arch) != 0) {
+        ERR(c, key_pos(t, "arch"), "RP1309",
+            "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]", arch, home, code_key);
+    }
+    for (int k = 0; k < 3; ++k) {       // the others still have to be GUIDs, and distinct
+        static const char *const others[] = { "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86" };
+        const rp_tkey_t *key = find_key(t, others[k]);
+        if (key && key->val.kind == RP_TV_STRING && strcmp(others[k], code_key) != 0) {
+            char *g = get_str(c, t, others[k], false, NULL);
+            if (g && !guid_ok(g)) ERR(c, key->pos, "RP1308", "%s must be a GUID", others[k]);
+            rp_mem_free(c->alloc, g);
+        }
+    }
+    rp_mem_free(c->alloc, home);
+    rp_mem_free(c->alloc, arch);
     ir->product_code = get_str(c, t, "product-code", false, NULL);
     if (ir->product_code && !guid_ok(ir->product_code)) {
         ERR(c, key_pos(t, "product-code"), "RP1308", "product-code must be a GUID");

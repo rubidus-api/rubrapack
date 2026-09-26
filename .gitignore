@@ -6,6 +6,7 @@
 !/.gitignore
 !/.gitattributes
 !/README.md
+!/README-ko.md
 !/LICENSE
 !/THIRD_PARTY_NOTICES.md
 !/nob.c
@@ -18,6 +19,7 @@
 !/resources/ui/
 !/resources/bin/
 !/manual/
+!/manual-ko/
 
 # Build output, even inside whitelisted folders.
 *.o

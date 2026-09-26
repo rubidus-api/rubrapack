@@ -83,6 +83,11 @@ Two Upgrade rows with the package's `UpgradeCode`:
 | this version | - | `0x102` (only detect, min inclusive) | `NEWER_FOUND` | same or newer version installed |
 | - | this version | `0x001` (migrate features) | `OLDER_FOUND` | older version installed: remove it |
 
+The Upgrade table matches by UpgradeCode, version and language only - not by architecture. If an
+x64 and an x86 build share one UpgradeCode, installing one removes the other as "older". Give each
+architecture its own UpgradeCode when both may be installed side by side (verified: two
+architectures with separate codes install and uninstall independently). [observed]
+
 An error custom action (type 19, `Target` = the message; it is a formatted string, so `[ProductName]`
 works) conditioned on `NEWER_FOUND` stops the installation with error 1603 when a same-or-newer
 version is present. Every version needs a new `ProductCode` (and every package file a new package

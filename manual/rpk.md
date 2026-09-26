@@ -54,7 +54,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed`) |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed`) |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
@@ -69,6 +69,14 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
 dirs, files and features. Registry, shortcuts, services, dialogs and the rest are planned; their
 tables are refused with "not supported yet" until they are implemented.
+
+### Architectures and upgrade families
+
+`arch` is the source's own architecture and `upgrade-code` its upgrade family. To build the same
+source for another architecture (`--arch`), give that architecture its own family with
+`upgrade-code-x86`, `upgrade-code-arm64` or `upgrade-code-x64`; without it the build is refused.
+Windows Installer's upgrade detection cannot tell architectures apart, so sharing one code would
+make installing one architecture remove the other.
 
 ### Wildcards: `[files.ID]`
 
