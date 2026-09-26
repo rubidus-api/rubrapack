@@ -41,6 +41,7 @@ static const char *const core_sources[] = {
     "src/core/diag.c",
     "src/core/limits.c",
     "src/msi/db.c",
+    "src/msi/suminfo.c",
     "src/text/utf.c",
 };
 
