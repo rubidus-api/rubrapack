@@ -36,6 +36,7 @@
 // rubrapack sources shared by every platform.
 static const char *const core_sources[] = {
     "src/cli/cli.c",
+    "src/cli/inspect.c",
     "src/container/cfb.c",
     "src/container/cfb_write.c",
     "src/core/buf.c",

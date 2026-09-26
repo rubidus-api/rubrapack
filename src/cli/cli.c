@@ -3,6 +3,7 @@
 
 #include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
+#include "rubrapack/inspect.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/text.h"
 #include "rubrapack/version.h"
@@ -25,8 +26,8 @@ static const command_t commands[] = {
     { "sign",    "sign <file> [signing options]", "sign an existing package or PE file", false },
     { "verify",  "verify <file> [--trust <cert>] [--system-roots]",
                  "check structure, digests, and signatures", false },
-    { "inspect", "inspect <file> [table|--summary|--files|--streams]",
-                 "dump a package (MSI tables as IDT)", false },
+    { "inspect", "inspect <file.msi> [table|--summary|--streams]",
+                 "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file> -d <dir>", "unpack a package into a new directory", false },
     { "lint",    "lint <src.rpk|file.msi>", "check a source or package", false },
     { "new",     "new [msi|msix] <name>", "write a starter source file", false },
@@ -144,6 +145,7 @@ int rp_main(int argc, char **argv) {
 
     if (strcmp(name, "version") == 0) return cmd_version(argc);
     if (strcmp(name, "help") == 0) return cmd_help(argc, argv);
+    if (strcmp(name, "inspect") == 0) return rp_cmd_inspect(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

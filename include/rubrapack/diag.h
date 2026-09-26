@@ -25,6 +25,9 @@ enum {
 #define RP_DIAG_EXTRA_ARGUMENT  "RP0004"
 #define RP_DIAG_NOMEM           "RP0005"
 #define RP_DIAG_OUTPUT          "RP0006"
+#define RP_DIAG_INPUT           "RP0007"
+#define RP_DIAG_BAD_PACKAGE     "RP0008"
+#define RP_DIAG_NO_TABLE        "RP0009"
 
 // MinGW checks `printf` formats against the MS runtime, which rejects %zu; the UCRT that
 // rubrapack links accepts C99 formats, so check against GNU rules there.

@@ -31,9 +31,11 @@ ZIP/OPC, block map) is implemented in this repository from public specifications
 
 ## Status
 
-Early implementation. The command-line skeleton builds and runs on Linux and Windows
-(`rubrapack version`, `rubrapack help`); package commands are listed but report
-"not implemented yet" and exit with status 2.
+Early implementation. The Windows Installer database layer is in place: rubrapack reads and
+writes MSI files (compound file, string pool, tables, streams, summary information) and
+`rubrapack inspect <file.msi> [table|--summary|--streams]` prints tables in the IDT archive
+format. Building packages from a source file is not there yet; commands that are not built
+report "not implemented yet" and exit with status 2.
 
 ## Text encoding
 
