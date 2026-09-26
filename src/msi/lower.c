@@ -425,7 +425,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     if (ir->arp_no_repair) { s_(&property, "ARPNOREPAIR"); s_(&property, "1"); }
     if (ir->arp_help) { s_(&property, "ARPHELPLINK"); s_(&property, ir->arp_help); }
     if (ir->arp_about) { s_(&property, "ARPURLINFOABOUT"); s_(&property, ir->arp_about); }
-    char *secure = kdup(k, "RP_NEWER_FOUND;RP_OLDER_FOUND"), *hidden = NULL;
+    char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
+    char *hidden = NULL;
     for (size_t i = 0; i < ir->property_count; ++i) {
         const rp_ir_property_t *p = &ir->properties[i];
         s_(&property, p->id);
@@ -565,11 +566,25 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     i_(&upgrade, 0x002 | 0x100); null_(&upgrade); s_(&upgrade, "RP_NEWER_FOUND");
     s_(&upgrade, ir->upgrade_code); null_(&upgrade); s_(&upgrade, ir->version); null_(&upgrade);
     i_(&upgrade, 0x001); null_(&upgrade); s_(&upgrade, "RP_OLDER_FOUND");
+    if (ir->refuse_below) {         // detect only (0x002), below the given version (max exclusive)
+        s_(&upgrade, ir->upgrade_code); null_(&upgrade); s_(&upgrade, ir->refuse_below); null_(&upgrade);
+        i_(&upgrade, 0x002); null_(&upgrade); s_(&upgrade, "RP_REFUSED_OLD");
+    }
 
     const char *message = ir->downgrade_message ? escape_formatted(k, ir->downgrade_message)
                           : ir->language == 1042 ? "더 새 판이나 같은 판의 [ProductName]이(가) 이미 설치되어 있습니다."
                                                  : "The same or a newer version of [ProductName] is already installed.";
     s_(&customaction, "RP_RefuseDowngrade"); i_(&customaction, 19); null_(&customaction); s_(&customaction, message);
+    // RFC-0003 section 9 (T1): an old version that must be removed by hand first. The removal command
+    // names the found product ([RP_REFUSED_OLD]) and keeps Restart Manager off for that removal.
+    if (ir->refuse_below) {
+        const char *cmd = "msiexec /x [RP_REFUSED_OLD] /qn MSIRESTARTMANAGERCONTROL=Disable";
+        const char *text = ir->refuse_message ? escape_formatted(k, ir->refuse_message)
+                           : ir->language == 1042 ? "설치된 옛 판 [ProductName]은(는) 이 설치로 올릴 수 없습니다. 먼저 지운 뒤 다시 설치하십시오:"
+                                                  : "The installed older version of [ProductName] cannot be upgraded by this package. Remove it first, then run this installation again:";
+        s_(&customaction, "RP_RefuseOld"); i_(&customaction, 19); null_(&customaction);
+        s_(&customaction, kprintf(k, "%s %s", text, cmd));
+    }
 
     static const struct { const char *action; const char *cond; int seq; } exec[] = {
         { "FindRelatedProducts", NULL, 25 }, { "RP_RefuseDowngrade", "RP_NEWER_FOUND", 30 },
@@ -586,6 +601,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->refuse_below) {
+        s_(&iexec, "RP_RefuseOld"); s_(&iexec, "RP_REFUSED_OLD"); i_(&iexec, 31);
+        s_(&iui, "RP_RefuseOld"); s_(&iui, "RP_REFUSED_OLD"); i_(&iui, 31);
     }
     for (size_t i = 0; i < na; ++i) {
         const rp_ir_action_t *a = &ir->actions[i];

@@ -421,11 +421,30 @@ static rp_ir_file_t *push_file(ctx_t *c) {
     return f;
 }
 
+// a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535 (ProductVersion rules).
+static bool parse_version(const char *s, uint16_t parts[4], size_t *count) {
+    static const unsigned max[4] = { 255, 255, 65535, 65535 };
+    const char *p = s;
+    size_t n = 0;
+    for (;;) {
+        unsigned long v = 0;
+        size_t digits = 0;
+        while (*p >= '0' && *p <= '9' && digits < 6) v = v * 10 + (unsigned long)(*p++ - '0'), ++digits;
+        if (digits == 0 || n >= 4 || v > max[n]) return false;
+        parts[n++] = (uint16_t)v;
+        if (*p != '.') break;
+        ++p;
+    }
+    *count = n;
+    return *p == '\0' && n >= 3;
+}
+
 static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "name", "summary-name", "manufacturer", "version", "arch", "upgrade-code",
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
-                                        "downgrade-message", "compress", "cab", NULL };
+                                        "downgrade-message", "compress", "cab", "refuse-upgrade-below",
+                                        "refuse-upgrade-message", NULL };
     rp_ir_t *ir = c->ir;
     check_keys(c, t, keys);
     ir->name = get_str(c, t, "name", true, NULL);
@@ -437,25 +456,35 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     if (ir->name && has_control(ir->name)) ERR(c, key_pos(t, "name"), "RP1308", "name contains a control character");
 
     ir->version = get_str(c, t, "version", true, NULL);
-    if (ir->version) {
-        static const unsigned max[4] = { 255, 255, 65535, 65535 };
-        const char *p = ir->version;
-        bool ok = true;
-        size_t n = 0;
-        while (ok) {
-            unsigned long v = 0;
-            size_t digits = 0;
-            while (*p >= '0' && *p <= '9' && digits < 6) v = v * 10 + (unsigned long)(*p++ - '0'), ++digits;
-            if (digits == 0 || n >= 4 || v > max[n]) ok = false;
-            else ir->version_parts[n++] = (uint16_t)v;
-            if (*p == '.') ++p;
-            else break;
+    if (ir->version && !parse_version(ir->version, ir->version_parts, &ir->version_count)) {
+        ERR(c, key_pos(t, "version"), "RP1308",
+            "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535", ir->version);
+    }
+    // Older versions that must be removed by hand first (RFC-0003 section 9, T1): the upgrade is
+    // refused and the message names the removal command.
+    ir->refuse_below = get_str(c, t, "refuse-upgrade-below", false, NULL);
+    ir->refuse_message = get_str(c, t, "refuse-upgrade-message", false, NULL);
+    if (ir->refuse_below) {
+        uint16_t below[4] = { 0 };
+        size_t bn = 0;
+        if (!parse_version(ir->refuse_below, below, &bn)) {
+            ERR(c, key_pos(t, "refuse-upgrade-below"), "RP1308", "refuse-upgrade-below '%s' must be a version like 1.2.3",
+                ir->refuse_below);
+        } else if (ir->version_count >= 3 && memcmp(below, ir->version_parts, 3 * sizeof below[0]) != 0) {
+            bool higher = false;
+            for (int k = 0; k < 3; ++k) {
+                if (below[k] != ir->version_parts[k]) {
+                    higher = below[k] > ir->version_parts[k];
+                    break;
+                }
+            }
+            if (higher) {
+                ERR(c, key_pos(t, "refuse-upgrade-below"), "RP1314",
+                    "refuse-upgrade-below %s is above this package's version %s", ir->refuse_below, ir->version);
+            }
         }
-        if (!ok || *p != '\0' || n < 3) {
-            ERR(c, key_pos(t, "version"), "RP1308",
-                "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535", ir->version);
-        }
-        ir->version_count = n;
+    } else if (ir->refuse_message) {
+        ERR(c, key_pos(t, "refuse-upgrade-message"), "RP1314", "refuse-upgrade-message needs refuse-upgrade-below");
     }
 
     // The source's arch is its home architecture; --arch may build another one (DECISIONS
@@ -1401,7 +1430,7 @@ void rp_ir_free(rp_ir_t *ir) {
     if (ir == NULL) return;
     proven_allocator_t a = ir->alloc;
     char *strs[] = { ir->name, ir->summary_name, ir->manufacturer, ir->version, ir->upgrade_code, ir->product_code,
-                     ir->downgrade_message };
+                     ir->downgrade_message, ir->refuse_below, ir->refuse_message };
     for (size_t k = 0; k < sizeof strs / sizeof strs[0]; ++k) rp_mem_free(a, strs[k]);
     for (size_t k = 0; k < ir->feature_count; ++k) {
         rp_ir_feature_t *f = &ir->features[k];
@@ -1480,6 +1509,10 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "downgrade-message", ir->downgrade_message);
     snprintf(num, sizeof num, "%d", ir->compress);
     kv(&b, "compress", ir->compress < 0 ? "none" : num);
+    if (ir->refuse_below) {         // only when set: older goldens stay as they are
+        kv(&b, "refuse-upgrade-below", ir->refuse_below);
+        kv(&b, "refuse-upgrade-message", ir->refuse_message);
+    }
     rp_buf_byte(&b, '\n');
 
     // Each kind in ID order, so the dump does not depend on the order of tables in the source.

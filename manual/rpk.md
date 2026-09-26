@@ -54,7 +54,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed`) |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`), ui (`none`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed`), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
@@ -115,6 +115,15 @@ source for another architecture (`--arch`), give that architecture its own famil
 `upgrade-code-x86`, `upgrade-code-arm64` or `upgrade-code-x64`; without it the build is refused.
 Windows Installer's upgrade detection cannot tell architectures apart, so sharing one code would
 make installing one architecture remove the other.
+
+### Versions that must be removed first
+
+`refuse-upgrade-below = "1.0.0"` refuses to upgrade an installed version below 1.0.0 and tells
+the user to remove it first; the message (`refuse-upgrade-message`, or a default one) always ends
+with the command that does it: `msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCONTROL=Disable`.
+Use it when older versions were built by another tool without `MSIRESTARTMANAGERCONTROL=Disable`:
+removing such a version inside an upgrade would try to close every program that has its files
+loaded (see `formats/msi-package.md`, "Files in use").
 
 ### Wildcards: `[files.ID]`
 

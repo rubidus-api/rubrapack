@@ -90,6 +90,8 @@ typedef struct {
     uint16_t  language;         // 1033 or 1042
     bool      reboot_suppress;
     char     *downgrade_message;
+    char     *refuse_below;     // refuse-upgrade-below (versions below it are refused), or NULL
+    char     *refuse_message;   // may be NULL
     int       compress;         // -1 none, 0-9 MSZIP level
 
     rp_ir_feature_t *features;
