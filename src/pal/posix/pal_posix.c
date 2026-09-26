@@ -4,9 +4,11 @@
 
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/text.h"
 
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -79,4 +81,56 @@ proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path
     }
     rp_mem_free(alloc, tmp);
     return err;
+}
+
+proven_err_t rp_pal_list_dir(proven_allocator_t alloc, const char *path_utf8, char ***names, size_t *count) {
+    if (path_utf8 == NULL || names == NULL || count == NULL) return PROVEN_ERR_INVALID_ARG;
+    DIR *d = opendir(path_utf8);
+    if (d == NULL) return PROVEN_ERR_NOT_FOUND;
+    char **v = NULL;
+    size_t n = 0, cap = 0;
+    proven_err_t err = PROVEN_OK;
+    struct dirent *e;
+    while (err == PROVEN_OK && (e = readdir(d)) != NULL) {
+        if (strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0) continue;
+        size_t len = strlen(e->d_name);
+        if (rp_utf8_validate((const uint8_t *)e->d_name, len).err != PROVEN_OK) {
+            err = PROVEN_ERR_INVALID_ENCODING;
+            break;
+        }
+        if (n == cap) {
+            size_t ncap = cap ? cap * 2 : 32;
+            char **nv = rp_mem_alloc(alloc, ncap, sizeof *nv);
+            if (nv == NULL) {
+                err = PROVEN_ERR_NOMEM;
+                break;
+            }
+            if (n) memcpy(nv, v, n * sizeof *nv);
+            rp_mem_free(alloc, v);
+            v = nv;
+            cap = ncap;
+        }
+        v[n] = rp_mem_alloc(alloc, len + 1, 1);
+        if (v[n] == NULL) {
+            err = PROVEN_ERR_NOMEM;
+            break;
+        }
+        memcpy(v[n++], e->d_name, len + 1);
+    }
+    closedir(d);
+    if (err != PROVEN_OK) {
+        for (size_t k = 0; k < n; ++k) rp_mem_free(alloc, v[k]);
+        rp_mem_free(alloc, v);
+        return err;
+    }
+    *names = v;
+    *count = n;
+    return PROVEN_OK;
+}
+
+bool rp_pal_same_file(proven_allocator_t alloc, const char *a_utf8, const char *b_utf8) {
+    (void)alloc;
+    struct stat a, b;
+    if (a_utf8 == NULL || b_utf8 == NULL || stat(a_utf8, &a) != 0 || stat(b_utf8, &b) != 0) return false;
+    return a.st_dev == b.st_dev && a.st_ino == b.st_ino;
 }

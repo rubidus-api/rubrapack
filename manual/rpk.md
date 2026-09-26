@@ -59,6 +59,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature |
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid |
+| `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
+| `[folder.ID]` | **dir**, **name**, keep, feature |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -67,6 +69,19 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
 dirs, files and features. Registry, shortcuts, services, dialogs and the rest are planned; their
 tables are refused with "not supported yet" until they are implemented.
+
+### Wildcards: `[files.ID]`
+
+`glob` is a source path with `*` (any characters within one folder), `?` (one character) and
+`**` (any number of folders). Matches are sorted by name, so the result never depends on the
+file system. Folders below the first wildcard are recreated under `dir`:
+`glob = "dist/layouts/**/*.jmt"` installs `dist/layouts/de/x.jmt` as `<dir>/de/x.jmt`. No match,
+a symbolic link, or the output file itself among the matches is an error.
+
+### Empty folders: `[folder.ID]`
+
+Creates the folder `name` inside `dir` even when no file goes there. With `keep = true` the folder
+stays after uninstall (for data the program writes).
 
 ### Features
 

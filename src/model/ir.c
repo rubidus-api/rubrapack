@@ -1,6 +1,7 @@
 // src/model/ir.c - `.rpk` AST -> checked package model (include/rubrapack/ir.h, RFC-0002).
 
 #include "rubrapack/buf.h"
+#include "rubrapack/ident.h"
 #include "rubrapack/ir.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
@@ -18,6 +19,7 @@ typedef struct {
     rp_ir_t               *ir;
     const rp_ttable_t     *define;
     bool                   nomem;
+    size_t                 dir_cap, file_cap;
 } ctx_t;
 
 #define ERR(c, pos, code, ...) rp_srcdiag_add((c)->d, (pos), (code), false, __VA_ARGS__)
@@ -357,8 +359,8 @@ static bool known_folder(const char *s) {
 // ---- tables ----------------------------------------------------------------------------------
 
 static const char *const top_kinds[] = { "package", "define", NULL };
-static const char *const item_kinds[] = { "feature", "dir", "file", NULL };
-static const char *const later_kinds[] = { "files", "folder", "registry", "shortcut", "env", "ini", "service",
+static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", NULL };
+static const char *const later_kinds[] = { "registry", "shortcut", "env", "ini", "service",
                                            "assoc", "protocol", "font", "permission", "require", "search",
                                            "remove", "copy", "action", "arp", "ui", "ui-text", "msix",
                                            "msix-app", "msix-extension", NULL };
@@ -375,11 +377,48 @@ static bool in_list(const char *s, const char *const *list) {
 }
 
 static const char *phase_of(const char *kind) {
-    if (strcmp(kind, "files") == 0 || strcmp(kind, "folder") == 0) return "later in P2";
     if (strcmp(kind, "action") == 0) return "P3";
     if (strncmp(kind, "ui", 2) == 0) return "P4";
     if (strncmp(kind, "msix", 4) == 0) return "P8";
     return "P3";
+}
+
+static rp_ir_dir_t *push_dir(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    if (ir->dir_count == c->dir_cap) {
+        size_t cap = c->dir_cap ? c->dir_cap * 2 : 16;
+        rp_ir_dir_t *v = rp_mem_alloc(c->alloc, cap, sizeof *v);
+        if (v == NULL) {
+            c->nomem = true;
+            return NULL;
+        }
+        if (ir->dir_count) memcpy(v, ir->dirs, ir->dir_count * sizeof *v);
+        rp_mem_free(c->alloc, ir->dirs);
+        ir->dirs = v;
+        c->dir_cap = cap;
+    }
+    rp_ir_dir_t *d = &ir->dirs[ir->dir_count++];
+    memset(d, 0, sizeof *d);
+    return d;
+}
+
+static rp_ir_file_t *push_file(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    if (ir->file_count == c->file_cap) {
+        size_t cap = c->file_cap ? c->file_cap * 2 : 16;
+        rp_ir_file_t *v = rp_mem_alloc(c->alloc, cap, sizeof *v);
+        if (v == NULL) {
+            c->nomem = true;
+            return NULL;
+        }
+        if (ir->file_count) memcpy(v, ir->files, ir->file_count * sizeof *v);
+        rp_mem_free(c->alloc, ir->files);
+        ir->files = v;
+        c->file_cap = cap;
+    }
+    rp_ir_file_t *f = &ir->files[ir->file_count++];
+    memset(f, 0, sizeof *f);
+    return f;
 }
 
 static void parse_package(ctx_t *c, const rp_ttable_t *t) {
@@ -542,6 +581,19 @@ static void parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
     rp_mem_free(c->alloc, path);
 }
 
+// RFC-0002 8.1: relative, '/' only.
+static bool source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
+    if (strchr(s, '\\')) {
+        ERR(c, pos, "RP1502", "source paths use '/', not '\\\\' (got '%s')", s);
+        return false;
+    }
+    if (s[0] == '/' || (s[0] && s[1] == ':')) {
+        ERR(c, pos, "RP1501", "source path '%s' must be relative to the .rpk file", s);
+        return false;
+    }
+    return true;
+}
+
 static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     static const char *const keys[] = { "dir", "source", "name", "any-arch", "keep", "vital", "feature",
                                         "component-guid", NULL };
@@ -564,14 +616,7 @@ static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     if (f->source == NULL) return;
     rp_pos_t sp = key_pos(t, "source");
     const char *s = f->source;
-    if (strchr(s, '\\')) {
-        ERR(c, sp, "RP1502", "source paths use '/', not '\\\\' (got '%s')", s);
-        return;
-    }
-    if (s[0] == '/' || (s[0] && s[1] == ':')) {
-        ERR(c, sp, "RP1501", "source path '%s' must be relative to the .rpk file", s);
-        return;
-    }
+    if (!source_path_ok(c, s, sp)) return;
     const char *dir = c->opt->source_dir ? c->opt->source_dir : ".";
     size_t n = strlen(dir) + strlen(s) + 2;
     f->source_path = rp_mem_alloc(c->alloc, n, 1);
@@ -590,6 +635,273 @@ static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
         f->name = dup(c, b ? b + 1 : s);
     }
     if (f->name) target_name_ok(c, f->name, find_key(t, "name") ? key_pos(t, "name") : sp);
+}
+
+// ---- [files.*]: wildcards ---------------------------------------------------------------------
+
+// One path segment against one pattern segment: '*' = any run (no '/'), '?' = one character.
+static bool seg_match(const char *pat, const char *name) {
+    if (*pat == '\0') return *name == '\0';
+    if (*pat == '*') {
+        for (const char *n = name;; ++n) {
+            if (seg_match(pat + 1, n)) return true;
+            if (*n == '\0') return false;
+        }
+    }
+    if (*name == '\0') return false;
+    if (*pat == '?') {
+        size_t step = 1;
+        while ((((unsigned char)name[step]) & 0xC0u) == 0x80u) ++step;     // one UTF-8 character
+        return seg_match(pat + 1, name + step);
+    }
+    return *pat == *name && seg_match(pat + 1, name + 1);
+}
+
+typedef struct {
+    ctx_t       *c;
+    char       **segs;
+    size_t       nseg;
+    const char  *root;          // OS path of the literal prefix
+    char       **found;         // relative paths below root
+    size_t       count, cap;
+    rp_pos_t     pos;
+    bool         failed;
+} glob_t;
+
+static void glob_add(glob_t *g, const char *rel) {
+    for (size_t k = 0; k < g->count; ++k) {
+        if (strcmp(g->found[k], rel) == 0) return;          // "**" can reach a file twice
+    }
+    if (g->count == g->cap) {
+        size_t cap = g->cap ? g->cap * 2 : 32;
+        char **v = rp_mem_alloc(g->c->alloc, cap, sizeof *v);
+        if (v == NULL) {
+            g->c->nomem = true;
+            return;
+        }
+        if (g->count) memcpy(v, g->found, g->count * sizeof *v);
+        rp_mem_free(g->c->alloc, g->found);
+        g->found = v;
+        g->cap = cap;
+    }
+    g->found[g->count++] = dup(g->c, rel);
+}
+
+static char *join(ctx_t *c, const char *a, const char *b) {
+    if (a == NULL || a[0] == '\0') return dup(c, b);
+    size_t n = strlen(a) + strlen(b) + 2;
+    char *r = rp_mem_alloc(c->alloc, n, 1);
+    if (r == NULL) {
+        c->nomem = true;
+        return NULL;
+    }
+    snprintf(r, n, "%s/%s", a, b);
+    return r;
+}
+
+static void glob_walk(glob_t *g, const char *rel, size_t seg, size_t depth) {
+    ctx_t *c = g->c;
+    if (g->failed || c->nomem || depth > 64 || g->count >= 100000) return;     // RFC-0001 14.3 limits
+    char *dir = rel[0] ? join(c, g->root, rel) : dup(c, g->root);
+    char **names = NULL;
+    size_t n = 0;
+    proven_err_t e = dir ? rp_pal_list_dir(c->alloc, dir, &names, &n) : PROVEN_ERR_NOMEM;
+    if (e == PROVEN_ERR_INVALID_ENCODING) {
+        ERR(c, g->pos, "RP1506", "a file name under '%s' is not valid Unicode and cannot be packaged", dir);
+        g->failed = true;
+    }
+    if (e != PROVEN_OK) {
+        rp_mem_free(c->alloc, dir);
+        return;
+    }
+    // Sorted by bytes, so the result does not depend on the file system's order.
+    for (size_t i = 1; i < n; ++i) {
+        for (size_t j = i; j > 0 && strcmp(names[j - 1], names[j]) > 0; --j) {
+            char *t = names[j];
+            names[j] = names[j - 1];
+            names[j - 1] = t;
+        }
+    }
+    const char *pat = g->segs[seg];
+    bool last = seg + 1 == g->nseg;
+    if (strcmp(pat, "**") == 0) {
+        if (!last) glob_walk(g, rel, seg + 1, depth + 1);        // zero folders
+        for (size_t k = 0; k < n; ++k) {
+            char *child = join(c, dir, names[k]);
+            rp_fskind_t kind = child ? rp_pal_stat(c->alloc, child, NULL) : RP_FS_NONE;
+            char *crel = join(c, rel, names[k]);
+            if (kind == RP_FS_DIR && crel) glob_walk(g, crel, seg, depth + 1);
+            else if (kind == RP_FS_FILE && last && crel) glob_add(g, crel);
+            rp_mem_free(c->alloc, child);
+            rp_mem_free(c->alloc, crel);
+        }
+    } else {
+        for (size_t k = 0; k < n; ++k) {
+            if (!seg_match(pat, names[k])) continue;
+            char *child = join(c, dir, names[k]);
+            rp_fskind_t kind = child ? rp_pal_stat(c->alloc, child, NULL) : RP_FS_NONE;
+            char *crel = join(c, rel, names[k]);
+            if (kind == RP_FS_LINK) {
+                ERR(c, g->pos, "RP1504", "'%s' is a symbolic link; links are not followed", child);
+                g->failed = true;
+            } else if (last && kind == RP_FS_FILE && crel) {
+                glob_add(g, crel);
+            } else if (!last && kind == RP_FS_DIR && crel) {
+                glob_walk(g, crel, seg + 1, depth + 1);
+            }
+            rp_mem_free(c->alloc, child);
+            rp_mem_free(c->alloc, crel);
+        }
+    }
+    for (size_t k = 0; k < n; ++k) rp_mem_free(c->alloc, names[k]);
+    rp_mem_free(c->alloc, names);
+    rp_mem_free(c->alloc, dir);
+}
+
+static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id);
+
+// Implicit sub folder `name` below dir `parent`, created once.
+static const char *implicit_dir(ctx_t *c, const char *parent, const char *name, rp_pos_t pos) {
+    char *logical = join(c, parent, name);
+    if (logical == NULL) return NULL;
+    char key[23];
+    rp_key_derive('D', logical, key);
+    rp_mem_free(c->alloc, logical);
+    const rp_ir_dir_t *have = find_dir(c->ir, key);
+    if (have) return have->id;
+    rp_ir_dir_t *d = push_dir(c);
+    if (d == NULL) return NULL;
+    d->id = dup(c, key);
+    d->parent = dup(c, parent);
+    d->parts = rp_mem_alloc(c->alloc, 1, sizeof *d->parts);
+    if (d->parts) {
+        d->parts[0] = dup(c, name);
+        d->part_count = 1;
+    }
+    d->implicit = true;
+    d->pos = pos;
+    target_name_ok(c, name, pos);
+    return d->id;
+}
+
+static void expand_files(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "dir", "glob", "feature", "keep", "vital", "any-arch", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    char *dir = get_str(c, t, "dir", true, NULL);
+    char *pattern = get_str(c, t, "glob", true, NULL);
+    char *feature = get_str(c, t, "feature", false, NULL);
+    bool vital = get_bool(c, t, "vital", true), any_arch = get_bool(c, t, "any-arch", false);
+    if (get_bool(c, t, "keep", false)) ERR(c, key_pos(t, "keep"), "RP1901", "keep for files is not supported yet (planned for P3)");
+    rp_pos_t gp = key_pos(t, "glob");
+    glob_t g = { .c = c, .pos = gp };
+    if (dir && pattern && source_path_ok(c, pattern, gp)) {
+        const rp_ir_dir_t *d = find_dir(c->ir, dir);
+        if (d == NULL) ERR(c, key_pos(t, "dir"), "RP1307", "dir '%s' is not defined", dir);
+        if (feature == NULL && d && d->feature) feature = dup(c, d->feature);
+        // Split into segments; the leading ones without wildcards are the root.
+        size_t nseg = 1;
+        for (const char *q = pattern; *q; ++q) nseg += *q == '/';
+        g.segs = rp_mem_alloc(c->alloc, nseg, sizeof *g.segs);
+        char *copy = dup(c, pattern);
+        size_t lit = 0;
+        bool wild = false;
+        for (char *q = copy, *next; g.segs && copy && q; q = next) {
+            next = strchr(q, '/');
+            if (next) *next++ = '\0';
+            g.segs[g.nseg] = dup(c, q);
+            bool has = strpbrk(q, "*?") != NULL;
+            if (!wild && !has) ++lit;
+            wild |= has;
+            ++g.nseg;
+        }
+        if (lit == g.nseg) --lit;           // no wildcard: the last segment is the file itself
+        char *root = dup(c, c->opt->source_dir ? c->opt->source_dir : ".");
+        for (size_t k = 0; k < lit && root; ++k) {
+            char *r = join(c, root, g.segs[k]);
+            rp_mem_free(c->alloc, root);
+            root = r;
+        }
+        g.root = root;
+        // The source path as written, relative to the .rpk: the literal segments, then rel.
+        char *prefix = dup(c, "");
+        for (size_t k = 0; k < lit && prefix; ++k) {
+            char *r = join(c, prefix, g.segs[k]);
+            rp_mem_free(c->alloc, prefix);
+            prefix = r;
+        }
+        char **segs_all = g.segs;
+        g.segs += lit;
+        g.nseg -= lit;
+        if (root && g.nseg > 0) glob_walk(&g, "", 0, 0);
+        if (!g.failed && g.count == 0) ERR(c, gp, "RP1503", "glob '%s' matches no file", pattern);
+        for (size_t k = 1; k < g.count; ++k) {
+            for (size_t j = k; j > 0 && strcmp(g.found[j - 1], g.found[j]) > 0; --j) {
+                char *tmp = g.found[j];
+                g.found[j] = g.found[j - 1];
+                g.found[j - 1] = tmp;
+            }
+        }
+        for (size_t k = 0; k < g.count && !c->nomem; ++k) {
+            const char *rel = g.found[k];
+            // Sub folders below the wildcard become implicit dirs.
+            const char *at = dir;
+            char *walk = dup(c, rel);
+            char *q = walk;
+            for (char *slash; q && (slash = strchr(q, '/')) != NULL; q = slash + 1) {
+                *slash = '\0';
+                at = implicit_dir(c, at, q, gp);
+                if (at == NULL) break;
+            }
+            char *logical = join(c, t->id, rel);
+            char key[23];
+            if (logical) rp_key_derive('F', logical, key);
+            rp_ir_file_t *f = push_file(c);
+            if (f && at && q && logical) {
+                f->id = dup(c, key);
+                f->dir = dup(c, at);
+                f->source = join(c, prefix, rel);
+                f->source_path = join(c, g.root, rel);
+                f->name = dup(c, q);
+                f->vital = vital;
+                f->any_arch = any_arch;
+                f->feature = feature ? dup(c, feature) : NULL;
+                f->pos = gp;
+                if (rp_pal_stat(c->alloc, f->source_path, &f->size) != RP_FS_FILE) {
+                    ERR(c, gp, "RP1508", "'%s' is not a regular file", f->source);
+                }
+                if (c->opt->output && rp_pal_same_file(c->alloc, f->source_path, c->opt->output)) {
+                    ERR(c, gp, "RP1505", "glob '%s' matches the output file '%s'", pattern, c->opt->output);
+                }
+                target_name_ok(c, f->name, gp);
+            }
+            rp_mem_free(c->alloc, logical);
+            rp_mem_free(c->alloc, walk);
+        }
+        for (size_t k = 0; k < g.count; ++k) rp_mem_free(c->alloc, g.found[k]);
+        rp_mem_free(c->alloc, g.found);
+        for (size_t k = 0; segs_all && k < lit + g.nseg; ++k) rp_mem_free(c->alloc, segs_all[k]);
+        rp_mem_free(c->alloc, segs_all);
+        rp_mem_free(c->alloc, copy);
+        rp_mem_free(c->alloc, root);
+        rp_mem_free(c->alloc, prefix);
+    }
+    rp_mem_free(c->alloc, dir);
+    rp_mem_free(c->alloc, pattern);
+    rp_mem_free(c->alloc, feature);
+}
+
+static void parse_folder(ctx_t *c, const rp_ttable_t *t, rp_ir_folder_t *f) {
+    static const char *const keys[] = { "dir", "name", "keep", "feature", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    f->id = dup(c, t->id);
+    f->pos = t->pos;
+    f->dir = get_str(c, t, "dir", true, NULL);
+    f->name = get_str(c, t, "name", true, NULL);
+    f->keep = get_bool(c, t, "keep", false);
+    f->feature = get_str(c, t, "feature", false, NULL);
+    if (f->name) target_name_ok(c, f->name, key_pos(t, "name"));
 }
 
 // ---- cross checks --------------------------------------------------------------------------
@@ -637,7 +949,7 @@ static void cross_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     // IDs unique across dir, file and feature (RFC-0002 2).
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
-    size_t n = ir->dir_count + ir->file_count + ir->feature_count;
+    size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -646,6 +958,7 @@ static void cross_checks(ctx_t *c) {
     size_t m = 0;
     for (size_t k = 0; k < ir->dir_count; ++k) ids[m++] = (idpos_t){ ir->dirs[k].id, ir->dirs[k].pos };
     for (size_t k = 0; k < ir->file_count; ++k) ids[m++] = (idpos_t){ ir->files[k].id, ir->files[k].pos };
+    for (size_t k = 0; k < ir->folder_count; ++k) ids[m++] = (idpos_t){ ir->folders[k].id, ir->folders[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
@@ -701,7 +1014,7 @@ static void cross_checks(ctx_t *c) {
     // Files: dir exists, feature resolves (G2), no PE yet, and no two paths differ only by case.
     bool declared = false;
     for (size_t k = 0; k < ir->feature_count; ++k) declared |= !ir->features[k].implicit;
-    size_t np = ir->dir_count + ir->file_count;
+    size_t np = ir->dir_count + ir->file_count + ir->folder_count;
     char **folded = rp_mem_alloc(c->alloc, np, sizeof *folded);
     rp_pos_t *where = rp_mem_alloc(c->alloc, np, sizeof *where);
     size_t nf = 0;
@@ -761,6 +1074,35 @@ static void cross_checks(ctx_t *c) {
             }
         }
     }
+    for (size_t k = 0; k < ir->folder_count; ++k) {
+        rp_ir_folder_t *f = &ir->folders[k];
+        const rp_ir_dir_t *d = f->dir ? find_dir(ir, f->dir) : NULL;
+        if (f->dir && d == NULL) {
+            ERR(c, f->pos, "RP1307", "dir '%s' is not defined", f->dir);
+            continue;
+        }
+        if (f->feature && !find_feature(ir, f->feature)) {
+            ERR(c, f->pos, "RP1307", "feature '%s' is not defined", f->feature);
+        } else if (f->feature == NULL) {
+            if (d && d->feature) f->feature = dup(c, d->feature);
+            else if (!declared) f->feature = dup(c, "Main");
+            else ERR(c, f->pos, "RP1202", "folder '%s' needs a feature: set 'feature' here or on its dir", f->id);
+        }
+        if (d && f->name && folded) {
+            size_t di = (size_t)(d - ir->dirs);
+            if (dir_paths[di]) {
+                size_t len = strlen(dir_paths[di]) + strlen(f->name) + 2;
+                char *full = rp_mem_alloc(c->alloc, len, 1);
+                if (full) {
+                    snprintf(full, len, "%s/%s", dir_paths[di], f->name);
+                    folded[nf] = rp_mem_alloc(c->alloc, len * 2 + 4, 1);
+                    if (folded[nf]) fold(full, folded[nf], len * 2 + 4);
+                    where[nf++] = f->pos;
+                    rp_mem_free(c->alloc, full);
+                }
+            }
+        }
+    }
     for (size_t a = 0; folded && a < nf; ++a) {
         for (size_t b = a + 1; b < nf; ++b) {
             if (folded[a] && folded[b] && strcmp(folded[a], folded[b]) == 0) {
@@ -786,7 +1128,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
         if (!in_list(t->kind, all_kinds)) {
@@ -814,6 +1156,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "feature") == 0) ++nfeat;
         else if (strcmp(t->kind, "dir") == 0) ++ndir;
         else if (strcmp(t->kind, "file") == 0) ++nfile;
+        else if (strcmp(t->kind, "folder") == 0) ++nfolder;
     }
     (void)item_kinds;
     if (c.define) {
@@ -831,9 +1174,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     }
 
     ir->features = rp_mem_alloc(alloc, nfeat + 1, sizeof *ir->features);
-    ir->dirs = rp_mem_alloc(alloc, ndir, sizeof *ir->dirs);
-    ir->files = rp_mem_alloc(alloc, nfile, sizeof *ir->files);
-    if (ir->features == NULL || ir->dirs == NULL || ir->files == NULL) c.nomem = true;
+    ir->folders = rp_mem_alloc(alloc, nfolder, sizeof *ir->folders);
+    (void)ndir;
+    (void)nfile;
+    if (ir->features == NULL || ir->folders == NULL) c.nomem = true;
     for (size_t k = 0; k < doc->count && !c.nomem; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
         if (t->id == NULL) continue;
@@ -842,14 +1186,21 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             memset(f, 0, sizeof *f);
             parse_feature(&c, t, f);
         } else if (strcmp(t->kind, "dir") == 0) {
-            rp_ir_dir_t *d = &ir->dirs[ir->dir_count++];
-            memset(d, 0, sizeof *d);
-            parse_dir(&c, t, d);
+            rp_ir_dir_t *d = push_dir(&c);
+            if (d) parse_dir(&c, t, d);
         } else if (strcmp(t->kind, "file") == 0) {
-            rp_ir_file_t *f = &ir->files[ir->file_count++];
+            rp_ir_file_t *f = push_file(&c);
+            if (f) parse_file(&c, t, f);
+        } else if (strcmp(t->kind, "folder") == 0) {
+            rp_ir_folder_t *f = &ir->folders[ir->folder_count++];
             memset(f, 0, sizeof *f);
-            parse_file(&c, t, f);
+            parse_folder(&c, t, f);
         }
+    }
+    // Wildcards after every dir is known (their feature and the implicit sub folders).
+    for (size_t k = 0; k < doc->count && !c.nomem; ++k) {
+        const rp_ttable_t *t = &doc->tables[k];
+        if (t->id && strcmp(t->kind, "files") == 0) expand_files(&c, t);
     }
     if (!c.nomem && ir->feature_count == 0) {       // G2: one hidden default feature
         rp_ir_feature_t *f = &ir->features[ir->feature_count++];
@@ -899,6 +1250,14 @@ void rp_ir_free(rp_ir_t *ir) {
         char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid };
         for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
     }
+    for (size_t k = 0; k < ir->folder_count; ++k) {
+        rp_ir_folder_t *f = &ir->folders[k];
+        rp_mem_free(a, f->id);
+        rp_mem_free(a, f->dir);
+        rp_mem_free(a, f->name);
+        rp_mem_free(a, f->feature);
+    }
+    rp_mem_free(a, ir->folders);
     rp_mem_free(a, ir->features);
     rp_mem_free(a, ir->dirs);
     rp_mem_free(a, ir->files);
@@ -980,6 +1339,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                     rp_buf_puts(&b, d->parts[j]);
                 }
                 kv(&b, "feature", d->feature);
+                if (d->implicit) rp_buf_puts(&b, " implicit=1");
             } else {
                 const rp_ir_file_t *f = &ir->files[idx[k]];
                 rp_buf_puts(&b, "file ");
@@ -998,5 +1358,28 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         }
     }
     rp_mem_free(alloc, idx);
+    // Folders in ID order.
+    {
+        size_t *order = rp_mem_alloc(alloc, ir->folder_count + 1, sizeof *order);
+        for (size_t k = 0; order && k < ir->folder_count; ++k) order[k] = k;
+        for (size_t i = 1; order && i < ir->folder_count; ++i) {
+            for (size_t j = i; j > 0 && cmp_str(ir->folders[order[j - 1]].id, ir->folders[order[j]].id) > 0; --j) {
+                size_t t = order[j];
+                order[j] = order[j - 1];
+                order[j - 1] = t;
+            }
+        }
+        for (size_t k = 0; order && k < ir->folder_count; ++k) {
+            const rp_ir_folder_t *f = &ir->folders[order[k]];
+            rp_buf_puts(&b, "folder ");
+            rp_buf_puts(&b, f->id);
+            kv(&b, "dir", f->dir);
+            kv(&b, "name", f->name);
+            kv(&b, "keep", f->keep ? "1" : "0");
+            kv(&b, "feature", f->feature);
+            rp_buf_byte(&b, '\n');
+        }
+        rp_mem_free(alloc, order);
+    }
     return rp_buf_take(&b, out, len);
 }

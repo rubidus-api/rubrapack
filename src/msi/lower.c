@@ -153,6 +153,7 @@ static const rp_msi_wcolumn_t featurecomp_cols[] = { { "Feature_", KEY_S(38) }, 
 static const rp_msi_wcolumn_t file_cols[] = { { "File", KEY_S(72) }, { "Component_", S(72) }, { "FileName", L(255) },
                                               { "FileSize", I4 }, { "Version", S_N(72) }, { "Language", S_N(20) },
                                               { "Attributes", I2_N }, { "Sequence", I4 } };
+static const rp_msi_wcolumn_t createfolder_cols[] = { { "Directory_", KEY_S(72) }, { "Component_", KEY_S(72) } };
 static const rp_msi_wcolumn_t filehash_cols[] = { { "File_", KEY_S(72) }, { "Options", I2 }, { "HashPart1", I4 },
                                                   { "HashPart2", I4 }, { "HashPart3", I4 }, { "HashPart4", I4 } };
 static const rp_msi_wcolumn_t media_cols[] = { { "DiskId", KEY_I2 }, { "LastSequence", I4 }, { "DiskPrompt", L_N(64) },
@@ -371,7 +372,8 @@ static char *escape_formatted(keep_t *k, const char *s) {
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len) {
-    rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui;
+    rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
+        createfolder;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -384,8 +386,9 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&customaction, alloc, "CustomAction", customaction_cols, 4);
     rows_init(&iexec, alloc, "InstallExecuteSequence", sequence_cols, 3);
     rows_init(&iui, alloc, "InstallUISequence", sequence_cols, 3);
+    rows_init(&createfolder, alloc, "CreateFolder", createfolder_cols, 2);
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
-                      &upgrade, &customaction, &iexec, &iui };
+                      &upgrade, &customaction, &iexec, &iui, &createfolder };
 
     // Property
     char version3[24];
@@ -481,6 +484,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                          ((uint32_t)d[4 * p + 3] << 24);
             i_(&filehash, (int32_t)w);
         }
+    }
+
+    // Folders: CreateFolder, one component each, the folder itself as the key path.
+    for (size_t i = 0; i < ir->folder_count; ++i) {
+        const rp_ir_folder_t *f = &ir->folders[i];
+        char comp[23], guid[39];
+        rp_key_derive('C', f->id, comp);
+        const char *logical = kprintf(k, "%s/%s", f->dir, f->name);
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "folder", f->id };
+        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        const char *ckey = kdup(k, comp);
+        s_(&component, ckey);
+        s_(&component, kdup(k, guid));
+        s_(&component, f->id);
+        i_(&component, comp_attr | (f->keep ? 16 : 0));
+        null_(&component);
+        null_(&component);
+        s_(&featurecomp, f->feature);
+        s_(&featurecomp, ckey);
+        s_(&createfolder, f->id);
+        s_(&createfolder, ckey);
     }
 
     // Media and the cabinet
@@ -643,6 +667,20 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             p = next ? next : p + strlen(p);
         }
         (void)d;
+    }
+
+    // Folders to create are directory nodes below their dir.
+    for (size_t i = 0; err == PROVEN_OK && i < ir->folder_count; ++i) {
+        const rp_ir_folder_t *f = &ir->folders[i];
+        const char *parent_logical = NULL;
+        for (size_t j = 0; j < ir->dir_count; ++j) {
+            if (strcmp(ir->dirs[j].id, f->dir) == 0) parent_logical = final_logical[j];
+        }
+        if (parent_logical == NULL) {
+            err = PROVEN_ERR_INVALID_ARG;
+            break;
+        }
+        add_node(&dirs, kdup(&k, f->id), kdup(&k, f->dir), kprintf(&k, "%s/%s", parent_logical, f->name), kdup(&k, f->name));
     }
 
     // Files: keys, components, contents.

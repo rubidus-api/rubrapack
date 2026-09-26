@@ -19,6 +19,7 @@ nullable, `l` = localizable, `i2`/`i4` integers). Keys are in bold.
 | FeatureComponents | **Feature_** s38, **Component_** s72 |
 | File | **File** s72, Component_ s72, FileName l255, FileSize i4, Version S72, Language S20, Attributes I2, Sequence i4 |
 | MsiFileHash | **File_** s72, Options i2, HashPart1..HashPart4 i4 |
+| CreateFolder | **Directory_** s72, **Component_** s72 |
 | Media | **DiskId** i2, LastSequence i4, DiskPrompt L64, Cabinet S255, VolumeLabel S32, Source S72 |
 | Upgrade | **UpgradeCode** s38, **VersionMin** S20, **VersionMax** S20, **Language** S255, **Attributes** i4, Remove S255, ActionProperty s72 |
 | CustomAction | **Action** s72, Type i2, Source S72, Target S255 |
@@ -57,6 +58,14 @@ fourth part is allowed but ignored when versions are compared), `Manufacturer`, 
   little-endian 32-bit integers (stored as signed values). Installed files hash with
   `MsiGetFileHash` to exactly these values. Files with a version resource put the version in
   `File.Version` instead (and need no hash).
+
+## Empty folders
+
+A folder that must exist without files gets its own Directory row, a component whose `Directory_`
+is that folder and whose `KeyPath` is null (the folder itself is the key path), a
+`CreateFolder` row pointing at both, and a `FeatureComponents` row. `CreateFolders` makes it at
+install time; `RemoveFolders` removes it at uninstall if it is empty. Component attribute 16
+(permanent) keeps it after uninstall.
 
 ## Media and the cabinet
 

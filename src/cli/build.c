@@ -121,7 +121,7 @@ int rp_cmd_build(int argc, char **argv) {
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress };
+            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, out };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             rp_toml_free(&doc);
         }

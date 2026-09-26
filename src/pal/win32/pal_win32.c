@@ -153,3 +153,78 @@ proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path
     proven_u16str_destroy(alloc, &t);
     return err;
 }
+
+proven_err_t rp_pal_list_dir(proven_allocator_t alloc, const char *path_utf8, char ***names, size_t *count) {
+    if (path_utf8 == NULL || names == NULL || count == NULL) return PROVEN_ERR_INVALID_ARG;
+    size_t pl = strlen(path_utf8);
+    char *pattern = rp_mem_alloc(alloc, pl + 3, 1);
+    if (pattern == NULL) return PROVEN_ERR_NOMEM;
+    memcpy(pattern, path_utf8, pl);
+    memcpy(pattern + pl, "\\*", 3);
+    proven_u16str_t w = { 0 };
+    proven_err_t err = wide_path(alloc, pattern, &w);
+    rp_mem_free(alloc, pattern);
+    if (err != PROVEN_OK) return err;
+    WIN32_FIND_DATAW fd;
+    HANDLE h = FindFirstFileW((const wchar_t *)proven_u16str_as_ptr(&w), &fd);
+    proven_u16str_destroy(alloc, &w);
+    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
+    char **v = NULL;
+    size_t n = 0, cap = 0;
+    do {
+        if (wcscmp(fd.cFileName, L".") == 0 || wcscmp(fd.cFileName, L"..") == 0) continue;
+        proven_u8str_t u = { 0 };
+        proven_u16str_view_t view = { .ptr = (const proven_u16 *)fd.cFileName, .size = wcslen(fd.cFileName) };
+        rp_text_result_t r = rp_utf16_to_u8str(alloc, view, &u);
+        if (r.err != PROVEN_OK) {
+            err = r.err;
+            break;
+        }
+        if (n == cap) {
+            size_t ncap = cap ? cap * 2 : 32;
+            char **nv = rp_mem_alloc(alloc, ncap, sizeof *nv);
+            if (nv == NULL) {
+                proven_u8str_destroy(alloc, &u);
+                err = PROVEN_ERR_NOMEM;
+                break;
+            }
+            if (n) memcpy(nv, v, n * sizeof *nv);
+            rp_mem_free(alloc, v);
+            v = nv;
+            cap = ncap;
+        }
+        size_t len = strlen(proven_u8str_as_cstr(&u));
+        v[n] = rp_mem_alloc(alloc, len + 1, 1);
+        if (v[n]) memcpy(v[n++], proven_u8str_as_cstr(&u), len + 1);
+        else err = PROVEN_ERR_NOMEM;
+        proven_u8str_destroy(alloc, &u);
+    } while (err == PROVEN_OK && FindNextFileW(h, &fd));
+    FindClose(h);
+    if (err != PROVEN_OK) {
+        for (size_t k = 0; k < n; ++k) rp_mem_free(alloc, v[k]);
+        rp_mem_free(alloc, v);
+        return err;
+    }
+    *names = v;
+    *count = n;
+    return PROVEN_OK;
+}
+
+static bool file_id(proven_allocator_t alloc, const char *path_utf8, BY_HANDLE_FILE_INFORMATION *info) {
+    proven_u16str_t w = { 0 };
+    if (wide_path(alloc, path_utf8, &w) != PROVEN_OK) return false;
+    HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&w), 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                           NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    proven_u16str_destroy(alloc, &w);
+    if (h == INVALID_HANDLE_VALUE) return false;
+    BOOL ok = GetFileInformationByHandle(h, info);
+    CloseHandle(h);
+    return ok != 0;
+}
+
+bool rp_pal_same_file(proven_allocator_t alloc, const char *a_utf8, const char *b_utf8) {
+    BY_HANDLE_FILE_INFORMATION a, b;
+    if (a_utf8 == NULL || b_utf8 == NULL || !file_id(alloc, a_utf8, &a) || !file_id(alloc, b_utf8, &b)) return false;
+    return a.dwVolumeSerialNumber == b.dwVolumeSerialNumber && a.nFileIndexHigh == b.nFileIndexHigh &&
+           a.nFileIndexLow == b.nFileIndexLow;
+}

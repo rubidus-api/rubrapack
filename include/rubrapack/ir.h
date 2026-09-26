@@ -33,6 +33,7 @@ typedef struct {
     char   **parts;             // relative path components below base/parent (at least one)
     size_t   part_count;
     char    *feature;           // may be NULL
+    bool     implicit;          // a sub folder created for [files.*] matches below a wildcard
     rp_pos_t pos;
 } rp_ir_dir_t;
 
@@ -48,6 +49,15 @@ typedef struct {
     char    *component_guid;    // user-fixed GUID or NULL
     rp_pos_t pos;
 } rp_ir_file_t;
+
+typedef struct {
+    char    *id;
+    char    *dir;               // dir ID
+    char    *name;              // folder name
+    bool     keep;              // left behind at uninstall
+    char    *feature;           // resolved (G2)
+    rp_pos_t pos;
+} rp_ir_folder_t;
 
 typedef struct {
     // [package]
@@ -69,6 +79,8 @@ typedef struct {
     size_t           dir_count;
     rp_ir_file_t    *files;
     size_t           file_count;
+    rp_ir_folder_t  *folders;
+    size_t           folder_count;
     proven_allocator_t alloc;
 } rp_ir_t;
 
@@ -83,6 +95,7 @@ typedef struct {
     size_t             define_count;
     const char        *arch;            // --arch, or NULL
     const char        *compress;        // --compress, or NULL
+    const char        *output;          // the file being built (refused inside a glob), or NULL
 } rp_ir_options_t;
 
 // Checks the document and builds the model. On any error the diagnostics say why, the model is
