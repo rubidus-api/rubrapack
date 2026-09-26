@@ -178,6 +178,8 @@ static const rp_msi_wcolumn_t removefile_cols[] = { { "FileKey", KEY_S(72) }, { 
                                                     { "DirProperty", S(72) }, { "InstallMode", I2 } };
 static const rp_msi_wcolumn_t duplicate_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "File_", S(72) },
                                                    { "DestName", L_N(255) }, { "DestFolder", S_N(72) } };
+static const rp_msi_wcolumn_t environment_cols[] = { { "Environment", KEY_S(72) }, { "Name", L(255) }, { "Value", L_N(255) },
+                                                     { "Component_", S(72) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -413,7 +415,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
-        createfolder, registry, removereg, shortcut, removefile, duplicate;
+        createfolder, registry, removereg, shortcut, removefile, duplicate, environment;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -432,10 +434,11 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&shortcut, alloc, "Shortcut", shortcut_cols, 12);
     rows_init(&removefile, alloc, "RemoveFile", removefile_cols, 5);
     rows_init(&duplicate, alloc, "DuplicateFile", duplicate_cols, 5);
+    rows_init(&environment, alloc, "Environment", environment_cols, 4);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &registry, &removereg, &shortcut,
-                      &removefile, &duplicate };
+                      &removefile, &duplicate, &environment };
     const size_t always = 13;
 
     // Property
@@ -666,6 +669,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         i_(&removefile, r->mode);
     }
 
+    // [env.*] (RFC-0004): system variables ('*'), each its own component under TARGETDIR. With '-'
+    // the engine undoes it at uninstall: a set variable is deleted, appended or prepended text is
+    // taken out and the rest kept; without '-' (keep) nothing is undone (observed).
+    for (size_t i = 0; i < ir->env_count; ++i) {
+        const rp_ir_env_t *e = &ir->envs[i];
+        char comp[23], guid[39];
+        rp_key_derive('C', kprintf(k, "env:%s", e->id, NULL), comp);
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), e->name, "env", e->id };
+        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        const char *ckey = kdup(k, comp);
+        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, "TARGETDIR");
+        i_(&component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); null_(&component); null_(&component);
+        s_(&featurecomp, e->feature); s_(&featurecomp, ckey);
+        const char *prefix = !e->keep ? "=-*" : "=*";
+        const char *value = e->mode == 1 ? kprintf(k, "[~];%s", e->value, NULL)
+                          : e->mode == 2 ? kprintf(k, "%s;[~]", e->value, NULL)
+                                         : e->value;
+        s_(&environment, e->id); s_(&environment, kprintf(k, "%s%s", prefix, e->name));
+        s_(&environment, value); s_(&environment, ckey);
+    }
+
     // [copy.*] (RFC-0004): DuplicateFile in the source file's component.
     for (size_t i = 0; i < ir->copy_count; ++i) {
         const rp_ir_copy_t *cp = &ir->copies[i];
@@ -767,6 +791,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
         s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+    }
+    if (ir->env_count) {            // MS Learn "Suggested InstallExecuteSequence"
+        s_(&iexec, "RemoveEnvironmentStrings"); null_(&iexec); i_(&iexec, 3310);
+        s_(&iexec, "WriteEnvironmentStrings"); null_(&iexec); i_(&iexec, 5200);
     }
     if (ir->copy_count) {           // MS Learn "Suggested InstallExecuteSequence" (3400 is used by our Undo pairs)
         s_(&iexec, "RemoveDuplicateFiles"); null_(&iexec); i_(&iexec, 3300);

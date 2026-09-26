@@ -66,6 +66,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 | `[registry.ID]` | **root** (`HKLM`, `HKCR`), **key**, name, value, type, remove, keep, view, with, feature |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
+| `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
@@ -134,8 +135,14 @@ removes the folder itself when it is empty. A failed installation puts removed f
 `[copy.ID]` installs a second copy of a file of this package into another folder; it goes and comes
 with its source. Folders that existed before the installation are never removed.
 
+### Environment variables: `[env.ID]`
+
+A system (machine-wide) variable. `mode = "set"` (default) replaces it, `append`/`prepend` add
+`;value` to the end or `value;` to the front of what is there. Uninstall undoes exactly that: a set
+variable is deleted, an appended part is taken out and the rest kept. `keep = true` leaves it.
+
 Only these fields are MSI formatted strings: registry `value` (and multi items), shortcut `args`,
-and later environment and INI values, service arguments, and conditions. Everywhere else rubrapack
+environment `value`, and later INI values, service arguments, and conditions. Everywhere else rubrapack
 writes the text exactly as given.
 
 ### Installed apps entry and properties

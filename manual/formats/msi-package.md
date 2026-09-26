@@ -164,6 +164,15 @@ File_ s72, DestName L255 `SHORT|Long`, DestFolder S72) runs in `DuplicateFiles` 
 `RemoveDuplicateFiles`. Files removed at install come back when the installation fails; a folder
 that existed before the installation is left in place at uninstall, even when empty. [observed]
 
+## Environment variables
+
+`Environment` (**Environment** s72, Name l255, Value L255 formatted, Component_ s72), written by
+`WriteEnvironmentStrings` (5200) and `RemoveEnvironmentStrings`. Name prefixes: `*` system
+variable (without it a per-user one), `=` create or set, `-` undo when the component is removed.
+Value `[~];x` appends `;x`, `x;[~]` prepends. With `-`, uninstall deletes a set variable and takes
+only the appended or prepended part out of a variable that existed before; without `-` nothing is
+undone. A failed installation restores the previous values. [observed]
+
 ## Files in use
 
 When a file to be replaced or removed is held by a running program (a DLL loaded into it):

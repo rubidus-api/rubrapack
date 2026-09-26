@@ -103,6 +103,17 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_remove_t;
 
+// [env.ID] (RFC-0004): a system environment variable.
+typedef struct {
+    char    *id;
+    char    *name;              // literal
+    char    *value;             // formatted
+    int      mode;              // 0 set, 1 append, 2 prepend
+    bool     keep;
+    char    *feature;           // resolved (G2)
+    rp_pos_t pos;
+} rp_ir_env_t;
+
 typedef struct {
     char    *id;
     char    *source_file;       // file ID
@@ -164,6 +175,8 @@ typedef struct {
     size_t            remove_count;
     rp_ir_copy_t     *copies;
     size_t            copy_count;
+    rp_ir_env_t      *envs;
+    size_t            env_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL
