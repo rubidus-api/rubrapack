@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "proven/allocator.h"
 #include "proven/types.h"
 
 typedef enum {
@@ -24,5 +25,10 @@ typedef enum {
 
 // Writes a NUL-terminated UTF-8 string.
 [[nodiscard]] proven_err_t rp_pal_puts(rp_out_t out, const char *utf8);
+
+// Reads a whole file named by a UTF-8 path into memory from `alloc` (free with rp_mem_free).
+// A file larger than max_bytes is refused with PROVEN_ERR_OUT_OF_BOUNDS before it is read.
+[[nodiscard]] proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8,
+                                            size_t max_bytes, uint8_t **data, size_t *len);
 
 #endif // RUBRAPACK_PAL_H

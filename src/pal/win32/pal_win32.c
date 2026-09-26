@@ -1,6 +1,7 @@
 // src/pal/win32/pal_win32.c - Windows output: a console gets UTF-16 through WriteConsoleW,
 // a pipe or file gets the UTF-8 bytes unchanged (RFC-0001 section 15.4).
 
+#include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/text.h"
 
@@ -57,4 +58,41 @@ proven_err_t rp_pal_write(rp_out_t out, const uint8_t *utf8, size_t len) {
 proven_err_t rp_pal_puts(rp_out_t out, const char *utf8) {
     if (utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
     return rp_pal_write(out, (const uint8_t *)utf8, strlen(utf8));
+}
+
+proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes,
+                              uint8_t **data, size_t *len) {
+    if (path_utf8 == NULL || data == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
+    proven_u16str_t wide = { 0 };
+    proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
+    rp_text_result_t t = rp_utf8_to_u16str(alloc, view, &wide);
+    if (t.err != PROVEN_OK) return t.err;
+    HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&wide), GENERIC_READ, FILE_SHARE_READ, NULL,
+                           OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    proven_u16str_destroy(alloc, &wide);
+    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
+    proven_err_t err = PROVEN_OK;
+    LARGE_INTEGER size;
+    uint8_t *buf = NULL;
+    if (!GetFileSizeEx(h, &size) || size.QuadPart < 0) err = PROVEN_ERR_IO;
+    else if ((unsigned long long)size.QuadPart > max_bytes) err = PROVEN_ERR_OUT_OF_BOUNDS;
+    if (err == PROVEN_OK) {
+        buf = rp_mem_alloc(alloc, (size_t)size.QuadPart, 1);
+        if (buf == NULL) err = PROVEN_ERR_NOMEM;
+    }
+    for (size_t off = 0; err == PROVEN_OK && off < (size_t)size.QuadPart;) {
+        size_t left = (size_t)size.QuadPart - off;
+        DWORD want = left > 0x10000000u ? 0x10000000u : (DWORD)left;
+        DWORD got = 0;
+        if (!ReadFile(h, buf + off, want, &got, NULL) || got == 0) err = PROVEN_ERR_IO;
+        off += got;
+    }
+    CloseHandle(h);
+    if (err != PROVEN_OK) {
+        rp_mem_free(alloc, buf);
+        return err;
+    }
+    *data = buf;
+    *len = (size_t)size.QuadPart;
+    return PROVEN_OK;
 }
