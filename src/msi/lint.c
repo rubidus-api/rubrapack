@@ -19,7 +19,19 @@ typedef struct {
     rp_srcdiags_t       *diags;
     size_t               errors;
     bool                 nomem;
+    rp_lint_opts_t       opts;
+    bool                 utf8;          // code page 65001: every string must be UTF-8
 } lint_t;
+
+// Findings that stop an installation; in a foreign package the others are warnings (L1).
+static bool breaking(const char *code) {
+    static const char *const codes[] = { "RP2001", "RP2002", "RP2004", "RP2005", "RP2006", "RP2007",
+                                         "RP2101", "RP2102", "RP2103", "RP2104", NULL };
+    for (size_t i = 0; codes[i]; ++i) {
+        if (strcmp(code, codes[i]) == 0) return true;
+    }
+    return false;
+}
 
 static rp_pos_t nopos(void) { return (rp_pos_t){ 0, 0 }; }
 
@@ -86,8 +98,9 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
     } else if (t) {
         snprintf(where, sizeof where, "%s: ", t->name);
     }
-    rp_srcdiag_add(l->diags, nopos(), code, false, "lint: %s%s", where, what);
-    ++l->errors;
+    bool warning = l->opts.foreign && !l->opts.strict && !breaking(code);
+    rp_srcdiag_add(l->diags, nopos(), code, warning, "lint: %s%s", where, what);
+    if (!warning) ++l->errors;
 }
 
 static bool str_is(const rp_msi_cell_t *c, const char *s) {
@@ -193,6 +206,13 @@ static void lint_cells(lint_t *l, const rp_msi_wtable_t *t) {
             if (want == RP_MSI_INT) {
                 bool ok = width == 2 ? v->i >= -32767 && v->i <= 32767 : v->i != INT32_MIN;
                 if (!ok) finding(l, "RP2004", t, row, "column %s: %ld is outside the column's range", col->name, (long)v->i);
+            } else if (want == RP_MSI_STR && !l->utf8) {
+                // Another code page: the bytes are not UTF-8; only an ASCII string can be measured.
+                bool ascii = true;
+                for (size_t i = 0; i < v->len; ++i) ascii &= v->bytes[i] < 0x80;
+                if (ascii && width && v->len > width) {
+                    finding(l, "RP2003", t, row, "column %s: %zu characters, the column holds %u", col->name, v->len, width);
+                }
             } else if (want == RP_MSI_STR) {
                 rp_text_result_t r = rp_utf8_to_utf16(v->bytes, v->len, NULL, 0);
                 if (r.err != PROVEN_OK) {
@@ -576,11 +596,97 @@ static void lint_custom_actions(lint_t *l, const index_t *files, const index_t *
     }
 }
 
+// ---- dialogs ---------------------------------------------------------------------------------
+
+static bool cell_str_eq(const rp_msi_cell_t *a, const rp_msi_cell_t *b) {
+    return a->kind == RP_MSI_STR && b->kind == RP_MSI_STR && a->len == b->len && memcmp(a->bytes, b->bytes, a->len) == 0;
+}
+
+// The Control row of `dialog` named `name`, or SIZE_MAX.
+static size_t control_row(const rp_msi_wtable_t *ct, size_t cd, size_t cn, const rp_msi_cell_t *dialog, const rp_msi_cell_t *name) {
+    for (size_t r = 0; r < ct->row_count; ++r) {
+        if (cell_str_eq(cell(ct, r, cd), dialog) && cell_str_eq(cell(ct, r, cn), name)) return r;
+    }
+    return SIZE_MAX;
+}
+
+static void lint_dialogs(lint_t *l) {
+    const rp_msi_wtable_t *dt = table(l, "Dialog"), *ct = table(l, "Control");
+    if (dt == NULL) return;
+    size_t dn = column(dt, "Dialog"), first = column(dt, "Control_First"), def = column(dt, "Control_Default"),
+           can = column(dt, "Control_Cancel");
+    size_t cd = ct ? column(ct, "Dialog_") : SIZE_MAX, cn = ct ? column(ct, "Control") : SIZE_MAX,
+           ctype = ct ? column(ct, "Type") : SIZE_MAX, cnext = ct ? column(ct, "Control_Next") : SIZE_MAX;
+    if (dn == SIZE_MAX || first == SIZE_MAX || cd == SIZE_MAX || cn == SIZE_MAX || cnext == SIZE_MAX) return;
+    for (size_t row = 0; row < dt->row_count; ++row) {
+        const rp_msi_cell_t *name = cell(dt, row, dn);
+        size_t cols[3] = { first, def, can };
+        static const char *const what[3] = { "Control_First", "Control_Default", "Control_Cancel" };
+        for (int k = 0; k < 3; ++k) {
+            if (cols[k] == SIZE_MAX) continue;
+            const rp_msi_cell_t *c = cell(dt, row, cols[k]);
+            if (!is_null(c) && control_row(ct, cd, cn, name, c) == SIZE_MAX) {
+                finding(l, "RP2102", dt, row, "%s '%.*s' is not a control of this dialog", what[k], (int)c->len, (const char *)c->bytes);
+            }
+        }
+        size_t with_next = 0;
+        for (size_t r = 0; r < ct->row_count; ++r) {
+            if (cell_str_eq(cell(ct, r, cd), name) && !is_null(cell(ct, r, cnext))) ++with_next;
+        }
+        if (with_next == 0) continue;
+        const rp_msi_cell_t *cur = cell(dt, row, first);
+        size_t steps = 0;
+        bool closed = false;
+        while (!closed && steps < with_next) {
+            size_t r = control_row(ct, cd, cn, name, cur);
+            if (r == SIZE_MAX || is_null(cell(ct, r, cnext))) break;
+            cur = cell(ct, r, cnext);
+            ++steps;
+            closed = cell_str_eq(cur, cell(dt, row, first));
+        }
+        if (!closed || steps != with_next) {
+            finding(l, "RP2101", dt, row, "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First "
+                    "(Windows Installer stops with error 2809 or 2810)", with_next);
+        }
+    }
+    // FilesInUse lists the programs in a ListBox filled from the ListBox table.
+    rp_msi_cell_t fiu = { .kind = RP_MSI_STR, .bytes = (const uint8_t *)"FilesInUse", .len = 10 };
+    for (size_t row = 0; row < dt->row_count; ++row) {
+        if (cell_str_eq(cell(dt, row, dn), &fiu) && table(l, "ListBox") == NULL) {
+            finding(l, "RP2103", dt, row, "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)");
+        }
+    }
+    // The dialog named by the ErrorDialog property shows every message.
+    const rp_msi_wtable_t *pt = table(l, "Property");
+    if (pt == NULL || ctype == SIZE_MAX) return;
+    for (size_t row = 0; row < pt->row_count; ++row) {
+        if (!str_is(cell(pt, row, 0), "ErrorDialog")) continue;
+        const rp_msi_cell_t *ed = cell(pt, row, 1);
+        static const char *const need[2][2] = { { "ErrorText", "Text" }, { "ErrorIcon", "Icon" } };
+        for (int k = 0; k < 2; ++k) {
+            rp_msi_cell_t nm = { .kind = RP_MSI_STR, .bytes = (const uint8_t *)need[k][0], .len = strlen(need[k][0]) };
+            size_t r = control_row(ct, cd, cn, ed, &nm);
+            if (r == SIZE_MAX || !str_is(cell(ct, r, ctype), need[k][1])) {
+                finding(l, "RP2104", pt, row, "the error dialog '%.*s' needs a %s control named %s (error 2835)", (int)ed->len,
+                        (const char *)ed->bytes, need[k][1], need[k][0]);
+            }
+        }
+    }
+}
+
 // ---- entry -----------------------------------------------------------------------------------
 
 proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_srcdiags_t *diags) {
-    if (db == NULL || diags == NULL) return PROVEN_ERR_INVALID_ARG;
-    lint_t l = { .alloc = alloc, .db = db, .diags = diags };
+    return rp_msi_lint_opts(alloc, db, &(rp_lint_opts_t){ 0 }, diags);
+}
+
+proven_err_t rp_msi_lint_opts(proven_allocator_t alloc, const rp_msi_wdb_t *db, const rp_lint_opts_t *opts, rp_srcdiags_t *diags) {
+    if (db == NULL || diags == NULL || opts == NULL) return PROVEN_ERR_INVALID_ARG;
+    lint_t l = { .alloc = alloc, .db = db, .diags = diags, .opts = *opts, .utf8 = db->codepage == 65001 };
+    if (!l.utf8) {
+        rp_srcdiag_add(diags, nopos(), "RP2100", true, "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII",
+                       (unsigned)db->codepage);
+    }
     for (size_t i = 0; i < db->table_count; ++i) lint_cells(&l, &db->tables[i]);
 
     static const char *const indexed[] = { "Property", "Directory", "Component", "Feature", "File", "CustomAction", "Dialog",
@@ -616,6 +722,7 @@ proven_err_t rp_msi_lint(proven_allocator_t alloc, const rp_msi_wdb_t *db, rp_sr
     lint_platform(&l);
     lint_custom_actions(&l, find_index(ix, NIX, "File"), cas);
     lint_upgrade(&l, props);
+    lint_dialogs(&l);
 
     for (size_t i = 0; i < NIX; ++i) index_free(&l, &ix[i].x);
     if (l.nomem) return PROVEN_ERR_NOMEM;

@@ -398,6 +398,8 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--reproducible]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
+rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--strict]
+rubrapack lint <file.msi> [--strict]
 rubrapack version | help [command]
 ```
 
@@ -411,5 +413,13 @@ rubrapack version | help [command]
   mean 'name'?)`.
 - Before writing, `build` checks the finished tables (`RP20xx` diagnostics, exit code 5); these
   checks guard rubrapack itself, so a source that passes the `RP1xxx` checks should never meet them.
+- `lint <src.rpk>` runs every check `build` runs and writes nothing. `lint <file.msi>` checks a
+  package made by any tool with the same table rules: what stops an installation is an error
+  (exit code 5) - a value that does not fit its column, a missing referenced row, a duplicate key,
+  a broken dialog tab order (`RP2101`), a dialog's first/default/cancel control that is not there
+  (`RP2102`), a files-in-use dialog without a `ListBox` table (`RP2103`), an error dialog without
+  `ErrorText`/`ErrorIcon` (`RP2104`) - and everything else is a warning. `--strict` makes warnings
+  fail too. A package in another code page than 65001 gets a note (`RP2100`): its text cannot be
+  checked as UTF-8. The last line on stdout counts errors and warnings.
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.

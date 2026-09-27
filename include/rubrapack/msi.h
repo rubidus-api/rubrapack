@@ -140,4 +140,17 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
                                         const rp_limits_t *limits, uint8_t **out, size_t *len);
 
+// ---- view ------------------------------------------------------------------------------------
+
+// A database read with rp_msi_open, seen as writer tables so the lint rules (rubrapack/lint.h)
+// run on any MSI (RFC-0006 1). Strings point into `msi`, which must stay open; binary cells
+// carry no bytes. `summary` (may be NULL) is borrowed. Free with rp_msi_view_free.
+typedef struct {
+    rp_msi_wdb_t db;
+    void        *priv;
+} rp_msi_view_t;
+
+[[nodiscard]] proven_err_t rp_msi_view(const rp_msi_t *msi, const uint8_t *summary, size_t summary_len, rp_msi_view_t *view);
+void rp_msi_view_free(const rp_msi_t *msi, rp_msi_view_t *view);
+
 #endif // RUBRAPACK_MSI_H

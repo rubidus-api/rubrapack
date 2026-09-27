@@ -9,4 +9,8 @@
 // `rubrapack build` (src/cli/build.c).
 [[nodiscard]] int rp_cmd_build(int argc, char **argv);
 
+// `rubrapack lint <src.rpk|file.msi> [--strict]` (RFC-0006 1); the source half lives in build.c.
+[[nodiscard]] int rp_cmd_lint(int argc, char **argv);
+[[nodiscard]] int rp_cmd_lint_source(int argc, char **argv);
+
 #endif // RUBRAPACK_INSPECT_H

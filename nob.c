@@ -43,6 +43,7 @@ static const char *const core_sources[] = {
     "src/cli/build.c",
     "src/cli/cli.c",
     "src/cli/inspect.c",
+    "src/cli/lint.c",
     "src/codec/deflate.c",
     "src/codec/md5.c",
     "src/container/cab.c",
@@ -61,6 +62,7 @@ static const char *const core_sources[] = {
     "src/msi/lower.c",
     "src/msi/suminfo.c",
     "src/msi/ui.c",
+    "src/msi/view.c",
     "src/pe/pe.c",
     "src/text/utf.c",
 };

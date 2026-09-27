@@ -9,6 +9,7 @@
 
 void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warning, const char *fmt, ...) {
     if (!warning) d->errors++;
+    else d->warnings++;
     if (d->count >= RP_SRCDIAG_MAX) {
         d->dropped++;
         return;

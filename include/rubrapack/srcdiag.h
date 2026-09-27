@@ -27,6 +27,7 @@ typedef struct {
     rp_srcdiag_t items[RP_SRCDIAG_MAX];
     size_t       count;
     size_t       errors;        // errors seen, including dropped ones
+    size_t       warnings;      // warnings seen, including dropped ones
     size_t       dropped;
 } rp_srcdiags_t;
 

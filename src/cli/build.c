@@ -26,8 +26,11 @@ static bool ends_with(const char *s, const char *suffix) {
     return true;
 }
 
-int rp_cmd_build(int argc, char **argv) {
+// `build`, or with `lint` set `lint <src.rpk>`: the same steps (parse, model, tables, RP20xx/RP21xx)
+// without writing anything (RFC-0006 1). --strict turns warnings into a lint failure.
+static int run(int argc, char **argv, bool lint) {
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
+    bool strict = false;
     rp_define_t defines[MAX_DEFINES];
     char *define_buf[MAX_DEFINES];
     size_t ndef = 0;
@@ -37,7 +40,9 @@ int rp_cmd_build(int argc, char **argv) {
     for (int i = 2; i < argc; ++i) {
         const char *a = argv[i];
         const char *next = i + 1 < argc ? argv[i + 1] : NULL;
-        if (strcmp(a, "-o") == 0 && next) {
+        if (lint && strcmp(a, "--strict") == 0) {
+            strict = true;
+        } else if (!lint && strcmp(a, "-o") == 0 && next) {
             out = next;
             ++i;
         } else if (strcmp(a, "-D") == 0 && next) {
@@ -78,7 +83,7 @@ int rp_cmd_build(int argc, char **argv) {
             }
             ++i;
         } else if (a[0] == '-' && a[1] != '\0') {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown or incomplete build option '%s'", a);
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown or incomplete %s option '%s'", lint ? "lint" : "build", a);
             goto done;
         } else if (src == NULL) {
             src = a;
@@ -87,8 +92,12 @@ int rp_cmd_build(int argc, char **argv) {
             goto done;
         }
     }
+    if (lint && src) {
+        out = "package.msi";        // names the external cabinets only; nothing is written
+    }
     if (src == NULL || out == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--reproducible]");
+        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--reproducible]");
         goto done;
     }
     if (!ends_with(out, ".msi")) {
@@ -121,7 +130,7 @@ int rp_cmd_build(int argc, char **argv) {
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, out };
+            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? NULL : out };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             rp_toml_free(&doc);
         }
@@ -147,7 +156,7 @@ int rp_cmd_build(int argc, char **argv) {
             rp_ir_free(&ir);
             // RFC-0001 7.1: never overwrite part of an earlier multi-file output; cabinets first, the
             // package last, so a package on disk always has its cabinets.
-            for (size_t i = 0; err == PROVEN_OK && i < ncabs; ++i) {
+            for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {
                 snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
                 uint64_t size = 0;
                 if (rp_pal_stat(heap, cabpath, &size) != RP_FS_NONE) {
@@ -155,12 +164,12 @@ int rp_cmd_build(int argc, char **argv) {
                     err = PROVEN_ERR_IO;
                 }
             }
-            for (size_t i = 0; err == PROVEN_OK && i < ncabs; ++i) {
+            for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {
                 snprintf(cabpath, sizeof cabpath, "%.*s%s", (int)outdir, out, cabs[i].name);
                 err = rp_pal_write_file_atomic(heap, cabpath, cabs[i].data, cabs[i].len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", cabpath);
             }
-            if (err == PROVEN_OK) {
+            if (!lint && err == PROVEN_OK) {
                 err = rp_pal_write_file_atomic(heap, out, msi, msi_len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             }
@@ -171,6 +180,7 @@ int rp_cmd_build(int argc, char **argv) {
                  : err == PROVEN_ERR_INVALID_STATE ? RP_EXIT_LINT     // rp_msi_lint refused the tables
                  : d.errors                        ? RP_EXIT_SOURCE
                                                    : RP_EXIT_IO;
+            if (rc == RP_EXIT_OK && strict && d.warnings) rc = RP_EXIT_LINT;
         } else {
             rp_srcdiag_print(&d, src);
             rc = err == PROVEN_ERR_INVALID_FORMAT ? RP_EXIT_SOURCE : RP_EXIT_IO;
@@ -180,3 +190,7 @@ done:
     for (size_t k = 0; k < ndef; ++k) rp_mem_free(proven_heap_allocator(), define_buf[k]);
     return rc;
 }
+
+int rp_cmd_build(int argc, char **argv) { return run(argc, argv, false); }
+
+int rp_cmd_lint_source(int argc, char **argv) { return run(argc, argv, true); }

@@ -29,7 +29,8 @@ static const command_t commands[] = {
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams]",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file> -d <dir>", "unpack a package into a new directory", false },
-    { "lint",    "lint <src.rpk|file.msi>", "check a source or package", false },
+    { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict] | lint <file.msi> [--strict]",
+                 "check a source or package without writing anything", true },
     { "new",     "new [msi|msix] <name>", "write a starter source file", false },
     { "guid",    "guid [--from <text>]", "print a random or derived GUID", false },
     { "keys",    "keys list [--store|--pkcs11 <module>]", "list usable signing keys", false },
@@ -147,6 +148,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "help") == 0) return cmd_help(argc, argv);
     if (strcmp(name, "inspect") == 0) return rp_cmd_inspect(argc, argv);
     if (strcmp(name, "build") == 0) return rp_cmd_build(argc, argv);
+    if (strcmp(name, "lint") == 0) return rp_cmd_lint(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);
