@@ -461,7 +461,9 @@ rubrapack version | help [command]
   names inside it.
 - `sign` adds an Authenticode signature (SHA-256, RSA) to a PE file or an MSI package, in place or
   to `-o`; `build --key` signs the package as it is built (the same code), and a signed
-  `--reproducible` build still gives the same bytes every time (the signature holds no time). An MSI
+  `--reproducible` build still gives the same bytes every time (the signature holds no time) - unless
+  it is timestamped: a timestamp carries the server's time and serial number, so it differs on every
+  run, and only the package inside the signature stays the same. An MSI
   whose cabinets lie outside it is refused: its signature would not cover them - use embedded
   cabinets, or `--allow-unsigned-cabs` to sign the `.msi` alone with a warning. The key
   file is a PKCS#12 file (`.pfx`/`.p12`: AES with PBKDF2-HMAC-SHA256, SHA-256 MAC - what current
@@ -490,6 +492,9 @@ rubrapack version | help [command]
   Authenticode timestamp that `Set-AuthenticodeSignature -TimestampServer` writes, which rubrapack
   does not check); the last three fail. Only a timestamp whose server is trusted through
   `--tsa-trust` - `--trust` does not count for it - moves the time at which the signer's
-  certificate must have been valid from now to the stamped time.
+  certificate must have been valid from now to the stamped time. (For tests, the environment
+  variable `RUBRAPACK_TEST_NOW` - seconds since 1970 - replaces "now" in `verify`'s checks, so
+  that an expired certificate can be checked without changing a clock; it widens nothing that a
+  clock set to that time would not.)
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.
