@@ -13,6 +13,7 @@
 
 #include "proven/allocator.h"
 #include "proven/types.h"
+#include "rubrapack/cfb.h"
 #include "rubrapack/pki.h"
 
 // Checks that the key file can sign code at time `now` (seconds since 1970): an RSA key with a
@@ -56,6 +57,26 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
 
 // Verifies a signed PE file.
 void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, const char **why);
+
+// ---- MSI ---------------------------------------------------------------------------------------
+
+// The MSI digests, from the compound file (tests/fixtures/authenticode, worked out against
+// Windows' signer - manual/formats/authenticode.md): `ex` = SHA-256 over the root's CLSID and
+// state bits and, for every stream in UTF-16LE name order, its name, 8-byte size and two stored
+// times; `digest` = hash over ex, the stream contents in the same order, and the root CLSID. The
+// two signature streams are left out. A database with storages is refused.
+[[nodiscard]] bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t ex[32], uint8_t *digest, const char **why);
+
+// Signs an MSI package: DigitalSignature and MsiDigitalSignatureEx streams are added. A package
+// that uses cabinets outside itself is refused unless `allow_external_cabs` (RFC-0007 S2: those
+// cabinets are then not covered, *external_cabs says so).
+[[nodiscard]] proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t len, const rp_keyfile_t *kf, int64_t now,
+                                       bool allow_external_cabs, bool *external_cabs, uint8_t **out, size_t *out_len, const char **why);
+
+// Verifies a signed MSI package (with or without MsiDigitalSignatureEx). The spans in *r point into
+// *sig, the signature stream, which the caller frees with rp_mem_free (NULL when there is none).
+void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_authenticode_check_t *r, uint8_t **sig,
+                   const char **why);
 
 // ---- trust -------------------------------------------------------------------------------------
 

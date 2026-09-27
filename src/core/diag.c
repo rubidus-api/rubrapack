@@ -7,12 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
-void rp_diag_error(const char *code, const char *fmt, ...) {
+static void emit(const char *kind, const char *code, const char *fmt, va_list ap) {
     char msg[1024];
-    va_list ap;
-    va_start(ap, fmt);
     int n = vsnprintf(msg, sizeof msg, fmt, ap);
-    va_end(ap);
     if (n < 0) {
         msg[0] = '\0';
     } else if ((size_t)n >= sizeof msg) {
@@ -28,8 +25,22 @@ void rp_diag_error(const char *code, const char *fmt, ...) {
     }
 
     char line[1100];
-    int m = snprintf(line, sizeof line, "rubrapack: error[%s]: %s\n", code, msg);
+    int m = snprintf(line, sizeof line, "rubrapack: %s[%s]: %s\n", kind, code, msg);
     if (m < 0) return;
     size_t len = strlen(line);
     (void)rp_pal_write(RP_OUT_STDERR, (const uint8_t *)line, len);
+}
+
+void rp_diag_error(const char *code, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    emit("error", code, fmt, ap);
+    va_end(ap);
+}
+
+void rp_diag_warning(const char *code, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    emit("warning", code, fmt, ap);
+    va_end(ap);
 }

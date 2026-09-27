@@ -21,11 +21,11 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible]",
+    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs]]",
                  "build a package from a source file", true },
-    { "sign",    "sign <file.exe|.dll> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [-o <out>]",
-                 "sign a PE file (MSI follows)", true },
-    { "verify",  "verify <file.exe|.dll> [--trust <certificate>]...",
+    { "sign",    "sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs] [-o <out>]",
+                 "sign a PE file or an MSI package", true },
+    { "verify",  "verify <file.exe|.dll|.msi> [--trust <certificate>]...",
                  "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },

@@ -29,6 +29,8 @@ typedef struct {
     uint8_t  type;          // RP_CFB_*
     uint32_t left, right, child;
     uint8_t  clsid[16];
+    uint32_t state;         // state bits
+    uint8_t  times[16];     // creation and modification FILETIMEs, as stored
     uint32_t start;         // first sector (regular or mini)
     uint64_t size;
 } rp_cfb_entry_t;

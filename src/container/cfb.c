@@ -196,6 +196,8 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
         out->right = rd32(e + 72);
         out->child = rd32(e + 76);
         memcpy(out->clsid, e + 80, 16);
+        out->state = rd32(e + 96);
+        memcpy(out->times, e + 100, 16);
         out->start = rd32(e + 116);
         out->size = cfb->major == 3 ? rd32(e + 120) : rd64(e + 120);
         uint32_t links[3] = { out->left, out->right, out->child };

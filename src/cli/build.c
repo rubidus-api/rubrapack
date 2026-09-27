@@ -31,6 +31,7 @@ static bool ends_with(const char *s, const char *suffix) {
 static int run(int argc, char **argv, bool lint) {
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
     bool strict = false, nfc = false;
+    rp_sign_args_t sign = { 0 };
     rp_define_t defines[MAX_DEFINES];
     char *define_buf[MAX_DEFINES];
     size_t ndef = 0;
@@ -74,6 +75,17 @@ static int run(int argc, char **argv, bool lint) {
         } else if (strcmp(a, "--compress") == 0 && next) {
             compress = next;
             ++i;
+        } else if (!lint && (strcmp(a, "--key") == 0 || strcmp(a, "--cert") == 0 || strcmp(a, "--pass-env") == 0 ||
+                             strcmp(a, "--pass-file") == 0) && next) {
+            const char **slot = strcmp(a, "--key") == 0 ? &sign.key : strcmp(a, "--cert") == 0 ? &sign.cert
+                              : strcmp(a, "--pass-env") == 0 ? &sign.pass_env : &sign.pass_file;
+            *slot = next;
+            ++i;
+        } else if (!lint && strcmp(a, "--allow-unsigned-cabs") == 0) {
+            sign.allow_unsigned_cabs = true;
+        } else if (strcmp(a, "--pass") == 0 || strncmp(a, "--pass=", 7) == 0) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a password is never taken on the command line (others can see it); use --pass-env or --pass-file");
+            goto done;
         } else if (strcmp(a, "--nfc") == 0) {
             nfc = true;
         } else if (strcmp(a, "--reproducible") == 0) {
@@ -96,6 +108,10 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (lint && src) {
         out = "package.msi";        // names the external cabinets only; nothing is written
+    }
+    if (!lint && (sign.cert || sign.pass_env || sign.pass_file || sign.allow_unsigned_cabs) && sign.key == NULL) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--cert, --pass-env, --pass-file and --allow-unsigned-cabs go with --key");
+        goto done;
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
@@ -156,6 +172,22 @@ static int run(int argc, char **argv, bool lint) {
             size_t ncabs = 0;
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
             rp_ir_free(&ir);
+            // --key: signed before anything is written (the same code as `rubrapack sign`).
+            if (err == PROVEN_OK && !lint && sign.key) {
+                uint8_t *signed_msi = NULL;
+                size_t signed_len = 0;
+                int src_rc = rp_sign_bytes(&sign, out, msi, msi_len, &signed_msi, &signed_len);
+                if (src_rc != RP_EXIT_OK) {
+                    rp_build_files_free(heap, cabs, ncabs);
+                    rp_mem_free(heap, msi);
+                    rp_srcdiag_print(&d, src);
+                    rc = src_rc;
+                    goto done;
+                }
+                rp_mem_free(heap, msi);
+                msi = signed_msi;
+                msi_len = signed_len;
+            }
             // RFC-0001 7.1: never overwrite part of an earlier multi-file output; cabinets first, the
             // package last, so a package on disk always has its cabinets.
             for (size_t i = 0; !lint && err == PROVEN_OK && i < ncabs; ++i) {

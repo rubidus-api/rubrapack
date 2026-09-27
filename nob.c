@@ -76,6 +76,7 @@ static const char *const core_sources[] = {
     "src/crypto/rsa.c",
     "src/sign/authenticode.c",
     "src/sign/chain.c",
+    "src/sign/msi_sign.c",
     "src/sign/pe_sign.c",
     "src/text/utf.c",
     "src/text/nfc.c",

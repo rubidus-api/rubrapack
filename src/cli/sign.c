@@ -80,61 +80,69 @@ static int load_key(proven_allocator_t heap, const char *key, const char *cert, 
     return rc;
 }
 
+int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, uint8_t **out, size_t *out_len) {
+    proven_allocator_t heap = proven_heap_allocator();
+    bool pe = is_pe(data, len), cfb = is_cfb(data, len);
+    if (!pe && !cfb) {
+        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll) nor an MSI package", label);
+        return RP_EXIT_USAGE;
+    }
+    rp_keyfile_t kf;
+    int rc = load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf);
+    if (rc != RP_EXIT_OK) return rc;
+    const char *why = NULL;
+    bool external = false;
+    int64_t now = (int64_t)time(NULL);
+    proven_err_t err = pe ? rp_pe_sign(heap, data, len, &kf, now, out, out_len, &why)
+                          : rp_msi_sign(heap, data, len, &kf, now, a->allow_unsigned_cabs, &external, out, out_len, &why);
+    rp_keyfile_free(&kf);
+    if (err != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_SIGN, "'%s': %s", label, why ? why : "cannot sign");
+        return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
+    }
+    if (external) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
+    return RP_EXIT_OK;
+}
+
 int rp_cmd_sign(int argc, char **argv) {
-    const char *file = NULL, *key = NULL, *cert = NULL, *pass_env = NULL, *pass_file = NULL, *out = NULL;
+    rp_sign_args_t a = { 0 };
+    const char *file = NULL, *out = NULL;
     for (int i = 2; i < argc; ++i) {
-        const char *a = argv[i], *next = i + 1 < argc ? argv[i + 1] : NULL;
-        const char **slot = strcmp(a, "--key") == 0 ? &key : strcmp(a, "--cert") == 0 ? &cert : strcmp(a, "--pass-env") == 0 ? &pass_env
-                          : strcmp(a, "--pass-file") == 0 ? &pass_file : strcmp(a, "-o") == 0 ? &out : NULL;
+        const char *arg = argv[i], *next = i + 1 < argc ? argv[i + 1] : NULL;
+        const char **slot = strcmp(arg, "--key") == 0 ? &a.key : strcmp(arg, "--cert") == 0 ? &a.cert : strcmp(arg, "--pass-env") == 0 ? &a.pass_env
+                          : strcmp(arg, "--pass-file") == 0 ? &a.pass_file : strcmp(arg, "-o") == 0 ? &out : NULL;
         if (slot && next) {
             *slot = next;
             ++i;
-        } else if (strcmp(a, "--pass") == 0 || strncmp(a, "--pass=", 7) == 0) {
+        } else if (strcmp(arg, "--allow-unsigned-cabs") == 0) {
+            a.allow_unsigned_cabs = true;
+        } else if (strcmp(arg, "--pass") == 0 || strncmp(arg, "--pass=", 7) == 0) {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a password is never taken on the command line (others can see it); use --pass-env or --pass-file");
             return RP_EXIT_USAGE;
-        } else if (a[0] == '-' || file) {
+        } else if (arg[0] == '-' || file) {
             file = NULL;
             break;
         } else {
-            file = a;
+            file = arg;
         }
     }
-    if (file == NULL || key == NULL || (pass_env && pass_file)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [-o <out>]");
+    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
-    uint8_t *data = NULL;
-    size_t len = 0;
+    uint8_t *data = NULL, *signed_data = NULL;
+    size_t len = 0, signed_len = 0;
     if (rp_pal_read_file(heap, file, MAX_INPUT, &data, &len) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", file);
         return RP_EXIT_IO;
     }
-    if (!is_pe(data, len)) {
-        if (is_cfb(data, len)) rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "signing MSI packages is not implemented yet (RFC-0007 step 4)");
-        else rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll) nor an MSI package", file);
-        rp_mem_free(heap, data);
-        return RP_EXIT_USAGE;
-    }
-    rp_keyfile_t kf;
-    int rc = load_key(heap, key, cert, pass_env, pass_file, &kf);
-    if (rc != RP_EXIT_OK) {
-        rp_mem_free(heap, data);
-        return rc;
-    }
-    uint8_t *signed_data = NULL;
-    size_t signed_len = 0;
-    const char *why = NULL;
-    proven_err_t err = rp_pe_sign(heap, data, len, &kf, (int64_t)time(NULL), &signed_data, &signed_len, &why);
-    rp_keyfile_free(&kf);
+    int rc = rp_sign_bytes(&a, file, data, len, &signed_data, &signed_len);
     rp_mem_free(heap, data);
-    if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_SIGN, "'%s': %s", file, why ? why : "cannot sign");
-        return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
-    }
+    if (rc != RP_EXIT_OK) return rc;
     // Written in one step: the original stays as it was if anything fails (RFC-0001 7.1).
     const char *target = out ? out : file;
-    err = rp_pal_write_file_atomic(heap, target, signed_data, signed_len);
+    proven_err_t err = rp_pal_write_file_atomic(heap, target, signed_data, signed_len);
     rp_mem_free(heap, signed_data);
     if (err != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", target);
@@ -160,7 +168,7 @@ int rp_cmd_verify(int argc, char **argv) {
         }
     }
     if (file == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll> [--trust <certificate>]...");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi> [--trust <certificate>]...");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -183,15 +191,17 @@ int rp_cmd_verify(int argc, char **argv) {
         rp_keyfile_free(&anchors);
         return RP_EXIT_IO;
     }
-    if (!is_pe(data, len)) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "verify reads PE files (.exe, .dll) for now; MSI follows with MSI signing");
+    if (!is_pe(data, len) && !is_cfb(data, len)) {
+        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file nor an MSI package", file);
         rp_mem_free(heap, data);
         rp_keyfile_free(&anchors);
         return RP_EXIT_USAGE;
     }
     rp_authenticode_check_t r;
     const char *why = NULL;
-    rp_pe_verify(data, len, &r, &why);
+    uint8_t *sig = NULL;
+    if (is_pe(data, len)) rp_pe_verify(data, len, &r, &why);
+    else rp_msi_verify(heap, data, len, &r, &sig, &why);
     const char *chain = "not-checked (give --trust)";
     const char *chain_why = NULL;
     bool trusted = false;
@@ -213,6 +223,7 @@ int rp_cmd_verify(int argc, char **argv) {
                            : ntrust ? (chain_why ? chain_why : "untrusted") : "no --trust given: the signature verifies but nothing says whom to trust";
         rp_diag_error(RP_DIAG_VERIFY, "'%s': %s", file, reason);
     }
+    rp_mem_free(heap, sig);
     rp_mem_free(heap, data);
     rp_keyfile_free(&anchors);
     int rc = rp_pal_puts(RP_OUT_STDOUT, out) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;

@@ -1,7 +1,7 @@
 # Authenticode signatures
 
-What a program has to write so that Windows accepts a signed PE file (`.exe`, `.dll`), and, once
-rubrapack signs them, an MSI package. Facts are tagged as in [README.md](README.md): **[spec]**
+What a program has to write so that Windows accepts a signed PE file (`.exe`, `.dll`) or MSI
+package. Facts are tagged as in [README.md](README.md): **[spec]**
 for Microsoft's "Windows Authenticode Portable Executable Signature Format", the PE/COFF
 specification and RFC 5652 (CMS); **[observed]** for files signed by Windows' own signer
 (PowerShell `Set-AuthenticodeSignature`, which uses `mssign32.dll`) and checked with
@@ -72,6 +72,34 @@ ContentInfo { signedData (1.2.840.113549.1.7.2), [0] SignedData {
 - RSA PKCS#1 v1.5 is deterministic: a program that writes exactly this structure with the same
   key produces the same bytes as Windows. rubrapack does, except the `CheckSum` difference above.
   [observed]
+
+## MSI packages
+
+Microsoft does not publish how an MSI package is hashed. The rules below were worked out by
+signing packages with Windows' signer and comparing: rubrapack's signature and Ex streams came out
+byte-identical to Windows' for the same package and key, and packages whose directory entries were
+given non-zero state bits, times and CLSIDs told the fields apart. [observed]
+
+- The signature is the stream `\005DigitalSignature` at the root of the compound file: the same
+  CMS `ContentInfo` as for a PE file, with `data` = `SEQUENCE { SPC_SIPINFO (1.3.6.1.4.1.311.2.1.30),
+  SpcSipInfo }`, where Windows writes `SpcSipInfo` as `SEQUENCE { 2, OCTET STRING <the MSI SIP GUID
+  {000C10F1-0000-0000-C000-000000000046} in its little-endian byte order>, 0, 0, 0, 0, 0 }`.
+- Windows also writes `\005MsiDigitalSignatureEx`: 32 bytes, the SHA-256 of a "prehash" of the
+  compound file's directory:
+  - the root entry's CLSID (16 bytes) and state bits (4 bytes, little-endian);
+  - then, for every stream at the root except the two signature streams, in the order of their
+    names compared as UTF-16LE bytes: the name (UTF-16LE, no terminating NUL), the stream size as
+    8 bytes little-endian, and the entry's creation and modification times as stored (8 + 8
+    bytes). A stream's CLSID and state bits are not part of it.
+  The root's own times are not part of it (Windows sets the root's modification time when it
+  saves the signed file).
+- The digest in `SpcIndirectDataContent` is the hash of: the 32-byte `MsiDigitalSignatureEx`
+  value (when that stream is written), then every stream's contents in the same name order
+  (again without the two signature streams), then the root CLSID.
+- Only streams at the root were observed; a package with storages (embedded transforms,
+  sub-databases) is not covered here, and rubrapack refuses to sign one.
+- A signature covers what is inside the `.msi` only: cabinets outside it (Media table `Cabinet`
+  values that do not start with `#`) are not part of the digest.
 
 ## What Windows reports
 

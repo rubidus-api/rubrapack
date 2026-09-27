@@ -44,5 +44,7 @@ enum {
 // it is cut at 1023 bytes on a character boundary.
 [[gnu::format(RP_PRINTF_FORMAT, 2, 3)]]
 void rp_diag_error(const char *code, const char *fmt, ...);
+[[gnu::format(RP_PRINTF_FORMAT, 2, 3)]]
+void rp_diag_warning(const char *code, const char *fmt, ...);
 
 #endif // RUBRAPACK_DIAG_H
