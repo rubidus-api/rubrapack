@@ -3,6 +3,7 @@
 // to stderr.
 
 #include "rubrapack/buf.h"
+#include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -152,12 +153,13 @@ static rp_msi_value_t cell(const tab_t *t, size_t row, int col) {
     return t->rows.cells[row * t->rows.column_count + (size_t)col];
 }
 
-// The long name of a "short|long" or "target:source" name field.
-static void long_name(const rp_msi_t *msi, rp_msi_value_t v, const uint8_t **p, size_t *n) {
+// The long name of a "short|long" name; a DefaultDir's "target:source" gives the target
+// (`split`; a FileName has no such part).
+static void long_name(const rp_msi_t *msi, rp_msi_value_t v, bool split, const uint8_t **p, size_t *n) {
     *p = (const uint8_t *)"";
     *n = 0;
     if (v.kind != RP_MSI_STR || rp_msi_string(msi, v.s, p, n) != PROVEN_OK) return;
-    const uint8_t *colon = memchr(*p, ':', *n);
+    const uint8_t *colon = split ? memchr(*p, ':', *n) : NULL;
     if (colon) *n = (size_t)(colon - *p);
     const uint8_t *bar = memchr(*p, '|', *n);
     if (bar) {
@@ -205,7 +207,7 @@ static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_par
     }
     if (prow == SIZE_MAX) return false;
     if (!dir_path(msi, dir, c_key, c_parent, c_default, prow, b, depth + 1)) return false;
-    long_name(msi, cell(dir, row, c_default), &p, &n);
+    long_name(msi, cell(dir, row, c_default), true, &p, &n);
     if (!(n == 1 && p[0] == '.')) {
         rp_buf_byte(b, '\\');
         rp_buf_put(b, p, n);
@@ -214,11 +216,14 @@ static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_par
 }
 
 static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
-    tab_t file, comp, dir;
+    tab_t file, comp, dir, hash;
     int rc = RP_EXIT_OK;
-    if (!load_table(msi, "File", &file) || !load_table(msi, "Component", &comp) || !load_table(msi, "Directory", &dir)) {
+    if (!load_table(msi, "File", &file) || !load_table(msi, "Component", &comp) || !load_table(msi, "Directory", &dir) ||
+        !load_table(msi, "MsiFileHash", &hash)) {
         rc = RP_EXIT_IO;
     }
+    int f_ver = column_of(msi, &file, "Version"), f_lang = column_of(msi, &file, "Language");
+    int h_key = column_of(msi, &hash, "File_"), h_part = column_of(msi, &hash, "HashPart1");
     int f_key = column_of(msi, &file, "File"), f_comp = column_of(msi, &file, "Component_"),
         f_name = column_of(msi, &file, "FileName"), f_size = column_of(msi, &file, "FileSize");
     int c_key = column_of(msi, &comp, "Component"), c_dir = column_of(msi, &comp, "Directory_");
@@ -230,7 +235,8 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         rp_diag_error(RP_DIAG_BAD_PACKAGE, "File, Component or Directory table lacks a standard column");
         rc = RP_EXIT_IO;
     }
-    // One line per file: path, size, File key, Component; sorted by bytes.
+    // One line per file: path, size, File key, Component, version, language, MD5 (MsiFileHash);
+    // sorted by bytes.
     size_t n = file.present ? file.rows.row_count : 0;
     rp_buf_t *lines = rp_mem_alloc(alloc, n, sizeof *lines);
     for (size_t r = 0; rc == RP_EXIT_OK && r < n; ++r) {
@@ -256,7 +262,7 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         }
         const uint8_t *p;
         size_t len;
-        long_name(msi, cell(&file, r, f_name), &p, &len);
+        long_name(msi, cell(&file, r, f_name), false, &p, &len);
         rp_buf_byte(&lines[r], '\\');
         rp_buf_put(&lines[r], p, len);
         rp_buf_byte(&lines[r], '\t');
@@ -268,6 +274,28 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         rp_buf_byte(&lines[r], '\t');
         (void)rp_msi_string(msi, compref.s, &p, &len);
         rp_buf_put(&lines[r], p, len);
+        int text_cols[2] = { f_ver, f_lang };
+        for (int k = 0; k < 2; ++k) {
+            rp_buf_byte(&lines[r], '\t');
+            rp_msi_value_t v = text_cols[k] >= 0 ? cell(&file, r, text_cols[k]) : (rp_msi_value_t){ 0 };
+            if (v.kind == RP_MSI_STR && rp_msi_string(msi, v.s, &p, &len) == PROVEN_OK) rp_buf_put(&lines[r], p, len);
+        }
+        rp_buf_byte(&lines[r], '\t');
+        rp_msi_value_t fkey = cell(&file, r, f_key);
+        for (size_t h = 0; h_key >= 0 && h_part >= 0 && h < hash.rows.row_count; ++h) {
+            rp_msi_value_t hk = cell(&hash, h, h_key);
+            if (hk.kind != RP_MSI_STR || hk.s != fkey.s) continue;
+            static const char hex[] = "0123456789abcdef";
+            for (int part = 0; part < 4; ++part) {
+                rp_msi_value_t v = cell(&hash, h, h_part + part);
+                uint32_t w = v.kind == RP_MSI_INT ? (uint32_t)v.i : 0;
+                for (int b = 0; b < 4; ++b) {
+                    uint8_t byte = (uint8_t)(w >> (8 * b));
+                    rp_buf_byte(&lines[r], (uint8_t)hex[byte >> 4]);
+                    rp_buf_byte(&lines[r], (uint8_t)hex[byte & 15]);
+                }
+            }
+        }
         rp_buf_byte(&lines[r], '\n');
     }
     if (rc == RP_EXIT_OK) {
@@ -292,12 +320,35 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
     rp_msi_rows_free(msi, &file.rows);
     rp_msi_rows_free(msi, &comp.rows);
     rp_msi_rows_free(msi, &dir.rows);
+    rp_msi_rows_free(msi, &hash.rows);
     return rc;
+}
+
+// `inspect <file.cab>`: one line per file, size and name, in stored order.
+static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven_allocator_t alloc) {
+    rp_limits_t limits = rp_limits_default();
+    rp_cab_file_t *files = NULL;
+    size_t n = 0;
+    uint8_t *arena = NULL;
+    if (rp_cab_read(alloc, data, len, &limits, &files, &n, &arena) != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a cabinet rubrapack can read (stored or MSZIP)", path);
+        return RP_EXIT_IO;
+    }
+    rp_buf_t b = rp_buf_new(alloc, (size_t)1 << 26);
+    for (size_t i = 0; i < n; ++i) {
+        rp_buf_long(&b, (long long)files[i].size);
+        rp_buf_byte(&b, '\t');
+        rp_buf_puts(&b, files[i].name);
+        rp_buf_byte(&b, '\n');
+    }
+    rp_mem_free(alloc, files);
+    rp_mem_free(alloc, arena);
+    return emit_buf(&b);
 }
 
 int rp_cmd_inspect(int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams]");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;
@@ -316,6 +367,13 @@ int rp_cmd_inspect(int argc, char **argv) {
         rp_diag_error(RP_DIAG_INPUT, "cannot read '%s' (%s)", path,
                       err == PROVEN_ERR_NOT_FOUND ? "not found" : err == PROVEN_ERR_OUT_OF_BOUNDS ? "too large" : "read error");
         return RP_EXIT_IO;
+    }
+    size_t pl = strlen(path);
+    if (pl > 4 && (strcmp(path + pl - 4, ".cab") == 0 || strcmp(path + pl - 4, ".CAB") == 0)) {
+        int crc = what ? RP_EXIT_USAGE : inspect_cab(path, data, len, heap);
+        if (what) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.cab> (no table or option)");
+        rp_mem_free(heap, data);
+        return crc;
     }
     rp_cfb_t cfb;
     rp_msi_t msi;

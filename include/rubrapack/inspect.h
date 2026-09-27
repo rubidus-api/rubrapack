@@ -16,4 +16,8 @@
 // `rubrapack extract <file.msi|file.cab> -d <new dir>` (RFC-0006 2).
 [[nodiscard]] int rp_cmd_extract(int argc, char **argv);
 
+// `rubrapack new [msi] <name>` and `rubrapack guid [--from <text>]` (RFC-0006 5).
+[[nodiscard]] int rp_cmd_new(int argc, char **argv);
+[[nodiscard]] int rp_cmd_guid(int argc, char **argv);
+
 #endif // RUBRAPACK_INSPECT_H

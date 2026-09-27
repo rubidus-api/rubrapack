@@ -26,14 +26,14 @@ static const command_t commands[] = {
     { "sign",    "sign <file> [signing options]", "sign an existing package or PE file", false },
     { "verify",  "verify <file> [--trust <cert>] [--system-roots]",
                  "check structure, digests, and signatures", false },
-    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams]",
+    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
     { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict] | lint <file.msi> [--strict]",
                  "check a source or package without writing anything", true },
-    { "new",     "new [msi|msix] <name>", "write a starter source file", false },
-    { "guid",    "guid [--from <text>]", "print a random or derived GUID", false },
+    { "new",     "new [msi] <name>", "write a starter source file <name>.rpk", true },
+    { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
     { "keys",    "keys list [--store|--pkcs11 <module>]", "list usable signing keys", false },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },
@@ -151,6 +151,8 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "build") == 0) return rp_cmd_build(argc, argv);
     if (strcmp(name, "lint") == 0) return rp_cmd_lint(argc, argv);
     if (strcmp(name, "extract") == 0) return rp_cmd_extract(argc, argv);
+    if (strcmp(name, "new") == 0) return rp_cmd_new(argc, argv);
+    if (strcmp(name, "guid") == 0) return rp_cmd_guid(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

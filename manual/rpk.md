@@ -398,6 +398,9 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--reproducible]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
+rubrapack inspect <file.cab>
+rubrapack new [msi] <name>
+rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--strict]
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
@@ -408,8 +411,18 @@ rubrapack version | help [command]
 - `--reproducible` derives the package code from the content: the same source gives the same
   bytes, on Linux and on Windows. Without it the package code is random, as Windows Installer
   expects for different package files.
-- `inspect <file.msi> <table>` prints the table in Windows Installer's IDT format;
-  `--files` lists every file with its installed path.
+- `inspect <file.msi> <table>` prints the table in Windows Installer's IDT format. `--files`
+  prints one tab-separated line per file: installed path, size, File key, component, version,
+  language, MD5 (from `MsiFileHash`; empty when the package has none). `--streams` lists the
+  streams and their sizes. `inspect <file.cab>` lists the files in a cabinet.
+- `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
+  `dist/`, with a fresh `upgrade-code`. It never replaces an existing file.
+- `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
+  from a text, the same way on every machine: SHA-256 over the 32-bit little-endian length of
+  `guid` and those 4 bytes, the 32-bit little-endian number 1, and the 32-bit little-endian length
+  of the text and its UTF-8 bytes; the first 16 bytes of the hash, with the version nibble set to 8
+  and the variant bits to `10` (RFC 9562 UUIDv8), written as `{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}`
+  in upper case. For example `guid --from hello` gives `{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}`.
 - Diagnostics look like `example.rpk:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you
   mean 'name'?)`.
 - Before writing, `build` checks the finished tables (`RP20xx` diagnostics, exit code 5); these
