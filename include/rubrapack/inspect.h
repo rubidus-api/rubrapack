@@ -13,4 +13,7 @@
 [[nodiscard]] int rp_cmd_lint(int argc, char **argv);
 [[nodiscard]] int rp_cmd_lint_source(int argc, char **argv);
 
+// `rubrapack extract <file.msi|file.cab> -d <new dir>` (RFC-0006 2).
+[[nodiscard]] int rp_cmd_extract(int argc, char **argv);
+
 #endif // RUBRAPACK_INSPECT_H

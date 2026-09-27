@@ -55,4 +55,14 @@ typedef enum {
 [[nodiscard]] proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path_utf8,
                                                     const uint8_t *data, size_t len);
 
+// Creates a new directory. PROVEN_ERR_BUSY when the name is already taken (by anything): an
+// extractor never reuses what was there (RFC-0001 14.3).
+[[nodiscard]] proven_err_t rp_pal_mkdir_new(proven_allocator_t alloc, const char *path_utf8);
+
+// Creates a new file and writes `data`. PROVEN_ERR_BUSY when the name is already taken - an
+// existing file, directory or link is never opened, followed or replaced. A failed write
+// removes the new file.
+[[nodiscard]] proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data,
+                                                 size_t len);
+
 #endif // RUBRAPACK_PAL_H

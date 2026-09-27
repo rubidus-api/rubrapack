@@ -228,3 +228,39 @@ bool rp_pal_same_file(proven_allocator_t alloc, const char *a_utf8, const char *
     return a.dwVolumeSerialNumber == b.dwVolumeSerialNumber && a.nFileIndexHigh == b.nFileIndexHigh &&
            a.nFileIndexLow == b.nFileIndexLow;
 }
+
+proven_err_t rp_pal_mkdir_new(proven_allocator_t alloc, const char *path_utf8) {
+    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
+    proven_u16str_t w = { 0 };
+    proven_err_t err = wide_path(alloc, path_utf8, &w);
+    if (err != PROVEN_OK) return err;
+    if (!CreateDirectoryW((const wchar_t *)proven_u16str_as_ptr(&w), NULL)) {
+        err = GetLastError() == ERROR_ALREADY_EXISTS ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
+    }
+    proven_u16str_destroy(alloc, &w);
+    return err;
+}
+
+proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
+    if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
+    proven_u16str_t w = { 0 };
+    proven_err_t err = wide_path(alloc, path_utf8, &w);
+    if (err != PROVEN_OK) return err;
+    const wchar_t *wp = (const wchar_t *)proven_u16str_as_ptr(&w);
+    // CREATE_NEW fails on any existing name; a reparse point is not followed.
+    HANDLE h = CreateFileW(wp, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+    if (h == INVALID_HANDLE_VALUE) {
+        DWORD e = GetLastError();
+        err = e == ERROR_FILE_EXISTS || e == ERROR_ALREADY_EXISTS ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
+    } else {
+        for (size_t off = 0; err == PROVEN_OK && off < len;) {
+            DWORD chunk = (len - off) > 0x10000000u ? 0x10000000u : (DWORD)(len - off), done = 0;
+            if (!WriteFile(h, data + off, chunk, &done, NULL) || done == 0) err = PROVEN_ERR_IO;
+            off += done;
+        }
+        if (!CloseHandle(h)) err = PROVEN_ERR_IO;
+        if (err != PROVEN_OK) DeleteFileW(wp);
+    }
+    proven_u16str_destroy(alloc, &w);
+    return err;
+}

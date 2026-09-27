@@ -28,7 +28,8 @@ static const command_t commands[] = {
                  "check structure, digests, and signatures", false },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams]",
                  "dump a package (MSI tables as IDT)", true },
-    { "extract", "extract <file> -d <dir>", "unpack a package into a new directory", false },
+    { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
+                 "unpack a package into a new directory, laid out as it installs", true },
     { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict] | lint <file.msi> [--strict]",
                  "check a source or package without writing anything", true },
     { "new",     "new [msi|msix] <name>", "write a starter source file", false },
@@ -149,6 +150,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "inspect") == 0) return rp_cmd_inspect(argc, argv);
     if (strcmp(name, "build") == 0) return rp_cmd_build(argc, argv);
     if (strcmp(name, "lint") == 0) return rp_cmd_lint(argc, argv);
+    if (strcmp(name, "extract") == 0) return rp_cmd_extract(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

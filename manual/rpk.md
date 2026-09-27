@@ -400,6 +400,7 @@ rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--strict]
 rubrapack lint <file.msi> [--strict]
+rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack version | help [command]
 ```
 
@@ -421,5 +422,13 @@ rubrapack version | help [command]
   `ErrorText`/`ErrorIcon` (`RP2104`) - and everything else is a warning. `--strict` makes warnings
   fail too. A package in another code page than 65001 gets a note (`RP2100`): its text cannot be
   checked as UTF-8. The last line on stdout counts errors and warnings.
+- `extract` unpacks a package the way it installs: folders by their long names under the
+  Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
+  embedded or external cabinets, or from the source folders next to an uncompressed package.
+  Every file is checked against its size and `MsiFileHash`. The target must be new or empty, and
+  nothing is written until the whole package has passed: names with `..`, `/`, `\`, `:`, a drive,
+  a reserved device name (`CON`, `COM1`, ...), a trailing dot or space, or two paths that differ
+  only in case are refused. The defaults allow 100,000 entries and 16 GiB. A `.cab` unpacks by the
+  names inside it.
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.

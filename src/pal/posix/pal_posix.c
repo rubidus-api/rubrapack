@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -133,4 +135,32 @@ bool rp_pal_same_file(proven_allocator_t alloc, const char *a_utf8, const char *
     struct stat a, b;
     if (a_utf8 == NULL || b_utf8 == NULL || stat(a_utf8, &a) != 0 || stat(b_utf8, &b) != 0) return false;
     return a.st_dev == b.st_dev && a.st_ino == b.st_ino;
+}
+
+proven_err_t rp_pal_mkdir_new(proven_allocator_t alloc, const char *path_utf8) {
+    (void)alloc;
+    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
+    if (mkdir(path_utf8, 0777) == 0) return PROVEN_OK;
+    return errno == EEXIST ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
+}
+
+proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
+    (void)alloc;
+    if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
+    // O_EXCL with O_CREAT fails on any existing name, a symbolic link included (never followed).
+    int fd = open(path_utf8, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0666);
+    if (fd < 0) return errno == EEXIST ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
+    proven_err_t err = PROVEN_OK;
+    for (size_t off = 0; err == PROVEN_OK && off < len;) {
+        ssize_t w = write(fd, data + off, len - off > 0x40000000u ? 0x40000000u : len - off);
+        if (w <= 0) {
+            if (w < 0 && errno == EINTR) continue;
+            err = PROVEN_ERR_IO;
+        } else {
+            off += (size_t)w;
+        }
+    }
+    if (close(fd) != 0) err = PROVEN_ERR_IO;
+    if (err != PROVEN_OK) unlink(path_utf8);
+    return err;
 }
