@@ -302,6 +302,14 @@ What the engine checks when it shows a dialog (each seen as an error dialog carr
   `EndDialog` arguments `ErrorAbort` .. `ErrorYes` are shown as the message needs. [observed]
 - **Brackets in texts.** `Text` is a formatted string: `[Next]` is read as a property and shows as
   nothing. [observed] Quote button names in running text instead.
+- **Files in use.** With Restart Manager off, the engine shows the dialog named `FilesInUse`
+  (buttons ending with `Retry`, `Ignore`, `Exit`) with a `ListBox` bound to `FileInUseProcess`. The
+  **ListBox table must exist, even empty**: without it the engine logs 2205 and skips the dialog,
+  and the installation goes on as if Ignore was chosen. In a major upgrade the dialog comes twice
+  (the new files, then the old version's removal). After Ignore the held file is moved aside and
+  the installation ends with 0. [observed]
+- **Error icon.** The engine puts its own icon for the message type into `ErrorIcon` (a warning
+  triangle for a launch condition), whatever the control's Binary holds. [observed]
 - **List order.** A `ComboBox` lists its items alphabetically unless the control has the Sorted
   attribute (0x10000); with it they follow the Order column. [observed] rubrapack sets it.
 - **Elevation.** A per-machine installation started interactively by a non-elevated user asks for

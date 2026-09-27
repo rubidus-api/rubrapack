@@ -142,7 +142,7 @@ typedef struct {
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox;
     rp_ui_prop_t       props[8];
     size_t             nprops;
     rp_ui_seq_t        seqs[16];
@@ -180,6 +180,8 @@ static const rp_msi_wcolumn_t uitext_cols[] = { { "Key", KEY_S(72) }, { "Text", 
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t radio_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
     { "X", I2 }, { "Y", I2 }, { "Width", I2 }, { "Height", I2 }, { "Text", L_N(0) }, { "Help", L_N(50) } };
+static const rp_msi_wcolumn_t listbox_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
+    { "Text", L_N(64) } };
 static const rp_msi_wcolumn_t combo_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
     { "Text", L_N(64) } };
 
@@ -351,8 +353,9 @@ static void error_dlg(ctx_t *c) {
 static void files_in_use_dlg(ctx_t *c) {
     const char *d = "FilesInUse";           // the engine looks this dialog up by name
     dialog(c, d, 370, 270, 3 | 32, "Retry", "Retry", "Exit");
-    frame(c, d, "FilesInUseTitle", "FilesInUseText", NULL);
-    control(c, d, "List", "ListBox", 20, 60, 330, 160, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
+    frame(c, d, "FilesInUseTitle", NULL, NULL);     // the text is too long for the banner (observed cut)
+    control(c, d, "Text", "Text", 20, 52, 330, 30, VIS | NOPREFIX, NULL, T(c, "FilesInUseText"), NULL);
+    control(c, d, "List", "ListBox", 20, 85, 330, 140, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
     control(c, d, "Retry", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Retry"), "Ignore");
     control(c, d, "Ignore", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Ignore"), "Exit");
     control(c, d, "Exit", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Exit"), "Retry");
@@ -689,7 +692,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     *out = NULL;
     ctx_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     rp_ui_t *ui = rp_mem_alloc(alloc, 1, sizeof *ui);
-    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 10, sizeof *tables);
+    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 11, sizeof *tables);
     if (c == NULL || ui == NULL || tables == NULL) {
         rp_mem_free(alloc, c);
         rp_mem_free(alloc, ui);
@@ -710,6 +713,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->binary, "Binary", binary_cols, 2);
     rows_init(&c->radio, "RadioButton", radio_cols, 9);
     rows_init(&c->combo, "ComboBox", combo_cols, 4);
+    rows_init(&c->listbox, "ListBox", listbox_cols, 4);
 
     // Fonts: the Korean face for Korean text (P1a: Hangul shows in these faces), Segoe UI otherwise.
     const char *face = c->ko ? "맑은 고딕" : "Segoe UI";
@@ -783,11 +787,13 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         if (ir->ui >= RP_UI_INSTALLDIR) c->props[c->nprops++] = (rp_ui_prop_t){ "_RpBrowseProperty", dir };
     }
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo };
+    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox };
     size_t nt = 0;
-    for (size_t i = 0; i < 10; ++i) {
+    for (size_t i = 0; i < 11; ++i) {
         rows_t *r = all[i];
-        if (r->filled == 0) continue;
+        // FilesInUse fills its ListBox from the ListBox table, which must exist even when empty
+        // (error 2205 otherwise, and the dialog is skipped: observed).
+        if (r->filled == 0 && r != &c->listbox) continue;
         tables[nt++] = (rp_msi_wtable_t){ r->name, r->cols, r->ncols, r->cells, r->filled / r->ncols };
     }
     ui->tables = tables;
@@ -813,8 +819,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo };
-        for (size_t i = 0; i < 10; ++i) rp_mem_free(alloc, all[i]->cells);
+        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox };
+        for (size_t i = 0; i < 11; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
         rp_mem_free(alloc, c);
