@@ -3,10 +3,12 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/net.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/tls.h"
 #include "rubrapack/version.h"
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 enum { MAX_HEAD = 65536, DEFAULT_BODY = 4 << 20, CONNECT_MS = 10000, TOTAL_MS = 60000, MAX_REDIRECTS = 3, RETRIES = 2 };
 
@@ -79,20 +81,83 @@ bool rp_url_parse(const char *url, bool *https, char *host, size_t host_cap, uin
 }
 
 typedef struct {
-    rp_sock_t *sock;
-    uint8_t    buf[16384];
-    size_t     pos, len;
-    int64_t    deadline;
+    rp_sock_t  *sock;
+    rp_tls_t   *tls;                // https: the TLS client between the socket and HTTP
+    const char *tls_why;            // what the TLS client said when it failed
+    uint8_t     buf[16384];         // bytes for HTTP (decrypted for https)
+    size_t      pos, len;
+    uint8_t     raw[16384];         // https: bytes from the socket
+    int64_t     deadline;
 } conn_t;
 
-static proven_err_t fill(conn_t *c) {
-    int left = (int)(c->deadline - rp_pal_now_ms());
+static int left_ms(const conn_t *c) { return (int)(c->deadline - rp_pal_now_ms()); }
+
+// Sends what the TLS client has queued.
+static proven_err_t flush(conn_t *c) {
+    const uint8_t *p;
+    size_t n = rp_tls_pending(c->tls, &p);
+    if (n == 0) return PROVEN_OK;
+    proven_err_t err = rp_pal_tcp_send(c->sock, p, n, left_ms(c));
+    if (err == PROVEN_OK) rp_tls_sent(c->tls, n);
+    return err;
+}
+
+// Receives from the socket into the TLS client; PROVEN_ERR_PERMISSION when TLS refuses the peer.
+static proven_err_t tls_pump(conn_t *c) {
+    int left = left_ms(c);
     if (left <= 0) return PROVEN_ERR_AGAIN;
     size_t got = 0;
-    proven_err_t err = rp_pal_tcp_recv(c->sock, c->buf, sizeof c->buf, &got, left);
-    c->pos = 0;
-    c->len = got;
-    if (err == PROVEN_OK && got == 0) return PROVEN_ERR_EOF;
+    proven_err_t err = rp_pal_tcp_recv(c->sock, c->raw, sizeof c->raw, &got, left);
+    if (err != PROVEN_OK) return err;
+    if (got == 0) return PROVEN_ERR_EOF;
+    if (rp_tls_feed(c->tls, c->raw, got, &c->tls_why) != PROVEN_OK) {
+        (void)flush(c);                                   // the alert, if the socket still takes it
+        return PROVEN_ERR_PERMISSION;
+    }
+    return flush(c);                                      // a KeyUpdate answer, say
+}
+
+static proven_err_t fill(conn_t *c) {
+    if (c->tls == NULL) {
+        int left = left_ms(c);
+        if (left <= 0) return PROVEN_ERR_AGAIN;
+        size_t got = 0;
+        proven_err_t err = rp_pal_tcp_recv(c->sock, c->buf, sizeof c->buf, &got, left);
+        c->pos = 0;
+        c->len = got;
+        if (err == PROVEN_OK && got == 0) return PROVEN_ERR_EOF;
+        return err;
+    }
+    for (;;) {
+        size_t n = rp_tls_read(c->tls, c->buf, sizeof c->buf);
+        if (n) {
+            c->pos = 0;
+            c->len = n;
+            return PROVEN_OK;
+        }
+        if (rp_tls_eof(c->tls)) return PROVEN_ERR_EOF;
+        proven_err_t err = tls_pump(c);
+        if (err != PROVEN_OK) return err;
+    }
+}
+
+static proven_err_t conn_send(conn_t *c, const uint8_t *data, size_t len) {
+    if (c->tls == NULL) return rp_pal_tcp_send(c->sock, data, len, left_ms(c));
+    proven_err_t err = rp_tls_write(c->tls, data, len);
+    return err == PROVEN_OK ? flush(c) : err;
+}
+
+// The TLS 1.3 handshake on a connected socket.
+static proven_err_t tls_start(proven_allocator_t alloc, conn_t *c, const rp_http_req_t *req, const char *host, const char **why) {
+    rp_tls_config_t cfg = { host, req->tls_anchors, req->tls_anchor_count, req->tls_now ? req->tls_now : (int64_t)time(NULL), NULL };
+    proven_err_t err = rp_tls_new(alloc, &cfg, &c->tls, why);
+    while (err == PROVEN_OK && !rp_tls_connected(c->tls)) {
+        err = flush(c);
+        if (err == PROVEN_OK) err = tls_pump(c);
+    }
+    if (err == PROVEN_OK) return PROVEN_OK;
+    if (c->tls_why) *why = c->tls_why;
+    else if (*why == NULL) *why = err == PROVEN_ERR_AGAIN ? "the TLS handshake did not finish in time" : "the server closed the connection during the TLS handshake";
     return err;
 }
 
@@ -301,7 +366,7 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
 }
 
 // One exchange with one server: connect, send, read. *head gets the status and headers.
-static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req, const char *host, uint16_t port, const char *path,
+static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req, bool https, const char *host, uint16_t port, const char *path,
                              int64_t deadline, head_t *head, uint8_t **body, size_t *blen, const char **why) {
     conn_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     if (c == NULL) return PROVEN_ERR_NOMEM;
@@ -315,21 +380,28 @@ static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req,
         rp_mem_free(alloc, c);
         return err;
     }
+    if (https) err = tls_start(alloc, c, req, host, why);
     char head_text[4096], hostport[300];
     bool v6 = strchr(host, ':') != NULL;
-    if (port == 80) snprintf(hostport, sizeof hostport, "%s%s%s", v6 ? "[" : "", host, v6 ? "]" : "");
+    if (port == (https ? 443 : 80)) snprintf(hostport, sizeof hostport, "%s%s%s", v6 ? "[" : "", host, v6 ? "]" : "");
     else snprintf(hostport, sizeof hostport, "%s%s%s:%u", v6 ? "[" : "", host, v6 ? "]" : "", (unsigned)port);
     int hn = snprintf(head_text, sizeof head_text,
                       "POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n"
                       "Content-Type: %s\r\n%s%s%sContent-Length: %zu\r\nConnection: close\r\n\r\n",
                       path, hostport, req->content_type, req->accept ? "Accept: " : "", req->accept ? req->accept : "",
                       req->accept ? "\r\n" : "", req->len);
-    if (hn < 0 || (size_t)hn >= sizeof head_text) err = PROVEN_ERR_OUT_OF_BOUNDS;
-    if (err == PROVEN_OK) err = rp_pal_tcp_send(c->sock, (const uint8_t *)head_text, (size_t)hn, (int)(deadline - rp_pal_now_ms()));
-    if (err == PROVEN_OK) err = rp_pal_tcp_send(c->sock, req->body, req->len, (int)(deadline - rp_pal_now_ms()));
+    if (err == PROVEN_OK && (hn < 0 || (size_t)hn >= sizeof head_text)) err = PROVEN_ERR_OUT_OF_BOUNDS;
+    if (err == PROVEN_OK) err = conn_send(c, (const uint8_t *)head_text, (size_t)hn);
+    if (err == PROVEN_OK) err = conn_send(c, req->body, req->len);
     if (err != PROVEN_OK && *why == NULL) *why = "the request could not be sent";
     if (err == PROVEN_OK) err = read_head(c, head, why);
     if (err == PROVEN_OK) err = read_body(alloc, c, head, req->max_body ? req->max_body : DEFAULT_BODY, body, blen, why);
+    if (c->tls_why && err != PROVEN_OK) *why = c->tls_why;        // TLS said what really went wrong
+    if (c->tls) {
+        rp_tls_close(c->tls);
+        (void)flush(c);
+        rp_tls_free(c->tls);
+    }
     rp_pal_tcp_close(c->sock);
     rp_mem_free(alloc, c);
     return err;
@@ -355,9 +427,9 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
             return PROVEN_ERR_PERMISSION;
         }
         was_https = https;
-        if (https) {
-            *why = "https timestamp servers need TLS, which comes with RFC-0008 step 3; use an http:// server for now";
-            return PROVEN_ERR_UNSUPPORTED;
+        if (https && req->tls_anchor_count == 0) {
+            *why = "an https server needs --tls-trust <certificates> or --system-roots to check it against";
+            return PROVEN_ERR_PERMISSION;
         }
         head_t head;
         uint8_t *body = NULL;
@@ -365,7 +437,7 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
         proven_err_t err = PROVEN_OK;
         for (int attempt = 0; attempt <= RETRIES; ++attempt) {
             *why = NULL;
-            err = exchange(alloc, req, host, port, path, deadline, &head, &body, &blen, why);
+            err = exchange(alloc, req, https, host, port, path, deadline, &head, &body, &blen, why);
             bool again = (err == PROVEN_ERR_AGAIN || err == PROVEN_ERR_IO || err == PROVEN_ERR_EOF || (err == PROVEN_OK && head.status >= 500)) &&
                          rp_pal_now_ms() < deadline;
             if (!again || attempt == RETRIES) break;

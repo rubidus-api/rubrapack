@@ -27,6 +27,8 @@
 typedef struct {
     const char *key, *cert, *pass_env, *pass_file;
     const char *timestamp, *tsa_trust;  // --timestamp <URL>, --tsa-trust <certificates> (RFC-0008)
+    const char *tls_trust;              // --tls-trust <certificates>: an https timestamp server's roots
+    bool        system_roots;           // --system-roots: the operating system's roots for it too
     bool        allow_unsigned_cabs;
 } rp_sign_args_t;
 

@@ -280,3 +280,26 @@ void rp_pal_tcp_close(rp_sock_t *s) {
     close(s->fd);
     rp_mem_free(s->alloc, s);
 }
+
+proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ctx, const uint8_t *data, size_t len), void *ctx) {
+    static const char *const paths[] = {
+        "/etc/ssl/certs/ca-certificates.crt",          // Debian, Ubuntu, Arch, Gentoo
+        "/etc/pki/tls/certs/ca-bundle.crt",            // Fedora, RHEL
+        "/etc/ssl/ca-bundle.pem",                      // openSUSE
+        "/etc/ssl/cert.pem",                           // Alpine, macOS, the BSDs
+    };
+    const char *env = getenv("SSL_CERT_FILE");
+    for (size_t i = env && *env ? 0 : 1; i <= sizeof paths / sizeof paths[0]; ++i) {
+        const char *path = i == 0 ? env : paths[i - 1];
+        uint8_t *data;
+        size_t len;
+        if (rp_pal_read_file(alloc, path, 16u << 20, &data, &len) != PROVEN_OK) {
+            if (i == 0) return PROVEN_ERR_NOT_FOUND;        // an explicit file that is not there
+            continue;
+        }
+        sink(ctx, data, len);
+        rp_mem_free(alloc, data);
+        return PROVEN_OK;
+    }
+    return PROVEN_ERR_NOT_FOUND;
+}

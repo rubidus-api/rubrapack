@@ -239,7 +239,8 @@ proven_err_t rp_tsa_stamp(void *ctx, proven_allocator_t alloc, const uint8_t *si
     size_t rl;
     proven_err_t err = rp_tsp_request(alloc, RP_HASH_SHA256, digest, nonce, &req, &rl);
     if (err != PROVEN_OK) return err;
-    rp_http_req_t q = { tsa->url, "application/timestamp-query", "application/timestamp-reply", req, rl, tsa->proxy, 0, 0 };
+    rp_http_req_t q = { .url = tsa->url, .content_type = "application/timestamp-query", .accept = "application/timestamp-reply", .body = req,
+                        .len = rl, .proxy = tsa->proxy, .tls_anchors = tsa->tls_anchors, .tls_anchor_count = tsa->tls_anchor_count };
     rp_http_resp_t r = { 0 };
     err = rp_http_post(alloc, &q, &r, why);
     rp_mem_free(alloc, req);

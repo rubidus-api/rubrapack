@@ -13,6 +13,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
+#include <wincrypt.h>
 
 static proven_err_t write_bytes(HANDLE h, const uint8_t *p, size_t len) {
     while (len > 0) {
@@ -391,4 +392,19 @@ void rp_pal_tcp_close(rp_sock_t *s) {
     if (s == NULL) return;
     closesocket(s->fd);
     rp_mem_free(s->alloc, s);
+}
+
+proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ctx, const uint8_t *data, size_t len), void *ctx) {
+    (void)alloc;
+    // The ROOT system store: the local machine's roots and the user's. Windows adds some roots
+    // only when something first needs them (automatic root update), so a root can be missing here.
+    HCERTSTORE store = CertOpenSystemStoreW(0, L"ROOT");
+    if (store == NULL) return PROVEN_ERR_NOT_FOUND;
+    size_t count = 0;
+    for (PCCERT_CONTEXT c = CertEnumCertificatesInStore(store, NULL); c; c = CertEnumCertificatesInStore(store, c)) {
+        sink(ctx, c->pbCertEncoded, c->cbCertEncoded);
+        ++count;
+    }
+    CertCloseStore(store, 0);
+    return count ? PROVEN_OK : PROVEN_ERR_NOT_FOUND;
 }

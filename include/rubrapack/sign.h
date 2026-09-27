@@ -147,12 +147,15 @@ typedef struct {
 
 // A timestamp server for rp_timestamper_t: rp_tsa_stamp posts a SHA-256 request with a random
 // nonce to `url` (RFC-0008 2 limits), checks the answer with rp_tsp_response and, with anchors
-// (--tsa-trust), the TSA's chain for time stamping at genTime. `failed` tells a timestamp failure
+// (--tsa-trust), the TSA's chain for time stamping at genTime. An https URL is checked against
+// tls_anchors (a separate trust from the TSA's: RFC-0008 T2). `failed` tells a timestamp failure
 // (exit 6) from a signing one; `gen_time` is the token's time.
 typedef struct {
     const char          *url, *proxy;
-    const rp_der_span_t *anchors;
+    const rp_der_span_t *anchors;               // --tsa-trust
     size_t               anchor_count;
+    const rp_der_span_t *tls_anchors;           // --tls-trust / --system-roots, for an https URL
+    size_t               tls_anchor_count;
     bool                 failed;
     int64_t              gen_time;
 } rp_tsa_t;

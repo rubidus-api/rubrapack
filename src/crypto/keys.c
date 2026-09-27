@@ -44,6 +44,7 @@ typedef struct {
     rp_keyfile_t      *out;
     const char       **why;
     proven_err_t       err;
+    size_t             skipped;     // rp_keyfile_add_roots: certificates left out
 } ctx_t;
 
 static bool fail(ctx_t *c, proven_err_t err, const char *why) {
@@ -493,7 +494,7 @@ proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size
         *why = "the key file is larger than 4 MiB";
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
-    ctx_t c = { alloc, pass, pass_len, out, why, PROVEN_OK };
+    ctx_t c = { alloc, pass, pass_len, out, why, PROVEN_OK, 0 };
     bool ok;
     if (has_pem(data, len)) {
         ok = pem_blocks(&c, data, len, pem_one);
@@ -539,8 +540,26 @@ proven_err_t rp_keyfile_add_certs(rp_keyfile_t *kf, const uint8_t *data, size_t 
     const char *dummy;
     if (why == NULL) why = &dummy;
     *why = NULL;
-    ctx_t c = { kf->alloc, NULL, 0, kf, why, PROVEN_OK };
+    ctx_t c = { kf->alloc, NULL, 0, kf, why, PROVEN_OK, 0 };
     bool ok = has_pem(data, len) ? pem_blocks(&c, data, len, pem_certs_only) : add_cert(&c, data, len);
+    return ok ? PROVEN_OK : c.err;
+}
+
+static bool pem_certs_lenient(ctx_t *c, const char *label, const uint8_t *der, size_t n) {
+    rp_cert_t t;
+    if (strcmp(label, "CERTIFICATE") != 0) return true;
+    if (!rp_cert_parse(der, n, &t, NULL)) {
+        ++c->skipped;
+        return true;
+    }
+    return add_cert(c, der, n);
+}
+
+proven_err_t rp_keyfile_add_roots(rp_keyfile_t *kf, const uint8_t *data, size_t len, size_t *skipped) {
+    const char *why = NULL;
+    ctx_t c = { kf->alloc, NULL, 0, kf, &why, PROVEN_OK, 0 };
+    bool ok = has_pem(data, len) ? pem_blocks(&c, data, len, pem_certs_lenient) : pem_certs_lenient(&c, "CERTIFICATE", data, len);
+    if (skipped) *skipped += c.skipped;
     return ok ? PROVEN_OK : c.err;
 }
 

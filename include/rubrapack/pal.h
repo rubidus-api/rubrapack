@@ -83,4 +83,9 @@ void rp_pal_tcp_close(rp_sock_t *s);
 // Milliseconds from a monotonic clock.
 [[nodiscard]] int64_t rp_pal_now_ms(void);
 
+// The operating system's trusted root certificates, handed to `sink` as data: on Windows each
+// certificate of the local machine's and user's ROOT store (DER), elsewhere the CA bundle file
+// ($SSL_CERT_FILE, or the first of the usual paths: PEM). PROVEN_ERR_NOT_FOUND when there is none.
+[[nodiscard]] proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ctx, const uint8_t *data, size_t len), void *ctx);
+
 #endif // RUBRAPACK_PAL_H

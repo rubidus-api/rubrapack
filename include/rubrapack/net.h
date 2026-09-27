@@ -7,16 +7,18 @@
 // Limits (RFC-0001 12.4): response body 4 MiB, 10 s to connect, 60 s in all, 3 redirects,
 // 2 retries after a failed connection, a timeout or a 5xx answer. Redirects keep the POST
 // (301, 302, 307, 308); one from https to http is refused. Content-Length and chunked together,
-// or two different Content-Lengths, are refused.
+// or two different Content-Lengths, are refused. https uses rubrapack's TLS 1.3 client
+// (include/rubrapack/tls.h) and needs trust anchors for the server.
 
 #include <stddef.h>
 #include <stdint.h>
 
 #include "proven/allocator.h"
 #include "proven/types.h"
+#include "rubrapack/der.h"
 
 typedef struct {
-    const char    *url;             // http://host[:port]/path (https follows with TLS, RFC-0008 3)
+    const char    *url;             // http://host[:port]/path or https://...
     const char    *content_type;
     const char    *accept;          // may be NULL
     const uint8_t *body;
@@ -24,6 +26,9 @@ typedef struct {
     const char    *proxy;           // http://host:port or NULL (RFC-0008 T5)
     size_t         max_body;        // 0 = 4 MiB
     int            total_ms;        // 0 = 60000
+    const rp_der_span_t *tls_anchors;   // https: the certificates the server's path must reach
+    size_t         tls_anchor_count;
+    int64_t        tls_now;         // https: when the certificates must be valid; 0 = now
 } rp_http_req_t;
 
 typedef struct {

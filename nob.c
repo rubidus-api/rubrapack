@@ -373,7 +373,7 @@ static int build(const target_t *t) {
     int n = snprintf(cmd, sizeof cmd, "%s %s%s -o %s", t->cc, opt_flags(t), link, exe);
     if (n < 0 || (size_t)n >= sizeof cmd) return 1;
     size_t len = (size_t)n;
-    if (t->kind == KIND_WIN32 && append(&len, "-static -municode -lbcrypt -lws2_32") != 0) return 1;
+    if (t->kind == KIND_WIN32 && append(&len, "-static -municode -lbcrypt -lws2_32 -lcrypt32") != 0) return 1;
     if (run(cmd) != 0) return 1;
     printf("nob: built %s\n", exe);
     return 0;

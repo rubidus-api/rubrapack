@@ -68,6 +68,9 @@ typedef struct {
 // the profile, PROVEN_ERR_INVALID_FORMAT for anything malformed; `why` explains.
 [[nodiscard]] proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size_t len, const uint8_t *pass,
                                            size_t pass_len, rp_keyfile_t *out, const char **why);
+// Adds the certificates of a PEM bundle or one DER certificate as trust anchors, skipping those
+// rubrapack cannot read (a system store may hold other key types); *skipped counts them.
+[[nodiscard]] proven_err_t rp_keyfile_add_roots(rp_keyfile_t *kf, const uint8_t *data, size_t len, size_t *skipped);
 // Adds the certificates of a PEM or DER file (a chain given apart from the key).
 [[nodiscard]] proven_err_t rp_keyfile_add_certs(rp_keyfile_t *kf, const uint8_t *data, size_t len, const char **why);
 void rp_keyfile_free(rp_keyfile_t *kf);

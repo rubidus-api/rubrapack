@@ -398,7 +398,8 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
                 [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
-                 [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs]]
+                 [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]]
+                 [--allow-unsigned-cabs]]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
@@ -407,8 +408,9 @@ rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--st
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
-               [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs] [-o <out>]
-rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--tsa-trust <certificates>]...
+               [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]]
+               [--allow-unsigned-cabs] [-o <out>]
+rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
 rubrapack version | help [command]
 ```
 
@@ -477,8 +479,16 @@ rubrapack version | help [command]
   Public servers include `http://timestamp.digicert.com`, `http://timestamp.sectigo.com` and
   `http://time.certum.pl`; `http` is fine, because the answer is itself signed and checked (the
   nonce, the hash of the signature, the server's signature and its time-stamping certificate).
-  `https` servers come with a later release. `--tsa-trust` also requires the server's
-  certificate path to end in one of the given certificates. When the timestamp fails - no answer,
+  `--tsa-trust` also requires the server's certificate path to end in one of the given
+  certificates. For an `https` server rubrapack speaks TLS 1.3 itself (AES-GCM, x25519 or P-256,
+  RSA-PSS or ECDSA server keys; not TLS 1.2) and checks the server's certificate - its path to a
+  root given with `--tls-trust` or found in the operating system's store with `--system-roots`, its
+  dates, that it names the server (subjectAltName; no wildcard across dots) and that it is for TLS
+  servers; nothing turns these checks off. The three trusts stay apart: `--tls-trust` and
+  `--system-roots` say whom to believe about the connection, `--tsa-trust` whom to believe about
+  the time; neither is used for the other. On Linux `--system-roots` reads `$SSL_CERT_FILE` or the
+  distribution's CA bundle; on Windows the ROOT store, which Windows fills with some roots only
+  when something first needs them, so a root may be missing there until then. When the timestamp fails - no answer,
   a refusal, a bad answer, a time outside the signing certificate's validity - nothing is signed
   and nothing is written (exit code 6); the signature never quietly goes out without it. The
   limits: 10 s to connect, 60 s in all, a 4 MiB answer, 3 redirects, 2 retries after a network
@@ -486,7 +496,9 @@ rubrapack version | help [command]
 - `verify` prints what it checked - structure, digest, signature, the path to a certificate given
   with `--trust`, revocation (never looked up: `not-checked`) and timestamp - and succeeds only
   when all of them hold and the path ends in a trusted certificate. Without `--trust` it does not
-  call anything trusted (exit code 4). It says nothing about Windows' own reputation checks. The
+  call anything trusted (exit code 4); `--system-roots` adds the operating system's roots to
+  `--trust` for the signer's path (not for the timestamp's). It says nothing about Windows' own
+  reputation checks. The
   timestamp line is `not-present`, `<time>, TSA not-checked (give --tsa-trust)`,
   `<time>, TSA trusted`, `<time>, TSA untrusted`, `invalid` or `unsupported` (the older
   Authenticode timestamp that `Set-AuthenticodeSignature -TimestampServer` writes, which rubrapack
