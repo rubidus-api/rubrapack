@@ -104,7 +104,7 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
 }
 
 static bool str_is(const rp_msi_cell_t *c, const char *s) {
-    return c->kind == RP_MSI_STR && c->len == strlen(s) && memcmp(c->bytes, s, c->len) == 0;
+    return c->kind == RP_MSI_STR && c->len == strlen(s) && (c->len == 0 || memcmp(c->bytes, s, c->len) == 0);
 }
 
 // ---- key index -------------------------------------------------------------------------------
@@ -137,7 +137,9 @@ static bool cell_eq(const rp_msi_cell_t *a, const rp_msi_cell_t *b) {
     if (an || bn) return an == bn;
     if (a->kind != b->kind) return false;
     if (a->kind == RP_MSI_INT) return a->i == b->i;
-    return a->len == b->len && memcmp(a->bytes, b->bytes, a->len) == 0;
+    // Binary cells seen through a read database carry no bytes (len 0, bytes NULL): never memcmp
+    // a NULL pointer, even for zero bytes (found by fuzzing, T049).
+    return a->len == b->len && (a->len == 0 || memcmp(a->bytes, b->bytes, a->len) == 0);
 }
 
 // Finds the row whose leading key cells equal `cells`; SIZE_MAX when there is none.
@@ -622,7 +624,7 @@ static void lint_custom_actions(lint_t *l, const index_t *files, const index_t *
 // ---- dialogs ---------------------------------------------------------------------------------
 
 static bool cell_str_eq(const rp_msi_cell_t *a, const rp_msi_cell_t *b) {
-    return a->kind == RP_MSI_STR && b->kind == RP_MSI_STR && a->len == b->len && memcmp(a->bytes, b->bytes, a->len) == 0;
+    return a->kind == RP_MSI_STR && b->kind == RP_MSI_STR && a->len == b->len && (a->len == 0 || memcmp(a->bytes, b->bytes, a->len) == 0);
 }
 
 // The Control row of `dialog` named `name`, or SIZE_MAX.
