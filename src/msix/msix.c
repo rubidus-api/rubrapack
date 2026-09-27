@@ -263,13 +263,20 @@ static const char *vfs_folder(const char *base, rp_arch_t arch, const char **why
     if (strcmp(base, "AppData") == 0 || strcmp(base, "LocalAppData") == 0) {
         *why = "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs";
     } else if (strcmp(base, "Fonts") == 0) {
-        *why = "fonts go into an MSIX through [font.*] (planned for P8b-3)";
+        *why = "a font goes into an MSIX through a [font.*] that names it";
     } else if (strcmp(base, "Temp") == 0) {
         *why = "an MSIX cannot place files in the temporary folder";
     } else {
-        *why = "Start menu, Programs, Desktop and Startup entries come from shortcuts (planned for P8b-3)";
+        *why = "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]";
     }
     return NULL;
+}
+
+static bool is_font(const rp_ir_t *ir, const char *file_id) {
+    for (size_t k = 0; k < ir->font_count; ++k) {
+        if (ir->fonts[k].file && strcmp(ir->fonts[k].file, file_id) == 0) return true;
+    }
+    return false;
 }
 
 // ---- [registry] into Registry.dat (HKLM\Software) and User.dat (HKCU) ------------------------------
@@ -452,7 +459,11 @@ typedef struct {
     char logo[3][2200];         // Square150x150, Square44x44, StoreLogo
 } app_paths_t;
 
-static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap) {
+// The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
+// extensions keeps the P8a manifest.
+enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8 };
+
+static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
     char version[32], publisher[8400];
     unsigned v[4] = { 0 };
@@ -462,8 +473,26 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     rp_buf_puts(m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
                    "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
                    "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
-                   "         xmlns:rescap=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities\"\r\n"
-                   "         IgnorableNamespaces=\"uap rescap\">\r\n  <Identity");
+                   "         xmlns:rescap=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities\"\r\n");
+    static const char *const ns_uri[][2] = { { "uap3", "http://schemas.microsoft.com/appx/manifest/uap/windows10/3" },
+                                             { "uap4", "http://schemas.microsoft.com/appx/manifest/uap/windows10/4" },
+                                             { "desktop", "http://schemas.microsoft.com/appx/manifest/desktop/windows10" },
+                                             { "desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7" } };
+    for (int k = 0; k < 4; ++k) {
+        if (!(ns & (1u << k))) continue;
+        rp_buf_puts(m, "         xmlns:");
+        rp_buf_puts(m, ns_uri[k][0]);
+        rp_buf_puts(m, "=\"");
+        rp_buf_puts(m, ns_uri[k][1]);
+        rp_buf_puts(m, "\"\r\n");
+    }
+    rp_buf_puts(m, "         IgnorableNamespaces=\"uap rescap");
+    for (int k = 0; k < 4; ++k) {
+        if (!(ns & (1u << k))) continue;
+        rp_buf_byte(m, ' ');
+        rp_buf_puts(m, ns_uri[k][0]);
+    }
+    rp_buf_puts(m, "\">\r\n  <Identity");
     attr(m, "Name", ir->msix_identity_name);
     attr(m, "Publisher", publisher);
     attr(m, "Version", version);
@@ -491,7 +520,13 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_puts(m, " BackgroundColor=\"transparent\"");
         attr(m, "Square150x150Logo", ap[i].logo[0]);
         attr(m, "Square44x44Logo", ap[i].logo[1]);
-        rp_buf_puts(m, " />\r\n    </Application>\r\n");
+        rp_buf_puts(m, " />\r\n");
+        if (ext[i].len) {
+            rp_buf_puts(m, "      <Extensions>\r\n");
+            rp_buf_put(m, ext[i].data, ext[i].len);
+            rp_buf_puts(m, "      </Extensions>\r\n");
+        }
+        rp_buf_puts(m, "    </Application>\r\n");
     }
     rp_buf_puts(m, "  </Applications>\r\n  <Capabilities>\r\n"
                    "    <rescap:Capability Name=\"runFullTrust\" />\r\n  </Capabilities>\r\n</Package>\r\n");
@@ -535,6 +570,175 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
     rp_buf_puts(t, "<Override PartName=\"/AppxBlockMap.xml\" ContentType=\"application/vnd.ms-appx.blockmap+xml\" /></Types>");
 }
 
+// ---- extensions (RFC-0010 N4; the support table: manual/formats/msix.md "Extensions") -------------
+
+// The build number of min-version ("10.0.17763.0" -> 17763).
+static unsigned min_build(const rp_ir_t *ir) {
+    const char *v = ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0";
+    for (int dots = 0; *v && dots < 2; ++v) dots += *v == '.';
+    return (unsigned)strtoul(v, NULL, 10);
+}
+
+static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {
+    for (size_t a = 0; file_id && a < ir->msix_app_count; ++a) {
+        if (ir->msix_apps[a].exe && strcmp(ir->msix_apps[a].exe, file_id) == 0) return a;
+    }
+    return SIZE_MAX;
+}
+
+static size_t app_by_id(const rp_ir_t *ir, const char *id) {
+    if (id == NULL) return 0;
+    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+        if (strcmp(ir->msix_apps[a].id, id) == 0) return a;
+    }
+    return SIZE_MAX;
+}
+
+// Each application's <Extensions> content into ext[a]; *ns gets the namespaces used.
+static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, const app_paths_t *ap, rp_buf_t *ext, unsigned *ns,
+                             rp_srcdiags_t *d) {
+    unsigned build = min_build(ir);
+    char args[4096];
+    // A feature an older Windows lacks needs min-version raised (RFC-0001 13.1).
+#define NEED(pos, what, b)                                                                                                  \
+    do {                                                                                                                    \
+        if (build < (b)) DERR(pos, "RP1614", "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\"", what, \
+                              (unsigned)(b), (unsigned)(b));                                                                 \
+    } while (0)
+    // File types, one FileTypeAssociation per prog-id.
+    for (size_t k = 0; k < ir->assoc_count; ++k) {
+        const rp_ir_assoc_t *x = &ir->assocs[k];
+        bool first = true;
+        for (size_t j = 0; j < k; ++j) first &= strcmp(ir->assocs[j].prog_id, x->prog_id) != 0;
+        if (!first) continue;
+        size_t a = app_of_file(ir, x->target_file);
+        if (a == SIZE_MAX) {
+            DERR(x->pos, "RP1613", "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable", x->id);
+            continue;
+        }
+        if (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0) {
+            DERR(x->pos, "RP1613", "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)", x->id);
+            continue;
+        }
+        NEED(x->pos, "a file type association", 14393u);
+        char name[64];
+        size_t o = 0;
+        for (const char *q = x->prog_id; *q && o + 1 < sizeof name; ++q) name[o++] = (*q >= 'A' && *q <= 'Z') ? (char)(*q + 32) : *q;
+        name[o] = 0;
+        rp_buf_t *b = &ext[a];
+        rp_buf_puts(b, "        <uap:Extension Category=\"windows.fileTypeAssociation\">\r\n          <uap3:FileTypeAssociation");
+        attr(b, "Name", name);
+        attr(b, "Parameters", args);
+        rp_buf_puts(b, ">\r\n");
+        if (x->description) {
+            rp_buf_puts(b, "            <uap:DisplayName>");
+            xml_text(b, x->description);
+            rp_buf_puts(b, "</uap:DisplayName>\r\n");
+        }
+        rp_buf_puts(b, "            <uap:SupportedFileTypes>\r\n");
+        for (size_t j = k; j < ir->assoc_count; ++j) {
+            if (strcmp(ir->assocs[j].prog_id, x->prog_id) != 0) continue;
+            rp_buf_puts(b, "              <uap:FileType>");
+            xml_text(b, ir->assocs[j].extension);
+            rp_buf_puts(b, "</uap:FileType>\r\n");
+        }
+        rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n          </uap3:FileTypeAssociation>\r\n        </uap:Extension>\r\n");
+        *ns |= NS_UAP3;
+    }
+    for (size_t k = 0; k < ir->protocol_count; ++k) {
+        const rp_ir_protocol_t *x = &ir->protocols[k];
+        size_t a = app_of_file(ir, x->target_file);
+        if (a == SIZE_MAX) {
+            DERR(x->pos, "RP1613", "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable", x->id);
+            continue;
+        }
+        if (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0) {
+            DERR(x->pos, "RP1613", "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)", x->id);
+            continue;
+        }
+        NEED(x->pos, "a protocol", 14393u);
+        rp_buf_puts(&ext[a], "        <uap3:Extension Category=\"windows.protocol\">\r\n          <uap3:Protocol");
+        attr(&ext[a], "Name", x->name);
+        attr(&ext[a], "Parameters", args);
+        rp_buf_puts(&ext[a], " />\r\n        </uap3:Extension>\r\n");
+        *ns |= NS_UAP3;
+    }
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        size_t a = app_by_id(ir, x->app);
+        if (a == SIZE_MAX) continue;                        // the IR said so
+        rp_buf_t *b = &ext[a];
+        if (x->kind == RP_MSIX_EXT_ALIAS) {
+            NEED(x->pos, "an execution alias", 14393u);
+            rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExecutionAlias\"");
+            attr(b, "Executable", ap[a].exe);
+            rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <uap3:AppExecutionAlias>\r\n            <desktop:ExecutionAlias");
+            attr(b, "Alias", x->alias);
+            rp_buf_puts(b, " />\r\n          </uap3:AppExecutionAlias>\r\n        </uap3:Extension>\r\n");
+            *ns |= NS_UAP3 | NS_DESKTOP;
+        } else {
+            NEED(x->pos, "a startup task", 14393u);
+            const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+            rp_buf_puts(b, "        <desktop:Extension Category=\"windows.startupTask\"");
+            attr(b, "Executable", ap[a].exe);
+            rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <desktop:StartupTask");
+            attr(b, "TaskId", x->task_id);
+            attr(b, "Enabled", x->enabled ? "true" : "false");
+            attr(b, "DisplayName", x->display ? x->display : app->display ? app->display : ir->name);
+            rp_buf_puts(b, " />\r\n        </desktop:Extension>\r\n");
+            *ns |= NS_DESKTOP;
+        }
+    }
+    // Shortcuts: the Start menu entry is the application itself; the desktop gets desktop7:Shortcut.
+    for (size_t k = 0; k < ir->shortcut_count; ++k) {
+        const rp_ir_shortcut_t *x = &ir->shortcuts[k];
+        size_t a = app_of_file(ir, x->target_file);
+        bool desktop = strcmp(x->dir, "Desktop") == 0, start = strcmp(x->dir, "Programs") == 0 || strcmp(x->dir, "StartMenu") == 0;
+        if (!desktop && !start) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s", x->id,
+                 strcmp(x->dir, "Startup") == 0 ? " (for Startup use [msix-extension] kind = \"startup-task\")" : "");
+        } else if (a == SIZE_MAX) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable", x->id);
+        } else if (x->working_dir) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX shortcut has no working-dir", x->id);
+        } else if (start && x->args) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args", x->id);
+        } else if (desktop) {
+            if (x->args && (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0)) {
+                DERR(x->pos, "RP1613", "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)", x->id);
+                continue;
+            }
+            NEED(x->pos, "a desktop shortcut", 19645u);
+            char file[600];
+            snprintf(file, sizeof file, "$(Desktop)\\%s.lnk", x->name);
+            rp_buf_puts(&ext[a], "        <desktop7:Extension Category=\"windows.shortcut\">\r\n          <desktop7:Shortcut");
+            attr(&ext[a], "File", file);
+            attr(&ext[a], "Icon", ap[a].exe);
+            if (x->args) attr(&ext[a], "Arguments", args);
+            if (x->description) attr(&ext[a], "Description", x->description);
+            rp_buf_puts(&ext[a], " />\r\n        </desktop7:Extension>\r\n");
+            *ns |= NS_DESKTOP7;
+        }
+    }
+    // Fonts, shared with other applications (uap4, in the first application).
+    if (ir->font_count) {
+        NEED(ir->fonts[0].pos, "a font", 15063u);
+        rp_buf_puts(&ext[0], "        <uap4:Extension Category=\"windows.sharedFonts\">\r\n          <uap4:SharedFonts>\r\n");
+        for (size_t k = 0; k < ir->font_count; ++k) {
+            for (size_t i = 0; i < n; ++i) {
+                if (items[i].file_id && strcmp(items[i].file_id, ir->fonts[k].file) == 0) {
+                    rp_buf_puts(&ext[0], "            <uap4:Font");
+                    attr(&ext[0], "File", items[i].path);
+                    rp_buf_puts(&ext[0], " />\r\n");
+                }
+            }
+        }
+        rp_buf_puts(&ext[0], "          </uap4:SharedFonts>\r\n        </uap4:Extension>\r\n");
+        *ns |= NS_UAP4;
+    }
+#undef NEED
+}
+
 proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out, size_t *len,
                              rp_srcdiags_t *d) {
     *out = NULL;
@@ -544,9 +748,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     // RFC-0009 M6: what an MSIX cannot carry.
     for (size_t i = 0; i < ir->msix_block_count; ++i) {
         const rp_ir_msix_block_t *b = &ir->msix_blocks[i];
-        bool later = strcmp(b->kind, "shortcut") == 0 || strcmp(b->kind, "font") == 0;
-        DERR(b->pos, "RP1605", "[%s.%s] cannot go into an MSIX%s; add msi-only = true to build the MSIX without it", b->kind, b->id,
-             later ? " yet (planned for P8b)" : "");
+        DERR(b->pos, "RP1605", "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it", b->kind, b->id);
     }
     if (!ir->has_msix) DERR(top, "RP1604", "a .msix output needs an [msix] table (identity-name, publisher)");
     if (ir->msix_app_count == 0) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
@@ -585,6 +787,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (r == root) {
             snprintf(it->path, sizeof it->path, "%s%s%s", dir, dir[0] ? "\\" : "", f->name);
             if (reserved(it->path)) DERR(f->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+        } else if (strcmp(r->base, "Fonts") == 0 && is_font(ir, f->id)) {
+            // A [font.*] (RFC-0010 N4): in the package's Fonts folder, shared through uap4:SharedFonts.
+            snprintf(it->path, sizeof it->path, "Fonts\\%s", f->name);
         } else {
             // Elsewhere: the package's virtual file system, under the folder's own path.
             const char *why = NULL, *vfs = vfs_folder(r->base, ir->arch, &why);
@@ -695,6 +900,19 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             if (ieq(items[i].path, items[k].path)) DERR(items[k].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[i].path, items[k].path);
         }
     }
+    rp_buf_t *ext = rp_mem_alloc(alloc, ir->msix_app_count, sizeof *ext);
+    unsigned ns = 0;
+    if (ext == NULL) {
+        for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
+        rp_mem_free(alloc, items);
+        rp_mem_free(alloc, ap);
+        return PROVEN_ERR_NOMEM;
+    }
+    for (size_t a = 0; a < ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
+    if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
+    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+        if (ext[a].err != PROVEN_OK) DERR(top, "RP1613", "out of memory");
+    }
     proven_err_t err = d->errors != errors ? PROVEN_ERR_INVALID_FORMAT : PROVEN_OK;
 
     // The archive: payload, manifest, block map, content types (Windows' order).
@@ -719,7 +937,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (items[i].source) rp_mem_free(alloc, data);
     }
     if (err == PROVEN_OK) {
-        manifest(&man, ir, opt, ap);
+        manifest(&man, ir, opt, ap, ext, ns);
         err = man.err;
     }
     if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, man.data, man.len, true);
@@ -738,6 +956,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, items);
     rp_mem_free(alloc, ap);
+    for (size_t a = 0; a < ir->msix_app_count; ++a) rp_buf_free(&ext[a]);
+    rp_mem_free(alloc, ext);
     return err;
 }
 

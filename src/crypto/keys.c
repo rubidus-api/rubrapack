@@ -211,7 +211,18 @@ static bool take_encrypted_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
     if (buf == NULL) return fail(c, PROVEN_ERR_NOMEM, "out of memory");
     memcpy(buf, data.val.p, data.val.n);
     size_t plain = 0;
-    bool ok = pbes2_decrypt(c, &alg, buf, data.val.n, &plain) && take_pkcs8(c, buf, plain);
+    bool ok = pbes2_decrypt(c, &alg, buf, data.val.n, &plain);
+    if (ok) {
+        // A wrong password still passes the padding check about once in 256 tries: the result is
+        // then not one DER SEQUENCE filling the plaintext, which a private key always is.
+        rp_der_span_t ps = { buf, plain };
+        rp_der_t whole;
+        if (!rp_der_get(&ps, RP_DER_SEQUENCE, &whole) || ps.n != 0) {
+            ok = fail(c, PROVEN_ERR_PERMISSION, "wrong password (the decrypted data is not a private key)");
+        } else {
+            ok = take_pkcs8(c, buf, plain);
+        }
+    }
     rp_wipe(buf, data.val.n);
     rp_mem_free(c->alloc, buf);
     return ok;

@@ -5,8 +5,8 @@ tagged as in [README.md](README.md): **[spec]** for Microsoft Learn (package man
 map schemas) and ECMA-376 Part 2 (Open Packaging Conventions); **[observed]** for packages written
 by Windows' own packaging API (`IAppxFactory`/`IAppxPackageWriter` in AppxPackaging.dll, part of
 Windows) and for rubrapack's packages read back through `IAppxPackageReader` and installed with
-`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; signing and extensions
-are not covered yet.
+`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; signing is not covered
+yet.
 
 ## The ZIP archive
 
@@ -108,6 +108,33 @@ change. Measured: `ProgramFilesX64` (%ProgramFiles%), `SystemX64` (System32), `C
 (%ProgramData%) - and none for `AppData` or `Local AppData`, as Microsoft Learn says. The other names
 rubrapack uses (`ProgramFilesX86`, `ProgramFilesCommonX64`/`X86`, `SystemX86`, `Windows`) are those
 Microsoft Learn lists. [spec] [observed]
+
+## Extensions
+
+What rubrapack writes into an application's `<Extensions>` (after `uap:VisualElements`), and only
+this: a source feature with no row here is an error, and one whose Windows build is above the
+package's `MinVersion` asks for `min-version` to be raised. [spec] Microsoft Learn, "Integrate your
+desktop app with Windows using packaging extensions" and the element pages. The last column is
+what the VM test checks (T075). [observed]
+
+| Source | Element (category) | Namespace | Min build | Capability | Checked on Windows 11 |
+|---|---|---|---|---|---|
+| `[assoc]` | `uap:Extension` `windows.fileTypeAssociation` > `uap3:FileTypeAssociation` (Name, Parameters) > `uap:DisplayName`, `uap:SupportedFileTypes` > `uap:FileType` | uap, uap3 | 14393 | runFullTrust | opening a `.rpx`/`.rpy` file starts the program with the file |
+| `[protocol]` | `uap3:Extension` `windows.protocol` > `uap3:Protocol` (Name, Parameters) | uap3 | 14393 | runFullTrust | starting a `scheme:` URI starts the program with it |
+| `[msix-extension]` alias | `uap3:Extension` `windows.appExecutionAlias` (Executable, EntryPoint) > `uap3:AppExecutionAlias` > `desktop:ExecutionAlias` (Alias) | uap3, desktop | 14393 | runFullTrust | the alias appears in `%LOCALAPPDATA%\Microsoft\WindowsApps` and starts the program |
+| `[msix-extension]` startup task | `desktop:Extension` `windows.startupTask` (Executable, EntryPoint) > `desktop:StartupTask` (TaskId, Enabled, DisplayName) | desktop | 14393 | runFullTrust | registered after the first start |
+| `[shortcut]` Desktop | `desktop7:Extension` `windows.shortcut` > `desktop7:Shortcut` (File `$(Desktop)\<name>.lnk`, Icon, Arguments, Description) | desktop7 | 19645 | runFullTrust | the shortcut is on the user's desktop and starts the program |
+| `[shortcut]` Programs, StartMenu | none: the application's own Start entry | - | - | - | the Start menu lists the application |
+| `[font]` | `uap4:Extension` `windows.sharedFonts` > `uap4:SharedFonts` > `uap4:Font` (File `Fonts\<name>`), in the first application | uap4 | 15063 | - | see T075's transcript |
+
+- The namespaces are declared on `Package`, and made ignorable, only when used, so a package
+  without extensions keeps the manifest described above.
+- `Parameters`, `Arguments`: literal text (MSI's `[...]` is refused); Windows puts the file or URI
+  where `%1` is.
+- `FileTypeAssociation` `Name`: the prog-id in lower case; `[assoc]` tables that share a prog-id
+  become one association with several `FileType`s.
+- Everything goes into the application whose executable the source names as target; a target
+  that is not an application's executable is an error.
 
 ## Bundles (`.msixbundle`)
 

@@ -385,8 +385,8 @@ static bool known_folder(const char *s) {
 static const char *const top_kinds[] = { "package", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", NULL };
-static const char *const later_kinds[] = { "assoc", "protocol", "msix-extension", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", NULL };
+static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
@@ -1601,6 +1601,103 @@ static void parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x) {
     x->title = get_str(c, t, "title", false, NULL);
 }
 
+// "file:<ID>" -> the ID (a copy), or NULL with RP1315.
+static char *file_ref(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
+    char *v = get_str(c, t, key, required, NULL);
+    if (v == NULL) return NULL;
+    char *id = NULL;
+    if (strncmp(v, "file:", 5) != 0 || v[5] == '\0') ERR(c, key_pos(t, key), "RP1315", "%s must be \"file:<ID>\" naming a [file.*] of this package", key);
+    else id = dup(c, v + 5);
+    rp_mem_free(c->alloc, v);
+    return id;
+}
+
+// Lower-case ASCII letters, digits and `extra`, starting at `from`; at least `min` of them.
+static bool lower_name(const char *s, const char *extra, size_t min) {
+    size_t n = 0;
+    for (; *s; ++s, ++n) {
+        if (!((*s >= 'a' && *s <= 'z') || (*s >= '0' && *s <= '9') || strchr(extra, *s))) return false;
+    }
+    return n >= min;
+}
+
+static void parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
+    static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "args", "msi-only", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 64);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    x->extension = get_str(c, t, "extension", true, NULL);
+    if (x->extension && (x->extension[0] != '.' || strlen(x->extension) > 64 || !lower_name(x->extension + 1, "_-", 1))) {
+        ERR(c, key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')", x->extension);
+    }
+    x->prog_id = get_str(c, t, "prog-id", true, NULL);
+    if (x->prog_id) {
+        bool ok = strlen(x->prog_id) <= 39 && x->prog_id[0] && !(x->prog_id[0] >= '0' && x->prog_id[0] <= '9');
+        for (const char *q = x->prog_id; ok && *q; ++q) {
+            ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '_' || *q == '-';
+        }
+        if (!ok) ERR(c, key_pos(t, "prog-id"), "RP1316", "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')", x->prog_id);
+    }
+    x->description = get_str(c, t, "description", false, NULL);
+    x->target_file = file_ref(c, t, "target", true);
+    x->icon_file = file_ref(c, t, "icon", false);
+    x->args = get_str(c, t, "args", false, NULL);
+    if (x->args == NULL) x->args = dup(c, "\"%1\"");
+}
+
+static void parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
+    static const char *const keys[] = { "name", "description", "target", "args", "msi-only", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 64);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    x->name = get_str(c, t, "name", true, NULL);
+    if (x->name && (!(x->name[0] >= 'a' && x->name[0] <= 'z') || strlen(x->name) > 64 || !lower_name(x->name, "+-.", 2))) {
+        ERR(c, key_pos(t, "name"), "RP1316", "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')", x->name);
+    }
+    static const char *const taken[] = { "http", "https", "file", "ftp", "mailto", "ms-settings", "shell", NULL };
+    if (x->name && in_list(x->name, taken)) ERR(c, key_pos(t, "name"), "RP1316", "'%s' belongs to Windows or the browsers", x->name);
+    x->description = get_str(c, t, "description", false, NULL);
+    x->target_file = file_ref(c, t, "target", true);
+    x->args = get_str(c, t, "args", false, NULL);
+    if (x->args == NULL) x->args = dup(c, "\"%1\"");
+}
+
+static void parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
+    static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", NULL };
+    check_keys(c, t, keys);
+    check_id(c, t, 72);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    char *kind = get_str(c, t, "kind", true, NULL);
+    x->app = get_str(c, t, "app", false, NULL);
+    x->enabled = get_bool(c, t, "enabled", true);
+    if (kind && strcmp(kind, "alias") == 0) {
+        x->kind = RP_MSIX_EXT_ALIAS;
+        x->alias = get_str(c, t, "alias", true, NULL);
+        size_t n = x->alias ? strlen(x->alias) : 0;
+        bool ok = n > 4 && n <= 64 && strcmp(x->alias + n - 4, ".exe") == 0;
+        for (size_t k = 0; ok && k < n; ++k) {
+            char ch = x->alias[k];
+            ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '_' || ch == '-';
+        }
+        if (x->alias && !ok) ERR(c, key_pos(t, "alias"), "RP1316", "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')", x->alias);
+        if (find_key(t, "task-id") || find_key(t, "display-name") || find_key(t, "enabled")) {
+            ERR(c, t->pos, "RP1316", "task-id, display-name and enabled belong to kind = \"startup-task\"");
+        }
+    } else if (kind && strcmp(kind, "startup-task") == 0) {
+        x->kind = RP_MSIX_EXT_STARTUP;
+        x->task_id = get_str(c, t, "task-id", false, NULL);
+        if (x->task_id == NULL) x->task_id = dup(c, t->id);
+        x->display = get_str(c, t, "display-name", false, NULL);
+        if (find_key(t, "alias")) ERR(c, key_pos(t, "alias"), "RP1316", "alias belongs to kind = \"alias\"");
+    } else if (kind) {
+        ERR(c, key_pos(t, "kind"), "RP1316", "kind must be \"alias\" or \"startup-task\" (got '%s')", kind);
+    }
+    rp_mem_free(c->alloc, kind);
+}
+
 static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     static const char *const keys[] = { "name", "value", "mode", "keep", "feature", NULL };
     check_keys(c, t, keys);
@@ -1944,6 +2041,138 @@ static char *dir_full_path(ctx_t *c, const rp_ir_dir_t *d, size_t depth) {
     return (char *)out;
 }
 
+static int cmp_str(const char *a, const char *b) { return strcmp(a ? a : "", b ? b : ""); }
+
+static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, const char *id) {
+    for (size_t j = 0; id && j < ir->file_count; ++j) {
+        if (strcmp(ir->files[j].id, id) == 0) return &ir->files[j];
+    }
+    return NULL;
+}
+
+// A program of this package that opens files or URIs: a [file.*] whose name ends in .exe.
+static bool program_ok(ctx_t *c, const char *id, rp_pos_t pos, const char *what) {
+    if (id == NULL) return false;
+    const rp_ir_file_t *f = file_by_id(c->ir, id);
+    if (f == NULL) {
+        ERR(c, pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", what, id);
+        return false;
+    }
+    const char *n = f->name ? f->name : "";
+    size_t l = strlen(n);
+    if (l < 4 || (strcmp(n + l - 4, ".exe") != 0 && strcmp(n + l - 4, ".EXE") != 0)) {
+        ERR(c, pos, "RP1316", "%s: file '%s' is not a program (.exe)", what, id);
+        return false;
+    }
+    return true;
+}
+
+static void add_class_value(ctx_t *c, const char *id, const char *suffix, const char *key, const char *name, const char *value,
+                            const char *with, rp_pos_t pos) {
+    rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
+    memset(r, 0, sizeof *r);
+    char rid[96];
+    snprintf(rid, sizeof rid, "%s.%s", id, suffix);
+    r->id = dup(c, rid);
+    r->root = RP_ROOT_HKCR;
+    r->key = dup(c, key);
+    r->name = name ? dup(c, name) : NULL;
+    r->type = RP_REG_STRING;
+    r->value = dup(c, value);
+    r->msi_only = true;             // an MSIX says the same in its manifest (RFC-0010 N4)
+    r->with_file = dup(c, with);
+    r->pos = pos;
+}
+
+// [assoc.*], [protocol.*] and [msix-extension.*] (RFC-0010 N4): programs that exist, one handler per
+// extension and scheme, one description per prog-id; then, for the MSI, their HKCR values in the
+// program's component. HKCR follows the installation: HKLM\Software\Classes per machine,
+// HKCU\Software\Classes per user.
+static void class_checks(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    for (size_t k = 0; k < ir->assoc_count; ++k) {
+        rp_ir_assoc_t *x = &ir->assocs[k];
+        program_ok(c, x->target_file, x->pos, "target");
+        if (x->icon_file && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", x->icon_file);
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_assoc_t *y = &ir->assocs[j];
+            if (x->extension && y->extension && strcmp(x->extension, y->extension) == 0) {
+                ERR(c, x->pos, "RP1301", "extension '%s' already has a program ([assoc.%s])", x->extension, y->id);
+            }
+            if (x->prog_id && y->prog_id && strcmp(x->prog_id, y->prog_id) == 0 &&
+                (cmp_str(x->description, y->description) != 0 || cmp_str(x->target_file, y->target_file) != 0 ||
+                 cmp_str(x->icon_file, y->icon_file) != 0 || cmp_str(x->args, y->args) != 0)) {
+                ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args", x->prog_id, y->id);
+            }
+        }
+    }
+    for (size_t k = 0; k < ir->protocol_count; ++k) {
+        rp_ir_protocol_t *x = &ir->protocols[k];
+        program_ok(c, x->target_file, x->pos, "target");
+        for (size_t j = 0; j < k; ++j) {
+            if (x->name && ir->protocols[j].name && strcmp(x->name, ir->protocols[j].name) == 0) {
+                ERR(c, x->pos, "RP1301", "scheme '%s' already has a program ([protocol.%s])", x->name, ir->protocols[j].id);
+            }
+        }
+    }
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        bool found = x->app == NULL;
+        for (size_t j = 0; !found && j < ir->msix_app_count; ++j) found = strcmp(ir->msix_apps[j].id, x->app) == 0;
+        if (!found) ERR(c, x->pos, "RP1315", "app '%s' is not an [msix-app.*]", x->app);
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+            if (x->kind == RP_MSIX_EXT_ALIAS && y->kind == RP_MSIX_EXT_ALIAS && cmp_str(x->app, y->app) == 0) {
+                ERR(c, x->pos, "RP1301", "an application has one alias ([msix-extension.%s] is one already)", y->id);
+            }
+            if (x->kind == RP_MSIX_EXT_STARTUP && y->kind == RP_MSIX_EXT_STARTUP && strcmp(x->task_id, y->task_id) == 0) {
+                ERR(c, x->pos, "RP1301", "task-id '%s' is already used by [msix-extension.%s]", x->task_id, y->id);
+            }
+        }
+    }
+    if (c->d->errors) return;       // a table with a missing key has NULL fields; the build fails anyway
+    for (size_t k = 0; k < ir->assoc_count && !c->nomem; ++k) {
+        const rp_ir_assoc_t *x = &ir->assocs[k];
+        add_class_value(c, x->id, "Ext", x->extension, NULL, x->prog_id, x->target_file, x->pos);
+        bool first = true;              // a prog-id shared by several extensions is written once
+        for (size_t j = 0; j < k; ++j) first &= strcmp(ir->assocs[j].prog_id, x->prog_id) != 0;
+        if (!first) continue;
+        char key[160], val[512];
+        add_class_value(c, x->id, "Prog", x->prog_id, NULL, x->description ? x->description : ir->name, x->target_file, x->pos);
+        snprintf(key, sizeof key, "%s\\DefaultIcon", x->prog_id);
+        snprintf(val, sizeof val, "[#%s],0", x->icon_file ? x->icon_file : x->target_file);
+        add_class_value(c, x->id, "Icon", key, NULL, val, x->target_file, x->pos);
+        snprintf(key, sizeof key, "%s\\shell\\open\\command", x->prog_id);
+        char *cmd = rp_mem_alloc(c->alloc, strlen(x->target_file) + strlen(x->args) + 16, 1);
+        if (cmd == NULL) {
+            c->nomem = true;
+            return;
+        }
+        sprintf(cmd, "\"[#%s]\" %s", x->target_file, x->args);
+        add_class_value(c, x->id, "Cmd", key, NULL, cmd, x->target_file, x->pos);
+        rp_mem_free(c->alloc, cmd);
+    }
+    for (size_t k = 0; k < ir->protocol_count && !c->nomem; ++k) {
+        const rp_ir_protocol_t *x = &ir->protocols[k];
+        char key[160], val[512];
+        snprintf(val, sizeof val, "URL:%s", x->description ? x->description : x->name);
+        add_class_value(c, x->id, "Url", x->name, NULL, val, x->target_file, x->pos);
+        add_class_value(c, x->id, "Proto", x->name, "URL Protocol", "", x->target_file, x->pos);
+        snprintf(key, sizeof key, "%s\\DefaultIcon", x->name);
+        snprintf(val, sizeof val, "[#%s],0", x->target_file);
+        add_class_value(c, x->id, "Icon", key, NULL, val, x->target_file, x->pos);
+        snprintf(key, sizeof key, "%s\\shell\\open\\command", x->name);
+        char *cmd = rp_mem_alloc(c->alloc, strlen(x->target_file) + strlen(x->args) + 16, 1);
+        if (cmd == NULL) {
+            c->nomem = true;
+            return;
+        }
+        sprintf(cmd, "\"[#%s]\" %s", x->target_file, x->args);
+        add_class_value(c, x->id, "Cmd", key, NULL, cmd, x->target_file, x->pos);
+        rp_mem_free(c->alloc, cmd);
+    }
+}
+
 static void cross_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     // IDs unique across dir, file and feature (RFC-0002 2).
@@ -1951,7 +2180,7 @@ static void cross_checks(ctx_t *c) {
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
                ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count +
                ir->require_count + ir->search_count + ir->service_count + ir->font_count + ir->permission_count +
-               ir->dialog_count + ir->dialog_control_count;
+               ir->dialog_count + ir->dialog_control_count + ir->assoc_count + ir->protocol_count + ir->msix_ext_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1971,6 +2200,9 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->search_count; ++k) ids[m++] = (idpos_t){ ir->searches[k].id, ir->searches[k].pos };
     for (size_t k = 0; k < ir->service_count; ++k) ids[m++] = (idpos_t){ ir->services[k].id, ir->services[k].pos };
     for (size_t k = 0; k < ir->font_count; ++k) ids[m++] = (idpos_t){ ir->fonts[k].id, ir->fonts[k].pos };
+    for (size_t k = 0; k < ir->assoc_count; ++k) ids[m++] = (idpos_t){ ir->assocs[k].id, ir->assocs[k].pos };
+    for (size_t k = 0; k < ir->protocol_count; ++k) ids[m++] = (idpos_t){ ir->protocols[k].id, ir->protocols[k].pos };
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) ids[m++] = (idpos_t){ ir->msix_exts[k].id, ir->msix_exts[k].pos };
     for (size_t k = 0; k < ir->permission_count; ++k) ids[m++] = (idpos_t){ ir->permissions[k].id, ir->permissions[k].pos };
     for (size_t k = 0; k < ir->dialog_count; ++k) ids[m++] = (idpos_t){ ir->dialogs[k].id, ir->dialogs[k].pos };
     for (size_t k = 0; k < ir->dialog_control_count; ++k) ids[m++] = (idpos_t){ ir->dialog_controls[k].id, ir->dialog_controls[k].pos };
@@ -2379,7 +2611,6 @@ static void cross_checks(ctx_t *c) {
 
 // ---- build -----------------------------------------------------------------------------------
 
-static int cmp_str(const char *a, const char *b) { return strcmp(a ? a : "", b ? b : ""); }
 
 proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt, rp_ir_t *ir,
                          rp_srcdiags_t *diags) {
@@ -2389,7 +2620,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, next_ = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -2432,6 +2663,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "search") == 0) ++nsearch;
         else if (strcmp(t->kind, "service") == 0) ++nsvc;
         else if (strcmp(t->kind, "font") == 0) ++nfont;
+        else if (strcmp(t->kind, "assoc") == 0) ++nassoc;
+        else if (strcmp(t->kind, "protocol") == 0) ++nproto;
+        else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
         else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
@@ -2442,7 +2676,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "msix-app") == 0) parse_msix_app(&c, t);
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
-                                               "dialog", "dialog-control", "arp", "msix", "msix-app", "registry", NULL };
+                                               "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
+                                               "assoc", "protocol", "shortcut", "font", NULL };
         if (!in_list(t->kind, msix_ok) && !get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -2479,7 +2714,12 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->folders = rp_mem_alloc(alloc, nfolder, sizeof *ir->folders);
     ir->properties = rp_mem_alloc(alloc, nprop + 1, sizeof *ir->properties);
     ir->actions = rp_mem_alloc(alloc, naction + 1, sizeof *ir->actions);
-    ir->registries = rp_mem_alloc(alloc, nreg + 1, sizeof *ir->registries);
+    // [assoc] and [protocol] add their HKCR values for the MSI (add_class_values).
+    ir->registries = rp_mem_alloc(alloc, nreg + 4 * nassoc + 4 * nproto + 1, sizeof *ir->registries);
+    ir->assocs = rp_mem_alloc(alloc, nassoc + 1, sizeof *ir->assocs);
+    ir->protocols = rp_mem_alloc(alloc, nproto + 1, sizeof *ir->protocols);
+    ir->msix_exts = rp_mem_alloc(alloc, next_ + 1, sizeof *ir->msix_exts);
+    if (ir->assocs == NULL || ir->protocols == NULL || ir->msix_exts == NULL) c.nomem = true;
     ir->shortcuts = rp_mem_alloc(alloc, nshort + 1, sizeof *ir->shortcuts);
     ir->removes = rp_mem_alloc(alloc, nrem + 1, sizeof *ir->removes);
     ir->copies = rp_mem_alloc(alloc, ncopy + 1, sizeof *ir->copies);
@@ -2568,6 +2808,18 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_font_t *x = &ir->fonts[ir->font_count++];
             memset(x, 0, sizeof *x);
             parse_font(&c, t, x);
+        } else if (strcmp(t->kind, "assoc") == 0) {
+            rp_ir_assoc_t *x = &ir->assocs[ir->assoc_count++];
+            memset(x, 0, sizeof *x);
+            parse_assoc(&c, t, x);
+        } else if (strcmp(t->kind, "protocol") == 0) {
+            rp_ir_protocol_t *x = &ir->protocols[ir->protocol_count++];
+            memset(x, 0, sizeof *x);
+            parse_protocol(&c, t, x);
+        } else if (strcmp(t->kind, "msix-extension") == 0) {
+            rp_ir_msix_ext_t *x = &ir->msix_exts[ir->msix_ext_count++];
+            memset(x, 0, sizeof *x);
+            parse_msix_ext(&c, t, x);
         } else if (strcmp(t->kind, "permission") == 0) {
             rp_ir_permission_t *x = &ir->permissions[ir->permission_count++];
             memset(x, 0, sizeof *x);
@@ -2685,6 +2937,18 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             ir->shortcuts[j - 1] = t;
         }
     }
+#define SORT_BY_ID(arr, count, type)                                                                \
+    for (size_t i = 1; !c.nomem && i < (count); ++i) {                                              \
+        for (size_t j = i; j > 0 && cmp_str((arr)[j - 1].id, (arr)[j].id) > 0; --j) {               \
+            type t = (arr)[j];                                                                      \
+            (arr)[j] = (arr)[j - 1];                                                                \
+            (arr)[j - 1] = t;                                                                       \
+        }                                                                                           \
+    }
+    SORT_BY_ID(ir->assocs, ir->assoc_count, rp_ir_assoc_t)
+    SORT_BY_ID(ir->protocols, ir->protocol_count, rp_ir_protocol_t)
+    SORT_BY_ID(ir->msix_exts, ir->msix_ext_count, rp_ir_msix_ext_t)
+#undef SORT_BY_ID
     for (size_t i = 1; !c.nomem && i < ir->registry_count; ++i) {
         for (size_t j = i; j > 0 && cmp_str(ir->registries[j - 1].id, ir->registries[j].id) > 0; --j) {
             rp_ir_registry_t t = ir->registries[j];
@@ -2716,6 +2980,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     }
     if (!c.nomem && opt->nfc) nfc_names(&c);
     if (!c.nomem) dialog_checks(&c);
+    if (!c.nomem) class_checks(&c);
     if (!c.nomem) cross_checks(&c);
     if (c.nomem) {
         rp_ir_free(ir);
@@ -2831,6 +3096,24 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, ir->fonts[k].title);
     }
     rp_mem_free(a, ir->fonts);
+    for (size_t k = 0; k < ir->assoc_count; ++k) {
+        rp_ir_assoc_t *x = &ir->assocs[k];
+        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->args };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->assocs);
+    for (size_t k = 0; k < ir->protocol_count; ++k) {
+        rp_ir_protocol_t *x = &ir->protocols[k];
+        char *xs[] = { x->id, x->name, x->description, x->target_file, x->args };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->protocols);
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->msix_exts);
     for (size_t k = 0; k < ir->permission_count; ++k) {
         rp_ir_permission_t *x = &ir->permissions[k];
         char *xs[] = { x->id, x->target, x->sddl, x->feature };
@@ -3225,6 +3508,40 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "args", sc->args);
         kv(&b, "description", sc->description);
         kv(&b, "working-dir", sc->working_dir);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->assoc_count; ++k) {
+        const rp_ir_assoc_t *x = &ir->assocs[k];
+        rp_buf_puts(&b, "assoc ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "extension", x->extension);
+        kv(&b, "prog-id", x->prog_id);
+        kv(&b, "description", x->description);
+        kv(&b, "target", x->target_file);
+        kv(&b, "icon", x->icon_file);
+        kv(&b, "args", x->args);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->protocol_count; ++k) {
+        const rp_ir_protocol_t *x = &ir->protocols[k];
+        rp_buf_puts(&b, "protocol ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "name", x->name);
+        kv(&b, "description", x->description);
+        kv(&b, "target", x->target_file);
+        kv(&b, "args", x->args);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        rp_buf_puts(&b, "msix-extension ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "kind", x->kind == RP_MSIX_EXT_ALIAS ? "alias" : "startup-task");
+        kv(&b, "app", x->app);
+        kv(&b, "alias", x->alias);
+        kv(&b, "task-id", x->task_id);
+        kv(&b, "display-name", x->display);
+        if (x->kind == RP_MSIX_EXT_STARTUP) kv(&b, "enabled", x->enabled ? "true" : "false");
         rp_buf_byte(&b, '\n');
     }
     return rp_buf_take(&b, out, len);

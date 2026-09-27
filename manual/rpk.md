@@ -70,6 +70,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**, **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
+| `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
+| `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
 | `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "Fonts"`), title |
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
@@ -81,6 +83,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
+| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -126,7 +129,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 - `[registry.*]` values go into the package's virtual registry, which the app sees merged into the
   real one while the machine's registry stays untouched: `HKLM` (and `HKMU`) under `Software` into
   `Registry.dat` (with `view = "32"` in the 32-bit view), `HKCU` under `Software` into `User.dat`.
-  What an MSIX cannot hold is an error (`RP1612`): `HKCR` (file types and protocols come later with
+  What an MSIX cannot hold is an error (`RP1612`): `HKCR` (file types and protocols are
   `[assoc.*]` and `[protocol.*]`), keys outside `Software`, `remove` and `keep`, and values with a part
   Windows Installer fills in at install time (`[INSTALLDIR]`, `[#File]`, ...; the escapes `[\[]` and
   `[\]]` are fine).
@@ -134,7 +137,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   must have the exact size (`RP1608`).
 - What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions,
   services, environment variables, INI files, permissions, launch conditions and searches, files
-  removed or copied at install, empty folders; shortcuts and fonts come later.
+  removed or copied at install, empty folders.
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
   the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
   Installer only and are not used for an MSIX.
@@ -201,6 +204,54 @@ args = "--settings \"[INSTALLDIR]\""
 A shortcut belongs to its target file (and its feature); folders created for it are removed at
 uninstall. In a per-machine package `Programs` and `Desktop` are the all-users Start menu and the
 Public Desktop.
+
+In an MSIX a shortcut starts an application (its target must be an `[msix-app.*]` executable): one
+in `Programs` or `StartMenu` is that application's own Start menu entry (no `args`); one on the
+`Desktop` is written into the manifest and needs `min-version = "10.0.19645.0"` or later
+(`RP1614`). Other folders, `working-dir` and `[...]` in `args` are errors there (`RP1613`); for
+`Startup` use a startup task.
+
+### File types and links: `[assoc.ID]`, `[protocol.ID]`
+
+```toml
+[assoc.Doc]
+extension = ".exdoc"
+prog-id = "Example.Document"      # tables sharing it describe one kind of document
+description = "Example document"
+target = "file:MainExe"
+args = "--open \"%1\""            # the default is "%1"
+
+[protocol.Link]
+name = "example"                  # example:... opens the program
+target = "file:MainExe"
+```
+
+In an MSI they are registry values under `HKEY_CLASSES_ROOT`, in the program's component: the
+extension's default value is the prog-id, the prog-id has the description, `DefaultIcon` (`icon`, or
+the program's first icon) and `shell\open\command`; a scheme gets `URL Protocol`. `HKEY_CLASSES_ROOT`
+follows the installation: per machine they land in `HKLM\Software\Classes`, per user in
+`HKCU\Software\Classes`, and removal takes them away. A type that only this program claims opens
+in it directly; where the user has chosen another program, Windows keeps that choice.
+
+In an MSIX they go into the manifest of the application whose executable is the target (a file
+type association, a protocol), and `args` must be plain text. `icon` is not used there: the
+application's logo stands for the file type.
+
+### MSIX only: `[msix-extension.ID]`
+
+```toml
+[msix-extension.Cli]
+kind = "alias"
+alias = "example.exe"             # typed in a console, it starts the application
+
+[msix-extension.Boot]
+kind = "startup-task"             # starts with Windows once the application has run once
+display-name = "Example"          # the name in Task Manager; task-id defaults to the table ID
+enabled = true
+```
+
+An MSI build leaves these out. Fonts (`[font.*]`) in an MSIX are shared with other applications
+(`uap4:SharedFonts`) from the package's `Fonts` folder; `title` is not used there.
 
 ### Removing and copying: `[remove.ID]`, `[copy.ID]`
 

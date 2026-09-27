@@ -165,6 +165,44 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_font_t;
 
+// [assoc.ID] (RFC-0010 N4): a file type opened by an installed program. MSI: HKCR values in the
+// program's component (the extension's default = prog-id; prog-id, DefaultIcon, shell\open\command);
+// MSIX: uap3:FileTypeAssociation of the application whose executable it is (grouped by prog-id).
+typedef struct {
+    char    *id;
+    char    *extension;         // ".ext", lower case
+    char    *prog_id;
+    char    *description;       // literal, or NULL
+    char    *target_file;       // file ID of the program
+    char    *icon_file;         // file ID, or NULL (MSI: the program's first icon)
+    char    *args;              // formatted; default "\"%1\""
+    rp_pos_t pos;
+} rp_ir_assoc_t;
+
+// [protocol.ID] (RFC-0010 N4): a URI scheme opened by an installed program. MSI: HKCR\<name>
+// (URL Protocol, DefaultIcon, shell\open\command); MSIX: uap3:Protocol.
+typedef struct {
+    char    *id;
+    char    *name;              // scheme, lower case
+    char    *description;       // literal, or NULL
+    char    *target_file;
+    char    *args;              // formatted; default "\"%1\""
+    rp_pos_t pos;
+} rp_ir_protocol_t;
+
+// [msix-extension.ID] (RFC-0010 N4): what only an MSIX has; left out of an MSI.
+typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP } rp_msix_ext_kind_t;
+typedef struct {
+    char              *id;
+    rp_msix_ext_kind_t kind;
+    char              *app;         // [msix-app.*] ID, or NULL = the first
+    char              *alias;       // alias: "name.exe"
+    char              *task_id;     // startup-task: default the table's ID
+    char              *display;     // startup-task: display name, or NULL
+    bool               enabled;     // startup-task (default true)
+    rp_pos_t           pos;
+} rp_ir_msix_ext_t;
+
 // [permission.ID] (RFC-0004): an SDDL security descriptor set on a folder, file or registry value.
 typedef struct {
     char    *id;
@@ -307,6 +345,12 @@ typedef struct {
     size_t            service_count;
     rp_ir_font_t     *fonts;
     size_t            font_count;
+    rp_ir_assoc_t    *assocs;               // in ID order
+    size_t            assoc_count;
+    rp_ir_protocol_t *protocols;            // in ID order
+    size_t            protocol_count;
+    rp_ir_msix_ext_t *msix_exts;            // in ID order
+    size_t            msix_ext_count;
     // P4 dialogs (RFC-0005)
     int               ui;                   // RP_UI_* (rubrapack/ui.h)
     char             *license_source;       // path to open (joined with the .rpk directory), or NULL
