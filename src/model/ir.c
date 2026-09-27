@@ -1072,20 +1072,30 @@ static void parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "executable", "display-name", "description", "logo-150", "logo-44", "store-logo", NULL };
     check_keys(c, t, keys);
     rp_ir_t *ir = c->ir;
-    if (++ir->msix_app_count > 1) {
-        ERR(c, t->pos, "RP1606", "one [msix-app.*] only for now (more applications come with P8b)");
+    if (ir->msix_app_count == 100) {
+        ERR(c, t->pos, "RP1606", "at most 100 [msix-app.*] tables");
         return;
     }
-    ir->msix_app_id = dup(c, t->id);
-    ir->msix_app_pos = t->pos;
-    ir->msix_app_exe = get_str(c, t, "executable", true, NULL);
-    ir->msix_app_display = get_str(c, t, "display-name", false, NULL);
-    ir->msix_app_description = get_str(c, t, "description", false, NULL);
+    rp_ir_msix_app_t *na = rp_mem_alloc(c->alloc, ir->msix_app_count + 1, sizeof *na);
+    if (na == NULL) {
+        c->nomem = true;
+        return;
+    }
+    if (ir->msix_app_count) memcpy(na, ir->msix_apps, ir->msix_app_count * sizeof *na);
+    rp_mem_free(c->alloc, ir->msix_apps);
+    ir->msix_apps = na;
+    rp_ir_msix_app_t *a = &na[ir->msix_app_count++];
+    memset(a, 0, sizeof *a);
+    a->id = dup(c, t->id);
+    a->pos = t->pos;
+    a->exe = get_str(c, t, "executable", true, NULL);
+    a->display = get_str(c, t, "display-name", false, NULL);
+    a->description = get_str(c, t, "description", false, NULL);
     static const char *const logos[3] = { "logo-150", "logo-44", "store-logo" };
     int given = 0;
     for (int i = 0; i < 3; ++i) {
-        ir->msix_logo_path[i] = logo_path(c, t, logos[i], &ir->msix_logo[i]);
-        given += ir->msix_logo[i] != NULL;
+        a->logo_path[i] = logo_path(c, t, logos[i], &a->logo[i]);
+        given += a->logo[i] != NULL;
     }
     if (given != 0 && given != 3) ERR(c, t->pos, "RP1608", "give all three logos (logo-150, logo-44, store-logo) or none");
     bool id_ok = t->id[0] != '\0' && strlen(t->id) <= 64 && !(t->id[0] >= '0' && t->id[0] <= '9');
@@ -1141,6 +1151,7 @@ static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) 
     check_id(c, t, 72);
     r->id = dup(c, t->id);
     r->pos = t->pos;
+    r->msi_only = get_bool(c, t, "msi-only", false);
     char *root = get_str(c, t, "root", true, NULL);
     if (root) {
         // Per scope: machine HKLM/HKCR/HKMU, user HKCU/HKCR/HKMU, dual HKMU/HKCR (HKMU = HKLM for a
@@ -2411,7 +2422,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "msix-app") == 0) parse_msix_app(&c, t);
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
-                                               "dialog", "dialog-control", "arp", "msix", "msix-app", NULL };
+                                               "dialog", "dialog-control", "arp", "msix", "msix-app", "registry", NULL };
         if (!in_list(t->kind, msix_ok) && !get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -2840,14 +2851,18 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_publisher);
     rp_mem_free(a, ir->msix_publisher_display);
     rp_mem_free(a, ir->msix_min_version);
-    rp_mem_free(a, ir->msix_app_id);
-    rp_mem_free(a, ir->msix_app_exe);
-    rp_mem_free(a, ir->msix_app_display);
-    rp_mem_free(a, ir->msix_app_description);
-    for (int i = 0; i < 3; ++i) {
-        rp_mem_free(a, ir->msix_logo[i]);
-        rp_mem_free(a, ir->msix_logo_path[i]);
+    for (size_t k = 0; k < ir->msix_app_count; ++k) {
+        rp_ir_msix_app_t *x = &ir->msix_apps[k];
+        rp_mem_free(a, x->id);
+        rp_mem_free(a, x->exe);
+        rp_mem_free(a, x->display);
+        rp_mem_free(a, x->description);
+        for (int i = 0; i < 3; ++i) {
+            rp_mem_free(a, x->logo[i]);
+            rp_mem_free(a, x->logo_path[i]);
+        }
     }
+    rp_mem_free(a, ir->msix_apps);
     for (size_t i = 0; i < ir->msix_block_count; ++i) {
         rp_mem_free(a, ir->msix_blocks[i].kind);
         rp_mem_free(a, ir->msix_blocks[i].id);

@@ -114,14 +114,27 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 
 - The version is `[package] version` with four parts (`1.2.3` becomes `1.2.3.0`), the
   architecture `[package] arch`, the language `[package] language`.
-- The package holds the folder of the executable - the dir anchored in a known location, such as
-  `ProgramFiles/Example App` - and everything below it. A file anywhere else is an error
-  (`RP1609`); files in other locations need the package's virtual file system, which comes later.
+- The package's own folder is that of the first `[msix-app.*]`'s executable - the dir anchored in a
+  known location, such as `ProgramFiles/Example App`. Files in other known locations go into the
+  package's virtual file system, where the app sees them at their usual place: Program Files
+  (`VFS\ProgramFilesX64`, or `X86` for an x86 package and for `ProgramFiles32`), `CommonFiles`,
+  `System`, `Windows` and `CommonAppData` (ProgramData). There is none for the user's `AppData` or
+  `LocalAppData`, nor for `Temp`: files there are an error (`RP1609`); fonts and the Start menu,
+  Desktop and Startup folders come later with `[font.*]` and shortcuts.
+- Several `[msix-app.*]` tables make several entries of one package (at most 100); the first one
+  gives the package its logo.
+- `[registry.*]` values go into the package's virtual registry, which the app sees merged into the
+  real one while the machine's registry stays untouched: `HKLM` (and `HKMU`) under `Software` into
+  `Registry.dat` (with `view = "32"` in the 32-bit view), `HKCU` under `Software` into `User.dat`.
+  What an MSIX cannot hold is an error (`RP1612`): `HKCR` (file types and protocols come later with
+  `[assoc.*]` and `[protocol.*]`), keys outside `Software`, `remove` and `keep`, and values with a part
+  Windows Installer fills in at install time (`[INSTALLDIR]`, `[#File]`, ...; the escapes `[\[]` and
+  `[\]]` are fine).
 - Give the three logos or none: without them the package gets plain one-colour logos. A logo
   must have the exact size (`RP1608`).
 - What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions,
   services, environment variables, INI files, permissions, launch conditions and searches, files
-  removed or copied at install, empty folders; registry values, shortcuts and fonts come later.
+  removed or copied at install, empty folders; shortcuts and fonts come later.
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
   the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
   Installer only and are not used for an MSIX.

@@ -77,6 +77,7 @@ typedef struct {
     char        **items;        // multi: formatted strings
     size_t        item_count;
     bool          remove, keep, view32;
+    bool          msi_only;     // msi-only = true: left out of an MSIX (RFC-0009 M6)
     char         *with_file;    // file ID whose component carries it, or NULL (own component)
     char         *feature;      // resolved (G2) when with_file is NULL
     rp_pos_t      pos;
@@ -240,6 +241,15 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_action_t;
 
+// [msix-app.ID] (RFC-0009, RFC-0010 N1: several).
+typedef struct {
+    char    *id, *exe;                  // exe: a [file] ID
+    char    *display, *description;     // may be NULL
+    char    *logo[3];                   // Square150x150, Square44x44, StoreLogo (as written), or NULL
+    char    *logo_path[3];              // to open (joined with the .rpk directory)
+    rp_pos_t pos;
+} rp_ir_msix_app_t;
+
 // A table an MSIX cannot hold (RFC-0009 M6): an error when building .msix, unless msi-only = true.
 typedef struct {
     char    *kind, *id;
@@ -318,12 +328,8 @@ typedef struct {
     bool      has_msix;
     char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;
     rp_pos_t  msix_pos;
+    rp_ir_msix_app_t *msix_apps;                // in source order
     size_t    msix_app_count;
-    char     *msix_app_id, *msix_app_exe;       // exe: a [file] ID
-    char     *msix_app_display, *msix_app_description;
-    char     *msix_logo[3];                     // Square150x150, Square44x44, StoreLogo (as written), or NULL
-    char     *msix_logo_path[3];                // to open (joined with the .rpk directory)
-    rp_pos_t  msix_app_pos;
     rp_ir_msix_block_t *msix_blocks;            // tables an MSIX cannot carry, without msi-only = true
     size_t    msix_block_count;
     proven_allocator_t alloc;

@@ -5,8 +5,8 @@ tagged as in [README.md](README.md): **[spec]** for Microsoft Learn (package man
 map schemas) and ECMA-376 Part 2 (Open Packaging Conventions); **[observed]** for packages written
 by Windows' own packaging API (`IAppxFactory`/`IAppxPackageWriter` in AppxPackaging.dll, part of
 Windows) and for rubrapack's packages read back through `IAppxPackageReader` and installed with
-`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; bundles, the virtual
-registry and file system, signing and extensions are not covered yet.
+`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; bundles, signing and
+extensions are not covered yet.
 
 ## The ZIP archive
 
@@ -85,6 +85,29 @@ The smallest desktop application that Windows installs and starts (namespaces `f
   `uap:VisualElements` (`DisplayName`, `Description`, `BackgroundColor`, `Square150x150Logo`,
   `Square44x44Logo`), and the restricted capability `runFullTrust`.
 - Paths in the manifest use `\` and name files of the package.
+
+## The virtual registry (`Registry.dat`, `User.dat`)
+
+Registry hives at the package root (the REGF format: [registry.md](registry.md)). Measured with a
+packaged app on Windows 11 (26100): [observed]
+
+- `Registry.dat`: its `REGISTRY\MACHINE\SOFTWARE` key stands for `HKLM\Software` (the hive's root
+  itself does not); `REGISTRY\MACHINE\SOFTWARE\WOW6432Node\...` is what the app sees in the 32-bit
+  view. Microsoft's description ("registry.dat serves as the logical equivalent of HKLM\Software")
+  is about what the app sees, not about the hive's layout.
+- `User.dat`: its root stands for `HKCU` (`Software\...` beneath it is `HKCU\Software\...`).
+- The app reads the package's keys merged into the real registry; nothing is written to the
+  machine's registry, and nothing is left after removal.
+- Windows' packaging tools write these hives with the Offline Registry Library (its mark "OfRg" is
+  in the base block).
+
+## The virtual file system (`VFS\...`)
+
+Files under `VFS\<folder>` appear to the app at the real location; the real folder does not
+change. Measured: `ProgramFilesX64` (%ProgramFiles%), `SystemX64` (System32), `Common AppData`
+(%ProgramData%) - and none for `AppData` or `Local AppData`, as Microsoft Learn says. The other names
+rubrapack uses (`ProgramFilesX86`, `ProgramFilesCommonX64`/`X86`, `SystemX86`, `Windows`) are those
+Microsoft Learn lists. [spec] [observed]
 
 ## Installing an unsigned package
 

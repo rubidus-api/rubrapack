@@ -13,9 +13,12 @@
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/regf.h"
+#include "rubrapack/text.h"
 #include "rubrapack/zip.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 enum { BLOCK = 65536, LEVEL = 6 };
@@ -221,6 +224,7 @@ static bool below_root(const rp_ir_t *ir, const char *dir, const rp_ir_dir_t **r
 // ---- building --------------------------------------------------------------------------------------
 
 typedef struct {
+    const char *file_id;        // the [file.*] it comes from, or NULL
     char        path[2200];     // package path, '\' separated
     const char *source;         // file to read, or NULL for `data`
     uint8_t    *data;           // generated content (logos), owned
@@ -232,11 +236,147 @@ typedef struct {
 
 static bool reserved(const char *path) {
     static const char *const names[] = { "AppxManifest.xml", "AppxBlockMap.xml", "[Content_Types].xml", "AppxSignature.p7x",
-                                         "CodeIntegrity.cat", "resources.pri", NULL };
+                                         "CodeIntegrity.cat", "resources.pri", "Registry.dat", "User.dat", "UserClasses.dat", NULL };
     for (size_t i = 0; names[i]; ++i) {
         if (ieq(path, names[i])) return true;
     }
-    return strncmp(path, "AppxMetadata\\", 13) == 0 || ieq(path, "AppxMetadata");
+    char top[16];
+    size_t n = strcspn(path, "\\");
+    snprintf(top, sizeof top, "%.*s", (int)(n < 15 ? n : 15), path);
+    return n < 15 && path[n] == '\\' && (ieq(top, "AppxMetadata") || ieq(top, "VFS"));
+}
+
+// The VFS folder for files anchored in a known location (RFC-0010 N5, narrowed to what Windows
+// does: docs/research/2026-09-27-p8b-regf-oracle.md), or NULL with *why.
+static const char *vfs_folder(const char *base, rp_arch_t arch, const char **why) {
+    bool x86 = arch == RP_ARCH_X86;
+    if (strcmp(base, "ProgramFiles") == 0) return x86 ? "ProgramFilesX86" : "ProgramFilesX64";
+    if (strcmp(base, "ProgramFiles32") == 0) return "ProgramFilesX86";
+    if (strcmp(base, "CommonFiles") == 0) return x86 ? "ProgramFilesCommonX86" : "ProgramFilesCommonX64";
+    if (strcmp(base, "System") == 0) return x86 ? "SystemX86" : "SystemX64";
+    if (strcmp(base, "Windows") == 0) return "Windows";
+    if (strcmp(base, "CommonAppData") == 0) return "Common AppData";
+    if (strcmp(base, "AppData") == 0 || strcmp(base, "LocalAppData") == 0) {
+        *why = "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs";
+    } else if (strcmp(base, "Fonts") == 0) {
+        *why = "fonts go into an MSIX through [font.*] (planned for P8b-3)";
+    } else if (strcmp(base, "Temp") == 0) {
+        *why = "an MSIX cannot place files in the temporary folder";
+    } else {
+        *why = "Start menu, Programs, Desktop and Startup entries come from shortcuts (planned for P8b-3)";
+    }
+    return NULL;
+}
+
+// ---- [registry] into Registry.dat (HKLM\Software) and User.dat (HKCU) ------------------------------
+//
+// Measured on Windows (docs/research/2026-09-27-p8b-regf-oracle.md): a package's Registry.dat maps its
+// REGISTRY\MACHINE\SOFTWARE to HKLM\Software (WOW6432Node beneath it for the 32-bit view), User.dat
+// maps its root to HKCU.
+
+// A formatted string (RFC-0004) that holds no install-time part: [\[] and [\]] become [ and ];
+// false for any other [...] (a property, a file's path...), which only Windows Installer knows.
+static bool literal(const char *s, char *out, size_t cap) {
+    size_t o = 0;
+    for (; *s; ++s) {
+        if (o + 2 >= cap) return false;
+        if (s[0] == '[') {
+            if ((s[1] == '\\') && (s[2] == '[' || s[2] == ']') && s[3] == ']') {
+                out[o++] = s[2];
+                s += 3;
+                continue;
+            }
+            return false;
+        }
+        out[o++] = *s;
+    }
+    out[o] = 0;
+    return true;
+}
+
+// `s` as UTF-16LE with its terminating zero.
+static bool utf16z(rp_buf_t *b, const char *s) {
+    static uint16_t tmp[8192];
+    rp_text_result_t r = rp_utf8_to_utf16((const uint8_t *)s, strlen(s), tmp, 8192);
+    if (r.err != PROVEN_OK) return false;
+    for (size_t i = 0; i < r.units; ++i) rp_buf_u16le(b, tmp[i]);
+    rp_buf_u16le(b, 0);
+    return b->err == PROVEN_OK;
+}
+
+// Adds one [registry.ID] to the hives; false with a diagnostic when it cannot go into an MSIX.
+static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp_regf_t *machine, rp_regf_t *user, bool *used_m, bool *used_u,
+                         rp_srcdiags_t *d) {
+    if (r->root == RP_ROOT_HKCR) {
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*] or [protocol.*] (planned for P8b-3), or msi-only = true", r->id);
+        return false;
+    }
+    if (r->remove || r->keep) {
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true", r->id);
+        return false;
+    }
+    bool hkcu = r->root == RP_ROOT_HKCU;
+    const char *key = r->key;
+    if (!(strncmp(key, "Software", 8) == 0 || strncmp(key, "SOFTWARE", 8) == 0 || strncmp(key, "software", 8) == 0) || (key[8] != '\\' && key[8] != 0)) {
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: an MSIX carries values under %s\\Software only", r->id, hkcu ? "HKCU" : "HKLM");
+        return false;
+    }
+    char path[2048];
+    const char *below = key[8] ? key + 9 : "";
+    if (hkcu) snprintf(path, sizeof path, "Software%s%s", below[0] ? "\\" : "", below);
+    else snprintf(path, sizeof path, "REGISTRY\\MACHINE\\SOFTWARE%s%s%s", r->view32 ? "\\WOW6432Node" : "", below[0] ? "\\" : "", below);
+    rp_buf_t data = rp_buf_new(alloc, 1u << 24);
+    uint32_t type = 0;
+    bool ok = true;
+    char text[8192];
+    switch (r->type) {
+    case RP_REG_STRING:
+    case RP_REG_EXPAND:
+        type = r->type == RP_REG_STRING ? 1 : 2;
+        ok = r->value == NULL || (literal(r->value, text, sizeof text) && utf16z(&data, text));
+        if (r->value == NULL) ok = utf16z(&data, "");
+        break;
+    case RP_REG_MULTI:
+        type = 7;
+        for (size_t i = 0; ok && i < r->item_count; ++i) ok = literal(r->items[i], text, sizeof text) && utf16z(&data, text);
+        rp_buf_u16le(&data, 0);
+        break;
+    case RP_REG_DWORD: {
+        type = 4;
+        long long v = strtoll(r->value, NULL, 10);
+        rp_buf_u32le(&data, (uint32_t)v);
+        break;
+    }
+    case RP_REG_QWORD: {
+        type = 11;
+        unsigned long long v = strncmp(r->value, "0x", 2) == 0 || strncmp(r->value, "0X", 2) == 0 ? strtoull(r->value + 2, NULL, 16)
+                                                                                                 : (unsigned long long)strtoll(r->value, NULL, 10);
+        rp_buf_u64le(&data, v);
+        break;
+    }
+    case RP_REG_BINARY:
+        type = 3;
+        for (size_t i = 0; r->value[i] && r->value[i + 1]; i += 2) {
+            unsigned hi = (unsigned)(r->value[i] <= '9' ? r->value[i] - '0' : (r->value[i] | 32) - 'a' + 10);
+            unsigned lo = (unsigned)(r->value[i + 1] <= '9' ? r->value[i + 1] - '0' : (r->value[i + 1] | 32) - 'a' + 10);
+            rp_buf_byte(&data, (uint8_t)(hi << 4 | lo));
+        }
+        break;
+    }
+    if (!ok) {
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only", r->id);
+        rp_buf_free(&data);
+        return false;
+    }
+    proven_err_t err = data.err != PROVEN_OK ? data.err
+                                             : rp_regf_set(hkcu ? user : machine, path, r->name ? r->name : "", type, data.data, data.len);
+    rp_buf_free(&data);
+    if (err != PROVEN_OK) {
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: the key or value name cannot go into a registry hive", r->id);
+        return false;
+    }
+    *(hkcu ? used_u : used_m) = true;
+    return true;
 }
 
 // Adds one payload file: its data stored or deflated block by block, its block map entry.
@@ -303,14 +443,18 @@ static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp
     return err;
 }
 
-static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const char *exe, char logos[3][2200]) {
+typedef struct {
+    char exe[2200];             // the executable's package path
+    char logo[3][2200];         // Square150x150, Square44x44, StoreLogo
+} app_paths_t;
+
+static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
     char version[32], publisher[8400];
     unsigned v[4] = { 0 };
     for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
     snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
     snprintf(publisher, sizeof publisher, "%s%s%s", ir->msix_publisher, opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
-    const char *display = ir->msix_app_display ? ir->msix_app_display : ir->name;
     rp_buf_puts(m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
                    "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
                    "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
@@ -325,21 +469,27 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     rp_buf_puts(m, "</DisplayName>\r\n    <PublisherDisplayName>");
     xml_text(m, ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
     rp_buf_puts(m, "</PublisherDisplayName>\r\n    <Logo>");
-    xml_text(m, logos[2]);
+    xml_text(m, ap[0].logo[2]);
     rp_buf_puts(m, "</Logo>\r\n  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
     attr(m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
     rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n  <Resources>\r\n    <Resource");
     attr(m, "Language", ir->language == 1042 ? "ko-KR" : "en-US");
-    rp_buf_puts(m, " />\r\n  </Resources>\r\n  <Applications>\r\n    <Application");
-    attr(m, "Id", ir->msix_app_id);
-    attr(m, "Executable", exe);
-    rp_buf_puts(m, " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
-    attr(m, "DisplayName", display);
-    attr(m, "Description", ir->msix_app_description ? ir->msix_app_description : display);
-    rp_buf_puts(m, " BackgroundColor=\"transparent\"");
-    attr(m, "Square150x150Logo", logos[0]);
-    attr(m, "Square44x44Logo", logos[1]);
-    rp_buf_puts(m, " />\r\n    </Application>\r\n  </Applications>\r\n  <Capabilities>\r\n"
+    rp_buf_puts(m, " />\r\n  </Resources>\r\n  <Applications>\r\n");
+    for (size_t i = 0; i < ir->msix_app_count; ++i) {
+        const rp_ir_msix_app_t *a = &ir->msix_apps[i];
+        const char *display = a->display ? a->display : ir->name;
+        rp_buf_puts(m, "    <Application");
+        attr(m, "Id", a->id);
+        attr(m, "Executable", ap[i].exe);
+        rp_buf_puts(m, " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
+        attr(m, "DisplayName", display);
+        attr(m, "Description", a->description ? a->description : display);
+        rp_buf_puts(m, " BackgroundColor=\"transparent\"");
+        attr(m, "Square150x150Logo", ap[i].logo[0]);
+        attr(m, "Square44x44Logo", ap[i].logo[1]);
+        rp_buf_puts(m, " />\r\n    </Application>\r\n");
+    }
+    rp_buf_puts(m, "  </Applications>\r\n  <Capabilities>\r\n"
                    "    <rescap:Capability Name=\"runFullTrust\" />\r\n  </Capabilities>\r\n</Package>\r\n");
 }
 
@@ -390,7 +540,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     // RFC-0009 M6: what an MSIX cannot carry.
     for (size_t i = 0; i < ir->msix_block_count; ++i) {
         const rp_ir_msix_block_t *b = &ir->msix_blocks[i];
-        bool later = strcmp(b->kind, "registry") == 0 || strcmp(b->kind, "shortcut") == 0 || strcmp(b->kind, "font") == 0;
+        bool later = strcmp(b->kind, "shortcut") == 0 || strcmp(b->kind, "font") == 0;
         DERR(b->pos, "RP1605", "[%s.%s] cannot go into an MSIX%s; add msi-only = true to build the MSIX without it", b->kind, b->id,
              later ? " yet (planned for P8b)" : "");
     }
@@ -398,26 +548,23 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (ir->msix_app_count == 0) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
-    // The executable decides the package root.
+    // The first application's executable decides the package root.
     const rp_ir_file_t *exe = NULL;
-    for (size_t i = 0; i < ir->file_count && ir->msix_app_exe; ++i) {
-        if (strcmp(ir->files[i].id, ir->msix_app_exe) == 0) exe = &ir->files[i];
+    const rp_ir_msix_app_t *first = &ir->msix_apps[0];
+    for (size_t i = 0; i < ir->file_count && first->exe; ++i) {
+        if (strcmp(ir->files[i].id, first->exe) == 0) exe = &ir->files[i];
     }
     const rp_ir_dir_t *root = NULL;
-    char exe_path[1024] = "";
+    char exe_dir[1024] = "";
     if (exe == NULL || exe->msi_only) {
-        DERR(ir->msix_app_pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", ir->msix_app_exe ? ir->msix_app_exe : "");
-    } else if (!ieq(extension(exe->name) ? extension(exe->name) : "", "exe")) {
-        DERR(ir->msix_app_pos, "RP1607", "the executable '%s' must be an .exe", exe->name);
-    } else if (!below_root(ir, exe->dir, &root, exe_path, sizeof exe_path)) {
-        DERR(ir->msix_app_pos, "RP1609", "the executable's folder does not lead to a known location");
+        DERR(first->pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", first->exe ? first->exe : "");
+    } else if (!below_root(ir, exe->dir, &root, exe_dir, sizeof exe_dir)) {
+        DERR(first->pos, "RP1609", "the executable's folder does not lead to a known location");
     }
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
-    if (exe_path[0]) strncat(exe_path, "\\", sizeof exe_path - strlen(exe_path) - 1);
-    strncat(exe_path, exe->name, sizeof exe_path - strlen(exe_path) - 1);
 
     // The payload.
-    size_t cap = ir->file_count + 3, n = 0;
+    size_t cap = ir->file_count + 3 * ir->msix_app_count + 5, n = 0;
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -426,57 +573,118 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (f->msi_only) continue;
         const rp_ir_dir_t *r = NULL;
         char dir[1024];
-        if (!below_root(ir, f->dir, &r, dir, sizeof dir) || r != root) {
-            DERR(f->pos, "RP1609", "'%s' is outside the application's folder; files elsewhere need VFS (planned for P8b) or msi-only = true", f->name);
+        if (!below_root(ir, f->dir, &r, dir, sizeof dir)) {
+            DERR(f->pos, "RP1609", "'%s': its folder does not lead to a known location", f->name);
             continue;
         }
-        item_t *it = &items[n++];
-        snprintf(it->path, sizeof it->path, "%s%s%s", dir, dir[0] ? "\\" : "", f->name);
+        item_t *it = &items[n];
+        if (r == root) {
+            snprintf(it->path, sizeof it->path, "%s%s%s", dir, dir[0] ? "\\" : "", f->name);
+            if (reserved(it->path)) DERR(f->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+        } else {
+            // Elsewhere: the package's virtual file system, under the folder's own path.
+            const char *why = NULL, *vfs = vfs_folder(r->base, ir->arch, &why);
+            if (vfs == NULL) {
+                DERR(f->pos, "RP1609", "'%s' goes to %s: %s; or msi-only = true", f->name, r->base, why);
+                continue;
+            }
+            char top[1024] = "";
+            size_t o = 0;
+            for (size_t k = 0; k < r->part_count && o < sizeof top; ++k) {
+                int w = snprintf(top + o, sizeof top - o, "%s%s", o ? "\\" : "", r->parts[k]);
+                if (w < 0) break;
+                o += (size_t)w;
+            }
+            snprintf(it->path, sizeof it->path, "VFS\\%s%s%s%s%s\\%s", vfs, top[0] ? "\\" : "", top, dir[0] ? "\\" : "", dir, f->name);
+        }
+        ++n;
+        it->file_id = f->id;
         it->source = f->source_path;
         it->pos = f->pos;
-        if (reserved(it->path)) DERR(f->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
     }
-    // Logos: the three given (checked), or plain ones made here.
+    // Each application: its executable's package path, and its logos - the three given (checked),
+    // or plain ones made here once for all applications.
+    app_paths_t *ap = rp_mem_alloc(alloc, ir->msix_app_count, sizeof *ap);
+    if (ap == NULL) {
+        rp_mem_free(alloc, items);
+        return PROVEN_ERR_NOMEM;
+    }
+    memset(ap, 0, ir->msix_app_count * sizeof *ap);
     static const uint32_t logo_px[3] = { 150, 44, 50 };
     static const char *const logo_default[3] = { "Assets\\DefaultSquare150x150Logo.png", "Assets\\DefaultSquare44x44Logo.png",
                                                  "Assets\\DefaultStoreLogo.png" };
-    char logos[3][2200];
-    for (int k = 0; k < 3; ++k) {
-        if (ir->msix_logo_path[k]) {
-            // A given logo must also be a file of the package: find it by source path.
-            const item_t *found = NULL;
-            for (size_t i = 0; i < n && !found; ++i) {
-                if (items[i].source && strcmp(items[i].source, ir->msix_logo_path[k]) == 0) found = &items[i];
-            }
-            uint8_t *png = NULL;
-            size_t pl = 0;
-            uint32_t w = 0, h = 0;
-            if (rp_pal_read_file(alloc, ir->msix_logo_path[k], 16u << 20, &png, &pl) != PROVEN_OK || !png_size(png, pl, &w, &h)) {
-                DERR(ir->msix_app_pos, "RP1608", "logo '%s' is not a PNG file", ir->msix_logo[k]);
-            } else if (w != logo_px[k] || h != logo_px[k]) {
-                DERR(ir->msix_app_pos, "RP1608", "logo '%s' is %ux%u pixels; it must be %ux%u", ir->msix_logo[k], (unsigned)w, (unsigned)h,
-                     (unsigned)logo_px[k], (unsigned)logo_px[k]);
-            }
-            rp_mem_free(alloc, png);
-            if (found) {
-                snprintf(logos[k], sizeof logos[k], "%s", found->path);
-            } else {
-                // Not otherwise installed: it goes in under Assets\ with its own name.
-                const char *b = strrchr(ir->msix_logo[k], '/');
-                item_t *it = &items[n++];
-                snprintf(it->path, sizeof it->path, "Assets\\%s", b ? b + 1 : ir->msix_logo[k]);
-                it->source = ir->msix_logo_path[k];
-                it->pos = ir->msix_app_pos;
-                snprintf(logos[k], sizeof logos[k], "%s", it->path);
-            }
+    bool defaults_made = false;
+    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+        const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+        const item_t *x = NULL;
+        for (size_t i = 0; i < n && app->exe && !x; ++i) {
+            if (items[i].file_id && strcmp(items[i].file_id, app->exe) == 0) x = &items[i];
+        }
+        if (x == NULL) {
+            DERR(app->pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", app->exe ? app->exe : "");
+        } else if (!ieq(extension(x->path) ? extension(x->path) : "", "exe")) {
+            DERR(app->pos, "RP1607", "the executable '%s' must be an .exe", x->path);
         } else {
-            item_t *it = &items[n++];
-            snprintf(it->path, sizeof it->path, "%s", logo_default[k]);
-            it->pos = ir->msix_app_pos;
-            if (default_logo(alloc, logo_px[k], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
-            snprintf(logos[k], sizeof logos[k], "%s", it->path);
+            snprintf(ap[a].exe, sizeof ap[a].exe, "%s", x->path);
+        }
+        for (int k = 0; k < 3; ++k) {
+            if (app->logo_path[k]) {
+                const item_t *found = NULL;
+                for (size_t i = 0; i < n && !found; ++i) {
+                    if (items[i].source && strcmp(items[i].source, app->logo_path[k]) == 0) found = &items[i];
+                }
+                uint8_t *png = NULL;
+                size_t pl = 0;
+                uint32_t w = 0, h = 0;
+                if (rp_pal_read_file(alloc, app->logo_path[k], 16u << 20, &png, &pl) != PROVEN_OK || !png_size(png, pl, &w, &h)) {
+                    DERR(app->pos, "RP1608", "logo '%s' is not a PNG file", app->logo[k]);
+                } else if (w != logo_px[k] || h != logo_px[k]) {
+                    DERR(app->pos, "RP1608", "logo '%s' is %ux%u pixels; it must be %ux%u", app->logo[k], (unsigned)w, (unsigned)h,
+                         (unsigned)logo_px[k], (unsigned)logo_px[k]);
+                }
+                rp_mem_free(alloc, png);
+                if (found) {
+                    snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", found->path);
+                } else {
+                    // Not otherwise installed: it goes in under Assets\ with its own name.
+                    const char *b = strrchr(app->logo[k], '/');
+                    item_t *it = &items[n++];
+                    snprintf(it->path, sizeof it->path, "Assets\\%s", b ? b + 1 : app->logo[k]);
+                    it->source = app->logo_path[k];
+                    it->pos = app->pos;
+                    snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", it->path);
+                }
+            } else {
+                if (!defaults_made) {
+                    for (int q = 0; q < 3; ++q) {
+                        item_t *it = &items[n++];
+                        snprintf(it->path, sizeof it->path, "%s", logo_default[q]);
+                        it->pos = app->pos;
+                        if (default_logo(alloc, logo_px[q], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
+                    }
+                    defaults_made = true;
+                }
+                snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "%s", logo_default[k]);
+            }
         }
     }
+    // [registry] values: Registry.dat and User.dat.
+    rp_regf_t *machine = rp_regf_new(alloc), *user = rp_regf_new(alloc);
+    bool used_m = false, used_u = false;
+    if (machine == NULL || user == NULL) DERR(top, "RP1612", "out of memory");
+    for (size_t i = 0; machine && user && i < ir->registry_count; ++i) {
+        if (!ir->registries[i].msi_only) (void)add_registry(alloc, &ir->registries[i], machine, user, &used_m, &used_u, d);
+    }
+    for (int h = 0; h < 2; ++h) {
+        rp_regf_t *hive = h ? user : machine;
+        if (!(h ? used_u : used_m) || d->errors != errors) continue;
+        item_t *it = &items[n++];
+        snprintf(it->path, sizeof it->path, "%s", h ? "User.dat" : "Registry.dat");
+        it->pos = top;
+        if (rp_regf_write(hive, &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1612", "cannot write %s", it->path);
+    }
+    rp_regf_free(machine);
+    rp_regf_free(user);
     // Two paths that Windows would take for one (letters compared without case).
     for (size_t i = 0; i < n; ++i) {
         for (size_t k = i + 1; k < n; ++k) {
@@ -507,7 +715,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (items[i].source) rp_mem_free(alloc, data);
     }
     if (err == PROVEN_OK) {
-        manifest(&man, ir, opt, exe_path, logos);
+        manifest(&man, ir, opt, ap);
         err = man.err;
     }
     if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, man.data, man.len, true);
@@ -525,6 +733,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     rp_buf_free(&ct);
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, items);
+    rp_mem_free(alloc, ap);
     return err;
 }
 
