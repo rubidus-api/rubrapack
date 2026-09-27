@@ -101,9 +101,33 @@ given non-zero state bits, times and CLSIDs told the fields apart. [observed]
 - A signature covers what is inside the `.msi` only: cabinets outside it (Media table `Cabinet`
   values that do not start with `#`) are not part of the digest.
 
+## Timestamps
+
+A signature without a timestamp stops being valid when the signing certificate expires. With an
+RFC 3161 timestamp, Windows checks the certificate at the stamped time instead. What
+`mssign32!SignerTimeStampEx2` with `SIGNER_TIMESTAMP_RFC3161` writes: [observed]
+
+- The request's message imprint is the hash (here SHA-256) of the SignerInfo's `signature` value:
+  the OCTET STRING's contents, without its tag and length.
+- The server's `TimeStampToken` (a CMS SignedData over a `TSTInfo`, RFC 3161) goes into the
+  SignerInfo as its unsigned attributes, after the signature:
+  `[1] { SEQUENCE { 1.3.6.1.4.1.311.3.3.1, SET { TimeStampToken } } }`.
+- Nothing else in the signature changes: the signed attributes, the signature and the outer
+  certificates are the same bytes as before; the server's certificates travel inside the token.
+  For an MSI package the `\005DigitalSignature` stream grows accordingly (from the mini stream to
+  regular sectors, for a token of a few kilobytes); `\005MsiDigitalSignatureEx` and the digest do
+  not change, since the signature streams are not part of them.
+- rubrapack writes exactly this; with the same key and token its PE file is byte-identical to
+  Windows', and so is the MSI signature stream.
+
+`Set-AuthenticodeSignature -TimestampServer` writes an older form instead: a PKCS#9
+counterSignature attribute (1.2.840.113549.1.9.6) and the server's certificates added to the outer
+certificates. Windows accepts both. [observed]
+
 ## What Windows reports
 
-`Get-AuthenticodeSignature` distinguishes the cases a signer needs: `Valid` (digest, signature and
+`Get-AuthenticodeSignature` distinguishes the cases a signer needs (and names the time-stamping
+certificate in `TimeStamperCertificate` when there is a timestamp): `Valid` (digest, signature and
 chain to a trusted root), `UnknownError` with "the certificate chain ... not trusted" (digest and
 signature are right, the root is not trusted on this machine), `HashMismatch` (the file changed
 after signing), `NotSigned`. So a signature can be checked for correctness before any root is

@@ -130,8 +130,8 @@ static uint32_t pe_checksum(const uint8_t *pe, size_t len, size_t cs) {
 static const uint8_t PE_DATA[] = { 0x30, 0x17, 0x06, 0x0A, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x0F,
                                    0x30, 0x09, 0x03, 0x01, 0x00, 0xA0, 0x04, 0xA2, 0x02, 0x80, 0x00 };
 
-proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len, const rp_keyfile_t *kf, int64_t now, uint8_t **out,
-                        size_t *out_len, const char **why) {
+proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len, const rp_keyfile_t *kf, int64_t now,
+                        const rp_timestamper_t *ts, uint8_t **out, size_t *out_len, const char **why) {
     layout_t l;
     if (!layout(pe, len, &l, why)) return PROVEN_ERR_INVALID_FORMAT;
     if (l.cert_off || l.cert_size) {
@@ -156,7 +156,7 @@ proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len,
     }
     uint8_t *p7 = NULL;
     size_t p7_len = 0;
-    proven_err_t err = rp_authenticode_build(alloc, kf, leaf, RP_HASH_SHA256, PE_DATA, sizeof PE_DATA, digest, &p7, &p7_len, why);
+    proven_err_t err = rp_authenticode_build(alloc, kf, leaf, RP_HASH_SHA256, PE_DATA, sizeof PE_DATA, digest, ts, &p7, &p7_len, why);
     if (err != PROVEN_OK) {
         rp_mem_free(alloc, work);
         return err;

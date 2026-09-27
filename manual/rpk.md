@@ -397,7 +397,8 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ```text
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
-                [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs]]
+                [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
+                 [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs]]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
@@ -406,8 +407,8 @@ rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--st
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
-               [--allow-unsigned-cabs] [-o <out>]
-rubrapack verify <file.exe|.dll|.msi> [--trust <certificate>]...
+               [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs] [-o <out>]
+rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--tsa-trust <certificates>]...
 rubrapack version | help [command]
 ```
 
@@ -468,9 +469,27 @@ rubrapack version | help [command]
   certificates the key file does not hold. The certificate must be for code signing, must not be a
   CA and must be valid now. The password comes from an environment variable or a file, never from
   the command line. A file that is signed already is refused.
+- `--timestamp <URL>` asks an RFC 3161 time-stamping server to countersign the signature, so that
+  it stays valid after the certificate expires; without it `sign` and `build --key` warn that it
+  will not. There is no default server and nothing goes over the network unless you name one.
+  Public servers include `http://timestamp.digicert.com`, `http://timestamp.sectigo.com` and
+  `http://time.certum.pl`; `http` is fine, because the answer is itself signed and checked (the
+  nonce, the hash of the signature, the server's signature and its time-stamping certificate).
+  `https` servers come with a later release. `--tsa-trust` also requires the server's
+  certificate path to end in one of the given certificates. When the timestamp fails - no answer,
+  a refusal, a bad answer, a time outside the signing certificate's validity - nothing is signed
+  and nothing is written (exit code 6); the signature never quietly goes out without it. The
+  limits: 10 s to connect, 60 s in all, a 4 MiB answer, 3 redirects, 2 retries after a network
+  error or a 5xx answer.
 - `verify` prints what it checked - structure, digest, signature, the path to a certificate given
   with `--trust`, revocation (never looked up: `not-checked`) and timestamp - and succeeds only
   when all of them hold and the path ends in a trusted certificate. Without `--trust` it does not
-  call anything trusted (exit code 4). It says nothing about Windows' own reputation checks.
+  call anything trusted (exit code 4). It says nothing about Windows' own reputation checks. The
+  timestamp line is `not-present`, `<time>, TSA not-checked (give --tsa-trust)`,
+  `<time>, TSA trusted`, `<time>, TSA untrusted`, `invalid` or `unsupported` (the older
+  Authenticode timestamp that `Set-AuthenticodeSignature -TimestampServer` writes, which rubrapack
+  does not check); the last three fail. Only a timestamp whose server is trusted through
+  `--tsa-trust` - `--trust` does not count for it - moves the time at which the signer's
+  certificate must have been valid from now to the stamped time.
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.

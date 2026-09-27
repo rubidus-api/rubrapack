@@ -26,6 +26,7 @@
 // Signing options shared by `sign` and `build --key` (one code path, RFC-0007 S4).
 typedef struct {
     const char *key, *cert, *pass_env, *pass_file;
+    const char *timestamp, *tsa_trust;  // --timestamp <URL>, --tsa-trust <certificates> (RFC-0008)
     bool        allow_unsigned_cabs;
 } rp_sign_args_t;
 

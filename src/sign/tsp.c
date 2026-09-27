@@ -2,9 +2,12 @@
 // RFC 3161, RFC 5816 (ESSCertIDv2 is not required here), RFC 5652 for the token's SignedData.
 
 #include "rubrapack/mem.h"
+#include "rubrapack/net.h"
 #include "rubrapack/sign.h"
 
 #include <string.h>
+
+#include "proven/random.h"
 
 #define OID(name, ...) static const uint8_t name[] = { __VA_ARGS__ }
 OID(O_SIGNED_DATA, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x02);
@@ -77,7 +80,7 @@ static bool gen_time(const rp_der_t *e, int64_t *out) {
 
 #define NO(msg) do { *why = (msg); return false; } while (0)
 
-bool rp_tsp_token(const uint8_t *tok, size_t len, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t *nonce, rp_tsp_token_t *t,
+bool rp_tsp_token(const uint8_t *tok, size_t len, const uint8_t *data, size_t data_len, const uint8_t *nonce, rp_tsp_token_t *t,
                   const char **why) {
     memset(t, 0, sizeof *t);
     rp_der_span_t s = { tok, len };
@@ -113,7 +116,11 @@ bool rp_tsp_token(const uint8_t *tok, size_t len, rp_hash_alg_t alg, const uint8
     rp_der_span_t ims = rp_der_inside(&imp);
     rp_hash_alg_t ia;
     if (!rp_der_get(&ims, RP_DER_SEQUENCE, &ialg) || !rp_der_get(&ims, RP_DER_OCTET_STRING, &ihash) || !alg_of(&ialg, &ia)) NO("malformed message imprint");
-    if (ia != alg || ihash.val.n != rp_hash_size(alg) || memcmp(ihash.val.p, digest, ihash.val.n) != 0) {
+    // The imprint's own hash: a foreign signer may have asked for SHA-384 or SHA-512.
+    uint8_t digest[RP_HASH_MAX];
+    rp_hash(ia, data, data_len, digest);
+    t->imprint_alg = ia;
+    if (ihash.val.n != rp_hash_size(ia) || memcmp(ihash.val.p, digest, ihash.val.n) != 0) {
         NO("the timestamp is for other data (its message imprint does not match)");
     }
     if (!gen_time(&gt, &t->gen_time)) NO("a malformed genTime");
@@ -203,7 +210,7 @@ bool rp_tsp_token(const uint8_t *tok, size_t len, rp_hash_alg_t alg, const uint8
     return true;
 }
 
-bool rp_tsp_response(const uint8_t *resp, size_t len, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t nonce[8], rp_tsp_token_t *t,
+bool rp_tsp_response(const uint8_t *resp, size_t len, const uint8_t *data, size_t data_len, const uint8_t nonce[8], rp_tsp_token_t *t,
                      const char **why) {
     rp_der_span_t s = { resp, len };
     rp_der_t r, status, st, tok;
@@ -215,5 +222,49 @@ bool rp_tsp_response(const uint8_t *resp, size_t len, rp_hash_alg_t alg, const u
     if (!rp_der_get(&sts, RP_DER_INTEGER, &st) || !rp_der_small(&st, &v)) NO("malformed TimeStampResp status");
     if (v > 1) NO(v == 2 ? "the timestamp server rejected the request" : v == 3 ? "the timestamp server is waiting (status 3)" : "the timestamp server refused (revocation status)");
     if (!rp_der_get(&rs, RP_DER_SEQUENCE, &tok)) NO("the timestamp server granted but sent no token");
-    return rp_tsp_token(tok.whole.p, tok.whole.n, alg, digest, nonce, t, why);
+    return rp_tsp_token(tok.whole.p, tok.whole.n, data, data_len, nonce, t, why);
+}
+
+proven_err_t rp_tsa_stamp(void *ctx, proven_allocator_t alloc, const uint8_t *sig, size_t sig_len, uint8_t **token, size_t *token_len,
+                          const char **why) {
+    rp_tsa_t *tsa = ctx;
+    tsa->failed = true;                                 // until a checked token is in hand
+    uint8_t digest[32], nonce[8];
+    rp_hash(RP_HASH_SHA256, sig, sig_len, digest);
+    if (!proven_random_bytes(nonce, sizeof nonce)) {
+        *why = "the system random source failed";
+        return PROVEN_ERR_IO;
+    }
+    uint8_t *req;
+    size_t rl;
+    proven_err_t err = rp_tsp_request(alloc, RP_HASH_SHA256, digest, nonce, &req, &rl);
+    if (err != PROVEN_OK) return err;
+    rp_http_req_t q = { tsa->url, "application/timestamp-query", "application/timestamp-reply", req, rl, tsa->proxy, 0, 0 };
+    rp_http_resp_t r = { 0 };
+    err = rp_http_post(alloc, &q, &r, why);
+    rp_mem_free(alloc, req);
+    if (err != PROVEN_OK) return err;
+    rp_tsp_token_t t;
+    if (r.status != 200) {
+        *why = "the timestamp server answered with an HTTP error";
+        err = PROVEN_ERR_IO;
+    } else if (!rp_tsp_response(r.body, r.len, sig, sig_len, nonce, &t, why)) {
+        err = PROVEN_ERR_INVALID_FORMAT;
+    } else if (tsa->anchor_count && !rp_chain_trusted_for(t.tsa_cert, t.certs, tsa->anchors, tsa->anchor_count, t.gen_time,
+                                                          RP_PURPOSE_TIMESTAMP, why)) {
+        err = PROVEN_ERR_PERMISSION;
+    } else {
+        uint8_t *copy = rp_mem_alloc(alloc, t.token.n, 1);
+        if (copy == NULL) {
+            err = PROVEN_ERR_NOMEM;
+        } else {
+            memcpy(copy, t.token.p, t.token.n);
+            *token = copy;
+            *token_len = t.token.n;
+            tsa->gen_time = t.gen_time;
+            tsa->failed = false;
+        }
+    }
+    rp_mem_free(alloc, r.body);
+    return err;
 }

@@ -6,7 +6,10 @@
 //    OCTET STRING;
 //  - the messageDigest attribute is the hash of that SEQUENCE's contents only (without its tag and
 //    length), while the file digest sits inside it;
-//  - the signed attributes are stored as [0] IMPLICIT but signed as a SET (tag 0x31).
+//  - the signed attributes are stored as [0] IMPLICIT but signed as a SET (tag 0x31);
+//  - a timestamp is one unsigned attribute [1] after the signature value: 1.3.6.1.4.1.311.3.3.1 with
+//    the RFC 3161 token, whose imprint is the SHA-256 of the signature value's octets
+//    (mssign32!SignerTimeStampEx2, tests/fixtures/timestamp; nothing else in the SignedData changes).
 
 #include "rubrapack/mem.h"
 #include "rubrapack/sign.h"
@@ -26,6 +29,8 @@ OID(O_SPC_INDIRECT, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x04);
 OID(O_SPC_OPUS, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x0C);
 OID(O_SPC_STATEMENT, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x0B);
 OID(O_SPC_INDIVIDUAL, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x15);
+OID(O_SPC_RFC3161, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x03, 0x03, 0x01);
+OID(O_COUNTER_SIGNATURE, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x09, 0x06);
 
 static const uint8_t *hash_oid(rp_hash_alg_t alg, size_t *n) {
     *n = sizeof O_SHA256;
@@ -52,13 +57,40 @@ bool rp_sign_check_key(const rp_keyfile_t *kf, int64_t now, int *leaf, const cha
     else if (c.has_ku && !c.ku_sign) *why = "the certificate's key usage does not allow digital signatures";
     else if (c.unknown_critical) *why = "the certificate has a critical extension rubrapack does not understand";
     else if (now < c.not_before) *why = "the certificate is not valid yet";
-    else if (now > c.not_after) *why = "the certificate has expired (a timestamp, planned for P7, would be needed to sign with it)";
+    else if (now > c.not_after) *why = "the certificate has expired";
     else return true;
     return false;
 }
 
+// The unsigned attributes [1] with the token `ts` returns for `sig`, after checking it.
+static proven_err_t stamp(proven_allocator_t alloc, const rp_timestamper_t *ts, const rp_cert_t *lc, const uint8_t *sig, size_t sig_len,
+                          rp_buf_t *ua, const char **why) {
+    uint8_t *tok = NULL;
+    size_t tl = 0;
+    proven_err_t err = ts->stamp(ts->ctx, alloc, sig, sig_len, &tok, &tl, why);
+    if (err != PROVEN_OK) return err;
+    rp_tsp_token_t t;
+    if (!rp_tsp_token(tok, tl, sig, sig_len, NULL, &t, why)) err = PROVEN_ERR_INVALID_FORMAT;
+    else if (t.gen_time < lc->not_before || t.gen_time > lc->not_after) {
+        *why = "the timestamp server's time lies outside the signing certificate's validity";
+        err = PROVEN_ERR_INVALID_STATE;
+    }
+    if (err == PROVEN_OK) {
+        rp_buf_t a = rp_buf_new(alloc, tl + 64), v = rp_buf_new(alloc, tl + 16), at = rp_buf_new(alloc, tl + 64);
+        rp_der_put_oid(&a, O_SPC_RFC3161, sizeof O_SPC_RFC3161);
+        rp_buf_put(&v, t.token.p, t.token.n);
+        rp_der_wrap(&a, RP_DER_SET, &v);
+        rp_der_wrap(&at, RP_DER_SEQUENCE, &a);
+        rp_der_wrap(ua, RP_DER_CTX1, &at);
+        err = ua->err;
+    }
+    rp_mem_free(alloc, tok);
+    return err;
+}
+
 proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
-                                   size_t data_len, const uint8_t *digest, uint8_t **out, size_t *out_len, const char **why) {
+                                   size_t data_len, const uint8_t *digest, const rp_timestamper_t *ts, uint8_t **out, size_t *out_len,
+                                   const char **why) {
     size_t hn, hl = rp_hash_size(alg);
     const uint8_t *hoid = hash_oid(alg, &hn);
     rp_cert_t lc;
@@ -129,6 +161,12 @@ proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t 
     }
     put_alg(&si, O_RSA, sizeof O_RSA);
     rp_der_put(&si, RP_DER_OCTET_STRING, sig, sig_len);
+    if (err == PROVEN_OK && ts) {
+        rp_buf_t ua = rp_buf_new(alloc, 1u << 16);
+        err = stamp(alloc, ts, &lc, sig, sig_len, &ua, why);
+        if (err == PROVEN_OK) rp_buf_put(&si, ua.data, ua.len);
+        rp_buf_free(&ua);
+    }
     rp_buf_t sis = rp_buf_new(alloc, 1u << 16);
     rp_der_wrap(&sis, RP_DER_SEQUENCE, &si);
 
@@ -289,6 +327,36 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
     rp_hash_update(&h, attrs.whole.p + 1, attrs.whole.n - 1);
     rp_hash_final(&h, attrs_hash);
     r->signature_ok = rp_rsa_verify(c.rsa_n.p, c.rsa_n.n, c.rsa_e.p, c.rsa_e.n, r->alg, attrs_hash, sig.val.p, sig.val.n);
+    r->sig = sig.val;
+    // Unsigned attributes: at most one timestamp, RFC 3161 or the old counterSignature.
+    rp_der_t ua;
+    if (rp_der_peek(&sif, &tag) && tag == RP_DER_CTX1) {
+        rp_der_span_t us = { NULL, 0 };
+        if (!rp_der_read(&sif, &ua)) r->ts_bad = true;
+        else us = rp_der_inside(&ua);
+        int stamps = 0;
+        while (!r->ts_bad && us.n) {
+            rp_der_t at, set, val;
+            if (!rp_der_get(&us, RP_DER_SEQUENCE, &a)) {
+                r->ts_bad = true;
+                break;
+            }
+            rp_der_span_t av = rp_der_inside(&a);
+            if (!rp_der_get(&av, RP_DER_OID, &at) || !rp_der_get(&av, RP_DER_SET, &set)) {
+                r->ts_bad = true;
+                break;
+            }
+            rp_der_span_t vs = rp_der_inside(&set);
+            bool rfc = rp_der_oid_is(&at, O_SPC_RFC3161, sizeof O_SPC_RFC3161), old = rp_der_oid_is(&at, O_COUNTER_SIGNATURE, sizeof O_COUNTER_SIGNATURE);
+            if (!rfc && !old) continue;                         // another unsigned attribute (a nested signature, say)
+            if (++stamps > 1 || !rp_der_get(&vs, RP_DER_SEQUENCE, &val) || vs.n) {
+                r->ts_bad = true;
+                break;
+            }
+            if (rfc) r->ts_token = val.whole;
+            else r->ts_legacy = true;
+        }
+    }
     if (!r->attrs_ok) *why = "the signed attributes do not match the signed content";
     else if (!r->signature_ok) *why = "the signature does not verify with the signer's certificate";
 }

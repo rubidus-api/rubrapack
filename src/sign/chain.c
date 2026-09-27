@@ -7,7 +7,9 @@
 
 #include <string.h>
 
-static bool sig_hash(const rp_cert_t *c, rp_hash_alg_t *alg) {
+// The hash of a certificate's signature algorithm; *rsa says whether it is PKCS#1 (else ECDSA). The
+// kind belongs to the issuer's key, not to the certificate's own.
+static bool sig_hash(const rp_cert_t *c, rp_hash_alg_t *alg, bool *rsa) {
     static const uint8_t pkcs1[] = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01 };
     static const uint8_t ecdsa[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x04, 0x03 };        // ecdsa-with-SHA2
     rp_der_span_t s = c->sig_alg;
@@ -16,8 +18,8 @@ static bool sig_hash(const rp_cert_t *c, rp_hash_alg_t *alg) {
     rp_der_span_t in = rp_der_inside(&seq);
     if (!rp_der_get(&in, RP_DER_OID, &oid)) return false;
     uint8_t last;
-    if (oid.val.n == 9 && memcmp(oid.val.p, pkcs1, 8) == 0 && c->ec_curve < 0) last = (uint8_t)(oid.val.p[8] - 0x0B);
-    else if (oid.val.n == 8 && memcmp(oid.val.p, ecdsa, 7) == 0) last = (uint8_t)(oid.val.p[7] - 2);
+    if (oid.val.n == 9 && memcmp(oid.val.p, pkcs1, 8) == 0) last = (uint8_t)(oid.val.p[8] - 0x0B), *rsa = true;
+    else if (oid.val.n == 8 && memcmp(oid.val.p, ecdsa, 7) == 0) last = (uint8_t)(oid.val.p[7] - 2), *rsa = false;
     else return false;              // SHA-1 and older are not accepted
     if (last > 2) return false;
     *alg = (rp_hash_alg_t)(RP_HASH_SHA256 + last);
@@ -43,7 +45,8 @@ bool rp_cert_verify_sig(const rp_cert_t *c, rp_hash_alg_t alg, const uint8_t *di
 
 bool rp_cert_signed_by(const rp_cert_t *child, const rp_cert_t *issuer) {
     rp_hash_alg_t alg;
-    if (!sig_hash(child, &alg)) return false;
+    bool rsa;
+    if (!sig_hash(child, &alg, &rsa) || rsa != issuer->rsa || (!rsa && issuer->ec_curve < 0)) return false;
     if (child->issuer.n != issuer->subject.n || memcmp(child->issuer.p, issuer->subject.p, child->issuer.n) != 0) return false;
     uint8_t d[RP_HASH_MAX];
     rp_hash(alg, child->tbs.p, child->tbs.n, d);
@@ -107,7 +110,8 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
             next = true;
         }
         if (!next) {
-            *why = "the path does not reach a trusted certificate (--trust)";
+            *why = purpose == RP_PURPOSE_TIMESTAMP ? "the path does not reach a trusted certificate (--tsa-trust)"
+                                                   : "the path does not reach a trusted certificate (--trust)";
             return false;
         }
     }

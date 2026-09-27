@@ -175,7 +175,7 @@ static proven_err_t collect(proven_allocator_t alloc, const rp_cfb_t *cfb, rp_cf
 }
 
 proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t len, const rp_keyfile_t *kf, int64_t now,
-                         bool allow_external_cabs, bool *external_cabs, uint8_t **out, size_t *out_len, const char **why) {
+                         const rp_timestamper_t *ts, bool allow_external_cabs, bool *external_cabs, uint8_t **out, size_t *out_len, const char **why) {
     rp_limits_t lim = rp_limits_default();
     rp_cfb_t cfb;
     *external_cabs = false;
@@ -221,7 +221,7 @@ proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t le
             rp_cfb_close(&w);
         }
     }
-    if (err == PROVEN_OK) err = rp_authenticode_build(alloc, kf, leaf, RP_HASH_SHA256, MSI_DATA, sizeof MSI_DATA, digest, &p7, &p7_len, why);
+    if (err == PROVEN_OK) err = rp_authenticode_build(alloc, kf, leaf, RP_HASH_SHA256, MSI_DATA, sizeof MSI_DATA, digest, ts, &p7, &p7_len, why);
     if (err == PROVEN_OK) {
         streams[ns++] = (rp_cfb_stream_t){ SIG_NAME, 17, p7, p7_len };
         streams[ns++] = (rp_cfb_stream_t){ EX_NAME, 22, ex, 32 };

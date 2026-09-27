@@ -76,9 +76,10 @@ static int run(int argc, char **argv, bool lint) {
             compress = next;
             ++i;
         } else if (!lint && (strcmp(a, "--key") == 0 || strcmp(a, "--cert") == 0 || strcmp(a, "--pass-env") == 0 ||
-                             strcmp(a, "--pass-file") == 0) && next) {
+                             strcmp(a, "--pass-file") == 0 || strcmp(a, "--timestamp") == 0 || strcmp(a, "--tsa-trust") == 0) && next) {
             const char **slot = strcmp(a, "--key") == 0 ? &sign.key : strcmp(a, "--cert") == 0 ? &sign.cert
-                              : strcmp(a, "--pass-env") == 0 ? &sign.pass_env : &sign.pass_file;
+                              : strcmp(a, "--pass-env") == 0 ? &sign.pass_env : strcmp(a, "--pass-file") == 0 ? &sign.pass_file
+                              : strcmp(a, "--timestamp") == 0 ? &sign.timestamp : &sign.tsa_trust;
             *slot = next;
             ++i;
         } else if (!lint && strcmp(a, "--allow-unsigned-cabs") == 0) {
@@ -109,13 +110,17 @@ static int run(int argc, char **argv, bool lint) {
     if (lint && src) {
         out = "package.msi";        // names the external cabinets only; nothing is written
     }
-    if (!lint && (sign.cert || sign.pass_env || sign.pass_file || sign.allow_unsigned_cabs) && sign.key == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--cert, --pass-env, --pass-file and --allow-unsigned-cabs go with --key");
+    if (!lint && (sign.cert || sign.pass_env || sign.pass_file || sign.allow_unsigned_cabs || sign.timestamp) && sign.key == NULL) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key");
+        goto done;
+    }
+    if (!lint && sign.tsa_trust && !sign.timestamp) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--tsa-trust goes with --timestamp");
         goto done;
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs]]");
         goto done;
     }
     if (!ends_with(out, ".msi")) {

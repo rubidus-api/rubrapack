@@ -1,4 +1,4 @@
-// src/cli/sign.c - `rubrapack sign` and `rubrapack verify` (RFC-0007 S4; RFC-0001 7, 12.6).
+// src/cli/sign.c - `rubrapack sign` and `rubrapack verify` (RFC-0007 S4; RFC-0008; RFC-0001 7, 12.6).
 //
 // Passwords come only from an environment variable or a file, never from the command line
 // (process lists show arguments), and are wiped after use.
@@ -10,6 +10,7 @@
 #include "rubrapack/sign.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -80,6 +81,32 @@ static int load_key(proven_allocator_t heap, const char *key, const char *cert, 
     return rc;
 }
 
+// Reads the certificates in `path` into kf (an empty key file with kf->alloc set) and lists them in
+// *spans (freed by the caller). The exit code, or RP_EXIT_OK.
+static int load_anchors(proven_allocator_t heap, const char *const *paths, size_t n, rp_keyfile_t *kf, rp_der_span_t **spans) {
+    *spans = NULL;
+    for (size_t i = 0; i < n; ++i) {
+        uint8_t *d;
+        size_t dn;
+        const char *why;
+        if (rp_pal_read_file(heap, paths[i], MAX_KEY, &d, &dn) != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '%s'", paths[i]);
+            return RP_EXIT_IO;
+        }
+        proven_err_t err = rp_keyfile_add_certs(kf, d, dn, &why);
+        rp_mem_free(heap, d);
+        if (err != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '%s': %s", paths[i], why ? why : "unreadable");
+            return RP_EXIT_IO;
+        }
+    }
+    if (kf->cert_count == 0) return RP_EXIT_OK;
+    *spans = rp_mem_alloc(heap, kf->cert_count, sizeof **spans);
+    if (*spans == NULL) return RP_EXIT_IO;
+    for (size_t i = 0; i < kf->cert_count; ++i) (*spans)[i] = (rp_der_span_t){ kf->certs[i], kf->cert_len[i] };
+    return RP_EXIT_OK;
+}
+
 int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, uint8_t **out, size_t *out_len) {
     proven_allocator_t heap = proven_heap_allocator();
     bool pe = is_pe(data, len), cfb = is_cfb(data, len);
@@ -87,20 +114,44 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
         rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll) nor an MSI package", label);
         return RP_EXIT_USAGE;
     }
+    rp_keyfile_t tsa_kf = { .alloc = heap };
+    rp_der_span_t *tsa_anchors = NULL;
+    if (a->tsa_trust) {
+        int trc = load_anchors(heap, &a->tsa_trust, 1, &tsa_kf, &tsa_anchors);
+        if (trc != RP_EXIT_OK) {
+            rp_keyfile_free(&tsa_kf);
+            return trc;
+        }
+    }
     rp_keyfile_t kf;
     int rc = load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf);
-    if (rc != RP_EXIT_OK) return rc;
+    if (rc != RP_EXIT_OK) {
+        rp_mem_free(heap, tsa_anchors);
+        rp_keyfile_free(&tsa_kf);
+        return rc;
+    }
     const char *why = NULL;
     bool external = false;
     int64_t now = (int64_t)time(NULL);
-    proven_err_t err = pe ? rp_pe_sign(heap, data, len, &kf, now, out, out_len, &why)
-                          : rp_msi_sign(heap, data, len, &kf, now, a->allow_unsigned_cabs, &external, out, out_len, &why);
+    rp_tsa_t tsa = { .url = a->timestamp, .anchors = tsa_anchors, .anchor_count = tsa_kf.cert_count };
+    rp_timestamper_t stamper = { rp_tsa_stamp, &tsa };
+    const rp_timestamper_t *ts = a->timestamp ? &stamper : NULL;
+    proven_err_t err = pe ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
+                          : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs, &external, out, out_len, &why);
     rp_keyfile_free(&kf);
+    rp_mem_free(heap, tsa_anchors);
+    rp_keyfile_free(&tsa_kf);
     if (err != PROVEN_OK) {
+        // A timestamp failure fails the signing (RFC-0008 1.4): the server, its answer, or its time.
+        if (a->timestamp && (tsa.failed || tsa.gen_time)) {
+            rp_diag_error(RP_DIAG_SIGN, "'%s': timestamp from %s: %s", label, a->timestamp, why ? why : "failed");
+            return RP_EXIT_NET;
+        }
         rp_diag_error(RP_DIAG_SIGN, "'%s': %s", label, why ? why : "cannot sign");
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
     }
     if (external) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
+    if (!a->timestamp) rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", label);
     return RP_EXIT_OK;
 }
 
@@ -110,7 +161,8 @@ int rp_cmd_sign(int argc, char **argv) {
     for (int i = 2; i < argc; ++i) {
         const char *arg = argv[i], *next = i + 1 < argc ? argv[i + 1] : NULL;
         const char **slot = strcmp(arg, "--key") == 0 ? &a.key : strcmp(arg, "--cert") == 0 ? &a.cert : strcmp(arg, "--pass-env") == 0 ? &a.pass_env
-                          : strcmp(arg, "--pass-file") == 0 ? &a.pass_file : strcmp(arg, "-o") == 0 ? &out : NULL;
+                          : strcmp(arg, "--pass-file") == 0 ? &a.pass_file : strcmp(arg, "--timestamp") == 0 ? &a.timestamp
+                          : strcmp(arg, "--tsa-trust") == 0 ? &a.tsa_trust : strcmp(arg, "-o") == 0 ? &out : NULL;
         if (slot && next) {
             *slot = next;
             ++i;
@@ -126,8 +178,8 @@ int rp_cmd_sign(int argc, char **argv) {
             file = arg;
         }
     }
-    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs] [-o <out>]");
+    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file) || (a.tsa_trust && !a.timestamp)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>]] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -153,13 +205,43 @@ int rp_cmd_sign(int argc, char **argv) {
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
+// "2026-09-27T07:44:31Z" from seconds since 1970 (days to civil date, proleptic Gregorian).
+static void iso_time(int64_t t, char out[64]) {
+    int64_t days = t / 86400, secs = t % 86400;
+    if (secs < 0) {
+        secs += 86400;
+        --days;
+    }
+    int64_t z = days + 719468, era = (z >= 0 ? z : z - 146096) / 146097, doe = z - era * 146097;
+    int64_t yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365, doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    int64_t mp = (5 * doy + 2) / 153, d = doy - (153 * mp + 2) / 5 + 1, m = mp < 10 ? mp + 3 : mp - 9, y = yoe + era * 400 + (m <= 2);
+    snprintf(out, 64, "%04lld-%02lld-%02lldT%02lld:%02lld:%02lldZ", (long long)y, (long long)m, (long long)d, (long long)(secs / 3600),
+             (long long)(secs / 60 % 60), (long long)(secs % 60));
+}
+
+// The time the checks use: now, or RUBRAPACK_TEST_NOW (seconds since 1970) - a test hook, so the
+// test harness can check an expired certificate without touching a clock (RFC-0001 12.7).
+static int64_t check_time(proven_allocator_t heap) {
+    char *v = rp_pal_getenv(heap, "RUBRAPACK_TEST_NOW");
+    int64_t t = (int64_t)time(NULL);
+    if (v) {
+        char *end;
+        long long n = strtoll(v, &end, 10);
+        if (end != v && *end == '\0') t = n;
+        rp_mem_free(heap, v);
+    }
+    return t;
+}
+
 int rp_cmd_verify(int argc, char **argv) {
     const char *file = NULL;
-    const char *trust[8];
-    size_t ntrust = 0;
+    const char *trust[8], *tsa_trust[8];
+    size_t ntrust = 0, ntsa = 0;
     for (int i = 2; i < argc; ++i) {
         if (strcmp(argv[i], "--trust") == 0 && i + 1 < argc && ntrust < 8) {
             trust[ntrust++] = argv[++i];
+        } else if (strcmp(argv[i], "--tsa-trust") == 0 && i + 1 < argc && ntsa < 8) {
+            tsa_trust[ntsa++] = argv[++i];
         } else if (argv[i][0] == '-' || file) {
             file = NULL;
             break;
@@ -168,64 +250,98 @@ int rp_cmd_verify(int argc, char **argv) {
         }
     }
     if (file == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi> [--trust <certificate>]...");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--tsa-trust <certificates>]...");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
-    rp_keyfile_t anchors = { .alloc = heap };
-    for (size_t i = 0; i < ntrust; ++i) {
-        uint8_t *d;
-        size_t n;
-        const char *why;
-        if (rp_pal_read_file(heap, trust[i], MAX_KEY, &d, &n) != PROVEN_OK || rp_keyfile_add_certs(&anchors, d, n, &why) != PROVEN_OK) {
-            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificates in '%s'", trust[i]);
-            rp_keyfile_free(&anchors);
-            return RP_EXIT_IO;
-        }
-        rp_mem_free(heap, d);
-    }
-    uint8_t *data = NULL;
+    rp_keyfile_t anchors = { .alloc = heap }, tsa_anchors = { .alloc = heap };
+    rp_der_span_t *a = NULL, *ta = NULL;
+    uint8_t *data = NULL, *sig = NULL;
     size_t len = 0;
+    int rc = load_anchors(heap, trust, ntrust, &anchors, &a);
+    if (rc == RP_EXIT_OK) rc = load_anchors(heap, tsa_trust, ntsa, &tsa_anchors, &ta);
+    if (rc != RP_EXIT_OK) goto done;
     if (rp_pal_read_file(heap, file, MAX_INPUT, &data, &len) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", file);
-        rp_keyfile_free(&anchors);
-        return RP_EXIT_IO;
+        rc = RP_EXIT_IO;
+        goto done;
     }
     if (!is_pe(data, len) && !is_cfb(data, len)) {
         rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file nor an MSI package", file);
-        rp_mem_free(heap, data);
-        rp_keyfile_free(&anchors);
-        return RP_EXIT_USAGE;
+        rc = RP_EXIT_USAGE;
+        goto done;
     }
     rp_authenticode_check_t r;
     const char *why = NULL;
-    uint8_t *sig = NULL;
     if (is_pe(data, len)) rp_pe_verify(data, len, &r, &why);
     else rp_msi_verify(heap, data, len, &r, &sig, &why);
+    int64_t now = check_time(heap);
+
+    // The timestamp: its genTime replaces `now` for the signer's chain only when the TSA's own
+    // chain is trusted through --tsa-trust (RFC-0001 12.6; RFC-0008 T2: --trust does not count).
+    char ts_line[512], when[64];
+    const char *ts_why = NULL;
+    bool ts_ok = true;
+    int64_t at = now;
+    if (!r.parsed) {
+        snprintf(ts_line, sizeof ts_line, "-");
+    } else if (r.ts_bad) {
+        ts_ok = false;
+        ts_why = "the unsigned attributes are malformed or hold more than one timestamp";
+        snprintf(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+    } else if (r.ts_legacy) {
+        ts_ok = false;
+        ts_why = "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check";
+        snprintf(ts_line, sizeof ts_line, "unsupported - %s", ts_why);
+    } else if (r.ts_token.n == 0) {
+        snprintf(ts_line, sizeof ts_line, "not-present");
+    } else {
+        rp_tsp_token_t t;
+        if (!rp_tsp_token(r.ts_token.p, r.ts_token.n, r.sig.p, r.sig.n, NULL, &t, &ts_why)) {
+            ts_ok = false;
+            snprintf(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+        } else {
+            iso_time(t.gen_time, when);
+            if (ntsa == 0) {
+                snprintf(ts_line, sizeof ts_line, "%s, TSA not-checked (give --tsa-trust)", when);
+            } else if (rp_chain_trusted_for(t.tsa_cert, t.certs, ta, tsa_anchors.cert_count, t.gen_time, RP_PURPOSE_TIMESTAMP, &ts_why)) {
+                snprintf(ts_line, sizeof ts_line, "%s, TSA trusted", when);
+                at = t.gen_time;
+            } else {
+                ts_ok = false;
+                snprintf(ts_line, sizeof ts_line, "%s, TSA untrusted - %s", when, ts_why);
+            }
+        }
+    }
+
     const char *chain = "not-checked (give --trust)";
     const char *chain_why = NULL;
     bool trusted = false;
     if (r.parsed && ntrust) {
-        rp_der_span_t *a = rp_mem_alloc(heap, ntrust * 8 + anchors.cert_count, sizeof *a);
-        for (size_t i = 0; a && i < anchors.cert_count; ++i) a[i] = (rp_der_span_t){ anchors.certs[i], anchors.cert_len[i] };
-        trusted = a && rp_chain_trusted(r.signer_cert, r.certs, a, anchors.cert_count, (int64_t)time(NULL), &chain_why);
+        trusted = rp_chain_trusted(r.signer_cert, r.certs, a, anchors.cert_count, at, &chain_why);
         chain = trusted ? "trusted" : "untrusted";
-        rp_mem_free(heap, a);
     }
     char out[2048];
     snprintf(out, sizeof out,
-             "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  not-present\n",
+             "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n",
              file, r.parsed ? "ok" : "invalid", r.parsed ? (r.digest_ok ? "ok" : "mismatch") : "-",
-             r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : "invalid") : "-", chain, chain_why ? " - " : "", chain_why ? chain_why : "");
-    bool ok = r.parsed && r.digest_ok && r.attrs_ok && r.signature_ok && trusted;
+             r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : "invalid") : "-", chain, chain_why ? " - " : "", chain_why ? chain_why : "", ts_line);
+    bool sig_ok = r.parsed && r.digest_ok && r.attrs_ok && r.signature_ok;
+    bool ok = sig_ok && ts_ok && trusted;
     if (!ok) {
-        const char *reason = !r.parsed || !r.digest_ok || !r.attrs_ok || !r.signature_ok ? (why ? why : "the signature does not verify")
+        const char *reason = !sig_ok ? (why ? why : "the signature does not verify")
+                           : !ts_ok ? ts_why
                            : ntrust ? (chain_why ? chain_why : "untrusted") : "no --trust given: the signature verifies but nothing says whom to trust";
-        rp_diag_error(RP_DIAG_VERIFY, "'%s': %s", file, reason);
+        rp_diag_error(RP_DIAG_VERIFY, "'%s': %s%s", file, !sig_ok || ts_ok ? "" : "timestamp: ", reason);
     }
+    rc = rp_pal_puts(RP_OUT_STDOUT, out) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
+    if (!ok) rc = RP_EXIT_SIGN;
+done:
     rp_mem_free(heap, sig);
     rp_mem_free(heap, data);
+    rp_mem_free(heap, a);
+    rp_mem_free(heap, ta);
     rp_keyfile_free(&anchors);
-    int rc = rp_pal_puts(RP_OUT_STDOUT, out) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
-    return ok ? rc : RP_EXIT_SIGN;
+    rp_keyfile_free(&tsa_anchors);
+    return rc;
 }
