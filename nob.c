@@ -67,6 +67,7 @@ static const char *const core_sources[] = {
     "src/msi/ui.c",
     "src/msi/view.c",
     "src/net/http.c",
+    "src/net/tls.c",
     "src/pe/pe.c",
     "src/crypto/aes.c",
     "src/crypto/hash.c",

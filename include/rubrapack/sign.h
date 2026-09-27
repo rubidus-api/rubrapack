@@ -104,7 +104,7 @@ void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_
 // with the signature as DER SEQUENCE { r, s }.
 [[nodiscard]] bool rp_cert_verify_sig(const rp_cert_t *c, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t *sig, size_t len);
 
-enum { RP_PURPOSE_CODE, RP_PURPOSE_TIMESTAMP };
+enum { RP_PURPOSE_CODE, RP_PURPOSE_TIMESTAMP, RP_PURPOSE_SERVER };
 
 // Builds a path from the signer's certificate through the signature's certificates to one of the
 // trust anchors (DER certificates) and checks it at time `now`: every signature, validity, CA and
@@ -112,7 +112,9 @@ enum { RP_PURPOSE_CODE, RP_PURPOSE_TIMESTAMP };
 // is at most 8 certificates long.
 [[nodiscard]] bool rp_chain_trusted(rp_der_span_t signer, rp_der_span_t certs, const rp_der_span_t *anchors, size_t anchor_count,
                                     int64_t now, const char **why);
-// The same for another purpose: RP_PURPOSE_TIMESTAMP asks for the time-stamping EKU on the leaf.
+// The same for another purpose: RP_PURPOSE_TIMESTAMP asks for the time-stamping EKU on the leaf,
+// RP_PURPOSE_SERVER for a TLS server's: serverAuth, anyExtendedKeyUsage or no EKU at all (RFC 5280
+// 4.2.1.12).
 [[nodiscard]] bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_der_span_t *anchors, size_t anchor_count,
                                         int64_t now, int purpose, const char **why);
 

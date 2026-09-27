@@ -72,6 +72,10 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
         *why = "the timestamp server's certificate is not for time stamping";
         return false;
     }
+    if (purpose == RP_PURPOSE_SERVER && cur.has_eku && !cur.eku_server && !cur.eku_any) {
+        *why = "the server's certificate is not for TLS servers (its extended key usage)";
+        return false;
+    }
     for (int depth = 0; depth < 8; ++depth) {
         if (!valid_at(&cur, now)) {
             *why = depth ? "a certificate in the path is expired or not valid yet" : "the signer's certificate is expired or not valid yet";
@@ -111,6 +115,7 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
         }
         if (!next) {
             *why = purpose == RP_PURPOSE_TIMESTAMP ? "the path does not reach a trusted certificate (--tsa-trust)"
+                 : purpose == RP_PURPOSE_SERVER    ? "the server's certificate path does not reach a trusted certificate (--tls-trust, --system-roots)"
                                                    : "the path does not reach a trusted certificate (--trust)";
             return false;
         }

@@ -17,6 +17,7 @@ static const uint8_t OID_KU[] = { 0x55, 0x1D, 0x0F }, OID_BC[] = { 0x55, 0x1D, 0
 static const uint8_t OID_SAN[] = { 0x55, 0x1D, 0x11 }, OID_SKI[] = { 0x55, 0x1D, 0x0E }, OID_AKI[] = { 0x55, 0x1D, 0x23 };
 static const uint8_t OID_CODE[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x03 };
 static const uint8_t OID_TIME[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x08 };
+static const uint8_t OID_SERVER[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x01 };
 static const uint8_t OID_ANY_EKU[] = { 0x55, 0x1D, 0x25, 0x00 };
 
 // Days from 1970-01-01 to a civil date (proleptic Gregorian).
@@ -89,9 +90,18 @@ static bool parse_ext(const rp_der_t *ext, rp_cert_t *c, const char **why) {
         while (rp_der_get(&list, RP_DER_OID, &o)) {
             c->eku_code |= rp_der_oid_is(&o, OID_CODE, sizeof OID_CODE);
             c->eku_time |= rp_der_oid_is(&o, OID_TIME, sizeof OID_TIME);
+            c->eku_server |= rp_der_oid_is(&o, OID_SERVER, sizeof OID_SERVER);
             c->eku_any |= rp_der_oid_is(&o, OID_ANY_EKU, sizeof OID_ANY_EKU);
         }
         if (list.n) FAIL("a malformed extended key usage");
+    } else if (rp_der_oid_is(&id, OID_SAN, sizeof OID_SAN)) {
+        if (!rp_der_get(&v, RP_DER_SEQUENCE, &x) || v.n) FAIL("a malformed subject alternative name");
+        c->san = rp_der_inside(&x);
+        rp_der_span_t list = c->san;
+        rp_der_t n;
+        while (list.n) {
+            if (!rp_der_read(&list, &n)) FAIL("a malformed subject alternative name");
+        }
     } else if (rp_der_oid_is(&id, OID_SKI, sizeof OID_SKI)) {
         if (!rp_der_get(&v, RP_DER_OCTET_STRING, &x)) FAIL("a malformed subject key identifier");
         c->ski = x.val;
@@ -185,4 +195,123 @@ bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **wh
     }
     if (t.n) FAIL("unexpected data in the certificate");
     return true;
+}
+
+// ---- host names (RFC 6125) ----------------------------------------------------------------------
+
+static char lower(char c) { return c >= 'A' && c <= 'Z' ? (char)(c + 32) : c; }
+
+// ASCII case-insensitive equality of a[0..n) and b[0..n).
+static bool ieq(const char *a, const char *b, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (lower(a[i]) != lower(b[i])) return false;
+    }
+    return true;
+}
+
+static bool dns_match(const char *pat, size_t pl, const char *host, size_t hl) {
+    if (pl && pat[pl - 1] == '.') --pl;
+    if (hl && host[hl - 1] == '.') --hl;
+    if (pl == 0 || hl == 0) return false;
+    for (size_t i = 0; i < pl; ++i) {
+        if ((unsigned char)pat[i] <= 0x20 || (unsigned char)pat[i] >= 0x7F) return false;
+    }
+    if (pl >= 2 && pat[0] == '*' && pat[1] == '.') {
+        const char *rest = pat + 1;                        // ".example.com"
+        size_t rl = pl - 1;
+        if (memchr(rest + 1, '.', rl - 1) == NULL) return false;    // "*.com": too wide
+        if (memchr(pat + 2, '*', pl - 2)) return false;
+        const char *dot = memchr(host, '.', hl);
+        if (dot == NULL || dot == host) return false;      // exactly one non-empty label
+        size_t tail = hl - (size_t)(dot - host);
+        return tail == rl && ieq(dot, rest, rl);
+    }
+    if (memchr(pat, '*', pl)) return false;                // no partial wildcards
+    return pl == hl && ieq(pat, host, pl);
+}
+
+size_t rp_ip_parse(const char *s, uint8_t out[16]) {
+    // IPv4: four decimal parts 0-255, no leading zeros beyond a single 0.
+    {
+        const char *p = s;
+        int parts = 0;
+        uint8_t v4[4];
+        bool ok = true;
+        while (ok && parts < 4) {
+            if (*p < '0' || *p > '9') {
+                ok = false;
+                break;
+            }
+            unsigned v = 0, digits = 0;
+            const char *start = p;
+            while (*p >= '0' && *p <= '9' && digits < 4) v = v * 10 + (unsigned)(*p++ - '0'), ++digits;
+            if (digits == 0 || digits > 3 || v > 255 || (digits > 1 && *start == '0')) ok = false;
+            v4[parts++] = (uint8_t)v;
+            if (parts < 4) {
+                if (*p != '.') ok = false;
+                else ++p;
+            }
+        }
+        if (ok && parts == 4 && *p == 0) {
+            memcpy(out, v4, 4);
+            return 4;
+        }
+    }
+    // IPv6: up to 8 groups of 1-4 hex digits, one "::" for a run of zero groups (no embedded IPv4).
+    uint16_t g[8];
+    int n = 0, gap = -1;
+    const char *p = s;
+    if (p[0] == ':' && p[1] == ':') {
+        gap = 0;
+        p += 2;
+    } else if (p[0] == ':') {
+        return 0;
+    }
+    while (*p) {
+        if (n == 8) return 0;
+        unsigned v = 0, digits = 0;
+        while (digits < 5) {
+            char c = lower(*p);
+            unsigned d = c >= '0' && c <= '9' ? (unsigned)(c - '0') : c >= 'a' && c <= 'f' ? (unsigned)(c - 'a' + 10) : 16;
+            if (d == 16) break;
+            v = v * 16 + d;
+            ++digits;
+            ++p;
+        }
+        if (digits == 0 || digits > 4) return 0;
+        g[n++] = (uint16_t)v;
+        if (*p == 0) break;
+        if (*p != ':') return 0;
+        ++p;
+        if (*p == ':') {
+            if (gap >= 0) return 0;
+            gap = n;
+            ++p;
+            if (*p == 0) break;
+        } else if (*p == 0) {
+            return 0;                                      // a trailing single ':'
+        }
+    }
+    if (gap < 0 ? n != 8 : n > 7) return 0;
+    memset(out, 0, 16);
+    int tail = gap < 0 ? 0 : n - gap, head = gap < 0 ? n : gap;
+    for (int i = 0; i < head; ++i) out[2 * i] = (uint8_t)(g[i] >> 8), out[2 * i + 1] = (uint8_t)g[i];
+    for (int i = 0; i < tail; ++i) {
+        int at = 8 - tail + i;
+        out[2 * at] = (uint8_t)(g[gap + i] >> 8);
+        out[2 * at + 1] = (uint8_t)g[gap + i];
+    }
+    return 16;
+}
+
+bool rp_cert_names_host(const rp_cert_t *c, const char *host) {
+    uint8_t ip[16];
+    size_t il = rp_ip_parse(host, ip);
+    rp_der_span_t list = c->san;
+    rp_der_t n;
+    while (rp_der_read(&list, &n)) {
+        if (il == 0 && n.tag == 0x82 && dns_match((const char *)n.val.p, n.val.n, host, strlen(host))) return true;   // [2] dNSName
+        if (il && n.tag == 0x87 && n.val.n == il && memcmp(n.val.p, ip, il) == 0) return true;                        // [7] iPAddress
+    }
+    return false;
 }
