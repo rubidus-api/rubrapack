@@ -1730,6 +1730,35 @@ static void dialog_checks(ctx_t *c) {
     }
 }
 
+// --nfc (RFC-0006 L3): the names the package gives to folders, files and shortcuts in NFC - a
+// file from macOS often arrives decomposed. The source files keep their names; texts, registry
+// values and the rest stay as written (lint warns about them). The case check that follows sees
+// the new names, so two names that become one are refused.
+static void nfc_one(ctx_t *c, char **s) {
+    if (*s == NULL) return;
+    uint8_t *o;
+    size_t n;
+    proven_err_t err = rp_nfc(c->alloc, (const uint8_t *)*s, strlen(*s), &o, &n);
+    if (err == PROVEN_ERR_NOMEM) {
+        c->nomem = true;
+        return;
+    }
+    if (err != PROVEN_OK) return;       // not UTF-8: already refused where the name was read
+    rp_mem_free(c->alloc, *s);
+    *s = (char *)o;
+}
+
+static void nfc_names(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    for (size_t k = 0; k < ir->dir_count; ++k) {
+        for (size_t j = 0; j < ir->dirs[k].part_count; ++j) nfc_one(c, &ir->dirs[k].parts[j]);
+    }
+    for (size_t k = 0; k < ir->file_count; ++k) nfc_one(c, &ir->files[k].name);
+    for (size_t k = 0; k < ir->folder_count; ++k) nfc_one(c, &ir->folders[k].name);
+    for (size_t k = 0; k < ir->shortcut_count; ++k) nfc_one(c, &ir->shortcuts[k].name);
+    for (size_t k = 0; k < ir->copy_count; ++k) nfc_one(c, &ir->copies[k].name);
+}
+
 static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     rp_ir_t *ir = c->ir;
     if (ir->license_shown) {
@@ -2216,8 +2245,8 @@ static void cross_checks(ctx_t *c) {
     for (size_t a = 0; folded && a < nf; ++a) {
         for (size_t b = a + 1; b < nf; ++b) {
             if (folded[a] && folded[b] && strcmp(folded[a], folded[b]) == 0) {
-                ERR(c, where[b], "RP1511", "installs to the same path as line %u (Windows ignores case in names)",
-                    (unsigned)where[a].line);
+                ERR(c, where[b], "RP1511", "installs to the same path as line %u (Windows ignores case in names%s)",
+                    (unsigned)where[a].line, c->opt->nfc ? "; --nfc made their Unicode forms the same" : "");
             }
         }
     }
@@ -2549,6 +2578,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             ir->dialog_controls[j - 1] = t;
         }
     }
+    if (!c.nomem && opt->nfc) nfc_names(&c);
     if (!c.nomem) dialog_checks(&c);
     if (!c.nomem) cross_checks(&c);
     if (c.nomem) {

@@ -31,6 +31,7 @@
 // RP2102 a dialog's Control_First, Control_Default or Control_Cancel is not one of its controls
 // RP2103 a FilesInUse dialog without a ListBox table (error 2205, the dialog is skipped)
 // RP2104 the ErrorDialog lacks the ErrorText (Text) or ErrorIcon (Icon) control (error 2835)
+// RP2105 (warning) text that is not in Unicode NFC (RFC-0006 L3)
 
 #include "proven/allocator.h"
 #include "proven/types.h"

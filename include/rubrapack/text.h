@@ -52,4 +52,12 @@ typedef struct {
 [[nodiscard]] rp_text_result_t rp_utf16_to_u8str(proven_allocator_t alloc, proven_u16str_view_t src,
                                                  proven_u8str_t *out);
 
+// Unicode Normalization Form C (UAX #15; RFC-0006 L3), Unicode 17.0 data from the UCD
+// (src/text/nfc_tables.c). The input must be valid UTF-8 (PROVEN_ERR_INVALID_ENCODING otherwise);
+// *out is NUL-terminated, free it with rp_mem_free.
+[[nodiscard]] proven_err_t rp_nfc(proven_allocator_t alloc, const uint8_t *src, size_t len, uint8_t **out, size_t *out_len);
+
+// Whether valid UTF-8 text is already in NFC (false for invalid UTF-8 or when out of memory).
+[[nodiscard]] bool rp_is_nfc(proven_allocator_t alloc, const uint8_t *src, size_t len);
+
 #endif // RUBRAPACK_TEXT_H

@@ -396,12 +396,12 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 
 ```text
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
-                [--compress none|mszip|mszip:N] [--reproducible]
+                [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
 rubrapack guid [--from <text>]
-rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--strict]
+rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack version | help [command]
@@ -411,6 +411,12 @@ rubrapack version | help [command]
 - `--reproducible` derives the package code from the content: the same source gives the same
   bytes, on Linux and on Windows. Without it the package code is random, as Windows Installer
   expects for different package files.
+- `--nfc` puts the names the package gives to folders, files and shortcuts in Unicode NFC
+  (composed). A file from macOS often has a decomposed name - a Hangul syllable such as U+D55C as the three jamo U+1112 U+1161 U+11AB - and Windows
+  installs names exactly as they are, so the same word can become two different files. The source
+  files keep their names; texts and registry values stay as written. `lint` warns (`RP2105`) about
+  any text that is not in NFC, and a name that becomes the same as another one is refused
+  (`RP1511`). The normalization is rubrapack's own, from Unicode 17.0 data.
 - `inspect <file.msi> <table>` prints the table in Windows Installer's IDT format. `--files`
   prints one tab-separated line per file: installed path, size, File key, component, version,
   language, MD5 (from `MsiFileHash`; empty when the package has none). `--streams` lists the

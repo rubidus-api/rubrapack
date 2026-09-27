@@ -322,6 +322,7 @@ typedef struct {
     const char        *arch;            // --arch, or NULL
     const char        *compress;        // --compress, or NULL
     const char        *output;          // the file being built (refused inside a glob), or NULL
+    bool               nfc;             // --nfc: names inside the package in NFC (RFC-0006 L3)
 } rp_ir_options_t;
 
 // Checks the document and builds the model. On any error the diagnostics say why, the model is

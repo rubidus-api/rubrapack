@@ -70,7 +70,9 @@ Korean, Japanese and supplementary-plane (e.g. U+20000, U+1F600) file and folder
 keys and values, shortcut names and the product name all install with exactly the right UTF-16
 text, and dialogs display them - also under a system locale whose ANSI code page cannot hold
 Korean (en-US, 1252), so no separate Unicode setup program is needed. A UTF-16 code page (1200) is
-not possible here: the pool holds single-byte-unit strings. [observed]
+not possible here: the pool holds single-byte-unit strings. [observed] Windows Installer does not normalize names: a
+folder named with decomposed Hangul (U+1100 U+1161) is installed with exactly those code units,
+next to - not instead of - one named U+AC00. [observed]
 
 ## System tables
 

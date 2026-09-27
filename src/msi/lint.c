@@ -186,6 +186,29 @@ static void index_free(lint_t *l, index_t *x) { rp_mem_free(l->alloc, x->slot); 
 
 // ---- generic column rules --------------------------------------------------------------------
 
+// RP2105: text that is not in NFC (RFC-0006 L3) - one warning per column, never an error: build
+// --nfc renames folders, files and shortcuts, and texts are kept as the author wrote them.
+static void lint_nfc(lint_t *l, const rp_msi_wtable_t *t) {
+    for (size_t c = 0; c < t->column_count; ++c) {
+        const rp_msi_wcolumn_t *col = &t->columns[c];
+        if (!(col->type & RP_MSI_COL_STRING) || !(col->type & RP_MSI_COL_NONBINARY)) continue;
+        size_t count = 0, first = SIZE_MAX;
+        for (size_t row = 0; row < t->row_count; ++row) {
+            const rp_msi_cell_t *v = cell(t, row, c);
+            if (v->kind != RP_MSI_STR || v->len == 0 || rp_utf8_validate(v->bytes, v->len).err != PROVEN_OK) continue;
+            if (!rp_is_nfc(l->alloc, v->bytes, v->len)) {
+                if (count++ == 0) first = row;
+            }
+        }
+        if (count) {
+            char name[160];
+            row_name(t, first, name, sizeof name);
+            rp_srcdiag_add(l->diags, nopos(), "RP2105", true, "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts "
+                           "folder, file and shortcut names in NFC", t->name, name, col->name, count, count == 1 ? "" : "s");
+        }
+    }
+}
+
 static void lint_cells(lint_t *l, const rp_msi_wtable_t *t) {
     for (size_t row = 0; row < t->row_count; ++row) {
         for (size_t c = 0; c < t->column_count; ++c) {
@@ -688,6 +711,7 @@ proven_err_t rp_msi_lint_opts(proven_allocator_t alloc, const rp_msi_wdb_t *db, 
                        (unsigned)db->codepage);
     }
     for (size_t i = 0; i < db->table_count; ++i) lint_cells(&l, &db->tables[i]);
+    for (size_t i = 0; l.utf8 && i < db->table_count; ++i) lint_nfc(&l, &db->tables[i]);
 
     static const char *const indexed[] = { "Property", "Directory", "Component", "Feature", "File", "CustomAction", "Dialog",
                                            "Registry" };

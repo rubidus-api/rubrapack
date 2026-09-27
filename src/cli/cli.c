@@ -21,7 +21,7 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--reproducible]",
+    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible]",
                  "build a package from a source file", true },
     { "sign",    "sign <file> [signing options]", "sign an existing package or PE file", false },
     { "verify",  "verify <file> [--trust <cert>] [--system-roots]",

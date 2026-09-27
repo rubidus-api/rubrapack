@@ -30,7 +30,7 @@ static bool ends_with(const char *s, const char *suffix) {
 // without writing anything (RFC-0006 1). --strict turns warnings into a lint failure.
 static int run(int argc, char **argv, bool lint) {
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
-    bool strict = false;
+    bool strict = false, nfc = false;
     rp_define_t defines[MAX_DEFINES];
     char *define_buf[MAX_DEFINES];
     size_t ndef = 0;
@@ -74,6 +74,8 @@ static int run(int argc, char **argv, bool lint) {
         } else if (strcmp(a, "--compress") == 0 && next) {
             compress = next;
             ++i;
+        } else if (strcmp(a, "--nfc") == 0) {
+            nfc = true;
         } else if (strcmp(a, "--reproducible") == 0) {
             reproducible = true;
         } else if (strcmp(a, "--target") == 0 && next) {
@@ -96,8 +98,8 @@ static int run(int argc, char **argv, bool lint) {
         out = "package.msi";        // names the external cabinets only; nothing is written
     }
     if (src == NULL || out == NULL) {
-        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--reproducible]");
+        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible]");
         goto done;
     }
     if (!ends_with(out, ".msi")) {
@@ -130,7 +132,7 @@ static int run(int argc, char **argv, bool lint) {
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? NULL : out };
+            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? NULL : out, nfc };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             rp_toml_free(&doc);
         }

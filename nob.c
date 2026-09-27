@@ -67,6 +67,8 @@ static const char *const core_sources[] = {
     "src/msi/view.c",
     "src/pe/pe.c",
     "src/text/utf.c",
+    "src/text/nfc.c",
+    "src/text/nfc_tables.c",
 };
 
 static const char *const posix_sources[] = {
