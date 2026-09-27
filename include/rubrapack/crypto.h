@@ -67,6 +67,22 @@ void rp_aes_decrypt(const rp_aes_t *a, const uint8_t in[16], uint8_t out[16]);
 bool rp_aes_cbc_encrypt(const rp_aes_t *a, const uint8_t iv[16], const uint8_t *in, uint8_t *out, size_t len);
 bool rp_aes_cbc_decrypt(const rp_aes_t *a, const uint8_t iv[16], const uint8_t *in, uint8_t *out, size_t len);
 
+// ---- ECDSA over P-256 and P-384 (FIPS 186-4, RFC 6979; src/crypto/ecdsa.c) ---------------------
+// Ported and vector-tested, but not used for signing packages until Windows is seen to accept it
+// in each format (RFC-0007 S1).
+
+typedef enum { RP_EC_P256, RP_EC_P384 } rp_ec_curve_t;
+
+size_t rp_ec_size(rp_ec_curve_t curve);         // 32 or 48: scalar and coordinate bytes
+// The public key of private scalar d (big-endian, rp_ec_size bytes); false when d is 0 or >= n.
+[[nodiscard]] bool rp_ec_public(rp_ec_curve_t curve, const uint8_t *d, uint8_t *qx, uint8_t *qy);
+// Deterministic ECDSA (RFC 6979, HMAC with `alg`): r and s get rp_ec_size bytes. The signature
+// is verified with the public key before it is returned (PROVEN_ERR_INVALID_STATE if not).
+[[nodiscard]] proven_err_t rp_ecdsa_sign(rp_ec_curve_t curve, const uint8_t *d, rp_hash_alg_t alg, const uint8_t *digest, uint8_t *r,
+                                         uint8_t *s);
+[[nodiscard]] bool rp_ecdsa_verify(rp_ec_curve_t curve, const uint8_t *qx, const uint8_t *qy, rp_hash_alg_t alg, const uint8_t *digest,
+                                   const uint8_t *r, const uint8_t *s);
+
 // Wipes memory that held a secret (not optimised away).
 void rp_wipe(void *p, size_t n);
 
@@ -96,6 +112,14 @@ void rp_mont_exp_ct(const rp_mont_t *m, uint32_t *r, const uint32_t *base, const
 void rp_mont_exp_pub(const rp_mont_t *m, uint32_t *r, const uint32_t *base, const uint8_t *exp, size_t exp_len);
 // r = a * b mod n (normal form, k limbs).
 void rp_mont_mulmod(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b);
+
+// Montgomery-form building blocks (all constant time, k limbs, values below n):
+// r = a b R^-1; r = a R (into Montgomery form); r = a R^-1 (out of it); r = a + b; r = a - b.
+void rp_mont_mul(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b);
+void rp_mont_to(const rp_mont_t *m, uint32_t *r, const uint32_t *a);
+void rp_mont_from(const rp_mont_t *m, uint32_t *r, const uint32_t *a);
+void rp_mont_add(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b);
+void rp_mont_sub(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b);
 
 // ---- RSA PKCS#1 v1.5 (RFC 8017 8.2) ------------------------------------------------------------
 

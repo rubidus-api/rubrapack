@@ -159,3 +159,40 @@ void rp_mont_exp_pub(const rp_mont_t *m, uint32_t *r, const uint32_t *base, cons
     }
     mont_mul(m, r, acc, one);
 }
+
+void rp_mont_mul(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b) { mont_mul(m, r, a, b); }
+
+void rp_mont_to(const rp_mont_t *m, uint32_t *r, const uint32_t *a) { mont_mul(m, r, a, m->rr); }
+
+void rp_mont_from(const rp_mont_t *m, uint32_t *r, const uint32_t *a) {
+    uint32_t one[RP_BN_LIMBS] = { 1 };
+    mont_mul(m, r, a, one);
+}
+
+void rp_mont_add(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b) {
+    uint32_t t[RP_BN_LIMBS];
+    uint64_t c = 0;
+    for (size_t j = 0; j < m->k; ++j) {
+        c += (uint64_t)a[j] + b[j];
+        t[j] = (uint32_t)c;
+        c >>= 32;
+    }
+    cond_sub(m, r, t, (uint32_t)c);
+}
+
+void rp_mont_sub(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b) {
+    uint64_t borrow = 0;
+    uint32_t t[RP_BN_LIMBS];
+    for (size_t j = 0; j < m->k; ++j) {
+        uint64_t d = (uint64_t)a[j] - b[j] - borrow;
+        t[j] = (uint32_t)d;
+        borrow = (d >> 63) & 1;
+    }
+    uint32_t mask = (uint32_t)0 - (uint32_t)borrow;       // add n back when it went below zero
+    uint64_t c = 0;
+    for (size_t j = 0; j < m->k; ++j) {
+        c += (uint64_t)t[j] + (m->n[j] & mask);
+        r[j] = (uint32_t)c;
+        c >>= 32;
+    }
+}
