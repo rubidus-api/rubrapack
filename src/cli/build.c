@@ -4,6 +4,7 @@
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/ir.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/toml.h"
@@ -35,7 +36,9 @@ static int run(int argc, char **argv, bool lint) {
     rp_define_t defines[MAX_DEFINES];
     char *define_buf[MAX_DEFINES];
     size_t ndef = 0;
-    bool reproducible = false;
+    bool reproducible = false, msix_compress_given = false;
+    rp_msix_options_t msix_opt = { 0 };
+    const char *target = NULL;
     int rc = RP_EXIT_USAGE;
 
     for (int i = 2; i < argc; ++i) {
@@ -95,11 +98,22 @@ static int run(int argc, char **argv, bool lint) {
             nfc = true;
         } else if (strcmp(a, "--reproducible") == 0) {
             reproducible = true;
-        } else if (strcmp(a, "--target") == 0 && next) {
-            if (strcmp(next, "msi") != 0) {
-                rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "--target %s is not implemented yet (MSIX is planned for P8)", next);
+        } else if (!lint && strcmp(a, "--unsigned-test") == 0) {
+            msix_opt.unsigned_test = true;
+        } else if (!lint && strcmp(a, "--msix-compress") == 0 && next) {
+            if (strcmp(next, "store") != 0 && strcmp(next, "deflate") != 0) {
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--msix-compress takes deflate or store (got '%s')", next);
                 goto done;
             }
+            msix_opt.store = strcmp(next, "store") == 0;
+            msix_compress_given = true;
+            ++i;
+        } else if (strcmp(a, "--target") == 0 && next) {
+            if (strcmp(next, "msi") != 0 && strcmp(next, "msix") != 0) {
+                rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "--target %s is not implemented (msi or msix)", next);
+                goto done;
+            }
+            target = next;
             ++i;
         } else if (a[0] == '-' && a[1] != '\0') {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown or incomplete %s option '%s'", lint ? "lint" : "build", a);
@@ -124,11 +138,25 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
-    if (!ends_with(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': only .msi is implemented yet (.msix is planned for P8)", out);
+    bool msix = !lint && ends_with(out, ".msix");
+    if (!lint && !msix && !ends_with(out, ".msi")) {
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi and .msix", out);
+        goto done;
+    }
+    if (target && strcmp(target, msix ? "msix" : "msi") != 0) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target %s does not match the output '%s'", target, out);
+        goto done;
+    }
+    if (!msix && (msix_opt.unsigned_test || msix_compress_given)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--unsigned-test and --msix-compress are for .msix outputs");
+        goto done;
+    }
+    if (msix && (sign.key || compress)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, sign.key ? "signing an MSIX comes with P9; build it unsigned (--unsigned-test to install it for testing)"
+                                                       : "--compress is for .msi; an MSIX takes --msix-compress deflate|store");
         goto done;
     }
 
@@ -162,7 +190,19 @@ static int run(int argc, char **argv, bool lint) {
             rp_toml_free(&doc);
         }
         rp_mem_free(heap, text);
-        if (err == PROVEN_OK) {
+        if (err == PROVEN_OK && msix) {
+            uint8_t *pkg = NULL;
+            size_t pkg_len = 0;
+            err = rp_msix_from_ir(heap, &ir, &msix_opt, &pkg, &pkg_len, &d);
+            rp_ir_free(&ir);
+            if (err == PROVEN_OK) {
+                err = rp_pal_write_file_atomic(heap, out, pkg, pkg_len);
+                if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+            }
+            rp_mem_free(heap, pkg);
+            rp_srcdiag_print(&d, src);
+            rc = err == PROVEN_OK ? RP_EXIT_OK : d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
+        } else if (err == PROVEN_OK) {
             rp_limits_t limits = rp_limits_default();
             // External cabinets are named after the package: <stem>.cab next to <stem>.msi.
             char stem[512], cabpath[1536];

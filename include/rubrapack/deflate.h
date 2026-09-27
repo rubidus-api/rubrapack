@@ -2,7 +2,7 @@
 #define RUBRAPACK_DEFLATE_H
 
 // include/rubrapack/deflate.h - raw deflate (RFC 1951) encoder and decoder. Used for MSZIP
-// cabinet blocks (MS-MCI) now, ZIP/MSIX and PNG later (RFC-0001 F5).
+// cabinet blocks (MS-MCI), MSIX blocks and PNG (RFC-0001 F5).
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,6 +16,14 @@
 // No preset dictionary is used (so every MSZIP block stands on its own).
 [[nodiscard]] proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out,
                                       size_t *out_len);
+
+// One independently decodable part of a stream, as MSIX block maps need (RFC-0009; Windows'
+// packaging API writes this, tests/fixtures/msix): in[0..n) as non-final blocks with no reference
+// before it, then an empty stored block (00 00 FF FF). Parts put one after the other, closed by
+// RP_DEFLATE_END (an empty final fixed block), are one valid stream.
+[[nodiscard]] proven_err_t rp_deflate_segment(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out,
+                                              size_t *out_len);
+#define RP_DEFLATE_END "\x03\x00"
 
 // Decodes one raw deflate stream from in[0..in_len) and appends the output to buf[*pos..cap);
 // buf[0..*pos) is history that back-references may reach (MSZIP keeps the previous blocks'

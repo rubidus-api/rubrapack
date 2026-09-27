@@ -47,6 +47,7 @@ typedef struct {
     bool     any_arch, keep, vital;
     uint16_t pe_machine;        // 0 when the file is not a PE program (checked in rp_ir_build)
     bool     pe_is_dll;
+    bool     msi_only;          // msi-only = true: left out of an MSIX (RFC-0009 M6)
     char    *feature;           // resolved (G2): never NULL
     char    *component_guid;    // user-fixed GUID or NULL
     rp_pos_t pos;
@@ -239,6 +240,12 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_action_t;
 
+// A table an MSIX cannot hold (RFC-0009 M6): an error when building .msix, unless msi-only = true.
+typedef struct {
+    char    *kind, *id;
+    rp_pos_t pos;
+} rp_ir_msix_block_t;
+
 typedef struct {
     // [package]
     char     *name, *summary_name, *manufacturer;
@@ -307,6 +314,18 @@ typedef struct {
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL
+    // [msix] and [msix-app.ID] (RFC-0009; used only when the output is .msix)
+    bool      has_msix;
+    char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;
+    rp_pos_t  msix_pos;
+    size_t    msix_app_count;
+    char     *msix_app_id, *msix_app_exe;       // exe: a [file] ID
+    char     *msix_app_display, *msix_app_description;
+    char     *msix_logo[3];                     // Square150x150, Square44x44, StoreLogo (as written), or NULL
+    char     *msix_logo_path[3];                // to open (joined with the .rpk directory)
+    rp_pos_t  msix_app_pos;
+    rp_ir_msix_block_t *msix_blocks;            // tables an MSIX cannot carry, without msi-only = true
+    size_t    msix_block_count;
     proven_allocator_t alloc;
 } rp_ir_t;
 

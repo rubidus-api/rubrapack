@@ -292,11 +292,14 @@ static void write_stored(bits_t *w, const uint8_t *p, size_t n, bool final) {
     } while (n > 0);
 }
 
-proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out, size_t *out_len) {
+// A whole stream (last block final), or with `segment` a part of one: every block non-final, then
+// an empty stored block, which ends the part on a byte boundary (00 00 FF FF, a "full flush").
+static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, bool segment, uint8_t **out, size_t *out_len) {
     if ((in == NULL && n != 0) || out == NULL || out_len == NULL || level < 0 || level > 9) return PROVEN_ERR_INVALID_ARG;
     bits_t w = { .b = rp_buf_new(alloc, n + n / 8 + 1024) };
     if (level == 0 || n == 0) {
-        write_stored(&w, in, n, true);
+        if (n || !segment) write_stored(&w, in, n, !segment);
+        if (segment) write_stored(&w, NULL, 0, false);
         align(&w);
         return rp_buf_take(&w.b, out, out_len);
     }
@@ -384,7 +387,7 @@ proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, i
                 pos += best_len;
             }
         }
-        bool final = pos >= n;
+        bool final = pos >= n && !segment;
         uint64_t dyn_header = dynamic_tree(alloc, dyn, syms, ns);
         if (dyn_header == 0) {
             err = PROVEN_ERR_NOMEM;
@@ -417,6 +420,7 @@ proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, i
             write_symbols(&w, dyn, syms, ns);
         }
     }
+    if (segment && err == PROVEN_OK) write_stored(&w, NULL, 0, false);
     align(&w);
     rp_mem_free(alloc, head);
     rp_mem_free(alloc, prev);
@@ -428,6 +432,14 @@ proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, i
         return err;
     }
     return rp_buf_take(&w.b, out, out_len);
+}
+
+proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out, size_t *out_len) {
+    return run(alloc, in, n, level, false, out, out_len);
+}
+
+proven_err_t rp_deflate_segment(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out, size_t *out_len) {
+    return run(alloc, in, n, level, true, out, out_len);
 }
 
 // ---- decoder ---------------------------------------------------------------------------------

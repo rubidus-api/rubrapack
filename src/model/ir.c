@@ -122,6 +122,8 @@ static void check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowe
     for (size_t k = 0; k < t->count; ++k) {
         bool known = false;
         for (size_t j = 0; allowed[j]; ++j) known |= strcmp(t->keys[k].key, allowed[j]) == 0;
+        // msi-only (RFC-0009 M6) is read for every item table outside [msix-*] (msix_blockers).
+        known |= t->id && strncmp(t->kind, "msix", 4) != 0 && strcmp(t->keys[k].key, "msi-only") == 0;
         if (!known) {
             const char *hint = suggest(t->keys[k].key, allowed);
             ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]%s%s%s", t->keys[k].key, t->kind, t->id ? "." : "",
@@ -360,14 +362,11 @@ static bool known_folder(const char *s) {
 
 // ---- tables ----------------------------------------------------------------------------------
 
-static const char *const top_kinds[] = { "package", "define", "arp", "ui", NULL };
+static const char *const top_kinds[] = { "package", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
                                           "ui-text", "dialog", "dialog-control", NULL };
-static const char *const later_kinds[] = {
-                                           "assoc", "protocol",
-                                           "msix",
-                                           "msix-app", "msix-extension", NULL };
+static const char *const later_kinds[] = { "assoc", "protocol", "msix-extension", NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
@@ -686,6 +685,7 @@ static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     f->any_arch = get_bool(c, t, "any-arch", false);
     f->keep = get_bool(c, t, "keep", false);
     f->vital = get_bool(c, t, "vital", true);
+    f->msi_only = get_bool(c, t, "msi-only", false);
     f->feature = get_str(c, t, "feature", false, NULL);
     f->component_guid = get_str(c, t, "component-guid", false, NULL);
     if (f->component_guid && !guid_ok(f->component_guid)) {
@@ -871,6 +871,7 @@ static void expand_files(ctx_t *c, const rp_ttable_t *t) {
     char *pattern = get_str(c, t, "glob", true, NULL);
     char *feature = get_str(c, t, "feature", false, NULL);
     bool vital = get_bool(c, t, "vital", true), any_arch = get_bool(c, t, "any-arch", false);
+    bool msi_only = get_bool(c, t, "msi-only", false);
     if (get_bool(c, t, "keep", false)) ERR(c, key_pos(t, "keep"), "RP1901", "keep for files is not supported yet (planned for P3)");
     rp_pos_t gp = key_pos(t, "glob");
     glob_t g = { .c = c, .pos = gp };
@@ -943,6 +944,7 @@ static void expand_files(ctx_t *c, const rp_ttable_t *t) {
                 f->source_path = join(c, g.root, rel);
                 f->name = dup(c, q);
                 f->vital = vital;
+                f->msi_only = msi_only;
                 f->any_arch = any_arch;
                 f->feature = feature ? dup(c, feature) : NULL;
                 f->pos = gp;
@@ -1002,6 +1004,93 @@ static void parse_arp(ctx_t *c, const rp_ttable_t *t) {
     c->ir->arp_help = get_str(c, t, "help", false, NULL);
     c->ir->arp_about = get_str(c, t, "about", false, NULL);
     if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1901", "icon is not supported yet (planned for P3)");
+}
+
+// ---- [msix] and [msix-app.ID] (RFC-0009) --------------------------------------------------------
+
+// ST_PackageName: 3-50 characters of A-Z a-z 0-9 . -
+static bool msix_name_ok(const char *s) {
+    size_t n = strlen(s);
+    if (n < 3 || n > 50) return false;
+    for (; *s; ++s) {
+        char ch = *s;
+        if (!((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '-')) return false;
+    }
+    return true;
+}
+
+static bool four_part_version(const char *s) {
+    int parts = 0;
+    while (*s) {
+        unsigned v = 0, digits = 0;
+        while (*s >= '0' && *s <= '9' && digits < 6) v = v * 10 + (unsigned)(*s++ - '0'), ++digits;
+        if (digits == 0 || v > 65535) return false;
+        ++parts;
+        if (*s == '.') ++s;
+        else if (*s) return false;
+    }
+    return parts == 4;
+}
+
+static void parse_msix(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", NULL };
+    check_keys(c, t, keys);
+    rp_ir_t *ir = c->ir;
+    ir->has_msix = true;
+    ir->msix_pos = t->pos;
+    ir->msix_identity_name = get_str(c, t, "identity-name", true, NULL);
+    ir->msix_publisher = get_str(c, t, "publisher", true, NULL);
+    ir->msix_publisher_display = get_str(c, t, "publisher-display-name", false, NULL);
+    ir->msix_min_version = get_str(c, t, "min-version", false, NULL);
+    if (ir->msix_identity_name && !msix_name_ok(ir->msix_identity_name)) {
+        ERR(c, key_pos(t, "identity-name"), "RP1601", "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')",
+            ir->msix_identity_name);
+    }
+    if (ir->msix_publisher && (strchr(ir->msix_publisher, '=') == NULL || strlen(ir->msix_publisher) > 8192)) {
+        ERR(c, key_pos(t, "publisher"), "RP1602", "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\"");
+    }
+    if (ir->msix_publisher && strstr(ir->msix_publisher, "OID.2.25.311729368913984317654407730594956997722")) {
+        ERR(c, key_pos(t, "publisher"), "RP1602", "publisher must not carry the unsigned-test OID; --unsigned-test adds it");
+    }
+    if (ir->msix_min_version && !four_part_version(ir->msix_min_version)) {
+        ERR(c, key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 10.0.17763.0");
+    }
+}
+
+static char *logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown) {
+    *shown = get_str(c, t, key, false, NULL);
+    if (*shown == NULL) return NULL;
+    rp_pos_t p = key_pos(t, key);
+    if (!source_path_ok(c, *shown, p)) return NULL;
+    char *path = join(c, c->opt->source_dir ? c->opt->source_dir : ".", *shown);
+    uint64_t size;
+    if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) ERR(c, p, "RP1507", "logo '%s' not found", *shown);
+    return path;
+}
+
+static void parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "executable", "display-name", "description", "logo-150", "logo-44", "store-logo", NULL };
+    check_keys(c, t, keys);
+    rp_ir_t *ir = c->ir;
+    if (++ir->msix_app_count > 1) {
+        ERR(c, t->pos, "RP1606", "one [msix-app.*] only for now (more applications come with P8b)");
+        return;
+    }
+    ir->msix_app_id = dup(c, t->id);
+    ir->msix_app_pos = t->pos;
+    ir->msix_app_exe = get_str(c, t, "executable", true, NULL);
+    ir->msix_app_display = get_str(c, t, "display-name", false, NULL);
+    ir->msix_app_description = get_str(c, t, "description", false, NULL);
+    static const char *const logos[3] = { "logo-150", "logo-44", "store-logo" };
+    int given = 0;
+    for (int i = 0; i < 3; ++i) {
+        ir->msix_logo_path[i] = logo_path(c, t, logos[i], &ir->msix_logo[i]);
+        given += ir->msix_logo[i] != NULL;
+    }
+    if (given != 0 && given != 3) ERR(c, t->pos, "RP1608", "give all three logos (logo-150, logo-44, store-logo) or none");
+    bool id_ok = t->id[0] != '\0' && strlen(t->id) <= 64 && !(t->id[0] >= '0' && t->id[0] <= '9');
+    for (const char *p = t->id; *p; ++p) id_ok &= (*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') || (*p >= '0' && *p <= '9');
+    if (!id_ok) ERR(c, t->pos, "RP1606", "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit", t->id);
 }
 
 static void parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
@@ -2318,6 +2407,22 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "dialog-control") == 0) ++ndctl;
         else if (strcmp(t->kind, "ui") == 0) uit = t;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
+        else if (strcmp(t->kind, "msix") == 0) parse_msix(&c, t);
+        else if (strcmp(t->kind, "msix-app") == 0) parse_msix_app(&c, t);
+        // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
+        static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
+                                               "dialog", "dialog-control", "arp", "msix", "msix-app", NULL };
+        if (!in_list(t->kind, msix_ok) && !get_bool(&c, t, "msi-only", false)) {
+            rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
+            if (nb == NULL) {
+                c.nomem = true;
+            } else {
+                if (ir->msix_block_count) memcpy(nb, ir->msix_blocks, ir->msix_block_count * sizeof *nb);
+                rp_mem_free(alloc, ir->msix_blocks);
+                ir->msix_blocks = nb;
+                nb[ir->msix_block_count++] = (rp_ir_msix_block_t){ dup(&c, t->kind), dup(&c, t->id), t->pos };
+            }
+        }
     }
     (void)item_kinds;
     if (c.define) {
@@ -2731,6 +2836,23 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->actions);
     rp_mem_free(a, ir->arp_help);
     rp_mem_free(a, ir->arp_about);
+    rp_mem_free(a, ir->msix_identity_name);
+    rp_mem_free(a, ir->msix_publisher);
+    rp_mem_free(a, ir->msix_publisher_display);
+    rp_mem_free(a, ir->msix_min_version);
+    rp_mem_free(a, ir->msix_app_id);
+    rp_mem_free(a, ir->msix_app_exe);
+    rp_mem_free(a, ir->msix_app_display);
+    rp_mem_free(a, ir->msix_app_description);
+    for (int i = 0; i < 3; ++i) {
+        rp_mem_free(a, ir->msix_logo[i]);
+        rp_mem_free(a, ir->msix_logo_path[i]);
+    }
+    for (size_t i = 0; i < ir->msix_block_count; ++i) {
+        rp_mem_free(a, ir->msix_blocks[i].kind);
+        rp_mem_free(a, ir->msix_blocks[i].id);
+    }
+    rp_mem_free(a, ir->msix_blocks);
     rp_mem_free(a, ir->folders);
     rp_mem_free(a, ir->features);
     rp_mem_free(a, ir->dirs);
