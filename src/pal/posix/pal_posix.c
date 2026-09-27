@@ -7,6 +7,7 @@
 #include "rubrapack/text.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <errno.h>
@@ -163,4 +164,13 @@ proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_ut
     if (close(fd) != 0) err = PROVEN_ERR_IO;
     if (err != PROVEN_OK) unlink(path_utf8);
     return err;
+}
+
+char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
+    const char *v = getenv(name);
+    if (v == NULL) return NULL;
+    size_t n = strlen(v);
+    char *c = rp_mem_alloc(alloc, n + 1, 1);
+    if (c) memcpy(c, v, n + 1);
+    return c;
 }

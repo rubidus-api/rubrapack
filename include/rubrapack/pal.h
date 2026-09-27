@@ -65,4 +65,7 @@ typedef enum {
 [[nodiscard]] proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data,
                                                  size_t len);
 
+// An environment variable as UTF-8 (NULL when unset); free with rp_mem_free.
+[[nodiscard]] char *rp_pal_getenv(proven_allocator_t alloc, const char *name);
+
 #endif // RUBRAPACK_PAL_H

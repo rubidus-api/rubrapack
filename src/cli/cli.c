@@ -23,9 +23,10 @@ typedef struct {
 static const command_t commands[] = {
     { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible]",
                  "build a package from a source file", true },
-    { "sign",    "sign <file> [signing options]", "sign an existing package or PE file", false },
-    { "verify",  "verify <file> [--trust <cert>] [--system-roots]",
-                 "check structure, digests, and signatures", false },
+    { "sign",    "sign <file.exe|.dll> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [-o <out>]",
+                 "sign a PE file (MSI follows)", true },
+    { "verify",  "verify <file.exe|.dll> [--trust <certificate>]...",
+                 "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
@@ -153,6 +154,8 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "extract") == 0) return rp_cmd_extract(argc, argv);
     if (strcmp(name, "new") == 0) return rp_cmd_new(argc, argv);
     if (strcmp(name, "guid") == 0) return rp_cmd_guid(argc, argv);
+    if (strcmp(name, "sign") == 0) return rp_cmd_sign(argc, argv);
+    if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

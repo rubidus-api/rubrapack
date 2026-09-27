@@ -1,0 +1,72 @@
+#ifndef RUBRAPACK_SIGN_H
+#define RUBRAPACK_SIGN_H
+
+// include/rubrapack/sign.h - Authenticode (RFC-0007 1-3): CMS SignedData over an
+// SpcIndirectDataContent, for PE files (SpcPeImageData) and, next, MSI (SpcSipInfo). The encoding
+// follows what Windows' own signer writes (tests/fixtures/authenticode, made by
+// Set-AuthenticodeSignature): SHA-256 digest, rsaEncryption signature, the signed attributes
+// SpcSpOpusInfo, contentType, SpcStatementType (individual) and messageDigest, the certificates
+// of the key file without self-signed roots, no signing time, no timestamp (P7).
+
+#include <stddef.h>
+#include <stdint.h>
+
+#include "proven/allocator.h"
+#include "proven/types.h"
+#include "rubrapack/pki.h"
+
+// Checks that the key file can sign code at time `now` (seconds since 1970): an RSA key with a
+// matching certificate that has the code-signing EKU, is not a CA, allows digital signatures, is
+// valid at `now` and has no critical extension we do not understand. *leaf gets its index.
+[[nodiscard]] bool rp_sign_check_key(const rp_keyfile_t *kf, int64_t now, int *leaf, const char **why);
+
+// Builds the SignedData ContentInfo (DER). `data` is the SpcAttributeTypeAndOptionalValue DER of
+// the indirect data (the part that says what kind of file is signed); `digest` the file's digest.
+[[nodiscard]] proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg,
+                                                 const uint8_t *data, size_t data_len, const uint8_t *digest, uint8_t **out,
+                                                 size_t *out_len, const char **why);
+
+// What a signature check found; each part apart (RFC-0001 12.6).
+typedef struct {
+    bool          parsed;       // a SignedData we understand
+    bool          digest_ok;    // the file's digest equals the signed one
+    bool          attrs_ok;     // messageDigest and contentType agree with the content
+    bool          signature_ok; // the signer's signature over the attributes verifies
+    rp_hash_alg_t alg;
+    rp_der_span_t data;         // the SpcAttributeTypeAndOptionalValue (whole element)
+    rp_der_span_t signer_cert;  // the signer's certificate (whole), when found
+    rp_der_span_t certs;        // the certificates SET contents
+} rp_authenticode_check_t;
+
+// Parses a SignedData and checks its attributes and signature; the caller compares the file digest
+// (digest_ok is set when `digest` is given and equals the signed one).
+void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *digest, rp_authenticode_check_t *r, const char **why);
+
+// ---- PE ------------------------------------------------------------------------------------------
+
+// The Authenticode digest of a PE file (Authenticode PE document): the headers without the
+// checksum and the certificate table entry, the sections in file order, and the data after them,
+// without the certificate table itself.
+[[nodiscard]] bool rp_pe_digest(const uint8_t *pe, size_t len, rp_hash_alg_t alg, uint8_t *digest, const char **why);
+
+// Signs a PE file: pads it to 8 bytes, adds the WIN_CERTIFICATE, points the certificate table at
+// it and recomputes the checksum. A file that is signed already is refused.
+[[nodiscard]] proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len, const rp_keyfile_t *kf, int64_t now,
+                                      uint8_t **out, size_t *out_len, const char **why);
+
+// Verifies a signed PE file.
+void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, const char **why);
+
+// ---- trust -------------------------------------------------------------------------------------
+
+// Whether `child` is signed by `issuer`'s key (RSA with SHA-256/384/512) and names it as issuer.
+[[nodiscard]] bool rp_cert_signed_by(const rp_cert_t *child, const rp_cert_t *issuer);
+
+// Builds a path from the signer's certificate through the signature's certificates to one of the
+// trust anchors (DER certificates) and checks it at time `now`: every signature, validity, CA and
+// key-cert-sign on issuers, the code-signing EKU on the leaf, no unknown critical extension. A path
+// is at most 8 certificates long.
+[[nodiscard]] bool rp_chain_trusted(rp_der_span_t signer, rp_der_span_t certs, const rp_der_span_t *anchors, size_t anchor_count,
+                                    int64_t now, const char **why);
+
+#endif // RUBRAPACK_SIGN_H

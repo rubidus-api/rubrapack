@@ -404,6 +404,8 @@ rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
+rubrapack sign <file.exe|.dll> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [-o <out>]
+rubrapack verify <file.exe|.dll> [--trust <certificate>]...
 rubrapack version | help [command]
 ```
 
@@ -454,5 +456,15 @@ rubrapack version | help [command]
   a reserved device name (`CON`, `COM1`, ...), a trailing dot or space, or two paths that differ
   only in case are refused. The defaults allow 100,000 entries and 16 GiB. A `.cab` unpacks by the
   names inside it.
+- `sign` adds an Authenticode signature (SHA-256, RSA) to a PE file, in place or to `-o`. The key
+  file is a PKCS#12 file (`.pfx`/`.p12`: AES with PBKDF2-HMAC-SHA256, SHA-256 MAC - what current
+  Windows and OpenSSL export) or a PKCS#8 PEM/DER key, plain or encrypted with PBES2; `--cert` adds
+  certificates the key file does not hold. The certificate must be for code signing, must not be a
+  CA and must be valid now. The password comes from an environment variable or a file, never from
+  the command line. A file that is signed already is refused. Signing MSI packages follows.
+- `verify` prints what it checked - structure, digest, signature, the path to a certificate given
+  with `--trust`, revocation (never looked up: `not-checked`) and timestamp - and succeeds only
+  when all of them hold and the path ends in a trusted certificate. Without `--trust` it does not
+  call anything trusted (exit code 4). It says nothing about Windows' own reputation checks.
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.

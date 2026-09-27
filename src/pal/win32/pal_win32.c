@@ -5,7 +5,9 @@
 #include "rubrapack/pal.h"
 #include "rubrapack/text.h"
 
+#include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -263,4 +265,20 @@ proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_ut
     }
     proven_u16str_destroy(alloc, &w);
     return err;
+}
+
+char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
+    proven_u16str_t w = { 0 };
+    if (wide_path(alloc, name, &w) != PROVEN_OK) return NULL;
+    const wchar_t *v = _wgetenv((const wchar_t *)proven_u16str_as_ptr(&w));
+    proven_u16str_destroy(alloc, &w);
+    if (v == NULL) return NULL;
+    size_t n = wcslen(v);
+    rp_text_result_t r = rp_utf16_to_utf8((const proven_u16 *)v, n, NULL, 0);
+    if (r.err != PROVEN_OK) return NULL;
+    char *c = rp_mem_alloc(alloc, r.units + 1, 1);
+    if (c == NULL) return NULL;
+    (void)rp_utf16_to_utf8((const proven_u16 *)v, n, (uint8_t *)c, r.units);
+    c[r.units] = 0;
+    return c;
 }

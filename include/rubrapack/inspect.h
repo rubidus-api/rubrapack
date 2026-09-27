@@ -20,4 +20,8 @@
 [[nodiscard]] int rp_cmd_new(int argc, char **argv);
 [[nodiscard]] int rp_cmd_guid(int argc, char **argv);
 
+// `rubrapack sign` and `rubrapack verify` (RFC-0007 S4).
+[[nodiscard]] int rp_cmd_sign(int argc, char **argv);
+[[nodiscard]] int rp_cmd_verify(int argc, char **argv);
+
 #endif // RUBRAPACK_INSPECT_H

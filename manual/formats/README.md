@@ -14,6 +14,7 @@ tool from them without reading rubrapack's code - or check rubrapack's code agai
 | [`pe.md`](pe.md) | Program files: machine type and version resource |
 | [`cab-mszip.md`](cab-mszip.md) | Cabinet files, MSZIP blocks, the deflate encoder |
 | [`identity.md`](identity.md) | Deterministic GUIDs and keys, reproducible builds |
+| [`authenticode.md`](authenticode.md) | Authenticode signatures: where they sit in a PE file, the digest, the CMS structure Windows accepts |
 | [`verify.md`](verify.md) | How to check your output with Windows' own components |
 | [`msix.md`](msix.md) | MSIX - planned, not verified yet |
 
