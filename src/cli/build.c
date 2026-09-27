@@ -27,6 +27,53 @@ static bool ends_with(const char *s, const char *suffix) {
     return true;
 }
 
+// A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
+// named <identity>_<version>_<arch>.msix inside, the architectures in the order given.
+static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
+                        char (*archs)[8], size_t narch, const rp_msix_options_t *mopt, const char *out, const char *src, rp_srcdiags_t *d) {
+    static const char *const arch_names[] = { "x64", "arm64", "x86" };
+    rp_msix_part_t parts[3];
+    uint8_t *pkgs[3] = { 0 };
+    char names[3][320];
+    size_t n = 0;
+    proven_err_t err = PROVEN_OK;
+    for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
+        rp_ir_t ir;
+        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, false };
+        err = rp_ir_build(heap, doc, &opt, &ir, d);
+        if (err != PROVEN_OK) break;
+        size_t len = 0;
+        err = rp_msix_from_ir(heap, &ir, mopt, &pkgs[n], &len, d);
+        if (err == PROVEN_OK) {
+            unsigned v[4] = { 0 };
+            for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
+            snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", ir.msix_identity_name, v[0], v[1], v[2], v[3], arch_names[ir.arch]);
+            parts[n] = (rp_msix_part_t){ names[n], pkgs[n], len };
+            ++n;
+        }
+        rp_ir_free(&ir);
+    }
+    rp_srcdiag_print(d, src);
+    int rc = err == PROVEN_OK ? RP_EXIT_OK : d->errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
+    if (err == PROVEN_OK) {
+        rp_limits_t lim = rp_limits_default();
+        uint8_t *b = NULL;
+        size_t bl = 0;
+        const char *why = NULL;
+        err = rp_msix_bundle(heap, parts, n, &lim, &b, &bl, &why);
+        if (err != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot bundle the packages: %s", why ? why : "out of memory");
+            rc = RP_EXIT_IO;
+        } else if (rp_pal_write_file_atomic(heap, out, b, bl) != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+            rc = RP_EXIT_IO;
+        }
+        rp_mem_free(heap, b);
+    }
+    for (size_t i = 0; i < n; ++i) rp_mem_free(heap, pkgs[i]);
+    return rc;
+}
+
 // `build`, or with `lint` set `lint <src.rpk>`: the same steps (parse, model, tables, RP20xx/RP21xx)
 // without writing anything (RFC-0006 1). --strict turns warnings into a lint failure.
 static int run(int argc, char **argv, bool lint) {
@@ -138,13 +185,34 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
-    bool msix = !lint && ends_with(out, ".msix");
+    bool bundle = !lint && ends_with(out, ".msixbundle");
+    bool msix = !lint && (bundle || ends_with(out, ".msix"));
     if (!lint && !msix && !ends_with(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi and .msix", out);
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msix and .msixbundle", out);
         goto done;
+    }
+    // A bundle takes a list of architectures (RFC-0010 P8b-2); everything else one.
+    char arch_list[3][8];
+    size_t narch = 0;
+    if (arch && strchr(arch, ',') && !bundle) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch takes one architecture, or a list for a .msixbundle output");
+        goto done;
+    }
+    for (const char *p = arch; bundle && p && *p;) {
+        const char *comma = strchr(p, ',');
+        size_t n = comma ? (size_t)(comma - p) : strlen(p);
+        bool dup = false;
+        for (size_t k = 0; k < narch; ++k) dup |= strlen(arch_list[k]) == n && memcmp(arch_list[k], p, n) == 0;
+        if (narch == 3 || n == 0 || n >= sizeof arch_list[0] || dup) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')", arch);
+            goto done;
+        }
+        memcpy(arch_list[narch], p, n);
+        arch_list[narch++][n] = 0;
+        p = comma ? comma + 1 : p + n;
     }
     if (target && strcmp(target, msix ? "msix" : "msi") != 0) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target %s does not match the output '%s'", target, out);
@@ -184,6 +252,12 @@ static int run(int argc, char **argv, bool lint) {
         rp_tdoc_t doc;
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
+        if (err == PROVEN_OK && bundle) {
+            rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, &msix_opt, out, src, &d);
+            rp_toml_free(&doc);
+            rp_mem_free(heap, text);
+            goto done;
+        }
         if (err == PROVEN_OK) {
             rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? NULL : out, nfc };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);

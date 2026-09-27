@@ -626,8 +626,9 @@ int rp_cmd_extract(int argc, char **argv) {
             input = a;
         }
     }
-    if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab") || ends_with_ci(input, ".msix"))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]");
+    if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab") || ends_with_ci(input, ".msix") ||
+                                             ends_with_ci(input, ".msixbundle"))) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -644,7 +645,7 @@ int rp_cmd_extract(int argc, char **argv) {
     int rc;
     if (ends_with_ci(input, ".cab")) {
         rc = plan_cab(&p, data, len);
-    } else if (ends_with_ci(input, ".msix")) {
+    } else if (ends_with_ci(input, ".msix") || ends_with_ci(input, ".msixbundle")) {
         rc = plan_msix(&p, data, len);
     } else {
         rp_cfb_t cfb;

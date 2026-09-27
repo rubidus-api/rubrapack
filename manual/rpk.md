@@ -145,6 +145,11 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 - Files are compressed (`--msix-compress store` turns it off); pictures, archives and other
   already compressed files are stored. An MSIX holds no time: the same source gives the same
   bytes on Linux and Windows.
+- An output ending in `.msixbundle` is a bundle: the source built once for each architecture of
+  `--arch` (a list, `--arch x64,x86,arm64`; without it the source's own), each package named
+  `<identity-name>_<version>_<arch>.msix` inside. Windows installs the package for its own
+  architecture from it (an x64 machine takes x64 before x86). `$(ARCH)` gives each build its own
+  programs: `source = "bin/$(ARCH)/app.exe"`. The bundle's version is the packages' version.
 
 ### Registering with an installed program: `[action.ID]`
 
@@ -396,7 +401,8 @@ value = "typical"                 # the default, also for a silent installation
 source for another architecture (`--arch`), give that architecture its own family with
 `upgrade-code-x86`, `upgrade-code-arm64` or `upgrade-code-x64`; without it the build is refused.
 Windows Installer's upgrade detection cannot tell architectures apart, so sharing one code would
-make installing one architecture remove the other.
+make installing one architecture remove the other. An MSIX has no upgrade code, so `.msix` and
+`.msixbundle` builds do not need these.
 
 ### Versions that must be removed first
 
@@ -430,7 +436,9 @@ a `level` above 1 is not installed by default.
 
 `$(NAME)` inside a string value is replaced once, from `-D NAME=value` on the command line first,
 then `[define]`. The result is not read again (a value containing `$(X)` stays literal).
-`$$` is a literal `$`. An undefined name is an error.
+`$$` is a literal `$`. An undefined name is an error. `$(ARCH)` is built in, unless `-D` or
+`[define]` defines it: the architecture being built (`x64`, `arm64` or `x86`) - so one source can
+name each architecture's program, as `source = "bin/$(ARCH)/app.exe"`.
 
 ### Program files
 
@@ -452,20 +460,21 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ## Command line
 
 ```text
-rubrapack build <src.rpk> -o <out.msi|out.msix> [-D NAME=VALUE]... [--arch x64|arm64|x86]
+rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
+                [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
                 [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
-                [--unsigned-test] [--msix-compress deflate|store]                   (.msix)
+                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
-rubrapack inspect <file.msix> [--files | --manifest]
+rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
 rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
-rubrapack lint <file.msi|file.msix> [--strict]
-rubrapack extract <file.msi|file.msix|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
+rubrapack lint <file.msi|file.msix|file.msixbundle> [--strict]
+rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
@@ -494,6 +503,8 @@ rubrapack version | help [command]
   streams and their sizes. `inspect <file.cab>` lists the files in a cabinet. `inspect <file.msix>`
   shows the identity, the executable and the files (after checking every block's hash); `--files`
   lists path, size and whether each file is compressed, `--manifest` prints `AppxManifest.xml`.
+  For a bundle, the identity and the packages (each opened and checked as a package), and its
+  `AppxBundleManifest.xml`; `extract` writes the packages out.
 - `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
   `dist/`, with a fresh `upgrade-code`. It never replaces an existing file.
 - `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
@@ -515,7 +526,9 @@ rubrapack version | help [command]
   fail too. A package in another code page than 65001 gets a note (`RP2100`): its text cannot be
   checked as UTF-8. The last line on stdout counts errors and warnings. `lint <file.msix>` checks the package the way Windows reads
   it - the ZIP, the block map, every block's hash - and that the manifest has an identity and
-  names files that are in the package (`RP2201`, `RP2202`).
+  names files that are in the package (`RP2201`, `RP2202`). For a bundle: its manifest's block
+  map, and for each package where the manifest says it lies, its size, its identity and the
+  package itself; one package per architecture.
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.

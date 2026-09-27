@@ -1,4 +1,5 @@
-// src/cli/msix.c - `rubrapack inspect` and `rubrapack lint` for MSIX packages (RFC-0009 1).
+// src/cli/msix.c - `rubrapack inspect` and `rubrapack lint` for MSIX packages and bundles (RFC-0009 1,
+// RFC-0010 P8b-2).
 
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -48,7 +49,7 @@ static int out(const char *s) { return rp_pal_puts(RP_OUT_STDOUT, s) == PROVEN_O
 
 int rp_msix_inspect(const char *path, const char *what) {
     if (what && strcmp(what, "--files") != 0 && strcmp(what, "--manifest") != 0) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msix> [--files | --manifest]");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]");
         return RP_EXIT_USAGE;
     }
     pkg_t p;
@@ -68,14 +69,22 @@ int rp_msix_inspect(const char *path, const char *what) {
                                                  { "TargetDeviceFamily", "MinVersion" } };
         uint64_t total = 0;
         for (size_t i = 0; i < p.count; ++i) total += p.files[i].size;
-        for (size_t i = 0; i < sizeof fields / sizeof fields[0] && rc == RP_EXIT_OK; ++i) {
+        bool bundle = strstr((const char *)p.manifest, "<Bundle") != NULL;
+        for (size_t i = 0; i < (bundle ? 3 : sizeof fields / sizeof fields[0]) && rc == RP_EXIT_OK; ++i) {
             char v[4200];
             if (!rp_xml_attr((const char *)p.manifest, p.manifest_len, fields[i][0], fields[i][1], v, sizeof v)) snprintf(v, sizeof v, "-");
             snprintf(line, sizeof line, "%s: %s\n", fields[i][1], v);
             rc = out(line);
         }
-        snprintf(line, sizeof line, "files: %zu (%llu bytes, block hashes checked)\n", p.count, (unsigned long long)total);
-        if (rc == RP_EXIT_OK) rc = out(line);
+        if (bundle) {               // its packages (after the manifest), each opened and checked
+            for (size_t i = 1; i < p.count && rc == RP_EXIT_OK; ++i) {
+                snprintf(line, sizeof line, "package: %s (%llu bytes)\n", p.files[i].name, (unsigned long long)p.files[i].size);
+                rc = out(line);
+            }
+        } else {
+            snprintf(line, sizeof line, "files: %zu (%llu bytes, block hashes checked)\n", p.count, (unsigned long long)total);
+            if (rc == RP_EXIT_OK) rc = out(line);
+        }
     }
     close_pkg(&p);
     return rc;

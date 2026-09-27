@@ -139,7 +139,26 @@ static const rp_tkey_t *find_key(const rp_ttable_t *t, const char *key) {
     return NULL;
 }
 
-// $(NAME) substitution, once (RFC-0002 5): -D first, then [define]; values are not re-read.
+static bool msix_output(const ctx_t *c) {
+    const char *o = c->opt->output;
+    size_t n = o ? strlen(o) : 0;
+    return (n >= 5 && strcmp(o + n - 5, ".msix") == 0) || (n >= 11 && strcmp(o + n - 11, ".msixbundle") == 0);
+}
+
+// The built-in $(ARCH): the architecture being built - --arch, else [package] arch as written.
+static const char *builtin_arch(ctx_t *c) {
+    if (c->opt->arch) return c->opt->arch;
+    for (size_t k = 0; k < c->doc->count; ++k) {
+        const rp_ttable_t *t = &c->doc->tables[k];
+        if (strcmp(t->kind, "package") != 0 || t->id) continue;
+        const rp_tkey_t *a = find_key(t, "arch");
+        if (a && a->val.kind == RP_TV_STRING && memchr(a->val.str, '$', a->val.len) == NULL) return a->val.str;
+    }
+    return NULL;
+}
+
+// $(NAME) substitution, once (RFC-0002 5): -D first, then [define], then the built-in $(ARCH);
+// values are not re-read.
 static char *subst(ctx_t *c, const rp_tval_t *v) {
     rp_buf_t b = rp_buf_new(c->alloc, (size_t)1 << 24);
     const char *s = v->str;
@@ -174,6 +193,7 @@ static char *subst(ctx_t *c, const rp_tval_t *v) {
                 const rp_tkey_t *k = find_key(c->define, name);
                 if (k && k->val.kind == RP_TV_STRING) val = k->val.str;
             }
+            if (!val && strcmp(name, "ARCH") == 0) val = builtin_arch(c);
             if (!val) {
                 ERR(c, v->pos, "RP1403", "variable '%s' is not defined ([define] or -D %s=...)", name, name);
                 ok = false;
@@ -520,7 +540,7 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
         }
         rp_mem_free(c->alloc, ir->upgrade_code);
         ir->upgrade_code = own;
-    } else if (home && arch && strcmp(home, arch) != 0) {
+    } else if (home && arch && strcmp(home, arch) != 0 && !msix_output(c)) {   // an MSIX has no upgrade code
         ERR(c, key_pos(t, "arch"), "RP1309",
             "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]", arch, home, code_key);
     }

@@ -5,8 +5,8 @@ tagged as in [README.md](README.md): **[spec]** for Microsoft Learn (package man
 map schemas) and ECMA-376 Part 2 (Open Packaging Conventions); **[observed]** for packages written
 by Windows' own packaging API (`IAppxFactory`/`IAppxPackageWriter` in AppxPackaging.dll, part of
 Windows) and for rubrapack's packages read back through `IAppxPackageReader` and installed with
-`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; bundles, signing and
-extensions are not covered yet.
+`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; signing and extensions
+are not covered yet.
 
 ## The ZIP archive
 
@@ -108,6 +108,48 @@ change. Measured: `ProgramFilesX64` (%ProgramFiles%), `SystemX64` (System32), `C
 (%ProgramData%) - and none for `AppData` or `Local AppData`, as Microsoft Learn says. The other names
 rubrapack uses (`ProgramFilesX86`, `ProgramFilesCommonX64`/`X86`, `SystemX86`, `Windows`) are those
 Microsoft Learn lists. [spec] [observed]
+
+## Bundles (`.msixbundle`)
+
+A ZIP archive laid out like a package (ZIP64 entries with data descriptors), as Windows' bundle
+writer (`IAppxBundleWriter`) makes it: [observed]
+
+- The packages first, stored (method 0) under their file names, in the order they were added;
+  then `AppxMetadata/AppxBundleManifest.xml`, `AppxBlockMap.xml` and `[Content_Types].xml`,
+  deflated.
+- The block map lists the bundle manifest only (`AppxMetadata\AppxBundleManifest.xml`); the
+  packages carry their own block maps.
+- `[Content_Types].xml`: `Default` `msix` = `application/vnd.ms-appx`, `Default` `xml` =
+  `application/vnd.ms-appx.bundlemanifest+xml`, and an `Override` for `/AppxBlockMap.xml`.
+- The bundle manifest, CRLF line ends, tab indents, no line end after the last tag:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Bundle xmlns="http://schemas.microsoft.com/appx/2013/bundle" SchemaVersion="5.0" xmlns:b4="http://schemas.microsoft.com/appx/2018/bundle" xmlns:b5="http://schemas.microsoft.com/appx/2019/bundle" IgnorableNamespaces="b4 b5">
+	<Identity Name="Example.App" Publisher="CN=Example" Version="1.0.0.0"/>
+	<Packages>
+		<Package Type="application" Version="1.0.0.0" Architecture="x64" FileName="Example.App_1.0.0.0_x64.msix" Offset="66" Size="61340">
+			<Resources>
+				<Resource Language="en-US"/>
+			</Resources>
+			<b4:Dependencies>
+				<b4:TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0"/>
+			</b4:Dependencies>
+		</Package>
+	</Packages>
+</Bundle>
+```
+
+- `Offset` is where the package's bytes start in the bundle (after its local header), `Size`
+  their length. `Resources` and `Dependencies` repeat the package manifest's `Resource` and
+  `TargetDeviceFamily` elements.
+- The bundle's `Version` is the writer's argument (a 64-bit number, 16 bits per part);
+  rubrapack gives the packages' version. Every package must have the bundle's `Name` and
+  `Publisher`, one version, and an architecture of its own.
+- rubrapack's bundle of the same packages has the same entries at the same offsets and the same
+  manifest, block map and content types, byte for byte; only the ZIP dates differ (1980 in
+  rubrapack's). Windows installs from it the package for its own architecture: x64 on an x64
+  machine even when x86 and arm64 are there, x86 from a bundle of x86 alone. [observed]
 
 ## Installing an unsigned package
 

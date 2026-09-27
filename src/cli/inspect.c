@@ -349,7 +349,7 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
 
 int rp_cmd_inspect(int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix> [--files|--manifest] | inspect <file.cab>");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.cab>");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;

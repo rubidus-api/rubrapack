@@ -26,7 +26,20 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out,
                                            size_t *len, rp_srcdiags_t *d);
 
-// A payload file of a package, as its block map names it.
+// A package going into a bundle: its file name there (`<name>_<version>_<arch>.msix`, say) and bytes.
+typedef struct {
+    const char    *file_name;
+    const uint8_t *data;
+    size_t         len;
+} rp_msix_part_t;
+
+// A .msixbundle of packages (RFC-0010 P8b-2), as Windows' bundle writer lays it out: every package
+// must open (rp_msix_open), all with one Name, Publisher and Version and each of its own
+// architecture; the bundle's version is theirs. PROVEN_ERR_INVALID_ARG with *why otherwise.
+[[nodiscard]] proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim,
+                                          uint8_t **out, size_t *len, const char **why);
+
+// A payload file of a package, as its block map names it; for a bundle, its manifest and packages.
 typedef struct {
     char    *name;          // block map name (backslashes), UTF-8
     uint64_t size;
@@ -38,6 +51,9 @@ typedef struct {
 // block map's hash method, every payload file present in both with the same size and local header
 // size, and every block's SHA-256 (and, for deflated files, compressed size). *files lists the
 // payload in block map order (free with rp_msix_files_free); *manifest gets AppxManifest.xml.
+// A bundle (AppxMetadata/AppxBundleManifest.xml, no AppxManifest.xml) opens too: *manifest gets the
+// bundle manifest, *files its manifest and then its packages, each checked where the manifest says
+// it lies, opened as a package, and of the identity the manifest gives it; one per architecture.
 [[nodiscard]] proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim,
                                         rp_msix_file_t **files, size_t *count, uint8_t **manifest, size_t *manifest_len,
                                         const char **why);

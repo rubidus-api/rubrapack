@@ -21,7 +21,7 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi> [-D NAME=VALUE] [--arch x64|arm64|x86] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs]]",
+    { "build",   "build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs]]",
                  "build a package from a source file", true },
     { "sign",    "sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs] [-o <out>]",
                  "sign a PE file or an MSI package", true },

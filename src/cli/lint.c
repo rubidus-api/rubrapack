@@ -96,9 +96,9 @@ int rp_cmd_lint(int argc, char **argv) {
             if ((strcmp(argv[i], "-D") == 0 || strcmp(argv[i], "--arch") == 0) && i + 1 < argc) ++i;
         } else if (target == NULL) target = argv[i];
     }
-    if (target && ends_with_ci(target, ".msix")) {
+    if (target && (ends_with_ci(target, ".msix") || ends_with_ci(target, ".msixbundle"))) {
         if (other || argc > 4 || (argc == 4 && !strict)) {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <file.msix> [--strict]");
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]");
             return RP_EXIT_USAGE;
         }
         return rp_msix_lint(target, strict);

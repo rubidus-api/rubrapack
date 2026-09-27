@@ -23,6 +23,10 @@
 
 enum { BLOCK = 65536, LEVEL = 6 };
 
+// The bundle manifest as the ZIP and the block map name it.
+#define BUNDLE_MANIFEST_ZIP "AppxMetadata/AppxBundleManifest.xml"
+#define BUNDLE_MANIFEST     "AppxMetadata\\AppxBundleManifest.xml"
+
 static const char UNSIGNED_OID[] = "OID.2.25.311729368913984317654407730594956997722=1";
 
 // ---- small helpers ------------------------------------------------------------------------------
@@ -867,8 +871,117 @@ void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t 
 
 #define BAD(msg) do { *why = (msg); err = PROVEN_ERR_INVALID_FORMAT; goto out; } while (0)
 
-proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, rp_msix_file_t **files,
-                          size_t *count, uint8_t **manifest, size_t *manifest_len, const char **why) {
+static proven_err_t open_archive(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, bool allow_bundle,
+                                 rp_msix_file_t **files, size_t *count, uint8_t **manifest, size_t *manifest_len, const char **why);
+
+// What a package's manifest says of it (the first Identity; every Resource and TargetDeviceFamily).
+typedef struct {
+    char name[256], publisher[8400], version[64], arch[16];
+} identity_t;
+
+static bool read_identity(const char *m, size_t ml, identity_t *id) {
+    return rp_xml_attr(m, ml, "Identity", "Name", id->name, sizeof id->name) &&
+           rp_xml_attr(m, ml, "Identity", "Publisher", id->publisher, sizeof id->publisher) &&
+           rp_xml_attr(m, ml, "Identity", "Version", id->version, sizeof id->version);
+}
+
+static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg, const rp_limits_t *lim, const rp_zip_entry_t *e,
+                                    size_t ne, bool *used, const char *man, size_t ml, rp_msix_file_t *f, size_t *nf, const char **why) {
+    proven_err_t err = PROVEN_OK;
+    identity_t bid;
+    char archs[64][16];
+    size_t narch = 0;
+    if (!read_identity(man, ml, &bid)) {
+        *why = "the bundle manifest has no Identity Name, Publisher and Version";
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
+    xr_t x = { man, man + ml };
+    const char *te;
+    while (next_tag(&x, "Package", &te)) {
+        char type[32], ver[64], arch[16], file[1024], off_s[32], size_s[32];
+        uint64_t off, size;
+        const char *from = x.p - 1;
+        x.p = te;
+        if (!attr_value(from, te, "FileName", file, sizeof file) || !attr_value(from, te, "Offset", off_s, sizeof off_s) ||
+            !attr_value(from, te, "Size", size_s, sizeof size_s) || !parse_u64(off_s, &off) || !parse_u64(size_s, &size)) {
+            *why = "a Package of the bundle manifest without FileName, Offset or Size";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        if (!attr_value(from, te, "Type", type, sizeof type)) snprintf(type, sizeof type, "application");
+        if (strcmp(type, "application") != 0) {
+            *why = "a resource package in the bundle (rubrapack reads application packages only)";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        if (!attr_value(from, te, "Version", ver, sizeof ver) || !attr_value(from, te, "Architecture", arch, sizeof arch)) {
+            *why = "a Package of the bundle manifest without Version or Architecture";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        size_t k = SIZE_MAX;
+        for (size_t i = 0; i < ne && k == SIZE_MAX; ++i) {
+            if (!used[i] && zip_name_is(e[i].name, file)) k = i;
+        }
+        if (k == SIZE_MAX) {
+            *why = "a package named in the bundle manifest is not in the bundle";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        if (e[k].method != 0 || e[k].data_off != off || e[k].size != size) {
+            *why = "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        for (size_t i = 0; i < narch; ++i) {
+            if (strcmp(archs[i], arch) == 0) {
+                *why = "two packages of one architecture in the bundle";
+                return PROVEN_ERR_INVALID_FORMAT;
+            }
+        }
+        if (narch == sizeof archs / sizeof archs[0]) {
+            *why = "too many packages in the bundle";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        snprintf(archs[narch++], sizeof archs[0], "%s", arch);
+        used[k] = true;
+        // The package itself, as a package; its identity must be the one the bundle states.
+        rp_msix_file_t *inner = NULL;
+        size_t ni = 0, iml = 0;
+        uint8_t *im = NULL;
+        const char *iwhy = NULL;
+        err = open_archive(alloc, pkg + off, (size_t)size, lim, false, &inner, &ni, &im, &iml, &iwhy);
+        identity_t pid;
+        bool bad_id = false;
+        if (err == PROVEN_OK) {
+            bad_id = !read_identity((const char *)im, iml, &pid) ||
+                     !rp_xml_attr((const char *)im, iml, "Identity", "ProcessorArchitecture", pid.arch, sizeof pid.arch) ||
+                     strcmp(pid.name, bid.name) != 0 || strcmp(pid.publisher, bid.publisher) != 0 || strcmp(pid.version, ver) != 0 ||
+                     strcmp(pid.arch, arch) != 0;
+        }
+        rp_msix_files_free(alloc, inner, ni);
+        rp_mem_free(alloc, im);
+        if (err != PROVEN_OK) {
+            *why = err == PROVEN_ERR_NOMEM ? "out of memory" : iwhy && strcmp(iwhy, "a bundle inside a bundle") == 0 ? iwhy : "a package in the bundle is not a valid MSIX package";
+            return err;
+        }
+        if (bad_id) {
+            *why = "a package's identity differs from what the bundle manifest says of it";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        rp_msix_file_t *o = &f[(*nf)++];
+        o->name = rp_mem_alloc(alloc, strlen(file) + 1, 1);
+        o->data = rp_mem_alloc(alloc, (size_t)size ? (size_t)size : 1, 1);
+        if (o->name == NULL || o->data == NULL) return PROVEN_ERR_NOMEM;
+        strcpy(o->name, file);
+        memcpy(o->data, pkg + off, (size_t)size);
+        o->size = size;
+        o->deflated = false;
+    }
+    if (narch == 0) {
+        *why = "a bundle without packages";
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
+    return PROVEN_OK;
+}
+
+static proven_err_t open_archive(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, bool allow_bundle,
+                                 rp_msix_file_t **files, size_t *count, uint8_t **manifest, size_t *manifest_len, const char **why) {
     *files = NULL;
     *count = 0;
     *manifest = NULL;
@@ -881,12 +994,19 @@ proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t l
     proven_err_t err = rp_zip_read(alloc, pkg, len, lim, &e, &ne, why);
     if (err != PROVEN_OK) return err;
     size_t ibm = SIZE_MAX, ict = SIZE_MAX, iman = SIZE_MAX;
+    bool bundle = false;
     for (size_t i = 0; i < ne; ++i) {
         if (strcmp(e[i].name, "AppxBlockMap.xml") == 0) ibm = i;
         else if (strcmp(e[i].name, "[Content_Types].xml") == 0) ict = i;
         else if (strcmp(e[i].name, "AppxManifest.xml") == 0) iman = i;
     }
-    if (ibm == SIZE_MAX || ict == SIZE_MAX || iman == SIZE_MAX) BAD("not an MSIX package (AppxBlockMap.xml, AppxManifest.xml or [Content_Types].xml missing)");
+    for (size_t i = 0; i < ne && iman == SIZE_MAX; ++i) {
+        if (strcmp(e[i].name, BUNDLE_MANIFEST_ZIP) == 0) iman = i, bundle = true;
+    }
+    if (bundle && !allow_bundle) BAD("a bundle inside a bundle");
+    if (ibm == SIZE_MAX || ict == SIZE_MAX || iman == SIZE_MAX) {
+        BAD("not an MSIX package or bundle (AppxBlockMap.xml, the manifest or [Content_Types].xml missing)");
+    }
     err = rp_zip_data(alloc, pkg, len, &e[ibm], 64u << 20, &bm, why);
     if (err != PROVEN_OK) goto out;
     xr_t x = { (const char *)bm, (const char *)bm + e[ibm].size };
@@ -973,14 +1093,9 @@ proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t l
         if (out_f->deflated && csum + 2 != e[k].csize) BAD("a deflated file's block sizes do not add up to its compressed size");
         x.p = file_end;
     }
-    // Everything but the footprint files must be in the block map.
-    for (size_t i = 0; i < ne; ++i) {
-        if (used[i] || i == ibm || i == ict || strcmp(e[i].name, "AppxSignature.p7x") == 0 || strncmp(e[i].name, "AppxMetadata/", 13) == 0) continue;
-        BAD("a file of the package is not in the block map");
-    }
     if (!used[iman]) BAD("the manifest is not in the block map");
     for (size_t i = 0; i < nf; ++i) {
-        if (strcmp(f[i].name, "AppxManifest.xml") == 0) {
+        if (strcmp(f[i].name, bundle ? BUNDLE_MANIFEST : "AppxManifest.xml") == 0) {
             *manifest = rp_mem_alloc(alloc, (size_t)f[i].size + 1, 1);
             if (*manifest == NULL) {
                 err = PROVEN_ERR_NOMEM;
@@ -990,6 +1105,17 @@ proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t l
             (*manifest)[f[i].size] = 0;
             *manifest_len = (size_t)f[i].size;
         }
+    }
+    // A bundle's packages are outside its block map: its manifest names each one, where it lies
+    // and how large it is, and each is a package of its own.
+    if (bundle) {
+        err = bundle_packages(alloc, pkg, lim, e, ne, used, (const char *)*manifest, *manifest_len, f, &nf, why);
+        if (err != PROVEN_OK) goto out;
+    }
+    // Everything but the footprint files must be in the block map (or, in a bundle, be a package).
+    for (size_t i = 0; i < ne; ++i) {
+        if (used[i] || i == ibm || i == ict || strcmp(e[i].name, "AppxSignature.p7x") == 0 || strncmp(e[i].name, "AppxMetadata/", 13) == 0) continue;
+        BAD(bundle ? "a file of the bundle is neither in its block map nor one of its packages" : "a file of the package is not in the block map");
     }
 out:
     rp_mem_free(alloc, bm);
@@ -1007,8 +1133,133 @@ out:
     return PROVEN_OK;
 }
 
+proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, rp_msix_file_t **files,
+                          size_t *count, uint8_t **manifest, size_t *manifest_len, const char **why) {
+    return open_archive(alloc, pkg, len, lim, true, files, count, manifest, manifest_len, why);
+}
+
 bool rp_xml_attr(const char *xml, size_t len, const char *element, const char *attribute, char *out, size_t cap) {
     xr_t x = { xml, xml + len };
     const char *te;
     return next_tag(&x, element, &te) && attr_value(x.p - 1, te, attribute, out, cap);
+}
+
+// ---- bundles (RFC-0010 P8b-2) -------------------------------------------------------------------
+//
+// As Windows' bundle writer (IAppxBundleWriter) lays one out (docs/research/2026-09-27-p8b2-bundle-oracle.md):
+// the packages stored in the order given, AppxMetadata/AppxBundleManifest.xml (each package's
+// identity, languages and device families, and where its bytes lie), a block map of the manifest
+// alone, [Content_Types].xml. The bundle's version is its packages' version.
+
+// Every `element` of a manifest with its attributes `names`, written as `<prefix... a="v".../>` lines.
+static void copy_elements(rp_buf_t *m, const char *man, size_t ml, const char *element, const char *out_name, const char *const *names) {
+    xr_t x = { man, man + ml };
+    const char *te;
+    while (next_tag(&x, element, &te)) {
+        const char *from = x.p - 1;
+        rp_buf_puts(m, "\t\t\t\t<");
+        rp_buf_puts(m, out_name);
+        for (size_t i = 0; names[i]; ++i) {
+            char v[1024];
+            if (attr_value(from, te, names[i], v, sizeof v)) attr(m, names[i], v);
+        }
+        rp_buf_puts(m, "/>\r\n");
+        x.p = te;
+    }
+}
+
+proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, uint8_t **out,
+                            size_t *len, const char **why) {
+    enum { MAX_PARTS = 64 };
+    *out = NULL;
+    *len = 0;
+    if (n == 0 || n > MAX_PARTS) {
+        *why = n ? "at most 64 packages in a bundle" : "a bundle needs a package";
+        return PROVEN_ERR_INVALID_ARG;
+    }
+    uint8_t *mans[MAX_PARTS] = { 0 };
+    size_t mlens[MAX_PARTS] = { 0 };
+    identity_t ids[MAX_PARTS];
+    char zip_names[MAX_PARTS][1024];
+    proven_err_t err = PROVEN_OK;
+    for (size_t i = 0; i < n && err == PROVEN_OK; ++i) {
+        rp_msix_file_t *files = NULL;
+        size_t nfiles = 0;
+        const char *iwhy = NULL;
+        err = open_archive(alloc, parts[i].data, parts[i].len, lim, false, &files, &nfiles, &mans[i], &mlens[i], &iwhy);
+        rp_msix_files_free(alloc, files, nfiles);
+        if (err != PROVEN_OK) {
+            *why = err == PROVEN_ERR_NOMEM ? "out of memory" : "a package for the bundle is not a valid MSIX package";
+            break;
+        }
+        const char *m = (const char *)mans[i];
+        const char *ext = extension(parts[i].file_name);
+        if (!read_identity(m, mlens[i], &ids[i]) || !rp_xml_attr(m, mlens[i], "Identity", "ProcessorArchitecture", ids[i].arch, sizeof ids[i].arch)) {
+            *why = "a package without Identity Name, Publisher, Version and ProcessorArchitecture";
+        } else if (i && (strcmp(ids[i].name, ids[0].name) != 0 || strcmp(ids[i].publisher, ids[0].publisher) != 0 || strcmp(ids[i].version, ids[0].version) != 0)) {
+            *why = "the packages of a bundle need the same Name, Publisher and Version";
+        } else if (strlen(parts[i].file_name) > 255 || !ext || (!ieq(ext, "msix") && !ieq(ext, "appx")) || strpbrk(parts[i].file_name, "/\\")) {
+            *why = "a package's name in the bundle must be a file name ending in .msix or .appx";
+        } else {
+            part_name(parts[i].file_name, zip_names[i], sizeof zip_names[i]);
+            for (size_t k = 0; k < i && !*why; ++k) {
+                if (strcmp(ids[k].arch, ids[i].arch) == 0) *why = "two packages of one architecture in a bundle";
+                else if (ieq(parts[k].file_name, parts[i].file_name)) *why = "two packages of one name in a bundle";
+            }
+        }
+        if (*why) err = PROVEN_ERR_INVALID_ARG;
+    }
+    rp_zip_writer_t z;
+    rp_zip_begin(&z, alloc, (size_t)1 << 40);
+    rp_buf_t man = rp_buf_new(alloc, 1u << 24), bm = rp_buf_new(alloc, 1u << 20);
+    if (err == PROVEN_OK) {
+        rp_buf_puts(&man, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+                          "<Bundle xmlns=\"http://schemas.microsoft.com/appx/2013/bundle\" SchemaVersion=\"5.0\" "
+                          "xmlns:b4=\"http://schemas.microsoft.com/appx/2018/bundle\" xmlns:b5=\"http://schemas.microsoft.com/appx/2019/bundle\" "
+                          "IgnorableNamespaces=\"b4 b5\">\r\n\t<Identity");
+        attr(&man, "Name", ids[0].name);
+        attr(&man, "Publisher", ids[0].publisher);
+        attr(&man, "Version", ids[0].version);
+        rp_buf_puts(&man, "/>\r\n\t<Packages>\r\n");
+        static const char *const res[] = { "Language", NULL }, *const tdf[] = { "Name", "MinVersion", "MaxVersionTested", NULL };
+        for (size_t i = 0; i < n; ++i) {
+            // Stored entries: a local header of 30 bytes and the name, the bytes, a 24-byte ZIP64 descriptor.
+            size_t lfh = 0, before = z.out.len;
+            rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, rp_crc32(0, parts[i].data, parts[i].len), parts[i].len, &lfh);
+            rp_buf_puts(&man, "\t\t<Package Type=\"application\"");
+            attr(&man, "Version", ids[i].version);
+            attr(&man, "Architecture", ids[i].arch);
+            attr(&man, "FileName", parts[i].file_name);
+            attr_u64(&man, "Offset", before + lfh);
+            attr_u64(&man, "Size", parts[i].len);
+            rp_buf_puts(&man, ">\r\n\t\t\t<Resources>\r\n");
+            copy_elements(&man, (const char *)mans[i], mlens[i], "Resource", "Resource", res);
+            rp_buf_puts(&man, "\t\t\t</Resources>\r\n\t\t\t<b4:Dependencies>\r\n");
+            copy_elements(&man, (const char *)mans[i], mlens[i], "TargetDeviceFamily", "b4:TargetDeviceFamily", tdf);
+            rp_buf_puts(&man, "\t\t\t</b4:Dependencies>\r\n\t\t</Package>\r\n");
+        }
+        rp_buf_puts(&man, "\t</Packages>\r\n</Bundle>");
+        err = man.err != PROVEN_OK ? man.err : z.out.err;
+    }
+    if (err == PROVEN_OK) {
+        rp_buf_puts(&bm, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n<BlockMap "
+                         "xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" xmlns:b4=\"http://schemas.microsoft.com/appx/2021/blockmap\" "
+                         "IgnorableNamespaces=\"b4\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
+        err = add_payload(alloc, &z, &bm, BUNDLE_MANIFEST, NULL, man.data, man.len, true);
+    }
+    rp_buf_puts(&bm, "</BlockMap>");
+    if (err == PROVEN_OK) err = bm.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "AppxBlockMap.xml", NULL, bm.data, bm.len, true);
+    static const char ct[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                             "<Default Extension=\"msix\" ContentType=\"application/vnd.ms-appx\" />"
+                             "<Default Extension=\"xml\" ContentType=\"application/vnd.ms-appx.bundlemanifest+xml\" />"
+                             "<Override PartName=\"/AppxBlockMap.xml\" ContentType=\"application/vnd.ms-appx.blockmap+xml\" /></Types>";
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "[Content_Types].xml", "[Content_Types].xml", (const uint8_t *)ct, sizeof ct - 1, true);
+    if (err == PROVEN_OK) err = z.out.err;
+    if (err == PROVEN_OK) err = rp_zip_finish(&z, out, len);
+    else rp_zip_abort(&z);
+    rp_buf_free(&man);
+    rp_buf_free(&bm);
+    for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, mans[i]);
+    return err;
 }
