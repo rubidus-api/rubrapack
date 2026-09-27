@@ -409,8 +409,13 @@ rubrapack version | help [command]
 
 - Command-line options override the source.
 - `--reproducible` derives the package code from the content: the same source gives the same
-  bytes, on Linux and on Windows. Without it the package code is random, as Windows Installer
-  expects for different package files.
+  bytes, on Linux and on Windows, from any folder, with the options in any order. Without it the
+  package code is random, as Windows Installer expects for different package files. An MSI holds
+  no time at all (no creation or save dates in its summary; cabinet entries are dated
+  1980-01-01), so `SOURCE_DATE_EPOCH` does not change it; nor does it hold the source's path or
+  the name of the machine or user that built it. Every source file is read once, and those bytes
+  are hashed, versioned and packed; a file that changes while the package is being built stops the
+  build (`RP1515`).
 - `--nfc` puts the names the package gives to folders, files and shortcuts in Unicode NFC
   (composed). A file from macOS often has a decomposed name - a Hangul syllable such as U+D55C as the three jamo U+1112 U+1161 U+11AB - and Windows
   installs names exactly as they are, so the same word can become two different files. The source

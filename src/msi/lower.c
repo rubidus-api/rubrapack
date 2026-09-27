@@ -1401,6 +1401,15 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             break;
         }
         lf->size = n;
+        // One snapshot (RFC-0001 14.2): the bytes read here are hashed, versioned and packed; the
+        // model's earlier look (size, PE machine) must describe the same file.
+        rp_pe_info_t snap;
+        uint16_t machine = rp_pe_read(lf->data, n, &snap) == PROVEN_OK && snap.is_pe ? snap.machine : 0;
+        if ((uint64_t)n != f->size || machine != f->pe_machine) {
+            rp_srcdiag_add(diags, f->pos, "RP1515", false, "source file '%s' changed while the package was being built", f->source);
+            err = PROVEN_ERR_IO;
+            break;
+        }
         if (n > INT32_MAX) {
             rp_srcdiag_add(diags, f->pos, "RP1509", false, "source file '%s' is larger than 2 GiB", f->source);
             err = PROVEN_ERR_OUT_OF_BOUNDS;
