@@ -10,6 +10,9 @@
 #include <string.h>
 
 static const uint8_t OID_RSA[] = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01 };
+static const uint8_t OID_EC[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02, 0x01 };
+static const uint8_t OID_P256[] = { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07 };
+static const uint8_t OID_P384[] = { 0x2B, 0x81, 0x04, 0x00, 0x22 };
 static const uint8_t OID_KU[] = { 0x55, 0x1D, 0x0F }, OID_BC[] = { 0x55, 0x1D, 0x13 }, OID_EKU[] = { 0x55, 0x1D, 0x25 };
 static const uint8_t OID_SAN[] = { 0x55, 0x1D, 0x11 }, OID_SKI[] = { 0x55, 0x1D, 0x0E }, OID_AKI[] = { 0x55, 0x1D, 0x23 };
 static const uint8_t OID_CODE[] = { 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x03 };
@@ -89,6 +92,9 @@ static bool parse_ext(const rp_der_t *ext, rp_cert_t *c, const char **why) {
             c->eku_any |= rp_der_oid_is(&o, OID_ANY_EKU, sizeof OID_ANY_EKU);
         }
         if (list.n) FAIL("a malformed extended key usage");
+    } else if (rp_der_oid_is(&id, OID_SKI, sizeof OID_SKI)) {
+        if (!rp_der_get(&v, RP_DER_OCTET_STRING, &x)) FAIL("a malformed subject key identifier");
+        c->ski = x.val;
     } else if (critical && !rp_der_oid_is(&id, OID_SAN, sizeof OID_SAN) && !rp_der_oid_is(&id, OID_SKI, sizeof OID_SKI) &&
                !rp_der_oid_is(&id, OID_AKI, sizeof OID_AKI)) {
         c->unknown_critical = true;
@@ -98,6 +104,7 @@ static bool parse_ext(const rp_der_t *ext, rp_cert_t *c, const char **why) {
 
 bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **why) {
     memset(c, 0, sizeof *c);
+    c->ec_curve = -1;
     const char *dummy;
     if (why == NULL) why = &dummy;
     rp_der_span_t s = { der, len };
@@ -150,6 +157,16 @@ bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **wh
             FAIL("a malformed RSA key");
         }
         c->rsa = true;
+    } else if (rp_der_oid_is(&oid, OID_EC, sizeof OID_EC)) {
+        rp_der_t curve;
+        if (!rp_der_get(&as, RP_DER_OID, &curve)) FAIL("an EC key without a named curve");
+        size_t n = rp_der_oid_is(&curve, OID_P256, sizeof OID_P256) ? 32 : rp_der_oid_is(&curve, OID_P384, sizeof OID_P384) ? 48 : 0;
+        // BIT STRING: no unused bits, then 04 || X || Y.
+        if (n && bits.val.n == 2 + 2 * n && bits.val.p[0] == 0 && bits.val.p[1] == 4) {
+            c->ec_curve = n == 32 ? RP_EC_P256 : RP_EC_P384;
+            c->ec_x = (rp_der_span_t){ bits.val.p + 2, n };
+            c->ec_y = (rp_der_span_t){ bits.val.p + 2 + n, n };
+        }
     }
     // Optional issuerUniqueID [1], subjectUniqueID [2], then extensions [3].
     uint8_t tag;

@@ -80,8 +80,14 @@ void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_
 
 // ---- trust -------------------------------------------------------------------------------------
 
-// Whether `child` is signed by `issuer`'s key (RSA with SHA-256/384/512) and names it as issuer.
+// Whether `child` is signed by `issuer`'s key (RSA or ECDSA with SHA-256/384/512) and names it as issuer.
 [[nodiscard]] bool rp_cert_signed_by(const rp_cert_t *child, const rp_cert_t *issuer);
+
+// Verifies a signature over `digest` with the certificate's public key: RSA PKCS#1 v1.5, or ECDSA
+// with the signature as DER SEQUENCE { r, s }.
+[[nodiscard]] bool rp_cert_verify_sig(const rp_cert_t *c, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t *sig, size_t len);
+
+enum { RP_PURPOSE_CODE, RP_PURPOSE_TIMESTAMP };
 
 // Builds a path from the signer's certificate through the signature's certificates to one of the
 // trust anchors (DER certificates) and checks it at time `now`: every signature, validity, CA and
@@ -89,5 +95,33 @@ void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_
 // is at most 8 certificates long.
 [[nodiscard]] bool rp_chain_trusted(rp_der_span_t signer, rp_der_span_t certs, const rp_der_span_t *anchors, size_t anchor_count,
                                     int64_t now, const char **why);
+// The same for another purpose: RP_PURPOSE_TIMESTAMP asks for the time-stamping EKU on the leaf.
+[[nodiscard]] bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_der_span_t *anchors, size_t anchor_count,
+                                        int64_t now, int purpose, const char **why);
+
+// ---- RFC 3161 timestamps (src/sign/tsp.c; RFC-0008) -------------------------------------------
+
+typedef struct {
+    rp_der_span_t token;        // the TimeStampToken ContentInfo (whole)
+    int64_t       gen_time;     // seconds since 1970 (UTC), fraction dropped
+    rp_der_span_t tsa_cert;     // the TSA's certificate (whole), from the token
+    rp_der_span_t certs;        // the token's certificates SET contents
+} rp_tsp_token_t;
+
+// A TimeStampReq (DER) for `digest`: version 1, the imprint, the 8-byte nonce (its top bit is
+// cleared so the INTEGER stays positive - pass the same bytes to the checks), certReq TRUE.
+[[nodiscard]] proven_err_t rp_tsp_request(proven_allocator_t alloc, rp_hash_alg_t alg, const uint8_t *digest, uint8_t nonce[8],
+                                          uint8_t **out, size_t *len);
+
+// Checks a TimeStampResp: status granted, then the token as rp_tsp_token does (nonce required).
+[[nodiscard]] bool rp_tsp_response(const uint8_t *resp, size_t len, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t nonce[8],
+                                   rp_tsp_token_t *t, const char **why);
+
+// Checks a TimeStampToken: the TSTInfo imprint is `digest`, the nonce (when given) matches, the
+// token's SignedData signature verifies with the TSA certificate it carries, whose extended key
+// usage is time stamping and which was valid at genTime. Trust in that certificate is a separate
+// question (rp_chain_trusted_for with RP_PURPOSE_TIMESTAMP).
+[[nodiscard]] bool rp_tsp_token(const uint8_t *tok, size_t len, rp_hash_alg_t alg, const uint8_t *digest, const uint8_t *nonce,
+                                rp_tsp_token_t *t, const char **why);
 
 #endif // RUBRAPACK_SIGN_H

@@ -10,6 +10,8 @@
 #include <wchar.h>
 
 #define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 
 static proven_err_t write_bytes(HANDLE h, const uint8_t *p, size_t len) {
@@ -281,4 +283,112 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     (void)rp_utf16_to_utf8((const proven_u16 *)v, n, (uint8_t *)c, r.units);
     c[r.units] = 0;
     return c;
+}
+
+// ---- network ----------------------------------------------------------------------------------
+
+struct rp_sock {
+    proven_allocator_t alloc;
+    SOCKET             fd;
+};
+
+int64_t rp_pal_now_ms(void) { return (int64_t)GetTickCount64(); }
+
+static bool winsock_ready(void) {
+    static int state;           // 0 not tried, 1 ready, -1 failed
+    if (state == 0) {
+        WSADATA w;
+        state = WSAStartup(MAKEWORD(2, 2), &w) == 0 ? 1 : -1;
+    }
+    return state == 1;
+}
+
+static proven_err_t wait_sock(SOCKET fd, short events, int timeout_ms) {
+    WSAPOLLFD p = { fd, events, 0 };
+    int r = WSAPoll(&p, 1, timeout_ms < 0 ? 0 : timeout_ms);
+    if (r == 0) return PROVEN_ERR_AGAIN;
+    if (r < 0) return PROVEN_ERR_IO;
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_tcp_connect(proven_allocator_t alloc, const char *host, uint16_t port, int timeout_ms, rp_sock_t **out) {
+    if (!winsock_ready()) return PROVEN_ERR_IO;
+    proven_u16str_t wh = { 0 };
+    if (wide_path(alloc, host, &wh) != PROVEN_OK) return PROVEN_ERR_NOT_FOUND;
+    wchar_t service[8];
+    swprintf(service, 8, L"%u", (unsigned)port);
+    ADDRINFOW hints = { 0 }, *list = NULL;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_UNSPEC;
+    int gr = GetAddrInfoW((const wchar_t *)proven_u16str_as_ptr(&wh), service, &hints, &list);
+    proven_u16str_destroy(alloc, &wh);
+    if (gr != 0 || list == NULL) return PROVEN_ERR_NOT_FOUND;
+    proven_err_t err = PROVEN_ERR_IO;
+    int64_t deadline = rp_pal_now_ms() + timeout_ms;
+    for (ADDRINFOW *a = list; a && err != PROVEN_OK; a = a->ai_next) {
+        SOCKET fd = socket(a->ai_family, a->ai_socktype, a->ai_protocol);
+        if (fd == INVALID_SOCKET) continue;
+        u_long nb = 1;
+        ioctlsocket(fd, FIONBIO, &nb);
+        int r = connect(fd, a->ai_addr, (int)a->ai_addrlen);
+        if (r != 0 && WSAGetLastError() == WSAEWOULDBLOCK) {
+            err = wait_sock(fd, POLLWRNORM, (int)(deadline - rp_pal_now_ms()));
+            int soerr = 0, sl = sizeof soerr;
+            if (err == PROVEN_OK && (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&soerr, &sl) != 0 || soerr != 0)) err = PROVEN_ERR_IO;
+        } else {
+            err = r == 0 ? PROVEN_OK : PROVEN_ERR_IO;
+        }
+        if (err == PROVEN_OK) {
+            rp_sock_t *s = rp_mem_alloc(alloc, 1, sizeof *s);
+            if (s == NULL) {
+                closesocket(fd);
+                err = PROVEN_ERR_NOMEM;
+                break;
+            }
+            s->alloc = alloc;
+            s->fd = fd;
+            *out = s;
+        } else {
+            closesocket(fd);
+        }
+    }
+    FreeAddrInfoW(list);
+    return err;
+}
+
+proven_err_t rp_pal_tcp_send(rp_sock_t *s, const uint8_t *data, size_t len, int timeout_ms) {
+    int64_t deadline = rp_pal_now_ms() + timeout_ms;
+    while (len) {
+        proven_err_t err = wait_sock(s->fd, POLLWRNORM, (int)(deadline - rp_pal_now_ms()));
+        if (err != PROVEN_OK) return err;
+        int n = send(s->fd, (const char *)data, len > 0x10000000u ? 0x10000000 : (int)len, 0);
+        if (n == SOCKET_ERROR) {
+            if (WSAGetLastError() == WSAEWOULDBLOCK) continue;
+            return PROVEN_ERR_IO;
+        }
+        data += n;
+        len -= (size_t)n;
+    }
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_tcp_recv(rp_sock_t *s, uint8_t *buf, size_t cap, size_t *got, int timeout_ms) {
+    *got = 0;
+    for (;;) {
+        proven_err_t err = wait_sock(s->fd, POLLRDNORM, timeout_ms);
+        if (err != PROVEN_OK) return err;
+        int n = recv(s->fd, (char *)buf, cap > 0x10000000u ? 0x10000000 : (int)cap, 0);
+        if (n == SOCKET_ERROR) {
+            if (WSAGetLastError() == WSAEWOULDBLOCK) continue;
+            return PROVEN_ERR_IO;
+        }
+        *got = (size_t)n;
+        return PROVEN_OK;
+    }
+}
+
+void rp_pal_tcp_close(rp_sock_t *s) {
+    if (s == NULL) return;
+    closesocket(s->fd);
+    rp_mem_free(s->alloc, s);
 }

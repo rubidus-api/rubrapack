@@ -25,6 +25,9 @@ typedef struct {
     rp_der_span_t spki;         // SubjectPublicKeyInfo (whole)
     bool          rsa;          // an RSA public key
     rp_der_span_t rsa_n, rsa_e; // its magnitude bytes
+    int           ec_curve;     // -1, or RP_EC_P256 / RP_EC_P384 for an EC public key
+    rp_der_span_t ec_x, ec_y;   // its coordinates (uncompressed point)
+    rp_der_span_t ski;          // subjectKeyIdentifier contents, or empty
     rp_der_span_t sig_alg;      // signatureAlgorithm (whole)
     rp_der_span_t sig;          // signature bits
     int64_t       not_before, not_after;    // seconds since 1970 (UTC)

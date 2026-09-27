@@ -68,4 +68,19 @@ typedef enum {
 // An environment variable as UTF-8 (NULL when unset); free with rp_mem_free.
 [[nodiscard]] char *rp_pal_getenv(proven_allocator_t alloc, const char *name);
 
+// ---- network (RFC-0008) -------------------------------------------------------------------------
+
+typedef struct rp_sock rp_sock_t;
+
+// Connects over TCP to host:port (resolved by the OS, IPv4 or IPv6) within timeout_ms.
+// PROVEN_ERR_NOT_FOUND: the name did not resolve; PROVEN_ERR_AGAIN: timed out; PROVEN_ERR_IO: refused.
+[[nodiscard]] proven_err_t rp_pal_tcp_connect(proven_allocator_t alloc, const char *host, uint16_t port, int timeout_ms, rp_sock_t **out);
+// Sends all of `data` within timeout_ms.
+[[nodiscard]] proven_err_t rp_pal_tcp_send(rp_sock_t *s, const uint8_t *data, size_t len, int timeout_ms);
+// Receives up to `cap` bytes within timeout_ms; *got = 0 when the peer closed.
+[[nodiscard]] proven_err_t rp_pal_tcp_recv(rp_sock_t *s, uint8_t *buf, size_t cap, size_t *got, int timeout_ms);
+void rp_pal_tcp_close(rp_sock_t *s);
+// Milliseconds from a monotonic clock.
+[[nodiscard]] int64_t rp_pal_now_ms(void);
+
 #endif // RUBRAPACK_PAL_H

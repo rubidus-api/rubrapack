@@ -66,6 +66,7 @@ static const char *const core_sources[] = {
     "src/msi/suminfo.c",
     "src/msi/ui.c",
     "src/msi/view.c",
+    "src/net/http.c",
     "src/pe/pe.c",
     "src/crypto/aes.c",
     "src/crypto/hash.c",
@@ -79,6 +80,7 @@ static const char *const core_sources[] = {
     "src/sign/chain.c",
     "src/sign/msi_sign.c",
     "src/sign/pe_sign.c",
+    "src/sign/tsp.c",
     "src/text/utf.c",
     "src/text/nfc.c",
     "src/text/nfc_tables.c",
@@ -368,7 +370,7 @@ static int build(const target_t *t) {
     int n = snprintf(cmd, sizeof cmd, "%s %s%s -o %s", t->cc, opt_flags(t), link, exe);
     if (n < 0 || (size_t)n >= sizeof cmd) return 1;
     size_t len = (size_t)n;
-    if (t->kind == KIND_WIN32 && append(&len, "-static -municode -lbcrypt") != 0) return 1;
+    if (t->kind == KIND_WIN32 && append(&len, "-static -municode -lbcrypt -lws2_32") != 0) return 1;
     if (run(cmd) != 0) return 1;
     printf("nob: built %s\n", exe);
     return 0;

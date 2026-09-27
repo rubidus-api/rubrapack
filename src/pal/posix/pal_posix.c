@@ -12,6 +12,10 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <netdb.h>
+#include <poll.h>
+#include <sys/socket.h>
+#include <time.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -173,4 +177,106 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     char *c = rp_mem_alloc(alloc, n + 1, 1);
     if (c) memcpy(c, v, n + 1);
     return c;
+}
+
+// ---- network ----------------------------------------------------------------------------------
+
+struct rp_sock {
+    proven_allocator_t alloc;
+    int                fd;
+};
+
+int64_t rp_pal_now_ms(void) {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return (int64_t)t.tv_sec * 1000 + t.tv_nsec / 1000000;
+}
+
+static proven_err_t wait_fd(int fd, short events, int timeout_ms) {
+    struct pollfd p = { fd, events, 0 };
+    int r;
+    do {
+        r = poll(&p, 1, timeout_ms < 0 ? 0 : timeout_ms);
+    } while (r < 0 && errno == EINTR);
+    if (r == 0) return PROVEN_ERR_AGAIN;
+    if (r < 0) return PROVEN_ERR_IO;
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_tcp_connect(proven_allocator_t alloc, const char *host, uint16_t port, int timeout_ms, rp_sock_t **out) {
+    char service[8];
+    snprintf(service, sizeof service, "%u", (unsigned)port);
+    struct addrinfo hints = { 0 }, *list = NULL;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_UNSPEC;
+    if (getaddrinfo(host, service, &hints, &list) != 0 || list == NULL) return PROVEN_ERR_NOT_FOUND;
+    proven_err_t err = PROVEN_ERR_IO;
+    int64_t deadline = rp_pal_now_ms() + timeout_ms;
+    for (struct addrinfo *a = list; a && err != PROVEN_OK; a = a->ai_next) {
+        int fd = socket(a->ai_family, a->ai_socktype | SOCK_CLOEXEC, a->ai_protocol);
+        if (fd < 0) continue;
+        int fl = fcntl(fd, F_GETFL);
+        fcntl(fd, F_SETFL, fl | O_NONBLOCK);
+        int r = connect(fd, a->ai_addr, a->ai_addrlen);
+        if (r != 0 && errno == EINPROGRESS) {
+            err = wait_fd(fd, POLLOUT, (int)(deadline - rp_pal_now_ms()));
+            int soerr = 0;
+            socklen_t sl = sizeof soerr;
+            if (err == PROVEN_OK && (getsockopt(fd, SOL_SOCKET, SO_ERROR, &soerr, &sl) != 0 || soerr != 0)) err = PROVEN_ERR_IO;
+        } else {
+            err = r == 0 ? PROVEN_OK : PROVEN_ERR_IO;
+        }
+        if (err == PROVEN_OK) {
+            rp_sock_t *s = rp_mem_alloc(alloc, 1, sizeof *s);
+            if (s == NULL) {
+                close(fd);
+                err = PROVEN_ERR_NOMEM;
+                break;
+            }
+            s->alloc = alloc;
+            s->fd = fd;
+            *out = s;
+        } else {
+            close(fd);
+        }
+    }
+    freeaddrinfo(list);
+    return err;
+}
+
+proven_err_t rp_pal_tcp_send(rp_sock_t *s, const uint8_t *data, size_t len, int timeout_ms) {
+    int64_t deadline = rp_pal_now_ms() + timeout_ms;
+    while (len) {
+        proven_err_t err = wait_fd(s->fd, POLLOUT, (int)(deadline - rp_pal_now_ms()));
+        if (err != PROVEN_OK) return err;
+        ssize_t n = send(s->fd, data, len, MSG_NOSIGNAL);
+        if (n < 0) {
+            if (errno == EINTR || errno == EAGAIN) continue;
+            return PROVEN_ERR_IO;
+        }
+        data += n;
+        len -= (size_t)n;
+    }
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_tcp_recv(rp_sock_t *s, uint8_t *buf, size_t cap, size_t *got, int timeout_ms) {
+    *got = 0;
+    for (;;) {
+        proven_err_t err = wait_fd(s->fd, POLLIN, timeout_ms);
+        if (err != PROVEN_OK) return err;
+        ssize_t n = recv(s->fd, buf, cap, 0);
+        if (n < 0) {
+            if (errno == EINTR || errno == EAGAIN) continue;
+            return PROVEN_ERR_IO;
+        }
+        *got = (size_t)n;
+        return PROVEN_OK;
+    }
+}
+
+void rp_pal_tcp_close(rp_sock_t *s) {
+    if (s == NULL) return;
+    close(s->fd);
+    rp_mem_free(s->alloc, s);
 }
