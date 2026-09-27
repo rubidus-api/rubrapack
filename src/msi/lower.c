@@ -558,6 +558,13 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (p->hidden) hidden = hidden ? kprintf(k, "%s;%s", hidden, p->id) : kdup(k, p->id);
     }
     for (size_t i = 0; i < ir->search_count; ++i) secure = kprintf(k, "%s;%s", secure, ir->searches[i].property);
+    // What an author's dialog collects runs the elevated part too (RFC-0005 K4).
+    for (size_t i = 0; i < ir->dialog_control_count; ++i) {
+        const char *pn = ir->dialog_controls[i].property;
+        bool listed = false;
+        for (size_t j = 0; pn && j < ir->property_count; ++j) listed |= ir->properties[j].secure && strcmp(ir->properties[j].id, pn) == 0;
+        if (pn && !listed) secure = kprintf(k, "%s;%s", secure, pn);
+    }
     s_(&property, "SecureCustomProperties"); s_(&property, secure);
     if (hidden) { s_(&property, "MsiHiddenProperties"); s_(&property, hidden); }
 

@@ -287,6 +287,8 @@ A package with dialogs carries these tables (types as above):
 | TextStyle | **TextStyle** s72, FaceName s32, Size i2, Color I4, StyleBits I2 |
 | UIText | **Key** s72, Text L255 |
 | Binary | **Name** s72, Data v0 (a stream) |
+| RadioButton | **Property** s72, **Order** i2, Value s64, X i2, Y i2, Width i2, Height i2, Text L0, Help L50 |
+| ComboBox | **Property** s72, **Order** i2, Value s64, Text L64 |
 
 What the engine checks when it shows a dialog (each seen as an error dialog carrying the number):
 
@@ -300,6 +302,8 @@ What the engine checks when it shows a dialog (each seen as an error dialog carr
   `EndDialog` arguments `ErrorAbort` .. `ErrorYes` are shown as the message needs. [observed]
 - **Brackets in texts.** `Text` is a formatted string: `[Next]` is read as a property and shows as
   nothing. [observed] Quote button names in running text instead.
+- **List order.** A `ComboBox` lists its items alphabetically unless the control has the Sorted
+  attribute (0x10000); with it they follow the Order column. [observed] rubrapack sets it.
 - **Elevation.** A per-machine installation started interactively by a non-elevated user asks for
   consent (UAC) when the execute sequence starts, on the secure desktop. [observed]
 - **Code page.** With the database code page 65001, Korean titles, texts and RTF license text show
@@ -317,8 +321,15 @@ InstallUISequence adds the welcome (1230, `NOT Installed`) or the maintenance di
 license text is a `ScrollableText` control holding RTF: plain text becomes `\uN?` escapes
 (characters above U+FFFF as a surrogate pair), one `\par` per line.
 
+Author pages are ordinary Dialog rows in the same frame; `Control_Next` runs through their
+controls in position order and on to Back, Next and Cancel. A radio group is a
+`RadioButtonGroup` control whose buttons are RadioButton rows (positions relative to the group); a
+drop-down list is a `ComboBox` control with ComboList (0x20000) and Sorted, filled from ComboBox
+rows. Their properties are added to `SecureCustomProperties`, so values chosen in the dialogs or
+given on the command line reach the execute sequence. [observed]
+
 ## What this recipe does not cover yet
 
-Custom actions other than the error type, the register pair and the REG_QWORD helper above;
-author-defined dialogs; and `_Validation` (needed by validation tools, not by the installer). These
+Custom actions other than the error type, the register pair and the REG_QWORD helper above; and
+`_Validation` (needed by validation tools, not by the installer). These
 pages grow as rubrapack implements them.

@@ -198,6 +198,30 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_ui_text_t;
 
+// [dialog.ID] and [dialog-control.ID] (RFC-0005 K4): an author's page in the built-in flow.
+typedef struct {
+    char    *id;                // the Dialog key
+    char    *title, *description;   // banner heading (formatted) and the line under it (or NULL)
+    char    *after;             // a built-in page (RpWelcomeDlg, RpLicenseDlg, RpInstallDirDlg,
+                                // RpCustomizeDlg) or another [dialog.*]
+    rp_pos_t pos;
+} rp_ir_dialog_t;
+
+enum { RP_DC_TEXT, RP_DC_CHECKBOX, RP_DC_EDIT, RP_DC_RADIO, RP_DC_COMBO };
+
+typedef struct {
+    char    *id;                // the Control key (unique across all tables)
+    char    *dialog;            // [dialog.*] ID
+    int      type;              // RP_DC_*
+    int      x, y, width, height;   // dialog units, inside the body (y 45..234)
+    char    *text;              // label (text, checkbox), formatted
+    char    *property;          // public property (checkbox, edit, radio, combo)
+    char   **values;            // radio, combo: the property values
+    char   **labels;            // their labels (the values when omitted)
+    size_t   value_count;
+    rp_pos_t pos;
+} rp_ir_dialog_control_t;
+
 typedef struct {
     char    *id;                // public property name (upper case)
     char    *value;
@@ -274,6 +298,10 @@ typedef struct {
     char             *ui_install_dir;       // [ui] install-dir (dir ID), or NULL
     rp_ir_ui_text_t  *ui_texts;
     size_t            ui_text_count;
+    rp_ir_dialog_t   *dialogs;              // in ID order
+    size_t            dialog_count;
+    rp_ir_dialog_control_t *dialog_controls;    // in ID order
+    size_t            dialog_control_count;
     rp_ir_permission_t *permissions;
     size_t            permission_count;
     // [arp]

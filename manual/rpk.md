@@ -76,6 +76,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`) |
 | `[ui-text.ID]` | **text** - replaces one built-in dialog text |
+| `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description |
+| `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
@@ -84,8 +86,8 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
-dirs, files and features. Tables that are planned but not implemented yet (`[dialog.ID]`, the MSIX
-tables) are refused with "not supported yet".
+dirs, files and features. Tables that are planned but not implemented yet (the MSIX tables) are
+refused with "not supported yet".
 
 ### Registering with an installed program: `[action.ID]`
 
@@ -275,6 +277,61 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`, `OutOfDiskTitle`,
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`. In
 button texts `&` marks the access key (`&Next` is Alt+N).
+
+### Your own dialog pages: `[dialog.ID]`, `[dialog-control.ID]`
+
+With `minimal`, `installdir` or `features` you can add pages to the built-in flow. A page gets the
+same banner and Back / Next / Cancel buttons as the others; you place the controls in its body.
+
+```toml
+[dialog.Options]
+title = "Options"                 # the banner heading; [ProductName] when omitted
+description = "Choose how to install."
+after = "RpInstallDirDlg"         # shown right after this page
+
+[dialog-control.ModeLabel]
+dialog = "Options"
+type = "text"
+x = 20
+y = 55
+width = 330
+height = 12
+text = "Installation &mode:"
+
+[dialog-control.Mode]
+dialog = "Options"
+type = "radio"
+x = 20
+y = 70
+width = 200
+height = 42                       # at least 12 per value
+property = "APP_MODE"
+values = ["typical", "portable", "server"]
+labels = ["&Typical", "&Portable", "&Server"]
+
+[property.APP_MODE]
+value = "typical"                 # the default, also for a silent installation
+```
+
+- `after` is a page of the chosen set - `RpWelcomeDlg`, `RpLicenseDlg` (with a license),
+  `RpInstallDirDlg` (installdir, features), `RpCustomizeDlg` (features) - or another of your pages.
+  Several pages after the same page follow in ID order. In `minimal` the last page's button is
+  Install; in the other sets the ready page always comes last.
+- Coordinates are dialog units on a 370 x 270 page; controls go in the body, between y = 45 and
+  y = 234. The Tab key moves through the controls from top to bottom, then left to right.
+- `text` shows a label (`&` marks an access key; on a text control it moves to the next control).
+  `checkbox` sets its property to `1` when ticked and removes it when clear. `edit` lets the user
+  type the property's value. `radio` and `combo` choose one of `values` (1 to 32 strings of at most
+  64 bytes), shown as `labels` (default: the values themselves), in the order written.
+- A `radio` or `combo` needs a `[property.*]` whose value is one of its values: the dialogs only
+  collect values, and a silent installation (`/qn`) uses the defaults. Any property can also be
+  set on the command line: `msiexec /i example.msi /qn APP_MODE=server`.
+- The properties are public names of your own (upper case), one control each, and reach the
+  elevated part of the installation, so `[registry.*]`, `[ini.*]`, `[env.*]`, conditions and the
+  rest can use them as `[APP_MODE]`.
+- Page IDs starting with `Rp` and the control IDs of the frame (`Banner`, `Title`, `Description`,
+  `BannerLine`, `BottomLine`, `Back`, `Next`, `Cancel`) are reserved; a page holds up to 64
+  controls.
 
 ### Architectures and upgrade families
 

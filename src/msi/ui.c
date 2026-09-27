@@ -142,7 +142,7 @@ typedef struct {
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo;
     rp_ui_prop_t       props[8];
     size_t             nprops;
     rp_ui_seq_t        seqs[16];
@@ -178,6 +178,10 @@ static const rp_msi_wcolumn_t style_cols[] = { { "TextStyle", KEY_S(72) }, { "Fa
     { "Color", I4_N }, { "StyleBits", I2_N } };
 static const rp_msi_wcolumn_t uitext_cols[] = { { "Key", KEY_S(72) }, { "Text", L_N(255) } };
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
+static const rp_msi_wcolumn_t radio_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
+    { "X", I2 }, { "Y", I2 }, { "Width", I2 }, { "Height", I2 }, { "Text", L_N(0) }, { "Help", L_N(50) } };
+static const rp_msi_wcolumn_t combo_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
+    { "Text", L_N(64) } };
 
 static void rows_init(rows_t *r, const char *name, const rp_msi_wcolumn_t *cols, size_t n) {
     *r = (rows_t){ .cols = cols, .ncols = n, .name = name };
@@ -283,14 +287,18 @@ static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, 
     s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, attr);
 }
 
-// Banner (white fill, title, description) and the bottom line; `title`/`text` are text IDs.
-static void frame(ctx_t *c, const char *dlg, const char *title, const char *text, const char *first) {
+// Banner (white fill, title, description) and the bottom line, with the texts as given.
+static void frame_text(ctx_t *c, const char *dlg, const char *title, const char *text) {
     control(c, dlg, "Banner", "Bitmap", 0, 0, 370, 44, VIS, NULL, "RpBanner", NULL);
-    control(c, dlg, "Title", "Text", 15, 7, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL,
-            keep(c, "{\\RpTitle}", T(c, title)), NULL);
-    control(c, dlg, "Description", "Text", 25, 22, 330, 20, VIS | TRANSPARENT | NOPREFIX, NULL, text ? T(c, text) : "", NULL);
+    control(c, dlg, "Title", "Text", 15, 7, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL, keep(c, "{\\RpTitle}", title), NULL);
+    control(c, dlg, "Description", "Text", 25, 22, 330, 20, VIS | TRANSPARENT | NOPREFIX, NULL, text ? text : "", NULL);
     control(c, dlg, "BannerLine", "Line", 0, 44, 370, 0, VIS, NULL, NULL, NULL);
     control(c, dlg, "BottomLine", "Line", 0, 234, 370, 0, VIS, NULL, NULL, NULL);
+}
+
+// The same with text IDs (`text` may be NULL).
+static void frame(ctx_t *c, const char *dlg, const char *title, const char *text, const char *first) {
+    frame_text(c, dlg, T(c, title), text ? T(c, text) : NULL);
     (void)first;
 }
 
@@ -402,22 +410,22 @@ static void maintenance_dlg(ctx_t *c) {
     c->seqs[c->nseqs++] = (rp_ui_seq_t){ d, "Installed AND NOT RESUME AND NOT Preselected", 1240 };
 }
 
-static void welcome_dlg(ctx_t *c, const char *next) {
+static void welcome_dlg(ctx_t *c, const char *next, const char *next_text) {
     const char *d = "RpWelcomeDlg";
     dialog(c, d, 370, 270, 3, "Next", "Next", "Cancel");
     frame(c, d, "WelcomeTitle", NULL, NULL);
     control(c, d, "Body", "Text", 25, 60, 320, 100, VIS | NOPREFIX, NULL, T(c, "WelcomeText"), NULL);
-    buttons(c, d, NULL, next, NULL, NULL, NULL);
+    buttons(c, d, NULL, next, next_text, NULL, NULL);
     c->seqs[c->nseqs++] = (rp_ui_seq_t){ d, "NOT Installed", 1230 };
 }
 
-static void license_dlg(ctx_t *c, const char *rtf, const char *next, const char *next_text) {
+static void license_dlg(ctx_t *c, const char *rtf, const char *back, const char *next, const char *next_text) {
     const char *d = "RpLicenseDlg";
     dialog(c, d, 370, 270, 3, "LicenseText", "Next", "Cancel");
     frame(c, d, "LicenseTitle", "LicenseText", NULL);
     control(c, d, "LicenseText", "ScrollableText", 20, 55, 330, 145, VIS | SUNKEN, NULL, rtf, "Accept");
     control(c, d, "Accept", "CheckBox", 20, 207, 330, 18, VIS | EN, "RpLicenseAccepted", T(c, "LicenseAccept"), "Back");
-    buttons(c, d, "RpWelcomeDlg", next, next_text, "RpLicenseAccepted <> \"1\"", "LicenseText");
+    buttons(c, d, back, next, next_text, "RpLicenseAccepted <> \"1\"", "LicenseText");
     c->props[c->nprops++] = (rp_ui_prop_t){ "RpLicenseAccepted", NULL };    // unset until the box is ticked
 }
 
@@ -491,6 +499,90 @@ static void ready_dlg(ctx_t *c, const char *back) {
     control(c, o, "List", "VolumeCostList", 20, 55, 330, 160, VIS | SUNKEN | 0x20000, NULL, "{120}{70}{70}{70}{70}", "OK");
     control(c, o, "OK", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "OK"), "List");
     event(c, o, "OK", "EndDialog", "Return", NULL, 1);
+}
+
+// An author's page (RFC-0005 K4): the built-in frame and buttons around the source's controls.
+// Tab order follows the position (top to bottom, then left to right), so it never depends on the
+// order of tables in the source.
+static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, const char *next, const char *next_text) {
+    const rp_ir_t *ir = c->ir;
+    const rp_ir_dialog_control_t *mine[64];
+    size_t n = 0;
+    for (size_t k = 0; k < ir->dialog_control_count && n < 64; ++k) {
+        if (ir->dialog_controls[k].dialog && strcmp(ir->dialog_controls[k].dialog, d->id) == 0) mine[n++] = &ir->dialog_controls[k];
+    }
+    for (size_t i = 1; i < n; ++i) {        // controls come in ID order; stable by position
+        for (size_t j = i; j > 0 && (mine[j - 1]->y > mine[j]->y || (mine[j - 1]->y == mine[j]->y && mine[j - 1]->x > mine[j]->x)); --j) {
+            const rp_ir_dialog_control_t *t = mine[j];
+            mine[j] = mine[j - 1];
+            mine[j - 1] = t;
+        }
+    }
+    const char *first = NULL;
+    for (size_t i = 0; i < n && first == NULL; ++i) {
+        if (mine[i]->type != RP_DC_TEXT) first = mine[i]->id;
+    }
+    dialog(c, d->id, 370, 270, 3, first ? first : "Next", "Next", "Cancel");
+    frame_text(c, d->id, d->title ? d->title : "[ProductName]", d->description);
+    for (size_t i = 0; i < n; ++i) {
+        const rp_ir_dialog_control_t *x = mine[i];
+        const char *to = NULL;              // the next tab stop, or Back after the last
+        if (x->type != RP_DC_TEXT) {
+            to = "Back";
+            for (size_t j = i + 1; j < n && strcmp(to, "Back") == 0; ++j) {
+                if (mine[j]->type != RP_DC_TEXT) to = mine[j]->id;
+            }
+        }
+        switch (x->type) {
+        case RP_DC_TEXT:
+            control(c, d->id, x->id, "Text", x->x, x->y, x->width, x->height, VIS | TRANSPARENT, NULL, x->text, NULL);
+            break;
+        case RP_DC_CHECKBOX:        // ticked: the property is "1"; clear: the property is removed
+            control(c, d->id, x->id, "CheckBox", x->x, x->y, x->width, x->height, VIS | EN, x->property, x->text, to);
+            break;
+        case RP_DC_EDIT:
+            control(c, d->id, x->id, "Edit", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, x->property, NULL, to);
+            break;
+        case RP_DC_RADIO: {
+            control(c, d->id, x->id, "RadioButtonGroup", x->x, x->y, x->width, x->height, VIS | EN, x->property, NULL, to);
+            int step = x->value_count ? x->height / (int)x->value_count : x->height;
+            for (size_t j = 0; j < x->value_count; ++j) {
+                rows_t *r = &c->radio;
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
+                i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, x->labels[j]); n_(c, r);
+            }
+            break;
+        }
+        case RP_DC_COMBO:           // a drop-down list (0x20000): one of the values, nothing typed. Without
+                                    // Sorted (0x10000) the engine lists them alphabetically (observed).
+            control(c, d->id, x->id, "ComboBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN | 0x20000 | 0x10000,
+                    x->property, NULL, to);
+            for (size_t j = 0; j < x->value_count; ++j) {
+                rows_t *r = &c->combo;
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, x->labels[j]);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    buttons(c, d->id, back, next, next_text, NULL, first);
+}
+
+typedef struct {
+    const char           *name;
+    const rp_ir_dialog_t *custom;   // NULL for a built-in page
+} page_t;
+
+// Appends the author's pages placed after `anchor` (in ID order), each followed by its own.
+static void place(const rp_ir_t *ir, page_t *pages, size_t *n, size_t cap, const char *anchor, int depth) {
+    for (size_t k = 0; k < ir->dialog_count && depth <= (int)ir->dialog_count; ++k) {
+        const rp_ir_dialog_t *d = &ir->dialogs[k];
+        if (d->after && strcmp(d->after, anchor) == 0 && *n < cap) {
+            pages[(*n)++] = (page_t){ d->id, d };
+            place(ir, pages, n, cap, d->id, depth + 1);
+        }
+    }
 }
 
 // ---- entry -------------------------------------------------------------------------------------
@@ -597,7 +689,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     *out = NULL;
     ctx_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     rp_ui_t *ui = rp_mem_alloc(alloc, 1, sizeof *ui);
-    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 8, sizeof *tables);
+    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 10, sizeof *tables);
     if (c == NULL || ui == NULL || tables == NULL) {
         rp_mem_free(alloc, c);
         rp_mem_free(alloc, ui);
@@ -616,6 +708,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->style, "TextStyle", style_cols, 5);
     rows_init(&c->uitext, "UIText", uitext_cols, 2);
     rows_init(&c->binary, "Binary", binary_cols, 2);
+    rows_init(&c->radio, "RadioButton", radio_cols, 9);
+    rows_init(&c->combo, "ComboBox", combo_cols, 4);
 
     // Fonts: the Korean face for Korean text (P1a: Hangul shows in these faces), Segoe UI otherwise.
     const char *face = c->ko ? "맑은 고딕" : "Segoe UI";
@@ -655,33 +749,43 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         }
     }
     const char *dir = in->install_dir ? in->install_dir : "TARGETDIR";
-    switch (ir->ui) {
-    case RP_UI_BASIC:
-        break;
-    case RP_UI_MINIMAL:
-        welcome_dlg(c, rtf ? "RpLicenseDlg" : "");
-        if (rtf) license_dlg(c, rtf, "", "Install");
+    if (ir->ui >= RP_UI_MINIMAL) {
+        // The pages in order: the set's own, each followed by the author's pages placed after it.
+        size_t cap = 5 + ir->dialog_count, n = 0;
+        page_t *pages = rp_mem_alloc(alloc, cap, sizeof *pages);
+        if (pages == NULL) c->nomem = true;
+        const char *base[5];
+        size_t nb = 0;
+        base[nb++] = "RpWelcomeDlg";
+        if (rtf) base[nb++] = "RpLicenseDlg";
+        if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpInstallDirDlg";
+        if (ir->ui == RP_UI_FEATURES) base[nb++] = "RpCustomizeDlg";
+        if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpReadyDlg";
+        for (size_t i = 0; pages && i < nb; ++i) {
+            pages[n++] = (page_t){ base[i], NULL };
+            place(ir, pages, &n, cap, base[i], 0);
+        }
+        bool ready = ir->ui >= RP_UI_INSTALLDIR;    // minimal: the last page's Next starts the installation
+        for (size_t i = 0; pages && i < n; ++i) {
+            const char *back = i ? pages[i - 1].name : NULL;
+            const char *next = i + 1 < n ? pages[i + 1].name : "";
+            const char *next_text = !ready && i + 1 == n ? "Install" : NULL;
+            const char *p = pages[i].name;
+            if (pages[i].custom) custom_dlg(c, pages[i].custom, back, next, next_text);
+            else if (strcmp(p, "RpWelcomeDlg") == 0) welcome_dlg(c, next, next_text);
+            else if (strcmp(p, "RpLicenseDlg") == 0) license_dlg(c, rtf, back, next, next_text);
+            else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
+            else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next);
+            else ready_dlg(c, back);
+        }
+        rp_mem_free(alloc, pages);
         maintenance_dlg(c);
-        break;
-    case RP_UI_INSTALLDIR:
-    case RP_UI_FEATURES: {
-        bool features = ir->ui == RP_UI_FEATURES;
-        welcome_dlg(c, rtf ? "RpLicenseDlg" : "RpInstallDirDlg");
-        if (rtf) license_dlg(c, rtf, "RpInstallDirDlg", NULL);
-        installdir_dlg(c, rtf ? "RpLicenseDlg" : "RpWelcomeDlg", features ? "RpCustomizeDlg" : "RpReadyDlg", dir);
-        if (features) customize_dlg(c, "RpInstallDirDlg", "RpReadyDlg");
-        ready_dlg(c, features ? "RpCustomizeDlg" : "RpInstallDirDlg");
-        maintenance_dlg(c);
-        c->props[c->nprops++] = (rp_ui_prop_t){ "_RpBrowseProperty", dir };
-        break;
-    }
-    default:
-        break;
+        if (ir->ui >= RP_UI_INSTALLDIR) c->props[c->nprops++] = (rp_ui_prop_t){ "_RpBrowseProperty", dir };
     }
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary };
+    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo };
     size_t nt = 0;
-    for (size_t i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 10; ++i) {
         rows_t *r = all[i];
         if (r->filled == 0) continue;
         tables[nt++] = (rp_msi_wtable_t){ r->name, r->cols, r->ncols, r->cells, r->filled / r->ncols };
@@ -709,8 +813,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary };
-        for (size_t i = 0; i < 8; ++i) rp_mem_free(alloc, all[i]->cells);
+        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo };
+        for (size_t i = 0; i < 10; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
         rp_mem_free(alloc, c);

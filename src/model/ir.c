@@ -363,7 +363,7 @@ static bool known_folder(const char *s) {
 static const char *const top_kinds[] = { "package", "define", "arp", "ui", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", NULL };
+                                          "ui-text", "dialog", "dialog-control", NULL };
 static const char *const later_kinds[] = {
                                            "assoc", "protocol",
                                            "msix",
@@ -371,7 +371,7 @@ static const char *const later_kinds[] = {
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
-                                         "arp", "ui", "ui-text", "msix", "msix-app", "msix-extension", NULL };
+                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", NULL };
 
 static bool in_list(const char *s, const char *const *list) {
     for (size_t k = 0; list[k]; ++k) {
@@ -1545,6 +1545,191 @@ static void parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
     if (!rp_ui_text_known(t->id)) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", t->id);
 }
 
+static bool public_property(const char *s) {
+    bool upper = s[0] != '\0' && strlen(s) <= 72 && !(s[0] >= '0' && s[0] <= '9');
+    for (const char *p = s; *p; ++p) upper &= (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_';
+    return upper && !tool_property(s);
+}
+
+// Names the built-in frame gives every page (rubrapack/ui.h); an author's control cannot take them.
+static bool frame_control(const char *s) {
+    static const char *const names[] = { "Banner", "Title", "Description", "BannerLine", "BottomLine", "Back", "Next",
+                                         "Cancel", NULL };
+    return in_list(s, names);
+}
+
+static void parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
+    static const char *const keys[] = { "title", "description", "after", NULL };
+    check_keys(c, t, keys);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    if (!check_id(c, t, 72)) return;
+    if (strncmp(t->id, "Rp", 2) == 0 || strcmp(t->id, "FilesInUse") == 0) {
+        ERR(c, t->pos, "RP1302", "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own");
+    }
+    x->title = get_str(c, t, "title", false, NULL);         // the banner heading; [ProductName] when omitted
+    x->description = get_str(c, t, "description", false, NULL);
+    x->after = get_str(c, t, "after", true, NULL);
+}
+
+static void parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_control_t *x) {
+    static const char *const keys[] = { "dialog", "type", "x", "y", "width", "height", "text", "property", "values",
+                                        "labels", NULL };
+    check_keys(c, t, keys);
+    x->id = dup(c, t->id);
+    x->pos = t->pos;
+    if (!check_id(c, t, 50)) return;
+    if (frame_control(t->id)) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", t->id);
+    x->dialog = get_str(c, t, "dialog", true, NULL);
+    char *type = get_str(c, t, "type", true, NULL);
+    static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", NULL };
+    x->type = -1;
+    for (int k = 0; type && types[k]; ++k) {
+        if (strcmp(type, types[k]) == 0) x->type = k;
+    }
+    if (type && x->type < 0) ERR(c, key_pos(t, "type"), "RP1316", "type must be text, checkbox, edit, radio or combo (got '%s')", type);
+    rp_mem_free(c->alloc, type);
+    static const char *const req[] = { "x", "y", "width", "height" };
+    for (int k = 0; k < 4; ++k) {
+        if (!find_key(t, req[k])) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs '%s'", t->id, req[k]);
+    }
+    // The body between the banner line (44) and the button line (234) of a 370 x 270 page.
+    x->x = (int)get_int(c, t, "x", 0, 0, 369);
+    x->y = (int)get_int(c, t, "y", 45, 45, 233);
+    x->width = (int)get_int(c, t, "width", 1, 1, 370);
+    x->height = (int)get_int(c, t, "height", 1, 1, 189);
+    if (x->x + x->width > 370) ERR(c, key_pos(t, "width"), "RP1308", "x + width must be at most 370 (the page width)");
+    if (x->y + x->height > 234) ERR(c, key_pos(t, "height"), "RP1308", "y + height must be at most 234 (the line above the buttons)");
+    bool has_text = false;
+    x->text = get_str(c, t, "text", false, &has_text);
+    x->property = get_str(c, t, "property", false, NULL);
+    if (x->type == RP_DC_TEXT || x->type == RP_DC_CHECKBOX) {
+        if (!has_text) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", t->id);
+    } else if (x->type >= 0 && has_text) {
+        ERR(c, key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", x->type == RP_DC_EDIT ? "edit" : x->type == RP_DC_RADIO ? "radio" : "combo");
+    }
+    if (x->type == RP_DC_TEXT) {
+        if (x->property) ERR(c, key_pos(t, "property"), "RP1316", "a text control has no property");
+    } else if (x->type >= 0) {
+        if (x->property == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", t->id);
+        else if (!public_property(x->property))
+            ERR(c, key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", x->property);
+    }
+    const rp_tkey_t *vk = find_key(t, "values"), *lk = find_key(t, "labels");
+    bool list = x->type == RP_DC_RADIO || x->type == RP_DC_COMBO;
+    if (!list) {
+        if (vk) ERR(c, vk->pos, "RP1316", "only radio and combo controls take values");
+        if (lk) ERR(c, lk->pos, "RP1316", "only radio and combo controls take labels");
+        return;
+    }
+    if (vk == NULL) {
+        ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'values'", t->id);
+        return;
+    }
+    if (vk->val.kind != RP_TV_ARRAY || vk->val.count == 0 || vk->val.count > 32) {
+        ERR(c, vk->pos, "RP1316", "values is an array of 1 to 32 strings");
+        return;
+    }
+    if (lk && (lk->val.kind != RP_TV_ARRAY || lk->val.count != vk->val.count)) {
+        ERR(c, lk->pos, "RP1316", "labels is an array of strings, one per value");
+        lk = NULL;
+    }
+    x->values = rp_mem_alloc(c->alloc, vk->val.count, sizeof *x->values);
+    x->labels = rp_mem_alloc(c->alloc, vk->val.count, sizeof *x->labels);
+    if (x->values == NULL || x->labels == NULL) {
+        c->nomem = true;
+        return;
+    }
+    for (size_t k = 0; k < vk->val.count; ++k) {
+        const rp_tval_t *v = &vk->val.items[k], *l = lk ? &lk->val.items[k] : NULL;
+        if (v->kind != RP_TV_STRING || (l && l->kind != RP_TV_STRING)) {
+            ERR(c, vk->pos, "RP1316", "values and labels are strings");
+            break;
+        }
+        char *val = subst(c, v);
+        if (val && (val[0] == '\0' || strlen(val) > 64)) ERR(c, vk->pos, "RP1316", "a value is 1 to 64 bytes");
+        for (size_t j = 0; val && j < x->value_count; ++j) {
+            if (strcmp(x->values[j], val) == 0) ERR(c, vk->pos, "RP1316", "value '%s' is listed twice", val);
+        }
+        x->values[x->value_count] = val;
+        x->labels[x->value_count] = l ? subst(c, l) : dup(c, val ? val : "");
+        ++x->value_count;
+    }
+    if (x->type == RP_DC_RADIO && x->height < 12 * (int)x->value_count)
+        ERR(c, key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value (%d)", 12 * (int)x->value_count);
+}
+
+static const rp_ir_dialog_t *find_dialog(const rp_ir_t *ir, const char *id) {
+    for (size_t k = 0; k < ir->dialog_count; ++k) {
+        if (ir->dialogs[k].id && strcmp(ir->dialogs[k].id, id) == 0) return &ir->dialogs[k];
+    }
+    return NULL;
+}
+
+static const rp_ir_property_t *find_property(const rp_ir_t *ir, const char *id) {
+    for (size_t k = 0; k < ir->property_count; ++k) {
+        if (ir->properties[k].id && strcmp(ir->properties[k].id, id) == 0) return &ir->properties[k];
+    }
+    return NULL;
+}
+
+// K4: every page hangs off a page of the chosen set; the values have defaults (RFC-0003 7).
+static void dialog_checks(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    for (size_t k = 0; k < ir->dialog_count; ++k) {
+        const rp_ir_dialog_t *d = &ir->dialogs[k];
+        if (ir->ui < RP_UI_MINIMAL) {
+            ERR(c, d->pos, "RP1316", "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\"", d->id);
+            continue;
+        }
+        if (d->after == NULL) continue;
+        bool builtin = strcmp(d->after, "RpWelcomeDlg") == 0 ||
+                       (strcmp(d->after, "RpLicenseDlg") == 0 && ir->license_shown) ||
+                       (strcmp(d->after, "RpInstallDirDlg") == 0 && ir->ui >= RP_UI_INSTALLDIR) ||
+                       (strcmp(d->after, "RpCustomizeDlg") == 0 && ir->ui == RP_UI_FEATURES);
+        if (builtin) continue;
+        // Another author page: it must exist and the chain must reach a built-in page.
+        const rp_ir_dialog_t *p = find_dialog(ir, d->after);
+        size_t steps = 0;
+        while (p && p->after && find_dialog(ir, p->after) && steps <= ir->dialog_count) {
+            p = find_dialog(ir, p->after);
+            ++steps;
+        }
+        if (find_dialog(ir, d->after) == NULL) {
+            ERR(c, d->pos, "RP1315", "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]", d->after,
+                ir->license_shown ? ", RpLicenseDlg" : "", ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : "",
+                ir->ui == RP_UI_FEATURES ? ", RpCustomizeDlg" : "");
+        } else if (steps > ir->dialog_count) {
+            ERR(c, d->pos, "RP1307", "[dialog.%s] is placed after itself through other dialogs", d->id);
+        }
+    }
+    for (size_t k = 0; k < ir->dialog_control_count; ++k) {
+        const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
+        if (x->dialog && find_dialog(ir, x->dialog) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", x->dialog);
+        if (x->property == NULL || x->type == RP_DC_TEXT) continue;
+        const rp_ir_property_t *p = find_property(ir, x->property);
+        if (x->type == RP_DC_RADIO || x->type == RP_DC_COMBO) {
+            bool ok = false;
+            for (size_t j = 0; p && p->value && j < x->value_count; ++j) ok |= x->values[j] && strcmp(x->values[j], p->value) == 0;
+            if (!ok) ERR(c, x->pos, "RP1315", "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)",
+                         x->type == RP_DC_RADIO ? "radio" : "combo", x->property);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_dialog_control_t *y = &ir->dialog_controls[j];
+            if (y->property && strcmp(y->property, x->property) == 0 && y->type != RP_DC_TEXT)
+                ERR(c, x->pos, "RP1301", "property '%s' already belongs to control '%s'", x->property, y->id);
+        }
+    }
+    for (size_t k = 0; k < ir->dialog_count; ++k) {
+        bool any = false;
+        for (size_t j = 0; j < ir->dialog_control_count && !any; ++j) any = ir->dialog_controls[j].dialog && strcmp(ir->dialog_controls[j].dialog, ir->dialogs[k].id) == 0;
+        size_t count = 0;
+        for (size_t j = 0; j < ir->dialog_control_count; ++j) count += ir->dialog_controls[j].dialog && strcmp(ir->dialog_controls[j].dialog, ir->dialogs[k].id) == 0;
+        if (!any) ERR(c, ir->dialogs[k].pos, "RP1202", "[dialog.%s] has no [dialog-control.*]", ir->dialogs[k].id);
+        else if (count > 64) ERR(c, ir->dialogs[k].pos, "RP1313", "[dialog.%s] has %zu controls; at most 64", ir->dialogs[k].id, count);
+    }
+}
+
 static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     rp_ir_t *ir = c->ir;
     if (ir->license_shown) {
@@ -1616,7 +1801,8 @@ static void cross_checks(ctx_t *c) {
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
                ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count +
-               ir->require_count + ir->search_count + ir->service_count + ir->font_count + ir->permission_count;
+               ir->require_count + ir->search_count + ir->service_count + ir->font_count + ir->permission_count +
+               ir->dialog_count + ir->dialog_control_count;
     idpos_t *ids = rp_mem_alloc(c->alloc, n, sizeof *ids);
     if (ids == NULL) {
         c->nomem = true;
@@ -1637,6 +1823,8 @@ static void cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->service_count; ++k) ids[m++] = (idpos_t){ ir->services[k].id, ir->services[k].pos };
     for (size_t k = 0; k < ir->font_count; ++k) ids[m++] = (idpos_t){ ir->fonts[k].id, ir->fonts[k].pos };
     for (size_t k = 0; k < ir->permission_count; ++k) ids[m++] = (idpos_t){ ir->permissions[k].id, ir->permissions[k].pos };
+    for (size_t k = 0; k < ir->dialog_count; ++k) ids[m++] = (idpos_t){ ir->dialogs[k].id, ir->dialogs[k].pos };
+    for (size_t k = 0; k < ir->dialog_control_count; ++k) ids[m++] = (idpos_t){ ir->dialog_controls[k].id, ir->dialog_controls[k].pos };
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
@@ -2052,7 +2240,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -2097,6 +2285,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "font") == 0) ++nfont;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
+        else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
+        else if (strcmp(t->kind, "dialog-control") == 0) ++ndctl;
         else if (strcmp(t->kind, "ui") == 0) uit = t;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
     }
@@ -2136,7 +2326,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->fonts = rp_mem_alloc(alloc, nfont + 1, sizeof *ir->fonts);
     ir->permissions = rp_mem_alloc(alloc, nperm + 1, sizeof *ir->permissions);
     ir->ui_texts = rp_mem_alloc(alloc, nuitext + 1, sizeof *ir->ui_texts);
-    if (ir->ui_texts == NULL) c.nomem = true;
+    ir->dialogs = rp_mem_alloc(alloc, ndlg + 1, sizeof *ir->dialogs);
+    ir->dialog_controls = rp_mem_alloc(alloc, ndctl + 1, sizeof *ir->dialog_controls);
+    if (ir->ui_texts == NULL || ir->dialogs == NULL || ir->dialog_controls == NULL) c.nomem = true;
     if (ir->services == NULL || ir->fonts == NULL || ir->permissions == NULL) c.nomem = true;
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
         ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL || ir->requires == NULL ||
@@ -2219,6 +2411,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_ui_text_t *x = &ir->ui_texts[ir->ui_text_count++];
             memset(x, 0, sizeof *x);
             parse_ui_text(&c, t, x);
+        } else if (strcmp(t->kind, "dialog") == 0) {
+            rp_ir_dialog_t *x = &ir->dialogs[ir->dialog_count++];
+            memset(x, 0, sizeof *x);
+            parse_dialog(&c, t, x);
+        } else if (strcmp(t->kind, "dialog-control") == 0) {
+            rp_ir_dialog_control_t *x = &ir->dialog_controls[ir->dialog_control_count++];
+            memset(x, 0, sizeof *x);
+            parse_dialog_control(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -2335,6 +2535,21 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             ir->ui_texts[j - 1] = t;
         }
     }
+    for (size_t i = 1; !c.nomem && i < ir->dialog_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->dialogs[j - 1].id, ir->dialogs[j].id) > 0; --j) {
+            rp_ir_dialog_t t = ir->dialogs[j];
+            ir->dialogs[j] = ir->dialogs[j - 1];
+            ir->dialogs[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->dialog_control_count; ++i) {
+        for (size_t j = i; j > 0 && cmp_str(ir->dialog_controls[j - 1].id, ir->dialog_controls[j].id) > 0; --j) {
+            rp_ir_dialog_control_t t = ir->dialog_controls[j];
+            ir->dialog_controls[j] = ir->dialog_controls[j - 1];
+            ir->dialog_controls[j - 1] = t;
+        }
+    }
+    if (!c.nomem) dialog_checks(&c);
     if (!c.nomem) cross_checks(&c);
     if (c.nomem) {
         rp_ir_free(ir);
@@ -2461,6 +2676,23 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, ir->ui_texts[k].text);
     }
     rp_mem_free(a, ir->ui_texts);
+    for (size_t k = 0; k < ir->dialog_count; ++k) {
+        char *xs[] = { ir->dialogs[k].id, ir->dialogs[k].title, ir->dialogs[k].description, ir->dialogs[k].after };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->dialogs);
+    for (size_t k = 0; k < ir->dialog_control_count; ++k) {
+        rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
+        char *xs[] = { x->id, x->dialog, x->text, x->property };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        for (size_t j = 0; j < x->value_count; ++j) {
+            rp_mem_free(a, x->values[j]);
+            rp_mem_free(a, x->labels[j]);
+        }
+        rp_mem_free(a, x->values);
+        rp_mem_free(a, x->labels);
+    }
+    rp_mem_free(a, ir->dialog_controls);
     char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir };
     for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
     rp_mem_free(a, ir->removes);
@@ -2689,6 +2921,32 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_puts(&b, "ui-text ");
         rp_buf_puts(&b, ir->ui_texts[k].id);
         kv(&b, "text", ir->ui_texts[k].text);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->dialog_count; ++k) {
+        rp_buf_puts(&b, "dialog ");
+        rp_buf_puts(&b, ir->dialogs[k].id);
+        kv(&b, "title", ir->dialogs[k].title);
+        kv(&b, "description", ir->dialogs[k].description);
+        kv(&b, "after", ir->dialogs[k].after);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->dialog_control_count; ++k) {
+        static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo" };
+        const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
+        char geo[64];
+        rp_buf_puts(&b, "dialog-control ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "dialog", x->dialog);
+        kv(&b, "type", x->type >= 0 && x->type < 5 ? types[x->type] : "-");
+        snprintf(geo, sizeof geo, "%d,%d,%d,%d", x->x, x->y, x->width, x->height);
+        kv(&b, "at", geo);
+        kv(&b, "text", x->text);
+        kv(&b, "property", x->property);
+        for (size_t j = 0; j < x->value_count; ++j) {
+            kv(&b, "value", x->values[j]);
+            kv(&b, "label", x->labels[j]);
+        }
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->font_count; ++k) {
