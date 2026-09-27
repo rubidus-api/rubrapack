@@ -73,4 +73,46 @@ void rp_wipe(void *p, size_t n);
 // Constant-time equality of two buffers.
 bool rp_ct_equal(const uint8_t *a, const uint8_t *b, size_t n);
 
+// ---- big numbers: Montgomery arithmetic with 32-bit limbs (src/crypto/bn.c) ----------------
+
+enum { RP_BN_LIMBS = 136 };     // up to 4352 bits: RSA-4096 moduli with room
+
+typedef struct {
+    uint32_t n[RP_BN_LIMBS];    // odd modulus, little-endian limbs
+    uint32_t rr[RP_BN_LIMBS];   // R^2 mod n, R = 2^(32k)
+    size_t   k;                 // limbs in use
+    size_t   bits;              // bit length of n
+    uint32_t n0inv;             // -n^-1 mod 2^32
+} rp_mont_t;
+
+// An odd modulus as big-endian bytes (no more than RP_BN_LIMBS limbs); false otherwise.
+bool rp_mont_init(rp_mont_t *m, const uint8_t *mod, size_t len);
+// r = x mod n for a big-endian x of up to 2k limbs with x < n * R (e.g. x < n^2); r in k limbs.
+void rp_mont_reduce_bytes(const rp_mont_t *m, const uint8_t *x, size_t len, uint32_t *r);
+// r = base^exp mod n (normal form in and out, k limbs). `exp` big-endian; the time does not depend
+// on the values of base or exp, only on the modulus size and exp_len.
+void rp_mont_exp_ct(const rp_mont_t *m, uint32_t *r, const uint32_t *base, const uint8_t *exp, size_t exp_len);
+// The same for a public exponent (may take less time for small exponents such as 65537).
+void rp_mont_exp_pub(const rp_mont_t *m, uint32_t *r, const uint32_t *base, const uint8_t *exp, size_t exp_len);
+// r = a * b mod n (normal form, k limbs).
+void rp_mont_mulmod(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b);
+
+// ---- RSA PKCS#1 v1.5 (RFC 8017 8.2) ------------------------------------------------------------
+
+typedef struct {
+    const uint8_t *n, *e, *d, *p, *q, *dp, *dq, *qinv;     // big-endian, no leading zero bytes needed
+    size_t         n_len, e_len, d_len, p_len, q_len, dp_len, dq_len, qinv_len;
+} rp_rsa_key_t;
+
+// Signs a digest (EMSA-PKCS1-v1_5 with the DigestInfo of `alg`): CRT with blinding on both primes,
+// constant-time exponentiation, and the signature is verified with (n, e) before it is returned.
+// sig gets the modulus byte length. PROVEN_ERR_INVALID_ARG for a key that is not usable,
+// PROVEN_ERR_INVALID_STATE when the check fails (a wrong key or a fault), PROVEN_ERR_IO when the OS
+// random source fails.
+[[nodiscard]] proven_err_t rp_rsa_sign(const rp_rsa_key_t *key, rp_hash_alg_t alg, const uint8_t *digest, uint8_t *sig,
+                                       size_t *sig_len);
+// Verifies a PKCS#1 v1.5 signature of a digest.
+[[nodiscard]] bool rp_rsa_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_len, rp_hash_alg_t alg,
+                                 const uint8_t *digest, const uint8_t *sig, size_t sig_len);
+
 #endif // RUBRAPACK_CRYPTO_H

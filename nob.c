@@ -68,6 +68,8 @@ static const char *const core_sources[] = {
     "src/pe/pe.c",
     "src/crypto/aes.c",
     "src/crypto/hash.c",
+    "src/crypto/bn.c",
+    "src/crypto/rsa.c",
     "src/text/utf.c",
     "src/text/nfc.c",
     "src/text/nfc_tables.c",
