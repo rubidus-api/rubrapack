@@ -200,6 +200,9 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
         memcpy(out->times, e + 100, 16);
         out->start = rd32(e + 116);
         out->size = cfb->major == 3 ? rd32(e + 120) : rd64(e + 120);
+        // A stream cannot hold more than the whole file: a larger size is a lie that would reach
+        // an allocation before the chain walk refuses it (found by fuzzing, T049).
+        if ((out->type == RP_CFB_STREAM || out->type == RP_CFB_ROOT) && out->size > len) FAIL(PROVEN_ERR_INVALID_FORMAT, "a stream larger than the file");
         uint32_t links[3] = { out->left, out->right, out->child };
         for (int k = 0; k < 3; ++k) {
             if (links[k] != RP_CFB_NONE && links[k] >= entries) FAIL(PROVEN_ERR_INVALID_FORMAT, "directory link out of range");
