@@ -16,7 +16,7 @@ tool from them without reading rubrapack's code - or check rubrapack's code agai
 | [`identity.md`](identity.md) | Deterministic GUIDs and keys, reproducible builds |
 | [`authenticode.md`](authenticode.md) | Authenticode signatures: where they sit in a PE file, the digest, the CMS structure Windows accepts |
 | [`verify.md`](verify.md) | How to check your output with Windows' own components |
-| [`msix.md`](msix.md) | MSIX: the ZIP layout, block map, manifest, virtual registry and file system |
+| [`msix.md`](msix.md) | MSIX: the ZIP layout, block map, manifest, virtual registry and file system, bundles |
 | [`registry.md`](registry.md) | Registry hive files (REGF), as MSIX `Registry.dat` and `User.dat` hold them |
 
 ## How to read the facts

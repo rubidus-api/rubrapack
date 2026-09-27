@@ -30,7 +30,8 @@ static bool ends_with(const char *s, const char *suffix) {
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
 // named <identity>_<version>_<arch>.msix inside, the architectures in the order given.
 static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
-                        char (*archs)[8], size_t narch, const rp_msix_options_t *mopt, const char *out, const char *src, rp_srcdiags_t *d) {
+                        char (*archs)[8], size_t narch, bool nfc, const rp_msix_options_t *mopt, const char *out, const char *src,
+                        rp_srcdiags_t *d) {
     static const char *const arch_names[] = { "x64", "arm64", "x86" };
     rp_msix_part_t parts[3];
     uint8_t *pkgs[3] = { 0 };
@@ -39,7 +40,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     proven_err_t err = PROVEN_OK;
     for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
         rp_ir_t ir;
-        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, false };
+        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, nfc };
         err = rp_ir_build(heap, doc, &opt, &ir, d);
         if (err != PROVEN_OK) break;
         size_t len = 0;
@@ -253,7 +254,7 @@ static int run(int argc, char **argv, bool lint) {
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
         if (err == PROVEN_OK && bundle) {
-            rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, &msix_opt, out, src, &d);
+            rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, nfc, &msix_opt, out, src, &d);
             rp_toml_free(&doc);
             rp_mem_free(heap, text);
             goto done;
