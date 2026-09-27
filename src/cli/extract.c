@@ -20,6 +20,7 @@
 #include "rubrapack/md5.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/suminfo.h"
 
@@ -268,6 +269,42 @@ static int plan_cab(plan_t *p, const uint8_t *data, size_t len) {
         if (!path_ok(p, rel, "file") || !add_file(p, rel, files[i].data, files[i].size)) return RP_EXIT_IO;
     }
     return p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
+}
+
+// ---- MSIX: the payload at its paths (block hashes checked while reading) ----------------------
+
+static int plan_msix(plan_t *p, const uint8_t *data, size_t len) {
+    rp_msix_file_t *files = NULL;
+    size_t n = 0;
+    uint8_t *manifest = NULL;
+    size_t ml = 0;
+    const char *why = NULL;
+    if (rp_msix_open(p->alloc, data, len, &p->read, &files, &n, &manifest, &ml, &why) != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid MSIX package: %s", p->path, why ? why : "unreadable");
+        return RP_EXIT_IO;
+    }
+    rp_mem_free(p->alloc, manifest);
+    int rc = RP_EXIT_OK;
+    for (size_t i = 0; i < n && rc == RP_EXIT_OK; ++i) {
+        own(p, files[i].data);              // kept until the plan is written
+        const uint8_t *fdata = files[i].data;
+        files[i].data = NULL;
+        char *rel = dup_n(p, files[i].name, strlen(files[i].name));
+        if (rel == NULL) {
+            rc = RP_EXIT_IO;
+            break;
+        }
+        for (char *c = rel; *c; ++c) {
+            if (*c == '\\') *c = '/';
+        }
+        if (!path_ok(p, rel, "file") || !add_file(p, rel, fdata, (size_t)files[i].size)) rc = RP_EXIT_IO;
+    }
+    for (size_t i = 0; i < n; ++i) {
+        rp_mem_free(p->alloc, files[i].name);
+        rp_mem_free(p->alloc, files[i].data);
+    }
+    rp_mem_free(p->alloc, files);
+    return rc != RP_EXIT_OK || p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
 }
 
 // ---- MSI -------------------------------------------------------------------------------------
@@ -589,8 +626,8 @@ int rp_cmd_extract(int argc, char **argv) {
             input = a;
         }
     }
-    if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab"))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]");
+    if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab") || ends_with_ci(input, ".msix"))) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -607,6 +644,8 @@ int rp_cmd_extract(int argc, char **argv) {
     int rc;
     if (ends_with_ci(input, ".cab")) {
         rc = plan_cab(&p, data, len);
+    } else if (ends_with_ci(input, ".msix")) {
+        rc = plan_msix(&p, data, len);
     } else {
         rp_cfb_t cfb;
         const char *why = NULL;

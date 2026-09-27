@@ -8,6 +8,7 @@
 #include "rubrapack/lint.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
 
 #include <stdio.h>
@@ -94,6 +95,13 @@ int rp_cmd_lint(int argc, char **argv) {
             other = true;
             if ((strcmp(argv[i], "-D") == 0 || strcmp(argv[i], "--arch") == 0) && i + 1 < argc) ++i;
         } else if (target == NULL) target = argv[i];
+    }
+    if (target && ends_with_ci(target, ".msix")) {
+        if (other || argc > 4 || (argc == 4 && !strict)) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <file.msix> [--strict]");
+            return RP_EXIT_USAGE;
+        }
+        return rp_msix_lint(target, strict);
     }
     if (target && ends_with_ci(target, ".msi")) {
         if (other || argc > 4 || (argc == 4 && !strict)) {

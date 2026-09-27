@@ -9,6 +9,7 @@
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/suminfo.h"
 
@@ -348,12 +349,12 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
 
 int rp_cmd_inspect(int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix> [--files|--manifest] | inspect <file.cab>");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;
     if (what && what[0] == '-' && strcmp(what, "--summary") != 0 && strcmp(what, "--streams") != 0 &&
-        strcmp(what, "--files") != 0) {
+        strcmp(what, "--files") != 0 && strcmp(what, "--manifest") != 0) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "unknown inspect option (use a table name, --summary, --files or --streams)");
         return RP_EXIT_USAGE;
     }
@@ -369,6 +370,10 @@ int rp_cmd_inspect(int argc, char **argv) {
         return RP_EXIT_IO;
     }
     size_t pl = strlen(path);
+    if (len >= 4 && memcmp(data, "PK\3\4", 4) == 0) {             // a ZIP: an MSIX package
+        rp_mem_free(heap, data);
+        return rp_msix_inspect(path, what);
+    }
     if (pl > 4 && (strcmp(path + pl - 4, ".cab") == 0 || strcmp(path + pl - 4, ".CAB") == 0)) {
         int crc = what ? RP_EXIT_USAGE : inspect_cab(path, data, len, heap);
         if (what) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.cab> (no table or option)");

@@ -1,21 +1,96 @@
-# MSIX (planned - not verified yet)
+# MSIX packages
 
-rubrapack will write MSIX packages later. Until the writer exists and its output has been
-installed on Windows, this page only lists the parts an MSIX package consists of, from Microsoft
-Learn and ECMA-376 Part 2. Nothing here has been tested by rubrapack yet.
+What a program has to write so that Windows reads, installs and runs an MSIX package. Facts are
+tagged as in [README.md](README.md): **[spec]** for Microsoft Learn (package manifest and block
+map schemas) and ECMA-376 Part 2 (Open Packaging Conventions); **[observed]** for packages written
+by Windows' own packaging API (`IAppxFactory`/`IAppxPackageWriter` in AppxPackaging.dll, part of
+Windows) and for rubrapack's packages read back through `IAppxPackageReader` and installed with
+`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; bundles, the virtual
+registry and file system, signing and extensions are not covered yet.
 
-- A ZIP archive (PKWARE APPNOTE) following the Open Packaging Conventions (ECMA-376 Part 2):
-  file names in UTF-8 with the language-encoding flag.
-- `AppxManifest.xml` - package identity (name, publisher, four-part version, processor
-  architecture), properties, dependencies (target device family and minimum version), resources,
-  applications, capabilities.
-- `AppxBlockMap.xml` - every file split into 64 KiB blocks, each block's SHA-256 in base64 and,
-  for deflated files, its compressed size.
-- `[Content_Types].xml` - media types by extension and override.
-- `AppxSignature.p7x` when signed.
-- Optionally `Registry.dat` (a registry hive) for virtual registry entries, and files under
-  `VFS/...` for well-known folders.
-- `.msixbundle`: several architecture packages plus `AppxMetadata/AppxBundleManifest.xml`.
+## The ZIP archive
 
-The details - exact ZIP layout rules, block map hashing of deflated files, hive format - will be
-documented here with the same [spec]/[observed] tags once they are implemented and verified.
+- The payload files first, then `AppxManifest.xml`, `AppxBlockMap.xml` and `[Content_Types].xml`,
+  in that order. [observed]
+- Every entry is ZIP64, whatever its size: the local header has version needed 4.5, flag 0x0008
+  (data descriptor), CRC and sizes 0 and no extra field; the data is followed by a ZIP64 data
+  descriptor (`PK\7\8`, CRC-32, compressed and plain size as 8 bytes each). The central directory
+  entry has made-by and needed 4.5 (MS-DOS), sizes and offset 0xFFFFFFFF and a ZIP64 extra field
+  (0x0001, 24 bytes: plain size, compressed size, local header offset). The archive ends with a
+  ZIP64 end record (size 44), its locator, and an end record whose counts and offsets are all
+  0xFFFF / 0xFFFFFFFF. [observed]
+- Methods: stored (0) and deflate (8). `AppxManifest.xml`, `AppxBlockMap.xml` and
+  `[Content_Types].xml` are deflated even when the payload is stored. [observed]
+- Entry names are OPC part names: `/` between folders and every byte outside `A-Z a-z 0-9 - . _ ~`
+  percent-encoded, UTF-8 bytes included - `data\<U+C790> %#(1).txt` (a Hangul syllable, a space,
+  `%`, `#` and parentheses) is stored as `data/%EC%9E%90%20%25%23%281%29.txt` - and the UTF-8
+  name flag is not set.
+  `[Content_Types].xml` keeps its brackets. [observed]
+- The dates in the headers are not read; Windows writes the time of writing, rubrapack
+  1980-01-01 00:00 so that a package does not change from one build to the next. [observed]
+
+## The block map (`AppxBlockMap.xml`)
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<BlockMap xmlns="http://schemas.microsoft.com/appx/2010/blockmap"
+          xmlns:b4="http://schemas.microsoft.com/appx/2021/blockmap" IgnorableNamespaces="b4"
+          HashMethod="http://www.w3.org/2001/04/xmlenc#sha256">
+  <File Name="data\text.txt" Size="218890" LfhSize="43">
+    <Block Hash="(base64 SHA-256 of 65536 plain bytes)" Size="(compressed bytes of this block)"/>
+    ...
+    <b4:FileHash Hash="(base64 SHA-256 of the whole file)"/>
+  </File>
+  ...
+</BlockMap>
+```
+
+- One `File` per payload file and one for `AppxManifest.xml`; the block map and
+  `[Content_Types].xml` are not listed. `Name` is the path as written, with `\`, not
+  percent-encoded; `Size` is the plain size; `LfhSize` the local header's size (30 + the ZIP
+  name's length). An empty file has no `Block`. [spec] [observed]
+- One `Block` per 65536 bytes of plain data; `Hash` is the base64 SHA-256 of that plain block.
+  [spec]
+- A deflated file is one independent raw deflate part per block: each part decodes with a fresh
+  decoder (nothing refers back into an earlier block) and ends with an empty stored block
+  (`00 00 FF FF`), and after the last part comes an empty final block (`03 00`). The block's
+  `Size` counts the bytes of its part, so the compressed size of the file is the sum of the
+  `Size`s plus 2 (an empty file: 2 bytes, no block). Stored files have no `Size` on their
+  blocks. Incompressible data is deflated as well (into stored blocks). [observed]
+- `b4:FileHash` appears only for files of more than one block. [observed]
+- Windows' reader checks every block's hash as the file is read, and refuses a package whose
+  file differs from its block map, both when reading and when installing. [observed]
+
+## `[Content_Types].xml`
+
+One line: a `Default` per file extension in order of first use (lower case), `xml` as
+`application/vnd.ms-appx.manifest+xml`, and `Override PartName="/AppxBlockMap.xml"` as
+`application/vnd.ms-appx.blockmap+xml`. rubrapack adds an `Override` for each file without an
+extension, and one for `/AppxManifest.xml` when a payload `.xml` file took the `xml` default.
+[observed]
+
+## The manifest (`AppxManifest.xml`)
+
+The smallest desktop application that Windows installs and starts (namespaces `foundation/windows10`,
+`uap/windows10`, `restrictedcapabilities`): [spec] [observed]
+
+- `Identity`: `Name` (3-50 characters of `A-Z a-z 0-9 . -`), `Publisher` (the signing
+  certificate's subject), `Version` (four parts, each at most 65535), `ProcessorArchitecture`
+  (`x64`, `arm64`, `x86`).
+- `Properties`: `DisplayName`, `PublisherDisplayName`, `Logo` (a PNG in the package).
+- `Dependencies/TargetDeviceFamily Name="Windows.Desktop"` with `MinVersion` and
+  `MaxVersionTested`.
+- `Resources/Resource Language`.
+- `Application Id Executable EntryPoint="Windows.FullTrustApplication"` with
+  `uap:VisualElements` (`DisplayName`, `Description`, `BackgroundColor`, `Square150x150Logo`,
+  `Square44x44Logo`), and the restricted capability `runFullTrust`.
+- Paths in the manifest use `\` and name files of the package.
+
+## Installing an unsigned package
+
+- `Publisher` must end in `OID.2.25.311729368913984317654407730594956997722=1`; then
+  `Add-AppxPackage -AllowUnsigned` installs it on Windows 11. [spec]
+- A package with an executable needs an elevated process (otherwise 0x80073D2B: an unsigned
+  package cannot hold an executable activation). Developer mode is not needed. [observed]
+- `Add-AppxPackage` from a network logon (an SSH session) fails at "PLM initialization" with
+  0x80070005; it works in an interactive session. [observed]

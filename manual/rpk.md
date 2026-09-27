@@ -79,6 +79,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
+| `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
+| `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -86,8 +88,50 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
-dirs, files and features. Tables that are planned but not implemented yet (the MSIX tables) are
-refused with "not supported yet".
+dirs, files and features. Tables that are planned but not implemented yet (`[assoc.*]`,
+`[protocol.*]`, `[msix-extension.*]`) are refused with "not supported yet".
+
+### MSIX packages
+
+The same source builds an MSIX package when the output ends in `.msix`: one desktop application
+that runs with full trust, for one architecture. Two more tables say what only MSIX needs:
+
+```toml
+[msix]
+identity-name = "Example.App"               # 3-50 characters: A-Z a-z 0-9 . -
+publisher = "CN=Example, O=Example, C=KR"   # the subject of the certificate that will sign it
+publisher-display-name = "Example"          # default: [package] manufacturer
+min-version = "10.0.17763.0"                # the oldest Windows it installs on (this is the default)
+
+[msix-app.Main]
+executable = "MainExe"                      # the [file.*] that starts the app
+display-name = "Example App"                # default: [package] name
+description = "An example"                  # default: the display name
+logo-150 = "assets/Square150x150.png"       # PNG, 150x150
+logo-44 = "assets/Square44x44.png"          # PNG, 44x44
+store-logo = "assets/StoreLogo.png"         # PNG, 50x50
+```
+
+- The version is `[package] version` with four parts (`1.2.3` becomes `1.2.3.0`), the
+  architecture `[package] arch`, the language `[package] language`.
+- The package holds the folder of the executable - the dir anchored in a known location, such as
+  `ProgramFiles/Example App` - and everything below it. A file anywhere else is an error
+  (`RP1609`); files in other locations need the package's virtual file system, which comes later.
+- Give the three logos or none: without them the package gets plain one-colour logos. A logo
+  must have the exact size (`RP1608`).
+- What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions,
+  services, environment variables, INI files, permissions, launch conditions and searches, files
+  removed or copied at install, empty folders; registry values, shortcuts and fonts come later.
+  Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
+  the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
+  Installer only and are not used for an MSIX.
+- `--unsigned-test` adds the attribute Windows needs to install an unsigned package for testing
+  (`Add-AppxPackage -AllowUnsigned`, as administrator when it contains a program); such a package
+  is not for distribution and its identity differs from the signed one. Signing MSIX packages
+  comes later.
+- Files are compressed (`--msix-compress store` turns it off); pictures, archives and other
+  already compressed files are stored. An MSIX holds no time: the same source gives the same
+  bytes on Linux and Windows.
 
 ### Registering with an installed program: `[action.ID]`
 
@@ -395,18 +439,20 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ## Command line
 
 ```text
-rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
+rubrapack build <src.rpk> -o <out.msi|out.msix> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
                 [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
+                [--unsigned-test] [--msix-compress deflate|store]                   (.msix)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
+rubrapack inspect <file.msix> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
 rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
-rubrapack lint <file.msi> [--strict]
-rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
+rubrapack lint <file.msi|file.msix> [--strict]
+rubrapack extract <file.msi|file.msix|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
@@ -432,7 +478,9 @@ rubrapack version | help [command]
 - `inspect <file.msi> <table>` prints the table in Windows Installer's IDT format. `--files`
   prints one tab-separated line per file: installed path, size, File key, component, version,
   language, MD5 (from `MsiFileHash`; empty when the package has none). `--streams` lists the
-  streams and their sizes. `inspect <file.cab>` lists the files in a cabinet.
+  streams and their sizes. `inspect <file.cab>` lists the files in a cabinet. `inspect <file.msix>`
+  shows the identity, the executable and the files (after checking every block's hash); `--files`
+  lists path, size and whether each file is compressed, `--manifest` prints `AppxManifest.xml`.
 - `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
   `dist/`, with a fresh `upgrade-code`. It never replaces an existing file.
 - `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
@@ -452,7 +500,9 @@ rubrapack version | help [command]
   (`RP2102`), a files-in-use dialog without a `ListBox` table (`RP2103`), an error dialog without
   `ErrorText`/`ErrorIcon` (`RP2104`) - and everything else is a warning. `--strict` makes warnings
   fail too. A package in another code page than 65001 gets a note (`RP2100`): its text cannot be
-  checked as UTF-8. The last line on stdout counts errors and warnings.
+  checked as UTF-8. The last line on stdout counts errors and warnings. `lint <file.msix>` checks the package the way Windows reads
+  it - the ZIP, the block map, every block's hash - and that the manifest has an identity and
+  names files that are in the package (`RP2201`, `RP2202`).
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.
@@ -460,7 +510,8 @@ rubrapack version | help [command]
   nothing is written until the whole package has passed: names with `..`, `/`, `\`, `:`, a drive,
   a reserved device name (`CON`, `COM1`, ...), a trailing dot or space, or two paths that differ
   only in case are refused. The defaults allow 100,000 entries and 16 GiB. A `.cab` unpacks by the
-  names inside it.
+  names inside it. An `.msix` unpacks its files (not the ZIP's own
+  `[Content_Types].xml` and `AppxBlockMap.xml`) after every block has matched its hash.
 - `sign` adds an Authenticode signature (SHA-256, RSA) to a PE file or an MSI package, in place or
   to `-o`; `build --key` signs the package as it is built (the same code), and a signed
   `--reproducible` build still gives the same bytes every time (the signature holds no time) - unless

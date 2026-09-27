@@ -438,7 +438,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     // Logos: the three given (checked), or plain ones made here.
     static const uint32_t logo_px[3] = { 150, 44, 50 };
-    static const char *const logo_default[3] = { "Assets\\Square150x150Logo.png", "Assets\\Square44x44Logo.png", "Assets\\StoreLogo.png" };
+    static const char *const logo_default[3] = { "Assets\\DefaultSquare150x150Logo.png", "Assets\\DefaultSquare44x44Logo.png",
+                                                 "Assets\\DefaultStoreLogo.png" };
     char logos[3][2200];
     for (int k = 0; k < 3; ++k) {
         if (ir->msix_logo_path[k]) {
@@ -525,4 +526,280 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, items);
     return err;
+}
+
+// ---- reading --------------------------------------------------------------------------------------
+//
+// A minimal reader for the block map (RFC-0001 F11: rubrapack's own, for this one schema): elements
+// and attributes in double quotes, the five XML entities and numeric character references.
+
+typedef struct {
+    const char *p, *end;
+} xr_t;
+
+// The next start tag named `name` (with or without a prefix match on the local name), from x->p.
+// On success x->p is just after the name; *self_closing tells whether it ends in "/>".
+static bool next_tag(xr_t *x, const char *name, const char **tag_end) {
+    size_t nl = strlen(name);
+    for (const char *q = x->p; q + 1 + nl < x->end; ++q) {
+        if (q[0] == '<' && memcmp(q + 1, name, nl) == 0 && (q[1 + nl] == ' ' || q[1 + nl] == '/' || q[1 + nl] == '>' || q[1 + nl] == '\r' || q[1 + nl] == '\n' || q[1 + nl] == '\t')) {
+            const char *e = memchr(q, '>', (size_t)(x->end - q));
+            if (e == NULL) return false;
+            x->p = q + 1 + nl;
+            *tag_end = e;
+            return true;
+        }
+    }
+    return false;
+}
+
+// The value of attribute `name` between x->p and tag_end, decoded into out (NUL-terminated).
+static bool attr_value(const char *from, const char *tag_end, const char *name, char *out, size_t cap) {
+    size_t nl = strlen(name);
+    for (const char *q = from; q + nl + 2 < tag_end; ++q) {
+        if ((q[-1] == ' ' || q[-1] == '\t' || q[-1] == '\r' || q[-1] == '\n') && memcmp(q, name, nl) == 0 && q[nl] == '=' && q[nl + 1] == '"') {
+            const char *v = q + nl + 2, *ve = memchr(v, '"', (size_t)(tag_end - v));
+            if (ve == NULL) return false;
+            size_t o = 0;
+            for (const char *c = v; c < ve;) {
+                if (o + 5 >= cap) return false;
+                if (*c != '&') {
+                    out[o++] = *c++;
+                    continue;
+                }
+                const char *semi = memchr(c, ';', (size_t)(ve - c));
+                if (semi == NULL || semi - c > 10) return false;
+                size_t el = (size_t)(semi - c - 1);
+                const char *ent = c + 1;
+                unsigned long cp = 0;
+                if (el == 3 && memcmp(ent, "amp", 3) == 0) cp = '&';
+                else if (el == 2 && memcmp(ent, "lt", 2) == 0) cp = '<';
+                else if (el == 2 && memcmp(ent, "gt", 2) == 0) cp = '>';
+                else if (el == 4 && memcmp(ent, "quot", 4) == 0) cp = '"';
+                else if (el == 4 && memcmp(ent, "apos", 4) == 0) cp = '\'';
+                else if (el >= 2 && ent[0] == '#') {
+                    bool hexa = ent[1] == 'x';
+                    for (const char *d = ent + 1 + hexa; d < semi; ++d) {
+                        int dv = *d >= '0' && *d <= '9' ? *d - '0' : hexa && (*d | 32) >= 'a' && (*d | 32) <= 'f' ? (*d | 32) - 'a' + 10 : -1;
+                        if (dv < 0 || cp > 0x10FFFF) return false;
+                        cp = cp * (hexa ? 16 : 10) + (unsigned long)dv;
+                    }
+                } else {
+                    return false;
+                }
+                if (cp == 0 || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) return false;
+                if (cp < 0x80) out[o++] = (char)cp;
+                else if (cp < 0x800) out[o++] = (char)(0xC0 | cp >> 6), out[o++] = (char)(0x80 | (cp & 63));
+                else if (cp < 0x10000) out[o++] = (char)(0xE0 | cp >> 12), out[o++] = (char)(0x80 | (cp >> 6 & 63)), out[o++] = (char)(0x80 | (cp & 63));
+                else out[o++] = (char)(0xF0 | cp >> 18), out[o++] = (char)(0x80 | (cp >> 12 & 63)), out[o++] = (char)(0x80 | (cp >> 6 & 63)), out[o++] = (char)(0x80 | (cp & 63));
+                c = semi + 1;
+            }
+            out[o] = 0;
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool parse_u64(const char *s, uint64_t *v) {
+    *v = 0;
+    if (*s == 0) return false;
+    for (; *s; ++s) {
+        if (*s < '0' || *s > '9' || *v > (UINT64_MAX - 9) / 10) return false;
+        *v = *v * 10 + (uint64_t)(*s - '0');
+    }
+    return true;
+}
+
+// Percent-decoded ZIP name with '\' for '/', compared with a block map name.
+static bool zip_name_is(const char *zip, const char *bm) {
+    for (; *zip; ++bm) {
+        unsigned ch;
+        if (zip[0] == '%') {
+            int h = zip[1] >= '0' && zip[1] <= '9' ? zip[1] - '0' : (zip[1] | 32) >= 'a' && (zip[1] | 32) <= 'f' ? (zip[1] | 32) - 'a' + 10 : -1;
+            int l = h < 0 ? -1 : zip[2] >= '0' && zip[2] <= '9' ? zip[2] - '0' : (zip[2] | 32) >= 'a' && (zip[2] | 32) <= 'f' ? (zip[2] | 32) - 'a' + 10 : -1;
+            if (l < 0) return false;
+            ch = (unsigned)(h * 16 + l);
+            zip += 3;
+        } else {
+            ch = *zip == '/' ? '\\' : (unsigned char)*zip;
+            ++zip;
+        }
+        if ((unsigned char)*bm != ch) return false;
+    }
+    return *bm == 0;
+}
+
+static int b64v(char c) {
+    return c >= 'A' && c <= 'Z' ? c - 'A' : c >= 'a' && c <= 'z' ? c - 'a' + 26 : c >= '0' && c <= '9' ? c - '0' + 52 : c == '+' ? 62 : c == '/' ? 63 : -1;
+}
+
+// Decodes base64 of exactly `n` bytes.
+static bool unbase64(const char *s, uint8_t *out, size_t n) {
+    size_t sl = strlen(s), o = 0;
+    if (sl != (n + 2) / 3 * 4) return false;
+    for (size_t i = 0; i < sl; i += 4) {
+        int a = b64v(s[i]), b = b64v(s[i + 1]), c = s[i + 2] == '=' ? 0 : b64v(s[i + 2]), d = s[i + 3] == '=' ? 0 : b64v(s[i + 3]);
+        if (a < 0 || b < 0 || c < 0 || d < 0) return false;
+        uint32_t v = (uint32_t)a << 18 | (uint32_t)b << 12 | (uint32_t)c << 6 | (uint32_t)d;
+        uint8_t t[3] = { (uint8_t)(v >> 16), (uint8_t)(v >> 8), (uint8_t)v };
+        for (int k = 0; k < 3 && o < n; ++k) out[o++] = t[k];
+    }
+    return o == n;
+}
+
+void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t count) {
+    for (size_t i = 0; files && i < count; ++i) {
+        rp_mem_free(alloc, files[i].name);
+        rp_mem_free(alloc, files[i].data);
+    }
+    rp_mem_free(alloc, files);
+}
+
+#define BAD(msg) do { *why = (msg); err = PROVEN_ERR_INVALID_FORMAT; goto out; } while (0)
+
+proven_err_t rp_msix_open(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, rp_msix_file_t **files,
+                          size_t *count, uint8_t **manifest, size_t *manifest_len, const char **why) {
+    *files = NULL;
+    *count = 0;
+    *manifest = NULL;
+    *manifest_len = 0;
+    rp_zip_entry_t *e = NULL;
+    size_t ne = 0, nf = 0;
+    uint8_t *bm = NULL;
+    rp_msix_file_t *f = NULL;
+    bool *used = NULL;
+    proven_err_t err = rp_zip_read(alloc, pkg, len, lim, &e, &ne, why);
+    if (err != PROVEN_OK) return err;
+    size_t ibm = SIZE_MAX, ict = SIZE_MAX, iman = SIZE_MAX;
+    for (size_t i = 0; i < ne; ++i) {
+        if (strcmp(e[i].name, "AppxBlockMap.xml") == 0) ibm = i;
+        else if (strcmp(e[i].name, "[Content_Types].xml") == 0) ict = i;
+        else if (strcmp(e[i].name, "AppxManifest.xml") == 0) iman = i;
+    }
+    if (ibm == SIZE_MAX || ict == SIZE_MAX || iman == SIZE_MAX) BAD("not an MSIX package (AppxBlockMap.xml, AppxManifest.xml or [Content_Types].xml missing)");
+    err = rp_zip_data(alloc, pkg, len, &e[ibm], 64u << 20, &bm, why);
+    if (err != PROVEN_OK) goto out;
+    xr_t x = { (const char *)bm, (const char *)bm + e[ibm].size };
+    const char *te;
+    char val[4200];
+    if (!next_tag(&x, "BlockMap", &te) || !attr_value(x.p - 1, te, "HashMethod", val, sizeof val)) BAD("the block map has no HashMethod");
+    rp_hash_alg_t alg;
+    if (strcmp(val, "http://www.w3.org/2001/04/xmlenc#sha256") == 0) alg = RP_HASH_SHA256;
+    else if (strcmp(val, "http://www.w3.org/2001/04/xmldsig-more#sha384") == 0) alg = RP_HASH_SHA384;
+    else if (strcmp(val, "http://www.w3.org/2001/04/xmlenc#sha512") == 0) alg = RP_HASH_SHA512;
+    else BAD("the block map uses a hash rubrapack does not know");
+    size_t hl = rp_hash_size(alg);
+    f = rp_mem_alloc(alloc, ne ? ne : 1, sizeof *f);
+    used = rp_mem_alloc(alloc, ne ? ne : 1, sizeof *used);
+    if (f == NULL || used == NULL) {
+        err = PROVEN_ERR_NOMEM;
+        goto out;
+    }
+    memset(f, 0, (ne ? ne : 1) * sizeof *f);
+    memset(used, 0, (ne ? ne : 1) * sizeof *used);
+    for (;;) {
+        xr_t fx = x;
+        if (!next_tag(&fx, "File", &te)) break;
+        x = fx;
+        uint64_t size, lfh;
+        char sz[32], lf[32];
+        if (!attr_value(x.p - 1, te, "Name", val, sizeof val) || !attr_value(x.p - 1, te, "Size", sz, sizeof sz) ||
+            !attr_value(x.p - 1, te, "LfhSize", lf, sizeof lf) || !parse_u64(sz, &size) || !parse_u64(lf, &lfh)) {
+            BAD("a malformed File in the block map");
+        }
+        if (nf == ne) BAD("the block map lists more files than the package holds");
+        size_t k = SIZE_MAX;
+        for (size_t i = 0; i < ne && k == SIZE_MAX; ++i) {
+            if (!used[i] && i != ibm && i != ict && zip_name_is(e[i].name, val)) k = i;
+        }
+        if (k == SIZE_MAX) BAD("a file of the block map is not in the package");
+        used[k] = true;
+        if (e[k].size != size || e[k].lfh_size != lfh) BAD("a file's size or local header size differs from the block map");
+        rp_msix_file_t *out_f = &f[nf++];
+        out_f->name = rp_mem_alloc(alloc, strlen(val) + 1, 1);
+        if (out_f->name == NULL) {
+            err = PROVEN_ERR_NOMEM;
+            goto out;
+        }
+        strcpy(out_f->name, val);
+        out_f->size = size;
+        out_f->deflated = e[k].method == 8;
+        if (size > lim->max_output) {
+            *why = "a file larger than allowed";
+            err = PROVEN_ERR_OUT_OF_BOUNDS;
+            goto out;
+        }
+        err = rp_zip_data(alloc, pkg, len, &e[k], lim->max_output, &out_f->data, why);
+        if (err != PROVEN_OK) goto out;
+        // The blocks, up to </File> (or none for a self-closing File).
+        const char *file_end = te[-1] == '/' ? te : NULL;
+        if (file_end == NULL) {
+            for (const char *q = te; q + 7 <= x.end; ++q) {
+                if (memcmp(q, "</File>", 7) == 0) {
+                    file_end = q;
+                    break;
+                }
+            }
+            if (file_end == NULL) BAD("a File without its end in the block map");
+        }
+        uint64_t nblocks = (size + BLOCK - 1) / BLOCK, csum = 0, seen = 0;
+        xr_t bx = { te, file_end };
+        const char *be;
+        while (next_tag(&bx, "Block", &be)) {
+            uint8_t want[RP_HASH_MAX], got[RP_HASH_MAX];
+            if (seen == nblocks || !attr_value(bx.p - 1, be, "Hash", val, sizeof val) || !unbase64(val, want, hl)) BAD("a malformed Block in the block map");
+            uint64_t off = seen * BLOCK, take = size - off < BLOCK ? size - off : BLOCK;
+            rp_hash(alg, out_f->data + off, (size_t)take, got);
+            if (memcmp(want, got, hl) != 0) BAD("a block's hash does not match the block map (the package was changed)");
+            if (out_f->deflated) {
+                uint64_t bs;
+                if (!attr_value(bx.p - 1, be, "Size", sz, sizeof sz) || !parse_u64(sz, &bs)) BAD("a deflated file's Block has no Size");
+                csum += bs;
+            }
+            ++seen;
+            bx.p = be;
+        }
+        if (seen != nblocks) BAD("the block map lists the wrong number of blocks for a file");
+        if (out_f->deflated && csum + 2 != e[k].csize) BAD("a deflated file's block sizes do not add up to its compressed size");
+        x.p = file_end;
+    }
+    // Everything but the footprint files must be in the block map.
+    for (size_t i = 0; i < ne; ++i) {
+        if (used[i] || i == ibm || i == ict || strcmp(e[i].name, "AppxSignature.p7x") == 0 || strncmp(e[i].name, "AppxMetadata/", 13) == 0) continue;
+        BAD("a file of the package is not in the block map");
+    }
+    if (!used[iman]) BAD("the manifest is not in the block map");
+    for (size_t i = 0; i < nf; ++i) {
+        if (strcmp(f[i].name, "AppxManifest.xml") == 0) {
+            *manifest = rp_mem_alloc(alloc, (size_t)f[i].size + 1, 1);
+            if (*manifest == NULL) {
+                err = PROVEN_ERR_NOMEM;
+                goto out;
+            }
+            memcpy(*manifest, f[i].data, (size_t)f[i].size);
+            (*manifest)[f[i].size] = 0;
+            *manifest_len = (size_t)f[i].size;
+        }
+    }
+out:
+    rp_mem_free(alloc, bm);
+    rp_mem_free(alloc, used);
+    rp_zip_entries_free(alloc, e, ne);
+    if (err != PROVEN_OK) {
+        rp_msix_files_free(alloc, f, nf);
+        rp_mem_free(alloc, *manifest);
+        *manifest = NULL;
+        *manifest_len = 0;
+        return err;
+    }
+    *files = f;
+    *count = nf;
+    return PROVEN_OK;
+}
+
+bool rp_xml_attr(const char *xml, size_t len, const char *element, const char *attribute, char *out, size_t cap) {
+    xr_t x = { xml, xml + len };
+    const char *te;
+    return next_tag(&x, element, &te) && attr_value(x.p - 1, te, attribute, out, cap);
 }
