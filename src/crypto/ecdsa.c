@@ -221,6 +221,22 @@ bool rp_ec_public(rp_ec_curve_t curve, const uint8_t *d, uint8_t *qx, uint8_t *q
     return true;
 }
 
+bool rp_ecdh(rp_ec_curve_t curve, const uint8_t *d, const uint8_t *px, const uint8_t *py, uint8_t *shared_x) {
+    ctx_t c;
+    if (!ctx_init(&c, curve) || !in_range(&c, d) || !on_curve(&c, px, py)) return false;
+    uint32_t x[L], y[L];
+    from_be(x, c.fp.k, px, c.c->len);
+    from_be(y, c.fp.k, py, c.c->len);
+    pt_t p, q;
+    from_affine(&c, &p, x, y);
+    smul(&c, &q, &p, d);
+    bool ok = to_affine(&c, &q, x, y);
+    if (ok) to_be(x, shared_x, c.c->len);
+    rp_wipe(&q, sizeof q);
+    rp_wipe(x, sizeof x);
+    return ok;
+}
+
 // bits2int (RFC 6979 2.3.2) then mod n: the leftmost qlen bits of the hash, as a scalar.
 static void hash_to_scalar(const ctx_t *c, const uint8_t *digest, size_t hl, uint8_t *out) {
     size_t len = c->c->len;

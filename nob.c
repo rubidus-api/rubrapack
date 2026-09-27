@@ -72,6 +72,8 @@ static const char *const core_sources[] = {
     "src/crypto/hash.c",
     "src/crypto/bn.c",
     "src/crypto/ecdsa.c",
+    "src/crypto/gcm.c",
+    "src/crypto/x25519.c",
     "src/crypto/der.c",
     "src/crypto/keys.c",
     "src/crypto/x509.c",

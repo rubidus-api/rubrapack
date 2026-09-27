@@ -186,3 +186,34 @@ void rp_pbkdf2(rp_hash_alg_t alg, const uint8_t *pass, size_t pass_len, const ui
     rp_wipe(u, sizeof u);
     rp_wipe(t, sizeof t);
 }
+
+void rp_hkdf_extract(rp_hash_alg_t alg, const uint8_t *salt, size_t salt_len, const uint8_t *ikm, size_t ikm_len, uint8_t *prk) {
+    // HMAC pads its key with zeros, so an empty salt already is "HashLen zeros".
+    rp_hmac(alg, salt, salt_len, ikm, ikm_len, prk);
+}
+
+bool rp_hkdf_expand(rp_hash_alg_t alg, const uint8_t *prk, size_t prk_len, const uint8_t *info, size_t info_len, uint8_t *out,
+                    size_t len) {
+    size_t hl = rp_hash_size(alg);
+    if (len > 255 * hl) return false;
+    rp_hmac_t base, m;
+    rp_hmac_init(&base, alg, prk, prk_len);
+    uint8_t t[RP_HASH_MAX];
+    size_t tl = 0;
+    for (uint8_t i = 1; len; ++i) {
+        m = base;
+        rp_hmac_update(&m, t, tl);
+        rp_hmac_update(&m, info, info_len);
+        rp_hmac_update(&m, &i, 1);
+        rp_hmac_final(&m, t);
+        tl = hl;
+        size_t take = len < hl ? len : hl;
+        memcpy(out, t, take);
+        out += take;
+        len -= take;
+    }
+    rp_wipe(t, sizeof t);
+    rp_wipe(&base, sizeof base);
+    rp_wipe(&m, sizeof m);
+    return true;
+}

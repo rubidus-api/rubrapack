@@ -1,4 +1,5 @@
-// src/crypto/rsa.c - RSA PKCS#1 v1.5 signatures (RFC 8017 8.2, 9.2; include/rubrapack/crypto.h).
+// src/crypto/rsa.c - RSA PKCS#1 v1.5 signatures (RFC 8017 8.2, 9.2) and RSASSA-PSS verification
+// (RFC 8017 8.1.2, 9.1.2) (include/rubrapack/crypto.h).
 //
 // Signing uses the CRT with base blinding on each prime: for a random r < p the message is
 // multiplied by r^e, raised to dP (giving m1 r, since e dP = 1 mod p - 1), and divided by r again
@@ -209,4 +210,60 @@ bool rp_rsa_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_le
     if (!encode(alg, digest, em, n_len)) return false;
     to_be(mv, mn.k, got, n_len);
     return rp_ct_equal(em, got, n_len);
+}
+
+// MGF1 (RFC 8017 B.2.1) XORed into `db`.
+static void mgf1_xor(rp_hash_alg_t alg, const uint8_t *seed, size_t seed_len, uint8_t *db, size_t len) {
+    uint8_t h[RP_HASH_MAX];
+    size_t hl = rp_hash_size(alg);
+    for (uint32_t c = 0, off = 0; off < len; ++c) {
+        uint8_t ctr[4] = { (uint8_t)(c >> 24), (uint8_t)(c >> 16), (uint8_t)(c >> 8), (uint8_t)c };
+        rp_hash_t t;
+        rp_hash_init(&t, alg);
+        rp_hash_update(&t, seed, seed_len);
+        rp_hash_update(&t, ctr, 4);
+        rp_hash_final(&t, h);
+        for (size_t i = 0; i < hl && off < len; ++i) db[off++] ^= h[i];
+    }
+}
+
+bool rp_rsa_pss_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_len, rp_hash_alg_t alg, const uint8_t *digest,
+                       const uint8_t *sig, size_t sig_len, size_t salt_len) {
+    strip(&n, &n_len);
+    strip(&e, &e_len);
+    rp_mont_t mn;
+    if (sig_len != n_len || !e_len || !rp_mont_init(&mn, n, n_len)) return false;
+    if (memcmp(sig, n, n_len) >= 0) return false;
+    uint32_t sv[RP_BN_LIMBS], mv[RP_BN_LIMBS];
+    from_be(sv, mn.k, sig, sig_len);
+    rp_mont_exp_pub(&mn, mv, sv, e, e_len);
+    uint8_t m[4 * RP_BN_LIMBS];
+    to_be(mv, mn.k, m, n_len);
+    // emBits = modBits - 1; EM is the last emLen bytes of m, whose leading bytes must be zero.
+    size_t mod_bits = 8 * n_len;
+    for (uint8_t top = n[0]; !(top & 0x80); top = (uint8_t)(top << 1)) --mod_bits;
+    size_t em_bits = mod_bits - 1, em_len = (em_bits + 7) / 8, hl = rp_hash_size(alg);
+    for (size_t i = 0; i < n_len - em_len; ++i) {
+        if (m[i]) return false;
+    }
+    uint8_t *em = m + (n_len - em_len);
+    if (em_len < hl + salt_len + 2 || em[em_len - 1] != 0xBC) return false;
+    size_t db_len = em_len - hl - 1;
+    uint8_t top_mask = (uint8_t)(0xFF >> (8 * em_len - em_bits));
+    if (em[0] & (uint8_t)~top_mask) return false;
+    const uint8_t *hash = em + db_len;
+    mgf1_xor(alg, hash, hl, em, db_len);            // em[0..db_len) becomes DB
+    em[0] &= top_mask;
+    for (size_t i = 0; i < db_len - salt_len - 1; ++i) {
+        if (em[i]) return false;
+    }
+    if (em[db_len - salt_len - 1] != 0x01) return false;
+    uint8_t h2[RP_HASH_MAX], zeros[8] = { 0 };
+    rp_hash_t t;
+    rp_hash_init(&t, alg);
+    rp_hash_update(&t, zeros, 8);
+    rp_hash_update(&t, digest, hl);
+    rp_hash_update(&t, em + db_len - salt_len, salt_len);
+    rp_hash_final(&t, h2);
+    return memcmp(h2, hash, hl) == 0;
 }
