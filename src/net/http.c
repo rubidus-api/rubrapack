@@ -365,30 +365,151 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
     return PROVEN_OK;
 }
 
-// One exchange with one server: connect, send, read. *head gets the status and headers.
-static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req, bool https, const char *host, uint16_t port, const char *path,
-                             int64_t deadline, head_t *head, uint8_t **body, size_t *blen, const char **why) {
+// ---- proxies (RFC-0008 T5) --------------------------------------------------------------------
+
+typedef struct {
+    bool     on;
+    char     host[256];
+    uint16_t port;
+} proxy_t;
+
+// Whether `host` is in a no_proxy list: comma-separated names, each matching the host itself or
+// any name under it ("example.com" and ".example.com" both cover a.example.com), "*" for all.
+// Ports in entries are ignored; letters compare without case.
+static bool no_proxy_covers(const char *list, const char *host) {
+    size_t hl = strlen(host);
+    while (*list) {
+        while (*list == ',' || *list == ' ') ++list;
+        const char *end = list;
+        while (*end && *end != ',' && *end != ' ') ++end;
+        size_t n = (size_t)(end - list);
+        const char *colon = memchr(list, ':', n);
+        if (colon && !memchr(colon + 1, ':', (size_t)(end - colon - 1))) n = (size_t)(colon - list);   // name:port (not IPv6)
+        if (n && list[0] == '.') ++list, --n;
+        if (n == 1 && list[0] == '*') return true;
+        bool match = n && n <= hl;
+        for (size_t i = 0; match && i < n; ++i) {
+            char a = host[hl - n + i], b = list[i];
+            if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
+            if (b >= 'A' && b <= 'Z') b = (char)(b + 32);
+            match = a == b;
+        }
+        if (match && (n == hl || host[hl - n - 1] == '.')) return true;
+        list = end;
+    }
+    return false;
+}
+
+// The proxy for a target: --proxy first, else https_proxy/HTTPS_PROXY for https and http_proxy
+// for http (not HTTP_PROXY, which a CGI environment could set from a request header), unless
+// no_proxy/NO_PROXY names the target.
+static proven_err_t choose_proxy(proven_allocator_t alloc, const rp_http_req_t *req, bool https, const char *host, proxy_t *px,
+                                 const char **why) {
+    memset(px, 0, sizeof *px);
+    char *env = NULL;
+    const char *url = req->proxy;
+    if (url == NULL) {
+        const char *names[2] = { https ? "https_proxy" : "http_proxy", https ? "HTTPS_PROXY" : NULL };
+        for (int i = 0; i < 2 && env == NULL && names[i]; ++i) env = rp_pal_getenv(alloc, names[i]);
+        if (env == NULL || env[0] == 0) {
+            if (env) rp_mem_free(alloc, env);
+            return PROVEN_OK;
+        }
+        char *np = rp_pal_getenv(alloc, "no_proxy");
+        if (np == NULL) np = rp_pal_getenv(alloc, "NO_PROXY");
+        bool skip = np && no_proxy_covers(np, host);
+        if (np) rp_mem_free(alloc, np);
+        if (skip) {
+            rp_mem_free(alloc, env);
+            return PROVEN_OK;
+        }
+        url = env;
+    }
+    char full[1024];
+    snprintf(full, sizeof full, "%s%s", strstr(url, "://") ? "" : "http://", url);
+    bool proxy_https = false;
+    char path[256];
+    proven_err_t err = PROVEN_OK;
+    if (strchr(full, '@')) {
+        *why = "a proxy with a user name or password is not supported";
+        err = PROVEN_ERR_UNSUPPORTED;
+    } else if (!rp_url_parse(full, &proxy_https, px->host, sizeof px->host, &px->port, path, sizeof path)) {
+        *why = "not a proxy URL rubrapack accepts (http://host:port)";
+        err = PROVEN_ERR_INVALID_ARG;
+    } else if (proxy_https) {
+        *why = "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)";
+        err = PROVEN_ERR_UNSUPPORTED;
+    } else {
+        px->on = true;
+    }
+    if (env) rp_mem_free(alloc, env);
+    return err;
+}
+
+// Asks the proxy for a tunnel to host:port (RFC 9110 9.3.6).
+static proven_err_t tunnel(conn_t *c, const char *hostport, const char **why) {
+    char line[700];
+    int n = snprintf(line, sizeof line, "CONNECT %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n\r\n",
+                     hostport, hostport);
+    if (n < 0 || (size_t)n >= sizeof line) return PROVEN_ERR_OUT_OF_BOUNDS;
+    proven_err_t err = conn_send(c, (const uint8_t *)line, (size_t)n);
+    head_t h;
+    if (err == PROVEN_OK) err = read_head(c, &h, why);
+    if (err != PROVEN_OK) {
+        if (*why == NULL) *why = "the proxy did not answer the tunnel request";
+        return err;
+    }
+    if (h.status == 407) {
+        *why = "the proxy asks for a password (407), which rubrapack does not support";
+        return PROVEN_ERR_PERMISSION;
+    }
+    if (h.status < 200 || h.status > 299) {
+        static char msg[80];
+        snprintf(msg, sizeof msg, "the proxy refused the tunnel (HTTP status %d)", h.status);
+        *why = msg;
+        return PROVEN_ERR_PERMISSION;
+    }
+    if (c->pos != c->len) {                               // nothing may follow the proxy's answer
+        *why = "the proxy sent data after its answer to CONNECT";
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
+    return PROVEN_OK;
+}
+
+// One exchange with one server: connect (to the proxy, when there is one), send, read. *head gets
+// the status and headers.
+static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req, const proxy_t *px, bool https, const char *host, uint16_t port,
+                             const char *path, int64_t deadline, head_t *head, uint8_t **body, size_t *blen, const char **why) {
     conn_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     if (c == NULL) return PROVEN_ERR_NOMEM;
     memset(c, 0, sizeof *c);
     c->deadline = deadline;
     int left = (int)(deadline - rp_pal_now_ms());
-    proven_err_t err = rp_pal_tcp_connect(alloc, host, port, left < CONNECT_MS ? left : CONNECT_MS, &c->sock);
+    proven_err_t err = rp_pal_tcp_connect(alloc, px->on ? px->host : host, px->on ? px->port : port, left < CONNECT_MS ? left : CONNECT_MS, &c->sock);
     if (err != PROVEN_OK) {
-        *why = err == PROVEN_ERR_NOT_FOUND ? "the server name does not resolve" : err == PROVEN_ERR_AGAIN ? "the server did not accept the connection in time"
-                                                                                                        : "the server refused the connection";
+        *why = px->on ? (err == PROVEN_ERR_NOT_FOUND ? "the proxy's name does not resolve" : err == PROVEN_ERR_AGAIN ? "the proxy did not accept the connection in time"
+                                                                                                                  : "the proxy refused the connection")
+                      : (err == PROVEN_ERR_NOT_FOUND ? "the server name does not resolve" : err == PROVEN_ERR_AGAIN ? "the server did not accept the connection in time"
+                                                                                                                 : "the server refused the connection");
         rp_mem_free(alloc, c);
         return err;
     }
-    if (https) err = tls_start(alloc, c, req, host, why);
-    char head_text[4096], hostport[300];
+    char head_text[4096], hostport[300], target[2600];
     bool v6 = strchr(host, ':') != NULL;
     if (port == (https ? 443 : 80)) snprintf(hostport, sizeof hostport, "%s%s%s", v6 ? "[" : "", host, v6 ? "]" : "");
     else snprintf(hostport, sizeof hostport, "%s%s%s:%u", v6 ? "[" : "", host, v6 ? "]" : "", (unsigned)port);
+    if (px->on && https) {
+        char hp[300];                                     // CONNECT always names the port
+        snprintf(hp, sizeof hp, "%s%s%s:%u", v6 ? "[" : "", host, v6 ? "]" : "", (unsigned)port);
+        err = tunnel(c, hp, why);
+    }
+    if (err == PROVEN_OK && https) err = tls_start(alloc, c, req, host, why);
+    // Through a proxy, plain http asks for the absolute URL (RFC 9112 3.2.2).
+    snprintf(target, sizeof target, "%s%s%s", px->on && !https ? "http://" : "", px->on && !https ? hostport : "", path);
     int hn = snprintf(head_text, sizeof head_text,
                       "POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: rubrapack/" RUBRAPACK_VERSION_STRING "\r\n"
                       "Content-Type: %s\r\n%s%s%sContent-Length: %zu\r\nConnection: close\r\n\r\n",
-                      path, hostport, req->content_type, req->accept ? "Accept: " : "", req->accept ? req->accept : "",
+                      target, hostport, req->content_type, req->accept ? "Accept: " : "", req->accept ? req->accept : "",
                       req->accept ? "\r\n" : "", req->len);
     if (err == PROVEN_OK && (hn < 0 || (size_t)hn >= sizeof head_text)) err = PROVEN_ERR_OUT_OF_BOUNDS;
     if (err == PROVEN_OK) err = conn_send(c, (const uint8_t *)head_text, (size_t)hn);
@@ -431,19 +552,26 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
             *why = "an https server needs --tls-trust <certificates> or --system-roots to check it against";
             return PROVEN_ERR_PERMISSION;
         }
+        proxy_t px;
+        proven_err_t err = choose_proxy(alloc, req, https, host, &px, why);
+        if (err != PROVEN_OK) return err;
         head_t head;
         uint8_t *body = NULL;
         size_t blen = 0;
-        proven_err_t err = PROVEN_OK;
         for (int attempt = 0; attempt <= RETRIES; ++attempt) {
             *why = NULL;
-            err = exchange(alloc, req, https, host, port, path, deadline, &head, &body, &blen, why);
+            err = exchange(alloc, req, &px, https, host, port, path, deadline, &head, &body, &blen, why);
             bool again = (err == PROVEN_ERR_AGAIN || err == PROVEN_ERR_IO || err == PROVEN_ERR_EOF || (err == PROVEN_OK && head.status >= 500)) &&
                          rp_pal_now_ms() < deadline;
             if (!again || attempt == RETRIES) break;
             if (err == PROVEN_OK) rp_mem_free(alloc, body);
         }
         if (err != PROVEN_OK) return err;
+        if (px.on && head.status == 407) {                // a plain request the proxy itself refused
+            rp_mem_free(alloc, body);
+            *why = "the proxy asks for a password (407), which rubrapack does not support";
+            return PROVEN_ERR_PERMISSION;
+        }
         if (head.status == 301 || head.status == 302 || head.status == 307 || head.status == 308) {
             rp_mem_free(alloc, body);
             if (redirects == MAX_REDIRECTS) {

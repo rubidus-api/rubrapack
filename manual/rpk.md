@@ -398,8 +398,8 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 rubrapack build <src.rpk> -o <out.msi> [-D NAME=VALUE]... [--arch x64|arm64|x86]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
                 [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
-                 [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]]
-                 [--allow-unsigned-cabs]]
+                 [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
+                  [--proxy <URL>]] [--allow-unsigned-cabs]]
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
@@ -408,8 +408,8 @@ rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--st
 rubrapack lint <file.msi> [--strict]
 rubrapack extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
-               [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]]
-               [--allow-unsigned-cabs] [-o <out>]
+               [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
+                [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
 rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
 rubrapack version | help [command]
 ```
@@ -488,7 +488,13 @@ rubrapack version | help [command]
   `--system-roots` say whom to believe about the connection, `--tsa-trust` whom to believe about
   the time; neither is used for the other. On Linux `--system-roots` reads `$SSL_CERT_FILE` or the
   distribution's CA bundle; on Windows the ROOT store, which Windows fills with some roots only
-  when something first needs them, so a root may be missing there until then. When the timestamp fails - no answer,
+  when something first needs them, so a root may be missing there until then. `--proxy
+  http://host:port` sends the request through a proxy (an `https` server through `CONNECT`, so the
+  proxy sees only the server's name); without it `https_proxy` or `HTTPS_PROXY` (for an `https`
+  server) or `http_proxy` (for `http`; the upper-case `HTTP_PROXY` is not read, since a CGI
+  environment can set it from a request header) are used unless `no_proxy` or `NO_PROXY` - names,
+  each also covering the names under it, or `*` - lists the server. A proxy that asks for a
+  password is not supported (a clear error), nor an `https://` proxy. When the timestamp fails - no answer,
   a refusal, a bad answer, a time outside the signing certificate's validity - nothing is signed
   and nothing is written (exit code 6); the signature never quietly goes out without it. The
   limits: 10 s to connect, 60 s in all, a 4 MiB answer, 3 redirects, 2 retries after a network

@@ -152,7 +152,7 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
     const char *why = NULL;
     bool external = false;
     int64_t now = (int64_t)time(NULL);
-    rp_tsa_t tsa = { .url = a->timestamp, .anchors = tsa_anchors, .anchor_count = tsa_kf.cert_count, .tls_anchors = tls_anchors,
+    rp_tsa_t tsa = { .url = a->timestamp, .proxy = a->proxy, .anchors = tsa_anchors, .anchor_count = tsa_kf.cert_count, .tls_anchors = tls_anchors,
                      .tls_anchor_count = tls_kf.cert_count };
     rp_timestamper_t stamper = { rp_tsa_stamp, &tsa };
     const rp_timestamper_t *ts = a->timestamp ? &stamper : NULL;
@@ -185,7 +185,7 @@ int rp_cmd_sign(int argc, char **argv) {
         const char **slot = strcmp(arg, "--key") == 0 ? &a.key : strcmp(arg, "--cert") == 0 ? &a.cert : strcmp(arg, "--pass-env") == 0 ? &a.pass_env
                           : strcmp(arg, "--pass-file") == 0 ? &a.pass_file : strcmp(arg, "--timestamp") == 0 ? &a.timestamp
                           : strcmp(arg, "--tsa-trust") == 0 ? &a.tsa_trust : strcmp(arg, "--tls-trust") == 0 ? &a.tls_trust
-                          : strcmp(arg, "-o") == 0 ? &out : NULL;
+                          : strcmp(arg, "--proxy") == 0 ? &a.proxy : strcmp(arg, "-o") == 0 ? &out : NULL;
         if (slot && next) {
             *slot = next;
             ++i;
@@ -203,8 +203,8 @@ int rp_cmd_sign(int argc, char **argv) {
             file = arg;
         }
     }
-    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots) && !a.timestamp)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]] [--allow-unsigned-cabs] [-o <out>]");
+    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
