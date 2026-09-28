@@ -144,7 +144,7 @@ static bool take_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
     rp_der_span_t look = is;
     rp_der_t skip;
     if (rp_der_read(&look, &skip) && rp_der_peek(&look, &second) && second == RP_DER_INTEGER) {
-        return fail(c, PROVEN_ERR_UNSUPPORTED, "an old-style RSA private key (PKCS#1); convert it to PKCS#8 (BEGIN PRIVATE KEY or ENCRYPTED PRIVATE KEY)");
+        return fail(c, PROVEN_ERR_UNSUPPORTED, "an old-style RSA private key (PKCS#1); convert it to PKCS#8 (a PEM \"PRIVATE KEY\" or \"ENCRYPTED PRIVATE KEY\" block)");
     }
     if (!rp_der_get(&is, RP_DER_INTEGER, &ver) || !rp_der_small(&ver, &v) || v > 1 || !rp_der_get(&is, RP_DER_SEQUENCE, &alg) ||
         !rp_der_get(&is, RP_DER_OCTET_STRING, &key)) {
@@ -518,7 +518,7 @@ static bool pem_one(ctx_t *c, const char *label, const uint8_t *der, size_t n) {
     if (strcmp(label, "PRIVATE KEY") == 0) return take_pkcs8(c, der, n);
     if (strcmp(label, "ENCRYPTED PRIVATE KEY") == 0) return take_encrypted_pkcs8(c, der, n);
     if (strcmp(label, "RSA PRIVATE KEY") == 0) {
-        return fail(c, PROVEN_ERR_UNSUPPORTED, "an old-style RSA PRIVATE KEY block; convert it to PKCS#8 (BEGIN PRIVATE KEY or ENCRYPTED PRIVATE KEY)");
+        return fail(c, PROVEN_ERR_UNSUPPORTED, "an old-style RSA PRIVATE KEY block; convert it to PKCS#8 (a PEM \"PRIVATE KEY\" or \"ENCRYPTED PRIVATE KEY\" block)");
     }
     return true;        // other blocks (parameters, CRLs) are not needed
 }

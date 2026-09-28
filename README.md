@@ -1,49 +1,66 @@
 # rubrapack
 
-A command-line tool that builds Windows installer packages: Windows Installer (`.msi`)
-and MSIX (`.msix`). It runs on Windows and on Linux.
+A command-line tool that builds and signs Windows installer packages - Windows Installer (`.msi`)
+and MSIX (`.msix`, `.msixbundle`) - on Windows and on Linux.
 
-## What it is
+Korean: [README-ko.md](README-ko.md).
 
-- One declarative source file in, one `.msi` (with an embedded CAB) or `.msix` out.
-  Target architectures: x64, Arm64, x86. Several MSIX architectures can go into one `.msixbundle`.
-- Covers everyday installer work: install and remove files, create and remove folders,
-  registry values, shortcuts, environment variables, services, file associations, upgrades,
-  launch conditions, custom actions, built-in installer dialogs.
-- Compression choices (none, MSZIP levels; deflate or stored for MSIX) and code signing
-  with RFC 3161 timestamps.
-- Built-in inspection: `inspect`, `extract`, `lint`, `verify`, so results can be checked
-  without other tools.
-- No run-time dependencies beyond the operating system: formats, compression, signing
-  crypto, HTTP and TLS are all implemented in this repository.
+```sh
+rubrapack new app                                   # writes app.rpk, a source to fill in
+rubrapack build app.rpk -o app.msi                  # a Windows Installer package
+rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
+rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
+rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
+```
+
+## What it does
+
+- **One source, both formats.** A declarative `.rpk` file (a strict TOML subset) describes the
+  product once; the same source builds an MSI and an MSIX. What one format cannot carry is an error
+  that says so, never something left out quietly.
+- **MSI:** files and folders (globs, kept or removed folders), features, registry values (with
+  REG_QWORD and the 32-bit view), shortcuts, file types and URL schemes, environment variables,
+  INI files, services, fonts, permissions, launch conditions and searches, a program run to
+  register and unregister with rollback, major upgrades with downgrade refusal, per-machine,
+  per-user and dual packages, embedded or external MSZIP cabinets, built-in dialog sets
+  (Korean and English) and dialog pages of your own. x64, x86 and Arm64 packages.
+- **MSIX:** full-trust desktop applications with a virtual registry (`Registry.dat`,
+  `User.dat`) and virtual file system, several applications per package, file types, protocols,
+  execution aliases, startup tasks, desktop shortcuts, shared fonts; bundles of several
+  architectures; unsigned test packages.
+- **Signing:** Authenticode for PE files, MSI and MSIX packages and bundles, RSA or ECDSA, with
+  RFC 3161 timestamps (over HTTP or its own TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
+  token (`--pkcs11`), or the Windows certificate store through NCrypt (`--key-store`), so a
+  code-signing key that must stay in hardware stays there.
+- **Checking:** `lint` (sources and any MSI or MSIX), `inspect`, `extract`, `verify`, `keys list`.
+- **Reproducible:** the same source gives the same bytes on Linux and on Windows.
+- **No run-time dependencies** beyond the operating system: the compound file and MSI database,
+  cabinets and deflate, ZIP/OPC and the block map, registry hives, the crypto, PKCS#12, HTTP and
+  TLS are all written in this repository from public specifications and checked against Windows.
 
 ## What it is not
 
-- Not a WiX front end and not WiX-compatible. It does not read `.wxs` files.
-- The tool itself is 64-bit only (it still builds x86 packages).
-- No patches (`.msp`), transforms (`.mst`), merge-module authoring, or bootstrapper bundles.
-
-## Stack
-
-C23 on proven_c_lib (vendored). Win32 API on Windows,
-POSIX on Linux. The tool is 64-bit only. Every file format (compound file, MSI database, CAB, deflate,
-ZIP/OPC, block map) is implemented in this repository from public specifications.
+- Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
+- No patches (`.msp`), transforms (`.mst`), merge-module authoring or bootstrapper bundles.
+- The tool itself is 64-bit only (it builds x86 packages too).
 
 ## Status
 
-Early implementation. `rubrapack build app.rpk -o app.msi` builds an installable MSI from a
-source file (files, folders, features, major upgrades with downgrade refusal; the cabinet is
-stored uncompressed for now), and `rubrapack inspect <file.msi> [table|--summary|--files|--streams]`
-prints any MSI's tables in the IDT archive format. The same source gives the same bytes on Linux
-and Windows with `--reproducible`. Commands that are not built yet report "not implemented yet"
-and exit with status 2.
+Version 0.1.0, the first public release. Every feature above is covered by tests on Linux and by
+installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
+on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
+(a software token stands in), and a native build on a Windows host (the Windows binary is
+cross-built with MinGW-w64 and runs on Windows).
 
 ## Documentation
 
-- [`manual/rpk.md`](manual/rpk.md) - writing `.rpk` sources and using the command line.
-- [`manual/formats/`](manual/formats/README.md) - the package formats explained for implementers:
-  compound files, the MSI database encoding, summary information, the minimal installable
-  package, cabinets/MSZIP/deflate, deterministic identities, and how to verify against Windows.
+- [`manual/rpk.md`](manual/rpk.md) - the user manual: writing `.rpk` sources and the command line.
+- [`manual/formats/`](manual/formats/README.md) - the file format manual, for implementers: the
+  compound file, the MSI database encoding, summary information, the tables that install,
+  cabinets/MSZIP/deflate, deterministic identities, Authenticode and timestamps, MSIX packages,
+  bundles and signatures, registry hives, and how to check your own output against Windows.
+- Both manuals as one book (PDF and web): <https://rubidus-api.github.io/rubrapack/>
+- Korean: [`manual-ko/`](manual-ko/README.md).
 
 ## Text encoding
 
@@ -64,9 +81,10 @@ gcc -std=c23 -o nob.exe nob.c && nob.exe
 ./nob --target=win64
 ```
 
-`nob.c` needs nothing but a C23 compiler. The Linux build and the Linux -> Windows cross build are
-tested; a native build on a Windows host is not yet. Options: `--sanitize` (AddressSanitizer and
-UBSan), `--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers.
+`nob.c` needs nothing but a C23 compiler. Options: `--sanitize` (AddressSanitizer and UBSan),
+`--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers. The helper DLLs that MSI
+packages carry for REG_QWORD values are in `resources/bin/` with their SHA-256 sums; they are
+rebuilt from `src/` byte for byte.
 
 ## License
 

@@ -114,7 +114,7 @@ What rubrapack writes into an application's `<Extensions>` (after `uap:VisualEle
 this: a source feature with no row here is an error, and one whose Windows build is above the
 package's `MinVersion` asks for `min-version` to be raised. [spec] Microsoft Learn, "Integrate your
 desktop app with Windows using packaging extensions" and the element pages. The last column is
-what the VM test checks (T075). [observed]
+what was checked by installing a package on Windows 11 (26100). [observed]
 
 | Source | Element (category) | Namespace | Min build | Capability | Checked on Windows 11 |
 |---|---|---|---|---|---|
@@ -124,7 +124,7 @@ what the VM test checks (T075). [observed]
 | `[msix-extension]` startup task | `desktop:Extension` `windows.startupTask` (Executable, EntryPoint) > `desktop:StartupTask` (TaskId, Enabled, DisplayName) | desktop | 14393 | runFullTrust | registered after the first start |
 | `[shortcut]` Desktop | `desktop7:Extension` `windows.shortcut` > `desktop7:Shortcut` (File `$(Desktop)\<name>.lnk`, Icon, Arguments, Description) | desktop7 | 19645 | runFullTrust | the shortcut is on the user's desktop and starts the program |
 | `[shortcut]` Programs, StartMenu | none: the application's own Start entry | - | - | - | the Start menu lists the application |
-| `[font]` | `uap4:Extension` `windows.sharedFonts` > `uap4:SharedFonts` > `uap4:Font` (File `Fonts\<name>`), in the first application | uap4 | 15063 | - | see T075's transcript |
+| `[font]` | `uap4:Extension` `windows.sharedFonts` > `uap4:SharedFonts` > `uap4:Font` (File `Fonts\<name>`), in the first application | uap4 | 15063 | - | other programs see the font while the package is installed, and not after |
 
 - The namespaces are declared on `Package`, and made ignorable, only when used, so a package
   without extensions keeps the manifest described above.
@@ -225,3 +225,5 @@ PowerShell cmdlet cannot sign a package) and checked by installing rubrapack's s
   package cannot hold an executable activation). Developer mode is not needed. [observed]
 - `Add-AppxPackage` from a network logon (an SSH session) fails at "PLM initialization" with
   0x80070005; it works in an interactive session. [observed]
+- A package with file types leaves, after removal, an empty `OpenWithProgids` key under
+  `HKCU\Software\Classes\.<ext>` - Windows' own doing, not the package's. [observed]

@@ -149,6 +149,15 @@ or deletes, one to its rollback twin that restores what was there. The DLL's bit
 the package (the engine loads it into a custom action server of the package's architecture).
 [observed: x64 and x86]
 
+File types and URL schemes are plain `Registry` rows under Root 0 (HKCR) in the program's
+component, not the `Extension`/`Verb`/`ProgId` tables (those bring advertisement and repair on
+first use): `.ext` (default) = the ProgId; `ProgId` (default) = its description,
+`ProgId\DefaultIcon` = `[#File],0`, `ProgId\shell\open\command` = `"[#File]" "%1"`; for a scheme,
+`scheme` (default) = `URL:<description>`, `URL Protocol` = empty (a Null Value with a Name writes an
+empty string), and the same `DefaultIcon` and `shell\open\command`. Root 0 follows the
+installation: HKLM\Software\Classes per machine, HKCU\Software\Classes per user. Opening a file
+of a type only this program claims then starts it directly. [observed]
+
 ## Shortcuts
 
 `Shortcut` (**Shortcut** s72, Directory_ s72, Name l128 `SHORT|Long` without `.lnk`, Component_ s72,

@@ -91,8 +91,7 @@ for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonApp
 also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
-dirs, files and features. Tables that are planned but not implemented yet (`[assoc.*]`,
-`[protocol.*]`, `[msix-extension.*]`) are refused with "not supported yet".
+dirs, files and features.
 
 ### MSIX packages
 
@@ -122,8 +121,9 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   package's virtual file system, where the app sees them at their usual place: Program Files
   (`VFS\ProgramFilesX64`, or `X86` for an x86 package and for `ProgramFiles32`), `CommonFiles`,
   `System`, `Windows` and `CommonAppData` (ProgramData). There is none for the user's `AppData` or
-  `LocalAppData`, nor for `Temp`: files there are an error (`RP1609`); fonts and the Start menu,
-  Desktop and Startup folders come later with `[font.*]` and shortcuts.
+  `LocalAppData`, nor for `Temp`: files there are an error (`RP1609`). A font in `Fonts` goes in
+  through its `[font.*]`; the Start menu, Programs and Desktop folders take shortcuts
+  (`[shortcut.*]`), and Startup a startup task (`[msix-extension.*]`).
 - Several `[msix-app.*]` tables make several entries of one package (at most 100); the first one
   gives the package its logo.
 - `[registry.*]` values go into the package's virtual registry, which the app sees merged into the
