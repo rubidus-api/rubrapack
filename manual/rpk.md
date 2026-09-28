@@ -681,8 +681,9 @@ rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
 rubrapack guid [--from <text>]
-rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
-rubrapack lint <file.msi|file.msix|file.msixbundle> [--strict]
+rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
+rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
+rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> <key> [--cert <chain.pem>]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
@@ -733,7 +734,9 @@ rubrapack version | help [command]
   mean 'name'?)`.
 - Before writing, `build` checks the finished tables (`RP20xx` diagnostics, exit code 5); these
   checks guard rubrapack itself, so a source that passes the `RP1xxx` checks should never meet them.
-- `lint <src.rpk>` runs every check `build` runs and writes nothing. `lint <file.msi>` checks a
+- `lint <src.rpk>` runs every check `build` runs and writes nothing. It checks the source for an
+  MSI; `--target msix` checks it for an MSIX instead (the `[msix]` tables, and what an MSIX
+  cannot carry, such as `keep` or `when`). `lint <file.msi>` checks a
   package made by any tool with the same table rules: what stops an installation is an error
   (exit code 5) - a value that does not fit its column, a missing referenced row, a duplicate key,
   a broken dialog tab order (`RP2101`), a dialog's first/default/cancel control that is not there
@@ -745,6 +748,14 @@ rubrapack version | help [command]
   names files that are in the package (`RP2201`, `RP2202`). For a bundle: its manifest's block
   map, and for each package where the manifest says it lies, its size, its identity and the
   package itself; one package per architecture.
+- `lint new.msi --previous old.msi` also checks that `new.msi` upgrades `old.msi` cleanly. Errors:
+  another UpgradeCode (`RP2301`: the new package does not replace the old one), a version that is
+  not higher in its first three fields (`RP2302`: Windows compares only those). Warnings: the same
+  ProductCode (`RP2303`: an upgrade needs a new one), a component whose GUID stays but whose key
+  path (file, folder or registry value) changed (`RP2304`), or whose 64-bit flag changed
+  (`RP2305`), a component that is gone (`RP2306`: its resources are removed with the old version),
+  a feature that is gone (`RP2307`: a patch or a change of the installed set loses it). The last
+  line names the previous package.
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.

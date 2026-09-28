@@ -97,6 +97,7 @@ static int run(int argc, char **argv, bool lint) {
     size_t ndef = 0;
     bool reproducible = false, msix_compress_given = false;
     size_t jobs = 0;
+    bool lint_msix = false;
     rp_msix_options_t msix_opt = { 0 };
     const char *target = NULL;
     int rc = RP_EXIT_USAGE;
@@ -112,6 +113,15 @@ static int run(int argc, char **argv, bool lint) {
         if (strcmp(a, "--pin") == 0 || strncmp(a, "--pin=", 6) == 0) {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file");
             goto done;
+        }
+        if (lint && strcmp(a, "--target") == 0 && next) {        // RFC-0013 B2: which format the source is for
+            if (strcmp(next, "msix") != 0 && strcmp(next, "msi") != 0) {
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target takes msi or msix (got '%s')", next);
+                goto done;
+            }
+            lint_msix = strcmp(next, "msix") == 0;
+            ++i;
+            continue;
         }
         if (lint && strcmp(a, "--strict") == 0) {
             strict = true;
@@ -212,12 +222,12 @@ static int run(int argc, char **argv, bool lint) {
         goto done;
     }
     if (src == NULL || out == NULL) {
-        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
+        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
         else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
     bool bundle = !lint && ends_with(out, ".msixbundle");
-    bool msix = !lint && (bundle || ends_with(out, ".msix"));
+    bool msix = (!lint && (bundle || ends_with(out, ".msix"))) || lint_msix;
     if (!lint && !msix && !ends_with(out, ".msi")) {
         rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msix and .msixbundle", out);
         goto done;
@@ -294,7 +304,7 @@ static int run(int argc, char **argv, bool lint) {
             goto done;
         }
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? NULL : out, nfc };
+            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             rp_toml_free(&doc);
         }
@@ -313,7 +323,7 @@ static int run(int argc, char **argv, bool lint) {
                 pkg = signed_pkg;
                 pkg_len = signed_len;
             }
-            if (err == PROVEN_OK && sign_rc == RP_EXIT_OK) {
+            if (err == PROVEN_OK && sign_rc == RP_EXIT_OK && !lint) {
                 err = rp_pal_write_file_atomic(heap, out, pkg, pkg_len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             }

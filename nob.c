@@ -64,6 +64,7 @@ static const char *const core_sources[] = {
     "src/msi/db.c",
     "src/msi/db_write.c",
     "src/msi/lint.c",
+    "src/msi/lint_prev.c",
     "src/msi/lower.c",
     "src/msi/suminfo.c",
     "src/msi/ui.c",

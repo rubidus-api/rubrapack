@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.4.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-0.4.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-0.4.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-manual-0.4.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-manual-0.4.0-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.4.1** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.1/rubrapack-0.4.1-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.1/rubrapack-0.4.1-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.1/rubrapack-manual-0.4.1-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.1/rubrapack-manual-0.4.1-en.pdf)
 
 # rubrapack
 
@@ -38,7 +38,8 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   RFC 3161 timestamps (over HTTP or its own TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
   token (`--pkcs11`), or the Windows certificate store through NCrypt (`--key-store`), so a
   code-signing key that must stay in hardware stays there.
-- **Checking:** `lint` (sources and any MSI or MSIX), `inspect`, `extract`, `verify`, `keys list`.
+- **Checking:** `lint` (sources and any MSI or MSIX, and an MSI against the version before it),
+  `inspect`, `extract`, `verify`, `keys list`.
 - **Reproducible and fast:** the same source gives the same bytes on Linux and on Windows, whatever
   the number of threads compressing it (every processor by default).
 - **No run-time dependencies** beyond the operating system: the compound file and MSI database,
@@ -53,7 +54,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## Status
 
-Version 0.4.0. Every feature above is covered by tests on Linux and by
+Version 0.4.1. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is

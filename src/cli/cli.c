@@ -33,7 +33,7 @@ static const command_t commands[] = {
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
-    { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--strict] | lint <file.msi> [--strict]",
+    { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
                  "check a source or package without writing anything", true },
     { "new",     "new [msi] <name>", "write a starter source file <name>.rpk", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },

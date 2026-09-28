@@ -646,8 +646,9 @@ rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
 rubrapack guid [--from <text>]
-rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
-rubrapack lint <file.msi|file.msix|file.msixbundle> [--strict]
+rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
+rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
+rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <새 폴더> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> <키> [--cert <chain.pem>]
                [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
@@ -694,7 +695,9 @@ rubrapack version | help [command]
   꼴이다.
 - 쓰기 전에 `build` 는 완성된 표를 검사한다(`RP20xx` 진단, 종료 코드 5). 이 검사는 rubrapack 자신을
   지키는 것이라, `RP1xxx` 검사를 통과한 원본은 여기에 걸리지 않아야 한다.
-- `lint <src.rpk>` 는 `build` 가 하는 검사를 모두 하고 아무것도 쓰지 않는다. `lint <file.msi>` 는 어떤
+- `lint <src.rpk>` 는 `build` 가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 원본을 MSI 기준으로
+  검사하며, `--target msix` 를 주면 MSIX 기준으로 검사한다(`[msix]` 표, 그리고 `keep` 이나 `when`
+  처럼 MSIX 가 담을 수 없는 것). `lint <file.msi>` 는 어떤
   도구가 만든 패키지든 같은 표 규칙으로 검사한다: 설치를 멈추게 하는 것은 오류(종료 코드 5) - 열에 맞지
   않는 값, 가리키는 행이 없음, 중복 키, 깨진 대화창 Tab 순서(`RP2101`), 대화창의 첫/기본/취소 컨트롤이
   없음(`RP2102`), `ListBox` 표 없는 사용 중 파일 대화창(`RP2103`), `ErrorText`/`ErrorIcon` 없는 오류
@@ -704,6 +707,12 @@ rubrapack version | help [command]
   매니페스트에 정체가 있는지, 매니페스트가 가리키는 파일이 패키지에 있는지 본다(`RP2201`, `RP2202`).
   묶음은 매니페스트의 블록 맵, 그리고 패키지마다 매니페스트가 말하는 자리·크기·정체와 패키지 자체를
   본다. 아키텍처 하나에 패키지 하나다.
+- `lint new.msi --previous old.msi` 는 `new.msi` 가 `old.msi` 를 깨끗하게 업그레이드하는지도 본다.
+  오류: 다른 UpgradeCode(`RP2301`: 새 패키지가 옛것을 대체하지 않는다), 앞의 세 자리가 높지 않은
+  버전(`RP2302`: Windows 는 그 세 자리만 비교한다). 경고: 같은 ProductCode(`RP2303`: 업그레이드에는
+  새 것이 필요하다), GUID 는 그대로인데 키 경로(파일, 폴더, 레지스트리 값)가 바뀐 컴포넌트(`RP2304`),
+  64비트 표시가 바뀐 컴포넌트(`RP2305`), 없어진 컴포넌트(`RP2306`: 그 자원은 옛 판과 함께 지워진다),
+  없어진 기능(`RP2307`: 패치나 설치된 기능 바꾸기에서 사라진다). 마지막 줄은 이전 패키지를 밝힌다.
 - `extract` 는 패키지를 설치되는 모습대로 푼다: 폴더는 Directory 트리의 긴 이름으로(`ProgramFiles64Folder`
   같은 표준 폴더는 그 이름 그대로), 파일은 안팎의 캐비닛에서, 또는 압축하지 않은 패키지라면 옆의 원본
   폴더에서 가져온다. 파일마다 크기와 `MsiFileHash` 를 확인한다. 대상은 새 폴더거나 비어 있어야 하고,

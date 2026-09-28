@@ -52,4 +52,10 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msi_lint_opts(proven_allocator_t alloc, const rp_msi_wdb_t *db, const rp_lint_opts_t *opts,
                                             rp_srcdiags_t *diags);
 
+// A package against the version before it (RFC-0013 R3): errors RP2301 (another UpgradeCode) and
+// RP2302 (a version not higher); warnings RP2303 (the same ProductCode), RP2304/RP2305 (a component
+// GUID with another key path or bitness), RP2306 (a component gone), RP2307 (a feature gone).
+[[nodiscard]] proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *now, const rp_msi_wdb_t *before,
+                                                rp_srcdiags_t *diags);
+
 #endif // RUBRAPACK_LINT_H
