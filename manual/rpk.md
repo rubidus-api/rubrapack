@@ -56,17 +56,17 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
+| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
-| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid |
-| `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
+| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
+| `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, help (URL), about (URL) - how the product shows in Installed apps |
+| `[arp]` | no-modify, no-repair, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
-| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature |
+| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
-| `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
+| `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
@@ -74,13 +74,13 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
 | `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "Fonts"`), title |
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
-| `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
+| `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
-| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
-| `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
+| `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled), app (an `[msix-app.*]` ID; default the first) - MSIX only |
@@ -355,6 +355,20 @@ writes the text exactly as given.
 elevated part of the installation, `hidden = true` keeps its value out of logs. Names the installer
 or rubrapack set themselves (`ARP*`, `MSI*`, `RP_*`, `ALLUSERS`, `REBOOT`, ...) are refused.
 
+### Installing from the command line
+
+Everything the dialogs choose can be given to `msiexec` instead:
+
+| Property | What it does |
+|---|---|
+| `INSTALLDIR=D:\Apps\Example\` | the install folder (any dir with an upper-case ID) |
+| `ADDLOCAL=Core,Extra` | install these features (`ADDLOCAL=ALL`: every feature) |
+| `REMOVE=Extra` | remove these features from an installed product (`REMOVE=ALL`: everything) |
+| `INSTALLLEVEL=3` | install every feature whose `level` is at most 3 |
+| `RPLANGUAGE=ko` | the dialogs' language (with `[ui] languages`) |
+| `ALLUSERS=1 MSIINSTALLPERUSER=""` | a dual package for everyone (default: just the current user) |
+| `DESK=1`, `APP_MODE=server` | your own properties: `when` conditions, dialog values |
+
 ### Installing without a window
 
 Every package rubrapack builds installs, repairs, upgrades and uninstalls from the command line with
@@ -453,6 +467,19 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - `[package] language` sets only the package's language (`ProductLanguage`, the summary). Since
   0.2 it no longer makes the dialogs Korean: add `languages = ["ko"]` (lint warns, `RP1317`).
 
+### Icon, the finished page, and the scope page
+
+- `[arp] icon = "app.ico"` is the product's icon in Installed apps; `[shortcut] icon` gives a
+  shortcut its own `.ico` (without it, the program's own icon). Both are read when the package is
+  built and stored in it.
+- `[ui] launch = "file:App"` puts "Launch [ProductName]" on the finished page (ticked unless
+  `launch-checked = false`; `launch-args` are its arguments). Finish starts the program after a
+  first installation or an upgrade, as the user who ran the setup, not with the installer's
+  rights; not after a repair or removal, and never at `/qn`.
+- `scope = "dual"` with dialogs adds a page after the license: "Just me" (the default) or
+  "Everyone on this computer", which needs administrator rights; the install folder moves to
+  `%LOCALAPPDATA%\Programs` or Program Files accordingly.
+
 ### Your own dialog pages: `[dialog.ID]`, `[dialog-control.ID]`
 
 With `minimal`, `installdir` or `features` you can add pages to the built-in flow. A page gets the
@@ -543,7 +570,41 @@ stays after uninstall (for data the program writes).
 
 Without any `[feature.*]` table everything goes into one hidden feature. As soon as one feature is
 declared, every file needs one: its own `feature` key, or the `feature` of its dir. A feature with
-a `level` above 1 is not installed by default.
+a `level` above 1 is not installed by default. With `ui = "features"` the user picks features in a
+tree, and changes them later from Installed apps (Change on the maintenance page).
+
+- `required = true`: the tree offers no "will be unavailable" for it.
+- `follow-parent = true`: installed wherever its parent is (on this computer, or not at all).
+- `when = "<condition>"`: the feature is off - not installed and not shown - unless the condition
+  holds (see below).
+
+### Conditions: `when`
+
+`when` takes a Windows Installer condition (`VersionNT64`, `DESK = "1"`, `NOT OLDVERSION`) on a
+feature, a file or file group, a registry value (not one `with` a file: put it on the file), a
+shortcut, an environment variable or an INI value. What it guards is installed only when the
+condition holds; properties set in your own dialog pages, on the command line or by a search can
+be tested. The condition is evaluated when the item is first installed, a major upgrade included
+(a repair keeps what is
+there); an MSIX installs everything and refuses `when`.
+
+```toml
+[dialog-control.Desk]             # a check box in your own page (see below)
+dialog = "Options"
+type = "checkbox"
+x = 20
+y = 60
+width = 300
+height = 16
+text = "Create a &desktop shortcut"
+property = "DESK"
+
+[shortcut.Desk]
+dir = "Desktop"
+name = "Example"
+target = "file:App"
+when = "DESK"
+```
 
 ### Variables
 
@@ -559,6 +620,13 @@ Files that are Portable Executables (`.exe`, `.dll`, ...) are checked: their mac
 match `arch` (an x86 helper in an x64 package needs `any-arch = true`), and their version resource
 becomes the file's version in the package, which is how Windows Installer decides whether to
 replace an installed file.
+
+### Leaving a file at removal: `keep`
+
+`keep = true` on a file (or a file group) leaves it in place when the product is removed - for
+settings the user may have changed. A repair or a later version does not overwrite such a file once
+it has changed (Windows Installer's rule for files without a version). An MSIX removes all its files
+and refuses `keep`.
 
 ### Guarding the install folder
 

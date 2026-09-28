@@ -366,6 +366,42 @@ drop-down list is a `ComboBox` control with ComboList (0x20000) and Sorted, fill
 rows. Their properties are added to `SecureCustomProperties`, so values chosen in the dialogs or
 given on the command line reach the execute sequence. [observed]
 
+### Choices during installation
+
+What rubrapack writes for the choices a user makes (RFC-0013) [observed, Windows 11 26100]:
+
+- **Features.** `Feature.Attributes` 0x10 (UIDisallowAbsent) keeps "will be unavailable" out of
+  the tree's menu; 0x02 (FollowParent) installs a feature where its parent is. A feature that is off
+  unless a condition holds is a `Condition` row (**Feature_** s38, **Level** i2, Condition S255)
+  with Level 0 and the condition `NOT Installed AND NOT (<when>)`. **Without `NOT Installed` the
+  row turns the feature off again at removal, when the property is gone, and its files are left
+  behind.**
+- **Components.** `when` on a file, a registry value, an environment variable or an INI value is
+  the component's `Condition`, evaluated when the component is first installed (no Transitive
+  attribute: a repair keeps what is there). A shortcut lives in its target file's component; one
+  with `when` gets a component of its own in the shortcut's folder, whose key path is a registry
+  value under root -1 (HKMU: HKLM or HKCU as installed), with the attribute 0x4.
+- **Icons.** An `Icon` row (**Name** s72 ending in `.ico`, Data v0) holds the `.ico`;
+  `ARPPRODUCTICON` names it for Installed apps, which the engine registers as the product's
+  `ProductIcon` under `HKLM\SOFTWARE\Classes\Installer\Products` (not as `DisplayIcon`), and
+  `Shortcut.Icon_` / `IconIndex` 0 give a shortcut its own.
+- **Keep.** A file left at removal is a component with 0x10 (Permanent).
+- **Launch.** A type-34 custom action with 0xC0 (asynchronous, no wait): Source = the program's
+  folder, Target = `"[#FileKey]" args`. The finished dialog's Finish runs it through `DoAction`
+  before `EndDialog` under `RPLAUNCH = "1" AND NOT Installed`; `Installed` still has its value from
+  the start of the setup, so repair and removal do not start it. It runs in the setup's client
+  process, with the rights of the user who started the setup.
+- **Change.** The maintenance dialog's Change is a `NewDialog` to the dialog with the
+  `SelectionTree`; that dialog's Back goes to the maintenance dialog under `Installed` and to the
+  install folder dialog under `NOT Installed`; the ready dialog's `EndDialog Return` then applies
+  the new feature states.
+- **Scope.** In a dual package (ALLUSERS=2, MSIINSTALLPERUSER=1 by default) the folder properties
+  follow the per-user default when the dialogs start. The scope page's Next sets `[ALLUSERS]` and
+  `[MSIINSTALLPERUSER]` (`{}` clears it), then puts the install folder's path under
+  `[%ProgramW6432]` (or `[%ProgramFiles(x86)]` for an x86 package) or `[LocalAppDataFolder]Programs`
+  into the directory's property and runs `SetTargetPath`; the execute sequence resolves the other
+  folders itself with the final scope.
+
 ### Several languages in one package
 
 The dialog tables hold one language at a time, but every text they show can come from a property,

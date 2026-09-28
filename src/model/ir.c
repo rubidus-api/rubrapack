@@ -132,6 +132,12 @@ static const char *lang_of_key(const char *key, const char *base) {
 }
 
 // Like check_keys, and also takes `base-xx` for every base in `lang_bases` (NULL-terminated).
+// An .ico named by a key (RFC-0013 A1): read at build time into the Icon table.
+static char *icon_source(ctx_t *c, const char *shown, rp_pos_t pos);
+
+// `when` (RFC-0013 A2): an MSI condition for a feature or a component.
+static char *get_when(ctx_t *c, const rp_ttable_t *t);
+
 static void check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allowed, const char *const *lang_bases) {
     for (size_t k = 0; k < t->count; ++k) {
         bool known = false;
@@ -629,7 +635,7 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
     if (ui) ERR(c, key_pos(t, "ui"), "RP1316", "ui must be none, basic, minimal, installdir or features (got '%s')", ui);
     rp_mem_free(c->alloc, ui);
     ir->license_shown = get_str(c, t, "license", false, NULL);      // checked in ui_checks (RFC-0005 K3)
-    if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1901", "icon is not supported yet (planned for P3)");
+    if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1316", "the icon of the installed apps list is [arp] icon = \"app.ico\"");
 
     ir->reboot_suppress = true;
     char *reboot = get_str(c, t, "reboot", false, NULL);
@@ -661,7 +667,7 @@ static void parse_package(ctx_t *c, const rp_ttable_t *t) {
 }
 
 static void parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
-    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", NULL };
+    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 38);
     f->id = dup(c, t->id);
@@ -671,7 +677,10 @@ static void parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     f->level = (int32_t)get_int(c, t, "level", 1, 1, 32767);
     f->hidden = get_bool(c, t, "hidden", false);
     f->parent = get_str(c, t, "parent", false, NULL);
-    if (find_key(t, "when")) ERR(c, key_pos(t, "when"), "RP1901", "feature conditions are not supported yet (planned for P3)");
+    f->required = get_bool(c, t, "required", false);
+    f->follow_parent = get_bool(c, t, "follow-parent", false);
+    if (f->follow_parent && f->parent == NULL) ERR(c, key_pos(t, "follow-parent"), "RP1316", "follow-parent needs a parent");
+    f->when = get_when(c, t);
 }
 
 static void parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
@@ -736,11 +745,12 @@ static bool source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
 
 static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     static const char *const keys[] = { "dir", "source", "name", "any-arch", "keep", "vital", "feature",
-                                        "component-guid", NULL };
+                                        "component-guid", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     f->id = dup(c, t->id);
     f->pos = t->pos;
+    f->when = get_when(c, t);
     f->dir = get_str(c, t, "dir", true, NULL);
     f->source = get_str(c, t, "source", true, NULL);
     f->name = get_str(c, t, "name", false, NULL);
@@ -753,7 +763,6 @@ static void parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     if (f->component_guid && !guid_ok(f->component_guid)) {
         ERR(c, key_pos(t, "component-guid"), "RP1308", "component-guid must be a GUID");
     }
-    if (f->keep) ERR(c, key_pos(t, "keep"), "RP1901", "keep for files is not supported yet (planned for P3)");
     if (f->source == NULL) return;
     rp_pos_t sp = key_pos(t, "source");
     const char *s = f->source;
@@ -926,7 +935,7 @@ static const char *implicit_dir(ctx_t *c, const char *parent, const char *name, 
 }
 
 static void expand_files(ctx_t *c, const rp_ttable_t *t) {
-    static const char *const keys[] = { "dir", "glob", "feature", "keep", "vital", "any-arch", NULL };
+    static const char *const keys[] = { "dir", "glob", "feature", "keep", "vital", "any-arch", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     char *dir = get_str(c, t, "dir", true, NULL);
@@ -934,7 +943,8 @@ static void expand_files(ctx_t *c, const rp_ttable_t *t) {
     char *feature = get_str(c, t, "feature", false, NULL);
     bool vital = get_bool(c, t, "vital", true), any_arch = get_bool(c, t, "any-arch", false);
     bool msi_only = get_bool(c, t, "msi-only", false);
-    if (get_bool(c, t, "keep", false)) ERR(c, key_pos(t, "keep"), "RP1901", "keep for files is not supported yet (planned for P3)");
+    bool keep = get_bool(c, t, "keep", false);      // RFC-0013 A7
+    char *when = get_when(c, t);                    // RFC-0013 A2
     rp_pos_t gp = key_pos(t, "glob");
     glob_t g = { .c = c, .pos = gp };
     if (dir && pattern && source_path_ok(c, pattern, gp)) {
@@ -1006,6 +1016,8 @@ static void expand_files(ctx_t *c, const rp_ttable_t *t) {
                 f->source_path = join(c, g.root, rel);
                 f->name = dup(c, q);
                 f->vital = vital;
+                f->keep = keep;
+                f->when = dup(c, when);
                 f->msi_only = msi_only;
                 f->any_arch = any_arch;
                 f->feature = feature ? dup(c, feature) : NULL;
@@ -1032,6 +1044,7 @@ static void expand_files(ctx_t *c, const rp_ttable_t *t) {
     rp_mem_free(c->alloc, dir);
     rp_mem_free(c->alloc, pattern);
     rp_mem_free(c->alloc, feature);
+    rp_mem_free(c->alloc, when);
 }
 
 static void parse_folder(ctx_t *c, const rp_ttable_t *t, rp_ir_folder_t *f) {
@@ -1065,7 +1078,8 @@ static void parse_arp(ctx_t *c, const rp_ttable_t *t) {
     c->ir->arp_no_repair = get_bool(c, t, "no-repair", false);
     c->ir->arp_help = get_str(c, t, "help", false, NULL);
     c->ir->arp_about = get_str(c, t, "about", false, NULL);
-    if (find_key(t, "icon")) ERR(c, key_pos(t, "icon"), "RP1901", "icon is not supported yet (planned for P3)");
+    c->ir->arp_icon_shown = get_str(c, t, "icon", false, NULL);
+    if (c->ir->arp_icon_shown) c->ir->arp_icon_source = icon_source(c, c->ir->arp_icon_shown, key_pos(t, "icon"));
 }
 
 // ---- [msix] and [msix-app.ID] (RFC-0009) --------------------------------------------------------
@@ -1208,11 +1222,13 @@ static void parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
 
 static void parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     static const char *const keys[] = { "root", "key", "name", "value", "type", "remove", "keep", "view", "with",
-                                        "feature", NULL };
+                                        "feature", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     r->id = dup(c, t->id);
     r->pos = t->pos;
+    r->when = get_when(c, t);
+    if (r->when && find_key(t, "with")) ERR(c, key_pos(t, "when"), "RP1316", "a value `with` a file shares its component: put `when` on the file");
     r->msi_only = get_bool(c, t, "msi-only", false);
     char *root = get_str(c, t, "root", true, NULL);
     if (root) {
@@ -1352,11 +1368,14 @@ static bool shortcut_folder(const char *s) {
 }
 
 static void parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
-    static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", NULL };
+    static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", "icon", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     s->id = dup(c, t->id);
     s->pos = t->pos;
+    s->when = get_when(c, t);
+    s->icon_shown = get_str(c, t, "icon", false, NULL);
+    if (s->icon_shown) s->icon_source = icon_source(c, s->icon_shown, key_pos(t, "icon"));
     s->dir = get_str(c, t, "dir", true, NULL);
     s->name = get_str(c, t, "name", true, NULL);
     if (s->name) target_name_ok(c, s->name, key_pos(t, "name"));
@@ -1426,11 +1445,12 @@ static void parse_copy(ctx_t *c, const rp_ttable_t *t, rp_ir_copy_t *cp) {
 }
 
 static void parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
-    static const char *const keys[] = { "dir", "file", "section", "key", "value", "mode", "feature", NULL };
+    static const char *const keys[] = { "dir", "file", "section", "key", "value", "mode", "feature", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     x->id = dup(c, t->id);
     x->pos = t->pos;
+    x->when = get_when(c, t);
     x->dir = get_str(c, t, "dir", true, NULL);
     x->file = get_str(c, t, "file", true, NULL);
     if (x->file) target_name_ok(c, x->file, key_pos(t, "file"));
@@ -1464,6 +1484,14 @@ static bool condition_ok(const char *s) {
         else if (!quote && *p == ')' && --depth < 0) return false;
     }
     return !quote && depth == 0 && s[0] != '\0';
+}
+
+static char *get_when(ctx_t *c, const rp_ttable_t *t) {
+    char *w = get_str(c, t, "when", false, NULL);
+    if (w == NULL) return NULL;
+    if (w[0] == '\0' || !condition_ok(w)) ERR(c, key_pos(t, "when"), "RP1316", "when is an MSI condition with closed quotes and balanced parentheses");
+    else if (strlen(w) > 240) ERR(c, key_pos(t, "when"), "RP1316", "when is longer than 240 characters");
+    return w;
 }
 
 static void parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
@@ -1741,11 +1769,12 @@ static void parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) 
 }
 
 static void parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
-    static const char *const keys[] = { "name", "value", "mode", "keep", "feature", NULL };
+    static const char *const keys[] = { "name", "value", "mode", "keep", "feature", "when", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     e->id = dup(c, t->id);
     e->pos = t->pos;
+    e->when = get_when(c, t);
     e->name = get_str(c, t, "name", true, NULL);
     if (e->name && (strchr("=+-!*", e->name[0]) || strchr(e->name, '=') || has_control(e->name))) {
         ERR(c, key_pos(t, "name"), "RP1316", "variable name '%s' may not contain '=' or start with = + - ! *", e->name);
@@ -1780,6 +1809,16 @@ static bool ends_with_ci(const char *s, const char *suffix) {
         if (a != suffix[k]) return false;
     }
     return true;
+}
+
+static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos);
+
+static char *icon_source(ctx_t *c, const char *shown, rp_pos_t pos) {
+    if (!ends_with_ci(shown, ".ico")) {
+        ERR(c, pos, "RP1316", "icon must be an .ico file");
+        return NULL;
+    }
+    return ui_source(c, shown, pos);
 }
 
 // A source file named by a key (license, banner): relative, existing, a regular file.
@@ -2241,7 +2280,7 @@ static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) 
     }
     ui_languages(c, uit);
     if (uit == NULL) return;
-    static const char *const keys[] = { "banner", "install-dir", "languages", NULL },
+    static const char *const keys[] = { "banner", "install-dir", "languages", "launch", "launch-args", "launch-checked", NULL },
                              *const lkeys[] = { "name", "font", "langid", "license", NULL };
     check_keys_lang(c, uit, keys, lkeys);
     if (ir->ui == 0) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package]");
@@ -2252,6 +2291,16 @@ static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) 
         rp_mem_free(c->alloc, banner);
     }
     ir->ui_install_dir = get_str(c, uit, "install-dir", false, NULL);
+    // RFC-0013 A5: a program started from the finished page, as the user who runs the setup.
+    char *launch = get_str(c, uit, "launch", false, NULL);
+    if (launch) {
+        if (strncmp(launch, "file:", 5) != 0 || launch[5] == '\0') ERR(c, key_pos(uit, "launch"), "RP1315", "launch must be \"file:<ID>\" naming a [file.*] of this package");
+        else ir->ui_launch_file = dup(c, launch + 5);
+        rp_mem_free(c->alloc, launch);
+    }
+    ir->ui_launch_args = get_str(c, uit, "launch-args", false, NULL);
+    ir->ui_launch_default = get_bool(c, uit, "launch-checked", true);
+    if (ir->ui_launch_args && ir->ui_launch_file == NULL) ERR(c, key_pos(uit, "launch-args"), "RP1316", "launch-args needs launch");
 }
 
 // ---- cross checks --------------------------------------------------------------------------
@@ -2344,6 +2393,7 @@ static void add_class_value(ctx_t *c, const char *id, const char *suffix, const 
 // HKCU\Software\Classes per user.
 static void class_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
+    if (ir->ui_launch_file) program_ok(c, ir->ui_launch_file, (rp_pos_t){ 1, 1 }, "[ui] launch");
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
         program_ok(c, x->target_file, x->pos, "target");
@@ -3275,6 +3325,7 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, f->title);
         rp_mem_free(a, f->description);
         rp_mem_free(a, f->parent);
+        rp_mem_free(a, f->when);
     }
     for (size_t k = 0; k < ir->dir_count; ++k) {
         rp_ir_dir_t *d = &ir->dirs[k];
@@ -3287,7 +3338,7 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid };
+        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when };
         for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
@@ -3308,7 +3359,7 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->registry_count; ++k) {
         rp_ir_registry_t *r = &ir->registries[k];
-        char *rs[] = { r->id, r->key, r->name, r->value, r->with_file, r->feature };
+        char *rs[] = { r->id, r->key, r->name, r->value, r->with_file, r->feature, r->when };
         for (size_t j = 0; j < sizeof rs / sizeof rs[0]; ++j) rp_mem_free(a, rs[j]);
         for (size_t j = 0; j < r->item_count; ++j) rp_mem_free(a, r->items[j]);
         rp_mem_free(a, r->items);
@@ -3316,7 +3367,8 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->registries);
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
         rp_ir_shortcut_t *sc = &ir->shortcuts[k];
-        char *ss[] = { sc->id, sc->dir, sc->name, sc->target_file, sc->args, sc->description, sc->working_dir };
+        char *ss[] = { sc->id, sc->dir, sc->name, sc->target_file, sc->args, sc->description, sc->working_dir, sc->icon_source,
+                       sc->icon_shown, sc->when };
         for (size_t j = 0; j < sizeof ss / sizeof ss[0]; ++j) rp_mem_free(a, ss[j]);
     }
     rp_mem_free(a, ir->shortcuts);
@@ -3332,13 +3384,13 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
-        char *xs[] = { e->id, e->name, e->value, e->feature };
+        char *xs[] = { e->id, e->name, e->value, e->feature, e->when };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->envs);
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
-        char *xs[] = { x->id, x->dir, x->file, x->section, x->key, x->value, x->feature };
+        char *xs[] = { x->id, x->dir, x->file, x->section, x->key, x->value, x->feature, x->when };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->inis);
@@ -3426,13 +3478,15 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->labels_by_lang);
     }
     rp_mem_free(a, ir->dialog_controls);
-    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir };
+    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args };
     for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);
     rp_mem_free(a, ir->properties);
     rp_mem_free(a, ir->actions);
     rp_mem_free(a, ir->arp_help);
+    rp_mem_free(a, ir->arp_icon_source);
+    rp_mem_free(a, ir->arp_icon_shown);
     rp_mem_free(a, ir->arp_about);
     rp_mem_free(a, ir->msix_identity_name);
     rp_mem_free(a, ir->msix_publisher);
@@ -3540,6 +3594,9 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "hidden", f->hidden ? "1" : "0");
                 kv(&b, "parent", f->parent);
                 kv(&b, "implicit", f->implicit ? "1" : "0");
+                if (f->required) kv(&b, "required", "1");
+                if (f->follow_parent) kv(&b, "follow-parent", "1");
+                if (f->when) kv(&b, "when", f->when);
             } else if (kind == 1) {
                 const rp_ir_dir_t *d = &ir->dirs[idx[k]];
                 rp_buf_puts(&b, "dir ");
@@ -3567,6 +3624,8 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "any-arch", f->any_arch ? "1" : "0");
                 kv(&b, "feature", f->feature);
                 kv(&b, "component-guid", f->component_guid);
+                if (f->keep) kv(&b, "keep", "1");
+                if (f->when) kv(&b, "when", f->when);
             }
             rp_buf_byte(&b, '\n');
         }
@@ -3596,12 +3655,13 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_mem_free(alloc, order);
     }
     // RFC-0003 items, only when present (older goldens stay as they are).
-    if (ir->arp_no_modify || ir->arp_no_repair || ir->arp_help || ir->arp_about) {
+    if (ir->arp_no_modify || ir->arp_no_repair || ir->arp_help || ir->arp_about || ir->arp_icon_shown) {
         rp_buf_puts(&b, "arp");
         kv(&b, "no-modify", ir->arp_no_modify ? "1" : "0");
         kv(&b, "no-repair", ir->arp_no_repair ? "1" : "0");
         kv(&b, "help", ir->arp_help);
         kv(&b, "about", ir->arp_about);
+        if (ir->arp_icon_shown) kv(&b, "icon", ir->arp_icon_shown);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->property_count; ++k) {
@@ -3640,6 +3700,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "view", r->view32 ? "32" : "native");
         kv(&b, "with", r->with_file);
         kv(&b, "feature", r->feature);
+        if (r->when) kv(&b, "when", r->when);
         rp_buf_byte(&b, '\n');
     }
     static const char *const modes[] = { "-", "install", "uninstall", "both" };
@@ -3790,6 +3851,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "value", x->value);
         kv(&b, "mode", imodes[x->mode]);
         kv(&b, "feature", x->feature);
+        if (x->when) kv(&b, "when", x->when);
         rp_buf_byte(&b, '\n');
     }
     static const char *const emodes[] = { "set", "append", "prepend" };
@@ -3802,6 +3864,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "mode", emodes[e->mode]);
         kv(&b, "keep", e->keep ? "1" : "0");
         kv(&b, "feature", e->feature);
+        if (e->when) kv(&b, "when", e->when);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->copy_count; ++k) {
@@ -3823,6 +3886,8 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "args", sc->args);
         kv(&b, "description", sc->description);
         kv(&b, "working-dir", sc->working_dir);
+        if (sc->icon_shown) kv(&b, "icon", sc->icon_shown);
+        if (sc->when) kv(&b, "when", sc->when);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->assoc_count; ++k) {

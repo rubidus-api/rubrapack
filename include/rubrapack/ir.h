@@ -23,6 +23,9 @@ typedef struct {
     bool     hidden;
     char    *parent;            // feature ID or NULL
     bool     implicit;          // the default `Main` feature (G2)
+    bool     required;          // RFC-0013 A3: cannot be set to "not installed" in the tree
+    bool     follow_parent;     // RFC-0013 A3: installed where its parent is
+    char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     rp_pos_t pos;
 } rp_ir_feature_t;
 
@@ -51,6 +54,7 @@ typedef struct {
     bool     msi_only;          // msi-only = true: left out of an MSIX (RFC-0009 M6)
     char    *feature;           // resolved (G2): never NULL
     char    *component_guid;    // user-fixed GUID or NULL
+    char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     rp_pos_t pos;
 } rp_ir_file_t;
 
@@ -81,6 +85,7 @@ typedef struct {
     bool          msi_only;     // msi-only = true: left out of an MSIX (RFC-0009 M6)
     char         *with_file;    // file ID whose component carries it, or NULL (own component)
     char         *feature;      // resolved (G2) when with_file is NULL
+    char         *when;         // RFC-0013 A2, own component only
     rp_pos_t      pos;
 } rp_ir_registry_t;
 
@@ -93,6 +98,9 @@ typedef struct {
     char    *args;              // formatted, or NULL
     char    *description;       // literal, or NULL
     char    *working_dir;       // dir ID, or NULL
+    char    *icon_source;       // .ico to open (RFC-0013 A1), or NULL: the target's own icon
+    char    *when;              // RFC-0013 A2: then the shortcut has its own component
+    char    *icon_shown;        // as written
     rp_pos_t pos;
 } rp_ir_shortcut_t;
 
@@ -116,6 +124,7 @@ typedef struct {
     char    *value;             // formatted; NULL for remove
     int      mode;              // 0 set, 1 add (to a comma list), 2 remove (at install)
     char    *feature;           // resolved (G2)
+    char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     rp_pos_t pos;
 } rp_ir_ini_t;
 
@@ -224,6 +233,7 @@ typedef struct {
     int      mode;              // 0 set, 1 append, 2 prepend
     bool     keep;
     char    *feature;           // resolved (G2)
+    char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     rp_pos_t pos;
 } rp_ir_env_t;
 
@@ -393,6 +403,9 @@ typedef struct {
     char             *license_shown;        // as written
     char             *banner_source;        // [ui] banner BMP, or NULL
     char             *ui_install_dir;       // [ui] install-dir (dir ID), or NULL
+    char             *ui_launch_file;       // [ui] launch = "file:ID" (RFC-0013 A5), or NULL
+    char             *ui_launch_args;       // [ui] launch-args (formatted), or NULL
+    bool              ui_launch_default;    // [ui] launch-checked (default true)
     rp_ir_ui_lang_t   ui_langs[RP_UI_LANG_MAX];     // RFC-0012: [0] is English; one entry = English only
     size_t            ui_lang_count;
     rp_ir_ui_text_t  *ui_texts;
@@ -406,6 +419,7 @@ typedef struct {
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL
+    char     *arp_icon_source, *arp_icon_shown;     // [arp] icon: .ico to open / as written (RFC-0013 A1)
     // [msix] and [msix-app.ID] (RFC-0009; used only when the output is .msix)
     bool      has_msix;
     char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;

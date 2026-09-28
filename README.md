@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.2.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.3.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-0.3.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-0.3.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-manual-0.3.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-manual-0.3.0-en.pdf)
 
 # rubrapack
 
@@ -25,8 +25,11 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   per-user and dual packages, embedded or external MSZIP cabinets, built-in dialog sets
   in English with Korean or other languages added to the same package (a language page first;
   Korean chosen for Korean systems), dialog pages of your own, a remembered install folder, and a
-  guard that refuses a prepared install folder not owned by administrators. x64, x86 and Arm64
-  packages.
+  guard that refuses a prepared install folder not owned by administrators. The user's choices:
+  a feature tree with required features and Change after installation, conditions (`when`) on
+  features, files, shortcuts and settings, "Just me / Everyone" for dual packages, and a program
+  started from the finished page; icons for Installed apps and shortcuts; files kept at removal.
+  x64, x86 and Arm64 packages.
 - **MSIX:** full-trust desktop applications with a virtual registry (`Registry.dat`,
   `User.dat`) and virtual file system, several applications per package, file types, protocols,
   execution aliases, startup tasks, desktop shortcuts, shared fonts; bundles of several
@@ -49,7 +52,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## Status
 
-Version 0.2.0. Every feature above is covered by tests on Linux and by
+Version 0.3.0. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is

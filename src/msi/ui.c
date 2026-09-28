@@ -79,6 +79,13 @@ static const text_t texts[] = {
     { "RemoveText", "[ProductName]을(를) 이 컴퓨터에서 지웁니다.", "Remove [ProductName] from this computer." },
     { "DirGuardText", "설치를 멈췄습니다: 폴더 [1] 이(가) 이미 있는데 관리자 소유가 아니거나 다른 곳으로 이어지는 연결입니다. 다른 폴더를 고르거나, 관리자가 먼저 그 폴더를 지우게 하십시오.",
       "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
+    { "LaunchText", "[ProductName] 실행(&L)", "&Launch [ProductName]" },
+    { "Change", "변경(&C)", "&Change" },
+    { "ChangeText", "설치할 기능을 바꿉니다.", "Choose which features are installed." },
+    { "ScopeTitle", "설치 범위", "Installation scope" },
+    { "ScopeText", "[ProductName]을(를) 누가 쓸지 고르십시오.", "Choose who can use [ProductName]." },
+    { "ScopeUser", "나만(&M)", "Just &me" },
+    { "ScopeMachine", "이 컴퓨터의 모든 사용자(&E) - 관리자 권한이 필요합니다", "&Everyone on this computer - needs administrator rights" },
     { "LanguageTitle", "언어", "Language" },
     { "LanguageText", "설치에 쓸 언어를 고르십시오.", "Choose the language for setup." },
 };
@@ -172,6 +179,7 @@ typedef struct {
     const rp_ir_t     *ir;
     bool               multi;           // more than one language
     bool               page;            // ... and the language page leads the flow
+    bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
     bool               nomem;
     char             **strings;
@@ -442,7 +450,12 @@ static void buttons(ctx_t *c, const char *dlg, const char *back, const char *nex
     control(c, dlg, "Back", "PushButton", 180, 243, 56, 17, back ? VIS | EN : VIS, NULL, T(c, "Back"), "Next");
     control(c, dlg, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, next_text ? next_text : "Next"), "Cancel");
     control(c, dlg, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), first ? first : "Back");
-    if (back) event(c, dlg, "Back", "NewDialog", back, NULL, 1);
+    if (back && c->maint_back) {            // the feature tree, reached from the maintenance page too
+        event(c, dlg, "Back", "NewDialog", back, "NOT Installed", 1);
+        event(c, dlg, "Back", "NewDialog", "RpMaintenanceDlg", "Installed", 1);
+    } else if (back) {
+        event(c, dlg, "Back", "NewDialog", back, NULL, 1);
+    }
     if (next && next[0]) event(c, dlg, "Next", "NewDialog", next, next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
     else event(c, dlg, "Next", "EndDialog", "Return", next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
     if (next_cond_disable) {
@@ -511,28 +524,44 @@ static void progress_and_exits(ctx_t *c) {
                                             { "RpUserExitDlg", "UserExitTitle", "UserExitText" },
                                             { "RpFatalDlg", "FatalTitle", "FatalText" } };
     for (int i = 0; i < 3; ++i) {
+        // RFC-0013 A5: the finished page may start the program (RP_Launch, made by the lowering),
+        // after a first installation or an upgrade only.
+        bool launch = i == 0 && c->ir->ui_launch_file;
         dialog(c, exits[i][0], 370, 270, 3, "Finish", "Finish", "Finish");
         frame(c, exits[i][0], exits[i][1], exits[i][2], NULL);
+        if (launch) {
+            control(c, exits[i][0], "Launch", "CheckBox", 25, 80, 320, 17, VIS | EN, "RPLAUNCH", T(c, "LaunchText"), "Finish");
+            cond(c, exits[i][0], "Launch", "Hide", "Installed");
+            event(c, exits[i][0], "Finish", "DoAction", "RP_Launch", "RPLAUNCH = \"1\" AND NOT Installed", 1);
+        }
         control(c, exits[i][0], "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
-        control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), NULL);
+        control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), launch ? "Launch" : NULL);
         control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
-        event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, 1);
+        event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, launch ? 2 : 1);
     }
+    if (c->ir->ui_launch_file && c->ir->ui_launch_default) prop(c, "RPLAUNCH", "1");
     seq(c, "RpExitDlg", NULL, -1);
     seq(c, "RpUserExitDlg", NULL, -2);
     seq(c, "RpFatalDlg", NULL, -3);
     seq(c, "RpProgressDlg", NULL, 1280);
 }
 
-static void maintenance_dlg(ctx_t *c) {
+// RFC-0013 A4: with the features set, Change (to the feature tree) comes first.
+static void maintenance_dlg(ctx_t *c, bool change) {
     const char *d = "RpMaintenanceDlg";
-    dialog(c, d, 370, 270, 3, "Repair", "Repair", "Cancel");
+    int y = change ? 40 : 0;
+    dialog(c, d, 370, 270, 3, change ? "Change" : "Repair", "Repair", "Cancel");
     frame(c, d, "MaintTitle", "MaintText", NULL);
-    control(c, d, "Repair", "PushButton", 25, 65, 80, 17, VIS | EN, NULL, T(c, "Repair"), "Remove");
-    control(c, d, "RepairText", "Text", 115, 67, 235, 20, VIS | NOPREFIX, NULL, T(c, "RepairText"), NULL);
-    control(c, d, "Remove", "PushButton", 25, 105, 80, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
-    control(c, d, "RemoveText", "Text", 115, 107, 235, 20, VIS | NOPREFIX, NULL, T(c, "RemoveText"), NULL);
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Repair");
+    if (change) {
+        control(c, d, "Change", "PushButton", 25, 65, 80, 17, VIS | EN, NULL, T(c, "Change"), "Repair");
+        control(c, d, "ChangeText", "Text", 115, 67, 235, 20, VIS | NOPREFIX, NULL, T(c, "ChangeText"), NULL);
+        event(c, d, "Change", "NewDialog", "RpCustomizeDlg", NULL, 1);
+    }
+    control(c, d, "Repair", "PushButton", 25, 65 + y, 80, 17, VIS | EN, NULL, T(c, "Repair"), "Remove");
+    control(c, d, "RepairText", "Text", 115, 67 + y, 235, 20, VIS | NOPREFIX, NULL, T(c, "RepairText"), NULL);
+    control(c, d, "Remove", "PushButton", 25, 105 + y, 80, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
+    control(c, d, "RemoveText", "Text", 115, 107 + y, 235, 20, VIS | NOPREFIX, NULL, T(c, "RemoveText"), NULL);
+    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), change ? "Change" : "Repair");
     event(c, d, "Repair", "Reinstall", "ALL", NULL, 1);
     event(c, d, "Repair", "ReinstallMode", "ecmus", NULL, 2);
     event(c, d, "Repair", "EndDialog", "Return", NULL, 3);
@@ -624,7 +653,9 @@ static void customize_dlg(ctx_t *c, const char *back, const char *next) {
     mapping(c, d, "ItemSize", "SelectionSize", "Text");
     event(c, d, "Reset", "Reset", "0", NULL, 1);
     event(c, d, "DiskCost", "SpawnDialog", "RpDiskCostDlg", NULL, 1);
+    c->maint_back = true;
     buttons(c, d, back, next, NULL, NULL, "Tree");
+    c->maint_back = false;
 
     const char *k = "RpDiskCostDlg";
     dialog(c, k, 370, 270, 3 | 32, "OK", "OK", "OK");
@@ -633,6 +664,59 @@ static void customize_dlg(ctx_t *c, const char *back, const char *next) {
             "{120}{70}{70}{70}{70}", "OK");
     control(c, k, "OK", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "OK"), "List");
     event(c, k, "OK", "EndDialog", "Return", NULL, 1);
+}
+
+// The folder of dir `id` for one scope (RFC-0013 A6), when it lies under ProgramFiles: the machine's
+// Program Files from the environment (the folder properties follow the per-user default), or the
+// user's Programs folder. NULL when the dir is elsewhere.
+static const char *scope_path(ctx_t *c, const char *id, bool machine) {
+    const rp_ir_t *ir = c->ir;
+    const char *tail = "";
+    for (int depth = 0; id && depth < 64; ++depth) {
+        const rp_ir_dir_t *d = NULL;
+        for (size_t i = 0; i < ir->dir_count; ++i) {
+            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
+        }
+        if (d == NULL) return NULL;
+        const char *mine = "";
+        for (size_t j = 0; j < d->part_count; ++j) mine = keep(c, mine, keep(c, d->parts[j], "\\"));
+        tail = keep(c, mine, tail);
+        if (d->base) {
+            if (strcmp(d->base, "ProgramFiles") != 0) return NULL;
+            const char *root = !machine ? "[LocalAppDataFolder]Programs\\"
+                             : ir->arch == RP_ARCH_X86 ? "[%ProgramFiles(x86)]\\" : "[%ProgramW6432]\\";
+            return keep(c, root, tail);
+        }
+        id = d->parent;
+    }
+    return NULL;
+}
+
+// "Just me" or "everyone" for a dual package (RFC-0013 A6): the scope properties, then the install
+// folder moved to that scope's place (SetTargetPath takes the path from the dir's property).
+static void scope_dlg(ctx_t *c, const char *back, const char *next, const char *next_text, const char *dir, const char *dir_id) {
+    const char *d = "RpScopeDlg";
+    dialog(c, d, 370, 270, 3, "Scope", "Next", "Cancel");
+    frame(c, d, "ScopeTitle", "ScopeText", NULL);
+    control(c, d, "Scope", "RadioButtonGroup", 25, 60, 320, 36, VIS | EN, "RPSCOPE", NULL, "Back");
+    const char *vals[2] = { "user", "machine" }, *labels[2] = { T(c, "ScopeUser"), T(c, "ScopeMachine") };
+    for (int i = 0; i < 2; ++i) {
+        rows_t *r = &c->radio;
+        s_(c, r, "RPSCOPE"); i_(c, r, i + 1); s_(c, r, vals[i]); i_(c, r, 0);
+        i_(c, r, i * 18); i_(c, r, 320); i_(c, r, 16); s_(c, r, labels[i]); n_(c, r);
+    }
+    buttons(c, d, back, next, next_text, NULL, "Scope");
+    event(c, d, "Next", "[ALLUSERS]", "2", "RPSCOPE = \"user\"", 0);
+    event(c, d, "Next", "[MSIINSTALLPERUSER]", "1", "RPSCOPE = \"user\"", 0);
+    event(c, d, "Next", "[ALLUSERS]", "1", "RPSCOPE = \"machine\"", 0);
+    event(c, d, "Next", "[MSIINSTALLPERUSER]", "{}", "RPSCOPE = \"machine\"", 0);
+    const char *pu = dir_id ? scope_path(c, dir_id, false) : NULL, *pm = dir_id ? scope_path(c, dir_id, true) : NULL;
+    if (pu && pm) {
+        event(c, d, "Next", keep(c, "[", keep(c, dir, "]")), pu, "RPSCOPE = \"user\"", 0);
+        event(c, d, "Next", keep(c, "[", keep(c, dir, "]")), pm, "RPSCOPE = \"machine\"", 0);
+        event(c, d, "Next", "SetTargetPath", dir, NULL, 0);
+    }
+    prop(c, "RPSCOPE", "user");
 }
 
 static void ready_dlg(ctx_t *c, const char *back) {
@@ -1074,13 +1158,14 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     if (c->page) language_dlg(c);
     if (ir->ui >= RP_UI_MINIMAL) {
         // The pages in order: the set's own, each followed by the author's pages placed after it.
-        size_t cap = 5 + ir->dialog_count, n = 0;
+        size_t cap = 6 + ir->dialog_count, n = 0;
         page_t *pages = rp_mem_alloc(alloc, cap, sizeof *pages);
         if (pages == NULL) c->nomem = true;
-        const char *base[5];
+        const char *base[6];
         size_t nb = 0;
         base[nb++] = "RpWelcomeDlg";
         if (any_license) base[nb++] = "RpLicenseDlg";
+        if (ir->scope == 2) base[nb++] = "RpScopeDlg";          // RFC-0013 A6
         if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpInstallDirDlg";
         if (ir->ui == RP_UI_FEATURES) base[nb++] = "RpCustomizeDlg";
         if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpReadyDlg";
@@ -1098,11 +1183,12 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
             else if (strcmp(p, "RpWelcomeDlg") == 0) welcome_dlg(c, next, next_text);
             else if (strcmp(p, "RpLicenseDlg") == 0) license_dlg(c, rtf, back, next, next_text);
             else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
+            else if (strcmp(p, "RpScopeDlg") == 0) scope_dlg(c, back, next, next_text, dir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR");
             else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next);
             else ready_dlg(c, back);
         }
         rp_mem_free(alloc, pages);
-        maintenance_dlg(c);
+        maintenance_dlg(c, ir->ui == RP_UI_FEATURES);
         if (ir->ui >= RP_UI_INSTALLDIR) prop(c, "_RpBrowseProperty", dir);
     }
     if (c->multi) language_rows(c);

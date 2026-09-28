@@ -322,6 +322,7 @@ static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp
         rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*] or [protocol.*] (planned for P8b-3), or msi-only = true", r->id);
         return false;
     }
+    if (r->when) rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: an MSIX writes all its values (when); use msi-only = true", r->id);
     if (r->remove || r->keep) {
         rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true", r->id);
         return false;
@@ -701,6 +702,10 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             DERR(x->pos, "RP1613", "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable", x->id);
         } else if (x->working_dir) {
             DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX shortcut has no working-dir", x->id);
+        } else if (x->when) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)", x->id);
+        } else if (x->icon_shown) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI", x->id);
         } else if (start && x->args) {
             DERR(x->pos, "RP1613", "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args", x->id);
         } else if (desktop) {
@@ -777,6 +782,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     for (size_t i = 0; i < ir->file_count; ++i) {
         const rp_ir_file_t *f = &ir->files[i];
         if (f->msi_only) continue;
+        if (f->keep) DERR(f->pos, "RP1612", "'%s': an MSIX removes all its files (keep); use msi-only = true", f->name);
+        if (f->when) DERR(f->pos, "RP1612", "'%s': an MSIX installs all its files (when); use msi-only = true", f->name);
         const rp_ir_dir_t *r = NULL;
         char dir[1024];
         if (!below_root(ir, f->dir, &r, dir, sizeof dir)) {

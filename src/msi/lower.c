@@ -219,6 +219,8 @@ static const rp_msi_wcolumn_t font_cols[] = { { "File_", KEY_S(72) }, { "FontTit
 static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_S(72) }, { "LockObject", S(72) },
                                                   { "Table", S(32) }, { "SDDLText", S(0) }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
+static const rp_msi_wcolumn_t icon_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
+static const rp_msi_wcolumn_t condition_cols[] = { { "Feature_", KEY_S(38) }, { "Level", KEY_I2 }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
 // ---- directories and short names -------------------------------------------------------------
@@ -488,13 +490,37 @@ static bool ends_with_rtf(const char *s) {
     return n > 4 && s[n - 4] == '.' && (s[n - 3] | 32) == 'r' && (s[n - 2] | 32) == 't' && (s[n - 1] | 32) == 'f';
 }
 
+// An .ico loaded into the Icon table (RFC-0013 A1).
+typedef struct {
+    const char *source, *name;
+    uint8_t    *data;
+} icon_t;
+
+static const char *icon_name(proven_allocator_t alloc, keep_t *k, rows_t *icon, icon_t *icons, size_t *n, const char *source,
+                             proven_err_t *err) {
+    if (source == NULL || *err != PROVEN_OK) return NULL;
+    for (size_t i = 0; i < *n; ++i) {
+        if (strcmp(icons[i].source, source) == 0) return icons[i].name;
+    }
+    uint8_t *data = NULL;
+    size_t len = 0;
+    *err = rp_pal_read_file(alloc, source, 1u << 22, &data, &len);
+    if (*err != PROVEN_OK) return NULL;
+    char num[24];
+    snprintf(num, sizeof num, "%zu", *n + 1);
+    const char *name = kprintf(k, "RpIcon%s.ico", num, NULL);
+    icons[(*n)++] = (icon_t){ source, name, data };
+    s_(icon, name); b_(icon, data, len);
+    return name;
+}
+
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
-        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary;
+        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition;
     rows_init(&property, alloc, "Property", property_cols, 2);
     rows_init(&directory, alloc, "Directory", directory_cols, 3);
     rows_init(&component, alloc, "Component", component_cols, 6);
@@ -530,11 +556,13 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&font, alloc, "Font", font_cols, 2);
     rows_init(&lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
     rows_init(&binary, alloc, "Binary", binary_cols, 2);
+    rows_init(&icon, alloc, "Icon", icon_cols, 2);
+    rows_init(&condition, alloc, "Condition", condition_cols, 3);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
                       &upgrade, &customaction, &iexec, &iui, &createfolder, &aexec, &aui, &advt, &registry, &removereg, &shortcut,
                       &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
-                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm, &binary };
+                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm, &binary, &icon, &condition };
     const size_t always = 16;
 
     // Property
@@ -560,6 +588,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     // upgrade obeys it too (observed).
     s_(&property, "MSIRESTARTMANAGERCONTROL"); s_(&property, "Disable");
     // [arp] and [property.*] (RFC-0003 1). Secure and hidden properties are listed for the engine.
+    // Icons (RFC-0013 A1): every .ico once in the Icon table (stream Icon.<Name>), named in order of
+    // first use: the installed apps list first, then the shortcuts in ID order.
+    size_t nicons = 0;
+    proven_err_t icon_err = PROVEN_OK;
+    icon_t *icons = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *icons);
+    if (icons == NULL) icon_err = PROVEN_ERR_NOMEM;
+    const char *arp_icon = icons ? icon_name(alloc, k, &icon, icons, &nicons, ir->arp_icon_source, &icon_err) : NULL;
+    if (arp_icon) { s_(&property, "ARPPRODUCTICON"); s_(&property, arp_icon); }
     if (ir->arp_no_modify) { s_(&property, "ARPNOMODIFY"); s_(&property, "1"); }
     if (ir->arp_no_repair) { s_(&property, "ARPNOREPAIR"); s_(&property, "1"); }
     if (ir->arp_help) { s_(&property, "ARPHELPLINK"); s_(&property, ir->arp_help); }
@@ -609,7 +645,12 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (!f->hidden) display += 2;
         i_(&feature, f->level);
         null_(&feature);
-        i_(&feature, 0);
+        i_(&feature, (f->required ? 0x10 : 0) | (f->follow_parent ? 0x2 : 0));    // UIDisallowAbsent, FollowParent (RFC-0013 A3)
+        if (f->when) {                  // off (level 0) unless its condition holds (RFC-0013 A2)
+            // Only at the first installation: at removal the property is gone, and a feature turned
+            // off then would keep its files (observed, r1-vm).
+            s_(&condition, f->id); i_(&condition, 0); s_(&condition, kprintf(k, "NOT Installed AND NOT (%s)", f->when, NULL));
+        }
     }
 
     // Files, components, hashes (in File key order = sequence order)
@@ -627,8 +668,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&component, lf->comp);
         s_(&component, kdup(k, guid));
         s_(&component, lf->dir_key);
-        i_(&component, comp_attr);
-        null_(&component);
+        i_(&component, comp_attr | (lf->f->keep ? 16 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
+        s_(&component, lf->f->when);                            // RFC-0013 A2
         s_(&component, lf->key);
 
         s_(&featurecomp, lf->f->feature);
@@ -693,7 +734,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             s_(&component, kdup(k, guid));
             s_(&component, "TARGETDIR");
             i_(&component, attr);
-            null_(&component);
+            s_(&component, r->when);
             if (!keypath) null_(&component);
             else s_(&component, r->id);
             s_(&featurecomp, r->feature);
@@ -760,11 +801,31 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&shortcut, sc->id);
         s_(&shortcut, sdir);
         s_(&shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
-        s_(&shortcut, target->comp);
+        // A shortcut with `when` has its own component (RFC-0013 A2), whose key path is a registry
+        // value under HKMU (HKLM or HKCU as installed), in the target file's feature.
+        const char *sc_comp = target->comp;
+        if (sc->when) {
+            char comp[23], guid[39], rk[23];
+            rp_key_derive('C', kprintf(k, "shortcut:%s", sc->id, NULL), comp);
+            rp_key_derive('R', kprintf(k, "shortcut-when:%s", sc->id, NULL), rk);
+            const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), sc->id, "shortcut", sc->id };
+            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            sc_comp = kdup(k, comp);
+            s_(&component, sc_comp); s_(&component, kdup(k, guid)); s_(&component, sdir);
+            i_(&component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); s_(&component, sc->when); s_(&component, kdup(k, rk));
+            s_(&featurecomp, target->f->feature); s_(&featurecomp, sc_comp);
+            s_(&registry, kdup(k, rk)); i_(&registry, -1); s_(&registry, "Software\\[Manufacturer]\\[ProductName]\\Shortcuts");
+            s_(&registry, sc->id); s_(&registry, "1"); s_(&registry, sc_comp);
+            any_write = true;
+        }
+        s_(&shortcut, sc_comp);
         s_(&shortcut, kprintf(k, "[#%s]", target->key, NULL));
         s_(&shortcut, sc->args);                                            // formatted (H2)
         s_(&shortcut, sc->description);                                     // Text, not formatted
-        null_(&shortcut); null_(&shortcut); null_(&shortcut); null_(&shortcut);
+        const char *sc_icon = icons ? icon_name(alloc, k, &icon, icons, &nicons, sc->icon_source, &icon_err) : NULL;
+        null_(&shortcut);                                                   // Hotkey
+        if (sc_icon) { s_(&shortcut, sc_icon); i_(&shortcut, 0); } else { null_(&shortcut); null_(&shortcut); }
+        null_(&shortcut);                                                   // ShowCmd
         s_(&shortcut, dkey(ir, sc->working_dir));
         for (const dnode_t *n = find_node(dirs, sdir); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
             char rk[23];
@@ -807,7 +868,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, "TARGETDIR");
-        i_(&component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); null_(&component); null_(&component);
+        i_(&component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); s_(&component, e->when); null_(&component);
         s_(&featurecomp, e->feature); s_(&featurecomp, ckey);
         const char *prefix = ir->scope == 1 ? (!e->keep ? "=-" : "=") : (!e->keep ? "=-*" : "=*");  // no '*': user variable
         const char *value = e->mode == 1 ? kprintf(k, "[~];%s", e->value, NULL)
@@ -830,7 +891,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, dkey(ir, x->dir));
-        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
+        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); s_(&component, x->when); null_(&component);
         s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
         const char *shortn = dirs->ini_short[i];
         const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
@@ -885,6 +946,18 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             reg_bad = true;
         }
         s_(&binary, "RpCa"); b_(&binary, part, part_len);
+    }
+    // RFC-0013 A5: the finished page's program, started by the setup's own (non-elevated) client,
+    // without waiting: type 34 (an exe in a folder) + 0xC0 (asynchronous, no wait).
+    if (ir->ui_launch_file && ir->ui != RP_UI_NONE) {
+        const rp_ir_file_t *lf = NULL;
+        for (size_t i = 0; i < ir->file_count; ++i) {
+            if (strcmp(ir->files[i].id, ir->ui_launch_file) == 0) lf = &ir->files[i];
+        }
+        if (lf) {
+            s_(&customaction, "RP_Launch"); i_(&customaction, 34 | 0xC0); s_(&customaction, dkey(ir, lf->dir));
+            s_(&customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
+        }
     }
     // The guard (immediate, first installation only, before any file is placed): its message in
     // each language of the dialogs, picked by RPLANGUAGE (English without dialogs).
@@ -1026,7 +1099,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
 
     // Media and the cabinets: files in sequence order, a new cabinet when the next file would pass
     // cab-max-size (a file larger than that gets a cabinet of its own). One Media row per cabinet.
-    proven_err_t err = reg_bad ? PROVEN_ERR_INVALID_ARG : PROVEN_OK;
+    proven_err_t err = reg_bad ? PROVEN_ERR_INVALID_ARG : icon_err;
     size_t ngroups = 0, *group_end = rp_mem_alloc(alloc, nfiles + 1, sizeof *group_end);
     rp_msi_wstream_t *streams = rp_mem_alloc(alloc, nfiles + 1, sizeof *streams);
     rp_build_file_t *ext = ir->cab_external ? rp_mem_alloc(alloc, nfiles + 1, sizeof *ext) : NULL;
@@ -1371,6 +1444,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_mem_free(alloc, lic);
     rp_mem_free(alloc, rtf);
     rp_mem_free(alloc, banner);
+    for (size_t i = 0; icons && i < nicons; ++i) rp_mem_free(alloc, icons[i].data);
+    rp_mem_free(alloc, icons);
     for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) rp_mem_free(alloc, lang_rtf[li]);
     rp_mem_free(alloc, summary);
     if (ir->cab_external) {

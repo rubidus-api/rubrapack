@@ -56,17 +56,17 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent |
+| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
-| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid |
-| `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
+| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when |
+| `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, help(URL), about(URL) - "설치된 앱"에 제품이 어떻게 보이는가 |
+| `[arp]` | no-modify, no-repair, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
 | `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
-| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature |
+| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), feature |
-| `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature |
+| `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
@@ -74,13 +74,13 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
 | `[font.ID]` | **file**(`path = "Fonts"` 인 dir 에 드는 파일의 `file:ID`), title |
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
-| `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature |
+| `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
-| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
+| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
-| `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID) |
+| `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
@@ -341,6 +341,20 @@ MSI 서식 문자열로 해석되는 곳은 이것뿐이다: 레지스트리 `va
 부분까지 가게 하고, `hidden = true` 는 로그에 값이 남지 않게 한다. 설치 엔진이나 rubrapack 이
 스스로 쓰는 이름(`ARP*`, `MSI*`, `RP_*`, `ALLUSERS`, `REBOOT` 등)은 거부한다.
 
+### 명령줄로 설치하기
+
+대화창이 고르는 것은 모두 `msiexec` 에 줄 수 있다.
+
+| 속성 | 하는 일 |
+|---|---|
+| `INSTALLDIR=D:\Apps\Example\` | 설치 폴더(대문자 ID 의 dir 모두) |
+| `ADDLOCAL=Core,Extra` | 이 기능들을 설치(`ADDLOCAL=ALL`: 모든 기능) |
+| `REMOVE=Extra` | 설치된 제품에서 이 기능들을 제거(`REMOVE=ALL`: 전부) |
+| `INSTALLLEVEL=3` | `level` 이 3 이하인 기능을 모두 설치 |
+| `RPLANGUAGE=ko` | 대화창 언어(`[ui] languages` 가 있을 때) |
+| `ALLUSERS=1 MSIINSTALLPERUSER=""` | 겸용 패키지를 모든 사용자에게(기본: 현재 사용자만) |
+| `DESK=1`, `APP_MODE=server` | 원본이 정한 속성: `when` 조건, 대화창 값 |
+
 ### 창 없이 설치하기
 
 rubrapack 이 만드는 패키지는 모두 명령줄에서 사용자 화면 없이 설치·복구·업그레이드·제거된다:
@@ -435,6 +449,17 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - `[package] language` 는 패키지의 언어(`ProductLanguage`, 요약 정보)만 정한다. 0.2 부터는 대화창을
   한국어로 만들지 않는다: `languages = ["ko"]` 를 넣는다(lint 가 `RP1317` 로 경고한다).
 
+### 아이콘, 완료 페이지, 설치 범위 페이지
+
+- `[arp] icon = "app.ico"` 는 "설치된 앱"에 보일 제품 아이콘이다. `[shortcut] icon` 은 바로가기에 따로
+  `.ico` 를 준다(없으면 프로그램 자신의 아이콘). 둘 다 빌드할 때 읽어 패키지 안에 넣는다.
+- `[ui] launch = "file:App"` 은 완료 페이지에 "[ProductName] 실행"을 둔다(`launch-checked = false` 가 아니면
+  체크된 채로; `launch-args` 는 그 인자). "마침"을 누르면 첫 설치나 업그레이드 뒤에 설치를 실행한 사용자의
+  권한으로(설치 엔진의 권한이 아니라) 프로그램을 띄운다. 복구·제거 뒤에는 띄우지 않고, `/qn` 에서는 결코
+  띄우지 않는다.
+- 대화창이 있는 `scope = "dual"` 패키지는 사용권 다음에 "나만"(기본) / "이 컴퓨터의 모든 사용자"(관리자
+  권한 필요) 페이지를 둔다. 설치 폴더도 그에 따라 `%LOCALAPPDATA%\Programs` 나 Program Files 로 옮긴다.
+
 ### 나만의 대화창 페이지: `[dialog.ID]`, `[dialog-control.ID]`
 
 `minimal`, `installdir`, `features` 에서는 내장 흐름에 페이지를 더할 수 있다. 더한 페이지도 다른
@@ -520,7 +545,44 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 
 `[feature.*]` 표가 없으면 모든 것이 숨은 기능 하나에 든다. 기능을 하나라도 선언하면 모든 파일에
 기능이 있어야 한다: 파일 자신의 `feature` 키, 또는 그 dir 의 `feature`. `level` 이 1 보다 큰 기능은
-기본으로 설치하지 않는다.
+기본으로 설치하지 않는다. `ui = "features"` 면 사용자가 트리에서 기능을 고르고, 나중에 "설치된 앱"에서
+바꿀 수 있다(유지보수 페이지의 "변경").
+
+- `required = true`: 트리에서 "설치하지 않음"을 고를 수 없다.
+- `follow-parent = true`: 부모가 설치되는 대로 따라간다.
+- `when = "<조건>"`: 조건이 참이 아니면 그 기능은 꺼진다 - 설치하지도 보여 주지도 않는다(아래).
+
+### 조건: `when`
+
+`when` 은 Windows Installer 조건(`VersionNT64`, `DESK = "1"`, `NOT OLDVERSION`)을 받는다. 기능, 파일과
+파일 묶음, 레지스트리 값(파일과 `with` 로 묶인 값은 안 된다: 파일 쪽에 둔다), 바로가기, 환경 변수, INI 값에
+쓸 수 있다. 조건이 참일 때만 그것을 설치한다. 나만의 대화창 페이지에서 정한 속성, 명령줄에 준 속성, 검색
+결과를 볼 수 있다. 조건은 그것을 처음 설치할 때(메이저 업그레이드 포함) 따진다 - 복구는 있는 그대로 둔다.
+MSIX 는 모두 설치하므로 `when` 을 거부한다.
+
+```toml
+[dialog-control.Desk]             # 나만의 페이지의 체크박스
+dialog = "Options"
+type = "checkbox"
+x = 20
+y = 60
+width = 300
+height = 16
+text = "바탕화면 바로 가기 만들기(&D)"
+property = "DESK"
+
+[shortcut.Desk]
+dir = "Desktop"
+name = "Example"
+target = "file:App"
+when = "DESK"
+```
+
+### 제거할 때 파일 남기기: `keep`
+
+파일(또는 파일 묶음)에 `keep = true` 를 두면 제품을 제거해도 그 파일은 남는다 - 사용자가 바꿨을 수 있는
+설정 파일용이다. 한 번 바뀐 파일은 복구나 다음 판이 덮어쓰지 않는다(판 없는 파일에 대한 Windows Installer
+의 규칙). MSIX 는 파일을 모두 지우므로 `keep` 을 거부한다.
 
 ### 변수
 
