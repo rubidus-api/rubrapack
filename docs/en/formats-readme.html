@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Package formats for implementers - rubrapack Manual</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack Manual</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-en.pdf">PDF edition</a><a href="../ko/formats-readme.html">한국어</a></header>
+<main>
+<h1>Package formats for implementers</h1>
+<p>These pages describe what a program has to write to produce a Windows Installer package (<code>.msi</code>) and an MSIX package or bundle that Windows accepts, and how to sign them. They are written from public specifications and from experiments against Windows itself, so that you can build your own tool from them without reading rubrapack's code - or check rubrapack's code against them.</p>
+<div class="table"><table><tr><th>Page</th><th>Covers</th></tr><tr><td><a href="formats-cfb.html">Compound File Binary (CFB)</a></td><td>Compound File Binary: the container every <code>.msi</code> is</td></tr><tr><td><a href="formats-msi-database.html">The MSI database inside the compound file</a></td><td>Streams, string pool, system tables, table encoding, IDT export</td></tr><tr><td><a href="formats-msi-summary.html">Summary information</a></td><td>The summary information stream and its code page trap</td></tr><tr><td><a href="formats-msi-package.html">The smallest package that installs, repairs, upgrades and uninstalls</a></td><td>The tables that install, upgrade, repair and uninstall: files, registry, shortcuts, services, fonts, dialogs, per-user packages, sequences</td></tr><tr><td><a href="formats-pe.html">Program files: machine type and version</a></td><td>Program files: machine type and version resource</td></tr><tr><td><a href="formats-cab-mszip.html">Cabinets, MSZIP and deflate</a></td><td>Cabinet files, MSZIP blocks, the deflate encoder</td></tr><tr><td><a href="formats-identity.html">Deterministic identities and reproducible packages</a></td><td>Deterministic GUIDs and keys, reproducible builds</td></tr><tr><td><a href="formats-authenticode.html">Authenticode signatures</a></td><td>Authenticode signatures for PE files and MSI packages: the digests, the CMS structure Windows accepts, ECDSA, RFC 3161 timestamps</td></tr><tr><td><a href="formats-verify.html">Checking your output against Windows</a></td><td>How to check your output with Windows' own components</td></tr><tr><td><a href="formats-msix.html">MSIX packages</a></td><td>MSIX: the ZIP layout, block map, manifest, virtual registry and file system, extensions, bundles, signatures</td></tr><tr><td><a href="formats-registry.html">Registry hive files (REGF)</a></td><td>Registry hive files (REGF), as MSIX <code>Registry.dat</code> and <code>User.dat</code> hold them</td></tr></table></div>
+<h2 id="how-to-read-the-facts">How to read the facts</h2>
+<p>Every statement is tagged with where it comes from:</p>
+<ul><li><strong>[spec]</strong> - a public specification: [MS-CFB], [MS-OLEPS], [MS-CAB], [MS-MCI], RFC 1951, RFC 1321, RFC 3161, RFC 5652, RFC 9562, the PKWARE ZIP APPNOTE, ECMA-376 Part 2 (OPC), the Authenticode PE specification, or the Windows Installer and MSIX references on Microsoft Learn.</li><li><strong>[observed]</strong> - measured on Windows 11: the MSI pages on 25H2 (build 26200) with Windows Installer 5.0.10011, by creating databases through <code>msi.dll</code> and reading them back byte for byte, and by installing packages; the MSIX, registry hive and signature pages on build 26100, against Windows' own packaging API, Offline Registry Library and signer, and by installing and running packages. Observations are facts about those builds; where Microsoft does not document a format (the MSI table encoding, the registry hive, the MSIX signature's record of hashes are not published), observation is the only source.</li></ul>
+<p>No text or code here comes from other MSI, MSIX, cabinet or registry implementations.</p>
+<h2 id="conventions">Conventions</h2>
+<ul><li>All integers are little-endian unless stated otherwise.</li><li><code>u16</code>, <code>u32</code>, <code>u64</code> are unsigned; <code>i16</code>, <code>i32</code> signed two's complement.</li><li>Offsets are in bytes from the start of the structure named.</li><li>Hex byte strings are written in file order: <code>D0 CF 11 E0</code>.</li></ul>
+<h2 id="the-pipeline-in-one-picture">The pipeline, in one picture</h2>
+<pre><code class="lang-text">source description --&gt; tables (rows of strings/integers/streams)
+                   --&gt; MSI database encoding (string pool + one stream per table)
+                   --&gt; files packed into a cabinet (stored or MSZIP) --&gt; one more stream
+                   --&gt; summary information stream
+                   --&gt; all streams written into one compound file  = the .msi</code></pre>
+<p>An MSIX package is simpler: the payload files (each deflated in independent 64 KiB parts), <code>AppxManifest.xml</code>, <code>AppxBlockMap.xml</code> (a hash per part) and <code>[Content_Types].xml</code> in one ZIP64 archive, with <code>Registry.dat</code>/<code>User.dat</code> hives for registry values; a bundle stores packages side by side; a signature adds <code>AppxSignature.p7x</code> (<a href="formats-msix.html">MSIX packages</a>, <a href="formats-registry.html">Registry hive files (REGF)</a>).</p>
+<p>Each arrow is a page above. None of it needs Windows to produce: rubrapack builds the same bytes on Linux and on Windows.</p>
+</main>
+<footer class="bar"><span>&larr; <a href="rpk.html">.rpk sources and the rubrapack command</a></span><span><a href="formats-cfb.html">Compound File Binary (CFB)</a> &rarr;</span></footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Summary information - rubrapack Manual</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack Manual</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-en.pdf">PDF edition</a><a href="../ko/formats-msi-summary.html">한국어</a></header>
+<main>
+<h1>Summary information</h1>
+<p>Every package has a stream <code>\x05SummaryInformation</code> (the first character is U+0005; the name is not packed). It is an OLE property set as specified in [MS-OLEPS]; Microsoft Learn ("Summary Information Stream Property Set") says which properties an installer package uses.</p>
+<h2 id="layout-spec-observed">Layout [spec] [observed]</h2>
+<pre><code class="lang-text">u16  byte order      FFFE
+u16  version         0 (msi.dll writes 0)
+u32  OS field        msi.dll writes 0x00020206
+16   CLSID           zero
+u32  section count   1
+16   FMTID           F29F85E0-4FF9-1068-AB91-08002B27B3D9, stored E0 85 9F F2 F9 4F 68 10 AB 91 08 00 2B 27 B3 D9
+u32  section offset  48
+
+section:
+u32  section size
+u32  property count
+count x (u32 property id, u32 offset from the section start)
+values, each padded to a multiple of 4 bytes:
+  VT_I2 (2)        u32 type, i16 value, 2 bytes padding
+  VT_I4 (3)        u32 type, i32 value
+  VT_LPSTR (30)    u32 type, u32 byte count including the NUL, bytes, NUL, padding
+  VT_FILETIME (64) u32 type, u64 100-ns intervals since 1601-01-01 UTC</code></pre>
+<h2 id="properties-an-installer-package-sets">Properties an installer package sets</h2>
+<div class="table"><table><tr><th>Id</th><th>Name</th><th>Type</th><th>Value</th></tr><tr><td>2</td><td>Title</td><td>LPSTR</td><td>e.g. <code>Installation Database</code></td></tr><tr><td>3</td><td>Subject</td><td>LPSTR</td><td>product name</td></tr><tr><td>4</td><td>Author</td><td>LPSTR</td><td>manufacturer</td></tr><tr><td>5</td><td>Keywords</td><td>LPSTR</td><td>e.g. <code>Installer</code></td></tr><tr><td>7</td><td>Template</td><td>LPSTR</td><td><code>&lt;platform&gt;;&lt;language id&gt;</code>: <code>x64;1033</code>, <code>Arm64;1042</code>, <code>Intel;1033</code></td></tr><tr><td>9</td><td>Revision Number</td><td>LPSTR</td><td>the <strong>package code</strong>: a GUID, new for every different package file</td></tr><tr><td>12, 13</td><td>Create / Last Save time</td><td>FILETIME</td><td>optional</td></tr><tr><td>14</td><td>Page Count</td><td>I4</td><td>minimum installer version: 200 for x64 and x86, 500 for Arm64</td></tr><tr><td>15</td><td>Word Count</td><td>I4</td><td>bit 1 = files are compressed (in cabinets); 2 for a normal package</td></tr><tr><td>18</td><td>Creating Application</td><td>LPSTR</td><td>any</td></tr></table></div>
+<h2 id="the-code-page-trap---keep-summary-strings-ascii-observed">The code page trap - keep summary strings ASCII [observed]</h2>
+<p>Property 1 (<code>CodePage</code>, VT_I2) says how the LPSTR bytes are encoded. On Windows 11 25H2:</p>
+<ul><li><strong>65001:</strong> <code>msi.dll</code> writes the strings correctly as UTF-8, but reads the code page back as the signed value -535, fails to convert every string (the installation log says "Failed to retrieve # 9 summary info property. GetLastError returned 87, the code page is -535") and refuses the package with error 1620.</li><li><strong>1200 (UTF-16):</strong> refused the same way (log: "... the code page is 1200"), even with complete UTF-16 strings and byte counts that follow [MS-OLEPS].</li><li><strong>No code page property and ASCII strings:</strong> installs.</li></ul>
+<p>So: leave property 1 out and write every summary string in ASCII. Localized product names belong in the <code>Property</code> table (<code>ProductName</code>), which uses the database code page - and 65001 works there (see <a href="formats-msi-database.html">The MSI database inside the compound file</a>).</p>
+</main>
+<footer class="bar"><span>&larr; <a href="formats-msi-database.html">The MSI database inside the compound file</a></span><span><a href="formats-msi-package.html">The smallest package that installs, repairs, upgrades and uninstalls</a> &rarr;</span></footer>
+</body>
+</html>

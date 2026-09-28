@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deterministic identities and reproducible packages - rubrapack Manual</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack Manual</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-en.pdf">PDF edition</a><a href="../ko/formats-identity.html">한국어</a></header>
+<main>
+<h1>Deterministic identities and reproducible packages</h1>
+<p>Windows Installer identifies things by GUIDs and keys that must be <strong>stable</strong>: the same component must keep the same <code>ComponentId</code> in every version, or repair and upgrade misbehave. Generating them from the content, instead of storing them by hand, keeps them stable and makes builds reproducible. This page describes rubrapack's rules; other rules work too as long as they are stable.</p>
+<h2 id="name-based-guids-uuid-version-8-spec-rfc-9562">Name-based GUIDs (UUID version 8) [spec: RFC 9562]</h2>
+<pre><code class="lang-text">digest = SHA-256( u32le(len(tag)) || tag
+                  || u32le(1)                                   (format version)
+                  || for each field: u32le(len(field)) || field )  (fields in UTF-8)
+uuid   = digest[0..16), then byte 6 = (byte 6 &amp; 0x0F) | 0x80   (version 8)
+                             byte 8 = (byte 8 &amp; 0x3F) | 0x80   (variant 10)
+text   = "{" + hex(bytes 0-3) "-" hex(4-5) "-" hex(6-7) "-" hex(8-9) "-" hex(10-15) + "}"
+         upper case, bytes in order</code></pre>
+<p>Length prefixes keep <code>("ab","c")</code> and <code>("a","bc")</code> apart; the tag keeps different kinds of identity apart.</p>
+<div class="table"><table><tr><th>Identity</th><th>Tag</th><th>Fields</th></tr><tr><td>ComponentId</td><td><code>rubrapack.component</code></td><td>upgrade code, scope (<code>machine</code>), component architecture, logical target path (<code>&lt;dir id&gt;/&lt;file name&gt;</code>), key path kind (<code>file</code>), key path name (the File key)</td></tr><tr><td>ProductCode</td><td><code>rubrapack.product</code></td><td>upgrade code, architecture, scope, the version's first three parts</td></tr><tr><td>package code (reproducible builds)</td><td><code>rubrapack.package</code></td><td>hex SHA-256 of the package built with an all-zero package code</td></tr></table></div>
+<p>The ProductCode changes with the three-part version - which is what a major upgrade needs - and the ComponentIds do not.</p>
+<h2 id="keys">Keys</h2>
+<p>Table keys (<code>File</code>, <code>Component</code>, <code>Directory</code>) are identifiers: <code>[A-Za-z_][A-Za-z0-9_.]*</code>, at most 72 characters. rubrapack uses the author's IDs for files and folders as given and derives the rest:</p>
+<pre><code class="lang-text">key = prefix + "_" + first 20 lower-case hex digits of SHA-256(logical name)
+      prefix C for components (logical name: the File key), D for intermediate folders
+      (logical name: "&lt;standard folder&gt;/&lt;part&gt;/&lt;part&gt;..."), F for files from wildcards</code></pre>
+<h2 id="reproducible-packages">Reproducible packages</h2>
+<p>A package is byte-for-byte reproducible when nothing depends on the clock, the machine or the order of hash tables: fixed CFB directory times (zero), fixed cabinet dates, string ids assigned in byte order of the strings, rows sorted by key, streams in a fixed order, no random GUIDs. The one identity that must differ between package files is the package code; derive it from the content (as above) when reproducibility matters, and use a random one otherwise.</p>
+</main>
+<footer class="bar"><span>&larr; <a href="formats-cab-mszip.html">Cabinets, MSZIP and deflate</a></span><span><a href="formats-authenticode.html">Authenticode signatures</a> &rarr;</span></footer>
+</body>
+</html>

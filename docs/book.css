@@ -1,0 +1,26 @@
+:root { color-scheme: light dark; --fg:#1b1b1b; --bg:#fdfdfb; --muted:#666; --rule:#ddd; --code:#f3f3f1; --accent:#1a4f8a; }
+@media (prefers-color-scheme: dark) { :root { --fg:#e4e4e4; --bg:#16181a; --muted:#9aa0a6; --rule:#333; --code:#23262a; --accent:#7aa9d6; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); line-height:1.7;
+  font-family: "Noto Serif", "Noto Serif CJK KR", "Apple SD Gothic Neo", "Malgun Gothic", Georgia, serif; }
+header.bar, footer.bar { font-family: "Noto Sans", "Noto Sans CJK KR", system-ui, sans-serif; font-size:.9rem; }
+header.bar { border-bottom:1px solid var(--rule); padding:.6rem 1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:baseline; }
+header.bar .book { font-weight:700; }
+header.bar .spacer { flex:1; }
+main { max-width:48rem; margin:0 auto; padding:1.5rem 1.1rem 3rem; }
+h1, h2, h3, h4 { font-family: "Noto Sans", "Noto Sans CJK KR", system-ui, sans-serif; line-height:1.35; }
+h1 { font-size:1.9rem; margin:.5rem 0 1.2rem; }
+h2 { font-size:1.35rem; margin-top:2.2rem; border-bottom:1px solid var(--rule); padding-bottom:.2rem; }
+h3 { font-size:1.1rem; margin-top:1.8rem; }
+a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+code { font-family: D2Coding, "Noto Sans Mono", ui-monospace, Consolas, monospace; font-size:.9em; background:var(--code); padding:.05em .3em; border-radius:3px; }
+pre { background:var(--code); padding:.8rem 1rem; border-radius:4px; overflow-x:auto; line-height:1.45; }
+pre code { background:none; padding:0; font-size:.84rem; }
+.table { overflow-x:auto; margin:1rem 0; }
+table { border-collapse:collapse; font-size:.88rem; min-width:60%; }
+th, td { border:1px solid var(--rule); padding:.35rem .55rem; vertical-align:top; text-align:left; }
+th { background:var(--code); }
+footer.bar { border-top:1px solid var(--rule); padding:.8rem 1rem; display:flex; justify-content:space-between; gap:1rem; }
+.toc ol { padding-left:1.4rem; } .toc li { margin:.2rem 0; }
+.part { font-family: "Noto Sans", "Noto Sans CJK KR", sans-serif; color:var(--muted); margin-top:1.6rem; font-weight:700; }
+.muted { color:var(--muted); }

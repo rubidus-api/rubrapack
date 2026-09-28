@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>레지스트리 하이브 파일(REGF) - rubrapack 매뉴얼</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack 매뉴얼</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-ko.pdf">PDF 판</a><a href="../en/formats-registry.html">English</a></header>
+<main>
+<h1>레지스트리 하이브 파일(REGF)</h1>
+<p>MSIX 패키지 속 <code>Registry.dat</code> 와 <code>User.dat</code> 의 파일 형식이다. Microsoft 는 이것을 공개하지 않는다. 여기의 모든 사실은 <strong>[observed]</strong> 다: 고른 키/값 집합으로 Windows 의 오프라인 레지스트리 라이브러리(offreg.dll, 10.0.26100, Windows 패키징 도구가 쓰는 작성기 - 그 표시가 기본 블록에 있다)가 쓴 하이브, 그리고 같은 집합으로 rubrapack 이 쓴 하이브를 Windows 에서 <code>OROpenHive</code> 와 <code>RegLoadAppKey</code> 로 읽어 Windows 가 자기 하이브에서 늘어놓는 것과 정확히 같은 키와 값이 나오는 것을 확인했다. 새로 쓴 하이브에 필요한 것만 적는다: 트랜잭션 로그, 휘발성 키, 빈 칸 재사용은 없다.</p>
+<h2 id="배치">배치</h2>
+<ul><li>4096바이트 기본 블록, 그다음 하이브 bin 들. 칸 속의 오프셋("칸 오프셋")은 기본 블록 끝에서부터 센다 (파일 오프셋 - 4096). "없음"은 0xFFFFFFFF 다.</li><li>bin: <code>hbin</code>, u32 자신의 칸 오프셋, u32 크기(4096 이나 그 배수), 0 인 8바이트, u64 시각(0), u32 여분(0); 모두 32바이트. 그 뒤에 칸이 온다. 지금 bin 에 들어가지 않는 칸은 그것을 담을 크기의 새 bin 을 시작하고, bin 의 나머지는 빈 칸 하나다.</li><li>칸: i32 크기(쓰는 중이면 음수, 8의 배수, 크기 필드 포함), 그다음 내용. 칸은 제 bin 의 끝을 넘지 않는다.</li></ul>
+<h2 id="기본-블록">기본 블록</h2>
+<div class="table"><table><tr><th>오프셋</th><th>필드</th><th>값</th></tr><tr><td>0</td><td>서명</td><td><code>regf</code></td></tr><tr><td>4, 8</td><td>순서 번호</td><td>1, 1 (다르면 = 깨끗이 닫히지 않음; 판독기는 거부하거나 로그를 다시 적용)</td></tr><tr><td>12</td><td>u64 시각</td><td>0 도 받는다</td></tr><tr><td>20, 24</td><td>판</td><td>1, 5</td></tr><tr><td>28, 32</td><td>종류, 형식</td><td>0, 1</td></tr><tr><td>36</td><td>루트 키의 칸 오프셋</td><td></td></tr><tr><td>40</td><td>모든 bin 의 크기</td><td></td></tr><tr><td>44</td><td>클러스터링</td><td>1</td></tr><tr><td>0xB0</td><td>offreg 의 표시</td><td><code>OfRg</code>, 그다음 u32 1</td></tr><tr><td>508</td><td>체크섬</td><td>앞의 dword 127개의 XOR; 0 은 1 로, 0xFFFFFFFF 는 0xFFFFFFFE 로 쓴다</td></tr></table></div>
+<p>나머지는 모두 0 이다.</p>
+<h2 id="키nk">키(<code>nk</code>)</h2>
+<p><code>nk</code>, u16 플래그, u64 시각, u32 접근 비트(0), u32 부모(루트면 없음), u32 하위 키 수, u32 휘발성 하위 키 수(0), u32 하위 키 목록, u32 휘발성 목록(없음), u32 값 수, u32 값 목록, u32 보안 칸, u32 클래스(없음), u32 가장 긴 하위 키 이름, u32 가장 긴 클래스(0), u32 가장 긴 값 이름, u32 가장 큰 값 데이터, u32 작업 변수(0), u16 이름 길이, u16 클래스 길이(0), 그다음 이름.</p>
+<ul><li>플래그: 이름을 Latin-1 로 저장하면("압축": 모든 UTF-16 단위가 256 미만) 0x20, 아니면 이름은 UTF-16LE 다. offreg 하이브의 루트 키 이름은 <code>ROOT</code> 이고 플래그는 0x20 뿐이다.</li><li>가장 긴 이름들은 저장 형태와 상관없이 UTF-16 바이트로 센다.</li><li>이름은 대소문자 없이 비교한다: UTF-16 단위마다 유니코드 단순 대문자로 바꾼다.</li></ul>
+<h2 id="하위-키-목록lh-ri">하위 키 목록(<code>lh</code>, <code>ri</code>)</h2>
+<ul><li><code>lh</code>, u16 수, 그다음 하위 키마다: u32 키 칸, u32 해시. 대문자로 바꾼 이름순 정렬.</li><li>해시: h = 0; 이름의 UTF-16 단위마다 h = h * 37 + upper(unit)(32비트에서 넘침).</li><li>하위 키가 507개보다 많으면: 507개까지 담는 <code>lh</code> 목록들의 <code>ri</code>(u16 수, <code>lh</code> 목록마다 u32).</li></ul>
+<h2 id="값vk과-값-목록">값(<code>vk</code>)과 값 목록</h2>
+<ul><li>값 목록은 u32 값 칸 오프셋을 값을 정한 순서대로 담은 보통 칸이다.</li><li><code>vk</code>, u16 이름 길이, u32 데이터 크기, u32 데이터 오프셋, u32 형식, u16 플래그, u16 여분, 그다음 이름. 플래그 1 = Latin-1 이름. 이름 없는 기본값은 이름이 비고 플래그가 0 이다.</li><li>4바이트 이하의 데이터(빈 값 포함)는 데이터 오프셋 필드에 두고 크기의 최상위 비트를 켠다.</li><li>16344바이트까지: 데이터 칸 하나. 16345바이트부터: <code>db</code> 칸(<code>db</code>, u16 조각 수, u32 조각 목록), u32 조각 칸들의 목록 칸, 저마다 16344바이트인 조각들 - 마지막 것까지 모든 조각 칸을 온 크기로 잡는다: 마지막 조각 칸이 더 짧으면 Windows 는 그 값을 읽다 멈춘다.</li></ul>
+<h2 id="보안-칸sk">보안 칸(<code>sk</code>)</h2>
+<p>모든 키가 나눠 쓰는 <code>sk</code> 칸 하나: <code>sk</code>, u16 0, u32 다음과 u32 이전(둘 다 자기 자신), u32 참조 수(키의 수), u32 서술자 길이, 그다음 자기 상대(self-relative) 보안 서술자. offreg 의 것: 소유자와 그룹은 Administrators; SYSTEM 과 Administrators 모든 권한, Everyone 과 RESTRICTED 읽기, 모두 컨테이너 상속.</p>
+<h2 id="재현-가능한-하이브">재현 가능한 하이브</h2>
+<p>시각 필드를 모두 0 으로 두고 칸을 깊이 우선으로 놓으면(키; 루트 키 다음에는 보안 칸; 키의 하위 키 목록, 값 목록, 값마다 그 뒤에 데이터; 그다음 하위 키들을 정렬 순서로) 같은 키와 값은 어느 호스트에서나 같은 바이트가 된다. Windows 는 그런 하이브를 아무 불평 없이 읽는다.</p>
+</main>
+<footer class="bar"><span>&larr; <a href="formats-msix.html">MSIX 패키지</a></span><span></span></footer>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.rpk 원본과 rubrapack 명령 - rubrapack 매뉴얼</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack 매뉴얼</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-ko.pdf">PDF 판</a><a href="../en/rpk.html">English</a></header>
+<main>
+<h1><code>.rpk</code> 원본과 <code>rubrapack</code> 명령</h1>
+<p><code>.rpk</code> 파일 하나가 패키지 하나를 기술한다. 형식은 <a href="https://toml.io/ko/v1.0.0">TOML 1.0</a>의 엄격한 부분집합이다. 모든 <code>.rpk</code> 파일은 올바른 TOML 이지만, 부분집합 밖의 TOML 기능은 무시하지 않고 오류로 거부한다.</p>
+<h2 id="예">예</h2>
+<pre><code class="lang-toml">[define]
+VERSION = "1.4.0"
+
+[package]
+name = "Example App"
+manufacturer = "Example"
+version = "$(VERSION)"
+arch = "x64"                                        # x64, arm64, x86 가운데 하나 - 기본값 없음
+upgrade-code = "{0B9A6C1E-3D2F-4A5B-8C7D-6E5F4A3B2C1D}" # 한 번 만들어 영원히 쓴다
+language = "en-US"                                  # 또는 "ko-KR"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Example App"
+
+[dir.Docs]
+path = "INSTALLDIR/docs"
+
+[file.MainExe]
+dir = "INSTALLDIR"
+source = "dist/app.txt"
+
+[file.Guide]
+dir = "Docs"
+source = "dist/guide.txt"
+name = "User guide.txt"</code></pre>
+<pre><code class="lang-sh">rubrapack build example.rpk -o example.msi -D VERSION=1.4.1
+rubrapack inspect example.msi File</code></pre>
+<h2 id="toml-부분집합">TOML 부분집합</h2>
+<p>받는 것: <code>[kind]</code>·<code>[kind.ID]</code> 표, 맨 키(<code>A-Z a-z 0-9 _ -</code>), TOML 이스케이프가 되는 기본 문자열 <code>"..."</code>, 리터럴 문자열 <code>'...'</code>(이스케이프 없음 - 백슬래시와 따옴표를 쓸 때 편하다: <code>'SOFTWARE\Example'</code>), 십진수와 <code>0x</code> 정수, <code>true</code>/<code>false</code>, 한 가지 형만 담은 배열, <code>#</code> 주석. BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF 나 CRLF.</p>
+<p>오류로 거부하는 것: 여러 줄 문자열, 인라인 표, 표 배열, 점으로 이은 키와 따옴표 키, 세 부분 이상의 표 이름, 부동소수, 날짜, 숫자 속 <code>_</code>, 8진·2진 수, 빈 배열이나 섞인 배열, 첫 표보다 앞의 키. 표와 키의 순서는 아무 의미가 없다.</p>
+<h2 id="표">표</h2>
+<div class="table"><table><tr><th>표</th><th>키(굵은 것은 반드시)</th></tr><tr><td><code>[package]</code></td><td><strong>name</strong>, <strong>manufacturer</strong>, <strong>version</strong>(<code>a.b.c</code> 또는 <code>a.b.c.d</code>), <strong>arch</strong>, <strong>upgrade-code</strong>, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(<code>machine</code>, <code>user</code>, <code>dual</code>), ui(<code>none</code>, <code>basic</code>, <code>minimal</code>, <code>installdir</code>, <code>features</code>), license(<code>.txt</code>, <code>.md</code>, <code>.rtf</code>), reboot(<code>suppress</code>/<code>allow</code>), downgrade-message, compress(<code>none</code>, <code>mszip</code>, <code>mszip:0</code>..<code>mszip:9</code>; 기본 <code>mszip:6</code>), cab(<code>embed</code> 또는 <code>external</code>), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message</td></tr><tr><td><code>[define]</code></td><td>변수: <code>NAME = "value"</code></td></tr><tr><td><code>[feature.ID]</code></td><td><strong>title</strong>, description, level(1-32767), hidden, parent</td></tr><tr><td><code>[dir.ID]</code></td><td><strong>path</strong> = <code>기준/상대/경로</code>, feature</td></tr><tr><td><code>[file.ID]</code></td><td><strong>dir</strong>, <strong>source</strong>, name, vital(기본 true), any-arch, feature, component-guid</td></tr><tr><td><code>[files.ID]</code></td><td><strong>dir</strong>, <strong>glob</strong>, vital, any-arch, feature</td></tr><tr><td><code>[folder.ID]</code></td><td><strong>dir</strong>, <strong>name</strong>, keep, feature</td></tr><tr><td><code>[arp]</code></td><td>no-modify, no-repair, help(URL), about(URL) - "설치된 앱"에 제품이 어떻게 보이는가</td></tr><tr><td><code>[property.ID]</code></td><td><strong>value</strong>, secure, hidden - 대문자 이름의 공개 속성</td></tr><tr><td><code>[action.ID]</code></td><td><strong>run</strong>(이 패키지의 <code>.exe</code> 를 가리키는 <code>file:ID</code>), <strong>do</strong>, <strong>undo</strong>, check</td></tr><tr><td><code>[registry.ID]</code></td><td><strong>root</strong>(<code>HKLM</code>, <code>HKCU</code>, <code>HKCR</code>, <code>HKMU</code>), <strong>key</strong>, name, value, type, remove, keep, view, with, feature</td></tr><tr><td><code>[remove.ID]</code></td><td><strong>dir</strong>, name(<code>*</code> 와 <code>?</code>; 없으면 폴더 자체), <strong>on</strong>(<code>install</code>, <code>uninstall</code>, <code>both</code>), feature</td></tr><tr><td><code>[ini.ID]</code></td><td><strong>dir</strong>, <strong>file</strong>, <strong>section</strong>, <strong>key</strong>, value, mode(<code>set</code>, <code>add</code>, <code>remove</code>), feature</td></tr><tr><td><code>[require.ID]</code></td><td><strong>condition</strong>, <strong>message</strong></td></tr><tr><td><code>[search.ID]</code></td><td><strong>property</strong>, <strong>kind</strong>(<code>registry</code>: root, key, name, view; <code>file</code>: path, file, min-version; <code>dir</code>: path; <code>component</code>: component-guid)</td></tr><tr><td><code>[service.ID]</code></td><td><strong>file</strong>(<code>.exe</code> 를 가리키는 <code>file:ID</code>), <strong>name</strong>, display-name, description, start(<code>auto</code>, <code>demand</code>, <code>disabled</code>), account(<code>LocalSystem</code>, <code>LocalService</code>, <code>NetworkService</code>), args, start-on-install</td></tr><tr><td><code>[assoc.ID]</code></td><td><strong>extension</strong>(<code>.ext</code>, 소문자), <strong>prog-id</strong>, <strong>target</strong>(<code>.exe</code> 를 가리키는 <code>file:ID</code>), description, icon(<code>file:ID</code>), args(기본 <code>"%1"</code>)</td></tr><tr><td><code>[protocol.ID]</code></td><td><strong>name</strong>(스킴, 소문자), <strong>target</strong>(<code>.exe</code> 를 가리키는 <code>file:ID</code>), description, args(기본 <code>"%1"</code>)</td></tr><tr><td><code>[font.ID]</code></td><td><strong>file</strong>(<code>path = "Fonts"</code> 인 dir 에 드는 파일의 <code>file:ID</code>), title</td></tr><tr><td><code>[permission.ID]</code></td><td><strong>target</strong>(<code>dir:ID</code>, <code>file:ID</code>, <code>registry:ID</code>), <strong>sddl</strong></td></tr><tr><td><code>[env.ID]</code></td><td><strong>name</strong>, <strong>value</strong>, mode(<code>set</code>, <code>append</code>, <code>prepend</code>), keep, feature</td></tr><tr><td><code>[copy.ID]</code></td><td><strong>source</strong>(<code>file:ID</code>), <strong>dir</strong>, name(기본: 원본 파일 이름)</td></tr><tr><td><code>[ui]</code></td><td>install-dir(dir ID; 기본 <code>INSTALLDIR</code>), banner(<code>.bmp</code>)</td></tr><tr><td><code>[ui-text.ID]</code></td><td><strong>text</strong> - 내장 대화창 문구 하나를 바꾼다</td></tr><tr><td><code>[dialog.ID]</code></td><td><strong>after</strong>(내장 페이지 또는 다른 <code>[dialog.*]</code>), title, description</td></tr><tr><td><code>[dialog-control.ID]</code></td><td><strong>dialog</strong>, <strong>type</strong>(<code>text</code>, <code>checkbox</code>, <code>edit</code>, <code>radio</code>, <code>combo</code>), <strong>x</strong>, <strong>y</strong>, <strong>width</strong>, <strong>height</strong>, text, property, values, labels</td></tr><tr><td><code>[shortcut.ID]</code></td><td><strong>dir</strong>(dir ID, 또는 <code>Programs</code>, <code>Desktop</code>, <code>StartMenu</code>, <code>Startup</code>), <strong>name</strong>, <strong>target</strong>(<code>file:ID</code>), args, description, working-dir(dir ID)</td></tr><tr><td><code>[msix]</code></td><td><strong>identity-name</strong>, <strong>publisher</strong>, publisher-display-name, min-version - <a href="#msix-패키지">MSIX 패키지</a> 참고</td></tr><tr><td><code>[msix-app.ID]</code></td><td><strong>executable</strong>(<code>[file.*]</code> ID), display-name, description, logo-150, logo-44, store-logo</td></tr><tr><td><code>[msix-extension.ID]</code></td><td><strong>kind</strong>(<code>alias</code>: <strong>alias</strong>; <code>startup-task</code>: task-id, display-name, enabled), app(<code>[msix-app.*]</code> ID; 기본은 첫째) - MSIX 전용</td></tr></table></div>
+<p>dir 경로의 <code>기준</code>은 다른 dir ID 이거나 다음 가운데 하나다: <code>ProgramFiles</code>(x64/arm64 는 64비트, x86 은 32비트), <code>ProgramFiles32</code>, <code>CommonFiles</code>, <code>AppData</code>, <code>LocalAppData</code>, <code>CommonAppData</code>, <code>StartMenu</code>, <code>Programs</code>, <code>Desktop</code>, <code>Startup</code>, <code>Windows</code>, <code>System</code>, <code>Fonts</code>, <code>Temp</code>. 알려진 폴더 하나만 쓴 경로(<code>path = "Fonts"</code>)는 그 폴더 바로 안에 드는 파일에 쓴다.</p>
+<p>ID 는 <code>[A-Za-z_][A-Za-z0-9_]*</code> 꼴이고(최대 72자, feature 는 38자) dir·파일·feature 를 통틀어 서로 달라야 한다.</p>
+<h3 id="msix-패키지">MSIX 패키지</h3>
+<p>출력 이름이 <code>.msix</code> 로 끝나면 같은 원본이 MSIX 패키지가 된다: 완전 신뢰로 도는 데스크톱 앱 하나, 아키텍처 하나. MSIX 에만 필요한 것은 표 두 개가 더 말한다:</p>
+<pre><code class="lang-toml">[msix]
+identity-name = "Example.App"               # 3~50자: A-Z a-z 0-9 . -
+publisher = "C=KR, O=Example, CN=Example"   # 서명 인증서의 주체, 마지막 부분부터
+publisher-display-name = "Example"          # 기본: [package] manufacturer
+min-version = "10.0.17763.0"                # 설치되는 가장 오래된 Windows(이것이 기본값)
+
+[msix-app.Main]
+executable = "MainExe"                      # 앱을 시작하는 [file.*]
+display-name = "Example App"                # 기본: [package] name
+description = "An example"                  # 기본: 표시 이름
+logo-150 = "assets/Square150x150.png"       # PNG, 150x150
+logo-44 = "assets/Square44x44.png"          # PNG, 44x44
+store-logo = "assets/StoreLogo.png"         # PNG, 50x50</code></pre>
+<ul><li>판은 <code>[package] version</code> 을 네 부분으로 늘린 것(<code>1.2.3</code> 은 <code>1.2.3.0</code>), 아키텍처는 <code>[package] arch</code>, 언어는 <code>[package] language</code> 다.</li><li>패키지 자신의 폴더는 첫 <code>[msix-app.*]</code> 실행 파일이 드는 폴더 - <code>ProgramFiles/Example App</code> 처럼 알려진 자리에 붙은 dir - 다. 다른 알려진 자리의 파일은 패키지의 가상 파일 시스템(VFS)에 들어가고, 앱은 그것을 늘 보던 자리에서 본다: Program Files(<code>VFS\ProgramFilesX64</code>, x86 패키지와 <code>ProgramFiles32</code> 는 <code>X86</code>), <code>CommonFiles</code>, <code>System</code>, <code>Windows</code>, <code>CommonAppData</code>(ProgramData). 사용자의 <code>AppData</code>·<code>LocalAppData</code> 와 <code>Temp</code> 에는 가상 폴더가 없어 거기 드는 파일은 오류다 (<code>RP1609</code>). <code>Fonts</code> 의 글꼴은 그 <code>[font.*]</code> 로 들어가고, 시작 메뉴·Programs·바탕화면 폴더는 바로가기(<code>[shortcut.*]</code>)로, Startup 은 시작 작업(<code>[msix-extension.*]</code>)으로 쓴다.</li><li><code>[msix-app.*]</code> 표가 여럿이면 한 패키지에 항목이 여럿 생긴다(최대 100개). 패키지 로고는 첫째 것이다.</li><li><code>[registry.*]</code> 값은 패키지의 가상 레지스트리에 들어간다. 앱은 그것을 실제 레지스트리와 합쳐 보고, 컴퓨터의 레지스트리는 건드리지 않는다: <code>Software</code> 아래의 <code>HKLM</code>(과 <code>HKMU</code>)은 <code>Registry.dat</code> (<code>view = "32"</code> 면 32비트 보기)에, <code>Software</code> 아래의 <code>HKCU</code> 는 <code>User.dat</code> 에 든다. MSIX 가 담을 수 없는 것은 오류다(<code>RP1612</code>): <code>HKCR</code>(파일 형식과 프로토콜은 <code>[assoc.*]</code>·<code>[protocol.*]</code> 로 쓴다), <code>Software</code> 밖의 키, <code>remove</code> 와 <code>keep</code>, 그리고 Windows Installer 가 설치 때 채우는 부분이 든 값 (<code>[INSTALLDIR]</code>, <code>[#File]</code> 등. 이스케이프 <code>[\[]</code> 와 <code>[\]]</code> 는 괜찮다).</li><li>로고는 셋 다 주거나 하나도 주지 않는다. 주지 않으면 한 가지 색의 로고가 들어간다. 로고는 크기가 정확해야 한다(<code>RP1608</code>).</li><li>MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(<code>RP1605</code>): 사용자 지정 동작, 서비스, 환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우거나 복사하는 파일, 빈 폴더. 그런 표(또는 <code>[file.*]</code>/<code>[files.*]</code>)에 <code>msi-only = true</code> 를 달면 MSI 에는 들어가고 MSIX 는 그것 없이 만들어진다. feature·속성·대화창·<code>[arp]</code> 은 Windows Installer 에만 해당하므로 MSIX 에는 쓰지 않는다.</li><li><code>--unsigned-test</code> 는 서명 없는 패키지를 시험 삼아 설치할 때 Windows 가 요구하는 속성을 더한다 (<code>Add-AppxPackage -AllowUnsigned</code>, 프로그램이 들어 있으면 관리자로). 그런 패키지는 배포용이 아니고 정체(identity)도 서명판과 다르다. 대신 <code>--key</code> 를 주면 패키지(또는 묶음과 그 안의 패키지)에 서명한다. 아래 <code>sign</code> 참고.</li><li>파일은 압축한다(<code>--msix-compress store</code> 로 끈다). 그림, 압축 파일처럼 이미 압축된 파일은 저장만 한다. MSIX 에는 시각이 들어가지 않아, 같은 원본은 Linux 와 Windows 에서 같은 바이트가 된다.</li><li>출력 이름이 <code>.msixbundle</code> 로 끝나면 묶음이다: <code>--arch</code> 의 아키텍처마다 원본을 한 번씩 짓고 (목록, <code>--arch x64,x86,arm64</code>; 없으면 원본의 아키텍처), 각 패키지는 안에서 <code>&lt;identity-name&gt;_&lt;version&gt;_&lt;arch&gt;.msix</code> 라는 이름을 갖는다. Windows 는 그 가운데 자기 아키텍처의 패키지를 설치한다(x64 컴퓨터는 x86 보다 x64 를 고른다). <code>$(ARCH)</code> 로 빌드마다 제 프로그램을 준다: <code>source = "bin/$(ARCH)/app.exe"</code>. 묶음의 판은 패키지들의 판이다.</li></ul>
+<h3 id="설치한-프로그램으로-등록하기-actionid">설치한 프로그램으로 등록하기: <code>[action.ID]</code></h3>
+<pre><code class="lang-toml">[action.Tip]
+run = "file:MainExe"      # 이 패키지가 설치하는 .exe
+do = "--register"         # 파일을 설치한 뒤, 그리고 복구할 때 다시 실행
+undo = "--unregister"     # 제거할 때, 파일을 지우기 전에 실행</code></pre>
+<p>rubrapack 은 이 한 쌍을 관리자 권한의 지연(deferred) 동작과 그 되돌림(rollback) 짝으로 바꾼다. 그래서 제거와 업그레이드는 전부 되거나 전혀 되지 않는다: 뒤에서 무엇이 실패하면(또는 <code>do</code>/<code>undo</code> 자체가 0 아닌 값으로 끝나면) 파일이 되돌아오고 다른 명령이 등록을 되살린다. 두 명령은 두 번 실행해도 안전해야 하고, 아무것도 묻지 않고 끝나야 한다 - 창 없이 실행되고 사용자를 기다리는 것은 없다. <code>check</code> 는 등록이 되어 있으면 0 으로 끝나는 명령을 (필요하면) 적는다.</p>
+<h3 id="레지스트리-값-registryid">레지스트리 값: <code>[registry.ID]</code></h3>
+<pre><code class="lang-toml">[registry.InstallDir]
+root = "HKLM"
+key = 'SOFTWARE\Example'          # 리터럴 문자열은 백슬래시를 그대로 둔다
+name = "InstallDir"               # 없으면 키의 기본값
+value = "[INSTALLDIR]"            # MSI 서식 문자열: [PROPERTY], [#FileID], "[" 는 [\[]</code></pre>
+<p><code>type</code> 은 <code>string</code>(기본), <code>expand</code>, <code>dword</code>(0~0xFFFFFFFF 정수), <code>qword</code>(정수, 또는 <code>"0x"</code> 와 16자 이하의 16진수), <code>binary</code>(16진수), <code>multi</code>(문자열 배열)이다. Windows Installer 는 REG_QWORD 를 스스로 쓰지 못한다. 그래서 rubrapack 이 작은 도우미 DLL 을 패키지에 넣어 쓰게 하고, 설치가 실패하면 그 DLL 이 이전 값을 되살린다. 값 하나가 구성 요소(component) 하나이고 제거할 때 지워진다(<code>keep = true</code> 면 남는다). <code>with = "file:ID"</code> 는 대신 그 파일의 구성 요소에 넣는다. 64비트 패키지에서 값은 64비트 레지스트리 보기로 가고, <code>view = "32"</code> 는 32비트 보기에 쓴다. <code>remove = true</code>(<code>value</code> 없이)는 설치 중에 이름 붙은 값을 - <code>name</code> 이 없으면 키 전체를 - 지운다.</p>
+<h3 id="바로가기-shortcutid">바로가기: <code>[shortcut.ID]</code></h3>
+<pre><code class="lang-toml">[dir.Menu]
+path = "Programs/Example"         # 시작 메뉴 &gt; Example
+
+[shortcut.Settings]
+dir = "Menu"
+name = "Example settings"         # ".lnk" 는 붙여 준다
+target = "file:MainExe"
+args = "--settings \"[INSTALLDIR]\""</code></pre>
+<p>바로가기는 대상 파일(과 그 feature)에 딸린다. 바로가기 때문에 만든 폴더는 제거할 때 지운다. 컴퓨터 전체 패키지에서 <code>Programs</code> 와 <code>Desktop</code> 은 모든 사용자의 시작 메뉴와 공용 바탕화면이다.</p>
+<p>MSIX 에서 바로가기는 앱을 시작한다(대상은 <code>[msix-app.*]</code> 의 실행 파일이어야 한다): <code>Programs</code> 나 <code>StartMenu</code> 의 것은 그 앱 자신의 시작 메뉴 항목이고(<code>args</code> 없음), <code>Desktop</code> 의 것은 매니페스트에 적히며 <code>min-version = "10.0.19645.0"</code> 이상이 필요하다(<code>RP1614</code>). 다른 폴더, <code>working-dir</code>, <code>args</code> 속 <code>[...]</code> 는 거기서 오류다(<code>RP1613</code>). <code>Startup</code> 은 시작 작업으로 쓴다.</p>
+<h3 id="파일-형식과-링크-associd-protocolid">파일 형식과 링크: <code>[assoc.ID]</code>, <code>[protocol.ID]</code></h3>
+<pre><code class="lang-toml">[assoc.Doc]
+extension = ".exdoc"
+prog-id = "Example.Document"      # 같은 prog-id 의 표들은 한 종류의 문서를 뜻한다
+description = "Example document"
+target = "file:MainExe"
+args = "--open \"%1\""            # 기본값은 "%1"
+
+[protocol.Link]
+name = "example"                  # example:... 가 프로그램을 연다
+target = "file:MainExe"</code></pre>
+<p>MSI 에서는 프로그램의 구성 요소에 든 <code>HKEY_CLASSES_ROOT</code> 아래 레지스트리 값이다: 확장자의 기본값은 prog-id, prog-id 에는 설명과 <code>DefaultIcon</code>(<code>icon</code>, 없으면 프로그램의 첫 아이콘), <code>shell\open\command</code> 가 있고, 스킴에는 <code>URL Protocol</code> 이 붙는다. <code>HKEY_CLASSES_ROOT</code> 는 설치 방식을 따른다: 컴퓨터 전체면 <code>HKLM\Software\Classes</code>, 사용자별이면 <code>HKCU\Software\Classes</code> 에 들고, 제거하면 없어진다. 이 프로그램만 맡겠다는 형식은 곧바로 이 프로그램으로 열리고, 사용자가 다른 프로그램을 골라 두었으면 Windows 는 그 선택을 지킨다.</p>
+<p>MSIX 에서는 대상 실행 파일을 가진 앱의 매니페스트에 들어가고(파일 형식 연결, 프로토콜) <code>args</code> 는 평문이어야 한다. <code>icon</code> 은 쓰지 않는다: 앱의 로고가 파일 형식을 나타낸다.</p>
+<h3 id="msix-전용-msix-extensionid">MSIX 전용: <code>[msix-extension.ID]</code></h3>
+<pre><code class="lang-toml">[msix-extension.Cli]
+kind = "alias"
+alias = "example.exe"             # 콘솔에서 이 이름을 치면 앱이 시작된다
+
+[msix-extension.Boot]
+kind = "startup-task"             # 앱을 한 번 실행한 뒤로 Windows 와 함께 시작된다
+display-name = "Example"          # 작업 관리자에 보이는 이름; task-id 기본값은 표 ID
+enabled = true</code></pre>
+<p>MSI 빌드는 이것들을 뺀다. MSIX 에서 글꼴(<code>[font.*]</code>)은 패키지의 <code>Fonts</code> 폴더에서 다른 앱과 나눠 쓰며(<code>uap4:SharedFonts</code>) <code>title</code> 은 쓰지 않는다.</p>
+<h3 id="지우기와-복사-removeid-copyid">지우기와 복사: <code>[remove.ID]</code>, <code>[copy.ID]</code></h3>
+<p><code>[remove.ID]</code> 는 <code>dir</code> 에서 <code>name</code> 에 맞는 파일을 지운다 - 예를 들어 옛 판이 남긴 <code>*.log</code> 를 <code>on = "install"</code> 로, 프로그램이 실행 중에 만드는 파일을 <code>on = "uninstall"</code> 로. <code>name</code> 이 없으면 비어 있는 폴더 자체를 지운다. 설치가 실패하면 지운 파일은 되돌아온다. <code>[copy.ID]</code> 는 이 패키지의 파일을 다른 폴더에 한 벌 더 설치하고, 원본과 함께 들어오고 함께 나간다. 설치 전부터 있던 폴더는 절대 지우지 않는다.</p>
+<h3 id="환경-변수-envid">환경 변수: <code>[env.ID]</code></h3>
+<p>시스템(컴퓨터 전체) 변수다. <code>mode = "set"</code>(기본)은 값을 바꾸고, <code>append</code>/<code>prepend</code> 는 기존 값 끝에 <code>;value</code> 를, 앞에 <code>value;</code> 를 붙인다. 제거는 정확히 그만큼 되돌린다: set 한 변수는 지우고, 붙인 부분은 떼어 내고 나머지는 둔다. <code>keep = true</code> 면 남긴다.</p>
+<h3 id="ini-파일-iniid">INI 파일: <code>[ini.ID]</code></h3>
+<p><code>mode = "set"</code>(기본)은 파일의 <code>[section]</code> 에 <code>key=value</code> 를 쓰고, <code>add</code> 는 쉼표 목록에 값을 덧붙이며 (<code>a</code> 가 <code>a,b</code> 로), <code>remove</code> 는 설치 중에 키를 지운다. 제거하면 <code>set</code> 과 <code>add</code> 가 쓴 것을 뗀다. <code>remove</code> 는 파일 설치보다 먼저 실행되므로 옛 판이 남긴 INI 파일을 위한 것이다.</p>
+<h3 id="검색과-요구-searchid-requireid">검색과 요구: <code>[search.ID]</code>, <code>[require.ID]</code></h3>
+<p>검색은 무엇보다 먼저 실행되고 찾은 것을 공개 속성에 넣는다(못 찾으면 비어 있다): 레지스트리 값의 데이터, 파일의 전체 경로(<code>path</code> = 알려진 폴더와 상대 경로, 예 <code>System</code> 이나 <code>ProgramFiles/Example</code>; 프로그램 파일은 <code>min-version</code>), 폴더, 또는 다른 제품 구성 요소의 키 파일. 요구 사항은 <code>condition</code> 이 거짓이면 그 메시지로 첫 설치를 멈춘다(복구와 제거는 막지 않는다). 조건은 Windows Installer 의 문법을 쓰고 (<code>VersionNT &gt;= 603</code>, <code>FOUND_TOOL</code>, <code>NOT OLDSETTING</code>) 검색 결과를 볼 수 있다.</p>
+<pre><code class="lang-toml">[search.Tool]
+property = "FOUND_TOOL"
+kind = "file"
+path = "System"
+file = "tool.exe"
+
+[require.Tool]
+condition = "FOUND_TOOL"
+message = "[ProductName] needs tool.exe."</code></pre>
+<h3 id="서비스-글꼴-권한">서비스, 글꼴, 권한</h3>
+<p><code>[service.ID]</code> 는 패키지의 <code>.exe</code> 가 돌리는 서비스를 설치한다: 파일이 바뀌기 전과 제거할 때 멈추고, 제거할 때 지우며, <code>start-on-install = true</code> 면 설치 뒤에 시작한다. <code>[font.ID]</code> 는 패키지가 Fonts 폴더에 설치하는 글꼴 파일을 등록한다. <code>title</code> 이 없으면 Windows 가 TrueType/OpenType 파일에서 이름을 읽는다. <code>[permission.ID]</code> 는 패키지가 만드는 폴더, 그 파일, 또는 그 레지스트리 값에 SDDL 보안 서술자를 건다(이것이 있으면 패키지는 Windows Installer 5.0 을 요구한다).</p>
+<h3 id="사용자별-패키지와-겸용-패키지-scope">사용자별 패키지와 겸용 패키지: <code>scope</code></h3>
+<p><code>scope = "machine"</code>(기본)은 모든 사용자에게 설치하고 관리자 권한이 필요하다. <code>scope = "user"</code> 는 권한 상승 없이 현재 사용자에게 설치한다: <code>ProgramFiles</code> 는 <code>%LOCALAPPDATA%\Programs</code> 가 되고, <code>Programs</code> 와 <code>Desktop</code> 은 그 사용자의 것, 레지스트리 값은 <code>HKCU</code>(또는 <code>HKMU</code>), 환경 변수는 사용자의 것이며 do/undo 동작은 그 사용자로 실행된다. 컴퓨터 전체 설치를 요청하면 거부한다. <code>scope = "dual"</code> 은 기본으로 사용자별로 설치하고, 관리자 명령창에서 <code>msiexec /i x.msi ALLUSERS=1 MSIINSTALLPERUSER=""</code> 로 하면 컴퓨터 전체로 설치한다. 그 레지스트리 값은 설치된 방식에 따라 <code>HKLM</code> 이나 <code>HKCU</code> 가 되는 <code>HKMU</code> 를 쓴다. 서비스, 글꼴, 권한과 컴퓨터 폴더(<code>Windows</code>, <code>System</code>, <code>Fonts</code>, <code>CommonAppData</code>)는 <code>scope = "machine"</code> 이 필요하다.</p>
+<h3 id="캐비닛">캐비닛</h3>
+<p>파일은 패키지에 넣는 캐비닛 하나로 압축한다. <code>cab-max-size = N</code> 은 파일이 N MiB 를 넘을 때마다 새 캐비닛을 시작하고, <code>cab = "external"</code> 은 캐비닛을 패키지 옆에 <code>&lt;name&gt;.cab</code>(또는 <code>&lt;name&gt;-1.cab</code>, <code>&lt;name&gt;-2.cab</code>, ...)으로 쓴다. 그 캐비닛은 패키지와 함께 다녀야 한다. rubrapack 은 있는 캐비닛을 덮어쓰지 않고 패키지를 맨 나중에 쓴다. 모든 패키지에는 관리 설치(<code>msiexec /a</code>, 압축을 푼 네트워크 이미지)와 광고(<code>msiexec /jm</code>) 순서도 들어 있다.</p>
+<p>MSI 서식 문자열로 해석되는 곳은 이것뿐이다: 레지스트리 <code>value</code>(와 multi 항목), 바로가기 <code>args</code>, 환경 변수 <code>value</code>, INI <code>value</code>, 요구 사항 <code>message</code>, 서비스 <code>args</code>. 나머지는 적은 그대로 쓴다.</p>
+<h3 id="설치된-앱-항목과-속성">설치된 앱 항목과 속성</h3>
+<p><code>[arp]</code> 는 제품이 "설정 &gt; 설치된 앱"에 어떻게 보이는지 정한다(<code>no-modify</code>, <code>no-repair</code>, <code>help</code>, <code>about</code>). <code>[property.NAME]</code> 은 공개 속성을 더한다. <code>secure = true</code> 는 그 값이 설치의 관리자 권한 부분까지 가게 하고, <code>hidden = true</code> 는 로그에 값이 남지 않게 한다. 설치 엔진이나 rubrapack 이 스스로 쓰는 이름(<code>ARP*</code>, <code>MSI*</code>, <code>RP_*</code>, <code>ALLUSERS</code>, <code>REBOOT</code> 등)은 거부한다.</p>
+<h3 id="창-없이-설치하기">창 없이 설치하기</h3>
+<p>rubrapack 이 만드는 패키지는 모두 명령줄에서 사용자 화면 없이 설치·복구·업그레이드·제거된다:</p>
+<pre><code class="lang-text">msiexec /i example.msi /qn /l*v install.log
+msiexec /x {ProductCode} /qn</code></pre>
+<p>종료 코드 0 은 성공, 3010 은 다시 시작이 필요한 성공(rubrapack 은 컴퓨터를 스스로 다시 시작하지 않는다), 그 밖의 값은 실패이며 그 뒤 컴퓨터는 설치 전과 같다.</p>
+<h3 id="대화창-ui">대화창: <code>ui</code></h3>
+<p><code>[package]</code> 의 <code>ui</code> 가 내장 대화창 세트 하나를 고른다. 없으면(<code>none</code>) Windows Installer 자신의 진행 막대만 보인다.</p>
+<div class="table"><table><tr><th><code>ui</code></th><th>설치할 때</th><th>이미 설치되어 있을 때</th></tr><tr><td><code>basic</code></td><td>진행, 끝(또는 오류)</td><td>진행, 끝</td></tr><tr><td><code>minimal</code></td><td>환영, 사용권(있으면), 진행, 끝</td><td>복구 또는 제거</td></tr><tr><td><code>installdir</code></td><td>환영, 사용권, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 끝</td><td>복구 또는 제거</td></tr><tr><td><code>features</code></td><td><code>installdir</code> 에 더해 기능 트리와 필요한 디스크 공간</td><td>복구 또는 제거</td></tr></table></div>
+<p>모든 세트에는 취소 확인, 오류 대화창, 사용 중인 파일 목록, 디스크 공간 부족 경고도 있다. 대화창은 모두 기본값이 있는 값만 모으므로 <code>/qn</code> 은 여전히 창 없이 설치한다.</p>
+<pre><code class="lang-toml">[package]
+ui = "installdir"
+license = "LICENSE.txt"           # 동의할 때까지 설치/다음 단추가 꺼져 있다
+language = "ko-KR"                # 내장 문구는 ko-KR 이면 한국어, 아니면 영어
+
+[ui]
+install-dir = "APPDIR"            # 사용자가 바꿀 수 있는 dir(기본 INSTALLDIR)
+banner = "banner.bmp"             # 위쪽 띠; 약 493 x 58 화소
+
+[ui-text.WelcomeText]
+text = "This will install [ProductName]. Close other programs first."</code></pre>
+<p><code>.txt</code> 나 <code>.md</code> 사용권은 평문으로 보여 준다(한글, 이모지 같은 어떤 글자도 그대로 둔다). <code>.rtf</code> 사용권은 그대로 쓴다. <code>banner</code> 가 없으면 띠는 흰색이다. <code>[ui-text.ID]</code> 는 문구 하나를 바꾼다. 문구는 MSI 서식 문자열이라 <code>[ProductName]</code> 은 치환되고 <code>[</code> 자체는 <code>[\[]</code> 로 쓴다. ID 는 다음과 같다: <code>Back</code>, <code>Next</code>, <code>Cancel</code>, <code>Install</code>, <code>Finish</code>, <code>OK</code>, <code>Yes</code>, <code>No</code>, <code>Retry</code>, <code>Ignore</code>, <code>Abort</code>, <code>Exit</code>, <code>Browse</code>, <code>WelcomeTitle</code>, <code>WelcomeText</code>, <code>LicenseTitle</code>, <code>LicenseText</code>, <code>LicenseAccept</code>, <code>DirTitle</code>, <code>DirText</code>, <code>DirLabel</code>, <code>BrowseTitle</code>, <code>BrowseText</code>, <code>BrowseLookIn</code>, <code>BrowseFolder</code>, <code>BrowseUp</code>, <code>BrowseNew</code>, <code>CustomizeTitle</code>, <code>CustomizeText</code>, <code>Reset</code>, <code>DiskCost</code>, <code>DiskCostTitle</code>, <code>DiskCostText</code>, <code>ReadyTitle</code>, <code>ReadyText</code>, <code>ProgressTitle</code>, <code>ProgressText</code>, <code>ProgressStatus</code>, <code>ExitTitle</code>, <code>ExitText</code>, <code>UserExitTitle</code>, <code>UserExitText</code>, <code>FatalTitle</code>, <code>FatalText</code>, <code>CancelText</code>, <code>FilesInUseTitle</code>, <code>FilesInUseText</code>, <code>OutOfDiskTitle</code>, <code>OutOfDiskText</code>, <code>MaintTitle</code>, <code>MaintText</code>, <code>Repair</code>, <code>RepairText</code>, <code>Remove</code>, <code>RemoveText</code>. 단추 문구에서 <code>&amp;</code> 는 바로 가기 키를 표시한다(<code>&amp;Next</code> 는 Alt+N).</p>
+<h3 id="나만의-대화창-페이지-dialogid-dialog-controlid">나만의 대화창 페이지: <code>[dialog.ID]</code>, <code>[dialog-control.ID]</code></h3>
+<p><code>minimal</code>, <code>installdir</code>, <code>features</code> 에서는 내장 흐름에 페이지를 더할 수 있다. 더한 페이지도 다른 페이지와 같은 띠와 뒤로/다음/취소 단추를 갖고, 본문에 컨트롤을 놓는다.</p>
+<pre><code class="lang-toml">[dialog.Options]
+title = "Options"                 # 띠의 제목; 없으면 [ProductName]
+description = "Choose how to install."
+after = "RpInstallDirDlg"         # 이 페이지 바로 다음에 나온다
+
+[dialog-control.ModeLabel]
+dialog = "Options"
+type = "text"
+x = 20
+y = 55
+width = 330
+height = 12
+text = "Installation &amp;mode:"
+
+[dialog-control.Mode]
+dialog = "Options"
+type = "radio"
+x = 20
+y = 70
+width = 200
+height = 42                       # 값 하나에 12 이상
+property = "APP_MODE"
+values = ["typical", "portable", "server"]
+labels = ["&amp;Typical", "&amp;Portable", "&amp;Server"]
+
+[property.APP_MODE]
+value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인다</code></pre>
+<ul><li><code>after</code> 는 고른 세트의 페이지 - <code>RpWelcomeDlg</code>, <code>RpLicenseDlg</code>(사용권이 있을 때), <code>RpInstallDirDlg</code>(installdir, features), <code>RpCustomizeDlg</code>(features) - 또는 직접 만든 다른 페이지다. 같은 페이지 뒤에 여러 페이지가 오면 ID 순서를 따른다. <code>minimal</code> 에서는 마지막 페이지의 단추가 설치이고, 다른 세트에서는 준비 페이지가 늘 마지막이다.</li><li>좌표는 370 x 270 페이지 위의 대화창 단위다. 컨트롤은 본문, y = 45 에서 y = 234 사이에 놓는다. Tab 키는 컨트롤을 위에서 아래로, 그다음 왼쪽에서 오른쪽으로 옮겨 다닌다.</li><li><code>text</code> 는 글씨를 보인다(<code>&amp;</code> 는 바로 가기 키를 표시하고, 글씨 컨트롤에서는 다음 컨트롤로 옮긴다). <code>checkbox</code> 는 체크하면 속성을 <code>1</code> 로, 풀면 속성을 없앤다. <code>edit</code> 는 사용자가 속성 값을 입력하게 한다. <code>radio</code> 와 <code>combo</code> 는 <code>values</code>(64바이트 이하 문자열 1~32개) 가운데 하나를 고르게 하고, 적은 순서대로 <code>labels</code>(기본: 값 자체)로 보인다.</li><li><code>radio</code> 와 <code>combo</code> 에는 그 값 가운데 하나를 값으로 가진 <code>[property.*]</code> 가 있어야 한다: 대화창은 값을 모을 뿐이고 창 없는 설치(<code>/qn</code>)는 기본값을 쓴다. 어떤 속성이든 명령줄에서 줄 수도 있다: <code>msiexec /i example.msi /qn APP_MODE=server</code>.</li><li>속성은 직접 정한 공개 이름(대문자)이고 컨트롤 하나에 하나이며, 설치의 관리자 권한 부분까지 가므로 <code>[registry.*]</code>, <code>[ini.*]</code>, <code>[env.*]</code>, 조건 등에서 <code>[APP_MODE]</code> 로 쓸 수 있다.</li><li><code>Rp</code> 로 시작하는 페이지 ID 와 틀의 컨트롤 ID(<code>Banner</code>, <code>Title</code>, <code>Description</code>, <code>BannerLine</code>, <code>BottomLine</code>, <code>Back</code>, <code>Next</code>, <code>Cancel</code>)는 예약되어 있다. 페이지 하나에는 컨트롤이 64개까지 든다.</li></ul>
+<h3 id="아키텍처와-업그레이드-계열">아키텍처와 업그레이드 계열</h3>
+<p><code>arch</code> 는 원본 자신의 아키텍처, <code>upgrade-code</code> 는 그 업그레이드 계열이다. 같은 원본을 다른 아키텍처로 지으려면(<code>--arch</code>) 그 아키텍처에 <code>upgrade-code-x86</code>, <code>upgrade-code-arm64</code>, <code>upgrade-code-x64</code> 로 제 계열을 주어야 하고, 없으면 빌드를 거부한다. Windows Installer 의 업그레이드 감지는 아키텍처를 가리지 못해서, 코드를 같이 쓰면 한 아키텍처를 설치할 때 다른 아키텍처가 지워진다. MSIX 에는 업그레이드 코드가 없으므로 <code>.msix</code>·<code>.msixbundle</code> 빌드에는 필요 없다.</p>
+<h3 id="먼저-지워야-하는-판">먼저 지워야 하는 판</h3>
+<p><code>refuse-upgrade-below = "1.0.0"</code> 은 설치된 1.0.0 미만 판의 업그레이드를 거부하고 먼저 지우라고 알린다. 메시지(<code>refuse-upgrade-message</code>, 또는 기본 문구)는 늘 그 일을 하는 명령으로 끝난다: <code>msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCONTROL=Disable</code>. 옛 판을 다른 도구가 <code>MSIRESTARTMANAGERCONTROL=Disable</code> 없이 만들었을 때 쓴다: 그런 판을 업그레이드 도중에 지우면 그 파일을 불러 쓰는 프로그램을 모두 닫으려 한다(<code>formats/msi-package.md</code> 의 "사용 중인 파일" 참고).</p>
+<h3 id="와일드카드-filesid">와일드카드: <code>[files.ID]</code></h3>
+<p><code>glob</code> 은 <code>*</code>(한 폴더 안의 아무 글자들), <code>?</code>(한 글자), <code>**</code>(폴더 여러 단계)가 든 원본 경로다. 맞는 것은 이름순으로 정렬하므로 결과가 파일 시스템에 따라 달라지지 않는다. 첫 와일드카드 아래의 폴더는 <code>dir</code> 아래에 다시 만든다: <code>glob = "dist/layouts/**/*.jmt"</code> 는 <code>dist/layouts/de/x.jmt</code> 를 <code>&lt;dir&gt;/de/x.jmt</code> 로 설치한다. 맞는 것이 없거나, 심볼릭 링크이거나, 출력 파일 자신이 맞으면 오류다.</p>
+<h3 id="빈-폴더-folderid">빈 폴더: <code>[folder.ID]</code></h3>
+<p>파일이 하나도 들지 않아도 <code>dir</code> 안에 <code>name</code> 폴더를 만든다. <code>keep = true</code> 면 제거한 뒤에도 폴더가 남는다(프로그램이 쓰는 데이터를 위해).</p>
+<h3 id="기능feature">기능(feature)</h3>
+<p><code>[feature.*]</code> 표가 없으면 모든 것이 숨은 기능 하나에 든다. 기능을 하나라도 선언하면 모든 파일에 기능이 있어야 한다: 파일 자신의 <code>feature</code> 키, 또는 그 dir 의 <code>feature</code>. <code>level</code> 이 1 보다 큰 기능은 기본으로 설치하지 않는다.</p>
+<h3 id="변수">변수</h3>
+<p>문자열 값 속 <code>$(NAME)</code> 은 한 번 치환된다. 명령줄의 <code>-D NAME=value</code> 가 먼저, 그다음 <code>[define]</code> 이다. 치환 결과는 다시 읽지 않는다(<code>$(X)</code> 가 든 값은 그대로 남는다). <code>$$</code> 는 <code>$</code> 한 글자다. 정의되지 않은 이름은 오류다. <code>$(ARCH)</code> 는 <code>-D</code> 나 <code>[define]</code> 이 정의하지 않는 한 내장이다: 짓고 있는 아키텍처(<code>x64</code>, <code>arm64</code>, <code>x86</code>) - 그래서 원본 하나가 <code>source = "bin/$(ARCH)/app.exe"</code> 처럼 아키텍처마다 제 프로그램을 가리킬 수 있다.</p>
+<h3 id="프로그램-파일">프로그램 파일</h3>
+<p>PE 파일(<code>.exe</code>, <code>.dll</code> 등)은 검사한다: 머신 형식이 <code>arch</code> 와 맞아야 하고(x64 패키지의 x86 도우미는 <code>any-arch = true</code> 가 필요하다), 판 정보 리소스가 패키지 안 파일의 판이 된다. Windows Installer 는 그것을 보고 설치된 파일을 바꿀지 정한다.</p>
+<h3 id="경로">경로</h3>
+<p>원본 경로는 <code>.rpk</code> 파일 기준의 상대 경로이고 <code>/</code> 를 쓴다. 절대 경로, <code>\</code>, 심볼릭 링크, 없는 파일은 오류다. 설치될 이름에는 Windows 가 금하는 것(<code>&lt; &gt; : " / \ | ? *</code>, 제어 문자, 끝의 점이나 공백, <code>CON</code> 같은 장치 이름)만 빼고 어떤 유니코드 글자든 쓸 수 있고, 한 폴더 안의 두 이름이 대소문자만 달라서는 안 된다. Windows Installer 는 이름을 8.3 짧은 이름과 함께 UTF-16 255단위에 저장하므로, 긴 이름은 짧은 이름이 남긴 만큼만 쓸 수 있다: 세 글자 확장자의 <code>name.ext</code> 는 242단위, 확장자 없는 이름은 246단위(NTFS 는 255 를 받는다). 더 긴 이름은 RP1514 로 거부한다.</p>
+<h2 id="명령줄">명령줄</h2>
+<pre><code class="lang-text">rubrapack build &lt;src.rpk&gt; -o &lt;out.msi|out.msix|out.msixbundle&gt; [-D NAME=VALUE]...
+                [--arch x64|arm64|x86 | --arch &lt;목록&gt; (.msixbundle)]
+                [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
+                [&lt;키&gt; [--cert &lt;chain.pem&gt;]
+                 [--timestamp &lt;URL&gt; [--tsa-trust &lt;인증서&gt;] [--tls-trust &lt;인증서&gt;] [--system-roots]
+                  [--proxy &lt;URL&gt;]] [--allow-unsigned-cabs]]
+                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
+rubrapack inspect &lt;file.msi&gt; [table | --summary | --files | --streams]
+rubrapack inspect &lt;file.msix|file.msixbundle&gt; [--files | --manifest]
+rubrapack inspect &lt;file.cab&gt;
+rubrapack new [msi] &lt;name&gt;
+rubrapack guid [--from &lt;text&gt;]
+rubrapack lint &lt;src.rpk&gt; [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
+rubrapack lint &lt;file.msi|file.msix|file.msixbundle&gt; [--strict]
+rubrapack extract &lt;file.msi|file.msix|file.msixbundle|file.cab&gt; -d &lt;새 폴더&gt; [--limit-entries N] [--limit-bytes N]
+rubrapack sign &lt;file.exe|.dll|.msi|.msix|.msixbundle&gt; &lt;키&gt; [--cert &lt;chain.pem&gt;]
+               [--timestamp &lt;URL&gt; [--tsa-trust &lt;인증서&gt;] [--tls-trust &lt;인증서&gt;] [--system-roots]
+                [--proxy &lt;URL&gt;]] [--allow-unsigned-cabs] [-o &lt;out&gt;]
+rubrapack keys list [--pkcs11 &lt;모듈&gt; [--token-label &lt;이름&gt;] [--pin-env VAR | --pin-file FILE]]
+rubrapack verify &lt;file.exe|.dll|.msi|.msix|.msixbundle&gt; [--trust &lt;인증서&gt;]... [--system-roots] [--tsa-trust &lt;인증서&gt;]...
+rubrapack version | help [command]
+
+&lt;키&gt; 는 다음 가운데 하나:
+  --key &lt;key.pfx|.pem&gt; [--pass-env VAR | --pass-file FILE]                   키 파일
+  --pkcs11 &lt;모듈&gt; --key-label &lt;이름&gt; [--token-label &lt;이름&gt;]
+           [--pin-env VAR | --pin-file FILE]                                  PKCS#11 토큰 안의 키
+  --key-store &lt;SHA-1 지문&gt; [--machine-store]                                  Windows 저장소의 키</code></pre>
+<ul><li>명령줄 옵션은 원본보다 앞선다.</li><li><code>--reproducible</code> 은 패키지 코드를 내용에서 끌어낸다: 같은 원본은 Linux 에서든 Windows 에서든, 어느 폴더에서든, 옵션 순서가 어떻든 같은 바이트가 된다. 없으면 패키지 코드는 무작위다 - Windows Installer 가 서로 다른 패키지 파일에 기대하는 대로. MSI 에는 시각이 전혀 들지 않으므로(요약 정보에 만든·저장한 날짜가 없고 캐비닛 항목은 1980-01-01) <code>SOURCE_DATE_EPOCH</code> 는 결과를 바꾸지 않는다. 원본의 경로나 지은 컴퓨터·사용자의 이름도 들지 않는다. 원본 파일은 한 번만 읽고, 그 바이트를 해시하고 판을 읽고 담는다. 짓는 동안 바뀐 파일은 빌드를 멈춘다(<code>RP1515</code>).</li><li><code>--nfc</code> 는 패키지가 폴더·파일·바로가기에 붙이는 이름을 유니코드 NFC(조합형)로 바꾼다. macOS 에서 온 파일은 흔히 이름이 분해형이다 - 한글 음절 U+D55C 가 자모 셋 U+1112 U+1161 U+11AB 로 - 그리고 Windows 는 이름을 있는 그대로 설치하므로 같은 낱말이 서로 다른 두 파일이 될 수 있다. 원본 파일의 이름은 그대로 두고, 문구와 레지스트리 값도 적은 대로 둔다. <code>lint</code> 는 NFC 가 아닌 문구를 경고하고(<code>RP2105</code>), 다른 이름과 같아지는 이름은 거부한다(<code>RP1511</code>). 정규화는 Unicode 17.0 자료로 rubrapack 이 직접 한다.</li><li><code>inspect &lt;file.msi&gt; &lt;table&gt;</code> 은 표를 Windows Installer 의 IDT 형식으로 찍는다. <code>--files</code> 는 파일마다 탭으로 나눈 한 줄을 찍는다: 설치 경로, 크기, File 키, 구성 요소, 판, 언어, MD5(<code>MsiFileHash</code> 에서; 없으면 비어 있다). <code>--streams</code> 는 스트림과 그 크기를 늘어놓는다. <code>inspect &lt;file.cab&gt;</code> 은 캐비닛 속 파일을 늘어놓는다. <code>inspect &lt;file.msix&gt;</code> 는 (블록 해시를 모두 확인한 뒤) 정체, 실행 파일, 파일을 보인다. <code>--files</code> 는 경로, 크기, 압축 여부를, <code>--manifest</code> 는 <code>AppxManifest.xml</code> 을 찍는다. 묶음은 정체와 패키지(하나하나 패키지로 열어 확인한 것)와 <code>AppxBundleManifest.xml</code> 을 보이고, <code>extract</code> 는 패키지를 꺼내 쓴다.</li><li><code>new &lt;name&gt;</code> 은 <code>&lt;name&gt;.rpk</code> 를 쓴다. 프로그램 파일을 <code>dist/</code> 에 넣기만 하면 빌드되는 원본이고 <code>upgrade-code</code> 는 새로 만든다. 있는 파일은 절대 바꾸지 않는다.</li><li><code>guid</code> 는 무작위 GUID(4판)를 찍는다. <code>guid --from &lt;text&gt;</code> 는 rubrapack 이 글에서 끌어내는 GUID 를 어느 컴퓨터에서나 같게 찍는다: <code>guid</code> 의 32비트 리틀엔디언 길이와 그 4바이트, 32비트 리틀엔디언 수 1, 글의 32비트 리틀엔디언 길이와 UTF-8 바이트에 대한 SHA-256. 해시의 앞 16바이트에 판 니블을 8 로, 변종 비트를 <code>10</code> 으로 넣어(RFC 9562 UUIDv8) 대문자 <code>{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}</code> 로 쓴다. 예를 들어 <code>guid --from hello</code> 는 <code>{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}</code> 이다.</li><li>진단은 <code>example.rpk:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you mean 'name'?)</code> 꼴이다.</li><li>쓰기 전에 <code>build</code> 는 완성된 표를 검사한다(<code>RP20xx</code> 진단, 종료 코드 5). 이 검사는 rubrapack 자신을 지키는 것이라, <code>RP1xxx</code> 검사를 통과한 원본은 여기에 걸리지 않아야 한다.</li><li><code>lint &lt;src.rpk&gt;</code> 는 <code>build</code> 가 하는 검사를 모두 하고 아무것도 쓰지 않는다. <code>lint &lt;file.msi&gt;</code> 는 어떤 도구가 만든 패키지든 같은 표 규칙으로 검사한다: 설치를 멈추게 하는 것은 오류(종료 코드 5) - 열에 맞지 않는 값, 가리키는 행이 없음, 중복 키, 깨진 대화창 Tab 순서(<code>RP2101</code>), 대화창의 첫/기본/취소 컨트롤이 없음(<code>RP2102</code>), <code>ListBox</code> 표 없는 사용 중 파일 대화창(<code>RP2103</code>), <code>ErrorText</code>/<code>ErrorIcon</code> 없는 오류 대화창(<code>RP2104</code>) - 이고 나머지는 경고다. <code>--strict</code> 는 경고도 실패로 친다. 65001 이 아닌 코드 페이지의 패키지에는 알림(<code>RP2100</code>)이 붙는다: 그 글자는 UTF-8 로 검사할 수 없다. 표준 출력의 마지막 줄은 오류와 경고의 수다. <code>lint &lt;file.msix&gt;</code> 는 Windows 가 읽는 방식대로 - ZIP, 블록 맵, 블록마다의 해시 - 검사하고, 매니페스트에 정체가 있는지, 매니페스트가 가리키는 파일이 패키지에 있는지 본다(<code>RP2201</code>, <code>RP2202</code>). 묶음은 매니페스트의 블록 맵, 그리고 패키지마다 매니페스트가 말하는 자리·크기·정체와 패키지 자체를 본다. 아키텍처 하나에 패키지 하나다.</li><li><code>extract</code> 는 패키지를 설치되는 모습대로 푼다: 폴더는 Directory 트리의 긴 이름으로(<code>ProgramFiles64Folder</code> 같은 표준 폴더는 그 이름 그대로), 파일은 안팎의 캐비닛에서, 또는 압축하지 않은 패키지라면 옆의 원본 폴더에서 가져온다. 파일마다 크기와 <code>MsiFileHash</code> 를 확인한다. 대상은 새 폴더거나 비어 있어야 하고, 패키지 전체가 통과할 때까지 아무것도 쓰지 않는다: <code>..</code>, <code>/</code>, <code>\</code>, <code>:</code>, 드라이브, 예약 장치 이름(<code>CON</code>, <code>COM1</code> 등), 끝의 점이나 공백이 든 이름, 대소문자만 다른 두 경로는 거부한다. 기본 한도는 항목 100,000개와 16 GiB 다. <code>.cab</code> 은 안의 이름대로 푼다. <code>.msix</code> 는 블록이 모두 해시와 맞은 뒤 파일(ZIP 자신의 <code>[Content_Types].xml</code> 과 <code>AppxBlockMap.xml</code> 은 빼고)을 푼다.</li><li><code>sign</code> 은 PE 파일, MSI 패키지, MSIX 패키지나 묶음(안의 패키지를 먼저 서명한다)에 Authenticode 서명(SHA-256; RSA 또는 ECDSA P-256/P-384)을 제자리에서, 또는 <code>-o</code> 로 붙인다. <code>build --key</code> 는 짓는 김에 (같은 코드로) 서명하고, 서명한 <code>--reproducible</code> 빌드도 매번 같은 바이트다(서명에 시각이 없다) - 타임스탬프가 붙지 않는 한: 타임스탬프에는 서버의 시각과 일련번호가 들어 매번 다르고, 서명 안의 패키지만 같다. 캐비닛이 밖에 있는 MSI 는 거부한다: 서명이 그것을 덮지 못한다 - 캐비닛을 안에 넣거나, <code>--allow-unsigned-cabs</code> 로 경고와 함께 <code>.msi</code> 만 서명한다. 키 파일은 PKCS#12 파일 (<code>.pfx</code>/<code>.p12</code>: PBKDF2-HMAC-SHA256 의 AES, SHA-256 MAC - 요즘 Windows 와 OpenSSL 이 내보내는 것)이거나, 평문 또는 PBES2 로 암호화한 PKCS#8 PEM/DER 키다. <code>--cert</code> 는 키 파일에 없는 인증서를 더한다. 인증서는 코드 서명용이어야 하고, CA 가 아니어야 하며, 지금 유효해야 한다. 암호는 환경 변수나 파일에서 받고 명령줄에서는 절대 받지 않는다. 이미 서명된 파일은 거부한다. MSIX 의 <code>[msix] publisher</code> 는 Windows 가 쓰는 방식의 인증서 주체 - 부분을 마지막부터 처음으로, <code>O=Example Ltd, CN=Example</code> 처럼 - 와 같아야 하고, 다르면 서명을 멈추고 써야 할 주체를 알려 준다. <code>--unsigned-test</code> 와 키는 함께 쓰지 않는다.</li><li>하드웨어 밖으로 나가서는 안 되는 키 - 2023년부터 공개 신뢰 코드 서명 인증서에 요구되는 것 - 는 거기 머문다: rubrapack 이 해시, CMS 구조, 타임스탬프 요청을 스스로 계산하고 서명 연산 하나만 맡긴다. <code>--pkcs11 &lt;모듈&gt;</code> 은 토큰의 PKCS#11 라이브러리를 불러오고(rubrapack 이 불러오는 유일한 라이브러리이고, 이름 준 것만 불러온다), <code>--pin-env</code> 나 <code>--pin-file</code> 의 PIN 으로(명령줄은 절대 아님) 로그인해, <code>--key-label</code> 이라는 이름표의 개인 키와 토큰에 같은 ID 로 저장된 인증서를 쓴다(토큰에 인증서가 없으면 <code>--cert</code> 가 그것이나 사슬의 나머지를 준다). 토큰이 여럿이면 <code>--token-label</code> 로 고른다. Windows 에서 <code>--key-store &lt;지문&gt;</code> 은 현재 사용자의 개인 저장소(<code>--machine-store</code>: 로컬 컴퓨터의 것)에 있고 개인 키에 NCrypt 로 닿을 수 있는 인증서 - 키 저장소 공급자를 거친 스마트카드·토큰·TPM, 또는 소프트웨어 키 - 를 쓰고, Windows 가 만들어 주는 사슬을 가져온다. RSA 키와 ECDSA 키 모두 된다. 서명은 모두 파일에 쓰기 전에 인증서로 확인한다.</li><li><code>keys list</code> 는 서명에 쓸 수 있는 키를 보인다: <code>--pkcs11</code> 이면 토큰의 개인 키마다 이름표, ID, 인증서를, Windows 에서 그것 없이면 개인 저장소에서 개인 키가 있는 인증서와 그 지문을 보인다. 인증서마다 그것이 서명하는 MSIX publisher 와 만료일을 찍고, 비밀은 아무것도 찍지 않는다.</li><li><code>--timestamp &lt;URL&gt;</code> 은 RFC 3161 타임스탬프 서버에 서명의 연서명을 청해, 인증서가 만료된 뒤에도 서명이 유효하게 한다. 없으면 <code>sign</code> 과 <code>build --key</code> 는 그렇지 않을 것이라고 경고한다. 기본 서버는 없고, 서버를 적지 않으면 네트워크에 아무것도 나가지 않는다. 공개 서버로는 <code>http://timestamp.digicert.com</code>, <code>http://timestamp.sectigo.com</code>, <code>http://time.certum.pl</code> 이 있다. <code>http</code> 여도 괜찮다: 답 자체가 서명되어 있고 확인하기 때문이다(nonce, 서명의 해시, 서버의 서명과 그 타임스탬프 인증서). <code>--tsa-trust</code> 는 서버 인증서의 경로가 준 인증서 가운데 하나에서 끝나야 한다는 조건을 더한다. <code>https</code> 서버와는 rubrapack 이 TLS 1.3 을 직접 말하고(AES-GCM, x25519 또는 P-256, RSA-PSS 또는 ECDSA 서버 키; TLS 1.2 는 아님) 서버 인증서를 확인한다 - <code>--tls-trust</code> 로 준 루트나 <code>--system-roots</code> 로 운영 체제 저장소에서 찾은 루트까지의 경로, 날짜, 서버 이름을 담았는지(subjectAltName; 점을 넘는 와일드카드 없음), TLS 서버용인지. 이 검사를 끄는 방법은 없다. 세 가지 신뢰는 섞이지 않는다: <code>--tls-trust</code> 와 <code>--system-roots</code> 는 연결을 누구 말로 믿을지, <code>--tsa-trust</code> 는 시각을 누구 말로 믿을지를 정하고, 어느 것도 다른 쪽에 쓰이지 않는다. Linux 에서 <code>--system-roots</code> 는 <code>$SSL_CERT_FILE</code> 이나 배포판의 CA 묶음을 읽고, Windows 에서는 ROOT 저장소를 읽는다. Windows 는 어떤 루트를 무언가가 처음 필요로 할 때에야 채우므로 그때까지 없을 수 있다. <code>--proxy http://host:port</code> 는 요청을 프록시로 보낸다(<code>https</code> 서버는 <code>CONNECT</code> 로, 그래서 프록시는 서버 이름만 본다). 없으면 <code>https_proxy</code> 나 <code>HTTPS_PROXY</code> (<code>https</code> 서버), <code>http_proxy</code>(<code>http</code>; 대문자 <code>HTTP_PROXY</code> 는 읽지 않는다 - CGI 환경에서는 요청 머리글이 그것을 정할 수 있다)를 쓰되, <code>no_proxy</code> 나 <code>NO_PROXY</code> - 이름들, 각각 그 아래 이름까지 포함, 또는 <code>*</code> - 에 서버가 있으면 쓰지 않는다. 암호를 묻는 프록시와 <code>https://</code> 프록시는 지원하지 않는다(분명한 오류). 타임스탬프가 실패하면 - 답 없음, 거절, 잘못된 답, 서명 인증서의 유효 기간 밖의 시각 - 아무것도 서명하지 않고 아무것도 쓰지 않는다(종료 코드 6). 서명이 타임스탬프 없이 슬그머니 나가는 일은 없다. 한도: 연결 10초, 전체 60초, 답 4 MiB, 리디렉션 3번, 네트워크 오류나 5xx 답 뒤 재시도 2번.</li><li><code>verify</code> 는 무엇을 확인했는지 찍는다 - 구조, 다이제스트, 서명, <code>--trust</code> 로 준 인증서까지의 경로, 폐기 여부(찾아보지 않는다: <code>not-checked</code>), 타임스탬프 - 그리고 모두 맞고 경로가 신뢰하는 인증서에서 끝날 때만 성공한다. <code>--trust</code> 가 없으면 아무것도 신뢰한다고 하지 않는다(종료 코드 4). <code>--system-roots</code> 는 서명자의 경로에 대해(타임스탬프 쪽은 아님) <code>--trust</code> 에 운영 체제의 루트를 더한다. Windows 자신의 평판 검사에 대해서는 아무것도 말하지 않는다. 타임스탬프 줄은 <code>not-present</code>, <code>&lt;시각&gt;, TSA not-checked (give --tsa-trust)</code>, <code>&lt;시각&gt;, TSA trusted</code>, <code>&lt;시각&gt;, TSA untrusted</code>, <code>invalid</code>, <code>unsupported</code>(<code>Set-AuthenticodeSignature -TimestampServer</code> 가 쓰는 옛 Authenticode 타임스탬프로, rubrapack 은 확인하지 않는다) 가운데 하나이고 뒤의 셋은 실패다. 서버가 <code>--tsa-trust</code> 로 신뢰되는 타임스탬프만 - <code>--trust</code> 는 여기에 치지 않는다 - 서명자 인증서가 유효해야 하는 시각을 지금에서 찍힌 시각으로 옮긴다. (시험용으로, 환경 변수 <code>RUBRAPACK_TEST_NOW</code> - 1970년부터의 초 - 가 <code>verify</code> 검사의 "지금"을 대신한다. 그래서 시계를 바꾸지 않고 만료된 인증서를 확인할 수 있다. 그 시각으로 맞춘 시계가 허용하지 않을 것은 아무것도 넓히지 않는다.)</li><li>종료 코드: 0 성공, 1 원본 오류, 2 사용법, 3 입출력, 4 서명, 5 lint, 6 네트워크.</li></ul>
+</main>
+<footer class="bar"><span></span><span><a href="formats-readme.html">구현하는 사람을 위한 패키지 형식</a> &rarr;</span></footer>
+</body>
+</html>

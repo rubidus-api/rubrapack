@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>요약 정보 - rubrapack 매뉴얼</title>
+<link rel="stylesheet" href="../book.css">
+</head>
+<body>
+<header class="bar"><a class="book" href="index.html">rubrapack 매뉴얼</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-ko.pdf">PDF 판</a><a href="../en/formats-msi-summary.html">English</a></header>
+<main>
+<h1>요약 정보</h1>
+<p>모든 패키지에는 <code>\x05SummaryInformation</code> 스트림이 있다(첫 글자는 U+0005, 이름은 압축하지 않는다). [MS-OLEPS]가 정한 OLE 속성 집합이고, Microsoft Learn("Summary Information Stream Property Set")이 설치 패키지가 어떤 속성을 쓰는지 알려 준다.</p>
+<h2 id="배치-spec-observed">배치 [spec] [observed]</h2>
+<pre><code class="lang-text">u16  바이트 순서     FFFE
+u16  판              0 (msi.dll 은 0 을 쓴다)
+u32  OS 필드         msi.dll 은 0x00020206 을 쓴다
+16   CLSID           0
+u32  구역 수         1
+16   FMTID           F29F85E0-4FF9-1068-AB91-08002B27B3D9, 저장은 E0 85 9F F2 F9 4F 68 10 AB 91 08 00 2B 27 B3 D9
+u32  구역 오프셋     48
+
+구역:
+u32  구역 크기
+u32  속성 수
+수만큼 (u32 속성 id, u32 구역 처음부터의 오프셋)
+값들, 각각 4바이트 배수로 채움:
+  VT_I2 (2)        u32 형식, i16 값, 채움 2바이트
+  VT_I4 (3)        u32 형식, i32 값
+  VT_LPSTR (30)    u32 형식, NUL 포함 u32 바이트 수, 바이트, NUL, 채움
+  VT_FILETIME (64) u32 형식, 1601-01-01 UTC 부터의 100ns 간격 수 u64</code></pre>
+<h2 id="설치-패키지가-정하는-속성">설치 패키지가 정하는 속성</h2>
+<div class="table"><table><tr><th>Id</th><th>이름</th><th>형식</th><th>값</th></tr><tr><td>2</td><td>Title</td><td>LPSTR</td><td>예 <code>Installation Database</code></td></tr><tr><td>3</td><td>Subject</td><td>LPSTR</td><td>제품 이름</td></tr><tr><td>4</td><td>Author</td><td>LPSTR</td><td>제조사</td></tr><tr><td>5</td><td>Keywords</td><td>LPSTR</td><td>예 <code>Installer</code></td></tr><tr><td>7</td><td>Template</td><td>LPSTR</td><td><code>&lt;플랫폼&gt;;&lt;언어 id&gt;</code>: <code>x64;1033</code>, <code>Arm64;1042</code>, <code>Intel;1033</code></td></tr><tr><td>9</td><td>Revision Number</td><td>LPSTR</td><td><strong>패키지 코드</strong>: GUID, 서로 다른 패키지 파일마다 새로</td></tr><tr><td>12, 13</td><td>Create / Last Save time</td><td>FILETIME</td><td>선택</td></tr><tr><td>14</td><td>Page Count</td><td>I4</td><td>최소 설치 엔진 판: x64 와 x86 은 200, Arm64 는 500</td></tr><tr><td>15</td><td>Word Count</td><td>I4</td><td>비트 1 = 파일이 (캐비닛에) 압축되어 있음; 보통 패키지는 2</td></tr><tr><td>18</td><td>Creating Application</td><td>LPSTR</td><td>아무것</td></tr></table></div>
+<h2 id="코드-페이지-함정---요약-문자열은-ascii-로-observed">코드 페이지 함정 - 요약 문자열은 ASCII 로 [observed]</h2>
+<p>속성 1(<code>CodePage</code>, VT_I2)은 LPSTR 바이트의 인코딩을 말한다. Windows 11 25H2 에서:</p>
+<ul><li><strong>65001:</strong> <code>msi.dll</code> 은 문자열을 UTF-8 로 제대로 쓰지만, 코드 페이지를 부호 있는 값 -535 로 다시 읽어 모든 문자열 변환에 실패하고(설치 로그: "Failed to retrieve # 9 summary info property. GetLastError returned 87, the code page is -535") 오류 1620 으로 패키지를 거부한다.</li><li><strong>1200(UTF-16):</strong> 똑같이 거부한다(로그: "... the code page is 1200"). [MS-OLEPS]대로 완전한 UTF-16 문자열과 바이트 수를 써도 그렇다.</li><li><strong>코드 페이지 속성 없음, ASCII 문자열:</strong> 설치된다.</li></ul>
+<p>그러니 속성 1 은 빼고 요약 문자열은 모두 ASCII 로 쓴다. 지역화한 제품 이름은 데이터베이스 코드 페이지를 쓰는 <code>Property</code> 표(<code>ProductName</code>)에 둔다 - 거기서는 65001 이 통한다(<a href="formats-msi-database.html">복합 파일 속의 MSI 데이터베이스</a> 참고).</p>
+</main>
+<footer class="bar"><span>&larr; <a href="formats-msi-database.html">복합 파일 속의 MSI 데이터베이스</a></span><span><a href="formats-msi-package.html">설치·복구·업그레이드·제거가 되는 가장 작은 패키지</a> &rarr;</span></footer>
+</body>
+</html>
