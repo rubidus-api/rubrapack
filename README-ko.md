@@ -1,9 +1,9 @@
+**한국어** | [English](README.md) — **rubrapack v0.1.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-en.pdf)
+
 # rubrapack
 
 Windows 설치 패키지 - Windows Installer(`.msi`)와 MSIX(`.msix`, `.msixbundle`) - 를 만들고 서명하는 명령줄
 도구입니다. Windows 와 Linux 에서 모두 돌아갑니다.
-
-English: [README.md](README.md).
 
 ```sh
 rubrapack new app                                   # 채워 넣을 원본 app.rpk 를 만듭니다

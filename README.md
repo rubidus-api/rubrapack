@@ -1,9 +1,9 @@
+[한국어](README-ko.md) | **English** — **rubrapack v0.1.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-en.pdf)
+
 # rubrapack
 
 A command-line tool that builds and signs Windows installer packages - Windows Installer (`.msi`)
 and MSIX (`.msix`, `.msixbundle`) - on Windows and on Linux.
-
-Korean: [README-ko.md](README-ko.md).
 
 ```sh
 rubrapack new app                                   # writes app.rpk, a source to fill in
