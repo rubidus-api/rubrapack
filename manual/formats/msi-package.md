@@ -205,7 +205,28 @@ Non-ASCII file, section, key and value names work. A failed installation restore
 with the same signature: `RegLocator` (Root, Key, Name, Type 2 = raw value, +16 = 64-bit view),
 `DrLocator` (Path may start with a folder property, like `[System64Folder]`) with a `Signature` row
 for a file (FileName, MinVersion), or `CompLocator` (ComponentId, Type 1 = key file). The property
-must be public and listed in `SecureCustomProperties` to reach the server side. `LaunchCondition`
+must be public and listed in `SecureCustomProperties` to reach the server side.
+
+A search can give a directory its default: a directory's property set before `CostFinalize` is where
+the directory resolves. rubrapack searches into a property of its own (`RpFound_<ID>`) and copies
+it with a type-51 action (Source = the directory, Target = `[RpFound_<ID>]`) at 51 in both sequences
+under the condition `RpFound_<ID> AND NOT <DIR>`, so a directory given on the command line is left
+alone. The registry locator then has Type 0 (a folder, which must exist; the value comes back with
+a trailing backslash) instead of 2: **AppSearch looks a folder-type RegLocator up in the
+`Signature` table, which must exist, even empty** - without it the installation stops with 2228.
+[observed: a /qn major upgrade installs into the folder the earlier version recorded; `DIR=` on the
+command line wins]
+
+rubrapack's install folder guard (`guard = true`) is an immediate DLL custom action (type 1, the
+helper DLL in `Binary`) at 1010 in InstallExecuteSequence, after `CostFinalize` has resolved the
+directories and before `InstallValidate`, under `NOT Installed`. It reads the Directory keys from a
+property, gets each path with `MsiGetTargetPath`, and refuses a path in which an existing part is a
+reparse point or not a folder, or whose folder exists with an owner (`GetNamedSecurityInfo`) other
+than S-1-5-18, S-1-5-32-544 or TrustedInstaller; it then shows the message with
+`MsiProcessMessage(INSTALLMESSAGE_ERROR)` and returns `ERROR_INSTALL_FAILURE`, so the installation
+ends with 1603 before any file is written. [observed]
+
+`LaunchCondition`
 (**Condition**, Description formatted) at 100 in both sequences stops the installation with the
 description when a condition is false. [observed]
 
@@ -344,6 +365,37 @@ controls in position order and on to Back, Next and Cancel. A radio group is a
 drop-down list is a `ComboBox` control with ComboList (0x20000) and Sorted, filled from ComboBox
 rows. Their properties are added to `SecureCustomProperties`, so values chosen in the dialogs or
 given on the command line reach the execute sequence. [observed]
+
+### Several languages in one package
+
+The dialog tables hold one language at a time, but every text they show can come from a property,
+so one set of dialogs can speak several languages. What the engine does [observed, Windows 11
+26100]:
+
+- A `Text`, `PushButton`, `CheckBox`, `RadioButton` or `ComboBox` text of `[RpT_X]`, and a Dialog
+  `Title` of `[P]`, show the property's value; each dialog reads it when it is created, so a value
+  changed by one dialog shows on the next.
+- A text style prefix at the start of the value (`{\RpTitle_ko}...`) applies.
+- **The value is not formatted again**: `[ProductName]` inside a property's value shows literally.
+  The text must be formatted when it is put into the property - by a `[RpT_X]` ControlEvent, whose
+  Argument is formatted when the event runs, or by a type-51 custom action, whose Target is.
+- Setting `[DefaultUIFont]` by an event changes the face of every control without its own style on
+  the next dialog.
+- A dialog's `Control_First` must be visible when the dialog opens (2836 otherwise); a control
+  hidden by ControlCondition may stay in the tab cycle.
+
+rubrapack's layout with `[ui] languages`: English is language 0. For every text X and language L,
+`RpT_X_L` in the Property table holds the text with `[ProductName]`, `[Manufacturer]` and
+`[ProductVersion]` put in at build time (and the title style for headings); `RpT_X` holds the English
+one. The InstallUISequence starts with type-51 actions: `RPLANGUAGE` = L when unset and
+`UserLanguageID` (17), then `SystemLanguageID` (18), is one of L's LANGIDs, else `en` (19); then at
+21 one action per text copies `[RpT_X_L]` into `RpT_X` under `RPLANGUAGE = "L"`, and one sets
+`DefaultUIFont`. A text that uses other properties is copied as its formatted source instead. The
+language page (`RpLanguageDlg`, 1225, a `RadioButtonGroup` on `RPLANGUAGE`) replaces the welcome and
+maintenance rows; its Next runs the same copies as ControlEvents, then `NewDialog` to the welcome or
+the maintenance page. A license per language is a `ScrollableText` per language in the same place,
+each with `Show`/`Hide` ControlConditions on `RPLANGUAGE`. The UIText table has one language:
+English.
 
 ## What this recipe does not cover yet
 

@@ -77,6 +77,10 @@ static const text_t texts[] = {
     { "RepairText", "빠지거나 망가진 파일과 설정을 되살립니다.", "Restore missing or damaged files and settings." },
     { "Remove", "제거(&R)", "&Remove" },
     { "RemoveText", "[ProductName]을(를) 이 컴퓨터에서 지웁니다.", "Remove [ProductName] from this computer." },
+    { "DirGuardText", "설치를 멈췄습니다: 폴더 [1] 이(가) 이미 있는데 관리자 소유가 아니거나 다른 곳으로 이어지는 연결입니다. 다른 폴더를 고르거나, 관리자가 먼저 그 폴더를 지우게 하십시오.",
+      "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
+    { "LanguageTitle", "언어", "Language" },
+    { "LanguageText", "설치에 쓸 언어를 고르십시오.", "Choose the language for setup." },
 };
 
 bool rp_ui_text_known(const char *id) {
@@ -84,6 +88,26 @@ bool rp_ui_text_known(const char *id) {
         if (strcmp(texts[i].id, id) == 0) return true;
     }
     return false;
+}
+
+const char *rp_ui_text_id(size_t i) { return i < sizeof texts / sizeof texts[0] ? texts[i].id : NULL; }
+
+// The properties a text may use and still be settled at build time (their values are in the source).
+static const char *const static_props[] = { "ProductName", "Manufacturer", "ProductVersion" };
+
+bool rp_ui_text_static(const char *text) {
+    for (const char *p = text; *p; ++p) {
+        if (*p == '{') return false;            // {...} segments are the formatter's
+        if (*p != '[') continue;
+        const char *e = strchr(p, ']');
+        if (e == NULL) return false;
+        size_t n = (size_t)(e - p - 1);
+        bool known = n == 2 && p[1] == '\\';      // [\x]: a literal character
+        for (size_t i = 0; i < 3 && !known; ++i) known = strlen(static_props[i]) == n && strncmp(p + 1, static_props[i], n) == 0;
+        if (!known) return false;
+        p = e;
+    }
+    return true;
 }
 
 // UIText rows the engine asks for (sizes, selection tree menus, volume list columns).
@@ -135,18 +159,33 @@ typedef struct {
 // the (unused, all zero) AND mask - the alpha channel does the masking.
 enum { ICON_PIXELS = 32 * 32 * 4, ICON_SIZE = 6 + 16 + 40 + ICON_PIXELS + 32 * 4 };
 
+// A text of the dialogs when there are several languages (RFC-0012): the controls show [RpT_<key>],
+// which the chosen language fills.
+typedef struct {
+    const char *key;
+    const char *src[RP_UI_LANG_MAX];    // in each language of ir->ui_langs (formatted source)
+    bool        title;                  // a banner heading: the value starts with the language's title style
+} regtext_t;
+
 typedef struct {
     proven_allocator_t alloc;
     const rp_ir_t     *ir;
-    bool               ko;
+    bool               multi;           // more than one language
+    bool               page;            // ... and the language page leads the flow
+    size_t             nlang;
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
     rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox;
-    rp_ui_prop_t       props[8];
-    size_t             nprops;
-    rp_ui_seq_t        seqs[16];
-    size_t             nseqs;
+    rp_ui_prop_t      *props;
+    size_t             nprops, capprops;
+    rp_ui_seq_t       *seqs;
+    size_t             nseqs, capseqs;
+    rp_ui_ca_t        *cas;
+    size_t             ncas, capcas;
+    regtext_t         *reg;
+    size_t             nreg, capreg;
+    size_t             ncustom;
     uint8_t            white[58];
     uint8_t            icon[ICON_SIZE];
 } ctx_t;
@@ -244,15 +283,104 @@ static const char *keep(ctx_t *c, const char *a, const char *b) {
     return s;
 }
 
-// A text in the package language, or the source's [ui-text.ID] override.
-static const char *T(ctx_t *c, const char *id) {
-    for (size_t i = 0; i < c->ir->ui_text_count; ++i) {
-        if (strcmp(c->ir->ui_texts[i].id, id) == 0) return c->ir->ui_texts[i].text;
+static bool grow(ctx_t *c, void **p, size_t *cap, size_t n, size_t size) {
+    if (n < *cap) return true;
+    size_t cap2 = *cap ? *cap * 2 : 32;
+    void *q = rp_mem_alloc(c->alloc, cap2, size);
+    if (q == NULL) {
+        c->nomem = true;
+        return false;
+    }
+    if (n) memcpy(q, *p, n * size);
+    rp_mem_free(c->alloc, *p);
+    *p = q;
+    *cap = cap2;
+    return true;
+}
+
+static void prop(ctx_t *c, const char *name, const char *value) {
+    if (grow(c, (void **)&c->props, &c->capprops, c->nprops, sizeof *c->props)) c->props[c->nprops++] = (rp_ui_prop_t){ name, value };
+}
+
+static void seq(ctx_t *c, const char *action, const char *cond, int n) {
+    if (grow(c, (void **)&c->seqs, &c->capseqs, c->nseqs, sizeof *c->seqs)) c->seqs[c->nseqs++] = (rp_ui_seq_t){ action, cond, n };
+}
+
+static void ca(ctx_t *c, const char *action, const char *source, const char *target) {
+    if (grow(c, (void **)&c->cas, &c->capcas, c->ncas, sizeof *c->cas)) c->cas[c->ncas++] = (rp_ui_ca_t){ action, source, target };
+}
+
+static const char *lang_code(const ctx_t *c, size_t li) { return c->ir->ui_lang_count ? c->ir->ui_langs[li].code : "en"; }
+
+// Text `id` in language `li`: the source's [ui-text.ID] text-xx, then its text, then the built-in one
+// (English and Korean; other languages give every text, which lint checks).
+const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
+    const char *code = ir->ui_lang_count ? ir->ui_langs[li].code : "en";
+    for (size_t i = 0; i < ir->ui_text_count; ++i) {
+        const rp_ir_ui_text_t *x = &ir->ui_texts[i];
+        if (strcmp(x->id, id) != 0) continue;
+        for (size_t j = 0; j < x->by_lang_count; ++j) {
+            if (strcmp(x->by_lang[j].lang, code) == 0) return x->by_lang[j].text;
+        }
+        if (x->text) return x->text;
     }
     for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
-        if (strcmp(texts[i].id, id) == 0) return c->ko ? texts[i].ko : texts[i].en;
+        if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
     }
     return id;
+}
+
+static const char *text_for(const ctx_t *c, const char *id, size_t li) { return rp_ui_text_for(c->ir, id, li); }
+
+// Registers a text shown through [RpT_<key>] and returns that reference.
+static const char *reg_text(ctx_t *c, const char *key, const char *const *src, bool title) {
+    for (size_t i = 0; i < c->nreg; ++i) {
+        if (strcmp(c->reg[i].key, key) == 0) return keep(c, "[RpT_", keep(c, key, "]"));
+    }
+    if (!grow(c, (void **)&c->reg, &c->capreg, c->nreg, sizeof *c->reg)) return "";
+    regtext_t *r = &c->reg[c->nreg++];
+    *r = (regtext_t){ .key = key, .title = title };
+    for (size_t i = 0; i < c->nlang; ++i) r->src[i] = src[i];
+    return keep(c, "[RpT_", keep(c, key, "]"));
+}
+
+// A built-in text: literal with one language, a property with several.
+static const char *T(ctx_t *c, const char *id) {
+    if (!c->multi) return text_for(c, id, 0);
+    const char *src[RP_UI_LANG_MAX] = { 0 };
+    for (size_t i = 0; i < c->nlang; ++i) src[i] = text_for(c, id, i);
+    return reg_text(c, id, src, false);
+}
+
+// The same for a banner heading, with its title style.
+static const char *TT(ctx_t *c, const char *id) {
+    if (!c->multi) return keep(c, "{\\RpTitle}", text_for(c, id, 0));
+    const char *src[RP_UI_LANG_MAX] = { 0 };
+    for (size_t i = 0; i < c->nlang; ++i) src[i] = text_for(c, id, i);
+    return reg_text(c, id, src, true);
+}
+
+// An author's text (RFC-0012): `all` for every language, `by` for some. NULL when there is none.
+static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t nby, bool title) {
+    if (all == NULL && nby == 0) return NULL;
+    if (!c->multi) {
+        const char *t = all;
+        for (size_t j = 0; j < nby; ++j) {
+            if (strcmp(by[j].lang, "en") == 0) t = by[j].text;
+        }
+        t = t ? t : "";
+        return title ? keep(c, "{\\RpTitle}", t) : t;
+    }
+    const char *src[RP_UI_LANG_MAX] = { 0 };
+    for (size_t i = 0; i < c->nlang; ++i) {
+        src[i] = all ? all : "";
+        for (size_t j = 0; j < nby; ++j) {
+            if (strcmp(by[j].lang, lang_code(c, i)) == 0) src[i] = by[j].text;
+        }
+    }
+    char key[24];
+    snprintf(key, sizeof key, "c%zu", ++c->ncustom);
+    return reg_text(c, keep(c, key, NULL), src, title);
 }
 
 // ---- building blocks ------------------------------------------------------------------------------
@@ -289,10 +417,11 @@ static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, 
     s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, attr);
 }
 
-// Banner (white fill, title, description) and the bottom line, with the texts as given.
+// Banner (white fill, title, description) and the bottom line, with the texts as given (the title
+// with its style, from TT or AT).
 static void frame_text(ctx_t *c, const char *dlg, const char *title, const char *text) {
     control(c, dlg, "Banner", "Bitmap", 0, 0, 370, 44, VIS, NULL, "RpBanner", NULL);
-    control(c, dlg, "Title", "Text", 15, 7, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL, keep(c, "{\\RpTitle}", title), NULL);
+    control(c, dlg, "Title", "Text", 15, 7, 330, 15, VIS | TRANSPARENT | NOPREFIX, NULL, title, NULL);
     control(c, dlg, "Description", "Text", 25, 22, 330, 20, VIS | TRANSPARENT | NOPREFIX, NULL, text ? text : "", NULL);
     control(c, dlg, "BannerLine", "Line", 0, 44, 370, 0, VIS, NULL, NULL, NULL);
     control(c, dlg, "BottomLine", "Line", 0, 234, 370, 0, VIS, NULL, NULL, NULL);
@@ -300,7 +429,7 @@ static void frame_text(ctx_t *c, const char *dlg, const char *title, const char 
 
 // The same with text IDs (`text` may be NULL).
 static void frame(ctx_t *c, const char *dlg, const char *title, const char *text, const char *first) {
-    frame_text(c, dlg, T(c, title), text ? T(c, text) : NULL);
+    frame_text(c, dlg, TT(c, title), text ? T(c, text) : NULL);
     (void)first;
 }
 
@@ -347,7 +476,7 @@ static void error_dlg(ctx_t *c) {
         control(c, "RpErrorDlg", btn[i][0], "PushButton", 107, 80, 56, 17, VIS | EN, NULL, T(c, label[i]), NULL);
         event(c, "RpErrorDlg", btn[i][0], "EndDialog", btn[i][1], NULL, 1);
     }
-    c->props[c->nprops++] = (rp_ui_prop_t){ "ErrorDialog", "RpErrorDlg" };
+    prop(c, "ErrorDialog", "RpErrorDlg");
 }
 
 static void files_in_use_dlg(ctx_t *c) {
@@ -389,10 +518,10 @@ static void progress_and_exits(ctx_t *c) {
         control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
         event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, 1);
     }
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ "RpExitDlg", NULL, -1 };
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ "RpUserExitDlg", NULL, -2 };
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ "RpFatalDlg", NULL, -3 };
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ "RpProgressDlg", NULL, 1280 };
+    seq(c, "RpExitDlg", NULL, -1);
+    seq(c, "RpUserExitDlg", NULL, -2);
+    seq(c, "RpFatalDlg", NULL, -3);
+    seq(c, "RpProgressDlg", NULL, 1280);
 }
 
 static void maintenance_dlg(ctx_t *c) {
@@ -410,7 +539,7 @@ static void maintenance_dlg(ctx_t *c) {
     event(c, d, "Remove", "Remove", "ALL", NULL, 1);
     event(c, d, "Remove", "EndDialog", "Return", NULL, 2);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ d, "Installed AND NOT RESUME AND NOT Preselected", 1240 };
+    if (!c->page) seq(c, d, "Installed AND NOT RESUME AND NOT Preselected", 1240);
 }
 
 static void welcome_dlg(ctx_t *c, const char *next, const char *next_text) {
@@ -418,18 +547,35 @@ static void welcome_dlg(ctx_t *c, const char *next, const char *next_text) {
     dialog(c, d, 370, 270, 3, "Next", "Next", "Cancel");
     frame(c, d, "WelcomeTitle", NULL, NULL);
     control(c, d, "Body", "Text", 25, 60, 320, 100, VIS | NOPREFIX, NULL, T(c, "WelcomeText"), NULL);
-    buttons(c, d, NULL, next, next_text, NULL, NULL);
-    c->seqs[c->nseqs++] = (rp_ui_seq_t){ d, "NOT Installed", 1230 };
+    buttons(c, d, c->page ? "RpLanguageDlg" : NULL, next, next_text, NULL, NULL);
+    if (!c->page) seq(c, d, "NOT Installed", 1230);
 }
 
-static void license_dlg(ctx_t *c, const char *rtf, const char *back, const char *next, const char *next_text) {
+static const char *lang_cond(ctx_t *c, size_t li);
+
+// One license for every language, or (RFC-0012 license-xx) one ScrollableText per language in the
+// same place, each shown only for its language.
+static void license_dlg(ctx_t *c, const char *const *rtf, const char *back, const char *next, const char *next_text) {
     const char *d = "RpLicenseDlg";
-    dialog(c, d, 370, 270, 3, "LicenseText", "Next", "Cancel");
+    bool several = false;
+    for (size_t i = 1; i < c->nlang; ++i) several |= strcmp(rtf[i], rtf[0]) != 0;
+    size_t n = several ? c->nlang : 1;
+    // The first control must be visible whatever the language (error 2836 otherwise, observed):
+    // with a license per language that is the check box.
+    dialog(c, d, 370, 270, 3, several ? "Accept" : "LicenseText", "Next", "Cancel");
     frame(c, d, "LicenseTitle", "LicenseText", NULL);
-    control(c, d, "LicenseText", "ScrollableText", 20, 55, 330, 145, VIS | SUNKEN, NULL, rtf, "Accept");
+    for (size_t i = 0; i < n; ++i) {
+        const char *name = i ? keep(c, "LicenseText_", lang_code(c, i)) : "LicenseText";
+        const char *to = i + 1 < n ? keep(c, "LicenseText_", lang_code(c, i + 1)) : "Accept";
+        control(c, d, name, "ScrollableText", 20, 55, 330, 145, VIS | SUNKEN, NULL, rtf[i], to);
+        if (several) {
+            cond(c, d, name, "Show", lang_cond(c, i));
+            cond(c, d, name, "Hide", keep(c, "NOT (", keep(c, lang_cond(c, i), ")")));
+        }
+    }
     control(c, d, "Accept", "CheckBox", 20, 207, 330, 18, VIS | EN, "RpLicenseAccepted", T(c, "LicenseAccept"), "Back");
     buttons(c, d, back, next, next_text, "RpLicenseAccepted <> \"1\"", "LicenseText");
-    c->props[c->nprops++] = (rp_ui_prop_t){ "RpLicenseAccepted", NULL };    // unset until the box is ticked
+    prop(c, "RpLicenseAccepted", NULL);    // unset until the box is ticked
 }
 
 static void installdir_dlg(ctx_t *c, const char *back, const char *next, const char *dir) {
@@ -504,6 +650,14 @@ static void ready_dlg(ctx_t *c, const char *back) {
     event(c, o, "OK", "EndDialog", "Return", NULL, 1);
 }
 
+// The label of value j of a radio or combo control, in every language (labels-xx).
+static const char *label(ctx_t *c, const rp_ir_dialog_control_t *x, size_t j) {
+    rp_ir_ltext_t by[RP_UI_LANG_MAX];
+    size_t n = 0;
+    for (size_t k = 0; k < x->labels_by_lang_count && n < RP_UI_LANG_MAX; ++k) by[n++] = (rp_ir_ltext_t){ x->labels_by_lang[k].lang, x->labels_by_lang[k].labels[j] };
+    return AT(c, x->labels[j], by, n, false);
+}
+
 // An author's page (RFC-0005 K4): the built-in frame and buttons around the source's controls.
 // Tab order follows the position (top to bottom, then left to right), so it never depends on the
 // order of tables in the source.
@@ -526,9 +680,11 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
         if (mine[i]->type != RP_DC_TEXT) first = mine[i]->id;
     }
     dialog(c, d->id, 370, 270, 3, first ? first : "Next", "Next", "Cancel");
-    frame_text(c, d->id, d->title ? d->title : "[ProductName]", d->description);
+    frame_text(c, d->id, AT(c, d->title ? d->title : "[ProductName]", d->title_by_lang, d->title_by_lang_count, true),
+               AT(c, d->description, d->description_by_lang, d->description_by_lang_count, false));
     for (size_t i = 0; i < n; ++i) {
         const rp_ir_dialog_control_t *x = mine[i];
+        const char *text = AT(c, x->text, x->text_by_lang, x->text_by_lang_count, false);
         const char *to = NULL;              // the next tab stop, or Back after the last
         if (x->type != RP_DC_TEXT) {
             to = "Back";
@@ -538,10 +694,10 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
         }
         switch (x->type) {
         case RP_DC_TEXT:
-            control(c, d->id, x->id, "Text", x->x, x->y, x->width, x->height, VIS | TRANSPARENT, NULL, x->text, NULL);
+            control(c, d->id, x->id, "Text", x->x, x->y, x->width, x->height, VIS | TRANSPARENT, NULL, text, NULL);
             break;
         case RP_DC_CHECKBOX:        // ticked: the property is "1"; clear: the property is removed
-            control(c, d->id, x->id, "CheckBox", x->x, x->y, x->width, x->height, VIS | EN, x->property, x->text, to);
+            control(c, d->id, x->id, "CheckBox", x->x, x->y, x->width, x->height, VIS | EN, x->property, text, to);
             break;
         case RP_DC_EDIT:
             control(c, d->id, x->id, "Edit", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, x->property, NULL, to);
@@ -552,7 +708,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
             for (size_t j = 0; j < x->value_count; ++j) {
                 rows_t *r = &c->radio;
                 s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
-                i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, x->labels[j]); n_(c, r);
+                i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, label(c, x, j)); n_(c, r);
             }
             break;
         }
@@ -562,7 +718,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                     x->property, NULL, to);
             for (size_t j = 0; j < x->value_count; ++j) {
                 rows_t *r = &c->combo;
-                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, x->labels[j]);
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
             }
             break;
         default:
@@ -584,6 +740,147 @@ static void place(const rp_ir_t *ir, page_t *pages, size_t *n, size_t cap, const
         if (d->after && strcmp(d->after, anchor) == 0 && *n < cap) {
             pages[(*n)++] = (page_t){ d->id, d };
             place(ir, pages, n, cap, d->id, depth + 1);
+        }
+    }
+}
+
+// ---- several languages (RFC-0012) ----------------------------------------------------------------
+
+// The condition that language li is the chosen one. English is also chosen for an unknown value.
+static const char *lang_cond(ctx_t *c, size_t li) {
+    if (li) return keep(c, "RPLANGUAGE = \"", keep(c, lang_code(c, li), "\""));
+    const char *s = "NOT (";
+    for (size_t i = 1; i < c->nlang; ++i) s = keep(c, s, keep(c, i > 1 ? " OR RPLANGUAGE = \"" : "RPLANGUAGE = \"", keep(c, lang_code(c, i), "\"")));
+    return keep(c, s, ")");
+}
+
+// The first page when the dialogs speak several languages: the heading and the line under it in
+// every language, a radio button per language (the automatic choice already selected), then the
+// welcome page or, when installed, the maintenance page.
+static void language_dlg(ctx_t *c) {
+    const char *d = "RpLanguageDlg";
+    const char *title = "", *text = "";
+    for (size_t i = 0; i < c->nlang; ++i) {
+        title = keep(c, title, keep(c, i ? " / " : "", text_for(c, "LanguageTitle", i)));
+        text = keep(c, text, keep(c, i ? " / " : "", text_for(c, "LanguageText", i)));
+    }
+    dialog(c, d, 370, 270, 3, "Lang", "Next", "Cancel");
+    frame_text(c, d, keep(c, "{\\RpTitle_en}", title), text);
+    int h = 14 * (int)c->nlang;
+    control(c, d, "Lang", "RadioButtonGroup", 25, 60, 200, h, VIS | EN, "RPLANGUAGE", NULL, "Back");
+    for (size_t i = 0; i < c->nlang; ++i) {
+        rows_t *r = &c->radio;
+        const char *name = c->ir->ui_langs[i].name ? c->ir->ui_langs[i].name : lang_code(c, i);
+        s_(c, r, "RPLANGUAGE"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
+        i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, name); n_(c, r);
+    }
+    control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
+    control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
+    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Lang");
+    event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
+    // Next: the texts and fonts of the chosen language first (language_rows), then the page.
+    event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
+    event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
+    seq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
+}
+
+// Settles a text for one language at build time: the source's own values and [\x] escapes put in.
+// Returns NULL when the text needs the installer's formatting (rp_ui_text_static).
+static const char *settle(ctx_t *c, const char *src) {
+    if (!rp_ui_text_static(src)) return NULL;
+    const char *vals[3] = { c->ir->name, c->ir->manufacturer, c->ir->version };
+    const char *out = "";
+    const char *p = src;
+    while (*p) {
+        const char *b = strchr(p, '[');
+        if (b == NULL) {
+            out = keep(c, out, p);
+            break;
+        }
+        char *head = rp_mem_alloc(c->alloc, (size_t)(b - p) + 1, 1);
+        if (head == NULL) {
+            c->nomem = true;
+            return "";
+        }
+        memcpy(head, p, (size_t)(b - p));
+        head[b - p] = 0;
+        out = keep(c, out, head);
+        rp_mem_free(c->alloc, head);
+        const char *e = strchr(b, ']');
+        size_t n = (size_t)(e - b - 1);
+        if (n == 2 && b[1] == '\\') {
+            char one[2] = { b[2], 0 };
+            out = keep(c, out, one);
+        } else {
+            for (size_t i = 0; i < 3; ++i) {
+                if (strlen(static_props[i]) == n && strncmp(b + 1, static_props[i], n) == 0) out = keep(c, out, vals[i] ? vals[i] : "");
+            }
+        }
+        p = e + 1;
+    }
+    return out;
+}
+
+// Rows that put the chosen language's texts into the RpT_* properties (the oracle of RFC-0012: a
+// property's value is shown as it is, so each text is formatted when it is put in):
+//   - Property RpT_<key>_<code>: the text settled at build time (with its title style);
+//     RpT_<key>: the English one, the default;
+//   - InstallUISequence, before anything is shown: RPLANGUAGE from the command line, else the
+//     first language whose LANGIDs hold UserLanguageID, then SystemLanguageID, else English; then
+//     one type-51 action per text of that language (English needs them only for formatted texts);
+//   - the language page's Next: the same for the language picked there.
+static void language_rows(ctx_t *c) {
+    int n = 0;
+    char name[40];
+    for (size_t li = 1; li < c->nlang; ++li) {
+        const rp_ir_ui_lang_t *L = &c->ir->ui_langs[li];
+        const char *u = "", *sy = "";
+        for (size_t j = 0; j < L->langid_count; ++j) {
+            char id[16];
+            snprintf(id, sizeof id, "%u", (unsigned)L->langids[j]);
+            u = keep(c, u, keep(c, j ? " OR UserLanguageID = " : "UserLanguageID = ", id));
+            sy = keep(c, sy, keep(c, j ? " OR SystemLanguageID = " : "SystemLanguageID = ", id));
+        }
+        snprintf(name, sizeof name, "RpLangU_%s", L->code);
+        ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
+        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, u, ")")), 17);
+        snprintf(name, sizeof name, "RpLangS_%s", L->code);
+        ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
+        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, sy, ")")), 18);
+    }
+    ca(c, "RpLangEn", "RPLANGUAGE", "en");
+    seq(c, "RpLangEn", "NOT RPLANGUAGE", 19);
+    for (size_t li = 0; li < c->nlang; ++li) {
+        const char *code = lang_code(c, li), *cnd = lang_cond(c, li);
+        const char *font = keep(c, "RpNormal_", code);
+        if (li) {
+            snprintf(name, sizeof name, "RpL_%s_font", code);
+            ca(c, keep(c, name, NULL), "DefaultUIFont", font);
+            seq(c, keep(c, name, NULL), cnd, 21);
+        }
+        if (c->page) event(c, "RpLanguageDlg", "Next", "[DefaultUIFont]", font, cnd, 1);
+        for (size_t k = 0; k < c->nreg; ++k) {
+            const regtext_t *r = &c->reg[k];
+            const char *src = r->src[li] ? r->src[li] : "";
+            const char *pre = r->title ? keep(c, "{\\RpTitle_", keep(c, code, "}")) : "";
+            const char *v = settle(c, src);
+            const char *target = keep(c, "RpT_", r->key);
+            const char *arg;
+            if (v) {
+                const char *pname = keep(c, target, keep(c, "_", code));
+                const char *val = keep(c, pre, v);
+                if (val[0]) prop(c, pname, val);        // an empty text: the property stays unset
+                if (li == 0 && val[0]) prop(c, target, val);
+                arg = keep(c, "[", keep(c, pname, "]"));
+            } else {
+                arg = keep(c, pre, src);
+            }
+            if (c->page) event(c, "RpLanguageDlg", "Next", keep(c, "[", keep(c, target, "]")), arg, cnd, 1);
+            if (li || v == NULL) {
+                snprintf(name, sizeof name, "RpL_%s_%d", code, ++n);
+                ca(c, keep(c, name, NULL), target, arg);
+                seq(c, keep(c, name, NULL), cnd, 21);
+            }
         }
     }
 }
@@ -702,7 +999,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     memset(c, 0, sizeof *c);
     c->alloc = alloc;
     c->ir = ir;
-    c->ko = ir->language == 1042;
+    c->nlang = ir->ui_lang_count ? ir->ui_lang_count : 1;
+    c->multi = c->nlang > 1;
+    c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
     rows_init(&c->dialog, "Dialog", dialog_cols, 10);
     rows_init(&c->control, "Control", control_cols, 12);
     rows_init(&c->event, "ControlEvent", event_cols, 6);
@@ -715,13 +1014,19 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->combo, "ComboBox", combo_cols, 4);
     rows_init(&c->listbox, "ListBox", listbox_cols, 4);
 
-    // Fonts: the Korean face for Korean text (P1a: Hangul shows in these faces), Segoe UI otherwise.
-    const char *face = c->ko ? "맑은 고딕" : "Segoe UI";
-    s_(c, &c->style, "RpNormal"); s_(c, &c->style, face); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
-    s_(c, &c->style, "RpTitle"); s_(c, &c->style, face); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
-    c->props[c->nprops++] = (rp_ui_prop_t){ "DefaultUIFont", "RpNormal" };
+    // Fonts: each language's face (P1a: Hangul shows in the Korean face), Segoe UI for English.
+    // With several languages the styles carry the language's code, and the chosen language picks
+    // DefaultUIFont and the title style (RFC-0012).
+    for (size_t i = 0; i < c->nlang; ++i) {
+        const char *face = ir->ui_lang_count && ir->ui_langs[i].font ? ir->ui_langs[i].font : "Segoe UI";
+        const char *sfx = c->multi ? keep(c, "_", lang_code(c, i)) : "";
+        s_(c, &c->style, keep(c, "RpNormal", sfx)); s_(c, &c->style, face); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
+        s_(c, &c->style, keep(c, "RpTitle", sfx)); s_(c, &c->style, face); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
+    }
+    prop(c, "DefaultUIFont", c->multi ? "RpNormal_en" : "RpNormal");
+    // The engine's own texts (sizes, feature tree menus) have one table: English.
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
-        s_(c, &c->uitext, uitexts[i].id); s_(c, &c->uitext, c->ko ? uitexts[i].ko : uitexts[i].en);
+        s_(c, &c->uitext, uitexts[i].id); s_(c, &c->uitext, uitexts[i].en);
     }
     white_bmp(c->white);
     rp_msi_cell_t *bn = NULL;
@@ -742,17 +1047,31 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     error_dlg(c);
     files_in_use_dlg(c);
     progress_and_exits(c);
-    const char *rtf = in->license_rtf ? keep(c, "", "") : NULL;
-    if (in->license_rtf) {      // the RTF text as a string cell (it is 7-bit ASCII: \uN? escapes)
-        char *t = rp_mem_alloc(alloc, in->license_len + 1, 1);
-        if (t) {
-            memcpy(t, in->license_rtf, in->license_len);
-            t[in->license_len] = 0;
-            rtf = keep(c, t, NULL);
-            rp_mem_free(alloc, t);
+    // The license in each language: its own (license-xx), else the common one, else English's.
+    const char *rtf[RP_UI_LANG_MAX] = { 0 };
+    bool any_license = false;
+    for (size_t i = 0; i < c->nlang; ++i) {
+        const uint8_t *b = in->license_rtf_by_lang[i];
+        size_t n = in->license_len_by_lang[i];
+        if (b == NULL) b = in->license_rtf, n = in->license_len;
+        if (b == NULL) b = in->license_rtf_by_lang[0], n = in->license_len_by_lang[0];
+        if (b == NULL) continue;
+        any_license = true;
+        char *t = rp_mem_alloc(alloc, n + 1, 1);    // the RTF text as a string cell (7-bit ASCII: \uN? escapes)
+        if (t == NULL) {
+            c->nomem = true;
+            continue;
         }
+        memcpy(t, b, n);
+        t[n] = 0;
+        rtf[i] = keep(c, t, NULL);
+        rp_mem_free(alloc, t);
+    }
+    for (size_t i = 0; any_license && i < c->nlang; ++i) {
+        if (rtf[i] == NULL) rtf[i] = "";
     }
     const char *dir = in->install_dir ? in->install_dir : "TARGETDIR";
+    if (c->page) language_dlg(c);
     if (ir->ui >= RP_UI_MINIMAL) {
         // The pages in order: the set's own, each followed by the author's pages placed after it.
         size_t cap = 5 + ir->dialog_count, n = 0;
@@ -761,7 +1080,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         const char *base[5];
         size_t nb = 0;
         base[nb++] = "RpWelcomeDlg";
-        if (rtf) base[nb++] = "RpLicenseDlg";
+        if (any_license) base[nb++] = "RpLicenseDlg";
         if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpInstallDirDlg";
         if (ir->ui == RP_UI_FEATURES) base[nb++] = "RpCustomizeDlg";
         if (ir->ui >= RP_UI_INSTALLDIR) base[nb++] = "RpReadyDlg";
@@ -775,7 +1094,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
             const char *next = i + 1 < n ? pages[i + 1].name : "";
             const char *next_text = !ready && i + 1 == n ? "Install" : NULL;
             const char *p = pages[i].name;
-            if (pages[i].custom) custom_dlg(c, pages[i].custom, back, next, next_text);
+            if (pages[i].custom) custom_dlg(c, pages[i].custom, back ? back : (c->page ? "RpLanguageDlg" : NULL), next, next_text);
             else if (strcmp(p, "RpWelcomeDlg") == 0) welcome_dlg(c, next, next_text);
             else if (strcmp(p, "RpLicenseDlg") == 0) license_dlg(c, rtf, back, next, next_text);
             else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
@@ -784,8 +1103,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         }
         rp_mem_free(alloc, pages);
         maintenance_dlg(c);
-        if (ir->ui >= RP_UI_INSTALLDIR) c->props[c->nprops++] = (rp_ui_prop_t){ "_RpBrowseProperty", dir };
+        if (ir->ui >= RP_UI_INSTALLDIR) prop(c, "_RpBrowseProperty", dir);
     }
+    if (c->multi) language_rows(c);
 
     rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox };
     size_t nt = 0;
@@ -802,6 +1122,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     ui->prop_count = c->nprops;
     ui->seqs = c->seqs;
     ui->seq_count = c->nseqs;
+    ui->cas = c->cas;
+    ui->ca_count = c->ncas;
     ui->priv = c;
     if (c->nomem) {
         rp_ui_free(alloc, ui);
@@ -823,6 +1145,10 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
         for (size_t i = 0; i < 11; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
+        rp_mem_free(alloc, c->props);
+        rp_mem_free(alloc, c->seqs);
+        rp_mem_free(alloc, c->cas);
+        rp_mem_free(alloc, c->reg);
         rp_mem_free(alloc, c);
     }
     rp_mem_free(alloc, ui->tables);

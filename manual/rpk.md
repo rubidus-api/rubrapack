@@ -57,7 +57,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent |
-| `[dir.ID]` | **path** = `Base/relative/path`, feature |
+| `[dir.ID]` | **path** = `Base/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
@@ -68,7 +68,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature |
 | `[require.ID]` | **condition**, **message** |
-| `[search.ID]` | **property**, **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
+| `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
@@ -76,10 +76,10 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
-| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`) |
-| `[ui-text.ID]` | **text** - replaces one built-in dialog text |
-| `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description |
-| `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
+| `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
+| `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
+| `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID) |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
@@ -295,6 +295,26 @@ condition = "FOUND_TOOL"
 message = "[ProductName] needs tool.exe."
 ```
 
+A `registry` or `dir` search may name a dir instead of a property: the folder it finds becomes that
+dir's default. This is how a package remembers the folder the user chose: write the folder down,
+and look it up in the next version. A registry value is used only when that folder still exists; a
+folder given on the command line (`msiexec /i app.msi INSTALLDIR=D:\Apps\Example\`) still wins.
+
+```toml
+[registry.RememberDir]
+root = "HKLM"
+key = "Software\\Example"
+name = "InstallDir"
+value = "[INSTALLDIR]"
+
+[search.PreviousDir]
+property = "INSTALLDIR"           # a dir: its default, when the registry holds an existing folder
+kind = "registry"
+root = "HKLM"
+key = "Software\\Example"
+name = "InstallDir"
+```
+
 ### Services, fonts and permissions
 
 `[service.ID]` installs a service run by an `.exe` of the package: it is stopped before its files
@@ -368,7 +388,6 @@ installs without a window.
 [package]
 ui = "installdir"
 license = "LICENSE.txt"           # the Install/Next button stays disabled until it is accepted
-language = "ko-KR"                # the built-in texts are Korean for ko-KR, English otherwise
 
 [ui]
 install-dir = "APPDIR"            # the dir the user may change (default INSTALLDIR)
@@ -388,8 +407,51 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `Reset`, `DiskCost`, `DiskCostTitle`, `DiskCostText`, `ReadyTitle`, `ReadyText`, `ProgressTitle`,
 `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`, `UserExitTitle`, `UserExitText`,
 `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`, `OutOfDiskTitle`,
-`OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`. In
-button texts `&` marks the access key (`&Next` is Alt+N).
+`OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
+`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below). In button texts `&` marks the access key (`&Next` is Alt+N).
+
+### Several languages
+
+The dialogs are in English. `[ui] languages` adds other languages to the same package; then the
+first page asks for the language, and every page after it - welcome, license, folder, your own
+pages, ready, progress, finished, and the cancel, error, files-in-use, disk-space and maintenance
+pages - speaks the one chosen. The choice made for the user in advance is the first added language
+whose LANGIDs hold the user's regional format (`UserLanguageID`), then the system locale
+(`SystemLanguageID`), else English. `RPLANGUAGE=ko` on the command line chooses directly; a silent
+installation (`/qn`) shows nothing and needs no choice. With English alone there is no language
+page.
+
+```toml
+[ui]
+languages = ["ko"]                # English is always there, and the default
+license-ko = "LICENSE-ko.txt"     # a license per language (default: [package] license)
+
+[ui-text.WelcomeText]
+text-ko = "[ProductName]을(를) 설치합니다."     # text = every language, text-xx = one
+
+[dialog.Options]
+after = "RpInstallDirDlg"
+title = "Options"
+title-ko = "선택 사항"
+
+[dialog-control.Mode]
+# ...
+labels = ["&Typical", "&Portable"]
+labels-ko = ["표준(&T)", "휴대용(&P)"]
+```
+
+- The built-in texts exist in English and Korean (`ko`). Another language (`ja`, `de`, ...) gives
+  every built-in text as `text-xx` (lint names the ones missing), and may give `name-xx` (its name
+  on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
+  choose it: one number or an array). Common languages have these built in: `ja`, `zh`, `de`,
+  `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
+- Korean dialogs use Malgun Gothic, English ones Segoe UI.
+- A text that uses a property other than `[ProductName]`, `[Manufacturer]` and `[ProductVersion]`
+  is formatted when the language is chosen, and must fit 255 characters.
+- Windows Installer's own texts - the feature tree's menu, sizes, the time left, and its error
+  messages - are not the package's: the first stay English, the error messages follow Windows.
+- `[package] language` sets only the package's language (`ProductLanguage`, the summary). Since
+  0.2 it no longer makes the dialogs Korean: add `languages = ["ko"]` (lint warns, `RP1317`).
 
 ### Your own dialog pages: `[dialog.ID]`, `[dialog-control.ID]`
 
@@ -497,6 +559,31 @@ Files that are Portable Executables (`.exe`, `.dll`, ...) are checked: their mac
 match `arch` (an x86 helper in an x64 package needs `any-arch = true`), and their version resource
 becomes the file's version in the package, which is how Windows Installer decides whether to
 replace an installed file.
+
+### Guarding the install folder
+
+A program whose files are loaded by other programs - an input method, a shell extension, a
+service - must not be installed into a folder that someone else prepared: files already there
+stay, and a DLL planted beside the program would be loaded with its rights. `guard = true` on a dir
+makes a first installation stop before any file is placed when that folder
+
+- already exists and its owner is not SYSTEM, Administrators or TrustedInstaller, or
+- is reached through a junction or another reparse point (the folder itself or any folder above it).
+
+A folder that does not exist yet passes (the installer creates it; `[permission.*]` can lock it).
+Repair, upgrade-in-place and removal are not checked; a major upgrade is a first installation of
+the new version and is checked like one (the folder the earlier version created passes). The
+installation ends with 1603 after the message `DirGuardText` (`[1]` is the folder; in the language
+chosen in the dialogs), also at `/qn`, and the log names the owner found. The check is done by
+rubrapack's helper DLL, which the package then carries (as for `REG_QWORD` values). What is
+checked is the owner: a folder owned by Administrators whose permissions let anyone write is not
+refused (lock it with `[permission.*]`).
+
+```toml
+[dir.INSTALLDIR]
+path = "ProgramFiles/Example"
+guard = true
+```
 
 ### Paths
 

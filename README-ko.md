@@ -1,4 +1,4 @@
-**한국어** | [English](README.md) — **rubrapack v0.1.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-en.pdf)
+**한국어** | [English](README.md) — **rubrapack v0.2.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-en.pdf)
 
 # rubrapack
 
@@ -20,8 +20,10 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 - **MSI:** 파일과 폴더(와일드카드, 남기거나 지우는 폴더), 기능, 레지스트리 값(REG_QWORD 와 32비트 보기 포함),
   바로가기, 파일 형식과 URL 스킴, 환경 변수, INI 파일, 서비스, 글꼴, 권한, 설치 조건과 검색, 되돌림이 되는
   등록·해제 프로그램 실행, 다운그레이드를 거부하는 메이저 업그레이드, 컴퓨터 전체·사용자별·겸용 패키지, 안이나
-  밖에 두는 MSZIP 캐비닛, 내장 대화창 세트(한국어와 영어)와 직접 만드는 대화창 페이지를 지원합니다. x64,
-  x86, Arm64 패키지를 만듭니다.
+  밖에 두는 MSZIP 캐비닛, 내장 대화창 세트(영어에 한국어나 다른 언어를 같은 패키지 안에 덧붙일 수 있고,
+  첫 페이지에서 언어를 고르며, 한국어 시스템에서는 한국어가 미리 골라집니다), 직접 만드는 대화창 페이지,
+  기억하는 설치 폴더, 관리자 소유가 아닌 미리 만들어진 설치 폴더를 거부하는 가드를 지원합니다. x64, x86,
+  Arm64 패키지를 만듭니다.
 - **MSIX:** 가상 레지스트리(`Registry.dat`, `User.dat`)와 가상 파일 시스템을 쓰는 완전 신뢰 데스크톱 앱,
   패키지 하나에 여러 앱, 파일 형식, 프로토콜, 실행 별칭, 시작 작업, 바탕화면 바로가기, 공유 글꼴, 여러
   아키텍처를 담는 묶음, 서명 없는 시험 패키지를 지원합니다.
@@ -43,7 +45,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## 상태
 
-0.1.0, 첫 공개판입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
+0.2.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
 업그레이드·제거하는 시험으로 확인했습니다. 아직 실제 하드웨어에서 시험하지 않은 것: Arm64 패키지(구조만 확인 -
 Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 토큰으로 대신했습니다), Windows 에서의 네이티브
 빌드(Windows 실행 파일은 MinGW-w64 로 교차 빌드해 Windows 에서 돌렸습니다).

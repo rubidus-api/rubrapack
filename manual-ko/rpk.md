@@ -57,7 +57,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent |
-| `[dir.ID]` | **path** = `기준/상대/경로`, feature |
+| `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
 | `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
@@ -68,7 +68,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature |
 | `[require.ID]` | **condition**, **message** |
-| `[search.ID]` | **property**, **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
+| `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`) |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
@@ -76,10 +76,10 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
-| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`) |
-| `[ui-text.ID]` | **text** - 내장 대화창 문구 하나를 바꾼다 |
-| `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description |
-| `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels |
+| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
+| `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
+| `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
+| `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID) |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
@@ -284,6 +284,26 @@ condition = "FOUND_TOOL"
 message = "[ProductName] needs tool.exe."
 ```
 
+`registry` 나 `dir` 검색은 속성 대신 dir 을 가리킬 수 있다. 그러면 찾은 폴더가 그 dir 의 기본값이 된다.
+사용자가 고른 폴더를 패키지가 기억하는 방법이 이것이다: 폴더를 적어 두고, 다음 판에서 찾아본다.
+레지스트리 값은 그 폴더가 아직 있을 때만 쓰이고, 명령줄에 준 폴더(`msiexec /i app.msi
+INSTALLDIR=D:\Apps\Example\`)가 여전히 이긴다.
+
+```toml
+[registry.RememberDir]
+root = "HKLM"
+key = "Software\\Example"
+name = "InstallDir"
+value = "[INSTALLDIR]"
+
+[search.PreviousDir]
+property = "INSTALLDIR"           # dir: 레지스트리에 있는 폴더가 실제로 있으면 그것이 기본값
+kind = "registry"
+root = "HKLM"
+key = "Software\\Example"
+name = "InstallDir"
+```
+
 ### 서비스, 글꼴, 권한
 
 `[service.ID]` 는 패키지의 `.exe` 가 돌리는 서비스를 설치한다: 파일이 바뀌기 전과 제거할 때 멈추고,
@@ -352,7 +372,6 @@ msiexec /x {ProductCode} /qn
 [package]
 ui = "installdir"
 license = "LICENSE.txt"           # 동의할 때까지 설치/다음 단추가 꺼져 있다
-language = "ko-KR"                # 내장 문구는 ko-KR 이면 한국어, 아니면 영어
 
 [ui]
 install-dir = "APPDIR"            # 사용자가 바꿀 수 있는 dir(기본 INSTALLDIR)
@@ -372,7 +391,49 @@ text = "This will install [ProductName]. Close other programs first."
 `ReadyText`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
 `UserExitTitle`, `UserExitText`, `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`,
 `FilesInUseText`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
-`RepairText`, `Remove`, `RemoveText`. 단추 문구에서 `&` 는 바로 가기 키를 표시한다(`&Next` 는 Alt+N).
+`RepairText`, `Remove`, `RemoveText`, `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지).
+단추 문구에서 `&` 는 바로 가기 키를
+표시한다(`&Next` 는 Alt+N).
+
+### 여러 언어
+
+대화창은 영어다. `[ui] languages` 는 같은 패키지에 다른 언어를 덧붙인다. 그러면 첫 페이지가 언어를 묻고,
+그 뒤의 모든 페이지 - 환영, 사용권, 폴더, 사용자 페이지, 준비, 진행, 완료, 그리고 취소·오류·사용 중
+파일·디스크 공간·유지보수 페이지 - 가 고른 언어로 나온다. 미리 골라 두는 언어는 사용자의 지역 형식
+(`UserLanguageID`), 그다음 시스템 로캘(`SystemLanguageID`)이 LANGID 에 드는 첫 덧붙인 언어이고, 없으면
+영어다. 명령줄의 `RPLANGUAGE=ko` 는 바로 고른다. 무인 설치(`/qn`)는 아무것도 보여 주지 않으니 고를 것도
+없다. 영어만 있으면 언어 페이지도 없다.
+
+```toml
+[ui]
+languages = ["ko"]                # 영어는 늘 있고 기본이다
+license-ko = "LICENSE-ko.txt"     # 언어별 사용권(기본: [package] license)
+
+[ui-text.WelcomeText]
+text-ko = "[ProductName]을(를) 설치합니다."     # text = 모든 언어, text-xx = 한 언어
+
+[dialog.Options]
+after = "RpInstallDirDlg"
+title = "Options"
+title-ko = "선택 사항"
+
+[dialog-control.Mode]
+# ...
+labels = ["&Typical", "&Portable"]
+labels-ko = ["표준(&T)", "휴대용(&P)"]
+```
+
+- 내장 문구는 영어와 한국어(`ko`)로 있다. 다른 언어(`ja`, `de`, ...)는 내장 문구를 모두 `text-xx` 로 주고
+  (빠진 것은 lint 가 이름을 댄다), `name-xx`(언어 페이지에 보일 이름), `font-xx`(그 언어 대화창의 글꼴),
+  `langid-xx`(그 언어를 고르게 하는 LANGID: 숫자 하나나 배열)를 줄 수 있다. 흔한 언어는 이것들이 내장되어
+  있다: `ja`, `zh`, `de`, `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
+- 한국어 대화창은 맑은 고딕, 영어는 Segoe UI 를 쓴다.
+- `[ProductName]`, `[Manufacturer]`, `[ProductVersion]` 밖의 속성을 쓰는 문구는 언어를 고를 때 서식이
+  풀리므로 255자 안이어야 한다.
+- Windows Installer 자신의 문구 - 기능 트리 메뉴, 크기, 남은 시간, 오류 메시지 - 는 패키지 것이 아니다:
+  앞의 것들은 영어로 남고, 오류 메시지는 Windows 를 따른다.
+- `[package] language` 는 패키지의 언어(`ProductLanguage`, 요약 정보)만 정한다. 0.2 부터는 대화창을
+  한국어로 만들지 않는다: `languages = ["ko"]` 를 넣는다(lint 가 `RP1317` 로 경고한다).
 
 ### 나만의 대화창 페이지: `[dialog.ID]`, `[dialog-control.ID]`
 
@@ -474,6 +535,28 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 PE 파일(`.exe`, `.dll` 등)은 검사한다: 머신 형식이 `arch` 와 맞아야 하고(x64 패키지의 x86 도우미는
 `any-arch = true` 가 필요하다), 판 정보 리소스가 패키지 안 파일의 판이 된다. Windows Installer 는 그것을
 보고 설치된 파일을 바꿀지 정한다.
+
+### 설치 폴더 지키기
+
+다른 프로그램이 그 파일을 불러 쓰는 프로그램 - 입력기, 셸 확장, 서비스 - 은 남이 미리 만들어 둔 폴더에
+설치되면 안 된다: 거기 있던 파일은 그대로 남고, 프로그램 옆에 심어 둔 DLL 이 그 프로그램의 권한으로 실리기
+때문이다. dir 에 `guard = true` 를 두면, 그 폴더가 다음과 같을 때 첫 설치가 파일을 하나도 놓기 전에 멈춘다.
+
+- 이미 있고 주인이 SYSTEM, Administrators, TrustedInstaller 가 아니다.
+- 연결 지점(junction)이나 다른 리파스 포인트를 거쳐 닿는다(폴더 자신이나 그 위의 어느 폴더든).
+
+아직 없는 폴더는 통과한다(설치 엔진이 만들고, `[permission.*]` 로 잠글 수 있다). 복구, 제자리 업그레이드,
+제거는 검사하지 않는다. 메이저 업그레이드는 새 판의 첫 설치라 똑같이 검사한다(이전 판이 만든 폴더는
+통과한다). 설치는 `DirGuardText` 메시지(`[1]` 은 그 폴더; 대화창에서 고른 언어) 뒤에 1603 으로 끝나고,
+`/qn` 에서도 같으며, 로그에 찾은 주인이 적힌다. 검사는 rubrapack 의 도우미 DLL 이 하고, 패키지가 그 DLL 을
+싣는다(`REG_QWORD` 값과 같다). 보는 것은 주인이다: 관리자 소유라도 권한이 누구나 쓸 수 있게 되어 있는
+폴더는 거부하지 않는다(`[permission.*]` 로 잠근다).
+
+```toml
+[dir.INSTALLDIR]
+path = "ProgramFiles/Example"
+guard = true
+```
 
 ### 경로
 

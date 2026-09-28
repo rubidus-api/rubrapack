@@ -472,6 +472,22 @@ void rp_build_files_free(proven_allocator_t alloc, rp_build_file_t *files, size_
     rp_mem_free(alloc, files);
 }
 
+// A license shown as text gets the Korean face when it has Hangul (the face also shows Latin).
+static bool has_hangul(const uint8_t *t, size_t n) {
+    for (size_t i = 0; i + 2 < n; ++i) {
+        if (t[i] == 0xEA && t[i + 1] >= 0xB0) return true;      // U+AC00..U+AFFF
+        if (t[i] >= 0xEB && t[i] <= 0xEC) return true;          // U+B000..U+CFFF
+        if (t[i] == 0xED && t[i + 1] <= 0x9E) return true;      // U+D000..U+D7BF
+        if (t[i] == 0xE1 && t[i + 1] >= 0x84 && t[i + 1] <= 0x87) return true;   // U+1100..U+11FF jamo
+    }
+    return false;
+}
+
+static bool ends_with_rtf(const char *s) {
+    size_t n = strlen(s);
+    return n > 4 && s[n - 4] == '.' && (s[n - 3] | 32) == 'r' && (s[n - 2] | 32) == 't' && (s[n - 1] | 32) == 'f';
+}
+
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
@@ -565,6 +581,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t j = 0; pn && j < ir->property_count; ++j) listed |= ir->properties[j].secure && strcmp(ir->properties[j].id, pn) == 0;
         if (pn && !listed) secure = kprintf(k, "%s;%s", secure, pn);
     }
+    // The language chosen in the dialogs reaches the elevated part (the guard's message, RFC-0012).
+    if (ir->ui_lang_count > 1) secure = kprintf(k, "%s;%s", secure, "RPLANGUAGE");
     s_(&property, "SecureCustomProperties"); s_(&property, secure);
     if (hidden) { s_(&property, "MsiHiddenProperties"); s_(&property, hidden); }
 
@@ -852,16 +870,35 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
 
     // The helper DLL for qword values (RFC-0001 9.6): Binary "RpCa" with the part for this
     // architecture, the plan in RP_QWORDS, and prepare (immediate) -> rollback twin -> apply.
-    if (any_qword) {
+    // RFC-0012 V6: the dirs with guard = true, as Directory keys.
+    const char *guard = NULL;
+    for (size_t i = 0; i < ir->dir_count; ++i) {
+        if (ir->dirs[i].guard) guard = guard ? kprintf(k, "%s;%s", guard, dkey(ir, ir->dirs[i].id)) : dkey(ir, ir->dirs[i].id);
+    }
+    if (any_qword || guard) {
         const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
         size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
-                           "type = \"qword\" needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           arch_text(ir->arch));
+                           "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
+                           any_qword ? "type = \"qword\"" : "guard = true", arch_text(ir->arch));
             reg_bad = true;
         }
         s_(&binary, "RpCa"); b_(&binary, part, part_len);
+    }
+    // The guard (immediate, first installation only, before any file is placed): its message in
+    // each language of the dialogs, picked by RPLANGUAGE (English without dialogs).
+    if (guard) {
+        s_(&property, "RP_GUARD"); s_(&property, guard);
+        size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
+        for (size_t li = 0; li < nl; ++li) {
+            s_(&property, kprintf(k, "RpGuardMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL));
+            s_(&property, rp_ui_text_for(ir, "DirGuardText", li));
+        }
+        s_(&customaction, "RP_GuardDirs"); i_(&customaction, 1); s_(&customaction, "RpCa"); s_(&customaction, "RpGuardDirs");
+        s_(&iexec, "RP_GuardDirs"); s_(&iexec, "NOT Installed"); i_(&iexec, 1010);
+    }
+    if (any_qword) {
         s_(&property, "RP_QWORDS"); s_(&property, qplan);
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         s_(&customaction, "RP_QwordPrepare"); i_(&customaction, 1); s_(&customaction, "RpCa"); s_(&customaction, "RpQwordPrepare");
@@ -909,14 +946,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         s_(&launch, ir->language == 1042 ? "[ProductName]은(는) 사용자별로만 설치합니다(MSIINSTALLPERUSER=1)."
                                          : "[ProductName] installs for the current user only (MSIINSTALLPERUSER=1).");
     }
+    bool reglocator_dir = false;
     for (size_t i = 0; i < ir->search_count; ++i) {
         const rp_ir_search_t *x = &ir->searches[i];
-        s_(&appsearch, x->property); s_(&appsearch, x->id);
+        // A search that fills a dir (RFC-0012 V5) lands in RpFound_<ID>; a type-51 action right
+        // after AppSearch copies it to the dir only when the dir is still unset, so a value given on
+        // the command line wins.
+        const char *found = x->fills_dir ? kprintf(k, "RpFound_%s", x->id, NULL) : x->property;
+        s_(&appsearch, found); s_(&appsearch, x->id);
+        if (x->fills_dir) {
+            const char *act = kprintf(k, "RpFill_%s", x->id, NULL);
+            s_(&customaction, act); i_(&customaction, 51); s_(&customaction, x->property); s_(&customaction, kprintf(k, "[%s]", found, NULL));
+            const char *cnd = kprintf(k, "%s AND NOT %s", found, x->property);
+            s_(&iexec, act); s_(&iexec, cnd); i_(&iexec, 51);
+            s_(&iui, act); s_(&iui, cnd); i_(&iui, 51);
+        }
         switch (x->kind) {
-        case RP_SEARCH_REGISTRY:    // type 2 = the raw value; +16 = the 64-bit view
+        case RP_SEARCH_REGISTRY:    // type 2 = the raw value, 0 = a folder that must exist; +16 = the 64-bit view
             s_(&reglocator, x->id); i_(&reglocator, (int32_t)x->root); s_(&reglocator, escape_formatted(k, x->key));
             s_(&reglocator, x->name ? escape_formatted(k, x->name) : NULL);
-            i_(&reglocator, 2 | (x->view32 ? 0 : 16));
+            i_(&reglocator, (x->fills_dir ? 0 : 2) | (x->view32 ? 0 : 16));
+            reglocator_dir |= x->fills_dir;
             break;
         case RP_SEARCH_FILE:
         case RP_SEARCH_DIR: {
@@ -1193,6 +1243,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_ui_t *ui = NULL;
     uint8_t *lic = NULL, *rtf = NULL, *banner = NULL;
     size_t lic_len = 0, rtf_len = 0, banner_len = 0;
+    uint8_t *lang_rtf[RP_UI_LANG_MAX] = { 0 };
+    size_t lang_rtf_len[RP_UI_LANG_MAX] = { 0 };
     if (ir->ui != RP_UI_NONE && err == PROVEN_OK) {
         if (ir->license_source) {
             err = rp_pal_read_file(alloc, ir->license_source, 1u << 22, &lic, &lic_len);
@@ -1205,13 +1257,34 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                     rtf_len = lic_len;
                     lic = NULL;
                 } else {
-                    err = rp_ui_text_to_rtf(alloc, lic, lic_len, ir->language == 1042, &rtf, &rtf_len);
+                    err = rp_ui_text_to_rtf(alloc, lic, lic_len, has_hangul(lic, lic_len), &rtf, &rtf_len);
                 }
+            }
+        }
+        // RFC-0012: [ui] license-xx, each converted as the common one is.
+        for (size_t li = 0; err == PROVEN_OK && li < ir->ui_lang_count && li < RP_UI_LANG_MAX; ++li) {
+            const char *srcf = ir->ui_langs[li].license_source;
+            if (srcf == NULL) continue;
+            uint8_t *raw = NULL;
+            size_t raw_len = 0;
+            err = rp_pal_read_file(alloc, srcf, 1u << 22, &raw, &raw_len);
+            if (err != PROVEN_OK) break;
+            if (ends_with_rtf(srcf)) {
+                lang_rtf[li] = raw;
+                lang_rtf_len[li] = raw_len;
+            } else {
+                err = rp_ui_text_to_rtf(alloc, raw, raw_len, has_hangul(raw, raw_len), &lang_rtf[li], &lang_rtf_len[li]);
+                rp_mem_free(alloc, raw);
             }
         }
         if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &banner, &banner_len);
         if (err == PROVEN_OK) {
-            rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), rtf, rtf_len, banner, banner_len };
+            rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), rtf, rtf_len, banner, banner_len,
+                                 { 0 }, { 0 } };
+            for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
+                in.license_rtf_by_lang[li] = lang_rtf[li];
+                in.license_len_by_lang[li] = lang_rtf_len[li];
+            }
             err = rp_ui_build(alloc, ir, &in, &ui);
             if (err == PROVEN_ERR_INVALID_STATE)    // ui.c's own check of its tab orders: our bug, not the input's
                 rp_diag_error(RP_DIAG_INTERNAL, "internal error: a built-in dialog has a broken tab order; please report it");
@@ -1221,6 +1294,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         }
         for (size_t i = 0; ui && i < ui->seq_count; ++i) {
             s_(&iui, ui->seqs[i].action); s_(&iui, ui->seqs[i].condition); i_(&iui, ui->seqs[i].sequence);
+        }
+        for (size_t i = 0; ui && i < ui->ca_count; ++i) {       // RFC-0012: set-property actions
+            s_(&customaction, ui->cas[i].action); i_(&customaction, 51); s_(&customaction, ui->cas[i].source);
+            s_(&customaction, ui->cas[i].target);
         }
         for (size_t t = 0; ui && t < ui->table_count; ++t) {      // ui's Binary rows into ours
             const rp_msi_wtable_t *wt = &ui->tables[t];
@@ -1272,7 +1349,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 8];
         size_t nt = 0;
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
-            if (i < always || all[i]->t.row_count > 0) tables[nt++] = all[i]->t;
+            // AppSearch looks a folder-type RegLocator up in Signature, which must then exist even
+            // when empty (error 2228 otherwise: RFC-0012 V5 on the VM).
+            bool need = all[i] == &signature && reglocator_dir;
+            if (i < always || all[i]->t.row_count > 0 || need) tables[nt++] = all[i]->t;
         }
         for (size_t t = 0; ui && t < ui->table_count; ++t) {
             if (strcmp(ui->tables[t].name, "Binary") != 0) tables[nt++] = ui->tables[t];
@@ -1291,6 +1371,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_mem_free(alloc, lic);
     rp_mem_free(alloc, rtf);
     rp_mem_free(alloc, banner);
+    for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) rp_mem_free(alloc, lang_rtf[li]);
     rp_mem_free(alloc, summary);
     if (ir->cab_external) {
         if (err == PROVEN_OK) {

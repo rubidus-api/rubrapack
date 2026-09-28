@@ -27,6 +27,11 @@ typedef struct {
 
 typedef struct rp_ui rp_ui_t;
 
+// A property-setting custom action (type 51) of the dialogs (RFC-0012: the chosen language's texts).
+typedef struct {
+    const char *action, *source, *target;
+} rp_ui_ca_t;
+
 struct rp_ui {
     rp_msi_wtable_t *tables;
     size_t           table_count;
@@ -34,6 +39,8 @@ struct rp_ui {
     size_t           prop_count;
     rp_ui_seq_t     *seqs;          // InstallUISequence rows
     size_t           seq_count;
+    rp_ui_ca_t      *cas;           // CustomAction rows (type 51), sequenced in seqs
+    size_t           ca_count;
     void            *priv;
 };
 
@@ -43,15 +50,30 @@ typedef struct {
     size_t         license_len;
     const uint8_t *banner_bmp;      // user BMPs, or NULL (then a plain white banner)
     size_t         banner_len;
+    // RFC-0012: a license per language of ir->ui_langs ([ui] license-xx), or NULL: license_rtf.
+    const uint8_t *license_rtf_by_lang[RP_UI_LANG_MAX];
+    size_t         license_len_by_lang[RP_UI_LANG_MAX];
 } rp_ui_input_t;
 
-// Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in ir->language, with ir->ui_texts
-// overrides. Free with rp_ui_free.
+// Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts
+// overrides; with more than one of ir->ui_langs, every text is a property that the chosen
+// language fills (RFC-0012). Free with rp_ui_free.
 [[nodiscard]] proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_ui_input_t *in, rp_ui_t **out);
 void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui);
 
 // Whether `id` names a text that [ui-text.ID] may override.
 bool rp_ui_text_known(const char *id);
+
+// Text `id` in language `li` of ir->ui_langs: [ui-text.ID] text-xx, its text, or the built-in one.
+const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li);
+
+// The i-th of those IDs, or NULL past the last (RFC-0012: another language gives every one).
+const char *rp_ui_text_id(size_t i);
+
+// Whether a dialog text can be settled when the package is built (RFC-0012): its only [...] are
+// [ProductName], [Manufacturer], [ProductVersion] and [\x] escapes. Other texts are formatted when
+// the language is chosen, and must fit a 255-character column.
+bool rp_ui_text_static(const char *text);
 
 // Plain UTF-8 text -> RTF for the license dialog (ScrollableText): \uN? escapes, one \par per line.
 [[nodiscard]] proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, bool korean,

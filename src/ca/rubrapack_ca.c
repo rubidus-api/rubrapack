@@ -11,6 +11,14 @@
 //   RpQwordApply    deferred: writes or deletes the values.
 //   RpQwordRollback deferred rollback: puts back what RpQwordPrepare saw.
 //
+// Install folder guard (RFC-0012 V6):
+//   RpGuardDirs     immediate, execute sequence, first installation only: every directory named in
+//                   RP_GUARD (';'-separated Directory keys) must not pass through a reparse point,
+//                   and when it already exists it must be owned by SYSTEM, Administrators or
+//                   TrustedInstaller - otherwise the error message RpGuardMsg_<RPLANGUAGE> (or
+//                   RpGuardMsg_en; [1] = the folder) and the installation stops before any file is
+//                   placed.
+//
 // Data format (RFC-0001 9.6.1): "RPQ1" followed by records; every field is "<decimal length>:" and
 // that many UTF-16 units, so any text (including ':' and ';') round-trips. A plan record is
 // root, view, key, name, value (16 hex digits), component, keep; an apply record is op ("w" write,
@@ -23,6 +31,8 @@
 #include <windows.h>
 #include <msi.h>
 #include <msiquery.h>
+#include <aclapi.h>
+#include <sddl.h>
 
 enum { MAX_TEXT = 1 << 16, MAX_FIELDS = 16 };
 
@@ -218,3 +228,101 @@ static UINT run_list(MSIHANDLE h, bool rollback) {
 __declspec(dllexport) UINT __stdcall RpQwordApply(MSIHANDLE h) { return run_list(h, false); }
 
 __declspec(dllexport) UINT __stdcall RpQwordRollback(MSIHANDLE h) { return run_list(h, true); }
+
+// ---- install folder guard ------------------------------------------------------------------------
+
+static bool trusted_owner(PSID owner) {
+    static const wchar_t *const sids[] = { L"S-1-5-18", L"S-1-5-32-544",
+                                           L"S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464" };
+    bool ok = false;
+    for (size_t i = 0; i < sizeof sids / sizeof sids[0] && !ok; ++i) {
+        PSID s = NULL;
+        if (ConvertStringSidToSidW(sids[i], &s)) {
+            ok = EqualSid(owner, s) != 0;
+            LocalFree(s);
+        }
+    }
+    return ok;
+}
+
+// 0: fine (absent, or present and owned by a trusted account), 1: refused.
+static int check_dir(MSIHANDLE h, const wchar_t *path) {
+    size_t n = wcslen(path);
+    wchar_t *part = HeapAlloc(GetProcessHeap(), 0, (n + 1) * sizeof *part);
+    if (part == NULL) return 1;
+    // Every existing part of the path, from the one under the root down, is a real folder.
+    size_t start = n >= 3 && path[1] == L':' ? 3 : 0;
+    bool exists = true;
+    for (size_t i = start; i <= n && exists; ++i) {
+        if (i < n && path[i] != L'\\') continue;
+        if (i == start) continue;
+        memcpy(part, path, i * sizeof *part);
+        part[i] = 0;
+        DWORD a = GetFileAttributesW(part);
+        if (a == INVALID_FILE_ATTRIBUTES) {
+            exists = false;             // the rest does not exist either: the engine creates it
+            break;
+        }
+        if ((a & FILE_ATTRIBUTE_REPARSE_POINT) || !(a & FILE_ATTRIBUTE_DIRECTORY)) {
+            log_line(h, L"rubrapack: guard: %ls is a link or not a folder", part);
+            HeapFree(GetProcessHeap(), 0, part);
+            return 1;
+        }
+    }
+    int rc = 0;
+    if (exists) {
+        PSID owner = NULL;
+        PSECURITY_DESCRIPTOR sd = NULL;
+        DWORD e = GetNamedSecurityInfoW(part, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &owner, NULL, NULL, NULL, &sd);
+        if (e != ERROR_SUCCESS || owner == NULL || !trusted_owner(owner)) {
+            wchar_t *text = NULL;
+            if (e == ERROR_SUCCESS && owner) ConvertSidToStringSidW(owner, &text);
+            log_line(h, L"rubrapack: guard: %ls exists and is owned by %ls", part, text ? text : L"(unreadable)");
+            if (text) LocalFree(text);
+            rc = 1;
+        } else {
+            log_line(h, L"rubrapack: guard: %ls exists, owned by a trusted account", part);
+        }
+        if (sd) LocalFree(sd);
+    }
+    HeapFree(GetProcessHeap(), 0, part);
+    return rc;
+}
+
+__declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
+    wchar_t *list = get_property(h, L"RP_GUARD");
+    if (list == NULL) return ERROR_INSTALL_FAILURE;
+    UINT rc = ERROR_SUCCESS;
+    wchar_t *ctx = NULL;
+    for (wchar_t *dir = wcstok(list, L";", &ctx); dir && rc == ERROR_SUCCESS; dir = wcstok(NULL, L";", &ctx)) {
+        wchar_t path[MAX_PATH * 4];
+        DWORD n = sizeof path / sizeof path[0];
+        if (MsiGetTargetPathW(h, dir, path, &n) != ERROR_SUCCESS) {
+            log_line(h, L"rubrapack: guard: no target path for %ls", dir);
+            rc = ERROR_INSTALL_FAILURE;
+            break;
+        }
+        size_t len = wcslen(path);
+        if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
+        if (check_dir(h, path) == 0) continue;
+        // The message in the chosen language, with [1] = the folder.
+        wchar_t *lang = get_property(h, L"RPLANGUAGE");
+        wchar_t name[64];
+        swprintf(name, 64, L"RpGuardMsg_%ls", lang && lang[0] ? lang : L"en");
+        wchar_t *msg = get_property(h, name);
+        if (msg == NULL || msg[0] == 0) {
+            if (msg) HeapFree(GetProcessHeap(), 0, msg);
+            msg = get_property(h, L"RpGuardMsg_en");
+        }
+        MSIHANDLE rec = MsiCreateRecord(1);
+        MsiRecordSetStringW(rec, 0, msg ? msg : L"[1]");
+        MsiRecordSetStringW(rec, 1, path);
+        MsiProcessMessage(h, (INSTALLMESSAGE)(INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING), rec);
+        MsiCloseHandle(rec);
+        if (msg) HeapFree(GetProcessHeap(), 0, msg);
+        if (lang) HeapFree(GetProcessHeap(), 0, lang);
+        rc = ERROR_INSTALL_FAILURE;
+    }
+    HeapFree(GetProcessHeap(), 0, list);
+    return rc;
+}

@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.1.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-0.1.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.1.0/rubrapack-manual-0.1.0-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.2.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-0.2.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.2.0/rubrapack-manual-0.2.0-en.pdf)
 
 # rubrapack
 
@@ -23,7 +23,10 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   INI files, services, fonts, permissions, launch conditions and searches, a program run to
   register and unregister with rollback, major upgrades with downgrade refusal, per-machine,
   per-user and dual packages, embedded or external MSZIP cabinets, built-in dialog sets
-  (Korean and English) and dialog pages of your own. x64, x86 and Arm64 packages.
+  in English with Korean or other languages added to the same package (a language page first;
+  Korean chosen for Korean systems), dialog pages of your own, a remembered install folder, and a
+  guard that refuses a prepared install folder not owned by administrators. x64, x86 and Arm64
+  packages.
 - **MSIX:** full-trust desktop applications with a virtual registry (`Registry.dat`,
   `User.dat`) and virtual file system, several applications per package, file types, protocols,
   execution aliases, startup tasks, desktop shortcuts, shared fonts; bundles of several
@@ -46,7 +49,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## Status
 
-Version 0.1.0, the first public release. Every feature above is covered by tests on Linux and by
+Version 0.2.0. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is

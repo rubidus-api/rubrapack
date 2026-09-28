@@ -118,10 +118,25 @@ static bool check_id(ctx_t *c, const rp_ttable_t *t, size_t max) {
 
 // ---- keys ------------------------------------------------------------------------------------
 
-static void check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowed) {
+// "text-ko" -> "ko" when `key` is `base` + "-" + a language code (2 or 3 lower-case letters), RFC-0012.
+static const char *lang_of_key(const char *key, const char *base) {
+    size_t n = strlen(base);
+    if (strncmp(key, base, n) != 0 || key[n] != '-') return NULL;
+    const char *code = key + n + 1;
+    size_t m = strlen(code);
+    if (m < 2 || m > 3) return NULL;
+    for (size_t i = 0; i < m; ++i) {
+        if (code[i] < 'a' || code[i] > 'z') return NULL;
+    }
+    return code;
+}
+
+// Like check_keys, and also takes `base-xx` for every base in `lang_bases` (NULL-terminated).
+static void check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allowed, const char *const *lang_bases) {
     for (size_t k = 0; k < t->count; ++k) {
         bool known = false;
         for (size_t j = 0; allowed[j]; ++j) known |= strcmp(t->keys[k].key, allowed[j]) == 0;
+        for (size_t j = 0; lang_bases && lang_bases[j]; ++j) known |= lang_of_key(t->keys[k].key, lang_bases[j]) != NULL;
         // msi-only (RFC-0009 M6) is read for every item table outside [msix-*] (msix_blockers).
         known |= t->id && strncmp(t->kind, "msix", 4) != 0 && strcmp(t->keys[k].key, "msi-only") == 0;
         if (!known) {
@@ -131,6 +146,8 @@ static void check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowe
         }
     }
 }
+
+static void check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowed) { check_keys_lang(c, t, allowed, NULL); }
 
 static const rp_tkey_t *find_key(const rp_ttable_t *t, const char *key) {
     for (size_t k = 0; k < t->count; ++k) {
@@ -242,6 +259,30 @@ static char *get_str(ctx_t *c, const rp_ttable_t *t, const char *key, bool requi
         return NULL;
     }
     return s;
+}
+
+// Every `base-xx` string of the table (RFC-0012), in source order.
+static void get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext_t **out, size_t *count) {
+    size_t n = 0;
+    *out = NULL;
+    *count = 0;
+    for (size_t k = 0; k < t->count; ++k) n += lang_of_key(t->keys[k].key, base) != NULL;
+    if (n == 0) return;
+    *out = rp_mem_alloc(c->alloc, n, sizeof **out);
+    if (*out == NULL) {
+        c->nomem = true;
+        return;
+    }
+    for (size_t k = 0; k < t->count; ++k) {
+        const char *code = lang_of_key(t->keys[k].key, base);
+        if (code == NULL) continue;
+        if (t->keys[k].val.kind != RP_TV_STRING) {
+            ERR(c, t->keys[k].pos, "RP1306", "'%s' must be a string", t->keys[k].key);
+            continue;
+        }
+        (*out)[*count] = (rp_ir_ltext_t){ dup(c, code), subst(c, &t->keys[k].val) };
+        ++*count;
+    }
 }
 
 static bool get_bool(ctx_t *c, const rp_ttable_t *t, const char *key, bool dflt) {
@@ -634,11 +675,12 @@ static void parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
 }
 
 static void parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
-    static const char *const keys[] = { "path", "feature", NULL };
+    static const char *const keys[] = { "path", "feature", "guard", NULL };
     check_keys(c, t, keys);
     check_id(c, t, 72);
     d->id = dup(c, t->id);
     d->pos = t->pos;
+    d->guard = get_bool(c, t, "guard", false);
     d->feature = get_str(c, t, "feature", false, NULL);
     char *path = get_str(c, t, "path", true, NULL);
     if (path == NULL) return;
@@ -1754,11 +1796,12 @@ static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
 }
 
 static void parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
-    static const char *const keys[] = { "text", NULL };
-    check_keys(c, t, keys);
+    static const char *const keys[] = { "text", NULL }, *const lkeys[] = { "text", NULL };
+    check_keys_lang(c, t, keys, lkeys);
     x->id = dup(c, t->id);
     x->pos = t->pos;
-    x->text = get_str(c, t, "text", true, NULL);
+    get_ltexts(c, t, "text", &x->by_lang, &x->by_lang_count);
+    x->text = get_str(c, t, "text", x->by_lang_count == 0, NULL);
     if (!rp_ui_text_known(t->id)) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", t->id);
 }
 
@@ -1776,8 +1819,10 @@ static bool frame_control(const char *s) {
 }
 
 static void parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
-    static const char *const keys[] = { "title", "description", "after", NULL };
-    check_keys(c, t, keys);
+    static const char *const keys[] = { "title", "description", "after", NULL }, *const lkeys[] = { "title", "description", NULL };
+    check_keys_lang(c, t, keys, lkeys);
+    get_ltexts(c, t, "title", &x->title_by_lang, &x->title_by_lang_count);
+    get_ltexts(c, t, "description", &x->description_by_lang, &x->description_by_lang_count);
     x->id = dup(c, t->id);
     x->pos = t->pos;
     if (!check_id(c, t, 72)) return;
@@ -1791,8 +1836,9 @@ static void parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
 
 static void parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_control_t *x) {
     static const char *const keys[] = { "dialog", "type", "x", "y", "width", "height", "text", "property", "values",
-                                        "labels", NULL };
-    check_keys(c, t, keys);
+                                        "labels", NULL }, *const lkeys[] = { "text", "labels", NULL };
+    check_keys_lang(c, t, keys, lkeys);
+    get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
     x->id = dup(c, t->id);
     x->pos = t->pos;
     if (!check_id(c, t, 50)) return;
@@ -1821,8 +1867,8 @@ static void parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_co
     x->text = get_str(c, t, "text", false, &has_text);
     x->property = get_str(c, t, "property", false, NULL);
     if (x->type == RP_DC_TEXT || x->type == RP_DC_CHECKBOX) {
-        if (!has_text) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", t->id);
-    } else if (x->type >= 0 && has_text) {
+        if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", t->id);
+    } else if (x->type >= 0 && (has_text || x->text_by_lang_count)) {
         ERR(c, key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", x->type == RP_DC_EDIT ? "edit" : x->type == RP_DC_RADIO ? "radio" : "combo");
     }
     if (x->type == RP_DC_TEXT) {
@@ -1837,6 +1883,9 @@ static void parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_co
     if (!list) {
         if (vk) ERR(c, vk->pos, "RP1316", "only radio and combo controls take values");
         if (lk) ERR(c, lk->pos, "RP1316", "only radio and combo controls take labels");
+        for (size_t k = 0; k < t->count; ++k) {
+            if (lang_of_key(t->keys[k].key, "labels")) ERR(c, t->keys[k].pos, "RP1316", "only radio and combo controls take labels");
+        }
         return;
     }
     if (vk == NULL) {
@@ -1871,6 +1920,39 @@ static void parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_co
         x->values[x->value_count] = val;
         x->labels[x->value_count] = l ? subst(c, l) : dup(c, val ? val : "");
         ++x->value_count;
+    }
+    // labels-xx: the labels in one language, one per value (RFC-0012).
+    size_t nl = 0;
+    for (size_t k = 0; k < t->count; ++k) nl += lang_of_key(t->keys[k].key, "labels") != NULL;
+    if (nl) {
+        x->labels_by_lang = rp_mem_alloc(c->alloc, nl, sizeof *x->labels_by_lang);
+        if (x->labels_by_lang == NULL) {
+            c->nomem = true;
+            return;
+        }
+    }
+    for (size_t k = 0; k < t->count; ++k) {
+        const char *code = lang_of_key(t->keys[k].key, "labels");
+        if (code == NULL) continue;
+        const rp_tval_t *a = &t->keys[k].val;
+        if (a->kind != RP_TV_ARRAY || a->count != x->value_count) {
+            ERR(c, t->keys[k].pos, "RP1316", "%s is an array of strings, one per value", t->keys[k].key);
+            continue;
+        }
+        char **ls = rp_mem_alloc(c->alloc, a->count, sizeof *ls);
+        if (ls == NULL) {
+            c->nomem = true;
+            return;
+        }
+        for (size_t j = 0; j < a->count; ++j) {
+            if (a->items[j].kind != RP_TV_STRING) {
+                ERR(c, t->keys[k].pos, "RP1316", "%s holds strings", t->keys[k].key);
+                ls[j] = dup(c, "");
+            } else {
+                ls[j] = subst(c, &a->items[j]);
+            }
+        }
+        x->labels_by_lang[x->labels_by_lang_count++] = (rp_ir_llabels_t){ dup(c, code), ls };
     }
     if (x->type == RP_DC_RADIO && x->height < 12 * (int)x->value_count)
         ERR(c, key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value (%d)", 12 * (int)x->value_count);
@@ -1976,6 +2058,176 @@ static void nfc_names(ctx_t *c) {
     for (size_t k = 0; k < ir->copy_count; ++k) nfc_one(c, &ir->copies[k].name);
 }
 
+// Languages the dialogs know without help (RFC-0012): their LANGIDs for the automatic choice, the
+// name on the language page and the face. Built-in texts exist for en and ko only; any other
+// language gives every text itself ([ui-text.ID] text-xx).
+static const struct {
+    const char *code, *name, *font;
+    uint16_t    ids[6];
+} known_langs[] = {
+    { "en", "English", "Segoe UI", { 1033, 2057, 3081, 4105, 5129, 6153 } },
+    { "ko", "한국어", "맑은 고딕", { 1042 } },
+    { "ja", "日本語", "Yu Gothic UI", { 1041 } },
+    { "zh", "中文", "Microsoft YaHei UI", { 2052, 1028, 3076, 4100, 5124 } },
+    { "de", "Deutsch", "Segoe UI", { 1031, 2055, 3079, 4103, 5127 } },
+    { "fr", "Français", "Segoe UI", { 1036, 2060, 3084, 4108, 5132, 6156 } },
+    { "es", "Español", "Segoe UI", { 1034, 3082, 2058, 11274, 9226, 13322 } },
+    { "it", "Italiano", "Segoe UI", { 1040, 2064 } },
+    { "pt", "Português", "Segoe UI", { 1046, 2070 } },
+    { "nl", "Nederlands", "Segoe UI", { 1043, 2067 } },
+    { "pl", "Polski", "Segoe UI", { 1045 } },
+    { "ru", "Русский", "Segoe UI", { 1049 } },
+    { "uk", "Українська", "Segoe UI", { 1058 } },
+    { "tr", "Türkçe", "Segoe UI", { 1055 } },
+    { "vi", "Tiếng Việt", "Segoe UI", { 1066 } },
+    { "th", "ไทย", "Leelawadee UI", { 1054 } },
+};
+
+static int known_lang(const char *code) {
+    for (size_t i = 0; i < sizeof known_langs / sizeof known_langs[0]; ++i) {
+        if (strcmp(known_langs[i].code, code) == 0) return (int)i;
+    }
+    return -1;
+}
+
+static int ui_lang_index(const rp_ir_t *ir, const char *code) {
+    for (size_t i = 0; i < ir->ui_lang_count; ++i) {
+        if (strcmp(ir->ui_langs[i].code, code) == 0) return (int)i;
+    }
+    return -1;
+}
+
+// A license file of the dialogs: .txt/.md shown as text, .rtf as it is.
+static bool license_kind_ok(const char *s) { return ends_with_ci(s, ".txt") || ends_with_ci(s, ".rtf") || ends_with_ci(s, ".md"); }
+
+// [ui] languages and its name-xx / font-xx / langid-xx / license-xx (RFC-0012). English is always
+// there, first: the dialogs' default.
+static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
+    rp_ir_t *ir = c->ir;
+    ir->ui_lang_count = 1;
+    memcpy(ir->ui_langs[0].code, "en", 3);
+    const rp_tkey_t *lk = uit ? find_key(uit, "languages") : NULL;
+    if (lk) {
+        if (lk->val.kind != RP_TV_ARRAY) ERR(c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
+        for (size_t k = 0; lk->val.kind == RP_TV_ARRAY && k < lk->val.count; ++k) {
+            const rp_tval_t *v = &lk->val.items[k];
+            char *code = v->kind == RP_TV_STRING ? subst(c, v) : NULL;
+            size_t n = code ? strlen(code) : 0;
+            bool ok = n >= 2 && n <= 3;
+            for (size_t i = 0; ok && i < n; ++i) ok = code[i] >= 'a' && code[i] <= 'z';
+            if (!ok) {
+                ERR(c, lk->pos, "RP1316", "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')", code ? code : "?");
+            } else if (strcmp(code, "en") == 0) {
+                // English is always there
+            } else if (ui_lang_index(ir, code) >= 0) {
+                ERR(c, lk->pos, "RP1301", "language '%s' is listed twice", code);
+            } else if (ir->ui_lang_count == RP_UI_LANG_MAX) {
+                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_MAX - 1);
+            } else {
+                memcpy(ir->ui_langs[ir->ui_lang_count++].code, code, n + 1);
+            }
+            rp_mem_free(c->alloc, code);
+        }
+        if (ir->ui_lang_count > 1 && ir->ui == 0) ERR(c, lk->pos, "RP1316", "languages needs a dialog set (ui = \"basic\" or another)");
+    }
+    // The per-language keys of [ui].
+    for (size_t k = 0; uit && k < uit->count; ++k) {
+        const rp_tkey_t *key = &uit->keys[k];
+        static const char *const bases[] = { "name", "font", "langid", "license" };
+        for (int b = 0; b < 4; ++b) {
+            const char *code = lang_of_key(key->key, bases[b]);
+            if (code == NULL) continue;
+            int li = ui_lang_index(ir, code);
+            if (li < 0) {
+                ERR(c, key->pos, "RP1316", "'%s': '%s' is not in [ui] languages", key->key, code);
+                continue;
+            }
+            rp_ir_ui_lang_t *L = &ir->ui_langs[li];
+            L->pos = key->pos;
+            if (b == 2) {           // langid-xx: one LANGID or an array of them
+                const rp_tval_t *one = &key->val;
+                size_t cnt = one->kind == RP_TV_ARRAY ? one->count : 1;
+                for (size_t j = 0; j < cnt; ++j) {
+                    const rp_tval_t *v = one->kind == RP_TV_ARRAY ? &one->items[j] : one;
+                    if (v->kind != RP_TV_INT || v->i < 1 || v->i > 65535) {
+                        ERR(c, key->pos, "RP1308", "%s holds LANGIDs (1..65535), like 1041", key->key);
+                        break;
+                    }
+                    if (L->langid_count < RP_UI_LANGID_MAX) L->langids[L->langid_count++] = (uint16_t)v->i;
+                }
+                continue;
+            }
+            if (key->val.kind != RP_TV_STRING) {
+                ERR(c, key->pos, "RP1306", "'%s' must be a string", key->key);
+                continue;
+            }
+            char *v = subst(c, &key->val);
+            if (b == 0) L->name = v;
+            else if (b == 1) L->font = v;
+            else {
+                if (ir->ui < 2) ERR(c, key->pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
+                else if (!license_kind_ok(v)) ERR(c, key->pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
+                else L->license_source = ui_source(c, v, key->pos);
+                L->license_shown = v;
+            }
+        }
+    }
+    // What each language still needs.
+    for (size_t i = 0; i < ir->ui_lang_count; ++i) {
+        rp_ir_ui_lang_t *L = &ir->ui_langs[i];
+        int kl = known_lang(L->code);
+        rp_pos_t pos = lk ? lk->pos : (uit ? uit->pos : (rp_pos_t){ 0 });
+        if (L->langid_count == 0 && kl >= 0) {
+            for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
+        }
+        if (L->langid_count == 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)", L->code, L->code);
+        if (L->name == NULL && kl < 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] name-%s (its name on the language page)", L->code, L->code);
+        if (L->name == NULL && kl >= 0) L->name = dup(c, known_langs[kl].name);
+        if (L->font == NULL) L->font = dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI");
+        // Built-in texts are English and Korean; another language writes every one of them.
+        if (strcmp(L->code, "en") != 0 && strcmp(L->code, "ko") != 0) {
+            size_t missing = 0;
+            const char *first = NULL;
+            for (size_t t = 0; rp_ui_text_id(t); ++t) {
+                const char *id = rp_ui_text_id(t);
+                bool have = false;
+                for (size_t u = 0; u < ir->ui_text_count && !have; ++u) {
+                    const rp_ir_ui_text_t *x = &ir->ui_texts[u];
+                    if (strcmp(x->id, id) != 0) continue;
+                    have = x->text != NULL;
+                    for (size_t w = 0; w < x->by_lang_count && !have; ++w) have = strcmp(x->by_lang[w].lang, L->code) == 0;
+                }
+                if (!have && missing++ == 0) first = id;
+            }
+            if (missing) ERR(c, pos, "RP1202", "language '%s' has no built-in texts: give [ui-text.ID] text-%s for all of them (%zu missing, the first is %s)",
+                             L->code, L->code, missing, first);
+        }
+    }
+    // text-xx / title-xx / labels-xx name languages of the dialogs.
+#define LANG_OK(code, pos)                                                                                             \
+    do {                                                                                                               \
+        if (ui_lang_index(ir, (code)) < 0) ERR(c, (pos), "RP1316", "language '%s' is not in [ui] languages", (code));  \
+    } while (0)
+    for (size_t u = 0; u < ir->ui_text_count; ++u) {
+        for (size_t w = 0; w < ir->ui_texts[u].by_lang_count; ++w) LANG_OK(ir->ui_texts[u].by_lang[w].lang, ir->ui_texts[u].pos);
+    }
+    for (size_t u = 0; u < ir->dialog_count; ++u) {
+        for (size_t w = 0; w < ir->dialogs[u].title_by_lang_count; ++w) LANG_OK(ir->dialogs[u].title_by_lang[w].lang, ir->dialogs[u].pos);
+        for (size_t w = 0; w < ir->dialogs[u].description_by_lang_count; ++w) LANG_OK(ir->dialogs[u].description_by_lang[w].lang, ir->dialogs[u].pos);
+    }
+    for (size_t u = 0; u < ir->dialog_control_count; ++u) {
+        const rp_ir_dialog_control_t *x = &ir->dialog_controls[u];
+        for (size_t w = 0; w < x->text_by_lang_count; ++w) LANG_OK(x->text_by_lang[w].lang, x->pos);
+        for (size_t w = 0; w < x->labels_by_lang_count; ++w) LANG_OK(x->labels_by_lang[w].lang, x->pos);
+    }
+#undef LANG_OK
+    // 0.1 made Korean dialogs from language = "ko-KR"; the dialogs are English unless Korean is added.
+    if (ir->language == 1042 && ir->ui && ui_lang_index(ir, "ko") < 0) {
+        rp_srcdiag_add(c->d, uit ? uit->pos : (rp_pos_t){ 0 }, "RP1317", true,
+                       "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean");
+    }
+}
+
 static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     rp_ir_t *ir = c->ir;
     if (ir->license_shown) {
@@ -1987,9 +2239,11 @@ static void ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) 
             ir->license_source = ui_source(c, ir->license_shown, pos);
         }
     }
+    ui_languages(c, uit);
     if (uit == NULL) return;
-    static const char *const keys[] = { "banner", "install-dir", NULL };
-    check_keys(c, uit, keys);
+    static const char *const keys[] = { "banner", "install-dir", "languages", NULL },
+                             *const lkeys[] = { "name", "font", "langid", "license", NULL };
+    check_keys_lang(c, uit, keys, lkeys);
     if (ir->ui == 0) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package]");
     char *banner = get_str(c, uit, "banner", false, NULL);
     if (banner) {
@@ -2523,7 +2777,15 @@ static void cross_checks(ctx_t *c) {
         for (size_t j = 0; j < ir->property_count; ++j) {
             if (strcmp(ir->properties[j].id, x->property) == 0) ERR(c, x->pos, "RP1310", "'%s' is also a [property.*]", x->property);
         }
-        if (find_dir(ir, x->property)) ERR(c, x->pos, "RP1310", "'%s' is the name of a dir", x->property);
+        // A search may give a dir its default (RFC-0012 V5): a folder from the registry or from a
+        // folder search, never a file's path.
+        if (find_dir(ir, x->property)) {
+            if (x->kind != RP_SEARCH_REGISTRY && x->kind != RP_SEARCH_DIR) {
+                ERR(c, x->pos, "RP1310", "'%s' is the name of a dir: only a registry or dir search can fill a dir", x->property);
+            } else {
+                ir->searches[k].fills_dir = true;
+            }
+        }
     }
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
@@ -2993,6 +3255,14 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     return PROVEN_OK;
 }
 
+static void free_ltexts(proven_allocator_t a, rp_ir_ltext_t *x, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        rp_mem_free(a, x[i].lang);
+        rp_mem_free(a, x[i].text);
+    }
+    rp_mem_free(a, x);
+}
+
 void rp_ir_free(rp_ir_t *ir) {
     if (ir == NULL) return;
     proven_allocator_t a = ir->alloc;
@@ -3123,11 +3393,18 @@ void rp_ir_free(rp_ir_t *ir) {
     for (size_t k = 0; k < ir->ui_text_count; ++k) {
         rp_mem_free(a, ir->ui_texts[k].id);
         rp_mem_free(a, ir->ui_texts[k].text);
+        free_ltexts(a, ir->ui_texts[k].by_lang, ir->ui_texts[k].by_lang_count);
     }
     rp_mem_free(a, ir->ui_texts);
+    for (size_t k = 0; k < ir->ui_lang_count; ++k) {
+        char *xs[] = { ir->ui_langs[k].name, ir->ui_langs[k].font, ir->ui_langs[k].license_source, ir->ui_langs[k].license_shown };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
     for (size_t k = 0; k < ir->dialog_count; ++k) {
         char *xs[] = { ir->dialogs[k].id, ir->dialogs[k].title, ir->dialogs[k].description, ir->dialogs[k].after };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        free_ltexts(a, ir->dialogs[k].title_by_lang, ir->dialogs[k].title_by_lang_count);
+        free_ltexts(a, ir->dialogs[k].description_by_lang, ir->dialogs[k].description_by_lang_count);
     }
     rp_mem_free(a, ir->dialogs);
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
@@ -3140,6 +3417,13 @@ void rp_ir_free(rp_ir_t *ir) {
         }
         rp_mem_free(a, x->values);
         rp_mem_free(a, x->labels);
+        free_ltexts(a, x->text_by_lang, x->text_by_lang_count);
+        for (size_t j = 0; j < x->labels_by_lang_count; ++j) {
+            for (size_t v = 0; v < x->value_count; ++v) rp_mem_free(a, x->labels_by_lang[j].labels[v]);
+            rp_mem_free(a, x->labels_by_lang[j].labels);
+            rp_mem_free(a, x->labels_by_lang[j].lang);
+        }
+        rp_mem_free(a, x->labels_by_lang);
     }
     rp_mem_free(a, ir->dialog_controls);
     char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir };
@@ -3267,6 +3551,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                     if (j) rp_buf_byte(&b, '/');
                     rp_buf_puts(&b, d->parts[j]);
                 }
+                if (d->guard) kv(&b, "guard", "1");
                 kv(&b, "feature", d->feature);
                 if (d->implicit) rp_buf_puts(&b, " implicit=1");
             } else {
@@ -3387,10 +3672,32 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "feature", x->feature);
         rp_buf_byte(&b, '\n');
     }
+    char lkey[32];
+#define KV_LANG(base, lang, val)                                     \
+    do {                                                             \
+        snprintf(lkey, sizeof lkey, "%s-%s", (base), (lang));        \
+        kv(&b, lkey, (val));                                         \
+    } while (0)
+    for (size_t k = 1; k < ir->ui_lang_count; ++k) {      // RFC-0012: English (0) is always there
+        const rp_ir_ui_lang_t *L = &ir->ui_langs[k];
+        char ids[RP_UI_LANGID_MAX * 6 + 1] = "";
+        for (size_t j = 0; j < L->langid_count; ++j) {
+            size_t n = strlen(ids);
+            snprintf(ids + n, sizeof ids - n, "%s%u", j ? "," : "", (unsigned)L->langids[j]);
+        }
+        rp_buf_puts(&b, "ui-language ");
+        rp_buf_puts(&b, L->code);
+        kv(&b, "name", L->name);
+        kv(&b, "font", L->font);
+        kv(&b, "langids", ids);
+        kv(&b, "license", L->license_shown);
+        rp_buf_byte(&b, '\n');
+    }
     for (size_t k = 0; k < ir->ui_text_count; ++k) {
         rp_buf_puts(&b, "ui-text ");
         rp_buf_puts(&b, ir->ui_texts[k].id);
         kv(&b, "text", ir->ui_texts[k].text);
+        for (size_t j = 0; j < ir->ui_texts[k].by_lang_count; ++j) KV_LANG("text", ir->ui_texts[k].by_lang[j].lang, ir->ui_texts[k].by_lang[j].text);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->dialog_count; ++k) {
@@ -3399,6 +3706,9 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "title", ir->dialogs[k].title);
         kv(&b, "description", ir->dialogs[k].description);
         kv(&b, "after", ir->dialogs[k].after);
+        for (size_t j = 0; j < ir->dialogs[k].title_by_lang_count; ++j) KV_LANG("title", ir->dialogs[k].title_by_lang[j].lang, ir->dialogs[k].title_by_lang[j].text);
+        for (size_t j = 0; j < ir->dialogs[k].description_by_lang_count; ++j)
+            KV_LANG("description", ir->dialogs[k].description_by_lang[j].lang, ir->dialogs[k].description_by_lang[j].text);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
@@ -3416,6 +3726,10 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         for (size_t j = 0; j < x->value_count; ++j) {
             kv(&b, "value", x->values[j]);
             kv(&b, "label", x->labels[j]);
+        }
+        for (size_t j = 0; j < x->text_by_lang_count; ++j) KV_LANG("text", x->text_by_lang[j].lang, x->text_by_lang[j].text);
+        for (size_t j = 0; j < x->labels_by_lang_count; ++j) {
+            for (size_t v = 0; v < x->value_count; ++v) KV_LANG("label", x->labels_by_lang[j].lang, x->labels_by_lang[j].labels[v]);
         }
         rp_buf_byte(&b, '\n');
     }
@@ -3461,6 +3775,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "file", x->file_name);
         kv(&b, "min-version", x->min_version);
         kv(&b, "component-guid", x->component_guid);
+        if (x->fills_dir) kv(&b, "fills-dir", "1");
         rp_buf_byte(&b, '\n');
     }
     static const char *const imodes[] = { "set", "add", "remove" };

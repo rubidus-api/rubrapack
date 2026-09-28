@@ -34,6 +34,7 @@ typedef struct {
     size_t   part_count;
     char    *feature;           // may be NULL
     bool     implicit;          // a sub folder created for [files.*] matches below a wildcard
+    bool     guard;             // RFC-0012 V6: an existing folder must be owned by administrators
     rp_pos_t pos;
 } rp_ir_dir_t;
 
@@ -140,6 +141,8 @@ typedef struct {
     char            *file_name;     // file
     char            *min_version;   // file, or NULL
     char            *component_guid;// component
+    bool             fills_dir;     // property is a dir the user may change (RFC-0012 V5): the folder
+                                    // found becomes its default unless the command line set it
     rp_pos_t         pos;
 } rp_ir_search_t;
 
@@ -232,9 +235,36 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_copy_t;
 
+// A text written for one language: `text-ko = "..."` (RFC-0012).
+typedef struct {
+    char    *lang;              // "ko", "ja", ...
+    char    *text;              // formatted
+} rp_ir_ltext_t;
+
+typedef struct {
+    char    *lang;
+    char   **labels;            // one per value of the control
+} rp_ir_llabels_t;
+
+// The languages of the dialogs (RFC-0012): English always, first and the default; [ui] languages
+// adds the others.
+enum { RP_UI_LANG_MAX = 8, RP_UI_LANGID_MAX = 16 };
+typedef struct {
+    char     code[4];           // "en", "ko", ...
+    char    *name;              // [ui] name-xx: the language page's label, or NULL (built in)
+    char    *font;              // [ui] font-xx, or NULL (built in)
+    uint16_t langids[RP_UI_LANGID_MAX];     // chosen when UserLanguageID or SystemLanguageID is one of them
+    size_t   langid_count;
+    char    *license_source;    // [ui] license-xx: path to open, or NULL
+    char    *license_shown;     // as written
+    rp_pos_t pos;
+} rp_ir_ui_lang_t;
+
 typedef struct {
     char    *id;                // a text ID of the dialog sets (rp_ui_text_known)
-    char    *text;              // formatted
+    char    *text;              // formatted, every language; may be NULL when only text-xx is given
+    rp_ir_ltext_t *by_lang;     // text-xx
+    size_t   by_lang_count;
     rp_pos_t pos;
 } rp_ir_ui_text_t;
 
@@ -242,6 +272,8 @@ typedef struct {
 typedef struct {
     char    *id;                // the Dialog key
     char    *title, *description;   // banner heading (formatted) and the line under it (or NULL)
+    rp_ir_ltext_t *title_by_lang, *description_by_lang;     // title-xx, description-xx
+    size_t   title_by_lang_count, description_by_lang_count;
     char    *after;             // a built-in page (RpWelcomeDlg, RpLicenseDlg, RpInstallDirDlg,
                                 // RpCustomizeDlg) or another [dialog.*]
     rp_pos_t pos;
@@ -259,6 +291,10 @@ typedef struct {
     char   **values;            // radio, combo: the property values
     char   **labels;            // their labels (the values when omitted)
     size_t   value_count;
+    rp_ir_ltext_t *text_by_lang;        // text-xx
+    size_t   text_by_lang_count;
+    rp_ir_llabels_t *labels_by_lang;    // labels-xx
+    size_t   labels_by_lang_count;
     rp_pos_t pos;
 } rp_ir_dialog_control_t;
 
@@ -357,6 +393,8 @@ typedef struct {
     char             *license_shown;        // as written
     char             *banner_source;        // [ui] banner BMP, or NULL
     char             *ui_install_dir;       // [ui] install-dir (dir ID), or NULL
+    rp_ir_ui_lang_t   ui_langs[RP_UI_LANG_MAX];     // RFC-0012: [0] is English; one entry = English only
+    size_t            ui_lang_count;
     rp_ir_ui_text_t  *ui_texts;
     size_t            ui_text_count;
     rp_ir_dialog_t   *dialogs;              // in ID order
