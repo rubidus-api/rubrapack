@@ -13,6 +13,16 @@ its startup code and import libraries are linked into the DLLs). They import onl
 components (kernel32, advapi32, msi and the Universal CRT). `resources/bin/SHA256SUMS` lists their
 hashes; the same toolchain rebuilds them byte for byte.
 
+## Fonts in the published manual
+
+`docs/fonts/` (the web edition of the manual) holds subsets of Noto Serif, Noto Sans, Noto Sans
+Mono, Noto Serif CJK KR, Noto Sans CJK KR (Google, Adobe) and D2Coding (NAVER), all under the SIL
+Open Font License 1.1, which permits subsetting and redistribution; each subset keeps its font's
+copyright and licence records, and `docs/fonts/README.md` names the sources. The PDF editions embed
+the same fonts. The fonts are not part of the program.
+
+The web edition's page design and script follow the Proven C Book's web edition (same author, MIT).
+
 ## Unicode data
 
 `src/text/nfc_tables.c` holds normalization data generated from the Unicode Character Database

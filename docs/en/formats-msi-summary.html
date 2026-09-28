@@ -1,17 +1,16 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Summary information - rubrapack Manual</title>
-<link rel="stylesheet" href="../book.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5 Summary information - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
 <body>
-<header class="bar"><a class="book" href="index.html">rubrapack Manual</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-en.pdf">PDF edition</a><a href="../ko/formats-msi-summary.html">한국어</a></header>
-<main>
-<h1>Summary information</h1>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 5 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="formats-msi-database.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="formats-msi-package.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.1.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/formats-msi-summary.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#layout-spec-observed"><span class="tf-no">5.1</span>Layout [spec] [observed]</a><a class="lv3" href="#properties-an-installer-package-sets"><span class="tf-no">5.2</span>Properties an installer package sets</a><a class="lv3" href="#the-code-page-trap---keep-summary-strings-ascii-observed"><span class="tf-no">5.3</span>The code page trap - keep summary strings ASCII [observed]</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">5 Summary information</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#layout-spec-observed"><span class="tf-no">5.1</span>Layout [spec] [observed]</a><a class="lv3" href="#properties-an-installer-package-sets"><span class="tf-no">5.2</span>Properties an installer package sets</a><a class="lv3" href="#the-code-page-trap---keep-summary-strings-ascii-observed"><span class="tf-no">5.3</span>The code page trap - keep summary strings ASCII [observed]</a></div></div>
 <p>Every package has a stream <code>\x05SummaryInformation</code> (the first character is U+0005; the name is not packed). It is an OLE property set as specified in [MS-OLEPS]; Microsoft Learn ("Summary Information Stream Property Set") says which properties an installer package uses.</p>
-<h2 id="layout-spec-observed">Layout [spec] [observed]</h2>
+<h3 id="layout-spec-observed">5.1 Layout [spec] [observed]<a class="plink" href="#layout-spec-observed" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <pre><code class="lang-text">u16  byte order      FFFE
 u16  version         0 (msi.dll writes 0)
 u32  OS field        msi.dll writes 0x00020206
@@ -29,13 +28,39 @@ values, each padded to a multiple of 4 bytes:
   VT_I4 (3)        u32 type, i32 value
   VT_LPSTR (30)    u32 type, u32 byte count including the NUL, bytes, NUL, padding
   VT_FILETIME (64) u32 type, u64 100-ns intervals since 1601-01-01 UTC</code></pre>
-<h2 id="properties-an-installer-package-sets">Properties an installer package sets</h2>
-<div class="table"><table><tr><th>Id</th><th>Name</th><th>Type</th><th>Value</th></tr><tr><td>2</td><td>Title</td><td>LPSTR</td><td>e.g. <code>Installation Database</code></td></tr><tr><td>3</td><td>Subject</td><td>LPSTR</td><td>product name</td></tr><tr><td>4</td><td>Author</td><td>LPSTR</td><td>manufacturer</td></tr><tr><td>5</td><td>Keywords</td><td>LPSTR</td><td>e.g. <code>Installer</code></td></tr><tr><td>7</td><td>Template</td><td>LPSTR</td><td><code>&lt;platform&gt;;&lt;language id&gt;</code>: <code>x64;1033</code>, <code>Arm64;1042</code>, <code>Intel;1033</code></td></tr><tr><td>9</td><td>Revision Number</td><td>LPSTR</td><td>the <strong>package code</strong>: a GUID, new for every different package file</td></tr><tr><td>12, 13</td><td>Create / Last Save time</td><td>FILETIME</td><td>optional</td></tr><tr><td>14</td><td>Page Count</td><td>I4</td><td>minimum installer version: 200 for x64 and x86, 500 for Arm64</td></tr><tr><td>15</td><td>Word Count</td><td>I4</td><td>bit 1 = files are compressed (in cabinets); 2 for a normal package</td></tr><tr><td>18</td><td>Creating Application</td><td>LPSTR</td><td>any</td></tr></table></div>
-<h2 id="the-code-page-trap---keep-summary-strings-ascii-observed">The code page trap - keep summary strings ASCII [observed]</h2>
+<h3 id="properties-an-installer-package-sets">5.2 Properties an installer package sets<a class="plink" href="#properties-an-installer-package-sets" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table class="key"><tr><th>Id</th><th>Name</th><th>Type</th><th>Value</th></tr><tr><td>2</td><td>Title</td><td>LPSTR</td><td>e.g. <code>Installation Database</code></td></tr><tr><td>3</td><td>Subject</td><td>LPSTR</td><td>product name</td></tr><tr><td>4</td><td>Author</td><td>LPSTR</td><td>manufacturer</td></tr><tr><td>5</td><td>Keywords</td><td>LPSTR</td><td>e.g. <code>Installer</code></td></tr><tr><td>7</td><td>Template</td><td>LPSTR</td><td><code>&lt;platform&gt;;&lt;language id&gt;</code>: <code>x64;1033</code>, <code>Arm64;1042</code>, <code>Intel;1033</code></td></tr><tr><td>9</td><td>Revision Number</td><td>LPSTR</td><td>the <strong>package code</strong>: a GUID, new for every different package file</td></tr><tr><td>12, 13</td><td>Create / Last Save time</td><td>FILETIME</td><td>optional</td></tr><tr><td>14</td><td>Page Count</td><td>I4</td><td>minimum installer version: 200 for x64 and x86, 500 for Arm64</td></tr><tr><td>15</td><td>Word Count</td><td>I4</td><td>bit 1 = files are compressed (in cabinets); 2 for a normal package</td></tr><tr><td>18</td><td>Creating Application</td><td>LPSTR</td><td>any</td></tr></table></div>
+<h3 id="the-code-page-trap---keep-summary-strings-ascii-observed">5.3 The code page trap - keep summary strings ASCII [observed]<a class="plink" href="#the-code-page-trap---keep-summary-strings-ascii-observed" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <p>Property 1 (<code>CodePage</code>, VT_I2) says how the LPSTR bytes are encoded. On Windows 11 25H2:</p>
 <ul><li><strong>65001:</strong> <code>msi.dll</code> writes the strings correctly as UTF-8, but reads the code page back as the signed value -535, fails to convert every string (the installation log says "Failed to retrieve # 9 summary info property. GetLastError returned 87, the code page is -535") and refuses the package with error 1620.</li><li><strong>1200 (UTF-16):</strong> refused the same way (log: "... the code page is 1200"), even with complete UTF-16 strings and byte counts that follow [MS-OLEPS].</li><li><strong>No code page property and ASCII strings:</strong> installs.</li></ul>
 <p>So: leave property 1 out and write every summary string in ASCII. Localized product names belong in the <code>Property</code> table (<code>ProductName</code>), which uses the database code page - and 65001 works there (see <a href="formats-msi-database.html">The MSI database inside the compound file</a>).</p>
-</main>
-<footer class="bar"><span>&larr; <a href="formats-msi-database.html">The MSI database inside the compound file</a></span><span><a href="formats-msi-package.html">The smallest package that installs, repairs, upgrades and uninstalls</a> &rarr;</span></footer>
-</body>
-</html>
+<div class="nav"><a href="formats-msi-database.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="formats-msi-package.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

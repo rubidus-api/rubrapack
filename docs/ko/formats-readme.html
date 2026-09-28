@@ -1,24 +1,23 @@
 <!doctype html>
 <html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>구현하는 사람을 위한 패키지 형식 - rubrapack 매뉴얼</title>
-<link rel="stylesheet" href="../book.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2 구현하는 사람을 위한 패키지 형식 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
 <body>
-<header class="bar"><a class="book" href="index.html">rubrapack 매뉴얼</a><span class="muted">0.1.0</span><span class="spacer"></span><a href="../rubrapack-manual-ko.pdf">PDF 판</a><a href="../en/formats-readme.html">English</a></header>
-<main>
-<h1>구현하는 사람을 위한 패키지 형식</h1>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">2장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="rpk.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="formats-cfb.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.1.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/formats-readme.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#사실을-읽는-법"><span class="tf-no">2.1</span>사실을 읽는 법</a><a class="lv3" href="#표기"><span class="tf-no">2.2</span>표기</a><a class="lv3" href="#흐름을-한-그림으로"><span class="tf-no">2.3</span>흐름을 한 그림으로</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">2 구현하는 사람을 위한 패키지 형식</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#사실을-읽는-법"><span class="tf-no">2.1</span>사실을 읽는 법</a><a class="lv3" href="#표기"><span class="tf-no">2.2</span>표기</a><a class="lv3" href="#흐름을-한-그림으로"><span class="tf-no">2.3</span>흐름을 한 그림으로</a></div></div>
 <p>이 문서들은 Windows 가 받아들이는 Windows Installer 패키지(<code>.msi</code>)와 MSIX 패키지·묶음을 만들려면 프로그램이 무엇을 써야 하는지, 그리고 그것들에 어떻게 서명하는지를 설명한다. 공개 명세와 Windows 자체에 대한 실험으로 썼으므로, rubrapack 의 코드를 읽지 않고도 이것만으로 자기 도구를 만들 수 있다 - 또는 rubrapack 의 코드를 이것과 대조해 볼 수 있다.</p>
-<div class="table"><table><tr><th>문서</th><th>다루는 것</th></tr><tr><td><a href="formats-cfb.html">복합 파일(Compound File Binary, CFB)</a></td><td>복합 파일(Compound File Binary): 모든 <code>.msi</code> 의 그릇</td></tr><tr><td><a href="formats-msi-database.html">복합 파일 속의 MSI 데이터베이스</a></td><td>스트림, 문자열 풀, 시스템 표, 표 인코딩, IDT 내보내기</td></tr><tr><td><a href="formats-msi-summary.html">요약 정보</a></td><td>요약 정보 스트림과 그 코드 페이지 함정</td></tr><tr><td><a href="formats-msi-package.html">설치·복구·업그레이드·제거가 되는 가장 작은 패키지</a></td><td>설치·업그레이드·복구·제거를 하는 표들: 파일, 레지스트리, 바로가기, 서비스, 글꼴, 대화창, 사용자별 패키지, 순서</td></tr><tr><td><a href="formats-pe.html">프로그램 파일: 머신 형식과 판</a></td><td>프로그램 파일: 머신 형식과 판 정보 리소스</td></tr><tr><td><a href="formats-cab-mszip.html">캐비닛, MSZIP, deflate</a></td><td>캐비닛 파일, MSZIP 블록, deflate 인코더</td></tr><tr><td><a href="formats-identity.html">결정적인 정체와 재현 가능한 패키지</a></td><td>결정적인 GUID 와 키, 재현 가능한 빌드</td></tr><tr><td><a href="formats-authenticode.html">Authenticode 서명</a></td><td>PE 파일과 MSI 패키지의 Authenticode 서명: 다이제스트, Windows 가 받는 CMS 구조, ECDSA, RFC 3161 타임스탬프</td></tr><tr><td><a href="formats-verify.html">출력을 Windows 와 대조하기</a></td><td>Windows 자신의 구성 요소로 결과를 확인하는 방법</td></tr><tr><td><a href="formats-msix.html">MSIX 패키지</a></td><td>MSIX: ZIP 배치, 블록 맵, 매니페스트, 가상 레지스트리와 파일 시스템, 확장, 묶음, 서명</td></tr><tr><td><a href="formats-registry.html">레지스트리 하이브 파일(REGF)</a></td><td>MSIX <code>Registry.dat</code>·<code>User.dat</code> 가 담는 레지스트리 하이브 파일(REGF)</td></tr></table></div>
-<h2 id="사실을-읽는-법">사실을 읽는 법</h2>
+<div class="tblwrap"><table><tr><th>문서</th><th>다루는 것</th></tr><tr><td><a href="formats-cfb.html">복합 파일(Compound File Binary, CFB)</a></td><td>복합 파일(Compound File Binary): 모든 <code>.msi</code> 의 그릇</td></tr><tr><td><a href="formats-msi-database.html">복합 파일 속의 MSI 데이터베이스</a></td><td>스트림, 문자열 풀, 시스템 표, 표 인코딩, IDT 내보내기</td></tr><tr><td><a href="formats-msi-summary.html">요약 정보</a></td><td>요약 정보 스트림과 그 코드 페이지 함정</td></tr><tr><td><a href="formats-msi-package.html">설치·복구·업그레이드·제거가 되는 가장 작은 패키지</a></td><td>설치·업그레이드·복구·제거를 하는 표들: 파일, 레지스트리, 바로가기, 서비스, 글꼴, 대화창, 사용자별 패키지, 순서</td></tr><tr><td><a href="formats-pe.html">프로그램 파일: 머신 형식과 판</a></td><td>프로그램 파일: 머신 형식과 판 정보 리소스</td></tr><tr><td><a href="formats-cab-mszip.html">캐비닛, MSZIP, deflate</a></td><td>캐비닛 파일, MSZIP 블록, deflate 인코더</td></tr><tr><td><a href="formats-identity.html">결정적인 정체와 재현 가능한 패키지</a></td><td>결정적인 GUID 와 키, 재현 가능한 빌드</td></tr><tr><td><a href="formats-authenticode.html">Authenticode 서명</a></td><td>PE 파일과 MSI 패키지의 Authenticode 서명: 다이제스트, Windows 가 받는 CMS 구조, ECDSA, RFC 3161 타임스탬프</td></tr><tr><td><a href="formats-verify.html">출력을 Windows 와 대조하기</a></td><td>Windows 자신의 구성 요소로 결과를 확인하는 방법</td></tr><tr><td><a href="formats-msix.html">MSIX 패키지</a></td><td>MSIX: ZIP 배치, 블록 맵, 매니페스트, 가상 레지스트리와 파일 시스템, 확장, 묶음, 서명</td></tr><tr><td><a href="formats-registry.html">레지스트리 하이브 파일(REGF)</a></td><td>MSIX <code>Registry.dat</code>·<code>User.dat</code> 가 담는 레지스트리 하이브 파일(REGF)</td></tr></table></div>
+<h3 id="사실을-읽는-법">2.1 사실을 읽는 법<a class="plink" href="#사실을-읽는-법" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>모든 서술에는 출처 표시가 붙는다:</p>
 <ul><li><strong>[spec]</strong> - 공개 명세: [MS-CFB], [MS-OLEPS], [MS-CAB], [MS-MCI], RFC 1951, RFC 1321, RFC 3161, RFC 5652, RFC 9562, PKWARE ZIP APPNOTE, ECMA-376 Part 2(OPC), Authenticode PE 명세, 또는 Microsoft Learn 의 Windows Installer·MSIX 참고 문서.</li><li><strong>[observed]</strong> - Windows 11 에서 잰 것: MSI 문서는 25H2(빌드 26200)와 Windows Installer 5.0.10011 에서 <code>msi.dll</code> 로 데이터베이스를 만들어 바이트 단위로 다시 읽고 패키지를 설치해서, MSIX·레지스트리 하이브·서명 문서는 빌드 26100 에서 Windows 자신의 패키징 API, 오프라인 레지스트리 라이브러리, 서명기와 대조하고 패키지를 설치·실행해서 얻었다. 관찰은 그 빌드들에 대한 사실이다. Microsoft 가 형식을 문서로 내지 않은 곳(MSI 표 인코딩, 레지스트리 하이브, MSIX 서명의 해시 기록은 공개되지 않았다)에서는 관찰이 유일한 출처다.</li></ul>
 <p>여기의 어떤 글이나 코드도 다른 MSI·MSIX·캐비닛·레지스트리 구현에서 오지 않았다.</p>
-<h2 id="표기">표기</h2>
+<h3 id="표기">2.2 표기<a class="plink" href="#표기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <ul><li>따로 말하지 않으면 모든 정수는 리틀엔디언이다.</li><li><code>u16</code>, <code>u32</code>, <code>u64</code> 는 부호 없는 수, <code>i16</code>, <code>i32</code> 는 2의 보수 부호 있는 수다.</li><li>오프셋은 이름 붙은 구조의 처음부터 센 바이트 수다.</li><li>16진 바이트열은 파일에 놓인 순서로 쓴다: <code>D0 CF 11 E0</code>.</li></ul>
-<h2 id="흐름을-한-그림으로">흐름을 한 그림으로</h2>
+<h3 id="흐름을-한-그림으로">2.3 흐름을 한 그림으로<a class="plink" href="#흐름을-한-그림으로" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">원본 기술 --&gt; 표(문자열/정수/스트림의 행)
          --&gt; MSI 데이터베이스 인코딩(문자열 풀 + 표마다 스트림 하나)
          --&gt; 캐비닛에 담은 파일(저장 또는 MSZIP) --&gt; 스트림 하나 더
@@ -26,7 +25,33 @@
          --&gt; 모든 스트림을 복합 파일 하나에 쓴다  = .msi</code></pre>
 <p>MSIX 패키지는 더 단순하다: 페이로드 파일(각각 독립된 64 KiB 조각으로 deflate), <code>AppxManifest.xml</code>, <code>AppxBlockMap.xml</code>(조각마다 해시), <code>[Content_Types].xml</code> 이 ZIP64 압축 파일 하나에 들고, 레지스트리 값은 <code>Registry.dat</code>/<code>User.dat</code> 하이브에 든다. 묶음은 패키지를 나란히 담고, 서명은 <code>AppxSignature.p7x</code> 를 더한다(<a href="formats-msix.html">MSIX 패키지</a>, <a href="formats-registry.html">레지스트리 하이브 파일(REGF)</a>).</p>
 <p>화살표 하나가 위의 문서 하나다. 어느 것도 만드는 데 Windows 가 필요하지 않다: rubrapack 은 Linux 와 Windows 에서 같은 바이트를 만든다.</p>
-</main>
-<footer class="bar"><span>&larr; <a href="rpk.html">.rpk 원본과 rubrapack 명령</a></span><span><a href="formats-cfb.html">복합 파일(Compound File Binary, CFB)</a> &rarr;</span></footer>
-</body>
-</html>
+<div class="nav"><a href="rpk.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="formats-cfb.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
