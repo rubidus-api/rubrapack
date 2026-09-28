@@ -517,98 +517,75 @@ static const char *icon_name(proven_allocator_t alloc, keep_t *k, rows_t *icon, 
     return name;
 }
 
-static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
-                                  dirs_t *dirs, const char *product_code, const char *package_code,
-                                  const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
-                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs) {
+// The tables of one package, and what their parts share while write_package fills them in order.
+typedef struct {
+    proven_allocator_t alloc;
+    const rp_ir_t     *ir;
+    keep_t            *k;
+    lfile_t           *files;
+    size_t             nfiles;
+    dirs_t            *dirs;
+    rp_srcdiags_t     *diags;
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition;
-    rows_init(&property, alloc, "Property", property_cols, 2);
-    rows_init(&directory, alloc, "Directory", directory_cols, 3);
-    rows_init(&component, alloc, "Component", component_cols, 6);
-    rows_init(&feature, alloc, "Feature", feature_cols, 8);
-    rows_init(&featurecomp, alloc, "FeatureComponents", featurecomp_cols, 2);
-    rows_init(&file, alloc, "File", file_cols, 8);
-    rows_init(&filehash, alloc, "MsiFileHash", filehash_cols, 6);
-    rows_init(&media, alloc, "Media", media_cols, 6);
-    rows_init(&upgrade, alloc, "Upgrade", upgrade_cols, 7);
-    rows_init(&customaction, alloc, "CustomAction", customaction_cols, 4);
-    rows_init(&iexec, alloc, "InstallExecuteSequence", sequence_cols, 3);
-    rows_init(&iui, alloc, "InstallUISequence", sequence_cols, 3);
-    rows_init(&aexec, alloc, "AdminExecuteSequence", sequence_cols, 3);
-    rows_init(&aui, alloc, "AdminUISequence", sequence_cols, 3);
-    rows_init(&advt, alloc, "AdvtExecuteSequence", sequence_cols, 3);
-    rows_init(&createfolder, alloc, "CreateFolder", createfolder_cols, 2);
-    rows_init(&registry, alloc, "Registry", registry_cols, 6);
-    rows_init(&removereg, alloc, "RemoveRegistry", removereg_cols, 5);
-    rows_init(&shortcut, alloc, "Shortcut", shortcut_cols, 12);
-    rows_init(&removefile, alloc, "RemoveFile", removefile_cols, 5);
-    rows_init(&duplicate, alloc, "DuplicateFile", duplicate_cols, 5);
-    rows_init(&environment, alloc, "Environment", environment_cols, 4);
-    rows_init(&inifile, alloc, "IniFile", inifile_cols, 8);
-    rows_init(&removeini, alloc, "RemoveIniFile", removeini_cols, 8);
-    rows_init(&launch, alloc, "LaunchCondition", launch_cols, 2);
-    rows_init(&appsearch, alloc, "AppSearch", appsearch_cols, 2);
-    rows_init(&reglocator, alloc, "RegLocator", reglocator_cols, 5);
-    rows_init(&drlocator, alloc, "DrLocator", drlocator_cols, 4);
-    rows_init(&signature, alloc, "Signature", signature_cols, 9);
-    rows_init(&complocator, alloc, "CompLocator", complocator_cols, 3);
-    rows_init(&svcinstall, alloc, "ServiceInstall", svcinstall_cols, 13);
-    rows_init(&svccontrol, alloc, "ServiceControl", svccontrol_cols, 6);
-    rows_init(&font, alloc, "Font", font_cols, 2);
-    rows_init(&lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
-    rows_init(&binary, alloc, "Binary", binary_cols, 2);
-    rows_init(&icon, alloc, "Icon", icon_cols, 2);
-    rows_init(&condition, alloc, "Condition", condition_cols, 3);
-    // The P3 tables are written only when they have rows, so packages without them stay as they were.
-    rows_t *all[] = { &property, &directory, &component, &feature, &featurecomp, &file, &filehash, &media,
-                      &upgrade, &customaction, &iexec, &iui, &createfolder, &aexec, &aui, &advt, &registry, &removereg, &shortcut,
-                      &removefile, &duplicate, &environment, &inifile, &removeini, &launch, &appsearch, &reglocator,
-                      &drlocator, &signature, &complocator, &svcinstall, &svccontrol, &font, &lockperm, &binary, &icon, &condition };
-    const size_t always = 16;
+    icon_t          *icons;            // the Icon table's .ico files, in order of first use
+    size_t           nicons;
+    proven_err_t     icon_err;
+    int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
+    bool             any_write, any_remove, any_qword, reg_bad, reglocator_dir;
+    const char      *qplan;            // RP_QWORDS
+    size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
+    rp_msi_wstream_t *streams;         // embedded cabinets
+    rp_build_file_t *ext;              // or external ones
+    size_t           nstreams;
+    rp_ui_t         *ui;
+    uint8_t         *lic, *rtf, *banner, *lang_rtf[RP_UI_LANG_MAX];
+} pkg_t;
 
-    // Property
+// Property: identity, scope, [arp], [property.*] and the lists of secure and hidden properties.
+static void lower_properties(pkg_t *pk, const char *product_code) {
+    proven_allocator_t alloc = pk->alloc;
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     char version3[24];
     snprintf(version3, sizeof version3, "%u.%u.%u", ir->version_parts[0], ir->version_parts[1], ir->version_parts[2]);
     char lang[8];
     snprintf(lang, sizeof lang, "%u", ir->language);
-    s_(&property, "ProductCode"); s_(&property, product_code);
-    s_(&property, "ProductName"); s_(&property, ir->name);
-    s_(&property, "ProductVersion"); s_(&property, ir->version);
-    s_(&property, "Manufacturer"); s_(&property, ir->manufacturer);
-    s_(&property, "ProductLanguage"); s_(&property, kdup(k, lang));
-    s_(&property, "UpgradeCode"); s_(&property, ir->upgrade_code);
+    s_(&pk->property, "ProductCode"); s_(&pk->property, product_code);
+    s_(&pk->property, "ProductName"); s_(&pk->property, ir->name);
+    s_(&pk->property, "ProductVersion"); s_(&pk->property, ir->version);
+    s_(&pk->property, "Manufacturer"); s_(&pk->property, ir->manufacturer);
+    s_(&pk->property, "ProductLanguage"); s_(&pk->property, kdup(k, lang));
+    s_(&pk->property, "UpgradeCode"); s_(&pk->property, ir->upgrade_code);
     // Scope (RFC-0004 H3): machine ALLUSERS=1; user and dual use the single-package form ALLUSERS=2
     // with MSIINSTALLPERUSER=1 (per-user by default; dual installs per machine with ALLUSERS=1
     // MSIINSTALLPERUSER="" on the command line).
-    if (ir->scope == 0) { s_(&property, "ALLUSERS"); s_(&property, "1"); }
-    else { s_(&property, "ALLUSERS"); s_(&property, "2"); s_(&property, "MSIINSTALLPERUSER"); s_(&property, "1"); }
-    if (ir->reboot_suppress) { s_(&property, "REBOOT"); s_(&property, "ReallySuppress"); }
+    if (ir->scope == 0) { s_(&pk->property, "ALLUSERS"); s_(&pk->property, "1"); }
+    else { s_(&pk->property, "ALLUSERS"); s_(&pk->property, "2"); s_(&pk->property, "MSIINSTALLPERUSER"); s_(&pk->property, "1"); }
+    if (ir->reboot_suppress) { s_(&pk->property, "REBOOT"); s_(&pk->property, "ReallySuppress"); }
     // Never close the user's programs to free a file (RFC-0003 X4): at /qn Restart Manager shuts
     // down every process holding a file, and fails the installation if one does not close. It is
     // authored here, not passed on the command line, so the old package's removal inside an
     // upgrade obeys it too (observed).
-    s_(&property, "MSIRESTARTMANAGERCONTROL"); s_(&property, "Disable");
+    s_(&pk->property, "MSIRESTARTMANAGERCONTROL"); s_(&pk->property, "Disable");
     // [arp] and [property.*] (RFC-0003 1). Secure and hidden properties are listed for the engine.
     // Icons (RFC-0013 A1): every .ico once in the Icon table (stream Icon.<Name>), named in order of
     // first use: the installed apps list first, then the shortcuts in ID order.
-    size_t nicons = 0;
-    proven_err_t icon_err = PROVEN_OK;
-    icon_t *icons = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *icons);
-    if (icons == NULL) icon_err = PROVEN_ERR_NOMEM;
-    const char *arp_icon = icons ? icon_name(alloc, k, &icon, icons, &nicons, ir->arp_icon_source, &icon_err) : NULL;
-    if (arp_icon) { s_(&property, "ARPPRODUCTICON"); s_(&property, arp_icon); }
-    if (ir->arp_no_modify) { s_(&property, "ARPNOMODIFY"); s_(&property, "1"); }
-    if (ir->arp_no_repair) { s_(&property, "ARPNOREPAIR"); s_(&property, "1"); }
-    if (ir->arp_help) { s_(&property, "ARPHELPLINK"); s_(&property, ir->arp_help); }
-    if (ir->arp_about) { s_(&property, "ARPURLINFOABOUT"); s_(&property, ir->arp_about); }
+    pk->icons = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *pk->icons);
+    if (pk->icons == NULL) pk->icon_err = PROVEN_ERR_NOMEM;
+    const char *arp_icon = pk->icons ? icon_name(alloc, k, &pk->icon, pk->icons, &pk->nicons, ir->arp_icon_source, &pk->icon_err) : NULL;
+    if (arp_icon) { s_(&pk->property, "ARPPRODUCTICON"); s_(&pk->property, arp_icon); }
+    if (ir->arp_no_modify) { s_(&pk->property, "ARPNOMODIFY"); s_(&pk->property, "1"); }
+    if (ir->arp_no_repair) { s_(&pk->property, "ARPNOREPAIR"); s_(&pk->property, "1"); }
+    if (ir->arp_help) { s_(&pk->property, "ARPHELPLINK"); s_(&pk->property, ir->arp_help); }
+    if (ir->arp_about) { s_(&pk->property, "ARPURLINFOABOUT"); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
     char *hidden = NULL;
     for (size_t i = 0; i < ir->property_count; ++i) {
         const rp_ir_property_t *p = &ir->properties[i];
-        s_(&property, p->id);
-        s_(&property, p->value);
+        s_(&pk->property, p->id);
+        s_(&pk->property, p->value);
         if (p->secure) secure = kprintf(k, "%s;%s", secure, p->id);
         if (p->hidden) hidden = hidden ? kprintf(k, "%s;%s", hidden, p->id) : kdup(k, p->id);
     }
@@ -622,42 +599,55 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
     // The language chosen in the dialogs reaches the elevated part (the guard's message, RFC-0012).
     if (ir->ui_lang_count > 1) secure = kprintf(k, "%s;%s", secure, "RPLANGUAGE");
-    s_(&property, "SecureCustomProperties"); s_(&property, secure);
-    if (hidden) { s_(&property, "MsiHiddenProperties"); s_(&property, hidden); }
+    s_(&pk->property, "SecureCustomProperties"); s_(&pk->property, secure);
+    if (hidden) { s_(&pk->property, "MsiHiddenProperties"); s_(&pk->property, hidden); }
+}
 
-    // Directory
+// Directory: the folder tree with short|long names.
+static void lower_directories(pkg_t *pk) {
+    keep_t *k = pk->k;
+    dirs_t *dirs = pk->dirs;
     for (size_t i = 0; i < dirs->count; ++i) {
         dnode_t *n = &dirs->v[i];
-        s_(&directory, n->key);
-        s_(&directory, n->parent);
-        if (n->parent == NULL) s_(&directory, "SourceDir");
-        else if (n->long_name == NULL) s_(&directory, ".");
-        else if (strcmp(n->short_name, n->long_name) == 0) s_(&directory, n->long_name);
-        else s_(&directory, kprintf(k, "%s|%s", n->short_name, n->long_name));
+        s_(&pk->directory, n->key);
+        s_(&pk->directory, n->parent);
+        if (n->parent == NULL) s_(&pk->directory, "SourceDir");
+        else if (n->long_name == NULL) s_(&pk->directory, ".");
+        else if (strcmp(n->short_name, n->long_name) == 0) s_(&pk->directory, n->long_name);
+        else s_(&pk->directory, kprintf(k, "%s|%s", n->short_name, n->long_name));
     }
+}
 
-    // Features (Display: 0 hidden, then odd numbers in ID order)
+// Features (Display: 0 hidden, then odd numbers in ID order)
+static void lower_features(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     int display = 1;
     for (size_t i = 0; i < ir->feature_count; ++i) {
         const rp_ir_feature_t *f = &ir->features[i];
-        s_(&feature, f->id);
-        s_(&feature, f->parent);
-        s_(&feature, f->title);
-        s_(&feature, f->description);
-        i_(&feature, f->hidden ? 0 : display);
+        s_(&pk->feature, f->id);
+        s_(&pk->feature, f->parent);
+        s_(&pk->feature, f->title);
+        s_(&pk->feature, f->description);
+        i_(&pk->feature, f->hidden ? 0 : display);
         if (!f->hidden) display += 2;
-        i_(&feature, f->level);
-        null_(&feature);
-        i_(&feature, (f->required ? 0x10 : 0) | (f->follow_parent ? 0x2 : 0));    // UIDisallowAbsent, FollowParent (RFC-0013 A3)
+        i_(&pk->feature, f->level);
+        null_(&pk->feature);
+        i_(&pk->feature, (f->required ? 0x10 : 0) | (f->follow_parent ? 0x2 : 0));    // UIDisallowAbsent, FollowParent (RFC-0013 A3)
         if (f->when) {                  // off (level 0) unless its condition holds (RFC-0013 A2)
             // Only at the first installation: at removal the property is gone, and a feature turned
             // off then would keep its files (observed, r1-vm).
-            s_(&condition, f->id); i_(&condition, 0); s_(&condition, kprintf(k, "NOT Installed AND NOT (%s)", f->when, NULL));
+            s_(&pk->condition, f->id); i_(&pk->condition, 0); s_(&pk->condition, kprintf(k, "NOT Installed AND NOT (%s)", f->when, NULL));
         }
     }
+}
 
-    // Files, components, hashes (in File key order = sequence order)
-    int32_t comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256;
+// Files, components, hashes (in File key order = sequence order)
+static void lower_files(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
     for (size_t i = 0; i < nfiles; ++i) {
         lfile_t *lf = &files[i];
         char guid[39];
@@ -668,21 +658,21 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "file", lf->key };
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
         }
-        s_(&component, lf->comp);
-        s_(&component, kdup(k, guid));
-        s_(&component, lf->dir_key);
-        i_(&component, comp_attr | (lf->f->keep ? 16 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
-        s_(&component, lf->f->when);                            // RFC-0013 A2
-        s_(&component, lf->key);
+        s_(&pk->component, lf->comp);
+        s_(&pk->component, kdup(k, guid));
+        s_(&pk->component, lf->dir_key);
+        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
+        s_(&pk->component, lf->f->when);                            // RFC-0013 A2
+        s_(&pk->component, lf->key);
 
-        s_(&featurecomp, lf->f->feature);
-        s_(&featurecomp, lf->comp);
+        s_(&pk->featurecomp, lf->f->feature);
+        s_(&pk->featurecomp, lf->comp);
 
-        s_(&file, lf->key);
-        s_(&file, lf->comp);
-        if (strcmp(lf->short_name, lf->f->name) == 0) s_(&file, lf->f->name);
-        else s_(&file, kprintf(k, "%s|%s", lf->short_name, lf->f->name));
-        i_(&file, (int32_t)lf->size);
+        s_(&pk->file, lf->key);
+        s_(&pk->file, lf->comp);
+        if (strcmp(lf->short_name, lf->f->name) == 0) s_(&pk->file, lf->f->name);
+        else s_(&pk->file, kprintf(k, "%s|%s", lf->short_name, lf->f->name));
+        i_(&pk->file, (int32_t)lf->size);
         // Versioned files carry their version and language; the others get a hash row.
         rp_pe_info_t pi;
         bool versioned = rp_pe_read(lf->data, lf->size, &pi) == PROVEN_OK && pi.has_version;
@@ -690,30 +680,34 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             char vtext[32], ltext[8];
             snprintf(vtext, sizeof vtext, "%u.%u.%u.%u", pi.version[0], pi.version[1], pi.version[2], pi.version[3]);
             snprintf(ltext, sizeof ltext, "%u", pi.language);
-            s_(&file, kdup(k, vtext));
-            s_(&file, kdup(k, ltext));
+            s_(&pk->file, kdup(k, vtext));
+            s_(&pk->file, kdup(k, ltext));
         } else {
-            null_(&file);
-            null_(&file);
+            null_(&pk->file);
+            null_(&pk->file);
         }
-        i_(&file, lf->f->vital ? 512 : 0);
-        i_(&file, (int32_t)(i + 1));
+        i_(&pk->file, lf->f->vital ? 512 : 0);
+        i_(&pk->file, (int32_t)(i + 1));
         if (versioned) continue;
 
         uint8_t d[16];
         memcpy(d, lf->md5, sizeof lf->md5);
-        s_(&filehash, lf->key);
-        i_(&filehash, 0);
+        s_(&pk->filehash, lf->key);
+        i_(&pk->filehash, 0);
         for (int p = 0; p < 4; ++p) {
             uint32_t w = (uint32_t)d[4 * p] | ((uint32_t)d[4 * p + 1] << 8) | ((uint32_t)d[4 * p + 2] << 16) |
                          ((uint32_t)d[4 * p + 3] << 24);
-            i_(&filehash, (int32_t)w);
+            i_(&pk->filehash, (int32_t)w);
         }
     }
+}
 
-    // [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
-    bool any_write = false, any_remove = false, reg_bad = false, any_qword = false;
-    const char *qplan = "RPQ1";
+// [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
+static void lower_registry(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
     for (size_t i = 0; i < ir->registry_count; ++i) {
         const rp_ir_registry_t *r = &ir->registries[i];
         const char *ckey = NULL;
@@ -733,27 +727,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             ckey = kdup(k, comp);
             bool keypath = !r->remove && r->type != RP_REG_QWORD;     // a qword has no Registry row
             int32_t attr = (keypath ? 4 : 0) | (ir->arch != RP_ARCH_X86 && !r->view32 ? 256 : 0) | (r->keep ? 16 : 0);
-            s_(&component, ckey);
-            s_(&component, kdup(k, guid));
-            s_(&component, "TARGETDIR");
-            i_(&component, attr);
-            s_(&component, r->when);
-            if (!keypath) null_(&component);
-            else s_(&component, r->id);
-            s_(&featurecomp, r->feature);
-            s_(&featurecomp, ckey);
+            s_(&pk->component, ckey);
+            s_(&pk->component, kdup(k, guid));
+            s_(&pk->component, "TARGETDIR");
+            i_(&pk->component, attr);
+            s_(&pk->component, r->when);
+            if (!keypath) null_(&pk->component);
+            else s_(&pk->component, r->id);
+            s_(&pk->featurecomp, r->feature);
+            s_(&pk->featurecomp, ckey);
         }
         if (ckey == NULL) {
-            reg_bad = true;                     // the IR checked `with`; unreachable
+            pk->reg_bad = true;                     // the IR checked `with`; unreachable
             break;
         }
         const char *key = escape_formatted(k, r->key);
         const char *name = r->name ? escape_formatted(k, r->name) : NULL;
         if (r->remove) {
-            s_(&removereg, r->id); i_(&removereg, (int32_t)r->root); s_(&removereg, key);
-            s_(&removereg, name ? name : "-");  // no name: the whole key
-            s_(&removereg, ckey);
-            any_remove = true;
+            s_(&pk->removereg, r->id); i_(&pk->removereg, (int32_t)r->root); s_(&pk->removereg, key);
+            s_(&pk->removereg, name ? name : "-");  // no name: the whole key
+            s_(&pk->removereg, ckey);
+            pk->any_remove = true;
             continue;
         }
         if (r->type == RP_REG_QWORD) {      // RFC-0001 9.6: the helper DLL writes it (RP_QWORDS plan)
@@ -764,10 +758,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                 rp_text_result_t u = rp_utf8_to_utf16((const uint8_t *)fields[f], strlen(fields[f]), NULL, 0);
                 char head[24];
                 snprintf(head, sizeof head, "%zu:", u.units);
-                qplan = kprintf(k, "%s%s", qplan, head);
-                qplan = kprintf(k, "%s%s", qplan, fields[f]);
+                pk->qplan = kprintf(k, "%s%s", pk->qplan, head);
+                pk->qplan = kprintf(k, "%s%s", pk->qplan, fields[f]);
             }
-            any_qword = true;
+            pk->any_qword = true;
             continue;
         }
         const char *value = NULL;
@@ -782,13 +776,21 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             for (size_t j = 0; j < r->item_count; ++j) value = kprintf(k, "%s%s[~]", value, r->items[j]);
             break;
         }
-        s_(&registry, r->id); i_(&registry, (int32_t)r->root); s_(&registry, key); s_(&registry, name);
-        s_(&registry, value); s_(&registry, ckey);
-        any_write = true;
+        s_(&pk->registry, r->id); i_(&pk->registry, (int32_t)r->root); s_(&pk->registry, key); s_(&pk->registry, name);
+        s_(&pk->registry, value); s_(&pk->registry, ckey);
+        pk->any_write = true;
     }
+}
 
-    // [shortcut.*] (RFC-0004): in the target file's component; folders made for them are removed
-    // again at uninstall (RemoveFile, mode 2), from the shortcut's folder up to the known folder.
+// [shortcut.*] (RFC-0004): in the target file's component; folders made for them are removed
+// again at uninstall (RemoveFile, mode 2), from the shortcut's folder up to the known folder.
+static void lower_shortcuts(pkg_t *pk) {
+    proven_allocator_t alloc = pk->alloc;
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
+    dirs_t *dirs = pk->dirs;
     for (size_t i = 0; i < ir->shortcut_count; ++i) {
         const rp_ir_shortcut_t *sc = &ir->shortcuts[i];
         const lfile_t *target = NULL;
@@ -796,14 +798,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             if (strcmp(files[j].key, sc->target_file) == 0) target = &files[j];
         }
         if (target == NULL) {
-            reg_bad = true;
+            pk->reg_bad = true;
             break;
         }
         const char *sdir = shortcut_dir_key(ir, sc);
         const char *shortn = dirs->sc_short[i];
-        s_(&shortcut, sc->id);
-        s_(&shortcut, sdir);
-        s_(&shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
+        s_(&pk->shortcut, sc->id);
+        s_(&pk->shortcut, sdir);
+        s_(&pk->shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
         // A shortcut with `when` has its own component (RFC-0013 A2), whose key path is a registry
         // value under HKMU (HKLM or HKCU as installed), in the target file's feature.
         const char *sc_comp = target->comp;
@@ -814,37 +816,41 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), sc->id, "shortcut", sc->id };
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
             sc_comp = kdup(k, comp);
-            s_(&component, sc_comp); s_(&component, kdup(k, guid)); s_(&component, sdir);
-            i_(&component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); s_(&component, sc->when); s_(&component, kdup(k, rk));
-            s_(&featurecomp, target->f->feature); s_(&featurecomp, sc_comp);
-            s_(&registry, kdup(k, rk)); i_(&registry, -1); s_(&registry, "Software\\[Manufacturer]\\[ProductName]\\Shortcuts");
-            s_(&registry, sc->id); s_(&registry, "1"); s_(&registry, sc_comp);
-            any_write = true;
+            s_(&pk->component, sc_comp); s_(&pk->component, kdup(k, guid)); s_(&pk->component, sdir);
+            i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); s_(&pk->component, sc->when); s_(&pk->component, kdup(k, rk));
+            s_(&pk->featurecomp, target->f->feature); s_(&pk->featurecomp, sc_comp);
+            s_(&pk->registry, kdup(k, rk)); i_(&pk->registry, -1); s_(&pk->registry, "Software\\[Manufacturer]\\[ProductName]\\Shortcuts");
+            s_(&pk->registry, sc->id); s_(&pk->registry, "1"); s_(&pk->registry, sc_comp);
+            pk->any_write = true;
         }
-        s_(&shortcut, sc_comp);
-        s_(&shortcut, kprintf(k, "[#%s]", target->key, NULL));
-        s_(&shortcut, sc->args);                                            // formatted (H2)
-        s_(&shortcut, sc->description);                                     // Text, not formatted
-        const char *sc_icon = icons ? icon_name(alloc, k, &icon, icons, &nicons, sc->icon_source, &icon_err) : NULL;
-        null_(&shortcut);                                                   // Hotkey
-        if (sc_icon) { s_(&shortcut, sc_icon); i_(&shortcut, 0); } else { null_(&shortcut); null_(&shortcut); }
-        null_(&shortcut);                                                   // ShowCmd
-        s_(&shortcut, dkey(ir, sc->working_dir));
+        s_(&pk->shortcut, sc_comp);
+        s_(&pk->shortcut, kprintf(k, "[#%s]", target->key, NULL));
+        s_(&pk->shortcut, sc->args);                                            // formatted (H2)
+        s_(&pk->shortcut, sc->description);                                     // Text, not formatted
+        const char *sc_icon = pk->icons ? icon_name(alloc, k, &pk->icon, pk->icons, &pk->nicons, sc->icon_source, &pk->icon_err) : NULL;
+        null_(&pk->shortcut);                                                   // Hotkey
+        if (sc_icon) { s_(&pk->shortcut, sc_icon); i_(&pk->shortcut, 0); } else { null_(&pk->shortcut); null_(&pk->shortcut); }
+        null_(&pk->shortcut);                                                   // ShowCmd
+        s_(&pk->shortcut, dkey(ir, sc->working_dir));
         for (const dnode_t *n = find_node(dirs, sdir); n && n->long_name && n->parent; n = find_node(dirs, n->parent)) {
             char rk[23];
             rp_key_derive('R', kprintf(k, "shortcut-folder:%s", n->key, NULL), rk);
             bool seen = false;
-            for (size_t r = 0; r + 5 <= removefile.filled; r += 5) {
-                const rp_msi_cell_t *c0 = &removefile.cells[r];
+            for (size_t r = 0; r + 5 <= pk->removefile.filled; r += 5) {
+                const rp_msi_cell_t *c0 = &pk->removefile.cells[r];
                 seen |= c0->len == strlen(rk) && memcmp(c0->bytes, rk, c0->len) == 0;
             }
             if (seen) continue;
-            s_(&removefile, kdup(k, rk)); s_(&removefile, target->comp); null_(&removefile);
-            s_(&removefile, n->key); i_(&removefile, 2);
+            s_(&pk->removefile, kdup(k, rk)); s_(&pk->removefile, target->comp); null_(&pk->removefile);
+            s_(&pk->removefile, n->key); i_(&pk->removefile, 2);
         }
     }
+}
 
-    // [remove.*] (RFC-0004): own component in that folder (no key path file), one RemoveFile row.
+// [remove.*] (RFC-0004): own component in that folder (no key path file), one RemoveFile row.
+static void lower_removes(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     for (size_t i = 0; i < ir->remove_count; ++i) {
         const rp_ir_remove_t *r = &ir->removes[i];
         char comp[23], guid[39];
@@ -853,16 +859,20 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, dkey(ir, r->dir));
-        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
-        s_(&featurecomp, r->feature); s_(&featurecomp, ckey);
-        s_(&removefile, r->id); s_(&removefile, ckey); s_(&removefile, r->name); s_(&removefile, dkey(ir, r->dir));
-        i_(&removefile, r->mode);
+        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, r->dir));
+        i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
+        s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
+        s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); s_(&pk->removefile, r->name); s_(&pk->removefile, dkey(ir, r->dir));
+        i_(&pk->removefile, r->mode);
     }
+}
 
-    // [env.*] (RFC-0004): system variables ('*'), each its own component under TARGETDIR. With '-'
-    // the engine undoes it at uninstall: a set variable is deleted, appended or prepended text is
-    // taken out and the rest kept; without '-' (keep) nothing is undone (observed).
+// [env.*] (RFC-0004): system variables ('*'), each its own component under TARGETDIR. With '-'
+// the engine undoes it at uninstall: a set variable is deleted, appended or prepended text is
+// taken out and the rest kept; without '-' (keep) nothing is undone (observed).
+static void lower_env(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     for (size_t i = 0; i < ir->env_count; ++i) {
         const rp_ir_env_t *e = &ir->envs[i];
         char comp[23], guid[39];
@@ -870,19 +880,24 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), e->name, "env", e->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, "TARGETDIR");
-        i_(&component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); s_(&component, e->when); null_(&component);
-        s_(&featurecomp, e->feature); s_(&featurecomp, ckey);
+        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, "TARGETDIR");
+        i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); s_(&pk->component, e->when); null_(&pk->component);
+        s_(&pk->featurecomp, e->feature); s_(&pk->featurecomp, ckey);
         const char *prefix = ir->scope == 1 ? (!e->keep ? "=-" : "=") : (!e->keep ? "=-*" : "=*");  // no '*': user variable
         const char *value = e->mode == 1 ? kprintf(k, "[~];%s", e->value, NULL)
                           : e->mode == 2 ? kprintf(k, "%s;[~]", e->value, NULL)
                                          : e->value;
-        s_(&environment, e->id); s_(&environment, kprintf(k, "%s%s", prefix, e->name));
-        s_(&environment, value); s_(&environment, ckey);
+        s_(&pk->environment, e->id); s_(&pk->environment, kprintf(k, "%s%s", prefix, e->name));
+        s_(&pk->environment, value); s_(&pk->environment, ckey);
     }
+}
 
-    // [ini.*] (RFC-0004): one component per entry in the INI file's folder. IniFile rows are undone
-    // at uninstall by the engine; mode remove is a RemoveIniFile row applied at install.
+// [ini.*] (RFC-0004): one component per entry in the INI file's folder. IniFile rows are undone
+// at uninstall by the engine; mode remove is a RemoveIniFile row applied at install.
+static void lower_ini(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    dirs_t *dirs = pk->dirs;
     for (size_t i = 0; i < ir->ini_count; ++i) {
         const rp_ir_ini_t *x = &ir->inis[i];
         char comp[23], guid[39];
@@ -893,21 +908,27 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "ini", x->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, dkey(ir, x->dir));
-        i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); s_(&component, x->when); null_(&component);
-        s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
+        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->dir));
+        i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); s_(&pk->component, x->when); null_(&pk->component);
+        s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, ckey);
         const char *shortn = dirs->ini_short[i];
         const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
-        rows_t *t = x->mode == 2 ? &removeini : &inifile;
+        rows_t *t = x->mode == 2 ? &pk->removeini : &pk->inifile;
         s_(t, x->id); s_(t, fname); s_(t, dkey(ir, x->dir));
         s_(t, escape_formatted(k, x->section)); s_(t, escape_formatted(k, x->key));
         s_(t, x->value);                                            // formatted (H2); NULL for remove
         i_(t, x->mode == 0 ? 0 : x->mode == 1 ? 3 : 2);             // addLine, addTag, removeLine
         s_(t, ckey);
     }
+}
 
-    // [service.*] (RFC-0004): in the exe's component. Stopped before files change at install and at
-    // removal, deleted at removal, optionally started after installation; waits for each step.
+// [service.*] (RFC-0004): in the exe's component. Stopped before files change at install and at
+// removal, deleted at removal, optionally started after installation; waits for each step.
+static void lower_services(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
     for (size_t i = 0; i < ir->service_count; ++i) {
         const rp_ir_service_t *x = &ir->services[i];
         const lfile_t *exe = NULL;
@@ -915,40 +936,45 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             if (strcmp(files[j].key, x->file) == 0) exe = &files[j];
         }
         if (exe == NULL) {
-            reg_bad = true;
+            pk->reg_bad = true;
             break;
         }
         static const char *const accounts[] = { NULL, "NT AUTHORITY\\LocalService", "NT AUTHORITY\\NetworkService" };
         const char *name = escape_formatted(k, x->name);
-        s_(&svcinstall, x->id); s_(&svcinstall, name);
-        s_(&svcinstall, x->display_name ? escape_formatted(k, x->display_name) : NULL);
-        i_(&svcinstall, 0x10); i_(&svcinstall, x->start); i_(&svcinstall, 1);    // own process, normal errors
-        null_(&svcinstall); null_(&svcinstall);
-        s_(&svcinstall, accounts[x->account]); null_(&svcinstall);
-        s_(&svcinstall, x->args); s_(&svcinstall, exe->comp);
-        s_(&svcinstall, x->description ? escape_formatted(k, x->description) : NULL);   // formatted (observed)
+        s_(&pk->svcinstall, x->id); s_(&pk->svcinstall, name);
+        s_(&pk->svcinstall, x->display_name ? escape_formatted(k, x->display_name) : NULL);
+        i_(&pk->svcinstall, 0x10); i_(&pk->svcinstall, x->start); i_(&pk->svcinstall, 1);    // own process, normal errors
+        null_(&pk->svcinstall); null_(&pk->svcinstall);
+        s_(&pk->svcinstall, accounts[x->account]); null_(&pk->svcinstall);
+        s_(&pk->svcinstall, x->args); s_(&pk->svcinstall, exe->comp);
+        s_(&pk->svcinstall, x->description ? escape_formatted(k, x->description) : NULL);   // formatted (observed)
         int event = 0x2 | 0x20 | 0x80 | (x->start_on_install ? 0x1 : 0);         // stop (both), delete (remove), start
-        s_(&svccontrol, x->id); s_(&svccontrol, name); i_(&svccontrol, event); null_(&svccontrol);
-        i_(&svccontrol, 1); s_(&svccontrol, exe->comp);
+        s_(&pk->svccontrol, x->id); s_(&pk->svccontrol, name); i_(&pk->svccontrol, event); null_(&pk->svccontrol);
+        i_(&pk->svccontrol, 1); s_(&pk->svccontrol, exe->comp);
     }
+}
 
-    // The helper DLL for qword values (RFC-0001 9.6): Binary "RpCa" with the part for this
-    // architecture, the plan in RP_QWORDS, and prepare (immediate) -> rollback twin -> apply.
-    // RFC-0012 V6: the dirs with guard = true, as Directory keys.
+// The helper DLL for qword values (RFC-0001 9.6): Binary "RpCa" with the part for this
+// architecture, the plan in RP_QWORDS, and prepare (immediate) -> rollback twin -> apply.
+// RFC-0012 V6: the dirs with guard = true, as Directory keys.
+static void lower_helper_actions(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    rp_srcdiags_t *diags = pk->diags;
     const char *guard = NULL;
     for (size_t i = 0; i < ir->dir_count; ++i) {
         if (ir->dirs[i].guard) guard = guard ? kprintf(k, "%s;%s", guard, dkey(ir, ir->dirs[i].id)) : dkey(ir, ir->dirs[i].id);
     }
-    if (any_qword || guard) {
+    if (pk->any_qword || guard) {
         const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
         size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           any_qword ? "type = \"qword\"" : "guard = true", arch_text(ir->arch));
-            reg_bad = true;
+                           pk->any_qword ? "type = \"qword\"" : "guard = true", arch_text(ir->arch));
+            pk->reg_bad = true;
         }
-        s_(&binary, "RpCa"); b_(&binary, part, part_len);
+        s_(&pk->binary, "RpCa"); b_(&pk->binary, part, part_len);
     }
     // RFC-0013 A5: the finished page's program, started by the setup's own (non-elevated) client,
     // without waiting: type 34 (an exe in a folder) + 0xC0 (asynchronous, no wait).
@@ -958,35 +984,39 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             if (strcmp(ir->files[i].id, ir->ui_launch_file) == 0) lf = &ir->files[i];
         }
         if (lf) {
-            s_(&customaction, "RP_Launch"); i_(&customaction, 34 | 0xC0); s_(&customaction, dkey(ir, lf->dir));
-            s_(&customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
+            s_(&pk->customaction, "RP_Launch"); i_(&pk->customaction, 34 | 0xC0); s_(&pk->customaction, dkey(ir, lf->dir));
+            s_(&pk->customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
         }
     }
     // The guard (immediate, first installation only, before any file is placed): its message in
     // each language of the dialogs, picked by RPLANGUAGE (English without dialogs).
     if (guard) {
-        s_(&property, "RP_GUARD"); s_(&property, guard);
+        s_(&pk->property, "RP_GUARD"); s_(&pk->property, guard);
         size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
         for (size_t li = 0; li < nl; ++li) {
-            s_(&property, kprintf(k, "RpGuardMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL));
-            s_(&property, rp_ui_text_for(ir, "DirGuardText", li));
+            s_(&pk->property, kprintf(k, "RpGuardMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL));
+            s_(&pk->property, rp_ui_text_for(ir, "DirGuardText", li));
         }
-        s_(&customaction, "RP_GuardDirs"); i_(&customaction, 1); s_(&customaction, "RpCa"); s_(&customaction, "RpGuardDirs");
-        s_(&iexec, "RP_GuardDirs"); s_(&iexec, "NOT Installed"); i_(&iexec, 1010);
+        s_(&pk->customaction, "RP_GuardDirs"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpGuardDirs");
+        s_(&pk->iexec, "RP_GuardDirs"); s_(&pk->iexec, "NOT Installed"); i_(&pk->iexec, 1010);
     }
-    if (any_qword) {
-        s_(&property, "RP_QWORDS"); s_(&property, qplan);
+    if (pk->any_qword) {
+        s_(&pk->property, "RP_QWORDS"); s_(&pk->property, pk->qplan);
         const int noimp = ir->scope == 0 ? 0x800 : 0;
-        s_(&customaction, "RP_QwordPrepare"); i_(&customaction, 1); s_(&customaction, "RpCa"); s_(&customaction, "RpQwordPrepare");
-        s_(&customaction, "RP_QwordApplyRollback"); i_(&customaction, 1 | 0x100 | 0x400 | noimp | 0x40);
-        s_(&customaction, "RpCa"); s_(&customaction, "RpQwordRollback");
-        s_(&customaction, "RP_QwordApply"); i_(&customaction, 1 | 0x400 | noimp); s_(&customaction, "RpCa");
-        s_(&customaction, "RpQwordApply");
+        s_(&pk->customaction, "RP_QwordPrepare"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpQwordPrepare");
+        s_(&pk->customaction, "RP_QwordApplyRollback"); i_(&pk->customaction, 1 | 0x100 | 0x400 | noimp | 0x40);
+        s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpQwordRollback");
+        s_(&pk->customaction, "RP_QwordApply"); i_(&pk->customaction, 1 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpQwordApply");
     }
+}
 
-    // [permission.*] (RFC-0004): MsiLockPermissionsEx on a File, a Registry row, or a CreateFolder row
-    // (a folder gets its own component that creates it). Applied by InstallFiles, WriteRegistryValues,
-    // CreateFolders.
+// [permission.*] (RFC-0004): MsiLockPermissionsEx on a File, a Registry row, or a CreateFolder row
+// (a folder gets its own component that creates it). Applied by InstallFiles, WriteRegistryValues,
+// CreateFolders.
+static void lower_permissions(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     for (size_t i = 0; i < ir->permission_count; ++i) {
         const rp_ir_permission_t *x = &ir->permissions[i];
         static const char *const tables[] = { "CreateFolder", "File", "Registry" };
@@ -998,70 +1028,83 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
             const char *ckey = kdup(k, comp);
             lock = dkey(ir, x->target);
-            s_(&component, ckey); s_(&component, kdup(k, guid)); s_(&component, lock);
-            i_(&component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&component); null_(&component);
-            s_(&featurecomp, x->feature); s_(&featurecomp, ckey);
-            s_(&createfolder, lock); s_(&createfolder, ckey);
+            s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, lock);
+            i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
+            s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, ckey);
+            s_(&pk->createfolder, lock); s_(&pk->createfolder, ckey);
         }
-        s_(&lockperm, x->id); s_(&lockperm, lock); s_(&lockperm, tables[x->kind]); s_(&lockperm, x->sddl); null_(&lockperm);
+        s_(&pk->lockperm, x->id); s_(&pk->lockperm, lock); s_(&pk->lockperm, tables[x->kind]); s_(&pk->lockperm, x->sddl); null_(&pk->lockperm);
     }
+}
 
-    // [font.*] (RFC-0004): the file is already in FontsFolder; the Font row registers it.
+// [font.*] (RFC-0004): the file is already in FontsFolder; the Font row registers it.
+static void lower_fonts(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
     for (size_t i = 0; i < ir->font_count; ++i) {
-        s_(&font, ir->fonts[i].file); s_(&font, ir->fonts[i].title);
+        s_(&pk->font, ir->fonts[i].file); s_(&pk->font, ir->fonts[i].title);
     }
+}
 
-    // [require.*] and [search.*] (RFC-0004).
-    // Launch conditions only guard a first installation: repair and removal must never be blocked
-    // (the engine even deletes MSIINSTALLPERUSER once a per-user product is installed - observed).
+// [require.*] and [search.*] (RFC-0004).
+// Launch conditions only guard a first installation: repair and removal must never be blocked
+// (the engine even deletes MSIINSTALLPERUSER once a per-user product is installed - observed).
+static void lower_searches(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     for (size_t i = 0; i < ir->require_count; ++i) {
-        s_(&launch, kprintf(k, "Installed OR (%s)", ir->requires[i].condition, NULL)); s_(&launch, ir->requires[i].message);
+        s_(&pk->launch, kprintf(k, "Installed OR (%s)", ir->requires[i].condition, NULL)); s_(&pk->launch, ir->requires[i].message);
     }
     if (ir->scope == 1) {           // a per-user package stays per user
-        s_(&launch, "Installed OR MSIINSTALLPERUSER = 1");
-        s_(&launch, ir->language == 1042 ? "[ProductName]은(는) 사용자별로만 설치합니다(MSIINSTALLPERUSER=1)."
+        s_(&pk->launch, "Installed OR MSIINSTALLPERUSER = 1");
+        s_(&pk->launch, ir->language == 1042 ? "[ProductName]은(는) 사용자별로만 설치합니다(MSIINSTALLPERUSER=1)."
                                          : "[ProductName] installs for the current user only (MSIINSTALLPERUSER=1).");
     }
-    bool reglocator_dir = false;
     for (size_t i = 0; i < ir->search_count; ++i) {
         const rp_ir_search_t *x = &ir->searches[i];
         // A search that fills a dir (RFC-0012 V5) lands in RpFound_<ID>; a type-51 action right
         // after AppSearch copies it to the dir only when the dir is still unset, so a value given on
         // the command line wins.
         const char *found = x->fills_dir ? kprintf(k, "RpFound_%s", x->id, NULL) : x->property;
-        s_(&appsearch, found); s_(&appsearch, x->id);
+        s_(&pk->appsearch, found); s_(&pk->appsearch, x->id);
         if (x->fills_dir) {
             const char *act = kprintf(k, "RpFill_%s", x->id, NULL);
-            s_(&customaction, act); i_(&customaction, 51); s_(&customaction, x->property); s_(&customaction, kprintf(k, "[%s]", found, NULL));
+            s_(&pk->customaction, act); i_(&pk->customaction, 51); s_(&pk->customaction, x->property); s_(&pk->customaction, kprintf(k, "[%s]", found, NULL));
             const char *cnd = kprintf(k, "%s AND NOT %s", found, x->property);
-            s_(&iexec, act); s_(&iexec, cnd); i_(&iexec, 51);
-            s_(&iui, act); s_(&iui, cnd); i_(&iui, 51);
+            s_(&pk->iexec, act); s_(&pk->iexec, cnd); i_(&pk->iexec, 51);
+            s_(&pk->iui, act); s_(&pk->iui, cnd); i_(&pk->iui, 51);
         }
         switch (x->kind) {
         case RP_SEARCH_REGISTRY:    // type 2 = the raw value, 0 = a folder that must exist; +16 = the 64-bit view
-            s_(&reglocator, x->id); i_(&reglocator, (int32_t)x->root); s_(&reglocator, escape_formatted(k, x->key));
-            s_(&reglocator, x->name ? escape_formatted(k, x->name) : NULL);
-            i_(&reglocator, (x->fills_dir ? 0 : 2) | (x->view32 ? 0 : 16));
-            reglocator_dir |= x->fills_dir;
+            s_(&pk->reglocator, x->id); i_(&pk->reglocator, (int32_t)x->root); s_(&pk->reglocator, escape_formatted(k, x->key));
+            s_(&pk->reglocator, x->name ? escape_formatted(k, x->name) : NULL);
+            i_(&pk->reglocator, (x->fills_dir ? 0 : 2) | (x->view32 ? 0 : 16));
+            pk->reglocator_dir |= x->fills_dir;
             break;
         case RP_SEARCH_FILE:
         case RP_SEARCH_DIR: {
             const char *std = standard_folder(x->base, ir->arch);
             const char *path = x->path ? kprintf(k, "[%s]%s", std, x->path) : kprintf(k, "[%s]", std, NULL);
-            s_(&drlocator, x->id); null_(&drlocator); s_(&drlocator, path); i_(&drlocator, 0);
+            s_(&pk->drlocator, x->id); null_(&pk->drlocator); s_(&pk->drlocator, path); i_(&pk->drlocator, 0);
             if (x->kind == RP_SEARCH_FILE) {
-                s_(&signature, x->id); s_(&signature, x->file_name); s_(&signature, x->min_version);
-                for (int n = 0; n < 6; ++n) null_(&signature);
+                s_(&pk->signature, x->id); s_(&pk->signature, x->file_name); s_(&pk->signature, x->min_version);
+                for (int n = 0; n < 6; ++n) null_(&pk->signature);
             }
             break;
         }
         case RP_SEARCH_COMPONENT:   // type 1 = the full path of the component's key file
-            s_(&complocator, x->id); s_(&complocator, x->component_guid); i_(&complocator, 1);
+            s_(&pk->complocator, x->id); s_(&pk->complocator, x->component_guid); i_(&pk->complocator, 1);
             break;
         }
     }
+}
 
-    // [copy.*] (RFC-0004): DuplicateFile in the source file's component.
+// [copy.*] (RFC-0004): DuplicateFile in the source file's component.
+static void lower_copies(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
+    dirs_t *dirs = pk->dirs;
     for (size_t i = 0; i < ir->copy_count; ++i) {
         const rp_ir_copy_t *cp = &ir->copies[i];
         const lfile_t *src = NULL;
@@ -1069,17 +1112,21 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             if (strcmp(files[j].key, cp->source_file) == 0) src = &files[j];
         }
         if (src == NULL) {
-            reg_bad = true;
+            pk->reg_bad = true;
             break;
         }
         const char *longn = cp->name ? cp->name : src->f->name;
         const char *shortn = dirs->cp_short[i];
-        s_(&duplicate, cp->id); s_(&duplicate, src->comp); s_(&duplicate, src->key);
-        s_(&duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
-        s_(&duplicate, dkey(ir, cp->dir));
+        s_(&pk->duplicate, cp->id); s_(&pk->duplicate, src->comp); s_(&pk->duplicate, src->key);
+        s_(&pk->duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
+        s_(&pk->duplicate, dkey(ir, cp->dir));
     }
+}
 
-    // Folders: CreateFolder, one component each, the folder itself as the key path.
+// Folders: CreateFolder, one component each, the folder itself as the key path.
+static void lower_folders(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
     for (size_t i = 0; i < ir->folder_count; ++i) {
         const rp_ir_folder_t *f = &ir->folders[i];
         char comp[23], guid[39];
@@ -1088,49 +1135,56 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "folder", f->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&component, ckey);
-        s_(&component, kdup(k, guid));
-        s_(&component, f->id);
-        i_(&component, comp_attr | (f->keep ? 16 : 0));
-        null_(&component);
-        null_(&component);
-        s_(&featurecomp, f->feature);
-        s_(&featurecomp, ckey);
-        s_(&createfolder, f->id);
-        s_(&createfolder, ckey);
+        s_(&pk->component, ckey);
+        s_(&pk->component, kdup(k, guid));
+        s_(&pk->component, f->id);
+        i_(&pk->component, pk->comp_attr | (f->keep ? 16 : 0));
+        null_(&pk->component);
+        null_(&pk->component);
+        s_(&pk->featurecomp, f->feature);
+        s_(&pk->featurecomp, ckey);
+        s_(&pk->createfolder, f->id);
+        s_(&pk->createfolder, ckey);
     }
+}
 
-    // Media and the cabinets: files in sequence order, a new cabinet when the next file would pass
-    // cab-max-size (a file larger than that gets a cabinet of its own). One Media row per cabinet.
-    proven_err_t err = reg_bad ? PROVEN_ERR_INVALID_ARG : icon_err;
-    size_t ngroups = 0, *group_end = rp_mem_alloc(alloc, nfiles + 1, sizeof *group_end);
-    rp_msi_wstream_t *streams = rp_mem_alloc(alloc, nfiles + 1, sizeof *streams);
-    rp_build_file_t *ext = ir->cab_external ? rp_mem_alloc(alloc, nfiles + 1, sizeof *ext) : NULL;
-    if (group_end == NULL || streams == NULL || (ir->cab_external && ext == NULL)) err = PROVEN_ERR_NOMEM;
+// Media and the cabinets: files in sequence order, a new cabinet when the next file would pass
+// cab-max-size (a file larger than that gets a cabinet of its own). One Media row per cabinet.
+static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_limits_t *limits, size_t jobs) {
+    proven_allocator_t alloc = pk->alloc;
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
+    rp_srcdiags_t *diags = pk->diags;
+    proven_err_t err = pk->reg_bad ? PROVEN_ERR_INVALID_ARG : pk->icon_err;
+    pk->group_end = rp_mem_alloc(alloc, nfiles + 1, sizeof *pk->group_end);
+    pk->streams = rp_mem_alloc(alloc, nfiles + 1, sizeof *pk->streams);
+    pk->ext = ir->cab_external ? rp_mem_alloc(alloc, nfiles + 1, sizeof *pk->ext) : NULL;
+    if (pk->group_end == NULL || pk->streams == NULL || (ir->cab_external && pk->ext == NULL)) err = PROVEN_ERR_NOMEM;
     // External cabinets without cab-max-size are split before 2 GiB each (RFC-0013 E4).
     uint64_t cab_max = ir->cab_max ? ir->cab_max : ir->cab_external ? (2ull << 30) - (64ull << 20) : 0;
     for (size_t i = 0, used = 0; err == PROVEN_OK && i < nfiles; ++i) {
         if (cab_max && used > 0 && used + files[i].size > cab_max) {
-            group_end[ngroups++] = i;
+            pk->group_end[pk->ngroups++] = i;
             used = 0;
         }
         used += files[i].size;
     }
-    if (err == PROVEN_OK && nfiles) group_end[ngroups++] = nfiles;
+    if (err == PROVEN_OK && nfiles) pk->group_end[pk->ngroups++] = nfiles;
     if (nfiles == 0) {
-        i_(&media, 1); i_(&media, 0); null_(&media); null_(&media); null_(&media); null_(&media);
+        i_(&pk->media, 1); i_(&pk->media, 0); null_(&pk->media); null_(&pk->media); null_(&pk->media); null_(&pk->media);
     }
-    size_t nstreams = 0;
     uint64_t embedded = 0;
-    for (size_t g = 0, start = 0; err == PROVEN_OK && g < ngroups; start = group_end[g++]) {
+    for (size_t g = 0, start = 0; err == PROVEN_OK && g < pk->ngroups; start = pk->group_end[g++]) {
         char num[24];
         snprintf(num, sizeof num, "%zu", g + 1);
         const char *name = !ir->cab_external ? kprintf(k, "cab%s.cab", num, NULL)
-                           : ngroups == 1    ? kprintf(k, "%s.cab", cab_stem, NULL)
+                           : pk->ngroups == 1    ? kprintf(k, "%s.cab", cab_stem, NULL)
                                              : kprintf(k, "%s-%s.cab", cab_stem, num);
-        i_(&media, (int32_t)(g + 1)); i_(&media, (int32_t)group_end[g]); null_(&media);
-        s_(&media, ir->cab_external ? name : kprintf(k, "#%s", name, NULL)); null_(&media); null_(&media);
-        size_t n = group_end[g] - start;
+        i_(&pk->media, (int32_t)(g + 1)); i_(&pk->media, (int32_t)pk->group_end[g]); null_(&pk->media);
+        s_(&pk->media, ir->cab_external ? name : kprintf(k, "#%s", name, NULL)); null_(&pk->media); null_(&pk->media);
+        size_t n = pk->group_end[g] - start;
         rp_cab_file_t *cf = rp_mem_alloc(alloc, n, sizeof *cf);
         uint8_t *cab = NULL;
         size_t cab_len = 0;
@@ -1151,9 +1205,9 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                 break;
             }
             memcpy(copy, name, nl);
-            ext[nstreams++] = (rp_build_file_t){ copy, cab, cab_len };
+            pk->ext[pk->nstreams++] = (rp_build_file_t){ copy, cab, cab_len };
         } else {
-            streams[nstreams++] = (rp_msi_wstream_t){ name, cab, cab_len };
+            pk->streams[pk->nstreams++] = (rp_msi_wstream_t){ name, cab, cab_len };
             embedded += cab_len;
         }
     }
@@ -1163,21 +1217,26 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                        "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\"");
         err = PROVEN_ERR_OUT_OF_BOUNDS;
     }
+    return err;
+}
 
-    // Upgrade: detect same-or-newer (refused below), remove older (RFC-0001 9.5)
-    s_(&upgrade, ir->upgrade_code); s_(&upgrade, ir->version); null_(&upgrade); null_(&upgrade);
-    i_(&upgrade, 0x002 | 0x100); null_(&upgrade); s_(&upgrade, "RP_NEWER_FOUND");
-    s_(&upgrade, ir->upgrade_code); null_(&upgrade); s_(&upgrade, ir->version); null_(&upgrade);
-    i_(&upgrade, 0x001); null_(&upgrade); s_(&upgrade, "RP_OLDER_FOUND");
+// Upgrade: detect same-or-newer (refused below), remove older (RFC-0001 9.5)
+static void lower_upgrade(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    s_(&pk->upgrade, ir->upgrade_code); s_(&pk->upgrade, ir->version); null_(&pk->upgrade); null_(&pk->upgrade);
+    i_(&pk->upgrade, 0x002 | 0x100); null_(&pk->upgrade); s_(&pk->upgrade, "RP_NEWER_FOUND");
+    s_(&pk->upgrade, ir->upgrade_code); null_(&pk->upgrade); s_(&pk->upgrade, ir->version); null_(&pk->upgrade);
+    i_(&pk->upgrade, 0x001); null_(&pk->upgrade); s_(&pk->upgrade, "RP_OLDER_FOUND");
     if (ir->refuse_below) {         // detect only (0x002), below the given version (max exclusive)
-        s_(&upgrade, ir->upgrade_code); null_(&upgrade); s_(&upgrade, ir->refuse_below); null_(&upgrade);
-        i_(&upgrade, 0x002); null_(&upgrade); s_(&upgrade, "RP_REFUSED_OLD");
+        s_(&pk->upgrade, ir->upgrade_code); null_(&pk->upgrade); s_(&pk->upgrade, ir->refuse_below); null_(&pk->upgrade);
+        i_(&pk->upgrade, 0x002); null_(&pk->upgrade); s_(&pk->upgrade, "RP_REFUSED_OLD");
     }
 
     const char *message = ir->downgrade_message ? escape_formatted(k, ir->downgrade_message)
                           : ir->language == 1042 ? "더 새 판이나 같은 판의 [ProductName]이(가) 이미 설치되어 있습니다."
                                                  : "The same or a newer version of [ProductName] is already installed.";
-    s_(&customaction, "RP_RefuseDowngrade"); i_(&customaction, 19); null_(&customaction); s_(&customaction, message);
+    s_(&pk->customaction, "RP_RefuseDowngrade"); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, message);
     // RFC-0003 section 9 (T1): an old version that must be removed by hand first. The removal command
     // names the found product ([RP_REFUSED_OLD]) and keeps Restart Manager off for that removal.
     if (ir->refuse_below) {
@@ -1185,10 +1244,19 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         const char *text = ir->refuse_message ? escape_formatted(k, ir->refuse_message)
                            : ir->language == 1042 ? "설치된 옛 판 [ProductName]은(는) 이 설치로 올릴 수 없습니다. 먼저 지운 뒤 다시 설치하십시오:"
                                                   : "The installed older version of [ProductName] cannot be upgraded by this package. Remove it first, then run this installation again:";
-        s_(&customaction, "RP_RefuseOld"); i_(&customaction, 19); null_(&customaction);
-        s_(&customaction, kprintf(k, "%s %s", text, cmd));
+        s_(&pk->customaction, "RP_RefuseOld"); i_(&pk->customaction, 19); null_(&pk->customaction);
+        s_(&pk->customaction, kprintf(k, "%s %s", text, cmd));
     }
+}
 
+// The install, UI, administrative and advertisement sequences, with the [action.*] do/undo pairs.
+static proven_err_t lower_sequences(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    lfile_t *files = pk->files;
+    size_t nfiles = pk->nfiles;
+    rp_srcdiags_t *diags = pk->diags;
+    proven_err_t err = PROVEN_OK;
     static const struct { const char *action; const char *cond; int seq; } exec[] = {
         { "FindRelatedProducts", NULL, 25 }, { "RP_RefuseDowngrade", "RP_NEWER_FOUND", 30 },
         { "CostInitialize", NULL, 800 }, { "FileCost", NULL, 900 }, { "CostFinalize", NULL, 1000 },
@@ -1203,54 +1271,54 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     // InstallInitialize and RemoveExistingProducts (error 2613 on the VM, lint RP2019).
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
-        s_(&iexec, exec[i].action); s_(&iexec, exec[i].cond); i_(&iexec, exec[i].seq);
+        s_(&pk->iexec, exec[i].action); s_(&pk->iexec, exec[i].cond); i_(&pk->iexec, exec[i].seq);
     }
     if (ir->font_count) {           // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "UnregisterFonts"); null_(&iexec); i_(&iexec, 2500);
-        s_(&iexec, "RegisterFonts"); null_(&iexec); i_(&iexec, 5300);
+        s_(&pk->iexec, "UnregisterFonts"); null_(&pk->iexec); i_(&pk->iexec, 2500);
+        s_(&pk->iexec, "RegisterFonts"); null_(&pk->iexec); i_(&pk->iexec, 5300);
     }
     if (ir->service_count) {        // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "StopServices"); null_(&iexec); i_(&iexec, 1900);
-        s_(&iexec, "DeleteServices"); null_(&iexec); i_(&iexec, 2000);
-        s_(&iexec, "InstallServices"); null_(&iexec); i_(&iexec, 5800);
-        s_(&iexec, "StartServices"); null_(&iexec); i_(&iexec, 5900);
+        s_(&pk->iexec, "StopServices"); null_(&pk->iexec); i_(&pk->iexec, 1900);
+        s_(&pk->iexec, "DeleteServices"); null_(&pk->iexec); i_(&pk->iexec, 2000);
+        s_(&pk->iexec, "InstallServices"); null_(&pk->iexec); i_(&pk->iexec, 5800);
+        s_(&pk->iexec, "StartServices"); null_(&pk->iexec); i_(&pk->iexec, 5900);
     }
     if (ir->search_count) {         // before the launch conditions, which may test the results
-        s_(&iexec, "AppSearch"); null_(&iexec); i_(&iexec, 50);
-        s_(&iui, "AppSearch"); null_(&iui); i_(&iui, 50);
+        s_(&pk->iexec, "AppSearch"); null_(&pk->iexec); i_(&pk->iexec, 50);
+        s_(&pk->iui, "AppSearch"); null_(&pk->iui); i_(&pk->iui, 50);
     }
     if (ir->require_count || ir->scope == 1) {
-        s_(&iexec, "LaunchConditions"); null_(&iexec); i_(&iexec, 100);
-        s_(&iui, "LaunchConditions"); null_(&iui); i_(&iui, 100);
+        s_(&pk->iexec, "LaunchConditions"); null_(&pk->iexec); i_(&pk->iexec, 100);
+        s_(&pk->iui, "LaunchConditions"); null_(&pk->iui); i_(&pk->iui, 100);
     }
     if (ir->ini_count) {            // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "RemoveIniValues"); null_(&iexec); i_(&iexec, 3320);
-        s_(&iexec, "WriteIniValues"); null_(&iexec); i_(&iexec, 5100);
+        s_(&pk->iexec, "RemoveIniValues"); null_(&pk->iexec); i_(&pk->iexec, 3320);
+        s_(&pk->iexec, "WriteIniValues"); null_(&pk->iexec); i_(&pk->iexec, 5100);
     }
     if (ir->env_count) {            // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "RemoveEnvironmentStrings"); null_(&iexec); i_(&iexec, 3310);
-        s_(&iexec, "WriteEnvironmentStrings"); null_(&iexec); i_(&iexec, 5200);
+        s_(&pk->iexec, "RemoveEnvironmentStrings"); null_(&pk->iexec); i_(&pk->iexec, 3310);
+        s_(&pk->iexec, "WriteEnvironmentStrings"); null_(&pk->iexec); i_(&pk->iexec, 5200);
     }
     if (ir->copy_count) {           // MS Learn "Suggested InstallExecuteSequence" (3400 is used by our Undo pairs)
-        s_(&iexec, "RemoveDuplicateFiles"); null_(&iexec); i_(&iexec, 3300);
-        s_(&iexec, "DuplicateFiles"); null_(&iexec); i_(&iexec, 4210);
+        s_(&pk->iexec, "RemoveDuplicateFiles"); null_(&pk->iexec); i_(&pk->iexec, 3300);
+        s_(&pk->iexec, "DuplicateFiles"); null_(&pk->iexec); i_(&pk->iexec, 4210);
     }
     if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "RemoveShortcuts"); null_(&iexec); i_(&iexec, 3200);
-        s_(&iexec, "CreateShortcuts"); null_(&iexec); i_(&iexec, 4500);
+        s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
+        s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
     }
-    if (any_qword) {                // after WriteRegistryValues; the prepare step reads component states
-        s_(&iexec, "RP_QwordPrepare"); null_(&iexec); i_(&iexec, 5010);
-        s_(&iexec, "RP_QwordApplyRollback"); null_(&iexec); i_(&iexec, 5011);
-        s_(&iexec, "RP_QwordApply"); null_(&iexec); i_(&iexec, 5012);
+    if (pk->any_qword) {                // after WriteRegistryValues; the prepare step reads component states
+        s_(&pk->iexec, "RP_QwordPrepare"); null_(&pk->iexec); i_(&pk->iexec, 5010);
+        s_(&pk->iexec, "RP_QwordApplyRollback"); null_(&pk->iexec); i_(&pk->iexec, 5011);
+        s_(&pk->iexec, "RP_QwordApply"); null_(&pk->iexec); i_(&pk->iexec, 5012);
     }
-    if (any_write || any_remove) {  // MS Learn "Suggested InstallExecuteSequence"
-        s_(&iexec, "RemoveRegistryValues"); null_(&iexec); i_(&iexec, 2600);
-        s_(&iexec, "WriteRegistryValues"); null_(&iexec); i_(&iexec, 5000);
+    if (pk->any_write || pk->any_remove) {  // MS Learn "Suggested InstallExecuteSequence"
+        s_(&pk->iexec, "RemoveRegistryValues"); null_(&pk->iexec); i_(&pk->iexec, 2600);
+        s_(&pk->iexec, "WriteRegistryValues"); null_(&pk->iexec); i_(&pk->iexec, 5000);
     }
     if (ir->refuse_below) {
-        s_(&iexec, "RP_RefuseOld"); s_(&iexec, "RP_REFUSED_OLD"); i_(&iexec, 31);
-        s_(&iui, "RP_RefuseOld"); s_(&iui, "RP_REFUSED_OLD"); i_(&iui, 31);
+        s_(&pk->iexec, "RP_RefuseOld"); s_(&pk->iexec, "RP_REFUSED_OLD"); i_(&pk->iexec, 31);
+        s_(&pk->iui, "RP_RefuseOld"); s_(&pk->iui, "RP_REFUSED_OLD"); i_(&pk->iui, 31);
     }
     for (size_t i = 0; i < na; ++i) {
         const rp_ir_action_t *a = &ir->actions[i];
@@ -1287,9 +1355,9 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         };
         for (size_t r = 0; r < sizeof rows / sizeof rows[0]; ++r) {
             const char *name = kprintf(k, "RP_%s_%s", a->id, rows[r].suffix);
-            s_(&customaction, name); i_(&customaction, rows[r].type); s_(&customaction, run->key);
-            s_(&customaction, rows[r].args);
-            s_(&iexec, name); s_(&iexec, rows[r].cond); i_(&iexec, rows[r].seq);
+            s_(&pk->customaction, name); i_(&pk->customaction, rows[r].type); s_(&pk->customaction, run->key);
+            s_(&pk->customaction, rows[r].args);
+            s_(&pk->iexec, name); s_(&pk->iexec, rows[r].cond); i_(&pk->iexec, rows[r].seq);
         }
     }
     static const struct { const char *action; const char *cond; int seq; } ui_rows[] = {
@@ -1298,7 +1366,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         { "MigrateFeatureStates", NULL, 1200 }, { "ExecuteAction", NULL, 1300 },
     };
     for (size_t i = 0; i < sizeof ui_rows / sizeof ui_rows[0]; ++i) {
-        s_(&iui, ui_rows[i].action); s_(&iui, ui_rows[i].cond); i_(&iui, ui_rows[i].seq);
+        s_(&pk->iui, ui_rows[i].action); s_(&pk->iui, ui_rows[i].cond); i_(&pk->iui, ui_rows[i].seq);
     }
     // Administrative installation (msiexec /a: an uncompressed network image) and advertisement
     // (msiexec /jm), from MS Learn "Suggested AdminExecuteSequence / AdvtExecuteSequence" (RFC-0001
@@ -1308,93 +1376,172 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         { "InstallInitialize", 1500 }, { "InstallAdminPackage", 3900 }, { "InstallFiles", 4000 }, { "InstallFinalize", 6600 },
     };
     for (size_t i = 0; i < sizeof admin_exec / sizeof admin_exec[0]; ++i) {
-        s_(&aexec, admin_exec[i].action); null_(&aexec); i_(&aexec, admin_exec[i].seq);
+        s_(&pk->aexec, admin_exec[i].action); null_(&pk->aexec); i_(&pk->aexec, admin_exec[i].seq);
     }
     static const struct { const char *action; int seq; } admin_ui[] = {
         { "CostInitialize", 800 }, { "FileCost", 900 }, { "CostFinalize", 1000 }, { "ExecuteAction", 1300 },
     };
     for (size_t i = 0; i < sizeof admin_ui / sizeof admin_ui[0]; ++i) {
-        s_(&aui, admin_ui[i].action); null_(&aui); i_(&aui, admin_ui[i].seq);
+        s_(&pk->aui, admin_ui[i].action); null_(&pk->aui); i_(&pk->aui, admin_ui[i].seq);
     }
     static const struct { const char *action; int seq; } advt_exec[] = {
         { "CostInitialize", 800 }, { "CostFinalize", 1000 }, { "InstallValidate", 1400 }, { "InstallInitialize", 1500 },
         { "PublishFeatures", 6300 }, { "PublishProduct", 6400 }, { "InstallFinalize", 6600 },
     };
     for (size_t i = 0; i < sizeof advt_exec / sizeof advt_exec[0]; ++i) {
-        s_(&advt, advt_exec[i].action); null_(&advt); i_(&advt, advt_exec[i].seq);
+        s_(&pk->advt, advt_exec[i].action); null_(&pk->advt); i_(&pk->advt, advt_exec[i].seq);
     }
+    return err;
+}
 
-    // Dialog sets (RFC-0005): the tables come from ui.c; its Property, InstallUISequence and Binary
-    // rows join ours.
-    rp_ui_t *ui = NULL;
-    uint8_t *lic = NULL, *rtf = NULL, *banner = NULL;
+// Dialog sets (RFC-0005): the tables come from ui.c; its Property, InstallUISequence and Binary
+// rows join ours.
+static proven_err_t lower_dialogs(pkg_t *pk) {
+    proven_allocator_t alloc = pk->alloc;
+    const rp_ir_t *ir = pk->ir;
     size_t lic_len = 0, rtf_len = 0, banner_len = 0;
-    uint8_t *lang_rtf[RP_UI_LANG_MAX] = { 0 };
     size_t lang_rtf_len[RP_UI_LANG_MAX] = { 0 };
-    if (ir->ui != RP_UI_NONE && err == PROVEN_OK) {
-        if (ir->license_source) {
-            err = rp_pal_read_file(alloc, ir->license_source, 1u << 22, &lic, &lic_len);
-            if (err == PROVEN_OK) {
-                size_t n = strlen(ir->license_source);
-                bool is_rtf = n > 4 && (ir->license_source[n - 1] | 32) == 'f' && (ir->license_source[n - 2] | 32) == 't' &&
-                              (ir->license_source[n - 3] | 32) == 'r' && ir->license_source[n - 4] == '.';
-                if (is_rtf) {
-                    rtf = lic;
-                    rtf_len = lic_len;
-                    lic = NULL;
-                } else {
-                    err = rp_ui_text_to_rtf(alloc, lic, lic_len, has_hangul(lic, lic_len), &rtf, &rtf_len);
-                }
-            }
-        }
-        // RFC-0012: [ui] license-xx, each converted as the common one is.
-        for (size_t li = 0; err == PROVEN_OK && li < ir->ui_lang_count && li < RP_UI_LANG_MAX; ++li) {
-            const char *srcf = ir->ui_langs[li].license_source;
-            if (srcf == NULL) continue;
-            uint8_t *raw = NULL;
-            size_t raw_len = 0;
-            err = rp_pal_read_file(alloc, srcf, 1u << 22, &raw, &raw_len);
-            if (err != PROVEN_OK) break;
-            if (ends_with_rtf(srcf)) {
-                lang_rtf[li] = raw;
-                lang_rtf_len[li] = raw_len;
-            } else {
-                err = rp_ui_text_to_rtf(alloc, raw, raw_len, has_hangul(raw, raw_len), &lang_rtf[li], &lang_rtf_len[li]);
-                rp_mem_free(alloc, raw);
-            }
-        }
-        if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &banner, &banner_len);
+    if (ir->ui == RP_UI_NONE) return PROVEN_OK;
+    proven_err_t err = PROVEN_OK;
+    if (ir->license_source) {
+        err = rp_pal_read_file(alloc, ir->license_source, 1u << 22, &pk->lic, &lic_len);
         if (err == PROVEN_OK) {
-            rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), rtf, rtf_len, banner, banner_len,
-                                 { 0 }, { 0 } };
-            for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
-                in.license_rtf_by_lang[li] = lang_rtf[li];
-                in.license_len_by_lang[li] = lang_rtf_len[li];
-            }
-            err = rp_ui_build(alloc, ir, &in, &ui);
-            if (err == PROVEN_ERR_INVALID_STATE)    // ui.c's own check of its tab orders: our bug, not the input's
-                rp_diag_error(RP_DIAG_INTERNAL, "internal error: a built-in dialog has a broken tab order; please report it");
-        }
-        for (size_t i = 0; ui && i < ui->prop_count; ++i) {
-            if (ui->props[i].value) { s_(&property, ui->props[i].name); s_(&property, ui->props[i].value); }
-        }
-        for (size_t i = 0; ui && i < ui->seq_count; ++i) {
-            s_(&iui, ui->seqs[i].action); s_(&iui, ui->seqs[i].condition); i_(&iui, ui->seqs[i].sequence);
-        }
-        for (size_t i = 0; ui && i < ui->ca_count; ++i) {       // RFC-0012: set-property actions
-            s_(&customaction, ui->cas[i].action); i_(&customaction, 51); s_(&customaction, ui->cas[i].source);
-            s_(&customaction, ui->cas[i].target);
-        }
-        for (size_t t = 0; ui && t < ui->table_count; ++t) {      // ui's Binary rows into ours
-            const rp_msi_wtable_t *wt = &ui->tables[t];
-            if (strcmp(wt->name, "Binary") != 0) continue;
-            for (size_t r = 0; r < wt->row_count; ++r) {
-                const rp_msi_cell_t *c0 = &wt->cells[r * 2], *c1 = &wt->cells[r * 2 + 1];
-                s_(&binary, (const char *)c0->bytes);          // a NUL-terminated literal in ui.c
-                b_(&binary, c1->bytes, c1->len);
+            size_t n = strlen(ir->license_source);
+            bool is_rtf = n > 4 && (ir->license_source[n - 1] | 32) == 'f' && (ir->license_source[n - 2] | 32) == 't' &&
+                          (ir->license_source[n - 3] | 32) == 'r' && ir->license_source[n - 4] == '.';
+            if (is_rtf) {
+                pk->rtf = pk->lic;
+                rtf_len = lic_len;
+                pk->lic = NULL;
+            } else {
+                err = rp_ui_text_to_rtf(alloc, pk->lic, lic_len, has_hangul(pk->lic, lic_len), &pk->rtf, &rtf_len);
             }
         }
     }
+    // RFC-0012: [ui] license-xx, each converted as the common one is.
+    for (size_t li = 0; err == PROVEN_OK && li < ir->ui_lang_count && li < RP_UI_LANG_MAX; ++li) {
+        const char *srcf = ir->ui_langs[li].license_source;
+        if (srcf == NULL) continue;
+        uint8_t *raw = NULL;
+        size_t raw_len = 0;
+        err = rp_pal_read_file(alloc, srcf, 1u << 22, &raw, &raw_len);
+        if (err != PROVEN_OK) break;
+        if (ends_with_rtf(srcf)) {
+            pk->lang_rtf[li] = raw;
+            lang_rtf_len[li] = raw_len;
+        } else {
+            err = rp_ui_text_to_rtf(alloc, raw, raw_len, has_hangul(raw, raw_len), &pk->lang_rtf[li], &lang_rtf_len[li]);
+            rp_mem_free(alloc, raw);
+        }
+    }
+    if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &pk->banner, &banner_len);
+    if (err == PROVEN_OK) {
+        rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), pk->rtf, rtf_len, pk->banner, banner_len,
+                             { 0 }, { 0 } };
+        for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
+            in.license_rtf_by_lang[li] = pk->lang_rtf[li];
+            in.license_len_by_lang[li] = lang_rtf_len[li];
+        }
+        err = rp_ui_build(alloc, ir, &in, &pk->ui);
+        if (err == PROVEN_ERR_INVALID_STATE)    // ui.c's own check of its tab orders: our bug, not the input's
+            rp_diag_error(RP_DIAG_INTERNAL, "internal error: a built-in dialog has a broken tab order; please report it");
+    }
+    for (size_t i = 0; pk->ui && i < pk->ui->prop_count; ++i) {
+        if (pk->ui->props[i].value) { s_(&pk->property, pk->ui->props[i].name); s_(&pk->property, pk->ui->props[i].value); }
+    }
+    for (size_t i = 0; pk->ui && i < pk->ui->seq_count; ++i) {
+        s_(&pk->iui, pk->ui->seqs[i].action); s_(&pk->iui, pk->ui->seqs[i].condition); i_(&pk->iui, pk->ui->seqs[i].sequence);
+    }
+    for (size_t i = 0; pk->ui && i < pk->ui->ca_count; ++i) {       // RFC-0012: set-property actions
+        s_(&pk->customaction, pk->ui->cas[i].action); i_(&pk->customaction, 51); s_(&pk->customaction, pk->ui->cas[i].source);
+        s_(&pk->customaction, pk->ui->cas[i].target);
+    }
+    for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {      // ui's Binary rows into ours
+        const rp_msi_wtable_t *wt = &pk->ui->tables[t];
+        if (strcmp(wt->name, "Binary") != 0) continue;
+        for (size_t r = 0; r < wt->row_count; ++r) {
+            const rp_msi_cell_t *c0 = &wt->cells[r * 2], *c1 = &wt->cells[r * 2 + 1];
+            s_(&pk->binary, (const char *)c0->bytes);          // a NUL-terminated literal in ui.c
+            b_(&pk->binary, c1->bytes, c1->len);
+        }
+    }
+    return err;
+}
+
+static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
+                                  dirs_t *dirs, const char *product_code, const char *package_code,
+                                  const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
+                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs) {
+    pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
+                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1" };
+    pkg_t *pk = &pkg;
+    rows_init(&pk->property, alloc, "Property", property_cols, 2);
+    rows_init(&pk->directory, alloc, "Directory", directory_cols, 3);
+    rows_init(&pk->component, alloc, "Component", component_cols, 6);
+    rows_init(&pk->feature, alloc, "Feature", feature_cols, 8);
+    rows_init(&pk->featurecomp, alloc, "FeatureComponents", featurecomp_cols, 2);
+    rows_init(&pk->file, alloc, "File", file_cols, 8);
+    rows_init(&pk->filehash, alloc, "MsiFileHash", filehash_cols, 6);
+    rows_init(&pk->media, alloc, "Media", media_cols, 6);
+    rows_init(&pk->upgrade, alloc, "Upgrade", upgrade_cols, 7);
+    rows_init(&pk->customaction, alloc, "CustomAction", customaction_cols, 4);
+    rows_init(&pk->iexec, alloc, "InstallExecuteSequence", sequence_cols, 3);
+    rows_init(&pk->iui, alloc, "InstallUISequence", sequence_cols, 3);
+    rows_init(&pk->aexec, alloc, "AdminExecuteSequence", sequence_cols, 3);
+    rows_init(&pk->aui, alloc, "AdminUISequence", sequence_cols, 3);
+    rows_init(&pk->advt, alloc, "AdvtExecuteSequence", sequence_cols, 3);
+    rows_init(&pk->createfolder, alloc, "CreateFolder", createfolder_cols, 2);
+    rows_init(&pk->registry, alloc, "Registry", registry_cols, 6);
+    rows_init(&pk->removereg, alloc, "RemoveRegistry", removereg_cols, 5);
+    rows_init(&pk->shortcut, alloc, "Shortcut", shortcut_cols, 12);
+    rows_init(&pk->removefile, alloc, "RemoveFile", removefile_cols, 5);
+    rows_init(&pk->duplicate, alloc, "DuplicateFile", duplicate_cols, 5);
+    rows_init(&pk->environment, alloc, "Environment", environment_cols, 4);
+    rows_init(&pk->inifile, alloc, "IniFile", inifile_cols, 8);
+    rows_init(&pk->removeini, alloc, "RemoveIniFile", removeini_cols, 8);
+    rows_init(&pk->launch, alloc, "LaunchCondition", launch_cols, 2);
+    rows_init(&pk->appsearch, alloc, "AppSearch", appsearch_cols, 2);
+    rows_init(&pk->reglocator, alloc, "RegLocator", reglocator_cols, 5);
+    rows_init(&pk->drlocator, alloc, "DrLocator", drlocator_cols, 4);
+    rows_init(&pk->signature, alloc, "Signature", signature_cols, 9);
+    rows_init(&pk->complocator, alloc, "CompLocator", complocator_cols, 3);
+    rows_init(&pk->svcinstall, alloc, "ServiceInstall", svcinstall_cols, 13);
+    rows_init(&pk->svccontrol, alloc, "ServiceControl", svccontrol_cols, 6);
+    rows_init(&pk->font, alloc, "Font", font_cols, 2);
+    rows_init(&pk->lockperm, alloc, "MsiLockPermissionsEx", lockperm_cols, 5);
+    rows_init(&pk->binary, alloc, "Binary", binary_cols, 2);
+    rows_init(&pk->icon, alloc, "Icon", icon_cols, 2);
+    rows_init(&pk->condition, alloc, "Condition", condition_cols, 3);
+    // The P3 tables are written only when they have rows, so packages without them stay as they were.
+    rows_t *all[] = { &pk->property, &pk->directory, &pk->component, &pk->feature, &pk->featurecomp, &pk->file,
+                      &pk->filehash, &pk->media, &pk->upgrade, &pk->customaction, &pk->iexec, &pk->iui, &pk->createfolder,
+                      &pk->aexec, &pk->aui, &pk->advt, &pk->registry, &pk->removereg, &pk->shortcut, &pk->removefile,
+                      &pk->duplicate, &pk->environment, &pk->inifile, &pk->removeini, &pk->launch, &pk->appsearch,
+                      &pk->reglocator, &pk->drlocator, &pk->signature, &pk->complocator, &pk->svcinstall, &pk->svccontrol,
+                      &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition };
+    const size_t always = 16;
+
+    lower_properties(pk, product_code);
+    lower_directories(pk);
+    lower_features(pk);
+    lower_files(pk);
+    lower_registry(pk);
+    lower_shortcuts(pk);
+    lower_removes(pk);
+    lower_env(pk);
+    lower_ini(pk);
+    lower_services(pk);
+    lower_helper_actions(pk);
+    lower_permissions(pk);
+    lower_fonts(pk);
+    lower_searches(pk);
+    lower_copies(pk);
+    lower_folders(pk);
+    proven_err_t err = lower_cabinets(pk, cab_stem, limits, jobs);
+    lower_upgrade(pk);
+    proven_err_t seq_err = lower_sequences(pk);
+    if (seq_err != PROVEN_OK) err = seq_err;
+    if (err == PROVEN_OK) err = lower_dialogs(pk);
 
     // Summary information: ASCII strings only, no code page (DECISIONS P1a/P1b).
     const char *subject = ir->summary_name ? ir->summary_name : is_ascii(ir->name) ? ir->name : "rubrapack package";
@@ -1437,36 +1584,36 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
             // AppSearch looks a folder-type RegLocator up in Signature, which must then exist even
             // when empty (error 2228 otherwise: RFC-0012 V5 on the VM).
-            bool need = all[i] == &signature && reglocator_dir;
+            bool need = all[i] == &pk->signature && pk->reglocator_dir;
             if (i < always || all[i]->t.row_count > 0 || need) tables[nt++] = all[i]->t;
         }
-        for (size_t t = 0; ui && t < ui->table_count; ++t) {
-            if (strcmp(ui->tables[t].name, "Binary") != 0) tables[nt++] = ui->tables[t];
+        for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {
+            if (strcmp(pk->ui->tables[t].name, "Binary") != 0) tables[nt++] = pk->ui->tables[t];
         }
-        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, streams, ir->cab_external ? 0 : nstreams };
+        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, pk->streams, ir->cab_external ? 0 : pk->nstreams };
         err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
         if (err == PROVEN_OK) err = rp_msi_write(alloc, &db, 12, limits, out, len);
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
     if (!ir->cab_external) {
-        for (size_t i = 0; i < nstreams; ++i) rp_mem_free(alloc, (void *)streams[i].data);
+        for (size_t i = 0; i < pk->nstreams; ++i) rp_mem_free(alloc, (void *)pk->streams[i].data);
     }
-    rp_mem_free(alloc, streams);
-    rp_mem_free(alloc, group_end);
-    rp_ui_free(alloc, ui);
-    rp_mem_free(alloc, lic);
-    rp_mem_free(alloc, rtf);
-    rp_mem_free(alloc, banner);
-    for (size_t i = 0; icons && i < nicons; ++i) rp_mem_free(alloc, icons[i].data);
-    rp_mem_free(alloc, icons);
-    for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) rp_mem_free(alloc, lang_rtf[li]);
+    rp_mem_free(alloc, pk->streams);
+    rp_mem_free(alloc, pk->group_end);
+    rp_ui_free(alloc, pk->ui);
+    rp_mem_free(alloc, pk->lic);
+    rp_mem_free(alloc, pk->rtf);
+    rp_mem_free(alloc, pk->banner);
+    for (size_t i = 0; pk->icons && i < pk->nicons; ++i) rp_mem_free(alloc, pk->icons[i].data);
+    rp_mem_free(alloc, pk->icons);
+    for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) rp_mem_free(alloc, pk->lang_rtf[li]);
     rp_mem_free(alloc, summary);
     if (ir->cab_external) {
         if (err == PROVEN_OK) {
-            *xcabs = ext;
-            *nxcabs = nstreams;
+            *xcabs = pk->ext;
+            *nxcabs = pk->nstreams;
         } else {
-            rp_build_files_free(alloc, ext, nstreams);
+            rp_build_files_free(alloc, pk->ext, pk->nstreams);
         }
     }
     return err;
