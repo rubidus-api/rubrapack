@@ -31,7 +31,26 @@ typedef struct {
     const char *proxy;                  // --proxy http://host:port (else https_proxy/http_proxy, no_proxy)
     bool        system_roots;           // --system-roots: the operating system's roots for it too
     bool        allow_unsigned_cabs;
+    // A key that stays where it is (RFC-0011 P9b): a PKCS#11 token, or the Windows store.
+    const char *pkcs11, *key_label, *token_label;   // --pkcs11 <module> --key-label <label> [--token-label <label>]
+    const char *pin_env, *pin_file;                 // --pin-env VAR | --pin-file FILE (never on the command line)
+    const char *key_store;                          // --key-store <SHA-1 thumbprint> (Windows)
+    bool        machine_store;                      // --machine-store: LocalMachine\My instead of CurrentUser\My
 } rp_sign_args_t;
+
+// "2026-09-27T07:44:31Z" from seconds since 1970.
+void rp_iso_time(int64_t t, char out[64]);
+
+// `rubrapack keys list` (RFC-0011 P9b): the keys that can sign, in a PKCS#11 token or the Windows store.
+[[nodiscard]] int rp_cmd_keys(int argc, char **argv);
+
+// Whether a signing key was given (--key, --pkcs11 or --key-store).
+static inline bool rp_sign_wanted(const rp_sign_args_t *a) { return a->key || a->pkcs11 || a->key_store; }
+
+// Takes one of the key options (--key, --cert, --pass-env, --pass-file, --pkcs11, --key-label,
+// --token-label, --pin-env, --pin-file, --key-store, --machine-store): 1 or 2 arguments used, 0 when
+// `arg` is none of them.
+[[nodiscard]] int rp_sign_key_option(rp_sign_args_t *a, const char *arg, const char *next);
 
 // Signs a PE file or an MSI package held in memory; prints its own diagnostics (`label` names the
 // file) and returns an exit code.

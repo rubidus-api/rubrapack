@@ -60,6 +60,13 @@ typedef struct {
     rp_rsa_key_t       rsa;         // points into key_der (RSA keys)
     bool               ec;          // an EC key (RFC-0011 W6): ec_curve and the scalar in key_der
     int                ec_curve;    // RP_EC_P256 or RP_EC_P384
+    // A key that stays in a token or a key store (RFC-0011 P9b: PKCS#11, NCrypt): the signature
+    // over one digest is made there - RSA PKCS#1 v1.5, or ECDSA as DER SEQUENCE { r, s } - and
+    // certs[ext_leaf] is its certificate. key_der is NULL then.
+    proven_err_t     (*ext_sign)(void *ctx, int alg, const uint8_t *digest, uint8_t *sig, size_t *sig_len, const char **why);
+    void             (*ext_free)(void *ctx);
+    void              *ext_ctx;
+    int                ext_leaf;
     uint8_t          **certs;       // DER certificates in file order (owned)
     size_t            *cert_len;
     size_t             cert_count;

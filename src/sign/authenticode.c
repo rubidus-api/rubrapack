@@ -161,7 +161,16 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
     proven_err_t err = signed_set.err;
     if (err == PROVEN_OK) {
         rp_hash(alg, signed_set.data, signed_set.len, attrs_hash);
-        if (kf->ec) {
+        if (kf->ext_sign) {
+            // A token or key store makes the signature (RFC-0011 P9b); it is checked with the
+            // certificate before it goes into the file.
+            sig_len = sizeof sig;
+            err = kf->ext_sign(kf->ext_ctx, (int)alg, attrs_hash, sig, &sig_len, why);
+            if (err == PROVEN_OK && !rp_cert_verify_sig(&lc, alg, attrs_hash, sig, sig_len)) {
+                *why = "the token's signature does not verify with the certificate (the key and the certificate do not belong together)";
+                err = PROVEN_ERR_INVALID_STATE;
+            }
+        } else if (kf->ec) {
             // ECDSA (RFC 6979): the signature as DER SEQUENCE { r, s }, as Windows writes it.
             uint8_t r[48], sv[48];
             size_t n = rp_ec_size((rp_ec_curve_t)kf->ec_curve);
@@ -184,7 +193,9 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
         } else {
             err = rp_rsa_sign(&kf->rsa, alg, attrs_hash, sig, &sig_len);
         }
-        if (err != PROVEN_OK) *why = err == PROVEN_ERR_IO ? "the system random source failed" : "the private key does not work (or does not match its certificate)";
+        if (err != PROVEN_OK && !kf->ext_sign) {
+            *why = err == PROVEN_ERR_IO ? "the system random source failed" : "the private key does not work (or does not match its certificate)";
+        }
     }
 
     // SignerInfo.

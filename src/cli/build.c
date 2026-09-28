@@ -62,7 +62,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         size_t bl = 0;
         const char *why = NULL;
         err = rp_msix_bundle(heap, parts, n, &lim, &b, &bl, &why);
-        if (err == PROVEN_OK && sign->key) {                // --key: the packages, then the bundle
+        if (err == PROVEN_OK && rp_sign_wanted(sign)) {    // --key: the packages, then the bundle
             uint8_t *sb = NULL;
             size_t sl = 0;
             rc = rp_sign_bytes(sign, out, b, bl, &sb, &sl);
@@ -102,6 +102,15 @@ static int run(int argc, char **argv, bool lint) {
     for (int i = 2; i < argc; ++i) {
         const char *a = argv[i];
         const char *next = i + 1 < argc ? argv[i + 1] : NULL;
+        int used = lint ? 0 : rp_sign_key_option(&sign, a, next);     // --key, --pkcs11, --key-store and theirs
+        if (used) {
+            i += used - 1;
+            continue;
+        }
+        if (strcmp(a, "--pin") == 0 || strncmp(a, "--pin=", 6) == 0) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file");
+            goto done;
+        }
         if (lint && strcmp(a, "--strict") == 0) {
             strict = true;
         } else if (!lint && strcmp(a, "-o") == 0 && next) {
@@ -136,12 +145,9 @@ static int run(int argc, char **argv, bool lint) {
         } else if (strcmp(a, "--compress") == 0 && next) {
             compress = next;
             ++i;
-        } else if (!lint && (strcmp(a, "--key") == 0 || strcmp(a, "--cert") == 0 || strcmp(a, "--pass-env") == 0 ||
-                             strcmp(a, "--pass-file") == 0 || strcmp(a, "--timestamp") == 0 || strcmp(a, "--tsa-trust") == 0 ||
-                             strcmp(a, "--tls-trust") == 0 || strcmp(a, "--proxy") == 0) && next) {
-            const char **slot = strcmp(a, "--key") == 0 ? &sign.key : strcmp(a, "--cert") == 0 ? &sign.cert
-                              : strcmp(a, "--pass-env") == 0 ? &sign.pass_env : strcmp(a, "--pass-file") == 0 ? &sign.pass_file
-                              : strcmp(a, "--timestamp") == 0 ? &sign.timestamp : strcmp(a, "--tsa-trust") == 0 ? &sign.tsa_trust
+        } else if (!lint && (strcmp(a, "--timestamp") == 0 || strcmp(a, "--tsa-trust") == 0 || strcmp(a, "--tls-trust") == 0 ||
+                             strcmp(a, "--proxy") == 0) && next) {
+            const char **slot = strcmp(a, "--timestamp") == 0 ? &sign.timestamp : strcmp(a, "--tsa-trust") == 0 ? &sign.tsa_trust
                               : strcmp(a, "--proxy") == 0 ? &sign.proxy : &sign.tls_trust;
             *slot = next;
             ++i;
@@ -186,7 +192,7 @@ static int run(int argc, char **argv, bool lint) {
     if (lint && src) {
         out = "package.msi";        // names the external cabinets only; nothing is written
     }
-    if (!lint && (sign.cert || sign.pass_env || sign.pass_file || sign.allow_unsigned_cabs || sign.timestamp) && sign.key == NULL) {
+    if (!lint && (sign.cert || sign.allow_unsigned_cabs || sign.timestamp) && !rp_sign_wanted(&sign)) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key");
         goto done;
     }
@@ -237,7 +243,7 @@ static int run(int argc, char **argv, bool lint) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--compress is for .msi; an MSIX takes --msix-compress deflate|store");
         goto done;
     }
-    if (msix && sign.key && msix_opt.unsigned_test) {
+    if (msix && rp_sign_wanted(&sign) && msix_opt.unsigned_test) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--unsigned-test is for packages without a signature; with --key leave it out");
         goto done;
     }
@@ -288,7 +294,7 @@ static int run(int argc, char **argv, bool lint) {
             err = rp_msix_from_ir(heap, &ir, &msix_opt, &pkg, &pkg_len, &d);
             rp_ir_free(&ir);
             int sign_rc = RP_EXIT_OK;
-            if (err == PROVEN_OK && sign.key) {             // --key: signed before anything is written
+            if (err == PROVEN_OK && rp_sign_wanted(&sign)) {   // --key: signed before anything is written
                 uint8_t *signed_pkg = NULL;
                 size_t signed_len = 0;
                 sign_rc = rp_sign_bytes(&sign, out, pkg, pkg_len, &signed_pkg, &signed_len);
@@ -323,7 +329,7 @@ static int run(int argc, char **argv, bool lint) {
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
             rp_ir_free(&ir);
             // --key: signed before anything is written (the same code as `rubrapack sign`).
-            if (err == PROVEN_OK && !lint && sign.key) {
+            if (err == PROVEN_OK && !lint && rp_sign_wanted(&sign)) {
                 uint8_t *signed_msi = NULL;
                 size_t signed_len = 0;
                 int src_rc = rp_sign_bytes(&sign, out, msi, msi_len, &signed_msi, &signed_len);

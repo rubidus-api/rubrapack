@@ -514,7 +514,7 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
                 [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
-                [--key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
+                [<key> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
@@ -526,11 +526,18 @@ rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
 rubrapack lint <file.msi|file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
-rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
+rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> <key> [--cert <chain.pem>]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
+rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]
 rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
 rubrapack version | help [command]
+
+<key> is one of:
+  --key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE]                   a key file
+  --pkcs11 <module> --key-label <label> [--token-label <label>]
+           [--pin-env VAR | --pin-file FILE]                                  a key in a PKCS#11 token
+  --key-store <SHA-1 thumbprint> [--machine-store]                            a key in the Windows store
 ```
 
 - Command-line options override the source.
@@ -604,7 +611,23 @@ rubrapack version | help [command]
   the command line. A file that is signed already is refused. An MSIX's `[msix] publisher` must be
   the certificate's subject as Windows writes it - its parts from last to first, as
   `O=Example Ltd, CN=Example` - or signing stops and prints the subject to use; `--unsigned-test`
-  and `--key` do not go together.
+  and a key do not go together.
+- A key that must not leave its hardware - required for publicly trusted code-signing
+  certificates since 2023 - stays there: rubrapack computes the hashes, the CMS structure and the
+  timestamp request itself and asks only for the one signature. `--pkcs11 <module>` loads the
+  token's PKCS#11 library (the only library rubrapack ever loads, and only this one you name),
+  logs in with the PIN from `--pin-env` or `--pin-file` (never the command line), and uses the
+  private key labelled `--key-label` with the certificate stored under the same ID on the token
+  (`--cert` supplies it, or the rest of the chain, when the token has none); with several tokens
+  present, `--token-label` picks one. On Windows, `--key-store <thumbprint>` uses a certificate
+  in the current user's personal store (`--machine-store`: the local machine's) whose private key
+  is reachable through NCrypt - a smart card, a token or TPM through its key storage provider, or a
+  software key - and takes the chain Windows builds for it. RSA and ECDSA keys both work. Every
+  signature is checked with the certificate before it is written.
+- `keys list` shows the keys that can sign: with `--pkcs11`, each private key on the token(s) with
+  its label, ID and certificate; on Windows without it, the certificates with a private key in the
+  personal stores, with their thumbprints. For each it prints the MSIX publisher that certificate
+  signs for and when it expires; nothing secret.
 - `--timestamp <URL>` asks an RFC 3161 time-stamping server to countersign the signature, so that
   it stays valid after the certificate expires; without it `sign` and `build --key` warn that it
   will not. There is no default server and nothing goes over the network unless you name one.

@@ -619,6 +619,7 @@ proven_err_t rp_keyfile_add_roots(rp_keyfile_t *kf, const uint8_t *data, size_t 
 }
 
 void rp_keyfile_free(rp_keyfile_t *kf) {
+    if (kf->ext_free) kf->ext_free(kf->ext_ctx);
     if (kf->key_der) {
         rp_wipe(kf->key_der, kf->key_len);
         rp_mem_free(kf->alloc, kf->key_der);
@@ -630,6 +631,7 @@ void rp_keyfile_free(rp_keyfile_t *kf) {
 }
 
 int rp_keyfile_leaf(const rp_keyfile_t *kf) {
+    if (kf->ext_sign) return kf->ext_leaf < (int)kf->cert_count ? kf->ext_leaf : -1;
     for (size_t i = 0; i < kf->cert_count; ++i) {
         rp_cert_t c;
         if (!rp_cert_parse(kf->certs[i], kf->cert_len[i], &c, NULL)) continue;

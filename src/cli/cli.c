@@ -21,11 +21,13 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs]]",
+    { "build",   "build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
                  "build a package from a source file", true },
-    { "sign",    "sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--allow-unsigned-cabs] [-o <out>]",
-                 "sign a PE file or an MSI package", true },
-    { "verify",  "verify <file.exe|.dll|.msi> [--trust <certificate>]...",
+    { "sign",    "sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
+                 "sign a PE file, an MSI package, an MSIX package or bundle", true },
+    { "keys",    "keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]",
+                 "list the keys a token or the Windows certificate store can sign with", true },
+    { "verify",  "verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificate>]...",
                  "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
@@ -35,7 +37,6 @@ static const command_t commands[] = {
                  "check a source or package without writing anything", true },
     { "new",     "new [msi] <name>", "write a starter source file <name>.rpk", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
-    { "keys",    "keys list [--store|--pkcs11 <module>]", "list usable signing keys", false },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },
 };
@@ -155,6 +156,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "new") == 0) return rp_cmd_new(argc, argv);
     if (strcmp(name, "guid") == 0) return rp_cmd_guid(argc, argv);
     if (strcmp(name, "sign") == 0) return rp_cmd_sign(argc, argv);
+    if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
 
     char buf[256];

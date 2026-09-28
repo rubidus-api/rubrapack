@@ -152,6 +152,11 @@ static bool windows_name(proven_allocator_t alloc, rp_der_span_t name, char *out
     return ok;
 }
 
+bool rp_msix_publisher_of(proven_allocator_t alloc, const uint8_t *cert, size_t len, char *out, size_t cap) {
+    rp_cert_t c;
+    return rp_cert_parse(cert, len, &c, NULL) && windows_name(alloc, c.subject, out, cap);
+}
+
 // ---- signing --------------------------------------------------------------------------------------
 
 static char why_buf[1400];

@@ -70,6 +70,10 @@ void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t 
 // certificate's subject as Windows writes it (last RDN first). A signed package is refused.
 [[nodiscard]] proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_keyfile_t *kf, int64_t now,
                                         const rp_timestamper_t *ts, uint8_t **out, size_t *out_len, const char **why);
+// The MSIX Publisher a certificate (DER) signs for: its subject written the way Windows writes it
+// (the RDNs last to first, "A=v, B=v"). False when it cannot be written.
+[[nodiscard]] bool rp_msix_publisher_of(proven_allocator_t alloc, const uint8_t *cert, size_t len, char *out, size_t cap);
+
 // Checks a signed package or bundle: the package itself (rp_msix_open), the signature, and the
 // AppX record of hashes against the file (AXCI when it has a CodeIntegrity.cat); for a bundle each
 // package's own signature too. The spans in *r point into *sig (free with rp_mem_free).

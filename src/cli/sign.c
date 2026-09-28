@@ -5,11 +5,13 @@
 
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
+#include "rubrapack/keys.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/sign.h"
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +26,117 @@ static bool is_zip(const uint8_t *d, size_t n) { return n >= 4 && memcmp(d, "PK\
 static bool is_cfb(const uint8_t *d, size_t n) {
     static const uint8_t sig[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
     return n >= 8 && memcmp(d, sig, 8) == 0;
+}
+
+int rp_sign_key_option(rp_sign_args_t *a, const char *arg, const char *next) {
+    static const struct {
+        const char *name;
+        size_t      field;
+    } opts[] = {
+        { "--key", offsetof(rp_sign_args_t, key) },           { "--cert", offsetof(rp_sign_args_t, cert) },
+        { "--pass-env", offsetof(rp_sign_args_t, pass_env) }, { "--pass-file", offsetof(rp_sign_args_t, pass_file) },
+        { "--pkcs11", offsetof(rp_sign_args_t, pkcs11) },     { "--key-label", offsetof(rp_sign_args_t, key_label) },
+        { "--token-label", offsetof(rp_sign_args_t, token_label) }, { "--pin-env", offsetof(rp_sign_args_t, pin_env) },
+        { "--pin-file", offsetof(rp_sign_args_t, pin_file) }, { "--key-store", offsetof(rp_sign_args_t, key_store) },
+    };
+    if (strcmp(arg, "--machine-store") == 0) {
+        a->machine_store = true;
+        return 1;
+    }
+    for (size_t i = 0; i < sizeof opts / sizeof opts[0]; ++i) {
+        if (strcmp(arg, opts[i].name) == 0 && next) {
+            const char **slot = (const char **)((char *)a + opts[i].field);
+            *slot = next;
+            return 2;
+        }
+    }
+    return 0;
+}
+
+// The key options that go together (usage errors otherwise), or NULL when they are fine.
+static const char *key_options_problem(const rp_sign_args_t *a) {
+    int kinds = (a->key != NULL) + (a->pkcs11 != NULL) + (a->key_store != NULL);
+    if (kinds > 1) return "give one of --key, --pkcs11 and --key-store";
+    if ((a->pass_env || a->pass_file) && !a->key) return "--pass-env and --pass-file go with --key (a token takes --pin-env or --pin-file)";
+    if (a->pass_env && a->pass_file) return "give --pass-env or --pass-file, not both";
+    if ((a->key_label || a->token_label || a->pin_env || a->pin_file) && !a->pkcs11) return "--key-label, --token-label, --pin-env and --pin-file go with --pkcs11";
+    if (a->pkcs11 && !a->key_label) return "--pkcs11 needs --key-label";
+    if (a->pin_env && a->pin_file) return "give --pin-env or --pin-file, not both";
+    if (a->machine_store && !a->key_store) return "--machine-store goes with --key-store";
+    return NULL;
+}
+
+// A secret from an environment variable or a file (one closing line break dropped); never from the
+// command line. RP_EXIT_OK, or the exit code after a diagnostic.
+static int read_secret(proven_allocator_t heap, const char *env, const char *file, const char *what, uint8_t **out, size_t *len) {
+    *out = NULL;
+    *len = 0;
+    if (env) {
+        char *v = rp_pal_getenv(heap, env);
+        if (v == NULL) {
+            rp_diag_error(RP_DIAG_SIGN, "%s %s: the variable is not set", what, env);
+            return RP_EXIT_USAGE;
+        }
+        *out = (uint8_t *)v;
+        *len = strlen(v);
+    } else if (file) {
+        if (rp_pal_read_file(heap, file, 4096, out, len) != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the %s file '%s'", what, file);
+            return RP_EXIT_IO;
+        }
+        if (*len && (*out)[*len - 1] == '\n') --*len;
+        if (*len && (*out)[*len - 1] == '\r') --*len;
+    }
+    return RP_EXIT_OK;
+}
+
+// A key in a token (--pkcs11) or the Windows store (--key-store), and --cert.
+static int load_external(proven_allocator_t heap, const rp_sign_args_t *a, rp_keyfile_t *kf) {
+    const char *why = NULL;
+    proven_err_t err;
+    if (a->pkcs11) {
+        uint8_t *pin = NULL;
+        size_t pin_len = 0;
+        int rc = read_secret(heap, a->pin_env, a->pin_file, a->pin_env ? "--pin-env" : "--pin-file", &pin, &pin_len);
+        if (rc != RP_EXIT_OK) return rc;
+        err = rp_pkcs11_open(heap, a->pkcs11, a->token_label, a->key_label, pin, pin_len, kf, &why);
+        if (pin) {
+            rp_wipe(pin, pin_len);
+            rp_mem_free(heap, pin);
+        }
+    } else {
+        err = rp_ncrypt_open(heap, a->key_store, a->machine_store, kf, &why);
+    }
+    if (err != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_SIGN, "%s: %s", a->pkcs11 ? "PKCS#11 token" : "certificate store", why ? why : "cannot use the key");
+        return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : err == PROVEN_ERR_UNSUPPORTED ? RP_EXIT_USAGE : RP_EXIT_SIGN;
+    }
+    if (kf->cert_count == 0 && a->cert == NULL) {
+        rp_diag_error(RP_DIAG_SIGN, "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)");
+        rp_keyfile_free(kf);
+        return RP_EXIT_SIGN;
+    }
+    if (a->cert) {
+        uint8_t *data = NULL;
+        size_t len = 0;
+        if (rp_pal_read_file(heap, a->cert, MAX_KEY, &data, &len) != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_INPUT, "cannot read the certificate file '%s'", a->cert);
+            rp_keyfile_free(kf);
+            return RP_EXIT_IO;
+        }
+        err = rp_keyfile_add_certs(kf, data, len, &why);
+        rp_mem_free(heap, data);
+        if (err != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_SIGN, "certificate file '%s': %s", a->cert, why ? why : "unreadable");
+            rp_keyfile_free(kf);
+            return RP_EXIT_SIGN;
+        }
+    }
+    rp_cert_t c;                        // an EC key's curve, from its certificate
+    if (kf->ec && kf->cert_count && rp_cert_parse(kf->certs[kf->ext_leaf], kf->cert_len[kf->ext_leaf], &c, NULL) && c.ec_curve >= 0) {
+        kf->ec_curve = c.ec_curve;
+    }
+    return RP_EXIT_OK;
 }
 
 // Loads --key (with its password) and --cert into kf. The exit code, or RP_EXIT_OK.
@@ -143,7 +256,12 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
     if (rc == RP_EXIT_OK && a->tls_trust) rc = load_anchors(heap, &a->tls_trust, 1, &tls_kf, &tls_anchors);
     if (rc == RP_EXIT_OK && a->system_roots) rc = load_system_roots(heap, &tls_kf, &tls_anchors);
     rp_keyfile_t kf;
-    if (rc == RP_EXIT_OK) rc = load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf);
+    const char *problem = key_options_problem(a);
+    if (rc == RP_EXIT_OK && problem) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", problem);
+        rc = RP_EXIT_USAGE;
+    }
+    if (rc == RP_EXIT_OK) rc = a->key ? load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf) : load_external(heap, a, &kf);
     if (rc != RP_EXIT_OK) {
         rp_mem_free(heap, tsa_anchors);
         rp_mem_free(heap, tls_anchors);
@@ -185,10 +303,18 @@ int rp_cmd_sign(int argc, char **argv) {
     const char *file = NULL, *out = NULL;
     for (int i = 2; i < argc; ++i) {
         const char *arg = argv[i], *next = i + 1 < argc ? argv[i + 1] : NULL;
-        const char **slot = strcmp(arg, "--key") == 0 ? &a.key : strcmp(arg, "--cert") == 0 ? &a.cert : strcmp(arg, "--pass-env") == 0 ? &a.pass_env
-                          : strcmp(arg, "--pass-file") == 0 ? &a.pass_file : strcmp(arg, "--timestamp") == 0 ? &a.timestamp
-                          : strcmp(arg, "--tsa-trust") == 0 ? &a.tsa_trust : strcmp(arg, "--tls-trust") == 0 ? &a.tls_trust
-                          : strcmp(arg, "--proxy") == 0 ? &a.proxy : strcmp(arg, "-o") == 0 ? &out : NULL;
+        int used = rp_sign_key_option(&a, arg, next);
+        if (used) {
+            i += used - 1;
+            continue;
+        }
+        if (strcmp(arg, "--pin") == 0 || strncmp(arg, "--pin=", 6) == 0) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file");
+            return RP_EXIT_USAGE;
+        }
+        const char **slot = strcmp(arg, "--timestamp") == 0 ? &a.timestamp : strcmp(arg, "--tsa-trust") == 0 ? &a.tsa_trust
+                          : strcmp(arg, "--tls-trust") == 0 ? &a.tls_trust : strcmp(arg, "--proxy") == 0 ? &a.proxy
+                          : strcmp(arg, "-o") == 0 ? &out : NULL;
         if (slot && next) {
             *slot = next;
             ++i;
@@ -206,8 +332,8 @@ int rp_cmd_sign(int argc, char **argv) {
             file = arg;
         }
     }
-    if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
+    if (file == NULL || !rp_sign_wanted(&a) || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -234,7 +360,7 @@ int rp_cmd_sign(int argc, char **argv) {
 }
 
 // "2026-09-27T07:44:31Z" from seconds since 1970 (days to civil date, proleptic Gregorian).
-static void iso_time(int64_t t, char out[64]) {
+void rp_iso_time(int64_t t, char out[64]) {
     int64_t days = t / 86400, secs = t % 86400;
     if (secs < 0) {
         secs += 86400;
@@ -334,7 +460,7 @@ int rp_cmd_verify(int argc, char **argv) {
             ts_ok = false;
             snprintf(ts_line, sizeof ts_line, "invalid - %s", ts_why);
         } else {
-            iso_time(t.gen_time, when);
+            rp_iso_time(t.gen_time, when);
             if (ntsa == 0) {
                 snprintf(ts_line, sizeof ts_line, "%s, TSA not-checked (give --tsa-trust)", when);
             } else if (rp_chain_trusted_for(t.tsa_cert, t.certs, ta, tsa_anchors.cert_count, t.gen_time, RP_PURPOSE_TIMESTAMP, &ts_why)) {
