@@ -3,6 +3,8 @@
 
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+
+#include <stdatomic.h>
 #include "rubrapack/text.h"
 
 #include <stdlib.h>
@@ -407,4 +409,108 @@ proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ct
     }
     CertCloseStore(store, 0);
     return count ? PROVEN_OK : PROVEN_ERR_NOT_FOUND;
+}
+
+// ---- parallel work (RFC-0013 E2) ----------------------------------------------------------------
+
+typedef struct {
+    void (*fn)(void *ctx, size_t i);
+    void *ctx;
+    size_t count;
+    _Atomic size_t next;
+} rp_work_t;
+
+static void rp_work_run(rp_work_t *w) {
+    for (;;) {
+        size_t i = atomic_fetch_add(&w->next, 1);
+        if (i >= w->count) return;
+        w->fn(w->ctx, i);
+    }
+}
+
+size_t rp_pal_cpu_count(void) {
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return si.dwNumberOfProcessors ? (size_t)si.dwNumberOfProcessors : 1;
+}
+
+static DWORD WINAPI rp_work_thread(LPVOID arg) {
+    rp_work_run(arg);
+    return 0;
+}
+
+void rp_pal_parallel_for(size_t jobs, size_t count, void (*fn)(void *ctx, size_t i), void *ctx) {
+    rp_work_t w = { .fn = fn, .ctx = ctx, .count = count };
+    atomic_init(&w.next, 0);
+    if (jobs > count) jobs = count;
+    if (jobs > 64) jobs = 64;
+    HANDLE t[64];
+    size_t started = 0;
+    for (size_t k = 1; k < jobs; ++k) {
+        HANDLE h = CreateThread(NULL, 0, rp_work_thread, &w, 0, NULL);
+        if (h) t[started++] = h;
+    }
+    rp_work_run(&w);
+    for (size_t k = 0; k < started; ++k) {
+        WaitForSingleObject(t[k], INFINITE);
+        CloseHandle(t[k]);
+    }
+}
+
+// ---- mapped files (RFC-0013 E1) ------------------------------------------------------------------
+
+struct rp_map {
+    HANDLE      file, mapping;
+    const void *view;
+};
+
+proven_err_t rp_pal_map_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes, const uint8_t **data, size_t *len,
+                             rp_map_t **map) {
+    if (path_utf8 == NULL || data == NULL || len == NULL || map == NULL) return PROVEN_ERR_INVALID_ARG;
+    *data = NULL;
+    *len = 0;
+    *map = NULL;
+    proven_u16str_t wide = { 0 };
+    proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
+    rp_text_result_t t = rp_utf8_to_u16str(alloc, view, &wide);
+    if (t.err != PROVEN_OK) return t.err;
+    HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&wide), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+                           FILE_ATTRIBUTE_NORMAL, NULL);
+    proven_u16str_destroy(alloc, &wide);
+    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
+    LARGE_INTEGER size;
+    if (!GetFileSizeEx(h, &size) || size.QuadPart < 0) {
+        CloseHandle(h);
+        return PROVEN_ERR_IO;
+    }
+    if ((unsigned long long)size.QuadPart > max_bytes) {
+        CloseHandle(h);
+        return PROVEN_ERR_OUT_OF_BOUNDS;
+    }
+    rp_map_t *m = rp_mem_alloc(alloc, 1, sizeof *m);
+    if (m == NULL) {
+        CloseHandle(h);
+        return PROVEN_ERR_NOMEM;
+    }
+    *m = (rp_map_t){ h, NULL, NULL };
+    if (size.QuadPart > 0) {
+        m->mapping = CreateFileMappingW(h, NULL, PAGE_READONLY, 0, 0, NULL);
+        m->view = m->mapping ? MapViewOfFile(m->mapping, FILE_MAP_READ, 0, 0, 0) : NULL;
+        if (m->view == NULL) {
+            rp_pal_unmap(alloc, m);
+            return PROVEN_ERR_IO;
+        }
+    }
+    *data = m->view;
+    *len = (size_t)size.QuadPart;
+    *map = m;
+    return PROVEN_OK;
+}
+
+void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map) {
+    if (map == NULL) return;
+    if (map->view) UnmapViewOfFile(map->view);
+    if (map->mapping) CloseHandle(map->mapping);
+    if (map->file) CloseHandle(map->file);
+    rp_mem_free(alloc, map);
 }

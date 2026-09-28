@@ -339,8 +339,11 @@ and the machine folders (`Windows`, `System`, `Fonts`, `CommonAppData`) need `sc
 
 Files are compressed into one cabinet embedded in the package. `cab-max-size = N` starts a new
 cabinet after N MiB of files; `cab = "external"` writes the cabinets next to the package as
-`<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it. rubrapack never
-overwrites an existing cabinet and writes the package last. Every package also carries the
+`<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it; without
+`cab-max-size` external cabinets are split before 2 GiB each. Windows Installer cannot open a
+package of 2 GiB or more, so an embedded cabinet that large is an error (`RP1516`) that asks for
+`cab = "external"`. rubrapack never overwrites an existing cabinet and writes the package last.
+Compression runs on every processor (`--jobs N` to use fewer); the bytes are the same either way. Every package also carries the
 administrative (`msiexec /a`, an uncompressed network image) and advertisement (`msiexec /jm`)
 sequences.
 
@@ -668,7 +671,7 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ```text
 rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
-                [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
+                [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
                 [<key> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]

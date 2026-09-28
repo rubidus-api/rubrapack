@@ -10,6 +10,7 @@
 #include "rubrapack/toml.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "proven/heap.h"
@@ -95,6 +96,7 @@ static int run(int argc, char **argv, bool lint) {
     char *define_buf[MAX_DEFINES];
     size_t ndef = 0;
     bool reproducible = false, msix_compress_given = false;
+    size_t jobs = 0;
     rp_msix_options_t msix_opt = { 0 };
     const char *target = NULL;
     int rc = RP_EXIT_USAGE;
@@ -144,6 +146,15 @@ static int run(int argc, char **argv, bool lint) {
             ++i;
         } else if (strcmp(a, "--compress") == 0 && next) {
             compress = next;
+            ++i;
+        } else if (strcmp(a, "--jobs") == 0 && next) {        // RFC-0013 E2: 1..64 (default: the processors)
+            char *end = NULL;
+            long v = strtol(next, &end, 10);
+            if (end == next || *end || v < 1 || v > 64) {
+                rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--jobs takes a number from 1 to 64 (got '%s')", next);
+                goto done;
+            }
+            jobs = (size_t)v;
             ++i;
         } else if (!lint && (strcmp(a, "--timestamp") == 0 || strcmp(a, "--tsa-trust") == 0 || strcmp(a, "--tls-trust") == 0 ||
                              strcmp(a, "--proxy") == 0) && next) {
@@ -202,7 +213,7 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
     bool bundle = !lint && ends_with(out, ".msixbundle");
@@ -321,7 +332,7 @@ static int run(int argc, char **argv, bool lint) {
             base = base ? base + 1 : out;
             snprintf(stem, sizeof stem, "%.*s", (int)(strlen(base) - 4), base);
             size_t outdir = (size_t)(base - out);
-            rp_build_options_t bopt = { reproducible, stem };
+            rp_build_options_t bopt = { reproducible, stem, jobs };
             uint8_t *msi = NULL;
             size_t msi_len = 0;
             rp_build_file_t *cabs = NULL;

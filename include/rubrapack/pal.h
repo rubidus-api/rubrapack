@@ -88,4 +88,18 @@ void rp_pal_tcp_close(rp_sock_t *s);
 // ($SSL_CERT_FILE, or the first of the usual paths: PEM). PROVEN_ERR_NOT_FOUND when there is none.
 [[nodiscard]] proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ctx, const uint8_t *data, size_t len), void *ctx);
 
+// A file mapped read-only into memory (RFC-0013 E1): the pages come from the file as they are
+// read and cost no heap. *data is NULL for an empty file. Unmap with rp_pal_unmap.
+typedef struct rp_map rp_map_t;
+[[nodiscard]] proven_err_t rp_pal_map_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes,
+                                           const uint8_t **data, size_t *len, rp_map_t **map);
+void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map);
+
+// Processors this process may use (at least 1).
+[[nodiscard]] size_t rp_pal_cpu_count(void);
+
+// Runs fn(ctx, i) for every i in [0, count) on up to `jobs` threads (1: in this thread, in order).
+// fn must only touch what belongs to its own i. Returns when all are done (RFC-0013 E2).
+void rp_pal_parallel_for(size_t jobs, size_t count, void (*fn)(void *ctx, size_t i), void *ctx);
+
 #endif // RUBRAPACK_PAL_H

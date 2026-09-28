@@ -20,6 +20,7 @@
 #include "rubrapack/version.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "proven/hash.h"
@@ -401,8 +402,10 @@ typedef struct {
     char               *comp;
     char               *dir_key;
     char               *short_name;
-    uint8_t            *data;
+    const uint8_t      *data;       // mapped (RFC-0013 E1)
     size_t              size;
+    rp_map_t           *map;
+    uint8_t             md5[16];    // of the bytes as first read; checked again at the end
 } lfile_t;
 
 // `SHORT|Long` (or Long alone when it is its own short name) must fit a `width`-wide column
@@ -517,7 +520,7 @@ static const char *icon_name(proven_allocator_t alloc, keep_t *k, rows_t *icon, 
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
-                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs) {
+                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs) {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition;
@@ -698,7 +701,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         if (versioned) continue;
 
         uint8_t d[16];
-        rp_md5(lf->data, lf->size, d);
+        memcpy(d, lf->md5, sizeof lf->md5);
         s_(&filehash, lf->key);
         i_(&filehash, 0);
         for (int p = 0; p < 4; ++p) {
@@ -1104,8 +1107,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_msi_wstream_t *streams = rp_mem_alloc(alloc, nfiles + 1, sizeof *streams);
     rp_build_file_t *ext = ir->cab_external ? rp_mem_alloc(alloc, nfiles + 1, sizeof *ext) : NULL;
     if (group_end == NULL || streams == NULL || (ir->cab_external && ext == NULL)) err = PROVEN_ERR_NOMEM;
+    // External cabinets without cab-max-size are split before 2 GiB each (RFC-0013 E4).
+    uint64_t cab_max = ir->cab_max ? ir->cab_max : ir->cab_external ? (2ull << 30) - (64ull << 20) : 0;
     for (size_t i = 0, used = 0; err == PROVEN_OK && i < nfiles; ++i) {
-        if (ir->cab_max && used > 0 && used + files[i].size > ir->cab_max) {
+        if (cab_max && used > 0 && used + files[i].size > cab_max) {
             group_end[ngroups++] = i;
             used = 0;
         }
@@ -1116,6 +1121,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         i_(&media, 1); i_(&media, 0); null_(&media); null_(&media); null_(&media); null_(&media);
     }
     size_t nstreams = 0;
+    uint64_t embedded = 0;
     for (size_t g = 0, start = 0; err == PROVEN_OK && g < ngroups; start = group_end[g++]) {
         char num[24];
         snprintf(num, sizeof num, "%zu", g + 1);
@@ -1133,7 +1139,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             break;
         }
         for (size_t i = 0; i < n; ++i) cf[i] = (rp_cab_file_t){ files[start + i].key, files[start + i].data, files[start + i].size };
-        err = rp_cab_write(alloc, cf, n, ir->compress, limits, &cab, &cab_len);
+        err = rp_cab_write_ex(alloc, cf, n, ir->compress, jobs ? jobs : rp_pal_cpu_count(), limits, &cab, &cab_len);
         rp_mem_free(alloc, cf);
         if (err != PROVEN_OK) break;
         if (ir->cab_external) {
@@ -1148,7 +1154,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             ext[nstreams++] = (rp_build_file_t){ copy, cab, cab_len };
         } else {
             streams[nstreams++] = (rp_msi_wstream_t){ name, cab, cab_len };
+            embedded += cab_len;
         }
+    }
+    // Windows Installer does not open a package of 2 GiB or more (RFC-0013 E4).
+    if (err == PROVEN_OK && embedded >= (2ull << 30) - (16ull << 20)) {
+        rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1516", false,
+                       "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\"");
+        err = PROVEN_ERR_OUT_OF_BOUNDS;
     }
 
     // Upgrade: detect same-or-newer (refused below), remove older (RFC-0001 9.5)
@@ -1468,6 +1481,14 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     }
     *cabs = NULL;
     *cab_count = 0;
+    bool done = false;              // the reproducible build's first pass was the package
+    // Tests make several cabinet folders from a small package (RFC-0013 E4).
+    char *fb = rp_pal_getenv(alloc, "RP_TEST_CAB_FOLDER_BLOCKS");
+    if (fb) {
+        long v = strtol(fb, NULL, 10);
+        if (v > 0 && v <= 0xFFFF) rp_cab_folder_blocks = (size_t)v;
+        rp_mem_free(alloc, fb);
+    }
     const char *stem = opt->cab_stem ? opt->cab_stem : "cab";
     keep_t k = { .alloc = alloc };
     dirs_t dirs = { .k = &k, .ir = ir };
@@ -1551,12 +1572,13 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         lf->comp = kdup(&k, comp);
         lf->dir_key = kdup(&k, dkey(ir, f->dir));
         size_t n = 0;
-        if (rp_pal_read_file(alloc, f->source_path, limits->max_output, &lf->data, &n) != PROVEN_OK) {
+        if (rp_pal_map_file(alloc, f->source_path, limits->max_output, &lf->data, &n, &lf->map) != PROVEN_OK) {
             rp_srcdiag_add(diags, f->pos, "RP1509", false, "cannot read source file '%s'", f->source);
             err = PROVEN_ERR_IO;
             break;
         }
         lf->size = n;
+        rp_md5(lf->data, n, lf->md5);
         // One snapshot (RFC-0001 14.2): the bytes read here are hashed, versioned and packed; the
         // model's earlier look (size, PE machine) must describe the same file.
         rp_pe_info_t snap;
@@ -1693,14 +1715,16 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
         if (opt->reproducible) {
             // First pass with a zero package code; the package code is derived from those bytes.
-            // External cabinets are part of the content: hash the package and every cabinet.
+            // The two passes differ only in that code (the summary stream), so it is put into the
+            // first pass's bytes in place when it can be found there once; otherwise (it straddles
+            // two sectors) the package is written again, with the same result.
             uint8_t *first = NULL;
             size_t first_len = 0;
             rp_build_file_t *fcabs = NULL;
             size_t nfcabs = 0;
-            err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code,
-                                "{00000000-0000-0000-0000-000000000000}", limits, &first, &first_len, diags, stem,
-                                &fcabs, &nfcabs);
+            static const char zero[] = "{00000000-0000-0000-0000-000000000000}";
+            err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, zero, limits, &first, &first_len,
+                                diags, stem, &fcabs, &nfcabs, opt->jobs);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
@@ -1710,28 +1734,56 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                     proven_sha256((proven_mem_view_t){ fcabs[i].data, fcabs[i].len }, both + PROVEN_SHA256_SIZE);
                     proven_sha256((proven_mem_view_t){ both, sizeof both }, d);
                 }
-                rp_build_files_free(alloc, fcabs, nfcabs);
                 char hex[65];
                 for (int i = 0; i < 32; ++i) snprintf(hex + 2 * i, 3, "%02x", d[i]);
                 const char *fields[] = { hex };
                 rp_uuid_derive("rubrapack.package", fields, 1, package_code);
-                rp_mem_free(alloc, first);
+                size_t zl = sizeof zero - 1, hits = 0, at = 0;
+                for (size_t i = 0; i + zl <= first_len; ++i) {
+                    if (first[i] == '{' && memcmp(first + i, zero, zl) == 0) {
+                        ++hits;
+                        at = i;
+                    }
+                }
+                char *two = rp_pal_getenv(alloc, "RP_TEST_TWO_PASS");     // tests: take the other road
+                if (hits == 1 && two == NULL && strlen(package_code) == zl) {
+                    memcpy(first + at, package_code, zl);
+                    *out = first;
+                    *len = first_len;
+                    *cabs = fcabs;
+                    *cab_count = nfcabs;
+                    done = true;
+                } else {
+                    rp_build_files_free(alloc, fcabs, nfcabs);
+                    rp_mem_free(alloc, first);
+                }
+                rp_mem_free(alloc, two);
             }
         } else {
             err = rp_uuid_random(package_code);
         }
     }
-    if (err == PROVEN_OK) {
+    if (err == PROVEN_OK && !done) {
         err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
                             opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
-                            stem, cabs, cab_count);
+                            stem, cabs, cab_count, opt->jobs);
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
                        "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'");
     }
 
-    for (size_t i = 0; files && i < ir->file_count; ++i) rp_mem_free(alloc, files[i].data);
+    // One snapshot (RFC-0001 14.2) with mapped files: what was packed is still what was hashed.
+    for (size_t i = 0; err == PROVEN_OK && files && i < ir->file_count; ++i) {
+        uint8_t again[16];
+        rp_md5(files[i].data, files[i].size, again);
+        if (memcmp(again, files[i].md5, sizeof again) != 0) {
+            rp_srcdiag_add(diags, files[i].f->pos, "RP1515", false, "source file '%s' changed while the package was being built",
+                           files[i].f->source);
+            err = PROVEN_ERR_IO;
+        }
+    }
+    for (size_t i = 0; files && i < ir->file_count; ++i) rp_pal_unmap(alloc, files[i].map);
     rp_mem_free(alloc, files);
     rp_mem_free(alloc, final_logical);
     rp_mem_free(alloc, dirs.sc_short);

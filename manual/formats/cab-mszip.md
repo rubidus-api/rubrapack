@@ -46,7 +46,13 @@ uncompressed bytes (at most 32768), ending with a final block.
 
 The decompressor keeps the previous blocks of the same folder as its dictionary, so an encoder
 *may* refer back into earlier blocks. An encoder that never does (each block compressed on its
-own) produces valid MSZIP; rubrapack does that, and reads either kind. Windows extracts both.
+own) produces valid MSZIP too. rubrapack gives each block the previous block's 32 KiB of
+uncompressed data as a preset dictionary (about 9% smaller on mixed data than blocks on their own),
+and since that dictionary is the input, not the output, the blocks are still compressed on several
+threads at once, with the same bytes whatever their number. It starts a new folder at a file
+boundary before 65535 blocks; the dictionary does not cross folders. Windows extracts all of it:
+a package with twelve folders installs, repairs and removes with every file byte-identical.
+[observed]
 
 ## A deflate encoder in brief [spec: RFC 1951]
 

@@ -16,6 +16,7 @@
 typedef struct {
     bool        reproducible;   // package code from the content instead of random (RFC-0001 14.2)
     const char *cab_stem;       // external cabinets are named <stem>.cab / <stem>-N.cab (cab = "external")
+    size_t      jobs;           // threads compressing cabinets; 0 = the processors (RFC-0013 E2)
 } rp_build_options_t;
 
 // A file written next to the package (an external cabinet). Free with rp_build_files_free.

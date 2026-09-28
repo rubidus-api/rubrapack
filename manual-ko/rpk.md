@@ -327,8 +327,10 @@ name = "InstallDir"
 
 파일은 패키지에 넣는 캐비닛 하나로 압축한다. `cab-max-size = N` 은 파일이 N MiB 를 넘을 때마다 새
 캐비닛을 시작하고, `cab = "external"` 은 캐비닛을 패키지 옆에 `<name>.cab`(또는 `<name>-1.cab`,
-`<name>-2.cab`, ...)으로 쓴다. 그 캐비닛은 패키지와 함께 다녀야 한다. rubrapack 은 있는 캐비닛을
-덮어쓰지 않고 패키지를 맨 나중에 쓴다. 모든 패키지에는 관리 설치(`msiexec /a`, 압축을 푼 네트워크
+`<name>-2.cab`, ...)으로 쓴다. 그 캐비닛은 패키지와 함께 다녀야 하고, `cab-max-size` 가 없으면 캐비닛마다
+2 GiB 전에 나눈다. Windows Installer 는 2 GiB 이상인 패키지를 열지 못하므로, 그만큼 큰 내장 캐비닛은
+`cab = "external"` 을 권하는 오류(`RP1516`)다. rubrapack 은 있는 캐비닛을 덮어쓰지 않고 패키지를 맨 나중에
+쓴다. 압축은 모든 프로세서에서 돈다(덜 쓰려면 `--jobs N`); 어느 쪽이든 바이트는 같다. 모든 패키지에는 관리 설치(`msiexec /a`, 압축을 푼 네트워크
 이미지)와 광고(`msiexec /jm`) 순서도 들어 있다.
 
 MSI 서식 문자열로 해석되는 곳은 이것뿐이다: 레지스트리 `value`(와 multi 항목), 바로가기 `args`,
@@ -634,7 +636,7 @@ guard = true
 ```text
 rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <목록> (.msixbundle)]
-                [--compress none|mszip|mszip:N] [--nfc] [--reproducible]
+                [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
                 [<키> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]

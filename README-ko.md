@@ -1,4 +1,4 @@
-**한국어** | [English](README.md) — **rubrapack v0.3.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-0.3.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-0.3.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-manual-0.3.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.3.0/rubrapack-manual-0.3.0-en.pdf)
+**한국어** | [English](README.md) — **rubrapack v0.4.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-0.4.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-0.4.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-manual-0.4.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.0/rubrapack-manual-0.4.0-en.pdf)
 
 # rubrapack
 
@@ -34,7 +34,8 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   NCrypt 를 거친 Windows 인증서 저장소(`--key-store`)에서 가져옵니다. 그래서 하드웨어 밖으로 나가면 안 되는
   코드 서명 키도 그 자리에 둔 채 서명할 수 있습니다.
 - **확인:** `lint`(원본과 어떤 도구로 만든 MSI·MSIX 든), `inspect`, `extract`, `verify`, `keys list`.
-- **재현 가능:** 같은 원본은 Linux 에서도 Windows 에서도 같은 바이트가 됩니다.
+- **재현 가능하고 빠릅니다:** 같은 원본은 Linux 에서도 Windows 에서도, 압축하는 스레드 수와 상관없이 같은
+  바이트가 됩니다(기본은 모든 프로세서).
 - **운영 체제 말고는 실행 의존성이 없습니다:** 복합 파일과 MSI 데이터베이스, 캐비닛과 deflate, ZIP/OPC 와
   블록 맵, 레지스트리 하이브, 암호, PKCS#12, HTTP 와 TLS 를 모두 이 저장소 안에서 공개 명세를 보고 구현했고,
   Windows 와 대조해 확인했습니다.
@@ -47,7 +48,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## 상태
 
-0.3.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
+0.4.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
 업그레이드·제거하는 시험으로 확인했습니다. 아직 실제 하드웨어에서 시험하지 않은 것: Arm64 패키지(구조만 확인 -
 Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 토큰으로 대신했습니다), Windows 에서의 네이티브
 빌드(Windows 실행 파일은 MinGW-w64 로 교차 빌드해 Windows 에서 돌렸습니다).

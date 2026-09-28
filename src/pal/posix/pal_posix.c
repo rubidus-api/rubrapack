@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <pthread.h>
+#include <stdatomic.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
@@ -18,6 +20,8 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 
 proven_err_t rp_pal_write(rp_out_t out, const uint8_t *utf8, size_t len) {
     FILE *f = (out == RP_OUT_STDERR) ? stderr : stdout;
@@ -302,4 +306,97 @@ proven_err_t rp_pal_system_roots(proven_allocator_t alloc, void (*sink)(void *ct
         return PROVEN_OK;
     }
     return PROVEN_ERR_NOT_FOUND;
+}
+
+// ---- parallel work (RFC-0013 E2) ----------------------------------------------------------------
+
+typedef struct {
+    void (*fn)(void *ctx, size_t i);
+    void *ctx;
+    size_t count;
+    _Atomic size_t next;
+} rp_work_t;
+
+static void rp_work_run(rp_work_t *w) {
+    for (;;) {
+        size_t i = atomic_fetch_add(&w->next, 1);
+        if (i >= w->count) return;
+        w->fn(w->ctx, i);
+    }
+}
+
+size_t rp_pal_cpu_count(void) {
+    long n = sysconf(_SC_NPROCESSORS_ONLN);
+    return n > 0 ? (size_t)n : 1;
+}
+
+static void *rp_work_thread(void *arg) {
+    rp_work_run(arg);
+    return NULL;
+}
+
+void rp_pal_parallel_for(size_t jobs, size_t count, void (*fn)(void *ctx, size_t i), void *ctx) {
+    rp_work_t w = { .fn = fn, .ctx = ctx, .count = count };
+    atomic_init(&w.next, 0);
+    if (jobs > count) jobs = count;
+    if (jobs > 64) jobs = 64;
+    pthread_t t[64];
+    size_t started = 0;
+    for (size_t k = 1; k < jobs; ++k) {
+        if (pthread_create(&t[started], NULL, rp_work_thread, &w) == 0) ++started;
+    }
+    rp_work_run(&w);        // this thread works too; with no helper thread it does everything
+    for (size_t k = 0; k < started; ++k) pthread_join(t[k], NULL);
+}
+
+// ---- mapped files (RFC-0013 E1) ------------------------------------------------------------------
+
+struct rp_map {
+    void  *p;
+    size_t n;
+};
+
+proven_err_t rp_pal_map_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes, const uint8_t **data, size_t *len,
+                             rp_map_t **map) {
+    if (path_utf8 == NULL || data == NULL || len == NULL || map == NULL) return PROVEN_ERR_INVALID_ARG;
+    *data = NULL;
+    *len = 0;
+    *map = NULL;
+    int fd = open(path_utf8, O_RDONLY | O_CLOEXEC);
+    if (fd < 0) return PROVEN_ERR_NOT_FOUND;
+    struct stat st;
+    if (fstat(fd, &st) != 0 || !S_ISREG(st.st_mode) || st.st_size < 0) {
+        close(fd);
+        return PROVEN_ERR_IO;
+    }
+    if ((uint64_t)st.st_size > max_bytes) {
+        close(fd);
+        return PROVEN_ERR_OUT_OF_BOUNDS;
+    }
+    rp_map_t *m = rp_mem_alloc(alloc, 1, sizeof *m);
+    if (m == NULL) {
+        close(fd);
+        return PROVEN_ERR_NOMEM;
+    }
+    m->p = NULL;
+    m->n = (size_t)st.st_size;
+    if (m->n) {
+        m->p = mmap(NULL, m->n, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (m->p == MAP_FAILED) {
+            close(fd);
+            rp_mem_free(alloc, m);
+            return PROVEN_ERR_IO;
+        }
+    }
+    close(fd);
+    *data = m->p;
+    *len = m->n;
+    *map = m;
+    return PROVEN_OK;
+}
+
+void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map) {
+    if (map == NULL) return;
+    if (map->p) munmap(map->p, map->n);
+    rp_mem_free(alloc, map);
 }

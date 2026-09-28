@@ -1,8 +1,8 @@
 #ifndef RUBRAPACK_CAB_H
 #define RUBRAPACK_CAB_H
 
-// include/rubrapack/cab.h - cabinet files (MS-CAB; RFC-0001 F4): one folder, stored or MSZIP
-// (MS-MCI: each 32 KiB block is "CK" + a raw deflate stream).
+// include/rubrapack/cab.h - cabinet files (MS-CAB; RFC-0001 F4): stored or MSZIP folders (MS-MCI:
+// each 32 KiB block is "CK" + a raw deflate stream that may refer to the folder's earlier blocks).
 
 #include <stddef.h>
 #include <stdint.h>
@@ -17,9 +17,17 @@ typedef struct {
     size_t         size;
 } rp_cab_file_t;
 
-// Writes one cabinet with a single folder: compress -1 = stored, 0-9 = MSZIP at that deflate
-// level (each block compressed on its own). Deterministic: every file gets the date 1980-01-01
-// 00:00 and the archive attribute. Files are stored in the order given.
+// Writes one cabinet: compress -1 = stored, 0-9 = MSZIP at that deflate level, each block using the
+// previous block of its folder as its dictionary. A new folder starts (at a file boundary) before a
+// folder would pass 65,535 blocks. Deterministic, whatever `jobs` (threads compressing blocks):
+// every file gets the date 1980-01-01 00:00 and the archive attribute; files in the order given.
+[[nodiscard]] proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *files, size_t count, int compress,
+                                           size_t jobs, const rp_limits_t *limits, uint8_t **out, size_t *len);
+// Blocks per folder at most (0xFFFF, the format's limit). Tests lower it to make several folders
+// from a small package (RP_TEST_CAB_FOLDER_BLOCKS in the build).
+extern size_t rp_cab_folder_blocks;
+
+// The same on one thread.
 [[nodiscard]] proven_err_t rp_cab_write(proven_allocator_t alloc, const rp_cab_file_t *files, size_t count, int compress,
                                         const rp_limits_t *limits, uint8_t **out, size_t *len);
 

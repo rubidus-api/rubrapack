@@ -17,6 +17,11 @@
 [[nodiscard]] proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out,
                                       size_t *out_len);
 
+// The same with a preset dictionary: dict[0..dn) (its last 32 KiB) may be referenced but is not
+// written - an MSZIP block that continues the previous block's history (RFC-0013 E3).
+[[nodiscard]] proven_err_t rp_deflate_dict(proven_allocator_t alloc, const uint8_t *dict, size_t dn, const uint8_t *in, size_t n,
+                                           int level, uint8_t **out, size_t *out_len);
+
 // One independently decodable part of a stream, as MSIX block maps need (RFC-0009; Windows'
 // packaging API writes this, tests/fixtures/msix): in[0..n) as non-final blocks with no reference
 // before it, then an empty stored block (00 00 FF FF). Parts put one after the other, closed by

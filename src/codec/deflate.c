@@ -294,11 +294,13 @@ static void write_stored(bits_t *w, const uint8_t *p, size_t n, bool final) {
 
 // A whole stream (last block final), or with `segment` a part of one: every block non-final, then
 // an empty stored block, which ends the part on a byte boundary (00 00 FF FF, a "full flush").
-static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, bool segment, uint8_t **out, size_t *out_len) {
-    if ((in == NULL && n != 0) || out == NULL || out_len == NULL || level < 0 || level > 9) return PROVEN_ERR_INVALID_ARG;
-    bits_t w = { .b = rp_buf_new(alloc, n + n / 8 + 1024) };
-    if (level == 0 || n == 0) {
-        if (n || !segment) write_stored(&w, in, n, !segment);
+// in[0..start) is a preset dictionary: it is put into the match chains, and in[start..n) is encoded.
+static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, size_t start, int level, bool segment, uint8_t **out,
+                        size_t *out_len) {
+    if ((in == NULL && n != 0) || start > n || out == NULL || out_len == NULL || level < 0 || level > 9) return PROVEN_ERR_INVALID_ARG;
+    bits_t w = { .b = rp_buf_new(alloc, (n - start) + (n - start) / 8 + 1024) };
+    if (level == 0 || n == start) {
+        if (n > start || !segment) write_stored(&w, in + start, n - start, !segment);
         if (segment) write_stored(&w, NULL, 0, false);
         align(&w);
         return rp_buf_take(&w.b, out, out_len);
@@ -325,7 +327,13 @@ static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, i
     fixed_tree(fix);
     proven_err_t err = PROVEN_OK;
 
-    size_t pos = 0;
+    // The dictionary's positions go into the chains; nothing of it is encoded.
+    for (size_t q = 0; q + MIN_MATCH <= n && q < start; ++q) {
+        uint32_t h = hash3(in + q);
+        prev[q % WINDOW] = head[h];
+        head[h] = (int32_t)q;
+    }
+    size_t pos = start;
     while (pos < n && err == PROVEN_OK) {
         size_t block_start = pos, ns = 0;
         while (pos < n && ns < BLOCK_SYMBOLS) {
@@ -435,11 +443,28 @@ static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, i
 }
 
 proven_err_t rp_deflate(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out, size_t *out_len) {
-    return run(alloc, in, n, level, false, out, out_len);
+    return run(alloc, in, n, 0, level, false, out, out_len);
+}
+
+proven_err_t rp_deflate_dict(proven_allocator_t alloc, const uint8_t *dict, size_t dn, const uint8_t *in, size_t n, int level,
+                             uint8_t **out, size_t *out_len) {
+    if ((dict == NULL && dn != 0) || (in == NULL && n != 0)) return PROVEN_ERR_INVALID_ARG;
+    if (dn > WINDOW) {
+        dict += dn - WINDOW;
+        dn = WINDOW;
+    }
+    if (dn == 0) return run(alloc, in, n, 0, level, false, out, out_len);
+    uint8_t *both = rp_mem_alloc(alloc, dn + n + 1, 1);
+    if (both == NULL) return PROVEN_ERR_NOMEM;
+    memcpy(both, dict, dn);
+    if (n) memcpy(both + dn, in, n);
+    proven_err_t err = run(alloc, both, dn + n, dn, level, false, out, out_len);
+    rp_mem_free(alloc, both);
+    return err;
 }
 
 proven_err_t rp_deflate_segment(proven_allocator_t alloc, const uint8_t *in, size_t n, int level, uint8_t **out, size_t *out_len) {
-    return run(alloc, in, n, level, true, out, out_len);
+    return run(alloc, in, n, 0, level, true, out, out_len);
 }
 
 // ---- decoder ---------------------------------------------------------------------------------
