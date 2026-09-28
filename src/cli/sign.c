@@ -6,6 +6,7 @@
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/sign.h"
 
@@ -19,6 +20,7 @@
 enum { MAX_INPUT = 1u << 30, MAX_KEY = 1u << 22 };
 
 static bool is_pe(const uint8_t *d, size_t n) { return n >= 2 && d[0] == 'M' && d[1] == 'Z'; }
+static bool is_zip(const uint8_t *d, size_t n) { return n >= 4 && memcmp(d, "PK\3\4", 4) == 0; }
 static bool is_cfb(const uint8_t *d, size_t n) {
     static const uint8_t sig[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
     return n >= 8 && memcmp(d, sig, 8) == 0;
@@ -127,9 +129,9 @@ static int load_system_roots(proven_allocator_t heap, rp_keyfile_t *kf, rp_der_s
 
 int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, uint8_t **out, size_t *out_len) {
     proven_allocator_t heap = proven_heap_allocator();
-    bool pe = is_pe(data, len), cfb = is_cfb(data, len);
-    if (!pe && !cfb) {
-        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll) nor an MSI package", label);
+    bool pe = is_pe(data, len), cfb = is_cfb(data, len), zip = is_zip(data, len);
+    if (!pe && !cfb && !zip) {
+        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle", label);
         return RP_EXIT_USAGE;
     }
     // Three trusts, never mixed (RFC-0008 T2): the key's own chain, the TSA's (--tsa-trust), and
@@ -156,8 +158,9 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
                      .tls_anchor_count = tls_kf.cert_count };
     rp_timestamper_t stamper = { rp_tsa_stamp, &tsa };
     const rp_timestamper_t *ts = a->timestamp ? &stamper : NULL;
-    proven_err_t err = pe ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
-                          : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs, &external, out, out_len, &why);
+    proven_err_t err = pe    ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
+                       : zip ? rp_msix_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
+                             : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs, &external, out, out_len, &why);
     rp_keyfile_free(&kf);
     rp_mem_free(heap, tsa_anchors);
     rp_mem_free(heap, tls_anchors);
@@ -204,7 +207,7 @@ int rp_cmd_sign(int argc, char **argv) {
         }
     }
     if (file == NULL || a.key == NULL || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -278,7 +281,7 @@ int rp_cmd_verify(int argc, char **argv) {
         }
     }
     if (file == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -295,14 +298,15 @@ int rp_cmd_verify(int argc, char **argv) {
         rc = RP_EXIT_IO;
         goto done;
     }
-    if (!is_pe(data, len) && !is_cfb(data, len)) {
-        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file nor an MSI package", file);
+    if (!is_pe(data, len) && !is_cfb(data, len) && !is_zip(data, len)) {
+        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle", file);
         rc = RP_EXIT_USAGE;
         goto done;
     }
     rp_authenticode_check_t r;
     const char *why = NULL;
     if (is_pe(data, len)) rp_pe_verify(data, len, &r, &why);
+    else if (is_zip(data, len)) rp_msix_verify(heap, data, len, &r, &sig, &why);
     else rp_msi_verify(heap, data, len, &r, &sig, &why);
     int64_t now = check_time(heap);
 

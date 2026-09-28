@@ -30,8 +30,8 @@ static bool ends_with(const char *s, const char *suffix) {
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
 // named <identity>_<version>_<arch>.msix inside, the architectures in the order given.
 static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
-                        char (*archs)[8], size_t narch, bool nfc, const rp_msix_options_t *mopt, const char *out, const char *src,
-                        rp_srcdiags_t *d) {
+                        char (*archs)[8], size_t narch, bool nfc, const rp_msix_options_t *mopt, const rp_sign_args_t *sign,
+                        const char *out, const char *src, rp_srcdiags_t *d) {
     static const char *const arch_names[] = { "x64", "arm64", "x86" };
     rp_msix_part_t parts[3];
     uint8_t *pkgs[3] = { 0 };
@@ -62,9 +62,19 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         size_t bl = 0;
         const char *why = NULL;
         err = rp_msix_bundle(heap, parts, n, &lim, &b, &bl, &why);
+        if (err == PROVEN_OK && sign->key) {                // --key: the packages, then the bundle
+            uint8_t *sb = NULL;
+            size_t sl = 0;
+            rc = rp_sign_bytes(sign, out, b, bl, &sb, &sl);
+            rp_mem_free(heap, b);
+            b = sb;
+            bl = sl;
+        }
         if (err != PROVEN_OK) {
             rp_diag_error(RP_DIAG_OUTPUT, "cannot bundle the packages: %s", why ? why : "out of memory");
             rc = RP_EXIT_IO;
+        } else if (rc != RP_EXIT_OK) {
+            // rp_sign_bytes said why
         } else if (rp_pal_write_file_atomic(heap, out, b, bl) != PROVEN_OK) {
             rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             rc = RP_EXIT_IO;
@@ -223,9 +233,16 @@ static int run(int argc, char **argv, bool lint) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--unsigned-test and --msix-compress are for .msix outputs");
         goto done;
     }
-    if (msix && (sign.key || compress)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, sign.key ? "signing an MSIX comes with P9; build it unsigned (--unsigned-test to install it for testing)"
-                                                       : "--compress is for .msi; an MSIX takes --msix-compress deflate|store");
+    if (msix && compress) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--compress is for .msi; an MSIX takes --msix-compress deflate|store");
+        goto done;
+    }
+    if (msix && sign.key && msix_opt.unsigned_test) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--unsigned-test is for packages without a signature; with --key leave it out");
+        goto done;
+    }
+    if (msix && sign.allow_unsigned_cabs) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--allow-unsigned-cabs is for .msi");
         goto done;
     }
 
@@ -254,7 +271,7 @@ static int run(int argc, char **argv, bool lint) {
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
         if (err == PROVEN_OK && bundle) {
-            rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, nfc, &msix_opt, out, src, &d);
+            rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, nfc, &msix_opt, &sign, out, src, &d);
             rp_toml_free(&doc);
             rp_mem_free(heap, text);
             goto done;
@@ -270,13 +287,22 @@ static int run(int argc, char **argv, bool lint) {
             size_t pkg_len = 0;
             err = rp_msix_from_ir(heap, &ir, &msix_opt, &pkg, &pkg_len, &d);
             rp_ir_free(&ir);
-            if (err == PROVEN_OK) {
+            int sign_rc = RP_EXIT_OK;
+            if (err == PROVEN_OK && sign.key) {             // --key: signed before anything is written
+                uint8_t *signed_pkg = NULL;
+                size_t signed_len = 0;
+                sign_rc = rp_sign_bytes(&sign, out, pkg, pkg_len, &signed_pkg, &signed_len);
+                rp_mem_free(heap, pkg);
+                pkg = signed_pkg;
+                pkg_len = signed_len;
+            }
+            if (err == PROVEN_OK && sign_rc == RP_EXIT_OK) {
                 err = rp_pal_write_file_atomic(heap, out, pkg, pkg_len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             }
             rp_mem_free(heap, pkg);
             rp_srcdiag_print(&d, src);
-            rc = err == PROVEN_OK ? RP_EXIT_OK : d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
+            rc = sign_rc != RP_EXIT_OK ? sign_rc : err == PROVEN_OK ? RP_EXIT_OK : d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
         } else if (err == PROVEN_OK) {
             rp_limits_t limits = rp_limits_default();
             // External cabinets are named after the package: <stem>.cab next to <stem>.msi.

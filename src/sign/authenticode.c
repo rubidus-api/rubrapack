@@ -23,6 +23,9 @@ OID(O_SHA384, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02);
 OID(O_SHA512, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03);
 OID(O_RSA, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01);
 OID(O_RSA_SHA256, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x0B);
+OID(O_EC_PUBLIC, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02, 0x01);
+OID(O_ECDSA_SHA256, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x04, 0x03, 0x02);
+OID(O_ECDSA_SHA384, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x04, 0x03, 0x03);
 OID(O_CONTENT_TYPE, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x09, 0x03);
 OID(O_MESSAGE_DIGEST, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x09, 0x04);
 OID(O_SPC_INDIRECT, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x04);
@@ -91,7 +94,14 @@ static proven_err_t stamp(proven_allocator_t alloc, const rp_timestamper_t *ts, 
 proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
                                    size_t data_len, const uint8_t *digest, const rp_timestamper_t *ts, uint8_t **out, size_t *out_len,
                                    const char **why) {
+    return rp_authenticode_build_ex(alloc, kf, leaf, alg, data, data_len, digest, 0, ts, false, out, out_len, why);
+}
+
+proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
+                                      size_t data_len, const uint8_t *digest, size_t digest_len, const rp_timestamper_t *ts, bool appx,
+                                      uint8_t **out, size_t *out_len, const char **why) {
     size_t hn, hl = rp_hash_size(alg);
+    size_t dl = digest_len ? digest_len : hl;
     const uint8_t *hoid = hash_oid(alg, &hn);
     rp_cert_t lc;
     if (!rp_cert_parse(kf->certs[leaf], kf->cert_len[leaf], &lc, why)) return PROVEN_ERR_INVALID_ARG;
@@ -100,7 +110,7 @@ proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t 
     rp_buf_t ind = rp_buf_new(alloc, 1u << 20), di = rp_buf_new(alloc, 1024);
     rp_buf_put(&ind, data, data_len);
     put_alg(&di, hoid, hn);
-    rp_der_put(&di, RP_DER_OCTET_STRING, digest, hl);
+    rp_der_put(&di, RP_DER_OCTET_STRING, digest, dl);
     rp_der_wrap(&ind, RP_DER_SEQUENCE, &di);
     uint8_t content_hash[RP_HASH_MAX];
     rp_hash(alg, ind.data, ind.len, content_hash);          // the contents, without the SEQUENCE header
@@ -130,21 +140,50 @@ proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t 
     v = rp_buf_new(alloc, 256);
     rp_der_put(&v, RP_DER_OCTET_STRING, content_hash, hl);
     rp_der_wrap(&attr[3], RP_DER_SET, &v);
+    // An MSIX or bundle signature carries contentType and messageDigest only (as Windows' AppX SIP
+    // writes it: docs/research/2026-09-28-p9a-msix-signature-oracle.md).
     rp_buf_t attrs_enc[4];
     rp_der_span_t spans[4];
+    int nattr = 0;
     for (int i = 0; i < 4; ++i) {
         attrs_enc[i] = rp_buf_new(alloc, 4096);
+        if (appx && (i == 0 || i == 2)) {
+            rp_buf_free(&attr[i]);
+            continue;
+        }
         rp_der_wrap(&attrs_enc[i], RP_DER_SEQUENCE, &attr[i]);
-        spans[i] = (rp_der_span_t){ attrs_enc[i].data, attrs_enc[i].len };
+        spans[nattr++] = (rp_der_span_t){ attrs_enc[i].data, attrs_enc[i].len };
     }
     rp_buf_t signed_set = rp_buf_new(alloc, 16384);
-    rp_der_set_of(&signed_set, RP_DER_SET, spans, 4);        // what is signed
+    rp_der_set_of(&signed_set, RP_DER_SET, spans, (size_t)nattr);     // what is signed
     uint8_t attrs_hash[RP_HASH_MAX], sig[512];
     size_t sig_len = 0;
     proven_err_t err = signed_set.err;
     if (err == PROVEN_OK) {
         rp_hash(alg, signed_set.data, signed_set.len, attrs_hash);
-        err = rp_rsa_sign(&kf->rsa, alg, attrs_hash, sig, &sig_len);
+        if (kf->ec) {
+            // ECDSA (RFC 6979): the signature as DER SEQUENCE { r, s }, as Windows writes it.
+            uint8_t r[48], sv[48];
+            size_t n = rp_ec_size((rp_ec_curve_t)kf->ec_curve);
+            err = rp_ecdsa_sign((rp_ec_curve_t)kf->ec_curve, kf->key_der, alg, attrs_hash, r, sv);
+            if (err == PROVEN_OK) {
+                rp_buf_t rs = rp_buf_new(alloc, 256), seq = rp_buf_new(alloc, 256);
+                rp_der_put_uint(&rs, r, n);
+                rp_der_put_uint(&rs, sv, n);
+                rp_der_wrap(&seq, RP_DER_SEQUENCE, &rs);
+                if (seq.err == PROVEN_OK && seq.len <= sizeof sig) {
+                    memcpy(sig, seq.data, seq.len);
+                    sig_len = seq.len;
+                } else {
+                    err = PROVEN_ERR_NOMEM;
+                }
+                rp_buf_free(&seq);
+            }
+            rp_wipe(r, sizeof r);
+            rp_wipe(sv, sizeof sv);
+        } else {
+            err = rp_rsa_sign(&kf->rsa, alg, attrs_hash, sig, &sig_len);
+        }
         if (err != PROVEN_OK) *why = err == PROVEN_ERR_IO ? "the system random source failed" : "the private key does not work (or does not match its certificate)";
     }
 
@@ -159,7 +198,8 @@ proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t 
         rp_buf_byte(&si, 0xA0);                               // the same SET, stored as [0] IMPLICIT
         rp_buf_put(&si, signed_set.data + 1, signed_set.len - 1);
     }
-    put_alg(&si, O_RSA, sizeof O_RSA);
+    if (kf->ec) put_alg(&si, O_EC_PUBLIC, sizeof O_EC_PUBLIC);         // id-ecPublicKey, NULL: Windows' choice
+    else put_alg(&si, O_RSA, sizeof O_RSA);
     rp_der_put(&si, RP_DER_OCTET_STRING, sig, sig_len);
     if (err == PROVEN_OK && ts) {
         rp_buf_t ua = rp_buf_new(alloc, 1u << 16);
@@ -253,12 +293,14 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
     rp_der_t data, dinfo, dalg, dval;
     if (!rp_der_get(&ins, RP_DER_SEQUENCE, &data) || !rp_der_get(&ins, RP_DER_SEQUENCE, &dinfo)) STOP("malformed indirect data");
     rp_der_span_t ds = rp_der_inside(&dinfo);
+    // One hash - or, for MSIX packages and bundles, the AppX SIP's "APPX" record of hashes.
     if (!rp_der_get(&ds, RP_DER_SEQUENCE, &dalg) || !rp_der_get(&ds, RP_DER_OCTET_STRING, &dval) || !alg_of(&dalg, &r->alg) ||
-        dval.val.n != rp_hash_size(r->alg)) {
+        (dval.val.n != rp_hash_size(r->alg) && !(dval.val.n > 4 && memcmp(dval.val.p, "APPX", 4) == 0))) {
         STOP("the signed digest uses an unknown hash");
     }
     r->data = data.whole;
-    if (digest) r->digest_ok = memcmp(digest, dval.val.p, dval.val.n) == 0;
+    r->signed_digest = dval.val;
+    if (digest && dval.val.n == rp_hash_size(r->alg)) r->digest_ok = memcmp(digest, dval.val.p, dval.val.n) == 0;
     uint8_t tag;
     if (rp_der_peek(&ss, &tag) && tag == RP_DER_CTX0) {
         if (!rp_der_read(&ss, &e)) STOP("malformed certificates");
@@ -312,13 +354,17 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
             found = true;
         }
     }
-    if (!found || !c.rsa) STOP("the signer's certificate is not in the signature");
+    if (!found || !(c.rsa || c.ec_curve >= 0)) STOP("the signer's certificate is not in the signature");
     r->signer_cert = c.der;
     rp_der_span_t sa = rp_der_inside(&salg);
     rp_der_t soid;
-    if (!rp_der_get(&sa, RP_DER_OID, &soid) || !(rp_der_oid_is(&soid, O_RSA, sizeof O_RSA) || rp_der_oid_is(&soid, O_RSA_SHA256, sizeof O_RSA_SHA256))) {
-        STOP("the signature is not RSA");
+    bool rsa_alg = false, ec_alg = false;
+    if (rp_der_get(&sa, RP_DER_OID, &soid)) {
+        rsa_alg = rp_der_oid_is(&soid, O_RSA, sizeof O_RSA) || rp_der_oid_is(&soid, O_RSA_SHA256, sizeof O_RSA_SHA256);
+        ec_alg = rp_der_oid_is(&soid, O_EC_PUBLIC, sizeof O_EC_PUBLIC) || rp_der_oid_is(&soid, O_ECDSA_SHA256, sizeof O_ECDSA_SHA256) ||
+                 rp_der_oid_is(&soid, O_ECDSA_SHA384, sizeof O_ECDSA_SHA384);
     }
+    if (!(rsa_alg && c.rsa) && !(ec_alg && c.ec_curve >= 0)) STOP("the signature algorithm does not match the signer's key (RSA or ECDSA)");
     // Signed as a SET: the stored [0] with its tag changed.
     rp_hash_t h;
     uint8_t set_tag = RP_DER_SET, attrs_hash[RP_HASH_MAX];
@@ -326,7 +372,7 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
     rp_hash_update(&h, &set_tag, 1);
     rp_hash_update(&h, attrs.whole.p + 1, attrs.whole.n - 1);
     rp_hash_final(&h, attrs_hash);
-    r->signature_ok = rp_rsa_verify(c.rsa_n.p, c.rsa_n.n, c.rsa_e.p, c.rsa_e.n, r->alg, attrs_hash, sig.val.p, sig.val.n);
+    r->signature_ok = rp_cert_verify_sig(&c, r->alg, attrs_hash, sig.val.p, sig.val.n);
     r->sig = sig.val;
     // Unsigned attributes: at most one timestamp, RFC 3161 or the old counterSignature.
     rp_der_t ua;

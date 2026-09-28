@@ -32,6 +32,7 @@ void rp_zip_begin(rp_zip_writer_t *w, proven_allocator_t alloc, size_t limit) {
     w->out = rp_buf_new(alloc, limit);
     w->central = rp_buf_new(alloc, limit);
     w->count = 0;
+    w->signer_form = false;
 }
 
 void rp_zip_add(rp_zip_writer_t *w, const char *name, int method, const uint8_t *data, size_t data_len, uint32_t crc, uint64_t size,
@@ -58,6 +59,29 @@ void rp_zip_add(rp_zip_writer_t *w, const char *name, int method, const uint8_t 
     rp_buf_u64le(o, data_len);
     rp_buf_u64le(o, size);
     rp_buf_t *c = &w->central;
+    if (w->signer_form && data_len < 0xFFFFFFFFu && size < 0xFFFFFFFFu && off < 0xFFFFFFFFu) {
+        // The same entry described the ZIP32 way (what Windows' signer writes for small entries).
+        rp_buf_u32le(c, 0x02014B50);
+        rp_buf_u16le(c, VERSION);
+        rp_buf_u16le(c, VERSION);
+        rp_buf_u16le(c, FLAG_DESCRIPTOR);
+        rp_buf_u16le(c, (uint16_t)method);
+        rp_buf_u16le(c, DOS_TIME);
+        rp_buf_u16le(c, DOS_DATE);
+        rp_buf_u32le(c, crc);
+        rp_buf_u32le(c, (uint32_t)data_len);
+        rp_buf_u32le(c, (uint32_t)size);
+        rp_buf_u16le(c, (uint16_t)nl);
+        rp_buf_u16le(c, 0);
+        rp_buf_u16le(c, 0);
+        rp_buf_u16le(c, 0);
+        rp_buf_u16le(c, 0);
+        rp_buf_u32le(c, 0);
+        rp_buf_u32le(c, (uint32_t)off);
+        rp_buf_put(c, name, nl);
+        ++w->count;
+        return;
+    }
     rp_buf_u32le(c, 0x02014B50);
     rp_buf_u16le(c, VERSION);               // made by: 4.5, MS-DOS
     rp_buf_u16le(c, VERSION);
@@ -84,20 +108,56 @@ void rp_zip_add(rp_zip_writer_t *w, const char *name, int method, const uint8_t 
     ++w->count;
 }
 
-proven_err_t rp_zip_finish(rp_zip_writer_t *w, uint8_t **out, size_t *len) {
-    uint64_t cd_off = w->out.len, cd_size = w->central.len;
-    rp_buf_put(&w->out, w->central.data, w->central.len);
-    rp_buf_free(&w->central);
-    uint64_t z64 = w->out.len;
-    rp_buf_t *o = &w->out;
+void rp_zip_add_plain(rp_zip_writer_t *w, const char *name, int method, const uint8_t *data, size_t data_len, uint32_t crc, uint64_t size) {
+    size_t nl = strlen(name);
+    uint64_t off = w->out.len;
+    rp_buf_t *o = &w->out, *c = &w->central;
+    rp_buf_u32le(o, 0x04034B50);
+    rp_buf_u16le(o, 20);
+    rp_buf_u16le(o, 0);
+    rp_buf_u16le(o, (uint16_t)method);
+    rp_buf_u16le(o, DOS_TIME);
+    rp_buf_u16le(o, DOS_DATE);
+    rp_buf_u32le(o, crc);
+    rp_buf_u32le(o, (uint32_t)data_len);
+    rp_buf_u32le(o, (uint32_t)size);
+    rp_buf_u16le(o, (uint16_t)nl);
+    rp_buf_u16le(o, 0);
+    rp_buf_put(o, name, nl);
+    rp_buf_put(o, data, data_len);
+    rp_buf_u32le(c, 0x02014B50);
+    rp_buf_u16le(c, VERSION);
+    rp_buf_u16le(c, 20);
+    rp_buf_u16le(c, 0);
+    rp_buf_u16le(c, (uint16_t)method);
+    rp_buf_u16le(c, DOS_TIME);
+    rp_buf_u16le(c, DOS_DATE);
+    rp_buf_u32le(c, crc);
+    rp_buf_u32le(c, (uint32_t)data_len);
+    rp_buf_u32le(c, (uint32_t)size);
+    rp_buf_u16le(c, (uint16_t)nl);
+    rp_buf_u16le(c, 0);
+    rp_buf_u16le(c, 0);
+    rp_buf_u16le(c, 0);
+    rp_buf_u16le(c, 0);
+    rp_buf_u32le(c, 0);
+    rp_buf_u32le(c, (uint32_t)off);
+    rp_buf_put(c, name, nl);
+    ++w->count;
+}
+
+// The ZIP64 end record, its locator and the end record for a central directory of `count` entries
+// and `cd_size` bytes at `cd_off`.
+static void put_tail(rp_buf_t *o, uint64_t count, uint64_t cd_size, uint64_t cd_off, bool disks_zero) {
+    uint64_t z64 = cd_off + cd_size;
     rp_buf_u32le(o, 0x06064B50);            // ZIP64 end of central directory
     rp_buf_u64le(o, 44);
     rp_buf_u16le(o, VERSION);
     rp_buf_u16le(o, VERSION);
     rp_buf_u32le(o, 0);
     rp_buf_u32le(o, 0);
-    rp_buf_u64le(o, w->count);
-    rp_buf_u64le(o, w->count);
+    rp_buf_u64le(o, count);
+    rp_buf_u64le(o, count);
     rp_buf_u64le(o, cd_size);
     rp_buf_u64le(o, cd_off);
     rp_buf_u32le(o, 0x07064B50);            // locator
@@ -105,14 +165,26 @@ proven_err_t rp_zip_finish(rp_zip_writer_t *w, uint8_t **out, size_t *len) {
     rp_buf_u64le(o, z64);
     rp_buf_u32le(o, 1);
     rp_buf_u32le(o, 0x06054B50);            // end record: everything in the ZIP64 records
-    rp_buf_u16le(o, 0xFFFF);
-    rp_buf_u16le(o, 0xFFFF);
+    rp_buf_u16le(o, disks_zero ? 0 : 0xFFFF);
+    rp_buf_u16le(o, disks_zero ? 0 : 0xFFFF);
     rp_buf_u16le(o, 0xFFFF);
     rp_buf_u16le(o, 0xFFFF);
     rp_buf_u32le(o, 0xFFFFFFFF);
     rp_buf_u32le(o, 0xFFFFFFFF);
     rp_buf_u16le(o, 0);
-    return rp_buf_take(o, out, len);
+}
+
+proven_err_t rp_zip_finish(rp_zip_writer_t *w, uint8_t **out, size_t *len) {
+    uint64_t cd_off = w->out.len, cd_size = w->central.len;
+    rp_buf_put(&w->out, w->central.data, w->central.len);
+    rp_buf_free(&w->central);
+    put_tail(&w->out, w->count, cd_size, cd_off, w->signer_form);
+    return rp_buf_take(&w->out, out, len);
+}
+
+void rp_zip_tail(const rp_zip_writer_t *w, rp_buf_t *out) {
+    rp_buf_put(out, w->central.data, w->central.len);
+    put_tail(out, w->count, w->central.len, w->out.len, w->signer_form);
 }
 
 void rp_zip_abort(rp_zip_writer_t *w) {
@@ -297,4 +369,66 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
     }
     *out = buf;
     return PROVEN_OK;
+}
+
+bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, uint64_t skip_lfh_off, rp_buf_t *out, const char **why) {
+    // The ZIP64 end record gives the central directory (rp_zip_read has checked the archive).
+    if (len < 98) {
+        *why = "the archive has no ZIP64 end record";
+        return false;
+    }
+    size_t z = len - 22 - 20 - 56;
+    if (u32(zip + len - 22) != 0x06054B50 || u32(zip + z) != 0x06064B50) {
+        *why = "the archive does not end in ZIP64 end records as MSIX packages do";
+        return false;
+    }
+    uint64_t cd_size = u64(zip + z + 40), cd_off = u64(zip + z + 48);
+    if (cd_off > len || cd_size > len - cd_off) {
+        *why = "the central directory lies outside the archive";
+        return false;
+    }
+    size_t sl = strlen(skip), count = 0, kept = 0;
+    bool found = false;
+    for (uint64_t o = cd_off; o < cd_off + cd_size;) {
+        if (o + 46 > cd_off + cd_size || u32(zip + o) != 0x02014B50) {
+            *why = "a malformed central directory";
+            return false;
+        }
+        size_t n = u16(zip + o + 28), e = u16(zip + o + 30), c = u16(zip + o + 32), rl = 46 + n + e + c;
+        if (o + rl > cd_off + cd_size) {
+            *why = "a malformed central directory";
+            return false;
+        }
+        if (n == sl && memcmp(zip + o + 46, skip, sl) == 0) {
+            // Windows takes the entry's place from the ZIP32 offset field (measured, RFC-0011): an
+            // entry described the ZIP64 way is a hash mismatch there, so it is here.
+            if (u32(zip + o + 42) == 0xFFFFFFFF || u32(zip + o + 20) == 0xFFFFFFFF) {
+                *why = "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields";
+                return false;
+            }
+            found = true;
+        } else {
+            rp_buf_put(out, zip + o, rl);
+            kept += rl;
+            ++count;
+        }
+        o += rl;
+    }
+    if (!found) {
+        *why = "the entry is not in the central directory";
+        return false;
+    }
+    // The file's own end records, with counts, sizes and offsets as if the entry did not exist.
+    uint8_t tail[98];
+    memcpy(tail, zip + z, 98);
+    for (int k = 0; k < 2; ++k) {
+        for (int b = 0; b < 8; ++b) tail[24 + 8 * k + b] = (uint8_t)((uint64_t)count >> (8 * b));
+    }
+    for (int b = 0; b < 8; ++b) {
+        tail[40 + b] = (uint8_t)((uint64_t)kept >> (8 * b));
+        tail[48 + b] = (uint8_t)(skip_lfh_off >> (8 * b));
+        tail[56 + 8 + b] = (uint8_t)((skip_lfh_off + kept) >> (8 * b));
+    }
+    rp_buf_put(out, tail, sizeof tail);
+    return out->err == PROVEN_OK;
 }

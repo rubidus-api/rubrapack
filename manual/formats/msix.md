@@ -5,8 +5,7 @@ tagged as in [README.md](README.md): **[spec]** for Microsoft Learn (package man
 map schemas) and ECMA-376 Part 2 (Open Packaging Conventions); **[observed]** for packages written
 by Windows' own packaging API (`IAppxFactory`/`IAppxPackageWriter` in AppxPackaging.dll, part of
 Windows) and for rubrapack's packages read back through `IAppxPackageReader` and installed with
-`Add-AppxPackage` on Windows 11. rubrapack writes what is described here; signing is not covered
-yet.
+`Add-AppxPackage` on Windows 11. rubrapack writes what is described here.
 
 ## The ZIP archive
 
@@ -177,6 +176,46 @@ writer (`IAppxBundleWriter`) makes it: [observed]
   manifest, block map and content types, byte for byte; only the ZIP dates differ (1980 in
   rubrapack's). Windows installs from it the package for its own architecture: x64 on an x64
   machine even when x86 and arm64 are there, x86 from a bundle of x86 alone. [observed]
+
+## Signatures (`AppxSignature.p7x`)
+
+Worked out against Windows' signer (`mssign32!SignerSignEx2` with `APPX_SIP_CLIENT_DATA`; the
+PowerShell cmdlet cannot sign a package) and checked by installing rubrapack's signed packages.
+[observed]
+
+- `Publisher` in the manifest must be the signing certificate's subject written the way Windows
+  displays it: the RDNs from last to first, `A=value` joined by `, ` - a certificate made with
+  `/CN=Example/O=Example Ltd` needs `O=Example Ltd, CN=Example`. Otherwise signing fails with
+  0x8007000B.
+- Signing rewrites the archive the way the signer does: the payload's local records, the manifest
+  and the block map stay as they were; `[Content_Types].xml` gets
+  `<Override PartName="/AppxSignature.p7x" ContentType="application/vnd.ms-appx.signature"/>`;
+  the signature is added last, deflated, with its sizes in the local header (version needed 2.0, no
+  data descriptor); the central directory is written the ZIP32 way (no ZIP64 extra fields) where
+  sizes and offsets allow, and the end record's disk numbers are 0.
+- `AppxSignature.p7x` is `PKCX` followed by a CMS SignedData as in [authenticode.md](authenticode.md),
+  with these differences: `data` is `SEQUENCE { SpcSipInfo (1.3.6.1.4.1.311.2.1.30), SEQUENCE {
+  INTEGER 0x01010000, OCTET STRING <SIP GUID>, INTEGER 0, INTEGER 0, INTEGER 0, INTEGER 0,
+  INTEGER 0 } }` with the package SIP GUID bytes `4B DF C5 0A 07 CE E2 4D B7 6E 23 C8 39 A0 9F D1`
+  or the bundle SIP GUID bytes `B3 58 5F 0F DE AA 9A 4B A4 34 95 74 2D 92 EC EB`; the signed
+  attributes are `contentType` and `messageDigest` only.
+- The DigestInfo's digest is not one hash but `APPX` followed by records of a 4-byte tag and a
+  SHA-256:
+  - `AXPC`: the archive from its start to the signature entry's local header;
+  - `AXCD`: the central directory without the signature entry, then the ZIP64 end record, its
+    locator and the end record, all as if the signature entry did not exist (the central directory
+    starting where the signature's local header is). Windows reads the signature entry's place
+    from its ZIP32 fields: a signature entry described the ZIP64 way (0xFFFFFFFF there) is a
+    `HashMismatch` - so is the package whose central directory is rewritten that way after signing;
+  - `AXCT`: `[Content_Types].xml` (the plain bytes); `AXBM`: `AppxBlockMap.xml`;
+  - `AXCI`: `AppxMetadata/CodeIntegrity.cat`, only when the package has one.
+- Windows' signer also adds `AppxMetadata/CodeIntegrity.cat` - a catalog of the package's program
+  files, signed by the same key - when the package holds any. It is optional: a package signed
+  without it installs and runs. rubrapack does not write one; it checks `AXCI` when it is there.
+- A bundle: every package inside is signed first (each with its own `AppxSignature.p7x`), then the
+  bundle is written around them and signed with the bundle SIP GUID, without `AXCI`.
+- An unsigned package that needs `-AllowUnsigned` and the publisher OID (below) is not signed:
+  signing refuses a publisher with that OID.
 
 ## Installing an unsigned package
 

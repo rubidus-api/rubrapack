@@ -22,6 +22,8 @@ typedef struct {
     rp_buf_t  out;
     rp_buf_t  central;
     uint64_t  count;
+    bool      signer_form;  // as Windows' signer rewrites a package (RFC-0011): central records in ZIP32
+                            // form when they fit, and the end record's disk numbers 0 (else 0xFFFF)
 } rp_zip_writer_t;
 
 void rp_zip_begin(rp_zip_writer_t *w, proven_allocator_t alloc, size_t limit);
@@ -29,9 +31,22 @@ void rp_zip_begin(rp_zip_writer_t *w, proven_allocator_t alloc, size_t limit);
 // (compressed for method 8). *lfh_size gets the local header's size (30 + the name's length).
 void rp_zip_add(rp_zip_writer_t *w, const char *name, int method, const uint8_t *data, size_t data_len, uint32_t crc, uint64_t size,
                 size_t *lfh_size);
+// Adds a stored or deflated entry the ZIP32 way: sizes in the local header, no data descriptor, version
+// needed 2.0 (how Windows' signer writes AppxSignature.p7x). Under 4 GiB only.
+void rp_zip_add_plain(rp_zip_writer_t *w, const char *name, int method, const uint8_t *data, size_t data_len, uint32_t crc, uint64_t size);
 // Writes the central directory and the end records; the archive goes to *out (free with rp_mem_free).
 [[nodiscard]] proven_err_t rp_zip_finish(rp_zip_writer_t *w, uint8_t **out, size_t *len);
 void rp_zip_abort(rp_zip_writer_t *w);
+// Appends to `out` what rp_zip_finish would write now: the central directory and the end records
+// (for signing: the AppX SIP's AXCD, RFC-0011).
+void rp_zip_tail(const rp_zip_writer_t *w, rp_buf_t *out);
+// Appends to `out` the archive's central directory, as it is, without the entry `skip`, then the
+// file's end records with counts, sizes and offsets as if that entry had never been written - the
+// directory starting at `skip_lfh_off`, where the entry's local header is (for checking the AXCD
+// of a signed package). The skipped entry must be described the ZIP32 way (Windows reads its place
+// from those fields).
+[[nodiscard]] bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, uint64_t skip_lfh_off, rp_buf_t *out,
+                                          const char **why);
 
 typedef struct {
     char    *name;              // as stored, NUL-terminated

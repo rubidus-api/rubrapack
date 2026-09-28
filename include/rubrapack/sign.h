@@ -50,10 +50,20 @@ typedef struct {
     rp_der_span_t signer_cert;  // the signer's certificate (whole), when found
     rp_der_span_t certs;        // the certificates SET contents
     rp_der_span_t sig;          // the signature value (OCTET STRING contents)
+    rp_der_span_t signed_digest;    // the digest the signature covers (a hash, or an MSIX "APPX" record)
     rp_der_span_t ts_token;     // the RFC 3161 token (whole), when there is one
     bool          ts_legacy;    // an old-style Authenticode timestamp (PKCS#9 counterSignature)
     bool          ts_bad;       // the unsigned attributes are malformed or hold more than one timestamp
 } rp_authenticode_check_t;
+
+// The same with a digest of `digest_len` bytes (0: the hash's size; an MSIX signs the AppX SIP's
+// "APPX" record of hashes) and a choice of signed attributes: `appx` = contentType and messageDigest only, as the
+// AppX SIP writes them for MSIX packages and bundles (RFC-0011). An EC key signs with ECDSA; the
+// signer's algorithm is then id-ecPublicKey and the value DER SEQUENCE { r, s } (Windows' form).
+[[nodiscard]] proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg,
+                                                    const uint8_t *data, size_t data_len, const uint8_t *digest, size_t digest_len,
+                                                    const rp_timestamper_t *ts, bool appx, uint8_t **out, size_t *out_len,
+                                                    const char **why);
 
 // Parses a SignedData and checks its attributes and signature; the caller compares the file digest
 // (digest_ok is set when `digest` is given and equals the signed one).

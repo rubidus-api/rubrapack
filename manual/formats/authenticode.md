@@ -124,6 +124,14 @@ RFC 3161 timestamp, Windows checks the certificate at the stamped time instead. 
 counterSignature attribute (1.2.840.113549.1.9.6) and the server's certificates added to the outer
 certificates. Windows accepts both. [observed]
 
+## ECDSA
+
+An ECDSA P-256 signer works for PE files, MSI packages and MSIX packages alike (Windows 11 26100
+calls all three `Valid` with the root trusted). Windows' signer writes the SignerInfo's
+`signatureAlgorithm` as `id-ecPublicKey` (1.2.840.10045.2.1) with NULL parameters - not
+`ecdsa-with-SHA256` - and the signature value as the DER `SEQUENCE { INTEGER r, INTEGER s }`.
+rubrapack writes the same, with deterministic nonces (RFC 6979), and reads either OID. [observed]
+
 ## What Windows reports
 
 `Get-AuthenticodeSignature` distinguishes the cases a signer needs (and names the time-stamping

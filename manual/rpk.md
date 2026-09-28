@@ -102,7 +102,7 @@ that runs with full trust, for one architecture. Two more tables say what only M
 ```toml
 [msix]
 identity-name = "Example.App"               # 3-50 characters: A-Z a-z 0-9 . -
-publisher = "CN=Example, O=Example, C=KR"   # the subject of the certificate that will sign it
+publisher = "C=KR, O=Example, CN=Example"   # the signing certificate's subject, last part first
 publisher-display-name = "Example"          # default: [package] manufacturer
 min-version = "10.0.17763.0"                # the oldest Windows it installs on (this is the default)
 
@@ -143,8 +143,8 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   Installer only and are not used for an MSIX.
 - `--unsigned-test` adds the attribute Windows needs to install an unsigned package for testing
   (`Add-AppxPackage -AllowUnsigned`, as administrator when it contains a program); such a package
-  is not for distribution and its identity differs from the signed one. Signing MSIX packages
-  comes later.
+  is not for distribution and its identity differs from the signed one. `--key` signs the package
+  (or the bundle and its packages) instead; see `sign` below.
 - Files are compressed (`--msix-compress store` turns it off); pictures, archives and other
   already compressed files are stored. An MSIX holds no time: the same source gives the same
   bytes on Linux and Windows.
@@ -526,10 +526,10 @@ rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--nfc] [--strict]
 rubrapack lint <file.msi|file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
-rubrapack sign <file.exe|.dll|.msi> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
+rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> --key <key.pfx|.pem> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
-rubrapack verify <file.exe|.dll|.msi> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
+rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
 rubrapack version | help [command]
 ```
 
@@ -589,7 +589,8 @@ rubrapack version | help [command]
   only in case are refused. The defaults allow 100,000 entries and 16 GiB. A `.cab` unpacks by the
   names inside it. An `.msix` unpacks its files (not the ZIP's own
   `[Content_Types].xml` and `AppxBlockMap.xml`) after every block has matched its hash.
-- `sign` adds an Authenticode signature (SHA-256, RSA) to a PE file or an MSI package, in place or
+- `sign` adds an Authenticode signature (SHA-256; RSA, or ECDSA P-256/P-384) to a PE file, an MSI
+  package, an MSIX package or a bundle (whose packages are signed first), in place or
   to `-o`; `build --key` signs the package as it is built (the same code), and a signed
   `--reproducible` build still gives the same bytes every time (the signature holds no time) - unless
   it is timestamped: a timestamp carries the server's time and serial number, so it differs on every
@@ -600,7 +601,10 @@ rubrapack version | help [command]
   Windows and OpenSSL export) or a PKCS#8 PEM/DER key, plain or encrypted with PBES2; `--cert` adds
   certificates the key file does not hold. The certificate must be for code signing, must not be a
   CA and must be valid now. The password comes from an environment variable or a file, never from
-  the command line. A file that is signed already is refused.
+  the command line. A file that is signed already is refused. An MSIX's `[msix] publisher` must be
+  the certificate's subject as Windows writes it - its parts from last to first, as
+  `O=Example Ltd, CN=Example` - or signing stops and prints the subject to use; `--unsigned-test`
+  and `--key` do not go together.
 - `--timestamp <URL>` asks an RFC 3161 time-stamping server to countersign the signature, so that
   it stays valid after the certificate expires; without it `sign` and `build --key` warn that it
   will not. There is no default server and nothing goes over the network unless you name one.

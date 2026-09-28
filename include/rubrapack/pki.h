@@ -55,9 +55,11 @@ size_t rp_ip_parse(const char *s, uint8_t out[16]);
 // A private key with its certificates, loaded from a PKCS#12 (.pfx/.p12), PEM or DER PKCS#8 file.
 typedef struct {
     proven_allocator_t alloc;
-    uint8_t           *key_der;     // the RSAPrivateKey (owned, wiped on free)
+    uint8_t           *key_der;     // the RSAPrivateKey, or the EC private scalar (owned, wiped on free)
     size_t             key_len;
-    rp_rsa_key_t       rsa;         // points into key_der
+    rp_rsa_key_t       rsa;         // points into key_der (RSA keys)
+    bool               ec;          // an EC key (RFC-0011 W6): ec_curve and the scalar in key_der
+    int                ec_curve;    // RP_EC_P256 or RP_EC_P384
     uint8_t          **certs;       // DER certificates in file order (owned)
     size_t            *cert_len;
     size_t             cert_count;

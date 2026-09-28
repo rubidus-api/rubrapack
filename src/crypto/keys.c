@@ -87,6 +87,52 @@ static bool add_cert(ctx_t *c, const uint8_t *der, size_t len) {
 }
 
 // PrivateKeyInfo (RFC 5958): an RSA key is kept; an EC key is refused for now (RFC-0007 S1).
+OID(O_P256, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07);
+OID(O_P384, 0x2B, 0x81, 0x04, 0x00, 0x22);
+
+// An EC private key (RFC 5915 ECPrivateKey inside PKCS#8): P-256 or P-384 from the algorithm's
+// namedCurve (or the key's own [0] parameters); the scalar must be in [1, n-1]. Whether a format
+// takes ECDSA is the signer's question (RFC-0011 W6).
+static bool take_ec(ctx_t *c, rp_der_span_t *alg_rest, const rp_der_t *key) {
+    rp_der_t curve, seq, ver, d;
+    int crv = -1;
+    if (rp_der_get(alg_rest, RP_DER_OID, &curve)) {
+        if (rp_der_oid_is(&curve, O_P256, sizeof O_P256)) crv = RP_EC_P256;
+        else if (rp_der_oid_is(&curve, O_P384, sizeof O_P384)) crv = RP_EC_P384;
+        else return fail(c, PROVEN_ERR_UNSUPPORTED, "an EC key on a curve other than P-256 or P-384");
+    }
+    rp_der_span_t ks = { key->val.p, key->val.n };
+    uint64_t v = 0;
+    if (!rp_der_get(&ks, RP_DER_SEQUENCE, &seq)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed EC private key");
+    rp_der_span_t ss = rp_der_inside(&seq);
+    if (!rp_der_get(&ss, RP_DER_INTEGER, &ver) || !rp_der_small(&ver, &v) || v != 1 || !rp_der_get(&ss, RP_DER_OCTET_STRING, &d)) {
+        return fail(c, PROVEN_ERR_INVALID_FORMAT, "a malformed EC private key");
+    }
+    uint8_t tag = 0;
+    if (crv < 0 && rp_der_peek(&ss, &tag) && tag == RP_DER_CTX0) {
+        rp_der_t p0;
+        (void)rp_der_read(&ss, &p0);
+        rp_der_span_t ps = rp_der_inside(&p0);
+        if (rp_der_get(&ps, RP_DER_OID, &curve)) {
+            if (rp_der_oid_is(&curve, O_P256, sizeof O_P256)) crv = RP_EC_P256;
+            else if (rp_der_oid_is(&curve, O_P384, sizeof O_P384)) crv = RP_EC_P384;
+        }
+    }
+    if (crv < 0) return fail(c, PROVEN_ERR_UNSUPPORTED, "an EC key without a named P-256 or P-384 curve");
+    size_t n = rp_ec_size((rp_ec_curve_t)crv);
+    if (d.val.n != n) return fail(c, PROVEN_ERR_INVALID_FORMAT, "an EC private key of the wrong length");
+    uint8_t qx[48], qy[48];
+    if (!rp_ec_public((rp_ec_curve_t)crv, d.val.p, qx, qy)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "an EC private key out of range");
+    uint8_t *copy = rp_mem_alloc(c->alloc, n, 1);
+    if (copy == NULL) return fail(c, PROVEN_ERR_NOMEM, "out of memory");
+    memcpy(copy, d.val.p, n);
+    c->out->key_der = copy;
+    c->out->key_len = n;
+    c->out->ec = true;
+    c->out->ec_curve = crv;
+    return true;
+}
+
 static bool take_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
     if (c->out->key_der) return fail(c, PROVEN_ERR_INVALID_FORMAT, "the file holds more than one private key");
     rp_der_span_t s = { der, len };
@@ -106,9 +152,7 @@ static bool take_pkcs8(ctx_t *c, const uint8_t *der, size_t len) {
     }
     rp_der_span_t as = rp_der_inside(&alg);
     if (!rp_der_get(&as, RP_DER_OID, &oid)) return fail(c, PROVEN_ERR_INVALID_FORMAT, "a private key without an algorithm");
-    if (rp_der_oid_is(&oid, O_ECKEY, sizeof O_ECKEY)) {
-        return fail(c, PROVEN_ERR_UNSUPPORTED, "EC keys are not enabled yet (only RSA keys sign until Windows accepts ECDSA in each format, RFC-0007 S1)");
-    }
+    if (rp_der_oid_is(&oid, O_ECKEY, sizeof O_ECKEY)) return take_ec(c, &as, &key);
     if (!rp_der_oid_is(&oid, O_RSA, sizeof O_RSA)) return fail(c, PROVEN_ERR_UNSUPPORTED, "the private key is not an RSA key");
     uint8_t *copy = rp_mem_alloc(c->alloc, key.val.n, 1);
     if (copy == NULL) return fail(c, PROVEN_ERR_NOMEM, "out of memory");
@@ -588,7 +632,17 @@ void rp_keyfile_free(rp_keyfile_t *kf) {
 int rp_keyfile_leaf(const rp_keyfile_t *kf) {
     for (size_t i = 0; i < kf->cert_count; ++i) {
         rp_cert_t c;
-        if (!rp_cert_parse(kf->certs[i], kf->cert_len[i], &c, NULL) || !c.rsa) continue;
+        if (!rp_cert_parse(kf->certs[i], kf->cert_len[i], &c, NULL)) continue;
+        if (kf->ec) {                   // the certificate's point is the key's public point
+            uint8_t qx[48], qy[48];
+            size_t n = rp_ec_size((rp_ec_curve_t)kf->ec_curve);
+            if (c.ec_curve == kf->ec_curve && rp_ec_public((rp_ec_curve_t)kf->ec_curve, kf->key_der, qx, qy) && c.ec_x.n == n &&
+                c.ec_y.n == n && memcmp(c.ec_x.p, qx, n) == 0 && memcmp(c.ec_y.p, qy, n) == 0) {
+                return (int)i;
+            }
+            continue;
+        }
+        if (!c.rsa) continue;
         const uint8_t *n = kf->rsa.n, *e = kf->rsa.e;
         size_t nl = kf->rsa.n_len, el = kf->rsa.e_len;
         if (c.rsa_n.n == nl && c.rsa_e.n == el && memcmp(c.rsa_n.p, n, nl) == 0 && memcmp(c.rsa_e.p, e, el) == 0) return (int)i;

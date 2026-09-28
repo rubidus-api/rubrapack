@@ -14,6 +14,7 @@
 #include "proven/types.h"
 #include "rubrapack/ir.h"
 #include "rubrapack/limits.h"
+#include "rubrapack/sign.h"
 #include "rubrapack/srcdiag.h"
 
 typedef struct {
@@ -62,6 +63,18 @@ void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t 
 // The value of `attribute` on the first `element` (matched by its full name, prefix included) in
 // an XML text, decoded; false when there is none or it does not fit.
 [[nodiscard]] bool rp_xml_attr(const char *xml, size_t len, const char *element, const char *attribute, char *out, size_t cap);
+
+// Signs a package or bundle (RFC-0011 P9a; src/msix/msix_sign.c) as Windows' AppX SIP does: adds
+// AppxSignature.p7x after [Content_Types].xml (which gains its Override); a bundle's packages are
+// signed first and a new bundle made around them. The manifest's Publisher must be the signing
+// certificate's subject as Windows writes it (last RDN first). A signed package is refused.
+[[nodiscard]] proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_keyfile_t *kf, int64_t now,
+                                        const rp_timestamper_t *ts, uint8_t **out, size_t *out_len, const char **why);
+// Checks a signed package or bundle: the package itself (rp_msix_open), the signature, and the
+// AppX record of hashes against the file (AXCI when it has a CodeIntegrity.cat); for a bundle each
+// package's own signature too. The spans in *r point into *sig (free with rp_mem_free).
+void rp_msix_verify(proven_allocator_t alloc, const uint8_t *pkg, size_t len, rp_authenticode_check_t *r, uint8_t **sig,
+                    const char **why);
 
 // `rubrapack inspect|lint <file.msix>` (src/cli/msix.c).
 [[nodiscard]] int rp_msix_inspect(const char *path, const char *what);
