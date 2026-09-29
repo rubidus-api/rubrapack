@@ -4,6 +4,125 @@ An `.rpk` file describes a package. It is a strict subset of [TOML 1.0](https://
 every `.rpk` file is valid TOML, but rubrapack refuses TOML features outside the subset instead of
 ignoring them.
 
+## Getting started
+
+rubrapack is a single program file. Download `rubrapack-<version>-windows-x64.exe` (rename it
+`rubrapack.exe` if you like) or `rubrapack-<version>-linux-x86_64` (`chmod +x` it) from the
+releases page and run it where it lies, or put it on the `PATH`. There is nothing else to install:
+no runtime, no SDK, no libraries. The same program builds the same packages on Windows and on
+Linux.
+
+### A first package
+
+Put what you ship in a folder `dist/`: the program, and whatever it needs, in `dist/files/`
+(subfolders are kept). Then let rubrapack write a starting source:
+
+```sh
+rubrapack new app          # writes app.rpk with a fresh upgrade code
+```
+
+Edit `app.rpk` to say what the package is. This one installs the program and its files into
+`Program Files\My App`, puts it in the Start menu, and shows a dialog that lets the user change
+the folder:
+
+```toml
+[package]
+name = "My App"
+manufacturer = "My Company"            # shown in Settings > Installed apps
+version = "$(VERSION)"
+arch = "x64"                           # x64, arm64 or x86
+upgrade-code = "{E8C1815C-CCD7-4F3F-B914-92A4E3F3A317}"   # yours from `new`; keep it forever
+ui = "installdir"
+
+[define]
+VERSION = "1.0.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/My App"
+
+[file.App]
+dir = "INSTALLDIR"
+source = "dist/app.exe"
+
+[files.Rest]
+dir = "INSTALLDIR"
+glob = "dist/files/**"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "My App"
+target = "file:App"
+```
+
+```sh
+rubrapack build app.rpk -o app-1.0.0.msi
+rubrapack build app.rpk -o app-1.0.1.msi -D VERSION=1.0.1    # the next version
+```
+
+That is a complete installer. It appears in Installed apps, repairs itself, and removes everything
+it installed. A higher version replaces the one installed; the same or an older one is refused
+with a message. The component GUIDs, file keys, cabinet and tables are derived from the source,
+so nothing but the upgrade code needs to be remembered from one version to the next.
+
+### Trying it on Windows
+
+```bat
+:: install, with the dialogs
+msiexec /i app-1.0.0.msi
+:: upgrade, silently (as administrator)
+msiexec /i app-1.0.1.msi /qn
+:: remove
+msiexec /x app-1.0.1.msi
+:: a full log when something goes wrong
+msiexec /i app-1.0.0.msi /l*v install.log
+```
+
+[Installing from the command line](#installing-from-the-command-line) lists the properties that
+choose features, the folder and the language without dialogs.
+
+### When something is wrong
+
+`rubrapack lint app.rpk` runs every check a build runs and writes nothing. Every problem names its
+place and a code, often with the fix:
+
+```text
+app.rpk:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
+app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
+```
+
+To see what a package holds: `rubrapack inspect app.msi File` prints a table as text,
+`rubrapack extract app.msi -d out` unpacks the files the way they install, and
+`rubrapack lint app-1.0.1.msi --previous app-1.0.0.msi` checks that the new version upgrades the
+old one cleanly. Exit codes are fixed: 0 success, 1 source error, 2 usage, 3 input/output,
+4 signing, 5 lint, 6 network.
+
+### Automating it
+
+A build is one command with no state outside the source, so it fits any script or CI job. With
+`--reproducible` the same source gives the same bytes on every machine. On a Linux runner:
+
+```sh
+V=0.4.2                                    # the release to use
+curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
+chmod +x rubrapack
+./rubrapack lint app.rpk
+./rubrapack build app.rpk -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+    --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+```
+
+Signing is optional; leave out `--key` and what follows for an unsigned package. See
+[Command line](#command-line) (`sign`, `--pkcs11`, `--key-store`) for keys on a token or in the
+Windows certificate store.
+
+### With an AI assistant
+
+The source is short plain text and every error says where and why, so an AI coding assistant can
+do the whole job: give it this manual (or the book, <https://rubidus-api.github.io/rubrapack/>) and
+say what to install. It can write `app.rpk`, run `rubrapack lint app.rpk` until it is clean, build,
+check the result with `inspect` and `extract`, and turn the steps into a release script or a CI
+job like the one above. Two things stay yours: keep the upgrade code of the first version, and
+install the package on Windows once before you ship it.
+
 ## Example
 
 ```toml

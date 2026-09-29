@@ -2,8 +2,57 @@
 
 # rubrapack
 
-A command-line tool that builds and signs Windows installer packages - Windows Installer (`.msi`)
-and MSIX (`.msix`, `.msixbundle`) - on Windows and on Linux.
+**Windows installers from one small text file.** rubrapack turns a short, readable description
+of your program into a Windows Installer package (`.msi`) or an MSIX package (`.msix`,
+`.msixbundle`), signs it, and checks it - on Windows or on Linux, with one self-contained program
+and nothing else to install.
+
+```sh
+rubrapack new app                        # writes app.rpk: name, version, where the files go
+rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, upgrades, repair
+```
+
+## Why rubrapack
+
+- **MSI packaging made simple.** You write what to install - files, folders, shortcuts, registry
+  values, services - in a short `.rpk` file (plain TOML), and rubrapack writes the database
+  tables, component GUIDs, cabinets, upgrade rules and dialogs that Windows Installer needs. No
+  XML, no table editor, no GUID bookkeeping: only the upgrade code is yours to keep.
+- **Easy to automate - and easy for an AI assistant.** The source is plain text, the tool is one
+  command, and every problem is reported as `file:line:column: error[RPnnnn]: message`, often with
+  a suggestion (`unknown key 'glb' in [files.App] (did you mean 'glob'?)`). Exit codes are fixed,
+  `lint` checks without writing anything, `inspect` prints the finished tables as text, and the
+  same source always gives the same bytes. So a script, a CI job or an AI coding assistant can
+  write the source, check it, read the errors, fix them and build - and verify its own result.
+  Ask an assistant to package your program with rubrapack and it can also turn the steps into a
+  release script for you.
+- **Nothing to install.** Download one file - about 1 MB for Windows, 0.9 MB for Linux - and run
+  it. No .NET, no Python or other interpreter, no SDK, no libraries. The Linux program needs only
+  the C library; the Windows program uses only DLLs that are part of Windows (it does not even use
+  `msi.dll`). Build Windows packages on a Linux server or CI runner without a Windows machine.
+- **Plain C, small and easy to build.** About 33,000 lines of C23 plus a small vendored base
+  library, with no third-party dependencies. Building it needs a C compiler and nothing else:
+  `cc -std=c23 -o nob nob.c && ./nob` (under a minute on an ordinary PC; tested with GCC 14,
+  Clang 19 and MinGW-w64 GCC 16). Everything - the compound file and MSI database, cabinets and
+  deflate, ZIP and MSIX, registry hives, the cryptography, PKCS#12, HTTP and TLS - is written
+  here from public specifications and checked against Windows.
+- **Output you can trust.** Packages are reproducible byte for byte on Linux and Windows. Every
+  feature is tested by installing, running, repairing, upgrading and removing packages on
+  Windows 11. `lint` checks any MSI - also one made by another tool - and `lint new.msi --previous
+  old.msi` catches the mistakes that break an upgrade before your users meet them.
+
+## Where it fits
+
+- You ship a desktop program - written in C, C++, Rust, Go, .NET, Python, Electron or anything
+  else - and want a proper Windows installer: Program Files, Start menu, an entry in Installed
+  apps, clean removal and upgrades.
+- You build releases on Linux (a CI runner, a container, a build server) and want the Windows
+  installer, signed, from the same pipeline.
+- You sign with a key that lives on a hardware token (PKCS#11) or in the Windows certificate store.
+- You want an MSIX package, or a bundle for several architectures, from the same source as the MSI.
+- You need to look inside, check or unpack MSI and MSIX packages, whoever made them.
+
+## Quick look
 
 ```sh
 rubrapack new app                                   # writes app.rpk, a source to fill in
@@ -13,7 +62,10 @@ rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
 rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
-## What it does
+A first package, step by step, is the first chapter of the manual:
+[Getting started](manual/rpk.md#getting-started).
+
+## Features in detail
 
 - **One source, both formats.** A declarative `.rpk` file (a strict TOML subset) describes the
   product once; the same source builds an MSI and an MSIX. What one format cannot carry is an error
@@ -42,9 +94,6 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   `inspect`, `extract`, `verify`, `keys list`.
 - **Reproducible and fast:** the same source gives the same bytes on Linux and on Windows, whatever
   the number of threads compressing it (every processor by default).
-- **No run-time dependencies** beyond the operating system: the compound file and MSI database,
-  cabinets and deflate, ZIP/OPC and the block map, registry hives, the crypto, PKCS#12, HTTP and
-  TLS are all written in this repository from public specifications and checked against Windows.
 
 ## What it is not
 
@@ -79,7 +128,7 @@ values, and shortcuts can use any script.
 ## Build
 
 ```sh
-# Linux (gcc 14+ or clang 18+): builds build/native/rubrapack
+# Linux (tested with GCC 14 and Clang 19): builds build/native/rubrapack
 cc -std=c23 -o nob nob.c && ./nob
 
 # Windows (MinGW-w64 UCRT): builds build/native/rubrapack.exe
