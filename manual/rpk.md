@@ -342,7 +342,9 @@ cabinet after N MiB of files; `cab = "external"` writes the cabinets next to the
 `<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it; without
 `cab-max-size` external cabinets are split before 2 GiB each. Windows Installer cannot open a
 package of 2 GiB or more, so an embedded cabinet that large is an error (`RP1516`) that asks for
-`cab = "external"`. rubrapack never overwrites an existing cabinet and writes the package last.
+`cab = "external"`. rubrapack never overwrites an existing cabinet and writes the package last:
+it is built in `<out>.rp-map` (the package's bytes go straight into that file, not into memory)
+and renamed to its name only when everything succeeded, so a failed build leaves no package.
 Compression runs on every processor (`--jobs N` to use fewer); the bytes are the same either way. Every package also carries the
 administrative (`msiexec /a`, an uncompressed network image) and advertisement (`msiexec /jm`)
 sequences.

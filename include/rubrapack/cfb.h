@@ -87,4 +87,18 @@ typedef struct {
                                         const rp_cfb_stream_t *streams, size_t count, const rp_limits_t *limits,
                                         uint8_t **out, size_t *len);
 
+// Where a writer puts the finished file (RFC-0013 R2b): get hands out a zeroed buffer of `len`
+// bytes, such as a mapped output file; drop takes it back when the write fails. Without a sink the
+// buffer is heap memory, freed with rp_mem_free.
+typedef struct {
+    proven_err_t (*get)(void *ctx, size_t len, uint8_t **data);
+    void (*drop)(void *ctx, uint8_t *data);
+    void *ctx;
+} rp_out_sink_t;
+
+// rp_cfb_write into the sink's buffer (NULL: the heap, as rp_cfb_write).
+[[nodiscard]] proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, const uint8_t clsid[16],
+                                           const rp_cfb_stream_t *streams, size_t count, const rp_limits_t *limits,
+                                           const rp_out_sink_t *sink, uint8_t **out, size_t *len);
+
 #endif // RUBRAPACK_CFB_H

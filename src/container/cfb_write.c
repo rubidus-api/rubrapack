@@ -59,6 +59,17 @@ static size_t ceil_div(size_t a, size_t b) { return a / b + (a % b != 0); }
 proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const uint8_t clsid[16],
                           const rp_cfb_stream_t *streams, size_t count, const rp_limits_t *limits, uint8_t **out,
                           size_t *len) {
+    return rp_cfb_write_to(alloc, sector_shift, clsid, streams, count, limits, NULL, out, len);
+}
+
+static void give_back(proven_allocator_t alloc, const rp_out_sink_t *sink, uint8_t *f) {
+    if (sink) sink->drop(sink->ctx, f);
+    else rp_mem_free(alloc, f);
+}
+
+proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, const uint8_t clsid[16],
+                             const rp_cfb_stream_t *streams, size_t count, const rp_limits_t *limits,
+                             const rp_out_sink_t *sink, uint8_t **out, size_t *len) {
     if (out == NULL || len == NULL || limits == NULL || (streams == NULL && count != 0)) return PROVEN_ERR_INVALID_ARG;
     if (sector_shift != 9 && sector_shift != 12) return PROVEN_ERR_INVALID_ARG;
     if (count + 1 > limits->max_entries || count >= FREESECT - 1) return PROVEN_ERR_OUT_OF_BOUNDS;
@@ -96,14 +107,21 @@ proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const
     if (ckd_mul(&file_len, total_sectors + 1, ss)) return PROVEN_ERR_OVERFLOW;
     if (file_len > limits->max_output) return PROVEN_ERR_OUT_OF_BOUNDS;
 
-    uint8_t *f = rp_mem_alloc(alloc, file_len, 1);
+    uint8_t *f = NULL;
+    if (sink) {
+        proven_err_t got = sink->get(sink->ctx, file_len, &f);
+        if (got != PROVEN_OK) return got;
+    } else {
+        f = rp_mem_alloc(alloc, file_len, 1);
+        if (f) memset(f, 0, file_len);
+    }
     size_t *sorted = rp_mem_alloc(alloc, count, sizeof *sorted);
     uint32_t *left = rp_mem_alloc(alloc, count + 1, sizeof *left);
     uint32_t *right = rp_mem_alloc(alloc, count + 1, sizeof *right);
     uint32_t *table = rp_mem_alloc(alloc, fat * per_fat, sizeof *table);
     uint32_t *minifat = rp_mem_alloc(alloc, minifat_sectors * per_fat, sizeof *minifat);
     if (f == NULL || sorted == NULL || left == NULL || right == NULL || table == NULL || minifat == NULL) {
-        rp_mem_free(alloc, f);
+        if (f) give_back(alloc, sink, f);
         rp_mem_free(alloc, sorted);
         rp_mem_free(alloc, left);
         rp_mem_free(alloc, right);
@@ -111,7 +129,6 @@ proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const
         rp_mem_free(alloc, minifat);
         return PROVEN_ERR_NOMEM;
     }
-    memset(f, 0, file_len);
     for (size_t i = 0; i < fat * per_fat; ++i) table[i] = FREESECT;
     for (size_t i = 0; i < minifat_sectors * per_fat; ++i) minifat[i] = FREESECT;
     proven_err_t err = PROVEN_OK;
@@ -241,7 +258,7 @@ proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const
     rp_mem_free(alloc, table);
     rp_mem_free(alloc, minifat);
     if (err != PROVEN_OK) {
-        rp_mem_free(alloc, f);
+        give_back(alloc, sink, f);
         return err;
     }
     *out = f;

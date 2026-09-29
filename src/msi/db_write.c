@@ -228,6 +228,11 @@ static proven_err_t add_buffer(streams_t *s, const char *name, bool table, rp_bu
 
 proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
                           const rp_limits_t *limits, uint8_t **out, size_t *len) {
+    return rp_msi_write_to(alloc, db, sector_shift, limits, NULL, out, len);
+}
+
+proven_err_t rp_msi_write_to(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
+                             const rp_limits_t *limits, const rp_out_sink_t *sink, uint8_t **out, size_t *len) {
     if (db == NULL || limits == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
     pool_t pool = { .alloc = alloc };
     streams_t streams = { .alloc = alloc };
@@ -400,7 +405,7 @@ proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsi
                 list[i] = (rp_cfb_stream_t){ s->name, s->name_len, s->data ? s->data : s->borrowed, s->size };
             }
             static const uint8_t msi_clsid[16] = { 0x84, 0x10, 0x0C, 0, 0, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46 };
-            err = rp_cfb_write(alloc, sector_shift, msi_clsid, list, streams.count, limits, out, len);
+            err = rp_cfb_write_to(alloc, sector_shift, msi_clsid, list, streams.count, limits, sink, out, len);
             rp_mem_free(alloc, list);
         }
     }

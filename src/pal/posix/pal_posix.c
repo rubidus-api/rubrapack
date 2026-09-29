@@ -400,3 +400,68 @@ void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map) {
     if (map->p) munmap(map->p, map->n);
     rp_mem_free(alloc, map);
 }
+
+struct rp_outmap {
+    void  *p;
+    size_t n;
+    int    fd;
+    char  *tmp, *path;
+};
+
+static void outmap_free(proven_allocator_t alloc, rp_outmap_t *m) {
+    rp_mem_free(alloc, m->tmp);
+    rp_mem_free(alloc, m->path);
+    rp_mem_free(alloc, m);
+}
+
+proven_err_t rp_pal_outmap_create(proven_allocator_t alloc, const char *path_utf8, size_t len, uint8_t **data, rp_outmap_t **om) {
+    if (path_utf8 == NULL || data == NULL || om == NULL || len == 0 || len > (size_t)INT64_MAX) return PROVEN_ERR_INVALID_ARG;
+    *data = NULL;
+    *om = NULL;
+    size_t n = strlen(path_utf8);
+    rp_outmap_t *m = rp_mem_alloc(alloc, 1, sizeof *m);
+    if (m == NULL) return PROVEN_ERR_NOMEM;
+    *m = (rp_outmap_t){ NULL, len, -1, rp_mem_alloc(alloc, n + 16, 1), rp_mem_alloc(alloc, n + 1, 1) };
+    if (m->tmp == NULL || m->path == NULL) {
+        outmap_free(alloc, m);
+        return PROVEN_ERR_NOMEM;
+    }
+    snprintf(m->tmp, n + 16, "%s.rp-map", path_utf8);
+    memcpy(m->path, path_utf8, n + 1);
+    m->fd = open(m->tmp, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0666);
+    if (m->fd < 0) {
+        outmap_free(alloc, m);
+        return PROVEN_ERR_IO;
+    }
+    // Reserve the space now: a full disk met through the mapping would be a signal, not an error.
+    if (posix_fallocate(m->fd, 0, (off_t)len) != 0 ||
+        (m->p = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0)) == MAP_FAILED) {
+        m->p = NULL;
+        rp_pal_outmap_discard(alloc, m);
+        return PROVEN_ERR_IO;
+    }
+    *data = m->p;
+    *om = m;
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_outmap_commit(proven_allocator_t alloc, rp_outmap_t *om) {
+    if (om == NULL) return PROVEN_ERR_INVALID_ARG;
+    proven_err_t err = PROVEN_OK;
+    if (msync(om->p, om->n, MS_SYNC) != 0) err = PROVEN_ERR_IO;
+    munmap(om->p, om->n);
+    if (fsync(om->fd) != 0) err = PROVEN_ERR_IO;
+    if (close(om->fd) != 0) err = PROVEN_ERR_IO;
+    if (err == PROVEN_OK && rename(om->tmp, om->path) != 0) err = PROVEN_ERR_IO;
+    if (err != PROVEN_OK) unlink(om->tmp);
+    outmap_free(alloc, om);
+    return err;
+}
+
+void rp_pal_outmap_discard(proven_allocator_t alloc, rp_outmap_t *om) {
+    if (om == NULL) return;
+    if (om->p) munmap(om->p, om->n);
+    if (om->fd >= 0) close(om->fd);
+    unlink(om->tmp);
+    outmap_free(alloc, om);
+}

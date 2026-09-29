@@ -514,3 +514,92 @@ void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map) {
     if (map->file) CloseHandle(map->file);
     rp_mem_free(alloc, map);
 }
+
+struct rp_outmap {
+    HANDLE          file, mapping;
+    void           *view;
+    proven_u16str_t tmp, path;
+};
+
+static void outmap_close(rp_outmap_t *m) {
+    if (m->view) UnmapViewOfFile(m->view);
+    if (m->mapping) CloseHandle(m->mapping);
+    if (m->file != INVALID_HANDLE_VALUE) CloseHandle(m->file);
+    m->view = NULL;
+    m->mapping = NULL;
+    m->file = INVALID_HANDLE_VALUE;
+}
+
+static void outmap_free(proven_allocator_t alloc, rp_outmap_t *m) {
+    proven_u16str_destroy(alloc, &m->tmp);
+    proven_u16str_destroy(alloc, &m->path);
+    rp_mem_free(alloc, m);
+}
+
+proven_err_t rp_pal_outmap_create(proven_allocator_t alloc, const char *path_utf8, size_t len, uint8_t **data, rp_outmap_t **om) {
+    if (path_utf8 == NULL || data == NULL || om == NULL || len == 0 || len > (size_t)INT64_MAX) return PROVEN_ERR_INVALID_ARG;
+    *data = NULL;
+    *om = NULL;
+    size_t n = strlen(path_utf8);
+    char *tmp = rp_mem_alloc(alloc, n + 16, 1);
+    rp_outmap_t *m = rp_mem_alloc(alloc, 1, sizeof *m);
+    if (tmp == NULL || m == NULL) {
+        rp_mem_free(alloc, tmp);
+        rp_mem_free(alloc, m);
+        return PROVEN_ERR_NOMEM;
+    }
+    *m = (rp_outmap_t){ .file = INVALID_HANDLE_VALUE };
+    memcpy(tmp, path_utf8, n);
+    memcpy(tmp + n, ".rp-map", 8);
+    proven_err_t err = wide_path(alloc, path_utf8, &m->path);
+    if (err == PROVEN_OK) err = wide_path(alloc, tmp, &m->tmp);
+    rp_mem_free(alloc, tmp);
+    if (err != PROVEN_OK) {
+        outmap_free(alloc, m);
+        return err;
+    }
+    m->file = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&m->tmp), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+                          FILE_ATTRIBUTE_NORMAL, NULL);
+    if (m->file == INVALID_HANDLE_VALUE) {
+        outmap_free(alloc, m);
+        return PROVEN_ERR_IO;
+    }
+    // The length is set (and its clusters allocated) before mapping: a full disk is an error here.
+    LARGE_INTEGER size = { .QuadPart = (LONGLONG)len };
+    if (!SetFilePointerEx(m->file, size, NULL, FILE_BEGIN) || !SetEndOfFile(m->file) ||
+        (m->mapping = CreateFileMappingW(m->file, NULL, PAGE_READWRITE, 0, 0, NULL)) == NULL ||
+        (m->view = MapViewOfFile(m->mapping, FILE_MAP_WRITE, 0, 0, 0)) == NULL) {
+        rp_pal_outmap_discard(alloc, m);
+        return PROVEN_ERR_IO;
+    }
+    *data = m->view;
+    *om = m;
+    return PROVEN_OK;
+}
+
+proven_err_t rp_pal_outmap_commit(proven_allocator_t alloc, rp_outmap_t *om) {
+    if (om == NULL) return PROVEN_ERR_INVALID_ARG;
+    proven_err_t err = PROVEN_OK;
+    if (!FlushViewOfFile(om->view, 0)) err = PROVEN_ERR_IO;
+    UnmapViewOfFile(om->view);
+    om->view = NULL;
+    CloseHandle(om->mapping);
+    om->mapping = NULL;
+    if (!FlushFileBuffers(om->file)) err = PROVEN_ERR_IO;
+    outmap_close(om);
+    const wchar_t *wt = (const wchar_t *)proven_u16str_as_ptr(&om->tmp);
+    if (err == PROVEN_OK &&
+        !MoveFileExW(wt, (const wchar_t *)proven_u16str_as_ptr(&om->path), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+        err = PROVEN_ERR_IO;
+    }
+    if (err != PROVEN_OK) DeleteFileW(wt);
+    outmap_free(alloc, om);
+    return err;
+}
+
+void rp_pal_outmap_discard(proven_allocator_t alloc, rp_outmap_t *om) {
+    if (om == NULL) return;
+    outmap_close(om);
+    DeleteFileW((const wchar_t *)proven_u16str_as_ptr(&om->tmp));
+    outmap_free(alloc, om);
+}

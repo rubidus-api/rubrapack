@@ -88,6 +88,28 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
 
 // `build`, or with `lint` set `lint <src.rpk>`: the same steps (parse, model, tables, RP20xx/RP21xx)
 // without writing anything (RFC-0006 1). --strict turns warnings into a lint failure.
+// The package goes straight into its output file through a mapping (RFC-0013 R2b): no heap copy
+// of it next to its cabinets. A second pass of a reproducible build replaces the first.
+typedef struct {
+    proven_allocator_t alloc;
+    const char        *path;
+    rp_outmap_t       *om;
+} outfile_t;
+
+static proven_err_t outfile_get(void *ctx, size_t len, uint8_t **data) {
+    outfile_t *o = ctx;
+    rp_pal_outmap_discard(o->alloc, o->om);
+    o->om = NULL;
+    return rp_pal_outmap_create(o->alloc, o->path, len, data, &o->om);
+}
+
+static void outfile_drop(void *ctx, uint8_t *data) {
+    (void)data;
+    outfile_t *o = ctx;
+    rp_pal_outmap_discard(o->alloc, o->om);
+    o->om = NULL;
+}
+
 static int run(int argc, char **argv, bool lint) {
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
     bool strict = false, nfc = false;
@@ -342,9 +364,12 @@ static int run(int argc, char **argv, bool lint) {
             base = base ? base + 1 : out;
             snprintf(stem, sizeof stem, "%.*s", (int)(strlen(base) - 4), base);
             size_t outdir = (size_t)(base - out);
-            rp_build_options_t bopt = { reproducible, stem, jobs };
+            outfile_t of = { heap, out, NULL };
+            rp_out_sink_t sink = { outfile_get, outfile_drop, &of };
+            rp_build_options_t bopt = { reproducible, stem, jobs, lint ? NULL : &sink };
             uint8_t *msi = NULL;
             size_t msi_len = 0;
+            bool msi_on_heap = lint;        // otherwise it is the output file's mapping
             rp_build_file_t *cabs = NULL;
             size_t ncabs = 0;
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
@@ -354,15 +379,16 @@ static int run(int argc, char **argv, bool lint) {
                 uint8_t *signed_msi = NULL;
                 size_t signed_len = 0;
                 int src_rc = rp_sign_bytes(&sign, out, msi, msi_len, &signed_msi, &signed_len);
+                rp_pal_outmap_discard(heap, of.om);     // the signed copy is written instead
+                of.om = NULL;
                 if (src_rc != RP_EXIT_OK) {
                     rp_build_files_free(heap, cabs, ncabs);
-                    rp_mem_free(heap, msi);
                     rp_srcdiag_print(&d, src);
                     rc = src_rc;
                     goto done;
                 }
-                rp_mem_free(heap, msi);
                 msi = signed_msi;
+                msi_on_heap = true;
                 msi_len = signed_len;
             }
             // RFC-0001 7.1: never overwrite part of an earlier multi-file output; cabinets first, the
@@ -381,11 +407,14 @@ static int run(int argc, char **argv, bool lint) {
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", cabpath);
             }
             if (!lint && err == PROVEN_OK) {
-                err = rp_pal_write_file_atomic(heap, out, msi, msi_len);
+                if (of.om) err = rp_pal_outmap_commit(heap, of.om);  // the mapped file becomes the package
+                else err = rp_pal_write_file_atomic(heap, out, msi, msi_len);
+                of.om = NULL;
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             }
+            rp_pal_outmap_discard(heap, of.om);
             rp_build_files_free(heap, cabs, ncabs);
-            rp_mem_free(heap, msi);
+            if (msi_on_heap) rp_mem_free(heap, msi);
             rp_srcdiag_print(&d, src);
             rc = err == PROVEN_OK                  ? RP_EXIT_OK
                  : err == PROVEN_ERR_INVALID_STATE ? RP_EXIT_LINT     // rp_msi_lint refused the tables

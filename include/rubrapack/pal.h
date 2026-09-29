@@ -95,6 +95,15 @@ typedef struct rp_map rp_map_t;
                                            const uint8_t **data, size_t *len, rp_map_t **map);
 void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map);
 
+// An output file written through a writable mapping (RFC-0013 R2b), so a large package costs no
+// heap: <path>.rp-map is made `len` bytes long (zeros, its space reserved) and mapped at *data.
+// Commit flushes it and renames it to <path>; discard removes it. Both free the handle.
+typedef struct rp_outmap rp_outmap_t;
+[[nodiscard]] proven_err_t rp_pal_outmap_create(proven_allocator_t alloc, const char *path_utf8, size_t len, uint8_t **data,
+                                                rp_outmap_t **om);
+[[nodiscard]] proven_err_t rp_pal_outmap_commit(proven_allocator_t alloc, rp_outmap_t *om);
+void rp_pal_outmap_discard(proven_allocator_t alloc, rp_outmap_t *om);
+
 // Processors this process may use (at least 1).
 [[nodiscard]] size_t rp_pal_cpu_count(void);
 

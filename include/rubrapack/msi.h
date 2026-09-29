@@ -139,6 +139,9 @@ typedef struct {
 // non-empty table and per binary cell (`Table.key`). Deterministic for the same input.
 [[nodiscard]] proven_err_t rp_msi_write(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
                                         const rp_limits_t *limits, uint8_t **out, size_t *len);
+// rp_msi_write into the sink's buffer (rubrapack/cfb.h; NULL: the heap).
+[[nodiscard]] proven_err_t rp_msi_write_to(proven_allocator_t alloc, const rp_msi_wdb_t *db, unsigned sector_shift,
+                                           const rp_limits_t *limits, const rp_out_sink_t *sink, uint8_t **out, size_t *len);
 
 // ---- view ------------------------------------------------------------------------------------
 

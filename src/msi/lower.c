@@ -1471,7 +1471,8 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
 static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
-                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs) {
+                                  const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs,
+                                  const rp_out_sink_t *sink) {
     pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
                   .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1" };
     pkg_t *pk = &pkg;
@@ -1592,7 +1593,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         }
         rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, pk->streams, ir->cab_external ? 0 : pk->nstreams };
         err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
-        if (err == PROVEN_OK) err = rp_msi_write(alloc, &db, 12, limits, out, len);
+        if (err == PROVEN_OK) err = rp_msi_write_to(alloc, &db, 12, limits, sink, out, len);
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
     if (!ir->cab_external) {
@@ -1871,7 +1872,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             size_t nfcabs = 0;
             static const char zero[] = "{00000000-0000-0000-0000-000000000000}";
             err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, zero, limits, &first, &first_len,
-                                diags, stem, &fcabs, &nfcabs, opt->jobs);
+                                diags, stem, &fcabs, &nfcabs, opt->jobs, opt->sink);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
@@ -1902,7 +1903,8 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                     done = true;
                 } else {
                     rp_build_files_free(alloc, fcabs, nfcabs);
-                    rp_mem_free(alloc, first);
+                    if (opt->sink) opt->sink->drop(opt->sink->ctx, first);
+                    else rp_mem_free(alloc, first);
                 }
                 rp_mem_free(alloc, two);
             }
@@ -1913,7 +1915,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     if (err == PROVEN_OK && !done) {
         err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
                             opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
-                            stem, cabs, cab_count, opt->jobs);
+                            stem, cabs, cab_count, opt->jobs, opt->sink);
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
