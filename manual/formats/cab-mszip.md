@@ -54,6 +54,38 @@ boundary before 65535 blocks; the dictionary does not cross folders. Windows ext
 a package with twelve folders installs, repairs and removes with every file byte-identical.
 [observed]
 
+## LZX [spec: MS-PATCH 2, MS-CAB]
+
+A folder with compression type `3 | w << 8` (w = 15 .. 21) is one LZX stream with a window of 2^w
+bytes, cut into **frames** of 32768 output bytes (the last shorter), one frame per CFDATA block.
+The window, the three repeated offsets and the code lengths carry on from frame to frame; after
+each frame the bit stream is padded to a 16-bit boundary.
+
+- Bits are read from 16-bit **little-endian words, most significant bit first**.
+- The folder begins with one bit: 1 means *E8 translation* follows, with a 32-bit size. The
+  compressor rewrote the 4 bytes after every `E8` byte (an x86 `call`) from relative to absolute
+  addresses so that repeated calls match; the decompressor turns them back, in the first 32768
+  frames only.
+- A block: 3 bits type (1 verbatim, 2 aligned offset, 3 uncompressed), 24 bits of uncompressed
+  size. Blocks and matches may cross frames.
+- Verbatim and aligned blocks send the **main tree** (256 literals, then 8 symbols per *position
+  slot*: 30 slots for w = 15 up to 50 for w = 21) and the **length tree** (249 symbols), each range
+  as differences (mod 17) from the previous block's lengths through a 20-symbol **pretree** (17 and
+  18: runs of zeros, 19: a short run of one value). An aligned block first sends an 8-symbol tree
+  for the low 3 bits of long offsets.
+- A main symbol above 255 is a match: low 3 bits = length - 2 (7: add a length-tree symbol, up to
+  257), the rest the position slot. Slots 0-2 reuse the last three offsets; slot *s* >= 3 gives
+  the offset `base[s] - 2 + extra bits`, and the new offset moves into the repeated ones.
+- An uncompressed block pads to 16 bits (a whole word when already aligned), then holds the three
+  repeated offsets as 32-bit little-endian values, the bytes, and one padding byte if their count is
+  odd.
+
+rubrapack writes one verbatim block per frame (or an uncompressed one when that is smaller),
+matches that never cross a frame, the repeated offsets when they are about as long as a new match,
+one step of lazy matching, and no E8 translation. It reads every block type and E8 translation.
+Windows' `expand.exe` and msiexec unpack its cabinets, and it unpacks cabinets `makecab.exe` made
+with E8 translation on. [observed]
+
 ## A deflate encoder in brief [spec: RFC 1951]
 
 1. **Match finding (LZ77):** hash the next 3 bytes, walk a chain of earlier positions with the

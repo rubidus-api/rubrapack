@@ -50,6 +50,7 @@ static const char *const core_sources[] = {
     "src/cli/new.c", "src/cli/edit.c",
     "src/cli/sign.c",
     "src/codec/deflate.c",
+    "src/codec/lzx.c",
     "src/codec/md5.c",
     "src/container/cab.c",
     "src/container/cfb.c",

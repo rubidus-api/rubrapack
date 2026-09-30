@@ -1,6 +1,7 @@
 // src/model/ir_files.c - [package], [feature], [dir], [file], [files.*] wildcards and [folder].
 
 #include "ir_int.h"
+#include "rubrapack/cab.h"
 
 rp_ir_dir_t *ir_push_dir(ctx_t *c) {
     rp_ir_t *ir = c->ir;
@@ -201,7 +202,13 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         if (strcmp(comp, "none") == 0) ir->compress = -1;
         else if (strcmp(comp, "mszip") == 0) ir->compress = 6;
         else if (strncmp(comp, "mszip:", 6) == 0 && comp[6] >= '0' && comp[6] <= '9' && comp[7] == '\0') ir->compress = comp[6] - '0';
-        else ERR(c, ir_key_pos(t, "compress"), "RP1308", "compress must be \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\"");
+        else if (strcmp(comp, "lzx") == 0) ir->compress = RP_CAB_LZX(21);
+        else if (strncmp(comp, "lzx:", 4) == 0 && comp[4] >= '1' && comp[4] <= '2' && comp[5] >= '0' && comp[5] <= '9' && comp[6] == '\0' &&
+                 (comp[4] - '0') * 10 + (comp[5] - '0') >= 15 && (comp[4] - '0') * 10 + (comp[5] - '0') <= 21) {
+            ir->compress = RP_CAB_LZX((comp[4] - '0') * 10 + (comp[5] - '0'));
+        } else {
+            ERR(c, ir_key_pos(t, "compress"), "RP1308", "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\"");
+        }
         rp_mem_free(c->alloc, comp);
     }
     char *cab = ir_get_str(c, t, "cab", false, NULL);

@@ -53,7 +53,7 @@ compressed archive format Windows has used since the 1990s. Keys in `[package]`:
 
 | Key | Values | Effect |
 |---|---|---|
-| `compress` | `mszip:6` (default), `mszip:0` .. `mszip:9`, `mszip` (= 6), `none` | how hard to compress. 9 is smallest and slowest, 1 fastest; `none` stores the files as they are |
+| `compress` | `mszip:6` (default), `mszip:0` .. `mszip:9`, `mszip` (= 6), `lzx:15` .. `lzx:21`, `lzx` (= 21), `none` | how to compress. For MSZIP 9 is smallest and slowest, 1 fastest; LZX is smaller still, with a window of 2^15 to 2^21 bytes; `none` stores the files as they are |
 | `cab` | `embed` (default), `external` | the cabinet inside the `.msi`, or next to it as `hello-x64.cab` |
 | `cab-max-size` | a number of MiB | start a new cabinet after that much data (`-1.cab`, `-2.cab`, ...) |
 
@@ -63,8 +63,11 @@ that big must use `cab = "external"` (rubrapack refuses the embedded form with `
 `.msi` and its `.cab` files must then be kept together - in the same folder, on the same share.
 Without `cab-max-size`, external cabinets are split below 2 GiB each.
 
-Compression runs on every processor of your computer; `--jobs 2` uses at most two. On a 200 MB
-program with 16 processors, `mszip:6` takes about 5 seconds and makes 105 MB.
+MSZIP compression runs on every processor of your computer; `--jobs 2` uses at most two. On a
+200 MB program with 16 processors, `mszip:6` takes about 5 seconds and makes 105 MB. LZX finds
+repeats up to 2 MiB back (MSZIP: 32 KiB) and codes them more tightly: typically 5% smaller for
+programs and 20% for text, but it works on one processor, at about 4 MB a second - try
+`--compress lzx` for a release build and keep MSZIP for everyday ones.
 
 ## Several architectures: `--arch`
 

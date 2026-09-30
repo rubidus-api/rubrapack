@@ -195,7 +195,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -514,7 +514,8 @@ name = "InstallDir"
 
 ### 캐비닛
 
-파일은 패키지에 넣는 캐비닛 하나로 압축한다. `cab-max-size = N` 은 파일이 N MiB 를 넘을 때마다 새
+파일은 패키지에 넣는 캐비닛 하나로 MSZIP(deflate)이나 LZX(`compress = "lzx"`: 대개 5~20% 더 작고,
+MSZIP 이 처리기를 모두 쓰는 데 비해 처리기 하나로 초당 4 MB 쯤)로 압축한다. `cab-max-size = N` 은 파일이 N MiB 를 넘을 때마다 새
 캐비닛을 시작하고, `cab = "external"` 은 캐비닛을 패키지 옆에 `<name>.cab`(또는 `<name>-1.cab`,
 `<name>-2.cab`, ...)으로 쓴다. 그 캐비닛은 패키지와 함께 다녀야 하고, `cab-max-size` 가 없으면 캐비닛마다
 2 GiB 전에 나눈다. Windows Installer 는 2 GiB 이상인 패키지를 열지 못하므로, 그만큼 큰 내장 캐비닛은
@@ -826,7 +827,7 @@ guard = true
 ```text
 rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <목록> (.msixbundle)]
-                [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
+                [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<키> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]

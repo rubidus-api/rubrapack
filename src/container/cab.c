@@ -3,6 +3,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/deflate.h"
+#include "rubrapack/lzx.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
 
@@ -14,6 +15,7 @@ enum {
     BLOCK = 32768,          // uncompressed bytes per CFDATA block
     TYPE_NONE = 0,
     TYPE_MSZIP = 1,
+    TYPE_LZX = 3,           // | window bits << 8
     ATTR_ARCH = 0x20,
     DATE_1980_01_01 = (0 << 9) | (1 << 5) | 1,
 };
@@ -66,7 +68,8 @@ size_t rp_cab_folder_blocks = 0xFFFF;       // blocks per folder at most (a test
 
 proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *files, size_t count, int compress, size_t jobs,
                              const rp_limits_t *limits, uint8_t **out, size_t *len) {
-    if (compress < -1 || compress > 9) return PROVEN_ERR_INVALID_ARG;
+    bool lzx = compress >= RP_CAB_LZX(RP_LZX_MIN_WBITS) && compress <= RP_CAB_LZX(RP_LZX_MAX_WBITS);
+    if ((compress < -1 || compress > 9) && !lzx) return PROVEN_ERR_INVALID_ARG;
     if ((files == NULL && count != 0) || limits == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
     if (count > 0xFFFF) return PROVEN_ERR_OUT_OF_BOUNDS;
     if (jobs == 0) jobs = 1;
@@ -104,7 +107,8 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
     uint64_t files_off = HEADER + (uint64_t)FOLDER * nfold;
     uint64_t data_off = files_off + 16 * (uint64_t)count + names;
     // Worst case per MSZIP block: "CK" + a stored deflate block (5 bytes of header).
-    uint64_t cab_len = data_off + 8 * blocks + total + (compress >= 0 ? 7 * blocks : 0);
+    // LZX: at most about 9.4 bits a byte (entropy of 656 symbols + 1) and the trees.
+    uint64_t cab_len = data_off + 8 * blocks + total + (lzx ? (BLOCK / 4 + 2048) * blocks : compress >= 0 ? 7 * blocks : 0);
     if (nfold > MAX_FOLDERS || cab_len > UINT32_MAX || cab_len > limits->max_output) {
         rp_mem_free(alloc, folder_of);
         rp_mem_free(alloc, fbytes);
@@ -130,7 +134,7 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
     for (size_t f = 0; f < nfold; ++f) {    // CFFOLDER: first CFDATA patched below
         rp_buf_u32le(&b, 0);
         rp_buf_u16le(&b, (uint16_t)((fbytes[f] + BLOCK - 1) / BLOCK));
-        rp_buf_u16le(&b, compress >= 0 ? TYPE_MSZIP : TYPE_NONE);
+        rp_buf_u16le(&b, lzx ? (uint16_t)(TYPE_LZX | (compress - RP_CAB_LZX(0)) << 8) : compress >= 0 ? TYPE_MSZIP : TYPE_NONE);
     }
     uint64_t at = 0;
     for (size_t k = 0; k < count; ++k) {    // CFFILE
@@ -147,12 +151,19 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
     // CFDATA: each folder's bytes (its files back to back) in 32 KiB blocks, compressed a batch at a
     // time on `jobs` threads and written in order; a block's dictionary is the previous block of
     // its folder.
-    size_t batch = compress >= 0 ? jobs * 4 : 1;
+    size_t batch = compress >= 0 && !lzx ? jobs * 4 : 1;
     uint8_t *raw = rp_mem_alloc(alloc, (batch + 1) * BLOCK, 1);        // [previous block][batch blocks]
     zjob_t *zj = rp_mem_alloc(alloc, batch, sizeof *zj);
     proven_err_t err = raw && zj ? PROVEN_OK : PROVEN_ERR_NOMEM;
     size_t file = 0, file_off = 0;
+    rp_lzx_enc_t *enc = NULL;
     for (size_t f = 0; err == PROVEN_OK && f < nfold; ++f) {
+        if (lzx) {                          // LZX: one encoder per folder, its frames in order
+            rp_lzx_enc_free(enc);
+            enc = NULL;
+            err = rp_lzx_enc_new(alloc, (unsigned)(compress - RP_CAB_LZX(0)), &enc);
+            if (err != PROVEN_OK) break;
+        }
         if (b.err == PROVEN_OK) {
             uint32_t v = (uint32_t)b.len;
             for (int k = 0; k < 4; ++k) b.data[folder_at + FOLDER * f + (size_t)k] = (uint8_t)(v >> (8 * k));
@@ -180,6 +191,20 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
             }
             // skip files of this folder that are empty (no bytes to place)
             while (file < count && folder_of[file] == f && files[file].size == 0) ++file;
+            if (lzx) {
+                for (size_t j = 0; j < nb && err == PROVEN_OK; ++j) {
+                    const uint8_t *z = NULL;
+                    size_t zn = 0;
+                    err = rp_lzx_enc_frame(enc, raw + (j + 1) * BLOCK, fill_of[j], &z, &zn);
+                    if (err == PROVEN_OK && zn > 0xFFFF) err = PROVEN_ERR_OUT_OF_BOUNDS;
+                    if (err != PROVEN_OK) break;
+                    rp_buf_u32le(&b, block_checksum(z, (uint16_t)zn, (uint16_t)fill_of[j]));
+                    rp_buf_u16le(&b, (uint16_t)zn);
+                    rp_buf_u16le(&b, (uint16_t)fill_of[j]);
+                    rp_buf_put(&b, z, zn);
+                }
+                continue;
+            }
             if (compress < 0) {
                 for (size_t j = 0; j < nb; ++j) {
                     const uint8_t *chunk = raw + (j + 1) * BLOCK;
@@ -220,6 +245,7 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
             prev_len = fill_of[nb - 1];
         }
     }
+    rp_lzx_enc_free(enc);
     rp_mem_free(alloc, raw);
     rp_mem_free(alloc, zj);
     rp_mem_free(alloc, folder_of);
@@ -255,7 +281,11 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
         const uint8_t *fo = cab + HEADER + FOLDER * f;
         uint32_t off = rd32(fo);
         uint16_t nblocks = rd16(fo + 4), type = rd16(fo + 6);
-        if (type != TYPE_NONE && type != TYPE_MSZIP) return PROVEN_ERR_UNSUPPORTED;
+        unsigned wbits = type >> 8 & 0x1F;
+        if (type != TYPE_NONE && type != TYPE_MSZIP &&
+            ((type & 0xFF) != TYPE_LZX || wbits < RP_LZX_MIN_WBITS || wbits > RP_LZX_MAX_WBITS)) {
+            return PROVEN_ERR_UNSUPPORTED;
+        }
         for (uint16_t k = 0; k < nblocks; ++k) {
             if (!rp_range_ok(off, 8, len)) return PROVEN_ERR_INVALID_FORMAT;
             uint16_t cbd = rd16(cab + off + 4), cbu = rd16(cab + off + 6);
@@ -288,10 +318,18 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
         uint32_t off = rd32(fo);
         uint16_t type = rd16(fo + 6);
         folder_base[f] = at;
+        rp_lzx_dec_t *dec = NULL;
+        if ((type & 0xFF) == TYPE_LZX) err = rp_lzx_dec_new(alloc, type >> 8 & 0x1F, &dec);
         for (uint16_t k = 0; k < rd16(fo + 4) && err == PROVEN_OK; ++k) {
             uint16_t cbd = rd16(cab + off + 4), cbu = rd16(cab + off + 6);
             const uint8_t *data = cab + off + 8;
-            if (type == TYPE_NONE) {
+            if (dec) {
+                if (cbu == 0 || rp_lzx_dec_frame(dec, data, cbd, buf + at, cbu) != PROVEN_OK) {
+                    err = PROVEN_ERR_INVALID_FORMAT;
+                    break;
+                }
+                at += cbu;
+            } else if (type == TYPE_NONE) {
                 memcpy(buf + at, data, cbd);
                 at += cbd;
             } else {
@@ -308,6 +346,7 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
             }
             off += 8u + cbd;
         }
+        rp_lzx_dec_free(dec);
         folder_len[f] = at - folder_base[f];
     }
     size_t off = files_off;

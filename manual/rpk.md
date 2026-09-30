@@ -205,7 +205,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `Base/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -540,7 +540,9 @@ and the machine folders (`Windows`, `System`, `Fonts`, `CommonAppData`) need `sc
 
 ### Cabinets
 
-Files are compressed into one cabinet embedded in the package. `cab-max-size = N` starts a new
+Files are compressed into one cabinet embedded in the package, with MSZIP (deflate) or LZX
+(`compress = "lzx"`: typically 5 to 20% smaller, about 4 MB a second on one processor where MSZIP
+uses them all). `cab-max-size = N` starts a new
 cabinet after N MiB of files; `cab = "external"` writes the cabinets next to the package as
 `<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it; without
 `cab-max-size` external cabinets are split before 2 GiB each. Windows Installer cannot open a
@@ -876,7 +878,7 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ```text
 rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
-                [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
+                [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<key> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]

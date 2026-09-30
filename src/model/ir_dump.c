@@ -1,6 +1,7 @@
 // src/model/ir_dump.c - the text form of the model (the IR goldens).
 
 #include "ir_int.h"
+#include "rubrapack/cab.h"
 
 // ---- dump ------------------------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "language", num);
     kv(&b, "reboot", ir->reboot_suppress ? "suppress" : "allow");
     kv(&b, "downgrade-message", ir->downgrade_message);
-    snprintf(num, sizeof num, "%d", ir->compress);
+    if (ir->compress >= RP_CAB_LZX(15)) snprintf(num, sizeof num, "lzx:%d", ir->compress - RP_CAB_LZX(0));
+    else snprintf(num, sizeof num, "%d", ir->compress);
     kv(&b, "compress", ir->compress < 0 ? "none" : num);
     if (ir->scope) kv(&b, "scope", ir->scope == 1 ? "user" : "dual");      // only when set: older goldens stay
     if (ir->ui) {
