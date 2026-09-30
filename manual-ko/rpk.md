@@ -226,6 +226,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
+| `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
+| `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
 
 dir 경로의 `기준`은 다른 dir ID 이거나 다음 가운데 하나다: `ProgramFiles`(x64/arm64 는 64비트,
 x86 은 32비트), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -442,6 +444,23 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 `mode = "set"`(기본)은 파일의 `[section]` 에 `key=value` 를 쓰고, `add` 는 쉼표 목록에 값을 덧붙이며
 (`a` 가 `a,b` 로), `remove` 는 설치 중에 키를 지운다. 제거하면 `set` 과 `add` 가 쓴 것을 뗀다.
 `remove` 는 파일 설치보다 먼저 실행되므로 옛 판이 남긴 INI 파일을 위한 것이다.
+
+### 설치 프로그램 하나에 여러 패키지: `[chain]`
+
+`[chain]` 이 있는 원본은 패키지 대신 설치 프로그램을 만든다: `rubrapack build suite.toml -o setup.exe`.
+설치 프로그램은 `[chain-package.*]` 패키지들을 원본에 적힌 차례로, 저마다의 SHA-256 과 함께 담는다. 실행하면
+모두 확인한 뒤 Windows Installer 로 하나씩 차례로 설치한다. 이미 설치된 패키지(ProductCode 로 본다)는
+건너뛴다. `vital` 패키지(기본)가 실패하면 체인이 멈추고 그 패키지의 오류를 돌려준다. 그 패키지는 스스로
+되돌리고, 앞의 패키지들은 남는다. `properties` 는 msiexec 명령줄에서처럼 그 패키지에 건넨다.
+
+- `setup.exe` 는 Windows Installer 의 진행 창과 마지막 안내를 보인다. `/passive` 는 진행만, `/quiet` 는 아무것도
+  보이지 않는다. `/uninstall` 은 패키지들을 뒤에서부터 지운다. `/log <파일>` 은 자세한 기록을 쓴다. 종료 코드:
+  0, 3010(다시 시작 필요), 실패한 패키지의 오류, 설치 프로그램이 손상되면 1620, 사용자가 권한 올리기를 거절하면 1602.
+- `elevate = true`(기본)면 설치 프로그램이 모든 패키지를 위해 관리자 권한을 한 번 묻는다. 사용자별 체인은
+  `elevate = false` 로 한다.
+- 체인에는 `[chain]`, `[chain-package.ID]`, `[define]` 만 들어간다. 패키지마다 먼저 자기 원본으로 빌드한다.
+  `--key` 는 여느 프로그램처럼 설치 프로그램에 서명한다. `inspect setup.exe` 는 패키지 목록을, `extract setup.exe
+  -d 폴더` 는 패키지들을 꺼내 준다.
 
 ### 병합 모듈: `[merge.ID]`
 

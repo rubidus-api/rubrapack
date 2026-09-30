@@ -148,7 +148,7 @@ rubrapack runs on Linux too, and builds the same bytes there with `--reproducibl
 build server (GitHub Actions, GitLab CI, Jenkins) does not need Windows. On a Linux runner:
 
 ```text
-V=0.15.0
+V=0.16.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -172,6 +172,38 @@ write the release script. Two things stay yours:
 - keep the upgrade code of the first version in every later one (chapter 3);
 - install the package on a real Windows once before you ship it, and try the upgrade from the
   previous version.
+
+## Several packages, one setup program: `[chain]`
+
+A product sometimes needs another package first - a runtime, a driver, a second tool. A *chain*
+puts them in one `setup.exe` that installs them in order. Build each package from its own source,
+then write a small source that names them:
+
+```toml
+[chain]
+name = "Hello Suite"
+manufacturer = "Example Software"
+version = "1.0.0"
+
+[chain-package.Runtime]
+source = "runtime.msi"
+
+[chain-package.Hello]
+source = "hello.msi"
+properties = "INSTALLDIR=\"C:\\Tools\\Hello\""
+vital = true
+```
+
+```text
+C:\work\suite> rubrapack build suite.toml -o setup.exe
+C:\work\suite> rubrapack inspect setup.exe
+C:\work\suite> setup.exe /passive
+```
+
+The setup program checks every package's SHA-256, skips what is already installed, and stops at
+the first `vital` package that fails; `setup.exe /uninstall` removes them again, last first.
+`elevate = false` in `[chain]` keeps it from asking for administrator rights (for per-user
+packages). Everything else is in [the reference](../rpk.md#several-packages-in-one-setup-chain).
 
 ## Where to go from here
 

@@ -236,6 +236,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version, appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
+| `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
+| `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -465,6 +467,25 @@ variable is deleted, an appended part is taken out and the rest kept. `keep = tr
 comma-separated list (`a` becomes `a,b`), `remove` deletes the key during installation. Uninstall
 takes out what `set` and `add` wrote. `remove` runs before files are installed, so it is for INI
 files an older version left behind.
+
+### Several packages in one setup: `[chain]`
+
+A source with `[chain]` builds a setup program instead of a package: `rubrapack build suite.toml -o
+setup.exe`. The setup program holds the `[chain-package.*]` packages, in the order the source lists
+them, each with its SHA-256; it checks them all, then installs them one after the other with
+Windows Installer. A package already installed (its ProductCode) is skipped. When a `vital` package
+(the default) fails, the chain stops and returns that package's error; the package rolls itself
+back, the ones before it stay. `properties` are passed to that package as on msiexec's command line.
+
+- `setup.exe` shows Windows Installer's progress windows and a last message; `/passive` only the
+  progress; `/quiet` nothing. `/uninstall` removes the packages, last first. `/log <file>` writes a
+  verbose log. Exit code: 0, 3010 (a restart is needed), the failing package's error, 1620 for a
+  damaged setup program, 1602 when the user refuses elevation.
+- With `elevate = true` (the default) the setup program asks for administrator rights once, for all
+  packages; per-user chains set `elevate = false`.
+- A chain holds only `[chain]`, `[chain-package.ID]` and `[define]`; each package is built from its
+  own source first. `--key` signs the setup program like any program; `inspect setup.exe` lists its
+  packages and `extract setup.exe -d dir` takes them out.
 
 ### Merge modules: `[merge.ID]`
 

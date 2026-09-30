@@ -5,6 +5,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
+#include "rubrapack/chain.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
@@ -347,6 +348,38 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
     return emit_buf(&b);
 }
 
+// A setup program: the chain's name, then one line per package - ID, size, ProductCode, version,
+// vital or optional, whether its SHA-256 matches, its msiexec properties.
+static int inspect_chain(const char *path, const uint8_t *data, size_t len, proven_allocator_t heap) {
+    char name[256];
+    rp_chain_entry_t *e = NULL;
+    size_t n = 0;
+    proven_err_t err = rp_chain_read(heap, data, len, name, sizeof name, &e, &n);
+    if (err != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a rubrapack setup program%s", path, err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)");
+        return RP_EXIT_IO;
+    }
+    rp_buf_t b = rp_buf_new(heap, 1u << 20);
+    rp_buf_puts(&b, "chain\t");
+    rp_buf_puts(&b, name);
+    rp_buf_byte(&b, '\n');
+    for (size_t i = 0; i < n; ++i) {
+        rp_buf_puts(&b, e[i].id);
+        rp_buf_byte(&b, '\t');
+        rp_buf_long(&b, (long long)e[i].size);
+        rp_buf_byte(&b, '\t');
+        rp_buf_puts(&b, e[i].product_code);
+        rp_buf_byte(&b, '\t');
+        rp_buf_puts(&b, e[i].version);
+        rp_buf_puts(&b, e[i].vital ? "\tvital" : "\toptional");
+        rp_buf_puts(&b, e[i].hash_ok ? "\tsha256-ok\t" : "\tsha256-MISMATCH\t");
+        rp_buf_puts(&b, e[i].properties);
+        rp_buf_byte(&b, '\n');
+    }
+    rp_mem_free(heap, e);
+    return emit_buf(&b);
+}
+
 int rp_cmd_inspect(int argc, char **argv) {
     size_t n0 = argc >= 3 ? strlen(argv[2]) : 0;
     if (n0 > 4 && (strcmp(argv[2] + n0 - 4, ".msp") == 0 || strcmp(argv[2] + n0 - 4, ".MSP") == 0) && argc == 5 &&
@@ -384,6 +417,12 @@ int rp_cmd_inspect(int argc, char **argv) {
         return RP_EXIT_IO;
     }
     size_t pl = strlen(path);
+    if (len >= 2 && memcmp(data, "MZ", 2) == 0) {                  // a chain's setup program (RFC-0016 3)
+        int crc = what ? RP_EXIT_USAGE : inspect_chain(path, data, len, heap);
+        if (what) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <setup.exe> (no table or option)");
+        rp_mem_free(heap, data);
+        return crc;
+    }
     if (len >= 4 && memcmp(data, "PK\3\4", 4) == 0) {             // a ZIP: an MSIX package
         rp_mem_free(heap, data);
         return rp_msix_inspect(path, what);

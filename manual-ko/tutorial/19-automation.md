@@ -142,7 +142,7 @@ rubrapack 은 Linux 에서도 돌고, `--reproducible` 이면 거기서도 같�
 GitLab CI, Jenkins)에 Windows 가 없어도 된다. Linux 러너에서:
 
 ```text
-V=0.15.0
+V=0.16.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -162,6 +162,36 @@ chmod +x rubrapack
 
 - 첫 판의 업그레이드 코드를 이후 모든 판에 그대로 둔다(3장).
 - 배포하기 전에 실제 Windows 에 패키지를 한 번 설치해 보고, 전 판에서의 업그레이드도 해 본다.
+
+## 설치 프로그램 하나에 여러 패키지: `[chain]`
+
+제품이 다른 패키지를 먼저 필요로 할 때가 있다 - 런타임, 드라이버, 두 번째 도구. *체인* 은 그것들을
+차례로 설치하는 `setup.exe` 하나에 담는다. 패키지마다 자기 원본으로 빌드한 뒤, 그것들을 적는 작은 원본을 쓴다:
+
+```toml
+[chain]
+name = "Hello Suite"
+manufacturer = "Example Software"
+version = "1.0.0"
+
+[chain-package.Runtime]
+source = "runtime.msi"
+
+[chain-package.Hello]
+source = "hello.msi"
+properties = "INSTALLDIR=\"C:\\Tools\\Hello\""
+vital = true
+```
+
+```text
+C:\work\suite> rubrapack build suite.toml -o setup.exe
+C:\work\suite> rubrapack inspect setup.exe
+C:\work\suite> setup.exe /passive
+```
+
+설치 프로그램은 패키지마다 SHA-256 을 확인하고, 이미 설치된 것은 건너뛰며, 처음 실패한 `vital` 패키지에서
+멈춘다. `setup.exe /uninstall` 은 뒤에서부터 다시 지운다. `[chain]` 의 `elevate = false` 는 관리자 권한을
+묻지 않게 한다(사용자별 패키지용). 나머지는 [참고 문서](../rpk.md#설치-프로그램-하나에-여러-패키지-chain)에 있다.
 
 ## 여기서 어디로
 

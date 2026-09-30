@@ -14,6 +14,7 @@
 // new files only - an existing name is never opened, followed or replaced.
 
 #include "rubrapack/cab.h"
+#include "rubrapack/chain.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -267,6 +268,31 @@ static int plan_cab(plan_t *p, const uint8_t *data, size_t len) {
             if (*c == '\\') *c = '/';       // CAB folders are written with '\'
         }
         if (!path_ok(p, rel, "file") || !add_file(p, rel, files[i].data, files[i].size)) return RP_EXIT_IO;
+    }
+    return p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
+}
+
+// ---- a chain's setup program: its packages as <ID>.msi (RFC-0016 3) ---------------------------
+
+static int plan_chain(plan_t *p, const uint8_t *data, size_t len) {
+    rp_chain_entry_t *e = NULL;
+    size_t n = 0;
+    proven_err_t err = rp_chain_read(p->alloc, data, len, NULL, 0, &e, &n);
+    if (err != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a rubrapack setup program%s", p->path, err == PROVEN_ERR_NOT_FOUND ? "" : " (its payload is damaged)");
+        return RP_EXIT_IO;
+    }
+    own(p, e);
+    for (size_t i = 0; i < n; ++i) {
+        if (!e[i].hash_ok) {
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': package '%s' does not match its SHA-256", p->path, e[i].id);
+            return RP_EXIT_IO;
+        }
+        size_t il = strlen(e[i].id);
+        char *rel = dup_n(p, e[i].id, il + 4);
+        if (rel == NULL) return RP_EXIT_IO;
+        memcpy(rel + il, ".msi", 5);
+        if (!path_ok(p, rel, "file") || !add_file(p, rel, e[i].data, (size_t)e[i].size)) return RP_EXIT_IO;
     }
     return p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
 }
@@ -627,8 +653,8 @@ int rp_cmd_extract(int argc, char **argv) {
         }
     }
     if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab") || ends_with_ci(input, ".msix") ||
-                                             ends_with_ci(input, ".msixbundle"))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]");
+                                             ends_with_ci(input, ".msixbundle") || ends_with_ci(input, ".exe"))) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -645,6 +671,8 @@ int rp_cmd_extract(int argc, char **argv) {
     int rc;
     if (ends_with_ci(input, ".cab")) {
         rc = plan_cab(&p, data, len);
+    } else if (ends_with_ci(input, ".exe")) {
+        rc = plan_chain(&p, data, len);
     } else if (ends_with_ci(input, ".msix") || ends_with_ci(input, ".msixbundle")) {
         rc = plan_msix(&p, data, len);
     } else {

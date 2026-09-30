@@ -1,6 +1,7 @@
 // src/cli/build.c - `rubrapack build <src.toml> -o <out.msi> [options]` (RFC-0001 7, 7.1).
 
 #include "rubrapack/build.h"
+#include "rubrapack/chain.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/ir.h"
@@ -39,6 +40,46 @@ static bool write_appinstaller(proven_allocator_t heap, const char *out, const u
         return false;
     }
     return true;
+}
+
+// A chain's setup program (RFC-0016 3): the packages the source names, after rubrapack's bootstrapper.
+static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
+                       const char *arch, bool chain_out, bool lint, const rp_sign_args_t *sign, const char *out, const char *src,
+                       rp_srcdiags_t *d) {
+    if (!rp_chain_is(doc)) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)", src);
+        return RP_EXIT_USAGE;
+    }
+    if (!chain_out && !lint) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is a [chain]: it builds a setup program, -o setup.exe", src);
+        return RP_EXIT_USAGE;
+    }
+    rp_ir_options_t opt = { dir, defines, ndef, arch, NULL, NULL, false };
+    rp_chain_t chain;
+    proven_err_t err = rp_chain_parse(heap, doc, &opt, &chain, d);
+    uint8_t *exe = NULL;
+    size_t exe_len = 0;
+    rp_limits_t limits = rp_limits_default();
+    if (err == PROVEN_OK) {
+        err = rp_chain_write(heap, &chain, &limits, &exe, &exe_len, d);
+        rp_chain_free(&chain);
+    }
+    int rc = err == PROVEN_OK ? RP_EXIT_OK : d->errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
+    if (rc == RP_EXIT_OK && !lint && rp_sign_wanted(sign)) {
+        uint8_t *signed_exe = NULL;
+        size_t signed_len = 0;
+        rc = rp_sign_bytes(sign, out, exe, exe_len, &signed_exe, &signed_len);
+        rp_mem_free(heap, exe);
+        exe = signed_exe;
+        exe_len = signed_len;
+    }
+    if (rc == RP_EXIT_OK && !lint && rp_pal_write_file_atomic(heap, out, exe, exe_len) != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+        rc = RP_EXIT_IO;
+    }
+    rp_mem_free(heap, exe);
+    rp_srcdiag_print(d, src);
+    return rc;
 }
 
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
@@ -268,8 +309,9 @@ static int run(int argc, char **argv, bool lint) {
     }
     bool bundle = !lint && ends_with(out, ".msixbundle");
     bool msix = (!lint && (bundle || ends_with(out, ".msix"))) || lint_msix;
-    if (!lint && !msix && !ends_with(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msix and .msixbundle", out);
+    bool chain_out = !lint && ends_with(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
+    if (!lint && !msix && !chain_out && !ends_with(out, ".msi")) {
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msix, .msixbundle and a chain's setup .exe", out);
         goto done;
     }
     // A bundle takes a list of architectures (RFC-0010 P8b-2); everything else one.
@@ -337,6 +379,12 @@ static int run(int argc, char **argv, bool lint) {
         rp_tdoc_t doc;
         rp_ir_t ir;
         err = rp_toml_parse(heap, text, text_len, &doc, &d);
+        if (err == PROVEN_OK && (chain_out || rp_chain_is(&doc))) {
+            rc = build_chain(heap, &doc, dir, defines, ndef, arch, chain_out, lint, &sign, out, src, &d);
+            rp_toml_free(&doc);
+            rp_mem_free(heap, text);
+            goto done;
+        }
         if (err == PROVEN_OK && bundle) {
             rc = build_bundle(heap, &doc, dir, defines, ndef, arch_list, narch, nfc, &msix_opt, &sign, out, src, &d);
             rp_toml_free(&doc);
