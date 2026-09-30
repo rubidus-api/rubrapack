@@ -368,7 +368,7 @@ given on the command line reach the execute sequence. [observed]
 
 ### Choices during installation
 
-What rubrapack writes for the choices a user makes (RFC-0013) [observed, Windows 11 26100]:
+What rubrapack writes for the choices a user makes [observed, Windows 11 26100]:
 
 - **Features.** `Feature.Attributes` 0x10 (UIDisallowAbsent) keeps "will be unavailable" out of
   the tree's menu; 0x02 (FollowParent) installs a feature where its parent is. A feature that is off

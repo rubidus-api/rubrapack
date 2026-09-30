@@ -1,4 +1,5 @@
 # Public surface is a WHITELIST: everything is ignored unless listed below.
+# dist/v<version>/ holds each release's files; they are published as GitHub release assets only.
 # Development material (operating docs, RFCs, private docs/, scripts/, tests/, .agents/,
 # DECISIONS.md, CHANGELOG.md) lives in ../rubrapack_private/. Its entries may appear
 # here as untracked symlinks and must never be committed.
