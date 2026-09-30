@@ -66,16 +66,16 @@ static bool layout(const uint8_t *pe, size_t len, layout_t *l, const char **why)
     return true;
 }
 
-bool rp_pe_digest(const uint8_t *pe, size_t len, rp_hash_alg_t alg, uint8_t *digest, const char **why) {
+// The Authenticode digest stream of a PE file, fed to `feed`: the headers without CheckSum and the
+// certificate table entry, the sections in file order, the data after them up to the certificate
+// table. *unsigned_len is the file's length when it has no certificate table (0 when it has one).
+static bool pe_stream(const uint8_t *pe, size_t len, void (*feed)(void *, const void *, size_t), void *ctx, size_t *unsigned_len,
+                      const char **why) {
     layout_t l;
     if (!layout(pe, len, &l, why)) return false;
-    rp_hash_t h;
-    rp_hash_init(&h, alg);
-    // Headers without CheckSum and the certificate table entry.
-    rp_hash_update(&h, pe, l.checksum);
-    rp_hash_update(&h, pe + l.checksum + 4, l.certdir - (l.checksum + 4));
-    rp_hash_update(&h, pe + l.certdir + 8, l.headers - (l.certdir + 8));
-    // Sections in file order.
+    feed(ctx, pe, l.checksum);
+    feed(ctx, pe + l.checksum + 4, l.certdir - (l.checksum + 4));
+    feed(ctx, pe + l.certdir + 8, l.headers - (l.certdir + 8));
     uint32_t order[96];
     size_t n = 0;
     if (l.nsections > 96) {
@@ -103,12 +103,48 @@ bool rp_pe_digest(const uint8_t *pe, size_t len, rp_hash_alg_t alg, uint8_t *dig
             *why = "a section lies outside the file";
             return false;
         }
-        rp_hash_update(&h, pe + off, size);
+        feed(ctx, pe + off, size);
         hashed += size;
     }
-    // The data after the sections, up to the certificate table.
-    if (hashed < end) rp_hash_update(&h, pe + hashed, end - (size_t)hashed);
+    if (hashed < end) feed(ctx, pe + hashed, end - (size_t)hashed);
+    *unsigned_len = l.cert_size ? 0 : len;
+    return true;
+}
+
+static void feed_hash(void *ctx, const void *p, size_t n) { rp_hash_update(ctx, p, n); }
+
+bool rp_pe_digest(const uint8_t *pe, size_t len, rp_hash_alg_t alg, uint8_t *digest, const char **why) {
+    rp_hash_t h;
+    size_t ul;
+    rp_hash_init(&h, alg);
+    if (!pe_stream(pe, len, feed_hash, &h, &ul, why)) return false;
     rp_hash_final(&h, digest);
+    return true;
+}
+
+typedef struct {
+    rp_hash_t h256;
+    rp_sha1_t h1;
+} both_t;
+
+static void feed_both(void *ctx, const void *p, size_t n) {
+    both_t *b = ctx;
+    rp_hash_update(&b->h256, p, n);
+    rp_sha1_update(&b->h1, p, n);
+}
+
+bool rp_pe_catalog_hashes(const uint8_t *pe, size_t len, uint8_t sha1[20], uint8_t sha256[32], const char **why) {
+    both_t b;
+    size_t ul;
+    rp_hash_init(&b.h256, RP_HASH_SHA256);
+    rp_sha1_init(&b.h1);
+    if (!pe_stream(pe, len, feed_both, &b, &ul, why)) return false;
+    // An unsigned file is hashed as if padded with zeros to a multiple of 8 bytes, as it would be
+    // before a signature is added (Windows' CryptCATAdminCalcHashFromFileHandle2; format notes F9).
+    static const uint8_t zero[8] = { 0 };
+    if (ul % 8) feed_both(&b, zero, 8 - ul % 8);
+    rp_hash_final(&b.h256, sha256);
+    rp_sha1_final(&b.h1, sha1);
     return true;
 }
 

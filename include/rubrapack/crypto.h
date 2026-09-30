@@ -30,6 +30,17 @@ typedef struct {
 
 enum { RP_HASH_MAX = 64 };
 
+// SHA-1 (FIPS 180-4), only for identifying files in a catalog, as Windows' catalogs do (never for
+// a signature).
+typedef struct {
+    uint32_t h[5];
+    uint8_t  b[64];
+    uint64_t n;
+} rp_sha1_t;
+void rp_sha1_init(rp_sha1_t *s);
+void rp_sha1_update(rp_sha1_t *s, const void *data, size_t len);
+void rp_sha1_final(rp_sha1_t *s, uint8_t out[20]);
+
 size_t rp_hash_size(rp_hash_alg_t alg);         // 32, 48, 64
 size_t rp_hash_block(rp_hash_alg_t alg);        // 64, 128, 128
 void rp_hash_init(rp_hash_t *h, rp_hash_alg_t alg);

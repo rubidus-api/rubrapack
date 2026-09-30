@@ -97,21 +97,18 @@ proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t 
     return rp_authenticode_build_ex(alloc, kf, leaf, alg, data, data_len, digest, 0, ts, false, out, out_len, why);
 }
 
-proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
-                                      size_t data_len, const uint8_t *digest, size_t digest_len, const rp_timestamper_t *ts, bool appx,
-                                      uint8_t **out, size_t *out_len, const char **why) {
+// A SignedData whose content, of type `ctype`, is SEQUENCE { ind } (`ind` holds its contents and is
+// consumed); `appx` keeps the signed attributes to contentType and messageDigest.
+static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
+                                 size_t ctype_len, rp_buf_t ind, const rp_timestamper_t *ts, bool appx, uint8_t **out, size_t *out_len,
+                                 const char **why) {
     size_t hn, hl = rp_hash_size(alg);
-    size_t dl = digest_len ? digest_len : hl;
     const uint8_t *hoid = hash_oid(alg, &hn);
     rp_cert_t lc;
-    if (!rp_cert_parse(kf->certs[leaf], kf->cert_len[leaf], &lc, why)) return PROVEN_ERR_INVALID_ARG;
-
-    // SpcIndirectDataContent { data, DigestInfo { alg, digest } }.
-    rp_buf_t ind = rp_buf_new(alloc, 1u << 20), di = rp_buf_new(alloc, 1024);
-    rp_buf_put(&ind, data, data_len);
-    put_alg(&di, hoid, hn);
-    rp_der_put(&di, RP_DER_OCTET_STRING, digest, dl);
-    rp_der_wrap(&ind, RP_DER_SEQUENCE, &di);
+    if (!rp_cert_parse(kf->certs[leaf], kf->cert_len[leaf], &lc, why)) {
+        rp_buf_free(&ind);
+        return PROVEN_ERR_INVALID_ARG;
+    }
     uint8_t content_hash[RP_HASH_MAX];
     rp_hash(alg, ind.data, ind.len, content_hash);          // the contents, without the SEQUENCE header
     rp_buf_t indirect = rp_buf_new(alloc, 1u << 20);
@@ -128,7 +125,7 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
     rp_der_wrap(&attr[0], RP_DER_SET, &v);
     rp_der_put_oid(&attr[1], O_CONTENT_TYPE, sizeof O_CONTENT_TYPE);
     v = rp_buf_new(alloc, 256);
-    rp_der_put_oid(&v, O_SPC_INDIRECT, sizeof O_SPC_INDIRECT);
+    rp_der_put_oid(&v, ctype, ctype_len);
     rp_der_wrap(&attr[1], RP_DER_SET, &v);
     rp_der_put_oid(&attr[2], O_SPC_STATEMENT, sizeof O_SPC_STATEMENT);
     v = rp_buf_new(alloc, 256);
@@ -227,7 +224,7 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
     rp_der_put_small(&sd, 1);
     put_alg(&algs, hoid, hn);
     rp_der_wrap(&sd, RP_DER_SET, &algs);
-    rp_der_put_oid(&encap, O_SPC_INDIRECT, sizeof O_SPC_INDIRECT);
+    rp_der_put_oid(&encap, ctype, ctype_len);
     rp_der_wrap(&encap, RP_DER_CTX0, &indirect);
     rp_der_wrap(&sd, RP_DER_SEQUENCE, &encap);
     // The leaf first, then the other certificates, without self-signed roots (as Windows does).
@@ -259,6 +256,28 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
         return err;
     }
     return rp_buf_take(&all, out, out_len);
+}
+
+proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
+                                      size_t data_len, const uint8_t *digest, size_t digest_len, const rp_timestamper_t *ts, bool appx,
+                                      uint8_t **out, size_t *out_len, const char **why) {
+    size_t hn, dl = digest_len ? digest_len : rp_hash_size(alg);
+    const uint8_t *hoid = hash_oid(alg, &hn);
+    // SpcIndirectDataContent { data, DigestInfo { alg, digest } }.
+    rp_buf_t ind = rp_buf_new(alloc, 1u << 20), di = rp_buf_new(alloc, 1024);
+    rp_buf_put(&ind, data, data_len);
+    put_alg(&di, hoid, hn);
+    rp_der_put(&di, RP_DER_OCTET_STRING, digest, dl);
+    rp_der_wrap(&ind, RP_DER_SEQUENCE, &di);
+    return build_signed(alloc, kf, leaf, alg, O_SPC_INDIRECT, sizeof O_SPC_INDIRECT, ind, ts, appx, out, out_len, why);
+}
+
+proven_err_t rp_signed_content_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
+                                     size_t ctype_len, const uint8_t *content, size_t content_len, uint8_t **out, size_t *out_len,
+                                     const char **why) {
+    rp_buf_t ind = rp_buf_new(alloc, 1u << 24);
+    rp_buf_put(&ind, content, content_len);
+    return build_signed(alloc, kf, leaf, alg, ctype, ctype_len, ind, NULL, true, out, out_len, why);
 }
 
 // ---- checking -----------------------------------------------------------------------------------

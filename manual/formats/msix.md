@@ -244,9 +244,23 @@ PowerShell cmdlet cannot sign a package) and checked by installing rubrapack's s
     `HashMismatch` - so is the package whose central directory is rewritten that way after signing;
   - `AXCT`: `[Content_Types].xml` (the plain bytes); `AXBM`: `AppxBlockMap.xml`;
   - `AXCI`: `AppxMetadata/CodeIntegrity.cat`, only when the package has one.
-- Windows' signer also adds `AppxMetadata/CodeIntegrity.cat` - a catalog of the package's program
-  files, signed by the same key - when the package holds any. It is optional: a package signed
-  without it installs and runs. rubrapack does not write one; it checks `AXCI` when it is there.
+- A package that holds program files also gets `AppxMetadata/CodeIntegrity.cat` - a catalog of
+  them, signed by the same key - as Windows' signer adds it, and its hash as `AXCI`. It goes in
+  after `[Content_Types].xml` (which gains an Override `application/vnd.ms-pkiseccat` for it),
+  before the signature; the block map does not list it. The catalog [observed]:
+  - a SignedData with contentType and messageDigest as its only signed attributes, whose content
+    (type `1.3.6.1.4.1.311.10.1`, a certificate trust list) holds: the usage `1.3.6.1.4.1.311.12.1.1`
+    (catalog list), a 16-byte list identifier, the time, the member algorithm `1.3.6.1.4.1.311.12.1.3`,
+    the members, and two name-values (`1.3.6.1.4.1.311.12.2.1`: `PackageFullName` and `OSAttr` =
+    `2:6.2`, each a BMPString name, the flags `0x10010001` and a UTF-16 value);
+  - per PE file two members: its SHA-1 with the member information `1.3.6.1.4.1.311.12.2.3`, and its
+    SHA-256 with that and an SpcIndirectData for a PE image;
+  - a file's hash is its Authenticode digest, but taken over the file padded with zeros to a
+    multiple of 8 bytes when it has no signature - as it would be before a signature is added. For
+    a file whose length is a multiple of 8 the two are the same;
+  - the package full name is `<Name>_<Version>_<Architecture>_<ResourceId>_<PublisherId>`, the
+    publisher ID the first 8 bytes of the SHA-256 of the manifest's `Publisher` in UTF-16LE, as 13
+    characters of Crockford's base32 (`0-9 a-z` without `i l o u`).
 - A bundle: every package inside is signed first (each with its own `AppxSignature.p7x`), then the
   bundle is written around them and signed with the bundle SIP GUID, without `AXCI`.
 - An unsigned package that needs `-AllowUnsigned` and the publisher OID (below) is not signed:

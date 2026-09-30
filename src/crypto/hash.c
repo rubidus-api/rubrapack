@@ -217,3 +217,74 @@ bool rp_hkdf_expand(rp_hash_alg_t alg, const uint8_t *prk, size_t prk_len, const
     rp_wipe(&m, sizeof m);
     return true;
 }
+
+// ---- SHA-1 (FIPS 180-4 6.1), for catalog member identifiers only ----------------------------
+
+static uint32_t rl1(uint32_t x, int n) { return (x << n) | (x >> (32 - n)); }
+
+static void block1(uint32_t h[5], const uint8_t *p) {
+    uint32_t w[80];
+    for (int t = 0; t < 16; ++t) w[t] = (uint32_t)p[4 * t] << 24 | (uint32_t)p[4 * t + 1] << 16 | (uint32_t)p[4 * t + 2] << 8 | p[4 * t + 3];
+    for (int t = 16; t < 80; ++t) w[t] = rl1(w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16], 1);
+    uint32_t a = h[0], b = h[1], c = h[2], d = h[3], e = h[4];
+    for (int t = 0; t < 80; ++t) {
+        uint32_t f, k;
+        if (t < 20) f = (b & c) | (~b & d), k = 0x5A827999u;
+        else if (t < 40) f = b ^ c ^ d, k = 0x6ED9EBA1u;
+        else if (t < 60) f = (b & c) | (b & d) | (c & d), k = 0x8F1BBCDCu;
+        else f = b ^ c ^ d, k = 0xCA62C1D6u;
+        uint32_t tmp = rl1(a, 5) + f + e + k + w[t];
+        e = d;
+        d = c;
+        c = rl1(b, 30);
+        b = a;
+        a = tmp;
+    }
+    h[0] += a;
+    h[1] += b;
+    h[2] += c;
+    h[3] += d;
+    h[4] += e;
+}
+
+void rp_sha1_init(rp_sha1_t *s) {
+    static const uint32_t iv[5] = { 0x67452301u, 0xEFCDAB89u, 0x98BADCFEu, 0x10325476u, 0xC3D2E1F0u };
+    memcpy(s->h, iv, sizeof iv);
+    s->n = 0;
+}
+
+void rp_sha1_update(rp_sha1_t *s, const void *data, size_t len) {
+    const uint8_t *p = data;
+    size_t fill = (size_t)(s->n % 64);
+    s->n += len;
+    if (fill) {
+        size_t take = 64 - fill < len ? 64 - fill : len;
+        memcpy(s->b + fill, p, take);
+        p += take;
+        len -= take;
+        if (fill + take < 64) return;
+        block1(s->h, s->b);
+    }
+    for (; len >= 64; p += 64, len -= 64) block1(s->h, p);
+    if (len) memcpy(s->b, p, len);
+}
+
+void rp_sha1_final(rp_sha1_t *s, uint8_t out[20]) {
+    uint64_t bits = s->n * 8;
+    size_t fill = (size_t)(s->n % 64);
+    s->b[fill++] = 0x80;
+    if (fill > 56) {
+        memset(s->b + fill, 0, 64 - fill);
+        block1(s->h, s->b);
+        fill = 0;
+    }
+    memset(s->b + fill, 0, 56 - fill);
+    for (int i = 0; i < 8; ++i) s->b[56 + i] = (uint8_t)(bits >> (56 - 8 * i));
+    block1(s->h, s->b);
+    for (int i = 0; i < 5; ++i) {
+        out[4 * i] = (uint8_t)(s->h[i] >> 24);
+        out[4 * i + 1] = (uint8_t)(s->h[i] >> 16);
+        out[4 * i + 2] = (uint8_t)(s->h[i] >> 8);
+        out[4 * i + 3] = (uint8_t)s->h[i];
+    }
+}

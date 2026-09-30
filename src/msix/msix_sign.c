@@ -216,7 +216,199 @@ static proven_err_t add_deflated_plain(proven_allocator_t alloc, rp_zip_writer_t
     return err;
 }
 
-static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_keyfile_t *kf, int leaf,
+// ---- AppxMetadata/CodeIntegrity.cat (RFC-0016 3) --------------------------------------------------
+//
+// Windows' signer adds a catalog of the package's program files, signed with the package's key:
+// a SignedData whose content is a certificate trust list (1.3.6.1.4.1.311.10.1) - catalog list
+// usage, a list identifier, the time, member algorithm V2, then per PE file two members (its SHA-1
+// with the member-info attribute, its SHA-256 with that and an SpcIndirectData for a PE image), and
+// the PackageFullName and OSAttr name-values. Worked out from Windows-signed packages
+// (tests/fixtures/p9a/oracle) and Windows' own catalog hashes (format notes F9).
+
+#define MSOID(...) { 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, __VA_ARGS__ }
+static const uint8_t O_CTL[] = MSOID(0x0A, 0x01), O_CATALOG_LIST[] = MSOID(0x0C, 0x01, 0x01), O_MEMBER_V2[] = MSOID(0x0C, 0x01, 0x03),
+                     O_MEMBERINFO2[] = MSOID(0x0C, 0x02, 0x03), O_NAMEVALUE[] = MSOID(0x0C, 0x02, 0x01), O_INDIRECT[] = MSOID(0x02, 0x01, 0x04);
+static const uint8_t O_SHA256[] = { 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01 };
+// SpcAttributeTypeAndOptionalValue for a PE image, as Windows writes it in a catalog member.
+static const uint8_t PE_IMAGE_DATA[] = { 0x30, 0x18, 0x06, 0x0A, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x01, 0x0F, 0x30, 0x0A,
+                                         0x03, 0x02, 0x05, 0xA0, 0xA0, 0x04, 0xA2, 0x02, 0x80, 0x00 };
+static const char CI_OVERRIDE[] = "<Override PartName=\"/AppxMetadata/CodeIntegrity.cat\" ContentType=\"application/vnd.ms-pkiseccat\" />";
+
+static void memberinfo2(rp_buf_t *b, proven_allocator_t alloc) {
+    rp_buf_t a = rp_buf_new(alloc, 64), v = rp_buf_new(alloc, 16);
+    rp_der_put_oid(&a, O_MEMBERINFO2, sizeof O_MEMBERINFO2);
+    rp_buf_byte(&v, 0x80);
+    rp_buf_byte(&v, 0x00);
+    rp_der_wrap(&a, RP_DER_SET, &v);
+    rp_der_wrap(b, RP_DER_SEQUENCE, &a);
+}
+
+static void name_value(rp_buf_t *attrs, proven_allocator_t alloc, const char *name, const char *value) {
+    rp_buf_t nv = rp_buf_new(alloc, 1024), bmp = rp_buf_new(alloc, 256), str = rp_buf_new(alloc, 1024), a = rp_buf_new(alloc, 2048), os = rp_buf_new(alloc, 2048);
+    for (const char *p = name; *p; ++p) {
+        rp_buf_byte(&bmp, 0);
+        rp_buf_byte(&bmp, (uint8_t)*p);
+    }
+    rp_der_put(&nv, RP_DER_BMP, bmp.data, bmp.len);
+    rp_buf_free(&bmp);
+    rp_der_put_small(&nv, 0x10010001);
+    for (const char *p = value; *p; ++p) rp_buf_u16le(&str, (uint8_t)*p);     // ASCII: the identity's characters
+    rp_buf_u16le(&str, 0);
+    rp_der_put(&nv, RP_DER_OCTET_STRING, str.data, str.len);
+    rp_buf_free(&str);
+    rp_der_wrap(&os, RP_DER_SEQUENCE, &nv);
+    rp_der_put_oid(&a, O_NAMEVALUE, sizeof O_NAMEVALUE);
+    rp_der_put(&a, RP_DER_OCTET_STRING, os.data, os.len);
+    rp_buf_free(&os);
+    rp_der_wrap(attrs, RP_DER_SEQUENCE, &a);
+}
+
+// "<Name>_<Version>_<Architecture>_<ResourceId>_<PublisherId>": the publisher ID is Crockford's
+// base32 of the first 8 bytes of SHA-256 over the publisher in UTF-16LE, as 13 characters.
+static bool full_name(const char *man, size_t ml, char *out, size_t cap) {
+    char name[256], ver[64], arch[32] = "neutral", res[128] = "", pub[4200];
+    if (!rp_xml_attr(man, ml, "Identity", "Name", name, sizeof name) || !rp_xml_attr(man, ml, "Identity", "Version", ver, sizeof ver) ||
+        !rp_xml_attr(man, ml, "Identity", "Publisher", pub, sizeof pub)) {
+        return false;
+    }
+    (void)rp_xml_attr(man, ml, "Identity", "ProcessorArchitecture", arch, sizeof arch);
+    (void)rp_xml_attr(man, ml, "Identity", "ResourceId", res, sizeof res);
+    rp_hash_t h;
+    rp_hash_init(&h, RP_HASH_SHA256);
+    uint8_t u[2];
+    for (const unsigned char *p = (const unsigned char *)pub; *p; ++p) {
+        u[0] = *p;              // the subject is ASCII here (rubrapack writes it from the certificate)
+        u[1] = 0;
+        rp_hash_update(&h, u, 2);
+    }
+    uint8_t d[32];
+    rp_hash_final(&h, d);
+    uint64_t v = 0;
+    for (int i = 0; i < 8; ++i) v = v << 8 | d[i];
+    static const char a32[] = "0123456789abcdefghjkmnpqrstvwxyz";
+    char id[14];
+    for (int i = 0; i < 13; ++i) {
+        int shift = 59 - 5 * i;             // 65 bits: the 64 of v and a 0 after them
+        id[i] = a32[(shift >= 0 ? v >> shift : v << -shift) & 31];
+    }
+    id[13] = 0;
+    return (size_t)snprintf(out, cap, "%s_%s_%s_%s_%s", name, ver, arch, res, id) < cap;
+}
+
+static void utc_time(int64_t t, char out[32]) {
+    int64_t days = t / 86400, sec = t % 86400;
+    // days since 1970-01-01 to a civil date (H. Hinnant's algorithm)
+    int64_t z = days + 719468, era = (z >= 0 ? z : z - 146096) / 146097;
+    int64_t doe = z - era * 146097, yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    int64_t y = yoe + era * 400, doy = doe - (365 * yoe + yoe / 4 - yoe / 100), mp = (5 * doy + 2) / 153;
+    int64_t dd = doy - (153 * mp + 2) / 5 + 1, mm = mp < 10 ? mp + 3 : mp - 9;
+    if (mm <= 2) ++y;
+    snprintf(out, 32, "%02u%02u%02u%02u%02u%02uZ", (unsigned)(y % 100) % 100, (unsigned)mm % 100, (unsigned)dd % 100, (unsigned)(sec / 3600) % 100,
+             (unsigned)(sec / 60 % 60), (unsigned)(sec % 60));
+}
+
+static proven_err_t code_integrity(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_zip_entry_t *e, size_t ne,
+                                   const rp_keyfile_t *kf, int leaf, int64_t now, uint8_t **out, size_t *out_len, const char **why) {
+    *out = NULL;
+    *out_len = 0;
+    rp_der_span_t *subj = rp_mem_alloc(alloc, 2 * ne + 1, sizeof *subj);
+    rp_buf_t *enc = rp_mem_alloc(alloc, 2 * ne + 1, sizeof *enc);
+    if (subj == NULL || enc == NULL) {
+        rp_mem_free(alloc, subj);
+        rp_mem_free(alloc, enc);
+        return PROVEN_ERR_NOMEM;
+    }
+    size_t ns = 0;
+    proven_err_t err = PROVEN_OK;
+    uint8_t *man = NULL;
+    size_t ml = 0;
+    rp_hash_t idh;
+    rp_hash_init(&idh, RP_HASH_SHA256);
+    for (size_t i = 0; err == PROVEN_OK && i < ne; ++i) {
+        if (strcmp(e[i].name, "AppxManifest.xml") == 0) {
+            err = rp_zip_data(alloc, pkg, len, &e[i], 1u << 24, &man, why);
+            ml = man ? (size_t)e[i].size : 0;
+            continue;
+        }
+        if (strcmp(e[i].name, "AppxBlockMap.xml") == 0 || strcmp(e[i].name, "[Content_Types].xml") == 0 || e[i].size < 64) continue;
+        uint8_t *data = NULL;
+        err = rp_zip_data(alloc, pkg, len, &e[i], (uint64_t)1 << 32, &data, why);
+        if (err != PROVEN_OK) break;
+        uint8_t h1[20], h2[32];
+        const char *nwhy = NULL;
+        bool pe = data[0] == 'M' && data[1] == 'Z' && rp_pe_catalog_hashes(data, (size_t)e[i].size, h1, h2, &nwhy);
+        rp_mem_free(alloc, data);
+        if (!pe) continue;
+        rp_hash_update(&idh, h2, 32);
+        // SHA-1 member: the member information only.
+        rp_buf_t m1 = rp_buf_new(alloc, 256), set1 = rp_buf_new(alloc, 256);
+        rp_der_put(&m1, RP_DER_OCTET_STRING, h1, 20);
+        memberinfo2(&set1, alloc);
+        rp_der_wrap(&m1, RP_DER_SET, &set1);
+        enc[ns] = rp_buf_new(alloc, 512);
+        rp_der_wrap(&enc[ns], RP_DER_SEQUENCE, &m1);
+        subj[ns] = (rp_der_span_t){ enc[ns].data, enc[ns].len };
+        ++ns;
+        // SHA-256 member: the member information and the PE image's indirect data.
+        rp_buf_t m2 = rp_buf_new(alloc, 512), mi = rp_buf_new(alloc, 64), ind = rp_buf_new(alloc, 256), idc = rp_buf_new(alloc, 256),
+                 di = rp_buf_new(alloc, 128), alg = rp_buf_new(alloc, 32), ic = rp_buf_new(alloc, 256), ia = rp_buf_new(alloc, 256);
+        rp_der_put(&m2, RP_DER_OCTET_STRING, h2, 32);
+        memberinfo2(&mi, alloc);
+        rp_buf_put(&idc, PE_IMAGE_DATA, sizeof PE_IMAGE_DATA);
+        rp_der_put_oid(&alg, O_SHA256, sizeof O_SHA256);
+        rp_der_put_null(&alg);
+        rp_der_wrap(&di, RP_DER_SEQUENCE, &alg);
+        rp_der_put(&di, RP_DER_OCTET_STRING, h2, 32);
+        rp_der_wrap(&idc, RP_DER_SEQUENCE, &di);
+        rp_der_wrap(&ic, RP_DER_SEQUENCE, &idc);
+        rp_der_put_oid(&ia, O_INDIRECT, sizeof O_INDIRECT);
+        rp_der_wrap(&ia, RP_DER_SET, &ic);
+        rp_der_wrap(&ind, RP_DER_SEQUENCE, &ia);
+        rp_der_span_t attrs[2] = { { mi.data, mi.len }, { ind.data, ind.len } };
+        rp_der_set_of(&m2, RP_DER_SET, attrs, 2);
+        rp_buf_free(&mi);
+        rp_buf_free(&ind);
+        enc[ns] = rp_buf_new(alloc, 1024);
+        rp_der_wrap(&enc[ns], RP_DER_SEQUENCE, &m2);
+        subj[ns] = (rp_der_span_t){ enc[ns].data, enc[ns].len };
+        ++ns;
+    }
+    char fn[600], t[32];
+    if (err == PROVEN_OK && ns && (man == NULL || !full_name((const char *)man, ml, fn, sizeof fn))) {
+        *why = "the manifest's Identity cannot be read for the package full name";
+        err = PROVEN_ERR_INVALID_FORMAT;
+    }
+    if (err == PROVEN_OK && ns) {
+        utc_time(now, t);
+        uint8_t lid[32];
+        rp_hash_update(&idh, t, 13);
+        rp_hash_final(&idh, lid);                   // a list identifier of its own, from the members and the time
+        rp_buf_t ctl = rp_buf_new(alloc, 1u << 24), use = rp_buf_new(alloc, 64), malg = rp_buf_new(alloc, 64), ext = rp_buf_new(alloc, 4096),
+                 exts = rp_buf_new(alloc, 4096);
+        rp_der_put_oid(&use, O_CATALOG_LIST, sizeof O_CATALOG_LIST);
+        rp_der_wrap(&ctl, RP_DER_SEQUENCE, &use);
+        rp_der_put(&ctl, RP_DER_OCTET_STRING, lid, 16);
+        rp_der_put(&ctl, RP_DER_UTCTIME, t, 13);
+        rp_der_put_oid(&malg, O_MEMBER_V2, sizeof O_MEMBER_V2);
+        rp_der_put_null(&malg);
+        rp_der_wrap(&ctl, RP_DER_SEQUENCE, &malg);
+        rp_der_set_of(&ctl, RP_DER_SEQUENCE, subj, ns);       // the members in DER order
+        name_value(&ext, alloc, "PackageFullName", fn);
+        name_value(&ext, alloc, "OSAttr", "2:6.2");
+        rp_der_wrap(&exts, RP_DER_SEQUENCE, &ext);
+        rp_der_wrap(&ctl, RP_DER_CTX0, &exts);
+        err = ctl.err;
+        if (err == PROVEN_OK) err = rp_signed_content_build(alloc, kf, leaf, RP_HASH_SHA256, O_CTL, sizeof O_CTL, ctl.data, ctl.len, out, out_len, why);
+        rp_buf_free(&ctl);
+    }
+    for (size_t i = 0; i < ns; ++i) rp_buf_free(&enc[i]);
+    rp_mem_free(alloc, enc);
+    rp_mem_free(alloc, subj);
+    rp_mem_free(alloc, man);
+    return err;
+}
+
+static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_keyfile_t *kf, int leaf, int64_t now,
                                  const rp_timestamper_t *ts, bool bundle, uint8_t **out, size_t *out_len, const char **why) {
     rp_limits_t lim = rp_limits_default();
     rp_zip_entry_t *e = NULL;
@@ -230,8 +422,8 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
     z.signer_form = true;                   // central records and end record as Windows' signer writes them
     bool z_open = true;
     rp_buf_t newct = rp_buf_new(alloc, 1u << 20), rec = rp_buf_new(alloc, 512), tail = rp_buf_new(alloc, 1u << 24), data = rp_buf_new(alloc, 256);
-    uint8_t *sig = NULL;
-    size_t sl = 0;
+    uint8_t *sig = NULL, *cat = NULL;
+    size_t sl = 0, catl = 0;
     if (ct == NULL || strcmp(ct->name, "[Content_Types].xml") != 0 || bm == NULL) {
         *why = "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)";
         err = PROVEN_ERR_INVALID_FORMAT;
@@ -247,7 +439,9 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
         size_t lfh = 0;
         rp_zip_add(&z, e[i].name, e[i].method, pkg + e[i].data_off, (size_t)e[i].csize, e[i].crc, e[i].size, &lfh);
     }
-    // The content types with the signature's Override.
+    // The catalog of the package's programs (not for a bundle: its packages carry theirs).
+    if (err == PROVEN_OK && !bundle) err = code_integrity(alloc, pkg, len, e, ne, kf, leaf, now, &cat, &catl, why);
+    // The content types with the signature's Override (and the catalog's).
     if (err == PROVEN_OK) err = rp_zip_data(alloc, pkg, len, ct, 1u << 20, &ctp, why);
     if (err == PROVEN_OK) {
         const char *t = (const char *)ctp, *end = NULL;
@@ -260,11 +454,13 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
         } else {
             rp_buf_put(&newct, t, (size_t)(end - t));
             rp_buf_puts(&newct, SIG_OVERRIDE);
+            if (cat) rp_buf_puts(&newct, CI_OVERRIDE);
             rp_buf_put(&newct, end, (size_t)ct->size - (size_t)(end - t));
             err = newct.err;
         }
     }
     if (err == PROVEN_OK) err = add_deflated(alloc, &z, "[Content_Types].xml", newct.data, newct.len);
+    if (err == PROVEN_OK && cat) err = add_deflated_plain(alloc, &z, CI_NAME, cat, catl);
     // The record of hashes.
     uint8_t h[32];
     if (err == PROVEN_OK) {
@@ -278,6 +474,10 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
         put_record(&rec, "AXCT", h);
         err = sha256_of(alloc, pkg, len, bm, h, why);
         if (err == PROVEN_OK) put_record(&rec, "AXBM", h);
+        if (err == PROVEN_OK && cat) {
+            rp_hash(RP_HASH_SHA256, cat, catl, h);
+            put_record(&rec, "AXCI", h);
+        }
         err = err == PROVEN_OK ? (z.out.err != PROVEN_OK ? z.out.err : rec.err != PROVEN_OK ? rec.err : tail.err) : err;
     }
     if (err == PROVEN_OK) {
@@ -300,6 +500,7 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
 out:
     if (z_open) rp_zip_abort(&z);
     rp_mem_free(alloc, sig);
+    rp_mem_free(alloc, cat);
     rp_mem_free(alloc, ctp);
     rp_buf_free(&newct);
     rp_buf_free(&rec);
@@ -370,7 +571,7 @@ proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t l
         rp_mem_free(alloc, parts);
     }
     if (err == PROVEN_OK) {
-        err = sign_archive(alloc, rebuilt ? rebuilt : pkg, rebuilt ? rl : len, kf, leaf, ts, bundle, out, out_len, why);
+        err = sign_archive(alloc, rebuilt ? rebuilt : pkg, rebuilt ? rl : len, kf, leaf, now, ts, bundle, out, out_len, why);
     }
     rp_mem_free(alloc, rebuilt);
     rp_msix_files_free(alloc, files, nf);

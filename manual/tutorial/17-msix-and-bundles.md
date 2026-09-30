@@ -226,6 +226,12 @@ rubrapack: error[RP0011]: 'hello.msix': the package's publisher "CN=Example Soft
 Copy that subject into `publisher`. Windows writes a subject's parts from the last to the first, so
 it differs from how some tools show it.
 
+A signed package that holds programs also carries `AppxMetadata\CodeIntegrity.cat`, a catalog of
+their hashes signed with the same key, as Windows' own signer adds it. It is what Windows' code
+integrity checks the package's unsigned programs against where only signed code may run (S mode,
+application control); rubrapack's catalog was checked against Windows' own hashes and `signtool`,
+not on such a device.
+
 ## All architectures in one file: a bundle
 
 An output ending in `.msixbundle` builds the source once for each architecture of `--arch`, as in

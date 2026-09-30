@@ -212,9 +212,20 @@ Windows 의 서명기(`APPX_SIP_CLIENT_DATA` 를 준 `mssign32!SignerSignEx2`; P
     뒤 중앙 디렉터리를 그렇게 다시 쓴 패키지도 그렇다;
   - `AXCT`: `[Content_Types].xml`(원 바이트); `AXBM`: `AppxBlockMap.xml`;
   - `AXCI`: `AppxMetadata/CodeIntegrity.cat`, 패키지에 그것이 있을 때만.
-- Windows 의 서명기는 패키지에 프로그램 파일이 있으면 `AppxMetadata/CodeIntegrity.cat` - 같은 키로 서명한,
-  패키지 프로그램 파일의 카탈로그 - 도 더한다. 그것은 선택이다: 그것 없이 서명한 패키지도 설치되고
-  실행된다. rubrapack 은 그것을 쓰지 않고, 있으면 `AXCI` 를 확인한다.
+- 프로그램 파일이 있는 패키지는 Windows 의 서명기가 하듯 `AppxMetadata/CodeIntegrity.cat` - 같은 키로 서명한
+  그 파일들의 카탈로그 - 와 그 해시 `AXCI` 도 받는다. 그것은 `[Content_Types].xml`(여기에 그것을 위한 Override
+  `application/vnd.ms-pkiseccat` 이 붙는다) 뒤, 서명 앞에 들어가고, 블록 맵에는 적히지 않는다. 카탈로그 [observed]:
+  - 서명된 속성이 contentType 과 messageDigest 뿐인 SignedData 이고, 내용(형식 `1.3.6.1.4.1.311.10.1`, 인증서
+    신뢰 목록)은: 용도 `1.3.6.1.4.1.311.12.1.1`(카탈로그 목록), 16바이트 목록 식별자, 시각, 구성원 알고리즘
+    `1.3.6.1.4.1.311.12.1.3`, 구성원들, 그리고 이름-값 둘(`1.3.6.1.4.1.311.12.2.1`: `PackageFullName` 과
+    `OSAttr` = `2:6.2`, 저마다 BMPString 이름, 플래그 `0x10010001`, UTF-16 값).
+  - PE 파일마다 구성원 둘: 구성원 정보 `1.3.6.1.4.1.311.12.2.3` 을 단 SHA-1, 그리고 그것과 PE 이미지용
+    SpcIndirectData 를 단 SHA-256.
+  - 파일의 해시는 Authenticode 다이제스트이되, 서명이 없는 파일은 0 으로 8바이트 배수까지 채운 것 위에서 잰다 -
+    서명을 붙이기 전의 모습 그대로. 길이가 8의 배수인 파일은 둘이 같다.
+  - 패키지 전체 이름은 `<Name>_<Version>_<Architecture>_<ResourceId>_<PublisherId>` 이고, 게시자 ID 는 매니페스트
+    `Publisher` 의 UTF-16LE 에 대한 SHA-256 앞 8바이트를 Crockford base32(`0-9 a-z` 에서 `i l o u` 를 뺀 것)
+    13글자로 적은 것이다.
 - 묶음: 안의 모든 패키지를 먼저 서명하고(저마다 제 `AppxSignature.p7x`), 그 둘레에 묶음을 쓰고, 묶음 SIP
   GUID 로 `AXCI` 없이 서명한다.
 - `-AllowUnsigned` 와 publisher OID(아래)가 필요한 서명 없는 패키지는 서명하지 않는다: 서명은 그 OID 를 가진

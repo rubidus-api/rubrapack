@@ -218,6 +218,11 @@ rubrapack: error[RP0011]: 'hello.msix': the package's publisher "CN=Example Soft
 그 주체를 `publisher` 에 옮겨 적는다. Windows 는 주체의 부분들을 마지막 것부터 거꾸로 쓰므로, 어떤 도구가
 보여 주는 순서와 다를 수 있다.
 
+프로그램이 든 패키지는 서명하면 Windows 자신의 서명기가 하듯 `AppxMetadata\CodeIntegrity.cat` - 그 프로그램들의
+해시를 같은 키로 서명한 카탈로그 - 도 갖는다. 서명된 코드만 돌 수 있는 곳(S 모드, 응용 프로그램 제어)에서 Windows
+의 코드 무결성은 패키지 안의 서명 없는 프로그램을 이것과 대조한다. rubrapack 의 카탈로그는 Windows 자신의 해시와
+`signtool` 로 확인했고, 그런 기기에서는 확인하지 않았다.
+
 ## 모든 아키텍처를 파일 하나에: 번들
 
 `.msixbundle` 로 끝나는 출력은 15장처럼 `--arch` 의 아키텍처마다 원본을 한 번씩 빌드해 패키지들을 파일 하나에

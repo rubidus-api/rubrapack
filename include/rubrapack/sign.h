@@ -65,6 +65,13 @@ typedef struct {
                                                     const rp_timestamper_t *ts, bool appx, uint8_t **out, size_t *out_len,
                                                     const char **why);
 
+// A SignedData over other content (RFC-0016 3: a catalog): `ctype` is the content type's OID
+// (contents only) and `content` the contents of its SEQUENCE; contentType and messageDigest are the
+// signed attributes, as Windows signs a package's CodeIntegrity.cat.
+[[nodiscard]] proven_err_t rp_signed_content_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg,
+                                                   const uint8_t *ctype, size_t ctype_len, const uint8_t *content, size_t content_len,
+                                                   uint8_t **out, size_t *out_len, const char **why);
+
 // Parses a SignedData and checks its attributes and signature; the caller compares the file digest
 // (digest_ok is set when `digest` is given and equals the signed one).
 void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *digest, rp_authenticode_check_t *r, const char **why);
@@ -75,6 +82,11 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
 // checksum and the certificate table entry, the sections in file order, and the data after them,
 // without the certificate table itself.
 [[nodiscard]] bool rp_pe_digest(const uint8_t *pe, size_t len, rp_hash_alg_t alg, uint8_t *digest, const char **why);
+
+// The SHA-1 and SHA-256 a catalog lists a PE file under (RFC-0016 3: CodeIntegrity.cat): its
+// Authenticode digest, taken over the file padded with zeros to a multiple of 8 bytes when it has
+// no signature. False (with *why) for a file that is not a PE image.
+[[nodiscard]] bool rp_pe_catalog_hashes(const uint8_t *pe, size_t len, uint8_t sha1[20], uint8_t sha256[32], const char **why);
 
 // Signs a PE file: pads it to 8 bytes, adds the WIN_CERTIFICATE, points the certificate table at
 // it and recomputes the checksum. A file that is signed already is refused.
