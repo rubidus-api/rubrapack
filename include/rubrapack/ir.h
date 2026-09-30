@@ -435,6 +435,9 @@ typedef struct {
     // [msix] and [msix-app.ID] (RFC-0009; used only when the output is .msix)
     bool      has_msix;
     char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;
+    char     *msix_appinstaller_uri, *msix_package_uri;  // RFC-0016 3: an .appinstaller beside the output
+    int       msix_update_hours;                          // HoursBetweenUpdateChecks (default 24)
+    bool      msix_update_prompt, msix_update_blocks, msix_update_background;
     rp_pos_t  msix_pos;
     rp_ir_msix_app_t *msix_apps;                // in source order
     size_t    msix_app_count;

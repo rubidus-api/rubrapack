@@ -28,6 +28,19 @@ static bool ends_with(const char *s, const char *suffix) {
     return true;
 }
 
+// RFC-0016 3: <out without .msix/.msixbundle>.appinstaller, when the source names the addresses.
+static bool write_appinstaller(proven_allocator_t heap, const char *out, const uint8_t *data, size_t len) {
+    if (data == NULL) return true;
+    char path[1536];
+    const char *dot = strrchr(out, '.');
+    snprintf(path, sizeof path, "%.*s.appinstaller", (int)(dot ? (size_t)(dot - out) : strlen(out)), out);
+    if (rp_pal_write_file_atomic(heap, path, data, len) != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+        return false;
+    }
+    return true;
+}
+
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
 // named <identity>_<version>_<arch>.msix inside, the architectures in the order given.
 static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
@@ -35,7 +48,8 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
                         const char *out, const char *src, rp_srcdiags_t *d) {
     static const char *const arch_names[] = { "x64", "arm64", "x86" };
     rp_msix_part_t parts[3];
-    uint8_t *pkgs[3] = { 0 };
+    uint8_t *pkgs[3] = { 0 }, *ai = NULL;
+    size_t ai_len = 0;
     char names[3][320];
     size_t n = 0;
     proven_err_t err = PROVEN_OK;
@@ -46,6 +60,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         if (err != PROVEN_OK) break;
         size_t len = 0;
         err = rp_msix_from_ir(heap, &ir, mopt, &pkgs[n], &len, d);
+        if (err == PROVEN_OK && n == 0) err = rp_msix_appinstaller(heap, &ir, mopt, true, &ai, &ai_len);
         if (err == PROVEN_OK) {
             unsigned v[4] = { 0 };
             for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
@@ -79,9 +94,12 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         } else if (rp_pal_write_file_atomic(heap, out, b, bl) != PROVEN_OK) {
             rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
             rc = RP_EXIT_IO;
+        } else if (!write_appinstaller(heap, out, ai, ai_len)) {
+            rc = RP_EXIT_IO;
         }
         rp_mem_free(heap, b);
     }
+    rp_mem_free(heap, ai);
     for (size_t i = 0; i < n; ++i) rp_mem_free(heap, pkgs[i]);
     return rc;
 }
@@ -335,6 +353,9 @@ static int run(int argc, char **argv, bool lint) {
             uint8_t *pkg = NULL;
             size_t pkg_len = 0;
             err = rp_msix_from_ir(heap, &ir, &msix_opt, &pkg, &pkg_len, &d);
+            uint8_t *ai = NULL;
+            size_t ai_len = 0;
+            if (err == PROVEN_OK) err = rp_msix_appinstaller(heap, &ir, &msix_opt, false, &ai, &ai_len);
             rp_ir_free(&ir);
             int sign_rc = RP_EXIT_OK;
             if (err == PROVEN_OK && rp_sign_wanted(&sign)) {   // --key: signed before anything is written
@@ -348,7 +369,9 @@ static int run(int argc, char **argv, bool lint) {
             if (err == PROVEN_OK && sign_rc == RP_EXIT_OK && !lint) {
                 err = rp_pal_write_file_atomic(heap, out, pkg, pkg_len);
                 if (err != PROVEN_OK) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);
+                else if (!write_appinstaller(heap, out, ai, ai_len)) err = PROVEN_ERR_IO;
             }
+            rp_mem_free(heap, ai);
             rp_mem_free(heap, pkg);
             rp_srcdiag_print(&d, src);
             rc = sign_rc != RP_EXIT_OK ? sign_rc : err == PROVEN_OK ? RP_EXIT_OK : d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO;

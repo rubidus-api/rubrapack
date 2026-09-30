@@ -602,6 +602,8 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_publisher);
     rp_mem_free(a, ir->msix_publisher_display);
     rp_mem_free(a, ir->msix_min_version);
+    rp_mem_free(a, ir->msix_appinstaller_uri);
+    rp_mem_free(a, ir->msix_package_uri);
     for (size_t k = 0; k < ir->msix_app_count; ++k) {
         rp_ir_msix_app_t *x = &ir->msix_apps[k];
         rp_mem_free(a, x->id);

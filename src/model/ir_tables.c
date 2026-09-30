@@ -54,7 +54,8 @@ static bool four_part_version(const char *s) {
 }
 
 void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
-    static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", NULL };
+    static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", "appinstaller-uri",
+                                        "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background", NULL };
     ir_check_keys(c, t, keys);
     rp_ir_t *ir = c->ir;
     ir->has_msix = true;
@@ -75,6 +76,28 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     }
     if (ir->msix_min_version && !four_part_version(ir->msix_min_version)) {
         ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 10.0.17763.0");
+    }
+    // RFC-0016 3: where the .appinstaller file and the package will be downloaded from.
+    ir->msix_appinstaller_uri = ir_get_str(c, t, "appinstaller-uri", false, NULL);
+    ir->msix_package_uri = ir_get_str(c, t, "package-uri", false, NULL);
+    ir->msix_update_hours = (int)ir_get_int(c, t, "update-hours", 24, 0, 255);
+    ir->msix_update_prompt = ir_get_bool(c, t, "update-prompt", false);
+    ir->msix_update_blocks = ir_get_bool(c, t, "update-blocks", false);
+    ir->msix_update_background = ir_get_bool(c, t, "update-background", false);
+    if ((ir->msix_appinstaller_uri == NULL) != (ir->msix_package_uri == NULL)) {
+        ERR(c, t->pos, "RP1615", "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be");
+    }
+    const char *uris[] = { "appinstaller-uri", "package-uri" };
+    const char *vals[] = { ir->msix_appinstaller_uri, ir->msix_package_uri };
+    for (int k = 0; k < 2; ++k) {
+        const char *u = vals[k];
+        if (u && strncmp(u, "https://", 8) != 0 && strncmp(u, "http://", 7) != 0 && strncmp(u, "file://", 7) != 0 && strncmp(u, "\\\\", 2) != 0) {
+            ERR(c, ir_key_pos(t, uris[k]), "RP1615", "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')", uris[k], u);
+        }
+    }
+    if (ir->msix_appinstaller_uri == NULL && (ir_find_key(t, "update-hours") || ir_find_key(t, "update-prompt") || ir_find_key(t, "update-blocks") ||
+                                              ir_find_key(t, "update-background"))) {
+        ERR(c, t->pos, "RP1615", "update-* keys need appinstaller-uri and package-uri");
     }
 }
 

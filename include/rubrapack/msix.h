@@ -27,6 +27,12 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out,
                                            size_t *len, rp_srcdiags_t *d);
 
+// The App Installer file (RFC-0016 3) for a package or, with bundle set, a bundle built from this
+// model: where it and the package are downloaded from ([msix] appinstaller-uri, package-uri) and
+// how often Windows looks for a newer version. NULL output when the source asks for none.
+[[nodiscard]] proven_err_t rp_msix_appinstaller(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, bool bundle,
+                                                uint8_t **out, size_t *len);
+
 // A package going into a bundle: its file name there (`<name>_<version>_<arch>.msix`, say) and bytes.
 typedef struct {
     const char    *file_name;

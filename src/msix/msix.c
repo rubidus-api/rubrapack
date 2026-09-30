@@ -945,6 +945,43 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
 #undef NEED
 }
 
+proven_err_t rp_msix_appinstaller(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, bool bundle,
+                                  uint8_t **out, size_t *len) {
+    static const char *const arch[] = { "x64", "arm64", "x86" };
+    *out = NULL;
+    *len = 0;
+    if (ir->msix_appinstaller_uri == NULL || ir->msix_package_uri == NULL) return PROVEN_OK;
+    char version[32], hours[8], publisher[8400];
+    unsigned v[4] = { 0 };
+    for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
+    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+    snprintf(hours, sizeof hours, "%d", ir->msix_update_hours);
+    snprintf(publisher, sizeof publisher, "%s%s%s", ir->msix_publisher, opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
+    rp_buf_t b = rp_buf_new(alloc, 1u << 20);
+    rp_buf_puts(&b, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<AppInstaller xmlns=\"http://schemas.microsoft.com/appx/appinstaller/2018\"");
+    attr(&b, "Version", version);
+    attr(&b, "Uri", ir->msix_appinstaller_uri);
+    rp_buf_puts(&b, ">\r\n  <");
+    rp_buf_puts(&b, bundle ? "MainBundle" : "MainPackage");
+    attr(&b, "Name", ir->msix_identity_name);
+    attr(&b, "Publisher", publisher);
+    attr(&b, "Version", version);
+    if (!bundle) attr(&b, "ProcessorArchitecture", arch[ir->arch]);
+    attr(&b, "Uri", ir->msix_package_uri);
+    rp_buf_puts(&b, " />\r\n  <UpdateSettings>\r\n    <OnLaunch");
+    attr(&b, "HoursBetweenUpdateChecks", hours);
+    if (ir->msix_update_prompt) attr(&b, "ShowPrompt", "true");
+    if (ir->msix_update_blocks) attr(&b, "UpdateBlocksActivation", "true");
+    rp_buf_puts(&b, " />\r\n");
+    if (ir->msix_update_background) rp_buf_puts(&b, "    <AutomaticBackgroundTask />\r\n");
+    rp_buf_puts(&b, "  </UpdateSettings>\r\n</AppInstaller>\r\n");
+    if (b.err != PROVEN_OK) {
+        rp_buf_free(&b);
+        return PROVEN_ERR_NOMEM;
+    }
+    return rp_buf_take(&b, out, len);
+}
+
 proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out, size_t *len,
                              rp_srcdiags_t *d) {
     *out = NULL;

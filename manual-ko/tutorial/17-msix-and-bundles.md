@@ -223,6 +223,29 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 
 Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key` 를 주면 번들과 그 안의 패키지 모두에 서명한다.
 
+## 웹 사이트에서 업데이트: `.appinstaller`
+
+Windows 는 MSIX 를 올려 둔 웹 사이트(또는 공유 폴더)에서 스스로 최신으로 유지할 수 있다. 패키지를 둘 곳을 적으면
+rubrapack 이 그 옆에 *App Installer 파일*을 쓴다:
+
+```text
+[msix]
+...
+appinstaller-uri = "https://example.com/hello/hello.appinstaller"
+package-uri = "https://example.com/hello/hello.msixbundle"
+update-hours = 24                 # Windows 가 새 판을 찾는 간격(0: 시작할 때마다)
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --key ...
+```
+
+은 `hello.msixbundle` 과 `hello.appinstaller` 를 쓴다. 둘을 그 주소에 둔다. 사람들은 `.appinstaller` 로 설치하고
+(열거나 `Add-AppxPackage -AppInstallerFile`), 그 뒤로 Windows 는 앱이 시작될 때 그 주소를 확인한다. 다음 판을 새
+`.appinstaller` 와 함께 같은 주소에 올리면 스스로 업데이트된다. `update-prompt = true` 는 사용자에게 먼저 묻고,
+`update-blocks = true` 는 업데이트가 끝날 때까지 앱을 기다리게 하며, `update-background = true` 는 여덟 시간마다
+뒤에서도 확인한다. App Installer 는 서명된 패키지만 받는다(16장).
+
 ## 압축
 
 파일은 deflate 로 압축되고, 그림처럼 이미 압축된 파일은 그대로 저장된다. `--msix-compress store` 는 모두 그대로

@@ -233,6 +233,30 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 Windows installs the package for its own processor from it. With `--key` the bundle and each
 package in it are signed.
 
+## Updates from a web site: `.appinstaller`
+
+Windows can keep an MSIX up to date by itself, from a web site (or a file share) you publish it on.
+Say where the package will be, and rubrapack writes an *App Installer file* beside it:
+
+```text
+[msix]
+...
+appinstaller-uri = "https://example.com/hello/hello.appinstaller"
+package-uri = "https://example.com/hello/hello.msixbundle"
+update-hours = 24                 # how often Windows looks for a newer version (0: at every start)
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --key ...
+```
+
+writes `hello.msixbundle` and `hello.appinstaller`. Put both at those addresses. People install
+from the `.appinstaller` (opening it, or `Add-AppxPackage -AppInstallerFile`), and from then on
+Windows checks that address when the app starts; publish the next version with its new
+`.appinstaller` at the same addresses and it updates itself. `update-prompt = true` asks the user
+first, `update-blocks = true` makes the app wait for the update, `update-background = true` also
+checks every eight hours in the background. App Installer takes signed packages only (chapter 16).
+
 ## Compression
 
 Files are compressed with deflate; pictures and other files that are compressed already are stored

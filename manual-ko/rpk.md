@@ -222,7 +222,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 
