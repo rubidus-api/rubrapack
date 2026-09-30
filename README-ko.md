@@ -1,4 +1,4 @@
-**한국어** | [English](README.md) — **rubrapack v0.15.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.15.0/rubrapack-0.15.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.15.0/rubrapack-0.15.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.15.0/rubrapack-manual-0.15.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.15.0/rubrapack-manual-0.15.0-en.pdf)
+**한국어** | [English](README.md) — **rubrapack v0.16.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.16.0/rubrapack-0.16.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.16.0/rubrapack-0.16.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.16.0/rubrapack-manual-0.16.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.16.0/rubrapack-manual-0.16.0-en.pdf)
 
 # rubrapack
 
