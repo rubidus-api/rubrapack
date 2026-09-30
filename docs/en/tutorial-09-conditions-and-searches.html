@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9 Conditions and searches - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 9 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-08-optional-parts.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="rpk.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-09-conditions-and-searches.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#properties"><span class="tf-no">9.1</span>Properties</a><a class="lv3" href="#the-source"><span class="tf-no">9.2</span>The source</a><a class="lv3" href="#your-own-property-propertyname"><span class="tf-no">9.3</span>Your own property: [property.NAME]</a><a class="lv3" href="#installing-something-only-when-when"><span class="tf-no">9.4</span>Installing something only when: when</a><a class="lv3" href="#refusing-to-install-requireid"><span class="tf-no">9.5</span>Refusing to install: [require.ID]</a><a class="lv3" href="#looking-around-first-searchid"><span class="tf-no">9.6</span>Looking around first: [search.ID]</a><a class="lv3" href="#remembering-the-install-folder"><span class="tf-no">9.7</span>Remembering the install folder</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">9.8</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">9 Conditions and searches</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#properties"><span class="tf-no">9.1</span>Properties</a><a class="lv3" href="#the-source"><span class="tf-no">9.2</span>The source</a><a class="lv3" href="#your-own-property-propertyname"><span class="tf-no">9.3</span>Your own property: [property.NAME]</a><a class="lv3" href="#installing-something-only-when-when"><span class="tf-no">9.4</span>Installing something only when: when</a><a class="lv3" href="#refusing-to-install-requireid"><span class="tf-no">9.5</span>Refusing to install: [require.ID]</a><a class="lv3" href="#looking-around-first-searchid"><span class="tf-no">9.6</span>Looking around first: [search.ID]</a><a class="lv3" href="#remembering-the-install-folder"><span class="tf-no">9.7</span>Remembering the install folder</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">9.8</span>What happened inside</a></div></div>
+<p>Goal: decide <em>on the user's computer</em> what to install. Install only on 64-bit Windows; offer a part only where Notepad exists; make the desktop shortcut something the user can turn off; and install the next version into the folder the user chose for this one.</p>
+<h3 id="properties">9.1 Properties<a class="plink" href="#properties" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Windows Installer keeps named values called <em>properties</em> while it runs: <code>ProductName</code>, <code>INSTALLDIR</code>, <code>VersionNT64</code> (set on 64-bit Windows), and your own. A property whose name is all capitals is <em>public</em>: it can be set on the command line (<code>msiexec /i hello.msi DESKTOP_SHORTCUT=0</code>) and by the dialogs. A <em>condition</em> is a small expression over properties, true or false:</p>
+<div class="tblwrap"><table><tr><th>Condition</th><th>True when</th></tr><tr><td><code>VersionNT64</code></td><td>the property is set (not empty): here, on 64-bit Windows</td></tr><tr><td><code>NOT Installed</code></td><td>the product is not installed yet (a first installation)</td></tr><tr><td><code>DESKTOP_SHORTCUT = "1"</code></td><td>the property's value is exactly <code>1</code></td></tr><tr><td><code>VersionNT &gt;= 603</code></td><td>the Windows version number is 6.3 or later</td></tr><tr><td><code>A AND (B OR NOT C)</code></td><td>combinations, as you would expect</td></tr></table></div>
+<h3 id="the-source">9.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 09: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+ui = "features"
+
+[define]
+VERSION = "1.7.0"
+
+[property.DESKTOP_SHORTCUT]
+value = "1"
+secure = true
+
+[require.Windows64]
+condition = "VersionNT64"
+message = "[ProductName] needs 64-bit Windows."
+
+[search.Notepad]
+property = "NOTEPAD_PATH"
+kind = "file"
+path = "Windows"
+file = "notepad.exe"
+
+[search.PreviousDir]
+property = "INSTALLDIR"
+kind = "registry"
+root = "HKLM"
+key = "Software\\Example Software\\Hello"
+name = "InstallDir"
+
+[feature.Main]
+title = "Hello"
+required = true
+
+[feature.NotepadHelper]
+title = "Open notes in Notepad"
+description = "Only offered where Notepad is installed."
+when = "NOTEPAD_PATH"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+feature = "Main"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Settings]
+dir = "INSTALLDIR"
+source = "dist/settings.ini"
+feature = "NotepadHelper"
+
+[registry.RememberDir]
+root = "HKLM"
+key = "Software\\Example Software\\Hello"
+name = "InstallDir"
+value = "[INSTALLDIR]"
+feature = "Main"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"
+
+[shortcut.Desktop]
+dir = "Desktop"
+name = "Hello"
+target = "file:Hello"
+when = "DESKTOP_SHORTCUT = \"1\""</code></pre>
+<h3 id="your-own-property-propertyname">9.3 Your own property: <code>[property.NAME]</code><a class="plink" href="#your-own-property-propertyname" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>[property.DESKTOP_SHORTCUT]</code> creates the property with the default <code>1</code>. Names must be all capitals to be public; names Windows or rubrapack use themselves (<code>ALLUSERS</code>, <code>ARP...</code>, <code>MSI...</code>, ...) are refused.</p>
+<ul><li><code>secure = true</code>: an installation for all users runs in two parts - the user's part (dialogs) and an elevated part that changes the computer. A value set in the first part or on the command line reaches the second only if the property is <em>secure</em>. Make every property that a <code>when</code> condition tests secure. (rubrapack does this by itself for the properties of your own dialog pages and for search results.)</li><li><code>hidden = true</code>: the value is not written into installation logs - for passwords and keys.</li></ul>
+<h3 id="installing-something-only-when-when">9.4 Installing something only when: <code>when</code><a class="plink" href="#installing-something-only-when-when" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>when</code> on a feature, a file or file group, a shortcut, a registry value, an environment variable or an INI value installs it only when the condition is true at the first installation:</p>
+<ul><li><code>when = "DESKTOP_SHORTCUT = \"1\""</code> on the desktop shortcut: by default it is made; with <code>msiexec /i hello.msi DESKTOP_SHORTCUT=0</code> it is not. Chapter 14 turns the property into a tick box on a page of your own.</li><li><code>when = "NOTEPAD_PATH"</code> on a feature: where the condition is false, the feature is neither installed nor shown in the tree.</li></ul>
+<p>A repair keeps what was installed; a major upgrade (the next version) decides again.</p>
+<h3 id="refusing-to-install-requireid">9.5 Refusing to install: <code>[require.ID]</code><a class="plink" href="#refusing-to-install-requireid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A requirement stops a first installation with its <code>message</code> when its <code>condition</code> is false - here, on 32-bit Windows: "Hello needs 64-bit Windows." Repair and removal are never blocked.</p>
+<h3 id="looking-around-first-searchid">9.6 Looking around first: <code>[search.ID]</code><a class="plink" href="#looking-around-first-searchid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A search runs before anything else and puts what it found into a property (empty if nothing was found), which conditions can then test:</p>
+<div class="tblwrap"><table class="key"><tr><th><code>kind</code></th><th>Finds</th><th>Keys</th></tr><tr><td><code>file</code></td><td>the full path of a file</td><td><code>path</code> (a known folder and a relative path), <code>file</code>, <code>min-version</code> (for programs)</td></tr><tr><td><code>dir</code></td><td>a folder</td><td><code>path</code></td></tr><tr><td><code>registry</code></td><td>a value in the registry</td><td><code>root</code>, <code>key</code>, <code>name</code>, <code>view</code> (<code>32</code> for the 32-bit view)</td></tr><tr><td><code>component</code></td><td>the key file of another product's component</td><td><code>component-guid</code></td></tr></table></div>
+<p><code>[search.Notepad]</code> looks for <code>notepad.exe</code> in the Windows folder and puts its path into <code>NOTEPAD_PATH</code>.</p>
+<h3 id="remembering-the-install-folder">9.7 Remembering the install folder<a class="plink" href="#remembering-the-install-folder" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>If a user installed Hello into <code>D:\Tools\Hello</code>, the next version should go there too, not back to Program Files. Two pieces do it:</p>
+<ol><li><code>[registry.RememberDir]</code> writes the folder into the registry when installing: <code>[INSTALLDIR]</code> in a value is replaced by the folder (chapter 11 is about the registry).</li><li><code>[search.PreviousDir]</code> reads it back. Its <code>property</code> is the dir ID <code>INSTALLDIR</code>, so what it finds becomes that dir's <em>default</em> - but only if that folder still exists, and a folder given on the command line still wins.</li></ol>
+<h3 id="what-happened-inside">9.8 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi LaunchCondition
+Installed OR (VersionNT64)	[ProductName] needs 64-bit Windows.
+C:\work\hello&gt; rubrapack inspect hello.msi AppSearch
+NOTEPAD_PATH	Notepad
+RpFound_PreviousDir	PreviousDir
+C:\work\hello&gt; rubrapack inspect hello.msi Condition
+NotepadHelper	0	NOT Installed AND NOT (NOTEPAD_PATH)</code></pre>
+<p>(Headers left out.) rubrapack adds <code>Installed OR</code> to requirements, so that an installed product can always be repaired or removed. A feature's <code>when</code> becomes a row in the <code>Condition</code> table that sets its level to 0 - "not installed, not shown" - when the condition is false; <code>NOT Installed</code> keeps that from happening at removal, when properties are gone. The desktop shortcut got a component of its own, whose <code>Condition</code> column holds the <code>when</code>:</p>
+<pre><code class="lang-text">C_2ea6d5bfd9b4a9073b30	{BCBFF063-...}	DesktopFolder	260	DESKTOP_SHORTCUT = "1"	R_7f1795ed8aa7ac1a1c60</code></pre>
+<div class="nav"><a href="tutorial-08-optional-parts.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="rpk.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

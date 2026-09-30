@@ -37,10 +37,10 @@ VERSION = "1.2.0"
 [dir.INSTALLDIR]
 path = "ProgramFiles/Hello"
 
-[dir.Docs]
+[dir.DocsDir]
 path = "INSTALLDIR/docs"
 
-[dir.Samples]
+[dir.SamplesDir]
 path = "INSTALLDIR/samples"
 
 [file.Hello]
@@ -58,12 +58,12 @@ dir = "INSTALLDIR"
 source = "dist/settings.ini"
 keep = true
 
-[files.Docs]
-dir = "Docs"
+[files.DocFiles]
+dir = "DocsDir"
 glob = "dist/docs/**"
 
-[files.Samples]
-dir = "Samples"
+[files.SampleFiles]
+dir = "SamplesDir"
 glob = "dist/samples/**/*.txt"
 
 [folder.Data]
@@ -78,7 +78,7 @@ on = "uninstall"
 
 [copy.ReadmeInDocs]
 source = "file:Readme"
-dir = "Docs"
+dir = "DocsDir"
 name = "readme.txt"
 ```
 
@@ -88,10 +88,10 @@ name = "readme.txt"
 C:\work\hello> rubrapack build hello.toml -o hello.msi
 C:\work\hello> rubrapack inspect hello.msi --files
 [ProgramFiles64Folder]\Hello\Read me.txt	8	Readme
-[ProgramFiles64Folder]\Hello\docs\guide.txt	6	F_f493d5ad5c4931c97eb2
+[ProgramFiles64Folder]\Hello\docs\guide.txt	6	F_6d1508f52f6615459567
 [ProgramFiles64Folder]\Hello\hello.exe	17920	Hello
-[ProgramFiles64Folder]\Hello\samples\sample1.txt	7	F_4ea668ff38fbdf6c7cfe
-[ProgramFiles64Folder]\Hello\samples\sub\sample2.txt	7	F_7b15c594d3b07d23e57d
+[ProgramFiles64Folder]\Hello\samples\sample1.txt	7	F_1dc2b5e85973ee91d955
+[ProgramFiles64Folder]\Hello\samples\sub\sample2.txt	7	F_c9c5c4da73214a6abf37
 [ProgramFiles64Folder]\Hello\settings.ini	23	Settings
 ```
 
@@ -127,8 +127,8 @@ dir 의 `path` 는 *알려진 폴더*나 다른 dir 에서 시작해 그 아래 
 
 | `glob` | `dist\samples\sub\sample2.txt` 가 가는 곳 |
 |---|---|
-| `Samples` 로 `dist/samples/**/*.txt` | `...\Hello\samples\sub\sample2.txt` |
-| `Samples` 로 `dist/samples/*.txt` | 설치되지 않음: `*` 는 `sub` 안으로 들어가지 않는다 |
+| `SamplesDir` 로 `dist/samples/**/*.txt` | `...\Hello\samples\sub\sample2.txt` |
+| `SamplesDir` 로 `dist/samples/*.txt` | 설치되지 않음: `*` 는 `sub` 안으로 들어가지 않는다 |
 
 맞은 파일은 이름 순으로 정렬되므로, 파일 시스템이 어떤 순서로 보이든 패키지는 같다. 아무것도 맞지 않는 글롭은
 빌드를 멈춘다(`RP1503`) - 대개 경로의 오타다. rubrapack 은 맞은 파일마다 ID 를 따로 준다(`F_` 와 경로에서 끌어낸
@@ -148,7 +148,7 @@ dir 의 `path` 는 *알려진 폴더*나 다른 dir 에서 시작해 그 아래 
 
 ## 두 번째 사본: `[copy.ID]`
 
-`[copy.ReadmeInDocs]` 는 파일 `Readme` 의 사본을 하나 더 `Docs` 에 `readme.txt` 로 설치한다. 사본은 원래 파일과
+`[copy.ReadmeInDocs]` 는 파일 `Readme` 의 사본을 하나 더 `DocsDir` 에 `readme.txt` 로 설치한다. 사본은 원래 파일과
 함께 오고 함께 간다.
 
 ## 만날 수 있는 키 두 개 더

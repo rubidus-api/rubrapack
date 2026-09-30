@@ -38,10 +38,10 @@ VERSION = "1.2.0"
 [dir.INSTALLDIR]
 path = "ProgramFiles/Hello"
 
-[dir.Docs]
+[dir.DocsDir]
 path = "INSTALLDIR/docs"
 
-[dir.Samples]
+[dir.SamplesDir]
 path = "INSTALLDIR/samples"
 
 [file.Hello]
@@ -59,12 +59,12 @@ dir = "INSTALLDIR"
 source = "dist/settings.ini"
 keep = true
 
-[files.Docs]
-dir = "Docs"
+[files.DocFiles]
+dir = "DocsDir"
 glob = "dist/docs/**"
 
-[files.Samples]
-dir = "Samples"
+[files.SampleFiles]
+dir = "SamplesDir"
 glob = "dist/samples/**/*.txt"
 
 [folder.Data]
@@ -79,7 +79,7 @@ on = "uninstall"
 
 [copy.ReadmeInDocs]
 source = "file:Readme"
-dir = "Docs"
+dir = "DocsDir"
 name = "readme.txt"
 ```
 
@@ -89,10 +89,10 @@ Build it and look at the files:
 C:\work\hello> rubrapack build hello.toml -o hello.msi
 C:\work\hello> rubrapack inspect hello.msi --files
 [ProgramFiles64Folder]\Hello\Read me.txt	8	Readme
-[ProgramFiles64Folder]\Hello\docs\guide.txt	6	F_f493d5ad5c4931c97eb2
+[ProgramFiles64Folder]\Hello\docs\guide.txt	6	F_6d1508f52f6615459567
 [ProgramFiles64Folder]\Hello\hello.exe	17920	Hello
-[ProgramFiles64Folder]\Hello\samples\sample1.txt	7	F_4ea668ff38fbdf6c7cfe
-[ProgramFiles64Folder]\Hello\samples\sub\sample2.txt	7	F_7b15c594d3b07d23e57d
+[ProgramFiles64Folder]\Hello\samples\sample1.txt	7	F_1dc2b5e85973ee91d955
+[ProgramFiles64Folder]\Hello\samples\sub\sample2.txt	7	F_c9c5c4da73214a6abf37
 [ProgramFiles64Folder]\Hello\settings.ini	23	Settings
 ```
 
@@ -131,8 +131,8 @@ wildcard are recreated** under `dir`:
 
 | `glob` | `dist\samples\sub\sample2.txt` goes to |
 |---|---|
-| `dist/samples/**/*.txt` into `Samples` | `...\Hello\samples\sub\sample2.txt` |
-| `dist/samples/*.txt` into `Samples` | not installed: `*` does not go into `sub` |
+| `dist/samples/**/*.txt` into `SamplesDir` | `...\Hello\samples\sub\sample2.txt` |
+| `dist/samples/*.txt` into `SamplesDir` | not installed: `*` does not go into `sub` |
 
 The matches are sorted by name, so the package is the same whatever order the file system lists
 them in. A glob that matches nothing stops the build (`RP1503`) - usually a typo in the path.
@@ -155,7 +155,7 @@ puts removed files back.
 
 ## A second copy: `[copy.ID]`
 
-`[copy.ReadmeInDocs]` installs another copy of the file `Readme` into `Docs` as `readme.txt`. The
+`[copy.ReadmeInDocs]` installs another copy of the file `Readme` into `DocsDir` as `readme.txt`. The
 copy comes and goes with its source.
 
 ## Two more keys you may meet

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8 Optional parts: features and the user&#x27;s choices - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 8 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-07-several-languages.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-09-conditions-and-searches.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-08-optional-parts.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#features"><span class="tf-no">8.1</span>Features</a><a class="lv3" href="#the-source"><span class="tf-no">8.2</span>The source</a><a class="lv3" href="#declaring-features-featureid"><span class="tf-no">8.3</span>Declaring features: [feature.ID]</a><a class="lv3" href="#putting-files-in-features-feature"><span class="tf-no">8.4</span>Putting files in features: feature</a><a class="lv3" href="#what-the-user-sees"><span class="tf-no">8.5</span>What the user sees</a><a class="lv3" href="#choosing-from-the-command-line"><span class="tf-no">8.6</span>Choosing from the command line</a><a class="lv3" href="#changing-the-choice-later"><span class="tf-no">8.7</span>Changing the choice later</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">8.8</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">8 Optional parts: features and the user's choices</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#features"><span class="tf-no">8.1</span>Features</a><a class="lv3" href="#the-source"><span class="tf-no">8.2</span>The source</a><a class="lv3" href="#declaring-features-featureid"><span class="tf-no">8.3</span>Declaring features: [feature.ID]</a><a class="lv3" href="#putting-files-in-features-feature"><span class="tf-no">8.4</span>Putting files in features: feature</a><a class="lv3" href="#what-the-user-sees"><span class="tf-no">8.5</span>What the user sees</a><a class="lv3" href="#choosing-from-the-command-line"><span class="tf-no">8.6</span>Choosing from the command line</a><a class="lv3" href="#changing-the-choice-later"><span class="tf-no">8.7</span>Changing the choice later</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">8.8</span>What happened inside</a></div></div>
+<p>Goal: let the user choose what to install. The program itself is always installed; the documentation is offered and ticked; the samples are offered but not ticked; a diagnostics part is hidden and installed only on request.</p>
+<h3 id="features">8.1 Features<a class="plink" href="#features" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <em>feature</em> is a part of the product the user can choose: a line in the installer's tree with a title, a description and a tick. Every file belongs to exactly one feature; a feature holds as many files as you like.</p>
+<h3 id="the-source">8.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 08: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+ui = "features"
+license = "LICENSE.txt"
+
+[define]
+VERSION = "1.6.0"
+
+[feature.Main]
+title = "Hello"
+description = "The program itself."
+required = true
+
+[feature.Documentation]
+title = "Documentation"
+description = "The guide, in the docs folder."
+
+[feature.Samples]
+title = "Samples"
+description = "Example files to try Hello with."
+level = 2
+
+[feature.MoreSamples]
+title = "More samples"
+description = "Samples in sub folders."
+parent = "Samples"
+follow-parent = true
+
+[feature.Diagnostics]
+title = "Diagnostics"
+hidden = true
+level = 3
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+feature = "Main"
+
+[dir.DocsDir]
+path = "INSTALLDIR/docs"
+feature = "Documentation"
+
+[dir.SamplesDir]
+path = "INSTALLDIR/samples"
+feature = "Samples"
+
+[dir.MoreSamplesDir]
+path = "INSTALLDIR/samples/sub"
+feature = "MoreSamples"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[files.DocFiles]
+dir = "DocsDir"
+glob = "dist/docs/**"
+
+[files.SampleFiles]
+dir = "SamplesDir"
+glob = "dist/samples/*.txt"
+
+[files.MoreSampleFiles]
+dir = "MoreSamplesDir"
+glob = "dist/samples/sub/*.txt"
+
+[file.Readme]
+dir = "INSTALLDIR"
+source = "dist/readme.txt"
+feature = "Diagnostics"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"</code></pre>
+<h3 id="declaring-features-featureid">8.3 Declaring features: <code>[feature.ID]</code><a class="plink" href="#declaring-features-featureid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table><tr><th>Key</th><th>Meaning</th></tr><tr><td><code>title</code></td><td>the line in the tree</td></tr><tr><td><code>description</code></td><td>the text shown when the line is selected</td></tr><tr><td><code>level</code></td><td>1 (default): installed by default. 2 or more: offered, but only installed when chosen</td></tr><tr><td><code>required = true</code></td><td>always installed: the tree does not offer "will be unavailable" for it</td></tr><tr><td><code>parent = "Samples"</code></td><td>a line under another feature in the tree</td></tr><tr><td><code>follow-parent = true</code></td><td>installed exactly when its parent is</td></tr><tr><td><code>hidden = true</code></td><td>not shown in the tree at all</td></tr></table></div>
+<p>Feature IDs share one name space with dirs and files: <code>Documentation</code> the feature and <code>DocsDir</code> the folder must have different IDs (rubrapack says so with <code>RP1301</code> otherwise).</p>
+<h3 id="putting-files-in-features-feature">8.4 Putting files in features: <code>feature</code><a class="plink" href="#putting-files-in-features-feature" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li>On a dir: every file in that folder belongs to the feature - <code>DocsDir</code> puts <code>guide.txt</code> in <code>Documentation</code>, <code>SamplesDir</code> puts <code>sample1.txt</code> in <code>Samples</code>.</li><li>On a file or a file group: that file (or group) belongs to it, whatever its folder - <code>Readme</code> is in <code>INSTALLDIR</code>, a folder of <code>Main</code>, but belongs to <code>Diagnostics</code>.</li></ul>
+<p>A dir does not pass its feature on to the dirs below it: <code>MoreSamplesDir</code> names its own. As soon as the source declares one feature, <strong>everything installed needs one</strong>; rubrapack stops with <code>RP1202</code> naming what has none.</p>
+<h3 id="what-the-user-sees">8.5 What the user sees<a class="plink" href="#what-the-user-sees" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>With <code>ui = "features"</code>, after the license and the install folder comes "Choose features": a tree</p>
+<pre><code class="lang-text">[x] Hello                     (cannot be turned off)
+[x] Documentation
+[ ] Samples
+      [ ] More samples        (follows Samples)</code></pre>
+<p>Each line has a menu: "Will be installed on local hard drive", "Entire feature will be installed on local hard drive", "Entire feature will be unavailable". Selecting a line shows its description and the disk space it needs; "Disk Usage" shows the space on every drive. (These texts come from Windows and stay English.) Diagnostics does not appear.</p>
+<p>A default installation (double-click, Next, Next, ...) installs Hello and the documentation.</p>
+<h3 id="choosing-from-the-command-line">8.6 Choosing from the command line<a class="plink" href="#choosing-from-the-command-line" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Features are chosen with properties, so a silent installation can choose too:</p>
+<div class="tblwrap"><table><tr><th>Command</th><th>Installs</th></tr><tr><td><code>msiexec /i hello.msi /qn</code></td><td>the defaults: Main, Documentation</td></tr><tr><td><code>msiexec /i hello.msi /qn ADDLOCAL=Samples</code></td><td>the defaults and the samples (with More samples, which follows)</td></tr><tr><td><code>msiexec /i hello.msi /qn ADDLOCAL=ALL</code></td><td>every feature, hidden ones included</td></tr><tr><td><code>msiexec /i hello.msi /qn INSTALLLEVEL=3</code></td><td>every feature whose level is 3 or less: all of these</td></tr><tr><td><code>msiexec /i hello.msi /qn REMOVE=Documentation</code></td><td>the defaults without the documentation</td></tr></table></div>
+<p>Feature IDs are case-sensitive and separated by commas: <code>ADDLOCAL=Samples,Diagnostics</code>. <code>required</code> only binds the tree: <code>REMOVE=Main</code> on the command line is still obeyed (that is how Windows Installer works).</p>
+<h3 id="changing-the-choice-later">8.7 Changing the choice later<a class="plink" href="#changing-the-choice-later" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>After installation, Installed apps offers Modify for Hello; it opens the installer's maintenance page with <strong>Change</strong>, <strong>Repair</strong> and <strong>Remove</strong>. Change shows the same tree with what is installed ticked; the user adds or removes parts. From the command line on an installed product:</p>
+<pre><code class="lang-text">msiexec /i hello.msi ADDLOCAL=Samples
+msiexec /i hello.msi REMOVE=Samples</code></pre>
+<h3 id="what-happened-inside">8.8 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Feature
+Feature	Feature_Parent	Title	Description	Display	Level	Directory_	Attributes
+...
+Diagnostics		Diagnostics		0	3		0
+Documentation		Documentation	The guide, in the docs folder.	3	1		0
+Main		Hello	The program itself.	1	1		16
+MoreSamples	Samples	More samples	Samples in sub folders.	7	1		2
+Samples		Samples	Example files to try Hello with.	5	2		0</code></pre>
+<ul><li><code>Display</code> orders the tree (odd numbers, in the order of the source); 0 hides the feature.</li><li><code>Level</code> is the level; Windows installs a feature by default when its level is not above the property <code>INSTALLLEVEL</code>, which is 1.</li><li><code>Attributes</code> are bit flags: 16 means "may not be made absent" (<code>required</code>), 2 "follow the parent".</li></ul>
+<p>The <code>FeatureComponents</code> table ties each component - each file - to its feature:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi FeatureComponents
+...
+Documentation	C_a10be66379e69940a2e0
+Main	C_185f8db32271fe25f561
+Samples	C_a5674982edf0797da30f
+...</code></pre>
+<div class="nav"><a href="tutorial-07-several-languages.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-09-conditions-and-searches.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
