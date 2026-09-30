@@ -88,6 +88,7 @@ int ir_ascii_casecmp(const char *a, const char *b);
 void ir_parse_service(ctx_t *c, const rp_ttable_t *t, rp_ir_service_t *x);
 void ir_parse_permission(ctx_t *c, const rp_ttable_t *t, rp_ir_permission_t *x);
 void ir_parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x);
+void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x);
 void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x);
 void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x);
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x);

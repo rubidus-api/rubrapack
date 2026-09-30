@@ -169,6 +169,17 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_service_t;
 
+// [merge.ID] (RFC-0016 3): a merge module (.msm) merged into the MSI: its TARGETDIR becomes `dir`,
+// its components go into `feature`, its cabinet is embedded as a cabinet of its own.
+typedef struct {
+    char    *id;
+    char    *source;            // path of the .msm (joined with the source's folder)
+    char    *shown;             // as written, for messages
+    char    *dir;               // dir ID
+    char    *feature;           // resolved (G2)
+    rp_pos_t pos;
+} rp_ir_merge_t;
+
 // [font.ID] (RFC-0004): registers a font file of this package installed in the Fonts folder.
 typedef struct {
     char    *id;
@@ -428,6 +439,8 @@ typedef struct {
     size_t            dialog_control_count;
     rp_ir_permission_t *permissions;
     size_t            permission_count;
+    rp_ir_merge_t    *merges;
+    size_t            merge_count;
     // [arp]
     bool      arp_no_modify, arp_no_repair;
     char     *arp_help, *arp_about;     // may be NULL

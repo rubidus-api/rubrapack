@@ -171,8 +171,32 @@ static rp_msi_cell_t num(int32_t v) {
     return v == NONE ? (rp_msi_cell_t){ .kind = RP_MSI_NULL } : (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = v };
 }
 
+static bool table_known(const char *table) {
+    for (size_t i = 0; i < sizeof rules / sizeof rules[0]; ++i) {
+        if (strcmp(rules[i].table, table) == 0) return true;
+    }
+    return false;
+}
+
+static bool is(const rp_msi_cell_t *c, const char *s) {
+    return c->kind == RP_MSI_STR && c->len == strlen(s) && memcmp(c->bytes, s, c->len) == 0;
+}
+
+// A merge module's own _Validation row for this column, or NULL.
+static const rp_msi_cell_t *extra_row(const rp_msi_wtable_t *const *extra, size_t nextra, const char *table, const char *column) {
+    for (size_t e = 0; e < nextra; ++e) {
+        const rp_msi_wtable_t *v = extra[e];
+        if (v->column_count != NCOL) continue;
+        for (size_t r = 0; r < v->row_count; ++r) {
+            const rp_msi_cell_t *row = &v->cells[r * NCOL];
+            if (is(&row[0], table) && is(&row[1], column)) return row;
+        }
+    }
+    return NULL;
+}
+
 proven_err_t rp_msi_validation(proven_allocator_t alloc, const rp_msi_wtable_t *tables, size_t count,
-                               rp_msi_wtable_t *out, const char **missing) {
+                               const rp_msi_wtable_t *const *extra, size_t nextra, rp_msi_wtable_t *out, const char **missing) {
     if ((tables == NULL && count) || out == NULL) return PROVEN_ERR_INVALID_ARG;
     *out = (rp_msi_wtable_t){ .name = "_Validation", .columns = validation_cols, .column_count = NCOL };
     if (missing) *missing = NULL;
@@ -186,6 +210,19 @@ proven_err_t rp_msi_validation(proven_allocator_t alloc, const rp_msi_wtable_t *
         for (size_t c = 0; c < wt->column_count; ++c) {
             const rp_msi_wcolumn_t *col = &wt->columns[c];
             const rule_t *rule = find(wt->name, col->name);
+            if (rule == NULL && !table_known(wt->name)) {   // a table a merge module added
+                rp_msi_cell_t *row = &cells[r++ * NCOL];
+                const rp_msi_cell_t *x = extra_row(extra, nextra, wt->name, col->name);
+                if (x) {
+                    memcpy(row, x, NCOL * sizeof *row);
+                } else {
+                    for (size_t k = 0; k < NCOL; ++k) row[k] = str(NULL);
+                    row[0] = str(wt->name);
+                    row[1] = str(col->name);
+                    row[2] = str((col->type & 0x1000) ? "Y" : "N");
+                }
+                continue;
+            }
             if (rule == NULL) {
                 rp_mem_free(alloc, cells);
                 if (missing) *missing = wt->name;

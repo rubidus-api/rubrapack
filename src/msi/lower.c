@@ -10,6 +10,7 @@
 #include "rubrapack/lint.h"
 #include "rubrapack/md5.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/merge.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
@@ -1592,7 +1593,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
     if (err == PROVEN_OK && nomem) err = PROVEN_ERR_NOMEM;
     if (err == PROVEN_OK) {
-        rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 9];   // + the ui tables + _Validation
+        enum { MERGED_TABLES = 64 };     // tables merge modules may add (RFC-0016 3)
+        rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 9 + MERGED_TABLES];   // + ui tables + _Validation
         size_t nt = 0;
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
             // AppSearch looks a folder-type RegLocator up in Signature, which must then exist even
@@ -1603,17 +1605,53 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {
             if (strcmp(pk->ui->tables[t].name, "Binary") != 0) tables[nt++] = pk->ui->tables[t];
         }
+        // Merge modules (RFC-0016 3): their rows join the tables, their cabinets become streams.
+        rp_msi_module_t *mods = ir->merge_count ? rp_mem_alloc(alloc, ir->merge_count, sizeof *mods) : NULL;
+        rp_msi_wstream_t *streams = pk->streams;
+        size_t nstreams = ir->cab_external ? 0 : pk->nstreams;
+        const rp_msi_wtable_t *extra[64];
+        size_t nextra = 0;
+        if (ir->merge_count && mods == NULL) err = PROVEN_ERR_NOMEM;
+        if (err == PROVEN_OK && ir->merge_count) {
+            streams = rp_mem_alloc(alloc, nstreams + ir->merge_count, sizeof *streams);
+            if (streams == NULL) err = PROVEN_ERR_NOMEM;
+            else if (nstreams) memcpy(streams, pk->streams, nstreams * sizeof *streams);
+        }
+        size_t nmods = 0;
+        for (size_t k = 0; err == PROVEN_OK && k < ir->merge_count; ++k) {
+            const rp_ir_merge_t *x = &ir->merges[k];
+            const char *why = NULL;
+            err = rp_msi_module_open(alloc, x->source, &mods[k], &why);
+            nmods = k + 1;
+            rp_msi_wstream_t cab = { 0 };
+            if (err == PROVEN_OK) {
+                err = rp_msi_module_merge(&mods[k], tables, &nt, sizeof tables / sizeof tables[0] - 1, dkey(ir, x->dir), x->feature,
+                                          (unsigned)k + 1, &cab, &why);
+            }
+            if (err != PROVEN_OK) {
+                rp_srcdiag_add(diags, x->pos, "RP1517", false, "[merge.%s]: '%s' %s", x->id, x->shown ? x->shown : "",
+                               why ? why : "cannot be merged");
+                err = PROVEN_ERR_INVALID_FORMAT;
+                break;
+            }
+            if (cab.name) streams[nstreams++] = cab;
+            const rp_msi_wtable_t *v = rp_msi_module_validation(&mods[k]);
+            if (v && nextra < sizeof extra / sizeof extra[0]) extra[nextra++] = v;
+        }
         const char *missing = NULL;
-        err = rp_msi_validation(alloc, tables, nt, &tables[nt], &missing);
+        if (err == PROVEN_OK) err = rp_msi_validation(alloc, tables, nt, extra, nextra, &tables[nt], &missing);
         if (err == PROVEN_ERR_NOT_FOUND) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP2020", false, "internal: no _Validation rule for a column of %s", missing);
         }
         if (err == PROVEN_OK) {
-            rp_msi_wdb_t db = { 65001, tables, nt + 1, summary, summary_len, pk->streams, ir->cab_external ? 0 : pk->nstreams };
+            rp_msi_wdb_t db = { 65001, tables, nt + 1, summary, summary_len, streams, nstreams };
             err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
             if (err == PROVEN_OK) err = rp_msi_write_to(alloc, &db, 12, limits, sink, out, len);
             rp_mem_free(alloc, (void *)tables[nt].cells);
         }
+        for (size_t k = 0; k < nmods; ++k) rp_msi_module_close(&mods[k]);
+        rp_mem_free(alloc, mods);
+        if (streams != pk->streams) rp_mem_free(alloc, streams);
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
     if (!ir->cab_external) {

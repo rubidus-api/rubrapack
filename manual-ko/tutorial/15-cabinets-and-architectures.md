@@ -114,6 +114,20 @@ FC: 다른 점이 없습니다.
 `-D NAME=VALUE` 는 어느 `[define]` 변수든 정하고, 몇 번이든 줄 수 있다: `-D VERSION=2.0.1 -D EDITION=Pro`.
 `$$(` 는 글자 그대로의 `$(` 를 쓴다.
 
+## 남이 만든 조각: `[merge.ID]`
+
+어떤 라이브러리는 낱개 파일 대신 병합 모듈(`.msm`)로 나온다. 원본 옆에 두고 이름을 적으면, 그
+파일들이 지정한 폴더 아래에 들어간다:
+
+```toml
+[merge.Runtime]
+source = "runtime.msm"
+dir = "INSTALLDIR"
+```
+
+모듈의 캐비닛은 패키지 안의 두 번째 캐비닛이 되고, `inspect hello.msi Media` 에 보인다. 합칠 수
+없는 것은 참고 문서의 [병합 모듈](../rpk.md#병합-모듈-mergeid)에 있다.
+
 ## 안에서 무슨 일이 일어났나
 
 ```text

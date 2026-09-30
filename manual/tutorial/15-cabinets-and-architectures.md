@@ -117,6 +117,20 @@ are not NFC. Part III explains [Unicode normalization](../basics/03-text.md#unic
 `-D NAME=VALUE` sets any `[define]` variable, as often as needed:
 `-D VERSION=2.0.1 -D EDITION=Pro`. `$$(` writes a literal `$(`.
 
+## Somebody else's part: `[merge.ID]`
+
+Some libraries come with a merge module (`.msm`) instead of loose files. Put it beside the source
+and name it; its files go under the folder you give:
+
+```toml
+[merge.Runtime]
+source = "runtime.msm"
+dir = "INSTALLDIR"
+```
+
+The module's cabinet becomes a second cabinet in the package, and `inspect hello.msi Media` shows
+it. [Merge modules](../rpk.md#merge-modules-mergeid) in the reference lists what cannot be merged.
+
 ## What happened inside
 
 ```text

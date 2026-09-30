@@ -643,6 +643,25 @@ void ir_parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x) {
     x->title = ir_get_str(c, t, "title", false, NULL);
 }
 
+// [merge.ID] (RFC-0016 3).
+void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
+    static const char *const keys[] = { "source", "dir", "feature", NULL };
+    ir_check_keys(c, t, keys);
+    ir_check_id(c, t, 72);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    x->shown = ir_get_str(c, t, "source", true, NULL);
+    x->dir = ir_get_str(c, t, "dir", true, NULL);
+    x->feature = ir_get_str(c, t, "feature", false, NULL);
+    if (x->shown && ir_source_path_ok(c, x->shown, ir_key_pos(t, "source"))) {
+        x->source = ir_join(c, c->opt->source_dir ? c->opt->source_dir : ".", x->shown);
+        uint64_t size;
+        if (x->source && rp_pal_stat(c->alloc, x->source, &size) != RP_FS_FILE) {
+            ERR(c, ir_key_pos(t, "source"), "RP1507", "merge module '%s' not found", x->shown);
+        }
+    }
+}
+
 // "file:<ID>" -> the ID (a copy), or NULL with RP1315.
 static char *file_ref(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
     char *v = ir_get_str(c, t, key, required, NULL);

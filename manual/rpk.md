@@ -227,6 +227,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
+| `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature - MSI only |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
@@ -464,6 +465,17 @@ variable is deleted, an appended part is taken out and the rest kept. `keep = tr
 comma-separated list (`a` becomes `a,b`), `remove` deletes the key during installation. Uninstall
 takes out what `set` and `add` wrote. `remove` runs before files are installed, so it is for INI
 files an older version left behind.
+
+### Merge modules: `[merge.ID]`
+
+A merge module (`.msm`) is a piece of an installer that another vendor ships for its runtime or
+library. `[merge.ID]` copies its tables into the package: the module's files, components, registry
+values and its own actions. Its root folder becomes `dir`, its components join `feature` (default:
+the dir's feature, or `Main`), and its cabinet is embedded as a second cabinet of its own. A
+standard action the module's tables need and the package lacks (`WriteRegistryValues`, for
+example) is added at its usual place. rubrapack does not merge configurable modules (those with a
+`ModuleConfiguration` table), nor a module with non-ASCII text in a code page other than UTF-8
+(`RP1517`). MSIX has no merge modules.
 
 ### Searching and requiring: `[search.ID]`, `[require.ID]`
 

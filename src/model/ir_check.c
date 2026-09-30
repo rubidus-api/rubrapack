@@ -551,6 +551,18 @@ void ir_cross_checks(ctx_t *c) {
             else ERR(c, x->pos, "RP1202", "[ini.%s] needs a feature: set 'feature' here or on its dir", x->id);
         }
     }
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        rp_ir_merge_t *x = &ir->merges[k];
+        if (x->dir && ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->dir);
+        const rp_ir_dir_t *d = x->dir ? ir_find_dir(ir, x->dir) : NULL;
+        if (x->feature && !find_feature(ir, x->feature)) {
+            ERR(c, x->pos, "RP1307", "feature '%s' is not defined", x->feature);
+        } else if (x->feature == NULL) {
+            if (d && d->feature) x->feature = ir_dup(c, d->feature);
+            else if (!declared) x->feature = ir_dup(c, "Main");
+            else ERR(c, x->pos, "RP1202", "[merge.%s] needs a feature: set 'feature' here or on its dir", x->id);
+        }
+    }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
         if (e->feature && !find_feature(ir, e->feature)) {

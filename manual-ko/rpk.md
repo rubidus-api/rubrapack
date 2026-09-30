@@ -217,6 +217,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
+| `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature - MSI 전용 |
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
@@ -441,6 +442,16 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 `mode = "set"`(기본)은 파일의 `[section]` 에 `key=value` 를 쓰고, `add` 는 쉼표 목록에 값을 덧붙이며
 (`a` 가 `a,b` 로), `remove` 는 설치 중에 키를 지운다. 제거하면 `set` 과 `add` 가 쓴 것을 뗀다.
 `remove` 는 파일 설치보다 먼저 실행되므로 옛 판이 남긴 INI 파일을 위한 것이다.
+
+### 병합 모듈: `[merge.ID]`
+
+병합 모듈(`.msm`)은 다른 회사가 자기 런타임이나 라이브러리를 위해 내놓는 설치 프로그램 조각이다.
+`[merge.ID]` 는 그 표들을 패키지에 옮겨 담는다: 모듈의 파일, 구성 요소, 레지스트리 값, 모듈 자신의
+동작. 모듈의 뿌리 폴더는 `dir` 이 되고, 구성 요소는 `feature`(기본: 그 폴더의 기능, 없으면 `Main`)에
+들어가며, 모듈의 캐비닛은 따로 두 번째 캐비닛으로 들어간다. 모듈의 표가 필요로 하는데 패키지에
+없는 표준 동작(예를 들어 `WriteRegistryValues`)은 늘 쓰는 자리에 더한다. 설정할 수 있는
+모듈(`ModuleConfiguration` 표가 있는 것)과, UTF-8 이 아닌 코드 페이지에 ASCII 밖의 글자가 있는
+모듈은 합치지 않는다(`RP1517`). MSIX 에는 병합 모듈이 없다.
 
 ### 검색과 요구: `[search.ID]`, `[require.ID]`
 

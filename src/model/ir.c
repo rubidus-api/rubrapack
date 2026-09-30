@@ -8,12 +8,12 @@
 static const char *const top_kinds[] = { "package", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
-                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", NULL };
+                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "merge", NULL };
 
 bool ir_in_list(const char *s, const char *const *list) {
     for (size_t k = 0; list[k]; ++k) {
@@ -40,7 +40,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, next_ = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, next_ = 0, nmerge = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -83,6 +83,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "search") == 0) ++nsearch;
         else if (strcmp(t->kind, "service") == 0) ++nsvc;
         else if (strcmp(t->kind, "font") == 0) ++nfont;
+        else if (strcmp(t->kind, "merge") == 0) ++nmerge;
         else if (strcmp(t->kind, "assoc") == 0) ++nassoc;
         else if (strcmp(t->kind, "protocol") == 0) ++nproto;
         else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
@@ -149,6 +150,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->searches = rp_mem_alloc(alloc, nsearch + 1, sizeof *ir->searches);
     ir->services = rp_mem_alloc(alloc, nsvc + 1, sizeof *ir->services);
     ir->fonts = rp_mem_alloc(alloc, nfont + 1, sizeof *ir->fonts);
+    ir->merges = rp_mem_alloc(alloc, nmerge + 1, sizeof *ir->merges);
+    if (ir->merges == NULL) c.nomem = true;
     ir->permissions = rp_mem_alloc(alloc, nperm + 1, sizeof *ir->permissions);
     ir->ui_texts = rp_mem_alloc(alloc, nuitext + 1, sizeof *ir->ui_texts);
     ir->dialogs = rp_mem_alloc(alloc, ndlg + 1, sizeof *ir->dialogs);
@@ -224,6 +227,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_service_t *x = &ir->services[ir->service_count++];
             memset(x, 0, sizeof *x);
             ir_parse_service(&c, t, x);
+        } else if (strcmp(t->kind, "merge") == 0) {
+            rp_ir_merge_t *x = &ir->merges[ir->merge_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_merge(&c, t, x);
         } else if (strcmp(t->kind, "font") == 0) {
             rp_ir_font_t *x = &ir->fonts[ir->font_count++];
             memset(x, 0, sizeof *x);
@@ -520,6 +527,12 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->services);
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        rp_ir_merge_t *x = &ir->merges[k];
+        char *xs[] = { x->id, x->source, x->shown, x->dir, x->feature };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->merges);
     for (size_t k = 0; k < ir->font_count; ++k) {
         rp_mem_free(a, ir->fonts[k].id);
         rp_mem_free(a, ir->fonts[k].file);
