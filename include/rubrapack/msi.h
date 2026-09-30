@@ -134,6 +134,12 @@ typedef struct {
     size_t                 stream_count;
 } rp_msi_wdb_t;
 
+// The _Validation table for these tables and itself (src/msi/validation.c, ICE03): one row per
+// column. PROVEN_ERR_NOT_FOUND when a column has no rule; *missing then names its table. Free
+// out->cells with the allocator.
+[[nodiscard]] proven_err_t rp_msi_validation(proven_allocator_t alloc, const rp_msi_wtable_t *tables, size_t count,
+                                             rp_msi_wtable_t *out, const char **missing);
+
 // Writes a database (format notes F2; DECISIONS 2026-09-26 "P1b writer"): string ids sorted by
 // UTF-8 bytes, reference words counted, rows sorted by stored key values, one stream per
 // non-empty table and per binary cell (`Table.key`). Deterministic for the same input.

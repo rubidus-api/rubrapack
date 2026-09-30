@@ -88,13 +88,13 @@ FeatureComponents Main + C_185f8db32271fe25f561
 표에는 되풀이되는 문자열 - `INSTALLDIR`, 컴포넌트 키, `Hello` - 이 가득하고, MSI 는 서로 다른 문자열을 한 번씩만
 보관한다. 패키지의 모든 문자열이 **문자열 풀**이라는 목록 하나(스트림 둘, `_StringPool` 과 `_StringData`)에 있고,
 표의 문자열 칸은 그 목록에서의 문자열 *번호*만 2 바이트로(아주 큰 패키지에서는 3 바이트로) 담는다. 튜토리얼 첫
-패키지는 표 16개 전체에 서로 다른 문자열이 111개다:
+패키지는 표 17개 전체에 서로 다른 문자열이 132개다:
 
 ```text
 C:\work\hello> rubrapack inspect hello.msi
 code page: 65001
-strings: 111
-tables: 16
+strings: 132
+tables: 17
 ```
 
 풀은 문자열마다 몇 칸이 쓰는지도 센다. 그 바이트는 제4부가 보인다.
@@ -102,7 +102,8 @@ tables: 16
 ## 표에 대한 표
 
 데이터베이스는 자기를 설명한다. 두 표가 다른 표들을 나열한다: `_Tables` 는 표마다 한 행, `_Columns` 는 모든 표의 열마다
-형식과 함께 한 행이다. `inspect` 가 처음 두 줄에 출력하는 열 이름과 형식을 거기서 찾는다. *순서* 표들
+형식과 함께 한 행이다. 셋째 표 `_Validation` 은 열마다 담을 수 있는 것 - 범위, 값이 가리키는 표, Identifier 나
+Formatted 같은 범주 - 을 적는다. Windows Installer 는 설치할 때 이 표를 읽지 않고, 검증 도구가 자료를 이것과 대조한다. `inspect` 가 처음 두 줄에 출력하는 열 이름과 형식을 거기서 찾는다. *순서* 표들
 (`InstallExecuteSequence`, `InstallUISequence`, 그리고 관리용·광고용 설치를 위한 셋 더)은 설치의 단계를 순서대로,
 단계마다 조건과 함께 나열한다(튜토리얼 9장과 13장) - 절차마저 표다.
 

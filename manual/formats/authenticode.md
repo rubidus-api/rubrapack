@@ -156,30 +156,31 @@ signature made with any key carries these same values. The streams in order of t
 | 6 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
 | 7 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 8 | `40 48 16 42 27 43` ... | `Media` | 14 |
-| 9 | `40 48 3f 3b f2 43` ... | `_Columns` | 552 |
-| 10 | `40 48 3f 3f 77 45` ... | `_StringData` | 1381 |
-| 11 | `40 48 3f 3f 77 45` ... | `_StringPool` | 448 |
+| 9 | `40 48 3f 3b f2 43` ... | `_Columns` | 632 |
+| 10 | `40 48 3f 3f 77 45` ... | `_StringData` | 1544 |
+| 11 | `40 48 3f 3f 77 45` ... | `_StringPool` | 532 |
 | 12 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 120 |
 | 13 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
 | 14 | `40 48 59 45 f2 44` ... | `Property` | 40 |
-| 15 | `40 48 7f 3f 64 41` ... | `_Tables` | 32 |
+| 15 | `40 48 7f 3f 64 41` ... | `_Tables` | 34 |
 | 16 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 17 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
 | 18 | `40 48 ca 41 30 43` ... | `AdminUISequence` | 24 |
 | 19 | `40 48 ca 41 f9 45` ... | `AdvtExecuteSequence` | 42 |
 | 20 | `40 48 de 44 6a 45` ... | `Upgrade` | 32 |
+| 21 | `40 48 ff 3f e4 43` ... | `_Validation` | 1896 |
 
 The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its name, 8-byte size and
-two zero times: 802 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
+two zero times: 840 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-99 02 fe fb ce eb 28 a8 61 dc 7d ce 9a a9 83 fe a1 b7 c0 e1 28 5e a6 80 ee e7 f2 fe 73 dd c6 0a
+0f 7a 8a 5b 07 dd 74 3a 62 ba e1 5e 30 6c 43 04 4f 3a bc ff f7 1b 40 3b f7 ba 72 d3 22 ad 2e f4
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-d4 f3 d6 74 bf 5e eb 23 e2 f5 ff ff 22 76 66 fa d1 64 1e a6 93 26 40 05 45 ee 44 90 13 37 47 db
+a2 99 3a 0d f5 d1 c6 2f 5f 5d 3b 6e b8 c9 4d 04 fb 61 12 47 7e b3 8d c4 a5 5b 53 94 b1 1c 5c 46
 ```
 

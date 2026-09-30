@@ -60,19 +60,26 @@ Windows Installer API(`msi.dll`)만 있으면 된다. SDK 도구는 필요 없�
 Windows SDK 의 "MSI Tools" 에는 MsiVal2 와 `darice.cub` 가 들어 있다. Microsoft 의 작성 도구들이 돌리는 내부
 일관성 검사기(ICE)다: `MsiVal2 package.msi darice.cub -f` 가 실패한 것을 찍는다. Windows 에서만 돌고, 위의
 검사보다 한 걸음 더 간다 - 표의 모양만이 아니라 뜻을 안다. rubrapack 의 시험 패키지(시험에 쓰는 모든 원본,
-39개)에서 나오는 것과 그 까닭:
+39개)에서 0.8.0 부터 나오는 것은 **ICE52** 하나다: `AppSearch` 의 비공개 속성(`RpFound_<ID>`, 기억하는 폴더).
+명령줄이 "찾았다"고 꾸미지 못하게 일부러 비공개로 둔다. `AppSearch` 는 두 순서에서 모두 돌므로 서버 쪽에 넘길
+필요가 없다.
 
-- **ICE03, "Missing specifications in _Validation"** 이 모든 열에: `_Validation` 표는 검사기만을 위해 열을
-  설명한다. Windows Installer 는 읽지 않고, rubrapack 은 쓰지 않는다.
-- **ICE82**, 겹친 순서 번호: 대화창 언어가 여럿인 패키지의 언어 동작들이 번호 하나를 함께 쓴다. 서로 무관한
-  속성 설정 동작이라 순서가 상관없다.
-- **ICE34**, 언어 페이지 라디오 속성에 `Property` 행이 없다: 일부러다. 명령줄(`RPLANGUAGE=ko`)이 감지보다
-  이겨야 하고, 감지는 `NOT RPLANGUAGE` 일 때만 돈다.
-- **ICE43, ICE57**, 파일을 키 경로로 쓰는 컴포넌트의 광고되지 않은 바로가기: 이 규칙들은 바로가기 폴더를
-  사용자별로 가정한다. 컴퓨터 전체 패키지(`ALLUSERS=1`)에서 시작 메뉴와 바탕화면은 모든 사용자 폴더이고,
-  사용자별·겸용 패키지는 사용자마다 따로 설치되므로, 이 규칙이 막으려는 "첫 사용자만" 문제는 생기지 않는다.
-- **ICE52**, `AppSearch` 의 비공개 속성(`RpFound_<ID>`, 기억하는 폴더): 명령줄이 정하지 못하게 일부러
-  비공개다. `AppSearch` 는 두 순서에서 모두 돌므로 서버 쪽에 넘길 필요가 없다.
+나머지를 없애려고 0.8.0 이 바꾼 것 - 설치가 하는 일은 하나도 바뀌지 않는다:
+
+- **ICE03**, "Missing specifications in _Validation": 이제 `_Validation` 을 쓴다. rubrapack 이 쓰는 모든 표의 열마다
+  한 행(범위, 가리키는 표, 범주, 값 집합)이고, Microsoft Learn 의 열 설명에서 옮겼다. Windows Installer 는 읽지
+  않고, 검사기가 자료를 이것과 대조한다.
+- **ICE82**, 겹친 순서 번호: 대화창 언어가 여럿인 패키지의 언어 동작(글마다 속성 설정 동작 하나)이 `LaunchConditions`
+  (100)와 `CostInitialize`(800) 사이에서 번호를 하나씩 받는다. 799 를 넘으면(언어 약 13개) 마지막 번호를 나눠 쓴다.
+- **ICE34**, 라디오 묶음의 속성에는 `Property` 행이 있어야 한다: 언어 페이지의 단추는 `RPLANGUAGEUI`(행 `en`)를
+  정하고, 순서가 그것을 `RPLANGUAGE` 로 채우며, 페이지의 다음이 되돌려 준다. `RPLANGUAGE` 자체에는 행이 없어서
+  "명령줄에서 주지 않음"을 알아볼 수 있다.
+- **ICE43, ICE57, ICE69**: 이 규칙들은 컴퓨터 전체 패키지에서도 시작 메뉴와 바탕화면을 사용자별 폴더로 보고,
+  광고되지 않은 바로가기가 파일이 아니라 `HKEY_CURRENT_USER` 값을 키 경로로 쓰는 컴포넌트에 있기를 바란다. 이제
+  바로가기마다 그런 컴포넌트(`Software\[Manufacturer]\[ProductName]\Shortcuts` 아래 값)가 대상 파일의 기능 안에
+  있고, 대상을 `[#File]` 대신 `[<폴더>]<파일 이름>` 으로 적는다. `[#File]` 은 파일의 컴포넌트에 묶이기 때문이다
+  (ICE69). 0.7.1 로 만든 패키지에서 올려도 바로가기는 모두 남는다(`upgrade-vm.sh`): `RemoveExistingProducts` 가
+  `InstallInitialize` 바로 뒤에 돌아, 새 컴포넌트가 오기 전에 옛 제품이 다 지워진다.
 
 셋은 진짜 결함이었고 고쳤다(0.4.3): 완료·취소·실패 페이지가 `AdminUISequence` 에 없어 전체 UI 의 관리
 설치(`msiexec /a`)가 그 페이지 없이 끝났다(ICE20). 폴더를 키 경로로 쓰는 컴포넌트(INI 항목, `[remove]`)가

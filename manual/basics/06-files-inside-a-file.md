@@ -34,16 +34,17 @@ only marks its sectors free; growing one only links more sectors to its chain.
 ## An MSI is a file system in a file
 
 An `.msi` is a **Compound File** (Microsoft's "structured storage"): exactly the scheme above,
-inside one file. Here is the first `hello.msi` of the tutorial, 28,672 bytes, taken apart:
+inside one file. Here is the first `hello.msi` of the tutorial, 32,768 bytes, taken apart:
 
 ```text
   offset 0x0000  header           (the 512-byte header, padded to one 4096-byte sector)
   offset 0x1000  sector 0         the allocation table (FAT)
   offset 0x2000  sector 1         the directory
   offset 0x3000  sector 2         the mini FAT (see below)
-  offset 0x4000  sector 3         the mini stream (see below)
-  offset 0x5000  sector 4         cab1.cab, first part
-  offset 0x6000  sector 5         cab1.cab, second part
+  offset 0x4000  sector 3         the mini stream (see below), first part
+  offset 0x5000  sector 4         the mini stream, second part
+  offset 0x6000  sector 5         cab1.cab, first part
+  offset 0x7000  sector 6         cab1.cab, second part
 ```
 
 Sector *n* starts at byte (*n* + 1) x 4096, because the header takes the first 4096 bytes. The
@@ -55,10 +56,11 @@ sector 1. The allocation table in sector 0 reads, as 4-byte little-endian number
 | 0 | `0xFFFFFFFD` | this sector holds the allocation table itself |
 | 1 | `0xFFFFFFFE` | end of chain: the directory is one sector |
 | 2 | `0xFFFFFFFE` | end of chain: the mini FAT is one sector |
-| 3 | `0xFFFFFFFE` | end of chain: the mini stream is one sector |
-| 4 | `5` | next is sector 5 |
-| 5 | `0xFFFFFFFE` | end of chain: `cab1.cab` is sectors 4 and 5 |
-| 6 ... | `0xFFFFFFFF` | free (there are no more sectors) |
+| 3 | `4` | next is sector 4 |
+| 4 | `0xFFFFFFFE` | end of chain: the mini stream is sectors 3 and 4 |
+| 5 | `6` | next is sector 6 |
+| 6 | `0xFFFFFFFE` | end of chain: `cab1.cab` is sectors 5 and 6 |
+| 7 ... | `0xFFFFFFFF` | free (there are no more sectors) |
 
 A file inside is called a **stream**. The directory has one 128-byte entry per stream: its name in
 UTF-16 (chapter 3), its type, its first sector and its size. The first entry is always the root:
@@ -73,8 +75,9 @@ UTF-16 (chapter 3), its type, its first sector and its size. The first entry is 
 A 4096-byte sector would waste most of its space on a 20-byte table. So streams smaller than 4096
 bytes (the number at offset `0x38` of the header) are kept together in one stream, the **mini
 stream**, cut into **mini sectors** of 64 bytes, with their own table, the **mini FAT**. In this
-package, nineteen streams - eighteen tables of 4 to 1,392 bytes and the 332-byte summary - share the
-3,840-byte mini stream in sector 3; only the 6,776-byte cabinet is big enough for ordinary sectors. It is the same scheme again, one level
+package, twenty streams - nineteen tables of 4 to 1,896 bytes and the 332-byte summary - share the
+6,144-byte mini stream in sectors 3 and 4; only the 6,776-byte cabinet is big enough for ordinary
+sectors. It is the same scheme again, one level
 down.
 
 ### The names

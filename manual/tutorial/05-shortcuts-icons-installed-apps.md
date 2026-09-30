@@ -107,13 +107,17 @@ it: the shortcuts and the Start menu folder go too.
 C:\work\hello> rubrapack inspect hello.msi Shortcut
 Shortcut	Directory_	Name	Component_	Target	Arguments	Description	Hotkey
 ...
-Desktop	DesktopFolder	Hello	C_185f8db32271fe25f561	[#Hello]	--greet "[ProductName] user"
-ReadmeLink	MenuFolder	HELLO-~1|Hello - read me	C_44ff26388205705fb806	[#Readme]
-StartMenu	MenuFolder	Hello	C_185f8db32271fe25f561	[#Hello]		Says hello
+Desktop	DesktopFolder	Hello	C_2ea6d5bfd9b4a9073b30	[INSTALLDIR]hello.exe	--greet "[ProductName] user"
+ReadmeLink	MenuFolder	HELLO-~1|Hello - read me	C_1643d000d3751c809248	[INSTALLDIR]readme.txt
+StartMenu	MenuFolder	Hello	C_a7452f86f3da3f7d2a6c	[INSTALLDIR]hello.exe		Says hello
 ```
 
-- A shortcut belongs to its target file's component: it is installed and removed with the file.
-- `[#Hello]` is Windows Installer's way to say "the installed path of the file `Hello`".
+- Each shortcut has a component of its own, in its target file's feature: it is installed and
+  removed with the file. Its key path is a value under `HKEY_CURRENT_USER\Software\Example
+  Software\Hello\Shortcuts`, because Windows' rules treat the Start menu and the desktop as the
+  user's places (Part IV, [checking against Windows](../formats/verify.md#microsofts-ice-rules-observed)).
+- `[INSTALLDIR]hello.exe` is the target: the folder `INSTALLDIR`, wherever it was installed, and
+  the file name.
 - `HELLO-~1|Hello - read me` holds two names: an old-style short name (8 characters, a dot, 3
   characters - from the days of MS-DOS) and the long one. Windows Installer wants both for every
   name; rubrapack makes the short ones up.

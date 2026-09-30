@@ -69,6 +69,7 @@ static const char *const core_sources[] = {
     "src/msi/lower.c",
     "src/msi/suminfo.c",
     "src/msi/ui.c",
+    "src/msi/validation.c",
     "src/msi/view.c",
     "src/msix/msix.c",
     "src/msix/msix_sign.c",

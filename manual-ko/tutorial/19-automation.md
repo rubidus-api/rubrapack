@@ -142,7 +142,7 @@ rubrapack 은 Linux 에서도 돌고, `--reproducible` 이면 거기서도 같�
 GitLab CI, Jenkins)에 Windows 가 없어도 된다. Linux 러너에서:
 
 ```text
-V=0.7.1
+V=0.8.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict

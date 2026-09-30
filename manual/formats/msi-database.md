@@ -181,7 +181,7 @@ references). Then two u16 per string id; the first ids:
 | 5 | `07 00 01 00` | 7 | 1 | `1.2.3.4` |
 | 6 | `04 00 02 00` | 4 | 2 | `1033` |
 
-111 strings in all; their bytes, back to back, are the 1381 bytes of `_StringData`.
+132 strings in all; their bytes, back to back, are the 1544 bytes of `_StringData`.
 
 `_Columns` describes the table - its rows for `File`, the type decoded with the bit table above:
 
@@ -199,14 +199,14 @@ references). Then two u16 per string id; the first ids:
 The `File` stream itself is 20 bytes: one row, stored column by column:
 
 ```text
-32 00 0e 00 6c 00 00 46 00 80 05 00 06 00 00 82 01 00 00 80
+39 00 0e 00 81 00 00 46 00 80 05 00 06 00 00 82 01 00 00 80
 ```
 
 | Column | Stored |
 |---|---|
-| `File` | `32 00` -> id 50 `Hello` |
+| `File` | `39 00` -> id 57 `Hello` |
 | `Component_` | `0e 00` -> id 14 `C_185f8db32271fe25f561` |
-| `FileName` | `6c 00` -> id 108 `hello.exe` |
+| `FileName` | `81 00` -> id 129 `hello.exe` |
 | `FileSize` | `00 46 00 80` -> 0x80004600 ^ 0x80000000 = 17920 |
 | `Version` | `05 00` -> id 5 `1.2.3.4` |
 | `Language` | `06 00` -> id 6 `1033` |

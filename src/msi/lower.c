@@ -806,10 +806,14 @@ static void lower_shortcuts(pkg_t *pk) {
         s_(&pk->shortcut, sc->id);
         s_(&pk->shortcut, sdir);
         s_(&pk->shortcut, strcmp(shortn, sc->name) == 0 ? sc->name : kprintf(k, "%s|%s", shortn, sc->name));
-        // A shortcut with `when` has its own component (RFC-0013 A2), whose key path is a registry
-        // value under HKMU (HKLM or HKCU as installed), in the target file's feature.
+        // Every shortcut has a component of its own (RFC-0013 A2 for `when`, RFC-0016 1 for all):
+        // Windows' rules (ICE43, ICE57) treat the Start menu and the desktop as per-user places,
+        // even in a per-machine package, and want such a component keyed by an HKCU value, not by
+        // a program file. It is in the target file's feature, and it names the target by its folder
+        // and name rather than [#File], which would tie it to the file's component (ICE69).
         const char *sc_comp = target->comp;
-        if (sc->when) {
+        bool own = true;
+        if (own) {
             char comp[23], guid[39], rk[23];
             rp_key_derive('C', kprintf(k, "shortcut:%s", sc->id, NULL), comp);
             rp_key_derive('R', kprintf(k, "shortcut-when:%s", sc->id, NULL), rk);
@@ -817,14 +821,16 @@ static void lower_shortcuts(pkg_t *pk) {
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
             sc_comp = kdup(k, comp);
             s_(&pk->component, sc_comp); s_(&pk->component, kdup(k, guid)); s_(&pk->component, sdir);
-            i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); s_(&pk->component, sc->when); s_(&pk->component, kdup(k, rk));
+            i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0));
+            if (sc->when) s_(&pk->component, sc->when); else null_(&pk->component);
+            s_(&pk->component, kdup(k, rk));
             s_(&pk->featurecomp, target->f->feature); s_(&pk->featurecomp, sc_comp);
-            s_(&pk->registry, kdup(k, rk)); i_(&pk->registry, -1); s_(&pk->registry, "Software\\[Manufacturer]\\[ProductName]\\Shortcuts");
+            s_(&pk->registry, kdup(k, rk)); i_(&pk->registry, 1); s_(&pk->registry, "Software\\[Manufacturer]\\[ProductName]\\Shortcuts");
             s_(&pk->registry, sc->id); s_(&pk->registry, "1"); s_(&pk->registry, sc_comp);
             pk->any_write = true;
         }
         s_(&pk->shortcut, sc_comp);
-        s_(&pk->shortcut, kprintf(k, "[#%s]", target->key, NULL));
+        s_(&pk->shortcut, kprintf(k, "[%s]%s", target->dir_key, escape_formatted(k, target->f->name)));
         s_(&pk->shortcut, sc->args);                                            // formatted (H2)
         s_(&pk->shortcut, sc->description);                                     // Text, not formatted
         const char *sc_icon = pk->icons ? icon_name(alloc, k, &pk->icon, pk->icons, &pk->nicons, sc->icon_source, &pk->icon_err) : NULL;
@@ -841,7 +847,7 @@ static void lower_shortcuts(pkg_t *pk) {
                 seen |= c0->len == strlen(rk) && memcmp(c0->bytes, rk, c0->len) == 0;
             }
             if (seen) continue;
-            s_(&pk->removefile, kdup(k, rk)); s_(&pk->removefile, target->comp); null_(&pk->removefile);
+            s_(&pk->removefile, kdup(k, rk)); s_(&pk->removefile, own && !sc->when ? sc_comp : target->comp); null_(&pk->removefile);
             s_(&pk->removefile, n->key); i_(&pk->removefile, 2);
         }
     }
@@ -1586,7 +1592,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     }
     if (err == PROVEN_OK && nomem) err = PROVEN_ERR_NOMEM;
     if (err == PROVEN_OK) {
-        rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 8];
+        rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 9];   // + the ui tables + _Validation
         size_t nt = 0;
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
             // AppSearch looks a folder-type RegLocator up in Signature, which must then exist even
@@ -1597,9 +1603,17 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {
             if (strcmp(pk->ui->tables[t].name, "Binary") != 0) tables[nt++] = pk->ui->tables[t];
         }
-        rp_msi_wdb_t db = { 65001, tables, nt, summary, summary_len, pk->streams, ir->cab_external ? 0 : pk->nstreams };
-        err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
-        if (err == PROVEN_OK) err = rp_msi_write_to(alloc, &db, 12, limits, sink, out, len);
+        const char *missing = NULL;
+        err = rp_msi_validation(alloc, tables, nt, &tables[nt], &missing);
+        if (err == PROVEN_ERR_NOT_FOUND) {
+            rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP2020", false, "internal: no _Validation rule for a column of %s", missing);
+        }
+        if (err == PROVEN_OK) {
+            rp_msi_wdb_t db = { 65001, tables, nt + 1, summary, summary_len, pk->streams, ir->cab_external ? 0 : pk->nstreams };
+            err = rp_msi_lint(alloc, &db, diags);     // RFC-0001 7.1: build always checks what it writes
+            if (err == PROVEN_OK) err = rp_msi_write_to(alloc, &db, 12, limits, sink, out, len);
+            rp_mem_free(alloc, (void *)tables[nt].cells);
+        }
     }
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) rp_mem_free(alloc, all[i]->cells);
     if (!ir->cab_external) {

@@ -106,8 +106,8 @@ Without a table name, `inspect` lists every table with its row and column counts
 ```text
 C:\work\hello> rubrapack inspect hello.msi
 code page: 65001
-strings: 156
-tables: 19
+strings: 181
+tables: 20
   AdminExecuteSequence  rows=8 columns=3
   ...
   File  rows=2 columns=8
@@ -121,7 +121,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.7.1
+  18 = rubrapack 0.8.0
 ```
 
 The numbers of the summary are property IDs: 2 title, 3 subject, 4 author, 5 keywords, 7 the
@@ -146,7 +146,7 @@ C:\work\hello> rubrapack inspect hello.msi --streams
 table  40	File
 stream 6821	cab1.cab
 table  14	Media
-table  728	_Columns
+table  808	_Columns
 ...
 stream 332	!SummaryInformation
 ```
@@ -238,7 +238,7 @@ GUIDs this way, which is why they stay the same from version to version. Part II
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.7.1 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.8.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -249,7 +249,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.7.1 (proven_c_lib-v0.1.1)
+rubrapack 0.8.0 (proven_c_lib-v0.1.1)
 ```
 
 `rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options

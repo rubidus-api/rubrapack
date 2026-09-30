@@ -31,16 +31,17 @@ USB 메모리의 FAT 파일 시스템이 이렇게 동작한다(FAT: *file alloc
 ## MSI 는 파일 속의 파일 시스템이다
 
 `.msi` 는 **복합 파일**(Compound File, Microsoft 의 "구조화된 저장소")이다: 위의 방식 그대로를 파일 하나 안에 둔
-것이다. 튜토리얼의 첫 `hello.msi`, 28,672 바이트를 뜯어 보면:
+것이다. 튜토리얼의 첫 `hello.msi`, 32,768 바이트를 뜯어 보면:
 
 ```text
   offset 0x0000  header           (the 512-byte header, padded to one 4096-byte sector)
   offset 0x1000  sector 0         the allocation table (FAT)
   offset 0x2000  sector 1         the directory
   offset 0x3000  sector 2         the mini FAT (see below)
-  offset 0x4000  sector 3         the mini stream (see below)
-  offset 0x5000  sector 4         cab1.cab, first part
-  offset 0x6000  sector 5         cab1.cab, second part
+  offset 0x4000  sector 3         the mini stream (see below), first part
+  offset 0x5000  sector 4         the mini stream, second part
+  offset 0x6000  sector 5         cab1.cab, first part
+  offset 0x7000  sector 6         cab1.cab, second part
 ```
 
 머리가 처음 4096 바이트를 차지하므로 섹터 *n* 은 바이트 (*n* + 1) x 4096 에서 시작한다. 머리(1장)가 나머지가 어디
@@ -52,10 +53,11 @@ little-endian 수(2장)로 읽으면:
 | 0 | `0xFFFFFFFD` | 이 섹터는 할당 표 자신을 담는다 |
 | 1 | `0xFFFFFFFE` | 사슬의 끝: 디렉터리는 섹터 하나 |
 | 2 | `0xFFFFFFFE` | 사슬의 끝: 미니 FAT 은 섹터 하나 |
-| 3 | `0xFFFFFFFE` | 사슬의 끝: 미니 스트림은 섹터 하나 |
-| 4 | `5` | 다음은 섹터 5 |
-| 5 | `0xFFFFFFFE` | 사슬의 끝: `cab1.cab` 은 섹터 4 와 5 |
-| 6 ... | `0xFFFFFFFF` | 비어 있음(섹터가 더 없다) |
+| 3 | `4` | 다음은 섹터 4 |
+| 4 | `0xFFFFFFFE` | 사슬의 끝: 미니 스트림은 섹터 3 과 4 |
+| 5 | `6` | 다음은 섹터 6 |
+| 6 | `0xFFFFFFFE` | 사슬의 끝: `cab1.cab` 은 섹터 5 와 6 |
+| 7 ... | `0xFFFFFFFF` | 비어 있음(섹터가 더 없다) |
 
 안에 든 파일을 **스트림**이라 부른다. 디렉터리에는 스트림마다 128 바이트 항목이 하나씩 있다: UTF-16(3장)으로 쓴 이름,
 종류, 첫 섹터, 크기. 첫 항목은 언제나 뿌리(root)다:
@@ -69,8 +71,8 @@ little-endian 수(2장)로 읽으면:
 
 4096 바이트 섹터에 20 바이트짜리 표를 넣으면 공간 대부분이 버려진다. 그래서 4096 바이트(머리의 오프셋 `0x38` 에 있는
 수)보다 작은 스트림은 **미니 스트림**이라는 스트림 하나에 함께 두고, 64 바이트 **미니 섹터**로 잘라, 자기 표인
-**미니 FAT** 으로 관리한다. 이 패키지에서는 스트림 열아홉 개 - 4~1,392 바이트짜리 표 열여덟과 332 바이트 요약
-정보 - 가 섹터 3 의 3,840 바이트 미니 스트림을 나눠 쓴다. 보통 섹터를 쓸 만큼 큰 것은 6,776 바이트 캐비닛뿐이다.
+**미니 FAT** 으로 관리한다. 이 패키지에서는 스트림 스무 개 - 4~1,896 바이트짜리 표 열아홉과 332 바이트 요약
+정보 - 가 섹터 3·4 의 6,144 바이트 미니 스트림을 나눠 쓴다. 보통 섹터를 쓸 만큼 큰 것은 6,776 바이트 캐비닛뿐이다.
 같은 방식을 한 단계 아래에서 한 번 더 쓴 것이다.
 
 ### 이름

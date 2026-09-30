@@ -144,10 +144,11 @@ null 이면 빈 문자열을 쓴다), 그리고 같은 `DefaultIcon` 과 `shell\
 
 ## 바로가기
 
-`Shortcut`(**Shortcut** s72, Directory_ s72, `.lnk` 없는 Name l128 `SHORT|Long`, Component_ s72, 광고
-아닌 바로가기면 Target `[#FileKey]`, Arguments(서식), Description(평문), Hotkey, Icon_, IconIndex,
+`Shortcut`(**Shortcut** s72, Directory_ s72, `.lnk` 없는 Name l128 `SHORT|Long`, Component_ s72, 광고 아닌 바로가기면 Target 은 서식 경로(`[#FileKey]` 나 `[DirKey]이름`), Arguments(서식), Description(평문), Hotkey, Icon_, IconIndex,
 ShowCmd, WkDir = Directory 키)는 `CreateShortcuts`(4500)가 쓰고 `RemoveShortcuts`(3200)가 지운다.
-바로가기는 대상 파일의 구성 요소에 둔다. 바로가기만을 위해 만든 폴더는 저절로 지워지지 않는다: 그 폴더와
+바로가기를 대상 파일의 구성 요소에 두어도 되지만, Microsoft 의 ICE43/ICE57 은 광고 아닌 바로가기마다
+`HKCU` 값을 키 경로로 쓰는 구성 요소를 바란다([verify.md](verify.md)). rubrapack 은 바로가기마다 그런 구성 요소를
+주고 대상을 `[DirKey]이름` 으로 쓴다(ICE69). 바로가기만을 위해 만든 폴더는 저절로 지워지지 않는다: 그 폴더와
 표준 폴더 아래의 부모마다 `RemoveFile` 행(FileName null, DirProperty = 그 폴더, InstallMode 2)을 더한다.
 `ALLUSERS=1` 이면 `ProgramMenuFolder` 와 `DesktopFolder` 는 모든 사용자의 시작 메뉴와 공용 바탕화면이다.
 설치가 실패하면 바로가기도 폴더도 남지 않고, 복구는 지운 바로가기를 다시 만든다. [observed]

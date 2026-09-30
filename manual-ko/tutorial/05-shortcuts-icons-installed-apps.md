@@ -103,13 +103,15 @@ rubrapack 이 바로가기를 위해 만든 시작 메뉴 폴더는 바로가기
 C:\work\hello> rubrapack inspect hello.msi Shortcut
 Shortcut	Directory_	Name	Component_	Target	Arguments	Description	Hotkey
 ...
-Desktop	DesktopFolder	Hello	C_185f8db32271fe25f561	[#Hello]	--greet "[ProductName] user"
-ReadmeLink	MenuFolder	HELLO-~1|Hello - read me	C_44ff26388205705fb806	[#Readme]
-StartMenu	MenuFolder	Hello	C_185f8db32271fe25f561	[#Hello]		Says hello
+Desktop	DesktopFolder	Hello	C_2ea6d5bfd9b4a9073b30	[INSTALLDIR]hello.exe	--greet "[ProductName] user"
+ReadmeLink	MenuFolder	HELLO-~1|Hello - read me	C_1643d000d3751c809248	[INSTALLDIR]readme.txt
+StartMenu	MenuFolder	Hello	C_a7452f86f3da3f7d2a6c	[INSTALLDIR]hello.exe		Says hello
 ```
 
-- 바로가기는 대상 파일의 컴포넌트에 속한다: 파일과 함께 설치되고 지워진다.
-- `[#Hello]` 는 "파일 `Hello` 가 설치된 경로"를 뜻하는 Windows Installer 의 표기다.
+- 바로가기마다 자기 컴포넌트가 있고, 대상 파일의 기능에 든다: 파일과 함께 설치되고 지워진다. 그 키 경로는
+  `HKEY_CURRENT_USER\Software\Example Software\Hello\Shortcuts` 아래 값이다. Windows 의 규칙이 시작 메뉴와
+  바탕화면을 사용자의 자리로 보기 때문이다(제4부 [Windows 와 대조하기](../formats/verify.md#microsoft-의-ice-규칙-관찰)).
+- `[INSTALLDIR]hello.exe` 가 대상이다: 어디에 설치됐든 폴더 `INSTALLDIR` 와 파일 이름.
 - `HELLO-~1|Hello - read me` 에는 이름이 둘 들어 있다: 옛 방식의 짧은 이름(8자, 점, 3자 - MS-DOS 시절부터)과 긴
   이름. Windows Installer 는 모든 이름에 둘 다를 원하고, 짧은 이름은 rubrapack 이 지어낸다.
 

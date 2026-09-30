@@ -158,8 +158,8 @@ NotepadHelper	0	NOT Installed AND NOT (NOTEPAD_PATH)
 
 (머리줄은 뺐다.) rubrapack 은 요구 조건에 `Installed OR` 를 붙여, 설치된 제품은 늘 복구하거나 지울 수 있게 한다.
 기능의 `when` 은 `Condition` 표의 한 행이 되어 조건이 거짓이면 수준을 0 - "설치 안 함, 안 보임" - 으로 만든다.
-`NOT Installed` 는 속성이 사라진 제거 때 이 일이 일어나지 않게 막는다. 바탕화면 바로가기는 컴포넌트를 따로
-받았고, 그 `Condition` 열에 `when` 이 들어 있다:
+`NOT Installed` 는 속성이 사라진 제거 때 이 일이 일어나지 않게 막는다. 바로가기는 모두 컴포넌트를 따로
+받는다(5장). 바탕화면 바로가기의 것은 `Condition` 열에 `when` 을 담는다:
 
 ```text
 C_2ea6d5bfd9b4a9073b30	{BCBFF063-...}	DesktopFolder	260	DESKTOP_SHORTCUT = "1"	R_7f1795ed8aa7ac1a1c60

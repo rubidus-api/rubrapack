@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 28672 bytes: the
-header sector and 6 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 32768 bytes: the
+header sector and 7 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -145,9 +145,10 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 0 | `0x1000` | `FFFFFFFD` | FAT |
 | 1 | `0x2000` | `FFFFFFFE` | directory |
 | 2 | `0x3000` | `FFFFFFFE` | mini FAT |
-| 3 | `0x4000` | `FFFFFFFE` | mini stream |
-| 4 | `0x5000` | 5 | `cab1.cab` |
-| 5 | `0x6000` | `FFFFFFFE` | `cab1.cab` |
+| 3 | `0x4000` | 4 | mini stream |
+| 4 | `0x5000` | `FFFFFFFE` | mini stream |
+| 5 | `0x6000` | 6 | `cab1.cab` |
+| 6 | `0x7000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 
@@ -160,8 +161,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `02 00 00 00` | child | entry 2 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `00 0f 00 00 00 00 00 00` | size | 3840 |
+| 120 | `00 18 00 00 00 00 00 00` | size | 6144 |
 
-The root's size is the mini stream's: 3840 bytes, holding 19 of the 20 streams in 64-byte mini
+The root's size is the mini stream's: 6144 bytes, holding 20 of the 21 streams in 64-byte mini
 sectors; 1 stream is large enough for regular sectors. [msi-database.md](msi-database.md) continues
 with the streams' names and contents.

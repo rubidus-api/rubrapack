@@ -181,6 +181,7 @@ typedef struct {
     bool               page;            // ... and the language page leads the flow
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
+    int                lseq;            // the next InstallUISequence number of a language action
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
@@ -308,6 +309,13 @@ static bool grow(ctx_t *c, void **p, size_t *cap, size_t n, size_t size) {
 
 static void prop(ctx_t *c, const char *name, const char *value) {
     if (grow(c, (void **)&c->props, &c->capprops, c->nprops, sizeof *c->props)) c->props[c->nprops++] = (rp_ui_prop_t){ name, value };
+}
+
+// Language actions (type 51, one per text) get numbers of their own between LaunchConditions (100)
+// and CostInitialize (800), which ICE82 wants; past 799 they share the last one.
+static int lang_seq(ctx_t *c) {
+    if (c->lseq < 101) c->lseq = 101;
+    return c->lseq < 799 ? c->lseq++ : 799;
 }
 
 static void seq(ctx_t *c, const char *action, const char *cond, int n) {
@@ -851,17 +859,20 @@ static void language_dlg(ctx_t *c) {
     dialog(c, d, 370, 270, 3, "Lang", "Next", "Cancel");
     frame_text(c, d, keep(c, "{\\RpTitle_en}", title), text);
     int h = 14 * (int)c->nlang;
-    control(c, d, "Lang", "RadioButtonGroup", 25, 60, 200, h, VIS | EN, "RPLANGUAGE", NULL, "Back");
+    // The buttons set RPLANGUAGEUI, which has a Property row (ICE34); RPLANGUAGE itself has none, so
+    // that a missing one means "not given on the command line". Next copies it back first.
+    control(c, d, "Lang", "RadioButtonGroup", 25, 60, 200, h, VIS | EN, "RPLANGUAGEUI", NULL, "Back");
     for (size_t i = 0; i < c->nlang; ++i) {
         rows_t *r = &c->radio;
         const char *name = c->ir->ui_langs[i].name ? c->ir->ui_langs[i].name : lang_code(c, i);
-        s_(c, r, "RPLANGUAGE"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
+        s_(c, r, "RPLANGUAGEUI"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
         i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, name); n_(c, r);
     }
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
     control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
     control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Lang");
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
+    event(c, d, "Next", "[RPLANGUAGE]", "[RPLANGUAGEUI]", NULL, 0);
     // Next: the texts and fonts of the chosen language first (language_rows), then the page.
     event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
     event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
@@ -934,13 +945,18 @@ static void language_rows(ctx_t *c) {
     }
     ca(c, "RpLangEn", "RPLANGUAGE", "en");
     seq(c, "RpLangEn", "NOT RPLANGUAGE", 19);
+    if (c->page) {
+        prop(c, "RPLANGUAGEUI", "en");
+        ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
+        seq(c, "RpLangUi", NULL, 20);
+    }
     for (size_t li = 0; li < c->nlang; ++li) {
         const char *code = lang_code(c, li), *cnd = lang_cond(c, li);
         const char *font = keep(c, "RpNormal_", code);
         if (li) {
             snprintf(name, sizeof name, "RpL_%s_font", code);
             ca(c, keep(c, name, NULL), "DefaultUIFont", font);
-            seq(c, keep(c, name, NULL), cnd, 21);
+            seq(c, keep(c, name, NULL), cnd, lang_seq(c));
         }
         if (c->page) event(c, "RpLanguageDlg", "Next", "[DefaultUIFont]", font, cnd, 1);
         for (size_t k = 0; k < c->nreg; ++k) {
@@ -963,7 +979,7 @@ static void language_rows(ctx_t *c) {
             if (li || v == NULL) {
                 snprintf(name, sizeof name, "RpL_%s_%d", code, ++n);
                 ca(c, keep(c, name, NULL), target, arg);
-                seq(c, keep(c, name, NULL), cnd, 21);
+                seq(c, keep(c, name, NULL), cnd, lang_seq(c));
             }
         }
     }

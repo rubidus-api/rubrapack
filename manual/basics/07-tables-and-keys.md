@@ -96,13 +96,13 @@ Tables are full of repeated strings - `INSTALLDIR`, a component key, `Hello` - a
 each distinct string only once. All strings of the package live in one list, the **string pool**
 (two streams, `_StringPool` and `_StringData`), and a string cell in a table holds just the
 string's *number* in that list, in 2 bytes (or 3 in very large packages). The tutorial's first
-package has 111 distinct strings for all 16 tables:
+package has 132 distinct strings for all 17 tables:
 
 ```text
 C:\work\hello> rubrapack inspect hello.msi
 code page: 65001
-strings: 111
-tables: 16
+strings: 132
+tables: 17
 ```
 
 The pool also counts how many cells use each string. Part IV shows its bytes.
@@ -110,7 +110,10 @@ The pool also counts how many cells use each string. Part IV shows its bytes.
 ## Tables about tables
 
 A database describes itself. Two tables list the others: `_Tables` has one row per table, and
-`_Columns` one row per column of every table, with its type. That is where `inspect` finds the
+`_Columns` one row per column of every table, with its type. A third, `_Validation`, says what
+each column may hold - its range, the table a value points to, a category such as Identifier or
+Formatted; Windows Installer ignores it when installing, and validation tools check the data against
+it. That is where `inspect` finds the
 column names and types it prints on the first two lines. The *sequence* tables
 (`InstallExecuteSequence`, `InstallUISequence` and three more for administrative and advertised
 installations) list the installation's steps in order, with a condition each (tutorial chapters 9

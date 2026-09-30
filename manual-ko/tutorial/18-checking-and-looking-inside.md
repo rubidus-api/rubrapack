@@ -100,8 +100,8 @@ Hello	C_185f8db32271fe25f561	hello.exe	17920	1.2.3.4	1033	512	2
 ```text
 C:\work\hello> rubrapack inspect hello.msi
 code page: 65001
-strings: 156
-tables: 19
+strings: 181
+tables: 20
   AdminExecuteSequence  rows=8 columns=3
   ...
   File  rows=2 columns=8
@@ -115,7 +115,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.7.1
+  18 = rubrapack 0.8.0
 ```
 
 요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 *패키지 코드*(빌드마다 새
@@ -138,7 +138,7 @@ C:\work\hello> rubrapack inspect hello.msi --streams
 table  40	File
 stream 6821	cab1.cab
 table  14	Media
-table  728	_Columns
+table  808	_Columns
 ...
 stream 332	!SummaryInformation
 ```
@@ -225,7 +225,7 @@ C:\work\hello> rubrapack guid --from hello
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.7.1 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.8.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -236,7 +236,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.7.1 (proven_c_lib-v0.1.1)
+rubrapack 0.8.0 (proven_c_lib-v0.1.1)
 ```
 
 `rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은

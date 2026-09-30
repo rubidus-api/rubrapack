@@ -168,8 +168,8 @@ NotepadHelper	0	NOT Installed AND NOT (NOTEPAD_PATH)
 (Headers left out.) rubrapack adds `Installed OR` to requirements, so that an installed product can
 always be repaired or removed. A feature's `when` becomes a row in the `Condition` table that sets
 its level to 0 - "not installed, not shown" - when the condition is false; `NOT Installed` keeps
-that from happening at removal, when properties are gone. The desktop shortcut got a component of
-its own, whose `Condition` column holds the `when`:
+that from happening at removal, when properties are gone. Every shortcut has a component of
+its own (chapter 5); the desktop shortcut's holds the `when` in its `Condition` column:
 
 ```text
 C_2ea6d5bfd9b4a9073b30	{BCBFF063-...}	DesktopFolder	260	DESKTOP_SHORTCUT = "1"	R_7f1795ed8aa7ac1a1c60

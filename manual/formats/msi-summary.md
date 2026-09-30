@@ -80,10 +80,10 @@ Then 9 pairs of (property id, offset), and the values:
 | 4 | `0xB0` | VT_LPSTR | `1e 00 00 00 11 00 00 00 45 78 61 6d 70 6c 65 20 ...` | `Example Software` |
 | 5 | `0xCC` | VT_LPSTR | `1e 00 00 00 0a 00 00 00 49 6e 73 74 61 6c 6c 65 ...` | `Installer` |
 | 7 | `0xE0` | VT_LPSTR | `1e 00 00 00 09 00 00 00 78 36 34 3b 31 30 33 33 ...` | `x64;1033` |
-| 9 | `0xF4` | VT_LPSTR | `1e 00 00 00 27 00 00 00 7b 32 44 35 41 45 31 37 ...` | `{2D5AE179-ED68-8A18-9B3D-EC63BDFDA786}` |
+| 9 | `0xF4` | VT_LPSTR | `1e 00 00 00 27 00 00 00 7b 31 31 38 39 31 45 36 ...` | `{11891E65-44B0-8DAC-A727-1C2A3FAF5877}` |
 | 14 | `0x124` | VT_I4 | `03 00 00 00 c8 00 00 00` | 200 |
 | 15 | `0x12C` | VT_I4 | `03 00 00 00 02 00 00 00` | 2 |
-| 18 | `0x134` | VT_LPSTR | `1e 00 00 00 10 00 00 00 72 75 62 72 61 70 61 63 ...` | `rubrapack 0.7.1` |
+| 18 | `0x134` | VT_LPSTR | `1e 00 00 00 10 00 00 00 72 75 62 72 61 70 61 63 ...` | `rubrapack 0.8.0` |
 
 A string value is its type (30), its byte count including the NUL, the bytes, the NUL, and padding
 to a multiple of 4. Property 9, the package code, is derived from the content under

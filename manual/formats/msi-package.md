@@ -161,9 +161,11 @@ of a type only this program claims then starts it directly. [observed]
 ## Shortcuts
 
 `Shortcut` (**Shortcut** s72, Directory_ s72, Name l128 `SHORT|Long` without `.lnk`, Component_ s72,
-Target `[#FileKey]` for a non-advertised shortcut, Arguments (formatted), Description (plain text),
+Target a formatted path for a non-advertised shortcut (`[#FileKey]` or `[DirKey]name`), Arguments (formatted), Description (plain text),
 Hotkey, Icon_, IconIndex, ShowCmd, WkDir = a Directory key) is written by `CreateShortcuts` (4500)
-and removed by `RemoveShortcuts` (3200). Put the shortcut in its target file's component. A folder
+and removed by `RemoveShortcuts` (3200). A shortcut in its target file's component works, but Microsoft's ICE43/ICE57 want each
+non-advertised shortcut in a component keyed by an `HKCU` value (see [verify.md](verify.md)); rubrapack
+gives every shortcut such a component and targets `[DirKey]name` (ICE69). A folder
 made only for shortcuts is not removed by itself: add a `RemoveFile` row (FileName null,
 DirProperty = the folder, InstallMode 2) for it and each parent below the standard folder. With
 `ALLUSERS=1`, `ProgramMenuFolder` and `DesktopFolder` are the all-users Start menu and the Public
@@ -378,9 +380,9 @@ What rubrapack writes for the choices a user makes [observed, Windows 11 26100]:
   behind.**
 - **Components.** `when` on a file, a registry value, an environment variable or an INI value is
   the component's `Condition`, evaluated when the component is first installed (no Transitive
-  attribute: a repair keeps what is there). A shortcut lives in its target file's component; one
-  with `when` gets a component of its own in the shortcut's folder, whose key path is a registry
-  value under root -1 (HKMU: HKLM or HKCU as installed), with the attribute 0x4.
+  attribute: a repair keeps what is there). Every shortcut gets a component of its own in the shortcut's folder, in the target file's feature,
+  whose key path is a registry value under root 1 (HKCU), with the attribute 0x4; `when` is that
+  component's `Condition`.
 - **Icons.** An `Icon` row (**Name** s72 ending in `.ico`, Data v0) holds the `.ico`;
   `ARPPRODUCTICON` names it for Installed apps, which the engine registers as the product's
   `ProductIcon` under `HKLM\SOFTWARE\Classes\Installer\Products` (not as `DisplayIcon`), and

@@ -42,7 +42,7 @@ leftmost of these eight, worth 128, is bit 7. Bit *k* is worth 2^*k*.
 ## Bytes
 
 Bits are grouped by eight into **bytes**. A byte is the smallest piece a file is made of: a file of
-28,672 bytes - the size of the first `hello.msi` of the tutorial - is 28,672 x 8 = 229,376 bits.
+32,768 bytes - the size of the first `hello.msi` of the tutorial - is 32,768 x 8 = 262,144 bits.
 A byte holds one of 256 values, 0 to 255.
 
 What a byte *means* depends entirely on how a program reads it: the same byte `01001000` is the
