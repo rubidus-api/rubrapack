@@ -189,7 +189,7 @@ proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t le
         err = PROVEN_ERR_INVALID_STATE;
     } else if ((*external_cabs = has_external_cabs(alloc, &cfb)) && !allow_external_cabs) {
         *why = "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded "
-               "cabinets, or sign anyway with --allow-unsigned-cabs (RFC-0007 S2)";
+               "cabinets, or sign anyway with --allow-unsigned-cabs";
         err = PROVEN_ERR_INVALID_ARG;
     } else if (!rp_sign_check_key(kf, now, &leaf, why)) {
         err = PROVEN_ERR_INVALID_ARG;

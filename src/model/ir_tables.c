@@ -158,6 +158,10 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     a->do_args = ir_get_str(c, t, "do", false, &has_do);
     a->undo_args = ir_get_str(c, t, "undo", false, &has_undo);
     a->check_args = ir_get_str(c, t, "check", false, NULL);
+    if (a->check_args) {
+        rp_srcdiag_add(c->d, ir_key_pos(t, "check"), "RP1318", true,
+                       "[action.%s] check has no effect: nothing runs it yet; remove it", t->id);
+    }
     if (!has_do || !has_undo) {
         ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
     }

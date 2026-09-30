@@ -45,7 +45,7 @@ undo = "--unregister"
 | `run` | the program: `file:` and the ID of an `.exe` this package installs |
 | `do` | its arguments after installation - and again on a repair |
 | `undo` | its arguments at removal, before the files are removed |
-| `check` | accepted, but not used by this version of rubrapack |
+| `check` | has no effect yet: rubrapack warns (`RP1318`); leave it out |
 
 The arguments are passed as written: they are *not* formatted strings, so `[INSTALLDIR]` would
 arrive as the text `[INSTALLDIR]`. The program knows where it is (its own path), which is usually

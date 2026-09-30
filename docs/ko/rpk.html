@@ -154,7 +154,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50</code></pre>
 run = "file:MainExe"      # 이 패키지가 설치하는 .exe
 do = "--register"         # 파일을 설치한 뒤, 그리고 복구할 때 다시 실행
 undo = "--unregister"     # 제거할 때, 파일을 지우기 전에 실행</code></pre>
-<p>rubrapack 은 이 한 쌍을 관리자 권한의 지연(deferred) 동작과 그 되돌림(rollback) 짝으로 바꾼다. 그래서 제거와 업그레이드는 전부 되거나 전혀 되지 않는다: 뒤에서 무엇이 실패하면(또는 <code>do</code>/<code>undo</code> 자체가 0 아닌 값으로 끝나면) 파일이 되돌아오고 다른 명령이 등록을 되살린다. 두 명령은 두 번 실행해도 안전해야 하고, 아무것도 묻지 않고 끝나야 한다 - 창 없이 실행되고 사용자를 기다리는 것은 없다. 인자는 쓴 그대로 넘어간다(서식 문자열이 아니다). <code>check</code> 는 받아들이지만 이 판에서는 쓰지 않는다.</p>
+<p>rubrapack 은 이 한 쌍을 관리자 권한의 지연(deferred) 동작과 그 되돌림(rollback) 짝으로 바꾼다. 그래서 제거와 업그레이드는 전부 되거나 전혀 되지 않는다: 뒤에서 무엇이 실패하면(또는 <code>do</code>/<code>undo</code> 자체가 0 아닌 값으로 끝나면) 파일이 되돌아오고 다른 명령이 등록을 되살린다. 두 명령은 두 번 실행해도 안전해야 하고, 아무것도 묻지 않고 끝나야 한다 - 창 없이 실행되고 사용자를 기다리는 것은 없다. 인자는 쓴 그대로 넘어간다(서식 문자열이 아니다). <code>check</code> 는 아직 효과가 없어 경고(<code>RP1318</code>)만 낸다.</p>
 <h4 id="레지스트리-값-registryid">레지스트리 값: <code>[registry.ID]</code><a class="plink" href="#레지스트리-값-registryid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
 <pre><code class="lang-toml">[registry.InstallDir]
 root = "HKLM"

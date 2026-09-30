@@ -318,8 +318,8 @@ rubrapack turns the pair into deferred, elevated actions with their rollback twi
 upgrade are all-or-nothing: if anything fails later (or `do`/`undo` itself exits non-zero), the
 files come back and the other command restores the registration. Both commands must be safe to run
 twice and must finish without asking anything - they run without a window, and nothing waits for a
-user. The arguments are passed as written (they are not formatted strings). `check` is accepted
-but not used by this version.
+user. The arguments are passed as written (they are not formatted strings). `check` has no effect
+yet and only draws a warning (`RP1318`).
 
 ### Registry values: `[registry.ID]`
 

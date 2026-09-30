@@ -154,7 +154,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50</code></pre>
 run = "file:MainExe"      # an .exe this package installs
 do = "--register"         # run after the files are installed, and again on repair
 undo = "--unregister"     # run on removal, before the files are removed</code></pre>
-<p>rubrapack turns the pair into deferred, elevated actions with their rollback twins, so removal and upgrade are all-or-nothing: if anything fails later (or <code>do</code>/<code>undo</code> itself exits non-zero), the files come back and the other command restores the registration. Both commands must be safe to run twice and must finish without asking anything - they run without a window, and nothing waits for a user. The arguments are passed as written (they are not formatted strings). <code>check</code> is accepted but not used by this version.</p>
+<p>rubrapack turns the pair into deferred, elevated actions with their rollback twins, so removal and upgrade are all-or-nothing: if anything fails later (or <code>do</code>/<code>undo</code> itself exits non-zero), the files come back and the other command restores the registration. Both commands must be safe to run twice and must finish without asking anything - they run without a window, and nothing waits for a user. The arguments are passed as written (they are not formatted strings). <code>check</code> has no effect yet and only draws a warning (<code>RP1318</code>).</p>
 <h4 id="registry-values-registryid">Registry values: <code>[registry.ID]</code><a class="plink" href="#registry-values-registryid" aria-label="Link to this section" title="Link to this section">#</a></h4>
 <pre><code class="lang-toml">[registry.InstallDir]
 root = "HKLM"

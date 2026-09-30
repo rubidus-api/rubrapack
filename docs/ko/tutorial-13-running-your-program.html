@@ -36,7 +36,7 @@ run = "file:Hello"
 do = "--register"
 undo = "--unregister"</code></pre>
 <h3 id="actionid">13.3 <code>[action.ID]</code><a class="plink" href="#actionid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<div class="tblwrap"><table><tr><th>키</th><th>뜻</th></tr><tr><td><code>run</code></td><td>프로그램: <code>file:</code> 과 이 패키지가 설치하는 <code>.exe</code> 의 ID</td></tr><tr><td><code>do</code></td><td>설치 뒤의 인자 - 복구 때 다시</td></tr><tr><td><code>undo</code></td><td>제거 때, 파일을 지우기 전의 인자</td></tr><tr><td><code>check</code></td><td>받아들이지만 이 판의 rubrapack 은 쓰지 않는다</td></tr></table></div>
+<div class="tblwrap"><table><tr><th>키</th><th>뜻</th></tr><tr><td><code>run</code></td><td>프로그램: <code>file:</code> 과 이 패키지가 설치하는 <code>.exe</code> 의 ID</td></tr><tr><td><code>do</code></td><td>설치 뒤의 인자 - 복구 때 다시</td></tr><tr><td><code>undo</code></td><td>제거 때, 파일을 지우기 전의 인자</td></tr><tr><td><code>check</code></td><td>아직 효과가 없다: rubrapack 이 경고한다(<code>RP1318</code>). 쓰지 않는다</td></tr></table></div>
 <p>인자는 쓴 그대로 넘어간다: 서식 문자열이 <em>아니어서</em> <code>[INSTALLDIR]</code> 은 글자 <code>[INSTALLDIR]</code> 그대로 도착한다. 프로그램은 자기 자리(자기 경로)를 알고, 대개 그것이면 충분하다.</p>
 <p>두 명령 모두:</p>
 <ul><li>아무것도 묻지 않고 끝나야 한다: 창 없이 돌고, 대답해 줄 사람이 없다.</li><li>두 번 실행해도 안전해야 한다(이미 등록된 것을 등록: 괜찮음).</li><li>실패를 0 이 아닌 종료 코드로 알린다 - 그러면 설치가 실패하고 되돌려진다.</li></ul>
