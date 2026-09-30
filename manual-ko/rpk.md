@@ -61,6 +61,68 @@ rubrapack build app.rpk -o app-1.0.1.msi -D VERSION=1.0.1    # 다음 판
 판은 설치된 판을 대체하고, 같거나 낮은 판은 안내문과 함께 거부된다. 컴포넌트 GUID, 파일 키, 캐비닛과 표는
 원본에서 끌어내므로, 판에서 판으로 기억해야 할 것은 업그레이드 코드뿐이다.
 
+### 약관 페이지와 선택 구성요소
+
+설치 파일이라면 흔히 바라는 두 가지: 설치 전에 사용자가 약관에 동의하는 것, 그리고 일부 구성요소를 고를 수
+있는 것. `license` 는 약관 페이지를 더하고("동의합니다"에 표시하기 전에는 다음 단추가 꺼져 있다),
+`ui = "features"` 는 사용자가 설치할 기능을 고르는 트리를 더한다. 아래 원본은 프로그램을 늘 설치하고, 예제는
+보여 주되 고르지 않은 상태로 둔다:
+
+```toml
+[package]
+name = "My App"
+manufacturer = "My Company"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{E8C1815C-CCD7-4F3F-B914-92A4E3F3A317}"
+ui = "features"                        # welcome, license, folder, feature tree, ready
+license = "LICENSE.txt"                # Next stays off until "I accept" is ticked
+
+[define]
+VERSION = "1.0.0"
+
+[feature.Main]
+title = "My App"
+description = "The program itself."
+required = true                        # always installed: the tree does not offer to leave it out
+
+[feature.Samples]
+title = "Samples"
+description = "Example documents to try the program with."
+level = 2                              # offered in the tree, not selected by default
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/My App"
+feature = "Main"
+
+[dir.SamplesDir]
+path = "INSTALLDIR/samples"
+feature = "Samples"
+
+[file.App]
+dir = "INSTALLDIR"
+source = "dist/app.exe"
+
+[files.Rest]
+dir = "INSTALLDIR"
+glob = "dist/files/**"
+
+[files.Samples]
+dir = "SamplesDir"
+glob = "dist/samples/**"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "My App"
+target = "file:App"
+```
+
+약관 글은 `LICENSE.txt`(`.txt`, `.md`, `.rtf`)에, 예제 파일은 `dist/samples/` 에 둔다. `level = 2` 인 기능은
+사용자가 표시하지 않으면 설치되지 않고, `required` 는 트리가 그 기능을 빼자고 제안하지 못하게 한다. 나중에
+사용자는 "설치된 앱"의 "변경"에서 고른 것을 바꿀 수 있고, 명령줄에서도 대화창 없이 같은 일을 한다:
+`msiexec /i app.msi /qn ADDLOCAL=Samples` 는 예제를 더하고, `REMOVE=Samples` 는 뺀다(`required` 는 트리에만
+적용되고 명령줄은 묶지 않는다). 나머지는 [기능(feature)](#기능feature)과 [조건: when](#조건-when)에 있다.
+
 ### Windows 에서 시험하기
 
 ```bat

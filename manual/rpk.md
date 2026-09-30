@@ -64,6 +64,70 @@ it installed. A higher version replaces the one installed; the same or an older 
 with a message. The component GUIDs, file keys, cabinet and tables are derived from the source,
 so nothing but the upgrade code needs to be remembered from one version to the next.
 
+### A license page and optional parts
+
+Two things most installers want: the user accepts a license before installing, and some parts are
+optional. `license` adds the license page (Next stays off until "I accept" is ticked), and
+`ui = "features"` adds a tree in which the user picks the features to install. Here the program is
+always installed and the samples are offered but not selected:
+
+```toml
+[package]
+name = "My App"
+manufacturer = "My Company"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{E8C1815C-CCD7-4F3F-B914-92A4E3F3A317}"
+ui = "features"                        # welcome, license, folder, feature tree, ready
+license = "LICENSE.txt"                # Next stays off until "I accept" is ticked
+
+[define]
+VERSION = "1.0.0"
+
+[feature.Main]
+title = "My App"
+description = "The program itself."
+required = true                        # always installed: the tree does not offer to leave it out
+
+[feature.Samples]
+title = "Samples"
+description = "Example documents to try the program with."
+level = 2                              # offered in the tree, not selected by default
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/My App"
+feature = "Main"
+
+[dir.SamplesDir]
+path = "INSTALLDIR/samples"
+feature = "Samples"
+
+[file.App]
+dir = "INSTALLDIR"
+source = "dist/app.exe"
+
+[files.Rest]
+dir = "INSTALLDIR"
+glob = "dist/files/**"
+
+[files.Samples]
+dir = "SamplesDir"
+glob = "dist/samples/**"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "My App"
+target = "file:App"
+```
+
+Put the license text in `LICENSE.txt` (`.txt`, `.md` or `.rtf`) and the samples in
+`dist/samples/`. A feature with `level = 2` is not installed unless the user ticks it; `required`
+keeps the tree from offering to leave a feature out. Later the user changes the choice from
+Installed apps (Change), and the command line does the same without dialogs:
+`msiexec /i app.msi /qn ADDLOCAL=Samples` adds the samples, `REMOVE=Samples` takes them out
+(`required` binds only the tree, not the command line). [Features](#features) and
+[Conditions](#conditions-when) have the rest.
+
 ### Trying it on Windows
 
 ```bat

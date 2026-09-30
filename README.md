@@ -16,8 +16,10 @@ rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, up
 
 - **MSI packaging made simple.** You write what to install - files, folders, shortcuts, registry
   values, services - in a short `.rpk` file (plain TOML), and rubrapack writes the database
-  tables, component GUIDs, cabinets, upgrade rules and dialogs that Windows Installer needs. No
-  XML, no table editor, no GUID bookkeeping: only the upgrade code is yours to keep.
+  tables, component GUIDs, cabinets, upgrade rules and dialogs that Windows Installer needs -
+  a license page to accept, an install folder to choose, a tree of optional components, in
+  English and other languages. No XML, no table editor, no GUID bookkeeping: only the upgrade
+  code is yours to keep.
 - **Easy to automate - and easy for an AI assistant.** The source is plain text, the tool is one
   command, and every problem is reported as `file:line:column: error[RPnnnn]: message`, often with
   a suggestion (`unknown key 'glb' in [files.App] (did you mean 'glob'?)`). Exit codes are fixed,
