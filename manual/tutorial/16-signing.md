@@ -11,7 +11,7 @@ Anyone can check it with the matching *public key*, which is inside a *certifica
 document, itself signed by a *certificate authority* (CA), that says "this public key belongs to
 Example Software". Windows trusts a list of CAs; a certificate from one of them makes your name
 appear in the User Account Control prompt. If one byte of the package changes, the signature no
-longer matches. Part III explains keys, certificates and hashes step by step.
+longer matches. Part III explains [hashes](../basics/04-guids-and-hashes.md#hashes) and [keys, certificates and signatures](../basics/08-keys-certificates-signatures.md) step by step.
 
 Where the certificate comes from:
 

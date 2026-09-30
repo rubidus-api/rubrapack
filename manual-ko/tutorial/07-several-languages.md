@@ -126,4 +126,4 @@ RpL_ko_26	51	RpT_WelcomeText	[RpT_WelcomeText_ko]
 ```
 
 형식 51 은 "속성 정하기"다: `RpT_WelcomeText` 가 `RpT_WelcomeText_ko` 의 값이 된다. 글은 패키지에 UTF-8(코드
-페이지 65001)로 저장된다. 글자 인코딩은 제3부, 문자열 저장 방식은 제4부가 설명한다.
+페이지 65001)로 저장된다. 글자 인코딩은 제3부의 [글자](../basics/03-text.md), 문자열 저장 방식은 제4부의 [MSI 데이터베이스](../formats/msi-database.md)가 설명한다.

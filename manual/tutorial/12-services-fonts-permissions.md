@@ -131,6 +131,6 @@ HelloService	HelloService	163		1	C_d677...
 
 `16` is "a service in its own process", `2` "automatic start", `1` "report errors normally". The
 `163` in `ServiceControl` is a sum of bit flags: 1 (start at install) + 2 (stop at install) + 32 (stop
-at removal) + 128 (delete at removal). Part III explains how such sums work. A package with
+at removal) + 128 (delete at removal). [Bit flags](../basics/02-numbers-and-flags.md#bit-flags) in Part III explains how such sums work. A package with
 permissions declares Windows Installer 5.0 (the summary's schema, `14 500` in `rubrapack inspect
 hello.msi --summary`), because the `MsiLockPermissionsEx` table is newer than the rest.

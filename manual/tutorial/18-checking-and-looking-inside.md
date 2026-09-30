@@ -61,7 +61,7 @@ hello.msixbundle: 4 files, 0 errors, 0 warnings
 For an MSI it checks the tables with the rules Windows Installer applies: what would stop an
 installation is an error, anything else a warning. A package made by another tool may well have
 warnings. Here a product name was typed in a program that stores accented letters in two pieces
-(see "Unicode normalization" in Part III):
+(see [Unicode normalization](../basics/03-text.md#unicode-normalization) in Part III):
 
 ```text
 C:\work\hello> rubrapack lint cafe.msi
@@ -232,5 +232,4 @@ C:\work\hello> rubrapack guid --from hello
 
 The first is random - new every time - for an upgrade code. The second is the GUID rubrapack
 *derives* from a text; it is the same on every computer, every time. rubrapack derives component
-GUIDs this way, which is why they stay the same from version to version. Part III shows the
-calculation.
+GUIDs this way, which is why they stay the same from version to version. Part III [shows the calculation](../basics/04-guids-and-hashes.md#guids-from-hashes-guid---from).

@@ -110,7 +110,7 @@ code is shown by `rubrapack inspect hello.msi --summary` (property `9`).
 Unicode can write a character like `한` or `é` in two ways - one code point, or letters plus
 combining marks - and macOS file systems store names in the second form. `--nfc` converts file and
 folder names to the first form (NFC), which Windows uses; `lint` warns (`RP2105`) about names that
-are not NFC. Part III explains Unicode normalisation.
+are not NFC. Part III explains [Unicode normalization](../basics/03-text.md#unicode-normalization).
 
 ## Variables from the command line: `-D`
 

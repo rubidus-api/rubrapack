@@ -70,7 +70,7 @@ Upgrade	UpgradeCode	VersionMin	VersionMax	Language	Attributes
 
 첫 행은 1.1.0 보다 낮은 설치된 판을 찾고(지우려고), 둘째 행은 1.1.0 이상을 찾아 다운그레이드 안내문과 함께
 설치를 멈춘다. 속성 수는 비트 플래그다 - `258` 은 `256 + 2`, "최솟값 포함"에 "찾기만 하고 지우지 않음"을
-더한 것이다. 비트 플래그는 제3부, 이 표는 제4부가 설명한다.
+더한 것이다. 비트 플래그는 제3부의 [비트 플래그](../basics/02-numbers-and-flags.md#비트-플래그), 이 표는 제4부의 [설치하는 표들](../formats/msi-package.md)이 설명한다.
 
 ## 판 번호
 

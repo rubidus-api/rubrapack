@@ -133,5 +133,4 @@ RpL_ko_26	51	RpT_WelcomeText	[RpT_WelcomeText_ko]
 ```
 
 Type 51 is "set a property": `RpT_WelcomeText` becomes the value of `RpT_WelcomeText_ko`. The text is
-stored as UTF-8 in the package (code page 65001); Part III explains text encodings and Part IV how
-the strings are stored.
+stored as UTF-8 in the package (code page 65001); [Text](../basics/03-text.md) in Part III explains text encodings, and [the MSI database](../formats/msi-database.md) in Part IV how the strings are stored.

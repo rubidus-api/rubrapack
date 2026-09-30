@@ -58,7 +58,7 @@ hello.msixbundle: 4 files, 0 errors, 0 warnings
 
 MSI 는 Windows Installer 가 적용하는 규칙으로 표를 검사한다: 설치를 멈추게 할 것은 오류, 나머지는 경고다. 다른
 도구가 만든 패키지에는 경고가 있을 수 있다. 여기서는 악센트 글자를 두 조각으로 저장하는 프로그램에서 제품 이름을
-입력했다(제3부의 "유니코드 정규화" 참고):
+입력했다(제3부의 [유니코드 정규화](../basics/03-text.md#유니코드-정규화) 참고):
 
 ```text
 C:\work\hello> rubrapack lint cafe.msi
@@ -219,5 +219,4 @@ C:\work\hello> rubrapack guid --from hello
 ```
 
 첫 번째는 무작위 - 매번 새것 - 로, 업그레이드 코드에 쓴다. 두 번째는 rubrapack 이 글에서 *끌어낸* GUID 로, 어느
-컴퓨터에서든 언제나 같다. rubrapack 은 컴포넌트 GUID 를 이렇게 끌어내므로 판이 바뀌어도 같게 유지된다. 제3부가
-그 계산을 보여 준다.
+컴퓨터에서든 언제나 같다. rubrapack 은 컴포넌트 GUID 를 이렇게 끌어내므로 판이 바뀌어도 같게 유지된다. 제3부가 [그 계산](../basics/04-guids-and-hashes.md#해시로-만드는-guid-guid---from)을 보여 준다.

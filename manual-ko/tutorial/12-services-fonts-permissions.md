@@ -126,5 +126,5 @@ HelloService	HelloService	163		1	C_d677...
 
 `16` 은 "자기 프로세스의 서비스", `2` 는 "자동 시작", `1` 은 "오류를 보통으로 알림"이다. `ServiceControl` 의
 `163` 은 비트 플래그의 합이다: 1(설치 때 시작) + 2(설치 때 멈춤) + 32(제거 때 멈춤) + 128(제거 때 삭제). 이런
-합이 어떻게 되는지는 제3부가 설명한다. 권한이 있는 패키지는 Windows Installer 5.0 을 밝힌다(요약 정보의 스키마,
+합이 어떻게 되는지는 제3부의 [비트 플래그](../basics/02-numbers-and-flags.md#비트-플래그)가 설명한다. 권한이 있는 패키지는 Windows Installer 5.0 을 밝힌다(요약 정보의 스키마,
 `rubrapack inspect hello.msi --summary` 의 `14 500`). `MsiLockPermissionsEx` 표가 나머지보다 새것이기 때문이다.

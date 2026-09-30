@@ -74,8 +74,7 @@ Upgrade	UpgradeCode	VersionMin	VersionMax	Language	Attributes
 
 The first row finds installed versions below 1.1.0 (to remove them); the second finds 1.1.0 or
 higher, which stops the installation with the downgrade message. The attribute numbers are bit
-flags - `258` is `256 + 2`, "the minimum is included" plus "only detect, do not remove". Part III
-explains bit flags, Part IV this table.
+flags - `258` is `256 + 2`, "the minimum is included" plus "only detect, do not remove". [Bit flags](../basics/02-numbers-and-flags.md#bit-flags) in Part III explains them, [the tables that install](../formats/msi-package.md) in Part IV this table.
 
 ## Version numbers
 
