@@ -35,7 +35,8 @@ static const command_t commands[] = {
                  "unpack a package into a new directory, laid out as it installs", true },
     { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
                  "check a source or package without writing anything", true },
-    { "new",     "new [msi] <name> | new [<name>] -i | new <name> --dist <folder> [options]", "write a source file <name>.rpk: a starter, or made from answers", true },
+    { "new",     "new [<file>.rpk] [-i] | new <file>.rpk --dist <folder> [options] | new <name>", "write a source file: made from answers (asked, or given as options), or a fixed starter <name>.rpk", true },
+    { "edit",    "edit <file>.rpk [--set table.key=value]... [--unset table.key]... [--sync]", "change a source in place: through a menu of questions, or with the options", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },
@@ -154,6 +155,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "lint") == 0) return rp_cmd_lint(argc, argv);
     if (strcmp(name, "extract") == 0) return rp_cmd_extract(argc, argv);
     if (strcmp(name, "new") == 0) return rp_cmd_new(argc, argv);
+    if (strcmp(name, "edit") == 0) return rp_cmd_edit(argc, argv);
     if (strcmp(name, "guid") == 0) return rp_cmd_guid(argc, argv);
     if (strcmp(name, "sign") == 0) return rp_cmd_sign(argc, argv);
     if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);

@@ -21,6 +21,7 @@
 
 // `rubrapack new [msi] <name>` and `rubrapack guid [--from <text>]` (RFC-0006 5).
 [[nodiscard]] int rp_cmd_new(int argc, char **argv);
+[[nodiscard]] int rp_cmd_edit(int argc, char **argv);
 [[nodiscard]] int rp_cmd_guid(int argc, char **argv);
 
 // Signing options shared by `sign` and `build --key` (one code path, RFC-0007 S4).

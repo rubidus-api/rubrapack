@@ -67,6 +67,21 @@ proven_err_t rp_pal_puts(rp_out_t out, const char *utf8) {
     return rp_pal_write(out, (const uint8_t *)utf8, strlen(utf8));
 }
 
+static proven_err_t wide_path(proven_allocator_t alloc, const char *path_utf8, proven_u16str_t *out);
+
+proven_err_t rp_pal_remove_file(proven_allocator_t alloc, const char *path_utf8) {
+    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
+    proven_u16str_t w = { 0 };
+    proven_err_t err = wide_path(alloc, path_utf8, &w);
+    if (err != PROVEN_OK) return err;
+    if (!DeleteFileW((const wchar_t *)proven_u16str_as_ptr(&w))) {
+        DWORD e = GetLastError();
+        err = e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND ? PROVEN_ERR_NOT_FOUND : PROVEN_ERR_IO;
+    }
+    proven_u16str_destroy(alloc, &w);
+    return err;
+}
+
 proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char **line) {
     if (line == NULL || max_bytes == 0) return PROVEN_ERR_INVALID_ARG;
     *line = NULL;

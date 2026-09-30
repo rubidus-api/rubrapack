@@ -18,18 +18,23 @@ Put what you ship in a folder `dist/`: the program, and whatever it needs, in `d
 (subfolders are kept). Then let rubrapack write a starting source:
 
 ```sh
-rubrapack new              # asks, then writes the source and checks it
+rubrapack new app.rpk      # asks, then writes app.rpk and checks it
 ```
 
 It asks for the product name, the version, the folder with the files, the main program (its
 architecture is read from the file), the folder under Program Files, who it installs for, which
 sub folders are optional parts, the dialogs, a license (a `LICENSE.txt`, `.md` or `.rtf` next to
 it is offered), Korean dialogs, and the shortcuts. Enter takes the value in brackets. At the end
-it prints the same answers as one command (`rubrapack new app --dist dist --ui features ...`),
-which a script or an AI assistant can run without questions. `rubrapack new app` alone writes a
-fixed starter instead.
+it prints the same answers as one command (`rubrapack new app.rpk --dist dist --ui features ...`),
+which a script or an AI assistant can run without questions. `rubrapack new` without a name asks
+for the file name too, and `rubrapack new app` (no `.rpk`) writes a fixed starter instead.
 
-Either way, `app.rpk` is plain text to read and change. This one installs the program and its files into
+Either way, `app.rpk` is plain text to read and change - in any text editor, or with
+`rubrapack edit app.rpk`, a menu of the same questions with the current values as defaults
+(version, install folder, dialogs and license, optional parts, shortcuts, and matching the file
+list to the program folder after it changed). It changes only those values and keeps every other
+line, comment and table as it was. For scripts: `rubrapack edit app.rpk --set define.VERSION=1.1.0
+--sync`. This one installs the program and its files into
 `Program Files\My App`, puts it in the Start menu, and shows a dialog that lets the user change
 the folder:
 
@@ -174,7 +179,7 @@ A build is one command with no state outside the source, so it fits any script o
 `--reproducible` the same source gives the same bytes on every machine. On a Linux runner:
 
 ```sh
-V=0.5.0                                    # the release to use
+V=0.6.0                                    # the release to use
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint app.rpk
@@ -873,8 +878,9 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
-rubrapack new [<name>] [-i]
+rubrapack new [<file>.rpk] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
+rubrapack edit <file>.rpk [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
@@ -918,7 +924,8 @@ rubrapack version | help [command]
   For a bundle, the identity and the packages (each opened and checked as a package), and its
   `AppxBundleManifest.xml`; `extract` writes the packages out.
 - `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
-  `dist/`, with a fresh `upgrade-code`. `new` without a name, or with `-i`, asks the questions of
+  `dist/`, with a fresh `upgrade-code`. `new <file>.rpk`, `new` without a name (which asks for the file name
+  too), or `new <name> -i` asks the questions of
   [A first package](#a-first-package) instead (on stderr; answers from stdin, one per line, so they
   can be piped; the input ending before the last answer writes nothing), and `new <name>` with
   options takes the same answers without asking: `--name`, `--manufacturer`, `--version`,
@@ -928,7 +935,22 @@ rubrapack version | help [command]
   lists the folder's top-level files one by one (a shortcut names a file, and a glob cannot leave
   one out) and each sub folder that holds files as a glob; optional sub folders become features at
   `level = 2` next to a required `Main`. It is checked like `lint` after it is written (exit 1 if
-  that finds a problem). It never replaces an existing file.
+  that finds a problem). It never replaces an existing file; `new app.rpk` over an existing
+  `app.rpk` says to use `edit`.
+- `edit <file>.rpk` changes a source in place. Without options it shows a menu: 1 name,
+  manufacturer, version (in `[define] VERSION` when `version = "$(VERSION)"`) and architecture;
+  2 the folder under Program Files and the scope; 3 dialogs, license and Korean dialogs; 4 which
+  sub folders are optional parts (the first one adds a required `Main` feature and gives it to
+  everything that then needs a feature); 5 the Start menu and desktop shortcuts and the program
+  they open; 6 the file list against the program folder - files and sub folders that are gone are
+  removed, new ones added; 7 any `table.key`; `v` shows the text, `l` checks it like `lint`, `s`
+  saves and checks, `q` leaves (asking first when something changed). Each question offers the
+  current value. Only the values changed are rewritten - comments, order and tables written by
+  hand stay; a change that would not parse is not made. With options it asks nothing, applies them
+  in order and saves: `--set package.version=1.2.0` (a value that is TOML - `"text"`, a number,
+  `true`, `["ko"]` - is used as it is, anything else as a string; a table that is not there is
+  added), `--unset package.license`, `--sync` (6 without questions). Sources in UTF-16 are
+  refused: save them as UTF-8 first.
 - `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
   from a text, the same way on every machine: SHA-256 over the 32-bit little-endian length of
   `guid` and those 4 bytes, the 32-bit little-endian number 1, and the 32-bit little-endian length

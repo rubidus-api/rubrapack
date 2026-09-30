@@ -73,6 +73,13 @@ rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_
     return RP_FS_FILE;
 }
 
+proven_err_t rp_pal_remove_file(proven_allocator_t alloc, const char *path_utf8) {
+    (void)alloc;
+    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
+    if (unlink(path_utf8) == 0) return PROVEN_OK;
+    return errno == ENOENT ? PROVEN_ERR_NOT_FOUND : PROVEN_ERR_IO;
+}
+
 proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char **line) {
     if (line == NULL || max_bytes == 0) return PROVEN_ERR_INVALID_ARG;
     *line = NULL;

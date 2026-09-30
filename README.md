@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.5.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.6.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-en.pdf)
 
 # rubrapack
 
@@ -8,7 +8,7 @@ of your program into a Windows Installer package (`.msi`) or an MSIX package (`.
 and nothing else to install.
 
 ```sh
-rubrapack new                            # asks a few questions, writes app.rpk and checks it
+rubrapack new app.rpk                    # asks a few questions, writes app.rpk and checks it
 rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, upgrades, repair
 ```
 
@@ -57,7 +57,8 @@ rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, up
 ## Quick look
 
 ```sh
-rubrapack new                                       # asks, then writes app.rpk (or: new app --dist dist ...)
+rubrapack new app.rpk                               # asks, then writes app.rpk (or: new app.rpk --dist dist ...)
+rubrapack edit app.rpk                              # change it later: a menu, or --set define.VERSION=1.1.0 --sync
 rubrapack build app.rpk -o app.msi                  # a Windows Installer package
 rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
 rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
@@ -105,7 +106,7 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Status
 
-Version 0.5.0. Every feature above is covered by tests on Linux and by
+Version 0.6.0. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is

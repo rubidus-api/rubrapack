@@ -46,7 +46,7 @@ static const char *const core_sources[] = {
     "src/cli/lint.c",
     "src/cli/msix.c",
     "src/cli/extract.c",
-    "src/cli/new.c",
+    "src/cli/new.c", "src/cli/edit.c",
     "src/cli/sign.c",
     "src/codec/deflate.c",
     "src/codec/md5.c",

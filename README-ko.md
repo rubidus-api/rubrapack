@@ -1,4 +1,4 @@
-**한국어** | [English](README.md) — **rubrapack v0.5.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-en.pdf)
+**한국어** | [English](README.md) — **rubrapack v0.6.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-en.pdf)
 
 # rubrapack
 
@@ -7,7 +7,7 @@
 프로그램 파일 하나로 돌아가며, 따로 설치할 것이 없습니다.
 
 ```sh
-rubrapack new                            # 몇 가지를 묻고 app.rpk 를 써서 검사합니다
+rubrapack new app.rpk                    # 몇 가지를 묻고 app.rpk 를 써서 검사합니다
 rubrapack build app.rpk -o app.msi       # 제대로 된 설치 파일: 제거 항목, 업그레이드, 복구
 ```
 
@@ -50,7 +50,8 @@ rubrapack build app.rpk -o app.msi       # 제대로 된 설치 파일: 제거 �
 ## 한눈에 보기
 
 ```sh
-rubrapack new                                       # 물어본 뒤 app.rpk 를 씁니다 (또는: new app --dist dist ...)
+rubrapack new app.rpk                               # 물어본 뒤 app.rpk 를 씁니다 (또는: new app.rpk --dist dist ...)
+rubrapack edit app.rpk                              # 나중에 고치기: 메뉴, 또는 --set define.VERSION=1.1.0 --sync
 rubrapack build app.rpk -o app.msi                  # Windows Installer 패키지
 rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
 rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
@@ -91,7 +92,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## 상태
 
-0.5.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
+0.6.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
 업그레이드·제거하는 시험으로 확인했습니다. 아직 실제 하드웨어에서 시험하지 않은 것: Arm64 패키지(구조만 확인 -
 Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 토큰으로 대신했습니다), Windows 에서의 네이티브
 빌드(Windows 실행 파일은 MinGW-w64 로 교차 빌드해 Windows 에서 돌렸습니다).

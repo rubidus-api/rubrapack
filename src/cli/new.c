@@ -23,8 +23,10 @@
 
 #include "proven/heap.h"
 
+#include "new_int.h"
+
 // A product name that is also a file name and a TOML string without escapes.
-static const char *name_problem(const char *s) {
+const char *rpn_name_problem(const char *s) {
     size_t n = strlen(s);
     if (n == 0 || n > 64) return "must be 1 to 64 bytes";
     if (rp_utf8_validate((const uint8_t *)s, n).err != PROVEN_OK) return "is not valid UTF-8";
@@ -84,7 +86,7 @@ static int fixed_starter(const char *name) {
         "glob = \"dist/*\"\n",
         name, name, name, name, summary, name, code, name);
     if (len < 0 || (size_t)len >= sizeof text) return RP_EXIT_IO;
-    char path[128];
+    char path[160];
     snprintf(path, sizeof path, "%s.rpk", name);
     proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, (const uint8_t *)text, (size_t)len);
     if (err == PROVEN_ERR_BUSY) {
@@ -102,20 +104,15 @@ static int fixed_starter(const char *name) {
 
 // ---- the program folder --------------------------------------------------------------------
 
-typedef struct {
-    char **v;
-    size_t n;
-} names_t;
+int rpn_cmp_name(const void *a, const void *b) { return strcmp(*(char *const *)a, *(char *const *)b); }
 
-static int cmp_name(const void *a, const void *b) { return strcmp(*(char *const *)a, *(char *const *)b); }
-
-static void names_free(names_t *x) {
+void rpn_names_free(names_t *x) {
     for (size_t i = 0; i < x->n; ++i) rp_mem_free(proven_heap_allocator(), x->v[i]);
     rp_mem_free(proven_heap_allocator(), x->v);
     *x = (names_t){ 0 };
 }
 
-static char *join(const char *a, const char *b) {
+char *rpn_join(const char *a, const char *b) {
     size_t na = strlen(a), nb = strlen(b);
     char *s = rp_mem_alloc(proven_heap_allocator(), na + nb + 2, 1);
     if (s == NULL) return NULL;
@@ -133,7 +130,7 @@ static bool has_files(const char *dir, int depth) {
     if (depth > 32 || rp_pal_list_dir(heap, dir, &v, &n) != PROVEN_OK) return false;
     bool found = false;
     for (size_t i = 0; i < n; ++i) {
-        char *p = found ? NULL : join(dir, v[i]);
+        char *p = found ? NULL : rpn_join(dir, v[i]);
         uint64_t size = 0;
         rp_fskind_t k = p ? rp_pal_stat(heap, p, &size) : RP_FS_NONE;
         if (k == RP_FS_FILE || (k == RP_FS_DIR && has_files(p, depth + 1))) found = true;
@@ -144,11 +141,7 @@ static bool has_files(const char *dir, int depth) {
     return found;
 }
 
-typedef struct {
-    names_t files, dirs;    // top-level files; sub folders with files below them (sorted by name)
-} scan_t;
-
-static proven_err_t scan_dist(const char *dist, scan_t *s) {
+proven_err_t rpn_scan_dist(const char *dist, scan_t *s) {
     proven_allocator_t heap = proven_heap_allocator();
     *s = (scan_t){ 0 };
     char **v = NULL;
@@ -159,7 +152,7 @@ static proven_err_t scan_dist(const char *dist, scan_t *s) {
     s->dirs.v = rp_mem_alloc(heap, n + 1, sizeof(char *));
     if (s->files.v == NULL || s->dirs.v == NULL) err = PROVEN_ERR_NOMEM;
     for (size_t i = 0; i < n; ++i) {
-        char *p = err == PROVEN_OK ? join(dist, v[i]) : NULL;
+        char *p = err == PROVEN_OK ? rpn_join(dist, v[i]) : NULL;
         uint64_t size = 0;
         rp_fskind_t k = p ? rp_pal_stat(heap, p, &size) : RP_FS_NONE;
         if (k == RP_FS_FILE) s->files.v[s->files.n++] = v[i];
@@ -168,24 +161,24 @@ static proven_err_t scan_dist(const char *dist, scan_t *s) {
         rp_mem_free(heap, p);
     }
     rp_mem_free(heap, v);
-    qsort(s->files.v, s->files.n, sizeof(char *), cmp_name);
-    qsort(s->dirs.v, s->dirs.n, sizeof(char *), cmp_name);
+    qsort(s->files.v, s->files.n, sizeof(char *), rpn_cmp_name);
+    qsort(s->dirs.v, s->dirs.n, sizeof(char *), rpn_cmp_name);
     return err;
 }
 
-static void scan_free(scan_t *s) {
-    names_free(&s->files);
-    names_free(&s->dirs);
+void rpn_scan_free(scan_t *s) {
+    rpn_names_free(&s->files);
+    rpn_names_free(&s->dirs);
 }
 
-static bool in_names(const names_t *x, const char *s) {
+bool rpn_in_names(const names_t *x, const char *s) {
     for (size_t i = 0; i < x->n; ++i) {
         if (strcmp(x->v[i], s) == 0) return true;
     }
     return false;
 }
 
-static bool ends_ci(const char *s, const char *suffix) {
+bool rpn_ends_ci(const char *s, const char *suffix) {
     size_t n = strlen(s), m = strlen(suffix);
     if (n < m) return false;
     for (size_t i = 0; i < m; ++i) {
@@ -197,7 +190,7 @@ static bool ends_ci(const char *s, const char *suffix) {
 }
 
 // The architecture of a PE program, or NULL.
-static const char *pe_arch(const char *path) {
+const char *rpn_pe_arch(const char *path) {
     proven_allocator_t heap = proven_heap_allocator();
     const uint8_t *data = NULL;
     size_t len = 0;
@@ -214,33 +207,26 @@ static const char *pe_arch(const char *path) {
 }
 
 // A license next to the source or in the program folder: LICENSE.txt, .md or .rtf, any case.
-static void find_license(const char *dist, char *out, size_t cap) {
+void rpn_find_license(const char *dist, char *out, size_t cap) {
     proven_allocator_t heap = proven_heap_allocator();
     const char *where[] = { ".", dist };
     snprintf(out, cap, "-");
     for (int w = 0; w < 2; ++w) {
         names_t x = { 0 };
         if (rp_pal_list_dir(heap, where[w], &x.v, &x.n) != PROVEN_OK) continue;
-        qsort(x.v, x.n, sizeof(char *), cmp_name);
+        qsort(x.v, x.n, sizeof(char *), rpn_cmp_name);
         for (size_t i = 0; i < x.n && strcmp(out, "-") == 0; ++i) {
             const char *s = x.v[i];
-            bool lic = (s[0] == 'L' || s[0] == 'l') && strlen(s) > 8 && (ends_ci(s, ".txt") || ends_ci(s, ".md") || ends_ci(s, ".rtf"));
+            bool lic = (s[0] == 'L' || s[0] == 'l') && strlen(s) > 8 && (rpn_ends_ci(s, ".txt") || rpn_ends_ci(s, ".md") || rpn_ends_ci(s, ".rtf"));
             for (size_t k = 0; lic && k < 7; ++k) lic = (s[k] | 32) == "license"[k];
             if (lic && s[7] == '.') snprintf(out, cap, "%s%s%s", w ? dist : "", w ? "/" : "", s);
         }
-        names_free(&x);
+        rpn_names_free(&x);
         if (strcmp(out, "-") != 0) return;
     }
 }
 
 // ---- answers ------------------------------------------------------------------------------
-
-typedef struct {
-    char stem[128], name[256], manufacturer[256], version[32], arch[8], dist[512], main[256], install_dir[256],
-        scope[8], ui[16], license[512], languages[8], optional[1024], shortcuts[32];
-    scan_t scan;
-    bool scanned;
-} ans_t;
 
 static const char *const archs[] = { "x64", "x86", "arm64", NULL };
 static const char *const scopes[] = { "machine", "user", "dual", NULL };
@@ -253,7 +239,7 @@ static bool one_of(const char *s, const char *const *list) {
     return false;
 }
 
-static const char *check_product(ans_t *a, char *v) {
+const char *rpn_check_product(ans_t *a, char *v) {
     (void)a;
     size_t n = strlen(v);
     if (n == 0 || n > 128) return "give a name of 1 to 128 bytes";
@@ -263,7 +249,7 @@ static const char *check_product(ans_t *a, char *v) {
     return NULL;
 }
 
-static const char *check_version(ans_t *a, char *v) {
+const char *rpn_check_version(ans_t *a, char *v) {
     (void)a;
     unsigned long p[5] = { 0 };
     int k = 0;
@@ -282,11 +268,11 @@ static const char *check_version(ans_t *a, char *v) {
     return NULL;
 }
 
-static const char *check_arch(ans_t *a, char *v) { (void)a; return one_of(v, archs) ? NULL : "x64, x86 or arm64"; }
-static const char *check_scope(ans_t *a, char *v) { (void)a; return one_of(v, scopes) ? NULL : "machine, user or dual"; }
-static const char *check_ui(ans_t *a, char *v) { (void)a; return one_of(v, uis) ? NULL : "none, basic, minimal, installdir or features"; }
+const char *rpn_check_arch(ans_t *a, char *v) { (void)a; return one_of(v, archs) ? NULL : "x64, x86 or arm64"; }
+const char *rpn_check_scope(ans_t *a, char *v) { (void)a; return one_of(v, scopes) ? NULL : "machine, user or dual"; }
+const char *rpn_check_ui(ans_t *a, char *v) { (void)a; return one_of(v, uis) ? NULL : "none, basic, minimal, installdir or features"; }
 
-static const char *check_dist(ans_t *a, char *v) {
+const char *rpn_check_dist(ans_t *a, char *v) {
     for (char *p = v; *p; ++p) {
         if (*p == '\\') *p = '/';
     }
@@ -295,50 +281,50 @@ static const char *check_dist(ans_t *a, char *v) {
     if (n == 0 || v[0] == '/' || strchr(v, ':') || strstr(v, "..")) return "give a folder below this one, such as dist";
     uint64_t size = 0;
     if (rp_pal_stat(proven_heap_allocator(), v, &size) != RP_FS_DIR) return "there is no such folder here";
-    if (a->scanned) scan_free(&a->scan);
-    a->scanned = scan_dist(v, &a->scan) == PROVEN_OK;
+    if (a->scanned) rpn_scan_free(&a->scan);
+    a->scanned = rpn_scan_dist(v, &a->scan) == PROVEN_OK;
     if (!a->scanned) return "cannot read that folder";
     if (a->scan.files.n == 0 && a->scan.dirs.n == 0) return "that folder holds no files";
     return NULL;
 }
 
-static const char *check_main(ans_t *a, char *v) {
-    if (strcmp(v, "-") == 0 || in_names(&a->scan.files, v)) return NULL;
+const char *rpn_check_main(ans_t *a, char *v) {
+    if (strcmp(v, "-") == 0 || rpn_in_names(&a->scan.files, v)) return NULL;
     return "give a file directly in the program folder, or - for none";
 }
 
-static const char *check_folder(ans_t *a, char *v) {
+const char *rpn_check_folder(ans_t *a, char *v) {
     (void)a;
-    const char *why = name_problem(v);
+    const char *why = rpn_name_problem(v);
     return why ? "a folder name without / \\ : * ? \" < > | $" : NULL;
 }
 
-static const char *check_optional(ans_t *a, char *v) {
+const char *rpn_check_optional(ans_t *a, char *v) {
     if (strcmp(v, "-") == 0) return NULL;
     char copy[1024];
     snprintf(copy, sizeof copy, "%s", v);
     size_t count = 0;
     for (char *t = strtok(copy, ","); t; t = strtok(NULL, ",")) {
-        if (!in_names(&a->scan.dirs, t)) return "give sub folders of the program folder, separated by commas, or - for none";
+        if (!rpn_in_names(&a->scan.dirs, t)) return "give sub folders of the program folder, separated by commas, or - for none";
         ++count;
     }
     return count ? NULL : "give sub folders of the program folder, separated by commas, or - for none";
 }
 
-static const char *check_license(ans_t *a, char *v) {
+const char *rpn_check_license(ans_t *a, char *v) {
     (void)a;
     for (char *p = v; *p; ++p) {
         if (*p == '\\') *p = '/';
     }
     if (strcmp(v, "-") == 0) return NULL;
     uint64_t size = 0;
-    if (!(ends_ci(v, ".txt") || ends_ci(v, ".md") || ends_ci(v, ".rtf"))) return "a .txt, .md or .rtf file, or - for none";
+    if (!(rpn_ends_ci(v, ".txt") || rpn_ends_ci(v, ".md") || rpn_ends_ci(v, ".rtf"))) return "a .txt, .md or .rtf file, or - for none";
     if (v[0] == '/' || strchr(v, ':') || strstr(v, "..")) return "give a file below this folder";
     if (rp_pal_stat(proven_heap_allocator(), v, &size) != RP_FS_FILE) return "there is no such file here";
     return NULL;
 }
 
-static const char *check_languages(ans_t *a, char *v) { (void)a; return strcmp(v, "-") == 0 || strcmp(v, "ko") == 0 ? NULL : "ko, or - for English only"; }
+const char *rpn_check_languages(ans_t *a, char *v) { (void)a; return strcmp(v, "-") == 0 || strcmp(v, "ko") == 0 ? NULL : "ko, or - for English only"; }
 
 static const char *check_shortcuts(ans_t *a, char *v) {
     if (strcmp(v, "none") == 0) return NULL;
@@ -351,8 +337,8 @@ static const char *check_shortcuts(ans_t *a, char *v) {
 static const char *check_stem(ans_t *a, char *v) {
     (void)a;
     size_t n = strlen(v);
-    if (n > 4 && ends_ci(v, ".rpk")) v[n - 4] = '\0';
-    if (name_problem(v)) return "a file name without / \\ : * ? \" < > | $";
+    if (n > 4 && rpn_ends_ci(v, ".rpk")) v[n - 4] = '\0';
+    if (rpn_name_problem(v)) return "a file name without / \\ : * ? \" < > | $";
     char path[160];
     snprintf(path, sizeof path, "%s.rpk", v);
     uint64_t size = 0;
@@ -361,7 +347,7 @@ static const char *check_stem(ans_t *a, char *v) {
 }
 
 // One question on stderr, the answer from stdin; Enter takes the default. 0 = answered.
-static int ask(ans_t *a, const char *question, const char *dflt, char *out, size_t cap, const char *(*check)(ans_t *, char *)) {
+int rpn_ask(ans_t *a, const char *question, const char *dflt, char *out, size_t cap, const char *(*check)(ans_t *, char *)) {
     proven_allocator_t heap = proven_heap_allocator();
     for (;;) {
         char prompt[1400];
@@ -398,10 +384,10 @@ static int ask(ans_t *a, const char *question, const char *dflt, char *out, size
     }
 }
 
-static int ask_yes(ans_t *a, const char *question, bool dflt, bool *yes) {
+int rpn_ask_yes(ans_t *a, const char *question, bool dflt, bool *yes) {
     char v[8];
     for (;;) {
-        int rc = ask(a, question, dflt ? "Y/n" : "y/N", v, sizeof v, NULL);
+        int rc = rpn_ask(a, question, dflt ? "Y/n" : "y/N", v, sizeof v, NULL);
         if (rc) return rc;
         if (strcmp(v, "Y/n") == 0 || strcmp(v, "y/N") == 0) {
             *yes = dflt;
@@ -417,7 +403,7 @@ static int ask_yes(ans_t *a, const char *question, bool dflt, bool *yes) {
 static void default_main(ans_t *a, char *out, size_t cap) {
     snprintf(out, cap, "-");
     for (size_t i = 0; i < a->scan.files.n; ++i) {
-        if (ends_ci(a->scan.files.v[i], ".exe")) {
+        if (rpn_ends_ci(a->scan.files.v[i], ".exe")) {
             snprintf(out, cap, "%s", a->scan.files.v[i]);
             return;
         }
@@ -427,63 +413,63 @@ static void default_main(ans_t *a, char *out, size_t cap) {
 static void default_arch(ans_t *a, char *out, size_t cap) {
     const char *arch = NULL;
     if (strcmp(a->main, "-") != 0) {
-        char *p = join(a->dist, a->main);
-        if (p) arch = pe_arch(p);
+        char *p = rpn_join(a->dist, a->main);
+        if (p) arch = rpn_pe_arch(p);
         rp_mem_free(proven_heap_allocator(), p);
     }
     snprintf(out, cap, "%s", arch ? arch : "x64");
 }
 
 static void default_stem(const ans_t *a, char *out, size_t cap) {
-    snprintf(out, cap, "%s", name_problem(a->name) ? "app" : a->name);
+    snprintf(out, cap, "%s", rpn_name_problem(a->name) ? "app" : a->name);
 }
 
 static int interview(ans_t *a, const char *stem) {
     int rc;
     (void)rp_pal_puts(RP_OUT_STDERR, "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n");
-    if ((rc = ask(a, "Product name", stem ? stem : "", a->name, sizeof a->name, check_product))) return rc;
+    if ((rc = rpn_ask(a, "Product name", stem ? stem : "", a->name, sizeof a->name, rpn_check_product))) return rc;
     char d[512];
     snprintf(d, sizeof d, "%s authors", a->name);
-    if ((rc = ask(a, "Manufacturer (shown in Installed apps)", d, a->manufacturer, sizeof a->manufacturer, check_product))) return rc;
-    if ((rc = ask(a, "Version", "1.0.0", a->version, sizeof a->version, check_version))) return rc;
-    if ((rc = ask(a, "Folder with the files to install", "dist", a->dist, sizeof a->dist, check_dist))) return rc;
+    if ((rc = rpn_ask(a, "Manufacturer (shown in Installed apps)", d, a->manufacturer, sizeof a->manufacturer, rpn_check_product))) return rc;
+    if ((rc = rpn_ask(a, "Version", "1.0.0", a->version, sizeof a->version, rpn_check_version))) return rc;
+    if ((rc = rpn_ask(a, "Folder with the files to install", "dist", a->dist, sizeof a->dist, rpn_check_dist))) return rc;
     char line[1400];
     snprintf(line, sizeof line, "  %zu files and %zu folders there\n", a->scan.files.n, a->scan.dirs.n);
     (void)rp_pal_puts(RP_OUT_STDERR, line);
     default_main(a, d, sizeof d);
-    if ((rc = ask(a, "Main program, for shortcuts (- for none)", d, a->main, sizeof a->main, check_main))) return rc;
+    if ((rc = rpn_ask(a, "Main program, for shortcuts (- for none)", d, a->main, sizeof a->main, rpn_check_main))) return rc;
     default_arch(a, d, sizeof d);
-    if ((rc = ask(a, "Architecture (x64, x86, arm64)", d, a->arch, sizeof a->arch, check_arch))) return rc;
-    if ((rc = ask(a, "Folder name under Program Files", name_problem(a->name) ? "" : a->name, a->install_dir, sizeof a->install_dir,
-                  check_folder))) return rc;
-    if ((rc = ask(a, "Install for (machine, user, dual)", "machine", a->scope, sizeof a->scope, check_scope))) return rc;
+    if ((rc = rpn_ask(a, "Architecture (x64, x86, arm64)", d, a->arch, sizeof a->arch, rpn_check_arch))) return rc;
+    if ((rc = rpn_ask(a, "Folder name under Program Files", rpn_name_problem(a->name) ? "" : a->name, a->install_dir, sizeof a->install_dir,
+                  rpn_check_folder))) return rc;
+    if ((rc = rpn_ask(a, "Install for (machine, user, dual)", "machine", a->scope, sizeof a->scope, rpn_check_scope))) return rc;
     snprintf(a->optional, sizeof a->optional, "-");
     if (a->scan.dirs.n) {
         size_t o = (size_t)snprintf(line, sizeof line, "  sub folders:");
         for (size_t i = 0; i < a->scan.dirs.n && o < sizeof line - 1; ++i) o += (size_t)snprintf(line + o, sizeof line - o, " %s", a->scan.dirs.v[i]);
         if (o < sizeof line - 1) snprintf(line + o, sizeof line - o, "\n");
         (void)rp_pal_puts(RP_OUT_STDERR, line);
-        if ((rc = ask(a, "Optional parts the user may tick (sub folders, commas; - for none)", "-", a->optional, sizeof a->optional,
-                      check_optional))) return rc;
+        if ((rc = rpn_ask(a, "Optional parts the user may tick (sub folders, commas; - for none)", "-", a->optional, sizeof a->optional,
+                      rpn_check_optional))) return rc;
     }
-    if ((rc = ask(a, "Dialogs (none, basic, minimal, installdir, features)", strcmp(a->optional, "-") ? "features" : "installdir", a->ui,
-                  sizeof a->ui, check_ui))) return rc;
+    if ((rc = rpn_ask(a, "Dialogs (none, basic, minimal, installdir, features)", strcmp(a->optional, "-") ? "features" : "installdir", a->ui,
+                  sizeof a->ui, rpn_check_ui))) return rc;
     snprintf(a->license, sizeof a->license, "-");
     if (strcmp(a->ui, "none") != 0 && strcmp(a->ui, "basic") != 0) {
-        find_license(a->dist, d, sizeof d);
-        if ((rc = ask(a, "License to accept (.txt, .md, .rtf; - for none)", d, a->license, sizeof a->license, check_license))) return rc;
+        rpn_find_license(a->dist, d, sizeof d);
+        if ((rc = rpn_ask(a, "License to accept (.txt, .md, .rtf; - for none)", d, a->license, sizeof a->license, rpn_check_license))) return rc;
     }
     snprintf(a->languages, sizeof a->languages, "-");
     if (strcmp(a->ui, "none") != 0) {
         bool ko = false;
-        if ((rc = ask_yes(a, "Korean dialogs as well as English?", false, &ko))) return rc;
+        if ((rc = rpn_ask_yes(a, "Korean dialogs as well as English?", false, &ko))) return rc;
         if (ko) snprintf(a->languages, sizeof a->languages, "ko");
     }
     snprintf(a->shortcuts, sizeof a->shortcuts, "none");
     if (strcmp(a->main, "-") != 0) {
         bool start = true, desk = false;
-        if ((rc = ask_yes(a, "Start menu shortcut?", true, &start))) return rc;
-        if ((rc = ask_yes(a, "Desktop shortcut?", false, &desk))) return rc;
+        if ((rc = rpn_ask_yes(a, "Start menu shortcut?", true, &start))) return rc;
+        if ((rc = rpn_ask_yes(a, "Desktop shortcut?", false, &desk))) return rc;
         snprintf(a->shortcuts, sizeof a->shortcuts, "%s", start && desk ? "start,desktop" : start ? "start" : desk ? "desktop" : "none");
     }
     if (stem) {
@@ -491,17 +477,12 @@ static int interview(ans_t *a, const char *stem) {
         if (check_stem(a, a->stem) == NULL) return 0;
     }
     default_stem(a, d, sizeof d);
-    return ask(a, "Source file to write", d, a->stem, sizeof a->stem, check_stem);
+    return rpn_ask(a, "Source file to write", d, a->stem, sizeof a->stem, check_stem);
 }
 
 // ---- the source ---------------------------------------------------------------------------
 
-typedef struct {
-    char   v[4096][48];
-    size_t n;
-} ids_t;
-
-static bool id_used(const ids_t *ids, const char *s) {
+bool rpn_id_used(const ids_t *ids, const char *s) {
     for (size_t i = 0; i < ids->n; ++i) {
         const char *a = ids->v[i], *b = s;
         while (*a && *b && ((*a | 32) == (*b | 32))) ++a, ++b;
@@ -511,7 +492,7 @@ static bool id_used(const ids_t *ids, const char *s) {
 }
 
 // An ID from a file or folder name: letters, digits and '_' (IDs are shared by every table).
-static const char *make_id(ids_t *ids, const char *name, const char *suffix, char *out, size_t cap) {
+const char *rpn_make_id(ids_t *ids, const char *name, const char *suffix, char *out, size_t cap) {
     char base[40];
     size_t n = 0;
     for (const char *s = name; *s && n < 30; ++s) {
@@ -527,13 +508,13 @@ static const char *make_id(ids_t *ids, const char *name, const char *suffix, cha
         char num[12] = "";
         if (k > 1) snprintf(num, sizeof num, "_%d", k);
         snprintf(out, cap, "%s%s%s%s", base[0] >= '0' && base[0] <= '9' ? "_" : "", base, suffix, num);
-        if (!id_used(ids, out)) break;
+        if (!rpn_id_used(ids, out)) break;
     }
     if (ids->n < sizeof ids->v / sizeof ids->v[0]) snprintf(ids->v[ids->n++], sizeof ids->v[0], "%s", out);
     return out;
 }
 
-static void toml_str(rp_buf_t *b, const char *s) {
+void rpn_toml_str(rp_buf_t *b, const char *s) {
     rp_buf_byte(b, '"');
     for (; *s; ++s) {
         if (*s == '"' || *s == '\\') rp_buf_byte(b, '\\');
@@ -545,7 +526,7 @@ static void toml_str(rp_buf_t *b, const char *s) {
 static void kv(rp_buf_t *b, const char *key, const char *value, const char *comment) {
     rp_buf_puts(b, key);
     rp_buf_puts(b, " = ");
-    toml_str(b, value);
+    rpn_toml_str(b, value);
     if (comment) {
         rp_buf_puts(b, "   # ");
         rp_buf_puts(b, comment);
@@ -608,7 +589,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     memset(feat, 0, sizeof feat);
     for (size_t i = 0; optional && i < a->scan.dirs.n && i < 4096; ++i) {
         if (!listed(a->optional, a->scan.dirs.v[i])) continue;
-        make_id(&ids, a->scan.dirs.v[i], "", feat[i], sizeof feat[i]);
+        rpn_make_id(&ids, a->scan.dirs.v[i], "", feat[i], sizeof feat[i]);
         rp_buf_puts(&b, "\n[feature.");
         rp_buf_puts(&b, feat[i]);
         rp_buf_puts(&b, "]\n");
@@ -622,7 +603,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     char main_id[64] = "";
     for (size_t i = 0; i < a->scan.files.n; ++i) {
         const char *f = a->scan.files.v[i];
-        make_id(&ids, f, "", tmp, sizeof tmp);
+        rpn_make_id(&ids, f, "", tmp, sizeof tmp);
         if (strcmp(f, a->main) == 0) snprintf(main_id, sizeof main_id, "%s", tmp);
         snprintf(line, sizeof line, "\n[file.%s]\n", tmp);
         rp_buf_puts(&b, line);
@@ -633,8 +614,8 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     for (size_t i = 0; i < a->scan.dirs.n; ++i) {
         const char *f = a->scan.dirs.v[i];
         char dir_id[64], files_id[64];
-        make_id(&ids, f, "_dir", dir_id, sizeof dir_id);
-        make_id(&ids, f, "_files", files_id, sizeof files_id);
+        rpn_make_id(&ids, f, "_dir", dir_id, sizeof dir_id);
+        rpn_make_id(&ids, f, "_files", files_id, sizeof files_id);
         snprintf(line, sizeof line, "\n[dir.%s]\n", dir_id);
         rp_buf_puts(&b, line);
         snprintf(line, sizeof line, "INSTALLDIR/%s", f);
@@ -670,12 +651,14 @@ static void print_command(const ans_t *a) {
                            a->ui, a->license, a->languages, a->optional, a->shortcuts };
     rp_buf_t b = rp_buf_new(proven_heap_allocator(), 1 << 16);
     rp_buf_puts(&b, "the same without questions:\n  rubrapack new ");
-    toml_str(&b, a->stem);
+    char file[140];
+    snprintf(file, sizeof file, "%s.rpk", a->stem);
+    rpn_toml_str(&b, file);
     for (size_t i = 0; i < sizeof keys / sizeof keys[0]; ++i) {
         rp_buf_byte(&b, ' ');
         rp_buf_puts(&b, keys[i]);
         rp_buf_byte(&b, ' ');
-        toml_str(&b, vals[i]);
+        rpn_toml_str(&b, vals[i]);
     }
     rp_buf_byte(&b, '\n');
     uint8_t *text = NULL;
@@ -686,10 +669,11 @@ static void print_command(const ans_t *a) {
 
 static int usage(void) {
     rp_diag_error(RP_DIAG_EXTRA_ARGUMENT,
-                  "usage: rubrapack new [msi] <name> | rubrapack new [<name>] -i | rubrapack new <name> --dist <folder> "
+                  "usage: rubrapack new [<file>.rpk] | rubrapack new <file>.rpk --dist <folder> "
                   "[--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] "
                   "[--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] "
-                  "[--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none]");
+                  "[--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | "
+                  "rubrapack new <name> (a fixed starter <name>.rpk)");
     return RP_EXIT_USAGE;
 }
 
@@ -735,14 +719,29 @@ int rp_cmd_new(int argc, char **argv) {
     } else if (npos == 1) {
         name = pos[0];
     }
+    // `new app.rpk` names the file to write and asks for the rest (the same form as `edit`).
+    char stem_buf[128];
+    bool file_named = false;
+    if (rc == RP_EXIT_OK && name && strlen(name) > 4 && rpn_ends_ci(name, ".rpk") && strlen(name) < sizeof stem_buf) {
+        snprintf(stem_buf, sizeof stem_buf, "%.*s", (int)(strlen(name) - 4), name);
+        name = stem_buf;
+        file_named = true;
+        uint64_t size = 0;
+        char path[160];
+        snprintf(path, sizeof path, "%s.rpk", name);
+        if (!rpn_name_problem(name) && rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) {
+            rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists already; change it with `rubrapack edit %s`", path, path);
+            rc = RP_EXIT_IO;
+        }
+    }
     if (rc == RP_EXIT_OK && strcmp(kind, "msix") == 0) {
         rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)");
         rc = RP_EXIT_USAGE;
     } else if (rc == RP_EXIT_OK && strcmp(kind, "msi") != 0) {
         rc = usage();
     }
-    if (rc == RP_EXIT_OK && name && name_problem(name)) {
-        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "the name %s", name_problem(name));
+    if (rc == RP_EXIT_OK && name && rpn_name_problem(name)) {
+        rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "the name %s", rpn_name_problem(name));
         rc = RP_EXIT_USAGE;
     }
     if (rc == RP_EXIT_OK && interactive && options) {
@@ -750,11 +749,11 @@ int rp_cmd_new(int argc, char **argv) {
         rc = RP_EXIT_USAGE;
     }
     if (rc == RP_EXIT_OK && !interactive && !options) {
-        if (name) {                                    // the fixed starter, as before
+        if (name && !file_named) {                     // `new app`: the fixed starter, as before
             rp_mem_free(proven_heap_allocator(), a);
             return fixed_starter(name);
         }
-        interactive = true;                             // `rubrapack new` alone asks
+        interactive = true;                             // `new` or `new app.rpk` asks
     }
     if (rc == RP_EXIT_OK && interactive) {
         rc = interview(a, name);
@@ -762,12 +761,12 @@ int rp_cmd_new(int argc, char **argv) {
         // Options: the defaults the questions would offer, then every answer checked.
         if (name == NULL) rc = usage();
         struct { char *field; size_t cap; const char *(*check)(ans_t *, char *); const char *what; } chk[] = {
-            { a->name, sizeof a->name, check_product, "--name" }, { a->manufacturer, sizeof a->manufacturer, check_product, "--manufacturer" },
-            { a->version, sizeof a->version, check_version, "--version" }, { a->dist, sizeof a->dist, check_dist, "--dist" },
-            { a->main, sizeof a->main, check_main, "--main" }, { a->arch, sizeof a->arch, check_arch, "--arch" },
-            { a->install_dir, sizeof a->install_dir, check_folder, "--install-dir" }, { a->scope, sizeof a->scope, check_scope, "--scope" },
-            { a->optional, sizeof a->optional, check_optional, "--optional" }, { a->ui, sizeof a->ui, check_ui, "--ui" },
-            { a->license, sizeof a->license, check_license, "--license" }, { a->languages, sizeof a->languages, check_languages, "--languages" },
+            { a->name, sizeof a->name, rpn_check_product, "--name" }, { a->manufacturer, sizeof a->manufacturer, rpn_check_product, "--manufacturer" },
+            { a->version, sizeof a->version, rpn_check_version, "--version" }, { a->dist, sizeof a->dist, rpn_check_dist, "--dist" },
+            { a->main, sizeof a->main, rpn_check_main, "--main" }, { a->arch, sizeof a->arch, rpn_check_arch, "--arch" },
+            { a->install_dir, sizeof a->install_dir, rpn_check_folder, "--install-dir" }, { a->scope, sizeof a->scope, rpn_check_scope, "--scope" },
+            { a->optional, sizeof a->optional, rpn_check_optional, "--optional" }, { a->ui, sizeof a->ui, rpn_check_ui, "--ui" },
+            { a->license, sizeof a->license, rpn_check_license, "--license" }, { a->languages, sizeof a->languages, rpn_check_languages, "--languages" },
             { a->shortcuts, sizeof a->shortcuts, check_shortcuts, "--shortcuts" }, { a->stem, sizeof a->stem, check_stem, "the source file" },
         };
         if (rc == RP_EXIT_OK) snprintf(a->stem, sizeof a->stem, "%s", name);
@@ -780,12 +779,12 @@ int rp_cmd_new(int argc, char **argv) {
                 else if (f == a->dist) snprintf(f, chk[k].cap, "dist");
                 else if (f == a->main) default_main(a, f, chk[k].cap);
                 else if (f == a->arch) default_arch(a, f, chk[k].cap);
-                else if (f == a->install_dir) snprintf(f, chk[k].cap, "%s", name_problem(a->name) ? name : a->name);
+                else if (f == a->install_dir) snprintf(f, chk[k].cap, "%s", rpn_name_problem(a->name) ? name : a->name);
                 else if (f == a->scope) snprintf(f, chk[k].cap, "machine");
                 else if (f == a->optional) snprintf(f, chk[k].cap, "-");
                 else if (f == a->ui) snprintf(f, chk[k].cap, "%s", strcmp(a->optional, "-") ? "features" : "installdir");
                 else if (f == a->license) {
-                    if (strcmp(a->ui, "none") && strcmp(a->ui, "basic")) find_license(a->dist, f, chk[k].cap);
+                    if (strcmp(a->ui, "none") && strcmp(a->ui, "basic")) rpn_find_license(a->dist, f, chk[k].cap);
                     else snprintf(f, chk[k].cap, "-");
                 } else if (f == a->languages) snprintf(f, chk[k].cap, "-");
                 else if (f == a->shortcuts) snprintf(f, chk[k].cap, "%s", strcmp(a->main, "-") ? "start" : "none");
@@ -824,7 +823,7 @@ int rp_cmd_new(int argc, char **argv) {
         (void)rp_pal_puts(RP_OUT_STDOUT, lrc == RP_EXIT_OK ? "lint: no problems\n" : "lint: see the problems above\n");
         if (rc == RP_EXIT_OK) rc = lrc;
     }
-    if (a->scanned) scan_free(&a->scan);
+    if (a->scanned) rpn_scan_free(&a->scan);
     rp_mem_free(proven_heap_allocator(), a);
     return rc;
 }
