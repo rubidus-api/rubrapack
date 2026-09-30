@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2 A first installer: one program - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 2 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-01-before-you-start.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-03-versions-and-upgrades.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-02-a-first-installer.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-source"><span class="tf-no">2.1</span>The source</a><a class="lv3" href="#building"><span class="tf-no">2.2</span>Building</a><a class="lv3" href="#installing-and-removing-it"><span class="tf-no">2.3</span>Installing and removing it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">2.4</span>What happened inside</a><a class="lv3" href="#check-it-without-building"><span class="tf-no">2.5</span>Check it without building</a><a class="lv3" href="#the-same-with-questions-instead-of-a-text-editor"><span class="tf-no">2.6</span>The same, with questions instead of a text editor</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">2 A first installer: one program</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-source"><span class="tf-no">2.1</span>The source</a><a class="lv3" href="#building"><span class="tf-no">2.2</span>Building</a><a class="lv3" href="#installing-and-removing-it"><span class="tf-no">2.3</span>Installing and removing it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">2.4</span>What happened inside</a><a class="lv3" href="#check-it-without-building"><span class="tf-no">2.5</span>Check it without building</a><a class="lv3" href="#the-same-with-questions-instead-of-a-text-editor"><span class="tf-no">2.6</span>The same, with questions instead of a text editor</a></div></div>
+<p>Goal: an installer that copies <code>hello.exe</code> into <code>C:\Program Files\Hello</code>, shows up in Installed apps, and removes itself cleanly.</p>
+<h3 id="the-source">2.1 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>In the folder <code>C:\work\hello</code> (see the previous chapter), create a text file <code>hello.toml</code> with any text editor - Notepad will do - and write:</p>
+<pre><code class="lang-toml"># tutorial 02: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "1.0.0"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"</code></pre>
+<p>Line by line:</p>
+<ul><li>A line starting with <code>#</code> is a comment; rubrapack ignores it.</li><li><code>[package]</code> starts a <em>table</em>: the lines after it, up to the next <code>[...]</code>, belong to it. The <code>package</code> table says what the product is.<ul><li><code>name</code> is what users see: in Installed apps, in the title of the installer's windows.</li><li><code>manufacturer</code> is you or your company; Installed apps shows it under the name.</li><li><code>version</code> has three numbers (or four): major, minor, build. Chapter 3 is about changing it.</li><li><code>arch</code> is the processor the program is built for: <code>x64</code> (almost every PC today), <code>x86</code> (32-bit programs) or <code>arm64</code>. rubrapack checks that <code>hello.exe</code> really is an x64 program.</li><li><code>upgrade-code</code> is a GUID - a 128-bit number written as 32 hexadecimal digits in braces - that is unique to your product. Make your own with <code>rubrapack guid</code> (below), write it here once, and <strong>never change it</strong>: every later version must carry the same one, or Windows will treat it as a different product and install it next to the old one.</li></ul></li><li><code>[dir.INSTALLDIR]</code> declares a folder with the ID <code>INSTALLDIR</code>. An ID is a name you choose (letters, digits and <code>_</code>) to refer to a thing from other tables. <code>path</code> says where the folder is: <code>ProgramFiles/Hello</code> means <code>C:\Program Files\Hello</code> on an English or Korean Windows alike - the known folder <code>ProgramFiles</code> is resolved on the user's computer.</li><li><code>[file.Hello]</code> installs one file, with the ID <code>Hello</code>. <code>dir</code> names the folder it goes into, by its ID; <code>source</code> is where the file is now, relative to <code>hello.toml</code>, written with <code>/</code>.</li></ul>
+<p>Get your own upgrade code - a new one every time you run it:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack guid
+{F1B1ED21-3061-4A65-8D77-FBB5ACCB1642}</code></pre>
+<p>Copy it over the one in the example. (Using the example's code would make your product and every other reader's "the same product" to Windows.)</p>
+<h3 id="building">2.2 Building<a class="plink" href="#building" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msi</code></pre>
+<p>Nothing is printed when all is well, and <code>hello.msi</code> (about 28 KB) appears next to the source. If something is wrong, rubrapack says where and why and writes nothing, for example after a typo in <code>source</code>:</p>
+<pre><code class="lang-text">hello.toml:14:1: error[RP1507]: source file 'dist/hello.ex' not found</code></pre>
+<p>The numbers are the line and the column; the code in brackets (<code>RP1507</code>: RP15xx is "the files to install") is explained under <a href="rpk.html#diagnostic-codes">Diagnostic codes</a> in the Reference part. Fix the line and build again.</p>
+<h3 id="installing-and-removing-it">2.3 Installing and removing it<a class="plink" href="#installing-and-removing-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Copy <code>hello.msi</code> to a Windows computer and double-click it. Because it installs into Program Files, which belongs to all users, Windows asks for administrator permission (the User Account Control prompt). Then a small window with a progress bar appears for a moment - this package has no dialogs of its own yet (chapter 6 adds them). Afterwards:</p>
+<ul><li><code>C:\Program Files\Hello\hello.exe</code> exists;</li><li>Settings &gt; Apps &gt; Installed apps lists <strong>Hello</strong>, version 1.0.0, by Example Software.</li></ul>
+<p>Remove it from Installed apps (the <code>...</code> menu, Uninstall), or from a terminal:</p>
+<pre><code class="lang-text">msiexec /x hello.msi</code></pre>
+<p>The file and the folder are gone again. The same package can also be installed without any window, which is how companies deploy software (<code>/qn</code> means "quiet, no user interface"; run the terminal as administrator):</p>
+<pre><code class="lang-text">msiexec /i hello.msi /qn
+msiexec /x hello.msi /qn</code></pre>
+<p>When something goes wrong on Windows, a log tells why: <code>msiexec /i hello.msi /l*v install.log</code> writes everything Windows Installer did into <code>install.log</code>.</p>
+<h3 id="what-happened-inside">2.4 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>rubrapack inspect</code> shows what the package holds without installing it. <code>--files</code> lists the files and where they go:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi --files
+[ProgramFiles64Folder]\Hello\hello.exe	17920	Hello	C_185f8db32271fe25f561	1.2.3.4	1033</code></pre>
+<p><code>ProgramFiles64Folder</code> is Windows Installer's name for 64-bit Program Files; <code>17920</code> is the size in bytes; <code>1.2.3.4</code> and <code>1033</code> (US English) are the version and language written inside <code>hello.exe</code> (Windows compares them when it replaces a file). An MSI is a database, and <code>inspect</code> can print any of its tables; the <code>File</code> table has one row for our one file:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi File
+File	Component_	FileName	FileSize	Version	Language	Attributes	Sequence
+s72	s72	l255	i4	S72	S20	I2	i4
+File	File
+Hello	C_185f8db32271fe25f561	hello.exe	17920	1.2.3.4	1033	512	1</code></pre>
+<p>The first line names the columns, the second gives their types (<code>s72</code> is a string of up to 72 characters, <code>i4</code> a 4-byte integer, a capital letter means the column may be empty), the third names the table and its key column. <code>Hello</code> is your file ID; <code>C_185f...</code> is a <em>component</em> that rubrapack made for it; <code>512</code> means "vital" (the installation fails if this file cannot be written). The <code>Property</code> table holds the product's identity:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Property
+...
+ProductCode	{98BFA9A2-2741-81F9-A1CA-2C6626AE1304}
+ProductName	Hello
+ProductVersion	1.0.0
+UpgradeCode	{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}
+...</code></pre>
+<p>The <code>ProductCode</code> is another GUID, which identifies <em>this version</em>: rubrapack derives it from the upgrade code, the architecture and the version, so it changes by itself when the version does. You do not write it. Part IV explains how these tables are stored in the file.</p>
+<h3 id="check-it-without-building">2.5 Check it without building<a class="plink" href="#check-it-without-building" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>rubrapack lint hello.toml</code> runs every check the build runs and writes nothing - handy after an edit. <code>rubrapack lint hello.msi</code> checks a finished package, even one made by another tool:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack lint hello.msi
+hello.msi: 0 errors, 0 warnings</code></pre>
+<h3 id="the-same-with-questions-instead-of-a-text-editor">2.6 The same, with questions instead of a text editor<a class="plink" href="#the-same-with-questions-instead-of-a-text-editor" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>rubrapack new hello.toml</code> asks for the name, the version, the folder with the files and so on, and writes a source like the one above (it also makes up the upgrade code). Chapter 19 describes it and its companion <code>rubrapack edit</code>. Writing the source by hand once, as here, is the best way to learn what each line does.</p>
+<div class="nav"><a href="tutorial-01-before-you-start.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-03-versions-and-upgrades.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

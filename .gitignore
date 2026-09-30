@@ -42,3 +42,4 @@
 *.msi
 *.msix
 *.cab
+__pycache__/

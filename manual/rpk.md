@@ -1068,3 +1068,26 @@ rubrapack version | help [command]
   clock set to that time would not.)
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.
+
+## Diagnostic codes
+
+Every problem rubrapack reports has a code, `error[RPnnnn]` or `warning[RPnnnn]`, after the file,
+line and column it is about. The first two digits say what kind of problem it is:
+
+| Codes | What went wrong | Where to look |
+|---|---|---|
+| RP00xx | the command line: an unknown command or option, a file that cannot be read or written | `rubrapack help <command>` |
+| RP10xx | the source file's encoding: not UTF-8 (or UTF-16 with a BOM), stray carriage returns | save the file as UTF-8 |
+| RP11xx | TOML outside the subset rubrapack reads: multi-line strings, inline tables, a table defined twice | [The TOML subset](#the-toml-subset) |
+| RP12xx | tables and keys: an unknown table or key (with a suggestion), a required key or table missing, something without a feature once features exist | [Tables](#tables) |
+| RP13xx | values: IDs (unique across all tables, not reserved), GUIDs, versions, numbers out of range, references to things that do not exist | the table's section |
+| RP14xx | variables: `$(NAME)` without a value, `$(` not closed | [Variables](#variables) |
+| RP15xx | the files to install: not found, a directory, a link, a glob without a match, a program for another architecture, names too long, a file that changed during the build, a package too large | [Paths](#paths), [Program files](#program-files) |
+| RP16xx | MSIX: what an MSIX package needs, and what it cannot carry | [MSIX packages](#msix-packages) |
+| RP19xx | a feature this rubrapack does not provide | - |
+| RP20xx | the finished tables break a Windows Installer rule. A source that passes the RP1xxx checks should never meet these: please report it | - |
+| RP21xx | `lint` of a package: dialogs, code page, text normalisation | `lint` under [Command line](#command-line) |
+| RP22xx | `lint` of an MSIX package or bundle | `lint` under [Command line](#command-line) |
+| RP23xx | `lint --previous`: this package would not upgrade the previous one cleanly | [Versions and upgrades](tutorial/03-versions-and-upgrades.md) |
+
+The message says what to change; the codes above are the ones to search the manual for.

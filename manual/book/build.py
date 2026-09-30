@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """build.py - the rubrapack manual as a book: a PDF (through Typst) and a web edition per language,
-made from the Markdown in manual/ (English, the original) and manual-ko/ (Korean). Part I is the
-user manual (rpk.md), Part II the file format manual (formats/).
+made from the Markdown in manual/ (English, the original) and manual-ko/ (Korean), in the parts
+listed in PARTS: the tutorial (tutorial/), the reference (rpk.md), the background knowledge
+(basics/) and the file formats (formats/). A part without chapters yet is left out.
 
   python3 manual/book/build.py [--out build/book] [--typst typst] [--font-path DIR] [--no-pdf]
 
@@ -31,13 +32,23 @@ REPO_URL = "https://github.com/rubidus-api/rubrapack"
 FORMAT_ORDER = ["README", "cfb", "msi-database", "msi-summary", "msi-package", "pe", "cab-mszip", "identity",
                 "authenticode", "verify", "msix", "registry"]
 
+# The book's parts, in order: English and Korean titles, and where their chapters are - a folder
+# of NN-name.md files, one file, or "formats" (FORMAT_ORDER).
+PARTS = [
+    ("Tutorial", "따라 하며 배우기", "tutorial"),
+    ("Reference", "참조", "rpk.md"),
+    ("Background knowledge", "기초 지식", "basics"),
+    ("File formats", "파일 형식", "formats"),
+]
+ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
+
 LANGS = {
     "en": {"dir": "manual", "title": "rubrapack Manual", "sub": "Building and signing MSI and MSIX packages - and how the formats work",
-           "parts": ["User manual", "File format manual"], "toc": "Contents", "part": "Part", "prev": "Previous", "next": "Next",
+           "toc": "Contents", "part": "Part", "prev": "Previous", "next": "Next",
            "pdf": "PDF edition", "other": "한국어", "lang_name": "English", "home": "Contents",
            "note": "The English edition is the original.", "version": "Version", "chtoc": "In this chapter"},
     "ko": {"dir": "manual-ko", "title": "rubrapack 매뉴얼", "sub": "MSI·MSIX 패키지를 만들고 서명하기 - 그리고 그 형식이 어떻게 짜였는가",
-           "parts": ["사용자 매뉴얼", "파일 형식 매뉴얼"], "toc": "차례", "part": "제", "prev": "이전", "next": "다음",
+           "toc": "차례", "part": "제", "prev": "이전", "next": "다음",
            "pdf": "PDF 판", "other": "English", "lang_name": "한국어", "home": "차례",
            "note": "영어판이 원본이고 이 판은 그 번역이다. 둘이 어긋나면 영어판을 따른다.", "version": "판", "chtoc": "이 장의 차례"},
 }
@@ -174,11 +185,25 @@ def slugify(title):
 
 # ---- the book: chapters in order ------------------------------------------------------------------
 
+def part_files(base, where):
+    """(slug, path) of one part's chapters, in order."""
+    if where == "formats":
+        return [("formats-" + n.lower(), os.path.join(base, "formats", n + ".md")) for n in FORMAT_ORDER]
+    if where.endswith(".md"):
+        return [(where[:-3], os.path.join(base, where))]
+    d = os.path.join(base, where)
+    if not os.path.isdir(d):
+        return []
+    return [(where + "-" + f[:-3], os.path.join(d, f)) for f in sorted(os.listdir(d)) if f.endswith(".md") and f != "README.md"]
+
+
 def chapters(lang):
     base = os.path.join(REPO, LANGS[lang]["dir"])
-    out = [(0, "rpk", os.path.join(base, "rpk.md"))]
-    for name in FORMAT_ORDER:
-        out.append((1, "formats-" + name.lower(), os.path.join(base, "formats", name + ".md")))
+    out = []
+    for index, (_, _, where) in enumerate(PARTS):
+        files = part_files(base, where)
+        if files:
+            out += [(index, slug, path) for slug, path in files]
     book = []
     for part, slug, path in out:
         lines = open(path, encoding="utf-8").read().splitlines()
@@ -471,8 +496,8 @@ def typst_source(lang, book):
     last = None
     for c in book:
         if c["part"] != last:
-            num = ("Part " + ["I", "II"][c["part"]]) if lang == "en" else ("제" + str(c["part"] + 1) + "부")
-            parts.append("#part(" + ty_str(L["parts"][c["part"]]) + ", " + ty_str(num) + ")\n")
+            num = part_number(lang, book, c["part"])
+            parts.append("#part(" + ty_str(part_title(lang, c["part"])) + ", " + ty_str(num) + ")\n")
             last = c["part"]
         parts.append("= " + ty_inline(c["title"], c, book) + " <ch-" + c["slug"] + ">\n\n#chapter-toc()\n")
         parts.append(ty_blocks(c["blocks"], c, book))
@@ -695,8 +720,22 @@ def sec_rows(secs, href=""):
                    % (lv, href, sid, no, html.escape(t)) for lv, no, t, sid in secs)
 
 
-def part_label(lang, part):
-    return (["Part I", "Part II"][part] if lang == "en" else "제%d부" % (part + 1)) + " - " + LANGS[lang]["parts"][part]
+def part_title(lang, part):
+    return PARTS[part][0 if lang == "en" else 1]
+
+
+def part_number(lang, book, part):
+    """Parts are numbered as they appear in the book (a part without chapters is not counted)."""
+    order = []
+    for c in book:
+        if c["part"] not in order:
+            order.append(c["part"])
+    n = order.index(part)
+    return "Part " + ROMAN[n] if lang == "en" else "제%d부" % (n + 1)
+
+
+def part_label(lang, part, book):
+    return part_number(lang, book, part) + " - " + part_title(lang, part)
 
 
 def page(lang, title, inner, self_name, prev=None, nxt=None, label=None, secs=None):
@@ -792,7 +831,7 @@ def build_html(lang, book, out):
         if c["part"] != last:
             if last is not None:
                 toc.append("</div>")
-            toc.append('<h4 class="toc-part">%s</h4><div class="toc-group">' % html.escape(part_label(lang, c["part"])))
+            toc.append('<h4 class="toc-part">%s</h4><div class="toc-group">' % html.escape(part_label(lang, c["part"], book)))
             last = c["part"]
         toc.append('<a href="%s">%d. %s</a>' % (name, number, title))
     toc.append("</div>")
@@ -813,7 +852,7 @@ def build_html(lang, book, out):
     rows, last, index = [], None, []
     for c, number, title, secs, name in index_rows:
         if c["part"] != last:
-            rows.append('<h4 class="toc-part">%s</h4>' % html.escape(part_label(lang, c["part"])))
+            rows.append('<h4 class="toc-part">%s</h4>' % html.escape(part_label(lang, c["part"], book)))
             last = c["part"]
         rows.append('<div class="tf-ch"><a href="%s"><span class="tf-no">%d</span>%s</a></div>' % (name, number, title))
         if secs:

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1 시작하기 전에 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">1장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="index.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-02-a-first-installer.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-01-before-you-start.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#설치-파일이-하는-일"><span class="tf-no">1.1</span>설치 파일이 하는 일</a><a class="lv3" href="#무엇을-쓰고-무엇이-만들어지나"><span class="tf-no">1.2</span>무엇을 쓰고 무엇이 만들어지나</a><a class="lv3" href="#rubrapack-받기"><span class="tf-no">1.3</span>rubrapack 받기</a><a class="lv3" href="#터미널을-처음-쓰는-사람을-위해"><span class="tf-no">1.4</span>터미널을 처음 쓰는 사람을 위해</a><a class="lv3" href="#작업-폴더"><span class="tf-no">1.5</span>작업 폴더</a><a class="lv3" href="#이-튜토리얼에서-쓰는-말"><span class="tf-no">1.6</span>이 튜토리얼에서 쓰는 말</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">1 시작하기 전에</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#설치-파일이-하는-일"><span class="tf-no">1.1</span>설치 파일이 하는 일</a><a class="lv3" href="#무엇을-쓰고-무엇이-만들어지나"><span class="tf-no">1.2</span>무엇을 쓰고 무엇이 만들어지나</a><a class="lv3" href="#rubrapack-받기"><span class="tf-no">1.3</span>rubrapack 받기</a><a class="lv3" href="#터미널을-처음-쓰는-사람을-위해"><span class="tf-no">1.4</span>터미널을 처음 쓰는 사람을 위해</a><a class="lv3" href="#작업-폴더"><span class="tf-no">1.5</span>작업 폴더</a><a class="lv3" href="#이-튜토리얼에서-쓰는-말"><span class="tf-no">1.6</span>이 튜토리얼에서 쓰는 말</a></div></div>
+<p>매뉴얼의 이 부분은 따라 하며 배우는 튜토리얼이다. 가장 작은 설치 파일 - 프로그램 하나를 Program Files 에 복사하는 것 - 에서 시작해, 장마다 하나씩 더해 가며 끝에는 rubrapack 의 모든 기능을 한 번씩 써 본다. 장마다 앞 장에 이어서 쌓아 가므로 차례대로 읽는 것이 좋다. 컴퓨터를 쓸 줄 안다는 것 말고는 아무것도 가정하지 않는다. 바깥의 개념(GUID, 해시, 레지스트리 키 같은 것)이 필요하면 그 자리에서 설명하거나 "기초 지식" 부를 가리킨다.</p>
+<h3 id="설치-파일이-하는-일">1.1 설치 파일이 하는 일<a class="plink" href="#설치-파일이-하는-일" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>내 컴퓨터에 있는 프로그램은 그저 폴더 안의 파일들이다. 이것을 다른 사람에게 주려면 폴더를 그대로 보내도 된다 - 하지만 그러면 받는 사람이 둘 곳을 정하고, 시작 메뉴 항목을 직접 만들고, 나중에는 모든 것을 손으로 찾아 지워야 한다. *설치 파일*이 그 일을 대신한다:</p>
+<ul><li>파일을 알맞은 자리(보통 <code>C:\Program Files\&lt;프로그램&gt;</code>)에 복사한다.</li><li>바로가기, 레지스트리 값, 파일 형식 연결 등 프로그램이 필요로 하는 것을 만든다.</li><li>설정 &gt; 앱 &gt; 설치된 앱에 프로그램을 등록해, 거기서 지울 수 있게 한다.</li><li>2판을 내면 1판을 깨끗하게 바꿔 넣는다.</li><li>도중에 무언가 잘못되면 모든 것을 원래대로 되돌린다.</li></ul>
+<p>Windows 에는 이 일을 하는 엔진이 들어 있다: <strong>Windows Installer</strong>. 설치하는 프로그램을 짜는 것이 아니라, 무엇을 설치할지 기술한 파일인 *패키지*를 만들면 Windows Installer 가 그대로 실행한다. 패키지 형식은 둘이다:</p>
+<div class="tblwrap"><table class="key"><tr><th>형식</th><th>파일</th><th>설치하는 것</th><th>주로 쓰는 곳</th></tr><tr><td>Windows Installer</td><td><code>.msi</code></td><td>Windows Installer(<code>msiexec</code>), Windows 2000 부터</td><td>모든 종류의 데스크톱 프로그램; 회사는 관리 도구로 MSI 를 배포한다</td></tr><tr><td>MSIX</td><td><code>.msix</code>, <code>.msixbundle</code></td><td>Windows 10·11 의 앱 설치 관리자</td><td>새 방식의 패키지 앱, Microsoft Store</td></tr></table></div>
+<p>rubrapack 은 같은 기술에서 둘 다 만든다. 튜토리얼은 대부분 MSI 를 다루고, 17장에서 같은 예제를 MSIX 로 바꾼다.</p>
+<h3 id="무엇을-쓰고-무엇이-만들어지나">1.2 무엇을 쓰고 무엇이 만들어지나<a class="plink" href="#무엇을-쓰고-무엇이-만들어지나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>짧은 글 파일 하나, *원본*을 <a href="https://toml.io/ko/v1.0.0">TOML</a> 로 쓴다 - <code>키 = 값</code> 꼴의 간단한 형식이다. rubrapack 이 그것을 읽어 패키지를 쓴다:</p>
+<pre><code class="lang-text">  hello.toml  (내가 쓴다)
+      |
+      |   rubrapack build hello.toml -o hello.msi
+      v
+  hello.msi   (사용자에게 준다)
+      |
+      |   두 번 누르기, 또는: msiexec /i hello.msi
+      v
+  C:\Program Files\Hello\hello.exe   (Windows Installer 가 거기 둔다)</code></pre>
+<p>MSI 파일은 그 자체로 표 수십 개와 식별자와 압축 보관 파일이 든 작은 데이터베이스다 - 이 책의 제4부가 그것을 바이트 단위로 보여 준다. 그 표를 직접 쓸 일은 없다: rubrapack 이 원본에서 알아서 만든다.</p>
+<h3 id="rubrapack-받기">1.3 rubrapack 받기<a class="plink" href="#rubrapack-받기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>rubrapack 은 따로 설치할 것 없는 프로그램 파일 하나다. 릴리스 페이지 <a href="https://github.com/rubidus-api/rubrapack/releases">https://github.com/rubidus-api/rubrapack/releases</a> 에서 받는다:</p>
+<ul><li>Windows: <code>rubrapack-&lt;판&gt;-windows-x64.exe</code>. 이름을 <code>rubrapack.exe</code> 로 바꾼다.</li><li>Linux: <code>rubrapack-&lt;판&gt;-linux-x86_64</code>. 이름을 <code>rubrapack</code> 으로 바꾸고 실행할 수 있게 한다: <code>chmod +x rubrapack</code>.</li></ul>
+<p><code>PATH</code> 에 들어 있는 폴더에 두면(어디서나 명령이 된다) 편하고, 작업 폴더에 그냥 두었다면 <code>rubrapack</code> 대신 <code>.\rubrapack.exe</code>(Windows)나 <code>./rubrapack</code>(Linux)으로 친다. 이 튜토리얼은 그냥 <code>rubrapack</code> 으로 쓴다.</p>
+<p>패키지는 Linux 에서도 만들 수 있지만, 설치해 보려면 Windows 가 있어야 한다. Windows 가상 머신이면 충분하다.</p>
+<h3 id="터미널을-처음-쓰는-사람을-위해">1.4 터미널을 처음 쓰는 사람을 위해<a class="plink" href="#터미널을-처음-쓰는-사람을-위해" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>rubrapack 에는 창이 없다: 명령을 쳐서 쓴다. Windows 에서 Windows 키를 누르고 <code>terminal</code>(또는 <code>cmd</code>)을 쳐서 Enter 를 누르면 프롬프트가 있는 창이 열린다. 예를 들어:</p>
+<pre><code class="lang-text">C:\Users\you&gt;</code></pre>
+<p><code>&gt;</code> 앞의 부분이 *지금 폴더*다. 경로를 주지 않으면 명령은 그 폴더의 파일을 대상으로 한다. 필요한 명령은 셋이다:</p>
+<div class="tblwrap"><table><tr><th>명령</th><th>하는 일</th></tr><tr><td><code>cd C:\work\hello</code></td><td><code>C:\work\hello</code> 폴더로 들어간다</td></tr><tr><td><code>dir</code> (Linux: <code>ls</code>)</td><td>지금 폴더의 파일을 보인다</td></tr><tr><td><code>mkdir dist</code></td><td>여기에 <code>dist</code> 폴더를 만든다</td></tr></table></div>
+<p>해 보자: <code>rubrapack version</code> 은 판을 찍고, <code>rubrapack help</code> 는 명령 목록을 보인다.</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack version
+rubrapack 0.7.0 (proven_c_lib-v0.1.1)</code></pre>
+<h3 id="작업-폴더">1.5 작업 폴더<a class="plink" href="#작업-폴더" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>모든 장이 같은 배치를 쓴다. 프로젝트용 폴더를 만들고, 그 안에 배포할 파일만 담는 <code>dist</code>("distribution", 배포) 폴더를 둔다:</p>
+<pre><code class="lang-text">C:\work\hello\
+    dist\
+        hello.exe        프로그램 - 자기 프로그램 아무것이나 된다
+    hello.toml           원본(다음 장에서 쓴다)</code></pre>
+<p>마땅한 프로그램이 없으면 아무 <code>.exe</code> 로 배워도 된다. 설치 파일은 그것을 실행하지 않는다.</p>
+<h3 id="이-튜토리얼에서-쓰는-말">1.6 이 튜토리얼에서 쓰는 말<a class="plink" href="#이-튜토리얼에서-쓰는-말" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table><tr><th>말</th><th>뜻</th></tr><tr><td>패키지</td><td>사용자에게 주는 <code>.msi</code>(또는 <code>.msix</code>) 파일</td></tr><tr><td>원본</td><td>내가 쓰는 <code>.toml</code> 파일; rubrapack 이 여기서 패키지를 만든다</td></tr><tr><td>설치 폴더</td><td>사용자 컴퓨터에서 파일이 들어갈 곳, 예: <code>C:\Program Files\Hello</code></td></tr><tr><td>제품</td><td>Windows 가 보는 내 프로그램: 이름, 판, 제조사</td></tr><tr><td>업그레이드 코드</td><td>제품의 모든 판을 하나로 묶는 고정된 식별자(2장)</td></tr><tr><td>기능(feature)</td><td>사용자가 설치할지 말지 고를 수 있는 제품의 한 부분(8장)</td></tr><tr><td>컴포넌트(component)</td><td>Windows Installer 의 설치 단위; rubrapack 이 알아서 만든다</td></tr></table></div>
+<div class="nav"><a href="index.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="tutorial-02-a-first-installer.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

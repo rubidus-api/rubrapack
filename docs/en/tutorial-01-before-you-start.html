@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1 Before you start - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 1 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="index.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-02-a-first-installer.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-01-before-you-start.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#what-an-installer-does"><span class="tf-no">1.1</span>What an installer does</a><a class="lv3" href="#what-you-write-what-rubrapack-makes"><span class="tf-no">1.2</span>What you write, what rubrapack makes</a><a class="lv3" href="#getting-rubrapack"><span class="tf-no">1.3</span>Getting rubrapack</a><a class="lv3" href="#a-terminal-for-those-who-have-not-used-one"><span class="tf-no">1.4</span>A terminal, for those who have not used one</a><a class="lv3" href="#the-folder-you-work-in"><span class="tf-no">1.5</span>The folder you work in</a><a class="lv3" href="#words-used-in-this-tutorial"><span class="tf-no">1.6</span>Words used in this tutorial</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">1 Before you start</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#what-an-installer-does"><span class="tf-no">1.1</span>What an installer does</a><a class="lv3" href="#what-you-write-what-rubrapack-makes"><span class="tf-no">1.2</span>What you write, what rubrapack makes</a><a class="lv3" href="#getting-rubrapack"><span class="tf-no">1.3</span>Getting rubrapack</a><a class="lv3" href="#a-terminal-for-those-who-have-not-used-one"><span class="tf-no">1.4</span>A terminal, for those who have not used one</a><a class="lv3" href="#the-folder-you-work-in"><span class="tf-no">1.5</span>The folder you work in</a><a class="lv3" href="#words-used-in-this-tutorial"><span class="tf-no">1.6</span>Words used in this tutorial</a></div></div>
+<p>This part of the manual is a tutorial. It starts with the smallest installer there is - one program copied into Program Files - and adds one thing per chapter until every feature of rubrapack has been used once. Each chapter builds on the one before, so it is best read in order. Nothing is assumed beyond using a computer: where a chapter needs an idea from outside (a GUID, a hash, a registry key), it explains it on the spot or points to the Background knowledge part.</p>
+<h3 id="what-an-installer-does">1.1 What an installer does<a class="plink" href="#what-an-installer-does" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A program on your own computer is just files in a folder. To give it to someone else, you could send them the folder - but then they have to choose where to put it, make their own Start menu entry, and later find and delete everything by hand. An <em>installer</em> does this for them:</p>
+<ul><li>it copies the files to the right place (usually <code>C:\Program Files\&lt;your program&gt;</code>);</li><li>it creates shortcuts, registry values, file type links and whatever else the program needs;</li><li>it registers the program in Settings &gt; Apps &gt; Installed apps, so it can be removed there;</li><li>when you ship version 2, it replaces version 1 cleanly;</li><li>if something goes wrong halfway, it puts everything back as it was.</li></ul>
+<p>Windows has a built-in engine for this, <strong>Windows Installer</strong>. You do not write a program that installs; you write a <em>package</em>, a file that describes what to install, and Windows Installer carries it out. Two package formats exist:</p>
+<div class="tblwrap"><table class="key"><tr><th>Format</th><th>File</th><th>Installed by</th><th>Typical use</th></tr><tr><td>Windows Installer</td><td><code>.msi</code></td><td>Windows Installer (<code>msiexec</code>), since Windows 2000</td><td>desktop programs of every kind; companies deploy MSI through their management tools</td></tr><tr><td>MSIX</td><td><code>.msix</code>, <code>.msixbundle</code></td><td>the App Installer of Windows 10 and 11</td><td>modern packaged apps, the Microsoft Store</td></tr></table></div>
+<p>rubrapack makes both, from the same description. Most of this tutorial is about MSI; chapter 17 turns the same example into an MSIX.</p>
+<h3 id="what-you-write-what-rubrapack-makes">1.2 What you write, what rubrapack makes<a class="plink" href="#what-you-write-what-rubrapack-makes" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>You write one short text file, the <em>source</em>, in <a href="https://toml.io/en/v1.0.0">TOML</a> - a simple <code>key = value</code> format. rubrapack reads it and writes the package:</p>
+<pre><code class="lang-text">  hello.toml  (you write this)
+      |
+      |   rubrapack build hello.toml -o hello.msi
+      v
+  hello.msi   (you give this to users)
+      |
+      |   double-click, or: msiexec /i hello.msi
+      v
+  C:\Program Files\Hello\hello.exe   (Windows Installer puts it there)</code></pre>
+<p>An MSI file is itself a small database with dozens of tables, identifiers and a compressed archive inside - Part IV of this book shows it byte by byte. You never have to write those tables: rubrapack works them out from the source.</p>
+<h3 id="getting-rubrapack">1.3 Getting rubrapack<a class="plink" href="#getting-rubrapack" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>rubrapack is one program file with nothing else to install. From the releases page, <a href="https://github.com/rubidus-api/rubrapack/releases">https://github.com/rubidus-api/rubrapack/releases</a>, download:</p>
+<ul><li>on Windows: <code>rubrapack-&lt;version&gt;-windows-x64.exe</code>. Rename it to <code>rubrapack.exe</code>.</li><li>on Linux: <code>rubrapack-&lt;version&gt;-linux-x86_64</code>. Rename it to <code>rubrapack</code> and make it executable: <code>chmod +x rubrapack</code>.</li></ul>
+<p>Put it in a folder that is on your <code>PATH</code> (so the command works from anywhere), or keep it in the folder you work in and type <code>.\rubrapack.exe</code> (Windows) or <code>./rubrapack</code> (Linux) instead of <code>rubrapack</code>. This tutorial writes plain <code>rubrapack</code>.</p>
+<p>You can build packages on Linux, but you need Windows to install and try them. A virtual machine with Windows is enough.</p>
+<h3 id="a-terminal-for-those-who-have-not-used-one">1.4 A terminal, for those who have not used one<a class="plink" href="#a-terminal-for-those-who-have-not-used-one" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>rubrapack has no window: you type commands. On Windows, press the Windows key, type <code>terminal</code> (or <code>cmd</code>), and press Enter. A window with a prompt opens, for example:</p>
+<pre><code class="lang-text">C:\Users\you&gt;</code></pre>
+<p>The part before <code>&gt;</code> is the <em>current folder</em>. Commands work on files in that folder unless you give a path. Three commands are all you need:</p>
+<div class="tblwrap"><table><tr><th>Command</th><th>What it does</th></tr><tr><td><code>cd C:\work\hello</code></td><td>go into the folder <code>C:\work\hello</code></td></tr><tr><td><code>dir</code> (Linux: <code>ls</code>)</td><td>list the files in the current folder</td></tr><tr><td><code>mkdir dist</code></td><td>make a folder named <code>dist</code> here</td></tr></table></div>
+<p>Try it: <code>rubrapack version</code> prints the version, and <code>rubrapack help</code> lists the commands.</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack version
+rubrapack 0.7.0 (proven_c_lib-v0.1.1)</code></pre>
+<h3 id="the-folder-you-work-in">1.5 The folder you work in<a class="plink" href="#the-folder-you-work-in" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Every chapter uses the same layout. Make a folder for your project, and inside it a folder <code>dist</code> ("distribution") holding exactly the files you ship:</p>
+<pre><code class="lang-text">C:\work\hello\
+    dist\
+        hello.exe        the program - any program of your own will do
+    hello.toml           the source (the next chapter writes it)</code></pre>
+<p>If you have no program at hand, any <code>.exe</code> works for learning; the installer does not run it.</p>
+<h3 id="words-used-in-this-tutorial">1.6 Words used in this tutorial<a class="plink" href="#words-used-in-this-tutorial" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table><tr><th>Word</th><th>Meaning</th></tr><tr><td>package</td><td>the <code>.msi</code> (or <code>.msix</code>) file you give to users</td></tr><tr><td>source</td><td>the <code>.toml</code> file you write; rubrapack builds the package from it</td></tr><tr><td>install folder</td><td>where the files go on the user's computer, e.g. <code>C:\Program Files\Hello</code></td></tr><tr><td>product</td><td>your program as Windows sees it: a name, a version, a manufacturer</td></tr><tr><td>upgrade code</td><td>a fixed identifier that ties every version of your product together (chapter 2)</td></tr><tr><td>feature</td><td>a part of the product the user may choose to install or not (chapter 8)</td></tr><tr><td>component</td><td>Windows Installer's unit of installation; rubrapack makes these for you</td></tr></table></div>
+<div class="nav"><a href="index.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-02-a-first-installer.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
