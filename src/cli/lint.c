@@ -156,7 +156,7 @@ static int lint_package(const char *path, bool strict) {
         char line[512];
         snprintf(line, sizeof line, "%s: %zu error%s, %zu warning%s\n", path, d.errors, d.errors == 1 ? "" : "s", d.warnings,
                  d.warnings == 1 ? "" : "s");
-        rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors ? RP_EXIT_LINT : RP_EXIT_OK;
+        rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }
     rp_mem_free(heap, sum);
