@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>27 표, 키, 참조 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">27장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-06-files-inside-a-file.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="basics-08-keys-certificates-signatures.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-07-tables-and-keys.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#표-행-열"><span class="tf-no">27.1</span>표, 행, 열</a><a class="lv3" href="#기본-키-행을-하나로-만드는-것"><span class="tf-no">27.2</span>기본 키: 행을 하나로 만드는 것</a><a class="lv3" href="#외래-키-행을-가리키는-행"><span class="tf-no">27.3</span>외래 키: 행을 가리키는 행</a><a class="lv3" href="#내가-주는-키-rubrapack-이-만드는-키"><span class="tf-no">27.4</span>내가 주는 키, rubrapack 이 만드는 키</a><a class="lv3" href="#문자열은-한-번만-문자열-풀"><span class="tf-no">27.5</span>문자열은 한 번만: 문자열 풀</a><a class="lv3" href="#표에-대한-표"><span class="tf-no">27.6</span>표에 대한 표</a><a class="lv3" href="#idt-텍스트-형식"><span class="tf-no">27.7</span>IDT 텍스트 형식</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">27.8</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">27 표, 키, 참조</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#표-행-열"><span class="tf-no">27.1</span>표, 행, 열</a><a class="lv3" href="#기본-키-행을-하나로-만드는-것"><span class="tf-no">27.2</span>기본 키: 행을 하나로 만드는 것</a><a class="lv3" href="#외래-키-행을-가리키는-행"><span class="tf-no">27.3</span>외래 키: 행을 가리키는 행</a><a class="lv3" href="#내가-주는-키-rubrapack-이-만드는-키"><span class="tf-no">27.4</span>내가 주는 키, rubrapack 이 만드는 키</a><a class="lv3" href="#문자열은-한-번만-문자열-풀"><span class="tf-no">27.5</span>문자열은 한 번만: 문자열 풀</a><a class="lv3" href="#표에-대한-표"><span class="tf-no">27.6</span>표에 대한 표</a><a class="lv3" href="#idt-텍스트-형식"><span class="tf-no">27.7</span>IDT 텍스트 형식</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">27.8</span>쓰이는 곳</a></div></div>
+<p><code>.msi</code> 안(6장)의 스트림은 대부분 <strong>표</strong>다: 패키지는 작은 <strong>데이터베이스</strong>다. Windows Installer 는 내가 적은 단계별 각본을 따르는 것이 아니라, 표를 읽고 무엇을 할지 스스로 알아낸다. 이 장은 표를 읽는 데 필요한 데이터베이스 개념 몇 가지를 설명한다.</p>
+<h3 id="표-행-열">27.1 표, 행, 열<a class="plink" href="#표-행-열" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><strong>표</strong>는 격자다. <strong>열</strong>마다 이름과 형식이 있고, <strong>행</strong> 하나가 하나의 대상 - 파일 하나, 바로가기 하나, 레지스트리 값 하나 - 이다. 튜토리얼 첫 패키지(튜토리얼 2장)의 <code>File</code> 표를 <code>rubrapack inspect hello.msi File</code> 이 출력한 대로 보면:</p>
+<pre><code class="lang-text">File	Component_	FileName	FileSize	Version	Language	Attributes	Sequence
+s72	s72	l255	i4	S72	S20	I2	i4
+File	File
+Hello	C_185f8db32271fe25f561	hello.exe	17920	1.2.3.4	1033	512	1</code></pre>
+<p>격자로 펼치면:</p>
+<div class="tblwrap"><table class="key"><tr><th>File</th><th>Component_</th><th>FileName</th><th>FileSize</th><th>Version</th><th>Language</th><th>Attributes</th><th>Sequence</th></tr><tr><td><code>Hello</code></td><td><code>C_185f8db32271fe25f561</code></td><td><code>hello.exe</code></td><td>17920</td><td><code>1.2.3.4</code></td><td><code>1033</code></td><td>512</td><td>1</td></tr></table></div>
+<p>글의 둘째 줄이 열마다 <strong>형식</strong>을 준다:</p>
+<div class="tblwrap"><table><tr><th>형식</th><th>뜻</th></tr><tr><td><code>s72</code></td><td>72자까지의 문자열</td></tr><tr><td><code>l255</code></td><td>255자까지의 <em>지역화할 수 있는</em>(번역이 바꿀 수 있는) 문자열</td></tr><tr><td><code>i2</code>, <code>i4</code></td><td>2 또는 4 바이트 정수(2장)</td></tr><tr><td>대문자 <code>S</code>, <code>L</code>, <code>I</code></td><td>같지만 칸이 비어 있어도("null") 된다</td></tr></table></div>
+<p>표준 표의 열 형식은 Windows Installer 가 정해 두었고, rubrapack 은 모든 값을 그것과 대조한다(<code>lint</code>, 튜토리얼 18장): <code>i2</code> 열에 100,000 은 들어가지 않는다.</p>
+<h3 id="기본-키-행을-하나로-만드는-것">27.2 기본 키: 행을 하나로 만드는 것<a class="plink" href="#기본-키-행을-하나로-만드는-것" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>셋째 줄 <code>File	File</code> 은 표 이름과 <strong>기본 키</strong> - 행마다 값이 다른 열(또는 열들) - 를 적는다. <code>File</code> 표에서는 열 <code>File</code> 이다: <code>Hello</code> 가 이 행의 이름이고 다른 어떤 행도 그 이름을 쓸 수 없다. 그래서 rubrapack 의 ID 는 겹치면 안 된다(튜토리얼 2장): <code>[file.Hello]</code> 에 적은 ID 가 이 키가 된다.</p>
+<p>어떤 표는 열 둘을 함께 써야 한다. <code>FeatureComponents</code> 는 어느 컴포넌트가 어느 기능에 속하는지 적는다. 기능 하나에 컴포넌트가 여럿이고 컴포넌트 하나가 여러 기능에 들 수 있으므로, 둘의 짝만이 하나뿐이다:</p>
+<pre><code class="lang-text">Feature_	Component_
+s38	s72
+FeatureComponents	Feature_	Component_
+Main	C_185f8db32271fe25f561</code></pre>
+<h3 id="외래-키-행을-가리키는-행">27.3 외래 키: 행을 가리키는 행<a class="plink" href="#외래-키-행을-가리키는-행" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>이름이 <code>_</code> 로 끝나는 열은 <em>다른</em> 표의 행의 키를 담는다 - <strong>외래 키</strong>, 곧 참조다. 참조를 따라가면 표들이 하나의 그림으로 이어진다. 파일에서 시작해 참조를 따라가 보면:</p>
+<pre><code class="lang-text">File              Hello
+  Component_  --&gt; Component   C_185f8db32271fe25f561
+                    ComponentId   {B80BEC59-F582-8F10-8EB1-638C6687B899}
+                    Directory_  --&gt; Directory   INSTALLDIR
+                                      DefaultDir   Hello
+                                      Directory_Parent --&gt; Directory   ProgramFiles64Folder
+                                                             DefaultDir  .
+                                                             Directory_Parent --&gt; TARGETDIR
+                    KeyPath     --&gt; File        Hello   (back to the start)
+FeatureComponents Main + C_185f8db32271fe25f561
+  Feature_    --&gt; Feature     Main
+                    Level  1   (installed by default)</code></pre>
+<p>소리 내어 읽으면: 파일 <code>hello.exe</code> 는 한 컴포넌트에 속하고, 그 컴포넌트는 <code>ProgramFiles64Folder</code>(Program Files) 안의 폴더 <code>Hello</code> 에 설치되며, 기능 <code>Main</code> 이 그 컴포넌트를 설치한다. 컴포넌트의 <em>키 경로</em>는 파일 자신이다: <code>hello.exe</code> 가 있으면 그 컴포넌트는 설치된 것으로 친다(튜토리얼 4장).</p>
+<p>없는 행을 가리키는 참조는 Windows Installer 가 멈출 오류다 - <code>rubrapack lint</code> 가 어느 도구로 만든 <code>.msi</code> 에서든 검사하는 것 중 하나다.</p>
+<h3 id="내가-주는-키-rubrapack-이-만드는-키">27.4 내가 주는 키, rubrapack 이 만드는 키<a class="plink" href="#내가-주는-키-rubrapack-이-만드는-키" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>표에는 원본의 ID 가 그대로 나온다 - <code>Hello</code>, <code>INSTALLDIR</code>, <code>Main</code>. Windows Installer 에는 필요하지만 원본에 자기 표가 없는 행에는 rubrapack 이 키를 만든다: 파일마다 만드는 컴포넌트는 <code>C_</code> 와 16진수 20자리, 글롭으로 찾은 파일은 <code>F_</code> 와 16진수 20자리. 이 숫자는 그 대상의 자리의 해시(4장)에서 오므로 빌드마다 같다.</p>
+<h3 id="문자열은-한-번만-문자열-풀">27.5 문자열은 한 번만: 문자열 풀<a class="plink" href="#문자열은-한-번만-문자열-풀" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>표에는 되풀이되는 문자열 - <code>INSTALLDIR</code>, 컴포넌트 키, <code>Hello</code> - 이 가득하고, MSI 는 서로 다른 문자열을 한 번씩만 보관한다. 패키지의 모든 문자열이 <strong>문자열 풀</strong>이라는 목록 하나(스트림 둘, <code>_StringPool</code> 과 <code>_StringData</code>)에 있고, 표의 문자열 칸은 그 목록에서의 문자열 <em>번호</em>만 2 바이트로(아주 큰 패키지에서는 3 바이트로) 담는다. 튜토리얼 첫 패키지는 표 16개 전체에 서로 다른 문자열이 111개다:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi
+code page: 65001
+strings: 111
+tables: 16</code></pre>
+<p>풀은 문자열마다 몇 칸이 쓰는지도 센다. 그 바이트는 제4부가 보인다.</p>
+<h3 id="표에-대한-표">27.6 표에 대한 표<a class="plink" href="#표에-대한-표" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>데이터베이스는 자기를 설명한다. 두 표가 다른 표들을 나열한다: <code>_Tables</code> 는 표마다 한 행, <code>_Columns</code> 는 모든 표의 열마다 형식과 함께 한 행이다. <code>inspect</code> 가 처음 두 줄에 출력하는 열 이름과 형식을 거기서 찾는다. <em>순서</em> 표들 (<code>InstallExecuteSequence</code>, <code>InstallUISequence</code>, 그리고 관리용·광고용 설치를 위한 셋 더)은 설치의 단계를 순서대로, 단계마다 조건과 함께 나열한다(튜토리얼 9장과 13장) - 절차마저 표다.</p>
+<h3 id="idt-텍스트-형식">27.7 IDT 텍스트 형식<a class="plink" href="#idt-텍스트-형식" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><code>inspect</code> 가 출력하는 글은 Windows Installer 자신의 <strong>IDT</strong> 형식이다: 머리 세 줄, 그다음 행마다 한 줄, 열은 탭으로 나눈다. Microsoft 의 Windows SDK 도구들이 표를 이 형식으로 들이고 내보내므로, <code>rubrapack inspect</code> 의 표를 다른 도구가 내보낸 것과 비교할 수 있다.</p>
+<h3 id="쓰이는-곳">27.8 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>튜토리얼 <a href="tutorial-02-a-first-installer.html">2</a>장과 <a href="tutorial-04-files-and-folders.html">4</a>장: ID, 컴포넌트, 키 경로.</li><li>튜토리얼 <a href="tutorial-18-checking-and-looking-inside.html">18</a>장: <code>inspect</code> 와 <code>lint</code>.</li><li>제4부: <a href="formats-msi-database.html">MSI 데이터베이스</a>(문자열 풀과 표 인코딩), <a href="formats-msi-package.html">설치하는 표들</a>.</li></ul>
+<div class="nav"><a href="basics-06-files-inside-a-file.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="basics-08-keys-certificates-signatures.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

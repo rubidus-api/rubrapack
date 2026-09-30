@@ -11,7 +11,7 @@
 <div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#속성"><span class="tf-no">9.1</span>속성</a><a class="lv3" href="#원본"><span class="tf-no">9.2</span>원본</a><a class="lv3" href="#내-속성-propertyname"><span class="tf-no">9.3</span>내 속성: [property.NAME]</a><a class="lv3" href="#이럴-때만-설치하기-when"><span class="tf-no">9.4</span>이럴 때만 설치하기: when</a><a class="lv3" href="#설치-거부하기-requireid"><span class="tf-no">9.5</span>설치 거부하기: [require.ID]</a><a class="lv3" href="#먼저-둘러보기-searchid"><span class="tf-no">9.6</span>먼저 둘러보기: [search.ID]</a><a class="lv3" href="#설치-폴더-기억하기"><span class="tf-no">9.7</span>설치 폴더 기억하기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">9.8</span>안에서 무슨 일이 일어났나</a></div></div>
 <p>목표: 무엇을 설치할지 <em>사용자 컴퓨터에서</em> 정한다. 64비트 Windows 에서만 설치하고, 메모장이 있는 곳에서만 한 부분을 권하고, 바탕화면 바로가기를 사용자가 끌 수 있게 하고, 다음 판은 사용자가 이번 판에 고른 폴더에 설치한다.</p>
 <h3 id="속성">9.1 속성<a class="plink" href="#속성" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p>Windows Installer 는 실행하는 동안 *속성*이라는 이름 붙은 값을 지닌다: <code>ProductName</code>, <code>INSTALLDIR</code>, <code>VersionNT64</code>(64비트 Windows 에서 정해짐), 그리고 내 것들. 이름이 모두 대문자인 속성은 *공개*다: 명령줄 (<code>msiexec /i hello.msi DESKTOP_SHORTCUT=0</code>)과 대화창이 정할 수 있다. *조건*은 속성에 대한 작은 식으로, 참이거나 거짓이다:</p>
+<p>Windows Installer 는 실행하는 동안 <em>속성</em>이라는 이름 붙은 값을 지닌다: <code>ProductName</code>, <code>INSTALLDIR</code>, <code>VersionNT64</code>(64비트 Windows 에서 정해짐), 그리고 내 것들. 이름이 모두 대문자인 속성은 <em>공개</em>다: 명령줄 (<code>msiexec /i hello.msi DESKTOP_SHORTCUT=0</code>)과 대화창이 정할 수 있다. <em>조건</em>은 속성에 대한 작은 식으로, 참이거나 거짓이다:</p>
 <div class="tblwrap"><table><tr><th>조건</th><th>참일 때</th></tr><tr><td><code>VersionNT64</code></td><td>속성이 정해져 있을 때(비어 있지 않음): 여기서는 64비트 Windows</td></tr><tr><td><code>NOT Installed</code></td><td>제품이 아직 설치되지 않았을 때(첫 설치)</td></tr><tr><td><code>DESKTOP_SHORTCUT = "1"</code></td><td>속성 값이 정확히 <code>1</code> 일 때</td></tr><tr><td><code>VersionNT &gt;= 603</code></td><td>Windows 판 번호가 6.3 이상일 때</td></tr><tr><td><code>A AND (B OR NOT C)</code></td><td>생각하는 대로의 조합</td></tr></table></div>
 <h3 id="원본">9.2 원본<a class="plink" href="#원본" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-toml"># tutorial 09: hello.toml
@@ -88,7 +88,7 @@ target = "file:Hello"
 when = "DESKTOP_SHORTCUT = \"1\""</code></pre>
 <h3 id="내-속성-propertyname">9.3 내 속성: <code>[property.NAME]</code><a class="plink" href="#내-속성-propertyname" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p><code>[property.DESKTOP_SHORTCUT]</code> 은 기본값 <code>1</code> 로 속성을 만든다. 공개가 되려면 이름이 모두 대문자여야 한다. Windows 나 rubrapack 이 스스로 쓰는 이름(<code>ALLUSERS</code>, <code>ARP...</code>, <code>MSI...</code> 등)은 거부한다.</p>
-<ul><li><code>secure = true</code>: 모든 사용자를 위한 설치는 두 부분으로 돈다 - 사용자 부분(대화창)과, 컴퓨터를 바꾸는 권한 높은 부분. 첫 부분이나 명령줄에서 정한 값은 속성이 *보안(secure)*일 때만 둘째 부분에 닿는다. <code>when</code> 조건이 보는 속성은 모두 보안으로 한다. (내 대화창 페이지의 속성과 검색 결과는 rubrapack 이 알아서 그렇게 한다.)</li><li><code>hidden = true</code>: 값을 설치 기록에 쓰지 않는다 - 암호와 키를 위한 것이다.</li></ul>
+<ul><li><code>secure = true</code>: 모든 사용자를 위한 설치는 두 부분으로 돈다 - 사용자 부분(대화창)과, 컴퓨터를 바꾸는 권한 높은 부분. 첫 부분이나 명령줄에서 정한 값은 속성이 <em>보안(secure)</em>일 때만 둘째 부분에 닿는다. <code>when</code> 조건이 보는 속성은 모두 보안으로 한다. (내 대화창 페이지의 속성과 검색 결과는 rubrapack 이 알아서 그렇게 한다.)</li><li><code>hidden = true</code>: 값을 설치 기록에 쓰지 않는다 - 암호와 키를 위한 것이다.</li></ul>
 <h3 id="이럴-때만-설치하기-when">9.4 이럴 때만 설치하기: <code>when</code><a class="plink" href="#이럴-때만-설치하기-when" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>기능, 파일이나 파일 묶음, 바로가기, 레지스트리 값, 환경 변수, INI 값에 <code>when</code> 을 달면 첫 설치 때 조건이 참일 때만 설치한다:</p>
 <ul><li>바탕화면 바로가기의 <code>when = "DESKTOP_SHORTCUT = \"1\""</code>: 기본으로는 만들고, <code>msiexec /i hello.msi DESKTOP_SHORTCUT=0</code> 이면 만들지 않는다. 14장에서 이 속성을 내 페이지의 확인란으로 바꾼다.</li><li>기능의 <code>when = "NOTEPAD_PATH"</code>: 조건이 거짓인 곳에서는 그 기능을 설치하지도 트리에 보이지도 않는다.</li></ul>
@@ -101,7 +101,7 @@ when = "DESKTOP_SHORTCUT = \"1\""</code></pre>
 <p><code>[search.Notepad]</code> 는 Windows 폴더에서 <code>notepad.exe</code> 를 찾아 경로를 <code>NOTEPAD_PATH</code> 에 넣는다.</p>
 <h3 id="설치-폴더-기억하기">9.7 설치 폴더 기억하기<a class="plink" href="#설치-폴더-기억하기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>사용자가 Hello 를 <code>D:\Tools\Hello</code> 에 설치했다면 다음 판도 Program Files 로 돌아가지 말고 그리 가야 한다. 두 조각으로 한다:</p>
-<ol><li><code>[registry.RememberDir]</code> 는 설치할 때 폴더를 레지스트리에 적는다: 값 안의 <code>[INSTALLDIR]</code> 은 폴더로 바뀐다 (레지스트리는 11장).</li><li><code>[search.PreviousDir]</code> 는 그것을 다시 읽는다. <code>property</code> 가 dir ID <code>INSTALLDIR</code> 이므로 찾은 것이 그 dir 의 *기본값*이 된다 - 그 폴더가 아직 있을 때만이고, 명령줄로 준 폴더가 여전히 이긴다.</li></ol>
+<ol><li><code>[registry.RememberDir]</code> 는 설치할 때 폴더를 레지스트리에 적는다: 값 안의 <code>[INSTALLDIR]</code> 은 폴더로 바뀐다 (레지스트리는 11장).</li><li><code>[search.PreviousDir]</code> 는 그것을 다시 읽는다. <code>property</code> 가 dir ID <code>INSTALLDIR</code> 이므로 찾은 것이 그 dir 의 <em>기본값</em>이 된다 - 그 폴더가 아직 있을 때만이고, 명령줄로 준 폴더가 여전히 이긴다.</li></ol>
 <h3 id="안에서-무슨-일이-일어났나">9.8 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi LaunchCondition
 Installed OR (VersionNT64)	[ProductName] needs 64-bit Windows.

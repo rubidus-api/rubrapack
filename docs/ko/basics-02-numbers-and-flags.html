@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>22 파일 속의 수, 그리고 비트 플래그 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">22장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-01-bits-bytes-and-hex.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="basics-03-text.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-02-numbers-and-flags.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#1-2-4-8-바이트"><span class="tf-no">22.1</span>1, 2, 4, 8 바이트</a><a class="lv3" href="#바이트-순서-little-endian"><span class="tf-no">22.2</span>바이트 순서: little-endian</a><a class="lv3" href="#음수-2의-보수"><span class="tf-no">22.3</span>음수: 2의 보수</a><a class="lv3" href="#비트-플래그"><span class="tf-no">22.4</span>비트 플래그</a><a class="lv3" href="#비트-확인하기와-켜기-and-or"><span class="tf-no">22.5</span>비트 확인하기와 켜기: AND, OR</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">22.6</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">22 파일 속의 수, 그리고 비트 플래그</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#1-2-4-8-바이트"><span class="tf-no">22.1</span>1, 2, 4, 8 바이트</a><a class="lv3" href="#바이트-순서-little-endian"><span class="tf-no">22.2</span>바이트 순서: little-endian</a><a class="lv3" href="#음수-2의-보수"><span class="tf-no">22.3</span>음수: 2의 보수</a><a class="lv3" href="#비트-플래그"><span class="tf-no">22.4</span>비트 플래그</a><a class="lv3" href="#비트-확인하기와-켜기-and-or"><span class="tf-no">22.5</span>비트 확인하기와 켜기: AND, OR</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">22.6</span>쓰이는 곳</a></div></div>
+<p>파일 형식은 크기, 개수, 위치, 판 번호 같은 수를 정해진 수의 바이트로 저장한다. 이 장은 그 방법과, 수 하나가 예/아니요 설정을 한꺼번에 여럿 담는 방법을 보인다.</p>
+<h3 id="1-2-4-8-바이트">22.1 1, 2, 4, 8 바이트<a class="plink" href="#1-2-4-8-바이트" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>파일에 저장된 수는 형식이 정한 만큼의 바이트를 차지한다:</p>
+<div class="tblwrap"><table class="key"><tr><th>크기</th><th>비트</th><th>부호 없는 범위</th><th>흔한 이름</th></tr><tr><td>1 바이트</td><td>8</td><td>0 ~ 255</td><td>byte, <code>u8</code>, <code>uint8</code></td></tr><tr><td>2 바이트</td><td>16</td><td>0 ~ 65,535</td><td>word, <code>u16</code>, <code>uint16</code>, short</td></tr><tr><td>4 바이트</td><td>32</td><td>0 ~ 4,294,967,295</td><td>double word(DWORD), <code>u32</code>, <code>uint32</code>, int</td></tr><tr><td>8 바이트</td><td>64</td><td>0 ~ 약 1.8 x 10^19</td><td>quad word(QWORD), <code>u64</code>, <code>uint64</code></td></tr></table></div>
+<p><em>부호 없는</em>(unsigned)은 음수가 없다는 뜻이다. 크기에 비해 너무 큰 수는 저장할 수 없다 - 그래서 <code>i2</code>(2 바이트)로 선언된 MSI 표의 열은 100,000 을 담지 못하고, 위치를 4 KiB 섹터의 4바이트 번호로 적는 복합 파일에는 크기 상한이 있다.</p>
+<h3 id="바이트-순서-little-endian">22.2 바이트 순서: little-endian<a class="plink" href="#바이트-순서-little-endian" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>여러 바이트로 된 수는 바이트로 쪼개진다. 튜토리얼의 <code>hello.exe</code> 크기인 17,920 바이트를 보자. 16진수로는 <code>0x00004600</code> 이고, 큰 자리부터 네 바이트로 쓰면 <code>00 00 46 00</code> 이다. 그런데 Windows 용 파일은 거의 언제나 바이트를 반대로, <strong>작은 자리부터</strong> 저장한다:</p>
+<pre><code class="lang-text">  17920 = 0x00004600
+
+  most significant first (big-endian):     00 00 46 00
+  least significant first (little-endian): 00 46 00 00
+                                           |  |  |  |
+                                           |  |  |  +-- x 16,777,216 (256^3) = 0
+                                           |  |  +----- x 65,536     (256^2) = 0
+                                           |  +-------- x 256                = 17,920  (0x46 = 70)
+                                           +----------- x 1                  = 0</code></pre>
+<p>이 순서를 <strong>little-endian</strong>("작은 끝 먼저")이라 하고, 반대는 <strong>big-endian</strong> 이라 한다. Windows 컴퓨터의 Intel 과 Arm 처리기는 little-endian 으로 일하고, MSI, CAB, ZIP, 프로그램 파일 형식도 그렇다. 네트워크 프로토콜과 인증서(8장)는 big-endian 을 쓴다. 제4부의 표가 "u32 LE" 라고 하면 "부호 없는 4바이트 수, little-endian" 이라는 뜻이다.</p>
+<p>덤프에서 little-endian 수를 읽는 법: 그 바이트들을 뒤집어 16진수로 읽는다. 1장의 복합 파일 머리에서:</p>
+<div class="tblwrap"><table class="key"><tr><th>오프셋</th><th>바이트</th><th>뒤집으면</th><th>값</th><th>뜻</th></tr><tr><td><code>0x18</code></td><td><code>3e 00</code></td><td><code>00 3e</code></td><td>62</td><td>부 판 번호</td></tr><tr><td><code>0x1A</code></td><td><code>04 00</code></td><td><code>00 04</code></td><td>4</td><td>주 판 번호: 4 KiB 섹터</td></tr><tr><td><code>0x1C</code></td><td><code>fe ff</code></td><td><code>ff fe</code></td><td>0xFFFE</td><td>바이트 순서 표시: 0xFEFF 를 얻은 읽기 프로그램은 거꾸로 읽었음을 안다</td></tr><tr><td><code>0x1E</code></td><td><code>0c 00</code></td><td><code>00 0c</code></td><td>12</td><td>섹터 크기는 2^12 = 4096</td></tr><tr><td><code>0x38</code></td><td><code>00 10 00 00</code></td><td><code>00 00 10 00</code></td><td>4096</td><td>이보다 작은 스트림은 미니 스트림에 들어간다</td></tr></table></div>
+<h3 id="음수-2의-보수">22.3 음수: 2의 보수<a class="plink" href="#음수-2의-보수" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>음수가 필요한 형식은 <strong>2의 보수</strong>를 쓴다: 같은 비트를 쓰되 범위의 위쪽 절반을 음수로 읽는다. 1바이트에서 0~127 은 그대로이고, 128~255 가 -128~-1 을 나타낸다:</p>
+<div class="tblwrap"><table class="key"><tr><th>바이트</th><th>부호 없이</th><th>부호 있게</th></tr><tr><td><code>00</code></td><td>0</td><td>0</td></tr><tr><td><code>7f</code></td><td>127</td><td>127</td></tr><tr><td><code>80</code></td><td>128</td><td>-128</td></tr><tr><td><code>fe</code></td><td>254</td><td>-2</td></tr><tr><td><code>ff</code></td><td>255</td><td>-1</td></tr></table></div>
+<p>규칙: 맨 위 비트가 1 이면 음수이고, 값은 부호 없는 값에서 2^<em>비트수</em> 를 뺀 것이다. 4바이트에서 <code>ff ff ff ff</code> 는 -1, <code>fe ff ff ff</code> 는 -2 다. 형식들은 이런 "모두 1" 값을 표시로 즐겨 쓴다: 복합 파일에서 섹터 번호 <code>0xFFFFFFFE</code>(-2)는 "사슬의 끝", <code>0xFFFFFFFF</code>(-1)는 "비어 있음"이다.</p>
+<h3 id="비트-플래그">22.4 비트 플래그<a class="plink" href="#비트-플래그" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>형식이 한 가지에 대해 예/아니요 설정을 여럿 두어야 할 때가 많다. 설정마다 바이트를 하나씩 주는 대신, 설정마다 수의 <strong>비트</strong> 하나를 주고, 켜진 비트의 값을 더한 것이 그 수가 된다. 비트마다 값이 2의 거듭제곱 - 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, ... - 이므로 어떤 합이든 만드는 방법은 하나뿐이고, 그 수에서 설정을 거꾸로 읽어 낼 수 있다.</p>
+<p>튜토리얼에서 이런 수를 여럿 만났다. 여기서 분해해 본다 - 수를 2진수로 쓰면 <code>1</code> 하나하나가 설정 하나다:</p>
+<div class="tblwrap"><table class="key"><tr><th>수</th><th>2진수</th><th>켜진 비트</th><th>뜻(튜토리얼 장)</th></tr><tr><td>258</td><td><code>1 0000 0010</code></td><td>256 + 2</td><td>Upgrade 행: 최소 판 포함, 찾기만 함(3)</td></tr><tr><td>272</td><td><code>1 0001 0000</code></td><td>256 + 16</td><td>Component: 64비트, 영구(4)</td></tr><tr><td>512</td><td><code>10 0000 0000</code></td><td>512</td><td>File: 필수(2, 18)</td></tr><tr><td>163</td><td><code>1010 0011</code></td><td>128 + 32 + 2 + 1</td><td>ServiceControl: 제거 때 삭제, 제거 때 멈춤, 설치 때 멈춤, 설치 때 시작(12)</td></tr><tr><td>3090</td><td><code>1100 0001 0010</code></td><td>2048 + 1024 + 16 + 2</td><td>사용자 지정 동작: 가장(impersonation) 없음, 지연, 원본은 File, <code>.exe</code>(13)</td></tr><tr><td>3410</td><td><code>1101 0101 0010</code></td><td>2048 + 1024 + 256 + 64 + 16 + 2</td><td>같은 것에 되돌리기와 종료 코드 무시를 더함(13)</td></tr></table></div>
+<p>손으로 분해하려면 들어가는 가장 큰 2의 거듭제곱을 빼고 되풀이한다: 3090 - 2048 = 1042, 1042 - 1024 = 18, 18 - 16 = 2, 2 - 2 = 0. 그래서 3090 = 2048 + 1024 + 16 + 2 다. (Microsoft 문서는 사용자 지정 동작의 2 + 16 을 합쳐 "형식 18" 이라 부른다: 패키지가 설치하는 <code>.exe</code> 를 실행한다.)</p>
+<p>16진수로 보면 플래그가 잘 보인다. 16진수 한 자리가 4비트이기 때문이다: 3090 = <code>0xC12</code> 이고, <code>C</code> = <code>1100</code> 은 2048 과 1024, <code>1</code> = <code>0001</code> 은 16, <code>2</code> = <code>0010</code> 은 2 다.</p>
+<h3 id="비트-확인하기와-켜기-and-or">22.5 비트 확인하기와 켜기: AND, OR<a class="plink" href="#비트-확인하기와-켜기-and-or" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>프로그램은 <strong>AND</strong> 로 플래그를 확인한다: 두 수에서 모두 1 인 비트만 남긴다.</p>
+<pre><code class="lang-text">     3090 = 1100 0001 0010
+  AND 1024 = 0100 0000 0000
+          = 0100 0000 0000   not zero: "deferred" is on</code></pre>
+<p><strong>OR</strong>(어느 한쪽이라도 1 이면 1)로 비트를 켜고, 반대 수와의 AND 로 끈다. Windows Installer 조건(튜토리얼 9장)에도 같은 확인이 연산자 <code>&gt;&lt;</code> 로 있다: <code>MYFLAGS &gt;&lt; 2</code> 는 속성 <code>MYFLAGS</code> 에서 값이 2 인 비트가 켜져 있으면 참이다. rubrapack 을 쓰는 데 이것들이 필요하지는 않지만 - 이 수들은 rubrapack 이 모두 계산한다 - 수가 왜 그렇게 생겼는지 설명해 준다.</p>
+<h3 id="쓰이는-곳">22.6 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>제4부의 모든 "u16", "u32 LE". 첫 예는 <a href="formats-cfb.html">복합 파일</a>의 머리와 섹터 사슬이다.</li><li>튜토리얼 <a href="tutorial-02-a-first-installer.html">2</a>, <a href="tutorial-03-versions-and-upgrades.html">3</a>, <a href="tutorial-04-files-and-folders.html">4</a>, <a href="tutorial-12-services-fonts-permissions.html">12</a>, <a href="tutorial-13-running-your-program.html">13</a>장: 표 속의 수.</li></ul>
+<div class="nav"><a href="basics-01-bits-bytes-and-hex.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="basics-03-text.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

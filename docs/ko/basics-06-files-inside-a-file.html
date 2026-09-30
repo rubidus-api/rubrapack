@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>26 파일 속의 파일 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">26장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-05-compression.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="basics-07-tables-and-keys.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-06-files-inside-a-file.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#디스크가-파일을-저장하는-방법"><span class="tf-no">26.1</span>디스크가 파일을 저장하는 방법</a><a class="lv3" href="#msi-는-파일-속의-파일-시스템이다"><span class="tf-no">26.2</span>MSI 는 파일 속의 파일 시스템이다</a><a class="lv4" href="#작은-스트림-미니-스트림"><span class="tf-no"></span>작은 스트림: 미니 스트림</a><a class="lv4" href="#이름"><span class="tf-no"></span>이름</a><a class="lv3" href="#msix-는-묶음-파일이다"><span class="tf-no">26.3</span>MSIX 는 묶음 파일이다</a><a class="lv3" href="#왜-두-설계인가"><span class="tf-no">26.4</span>왜 두 설계인가?</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">26.5</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">26 파일 속의 파일</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#디스크가-파일을-저장하는-방법"><span class="tf-no">26.1</span>디스크가 파일을 저장하는 방법</a><a class="lv3" href="#msi-는-파일-속의-파일-시스템이다"><span class="tf-no">26.2</span>MSI 는 파일 속의 파일 시스템이다</a><a class="lv4" href="#작은-스트림-미니-스트림"><span class="tf-no"></span>작은 스트림: 미니 스트림</a><a class="lv4" href="#이름"><span class="tf-no"></span>이름</a><a class="lv3" href="#msix-는-묶음-파일이다"><span class="tf-no">26.3</span>MSIX 는 묶음 파일이다</a><a class="lv3" href="#왜-두-설계인가"><span class="tf-no">26.4</span>왜 두 설계인가?</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">26.5</span>쓰이는 곳</a></div></div>
+<p>패키지는 여러 파일을 담은 파일 하나다: <code>.msi</code> 는 표, 요약 정보, 캐비닛을 담고, <code>.msix</code> 는 프로그램 파일, 로고, 매니페스트를 담는다. 파일 안에 파일을 넣는 고전적인 방법은 두 가지 - 작은 <strong>파일 시스템</strong>과 <strong>묶음 파일</strong>(archive) - 이고, 두 패키지 형식이 하나씩 쓴다. 이 장은 튜토리얼의 패키지로 둘을 설명한다.</p>
+<h3 id="디스크가-파일을-저장하는-방법">26.1 디스크가 파일을 저장하는 방법<a class="plink" href="#디스크가-파일을-저장하는-방법" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>디스크는 같은 크기의 조각, <strong>섹터</strong>(또는 <em>클러스터</em>)로 나뉜다 - 이를테면 하나에 4096 바이트 - 그리고 0, 1, 2, ... 로 번호가 붙는다. 파일이 한 조각에 다 들어가는 일은 드물고, 받은 섹터들이 나란히 있을 필요도 없다. 그래서 파일 시스템은 데이터 말고 두 가지를 더 둔다:</p>
+<ul><li><strong>디렉터리</strong>: 파일마다 이름, 크기, 그리고 <em>첫</em> 섹터.</li><li><strong>할당 표</strong>: 섹터마다 같은 파일의 <em>다음</em> 섹터 번호, 또는 "마지막"이나 "비어 있음" 표시.</li></ul>
+<p>파일을 읽으려면 디렉터리에서 첫 섹터를 찾고, 표를 따라 섹터에서 섹터로 - <strong>사슬</strong>을 따라 - "마지막" 표시까지 간다:</p>
+<pre><code class="lang-text">  directory:  report.txt   size 10,000   first sector 4
+
+  allocation table:
+    sector:  0     1     2     3     4     5     6     7
+    next:    -     -     -     -     5     7     free  end
+
+  report.txt = sector 4 -&gt; sector 5 -&gt; sector 7 -&gt; end    (3 x 4096 bytes, the last one partly used)</code></pre>
+<p>USB 메모리의 FAT 파일 시스템이 이렇게 동작한다(FAT: <em>file allocation table</em>, 파일 할당 표). 파일을 지우면 섹터를 비었다고 표시할 뿐이고, 파일이 커지면 사슬에 섹터를 더 이을 뿐이다.</p>
+<h3 id="msi-는-파일-속의-파일-시스템이다">26.2 MSI 는 파일 속의 파일 시스템이다<a class="plink" href="#msi-는-파일-속의-파일-시스템이다" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><code>.msi</code> 는 <strong>복합 파일</strong>(Compound File, Microsoft 의 "구조화된 저장소")이다: 위의 방식 그대로를 파일 하나 안에 둔 것이다. 튜토리얼의 첫 <code>hello.msi</code>, 28,672 바이트를 뜯어 보면:</p>
+<pre><code class="lang-text">  offset 0x0000  header           (the 512-byte header, padded to one 4096-byte sector)
+  offset 0x1000  sector 0         the allocation table (FAT)
+  offset 0x2000  sector 1         the directory
+  offset 0x3000  sector 2         the mini FAT (see below)
+  offset 0x4000  sector 3         the mini stream (see below)
+  offset 0x5000  sector 4         cab1.cab, first part
+  offset 0x6000  sector 5         cab1.cab, second part</code></pre>
+<p>머리가 처음 4096 바이트를 차지하므로 섹터 <em>n</em> 은 바이트 (<em>n</em> + 1) x 4096 에서 시작한다. 머리(1장)가 나머지가 어디 있는지 말한다: 오프셋 <code>0x30</code> 의 <code>01 00 00 00</code> - 디렉터리는 섹터 1 에서 시작한다. 섹터 0 의 할당 표를 4바이트 little-endian 수(2장)로 읽으면:</p>
+<div class="tblwrap"><table class="key"><tr><th>섹터</th><th>값</th><th>뜻</th></tr><tr><td>0</td><td><code>0xFFFFFFFD</code></td><td>이 섹터는 할당 표 자신을 담는다</td></tr><tr><td>1</td><td><code>0xFFFFFFFE</code></td><td>사슬의 끝: 디렉터리는 섹터 하나</td></tr><tr><td>2</td><td><code>0xFFFFFFFE</code></td><td>사슬의 끝: 미니 FAT 은 섹터 하나</td></tr><tr><td>3</td><td><code>0xFFFFFFFE</code></td><td>사슬의 끝: 미니 스트림은 섹터 하나</td></tr><tr><td>4</td><td><code>5</code></td><td>다음은 섹터 5</td></tr><tr><td>5</td><td><code>0xFFFFFFFE</code></td><td>사슬의 끝: <code>cab1.cab</code> 은 섹터 4 와 5</td></tr><tr><td>6 ...</td><td><code>0xFFFFFFFF</code></td><td>비어 있음(섹터가 더 없다)</td></tr></table></div>
+<p>안에 든 파일을 <strong>스트림</strong>이라 부른다. 디렉터리에는 스트림마다 128 바이트 항목이 하나씩 있다: UTF-16(3장)으로 쓴 이름, 종류, 첫 섹터, 크기. 첫 항목은 언제나 뿌리(root)다:</p>
+<pre><code class="lang-text">  52 00 6f 00 6f 00 74 00 20 00 45 00 6e 00 74 00 72 00 79 00 00 00 ...
+   R     o     o     t           E     n     t     r     y   (end)</code></pre>
+<h4 id="작은-스트림-미니-스트림">작은 스트림: 미니 스트림<a class="plink" href="#작은-스트림-미니-스트림" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
+<p>4096 바이트 섹터에 20 바이트짜리 표를 넣으면 공간 대부분이 버려진다. 그래서 4096 바이트(머리의 오프셋 <code>0x38</code> 에 있는 수)보다 작은 스트림은 <strong>미니 스트림</strong>이라는 스트림 하나에 함께 두고, 64 바이트 <strong>미니 섹터</strong>로 잘라, 자기 표인 <strong>미니 FAT</strong> 으로 관리한다. 이 패키지에서는 스트림 열아홉 개 - 4~1,392 바이트짜리 표 열여덟과 332 바이트 요약 정보 - 가 섹터 3 의 3,840 바이트 미니 스트림을 나눠 쓴다. 보통 섹터를 쓸 만큼 큰 것은 6,776 바이트 캐비닛뿐이다. 같은 방식을 한 단계 아래에서 한 번 더 쓴 것이다.</p>
+<h4 id="이름">이름<a class="plink" href="#이름" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
+<p>MSI 의 스트림 이름은 이상하게 보인다 - <code>䡀㼿䕷䑬㹪䒲䠯</code>. 이름 하나에 허용되는 31 글자에 더 많은 글자를 넣으려고 Windows Installer 가 표 이름을 한중일 문자 영역의 글자로 눌러 담기 때문이다. <code>rubrapack inspect hello.msi --streams</code> (튜토리얼 18장)는 그것을 풀어 보인다: <code>File</code>, <code>Component</code>, <code>cab1.cab</code>, ... 이름 하나는 평범하다: <code>\005SummaryInformation</code>, 곧 요약 정보로, 복합 파일을 다루는 어느 도구든 읽을 수 있다.</p>
+<h3 id="msix-는-묶음-파일이다">26.3 MSIX 는 묶음 파일이다<a class="plink" href="#msix-는-묶음-파일이다" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><strong>묶음 파일</strong>은 파일 시스템보다 단순하다: 파일을 하나씩, 저마다 작은 머리 뒤에 차례로 쓰고, 끝의 목록이 각각 어디 있는지 말한다. 파일을 제자리에서 키울 수는 없지만 패키지는 그럴 일이 없다. MSIX 가 쓰는 ZIP 형식은 이렇게 생겼다:</p>
+<pre><code class="lang-text">  "PK 03 04"  local header: name, sizes, method   + the file's (compressed) bytes     hello.exe
+  "PK 03 04"  local header                        + bytes                             guide.txt
+  ...                                                                                  (9 files)
+  "PK 01 02"  central directory: one entry per file, with where its local header is
+  "PK 06 06"  end record: how many files, where the central directory starts</code></pre>
+<p>튜토리얼의 <code>hello.msix</code>(11,009 바이트)는 <code>50 4b 03 04</code> - ZIP 을 만든 Phil Katz 의 머리글자 "PK" - 로 시작하고 이름 <code>hello.exe</code> 가 뒤따른다. 중앙 디렉터리는 바이트 10,098 에서 시작해 항목 아홉을 나열한다. 읽는 쪽은 먼저 파일 끝으로 가서 끝 기록을 찾고, 거기서 목록으로 간다. (MSIX 는 4 GiB 넘는 묶음을 위해 만든 ZIP64 형태의 끝 기록 <code>PK 06 06</code> 을 쓴다.)</p>
+<p>항목마다 방법(5장)을 적는다: deflate 는 8, 저장은 0 - 여기서는 PNG 로고 셋이 0, 나머지는 모두 8 이다.</p>
+<h3 id="왜-두-설계인가">26.4 왜 두 설계인가?<a class="plink" href="#왜-두-설계인가" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table class="key"><tr><th></th><th>복합 파일(MSI)</th><th>ZIP(MSIX)</th></tr><tr><td>만든 목적</td><td>제자리에서 고치는 문서(1990년대의 Word, Excel)</td><td>한 번 싸서 여러 번 읽는 파일</td></tr><tr><td>스트림 바꾸기</td><td>그 사슬을 다시 쓴다</td><td>묶음 전체를 다시 쓴다</td></tr><tr><td>작은 조각</td><td>미니 스트림에서 싸다</td><td>조각마다 30 바이트 넘는 머리가 붙는다</td></tr><tr><td>한 조각 읽기</td><td>사슬을 따라간다</td><td>중앙 디렉터리에서 찾는다</td></tr></table></div>
+<p>Windows Installer 는 1999년에 Office 가 쓰던 저장소 위에 만들어졌고, MSIX 는 2018년에 <code>.docx</code> 파일이 쓰는 포장 표준(OPC) 위에 만들어졌다 - 그것이 ZIP 이다. 둘 다 "파일 속의 파일"이다.</p>
+<h3 id="쓰이는-곳">26.5 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>튜토리얼 <a href="tutorial-18-checking-and-looking-inside.html">18</a>장: <code>inspect --streams</code>, <code>extract</code>.</li><li>제4부: <a href="formats-cfb.html">복합 파일</a>, <a href="formats-msi-database.html">MSI 데이터베이스</a>(스트림 이름), <a href="formats-msix.html">MSIX</a>(ZIP 구조).</li></ul>
+<div class="nav"><a href="basics-05-compression.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="basics-07-tables-and-keys.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

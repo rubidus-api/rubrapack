@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>28 키, 인증서, 서명 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">28장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-07-tables-and-keys.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="formats-readme.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-08-keys-certificates-signatures.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#열쇠-하나-대신-둘"><span class="tf-no">28.1</span>열쇠 하나 대신 둘</a><a class="lv3" href="#서명하기와-확인하기"><span class="tf-no">28.2</span>서명하기와 확인하기</a><a class="lv3" href="#인증서-이것은-누구의-키인가"><span class="tf-no">28.3</span>인증서: 이것은 누구의 키인가?</a><a class="lv4" href="#이름-cn-o-c"><span class="tf-no"></span>이름: CN, O, C</a><a class="lv3" href="#사슬과-신뢰"><span class="tf-no">28.4</span>사슬과 신뢰</a><a class="lv4" href="#폐지"><span class="tf-no"></span>폐지</a><a class="lv3" href="#타임스탬프"><span class="tf-no">28.5</span>타임스탬프</a><a class="lv3" href="#키가-사는-곳-파일과-토큰"><span class="tf-no">28.6</span>키가 사는 곳: 파일과 토큰</a><a class="lv4" href="#지문"><span class="tf-no"></span>지문</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">28.7</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">28 키, 인증서, 서명</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#열쇠-하나-대신-둘"><span class="tf-no">28.1</span>열쇠 하나 대신 둘</a><a class="lv3" href="#서명하기와-확인하기"><span class="tf-no">28.2</span>서명하기와 확인하기</a><a class="lv3" href="#인증서-이것은-누구의-키인가"><span class="tf-no">28.3</span>인증서: 이것은 누구의 키인가?</a><a class="lv4" href="#이름-cn-o-c"><span class="tf-no"></span>이름: CN, O, C</a><a class="lv3" href="#사슬과-신뢰"><span class="tf-no">28.4</span>사슬과 신뢰</a><a class="lv4" href="#폐지"><span class="tf-no"></span>폐지</a><a class="lv3" href="#타임스탬프"><span class="tf-no">28.5</span>타임스탬프</a><a class="lv3" href="#키가-사는-곳-파일과-토큰"><span class="tf-no">28.6</span>키가 사는 곳: 파일과 토큰</a><a class="lv4" href="#지문"><span class="tf-no"></span>지문</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">28.7</span>쓰이는 곳</a></div></div>
+<p>튜토리얼 16장은 <code>hello.msi</code> 에 서명한다. 이 장은 그것이 무슨 뜻인지 설명한다: 서명이 파일을 누가 만들었고 아무도 바꾸지 않았음을 어떻게 증명하는지, 인증서가 무엇인지, 그리고 타임스탬프가 왜 인증서가 만료된 뒤에도 서명을 유효하게 두는지.</p>
+<h3 id="열쇠-하나-대신-둘">28.1 열쇠 하나 대신 둘<a class="plink" href="#열쇠-하나-대신-둘" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>가장 오래된 비밀 글쓰기는 양쪽에 열쇠 하나를 쓴다: 잠글 수 있는 사람은 열 수도 있다. <strong>공개 키 암호</strong>(1970년대)는 대신 <strong>키 쌍</strong>을 쓴다: 함께 만들어지고 서로 짝이 되는 두 수다.</p>
+<ul><li><strong>개인 키</strong>는 주인에게만 비밀로 남는다 - 비밀번호로 보호한 파일에, 더 좋게는 키를 절대 내보내지 않는 하드웨어 토큰 안에.</li><li><strong>공개 키</strong>는 모두에게 준다.</li></ul>
+<p>한 키가 한 일은 다른 키만 확인할 수 있다. 서명에서는 이런 뜻이다: 서명을 <em>만드는</em> 것은 개인 키만 할 수 있고, 공개 키가 있는 누구나 그것을 <em>확인</em>할 수 있다. 공개 키를 안다고 개인 키를 찾는 데 도움이 되지는 않는다 - 오늘날의 크기로는 우주의 수명 안에 되지 않는다.</p>
+<p>코드 서명에는 두 방법이 쓰인다:</p>
+<div class="tblwrap"><table class="key"><tr><th>방법</th><th>흔한 키 크기</th><th>참고</th></tr><tr><td>RSA</td><td>2048 또는 3072 비트</td><td>전통의 방법. rubrapack 의 시험 인증서가 RSA 2048 을 쓴다</td></tr><tr><td>ECDSA</td><td>256 또는 384 비트(P-256, P-384)</td><td>타원 곡선: 같은 강도에 훨씬 작은 키</td></tr></table></div>
+<h3 id="서명하기와-확인하기">28.2 서명하기와 확인하기<a class="plink" href="#서명하기와-확인하기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>서명은 파일 전체 위에 만들지 않는다 - 200 MB 패키지라면 느리다 - 파일의 <strong>해시</strong>(4장) 위에 만든다:</p>
+<pre><code class="lang-text">  signing (the publisher):
+    file ---hash---&gt; digest ---private key---&gt; signature      (stored in the file)
+
+  checking (any user's computer):
+    file ---hash---&gt; digest'
+    signature ---public key---&gt; digest
+    digest' = digest ?  yes: unchanged and signed by that key.  no: changed, or another key.</code></pre>
+<p>파일의 비트 하나만 바뀌어도 해시가 완전히 바뀌므로 어떤 수정도 확인을 통과하지 못한다. 그리고 공개 키가 받아들이는 서명은 개인 키만 만들 수 있으므로, 다른 누구도 바뀐 파일에 게시자의 이름으로 서명할 수 없다.</p>
+<h3 id="인증서-이것은-누구의-키인가">28.3 인증서: 이것은 누구의 키인가?<a class="plink" href="#인증서-이것은-누구의-키인가" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>서명은 어떤 공개 키로 확인된다 - 그런데 누구의 키인가? 누구든 키 쌍을 만들어 "Example Software" 라고 부를 수 있다. <strong>인증서</strong>가 그 답이다: "이 공개 키는 <em>이</em> 이름의 것이다"라고 적은 작은 문서로, 그 이름을 확인한 <strong>인증 기관</strong>(CA)이 서명한 것이다.</p>
+<p>rubrapack 자체 시험용으로 만든 시험 인증서를 <code>openssl x509 -text</code> 가 보이는 대로 옮기면:</p>
+<div class="tblwrap"><table><tr><th>필드</th><th>값</th></tr><tr><td>주체(Subject, 누구)</td><td><code>CN=rubrapack test signer, O=rubrapack tests</code></td></tr><tr><td>발급자(Issuer, 누가 보증)</td><td><code>CN=rubrapack test root</code></td></tr><tr><td>유효 기간 시작 / 끝</td><td>2026년 9월 30일 / 2036년 9월 27일</td></tr><tr><td>일련번호</td><td><code>71AB698C19EACB47D6A00D71A711CF7A0ACDB236</code></td></tr><tr><td>공개 키</td><td>RSA, 2048 비트</td></tr><tr><td>기본 제약</td><td><code>CA:FALSE</code> - 다른 인증서를 보증할 수 없다</td></tr><tr><td>키 용도</td><td>디지털 서명</td></tr><tr><td>확장 키 용도</td><td>코드 서명</td></tr><tr><td>서명</td><td>sha256WithRSAEncryption, 발급자의 개인 키로 만듦</td></tr></table></div>
+<p>rubrapack 은 서명하기 전에 이것들을 확인한다: 인증서는 코드 서명용이어야 하고, CA 의 것이 아니어야 하며, 오늘 유효해야 한다(튜토리얼 16장).</p>
+<h4 id="이름-cn-o-c">이름: CN, O, C<a class="plink" href="#이름-cn-o-c" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
+<p>주체는 부분들의 목록으로, 부분마다 종류와 값이 있다: <code>CN</code>(일반 이름), <code>O</code>(조직), <code>OU</code>(부서), <code>L</code>(도시), <code>S</code>(주/도), <code>C</code>(나라, 두 글자). 인증서는 이것을 어떤 순서로 저장하고, 프로그램마다 쓰는 순서가 다르다. 이 인증서는 <code>CN</code> 다음에 <code>O</code> 순서로 저장되어 있고, Windows 는 부분들을 마지막 것부터 거꾸로 쓴다:</p>
+<pre><code class="lang-text">  as stored:          CN=rubrapack test signer, O=rubrapack tests
+  as Windows writes:  O=rubrapack tests, CN=rubrapack test signer</code></pre>
+<p>MSIX 의 <code>publisher</code> 는 정확히 Windows 의 형태여야 한다(튜토리얼 17장) - 그래서 둘이 다르면 rubrapack 이 옮겨 적을 글을 출력해 준다.</p>
+<h3 id="사슬과-신뢰">28.4 사슬과 신뢰<a class="plink" href="#사슬과-신뢰" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>시험 인증서는 "rubrapack test root" 가 발급했고, 그 루트의 인증서는 자기 자신이 서명했다 - 그것이 <strong>루트</strong>다. 실제 인증서는 <strong>사슬</strong>을 이룬다:</p>
+<pre><code class="lang-text">  your code signing certificate    issued by   -&gt;  an intermediate CA certificate
+  the intermediate certificate     issued by   -&gt;  a root CA certificate
+  the root certificate             issued by   -&gt;  itself</code></pre>
+<p>Windows 는 믿는 루트 인증서의 목록, <strong>신뢰할 수 있는 루트 저장소</strong>를 두고, Microsoft 가 관리한다. 사슬이 그중 하나에서 끝나면 서명을 믿는다. 중간 인증서는 서명 안에 함께 실려 가므로(<code>--cert</code> 가 더한다) Windows 는 누구에게 묻지 않고 사슬을 만들 수 있다.</p>
+<p><code>rubrapack verify --trust ca.pem</code> 은 내가 지정한 루트로, <code>--system-roots</code> 는 컴퓨터 자신의 목록으로 확인한다. 직접 만든 인증서(튜토리얼 16장)는 사슬이 Windows 가 믿는 어디에서도 끝나지 않는다 - 그래서 시험에는 괜찮지만 사용자에게는 쓸모가 없다.</p>
+<h4 id="폐지">폐지<a class="plink" href="#폐지" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
+<p>개인 키를 도둑맞으면 CA 는 그 인증서를 <strong>폐지</strong>한다: 일련번호를 목록(CRL)에 공개하거나 그에 대한 질문(OCSP)에 답한다. Windows 는 네트워크에 닿을 때 이것을 확인한다. <code>rubrapack verify</code> 는 <code>revocation: not-checked</code> 라고 알린다: 스스로 온라인에 나가지 않는다.</p>
+<h3 id="타임스탬프">28.5 타임스탬프<a class="plink" href="#타임스탬프" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>인증서는 만료된다 - 오늘날 코드 서명 인증서는 길어야 39개월 뒤에. 그 인증서로 서명한 파일들은 어떻게 되나? 아무 도움이 없으면 그날부터 서명은 효력이 없다.</p>
+<p><strong>타임스탬프</strong>가 이것을 해결한다. 서명할 때 rubrapack 은 서명의 해시를 <strong>타임스탬프 기관</strong>(TSA) - CA 가 운영하는 서버 - 에 보낸다. TSA 는 "이 해시는 이 시각에 있었다"를 자기 인증서로 서명해 돌려주고, 그것이 서명 옆에 파일로 들어간다(RFC 3161). 나중에 Windows 는 확인한다: 서명한 인증서가 <em>타임스탬프가 보이는 시각에</em> 유효했는가? 그렇다면 서명은 인증서가 만료된 한참 뒤에도 계속 유효하다.</p>
+<pre><code class="lang-text">  signed 2026-10-01, certificate valid until 2029-10-01
+  checked 2031-05-12:
+    without a timestamp: certificate expired -&gt; signature not valid
+    with a timestamp:    valid on 2026-10-01 (the TSA says so) -&gt; signature valid</code></pre>
+<p>TSA 는 파일을 보지 않는다. 해시만 본다.</p>
+<h3 id="키가-사는-곳-파일과-토큰">28.6 키가 사는 곳: 파일과 토큰<a class="plink" href="#키가-사는-곳-파일과-토큰" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table><tr><th>형태</th><th>무엇인가</th></tr><tr><td><code>.pfx</code> / <code>.p12</code> (PKCS #12)</td><td>개인 키, 인증서, 흔히 사슬까지 한 파일에 담고 비밀번호로 보호한 것. Windows 가 내보내는 형태</td></tr><tr><td><code>.pem</code></td><td>글: 이진 형태를 base64 로 바꿔 <code>-----BEGIN CERTIFICATE-----</code> / <code>-----END ...-----</code>(또는 <code>PRIVATE KEY</code>) 줄 사이에 둔 것. Linux 도구들이 쓴다</td></tr><tr><td><code>.der</code>, <code>.cer</code></td><td>같은 것의 이진 형태</td></tr><tr><td>Windows 인증서 저장소</td><td>Windows 가 보관하는 키(<code>certmgr.msc</code>). 지문으로 쓴다(<code>--key-store</code>)</td></tr><tr><td>하드웨어 토큰, 클라우드 HSM</td><td>개인 키가 장치를 떠나지 않는다. 프로그램이 장치에 서명을 부탁한다(PKCS #11, <code>--pkcs11</code>)</td></tr></table></div>
+<p>2023년부터 CA 는 하드웨어 안의 키에만 코드 서명 인증서를 발급하므로, 배포용으로는 마지막 두 줄을 쓰게 된다.</p>
+<p>이진(DER) 인증서 자체도 길이가 앞에 붙은 필드들의 둥지다. 시험 인증서는 <code>30 82 03 d8</code> 로 시작한다: <code>30</code> 은 "묶음이 뒤따른다", <code>82</code> 는 "그 길이가 다음 2 바이트를 차지한다", 그리고 <code>03 d8</code> 이 그 길이 984 다 - 이번에는 big-endian 이다 (2장). 984 바이트에 이 네 바이트를 더하면 인증서 전체 988 바이트가 된다.</p>
+<h4 id="지문">지문<a class="plink" href="#지문" aria-label="이 절의 주소" title="이 절의 주소">#</a></h4>
+<p>인증서의 <strong>지문</strong>(thumbprint)은 그 이진 형태의 SHA-1 해시(4장)다 - 여기서는 <code>2E AB FE 60 19 0A F6 6C 52 E4 29 31 AF A6 01 BE C0 EF 86 0D</code>. 비밀이 아니다. 인증서 하나를 가리키는 짧은 이름이고, Windows 저장소와 <code>rubrapack keys list</code> 가 인증서를 이것으로 부른다.</p>
+<h3 id="쓰이는-곳">28.7 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>튜토리얼 <a href="tutorial-16-signing.html">16</a>장: <code>sign</code>, <code>verify</code>, 키, 타임스탬프.</li><li>튜토리얼 <a href="tutorial-17-msix-and-bundles.html">17</a>장: MSIX 게시자.</li><li>제4부: <a href="formats-authenticode.html">Authenticode</a>(정확히 무엇을 해시하고 서명하는지, Windows 가 받아들이는 구조), <a href="formats-verify.html">Windows 와 대조하기</a>.</li></ul>
+<div class="nav"><a href="basics-07-tables-and-keys.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="formats-readme.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

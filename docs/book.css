@@ -148,6 +148,9 @@ pre code { background:none; padding:0; }
    A table takes the width it needs and stands centred; only when it cannot fit does its wrapper
    scroll. Long code in a cell may break anywhere rather than push the table wide. */
 .tblwrap { overflow-x:auto; text-align:center; }
+figure { margin:1.2rem 0; text-align:center; }
+figure img { max-width:100%; height:auto; border:1px solid var(--rule); }
+figcaption { margin-top:.4rem; color:var(--muted); font-size:.92em; }
 .tblwrap > table { display:inline-table; width:auto; max-width:none; margin:1.1rem 0; text-align:left; }
 table { border-collapse:collapse; margin:1.1rem auto; font-size:.95rem; width:auto; max-width:100%;
   border:2px solid var(--fg); table-layout:auto; line-height:1.6; }

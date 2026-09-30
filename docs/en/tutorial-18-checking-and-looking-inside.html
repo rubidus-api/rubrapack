@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>18 Checking and looking inside - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 18 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-17-msix-and-bundles.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-19-automation.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-18-checking-and-looking-inside.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#checking-a-source-lint"><span class="tf-no">18.1</span>Checking a source: lint</a><a class="lv3" href="#checking-a-package-lint-file"><span class="tf-no">18.2</span>Checking a package: lint &lt;file&gt;</a><a class="lv3" href="#looking-at-the-tables-inspect"><span class="tf-no">18.3</span>Looking at the tables: inspect</a><a class="lv3" href="#files-and-streams"><span class="tf-no">18.4</span>Files and streams</a><a class="lv3" href="#unpacking-without-installing-extract"><span class="tf-no">18.5</span>Unpacking without installing: extract</a><a class="lv3" href="#signatures-verify"><span class="tf-no">18.6</span>Signatures: verify</a><a class="lv3" href="#msix-packages"><span class="tf-no">18.7</span>MSIX packages</a><a class="lv3" href="#faster-test-builds---compress-none"><span class="tf-no">18.8</span>Faster test builds: --compress none</a><a class="lv3" href="#guids-guid"><span class="tf-no">18.9</span>GUIDs: guid</a><a class="lv3" href="#help-on-the-command-line"><span class="tf-no">18.10</span>Help on the command line</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">18 Checking and looking inside</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#checking-a-source-lint"><span class="tf-no">18.1</span>Checking a source: lint</a><a class="lv3" href="#checking-a-package-lint-file"><span class="tf-no">18.2</span>Checking a package: lint &lt;file&gt;</a><a class="lv3" href="#looking-at-the-tables-inspect"><span class="tf-no">18.3</span>Looking at the tables: inspect</a><a class="lv3" href="#files-and-streams"><span class="tf-no">18.4</span>Files and streams</a><a class="lv3" href="#unpacking-without-installing-extract"><span class="tf-no">18.5</span>Unpacking without installing: extract</a><a class="lv3" href="#signatures-verify"><span class="tf-no">18.6</span>Signatures: verify</a><a class="lv3" href="#msix-packages"><span class="tf-no">18.7</span>MSIX packages</a><a class="lv3" href="#faster-test-builds---compress-none"><span class="tf-no">18.8</span>Faster test builds: --compress none</a><a class="lv3" href="#guids-guid"><span class="tf-no">18.9</span>GUIDs: guid</a><a class="lv3" href="#help-on-the-command-line"><span class="tf-no">18.10</span>Help on the command line</a></div></div>
+<p>Goal: catch mistakes before users do - check a source or a finished package, look at every table, file and stream in it, unpack it without installing, and check its signature. These commands also work on packages that other tools made.</p>
+<p>This chapter uses the <code>hello.toml</code> of chapter 17 and the <code>hello.msi</code> built from it.</p>
+<h3 id="checking-a-source-lint">18.1 Checking a source: <code>lint</code><a class="plink" href="#checking-a-source-lint" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>lint</code> runs every check <code>build</code> runs, and writes nothing:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack lint hello.toml
+C:\work\hello&gt; rubrapack lint hello.toml --target msix
+C:\work\hello&gt; rubrapack lint hello.toml --arch x86 -D VERSION=2.2.0</code></pre>
+<p>No output and exit code 0 means no problem. <code>--target msix</code> checks the source for an MSIX instead of an MSI; <code>--arch</code> and <code>-D</code> check it as <code>build</code> with the same options would build it.</p>
+<p>Warnings do not stop a build: something is probably not what you meant, but the package works. <code>--strict</code> makes them fail too, which is what an automatic build wants. Suppose the product's name is Korean and there is no <code>summary-name</code> (chapter 5):</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack lint ko.toml
+ko.toml:1:1: warning[RP1203]: name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'
+C:\work\hello&gt; echo %errorlevel%
+0
+C:\work\hello&gt; rubrapack lint ko.toml --strict
+ko.toml:1:1: warning[RP1203]: name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'
+C:\work\hello&gt; echo %errorlevel%
+5</code></pre>
+<p><code>%errorlevel%</code> is how <code>cmd</code> shows the exit code of the last command; in PowerShell it is <code>$LASTEXITCODE</code>. The exit codes:</p>
+<div class="tblwrap"><table><tr><th>Code</th><th>Meaning</th></tr><tr><td>0</td><td>success</td></tr><tr><td>1</td><td>an error in the source</td></tr><tr><td>2</td><td>a command line rubrapack does not understand</td></tr><tr><td>3</td><td>a file could not be read or written</td></tr><tr><td>4</td><td>signing or a signature</td></tr><tr><td>5</td><td><code>lint</code> found a problem (or a warning, with <code>--strict</code>)</td></tr><tr><td>6</td><td>the network (a timestamp server)</td></tr></table></div>
+<h3 id="checking-a-package-lint-file">18.2 Checking a package: <code>lint &lt;file&gt;</code><a class="plink" href="#checking-a-package-lint-file" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack lint hello.msi
+hello.msi: 0 errors, 0 warnings
+C:\work\hello&gt; rubrapack lint hello.msix
+hello.msix: 7 files, 0 errors, 0 warnings
+C:\work\hello&gt; rubrapack lint hello.msixbundle
+hello.msixbundle: 4 files, 0 errors, 0 warnings</code></pre>
+<p>For an MSI it checks the tables with the rules Windows Installer applies: what would stop an installation is an error, anything else a warning. A package made by another tool may well have warnings. Here a product name was typed in a program that stores accented letters in two pieces (see <a href="basics-03-text.html#unicode-normalization">Unicode normalization</a> in Part III):</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack lint cafe.msi
+cafe.msi: warning[RP2105]: lint: Feature row 'Main': column Title is not in NFC (1 row); build --nfc puts folder, file and shortcut names in NFC
+cafe.msi: warning[RP2105]: lint: Property row 'ProductName': column Value is not in NFC (1 row); build --nfc puts folder, file and shortcut names in NFC
+cafe.msi: 0 errors, 2 warnings</code></pre>
+<p>For an MSIX it checks what Windows checks before installing: the ZIP archive, the block map, the hash of every block, and that the manifest names files that are there. <code>lint new.msi --previous old.msi</code> checks an upgrade (chapter 3).</p>
+<h3 id="looking-at-the-tables-inspect">18.3 Looking at the tables: <code>inspect</code><a class="plink" href="#looking-at-the-tables-inspect" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An MSI is a small database. <code>inspect</code> with a table's name prints that table:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi File
+File	Component_	FileName	FileSize	Version	Language	Attributes	Sequence
+s72	s72	l255	i4	S72	S20	I2	i4
+File	File
+F_6d1508f52f6615459567	C_a10be66379e69940a2e0	guide.txt	6			512	1
+Hello	C_185f8db32271fe25f561	hello.exe	17920	1.2.3.4	1033	512	2</code></pre>
+<p>This is Windows Installer's own text format for tables (<em>IDT</em>), which its tools read too. The first three lines are the header:</p>
+<ol><li>the column names;</li><li>each column's type: <code>s72</code> a string of up to 72 characters, <code>l255</code> a <em>localizable</em> string, <code>i4</code> a 4-byte integer, <code>i2</code> a 2-byte one; a capital letter (<code>S72</code>, <code>I2</code>) means the column may be empty;</li><li>the table's name, then its key columns - the ones that make a row unique.</li></ol>
+<p>Every row after it is one file. <code>hello.exe</code> has a version and a language (1033 is English (United States)) because it is a program with a version resource; <code>guide.txt</code> has none. Attributes <code>512</code> is the bit "vital" (chapter 4: the installation fails if the file cannot be written). Part IV explains every type and how the rows are stored.</p>
+<p>Without a table name, <code>inspect</code> lists every table with its row and column counts, and the <em>summary information</em>, the few facts Windows shows in a file's properties:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi
+code page: 65001
+strings: 156
+tables: 19
+  AdminExecuteSequence  rows=8 columns=3
+  ...
+  File  rows=2 columns=8
+  ...
+summary:
+  2 = Installation Database
+  3 = Hello
+  4 = Example Software
+  5 = Installer
+  7 = x64;1033
+  9 = {7FC806A2-F359-4941-A159-26A77B78F839}
+  14 = 200
+  15 = 2
+  18 = rubrapack 0.7.0</code></pre>
+<p>The numbers of the summary are property IDs: 2 title, 3 subject, 4 author, 5 keywords, 7 the platform and languages, 9 the <em>package code</em> (a new GUID for every build), 14 the Windows Installer version needed (200 = 2.0), 15 word flags (2 = compressed), 18 the program that made it. <code>--summary</code> prints only them.</p>
+<h3 id="files-and-streams">18.4 Files and streams<a class="plink" href="#files-and-streams" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi --files
+[ProgramFiles64Folder]\Hello\guide.txt	6	F_6d1508f52f6615459567	C_a10be66379e69940a2e0			2b6739281f9372442df30e784b7dbdc7
+[ProgramFiles64Folder]\Hello\hello.exe	17920	Hello	C_185f8db32271fe25f561	1.2.3.4	1033</code></pre>
+<p>One line per file: where it installs, size, file ID, component, version, language, and the MD5 hash Windows uses to decide whether a file without a version needs replacing (a program is compared by its version instead, so it has none).</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi --streams
+table  40	File
+stream 6821	cab1.cab
+table  14	Media
+table  728	_Columns
+...
+stream 332	!SummaryInformation</code></pre>
+<p>A <em>stream</em> is a file inside the package (Part IV: the package is a file system in a file). Each table is one stream; <code>cab1.cab</code> holds the compressed files; <code>!SummaryInformation</code> the summary.</p>
+<p>A cabinet by itself can be inspected too - the external one of chapter 15:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect out-x64\hello-x64.cab
+6	F_6d1508f52f6615459567
+17920	Hello</code></pre>
+<h3 id="unpacking-without-installing-extract">18.5 Unpacking without installing: <code>extract</code><a class="plink" href="#unpacking-without-installing-extract" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack extract hello.msi -d unpacked
+unpacked: 2 files, 17926 bytes</code></pre>
+<p>The files come out as they would install, below the names of the standard folders:</p>
+<pre><code class="lang-text">unpacked\ProgramFiles64Folder\Hello\guide.txt
+unpacked\ProgramFiles64Folder\Hello\hello.exe</code></pre>
+<p><code>extract</code> works on <code>.msi</code>, <code>.cab</code>, <code>.msix</code> and <code>.msixbundle</code>, and is safe on packages from anywhere: the target folder must be new or empty; every file is checked against its size and hash; names that would write outside the folder (<code>..</code>, a drive, <code>CON</code>) are refused; and nothing is written until the whole package has passed. Limits guard against a package made to fill your disk:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack extract hello.msi -d small --limit-entries 2
+rubrapack: error[RP0008]: 'hello.msi': 4 entries, more than the limit 2 (--limit-entries); nothing was extracted
+C:\work\hello&gt; rubrapack extract hello.msi -d small --limit-bytes 1000
+rubrapack: error[RP0008]: 'hello.msi': more than 1000 bytes to write (--limit-bytes); nothing was extracted</code></pre>
+<p>The defaults are 100,000 entries and 16 GiB. (The four entries are the two files and the two folders, <code>ProgramFiles64Folder</code> and <code>Hello</code>.)</p>
+<h3 id="signatures-verify">18.6 Signatures: <code>verify</code><a class="plink" href="#signatures-verify" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Chapter 16 showed <code>verify</code>. It is the check to run on what you are about to publish:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack verify hello.msi --system-roots</code></pre>
+<h3 id="msix-packages">18.7 MSIX packages<a class="plink" href="#msix-packages" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msix
+C:\work\hello&gt; rubrapack inspect hello.msix --files
+C:\work\hello&gt; rubrapack inspect hello.msix --manifest</code></pre>
+<p>The first shows the identity, the executable and the files, after checking every block's hash. Chapter 17 showed the other two.</p>
+<h3 id="faster-test-builds---compress-none">18.8 Faster test builds: <code>--compress none</code><a class="plink" href="#faster-test-builds---compress-none" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Compression takes most of a build's time. While you try things out, leave it out:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o fast.msi --compress none</code></pre>
+<p>The package is bigger (here 45056 bytes instead of 32768) and works the same.</p>
+<h3 id="guids-guid">18.9 GUIDs: <code>guid</code><a class="plink" href="#guids-guid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack guid
+{98AE4FED-BF0B-4C77-B712-E0649EB47178}
+C:\work\hello&gt; rubrapack guid --from hello
+{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}</code></pre>
+<p>The first is random - new every time - for an upgrade code. The second is the GUID rubrapack <em>derives</em> from a text; it is the same on every computer, every time. rubrapack derives component GUIDs this way, which is why they stay the same from version to version. Part III <a href="basics-04-guids-and-hashes.html#guids-from-hashes-guid---from">shows the calculation</a>.</p>
+<h3 id="help-on-the-command-line">18.10 Help on the command line<a class="plink" href="#help-on-the-command-line" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack help
+rubrapack 0.7.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+
+usage: rubrapack &lt;command&gt; [arguments]
+
+commands:
+  build    build a package from a source file
+  sign     sign a PE file, an MSI package, an MSIX package or bundle
+  ...
+C:\work\hello&gt; rubrapack help sign
+usage: rubrapack sign &lt;file.exe|.dll|.msi|.msix|.msixbundle&gt; (--key &lt;key.pfx|.pem&gt; ...
+C:\work\hello&gt; rubrapack version
+rubrapack 0.7.0 (proven_c_lib-v0.1.1)</code></pre>
+<p><code>rubrapack --help</code> is the same as <code>rubrapack help</code>. <code>help &lt;command&gt;</code> prints that command's options</p>
+<ul><li>the short form of Part II, which has them all with their meaning.</li></ul>
+<div class="nav"><a href="tutorial-17-msix-and-bundles.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-19-automation.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

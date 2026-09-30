@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>17 MSIX packages and bundles - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 17 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-16-signing.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-18-checking-and-looking-inside.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-17-msix-and-bundles.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#msi-or-msix"><span class="tf-no">17.1</span>MSI or MSIX?</a><a class="lv3" href="#the-folder"><span class="tf-no">17.2</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">17.3</span>The source</a><a class="lv3" href="#the-packages-identity-msix"><span class="tf-no">17.4</span>The package&#x27;s identity: [msix]</a><a class="lv3" href="#the-application-msix-appid"><span class="tf-no">17.5</span>The application: [msix-app.ID]</a><a class="lv3" href="#extras-msix-extensionid"><span class="tf-no">17.6</span>Extras: [msix-extension.ID]</a><a class="lv3" href="#what-the-other-tables-become"><span class="tf-no">17.7</span>What the other tables become</a><a class="lv3" href="#building-for-testing---unsigned-test"><span class="tf-no">17.8</span>Building for testing: --unsigned-test</a><a class="lv3" href="#signing-it"><span class="tf-no">17.9</span>Signing it</a><a class="lv3" href="#all-architectures-in-one-file-a-bundle"><span class="tf-no">17.10</span>All architectures in one file: a bundle</a><a class="lv3" href="#compression"><span class="tf-no">17.11</span>Compression</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">17.12</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">17 MSIX packages and bundles</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#msi-or-msix"><span class="tf-no">17.1</span>MSI or MSIX?</a><a class="lv3" href="#the-folder"><span class="tf-no">17.2</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">17.3</span>The source</a><a class="lv3" href="#the-packages-identity-msix"><span class="tf-no">17.4</span>The package&#x27;s identity: [msix]</a><a class="lv3" href="#the-application-msix-appid"><span class="tf-no">17.5</span>The application: [msix-app.ID]</a><a class="lv3" href="#extras-msix-extensionid"><span class="tf-no">17.6</span>Extras: [msix-extension.ID]</a><a class="lv3" href="#what-the-other-tables-become"><span class="tf-no">17.7</span>What the other tables become</a><a class="lv3" href="#building-for-testing---unsigned-test"><span class="tf-no">17.8</span>Building for testing: --unsigned-test</a><a class="lv3" href="#signing-it"><span class="tf-no">17.9</span>Signing it</a><a class="lv3" href="#all-architectures-in-one-file-a-bundle"><span class="tf-no">17.10</span>All architectures in one file: a bundle</a><a class="lv3" href="#compression"><span class="tf-no">17.11</span>Compression</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">17.12</span>What happened inside</a></div></div>
+<p>Goal: build Hello as an MSIX package too - the newer package format of Windows - from the same source, then as one bundle that holds all three architectures.</p>
+<h3 id="msi-or-msix">17.1 MSI or MSIX?<a class="plink" href="#msi-or-msix" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table class="key"><tr><th></th><th>MSI (<code>.msi</code>)</th><th>MSIX (<code>.msix</code>)</th></tr><tr><td>Installs</td><td>anywhere the package says, and changes the computer as told</td><td>into a sealed folder Windows owns; files and registry the app writes are kept apart</td></tr><tr><td>Removal</td><td>as clean as the package makes it</td><td>always complete: nothing is left behind</td></tr><tr><td>Signature</td><td>recommended</td><td><strong>required</strong>: Windows does not install an unsigned MSIX (except for testing, below)</td></tr><tr><td>Can do</td><td>everything in this tutorial</td><td>files, shortcuts, file types, registry, fonts, a command-line alias, a start-at-sign-in task</td></tr><tr><td>Cannot do</td><td>-</td><td>services, custom actions, environment variables, INI files, permissions, conditions, dialogs</td></tr></table></div>
+<p>Many products ship both. rubrapack builds either from one source: the output's extension decides.</p>
+<h3 id="the-folder">17.2 The folder<a class="plink" href="#the-folder" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Three logos go next to the source, in <code>assets\</code>: PNG pictures of exactly 150x150, 44x44 and 50x50 pixels. The Start menu and the Settings app show them. Without them the package gets plain one-colour logos - give all three or none.</p>
+<pre><code class="lang-text">C:\work\hello\
+    assets\
+        Square150x150.png
+        Square44x44.png
+        StoreLogo.png
+    dist\
+        x64\hello.exe
+        x86\hello.exe
+        arm64\hello.exe
+        docs\guide.txt
+    hello.toml</code></pre>
+<h3 id="the-source">17.3 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 17: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+upgrade-code-x86 = "{7D1C2B3A-4E5F-4061-9728-3A4B5C6D7E8F}"
+upgrade-code-arm64 = "{0E9F8D7C-6B5A-4948-8372-6150F4E3D2C1}"
+
+[define]
+VERSION = "2.1.0"
+
+[msix]
+identity-name = "ExampleSoftware.Hello"
+publisher = "CN=Example Software"
+publisher-display-name = "Example Software"
+min-version = "10.0.17763.0"
+
+[msix-app.Hello]
+executable = "Hello"
+display-name = "Hello"
+description = "Says hello."
+logo-150 = "assets/Square150x150.png"
+logo-44 = "assets/Square44x44.png"
+store-logo = "assets/StoreLogo.png"
+
+[msix-extension.Command]
+kind = "alias"
+alias = "hello.exe"
+
+[msix-extension.AtSignIn]
+kind = "startup-task"
+display-name = "Hello"
+enabled = false
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/$(ARCH)/hello.exe"
+
+[files.DocFiles]
+dir = "INSTALLDIR"
+glob = "dist/docs/**"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"
+
+[assoc.HelloDoc]
+extension = ".hello"
+prog-id = "ExampleSoftware.HelloDocument"
+description = "Hello document"
+target = "file:Hello"
+
+[registry.Greeting]
+root = "HKMU"
+key = "Software\\Example Software\\Hello"
+name = "Greeting"
+value = "Hello"
+
+[env.HelloHome]
+name = "HELLO_HOME"
+value = "[INSTALLDIR]"
+msi-only = true</code></pre>
+<h3 id="the-packages-identity-msix">17.4 The package's identity: <code>[msix]</code><a class="plink" href="#the-packages-identity-msix" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table><tr><th>Key</th><th>Meaning</th></tr><tr><td><code>identity-name</code></td><td>the package's name for Windows, 3-50 characters of <code>A-Z a-z 0-9 . -</code>; by custom <code>Company.Product</code>. Like the upgrade code of an MSI it must never change: a new version with the same name and publisher replaces the old one.</td></tr><tr><td><code>publisher</code></td><td>the <em>subject</em> of the certificate you will sign with, written as Windows writes it (next section)</td></tr><tr><td><code>publisher-display-name</code></td><td>the publisher's name people see; the default is <code>[package] manufacturer</code></td></tr><tr><td><code>min-version</code></td><td>the oldest Windows it installs on, as <code>10.0.&lt;build&gt;.0</code>; the default <code>10.0.17763.0</code> is Windows 10 version 1809</td></tr></table></div>
+<p>The version is <code>[package] version</code> with a fourth part: <code>2.1.0</code> becomes <code>2.1.0.0</code>.</p>
+<h3 id="the-application-msix-appid">17.5 The application: <code>[msix-app.ID]</code><a class="plink" href="#the-application-msix-appid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An MSIX lists the <em>applications</em> it contains - the entries in the Start menu. <code>executable</code> names the <code>[file.*]</code> that starts it; the folder of that file (here <code>INSTALLDIR</code>) becomes the package's own folder. <code>display-name</code> and <code>description</code> default to the package's name. Several <code>[msix-app.*]</code> tables give several entries.</p>
+<h3 id="extras-msix-extensionid">17.6 Extras: <code>[msix-extension.ID]</code><a class="plink" href="#extras-msix-extensionid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li><code>kind = "alias"</code>: typing <code>hello.exe</code> in a console starts the application, from any folder - the MSIX way of putting a program on the <code>PATH</code>.</li><li><code>kind = "startup-task"</code>: the application starts when the user signs in, once it has been run once. <code>enabled = false</code> leaves it off until the user turns it on in Task Manager's Startup apps, which shows <code>display-name</code>. <code>task-id</code> names the task for Windows; the default is the table's ID (here <code>AtSignIn</code>, as the manifest below shows).</li></ul>
+<p>With several <code>[msix-app.*]</code> tables, <code>app = "Hello"</code> says which application an extension belongs to; the default is the first. An MSI build leaves these tables out.</p>
+<h3 id="what-the-other-tables-become">17.7 What the other tables become<a class="plink" href="#what-the-other-tables-become" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li><code>[shortcut.StartMenu]</code> in <code>Programs</code> to the application's executable <em>is</em> the application's Start menu entry. A shortcut on the <code>Desktop</code> also works, from <code>min-version = "10.0.19645.0"</code> on. Shortcuts elsewhere, with arguments or with an <code>icon</code>, are MSI only (<code>RP1613</code>).</li><li><code>[assoc.HelloDoc]</code> becomes a file type association of the application; the application's logo stands for the file type.</li><li><code>[registry.Greeting]</code> goes into the package's <em>virtual registry</em>: the application sees the value as if it were in the real registry, while the computer's registry stays untouched. Only keys under <code>Software</code> can go there (<code>RP1612</code>).</li><li><code>[env.HelloHome]</code>: an MSIX cannot set environment variables. Without <code>msi-only = true</code> the build stops:</li></ul>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msix --unsigned-test
+hello.toml:65:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it</code></pre>
+<p><code>msi-only = true</code> keeps the table in the MSI and leaves it out of the MSIX. rubrapack never drops something silently: what an MSIX cannot hold is an error until you say what you want.</p>
+<p>Features, properties, dialogs and <code>[arp]</code> concern Windows Installer only and are not used. <code>rubrapack lint hello.toml --target msix</code> checks a source for MSIX without building it.</p>
+<h3 id="building-for-testing---unsigned-test">17.8 Building for testing: <code>--unsigned-test</code><a class="plink" href="#building-for-testing---unsigned-test" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msix --unsigned-test
+C:\work\hello&gt; rubrapack build hello.toml -o hello.msi</code></pre>
+<p>Windows installs an unsigned MSIX only when the package says it is meant for testing and the installer says it accepts that. <code>--unsigned-test</code> adds that mark (it changes the publisher, so the package is a different package from the signed one). Install it in PowerShell, as administrator because it contains a program:</p>
+<pre><code class="lang-text">PS C:\work\hello&gt; Add-AppxPackage -Path hello.msix -AllowUnsigned
+PS C:\work\hello&gt; hello.exe
+PS C:\work\hello&gt; Get-AppxPackage ExampleSoftware.Hello | Remove-AppxPackage</code></pre>
+<p>Such a package is for your own test computer only.</p>
+<h3 id="signing-it">17.9 Signing it<a class="plink" href="#signing-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>For people to install it, sign it (chapter 16) - the MSIX's <code>publisher</code> must be exactly the certificate's subject. Otherwise signing stops and prints the subject to use:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msix --key signer.pfx --pass-env SIGN_PASS
+rubrapack: error[RP0011]: 'hello.msix': the package's publisher "CN=Example Software" is not the certificate's subject "O=Example Software Ltd, CN=Example Software"; set [msix] publisher to it (without --unsigned-test)</code></pre>
+<p>Copy that subject into <code>publisher</code>. Windows writes a subject's parts from the last to the first, so it differs from how some tools show it.</p>
+<h3 id="all-architectures-in-one-file-a-bundle">17.10 All architectures in one file: a bundle<a class="plink" href="#all-architectures-in-one-file-a-bundle" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An output ending in <code>.msixbundle</code> builds the source once for each architecture of <code>--arch</code>, as in chapter 15, and puts the packages in one file:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --unsigned-test
+C:\work\hello&gt; rubrapack inspect hello.msixbundle --files
+AppxMetadata\AppxBundleManifest.xml	1616	deflate
+ExampleSoftware.Hello_2.1.0.0_x64.msix	11009	stored
+ExampleSoftware.Hello_2.1.0.0_x86.msix	11096	stored
+ExampleSoftware.Hello_2.1.0.0_arm64.msix	11012	stored</code></pre>
+<p>Windows installs the package for its own processor from it. With <code>--key</code> the bundle and each package in it are signed.</p>
+<h3 id="compression">17.11 Compression<a class="plink" href="#compression" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Files are compressed with deflate; pictures and other files that are compressed already are stored as they are. <code>--msix-compress store</code> stores everything, which makes the package bigger (here 11009 to 29961 bytes) but quicker to open. An MSIX holds no date or time: the same source gives the same bytes on every computer.</p>
+<h3 id="what-happened-inside">17.12 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An MSIX is a ZIP archive. Look at its list of files:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msix --files
+hello.exe	17920	deflate
+guide.txt	6	deflate
+Assets\Square150x150.png	301	stored
+Assets\Square44x44.png	111	stored
+Assets\StoreLogo.png	117	stored
+Registry.dat	8192	deflate
+AppxManifest.xml	2537	deflate</code></pre>
+<p><code>Registry.dat</code> is the virtual registry - a registry <em>hive</em> file. <code>AppxManifest.xml</code> describes the package; <code>--manifest</code> prints it:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msix --manifest
+...
+  &lt;Identity Name="ExampleSoftware.Hello" Publisher="CN=Example Software, OID.2.25.311729368913984317654407730594956997722=1" Version="2.1.0.0" ProcessorArchitecture="x64" /&gt;
+...
+    &lt;Application Id="Hello" Executable="hello.exe" EntryPoint="Windows.FullTrustApplication"&gt;
+...
+          &lt;uap3:FileTypeAssociation Name="examplesoftware.hellodocument" Parameters="&amp;quot;%1&amp;quot;"&gt;
+...
+          &lt;desktop:StartupTask TaskId="AtSignIn" Enabled="false" DisplayName="Hello" /&gt;
+...
+            &lt;desktop:ExecutionAlias Alias="hello.exe" /&gt;
+...
+    &lt;rescap:Capability Name="runFullTrust" /&gt;</code></pre>
+<p>The <code>OID.2.25...=1</code> part of the publisher is the test mark <code>--unsigned-test</code> added. <code>runFullTrust</code> means the program runs like any desktop program, not in the restricted sandbox of store apps. Two more entries are in every package, though <code>--files</code> does not list them: <code>AppxBlockMap.xml</code>, the hash of every 64 KB block of every file, which is what a signature covers, and <code>[Content_Types].xml</code>, the type of each file. A signed package also has <code>AppxSignature.p7x</code>, the signature. Part IV shows the ZIP layout and the block map byte by byte.</p>
+<div class="nav"><a href="tutorial-16-signing.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-18-checking-and-looking-inside.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

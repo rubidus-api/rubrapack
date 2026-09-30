@@ -11,13 +11,13 @@
 <div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#설치-파일이-하는-일"><span class="tf-no">1.1</span>설치 파일이 하는 일</a><a class="lv3" href="#무엇을-쓰고-무엇이-만들어지나"><span class="tf-no">1.2</span>무엇을 쓰고 무엇이 만들어지나</a><a class="lv3" href="#rubrapack-받기"><span class="tf-no">1.3</span>rubrapack 받기</a><a class="lv3" href="#터미널을-처음-쓰는-사람을-위해"><span class="tf-no">1.4</span>터미널을 처음 쓰는 사람을 위해</a><a class="lv3" href="#작업-폴더"><span class="tf-no">1.5</span>작업 폴더</a><a class="lv3" href="#이-튜토리얼에서-쓰는-말"><span class="tf-no">1.6</span>이 튜토리얼에서 쓰는 말</a></div></div>
 <p>매뉴얼의 이 부분은 따라 하며 배우는 튜토리얼이다. 가장 작은 설치 파일 - 프로그램 하나를 Program Files 에 복사하는 것 - 에서 시작해, 장마다 하나씩 더해 가며 끝에는 rubrapack 의 모든 기능을 한 번씩 써 본다. 장마다 앞 장에 이어서 쌓아 가므로 차례대로 읽는 것이 좋다. 컴퓨터를 쓸 줄 안다는 것 말고는 아무것도 가정하지 않는다. 바깥의 개념(GUID, 해시, 레지스트리 키 같은 것)이 필요하면 그 자리에서 설명하거나 "기초 지식" 부를 가리킨다.</p>
 <h3 id="설치-파일이-하는-일">1.1 설치 파일이 하는 일<a class="plink" href="#설치-파일이-하는-일" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p>내 컴퓨터에 있는 프로그램은 그저 폴더 안의 파일들이다. 이것을 다른 사람에게 주려면 폴더를 그대로 보내도 된다 - 하지만 그러면 받는 사람이 둘 곳을 정하고, 시작 메뉴 항목을 직접 만들고, 나중에는 모든 것을 손으로 찾아 지워야 한다. *설치 파일*이 그 일을 대신한다:</p>
+<p>내 컴퓨터에 있는 프로그램은 그저 폴더 안의 파일들이다. 이것을 다른 사람에게 주려면 폴더를 그대로 보내도 된다 - 하지만 그러면 받는 사람이 둘 곳을 정하고, 시작 메뉴 항목을 직접 만들고, 나중에는 모든 것을 손으로 찾아 지워야 한다. <em>설치 파일</em>이 그 일을 대신한다:</p>
 <ul><li>파일을 알맞은 자리(보통 <code>C:\Program Files\&lt;프로그램&gt;</code>)에 복사한다.</li><li>바로가기, 레지스트리 값, 파일 형식 연결 등 프로그램이 필요로 하는 것을 만든다.</li><li>설정 &gt; 앱 &gt; 설치된 앱에 프로그램을 등록해, 거기서 지울 수 있게 한다.</li><li>2판을 내면 1판을 깨끗하게 바꿔 넣는다.</li><li>도중에 무언가 잘못되면 모든 것을 원래대로 되돌린다.</li></ul>
-<p>Windows 에는 이 일을 하는 엔진이 들어 있다: <strong>Windows Installer</strong>. 설치하는 프로그램을 짜는 것이 아니라, 무엇을 설치할지 기술한 파일인 *패키지*를 만들면 Windows Installer 가 그대로 실행한다. 패키지 형식은 둘이다:</p>
+<p>Windows 에는 이 일을 하는 엔진이 들어 있다: <strong>Windows Installer</strong>. 설치하는 프로그램을 짜는 것이 아니라, 무엇을 설치할지 기술한 파일인 <em>패키지</em>를 만들면 Windows Installer 가 그대로 실행한다. 패키지 형식은 둘이다:</p>
 <div class="tblwrap"><table class="key"><tr><th>형식</th><th>파일</th><th>설치하는 것</th><th>주로 쓰는 곳</th></tr><tr><td>Windows Installer</td><td><code>.msi</code></td><td>Windows Installer(<code>msiexec</code>), Windows 2000 부터</td><td>모든 종류의 데스크톱 프로그램; 회사는 관리 도구로 MSI 를 배포한다</td></tr><tr><td>MSIX</td><td><code>.msix</code>, <code>.msixbundle</code></td><td>Windows 10·11 의 앱 설치 관리자</td><td>새 방식의 패키지 앱, Microsoft Store</td></tr></table></div>
 <p>rubrapack 은 같은 기술에서 둘 다 만든다. 튜토리얼은 대부분 MSI 를 다루고, 17장에서 같은 예제를 MSIX 로 바꾼다.</p>
 <h3 id="무엇을-쓰고-무엇이-만들어지나">1.2 무엇을 쓰고 무엇이 만들어지나<a class="plink" href="#무엇을-쓰고-무엇이-만들어지나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p>짧은 글 파일 하나, *원본*을 <a href="https://toml.io/ko/v1.0.0">TOML</a> 로 쓴다 - <code>키 = 값</code> 꼴의 간단한 형식이다. rubrapack 이 그것을 읽어 패키지를 쓴다:</p>
+<p>짧은 글 파일 하나, <em>원본</em>을 <a href="https://toml.io/ko/v1.0.0">TOML</a> 로 쓴다 - <code>키 = 값</code> 꼴의 간단한 형식이다. rubrapack 이 그것을 읽어 패키지를 쓴다:</p>
 <pre><code class="lang-text">  hello.toml  (내가 쓴다)
       |
       |   rubrapack build hello.toml -o hello.msi
@@ -36,7 +36,7 @@
 <h3 id="터미널을-처음-쓰는-사람을-위해">1.4 터미널을 처음 쓰는 사람을 위해<a class="plink" href="#터미널을-처음-쓰는-사람을-위해" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>rubrapack 에는 창이 없다: 명령을 쳐서 쓴다. Windows 에서 Windows 키를 누르고 <code>terminal</code>(또는 <code>cmd</code>)을 쳐서 Enter 를 누르면 프롬프트가 있는 창이 열린다. 예를 들어:</p>
 <pre><code class="lang-text">C:\Users\you&gt;</code></pre>
-<p><code>&gt;</code> 앞의 부분이 *지금 폴더*다. 경로를 주지 않으면 명령은 그 폴더의 파일을 대상으로 한다. 필요한 명령은 셋이다:</p>
+<p><code>&gt;</code> 앞의 부분이 <em>지금 폴더</em>다. 경로를 주지 않으면 명령은 그 폴더의 파일을 대상으로 한다. 필요한 명령은 셋이다:</p>
 <div class="tblwrap"><table><tr><th>명령</th><th>하는 일</th></tr><tr><td><code>cd C:\work\hello</code></td><td><code>C:\work\hello</code> 폴더로 들어간다</td></tr><tr><td><code>dir</code> (Linux: <code>ls</code>)</td><td>지금 폴더의 파일을 보인다</td></tr><tr><td><code>mkdir dist</code></td><td>여기에 <code>dist</code> 폴더를 만든다</td></tr></table></div>
 <p>해 보자: <code>rubrapack version</code> 은 판을 찍고, <code>rubrapack help</code> 는 명령 목록을 보인다.</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack version

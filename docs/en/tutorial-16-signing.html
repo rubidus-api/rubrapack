@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16 Signing and timestamps - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 16 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-15-cabinets-and-architectures.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-17-msix-and-bundles.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-16-signing.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#what-a-signature-is"><span class="tf-no">16.1</span>What a signature is</a><a class="lv3" href="#signing-with-a-key-file"><span class="tf-no">16.2</span>Signing with a key file</a><a class="lv3" href="#timestamps-signatures-that-outlive-the-certificate"><span class="tf-no">16.3</span>Timestamps: signatures that outlive the certificate</a><a class="lv3" href="#a-key-in-the-windows-certificate-store"><span class="tf-no">16.4</span>A key in the Windows certificate store</a><a class="lv3" href="#a-hardware-token-pkcs11"><span class="tf-no">16.5</span>A hardware token: PKCS#11</a><a class="lv3" href="#checking-a-signature-verify"><span class="tf-no">16.6</span>Checking a signature: verify</a><a class="lv3" href="#external-cabinets-are-not-covered"><span class="tf-no">16.7</span>External cabinets are not covered</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">16.8</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">16 Signing and timestamps</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#what-a-signature-is"><span class="tf-no">16.1</span>What a signature is</a><a class="lv3" href="#signing-with-a-key-file"><span class="tf-no">16.2</span>Signing with a key file</a><a class="lv3" href="#timestamps-signatures-that-outlive-the-certificate"><span class="tf-no">16.3</span>Timestamps: signatures that outlive the certificate</a><a class="lv3" href="#a-key-in-the-windows-certificate-store"><span class="tf-no">16.4</span>A key in the Windows certificate store</a><a class="lv3" href="#a-hardware-token-pkcs11"><span class="tf-no">16.5</span>A hardware token: PKCS#11</a><a class="lv3" href="#checking-a-signature-verify"><span class="tf-no">16.6</span>Checking a signature: verify</a><a class="lv3" href="#external-cabinets-are-not-covered"><span class="tf-no">16.7</span>External cabinets are not covered</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">16.8</span>What happened inside</a></div></div>
+<p>Goal: sign <code>hello.msi</code> so that Windows shows "Example Software" as its publisher instead of "Unknown publisher", and so that nobody can change it unnoticed - with a key file, with a key in the Windows certificate store, or with a hardware token.</p>
+<h3 id="what-a-signature-is">16.1 What a signature is<a class="plink" href="#what-a-signature-is" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <em>digital signature</em> is a number computed from the file's contents and a secret <em>private key</em>. Anyone can check it with the matching <em>public key</em>, which is inside a <em>certificate</em>: a small document, itself signed by a <em>certificate authority</em> (CA), that says "this public key belongs to Example Software". Windows trusts a list of CAs; a certificate from one of them makes your name appear in the User Account Control prompt. If one byte of the package changes, the signature no longer matches. Part III explains <a href="basics-04-guids-and-hashes.html#hashes">hashes</a> and <a href="basics-08-keys-certificates-signatures.html">keys, certificates and signatures</a> step by step.</p>
+<p>Where the certificate comes from:</p>
+<ul><li><strong>For real users</strong>: a <em>code signing certificate</em> bought from a CA. Since 2023 the private key must live in hardware - a USB token or a cloud service - and never in a file. rubrapack signs through such a token (PKCS#11) or through the Windows certificate store, below.</li><li><strong>For learning and testing</strong>: a certificate you make yourself. Windows does not trust it (the prompt still says "Unknown publisher" unless you add it to the trusted list on the test computer), but everything else works the same. In PowerShell on Windows:</li></ul>
+<pre><code class="lang-text">PS&gt; New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=Example Software" -CertStoreLocation Cert:\CurrentUser\My</code></pre>
+<p>It prints the certificate's <em>thumbprint</em>, 40 hexadecimal digits that name it.</p>
+<h3 id="signing-with-a-key-file">16.2 Signing with a key file<a class="plink" href="#signing-with-a-key-file" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A key file holds the private key and the certificate, protected by a password: a <code>.pfx</code> (also called <code>.p12</code>), as Windows exports it (Export-PfxCertificate with <code>-CryptoAlgorithmOption AES256_SHA256</code>), or a PEM key. The password is never typed on the command line (other programs could read it there): it comes from an environment variable or a file. The options that would take one are there only to say so:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack sign hello.msi --key signer.pfx --pass secret
+rubrapack: error[RP0004]: a password is never taken on the command line (others can see it); use --pass-env or --pass-file</code></pre>
+<p>(<code>--pin</code> for a token's PIN answers the same way.)</p>
+<pre><code class="lang-text">C:\work\hello&gt; set SIGN_PASS=...the password...
+C:\work\hello&gt; rubrapack sign hello.msi --key signer.pfx --pass-env SIGN_PASS -o hello-signed.msi
+rubrapack: warning[RP0011]: 'hello.msi': no --timestamp: the signature stops being valid when the certificate expires
+signed hello-signed.msi</code></pre>
+<p>Without <code>-o</code> the file is signed in place. A file that is signed already is refused - sign the unsigned file again instead. The certificate must be one for code signing, not a CA's, and valid today. <code>--pass-file pass.txt</code> reads the password from a file instead. <code>--cert chain.pem</code> adds certificates the key file does not hold (the CA's intermediate certificates, which Windows needs to connect your certificate to a trusted root).</p>
+<p>Signing while building does the same in one step:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msi --key signer.pfx --pass-env SIGN_PASS</code></pre>
+<p><code>sign</code> also signs programs (<code>.exe</code>, <code>.dll</code>) - sign <code>hello.exe</code> before you build, so the program itself carries your name too - and MSIX packages (next chapter).</p>
+<h3 id="timestamps-signatures-that-outlive-the-certificate">16.3 Timestamps: signatures that outlive the certificate<a class="plink" href="#timestamps-signatures-that-outlive-the-certificate" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A certificate is valid for a year or three. The warning above says what happens after that: the signature no longer counts. A <em>timestamp</em> fixes it: a timestamp server (run by the CAs, free to use) signs "this signature existed at this time", and the signature then stays valid for good.</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack sign hello.msi --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com</code></pre>
+<p>Always timestamp what you publish. Options for unusual networks: <code>--proxy http://host:port</code>, <code>--tls-trust</code> (certificates to trust for an <code>https://</code> timestamp server), <code>--system-roots</code> (trust the computer's own root certificates for that connection), <code>--tsa-trust</code> (certificates to trust for the timestamp itself).</p>
+<h3 id="a-key-in-the-windows-certificate-store">16.4 A key in the Windows certificate store<a class="plink" href="#a-key-in-the-windows-certificate-store" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The self-made certificate above is in your certificate store. Sign with it by thumbprint - on Windows only:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack keys list
+CurrentUser\My	thumbprint=1a2b...	RSA	publisher=CN=Example Software	until=...
+C:\work\hello&gt; rubrapack sign hello.msi --key-store 1a2b...</code></pre>
+<p><code>--machine-store</code> looks in the computer's store (LocalMachine) instead of yours. Keys on a USB token whose driver plugs into Windows also appear here.</p>
+<h3 id="a-hardware-token-pkcs11">16.5 A hardware token: PKCS#11<a class="plink" href="#a-hardware-token-pkcs11" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A token's maker supplies a PKCS#11 <em>module</em> - a DLL (or <code>.so</code> on Linux) that speaks for the token. rubrapack talks to it directly:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack keys list --pkcs11 C:\token\pkcs11.dll --pin-env TOKEN_PIN
+C:\work\hello&gt; rubrapack sign hello.msi --pkcs11 C:\token\pkcs11.dll --key-label "Code Signing" --pin-env TOKEN_PIN --timestamp http://timestamp.digicert.com</code></pre>
+<p><code>--key-label</code> picks the key by its label, <code>--token-label</code> the token when several are plugged in, <code>--pin-env</code>/<code>--pin-file</code> give the PIN (never on the command line).</p>
+<h3 id="checking-a-signature-verify">16.6 Checking a signature: <code>verify</code><a class="plink" href="#checking-a-signature-verify" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack verify hello-signed.msi --trust ca.pem
+hello-signed.msi
+  structure:  ok
+  digest:     ok
+  signature:  ok
+  chain:      trusted
+  revocation: not-checked
+  timestamp:  not-present</code></pre>
+<ul><li><code>structure</code>: the signature is where it belongs; <code>digest</code>: the contents are unchanged; <code>signature</code>: it was made with the certificate's key;</li><li><code>chain</code>: the certificate leads to a certificate you trust - given with <code>--trust</code>, or <code>--system-roots</code> for the computer's trusted roots. Without either, verify says it cannot tell (and exits with 4);</li><li><code>timestamp</code>: present and valid, or not.</li></ul>
+<p>An unsigned file says <code>structure: invalid ... the package is not signed</code>.</p>
+<h3 id="external-cabinets-are-not-covered">16.7 External cabinets are not covered<a class="plink" href="#external-cabinets-are-not-covered" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A signature covers the <code>.msi</code> only. With <code>cab = "external"</code> (chapter 15) someone could swap the <code>.cab</code> files unnoticed, so <code>sign</code> refuses such a package:</p>
+<pre><code class="lang-text">C:\work\hello\out-x64&gt; rubrapack sign hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
+rubrapack: error[RP0011]: 'hello-x64.msi': the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs</code></pre>
+<p><code>--allow-unsigned-cabs</code> signs the <code>.msi</code> anyway, with a warning. Prefer embedded cabinets for signed packages.</p>
+<h3 id="what-happened-inside">16.8 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An MSI's signature is a hidden stream, <code>\005DigitalSignature</code>, holding a PKCS#7 structure: the hash of every other stream, your certificate chain, and the signature over it. Part IV (Authenticode) shows how the hash is computed and where each part lies.</p>
+<div class="nav"><a href="tutorial-15-cabinets-and-architectures.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-17-msix-and-bundles.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

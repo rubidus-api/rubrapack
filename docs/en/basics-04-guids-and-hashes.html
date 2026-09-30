@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>24 GUIDs and hashes - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 24 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-03-text.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="basics-05-compression.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/basics-04-guids-and-hashes.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#guids"><span class="tf-no">24.1</span>GUIDs</a><a class="lv4" href="#version-and-variant"><span class="tf-no"></span>Version and variant</a><a class="lv4" href="#in-text-and-in-bytes"><span class="tf-no"></span>In text and in bytes</a><a class="lv3" href="#hashes"><span class="tf-no">24.2</span>Hashes</a><a class="lv4" href="#hashes-in-the-tutorials-packages"><span class="tf-no"></span>Hashes in the tutorial&#x27;s packages</a><a class="lv3" href="#guids-from-hashes-guid---from"><span class="tf-no">24.3</span>GUIDs from hashes: guid --from</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">24.4</span>Where this is used</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">24 GUIDs and hashes</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#guids"><span class="tf-no">24.1</span>GUIDs</a><a class="lv4" href="#version-and-variant"><span class="tf-no"></span>Version and variant</a><a class="lv4" href="#in-text-and-in-bytes"><span class="tf-no"></span>In text and in bytes</a><a class="lv3" href="#hashes"><span class="tf-no">24.2</span>Hashes</a><a class="lv4" href="#hashes-in-the-tutorials-packages"><span class="tf-no"></span>Hashes in the tutorial&#x27;s packages</a><a class="lv3" href="#guids-from-hashes-guid---from"><span class="tf-no">24.3</span>GUIDs from hashes: guid --from</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">24.4</span>Where this is used</a></div></div>
+<p>Two kinds of 16-to-32-byte numbers appear everywhere in packages: <strong>GUIDs</strong>, which name things so that no two names ever collide, and <strong>hashes</strong>, which sum up a file's contents so that any change shows. rubrapack also joins the two: it makes GUIDs <em>from</em> hashes.</p>
+<h3 id="guids">24.1 GUIDs<a class="plink" href="#guids" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <strong>GUID</strong> (globally unique identifier; the standards call it a UUID) is a 128-bit number - 16 bytes - written as 32 hex digits in five groups, usually in braces:</p>
+<pre><code class="lang-text">{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}
+ 8 digits  4    4    4    12 digits</code></pre>
+<p>Windows uses GUIDs to name things that must never be confused with anything else, anywhere: a product (the product code), a product family across versions (the upgrade code), a component, a package build (the package code), a kind of COM object. There is no registry of GUIDs; nobody hands them out. They are unique because there are so many: 2^122 possible random ones, about 5 x 10^36. A computer making a billion random GUIDs every second would need about 86 years before the chance that any two of them were equal reached one half.</p>
+<h4 id="version-and-variant">Version and variant<a class="plink" href="#version-and-variant" aria-label="Link to this section" title="Link to this section">#</a></h4>
+<p>Not all 128 bits are free. Two places in the text say what kind of GUID it is:</p>
+<pre><code class="lang-text">{98AE4FED-BF0B-4C77-B712-E0649EB47178}      rubrapack guid          (random)
+               ^    ^
+               |    variant: 8, 9, A or B (the bits 10xx)
+               version: 4 = random
+
+{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}      rubrapack guid --from hello   (derived)
+               ^    ^
+               |    variant: 9
+               version: 8 = made by a method of the maker's own choosing</code></pre>
+<p>A <strong>version 4</strong> GUID is 122 random bits: <code>rubrapack guid</code> makes one for your upgrade code. A <strong>version 8</strong> GUID is 122 bits computed in a way its maker defines - rubrapack computes them from names, below.</p>
+<h4 id="in-text-and-in-bytes">In text and in bytes<a class="plink" href="#in-text-and-in-bytes" aria-label="Link to this section" title="Link to this section">#</a></h4>
+<p>In text, a GUID is its 32 digits in order. In a binary structure (a Compound File's directory, a program file), Windows stores the first three groups as little-endian numbers (chapter 2) and the last two as plain bytes:</p>
+<pre><code class="lang-text">  text:   B52FE8EF - B68D - 84B5 - 91AF - E6E01BEC2773
+  bytes:  ef e8 2f b5  8d b6  b5 84  91 af  e6 e0 1b ec 27 73
+          (reversed)  (rev.) (rev.) (as written)</code></pre>
+<p>MSI tables keep GUIDs as text, in upper case, with braces. The mixed order matters only in Part IV.</p>
+<h3 id="hashes">24.2 Hashes<a class="plink" href="#hashes" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <strong>hash function</strong> reads any amount of data and produces a short, fixed-size number from it, the <strong>hash</strong> (or <em>digest</em>). A good one has three properties:</p>
+<ol><li><strong>Same input, same hash</strong> - on every computer, every time.</li><li><strong>Any change changes everything.</strong> Change one bit of the input and about half the bits of the hash change, with no visible pattern.</li><li><strong>One-way.</strong> From a hash you cannot find an input that gives it, except by trying inputs forever.</li></ol>
+<p>Take the tutorial's <code>guide.txt</code>, six bytes <code>47 75 69 64 65 0a</code> ("Guide" and a new line), and the same with a lower-case <code>g</code>, one bit different (<code>47</code> = <code>0100 0111</code>, <code>67</code> = <code>0110 0111</code>):</p>
+<div class="tblwrap"><table><tr><th>Input</th><th>MD5 (16 bytes)</th></tr><tr><td><code>Guide\n</code></td><td><code>2b 67 39 28 1f 93 72 44 2d f3 0e 78 4b 7d bd c7</code></td></tr><tr><td><code>guide\n</code></td><td><code>e5 24 11 d5 57 3e b8 9b 5c 31 26 97 79 50 d3 ef</code></td></tr></table></div>
+<div class="tblwrap"><table><tr><th>Input</th><th>SHA-256 (32 bytes)</th></tr><tr><td><code>Guide\n</code></td><td><code>32 74 fc ad 88 6c de 4e 2c a8 6b 11 d3 0f d7 c4 48 58 ea df 1c 43 7a 95 83 f3 1e 78 15 db 1a f6</code></td></tr><tr><td><code>guide\n</code></td><td><code>90 c3 90 ec 1d e8 06 bf 94 58 85 cd 0a f5 1e 90 c3 cd 8c da 0d 0f f6 76 05 1a 56 c2 08 48 c9 0f</code></td></tr></table></div>
+<p>Try it in PowerShell: <code>Get-FileHash -Algorithm MD5 dist\docs\guide.txt</code>.</p>
+<p>The common hash functions:</p>
+<div class="tblwrap"><table class="key"><tr><th>Name</th><th>Size</th><th>Use today</th></tr><tr><td>MD5</td><td>128 bits</td><td>only to notice changes; it is broken for security (different inputs with the same MD5 can be made on purpose)</td></tr><tr><td>SHA-1</td><td>160 bits</td><td>the same; still used as a certificate's <em>thumbprint</em> (chapter 8)</td></tr><tr><td>SHA-256</td><td>256 bits</td><td>the standard for signatures, and what rubrapack uses to derive GUIDs</td></tr></table></div>
+<h4 id="hashes-in-the-tutorials-packages">Hashes in the tutorial's packages<a class="plink" href="#hashes-in-the-tutorials-packages" aria-label="Link to this section" title="Link to this section">#</a></h4>
+<p><strong><code>MsiFileHash</code></strong>: for each file without a version, Windows Installer keeps its MD5 to decide at a repair or upgrade whether the file on disk still is the one the package installed. <code>inspect --files</code> prints it as hex (tutorial chapter 18). The table itself stores it as four 4-byte numbers - the sixteen bytes read four at a time, little-endian and signed (chapter 2):</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi MsiFileHash
+File_	Options	HashPart1	HashPart2	HashPart3	HashPart4
+...
+F_6d1508f52f6615459567	0	674850603	1148359455	2014245677	-943882933
+
+2b 67 39 28 -&gt; 0x2839672B =  674850603
+1f 93 72 44 -&gt; 0x4472931F = 1148359455
+2d f3 0e 78 -&gt; 0x780EF32D = 2014245677
+4b 7d bd c7 -&gt; 0xC7BD7D4B = 3351084363, top bit set, minus 2^32 = -943882933</code></pre>
+<ul><li><strong>MSIX block map</strong> (tutorial chapter 17): the SHA-256 of every 64 KiB block of every file.</li><li><strong>Signatures</strong> (tutorial chapter 16): what is signed is a hash of the package, not the package.</li><li><strong><code>--reproducible</code></strong> (tutorial chapter 15): the package code is derived from a hash of the content.</li></ul>
+<h3 id="guids-from-hashes-guid---from">24.3 GUIDs from hashes: <code>guid --from</code><a class="plink" href="#guids-from-hashes-guid---from" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A component's GUID must stay the same from one version to the next - the upgrade relies on it - but nobody should have to write hundreds of them down. So rubrapack <em>derives</em> each one: it hashes a text that names the thing (the product and the file's place) and turns the hash into a GUID. The same text always gives the same GUID; different texts give different GUIDs.</p>
+<p><code>rubrapack guid --from &lt;text&gt;</code> shows the calculation's result for any text. Step by step, for <code>hello</code>:</p>
+<p><strong>1. Build the input bytes.</strong> Each part is its length as a 4-byte little-endian number, then its bytes: the word <code>guid</code>, the number 1 (the method's version), and the text in UTF-8.</p>
+<pre><code class="lang-text">04 00 00 00  67 75 69 64  01 00 00 00  05 00 00 00  68 65 6c 6c 6f
+length 4     "guid"       1            length 5     "hello"</code></pre>
+<p>Writing the lengths makes the parts unambiguous: <code>guid</code> + <code>hello</code> cannot be confused with <code>guidh</code> + <code>ello</code>.</p>
+<p><strong>2. Hash them with SHA-256:</strong></p>
+<pre><code class="lang-text">b5 2f e8 ef b6 8d f4 b5 d1 af e6 e0 1b ec 27 73 a2 8a 56 80 0f 9f 53 1b cd dc ee 7c f5 c8 59 90</code></pre>
+<p><strong>3. Keep the first 16 bytes:</strong> <code>b5 2f e8 ef b6 8d f4 b5 d1 af e6 e0 1b ec 27 73</code>.</p>
+<p><strong>4. Mark the version and variant.</strong> The top four bits of byte 6 become <code>1000</code> (version 8): <code>f4</code> becomes <code>84</code>. The top two bits of byte 8 become <code>10</code> (the variant): <code>d1</code> = <code>1101 0001</code> becomes <code>1001 0001</code> = <code>91</code>.</p>
+<pre><code class="lang-text">b5 2f e8 ef b6 8d 84 b5 91 af e6 e0 1b ec 27 73
+                  ^^    ^^</code></pre>
+<p><strong>5. Write it as a GUID</strong>, the bytes in order, upper case:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack guid --from hello
+{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}</code></pre>
+<p>Any program can repeat this and get the same GUID; Part IV, <a href="formats-identity.html">Deterministic identities</a>, lists the exact texts rubrapack hashes for each kind of thing.</p>
+<h3 id="where-this-is-used">24.4 Where this is used<a class="plink" href="#where-this-is-used" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li>Tutorial chapter <a href="tutorial-02-a-first-installer.html">2</a>: the upgrade code, made with <code>rubrapack guid</code>.</li><li>Tutorial chapters <a href="tutorial-04-files-and-folders.html">4</a> and <a href="tutorial-15-cabinets-and-architectures.html">15</a>: component GUIDs and the package code, derived.</li><li>Tutorial chapters <a href="tutorial-16-signing.html">16</a>, <a href="tutorial-17-msix-and-bundles.html">17</a>, <a href="tutorial-18-checking-and-looking-inside.html">18</a>: signatures, block maps, file hashes.</li><li>Part IV: <a href="formats-identity.html">Deterministic identities</a>, <a href="formats-authenticode.html">Authenticode</a>, <a href="formats-msix.html">MSIX</a>.</li></ul>
+<div class="nav"><a href="basics-03-text.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="basics-05-compression.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

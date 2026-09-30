@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>27 Tables, keys and references - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 27 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-06-files-inside-a-file.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="basics-08-keys-certificates-signatures.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/basics-07-tables-and-keys.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#tables-rows-and-columns"><span class="tf-no">27.1</span>Tables, rows and columns</a><a class="lv3" href="#primary-keys-what-makes-a-row-unique"><span class="tf-no">27.2</span>Primary keys: what makes a row unique</a><a class="lv3" href="#foreign-keys-rows-that-point-at-rows"><span class="tf-no">27.3</span>Foreign keys: rows that point at rows</a><a class="lv3" href="#keys-you-give-keys-rubrapack-makes"><span class="tf-no">27.4</span>Keys you give, keys rubrapack makes</a><a class="lv3" href="#storing-strings-once-the-string-pool"><span class="tf-no">27.5</span>Storing strings once: the string pool</a><a class="lv3" href="#tables-about-tables"><span class="tf-no">27.6</span>Tables about tables</a><a class="lv3" href="#the-idt-text-format"><span class="tf-no">27.7</span>The IDT text format</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">27.8</span>Where this is used</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">27 Tables, keys and references</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#tables-rows-and-columns"><span class="tf-no">27.1</span>Tables, rows and columns</a><a class="lv3" href="#primary-keys-what-makes-a-row-unique"><span class="tf-no">27.2</span>Primary keys: what makes a row unique</a><a class="lv3" href="#foreign-keys-rows-that-point-at-rows"><span class="tf-no">27.3</span>Foreign keys: rows that point at rows</a><a class="lv3" href="#keys-you-give-keys-rubrapack-makes"><span class="tf-no">27.4</span>Keys you give, keys rubrapack makes</a><a class="lv3" href="#storing-strings-once-the-string-pool"><span class="tf-no">27.5</span>Storing strings once: the string pool</a><a class="lv3" href="#tables-about-tables"><span class="tf-no">27.6</span>Tables about tables</a><a class="lv3" href="#the-idt-text-format"><span class="tf-no">27.7</span>The IDT text format</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">27.8</span>Where this is used</a></div></div>
+<p>Inside an <code>.msi</code> (chapter 6) the streams are mostly <strong>tables</strong>: the package is a small <strong>database</strong>. Windows Installer does not follow a script of steps written by you; it reads the tables and works out what to do. This chapter explains the few database ideas needed to read them.</p>
+<h3 id="tables-rows-and-columns">27.1 Tables, rows and columns<a class="plink" href="#tables-rows-and-columns" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <strong>table</strong> is a grid. Each <strong>column</strong> has a name and a type; each <strong>row</strong> is one thing - one file, one shortcut, one registry value. Here is the <code>File</code> table of the tutorial's first package (chapter 2 of the tutorial), as <code>rubrapack inspect hello.msi File</code> prints it:</p>
+<pre><code class="lang-text">File	Component_	FileName	FileSize	Version	Language	Attributes	Sequence
+s72	s72	l255	i4	S72	S20	I2	i4
+File	File
+Hello	C_185f8db32271fe25f561	hello.exe	17920	1.2.3.4	1033	512	1</code></pre>
+<p>Laid out as a grid:</p>
+<div class="tblwrap"><table class="key"><tr><th>File</th><th>Component_</th><th>FileName</th><th>FileSize</th><th>Version</th><th>Language</th><th>Attributes</th><th>Sequence</th></tr><tr><td><code>Hello</code></td><td><code>C_185f8db32271fe25f561</code></td><td><code>hello.exe</code></td><td>17920</td><td><code>1.2.3.4</code></td><td><code>1033</code></td><td>512</td><td>1</td></tr></table></div>
+<p>The second line of the text gives the <strong>type</strong> of each column:</p>
+<div class="tblwrap"><table><tr><th>Type</th><th>Meaning</th></tr><tr><td><code>s72</code></td><td>a string of at most 72 characters</td></tr><tr><td><code>l255</code></td><td>a <em>localizable</em> string (one a translation may change) of at most 255 characters</td></tr><tr><td><code>i2</code>, <code>i4</code></td><td>an integer of 2 or 4 bytes (chapter 2)</td></tr><tr><td>capital <code>S</code>, <code>L</code>, <code>I</code></td><td>the same, but the cell may be empty ("null")</td></tr></table></div>
+<p>A column's type is fixed by Windows Installer for each standard table, and rubrapack checks every value against it (<code>lint</code>, tutorial chapter 18): a 100,000 in an <code>i2</code> column would not fit.</p>
+<h3 id="primary-keys-what-makes-a-row-unique">27.2 Primary keys: what makes a row unique<a class="plink" href="#primary-keys-what-makes-a-row-unique" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The third line, <code>File	File</code>, names the table and its <strong>primary key</strong> - the column (or columns) whose value is different in every row. In <code>File</code> it is the column <code>File</code>: <code>Hello</code> names this row and no other row may use that name. This is why rubrapack's IDs must be unique (tutorial chapter 2): the ID you write in <code>[file.Hello]</code> becomes this key.</p>
+<p>Some tables need two columns together. <code>FeatureComponents</code> says which component belongs to which feature; one feature has many components and one component may be in several features, so only the pair is unique:</p>
+<pre><code class="lang-text">Feature_	Component_
+s38	s72
+FeatureComponents	Feature_	Component_
+Main	C_185f8db32271fe25f561</code></pre>
+<h3 id="foreign-keys-rows-that-point-at-rows">27.3 Foreign keys: rows that point at rows<a class="plink" href="#foreign-keys-rows-that-point-at-rows" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A column whose name ends in <code>_</code> holds the key of a row in <em>another</em> table - a <strong>foreign key</strong>, or reference. Following them connects the tables into one picture. Start at the file and follow the references:</p>
+<pre><code class="lang-text">File              Hello
+  Component_  --&gt; Component   C_185f8db32271fe25f561
+                    ComponentId   {B80BEC59-F582-8F10-8EB1-638C6687B899}
+                    Directory_  --&gt; Directory   INSTALLDIR
+                                      DefaultDir   Hello
+                                      Directory_Parent --&gt; Directory   ProgramFiles64Folder
+                                                             DefaultDir  .
+                                                             Directory_Parent --&gt; TARGETDIR
+                    KeyPath     --&gt; File        Hello   (back to the start)
+FeatureComponents Main + C_185f8db32271fe25f561
+  Feature_    --&gt; Feature     Main
+                    Level  1   (installed by default)</code></pre>
+<p>Read aloud: the file <code>hello.exe</code> belongs to a component, which installs into the folder <code>Hello</code> inside <code>ProgramFiles64Folder</code> (Program Files), and which the feature <code>Main</code> installs. The component's <em>key path</em> is the file itself: if <code>hello.exe</code> is there, the component counts as installed (tutorial chapter 4).</p>
+<p>A reference to a row that does not exist is an error Windows Installer would stop on - one of the things <code>rubrapack lint</code> checks in any <code>.msi</code>, from any tool.</p>
+<h3 id="keys-you-give-keys-rubrapack-makes">27.4 Keys you give, keys rubrapack makes<a class="plink" href="#keys-you-give-keys-rubrapack-makes" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>In the tables, the IDs from your source appear as they are - <code>Hello</code>, <code>INSTALLDIR</code>, <code>Main</code>. Where Windows Installer needs a row that has no table of its own in the source, rubrapack makes a key: a component per file is named <code>C_</code> and 20 hex digits, a file found by a glob <code>F_</code> and 20 hex digits. The digits come from a hash of the thing's place (chapter 4), so they stay the same from build to build.</p>
+<h3 id="storing-strings-once-the-string-pool">27.5 Storing strings once: the string pool<a class="plink" href="#storing-strings-once-the-string-pool" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Tables are full of repeated strings - <code>INSTALLDIR</code>, a component key, <code>Hello</code> - and an MSI keeps each distinct string only once. All strings of the package live in one list, the <strong>string pool</strong> (two streams, <code>_StringPool</code> and <code>_StringData</code>), and a string cell in a table holds just the string's <em>number</em> in that list, in 2 bytes (or 3 in very large packages). The tutorial's first package has 111 distinct strings for all 16 tables:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi
+code page: 65001
+strings: 111
+tables: 16</code></pre>
+<p>The pool also counts how many cells use each string. Part IV shows its bytes.</p>
+<h3 id="tables-about-tables">27.6 Tables about tables<a class="plink" href="#tables-about-tables" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A database describes itself. Two tables list the others: <code>_Tables</code> has one row per table, and <code>_Columns</code> one row per column of every table, with its type. That is where <code>inspect</code> finds the column names and types it prints on the first two lines. The <em>sequence</em> tables (<code>InstallExecuteSequence</code>, <code>InstallUISequence</code> and three more for administrative and advertised installations) list the installation's steps in order, with a condition each (tutorial chapters 9 and 13) - even the procedure is a table.</p>
+<h3 id="the-idt-text-format">27.7 The IDT text format<a class="plink" href="#the-idt-text-format" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The text <code>inspect</code> prints is Windows Installer's own <strong>IDT</strong> format: the three header lines, then one line per row, columns separated by tabs. The tools in Microsoft's Windows SDK import and export tables in this format, so a table from <code>rubrapack inspect</code> can be compared with one exported by another tool.</p>
+<h3 id="where-this-is-used">27.8 Where this is used<a class="plink" href="#where-this-is-used" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li>Tutorial chapters <a href="tutorial-02-a-first-installer.html">2</a> and <a href="tutorial-04-files-and-folders.html">4</a>: IDs, components, key paths.</li><li>Tutorial chapter <a href="tutorial-18-checking-and-looking-inside.html">18</a>: <code>inspect</code> and <code>lint</code>.</li><li>Part IV: <a href="formats-msi-database.html">the MSI database</a> (the string pool and table encoding), <a href="formats-msi-package.html">the tables that install</a>.</li></ul>
+<div class="nav"><a href="basics-06-files-inside-a-file.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="basics-08-keys-certificates-signatures.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

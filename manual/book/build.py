@@ -62,7 +62,8 @@ def version():
 # ---- Markdown (the subset these manuals use) -> blocks ---------------------------------------------
 
 def parse_blocks(lines):
-    """Headings, paragraphs, fenced code, pipe tables, (nested) lists."""
+    """Headings, paragraphs, fenced code, pipe tables, (nested) lists, and figures: a line that is
+    only `![caption](path)`."""
     blocks, i = [], 0
     while i < len(lines):
         line = lines[i]
@@ -91,6 +92,11 @@ def parse_blocks(lines):
                 j += 1
             blocks.append(("table", rows[0], rows[1:]))
             i = j
+            continue
+        m = re.match(r"^!\[([^\]]*)\]\(([^)\s]+)\)\s*$", line)
+        if m:
+            blocks.append(("image", m.group(1), m.group(2)))
+            i += 1
             continue
         if re.match(r"^(\s*)([-*]|\d+\.)\s+", line):
             items, i = parse_list(lines, i, len(re.match(r"^(\s*)", line).group(1)))
@@ -217,9 +223,15 @@ def chapters(lang):
                 sys.exit("build.py: %s:%d: indented code fence; put the block at the left margin"
                          % (os.path.relpath(path, REPO), n))
         blocks = parse_blocks(lines)
+        for k, b in enumerate(blocks):
+            if b[0] == "image":
+                src = os.path.normpath(os.path.join(os.path.dirname(path), b[2]))
+                if not os.path.isfile(src):
+                    sys.exit("build.py: %s: no picture %s" % (os.path.relpath(path, REPO), b[2]))
+                blocks[k] = ("image", b[1], src)
         title = blocks[0][2] if blocks and blocks[0][0] == "heading" and blocks[0][1] == 1 else slug
         body = blocks[1:] if blocks and blocks[0][0] == "heading" and blocks[0][1] == 1 else blocks
-        book.append({"part": part, "slug": slug, "path": path, "title": title, "blocks": body})
+        book.append({"part": part, "slug": slug, "path": path, "title": title, "blocks": body, "lang": lang})
     return book
 
 
@@ -309,6 +321,9 @@ def ty_blocks(blocks, chapter, book):
             out.append("#tbl(columns: (" + ", ".join(column_widths(b[1], b[2])) + ",), " + ", ".join(cells) + ")\n")
         elif b[0] == "list":
             out.append(ty_list(b, chapter, book, 0))
+        elif b[0] == "image":
+            rel = chapter["lang"] + "/img/" + os.path.basename(b[2])
+            out.append("#figure(image(" + ty_str(rel) + ", width: 80%), caption: [" + ty_inline(b[1], chapter, book) + "])\n")
     return "\n".join(out)
 
 
@@ -511,6 +526,21 @@ def typst_source(lang, book):
     return head + "\n" + "\n".join(parts)
 
 
+def copy_images(lang, book, out):
+    """Pictures go to <out>/<lang>/img/ under their file name, for the web pages and the PDF alike."""
+    d = os.path.join(out, lang, "img")
+    shutil.rmtree(d, ignore_errors=True)
+    seen = {}
+    for c in book:
+        for b in c["blocks"]:
+            if b[0] == "image":
+                name = os.path.basename(b[2])
+                if seen.setdefault(name, b[2]) != b[2]:
+                    sys.exit("build.py: two pictures named %s" % name)
+                os.makedirs(d, exist_ok=True)
+                shutil.copyfile(b[2], os.path.join(d, name))
+
+
 def build_pdf(lang, book, out_pdf, typst, font_path):
     src = os.path.join(os.path.dirname(out_pdf), "book-" + lang + ".typ")
     open(src, "w", encoding="utf-8").write(typst_source(lang, book))
@@ -711,6 +741,10 @@ def h_blocks(blocks, chapter, book, number):
             out.append('<div class="tblwrap"><table%s>%s</table></div>' % (key, "".join(rows)))
         elif b[0] == "list":
             out.append(h_list(b, chapter, book))
+        elif b[0] == "image":
+            out.append('<figure><img src="img/%s" alt="%s" loading="lazy"><figcaption>%s</figcaption></figure>'
+                       % (html.escape(os.path.basename(b[2])), html.escape(plain(h_inline(b[1], chapter, book))),
+                          h_inline(b[1], chapter, book)))
     return "\n".join(out), secs
 
 
@@ -980,6 +1014,7 @@ def main():
     build_landing(a.out)
     for lang in ("en", "ko"):
         book = chapters(lang)
+        copy_images(lang, book, a.out)
         build_html(lang, book, a.out)
         if not a.no_pdf:
             build_pdf(lang, book, os.path.join(a.out, "rubrapack-manual-%s.pdf" % lang), a.typst, a.font_path)

@@ -92,7 +92,7 @@ C:\work\hello&gt; rubrapack inspect hello.msi --files
 [ProgramFiles64Folder]\Hello\settings.ini	23	Settings</code></pre>
 <p>(실제 출력에는 열이 더 있다. 여기서는 경로, 크기, ID 만 보였다.)</p>
 <h3 id="폴더-dirid">4.3 폴더: <code>[dir.ID]</code><a class="plink" href="#폴더-dirid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p>dir 의 <code>path</code> 는 *알려진 폴더*나 다른 dir 에서 시작해 그 아래 폴더 이름을 잇는다:</p>
+<p>dir 의 <code>path</code> 는 <em>알려진 폴더</em>나 다른 dir 에서 시작해 그 아래 폴더 이름을 잇는다:</p>
 <div class="tblwrap"><table><tr><th><code>path</code></th><th>사용자 컴퓨터에서(흔한 경우)</th></tr><tr><td><code>ProgramFiles/Hello</code></td><td><code>C:\Program Files\Hello</code> (<code>x86</code> 패키지는 <code>C:\Program Files (x86)\Hello</code>)</td></tr><tr><td><code>INSTALLDIR/docs</code></td><td><code>C:\Program Files\Hello\docs</code> - 사용자가 어디에 두든 dir <code>INSTALLDIR</code> 아래</td></tr><tr><td><code>CommonAppData/Hello</code></td><td><code>C:\ProgramData\Hello</code> - 모든 사용자가 함께 쓰는 데이터</td></tr><tr><td><code>LocalAppData/Hello</code></td><td><code>C:\Users\&lt;이름&gt;\AppData\Local\Hello</code></td></tr></table></div>
 <p><code>ProgramFiles/Hello</code> 를 되풀이하지 않고 <code>INSTALLDIR</code> 위에 쌓는 것은 사용자가 설치 폴더를 고를 수 있게 되면(6장) 중요해진다: 그러면 <code>docs</code> 가 사용자가 고른 폴더를 따라간다. 알려진 폴더 전체 목록은 참조 부의 <a href="rpk.html#표">표</a>에 있다.</p>
 <h3 id="파일-하나-fileid">4.4 파일 하나: <code>[file.ID]</code><a class="plink" href="#파일-하나-fileid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
@@ -110,7 +110,7 @@ C:\work\hello&gt; rubrapack inspect hello.msi --files
 <h3 id="만날-수-있는-키-두-개-더">4.9 만날 수 있는 키 두 개 더<a class="plink" href="#만날-수-있는-키-두-개-더" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <ul><li>파일의 <code>any-arch = true</code>: rubrapack 은 모든 프로그램 파일(<code>.exe</code>, <code>.dll</code>)이 패키지의 <code>arch</code> 로 만들어졌는지 확인한다. 실수로 32비트 DLL 을 복사하는 x64 설치 파일은 망가진 프로그램을 설치하기 때문이다. x64 제품 안의 32비트 도우미처럼 일부러 그런 것이면 <code>any-arch = true</code> 로 밝힌다.</li><li>파일의 <code>component-guid = "{...}"</code>: rubrapack 은 모든 컴포넌트의 GUID 를 제품과 파일 자리에서 끌어내므로, 판이 바뀌어도 같게 유지되고 업그레이드는 그것에 기댄다. 앞선 패키지가 다른 GUID 로 만든 컴포넌트를 이어 갈 때만 손으로 준다.</li></ul>
 <h3 id="안에서-무슨-일이-일어났나">4.10 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
-<p>Windows Installer 는 *컴포넌트*를 설치한다: 함께 설치되고 함께 지워지는 작은 자원 묶음으로, 저마다 GUID 와 <em>키 경로</em>(그것이 있으면 "설치됨"을 뜻하는 것)를 가진다. rubrapack 은 파일마다 컴포넌트 하나를 만드는데 - 안전한 규칙이다 - 필요한 폴더, 지우기, 사본에도 하나씩 더 만든다:</p>
+<p>Windows Installer 는 <em>컴포넌트</em>를 설치한다: 함께 설치되고 함께 지워지는 작은 자원 묶음으로, 저마다 GUID 와 <em>키 경로</em>(그것이 있으면 "설치됨"을 뜻하는 것)를 가진다. rubrapack 은 파일마다 컴포넌트 하나를 만드는데 - 안전한 규칙이다 - 필요한 폴더, 지우기, 사본에도 하나씩 더 만든다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Component
 ...
 C_74a883a037bc227f9189	{51A68DD4-96FA-83C0-86AA-F20D51339238}	INSTALLDIR	272		Settings

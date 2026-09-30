@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>25 Compression - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 25 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-04-guids-and-hashes.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="basics-06-files-inside-a-file.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/basics-05-compression.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#why-data-can-be-made-smaller"><span class="tf-no">25.1</span>Why data can be made smaller</a><a class="lv3" href="#lz77-copy-from-earlier"><span class="tf-no">25.2</span>LZ77: &quot;copy from earlier&quot;</a><a class="lv3" href="#huffman-coding-short-codes-for-common-symbols"><span class="tf-no">25.3</span>Huffman coding: short codes for common symbols</a><a class="lv3" href="#deflate-bit-by-bit"><span class="tf-no">25.4</span>Deflate, bit by bit</a><a class="lv3" href="#mszip-deflate-in-a-cabinet"><span class="tf-no">25.5</span>MSZIP: deflate in a cabinet</a><a class="lv3" href="#deflate-in-an-msix"><span class="tf-no">25.6</span>Deflate in an MSIX</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">25.7</span>Where this is used</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">25 Compression</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#why-data-can-be-made-smaller"><span class="tf-no">25.1</span>Why data can be made smaller</a><a class="lv3" href="#lz77-copy-from-earlier"><span class="tf-no">25.2</span>LZ77: &quot;copy from earlier&quot;</a><a class="lv3" href="#huffman-coding-short-codes-for-common-symbols"><span class="tf-no">25.3</span>Huffman coding: short codes for common symbols</a><a class="lv3" href="#deflate-bit-by-bit"><span class="tf-no">25.4</span>Deflate, bit by bit</a><a class="lv3" href="#mszip-deflate-in-a-cabinet"><span class="tf-no">25.5</span>MSZIP: deflate in a cabinet</a><a class="lv3" href="#deflate-in-an-msix"><span class="tf-no">25.6</span>Deflate in an MSIX</a><a class="lv3" href="#where-this-is-used"><span class="tf-no">25.7</span>Where this is used</a></div></div>
+<p>An MSI's files travel in a cabinet, an MSIX's in a ZIP archive, and in both they are usually <em>compressed</em>: written in fewer bytes, from which the exact original comes back. This chapter shows how the method both use, <strong>deflate</strong>, does that - down to the bits of a real example.</p>
+<h3 id="why-data-can-be-made-smaller">25.1 Why data can be made smaller<a class="plink" href="#why-data-can-be-made-smaller" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Compression without loss works because real data is not random. Two things repeat:</p>
+<ol><li><strong>Sequences.</strong> A program's machine code repeats instruction patterns; a text repeats words; a picture of a blue sky repeats the same colour.</li><li><strong>Symbols, unevenly.</strong> In English text <code>e</code> is far more common than <code>z</code>; in a program the byte <code>00</code> is very common.</li></ol>
+<p>Deflate uses both, one after the other: <strong>LZ77</strong> replaces repeated sequences by short references, then <strong>Huffman coding</strong> writes common symbols in fewer bits.</p>
+<p>Data with neither - random numbers, or data that is compressed already, such as PNG and JPEG pictures, ZIP files, video - cannot be made smaller. Trying costs time and adds a few bytes.</p>
+<h3 id="lz77-copy-from-earlier">25.2 LZ77: "copy from earlier"<a class="plink" href="#lz77-copy-from-earlier" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>LZ77 (Lempel and Ziv, 1977) reads the data from the start and, wherever the next bytes already appeared recently, writes a <strong>back-reference</strong> instead: "go back <em>distance</em> bytes and copy <em>length</em> bytes from there". Everything else is written as <strong>literals</strong>, byte by byte.</p>
+<p>Take the 12 bytes <code>abcabcabcabc</code>. Deflate writes them as four literals and one reference:</p>
+<pre><code class="lang-text">  literal a
+  literal b
+  literal c
+  literal a
+  copy: distance 3, length 8</code></pre>
+<p>The copy may overlap what it produces: going back 3 bytes lands on <code>bca</code>, and copying byte by byte keeps reading bytes that were just written:</p>
+<pre><code class="lang-text">  written so far:  a b c a
+                     ^ start 3 back
+  copy 8:          a b c a b c a b c a b c
+                           \_______________/ 8 copied bytes</code></pre>
+<p>So a run of any length is one short reference. Deflate allows distances up to 32,768 bytes (the <em>window</em>) and lengths from 3 to 258.</p>
+<h3 id="huffman-coding-short-codes-for-common-symbols">25.3 Huffman coding: short codes for common symbols<a class="plink" href="#huffman-coding-short-codes-for-common-symbols" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>After LZ77 the data is a series of symbols: literal bytes, lengths and distances. A normal byte takes 8 bits whatever it is. A <strong>Huffman code</strong> gives each symbol its own number of bits - fewer for frequent ones - such that no code is the beginning of another, so a reader always knows where one ends.</p>
+<p>A small example with four symbols:</p>
+<div class="tblwrap"><table class="key"><tr><th>Symbol</th><th>Frequency</th><th>Fixed 2-bit code</th><th>Huffman code</th></tr><tr><td>A</td><td>50%</td><td><code>00</code></td><td><code>0</code></td></tr><tr><td>B</td><td>25%</td><td><code>01</code></td><td><code>10</code></td></tr><tr><td>C</td><td>12.5%</td><td><code>10</code></td><td><code>110</code></td></tr><tr><td>D</td><td>12.5%</td><td><code>11</code></td><td><code>111</code></td></tr></table></div>
+<p>On average this takes 0.5 x 1 + 0.25 x 2 + 0.125 x 3 + 0.125 x 3 = 1.75 bits per symbol instead of 2. <code>ABAD</code> becomes <code>0 10 0 111</code>, and reading <code>0100111</code> from the left can only mean A, B, A, D.</p>
+<p>Deflate has two kinds of code tables: a <strong>fixed</strong> table defined once in the standard (good for small data), and <strong>dynamic</strong> tables, built for each block from its own symbol counts and stored at the block's start (better for large data).</p>
+<h3 id="deflate-bit-by-bit">25.4 Deflate, bit by bit<a class="plink" href="#deflate-bit-by-bit" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Deflate (RFC 1951) writes blocks. Each starts with a three-bit header:</p>
+<div class="tblwrap"><table><tr><th>Bits</th><th>Meaning</th></tr><tr><td>1 bit: BFINAL</td><td>1 = this is the last block</td></tr><tr><td>2 bits: BTYPE</td><td>0 = stored (bytes as they are), 1 = fixed Huffman codes, 2 = dynamic Huffman codes</td></tr></table></div>
+<p>In the fixed table, the symbols are:</p>
+<div class="tblwrap"><table class="key"><tr><th>Symbols</th><th>Meaning</th><th>Code length</th><th>Codes</th></tr><tr><td>0-143</td><td>literal byte 0-143</td><td>8 bits</td><td><code>00110000</code> + symbol</td></tr><tr><td>144-255</td><td>literal byte 144-255</td><td>9 bits</td><td><code>110010000</code> + (symbol - 144)</td></tr><tr><td>256</td><td>end of block</td><td>7 bits</td><td><code>0000000</code></td></tr><tr><td>257-279</td><td>a length (plus extra bits)</td><td>7 bits</td><td><code>0000001</code> ...</td></tr><tr><td>280-287</td><td>a length (plus extra bits)</td><td>8 bits</td><td><code>11000000</code> ...</td></tr></table></div>
+<p>After a length comes a distance code of 5 bits, and some codes add a few <em>extra bits</em> to pick an exact value within a range.</p>
+<p>Here is <code>abcabcabcabc</code> compressed by deflate - seven bytes instead of twelve:</p>
+<pre><code class="lang-text">4b 4c 4a 4e 84 21 00</code></pre>
+<p>Deflate fills each byte starting with its lowest bit (bit 0, chapter 2). Written out that way, the bit stream reads:</p>
+<pre><code class="lang-text">byte 4b = 01001011  -&gt; bits in order: 1 1 0 1 0 0 1 0
+byte 4c = 01001100  -&gt; bits in order: 0 0 1 1 0 0 1 0
+...</code></pre>
+<p>and decodes as:</p>
+<div class="tblwrap"><table><tr><th>Bits (in order)</th><th>Meaning</th></tr><tr><td><code>1</code></td><td>BFINAL = 1: the last block</td></tr><tr><td><code>1 0</code></td><td>BTYPE = 1 (the two bits read as a number, low bit first): fixed codes</td></tr><tr><td><code>10010001</code></td><td>literal <code>a</code> (0x61 = 97; <code>00110000</code> + 97 = <code>10010001</code>)</td></tr><tr><td><code>10010010</code></td><td>literal <code>b</code></td></tr><tr><td><code>10010011</code></td><td>literal <code>c</code></td></tr><tr><td><code>10010001</code></td><td>literal <code>a</code></td></tr><tr><td><code>0000110</code></td><td>symbol 262: length 8</td></tr><tr><td><code>00010</code></td><td>distance code 2: distance 3</td></tr><tr><td><code>0000000</code></td><td>symbol 256: end of block</td></tr></table></div>
+<p>That is 3 + 4 x 8 + 7 + 5 + 7 = 54 bits; the last two bits of the seventh byte are unused. (Huffman codes are the one thing deflate writes from the code's <em>highest</em> bit first; numbers such as BTYPE and the extra bits go lowest bit first. Part IV spells out every table.)</p>
+<h3 id="mszip-deflate-in-a-cabinet">25.5 MSZIP: deflate in a cabinet<a class="plink" href="#mszip-deflate-in-a-cabinet" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A cabinet (<code>.cab</code>) splits the files' data into blocks of at most 32 KiB. With <strong>MSZIP</strong> each block is the two letters <code>CK</code> (<code>43 4b</code>) followed by one deflate stream, and each block may refer back into the previous one. <code>compress = "mszip:6"</code> in a source is deflate at effort 6 of 9: a higher number searches longer for matches - smaller output, more time - and the result unpacks the same way.</p>
+<h3 id="deflate-in-an-msix">25.6 Deflate in an MSIX<a class="plink" href="#deflate-in-an-msix" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An MSIX is a ZIP archive, and ZIP stores each file either as it is ("stored", method 0) or compressed with deflate (method 8). The tutorial's <code>hello.msix</code> (chapter 17):</p>
+<div class="tblwrap"><table class="key"><tr><th>File</th><th>Size</th><th>In the package</th><th></th></tr><tr><td><code>hello.exe</code></td><td>17,920</td><td>6,706</td><td>deflate: 37%</td></tr><tr><td><code>Registry.dat</code></td><td>8,192</td><td>430</td><td>deflate: mostly zero bytes, 5%</td></tr><tr><td><code>AppxManifest.xml</code></td><td>2,537</td><td>900</td><td>deflate: text, 35%</td></tr><tr><td><code>Assets\Square150x150.png</code></td><td>301</td><td>301</td><td>stored: PNG is compressed already</td></tr><tr><td><code>guide.txt</code></td><td>6</td><td>14</td><td>deflate: too small to gain</td></tr></table></div>
+<p>The last line shows the cost of compressing tiny data: a deflate block has a few bits of header and an end code, and six bytes contain nothing to repeat.</p>
+<h3 id="where-this-is-used">25.7 Where this is used<a class="plink" href="#where-this-is-used" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li>Tutorial chapter <a href="tutorial-15-cabinets-and-architectures.html">15</a>: <code>compress</code>, <code>cab</code>, <code>cab-max-size</code>.</li><li>Tutorial chapter <a href="tutorial-17-msix-and-bundles.html">17</a>: <code>--msix-compress</code>.</li><li>Part IV: <a href="formats-cab-mszip.html">Cabinets, MSZIP and deflate</a>, <a href="formats-msix.html">MSIX</a>.</li></ul>
+<div class="nav"><a href="basics-04-guids-and-hashes.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="basics-06-files-inside-a-file.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

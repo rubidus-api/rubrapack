@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>15 Cabinets, compression, big packages, and several architectures - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 15 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-14-your-own-pages.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-16-signing.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-15-cabinets-and-architectures.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-folder"><span class="tf-no">15.1</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">15.2</span>The source</a><a class="lv3" href="#cabinets-and-compression"><span class="tf-no">15.3</span>Cabinets and compression</a><a class="lv3" href="#several-architectures---arch"><span class="tf-no">15.4</span>Several architectures: --arch</a><a class="lv3" href="#the-same-bytes-every-time---reproducible"><span class="tf-no">15.5</span>The same bytes every time: --reproducible</a><a class="lv3" href="#names-from-a-mac---nfc"><span class="tf-no">15.6</span>Names from a Mac: --nfc</a><a class="lv3" href="#variables-from-the-command-line--d"><span class="tf-no">15.7</span>Variables from the command line: -D</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">15.8</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">15 Cabinets, compression, big packages, and several architectures</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-folder"><span class="tf-no">15.1</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">15.2</span>The source</a><a class="lv3" href="#cabinets-and-compression"><span class="tf-no">15.3</span>Cabinets and compression</a><a class="lv3" href="#several-architectures---arch"><span class="tf-no">15.4</span>Several architectures: --arch</a><a class="lv3" href="#the-same-bytes-every-time---reproducible"><span class="tf-no">15.5</span>The same bytes every time: --reproducible</a><a class="lv3" href="#names-from-a-mac---nfc"><span class="tf-no">15.6</span>Names from a Mac: --nfc</a><a class="lv3" href="#variables-from-the-command-line--d"><span class="tf-no">15.7</span>Variables from the command line: -D</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">15.8</span>What happened inside</a></div></div>
+<p>Goal: control how the files are packed - compression, one package file or package plus cabinets - build Hello for x64, x86 and Arm64 from one source, and make builds byte-for-byte repeatable.</p>
+<h3 id="the-folder">15.1 The folder<a class="plink" href="#the-folder" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The program now exists in three builds, one per processor type:</p>
+<pre><code class="lang-text">dist\
+    x64\hello.exe
+    x86\hello.exe
+    arm64\hello.exe
+    docs\guide.txt</code></pre>
+<h3 id="the-source">15.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 15: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+upgrade-code-x86 = "{7D1C2B3A-4E5F-4061-9728-3A4B5C6D7E8F}"
+upgrade-code-arm64 = "{0E9F8D7C-6B5A-4948-8372-6150F4E3D2C1}"
+compress = "mszip:9"
+cab = "external"
+cab-max-size = 500
+
+[define]
+VERSION = "2.0.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/$(ARCH)/hello.exe"
+
+[files.DocFiles]
+dir = "INSTALLDIR"
+glob = "dist/docs/**"</code></pre>
+<h3 id="cabinets-and-compression">15.3 Cabinets and compression<a class="plink" href="#cabinets-and-compression" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Inside an MSI the files are not stored one by one: they are packed into a <em>cabinet</em> (<code>.cab</code>), the compressed archive format Windows has used since the 1990s. Keys in <code>[package]</code>:</p>
+<div class="tblwrap"><table class="key"><tr><th>Key</th><th>Values</th><th>Effect</th></tr><tr><td><code>compress</code></td><td><code>mszip:6</code> (default), <code>mszip:0</code> .. <code>mszip:9</code>, <code>mszip</code> (= 6), <code>none</code></td><td>how hard to compress. 9 is smallest and slowest, 1 fastest; <code>none</code> stores the files as they are</td></tr><tr><td><code>cab</code></td><td><code>embed</code> (default), <code>external</code></td><td>the cabinet inside the <code>.msi</code>, or next to it as <code>hello-x64.cab</code></td></tr><tr><td><code>cab-max-size</code></td><td>a number of MiB</td><td>start a new cabinet after that much data (<code>-1.cab</code>, <code>-2.cab</code>, ...)</td></tr></table></div>
+<p>For most programs the defaults are right: one <code>.msi</code> holding everything. External cabinets are for very large products: <strong>an MSI of 2 GiB or more cannot be opened by Windows Installer</strong>, so a product that big must use <code>cab = "external"</code> (rubrapack refuses the embedded form with <code>RP1516</code>), and the <code>.msi</code> and its <code>.cab</code> files must then be kept together - in the same folder, on the same share. Without <code>cab-max-size</code>, external cabinets are split below 2 GiB each.</p>
+<p>Compression runs on every processor of your computer; <code>--jobs 2</code> uses at most two. On a 200 MB program with 16 processors, <code>mszip:6</code> takes about 5 seconds and makes 105 MB.</p>
+<h3 id="several-architectures---arch">15.4 Several architectures: <code>--arch</code><a class="plink" href="#several-architectures---arch" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>arch = "x64"</code> is the source's own architecture. <code>--arch x86</code> builds the same source for another one:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o out-x64\hello-x64.msi --arch x64
+C:\work\hello&gt; rubrapack build hello.toml -o out-x86\hello-x86.msi --arch x86
+C:\work\hello&gt; rubrapack build hello.toml -o out-arm64\hello-arm64.msi --arch arm64</code></pre>
+<ul><li><code>$(ARCH)</code> is a built-in variable: <code>x64</code>, <code>x86</code> or <code>arm64</code>, the architecture being built - here it picks <code>dist/x86/hello.exe</code> for the x86 package. rubrapack checks each program against it.</li><li><code>ProgramFiles</code> follows: <code>C:\Program Files</code> for x64 and Arm64, <code>C:\Program Files (x86)</code> for x86.</li><li><strong>Each architecture needs its own upgrade code</strong> - <code>upgrade-code-x86</code>, <code>upgrade-code-arm64</code> (and <code>upgrade-code-x64</code> if the source's own <code>arch</code> were another). Windows' upgrade logic cannot tell architectures apart: with one shared code, installing the x86 package would remove the x64 one as "an older version". Without them, <code>--arch</code> is refused.</li></ul>
+<p>Each output goes to its own folder here because external cabinets are named after the package and must not collide.</p>
+<h3 id="the-same-bytes-every-time---reproducible">15.5 The same bytes every time: <code>--reproducible</code><a class="plink" href="#the-same-bytes-every-time---reproducible" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A normal build gives every package a new random <em>package code</em> (a GUID in the file's summary), so two builds of the same source differ. <code>--reproducible</code> derives it from the content instead: the same source and files give the same <code>.msi</code>, byte for byte, on any computer, with any number of processors:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o r1.msi --reproducible --jobs 1
+C:\work\hello&gt; rubrapack build hello.toml -o r2\r1.msi --reproducible
+C:\work\hello&gt; fc /b r1.msi r2\r1.msi
+FC: no differences encountered</code></pre>
+<p>Anyone can then check that a published package was built from the published source. The package code is shown by <code>rubrapack inspect hello.msi --summary</code> (property <code>9</code>).</p>
+<h3 id="names-from-a-mac---nfc">15.6 Names from a Mac: <code>--nfc</code><a class="plink" href="#names-from-a-mac---nfc" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Unicode can write a character like <code>한</code> or <code>é</code> in two ways - one code point, or letters plus combining marks - and macOS file systems store names in the second form. <code>--nfc</code> converts file and folder names to the first form (NFC), which Windows uses; <code>lint</code> warns (<code>RP2105</code>) about names that are not NFC. Part III explains <a href="basics-03-text.html#unicode-normalization">Unicode normalization</a>.</p>
+<h3 id="variables-from-the-command-line--d">15.7 Variables from the command line: <code>-D</code><a class="plink" href="#variables-from-the-command-line--d" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>-D NAME=VALUE</code> sets any <code>[define]</code> variable, as often as needed: <code>-D VERSION=2.0.1 -D EDITION=Pro</code>. <code>$$(</code> writes a literal <code>$(</code>.</p>
+<h3 id="what-happened-inside">15.8 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect out-x64\hello-x64.msi Media
+1	2		hello-x64.cab
+C:\work\hello&gt; rubrapack inspect out-x86\hello-x86.msi --summary
+...
+7	Intel;1033</code></pre>
+<p>The <code>Media</code> table lists the cabinets: disk 1 holds files 1 to 2, in <code>hello-x64.cab</code> (an embedded one is written <code>#cab1.cab</code>, the <code>#</code> meaning "inside this file"). The summary's <em>template</em> (property 7) names the platform (<code>x64</code>, <code>Arm64</code>, or <code>Intel</code> for x86) and the language. Part IV shows the cabinet format - CFHEADER, CFFOLDER, CFDATA - and the MSZIP compression byte by byte.</p>
+<div class="nav"><a href="tutorial-14-your-own-pages.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-16-signing.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

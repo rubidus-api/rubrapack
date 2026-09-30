@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>25 압축 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">25장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="basics-04-guids-and-hashes.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="basics-06-files-inside-a-file.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-05-compression.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#데이터를-줄일-수-있는-까닭"><span class="tf-no">25.1</span>데이터를 줄일 수 있는 까닭</a><a class="lv3" href="#lz77-앞에서-베껴-와라"><span class="tf-no">25.2</span>LZ77: &quot;앞에서 베껴 와라&quot;</a><a class="lv3" href="#허프만-부호-흔한-기호에-짧은-부호"><span class="tf-no">25.3</span>허프만 부호: 흔한 기호에 짧은 부호</a><a class="lv3" href="#deflate-비트-하나하나"><span class="tf-no">25.4</span>deflate, 비트 하나하나</a><a class="lv3" href="#mszip-캐비닛-속의-deflate"><span class="tf-no">25.5</span>MSZIP: 캐비닛 속의 deflate</a><a class="lv3" href="#msix-속의-deflate"><span class="tf-no">25.6</span>MSIX 속의 deflate</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">25.7</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">25 압축</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#데이터를-줄일-수-있는-까닭"><span class="tf-no">25.1</span>데이터를 줄일 수 있는 까닭</a><a class="lv3" href="#lz77-앞에서-베껴-와라"><span class="tf-no">25.2</span>LZ77: &quot;앞에서 베껴 와라&quot;</a><a class="lv3" href="#허프만-부호-흔한-기호에-짧은-부호"><span class="tf-no">25.3</span>허프만 부호: 흔한 기호에 짧은 부호</a><a class="lv3" href="#deflate-비트-하나하나"><span class="tf-no">25.4</span>deflate, 비트 하나하나</a><a class="lv3" href="#mszip-캐비닛-속의-deflate"><span class="tf-no">25.5</span>MSZIP: 캐비닛 속의 deflate</a><a class="lv3" href="#msix-속의-deflate"><span class="tf-no">25.6</span>MSIX 속의 deflate</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">25.7</span>쓰이는 곳</a></div></div>
+<p>MSI 의 파일은 캐비닛에, MSIX 의 파일은 ZIP 압축 파일에 담겨 옮겨지고, 둘 다 보통 <em>압축</em>되어 있다: 더 적은 바이트로 쓰이고, 거기서 원래 것이 정확히 되살아난다. 이 장은 둘이 함께 쓰는 방법인 <strong>deflate</strong> 가 그것을 어떻게 하는지를 실제 예의 비트까지 내려가 보인다.</p>
+<h3 id="데이터를-줄일-수-있는-까닭">25.1 데이터를 줄일 수 있는 까닭<a class="plink" href="#데이터를-줄일-수-있는-까닭" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>손실 없는 압축이 되는 것은 실제 데이터가 무작위가 아니기 때문이다. 두 가지가 되풀이된다:</p>
+<ol><li><strong>나열.</strong> 프로그램의 기계어는 명령 무늬를 되풀이하고, 글은 낱말을 되풀이하고, 파란 하늘 그림은 같은 색을 되풀이한다.</li><li><strong>기호, 고르지 않게.</strong> 영어 글에서 <code>e</code> 는 <code>z</code> 보다 훨씬 흔하고, 프로그램에서는 바이트 <code>00</code> 이 아주 흔하다.</li></ol>
+<p>deflate 는 둘을 차례로 쓴다: <strong>LZ77</strong> 이 되풀이된 나열을 짧은 참조로 바꾸고, 이어서 <strong>허프만 부호</strong>가 흔한 기호를 더 적은 비트로 쓴다.</p>
+<p>어느 쪽도 없는 데이터 - 무작위 수, 또는 이미 압축된 데이터(PNG, JPEG 그림, ZIP 파일, 동영상) - 는 줄일 수 없다. 해 보면 시간이 들고 몇 바이트가 늘어난다.</p>
+<h3 id="lz77-앞에서-베껴-와라">25.2 LZ77: "앞에서 베껴 와라"<a class="plink" href="#lz77-앞에서-베껴-와라" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>LZ77(Lempel 과 Ziv, 1977년)은 데이터를 처음부터 읽다가, 다음 바이트들이 조금 전에 나온 적이 있으면 대신 <strong>뒤 참조</strong>를 쓴다: "<em>거리</em>만큼 뒤로 가서 <em>길이</em>만큼 베껴라". 나머지는 <strong>글자 그대로</strong>(literal) 한 바이트씩 쓴다.</p>
+<p>12 바이트 <code>abcabcabcabc</code> 를 보자. deflate 는 이것을 글자 넷과 참조 하나로 쓴다:</p>
+<pre><code class="lang-text">  literal a
+  literal b
+  literal c
+  literal a
+  copy: distance 3, length 8</code></pre>
+<p>베끼는 것은 자기가 만드는 것과 겹쳐도 된다: 3 바이트 뒤로 가면 <code>bca</code> 에 닿고, 한 바이트씩 베끼면 방금 쓴 바이트를 계속 읽게 된다:</p>
+<pre><code class="lang-text">  written so far:  a b c a
+                     ^ start 3 back
+  copy 8:          a b c a b c a b c a b c
+                           \_______________/ 8 copied bytes</code></pre>
+<p>그래서 아무리 긴 반복도 짧은 참조 하나다. deflate 는 거리 32,768 바이트(<em>창</em>)까지, 길이 3 에서 258 까지를 쓴다.</p>
+<h3 id="허프만-부호-흔한-기호에-짧은-부호">25.3 허프만 부호: 흔한 기호에 짧은 부호<a class="plink" href="#허프만-부호-흔한-기호에-짧은-부호" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>LZ77 을 지나면 데이터는 기호의 줄이 된다: 글자 바이트, 길이, 거리. 보통의 바이트는 무엇이든 8비트를 쓴다. <strong>허프만 부호</strong>는 기호마다 비트 수를 따로 준다 - 잦은 것에는 적게 - 그리고 어떤 부호도 다른 부호의 앞부분이 되지 않게 해서, 읽는 쪽이 언제나 한 부호가 어디서 끝나는지 안다.</p>
+<p>기호 넷으로 된 작은 예:</p>
+<div class="tblwrap"><table class="key"><tr><th>기호</th><th>빈도</th><th>고정 2비트 부호</th><th>허프만 부호</th></tr><tr><td>A</td><td>50%</td><td><code>00</code></td><td><code>0</code></td></tr><tr><td>B</td><td>25%</td><td><code>01</code></td><td><code>10</code></td></tr><tr><td>C</td><td>12.5%</td><td><code>10</code></td><td><code>110</code></td></tr><tr><td>D</td><td>12.5%</td><td><code>11</code></td><td><code>111</code></td></tr></table></div>
+<p>평균하면 기호 하나에 2비트 대신 0.5 x 1 + 0.25 x 2 + 0.125 x 3 + 0.125 x 3 = 1.75 비트다. <code>ABAD</code> 는 <code>0 10 0 111</code> 이 되고, <code>0100111</code> 을 왼쪽부터 읽으면 A, B, A, D 로만 읽힌다.</p>
+<p>deflate 에는 부호 표가 두 가지다: 표준에 한 번 정해 둔 <strong>고정</strong> 표(작은 데이터에 좋다)와, 블록마다 그 블록의 기호 수를 세어 만들어 블록 앞에 저장하는 <strong>동적</strong> 표(큰 데이터에 좋다).</p>
+<h3 id="deflate-비트-하나하나">25.4 deflate, 비트 하나하나<a class="plink" href="#deflate-비트-하나하나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>deflate(RFC 1951)는 블록을 쓴다. 블록은 저마다 세 비트짜리 머리로 시작한다:</p>
+<div class="tblwrap"><table><tr><th>비트</th><th>뜻</th></tr><tr><td>1비트: BFINAL</td><td>1 = 마지막 블록</td></tr><tr><td>2비트: BTYPE</td><td>0 = 저장(바이트 그대로), 1 = 고정 허프만 부호, 2 = 동적 허프만 부호</td></tr></table></div>
+<p>고정 표의 기호:</p>
+<div class="tblwrap"><table class="key"><tr><th>기호</th><th>뜻</th><th>부호 길이</th><th>부호</th></tr><tr><td>0-143</td><td>글자 바이트 0-143</td><td>8비트</td><td><code>00110000</code> + 기호</td></tr><tr><td>144-255</td><td>글자 바이트 144-255</td><td>9비트</td><td><code>110010000</code> + (기호 - 144)</td></tr><tr><td>256</td><td>블록 끝</td><td>7비트</td><td><code>0000000</code></td></tr><tr><td>257-279</td><td>길이(와 추가 비트)</td><td>7비트</td><td><code>0000001</code> ...</td></tr><tr><td>280-287</td><td>길이(와 추가 비트)</td><td>8비트</td><td><code>11000000</code> ...</td></tr></table></div>
+<p>길이 뒤에는 5비트 거리 부호가 오고, 어떤 부호는 범위 안의 정확한 값을 고르려고 <em>추가 비트</em>를 몇 개 더 붙인다.</p>
+<p><code>abcabcabcabc</code> 를 deflate 로 압축하면 이렇다 - 열두 바이트 대신 일곱 바이트:</p>
+<pre><code class="lang-text">4b 4c 4a 4e 84 21 00</code></pre>
+<p>deflate 는 바이트마다 가장 낮은 비트(비트 0, 2장)부터 채운다. 그 순서로 풀어 쓰면 비트의 줄은:</p>
+<pre><code class="lang-text">byte 4b = 01001011  -&gt; bits in order: 1 1 0 1 0 0 1 0
+byte 4c = 01001100  -&gt; bits in order: 0 0 1 1 0 0 1 0
+...</code></pre>
+<p>이고, 이렇게 읽힌다:</p>
+<div class="tblwrap"><table><tr><th>비트(순서대로)</th><th>뜻</th></tr><tr><td><code>1</code></td><td>BFINAL = 1: 마지막 블록</td></tr><tr><td><code>1 0</code></td><td>BTYPE = 1(두 비트를 낮은 비트부터 수로 읽는다): 고정 부호</td></tr><tr><td><code>10010001</code></td><td>글자 <code>a</code> (0x61 = 97. <code>00110000</code> + 97 = <code>10010001</code>)</td></tr><tr><td><code>10010010</code></td><td>글자 <code>b</code></td></tr><tr><td><code>10010011</code></td><td>글자 <code>c</code></td></tr><tr><td><code>10010001</code></td><td>글자 <code>a</code></td></tr><tr><td><code>0000110</code></td><td>기호 262: 길이 8</td></tr><tr><td><code>00010</code></td><td>거리 부호 2: 거리 3</td></tr><tr><td><code>0000000</code></td><td>기호 256: 블록 끝</td></tr></table></div>
+<p>3 + 4 x 8 + 7 + 5 + 7 = 54 비트이고, 일곱째 바이트의 마지막 두 비트는 쓰지 않는다. (허프만 부호만은 deflate 가 부호의 <em>가장 높은</em> 비트부터 쓴다. BTYPE 이나 추가 비트 같은 수는 가장 낮은 비트부터다. 제4부가 모든 표를 적어 두었다.)</p>
+<h3 id="mszip-캐비닛-속의-deflate">25.5 MSZIP: 캐비닛 속의 deflate<a class="plink" href="#mszip-캐비닛-속의-deflate" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>캐비닛(<code>.cab</code>)은 파일 데이터를 32 KiB 이하의 블록으로 나눈다. <strong>MSZIP</strong> 에서는 블록마다 두 글자 <code>CK</code>(<code>43 4b</code>) 뒤에 deflate 스트림 하나가 오고, 블록은 앞 블록 안을 참조할 수 있다. 원본의 <code>compress = "mszip:6"</code> 은 9 단계 중 6 의 노력으로 하는 deflate 다: 수가 클수록 일치를 더 오래 찾는다 - 결과는 작아지고 시간은 더 든다 - 풀리는 방식은 같다.</p>
+<h3 id="msix-속의-deflate">25.6 MSIX 속의 deflate<a class="plink" href="#msix-속의-deflate" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>MSIX 는 ZIP 압축 파일이고, ZIP 은 파일마다 그대로("저장", 방법 0) 또는 deflate 로 압축해(방법 8) 담는다. 튜토리얼의 <code>hello.msix</code>(17장):</p>
+<div class="tblwrap"><table class="key"><tr><th>파일</th><th>크기</th><th>패키지 안</th><th></th></tr><tr><td><code>hello.exe</code></td><td>17,920</td><td>6,706</td><td>deflate: 37%</td></tr><tr><td><code>Registry.dat</code></td><td>8,192</td><td>430</td><td>deflate: 대부분 0 바이트라 5%</td></tr><tr><td><code>AppxManifest.xml</code></td><td>2,537</td><td>900</td><td>deflate: 글이라 35%</td></tr><tr><td><code>Assets\Square150x150.png</code></td><td>301</td><td>301</td><td>저장: PNG 는 이미 압축되어 있다</td></tr><tr><td><code>guide.txt</code></td><td>6</td><td>14</td><td>deflate: 너무 작아 얻는 것이 없다</td></tr></table></div>
+<p>마지막 줄이 아주 작은 데이터를 압축하는 비용을 보인다: deflate 블록에는 머리 몇 비트와 끝 부호가 있고, 여섯 바이트에는 되풀이할 것이 없다.</p>
+<h3 id="쓰이는-곳">25.7 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>튜토리얼 <a href="tutorial-15-cabinets-and-architectures.html">15</a>장: <code>compress</code>, <code>cab</code>, <code>cab-max-size</code>.</li><li>튜토리얼 <a href="tutorial-17-msix-and-bundles.html">17</a>장: <code>--msix-compress</code>.</li><li>제4부: <a href="formats-cab-mszip.html">캐비닛, MSZIP, deflate</a>, <a href="formats-msix.html">MSIX</a>.</li></ul>
+<div class="nav"><a href="basics-04-guids-and-hashes.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="basics-06-files-inside-a-file.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

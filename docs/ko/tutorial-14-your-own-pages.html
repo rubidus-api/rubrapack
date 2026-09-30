@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>14 나만의 대화창 페이지 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">14장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-13-running-your-program.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-15-cabinets-and-architectures.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-14-your-own-pages.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#원본"><span class="tf-no">14.1</span>원본</a><a class="lv3" href="#페이지-dialogid"><span class="tf-no">14.2</span>페이지: [dialog.ID]</a><a class="lv3" href="#페이지-위의-자리"><span class="tf-no">14.3</span>페이지 위의 자리</a><a class="lv3" href="#컨트롤-dialog-controlid"><span class="tf-no">14.4</span>컨트롤: [dialog-control.ID]</a><a class="lv3" href="#모든-값에는-기본값이-있어야-한다-propertyname"><span class="tf-no">14.5</span>모든 값에는 기본값이 있어야 한다: [property.NAME]</a><a class="lv3" href="#해-보기"><span class="tf-no">14.6</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">14.7</span>안에서 무슨 일이 일어났나</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">14 나만의 대화창 페이지</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#원본"><span class="tf-no">14.1</span>원본</a><a class="lv3" href="#페이지-dialogid"><span class="tf-no">14.2</span>페이지: [dialog.ID]</a><a class="lv3" href="#페이지-위의-자리"><span class="tf-no">14.3</span>페이지 위의 자리</a><a class="lv3" href="#컨트롤-dialog-controlid"><span class="tf-no">14.4</span>컨트롤: [dialog-control.ID]</a><a class="lv3" href="#모든-값에는-기본값이-있어야-한다-propertyname"><span class="tf-no">14.5</span>모든 값에는 기본값이 있어야 한다: [property.NAME]</a><a class="lv3" href="#해-보기"><span class="tf-no">14.6</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">14.7</span>안에서 무슨 일이 일어났나</a></div></div>
+<p>목표: 설치 폴더 페이지 뒤에 "선택 사항" 페이지를 더한다. 사용자는 거기서 인사 방식을 고르고, 이름을 입력하고, 목록에서 언어를 고르고, 바탕화면 바로가기를 만들지 정한다. 그리고 그 답을 레지스트리에 저장한다.</p>
+<h3 id="원본">14.1 원본<a class="plink" href="#원본" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-toml"># tutorial 14: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+ui = "installdir"
+
+[define]
+VERSION = "1.12.0"
+
+[ui]
+languages = ["ko"]
+
+[dialog.Options]
+after = "RpInstallDirDlg"
+title = "Options"
+title-ko = "선택 사항"
+description = "Choose how Hello greets you."
+description-ko = "Hello 가 인사하는 방식을 고르십시오."
+
+[dialog-control.ModeLabel]
+dialog = "Options"
+type = "text"
+x = 20
+y = 55
+width = 330
+height = 12
+text = "Greeting &amp;style:"
+text-ko = "인사 방식(&amp;S):"
+
+[dialog-control.Mode]
+dialog = "Options"
+type = "radio"
+x = 20
+y = 70
+width = 200
+height = 42
+property = "GREETING_STYLE"
+values = ["friendly", "formal", "silent"]
+labels = ["&amp;Friendly", "F&amp;ormal", "S&amp;ilent"]
+labels-ko = ["친근하게(&amp;F)", "정중하게(&amp;O)", "조용히(&amp;I)"]
+
+[dialog-control.NameLabel]
+dialog = "Options"
+type = "text"
+x = 20
+y = 122
+width = 330
+height = 12
+text = "&amp;Your name:"
+text-ko = "이름(&amp;Y):"
+
+[dialog-control.Name]
+dialog = "Options"
+type = "edit"
+x = 20
+y = 136
+width = 200
+height = 18
+property = "GREETING_NAME"
+
+[dialog-control.LanguageLabel]
+dialog = "Options"
+type = "text"
+x = 20
+y = 164
+width = 330
+height = 12
+text = "&amp;Greeting language:"
+text-ko = "인사 언어(&amp;G):"
+
+[dialog-control.Language]
+dialog = "Options"
+type = "combo"
+x = 20
+y = 178
+width = 200
+height = 16
+property = "GREETING_LANGUAGE"
+values = ["en", "ko"]
+labels = ["English", "Korean"]
+labels-ko = ["영어", "한국어"]
+
+[dialog-control.DesktopBox]
+dialog = "Options"
+type = "checkbox"
+x = 20
+y = 204
+width = 330
+height = 16
+property = "DESKTOP_SHORTCUT"
+text = "Create a &amp;desktop shortcut"
+text-ko = "바탕화면 바로가기 만들기(&amp;D)"
+
+[property.GREETING_STYLE]
+value = "friendly"
+
+[property.GREETING_NAME]
+value = "friend"
+
+[property.GREETING_LANGUAGE]
+value = "en"
+
+[property.DESKTOP_SHORTCUT]
+value = "1"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[registry.StyleValue]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Style"
+value = "[GREETING_STYLE]"
+
+[registry.NameValue]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Name"
+value = "[GREETING_NAME]"
+
+[registry.LanguageValue]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Language"
+value = "[GREETING_LANGUAGE]"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"
+
+[shortcut.Desktop]
+dir = "Desktop"
+name = "Hello"
+target = "file:Hello"
+when = "DESKTOP_SHORTCUT"</code></pre>
+<h3 id="페이지-dialogid">14.2 페이지: <code>[dialog.ID]</code><a class="plink" href="#페이지-dialogid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table><tr><th>키</th><th>뜻</th></tr><tr><td><code>after</code></td><td>이 페이지가 뒤따를 페이지: <code>RpWelcomeDlg</code>, <code>RpLicenseDlg</code>(약관이 있을 때), <code>RpInstallDirDlg</code>(<code>installdir</code>, <code>features</code>), <code>RpCustomizeDlg</code>(<code>features</code>), 또는 내가 만든 다른 페이지</td></tr><tr><td><code>title</code>, <code>description</code></td><td>배너의 제목과 그 아래 한 줄(제목 기본값: 제품 이름)</td></tr><tr><td><code>title-xx</code>, <code>description-xx</code></td><td><code>[ui] languages</code> 의 다른 언어로 쓴 같은 것</td></tr></table></div>
+<p>페이지는 내장 페이지와 같은 배너와 뒤로 / 다음 / 취소 단추를 받고, 본문은 내가 채운다. 같은 페이지 뒤에 오는 페이지가 여럿이면 ID 순서로 온다. <code>minimal</code> 에서는 마지막 페이지의 단추가 "설치"가 되고, 다른 세트에서는 늘 "준비" 페이지가 마지막에 온다. 페이지는 <code>minimal</code>, <code>installdir</code>, <code>features</code> 에서 쓸 수 있다.</p>
+<h3 id="페이지-위의-자리">14.3 페이지 위의 자리<a class="plink" href="#페이지-위의-자리" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>위치와 크기는 픽셀이 아니라 <em>대화창 단위</em>다. Windows 가 글꼴에 맞춰 늘이고 줄이므로, 페이지는 어느 화면 크기에서도 같게 보인다. 모든 페이지는 370 x 270 단위다:</p>
+<pre><code class="lang-text"> x=0                                                         x=370
+ +--------------------------------------------------------------+ y=0
+ | Title (banner)                                               |
+ | Description                                                  |
+ +--------------------------------------------------------------+ y=44
+ |                                                              | y=45
+ |   your controls go here: x from 0 to 370, y from 45 to 234   |
+ |                                                              |
+ +--------------------------------------------------------------+ y=234
+ |                          [ &lt; Back ] [ Next &gt; ]   [ Cancel ]  | y=243
+ +--------------------------------------------------------------+ y=270</code></pre>
+<p>그림의 이름은 틀의 컨트롤 ID 그대로다: <code>Title</code> 은 제목, <code>Description</code> 은 설명, <code>Back</code> / <code>Next</code> / <code>Cancel</code> 은 뒤로 / 다음 / 취소 단추다.</p>
+<p>Tab 키는 내 컨트롤을 위에서 아래로, 그다음 왼쪽에서 오른쪽으로 옮겨 다닌다.</p>
+<h3 id="컨트롤-dialog-controlid">14.4 컨트롤: <code>[dialog-control.ID]</code><a class="plink" href="#컨트롤-dialog-controlid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>컨트롤마다 자기 <code>dialog</code>, <code>type</code>, 그리고 <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code> 를 적는다:</p>
+<div class="tblwrap"><table class="key"><tr><th><code>type</code></th><th>보이는 것</th><th>속성</th></tr><tr><td><code>text</code></td><td>글자(<code>text</code>)</td><td>-</td></tr><tr><td><code>checkbox</code></td><td>글자가 붙은 확인란</td><td>표시하면 <code>1</code>, 표시를 지우면 속성이 없어진다</td></tr><tr><td><code>edit</code></td><td>입력하는 한 줄 칸</td><td>입력한 글</td></tr><tr><td><code>radio</code></td><td>값마다 단추 하나, 그중 하나를 고름</td><td><code>values</code> 중 하나</td></tr><tr><td><code>combo</code></td><td>펼쳐지는 목록</td><td><code>values</code> 중 하나</td></tr></table></div>
+<ul><li><code>values</code>(문자열 1~32개)는 속성이 받는 값이고, <code>labels</code> 는 사용자가 보는 글로 같은 순서다(기본값: 값 그대로). <code>labels-xx</code> 와 <code>text-xx</code> 가 번역이다.</li><li>라디오 묶음은 값 하나에 높이 12단위쯤이 필요하다.</li><li>글자 안의 <code>&amp;</code> 는 Alt 키를 표시한다: <code>edit</code> 앞의 <code>text</code> 에 두면 Alt+Y 가 그 입력 칸으로 뛴다. 한국어 글에서는 <code>이름(&amp;Y):</code> 처럼 괄호 안에 쓰는 것이 Windows 의 관례다.</li><li>컨트롤 ID <code>Banner</code>, <code>Title</code>, <code>Description</code>, <code>BannerLine</code>, <code>BottomLine</code>, <code>Back</code>, <code>Next</code>, <code>Cancel</code> 은 틀의 것이고, <code>Rp</code> 로 시작하는 페이지 ID 는 rubrapack 의 것이다. 한 페이지에 컨트롤은 64개까지다.</li></ul>
+<h3 id="모든-값에는-기본값이-있어야-한다-propertyname">14.5 모든 값에는 기본값이 있어야 한다: <code>[property.NAME]</code><a class="plink" href="#모든-값에는-기본값이-있어야-한다-propertyname" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>대화창은 값을 <em>모을</em> 뿐이다. 조용한 설치(<code>/qn</code>)는 페이지를 하나도 보이지 않고 속성을 있는 그대로 쓴다. 그래서 컨트롤이 정하는 속성마다 기본값을 담은 <code>[property.*]</code> 가 있고, <code>radio</code> 와 <code>combo</code> 의 기본값은 <code>values</code> 중 하나여야 한다. 같은 속성은 명령줄에서도 줄 수 있다:</p>
+<pre><code class="lang-text">msiexec /i hello.msi /qn GREETING_STYLE=formal GREETING_NAME=Ada DESKTOP_SHORTCUT=""</code></pre>
+<p>rubrapack 은 내 컨트롤의 속성을 스스로 보안 속성으로 만들어, 설치의 관리자 권한 부분까지 전해지게 한다: <code>[registry.StyleValue]</code> 가 <code>[GREETING_STYLE]</code> 을 쓰고, 바탕화면 바로가기의 <code>when = "DESKTOP_SHORTCUT"</code> 이 확인란을 본다.</p>
+<h3 id="해-보기">14.6 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>설치한다: 폴더 페이지 뒤에 내 컨트롤이 든 "Options" 가 온다. 뒤로는 폴더 페이지로, 다음은 "준비"로 간다. 언어 페이지에서 한국어를 고르면 페이지 제목과 글자가 한국어("선택 사항")다. 설치한 뒤 <code>regedit</code> 을 열면 <code>HKLM\SOFTWARE\Example Software\Hello</code> 아래에 <code>Style</code>, <code>Name</code>, <code>Language</code> 가 있다. 바탕화면 바로가기는 확인란을 표시했을 때만 있다.</p>
+<h3 id="안에서-무슨-일이-일어났나">14.7 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>페이지는 <code>Control</code> 표의 행들 - 틀의 것과 내 것 - 이고, 단추는 <code>ControlEvent</code> 의 행들이다:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi ControlEvent
+...
+RpInstallDirDlg	Next	NewDialog	Options	1	1
+Options	Back	NewDialog	RpInstallDirDlg	1	1
+Options	Next	NewDialog	RpReadyDlg	1	1
+RpReadyDlg	Back	NewDialog	Options	1	1
+...</code></pre>
+<p>"폴더 페이지에서 다음을 누르면 Options 를 보여라". Options 의 뒤로와 다음은 이웃 페이지로 이어진다. rubrapack 은 내 페이지가 들어가도록 내장 페이지들의 연결을 바꾼다. <code>Control</code> 표의 속성 수는 여기서도 비트 플래그다(1 보임, 2 사용 가능, 65536 투명, ...).</p>
+<div class="nav"><a href="tutorial-13-running-your-program.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="tutorial-15-cabinets-and-architectures.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

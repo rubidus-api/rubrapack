@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21 비트, 바이트, 16진수 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">21장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="rpk.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="basics-02-numbers-and-flags.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/basics-01-bits-bytes-and-hex.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#비트"><span class="tf-no">21.1</span>비트</a><a class="lv3" href="#2진수"><span class="tf-no">21.2</span>2진수</a><a class="lv3" href="#바이트"><span class="tf-no">21.3</span>바이트</a><a class="lv3" href="#16진수"><span class="tf-no">21.4</span>16진수</a><a class="lv3" href="#16진-덤프-읽기"><span class="tf-no">21.5</span>16진 덤프 읽기</a><a class="lv3" href="#단위-kb-mb-와-kib-mib"><span class="tf-no">21.6</span>단위: KB, MB 와 KiB, MiB</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">21.7</span>쓰이는 곳</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">21 비트, 바이트, 16진수</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#비트"><span class="tf-no">21.1</span>비트</a><a class="lv3" href="#2진수"><span class="tf-no">21.2</span>2진수</a><a class="lv3" href="#바이트"><span class="tf-no">21.3</span>바이트</a><a class="lv3" href="#16진수"><span class="tf-no">21.4</span>16진수</a><a class="lv3" href="#16진-덤프-읽기"><span class="tf-no">21.5</span>16진 덤프 읽기</a><a class="lv3" href="#단위-kb-mb-와-kib-mib"><span class="tf-no">21.6</span>단위: KB, MB 와 KiB, MiB</a><a class="lv3" href="#쓰이는-곳"><span class="tf-no">21.7</span>쓰이는 곳</a></div></div>
+<p>이 부는 매뉴얼의 나머지가 딛고 선 개념을 처음부터 설명한다. 컴퓨터를 쓸 줄 안다는 것 말고는 아무것도 가정하지 않는다. 각 장의 끝에는 그 개념이 튜토리얼과 제4부의 어디에 쓰이는지 적었다.</p>
+<h3 id="비트">21.1 비트<a class="plink" href="#비트" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>컴퓨터가 저장하는 모든 것 - 프로그램, 사진, 이 매뉴얼, 설치 파일 - 은 결국 <strong>비트</strong>의 긴 줄이다. 비트는 값이 둘이고 <code>0</code> 과 <code>1</code> 로 쓴다(하드웨어에서는 전하가 없음과 있음, 자기의 한 방향과 반대 방향). 비트 하나는 예/아니요 질문 하나에 답할 수 있다.</p>
+<p>비트 여럿을 모으면 더 많은 값을 구별할 수 있다. 비트 하나를 더할 때마다 가짓수가 두 배가 된다:</p>
+<div class="tblwrap"><table class="key"><tr><th>비트 수</th><th>서로 다른 값</th><th>전부</th></tr><tr><td>1</td><td>2</td><td><code>0</code> <code>1</code></td></tr><tr><td>2</td><td>4</td><td><code>00</code> <code>01</code> <code>10</code> <code>11</code></td></tr><tr><td>3</td><td>8</td><td><code>000</code> <code>001</code> <code>010</code> <code>011</code> <code>100</code> <code>101</code> <code>110</code> <code>111</code></td></tr><tr><td>8</td><td>256</td><td><code>00000000</code> ... <code>11111111</code></td></tr><tr><td>16</td><td>65,536</td><td></td></tr><tr><td>32</td><td>4,294,967,296</td><td></td></tr></table></div>
+<p><em>n</em> 비트로는 2 x 2 x ... x 2(<em>n</em> 번) = 2^<em>n</em> 가지 값이 있다.</p>
+<h3 id="2진수">21.2 2진수<a class="plink" href="#2진수" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>비트의 줄은 10진수 숫자를 읽듯 수로 읽을 수 있다. 10진수에서는 한 자리가 오른쪽 자리의 열 배다: <code>305</code> 는 3 x 100 + 0 x 10 + 5 x 1 이다. <strong>2진수</strong>(밑이 2)에서는 한 자리가 오른쪽 자리의 두 배다:</p>
+<pre><code class="lang-text">  bit:      1    0    1    1    0    0    1    0
+  worth:  128   64   32   16    8    4    2    1
+          ---        --   --              -
+          128    +   32 + 16        +     2      = 178</code></pre>
+<p>그래서 2진수 <code>10110010</code> 은 10진수로 178 이다. 값이 1 인 맨 오른쪽 비트를 비트 0, 이 여덟 개 중 값이 128 인 맨 왼쪽 비트를 비트 7 이라고 부른다. 비트 <em>k</em> 의 값은 2^<em>k</em> 다.</p>
+<h3 id="바이트">21.3 바이트<a class="plink" href="#바이트" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>비트는 여덟 개씩 묶여 <strong>바이트</strong>가 된다. 바이트는 파일을 이루는 가장 작은 조각이다: 28,672 바이트인 파일 - 튜토리얼의 첫 <code>hello.msi</code> 크기 - 은 28,672 x 8 = 229,376 비트다. 바이트 하나는 0 부터 255 까지 256 가지 값 중 하나를 담는다.</p>
+<p>바이트가 무엇을 <em>뜻하는지</em>는 전적으로 프로그램이 그것을 어떻게 읽느냐에 달렸다: 같은 바이트 <code>01001000</code> 이 수 72 이기도 하고, 텍스트 파일에서는 글자 <code>H</code>(3장)이기도 하고, 더 큰 수의 일부(2장)이기도 하고, 프로그램 안에서는 기계 명령의 일부이기도 하다. 파일은 그것을 말해 주지 않는다. 말해 주는 것은 파일의 <em>형식</em>이다. 이 매뉴얼의 제4부가 그런 형식의 설명이다.</p>
+<h3 id="16진수">21.4 16진수<a class="plink" href="#16진수" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>2진수는 쓰기에 길고 읽기에 어렵다. 10진수는 바이트와 줄이 맞지 않는다. 그래서 바이트는 보통 <strong>16진수</strong>(밑이 16, "hex")로 쓴다: 숫자 <code>0</code>-<code>9</code> 다음에 10 부터 15 를 뜻하는 <code>A</code>-<code>F</code> 를 쓴다. 16진수 한 자리는 정확히 4비트이므로, 바이트 하나는 정확히 16진수 두 자리다:</p>
+<div class="tblwrap"><table class="key"><tr><th>10진수</th><th>2진수</th><th>16진수</th><th></th><th>10진수</th><th>2진수</th><th>16진수</th></tr><tr><td>0</td><td><code>0000</code></td><td><code>0</code></td><td></td><td>8</td><td><code>1000</code></td><td><code>8</code></td></tr><tr><td>1</td><td><code>0001</code></td><td><code>1</code></td><td></td><td>9</td><td><code>1001</code></td><td><code>9</code></td></tr><tr><td>2</td><td><code>0010</code></td><td><code>2</code></td><td></td><td>10</td><td><code>1010</code></td><td><code>A</code></td></tr><tr><td>3</td><td><code>0011</code></td><td><code>3</code></td><td></td><td>11</td><td><code>1011</code></td><td><code>B</code></td></tr><tr><td>4</td><td><code>0100</code></td><td><code>4</code></td><td></td><td>12</td><td><code>1100</code></td><td><code>C</code></td></tr><tr><td>5</td><td><code>0101</code></td><td><code>5</code></td><td></td><td>13</td><td><code>1101</code></td><td><code>D</code></td></tr><tr><td>6</td><td><code>0110</code></td><td><code>6</code></td><td></td><td>14</td><td><code>1110</code></td><td><code>E</code></td></tr><tr><td>7</td><td><code>0111</code></td><td><code>7</code></td><td></td><td>15</td><td><code>1111</code></td><td><code>F</code></td></tr></table></div>
+<p>바이트를 16진수로 바꾸려면 여덟 비트를 넷씩 둘로 나눠 각각 찾는다:</p>
+<pre><code class="lang-text">  10110010
+  1011 0010
+     B    2      -&gt; B2</code></pre>
+<p>거꾸로: 16진수 <code>B2</code> 는 B x 16 + 2 = 11 x 16 + 2 = 178 이다. 같은 수를 세 가지로 쓰면 <code>178</code>, <code>10110010</code>, <code>B2</code>.</p>
+<p>수가 16진수임을 밝히려고 프로그래머는 앞에 <code>0x</code> 를 붙이거나(<code>0xB2</code>), 뒤에 <code>h</code> 를 붙이거나(<code>B2h</code>), 그냥 말로 밝힌다. 이 매뉴얼은 바이트를 사이에 빈칸을 둔 16진수 두 자리로(<code>B2 00 FF</code>), 16진수로 적은 수는 <code>0x</code> 를 붙여 쓴다: <code>0x1000</code> 은 4096 이다.</p>
+<p>Windows 계산기의 <em>프로그래머</em> 모드는 10진수, 16진수, 2진수를 서로 바꿔 준다: 하나에 수를 넣고 나머지를 읽는다.</p>
+<h3 id="16진-덤프-읽기">21.5 16진 덤프 읽기<a class="plink" href="#16진-덤프-읽기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><strong>16진 덤프</strong>는 파일의 바이트를 한 줄에 열여섯 개씩 16진수로 보인다. 튜토리얼의 첫 <code>hello.msi</code> 의 처음 64 바이트다:</p>
+<pre><code class="lang-text">offset    bytes                                            as text
+00000000  d0 cf 11 e0 a1 b1 1a e1 00 00 00 00 00 00 00 00  ................
+00000010  00 00 00 00 00 00 00 00 3e 00 04 00 fe ff 0c 00  ........&gt;.......
+00000020  06 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00  ................
+00000030  01 00 00 00 00 00 00 00 00 10 00 00 02 00 00 00  ................</code></pre>
+<ul><li>왼쪽의 <strong>오프셋</strong>은 그 줄 첫 바이트의 위치로, 0 부터 세어 16진수로 적는다: <code>00000010</code> 은 16번째 바이트, <code>00000030</code> 은 48번째 바이트다. 오프셋 <code>0x1C</code> 의 바이트는 둘째 줄의 열세 번째인 <code>fe</code> 다.</li><li>그 뒤에 바이트가 16진수 두 자리씩 온다.</li><li>마지막 열은 글자인 바이트(32~126, 3장)는 글자로, 나머지는 <code>.</code> 으로 보인다. 여기에는 글이 거의 없다. 텍스트 파일이라면 이 열을 읽을 수 있다.</li></ul>
+<p>처음 여덟 바이트 <code>d0 cf 11 e0 a1 b1 1a e1</code> 은 모든 <code>.msi</code> 가 쓰는 복합 파일 형식의 <em>서명</em>이다 - 상상력을 조금 보태 읽으면 "DOCFILE". 모든 파일 형식은 이런 고정된 무늬, <strong>매직 넘버</strong>로 시작해서 프로그램이 파일의 정체를 알아볼 수 있다: 프로그램(<code>.exe</code>)은 <code>4d 5a</code>("MZ"), ZIP 압축 파일과 그래서 MSIX 는 <code>50 4b 03 04</code>("PK"), 캐비닛은 <code>4d 53 43 46</code>("MSCF")로 시작한다. 파일 이름은 거짓말을 할 수 있어도 첫 바이트들은 좀처럼 그러지 않는다.</p>
+<p>직접 이렇게 보려면 PowerShell 에서:</p>
+<pre><code class="lang-text">PS C:\work\hello&gt; Format-Hex hello.msi | Select-Object -First 4</code></pre>
+<p>(배치가 위와 조금 다르지만 바이트는 같다.)</p>
+<h3 id="단위-kb-mb-와-kib-mib">21.6 단위: KB, MB 와 KiB, MiB<a class="plink" href="#단위-kb-mb-와-kib-mib" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>크기는 바이트로 세고, 큰 수에는 접두어를 붙인다. 접두어는 두 벌이 있고, 둘을 헷갈리기 쉽다:</p>
+<div class="tblwrap"><table class="key"><tr><th>10진(SI)</th><th>바이트</th><th>2진(IEC)</th><th>바이트</th></tr><tr><td>1 kB (킬로바이트)</td><td>1,000</td><td>1 KiB (키비바이트)</td><td>1,024 = 2^10</td></tr><tr><td>1 MB (메가바이트)</td><td>1,000,000</td><td>1 MiB (메비바이트)</td><td>1,048,576 = 2^20</td></tr><tr><td>1 GB (기가바이트)</td><td>1,000,000,000</td><td>1 GiB (기비바이트)</td><td>1,073,741,824 = 2^30</td></tr><tr><td>1 TB (테라바이트)</td><td>10^12</td><td>1 TiB (테비바이트)</td><td>2^40</td></tr></table></div>
+<p>2진 크기가 쓰이는 것은 메모리와 파일 형식이 2의 거듭제곱으로 일하기 때문이다. 위의 덤프에도 하나 있다: 오프셋 <code>0x1E</code> 에 복합 파일 머리가 <code>0c 00</code>, 곧 수 12 를 저장하고, 그 섹터의 길이는 2^12 = 4096 바이트(4 KiB, <code>0x1000</code>) 다 - 형식이 크기가 아니라 지수를 저장한다. MSIX 블록 맵의 한 항목은 64 KiB 를 덮는다. Windows 탐색기는 "KB", "MB" 라고 쓰지만 뜻은 KiB, MiB 다. 디스크 제조사는 10진 단위를 뜻한다. 그래서 "1 TB" 디스크가 931 GB 로 보인다.</p>
+<p>rubrapack 은 한도가 2의 거듭제곱일 때 2진 단위를 쓴다: <code>cab-max-size</code> 는 MiB 이고, Windows Installer 의 <code>.msi</code> 한도는 2 GiB(2,147,483,648 바이트)다. 이 매뉴얼이 프로그램 크기를 "MB" 로 쓸 때("200 MB 프로그램")는 대략의 크기이고, 그 차이는 중요하지 않다.</p>
+<h3 id="쓰이는-곳">21.7 쓰이는 곳<a class="plink" href="#쓰이는-곳" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li>제4부의 모든 장이 파일 내용을 16진 덤프와 오프셋으로 보인다. 첫 장은 <a href="formats-cfb.html">복합 파일</a>이다.</li><li>튜토리얼 <a href="tutorial-15-cabinets-and-architectures.html">15</a>장: MiB 단위의 <code>cab-max-size</code> 와 2 GiB 한도.</li><li>튜토리얼 <a href="tutorial-18-checking-and-looking-inside.html">18</a>장: <code>inspect --files</code> 의 파일 크기는 바이트다.</li></ul>
+<div class="nav"><a href="rpk.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="basics-02-numbers-and-flags.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
