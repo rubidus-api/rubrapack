@@ -22,6 +22,7 @@
 !/manual/
 !/manual-ko/
 # docs/ is the book GitHub Pages serves (built by manual/book/build.py --out docs), nothing else;
+# its PDFs are built there too but published only as release assets (the pages link them);
 # development docs are in ../rubrapack_private/docs/ only.
 !/docs/
 /docs/*
@@ -31,8 +32,6 @@
 !/docs/en/
 !/docs/ko/
 !/docs/fonts/
-!/docs/rubrapack-manual-en.pdf
-!/docs/rubrapack-manual-ko.pdf
 
 # Build output, even inside whitelisted folders.
 *.o

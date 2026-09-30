@@ -54,6 +54,12 @@ LANGS = {
 }
 
 
+def pdf_url(lang):
+    """The PDFs are release assets, not files of the site: link the release of this version."""
+    v = version()
+    return "%s/releases/download/v%s/rubrapack-manual-%s-%s.pdf" % (REPO_URL, v, v, lang)
+
+
 def version():
     m = re.search(r'RUBRAPACK_VERSION_STRING\s+"([^"]+)"', open(VERSION_H, encoding="utf-8").read())
     return m.group(1) if m else "0"
@@ -800,7 +806,7 @@ def page(lang, title, inner, self_name, prev=None, nxt=None, label=None, secs=No
              + '<button class="tool" type="button" id="set-open">&#9881; %s</button>' % U["settings"]
              + '<a class="tool" href="toc.html">&#9636; %s</a>' % U["toc_full"]
              + '<a class="tool" href="../%s/%s">%s</a>' % (other, self_name, U["other"])
-             + '<a class="tool" href="../rubrapack-manual-%s.pdf">&#10515; %s</a>' % (lang, U["pdf"])
+             + '<a class="tool" href="%s">&#10515; %s</a>' % (pdf_url(lang), U["pdf"])
              + '<a class="tool" href="%s" title="%s">Git</a>' % (REPO_URL, esc(U["t_repo"]))
              + '<a class="tool" href="https://rubidus-api.github.io/" title="%s">&#8962; %s</a>' % (esc(U["t_home"]), U["l_home"])
              + '<a class="tool" href="https://github.com/rubidus-api" title="%s">&#8801; %s</a>' % (esc(U["t_repos"]), U["l_repos"]))
@@ -879,9 +885,9 @@ def build_html(lang, book, out):
     cover = ('<header class="cover"><h1>%s</h1><p class="cover-sub">%s</p>'
              '<p class="cover-meta">%s %s &middot; %s</p>'
              '<p class="cover-links"><a href="%s">github.com/rubidus-api/rubrapack</a>'
-             '<a href="../rubrapack-manual-%s.pdf">PDF</a></p>'
+             '<a href="%s">PDF</a></p>'
              '<div class="cover-blurb"><p>%s</p></div></header>') % (
-        html.escape(L["title"]), html.escape(L["sub"]), U["version"], version(), U["licence"], REPO_URL, lang,
+        html.escape(L["title"]), html.escape(L["sub"]), U["version"], version(), U["licence"], REPO_URL, pdf_url(lang),
         html.escape(U["blurb"]))
     inner = '%s<div class="note"><p>%s</p></div><h3>%s</h3><div class="toc">%s</div>' % (
         cover, html.escape(L["note"]), U["toc"], "".join(toc))
@@ -919,11 +925,11 @@ def build_landing(out):
 <p class="cover-sub">Windows 설치 패키지(MSI·MSIX)를 Windows 와 Linux 에서 만들고 서명하기</p>
 <p class="cover-meta">%s &middot; MIT License</p></header>
 <div class="toc"><h4 class="toc-part">English (original)</h4><div class="toc-group">
-<a href="en/index.html">rubrapack Manual - web</a><a href="rubrapack-manual-en.pdf">rubrapack Manual - PDF</a></div>
+<a href="en/index.html">rubrapack Manual - web</a><a href="%s">rubrapack Manual - PDF</a></div>
 <h4 class="toc-part">한국어</h4><div class="toc-group">
-<a href="ko/index.html">rubrapack 매뉴얼 - 웹</a><a href="rubrapack-manual-ko.pdf">rubrapack 매뉴얼 - PDF</a></div>
+<a href="ko/index.html">rubrapack 매뉴얼 - 웹</a><a href="%s">rubrapack 매뉴얼 - PDF</a></div>
 <h4 class="toc-part">Source</h4><div class="toc-group"><a href="%s">github.com/rubidus-api/rubrapack</a>
-<a href="https://rubidus-api.github.io/">rubidus-api.github.io</a></div></div>""" % (v, REPO_URL)
+<a href="https://rubidus-api.github.io/">rubidus-api.github.io</a></div></div>""" % (v, pdf_url("en"), pdf_url("ko"), REPO_URL)
     open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(
         '<!doctype html>\n<html lang="en">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<title>rubrapack</title><link rel="stylesheet" href="book.css">\n<script>%s</script></head>\n<body>\n'
