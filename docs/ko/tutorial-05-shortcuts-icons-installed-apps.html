@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5 바로가기, 아이콘, &quot;설치된 앱&quot; 항목 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">5장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-04-files-and-folders.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-06-dialogs-and-license.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-05-shortcuts-icons-installed-apps.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#원본"><span class="tf-no">5.1</span>원본</a><a class="lv3" href="#바로가기-shortcutid"><span class="tf-no">5.2</span>바로가기: [shortcut.ID]</a><a class="lv3" href="#설치된-앱-항목-arp"><span class="tf-no">5.3</span>&quot;설치된 앱&quot; 항목: [arp]</a><a class="lv3" href="#다른-글자로-된-이름"><span class="tf-no">5.4</span>다른 글자로 된 이름</a><a class="lv3" href="#해-보기"><span class="tf-no">5.5</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">5.6</span>안에서 무슨 일이 일어났나</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">5 바로가기, 아이콘, "설치된 앱" 항목</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#원본"><span class="tf-no">5.1</span>원본</a><a class="lv3" href="#바로가기-shortcutid"><span class="tf-no">5.2</span>바로가기: [shortcut.ID]</a><a class="lv3" href="#설치된-앱-항목-arp"><span class="tf-no">5.3</span>&quot;설치된 앱&quot; 항목: [arp]</a><a class="lv3" href="#다른-글자로-된-이름"><span class="tf-no">5.4</span>다른 글자로 된 이름</a><a class="lv3" href="#해-보기"><span class="tf-no">5.5</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">5.6</span>안에서 무슨 일이 일어났나</a></div></div>
+<p>목표: 시작 메뉴에 "Example Software" 폴더를 만들어 Hello 와 그 읽어보기를 넣고, 자기 아이콘을 가진 바탕화면 바로가기를 두고, "설치된 앱"의 Hello 에 아이콘과 링크를 단다.</p>
+<p>원본 옆에 아이콘 파일 <code>hello.ico</code> 가 있어야 한다(아무 <code>.ico</code> 나 된다. 많은 그림 편집기가 저장할 수 있다).</p>
+<h3 id="원본">5.1 원본<a class="plink" href="#원본" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-toml"># tutorial 05: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.3.0"
+
+[arp]
+icon = "hello.ico"
+help = "https://example.com/hello/help"
+about = "https://example.com/hello"
+no-repair = true
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[dir.MenuFolder]
+path = "Programs/Example Software"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Readme]
+dir = "INSTALLDIR"
+source = "dist/readme.txt"
+
+[shortcut.StartMenu]
+dir = "MenuFolder"
+name = "Hello"
+target = "file:Hello"
+description = "Says hello"
+working-dir = "INSTALLDIR"
+
+[shortcut.ReadmeLink]
+dir = "MenuFolder"
+name = "Hello - read me"
+target = "file:Readme"
+
+[shortcut.Desktop]
+dir = "Desktop"
+name = "Hello"
+target = "file:Hello"
+args = "--greet \"[ProductName] user\""
+icon = "hello.ico"</code></pre>
+<h3 id="바로가기-shortcutid">5.2 바로가기: <code>[shortcut.ID]</code><a class="plink" href="#바로가기-shortcutid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<ul><li><code>dir</code> 은 바로가기가 들어갈 곳이다: 내 dir, 또는 바로 <code>Programs</code>(시작 메뉴의 프로그램 목록), <code>StartMenu</code>, <code>Desktop</code>, <code>Startup</code>(로그인할 때마다 실행). 여기서 dir <code>MenuFolder</code> 는 시작 메뉴 프로그램 안의 "Example Software" 폴더라서, 시작 메뉴에 "Example Software" 와 그 안의 항목 둘이 보인다.</li><li><code>name</code> 은 바로가기 아래의 글이다.</li><li><code>target</code> 은 바로가기가 여는 파일이다: <code>file:</code> 과 이 패키지의 <code>[file.*]</code> ID.</li><li><code>description</code> 은 도움말 풍선, <code>working-dir</code>(dir ID)은 프로그램이 시작하는 폴더다.</li><li><code>args</code> 는 프로그램의 인자다. MSI *서식 문자열*이어서 바로가기를 만들 때 <code>[ProductName]</code> 이 "Hello" 가 된다. TOML 문자열 안의 큰따옴표는 <code>\"</code> 로 쓴다.</li><li><code>icon</code> 은 바로가기에 자기 <code>.ico</code> 를 준다. 없으면 Windows 는 프로그램 자체의 아이콘을 보인다.</li></ul>
+<p>rubrapack 이 바로가기를 위해 만든 시작 메뉴 폴더는 바로가기와 함께 제품을 지울 때 사라진다.</p>
+<h3 id="설치된-앱-항목-arp">5.3 "설치된 앱" 항목: <code>[arp]</code><a class="plink" href="#설치된-앱-항목-arp" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>("ARP" 는 이 목록의 옛 이름 Add or Remove Programs(프로그램 추가/제거)다.)</p>
+<div class="tblwrap"><table><tr><th>키</th><th>효과</th></tr><tr><td><code>icon = "hello.ico"</code></td><td>목록의 아이콘</td></tr><tr><td><code>help = "https://..."</code></td><td>Windows 가 제품과 함께 보이는 지원 링크</td></tr><tr><td><code>about = "https://..."</code></td><td>제품의 웹 페이지</td></tr><tr><td><code>no-repair = true</code></td><td>이 제품에 복구가 없다</td></tr><tr><td><code>no-modify = true</code></td><td>수정/변경이 없다(패키지에 바꿀 것이 없을 때 쓸모 있다. 8장이 바꿀 것을 더한다)</td></tr></table></div>
+<h3 id="다른-글자로-된-이름">5.4 다른 글자로 된 이름<a class="plink" href="#다른-글자로-된-이름" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><code>name</code> 은 어느 언어로든 쓸 수 있다(<code>name = "안녕"</code>). 그런데 <code>.msi</code> 파일 자체의 속성(자세히 탭)은 ASCII 글자만 보일 수 있어서, 그런 이름에는 ASCII 형태도 준다: <code>[package]</code> 의 <code>summary-name = "Annyeong"</code>. 없으면 rubrapack 이 경고하고(<code>RP1203</code>) 속성에는 "rubrapack package" 가 보인다.</p>
+<h3 id="해-보기">5.5 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>빌드하고 설치한 뒤 시작 메뉴를 연다: "Example Software" 에 "Hello" 와 "Hello - read me" 가 있고, 바탕화면에는 준 아이콘을 단 "Hello" 가 있다. "설치된 앱"에는 아이콘과 함께 Hello 가 보인다. 지우면 바로가기와 시작 메뉴 폴더도 사라진다.</p>
+<h3 id="안에서-무슨-일이-일어났나">5.6 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Shortcut
+Shortcut	Directory_	Name	Component_	Target	Arguments	Description	Hotkey
+...
+Desktop	DesktopFolder	Hello	C_185f8db32271fe25f561	[#Hello]	--greet "[ProductName] user"
+ReadmeLink	MenuFolder	HELLO-~1|Hello - read me	C_44ff26388205705fb806	[#Readme]
+StartMenu	MenuFolder	Hello	C_185f8db32271fe25f561	[#Hello]		Says hello</code></pre>
+<ul><li>바로가기는 대상 파일의 컴포넌트에 속한다: 파일과 함께 설치되고 지워진다.</li><li><code>[#Hello]</code> 는 "파일 <code>Hello</code> 가 설치된 경로"를 뜻하는 Windows Installer 의 표기다.</li><li><code>HELLO-~1|Hello - read me</code> 에는 이름이 둘 들어 있다: 옛 방식의 짧은 이름(8자, 점, 3자 - MS-DOS 시절부터)과 긴 이름. Windows Installer 는 모든 이름에 둘 다를 원하고, 짧은 이름은 rubrapack 이 지어낸다.</li></ul>
+<p>아이콘은 패키지 안(<code>Icon</code> 표)에 저장되고, "설치된 앱" 설정은 <code>Property</code> 표에 들어 있다:</p>
+<pre><code class="lang-text">ARPHELPLINK	https://example.com/hello/help
+ARPNOREPAIR	1
+ARPPRODUCTICON	RpIcon1.ico
+ARPURLINFOABOUT	https://example.com/hello</code></pre>
+<div class="nav"><a href="tutorial-04-files-and-folders.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="tutorial-06-dialogs-and-license.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

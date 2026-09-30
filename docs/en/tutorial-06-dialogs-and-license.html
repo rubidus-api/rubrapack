@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6 Dialogs, a license, and starting the program - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 6 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-05-shortcuts-icons-installed-apps.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-07-several-languages.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-06-dialogs-and-license.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-source"><span class="tf-no">6.1</span>The source</a><a class="lv3" href="#choosing-a-set-of-pages-ui"><span class="tf-no">6.2</span>Choosing a set of pages: ui</a><a class="lv3" href="#the-license-license"><span class="tf-no">6.3</span>The license: license</a><a class="lv3" href="#the-install-folder"><span class="tf-no">6.4</span>The install folder</a><a class="lv3" href="#a-picture-at-the-top-banner"><span class="tf-no">6.5</span>A picture at the top: banner</a><a class="lv3" href="#your-own-words-ui-textid"><span class="tf-no">6.6</span>Your own words: [ui-text.ID]</a><a class="lv3" href="#starting-the-program-at-the-end-launch"><span class="tf-no">6.7</span>Starting the program at the end: launch</a><a class="lv3" href="#try-it"><span class="tf-no">6.8</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">6.9</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">6 Dialogs, a license, and starting the program</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-source"><span class="tf-no">6.1</span>The source</a><a class="lv3" href="#choosing-a-set-of-pages-ui"><span class="tf-no">6.2</span>Choosing a set of pages: ui</a><a class="lv3" href="#the-license-license"><span class="tf-no">6.3</span>The license: license</a><a class="lv3" href="#the-install-folder"><span class="tf-no">6.4</span>The install folder</a><a class="lv3" href="#a-picture-at-the-top-banner"><span class="tf-no">6.5</span>A picture at the top: banner</a><a class="lv3" href="#your-own-words-ui-textid"><span class="tf-no">6.6</span>Your own words: [ui-text.ID]</a><a class="lv3" href="#starting-the-program-at-the-end-launch"><span class="tf-no">6.7</span>Starting the program at the end: launch</a><a class="lv3" href="#try-it"><span class="tf-no">6.8</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">6.9</span>What happened inside</a></div></div>
+<p>Goal: an installer with pages - welcome, a license the user must accept, a choice of folder, progress, finished - that offers to start Hello at the end.</p>
+<h3 id="the-source">6.1 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>LICENSE.txt</code> and <code>banner.bmp</code> (a picture about 493 x 58 pixels) are next to the source.</p>
+<pre><code class="lang-toml"># tutorial 06: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+ui = "installdir"
+license = "LICENSE.txt"
+
+[define]
+VERSION = "1.4.0"
+
+[ui]
+banner = "banner.bmp"
+launch = "file:Hello"
+launch-args = "--first-run"
+launch-checked = true
+
+[ui-text.WelcomeText]
+text = "This will install [ProductName] [ProductVersion]. Close Hello if it is running."
+
+[ui-text.ExitText]
+text = "[ProductName] is ready. Thank you for installing it."
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"</code></pre>
+<h3 id="choosing-a-set-of-pages-ui">6.2 Choosing a set of pages: <code>ui</code><a class="plink" href="#choosing-a-set-of-pages-ui" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>ui</code> in <code>[package]</code> picks one of the built-in dialog sets:</p>
+<div class="tblwrap"><table class="key"><tr><th><code>ui</code></th><th>When installing</th><th>When run again after installation</th></tr><tr><td>(none)</td><td>Windows Installer's own small progress window only</td><td>the same</td></tr><tr><td><code>basic</code></td><td>progress, then finished (or an error)</td><td>progress, finished</td></tr><tr><td><code>minimal</code></td><td>welcome, the license (if any), progress, finished</td><td>repair or remove</td></tr><tr><td><code>installdir</code></td><td>welcome, license, install folder (with a folder browser), ready, progress, finished</td><td>repair or remove</td></tr><tr><td><code>features</code></td><td>as <code>installdir</code>, plus a tree of features and the disk space they need (chapter 8)</td><td>repair, change or remove</td></tr></table></div>
+<p>Every set also has the pages Windows needs when something happens: "Are you sure you want to cancel?", an error message, "these programs use files that must be replaced" (files in use), and "not enough disk space". A package with dialogs still installs silently with <code>/qn</code>: every page only collects values that have defaults.</p>
+<h3 id="the-license-license">6.3 The license: <code>license</code><a class="plink" href="#the-license-license" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>license = "LICENSE.txt"</code> adds a license page after the welcome page. <strong>Next stays disabled until "I accept the terms of the license agreement" is ticked.</strong> The file may be:</p>
+<ul><li><code>.txt</code> or <code>.md</code> - shown as plain text; Korean, other scripts and emoji are kept;</li><li><code>.rtf</code> - shown as it is, with its fonts and formatting (make it in WordPad or Word).</li></ul>
+<p>The license text is stored in the package when it is built; the user does not need the file.</p>
+<h3 id="the-install-folder">6.4 The install folder<a class="plink" href="#the-install-folder" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>With <code>installdir</code> or <code>features</code>, a page shows the install folder with a Change button that opens a folder browser. The folder the user picks becomes <code>INSTALLDIR</code>, and every dir built on <code>INSTALLDIR</code> moves with it. To let the user change another dir, name it: <code>install-dir = "AppDir"</code> in <code>[ui]</code>. From the command line the folder is given as a property:</p>
+<pre><code class="lang-text">msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"</code></pre>
+<h3 id="a-picture-at-the-top-banner">6.5 A picture at the top: <code>banner</code><a class="plink" href="#a-picture-at-the-top-banner" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>banner = "banner.bmp"</code> puts a picture in the strip at the top of every inner page (Windows Installer draws a BMP; about 493 x 58 pixels). Without it the strip is plain white.</p>
+<h3 id="your-own-words-ui-textid">6.6 Your own words: <code>[ui-text.ID]</code><a class="plink" href="#your-own-words-ui-textid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Every text on the built-in pages has an ID; <code>[ui-text.ID]</code> replaces one. The IDs are listed in the Reference part (<a href="rpk.html#dialogs-ui">Dialogs</a>); <code>WelcomeText</code> and <code>ExitText</code> are the sentences on the first and the last page. Texts are formatted strings: <code>[ProductName]</code>, <code>[ProductVersion]</code> and <code>[Manufacturer]</code> are replaced, and a literal square bracket is written <code>[\[]</code>. In a button's text, <code>&amp;</code> marks the letter that works with Alt: <code>&amp;Next</code> is Alt+N.</p>
+<h3 id="starting-the-program-at-the-end-launch">6.7 Starting the program at the end: <code>launch</code><a class="plink" href="#starting-the-program-at-the-end-launch" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>launch = "file:Hello"</code> puts a tick box "Launch Hello" on the finished page (ticked, unless <code>launch-checked = false</code>); <code>launch-args</code> are the program's arguments. If it is ticked, Finish starts Hello - with the rights of the user who ran the installer, not the installer's administrator rights - after a first installation or an upgrade, but not after a repair or a removal, and never in a silent installation.</p>
+<h3 id="try-it">6.8 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Double-click <code>hello.msi</code>: welcome (with your text and the banner), the license (Next is grey until you tick the box), the install folder, ready, progress, finished with "Launch Hello" ticked. Run it again after installing: a page offers Repair and Remove.</p>
+<h3 id="what-happened-inside">6.9 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A package with dialogs carries them as tables - <code>Dialog</code>, <code>Control</code>, <code>ControlEvent</code> and more - that describe every window, button and text box with its position and what happens when it is pressed. rubrapack writes them from its built-in sets:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Dialog
+...
+RpBrowseDlg RpCancelDlg RpErrorDlg RpExitDlg RpFatalDlg RpInstallDirDlg RpLicenseDlg
+RpMaintenanceDlg RpOutOfDiskDlg RpProgressDlg RpReadyDlg RpUserExitDlg RpWelcomeDlg FilesInUse</code></pre>
+<p>(Here only the first column is shown.) The <code>InstallUISequence</code> table says when a page appears:</p>
+<pre><code class="lang-text">RpWelcomeDlg	NOT Installed	1230
+RpMaintenanceDlg	Installed AND NOT RESUME AND NOT Preselected	1240
+RpProgressDlg		1280
+RpExitDlg		-1
+RpUserExitDlg		-2
+RpFatalDlg		-3</code></pre>
+<p>The middle column is a <em>condition</em>: the welcome page only when the product is not installed yet, the maintenance page when it is. The negative numbers are special: the page shown at the end after success (-1), after the user cancelled (-2), after a failure (-3). Chapter 9 uses conditions of your own.</p>
+<div class="nav"><a href="tutorial-05-shortcuts-icons-installed-apps.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-07-several-languages.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7 Several languages - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 7 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-06-dialogs-and-license.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="rpk.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-07-several-languages.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-source"><span class="tf-no">7.1</span>The source</a><a class="lv3" href="#adding-a-language-languages"><span class="tf-no">7.2</span>Adding a language: languages</a><a class="lv3" href="#a-license-per-language-license-xx"><span class="tf-no">7.3</span>A license per language: license-xx</a><a class="lv3" href="#a-text-per-language-text-xx"><span class="tf-no">7.4</span>A text per language: text-xx</a><a class="lv3" href="#languages-other-than-english-and-korean"><span class="tf-no">7.5</span>Languages other than English and Korean</a><a class="lv3" href="#what-is-not-translated"><span class="tf-no">7.6</span>What is not translated</a><a class="lv3" href="#try-it"><span class="tf-no">7.7</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">7.8</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">7 Several languages</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-source"><span class="tf-no">7.1</span>The source</a><a class="lv3" href="#adding-a-language-languages"><span class="tf-no">7.2</span>Adding a language: languages</a><a class="lv3" href="#a-license-per-language-license-xx"><span class="tf-no">7.3</span>A license per language: license-xx</a><a class="lv3" href="#a-text-per-language-text-xx"><span class="tf-no">7.4</span>A text per language: text-xx</a><a class="lv3" href="#languages-other-than-english-and-korean"><span class="tf-no">7.5</span>Languages other than English and Korean</a><a class="lv3" href="#what-is-not-translated"><span class="tf-no">7.6</span>What is not translated</a><a class="lv3" href="#try-it"><span class="tf-no">7.7</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">7.8</span>What happened inside</a></div></div>
+<p>Goal: one package whose pages speak English or Korean, with a license in each language, Korean chosen in advance on Korean Windows.</p>
+<h3 id="the-source">7.1 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>LICENSE-ko.txt</code>, the Korean license, is next to <code>LICENSE.txt</code>.</p>
+<pre><code class="lang-toml"># tutorial 07: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+ui = "installdir"
+license = "LICENSE.txt"
+downgrade-message = "A newer Hello is already installed."
+
+[define]
+VERSION = "1.5.0"
+
+[ui]
+languages = ["ko"]
+license-ko = "LICENSE-ko.txt"
+launch = "file:Hello"
+
+[ui-text.WelcomeText]
+text = "This will install [ProductName] [ProductVersion]."
+text-ko = "[ProductName] [ProductVersion]을(를) 설치합니다."
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"</code></pre>
+<h3 id="adding-a-language-languages">7.2 Adding a language: <code>languages</code><a class="plink" href="#adding-a-language-languages" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The pages are always in English. <code>languages = ["ko"]</code> in <code>[ui]</code> adds Korean to the same package, and then:</p>
+<ul><li>the first page asks which language to use - English or 한국어;</li><li>on a Windows whose regional format (or, failing that, system language) is Korean, 한국어 is already selected; elsewhere English;</li><li>every page after it - welcome, license, folder, ready, progress, finished, and the cancel, error, files-in-use, disk-space and maintenance pages - speaks the language chosen.</li></ul>
+<p>With English alone there is no language page. A silent installation (<code>/qn</code>) shows no pages and needs no choice; <code>RPLANGUAGE=ko</code> on the command line chooses without the page:</p>
+<pre><code class="lang-text">msiexec /i hello.msi RPLANGUAGE=ko</code></pre>
+<h3 id="a-license-per-language-license-xx">7.3 A license per language: <code>license-xx</code><a class="plink" href="#a-license-per-language-license-xx" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>license-ko = "LICENSE-ko.txt"</code> is the license shown when Korean is chosen; English (and any added language without its own) shows <code>[package] license</code>. The same <code>.txt</code> / <code>.md</code> / <code>.rtf</code> rules apply.</p>
+<h3 id="a-text-per-language-text-xx">7.4 A text per language: <code>text-xx</code><a class="plink" href="#a-text-per-language-text-xx" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>In <code>[ui-text.ID]</code>, <code>text</code> is the text for every language and <code>text-ko</code> the Korean one. Every built-in text already exists in English and Korean; give <code>text-ko</code> only where you give <code>text</code>, so both languages say the same thing.</p>
+<h3 id="languages-other-than-english-and-korean">7.5 Languages other than English and Korean<a class="plink" href="#languages-other-than-english-and-korean" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>rubrapack's built-in pages are written in English and Korean. For another language - <code>ja</code>, <code>de</code>, <code>fr</code>, ... - you provide every text as <code>text-xx</code> yourself; the build lists the ones missing:</p>
+<pre><code class="lang-text">hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-text.ID] text-ja for all of them (64 missing, the first is Back)</code></pre>
+<p>For such a language, three more keys in <code>[ui]</code> may help: <code>name-ja</code> (its name on the language page), <code>font-ja</code> (the typeface of its pages) and <code>langid-ja</code> (the Windows language numbers that select it in advance - one number or a list). For common languages (<code>ja</code>, <code>zh</code>, <code>de</code>, <code>fr</code>, <code>es</code>, <code>it</code>, <code>pt</code>, <code>nl</code>, <code>pl</code>, <code>ru</code>, <code>uk</code>, <code>tr</code>, <code>vi</code>, <code>th</code>) these three are built in. Korean pages use the Malgun Gothic typeface, English ones Segoe UI.</p>
+<h3 id="what-is-not-translated">7.6 What is not translated<a class="plink" href="#what-is-not-translated" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li>Windows Installer's own words - the sizes and the menu in the feature tree, "time remaining", its error messages - come from Windows, not from the package.</li><li>The downgrade message (chapter 3) and the removal message of <code>refuse-upgrade-below</code> are one text each; write them in both languages if you need both ("A newer Hello is already installed. / 더 새 Hello 가 설치되어 있습니다.").</li><li><code>[package] language = "ko-KR"</code> only sets the package's own language code; it does not make the pages Korean - <code>languages</code> does.</li></ul>
+<h3 id="try-it">7.7 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>On a Korean Windows, double-click <code>hello.msi</code>: the language page has 한국어 selected; every page after it is Korean, with the Korean license. Choose English: the same pages in English with <code>LICENSE.txt</code>. Try <code>msiexec /i hello.msi RPLANGUAGE=ko</code> on an English Windows.</p>
+<h3 id="what-happened-inside">7.8 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A Windows Installer package has no built-in notion of "several languages": each text on a page is fixed in its table. rubrapack therefore makes every text a <em>property</em> - a named value - and shows the property on the page:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Property
+...
+RpT_WelcomeText	This will install Hello 1.5.0.
+RpT_WelcomeText_en	This will install Hello 1.5.0.
+RpT_WelcomeText_ko	Hello 1.5.0을(를) 설치합니다.
+...</code></pre>
+<p>Before the first page, small actions copy the chosen language's texts into the shown properties; each runs only when its condition is true:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi InstallUISequence
+...
+RpL_ko_26	RPLANGUAGE = "ko"	21
+...
+C:\work\hello&gt; rubrapack inspect hello.msi CustomAction
+...
+RpL_ko_26	51	RpT_WelcomeText	[RpT_WelcomeText_ko]</code></pre>
+<p>Type 51 is "set a property": <code>RpT_WelcomeText</code> becomes the value of <code>RpT_WelcomeText_ko</code>. The text is stored as UTF-8 in the package (code page 65001); Part III explains text encodings and Part IV how the strings are stored.</p>
+<div class="nav"><a href="tutorial-06-dialogs-and-license.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="rpk.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

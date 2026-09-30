@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4 More files and folders - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 4 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-03-versions-and-upgrades.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-05-shortcuts-icons-installed-apps.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-04-files-and-folders.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-folder"><span class="tf-no">4.1</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">4.2</span>The source</a><a class="lv3" href="#folders-dirid"><span class="tf-no">4.3</span>Folders: [dir.ID]</a><a class="lv3" href="#one-file-fileid"><span class="tf-no">4.4</span>One file: [file.ID]</a><a class="lv3" href="#many-files-filesid"><span class="tf-no">4.5</span>Many files: [files.ID]</a><a class="lv3" href="#an-empty-folder-folderid"><span class="tf-no">4.6</span>An empty folder: [folder.ID]</a><a class="lv3" href="#cleaning-up-removeid"><span class="tf-no">4.7</span>Cleaning up: [remove.ID]</a><a class="lv3" href="#a-second-copy-copyid"><span class="tf-no">4.8</span>A second copy: [copy.ID]</a><a class="lv3" href="#two-more-keys-you-may-meet"><span class="tf-no">4.9</span>Two more keys you may meet</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">4.10</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">4 More files and folders</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-folder"><span class="tf-no">4.1</span>The folder</a><a class="lv3" href="#the-source"><span class="tf-no">4.2</span>The source</a><a class="lv3" href="#folders-dirid"><span class="tf-no">4.3</span>Folders: [dir.ID]</a><a class="lv3" href="#one-file-fileid"><span class="tf-no">4.4</span>One file: [file.ID]</a><a class="lv3" href="#many-files-filesid"><span class="tf-no">4.5</span>Many files: [files.ID]</a><a class="lv3" href="#an-empty-folder-folderid"><span class="tf-no">4.6</span>An empty folder: [folder.ID]</a><a class="lv3" href="#cleaning-up-removeid"><span class="tf-no">4.7</span>Cleaning up: [remove.ID]</a><a class="lv3" href="#a-second-copy-copyid"><span class="tf-no">4.8</span>A second copy: [copy.ID]</a><a class="lv3" href="#two-more-keys-you-may-meet"><span class="tf-no">4.9</span>Two more keys you may meet</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">4.10</span>What happened inside</a></div></div>
+<p>Goal: install a whole program folder - the program, a readme under another name, a settings file the user may change, a folder of documents, samples in sub folders, an empty folder for data - and clean up the log files the program writes.</p>
+<h3 id="the-folder">4.1 The folder<a class="plink" href="#the-folder" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello\
+    dist\
+        hello.exe
+        readme.txt
+        settings.ini
+        docs\
+            guide.txt
+        samples\
+            sample1.txt
+            sub\
+                sample2.txt
+    hello.toml</code></pre>
+<h3 id="the-source">4.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 04: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.2.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[dir.Docs]
+path = "INSTALLDIR/docs"
+
+[dir.Samples]
+path = "INSTALLDIR/samples"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Readme]
+dir = "INSTALLDIR"
+source = "dist/readme.txt"
+name = "Read me.txt"
+vital = false
+
+[file.Settings]
+dir = "INSTALLDIR"
+source = "dist/settings.ini"
+keep = true
+
+[files.Docs]
+dir = "Docs"
+glob = "dist/docs/**"
+
+[files.Samples]
+dir = "Samples"
+glob = "dist/samples/**/*.txt"
+
+[folder.Data]
+dir = "INSTALLDIR"
+name = "data"
+keep = true
+
+[remove.Logs]
+dir = "INSTALLDIR"
+name = "*.log"
+on = "uninstall"
+
+[copy.ReadmeInDocs]
+source = "file:Readme"
+dir = "Docs"
+name = "readme.txt"</code></pre>
+<p>Build it and look at the files:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello.msi
+C:\work\hello&gt; rubrapack inspect hello.msi --files
+[ProgramFiles64Folder]\Hello\Read me.txt	8	Readme
+[ProgramFiles64Folder]\Hello\docs\guide.txt	6	F_f493d5ad5c4931c97eb2
+[ProgramFiles64Folder]\Hello\hello.exe	17920	Hello
+[ProgramFiles64Folder]\Hello\samples\sample1.txt	7	F_4ea668ff38fbdf6c7cfe
+[ProgramFiles64Folder]\Hello\samples\sub\sample2.txt	7	F_7b15c594d3b07d23e57d
+[ProgramFiles64Folder]\Hello\settings.ini	23	Settings</code></pre>
+<p>(The output has more columns; only the path, the size and the ID are shown here.)</p>
+<h3 id="folders-dirid">4.3 Folders: <code>[dir.ID]</code><a class="plink" href="#folders-dirid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A dir's <code>path</code> starts from a <em>known folder</em> or from another dir, then names the folders below it:</p>
+<div class="tblwrap"><table><tr><th><code>path</code></th><th>On the user's computer (typical)</th></tr><tr><td><code>ProgramFiles/Hello</code></td><td><code>C:\Program Files\Hello</code> (for an <code>x86</code> package: <code>C:\Program Files (x86)\Hello</code>)</td></tr><tr><td><code>INSTALLDIR/docs</code></td><td><code>C:\Program Files\Hello\docs</code> - below the dir <code>INSTALLDIR</code>, wherever the user put it</td></tr><tr><td><code>CommonAppData/Hello</code></td><td><code>C:\ProgramData\Hello</code> - data shared by all users</td></tr><tr><td><code>LocalAppData/Hello</code></td><td><code>C:\Users\&lt;name&gt;\AppData\Local\Hello</code></td></tr></table></div>
+<p>Building on <code>INSTALLDIR</code> rather than repeating <code>ProgramFiles/Hello</code> matters once users may choose the install folder (chapter 6): <code>docs</code> then follows the folder they chose. The full list of known folders is in the Reference part (<a href="rpk.html#tables">Tables</a>).</p>
+<h3 id="one-file-fileid">4.4 One file: <code>[file.ID]</code><a class="plink" href="#one-file-fileid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li><code>name</code> installs the file under another name - here <code>readme.txt</code> becomes <code>Read me.txt</code>. Names may use any language's letters; what Windows forbids in file names (<code>&lt; &gt; : " / \ | ? *</code>) is refused.</li><li><code>vital = false</code>: if this file cannot be written, the installation goes on without it. By default every file is vital.</li><li><code>keep = true</code>: the file stays when the product is removed, and a repair or a later version does not overwrite it once the user has changed it. Use it for settings the user edits.</li></ul>
+<h3 id="many-files-filesid">4.5 Many files: <code>[files.ID]</code><a class="plink" href="#many-files-filesid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>glob</code> is a path with wildcards: <code>*</code> is any characters within one folder name, <code>?</code> one character, <code>**</code> any number of folders. Every file that matches is installed, and <strong>the folders below the first wildcard are recreated</strong> under <code>dir</code>:</p>
+<div class="tblwrap"><table><tr><th><code>glob</code></th><th><code>dist\samples\sub\sample2.txt</code> goes to</th></tr><tr><td><code>dist/samples/**/*.txt</code> into <code>Samples</code></td><td><code>...\Hello\samples\sub\sample2.txt</code></td></tr><tr><td><code>dist/samples/*.txt</code> into <code>Samples</code></td><td>not installed: <code>*</code> does not go into <code>sub</code></td></tr></table></div>
+<p>The matches are sorted by name, so the package is the same whatever order the file system lists them in. A glob that matches nothing stops the build (<code>RP1503</code>) - usually a typo in the path. rubrapack gives each matched file an ID of its own (<code>F_</code> and a number derived from its path).</p>
+<h3 id="an-empty-folder-folderid">4.6 An empty folder: <code>[folder.ID]</code><a class="plink" href="#an-empty-folder-folderid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>[folder.Data]</code> creates <code>data</code> inside <code>INSTALLDIR</code> although no file goes there - a place for the program to write. <code>keep = true</code> leaves it (and whatever the program wrote in it) when the product is removed.</p>
+<h3 id="cleaning-up-removeid">4.7 Cleaning up: <code>[remove.ID]</code><a class="plink" href="#cleaning-up-removeid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Files the program creates itself - logs, caches - are not the installer's, so Windows Installer would leave them, and with them the folder. <code>[remove.Logs]</code> deletes <code>*.log</code> in <code>INSTALLDIR</code> when the product is removed (<code>on = "uninstall"</code>). <code>on = "install"</code> deletes at installation (files an earlier version left behind), <code>on = "both"</code> at either. Without <code>name</code>, the folder itself is removed if it is empty. Folders that existed before the installation are never removed, and a failed installation puts removed files back.</p>
+<h3 id="a-second-copy-copyid">4.8 A second copy: <code>[copy.ID]</code><a class="plink" href="#a-second-copy-copyid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>[copy.ReadmeInDocs]</code> installs another copy of the file <code>Readme</code> into <code>Docs</code> as <code>readme.txt</code>. The copy comes and goes with its source.</p>
+<h3 id="two-more-keys-you-may-meet">4.9 Two more keys you may meet<a class="plink" href="#two-more-keys-you-may-meet" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<ul><li><code>any-arch = true</code> on a file: rubrapack checks that every program file (<code>.exe</code>, <code>.dll</code>) is built for the package's <code>arch</code>, because an x64 installer that copies a 32-bit DLL by mistake installs a broken program. When that is intended - a 32-bit helper in an x64 product - say so with <code>any-arch = true</code>.</li><li><code>component-guid = "{...}"</code> on a file: rubrapack derives every component's GUID from the product and the file's place, so it stays the same from version to version, which upgrades rely on. Give one by hand only to continue a component that an earlier package made with a different GUID.</li></ul>
+<h3 id="what-happened-inside">4.10 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Windows Installer installs <em>components</em>: small groups of resources that are installed and removed together, each with a GUID and a <em>key path</em> (the thing whose presence means "installed"). rubrapack makes one component per file, which is the safe rule, and one more for each folder, removal and copy that needs one:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Component
+...
+C_74a883a037bc227f9189	{51A68DD4-96FA-83C0-86AA-F20D51339238}	INSTALLDIR	272		Settings
+C_cec3a9b89b2e391393d0	{615660C7-986E-8FB8-87AF-0616B544A6F9}	Data	272
+...</code></pre>
+<p>The <code>272</code> in the attributes column is <code>256 + 16</code>: 256 means a 64-bit component, 16 "permanent" - <code>keep = true</code>. Part IV describes these tables; <code>RemoveFile</code>, <code>CreateFolder</code> and <code>DuplicateFile</code> hold the removal, the empty folder and the copy.</p>
+<div class="nav"><a href="tutorial-03-versions-and-upgrades.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-05-shortcuts-icons-installed-apps.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
