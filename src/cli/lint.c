@@ -1,4 +1,4 @@
-// src/cli/lint.c - `rubrapack lint <src.rpk|file.msi> [--strict]` (RFC-0006 1). A source goes
+// src/cli/lint.c - `rubrapack lint <src.toml|file.msi> [--strict]` (RFC-0006 1). A source goes
 // through the build steps without writing (build.c); a package made by any tool is read and
 // checked with the same table rules (rubrapack/lint.h, foreign mode).
 

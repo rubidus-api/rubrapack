@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.6.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.7.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-0.7.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-0.7.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-manual-0.7.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-manual-0.7.0-en.pdf)
 
 # rubrapack
 
@@ -8,14 +8,14 @@ of your program into a Windows Installer package (`.msi`) or an MSIX package (`.
 and nothing else to install.
 
 ```sh
-rubrapack new app.rpk                    # asks a few questions, writes app.rpk and checks it
-rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, upgrades, repair
+rubrapack new app.toml                    # asks a few questions, writes app.toml and checks it
+rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, upgrades, repair
 ```
 
 ## Why rubrapack
 
 - **MSI packaging made simple.** You write what to install - files, folders, shortcuts, registry
-  values, services - in a short `.rpk` file (plain TOML), and rubrapack writes the database
+  values, services - in a short `.toml` file (plain TOML), and rubrapack writes the database
   tables, component GUIDs, cabinets, upgrade rules and dialogs that Windows Installer needs -
   a license page to accept, an install folder to choose, a tree of optional components, in
   English and other languages. No XML, no table editor, no GUID bookkeeping: only the upgrade
@@ -57,11 +57,11 @@ rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, up
 ## Quick look
 
 ```sh
-rubrapack new app.rpk                               # asks, then writes app.rpk (or: new app.rpk --dist dist ...)
-rubrapack edit app.rpk                              # change it later: a menu, or --set define.VERSION=1.1.0 --sync
-rubrapack build app.rpk -o app.msi                  # a Windows Installer package
-rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
-rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
+rubrapack new app.toml                               # asks, then writes app.toml (or: new app.toml --dist dist ...)
+rubrapack edit app.toml                              # change it later: a menu, or --set define.VERSION=1.1.0 --sync
+rubrapack build app.toml -o app.msi                  # a Windows Installer package
+rubrapack build app.toml -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
+rubrapack build app.toml -o app.msixbundle --arch x64,x86,arm64
 rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
@@ -70,9 +70,9 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Features in detail
 
-- **One source, both formats.** A declarative `.rpk` file (a strict TOML subset) describes the
-  product once; the same source builds an MSI and an MSIX. What one format cannot carry is an error
-  that says so, never something left out quietly.
+- **One source, both formats.** A declarative `.toml` file (a strict TOML subset; the older
+  `.rpk` name works too) describes the product once; the same source builds an MSI and an MSIX.
+  What one format cannot carry is an error that says so, never something left out quietly.
 - **MSI:** files and folders (globs, kept or removed folders), features, registry values (with
   REG_QWORD and the 32-bit view), shortcuts, file types and URL schemes, environment variables,
   INI files, services, fonts, permissions, launch conditions and searches, a program run to
@@ -106,7 +106,7 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Status
 
-Version 0.6.0. Every feature above is covered by tests on Linux and by
+Version 0.7.0. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is
@@ -114,7 +114,7 @@ cross-built with MinGW-w64 and runs on Windows).
 
 ## Documentation
 
-- [`manual/rpk.md`](manual/rpk.md) - the user manual: writing `.rpk` sources and the command line.
+- [`manual/rpk.md`](manual/rpk.md) - the user manual: writing sources (`.toml`) and the command line.
 - [`manual/formats/`](manual/formats/README.md) - the file format manual, for implementers: the
   compound file, the MSI database encoding, summary information, the tables that install,
   cabinets/MSZIP/deflate, deterministic identities, Authenticode and timestamps, MSIX packages,

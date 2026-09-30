@@ -1,8 +1,9 @@
-# `.rpk` sources and the `rubrapack` command
+# Source files and the `rubrapack` command
 
-An `.rpk` file describes a package. It is a strict subset of [TOML 1.0](https://toml.io/en/v1.0.0):
-every `.rpk` file is valid TOML, but rubrapack refuses TOML features outside the subset instead of
-ignoring them.
+A source file describes a package. It is a strict subset of [TOML 1.0](https://toml.io/en/v1.0.0)
+and is named `*.toml`, so editors, GitHub and AI assistants treat it as TOML (the older `*.rpk`
+name is read the same way). Every source is valid TOML, but rubrapack refuses TOML features
+outside the subset instead of ignoring them.
 
 ## Getting started
 
@@ -18,22 +19,22 @@ Put what you ship in a folder `dist/`: the program, and whatever it needs, in `d
 (subfolders are kept). Then let rubrapack write a starting source:
 
 ```sh
-rubrapack new app.rpk      # asks, then writes app.rpk and checks it
+rubrapack new app.toml      # asks, then writes app.toml and checks it
 ```
 
 It asks for the product name, the version, the folder with the files, the main program (its
 architecture is read from the file), the folder under Program Files, who it installs for, which
 sub folders are optional parts, the dialogs, a license (a `LICENSE.txt`, `.md` or `.rtf` next to
 it is offered), Korean dialogs, and the shortcuts. Enter takes the value in brackets. At the end
-it prints the same answers as one command (`rubrapack new app.rpk --dist dist --ui features ...`),
+it prints the same answers as one command (`rubrapack new app.toml --dist dist --ui features ...`),
 which a script or an AI assistant can run without questions. `rubrapack new` without a name asks
-for the file name too, and `rubrapack new app` (no `.rpk`) writes a fixed starter instead.
+for the file name too, and `rubrapack new app` (no extension) writes a fixed starter instead.
 
-Either way, `app.rpk` is plain text to read and change - in any text editor, or with
-`rubrapack edit app.rpk`, a menu of the same questions with the current values as defaults
+Either way, `app.toml` is plain text to read and change - in any text editor, or with
+`rubrapack edit app.toml`, a menu of the same questions with the current values as defaults
 (version, install folder, dialogs and license, optional parts, shortcuts, and matching the file
 list to the program folder after it changed). It changes only those values and keeps every other
-line, comment and table as it was. For scripts: `rubrapack edit app.rpk --set define.VERSION=1.1.0
+line, comment and table as it was. For scripts: `rubrapack edit app.toml --set define.VERSION=1.1.0
 --sync`. This one installs the program and its files into
 `Program Files\My App`, puts it in the Start menu, and shows a dialog that lets the user change
 the folder:
@@ -68,8 +69,8 @@ target = "file:App"
 ```
 
 ```sh
-rubrapack build app.rpk -o app-1.0.0.msi
-rubrapack build app.rpk -o app-1.0.1.msi -D VERSION=1.0.1    # the next version
+rubrapack build app.toml -o app-1.0.0.msi
+rubrapack build app.toml -o app-1.0.1.msi -D VERSION=1.0.1    # the next version
 ```
 
 That is a complete installer. It appears in Installed apps, repairs itself, and removes everything
@@ -159,12 +160,12 @@ choose features, the folder and the language without dialogs.
 
 ### When something is wrong
 
-`rubrapack lint app.rpk` runs every check a build runs and writes nothing. Every problem names its
+`rubrapack lint app.toml` runs every check a build runs and writes nothing. Every problem names its
 place and a code, often with the fix:
 
 ```text
-app.rpk:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
-app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
+app.toml:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
+app.toml:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
 ```
 
 To see what a package holds: `rubrapack inspect app.msi File` prints a table as text,
@@ -179,11 +180,11 @@ A build is one command with no state outside the source, so it fits any script o
 `--reproducible` the same source gives the same bytes on every machine. On a Linux runner:
 
 ```sh
-V=0.6.0                                    # the release to use
+V=0.7.0                                    # the release to use
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
-./rubrapack lint app.rpk
-./rubrapack build app.rpk -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+./rubrapack lint app.toml
+./rubrapack build app.toml -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
     --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
 ```
 
@@ -195,7 +196,7 @@ Windows certificate store.
 
 The source is short plain text and every error says where and why, so an AI coding assistant can
 do the whole job: give it this manual (or the book, <https://rubidus-api.github.io/rubrapack/>) and
-say what to install. It can write `app.rpk`, run `rubrapack lint app.rpk` until it is clean, build,
+say what to install. It can write `app.toml`, run `rubrapack lint app.toml` until it is clean, build,
 check the result with `inspect` and `extract`, and turn the steps into a release script or a CI
 job like the one above. Two things stay yours: keep the upgrade code of the first version, and
 install the package on Windows once before you ship it.
@@ -231,7 +232,7 @@ name = "User guide.txt"
 ```
 
 ```sh
-rubrapack build example.rpk -o example.msi -D VERSION=1.4.1
+rubrapack build example.toml -o example.msi -D VERSION=1.4.1
 rubrapack inspect example.msi File
 ```
 
@@ -856,7 +857,7 @@ guard = true
 
 ### Paths
 
-Source paths are relative to the `.rpk` file and use `/`. Absolute paths, `\`, symbolic links and
+Source paths are relative to the source file and use `/`. Absolute paths, `\`, symbolic links and
 missing files are errors. Target names may use any Unicode text except what Windows forbids
 (`< > : " / \ | ? *`, control characters, trailing dot or space, device names such as `CON`), and two
 names in one folder may not differ only by letter case. Windows Installer stores a name together
@@ -867,7 +868,7 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ## Command line
 
 ```text
-rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
+rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
                 [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
                 [<key> [--cert <chain.pem>]
@@ -878,11 +879,11 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
-rubrapack new [<file>.rpk] [-i]
+rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
-rubrapack edit <file>.rpk [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
+rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
-rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
+rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
@@ -923,8 +924,8 @@ rubrapack version | help [command]
   lists path, size and whether each file is compressed, `--manifest` prints `AppxManifest.xml`.
   For a bundle, the identity and the packages (each opened and checked as a package), and its
   `AppxBundleManifest.xml`; `extract` writes the packages out.
-- `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
-  `dist/`, with a fresh `upgrade-code`. `new <file>.rpk`, `new` without a name (which asks for the file name
+- `new <name>` writes `<name>.toml`, a source that builds as soon as the program's files are in
+  `dist/`, with a fresh `upgrade-code`. `new <file>.toml`, `new` without a name (which asks for the file name
   too), or `new <name> -i` asks the questions of
   [A first package](#a-first-package) instead (on stderr; answers from stdin, one per line, so they
   can be piped; the input ending before the last answer writes nothing), and `new <name>` with
@@ -935,9 +936,9 @@ rubrapack version | help [command]
   lists the folder's top-level files one by one (a shortcut names a file, and a glob cannot leave
   one out) and each sub folder that holds files as a glob; optional sub folders become features at
   `level = 2` next to a required `Main`. It is checked like `lint` after it is written (exit 1 if
-  that finds a problem). It never replaces an existing file; `new app.rpk` over an existing
-  `app.rpk` says to use `edit`.
-- `edit <file>.rpk` changes a source in place. Without options it shows a menu: 1 name,
+  that finds a problem). It never replaces an existing file; `new app.toml` over an existing
+  `app.toml` says to use `edit`.
+- `edit <file>.toml` changes a source in place. Without options it shows a menu: 1 name,
   manufacturer, version (in `[define] VERSION` when `version = "$(VERSION)"`) and architecture;
   2 the folder under Program Files and the scope; 3 dialogs, license and Korean dialogs; 4 which
   sub folders are optional parts (the first one adds a required `Main` feature and gives it to
@@ -957,11 +958,11 @@ rubrapack version | help [command]
   of the text and its UTF-8 bytes; the first 16 bytes of the hash, with the version nibble set to 8
   and the variant bits to `10` (RFC 9562 UUIDv8), written as `{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}`
   in upper case. For example `guid --from hello` gives `{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}`.
-- Diagnostics look like `example.rpk:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you
+- Diagnostics look like `example.toml:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you
   mean 'name'?)`.
 - Before writing, `build` checks the finished tables (`RP20xx` diagnostics, exit code 5); these
   checks guard rubrapack itself, so a source that passes the `RP1xxx` checks should never meet them.
-- `lint <src.rpk>` runs every check `build` runs and writes nothing. It checks the source for an
+- `lint <src.toml>` runs every check `build` runs and writes nothing. It checks the source for an
   MSI; `--target msix` checks it for an MSIX instead (the `[msix]` tables, and what an MSIX
   cannot carry, such as `keep` or `when`). `lint <file.msi>` checks a
   package made by any tool with the same table rules: what stops an installation is an error

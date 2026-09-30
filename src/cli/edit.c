@@ -1,4 +1,4 @@
-// src/cli/edit.c - `rubrapack edit <file>.rpk` (RFC-0015): changes a source in place, through a
+// src/cli/edit.c - `rubrapack edit <file>.toml` (or .rpk) (RFC-0015): changes a source in place, through a
 // menu of questions (the current value is the default) or with --set, --unset and --sync. Only
 // the values it changes are rewritten: every other line - comments, order, hand-written tables -
 // stays as it was. After each change the text is parsed again, so a change that would break the
@@ -703,7 +703,7 @@ static int any_key(src_t *s, ans_t *a) {
 // Checks the text as it would be saved: written next to the source (sources are relative to it).
 static int check(src_t *s, char *argv0) {
     char tmp[1100];
-    CUT(tmp, sizeof tmp, "%s.rp-edit.rpk", s->path);
+    CUT(tmp, sizeof tmp, "%s.rp-edit.toml", s->path);
     if (rp_pal_write_file_atomic(heap(), tmp, (const uint8_t *)s->t, s->n) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s' to check it", tmp);
         return RP_EXIT_IO;
@@ -747,7 +747,7 @@ static void summary(const src_t *s) {
 
 static int usage(void) {
     rp_diag_error(RP_DIAG_EXTRA_ARGUMENT,
-                  "usage: rubrapack edit <file>.rpk | rubrapack edit <file>.rpk [--set table.key=value]... [--unset table.key]... [--sync]");
+                  "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]");
     return RP_EXIT_USAGE;
 }
 
@@ -778,7 +778,7 @@ int rp_cmd_edit(int argc, char **argv) {
     rp_srcdiags_t d = { 0 };
     if (rp_toml_parse(heap(), (const uint8_t *)s.t, s.n, &s.doc, &d) != PROVEN_OK) {
         rp_srcdiag_print(&d, s.path);
-        rp_diag_error(RP_DIAG_INPUT, "'%s' is not valid .rpk TOML; fix it by hand first", s.path);
+        rp_diag_error(RP_DIAG_INPUT, "'%s' is not a valid source (the TOML subset); fix it by hand first", s.path);
         rp_mem_free(heap(), s.t);
         return RP_EXIT_SOURCE;
     }

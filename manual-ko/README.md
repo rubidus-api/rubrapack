@@ -2,7 +2,7 @@
 
 English: [`../manual/`](../manual/README.md).
 
-- [`rpk.md`](rpk.md) - 사용자 매뉴얼: `.rpk` 원본 형식과 `rubrapack` 명령줄.
+- [`rpk.md`](rpk.md) - 사용자 매뉴얼: 원본 파일(`.toml`, TOML 의 엄격한 부분집합)과 `rubrapack` 명령줄.
 - [`formats/`](formats/README.md) - 파일 형식 매뉴얼: Windows Installer 와 MSIX 패키지, 그 캐비닛,
   레지스트리 하이브, 서명이 바이트 단위로 어떻게 짜이는지. rubrapack 의 코드를 읽지 않고도 누구나
   자기 패키지 작성기나 판독기를 만들 수 있도록 썼다.

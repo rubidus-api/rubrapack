@@ -1,8 +1,9 @@
 // src/cli/new.c - `rubrapack new` and `rubrapack guid` (RFC-0006 5, RFC-0014).
 //
-//   new [msi] <name>                   a fixed starter source <name>.rpk (as before)
-//   new [<name>] -i | new              asks for the answers one by one (stderr / stdin)
-//   new <name> --dist <dir> [...]      the same answers as options, for scripts
+//   new <file>.toml | new              asks for the answers one by one (stderr / stdin)
+//   new <file>.toml --dist <dir> [...] the same answers as options, for scripts
+//   new [msi] <name>                   a fixed starter source <name>.toml
+// Sources are TOML: .toml by default; the older .rpk name is read and written as given.
 //
 // The source made from answers lists the top-level files of the program folder one by one (a
 // shortcut needs a file ID, and a glob cannot leave a file out), each sub folder as a glob, and
@@ -25,6 +26,12 @@
 
 #include "new_int.h"
 
+// snprintf into a small field whose value was checked before.
+#define CUTX(out, cap, ...)                                                          \
+    do {                                                                             \
+        if (snprintf((out), (cap), __VA_ARGS__) >= (int)(cap)) (out)[(cap) - 1] = 0; \
+    } while (0)
+
 // A product name that is also a file name and a TOML string without escapes.
 const char *rpn_name_problem(const char *s) {
     size_t n = strlen(s);
@@ -36,6 +43,13 @@ const char *rpn_name_problem(const char *s) {
     }
     if (s[0] == ' ' || s[n - 1] == ' ' || s[n - 1] == '.') return "may not start with a space or end with a space or a dot";
     return NULL;
+}
+
+size_t rpn_source_ext(const char *s) {
+    size_t n = strlen(s);
+    if (n > 5 && rpn_ends_ci(s, ".toml")) return 5;
+    if (n > 4 && rpn_ends_ci(s, ".rpk")) return 4;
+    return 0;
 }
 
 // The summary information is ASCII (RFC-0001 9.10): an ASCII form of the name, when needed.
@@ -51,7 +65,7 @@ static void ascii_form(const char *name, char *out, size_t cap, bool *all_ascii)
     out[na] = '\0';
 }
 
-static int fixed_starter(const char *name) {
+static int fixed_starter(const char *name, const char *ext) {
     char code[39];
     if (rp_uuid_random(code) != PROVEN_OK) {
         rp_diag_error(RP_DIAG_OUTPUT, "the system random source failed");
@@ -65,9 +79,9 @@ static int fixed_starter(const char *name) {
                              ascii[0] ? ascii : "package");
     char text[4096];
     int len = snprintf(text, sizeof text,
-        "# %s.rpk - made by `rubrapack new`. Put the program's files in dist/ next to this file, then:\n"
-        "#   rubrapack build \"%s.rpk\" -o \"%s.msi\"\n"
-        "# Every table and key is described in manual/rpk.md of the rubrapack sources.\n"
+        "# %s%s - made by `rubrapack new`. Put the program's files in dist/ next to this file, then:\n"
+        "#   rubrapack build \"%s%s\" -o \"%s.msi\"\n"
+        "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n"
         "\n"
         "[package]\n"
         "name = \"%s\"\n"
@@ -84,10 +98,10 @@ static int fixed_starter(const char *name) {
         "[files.App]\n"
         "dir = \"INSTALLDIR\"\n"
         "glob = \"dist/*\"\n",
-        name, name, name, name, summary, name, code, name);
+        name, ext, name, ext, name, name, summary, name, code, name);
     if (len < 0 || (size_t)len >= sizeof text) return RP_EXIT_IO;
     char path[160];
-    snprintf(path, sizeof path, "%s.rpk", name);
+    snprintf(path, sizeof path, "%s%s", name, ext);
     proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, (const uint8_t *)text, (size_t)len);
     if (err == PROVEN_ERR_BUSY) {
         rp_diag_error(RP_DIAG_OUTPUT, "'%s' already exists; it is left as it is", path);
@@ -336,11 +350,14 @@ static const char *check_shortcuts(ans_t *a, char *v) {
 
 static const char *check_stem(ans_t *a, char *v) {
     (void)a;
-    size_t n = strlen(v);
-    if (n > 4 && rpn_ends_ci(v, ".rpk")) v[n - 4] = '\0';
+    size_t n = strlen(v), e = rpn_source_ext(v);
+    if (e) {                            // the name given keeps its extension
+        CUTX(a->ext, sizeof a->ext, "%s", v + n - e);
+        v[n - e] = '\0';
+    }
     if (rpn_name_problem(v)) return "a file name without / \\ : * ? \" < > | $";
     char path[160];
-    snprintf(path, sizeof path, "%s.rpk", v);
+    snprintf(path, sizeof path, "%s%s", v, a->ext);
     uint64_t size = 0;
     if (rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) return "that file exists already; give another name";
     return NULL;
@@ -421,7 +438,7 @@ static void default_arch(ans_t *a, char *out, size_t cap) {
 }
 
 static void default_stem(const ans_t *a, char *out, size_t cap) {
-    snprintf(out, cap, "%s", rpn_name_problem(a->name) ? "app" : a->name);
+    snprintf(out, cap, "%s%s", rpn_name_problem(a->name) ? "app" : a->name, a->ext);
 }
 
 static int interview(ans_t *a, const char *stem) {
@@ -549,11 +566,11 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
     rp_buf_t b = rp_buf_new(proven_heap_allocator(), (size_t)1 << 22);
     char line[1200];
     snprintf(line, sizeof line,
-             "# %s.rpk - made by `rubrapack new`. Build it, and the next version, with:\n"
-             "#   rubrapack build \"%s.rpk\" -o \"%s.msi\"\n"
-             "#   rubrapack build \"%s.rpk\" -o \"%s-1.0.1.msi\" -D VERSION=1.0.1\n"
+             "# %s%s - made by `rubrapack new`. Build it, and the next version, with:\n"
+             "#   rubrapack build \"%s%s\" -o \"%s.msi\"\n"
+             "#   rubrapack build \"%s%s\" -o \"%s-1.0.1.msi\" -D VERSION=1.0.1\n"
              "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n\n",
-             a->stem, a->stem, a->stem, a->stem, a->stem);
+             a->stem, a->ext, a->stem, a->ext, a->stem, a->stem, a->ext, a->stem);
     rp_buf_puts(&b, line);
     rp_buf_puts(&b, "[package]\n");
     kv(&b, "name", a->name, NULL);
@@ -652,7 +669,7 @@ static void print_command(const ans_t *a) {
     rp_buf_t b = rp_buf_new(proven_heap_allocator(), 1 << 16);
     rp_buf_puts(&b, "the same without questions:\n  rubrapack new ");
     char file[140];
-    snprintf(file, sizeof file, "%s.rpk", a->stem);
+    snprintf(file, sizeof file, "%s%s", a->stem, a->ext);
     rpn_toml_str(&b, file);
     for (size_t i = 0; i < sizeof keys / sizeof keys[0]; ++i) {
         rp_buf_byte(&b, ' ');
@@ -669,11 +686,11 @@ static void print_command(const ans_t *a) {
 
 static int usage(void) {
     rp_diag_error(RP_DIAG_EXTRA_ARGUMENT,
-                  "usage: rubrapack new [<file>.rpk] | rubrapack new <file>.rpk --dist <folder> "
+                  "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> "
                   "[--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] "
                   "[--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] "
                   "[--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | "
-                  "rubrapack new <name> (a fixed starter <name>.rpk)");
+                  "rubrapack new <name> (a fixed starter <name>.toml); .rpk names are taken too");
     return RP_EXIT_USAGE;
 }
 
@@ -719,16 +736,19 @@ int rp_cmd_new(int argc, char **argv) {
     } else if (npos == 1) {
         name = pos[0];
     }
-    // `new app.rpk` names the file to write and asks for the rest (the same form as `edit`).
+    // `new app.toml` (or app.rpk) names the file to write and asks for the rest, as `edit` names it.
     char stem_buf[128];
     bool file_named = false;
-    if (rc == RP_EXIT_OK && name && strlen(name) > 4 && rpn_ends_ci(name, ".rpk") && strlen(name) < sizeof stem_buf) {
-        snprintf(stem_buf, sizeof stem_buf, "%.*s", (int)(strlen(name) - 4), name);
+    snprintf(a->ext, sizeof a->ext, ".toml");
+    size_t e = name ? rpn_source_ext(name) : 0;
+    if (rc == RP_EXIT_OK && e && strlen(name) < sizeof stem_buf) {
+        snprintf(a->ext, sizeof a->ext, "%s", name + strlen(name) - e);
+        snprintf(stem_buf, sizeof stem_buf, "%.*s", (int)(strlen(name) - e), name);
         name = stem_buf;
         file_named = true;
         uint64_t size = 0;
         char path[160];
-        snprintf(path, sizeof path, "%s.rpk", name);
+        snprintf(path, sizeof path, "%s%s", name, a->ext);
         if (!rpn_name_problem(name) && rp_pal_stat(proven_heap_allocator(), path, &size) != RP_FS_NONE) {
             rp_diag_error(RP_DIAG_OUTPUT, "'%s' exists already; change it with `rubrapack edit %s`", path, path);
             rc = RP_EXIT_IO;
@@ -751,9 +771,9 @@ int rp_cmd_new(int argc, char **argv) {
     if (rc == RP_EXIT_OK && !interactive && !options) {
         if (name && !file_named) {                     // `new app`: the fixed starter, as before
             rp_mem_free(proven_heap_allocator(), a);
-            return fixed_starter(name);
+            return fixed_starter(name, ".toml");
         }
-        interactive = true;                             // `new` or `new app.rpk` asks
+        interactive = true;                             // `new` or `new app.toml` asks
     }
     if (rc == RP_EXIT_OK && interactive) {
         rc = interview(a, name);
@@ -803,7 +823,7 @@ int rp_cmd_new(int argc, char **argv) {
     uint8_t *text = NULL;
     size_t len = 0;
     char path[160];
-    snprintf(path, sizeof path, "%s.rpk", a->stem);
+    snprintf(path, sizeof path, "%s%s", a->stem, a->ext);
     if (rc == RP_EXIT_OK && make_source(a, &text, &len) != PROVEN_OK) rc = RP_EXIT_IO;
     if (rc == RP_EXIT_OK) {
         proven_err_t err = rp_pal_write_file_new(proven_heap_allocator(), path, text, len);

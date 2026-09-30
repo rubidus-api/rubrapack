@@ -1,7 +1,8 @@
-# `.rpk` 원본과 `rubrapack` 명령
+# 원본 파일과 `rubrapack` 명령
 
-`.rpk` 파일 하나가 패키지 하나를 기술한다. 형식은 [TOML 1.0](https://toml.io/ko/v1.0.0)의 엄격한
-부분집합이다. 모든 `.rpk` 파일은 올바른 TOML 이지만, 부분집합 밖의 TOML 기능은 무시하지 않고
+원본 파일 하나가 패키지 하나를 기술한다. 형식은 [TOML 1.0](https://toml.io/ko/v1.0.0)의 엄격한
+부분집합이고 이름은 `*.toml` 이라서, 편집기와 GitHub, AI 도우미가 TOML 로 알아본다(예전 이름 `*.rpk` 도 똑같이
+읽는다). 모든 원본은 올바른 TOML 이지만, 부분집합 밖의 TOML 기능은 무시하지 않고
 오류로 거부한다.
 
 ## 시작하기
@@ -17,19 +18,19 @@ Windows 에서도 Linux 에서도 같은 패키지를 만든다.
 그대로 간다). 그다음 rubrapack 에게 시작할 원본을 쓰게 한다:
 
 ```sh
-rubrapack new app.rpk      # 묻고 나서 app.rpk 를 쓰고 검사한다
+rubrapack new app.toml      # 묻고 나서 app.toml 을 쓰고 검사한다
 ```
 
 제품 이름, 판, 파일이 든 폴더, 주 프로그램(아키텍처는 파일에서 읽는다), Program Files 아래 폴더, 누구를 위해
 설치하는지, 어떤 하위 폴더가 선택 구성요소인지, 대화창, 약관(옆에 `LICENSE.txt`, `.md`, `.rtf` 가 있으면 권한다),
-한국어 대화창, 바로가기를 묻는다. Enter 는 대괄호 안의 값을 쓴다. 끝에는 같은 답을 한 줄 명령(`rubrapack new app.rpk
+한국어 대화창, 바로가기를 묻는다. Enter 는 대괄호 안의 값을 쓴다. 끝에는 같은 답을 한 줄 명령(`rubrapack new app.toml
 --dist dist --ui features ...`)으로 보여 주는데, 스크립트나 AI 도우미는 묻지 않고 이것을 돌리면 된다.
-이름 없이 `rubrapack new` 만 주면 파일 이름까지 묻고, `rubrapack new app`(`.rpk` 없이)은 대신 고정된 틀을 쓴다.
+이름 없이 `rubrapack new` 만 주면 파일 이름까지 묻고, `rubrapack new app`(확장자 없이)은 대신 고정된 틀을 쓴다.
 
-어느 쪽이든 `app.rpk` 는 읽고 고칠 수 있는 평문이다 - 아무 편집기로나, 또는 `rubrapack edit app.rpk` 로. `edit` 는
+어느 쪽이든 `app.toml` 은 읽고 고칠 수 있는 평문이다 - 아무 편집기로나, 또는 `rubrapack edit app.toml` 으로. `edit` 는
 같은 질문을 지금 값을 기본으로 보여 주는 메뉴다(판, 설치 폴더, 대화창과 약관, 선택 구성요소, 바로가기, 그리고
 프로그램 폴더가 바뀐 뒤 파일 목록 맞추기). 그 값만 바꾸고 다른 줄, 주석, 표는 그대로 둔다. 스크립트에서는:
-`rubrapack edit app.rpk --set define.VERSION=1.1.0 --sync`. 아래 원본은 프로그램과 파일을 `Program Files\My App` 에 설치하고,
+`rubrapack edit app.toml --set define.VERSION=1.1.0 --sync`. 아래 원본은 프로그램과 파일을 `Program Files\My App` 에 설치하고,
 시작 메뉴에 넣고, 사용자가 폴더를 바꿀 수 있는 대화창을 보인다:
 
 ```toml
@@ -62,8 +63,8 @@ target = "file:App"
 ```
 
 ```sh
-rubrapack build app.rpk -o app-1.0.0.msi
-rubrapack build app.rpk -o app-1.0.1.msi -D VERSION=1.0.1    # 다음 판
+rubrapack build app.toml -o app-1.0.0.msi
+rubrapack build app.toml -o app-1.0.1.msi -D VERSION=1.0.1    # 다음 판
 ```
 
 이것으로 완전한 설치 파일이다. "설치된 앱"에 나타나고, 스스로 복구하고, 설치한 것을 모두 지운다. 더 높은
@@ -149,12 +150,12 @@ msiexec /i app-1.0.0.msi /l*v install.log
 
 ### 무언가 잘못됐을 때
 
-`rubrapack lint app.rpk` 는 빌드가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 모든 문제는 자리와 코드를,
+`rubrapack lint app.toml` 은 빌드가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 모든 문제는 자리와 코드를,
 흔히 고칠 방법까지 알려 준다:
 
 ```text
-app.rpk:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
-app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
+app.toml:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
+app.toml:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
 ```
 
 패키지 안을 보려면: `rubrapack inspect app.msi File` 은 표를 글로 보이고, `rubrapack extract app.msi -d out` 은
@@ -168,11 +169,11 @@ app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ
 원본은 어느 컴퓨터에서나 같은 바이트가 된다. Linux 러너에서:
 
 ```sh
-V=0.6.0                                    # 쓸 릴리스
+V=0.7.0                                    # 쓸 릴리스
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
-./rubrapack lint app.rpk
-./rubrapack build app.rpk -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+./rubrapack lint app.toml
+./rubrapack build app.toml -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
     --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
 ```
 
@@ -182,8 +183,8 @@ chmod +x rubrapack
 ### AI 도우미와 함께
 
 원본은 짧은 평문이고 모든 오류가 어디서 왜인지 말하므로, AI 코딩 도우미가 일 전체를 할 수 있다: 이 매뉴얼
-(또는 책, <https://rubidus-api.github.io/rubrapack/>)을 주고 무엇을 설치할지 말한다. 도우미는 `app.rpk` 를
-쓰고, 깨끗해질 때까지 `rubrapack lint app.rpk` 를 돌리고, 빌드하고, `inspect` 와 `extract` 로 결과를 확인하고,
+(또는 책, <https://rubidus-api.github.io/rubrapack/>)을 주고 무엇을 설치할지 말한다. 도우미는 `app.toml` 을
+쓰고, 깨끗해질 때까지 `rubrapack lint app.toml` 을 돌리고, 빌드하고, `inspect` 와 `extract` 로 결과를 확인하고,
 그 과정을 릴리스 스크립트나 위와 같은 CI 작업으로 만들 수 있다. 두 가지는 사람의 몫으로 남는다: 첫 판의
 업그레이드 코드를 간직하는 것, 그리고 내보내기 전에 한 번은 Windows 에 패키지를 설치해 보는 것.
 
@@ -218,7 +219,7 @@ name = "User guide.txt"
 ```
 
 ```sh
-rubrapack build example.rpk -o example.msi -D VERSION=1.4.1
+rubrapack build example.toml -o example.msi -D VERSION=1.4.1
 rubrapack inspect example.msi File
 ```
 
@@ -808,7 +809,7 @@ guard = true
 
 ### 경로
 
-원본 경로는 `.rpk` 파일 기준의 상대 경로이고 `/` 를 쓴다. 절대 경로, `\`, 심볼릭 링크, 없는 파일은
+원본 경로는 원본 파일 기준의 상대 경로이고 `/` 를 쓴다. 절대 경로, `\`, 심볼릭 링크, 없는 파일은
 오류다. 설치될 이름에는 Windows 가 금하는 것(`< > : " / \ | ? *`, 제어 문자, 끝의 점이나 공백,
 `CON` 같은 장치 이름)만 빼고 어떤 유니코드 글자든 쓸 수 있고, 한 폴더 안의 두 이름이 대소문자만
 달라서는 안 된다. Windows Installer 는 이름을 8.3 짧은 이름과 함께 UTF-16 255단위에 저장하므로, 긴
@@ -818,7 +819,7 @@ guard = true
 ## 명령줄
 
 ```text
-rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
+rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <목록> (.msixbundle)]
                 [--compress none|mszip|mszip:N] [--jobs N] [--nfc] [--reproducible]
                 [<키> [--cert <chain.pem>]
@@ -829,11 +830,11 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
-rubrapack new [<file>.rpk] [-i]
+rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
-rubrapack edit <file>.rpk [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
+rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
-rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
+rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <새 폴더> [--limit-entries N] [--limit-bytes N]
@@ -871,17 +872,17 @@ rubrapack version | help [command]
   보인다. `--files` 는 경로, 크기, 압축 여부를, `--manifest` 는 `AppxManifest.xml` 을 찍는다. 묶음은
   정체와 패키지(하나하나 패키지로 열어 확인한 것)와 `AppxBundleManifest.xml` 을 보이고, `extract` 는
   패키지를 꺼내 쓴다.
-- `new <name>` 은 `<name>.rpk` 를 쓴다. 프로그램 파일을 `dist/` 에 넣기만 하면 빌드되는 원본이고
-  `upgrade-code` 는 새로 만든다. `new <file>.rpk`, 이름 없는 `new`(파일 이름도 묻는다), `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
+- `new <name>` 은 `<name>.toml` 을 쓴다. 프로그램 파일을 `dist/` 에 넣기만 하면 빌드되는 원본이고
+  `upgrade-code` 는 새로 만든다. `new <file>.toml`, 이름 없는 `new`(파일 이름도 묻는다), `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
   표준 오류로, 답은 표준 입력에서 한 줄씩 받으므로 파이프로 줄 수 있다; 마지막 답 전에 입력이 끝나면 아무것도
   쓰지 않는다). `new <name>` 에 옵션을 주면 묻지 않고 같은 답을 받는다: `--name`, `--manufacturer`, `--version`,
   `--dist`(기본 `dist`), `--main <파일>|-`, `--arch`, `--install-dir`, `--scope`, `--optional <폴더,...>|-`, `--ui`,
   `--license <파일>|-`, `--languages ko|-`, `--shortcuts start,desktop|none`; 빠진 것은 질문이 권했을 기본값을 쓴다.
   원본은 폴더 최상위 파일을 하나씩 적고(바로가기는 파일을 가리키고, 글롭은 파일을 뺄 수 없다) 파일이 든 하위
   폴더는 글롭으로 적는다. 선택 하위 폴더는 필수 `Main` 옆에 `level = 2` 기능이 된다. 쓴 뒤에는 `lint` 처럼
-  검사한다(문제가 있으면 종료 코드 1). 있는 파일은 절대 바꾸지 않는다. 이미 있는 `app.rpk` 에 `new app.rpk` 를
+  검사한다(문제가 있으면 종료 코드 1). 있는 파일은 절대 바꾸지 않는다. 이미 있는 `app.toml` 에 `new app.toml` 을
   주면 `edit` 를 쓰라고 알린다.
-- `edit <file>.rpk` 는 원본을 그 자리에서 고친다. 옵션이 없으면 메뉴를 보인다: 1 이름, 제조사, 판(`version =
+- `edit <file>.toml` 은 원본을 그 자리에서 고친다. 옵션이 없으면 메뉴를 보인다: 1 이름, 제조사, 판(`version =
   "$(VERSION)"` 이면 `[define] VERSION`), 아키텍처; 2 Program Files 아래 폴더와 설치 범위; 3 대화창, 약관, 한국어
   대화창; 4 선택 구성요소로 할 하위 폴더(처음 켜면 필수 기능 `Main` 을 더하고, 그때부터 기능이 필요한 모든 것에
   준다); 5 시작 메뉴·바탕화면 바로가기와 그것이 여는 프로그램; 6 프로그램 폴더와 파일 목록 맞추기 - 사라진 파일과
@@ -895,11 +896,11 @@ rubrapack version | help [command]
   글의 32비트 리틀엔디언 길이와 UTF-8 바이트에 대한 SHA-256. 해시의 앞 16바이트에 판 니블을 8 로,
   변종 비트를 `10` 으로 넣어(RFC 9562 UUIDv8) 대문자 `{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}` 로
   쓴다. 예를 들어 `guid --from hello` 는 `{B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}` 이다.
-- 진단은 `example.rpk:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you mean 'name'?)`
+- 진단은 `example.toml:12:3: error[RP1201]: unknown key 'nmae' in [package] (did you mean 'name'?)`
   꼴이다.
 - 쓰기 전에 `build` 는 완성된 표를 검사한다(`RP20xx` 진단, 종료 코드 5). 이 검사는 rubrapack 자신을
   지키는 것이라, `RP1xxx` 검사를 통과한 원본은 여기에 걸리지 않아야 한다.
-- `lint <src.rpk>` 는 `build` 가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 원본을 MSI 기준으로
+- `lint <src.toml>` 는 `build` 가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 원본을 MSI 기준으로
   검사하며, `--target msix` 를 주면 MSIX 기준으로 검사한다(`[msix]` 표, 그리고 `keep` 이나 `when`
   처럼 MSIX 가 담을 수 없는 것). `lint <file.msi>` 는 어떤
   도구가 만든 패키지든 같은 표 규칙으로 검사한다: 설치를 멈추게 하는 것은 오류(종료 코드 5) - 열에 맞지

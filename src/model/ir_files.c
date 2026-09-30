@@ -286,7 +286,7 @@ bool ir_source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
         return false;
     }
     if (s[0] == '/' || (s[0] && s[1] == ':')) {
-        ERR(c, pos, "RP1501", "source path '%s' must be relative to the .rpk file", s);
+        ERR(c, pos, "RP1501", "source path '%s' must be relative to the source file", s);
         return false;
     }
     return true;

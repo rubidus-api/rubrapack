@@ -1,4 +1,4 @@
-// src/cli/build.c - `rubrapack build <src.rpk> -o <out.msi> [options]` (RFC-0001 7, 7.1).
+// src/cli/build.c - `rubrapack build <src.toml> -o <out.msi> [options]` (RFC-0001 7, 7.1).
 
 #include "rubrapack/build.h"
 #include "rubrapack/diag.h"
@@ -86,7 +86,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     return rc;
 }
 
-// `build`, or with `lint` set `lint <src.rpk>`: the same steps (parse, model, tables, RP20xx/RP21xx)
+// `build`, or with `lint` set `lint <src.toml>`: the same steps (parse, model, tables, RP20xx/RP21xx)
 // without writing anything (RFC-0006 1). --strict turns warnings into a lint failure.
 // The package goes straight into its output file through a mapping (RFC-0013 R2b): no heap copy
 // of it next to its cabinets. A second pass of a reproducible build replaces the first.
@@ -244,8 +244,8 @@ static int run(int argc, char **argv, bool lint) {
         goto done;
     }
     if (src == NULL || out == NULL) {
-        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
     bool bundle = !lint && ends_with(out, ".msixbundle");

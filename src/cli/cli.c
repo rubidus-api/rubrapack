@@ -21,7 +21,7 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.rpk> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
+    { "build",   "build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
                  "build a package from a source file", true },
     { "sign",    "sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
                  "sign a PE file, an MSI package, an MSIX package or bundle", true },
@@ -33,10 +33,10 @@ static const command_t commands[] = {
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
-    { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
+    { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
                  "check a source or package without writing anything", true },
-    { "new",     "new [<file>.rpk] [-i] | new <file>.rpk --dist <folder> [options] | new <name>", "write a source file: made from answers (asked, or given as options), or a fixed starter <name>.rpk", true },
-    { "edit",    "edit <file>.rpk [--set table.key=value]... [--unset table.key]... [--sync]", "change a source in place: through a menu of questions, or with the options", true },
+    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name>", "write a source file (.toml; .rpk names too): made from answers, asked or given as options, or a fixed starter", true },
+    { "edit",    "edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]", "change a source in place: through a menu of questions, or with the options", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },

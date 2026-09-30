@@ -20,7 +20,7 @@ typedef struct {
 } scan_t;
 
 typedef struct {
-    char stem[128], name[256], manufacturer[256], version[32], arch[8], dist[512], main[256], install_dir[256],
+    char stem[128], ext[8], name[256], manufacturer[256], version[32], arch[8], dist[512], main[256], install_dir[256],
         scope[8], ui[16], license[512], languages[8], optional[1024], shortcuts[32];
     scan_t scan;
     bool scanned;
@@ -32,6 +32,8 @@ typedef struct {
 } ids_t;
 
 const char *rpn_name_problem(const char *s);
+// The length of a source extension at the end of s: ".toml" (the default) or ".rpk" (read too); 0 for none.
+size_t rpn_source_ext(const char *s);
 char *rpn_join(const char *a, const char *b);
 int rpn_cmp_name(const void *a, const void *b);
 void rpn_names_free(names_t *x);

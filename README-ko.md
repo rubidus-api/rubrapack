@@ -1,4 +1,4 @@
-**한국어** | [English](README.md) — **rubrapack v0.6.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-0.6.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.6.0/rubrapack-manual-0.6.0-en.pdf)
+**한국어** | [English](README.md) — **rubrapack v0.7.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-0.7.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-0.7.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-manual-0.7.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.7.0/rubrapack-manual-0.7.0-en.pdf)
 
 # rubrapack
 
@@ -7,13 +7,13 @@
 프로그램 파일 하나로 돌아가며, 따로 설치할 것이 없습니다.
 
 ```sh
-rubrapack new app.rpk                    # 몇 가지를 묻고 app.rpk 를 써서 검사합니다
-rubrapack build app.rpk -o app.msi       # 제대로 된 설치 파일: 제거 항목, 업그레이드, 복구
+rubrapack new app.toml                    # 몇 가지를 묻고 app.toml 을 써서 검사합니다
+rubrapack build app.toml -o app.msi       # 제대로 된 설치 파일: 제거 항목, 업그레이드, 복구
 ```
 
 ## 왜 rubrapack 인가
 
-- **MSI 패키징이 쉬워집니다.** 설치할 것 - 파일, 폴더, 바로가기, 레지스트리 값, 서비스 - 을 짧은 `.rpk`
+- **MSI 패키징이 쉬워집니다.** 설치할 것 - 파일, 폴더, 바로가기, 레지스트리 값, 서비스 - 을 짧은 `.toml`
   파일(평범한 TOML)에 적으면, Windows Installer 가 요구하는 데이터베이스 표, 컴포넌트 GUID, 캐비닛, 업그레이드
   규칙, 대화창은 rubrapack 이 씁니다 - 동의해야 넘어가는 약관 페이지, 설치 폴더 고르기, 골라서 설치하는 선택
   구성요소 트리까지, 영어와 한국어 등 여러 언어로. XML 도, 표 편집기도, GUID 관리도 필요 없습니다. 직접 간직할
@@ -50,11 +50,11 @@ rubrapack build app.rpk -o app.msi       # 제대로 된 설치 파일: 제거 �
 ## 한눈에 보기
 
 ```sh
-rubrapack new app.rpk                               # 물어본 뒤 app.rpk 를 씁니다 (또는: new app.rpk --dist dist ...)
-rubrapack edit app.rpk                              # 나중에 고치기: 메뉴, 또는 --set define.VERSION=1.1.0 --sync
-rubrapack build app.rpk -o app.msi                  # Windows Installer 패키지
-rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
-rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
+rubrapack new app.toml                               # 물어본 뒤 app.toml 을 씁니다 (또는: new app.toml --dist dist ...)
+rubrapack edit app.toml                              # 나중에 고치기: 메뉴, 또는 --set define.VERSION=1.1.0 --sync
+rubrapack build app.toml -o app.msi                  # Windows Installer 패키지
+rubrapack build app.toml -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
+rubrapack build app.toml -o app.msixbundle --arch x64,x86,arm64
 rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
@@ -62,7 +62,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## 자세한 기능
 
-- **원본 하나로 두 형식을.** 선언형 `.rpk` 파일(TOML 의 엄격한 부분집합) 하나에 제품을 한 번 기술하면, 같은
+- **원본 하나로 두 형식을.** 선언형 `.toml` 파일(TOML 의 엄격한 부분집합; 예전 이름 `.rpk` 도 됩니다) 하나에 제품을 한 번 기술하면, 같은
   원본에서 MSI 와 MSIX 가 모두 나옵니다. 한쪽 형식이 담을 수 없는 것은 조용히 빼지 않고 오류로 알려 드립니다.
 - **MSI:** 파일과 폴더(와일드카드, 남기거나 지우는 폴더), 기능, 레지스트리 값(REG_QWORD 와 32비트 보기 포함),
   바로가기, 파일 형식과 URL 스킴, 환경 변수, INI 파일, 서비스, 글꼴, 권한, 설치 조건과 검색, 되돌림이 되는
@@ -92,14 +92,14 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 ## 상태
 
-0.6.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
+0.7.0 입니다. 위의 모든 기능은 Linux 의 시험과, Windows 11(x64)에서 패키지를 설치·실행·복구·
 업그레이드·제거하는 시험으로 확인했습니다. 아직 실제 하드웨어에서 시험하지 않은 것: Arm64 패키지(구조만 확인 -
 Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 토큰으로 대신했습니다), Windows 에서의 네이티브
 빌드(Windows 실행 파일은 MinGW-w64 로 교차 빌드해 Windows 에서 돌렸습니다).
 
 ## 문서
 
-- [`manual-ko/rpk.md`](manual-ko/rpk.md) - 사용자 매뉴얼: `.rpk` 원본 쓰기와 명령줄.
+- [`manual-ko/rpk.md`](manual-ko/rpk.md) - 사용자 매뉴얼: 원본(`.toml`) 쓰기와 명령줄.
 - [`manual-ko/formats/`](manual-ko/formats/README.md) - 구현하는 분을 위한 파일 형식 매뉴얼: 복합 파일, MSI
   데이터베이스 인코딩, 요약 정보, 설치하는 표들, 캐비닛/MSZIP/deflate, 결정적 정체, Authenticode 와
   타임스탬프, MSIX 패키지·묶음·서명, 레지스트리 하이브, 그리고 자기 출력을 Windows 와 대조하는 방법.
