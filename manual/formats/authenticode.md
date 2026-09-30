@@ -140,3 +140,46 @@ chain to a trusted root), `UnknownError` with "the certificate chain ... not tru
 signature are right, the root is not trusted on this machine), `HashMismatch` (the file changed
 after signing), `NotSigned`. So a signature can be checked for correctness before any root is
 trusted. [observed]
+
+## Worked example: the tutorial's hello.msi
+
+The digest of the tutorial's first package, computed here from the rules above without any key - a
+signature made with any key carries these same values. The streams in order of their UTF-16LE names:
+
+| # | name (UTF-16LE) | Name | Size |
+|---|---|---|---|
+| 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 332 |
+| 2 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
+| 3 | `40 48 0c 46 f6 45` ... | `CustomAction` | 8 |
+| 4 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
+| 5 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
+| 6 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
+| 7 | `40 48 0f 43 2f 42` | `File` | 20 |
+| 8 | `40 48 16 42 27 43` ... | `Media` | 14 |
+| 9 | `40 48 3f 3b f2 43` ... | `_Columns` | 552 |
+| 10 | `40 48 3f 3f 77 45` ... | `_StringData` | 1381 |
+| 11 | `40 48 3f 3f 77 45` ... | `_StringPool` | 448 |
+| 12 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 120 |
+| 13 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
+| 14 | `40 48 59 45 f2 44` ... | `Property` | 40 |
+| 15 | `40 48 7f 3f 64 41` ... | `_Tables` | 32 |
+| 16 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
+| 17 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
+| 18 | `40 48 ca 41 30 43` ... | `AdminUISequence` | 24 |
+| 19 | `40 48 ca 41 f9 45` ... | `AdvtExecuteSequence` | 42 |
+| 20 | `40 48 de 44 6a 45` ... | `Upgrade` | 32 |
+
+The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its name, 8-byte size and
+two zero times: 802 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
+
+```text
+99 02 fe fb ce eb 28 a8 61 dc 7d ce 9a a9 83 fe a1 b7 c0 e1 28 5e a6 80 ee e7 f2 fe 73 dd c6 0a
+```
+
+The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
+order, and the root CLSID:
+
+```text
+88 20 af 0f be 36 3d e2 1c fc 9d 96 5c f9 40 0d 2c 25 23 69 2f c0 2e ba 1a 17 25 8c bf 03 d8 a2
+```
+

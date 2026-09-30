@@ -156,3 +156,62 @@ rows  : cells separated by TAB, lines end with CR LF
 Check that the pool lengths add up to exactly the size of `_StringData`, that every string
 reference in a table points to a used id, that table stream sizes are a multiple of the row
 width, and that `_Columns` numbers each table's columns 1..n without gaps.
+
+## Worked example: the tutorial's hello.msi
+
+The table `File` of the tutorial's first package (see
+[cfb.md](cfb.md#worked-example-the-tutorials-hellomsi)) is the stream named `U+4840` `U+430F`
+`U+422F`:
+
+```text
+0x4840  (table)
+F i: 0x3800 + 15 + (44 << 6) = 0x430F
+l e: 0x3800 + 47 + (40 << 6) = 0x422F
+```
+
+`_StringPool` starts with `e9 fd 00 00`: the code page 65001 (UTF-8), bit 31 clear (2-byte string
+references). Then two u16 per string id; the first ids:
+
+| Id | Bytes | Length | Refs | String |
+|---|---|---|---|---|
+| 1 | `09 00 01 00` | 9 | 1 | `#cab1.cab` |
+| 2 | `01 00 01 00` | 1 | 1 | `.` |
+| 3 | `01 00 01 00` | 1 | 1 | `1` |
+| 4 | `05 00 03 00` | 5 | 3 | `1.0.0` |
+| 5 | `07 00 01 00` | 7 | 1 | `1.2.3.4` |
+| 6 | `04 00 02 00` | 4 | 2 | `1033` |
+
+111 strings in all; their bytes, back to back, are the 1381 bytes of `_StringData`.
+
+`_Columns` describes the table - its rows for `File`, the type decoded with the bit table above:
+
+| # | Column | Type | Meaning |
+|---|---|---|---|
+| 1 | `File` | `0x2D48` | key, string, non-binary, valid, width 72 |
+| 2 | `Component_` | `0x0D48` | string, non-binary, valid, width 72 |
+| 3 | `FileName` | `0x0FFF` | string, non-binary, localizable, valid, width 255 |
+| 4 | `FileSize` | `0x0104` | valid, width 4 |
+| 5 | `Version` | `0x1D48` | nullable, string, non-binary, valid, width 72 |
+| 6 | `Language` | `0x1D14` | nullable, string, non-binary, valid, width 20 |
+| 7 | `Attributes` | `0x1502` | nullable, non-binary, valid, width 2 |
+| 8 | `Sequence` | `0x0104` | valid, width 4 |
+
+The `File` stream itself is 20 bytes: one row, stored column by column:
+
+```text
+32 00 0e 00 6c 00 00 46 00 80 05 00 06 00 00 82 01 00 00 80
+```
+
+| Column | Stored |
+|---|---|
+| `File` | `32 00` -> id 50 `Hello` |
+| `Component_` | `0e 00` -> id 14 `C_185f8db32271fe25f561` |
+| `FileName` | `6c 00` -> id 108 `hello.exe` |
+| `FileSize` | `00 46 00 80` -> 0x80004600 ^ 0x80000000 = 17920 |
+| `Version` | `05 00` -> id 5 `1.2.3.4` |
+| `Language` | `06 00` -> id 6 `1033` |
+| `Attributes` | `00 82` -> 0x8200 ^ 0x8000 = 512 |
+| `Sequence` | `01 00 00 80` -> 0x80000001 ^ 0x80000000 = 1 |
+
+String cells are string ids; integers are stored with the top bit flipped, so 17920 (`0x00004600`)
+is stored `0x80004600` and 0 stays free to mean null.

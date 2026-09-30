@@ -56,3 +56,35 @@ Property 1 (`CodePage`, VT_I2) says how the LPSTR bytes are encoded. On Windows 
 So: leave property 1 out and write every summary string in ASCII. Localized product names belong
 in the `Property` table (`ProductName`), which uses the database code page - and 65001 works there
 (see [msi-database.md](msi-database.md)).
+
+## Worked example: the tutorial's hello.msi
+
+The tutorial's first package: the stream is 332 bytes. Its header:
+
+| Offset | Bytes | Field | Value |
+|---|---|---|---|
+| `0x00` | `fe ff` | byte order | 0xFFFE |
+| `0x04` | `06 02 02 00` | OS | 0x00020206 |
+| `0x18` | `01 00 00 00` | section count | 1 |
+| `0x1C` | `e0 85 9f f2 ...` | FMTID | `F29F85E0-...` |
+| `0x2C` | `30 00 00 00` | section offset | 48 |
+| `0x30` | `1c 01 00 00` | section size | 284 |
+| `0x34` | `09 00 00 00` | property count | 9 |
+
+Then 9 pairs of (property id, offset), and the values:
+
+| Property | Offset | Type | Raw bytes | Value |
+|---|---|---|---|---|
+| 2 | `0x80` | VT_LPSTR | `1e 00 00 00 16 00 00 00 49 6e 73 74 61 6c 6c 61 ...` | `Installation Database` |
+| 3 | `0xA0` | VT_LPSTR | `1e 00 00 00 06 00 00 00 48 65 6c 6c 6f 00` | `Hello` |
+| 4 | `0xB0` | VT_LPSTR | `1e 00 00 00 11 00 00 00 45 78 61 6d 70 6c 65 20 ...` | `Example Software` |
+| 5 | `0xCC` | VT_LPSTR | `1e 00 00 00 0a 00 00 00 49 6e 73 74 61 6c 6c 65 ...` | `Installer` |
+| 7 | `0xE0` | VT_LPSTR | `1e 00 00 00 09 00 00 00 78 36 34 3b 31 30 33 33 ...` | `x64;1033` |
+| 9 | `0xF4` | VT_LPSTR | `1e 00 00 00 27 00 00 00 7b 45 32 32 43 44 37 45 ...` | `{E22CD7E9-3AF1-82AB-811D-BCF61D7A0757}` |
+| 14 | `0x124` | VT_I4 | `03 00 00 00 c8 00 00 00` | 200 |
+| 15 | `0x12C` | VT_I4 | `03 00 00 00 02 00 00 00` | 2 |
+| 18 | `0x134` | VT_LPSTR | `1e 00 00 00 10 00 00 00 72 75 62 72 61 70 61 63 ...` | `rubrapack 0.7.0` |
+
+A string value is its type (30), its byte count including the NUL, the bytes, the NUL, and padding
+to a multiple of 4. Property 9, the package code, is derived from the content under
+`--reproducible`; without it every build gets a new one.

@@ -204,3 +204,33 @@ Windows 의 서명기(`APPX_SIP_CLIENT_DATA` 를 준 `mssign32!SignerSignEx2`; P
   대화형 세션에서는 된다. [observed]
 - 파일 형식이 든 패키지를 제거하면 `HKCU\Software\Classes\.<ext>` 아래에 빈 `OpenWithProgids` 키가 남는다 -
   패키지가 아니라 Windows 가 하는 일이다. [observed]
+
+## 실제 예: 튜토리얼의 hello.msix
+
+튜토리얼 17장의 MSIX(`--unsigned-test`, x64)는 11009 바이트다. 첫 파일 `hello.exe` 의 로컬 머리로 시작한다:
+
+| 오프셋 | 바이트 | 필드 | 값 |
+|---|---|---|---|
+| `0x00` | `50 4b 03 04` | 서명 | `PK\3\4` |
+| `0x04` | `2d 00` | 필요한 판 | 45 (4.5, ZIP64) |
+| `0x06` | `08 00` | 플래그 | 0x0008: 크기는 데이터 뒤에 |
+| `0x08` | `08 00` | 방법 | 8 (deflate) |
+| `0x0A` | `00 00 21 00` | 시각, 날짜 | 1980-01-01 00:00 |
+| `0x0E` | `00 00 00 00 00 00 00 00 00 00 00 00` | CRC, 크기 | 0 (데이터 기술자에) |
+| `0x1A` | `09 00 00 00` | 이름, 추가 필드 길이 | 9, 0 |
+| `0x1E` | `68 65 6c 6c 6f 2e 65 78 65` | 이름 | `hello.exe` |
+
+`hello.exe` 의 deflate 된 6706 바이트가 뒤따르고, 이어서 데이터 기술자가 온다: `50 4b 07 08 ac a3 c6 2e 32 1a 00 00 00 00
+00 00 00 46 00 00 00 00 00 00` - `PK\7\8`, CRC-32 `2EC6A3AC`, 그리고 압축된 크기와 원래 크기를 8 바이트씩(6706,
+17920).
+
+`AppxBlockMap.xml` 에 있는 그 항목:
+
+```xml
+<File Name="hello.exe" Size="17920" LfhSize="39">
+  <Block Hash="K7HbHzXLkhbwTo3dcUr0vs35DlYX27qMOexDOTR8e2k=" Size="6704"/>
+```
+
+파일이 64 KiB 보다 작아 블록은 하나다. `Hash` 는 원래 17920 바이트의 SHA-256 을 base64 로 쓴 것(여기서 계산한 값
+`K7HbHzXLkhbwTo3dcUr0vs35DlYX27qMOexDOTR8e2k=`), `Size` 는 그 deflate 부분의 6704 바이트 - 압축된 크기 6706 에서 2
+바이트 마지막 블록을 뺀 것 - 이고, `LfhSize` 는 로컬 머리의 39 바이트(30 + 이름 9 바이트)다.

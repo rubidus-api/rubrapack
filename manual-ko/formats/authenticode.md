@@ -124,3 +124,44 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 "the certificate chain ... not trusted" 를 단 `UnknownError`(다이제스트와 서명은 맞고, 루트를 이 컴퓨터가
 신뢰하지 않음), `HashMismatch`(서명 뒤에 파일이 바뀜), `NotSigned`. 그러니 어떤 루트도 신뢰시키기 전에 서명이
 맞는지 확인할 수 있다. [observed]
+
+## 실제 예: 튜토리얼의 hello.msi
+
+튜토리얼 첫 패키지의 다이제스트를 위의 규칙대로 키 없이 여기서 계산했다 - 어떤 키로 서명하든 서명에는 이 값이 그대로 들어간다. UTF-16LE 이름 순서로 놓은 스트림들:
+
+| # | 이름(UTF-16LE) | 이름 | 크기 |
+|---|---|---|---|
+| 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 332 |
+| 2 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
+| 3 | `40 48 0c 46 f6 45` ... | `CustomAction` | 8 |
+| 4 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
+| 5 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
+| 6 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
+| 7 | `40 48 0f 43 2f 42` | `File` | 20 |
+| 8 | `40 48 16 42 27 43` ... | `Media` | 14 |
+| 9 | `40 48 3f 3b f2 43` ... | `_Columns` | 552 |
+| 10 | `40 48 3f 3f 77 45` ... | `_StringData` | 1381 |
+| 11 | `40 48 3f 3f 77 45` ... | `_StringPool` | 448 |
+| 12 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 120 |
+| 13 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
+| 14 | `40 48 59 45 f2 44` ... | `Property` | 40 |
+| 15 | `40 48 7f 3f 64 41` ... | `_Tables` | 32 |
+| 16 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
+| 17 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
+| 18 | `40 48 ca 41 30 43` ... | `AdminUISequence` | 24 |
+| 19 | `40 48 ca 41 f9 45` ... | `AdvtExecuteSequence` | 42 |
+| 20 | `40 48 de 44 6a 45` ... | `Upgrade` | 32 |
+
+프리해시는 뿌리의 CLSID 와 상태 비트(20 바이트)에, 스트림마다 이름, 8 바이트 크기, 0 인 시각 둘을 이은 것으로 모두 802 바이트다. 그 SHA-256 이
+`\005MsiDigitalSignatureEx` 의 값이다:
+
+```text
+99 02 fe fb ce eb 28 a8 61 dc 7d ce 9a a9 83 fe a1 b7 c0 e1 28 5e a6 80 ee e7 f2 fe 73 dd c6 0a
+```
+
+`SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
+
+```text
+88 20 af 0f be 36 3d e2 1c fc 9d 96 5c f9 40 0d 2c 25 23 69 2f c0 2e ba 1a 17 25 8c bf 03 d8 a2
+```
+

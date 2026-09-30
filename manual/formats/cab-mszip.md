@@ -77,3 +77,30 @@ a package with twelve folders installs, repairs and removes with every file byte
 Check an encoder by inflating its output with an independent implementation (for example the
 zlib library with raw deflate, window bits -15) and an MSI built with it by installing it and
 comparing installed files' hashes ([verify.md](verify.md)).
+
+## Worked example: the tutorial's hello.msi
+
+The cabinet of the tutorial's first package is the stream `cab1.cab`, 6776 bytes. CFHEADER:
+
+| Offset | Bytes | Field | Value |
+|---|---|---|---|
+| `0x00` | `4d 53 43 46` | signature | `MSCF` |
+| `0x08` | `78 1a 00 00` | cabinet size | 6776 |
+| `0x10` | `2c 00 00 00` | first CFFILE | 44 |
+| `0x18` | `03 01` | version | 1.3 |
+| `0x1A` | `01 00` | folders | 1 |
+| `0x1C` | `01 00` | files | 1 |
+| `0x1E` | `00 00` | flags | 0 |
+| `0x20` | `00 00` | set id | 0 |
+
+CFFOLDER at `0x24`: `42 00 00 00 01 00 01 00` - first CFDATA at 66, 1 block, compression 1 (MSZIP).
+
+CFFILE entries - the name is the `File` table key:
+
+| Offset | size | offset in folder | folder | date | attr | Name |
+|---|---|---|---|---|---|---|
+| `0x2C` | 17920 | 0 | 0 | 1980-01-01 | `0x20` | `Hello` |
+
+The first CFDATA at 66: checksum `80 35 aa c0`, 6702 compressed bytes for 17920 uncompressed. Its
+data begins `43 4b ed 5c 0d 74`: `CK`, then deflate. The first deflate byte `ed` = `11101101`; its
+lowest bit is BFINAL = 1, the next two BTYPE = 2 (dynamic codes).

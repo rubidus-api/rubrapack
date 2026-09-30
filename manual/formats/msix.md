@@ -227,3 +227,35 @@ PowerShell cmdlet cannot sign a package) and checked by installing rubrapack's s
   0x80070005; it works in an interactive session. [observed]
 - A package with file types leaves, after removal, an empty `OpenWithProgids` key under
   `HKCU\Software\Classes\.<ext>` - Windows' own doing, not the package's. [observed]
+
+## Worked example: the tutorial's hello.msix
+
+The MSIX of tutorial chapter 17 (`--unsigned-test`, x64) is 11009 bytes. It begins with the local
+header of its first file, `hello.exe`:
+
+| Offset | Bytes | Field | Value |
+|---|---|---|---|
+| `0x00` | `50 4b 03 04` | signature | `PK\3\4` |
+| `0x04` | `2d 00` | version needed | 45 (4.5, ZIP64) |
+| `0x06` | `08 00` | flags | 0x0008: sizes follow the data |
+| `0x08` | `08 00` | method | 8 (deflate) |
+| `0x0A` | `00 00 21 00` | time, date | 1980-01-01 00:00 |
+| `0x0E` | `00 00 00 00 00 00 00 00 00 00 00 00` | CRC, sizes | 0 (in the data descriptor) |
+| `0x1A` | `09 00 00 00` | name, extra length | 9, 0 |
+| `0x1E` | `68 65 6c 6c 6f 2e 65 78 65` | name | `hello.exe` |
+
+The 6706 deflated bytes of `hello.exe` follow, then its data descriptor: `50 4b 07 08 ac a3 c6 2e 32
+1a 00 00 00 00 00 00 00 46 00 00 00 00 00 00` - `PK\7\8`, the CRC-32 `2EC6A3AC`, and the compressed
+and plain sizes as 8 bytes each (6706, 17920).
+
+Its entry in `AppxBlockMap.xml`:
+
+```xml
+<File Name="hello.exe" Size="17920" LfhSize="39">
+  <Block Hash="K7HbHzXLkhbwTo3dcUr0vs35DlYX27qMOexDOTR8e2k=" Size="6704"/>
+```
+
+The file is smaller than 64 KiB, so it is one block. Its `Hash` is the base64 of the SHA-256 of the
+17920 plain bytes (`K7HbHzXLkhbwTo3dcUr0vs35DlYX27qMOexDOTR8e2k=` computed here), `Size` the 6704
+bytes of its deflate part - the compressed size 6706 minus the 2-byte final block - and `LfhSize`
+the local header's 39 bytes (30 + the 9-byte name).

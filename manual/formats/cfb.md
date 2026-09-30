@@ -115,3 +115,53 @@ within the number of sectors in the file), sector numbers beyond the file, a cha
 the stream size needs, directory links out of range, sibling trees that visit a node twice, and
 counts beyond sane limits. None of this costs much, and a crafted `.msi` otherwise hangs or
 crashes the reader.
+
+## Worked example: the tutorial's hello.msi
+
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 28672 bytes: the
+header sector and 6 sectors of 4096 bytes. Its header:
+
+| Offset | Bytes | Field | Value |
+|---|---|---|---|
+| `0x00` | `d0 cf 11 e0 a1 b1 1a e1` | signature | Compound File |
+| `0x18` | `3e 00` | minor version | 0x003E |
+| `0x1A` | `04 00` | major version | 4 |
+| `0x1C` | `fe ff` | byte order | 0xFFFE |
+| `0x1E` | `0c 00` | sector shift | 12: 2^12 = 4096 |
+| `0x20` | `06 00` | mini sector shift | 6: 64 |
+| `0x28` | `01 00 00 00` | directory sectors | 1 |
+| `0x2C` | `01 00 00 00` | FAT sectors | 1 |
+| `0x30` | `01 00 00 00` | first directory sector | 1 |
+| `0x38` | `00 10 00 00` | mini stream cutoff | 4096 |
+| `0x3C` | `02 00 00 00` | first mini FAT sector | 2 |
+| `0x40` | `01 00 00 00` | mini FAT sectors | 1 |
+| `0x44` | `fe ff ff ff` | first DIFAT sector | `FFFFFFFE` |
+| `0x4C` | `00 00 00 00` | DIFAT[0]: first FAT sector | 0 |
+
+The sectors, and the FAT entry of each (the next sector of its chain):
+
+| Sector | At offset | FAT entry | Holds |
+|---|---|---|---|
+| 0 | `0x1000` | `FFFFFFFD` | FAT |
+| 1 | `0x2000` | `FFFFFFFE` | directory |
+| 2 | `0x3000` | `FFFFFFFE` | mini FAT |
+| 3 | `0x4000` | `FFFFFFFE` | mini stream |
+| 4 | `0x5000` | 5 | `cab1.cab` |
+| 5 | `0x6000` | `FFFFFFFE` | `cab1.cab` |
+
+The root directory entry, the first 128 bytes of sector 1:
+
+| Offset | Bytes | Field | Value |
+|---|---|---|---|
+| 0 | `52 00 6f 00 6f 00 74 00 20 00 45 00 6e 00 74 00 72 00 79 00 ...` | name | `Root Entry` (UTF-16LE) |
+| 64 | `16 00` | name length | 22 |
+| 66 | `05` | type | 5 (root) |
+| 67 | `01` | colour | 1 (black) |
+| 76 | `02 00 00 00` | child | entry 2 |
+| 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
+| 116 | `03 00 00 00` | start | sector 3 |
+| 120 | `00 0f 00 00 00 00 00 00` | size | 3840 |
+
+The root's size is the mini stream's: 3840 bytes, holding 19 of the 20 streams in 64-byte mini
+sectors; 1 stream is large enough for regular sectors. [msi-database.md](msi-database.md) continues
+with the streams' names and contents.

@@ -146,3 +146,60 @@ IDT 내보내기가 쓰는 순서이기도 하다.
 
 풀 길이의 합이 `_StringData` 크기와 정확히 같은지, 표의 모든 문자열 참조가 쓰이는 id 를 가리키는지, 표
 스트림 크기가 행 너비의 배수인지, `_Columns` 가 표마다 열을 1..n 으로 빈틈없이 번호 매기는지 확인한다.
+
+## 실제 예: 튜토리얼의 hello.msi
+
+튜토리얼 첫 패키지([cfb.md](cfb.md#실제-예-튜토리얼의-hellomsi))의 표 `File` 은 이름이 `U+4840` `U+430F` `U+422F` 인 스트림이다:
+
+```text
+0x4840  (table)
+F i: 0x3800 + 15 + (44 << 6) = 0x430F
+l e: 0x3800 + 47 + (40 << 6) = 0x422F
+```
+
+`_StringPool` 은 `e9 fd 00 00` 로 시작한다: 코드 페이지 65001(UTF-8), 비트 31 은 꺼짐(2 바이트 문자열 참조). 그 뒤는 문자열 번호마다
+u16 둘이다. 처음 번호들:
+
+| 번호 | 바이트 | 길이 | 참조 | 문자열 |
+|---|---|---|---|---|
+| 1 | `09 00 01 00` | 9 | 1 | `#cab1.cab` |
+| 2 | `01 00 01 00` | 1 | 1 | `.` |
+| 3 | `01 00 01 00` | 1 | 1 | `1` |
+| 4 | `05 00 03 00` | 5 | 3 | `1.0.0` |
+| 5 | `07 00 01 00` | 7 | 1 | `1.2.3.4` |
+| 6 | `04 00 02 00` | 4 | 2 | `1033` |
+
+모두 111개이고, 그 바이트를 이어 붙인 것이 `_StringData` 의 1381 바이트다.
+
+`_Columns` 가 표를 설명한다 - `File` 의 행들, 형식은 위의 비트 표로 풀었다:
+
+| # | 열 | Type | 뜻 |
+|---|---|---|---|
+| 1 | `File` | `0x2D48` | key, string, non-binary, valid, width 72 |
+| 2 | `Component_` | `0x0D48` | string, non-binary, valid, width 72 |
+| 3 | `FileName` | `0x0FFF` | string, non-binary, localizable, valid, width 255 |
+| 4 | `FileSize` | `0x0104` | valid, width 4 |
+| 5 | `Version` | `0x1D48` | nullable, string, non-binary, valid, width 72 |
+| 6 | `Language` | `0x1D14` | nullable, string, non-binary, valid, width 20 |
+| 7 | `Attributes` | `0x1502` | nullable, non-binary, valid, width 2 |
+| 8 | `Sequence` | `0x0104` | valid, width 4 |
+
+`File` 스트림 자체는 20 바이트다: 행 하나를 열 순서로 저장했다:
+
+```text
+32 00 0e 00 6c 00 00 46 00 80 05 00 06 00 00 82 01 00 00 80
+```
+
+| 열 | 저장값 |
+|---|---|
+| `File` | `32 00` -> id 50 `Hello` |
+| `Component_` | `0e 00` -> id 14 `C_185f8db32271fe25f561` |
+| `FileName` | `6c 00` -> id 108 `hello.exe` |
+| `FileSize` | `00 46 00 80` -> 0x80004600 ^ 0x80000000 = 17920 |
+| `Version` | `05 00` -> id 5 `1.2.3.4` |
+| `Language` | `06 00` -> id 6 `1033` |
+| `Attributes` | `00 82` -> 0x8200 ^ 0x8000 = 512 |
+| `Sequence` | `01 00 00 80` -> 0x80000001 ^ 0x80000000 = 1 |
+
+문자열 칸은 문자열 번호이고, 정수는 맨 위 비트를 뒤집어 저장한다. 그래서 17920(`0x00004600`)은 `0x80004600` 으로 저장되고, 0 은 null 을
+뜻하도록 비워 둔다.
