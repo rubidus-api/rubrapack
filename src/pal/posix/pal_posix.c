@@ -73,6 +73,49 @@ rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_
     return RP_FS_FILE;
 }
 
+proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char **line) {
+    if (line == NULL || max_bytes == 0) return PROVEN_ERR_INVALID_ARG;
+    *line = NULL;
+    size_t cap = 128, n = 0;
+    char *buf = rp_mem_alloc(alloc, cap, 1);
+    if (buf == NULL) return PROVEN_ERR_NOMEM;
+    int ch = EOF;
+    while ((ch = getchar()) != EOF && ch != '\n') {
+        if (n + 2 > cap) {
+            if (cap >= max_bytes + 2) {
+                rp_mem_free(alloc, buf);
+                return PROVEN_ERR_OUT_OF_BOUNDS;
+            }
+            char *more = rp_mem_alloc(alloc, cap * 2, 1);
+            if (more == NULL) {
+                rp_mem_free(alloc, buf);
+                return PROVEN_ERR_NOMEM;
+            }
+            memcpy(more, buf, n);
+            rp_mem_free(alloc, buf);
+            buf = more;
+            cap *= 2;
+        }
+        buf[n++] = (char)ch;
+    }
+    if (ch == EOF && n == 0) {
+        rp_mem_free(alloc, buf);
+        return PROVEN_ERR_NOT_FOUND;
+    }
+    if (n && buf[n - 1] == '\r') --n;
+    buf[n] = '\0';
+    if (n > max_bytes) {
+        rp_mem_free(alloc, buf);
+        return PROVEN_ERR_OUT_OF_BOUNDS;
+    }
+    if (rp_utf8_validate((const uint8_t *)buf, n).err != PROVEN_OK) {
+        rp_mem_free(alloc, buf);
+        return PROVEN_ERR_INVALID_ENCODING;
+    }
+    *line = buf;
+    return PROVEN_OK;
+}
+
 proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
     if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
     size_t n = strlen(path_utf8);

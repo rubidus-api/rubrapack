@@ -67,6 +67,115 @@ proven_err_t rp_pal_puts(rp_out_t out, const char *utf8) {
     return rp_pal_write(out, (const uint8_t *)utf8, strlen(utf8));
 }
 
+proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char **line) {
+    if (line == NULL || max_bytes == 0) return PROVEN_ERR_INVALID_ARG;
+    *line = NULL;
+    HANDLE in = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode = 0;
+    if (in == INVALID_HANDLE_VALUE || in == NULL) return PROVEN_ERR_NOT_FOUND;
+    uint8_t *buf = NULL;
+    size_t n = 0;
+    bool eof = false;
+    if (GetConsoleMode(in, &mode)) {
+        // The console gives UTF-16: read up to the end of the line, then convert once.
+        size_t cap = 256, w = 0;
+        proven_u16 *wb = rp_mem_alloc(alloc, cap, sizeof *wb);
+        if (wb == NULL) return PROVEN_ERR_NOMEM;
+        for (;;) {
+            if (w + 1 >= cap) {
+                if (cap > max_bytes + 2) {
+                    rp_mem_free(alloc, wb);
+                    return PROVEN_ERR_OUT_OF_BOUNDS;
+                }
+                proven_u16 *more = rp_mem_alloc(alloc, cap * 2, sizeof *more);
+                if (more == NULL) {
+                    rp_mem_free(alloc, wb);
+                    return PROVEN_ERR_NOMEM;
+                }
+                memcpy(more, wb, w * sizeof *wb);
+                rp_mem_free(alloc, wb);
+                wb = more;
+                cap *= 2;
+            }
+            DWORD got = 0;
+            if (!ReadConsoleW(in, wb + w, 1, &got, NULL) || got == 0) {
+                eof = true;
+                break;
+            }
+            if (wb[w] == 0x1A && w == 0) {      // Ctrl+Z, Enter: the end of the input
+                eof = true;
+                break;
+            }
+            if (wb[w] == L'\n') break;
+            ++w;
+        }
+        if (w && wb[w - 1] == L'\r') --w;
+        if (eof && w == 0) {
+            rp_mem_free(alloc, wb);
+            return PROVEN_ERR_NOT_FOUND;
+        }
+        rp_text_result_t need = rp_utf16_to_utf8(wb, w, NULL, 0);
+        if (need.err != PROVEN_OK || need.units > max_bytes) {
+            rp_mem_free(alloc, wb);
+            return need.err != PROVEN_OK ? PROVEN_ERR_INVALID_ENCODING : PROVEN_ERR_OUT_OF_BOUNDS;
+        }
+        buf = rp_mem_alloc(alloc, need.units + 1, 1);
+        if (buf == NULL) {
+            rp_mem_free(alloc, wb);
+            return PROVEN_ERR_NOMEM;
+        }
+        rp_text_result_t r = rp_utf16_to_utf8(wb, w, buf, need.units);
+        rp_mem_free(alloc, wb);
+        if (r.err != PROVEN_OK) {
+            rp_mem_free(alloc, buf);
+            return PROVEN_ERR_INVALID_ENCODING;
+        }
+        n = r.units;
+    } else {
+        // A pipe or a file: UTF-8 bytes, one at a time up to the line end.
+        size_t cap = 128;
+        buf = rp_mem_alloc(alloc, cap, 1);
+        if (buf == NULL) return PROVEN_ERR_NOMEM;
+        for (;;) {
+            uint8_t ch;
+            DWORD got = 0;
+            if (!ReadFile(in, &ch, 1, &got, NULL) || got == 0) {
+                eof = true;
+                break;
+            }
+            if (ch == '\n') break;
+            if (n + 2 > cap) {
+                if (cap > max_bytes + 2) {
+                    rp_mem_free(alloc, buf);
+                    return PROVEN_ERR_OUT_OF_BOUNDS;
+                }
+                uint8_t *more = rp_mem_alloc(alloc, cap * 2, 1);
+                if (more == NULL) {
+                    rp_mem_free(alloc, buf);
+                    return PROVEN_ERR_NOMEM;
+                }
+                memcpy(more, buf, n);
+                rp_mem_free(alloc, buf);
+                buf = more;
+                cap *= 2;
+            }
+            buf[n++] = ch;
+        }
+        if (eof && n == 0) {
+            rp_mem_free(alloc, buf);
+            return PROVEN_ERR_NOT_FOUND;
+        }
+        if (n && buf[n - 1] == '\r') --n;
+        if (n > max_bytes || rp_utf8_validate(buf, n).err != PROVEN_OK) {
+            rp_mem_free(alloc, buf);
+            return n > max_bytes ? PROVEN_ERR_OUT_OF_BOUNDS : PROVEN_ERR_INVALID_ENCODING;
+        }
+    }
+    buf[n] = 0;
+    *line = (char *)buf;
+    return PROVEN_OK;
+}
+
 proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes,
                               uint8_t **data, size_t *len) {
     if (path_utf8 == NULL || data == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;

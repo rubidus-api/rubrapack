@@ -35,7 +35,7 @@ static const command_t commands[] = {
                  "unpack a package into a new directory, laid out as it installs", true },
     { "lint",    "lint <src.rpk> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
                  "check a source or package without writing anything", true },
-    { "new",     "new [msi] <name>", "write a starter source file <name>.rpk", true },
+    { "new",     "new [msi] <name> | new [<name>] -i | new <name> --dist <folder> [options]", "write a source file <name>.rpk: a starter, or made from answers", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },

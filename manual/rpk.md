@@ -18,10 +18,18 @@ Put what you ship in a folder `dist/`: the program, and whatever it needs, in `d
 (subfolders are kept). Then let rubrapack write a starting source:
 
 ```sh
-rubrapack new app          # writes app.rpk with a fresh upgrade code
+rubrapack new              # asks, then writes the source and checks it
 ```
 
-Edit `app.rpk` to say what the package is. This one installs the program and its files into
+It asks for the product name, the version, the folder with the files, the main program (its
+architecture is read from the file), the folder under Program Files, who it installs for, which
+sub folders are optional parts, the dialogs, a license (a `LICENSE.txt`, `.md` or `.rtf` next to
+it is offered), Korean dialogs, and the shortcuts. Enter takes the value in brackets. At the end
+it prints the same answers as one command (`rubrapack new app --dist dist --ui features ...`),
+which a script or an AI assistant can run without questions. `rubrapack new app` alone writes a
+fixed starter instead.
+
+Either way, `app.rpk` is plain text to read and change. This one installs the program and its files into
 `Program Files\My App`, puts it in the Start menu, and shows a dialog that lets the user change
 the folder:
 
@@ -166,7 +174,7 @@ A build is one command with no state outside the source, so it fits any script o
 `--reproducible` the same source gives the same bytes on every machine. On a Linux runner:
 
 ```sh
-V=0.4.3                                    # the release to use
+V=0.5.0                                    # the release to use
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint app.rpk
@@ -865,6 +873,8 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
+rubrapack new [<name>] [-i]
+rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
@@ -908,7 +918,17 @@ rubrapack version | help [command]
   For a bundle, the identity and the packages (each opened and checked as a package), and its
   `AppxBundleManifest.xml`; `extract` writes the packages out.
 - `new <name>` writes `<name>.rpk`, a source that builds as soon as the program's files are in
-  `dist/`, with a fresh `upgrade-code`. It never replaces an existing file.
+  `dist/`, with a fresh `upgrade-code`. `new` without a name, or with `-i`, asks the questions of
+  [A first package](#a-first-package) instead (on stderr; answers from stdin, one per line, so they
+  can be piped; the input ending before the last answer writes nothing), and `new <name>` with
+  options takes the same answers without asking: `--name`, `--manufacturer`, `--version`,
+  `--dist` (default `dist`), `--main <file>|-`, `--arch`, `--install-dir`, `--scope`, `--optional
+  <folder,...>|-`, `--ui`, `--license <file>|-`, `--languages ko|-`, `--shortcuts
+  start,desktop|none`; what is left out takes the default the question would offer. The source
+  lists the folder's top-level files one by one (a shortcut names a file, and a glob cannot leave
+  one out) and each sub folder that holds files as a glob; optional sub folders become features at
+  `level = 2` next to a required `Main`. It is checked like `lint` after it is written (exit 1 if
+  that finds a problem). It never replaces an existing file.
 - `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
   from a text, the same way on every machine: SHA-256 over the 32-bit little-endian length of
   `guid` and those 4 bytes, the 32-bit little-endian number 1, and the 32-bit little-endian length

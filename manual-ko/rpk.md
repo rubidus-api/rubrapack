@@ -17,10 +17,16 @@ Windows 에서도 Linux 에서도 같은 패키지를 만든다.
 그대로 간다). 그다음 rubrapack 에게 시작할 원본을 쓰게 한다:
 
 ```sh
-rubrapack new app          # 새 업그레이드 코드가 든 app.rpk 를 쓴다
+rubrapack new              # 묻고 나서 원본을 쓰고 검사한다
 ```
 
-`app.rpk` 를 고쳐 패키지가 무엇인지 적는다. 아래 원본은 프로그램과 파일을 `Program Files\My App` 에 설치하고,
+제품 이름, 판, 파일이 든 폴더, 주 프로그램(아키텍처는 파일에서 읽는다), Program Files 아래 폴더, 누구를 위해
+설치하는지, 어떤 하위 폴더가 선택 구성요소인지, 대화창, 약관(옆에 `LICENSE.txt`, `.md`, `.rtf` 가 있으면 권한다),
+한국어 대화창, 바로가기를 묻는다. Enter 는 대괄호 안의 값을 쓴다. 끝에는 같은 답을 한 줄 명령(`rubrapack new app
+--dist dist --ui features ...`)으로 보여 주는데, 스크립트나 AI 도우미는 묻지 않고 이것을 돌리면 된다.
+`rubrapack new app` 만 주면 대신 고정된 틀을 쓴다.
+
+어느 쪽이든 `app.rpk` 는 읽고 고칠 수 있는 평문이다. 아래 원본은 프로그램과 파일을 `Program Files\My App` 에 설치하고,
 시작 메뉴에 넣고, 사용자가 폴더를 바꿀 수 있는 대화창을 보인다:
 
 ```toml
@@ -159,7 +165,7 @@ app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ
 원본은 어느 컴퓨터에서나 같은 바이트가 된다. Linux 러너에서:
 
 ```sh
-V=0.4.3                                    # 쓸 릴리스
+V=0.5.0                                    # 쓸 릴리스
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint app.rpk
@@ -820,6 +826,8 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
+rubrapack new [<name>] [-i]
+rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack guid [--from <text>]
 rubrapack lint <src.rpk> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
@@ -860,7 +868,14 @@ rubrapack version | help [command]
   정체와 패키지(하나하나 패키지로 열어 확인한 것)와 `AppxBundleManifest.xml` 을 보이고, `extract` 는
   패키지를 꺼내 쓴다.
 - `new <name>` 은 `<name>.rpk` 를 쓴다. 프로그램 파일을 `dist/` 에 넣기만 하면 빌드되는 원본이고
-  `upgrade-code` 는 새로 만든다. 있는 파일은 절대 바꾸지 않는다.
+  `upgrade-code` 는 새로 만든다. 이름 없이 `new` 나 `-i` 를 주면 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
+  표준 오류로, 답은 표준 입력에서 한 줄씩 받으므로 파이프로 줄 수 있다; 마지막 답 전에 입력이 끝나면 아무것도
+  쓰지 않는다). `new <name>` 에 옵션을 주면 묻지 않고 같은 답을 받는다: `--name`, `--manufacturer`, `--version`,
+  `--dist`(기본 `dist`), `--main <파일>|-`, `--arch`, `--install-dir`, `--scope`, `--optional <폴더,...>|-`, `--ui`,
+  `--license <파일>|-`, `--languages ko|-`, `--shortcuts start,desktop|none`; 빠진 것은 질문이 권했을 기본값을 쓴다.
+  원본은 폴더 최상위 파일을 하나씩 적고(바로가기는 파일을 가리키고, 글롭은 파일을 뺄 수 없다) 파일이 든 하위
+  폴더는 글롭으로 적는다. 선택 하위 폴더는 필수 `Main` 옆에 `level = 2` 기능이 된다. 쓴 뒤에는 `lint` 처럼
+  검사한다(문제가 있으면 종료 코드 1). 있는 파일은 절대 바꾸지 않는다.
 - `guid` 는 무작위 GUID(4판)를 찍는다. `guid --from <text>` 는 rubrapack 이 글에서 끌어내는 GUID 를
   어느 컴퓨터에서나 같게 찍는다: `guid` 의 32비트 리틀엔디언 길이와 그 4바이트, 32비트 리틀엔디언 수 1,
   글의 32비트 리틀엔디언 길이와 UTF-8 바이트에 대한 SHA-256. 해시의 앞 16바이트에 판 니블을 8 로,

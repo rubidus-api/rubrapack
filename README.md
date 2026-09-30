@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.4.3** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-0.4.3-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-0.4.3-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-manual-0.4.3-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-manual-0.4.3-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.5.0** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-0.5.0-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.5.0/rubrapack-manual-0.5.0-en.pdf)
 
 # rubrapack
 
@@ -8,7 +8,7 @@ of your program into a Windows Installer package (`.msi`) or an MSIX package (`.
 and nothing else to install.
 
 ```sh
-rubrapack new app                        # writes app.rpk: name, version, where the files go
+rubrapack new                            # asks a few questions, writes app.rpk and checks it
 rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, upgrades, repair
 ```
 
@@ -57,7 +57,7 @@ rubrapack build app.rpk -o app.msi       # a real installer: uninstall entry, up
 ## Quick look
 
 ```sh
-rubrapack new app                                   # writes app.rpk, a source to fill in
+rubrapack new                                       # asks, then writes app.rpk (or: new app --dist dist ...)
 rubrapack build app.rpk -o app.msi                  # a Windows Installer package
 rubrapack build app.rpk -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
 rubrapack build app.rpk -o app.msixbundle --arch x64,x86,arm64
@@ -105,7 +105,7 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Status
 
-Version 0.4.3. Every feature above is covered by tests on Linux and by
+Version 0.5.0. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is
