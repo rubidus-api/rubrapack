@@ -29,7 +29,9 @@ static const command_t commands[] = {
                  "list the keys a token or the Windows certificate store can sign with", true },
     { "verify",  "verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificate>]...",
                  "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
-    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.cab>",
+    { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
+                 "write a transform (.mst): what turns one package into the other", true },
+    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.mst> --base <base.msi> | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
@@ -86,7 +88,7 @@ static int print_usage(rp_out_t out) {
         "\n"
         "commands:\n");
     for (size_t i = 0; i < COMMAND_COUNT && err == PROVEN_OK; ++i) {
-        snprintf(line, sizeof line, "  %-8s %s%s\n", commands[i].name, commands[i].summary,
+        snprintf(line, sizeof line, "  %-9s %s%s\n", commands[i].name, commands[i].summary,
                  commands[i].implemented ? "" : " (not implemented yet)");
         err = rp_pal_puts(out, line);
     }
@@ -160,6 +162,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "sign") == 0) return rp_cmd_sign(argc, argv);
     if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
+    if (strcmp(name, "transform") == 0) return rp_cmd_transform(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

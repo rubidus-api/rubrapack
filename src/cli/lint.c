@@ -29,15 +29,7 @@ static bool ends_with_ci(const char *s, const char *suffix) {
     return true;
 }
 
-typedef struct {
-    uint8_t      *data, *sum;
-    rp_cfb_t      cfb;
-    rp_msi_t      msi;
-    rp_msi_view_t view;
-    int           stage;        // what is open: 1 data, 2 cfb, 3 msi, 4 view
-} pkg_t;
-
-static void pkg_close(proven_allocator_t heap, pkg_t *p) {
+void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p) {
     if (p->stage >= 4) rp_msi_view_free(&p->msi, &p->view);
     rp_mem_free(heap, p->sum);
     if (p->stage >= 3) rp_msi_close(&p->msi);
@@ -45,10 +37,9 @@ static void pkg_close(proven_allocator_t heap, pkg_t *p) {
     rp_mem_free(heap, p->data);
 }
 
-// Opens a package as writer tables (RFC-0006 1); prints why not and returns an exit code.
-static int pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t *limits, pkg_t *p) {
+int rp_pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t *limits, rp_pkg_t *p) {
     static const uint16_t summary_name[] = { 5, 'S', 'u', 'm', 'm', 'a', 'r', 'y', 'I', 'n', 'f', 'o', 'r', 'm', 'a', 't', 'i', 'o', 'n' };
-    *p = (pkg_t){ 0 };
+    *p = (rp_pkg_t){ 0 };
     size_t len = 0;
     proven_err_t err = rp_pal_read_file(heap, path, MAX_INPUT, &p->data, &len);
     if (err != PROVEN_OK) {
@@ -88,10 +79,10 @@ static int pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t
 static int lint_against(const char *path, const char *previous, bool strict) {
     proven_allocator_t heap = proven_heap_allocator();
     rp_limits_t limits = rp_limits_default();
-    pkg_t a, b;
-    int rc = pkg_open(heap, path, &limits, &a);
-    if (rc == RP_EXIT_OK) rc = pkg_open(heap, previous, &limits, &b);
-    else b = (pkg_t){ 0 };
+    rp_pkg_t a, b;
+    int rc = rp_pkg_open(heap, path, &limits, &a);
+    if (rc == RP_EXIT_OK) rc = rp_pkg_open(heap, previous, &limits, &b);
+    else b = (rp_pkg_t){ 0 };
     if (rc == RP_EXIT_OK) {
         rp_srcdiags_t d = { 0 };
         rp_lint_opts_t opts = { .foreign = true, .strict = strict };
@@ -104,8 +95,8 @@ static int lint_against(const char *path, const char *previous, bool strict) {
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }
-    pkg_close(heap, &a);
-    pkg_close(heap, &b);
+    rp_pkg_close(heap, &a);
+    rp_pkg_close(heap, &b);
     return rc;
 }
 

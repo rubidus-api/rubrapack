@@ -128,6 +128,28 @@ Integer columns do not have the non-binary bit.
 A writer that assigns string ids in byte order of the strings gets rows sorted by string value
 for free, which is also the order an IDT export uses.
 
+## Transforms (`.mst`)
+
+A transform is a compound file of the same kind, of class `{000C1082-0000-0000-C000-000000000046}`
+(a database is `{000C1084-...}`), that holds only differences: a string pool of its own, a stream
+per changed table, a stream per binary cell it adds or changes, and summary information.
+
+- A transform's table stream is **row-major**: records one after another, each starting with a
+  16-bit mask. `0` deletes the row whose key cells follow. An odd mask inserts (or replaces) a
+  whole row; its high byte is the number of cells that follow. Any other mask updates a row: the
+  key cells, then the cells of the columns whose bits are set (bit n for column n + 1).
+- Cells are stored as in a database - flipped integers, string ids (of the transform's pool), an
+  `OBJECT` marker 1 whose bytes are the transform's stream `<Table>.<key>`.
+- A new table is a `_Tables` insert and one `_Columns` insert per column, with a **null** Number:
+  Windows numbers the columns in record order. A dropped table is a `_Tables` delete.
+- msi.dll writes a table's records as the target's rows in key order, then the deletes in key
+  order.
+- Summary information: property 7 is the base's platform and languages, 8 the target's, 9
+  `{base ProductCode}version;{target ProductCode}version;{UpgradeCode}`, 14 the minimum
+  Windows Installer version, 16 the checks before applying (low word) and the errors to ignore
+  (high word).
+- A transform cannot be read alone: its records carry no column types, which come from the base.
+
 ## IDT archive files (what `MsiDatabaseExport` writes)
 
 Useful as a reference output: a reader that exports byte-identical IDT files decodes the

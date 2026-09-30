@@ -5,10 +5,10 @@
 <script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
 <body>
 <a class="skip" href="#content">본문으로 건너뛰기</a>
-<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">18장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-17-msix-and-bundles.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-19-automation.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.12.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-18-checking-and-looking-inside.html">En</a><a class="tool" href="https://github.com/rubidus-api/rubrapack/releases/download/v0.12.0/rubrapack-manual-0.12.0-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#원본-검사-lint"><span class="tf-no">18.1</span>원본 검사: lint</a><a class="lv3" href="#패키지-검사-lint-파일"><span class="tf-no">18.2</span>패키지 검사: lint &lt;파일&gt;</a><a class="lv3" href="#표-보기-inspect"><span class="tf-no">18.3</span>표 보기: inspect</a><a class="lv3" href="#파일과-스트림"><span class="tf-no">18.4</span>파일과 스트림</a><a class="lv3" href="#설치하지-않고-풀기-extract"><span class="tf-no">18.5</span>설치하지 않고 풀기: extract</a><a class="lv3" href="#서명-verify"><span class="tf-no">18.6</span>서명: verify</a><a class="lv3" href="#msix-패키지"><span class="tf-no">18.7</span>MSIX 패키지</a><a class="lv3" href="#더-빠른-시험-빌드---compress-none"><span class="tf-no">18.8</span>더 빠른 시험 빌드: --compress none</a><a class="lv3" href="#guid-guid"><span class="tf-no">18.9</span>GUID: guid</a><a class="lv3" href="#명령줄의-도움말"><span class="tf-no">18.10</span>명령줄의 도움말</a></div></div>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">18장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-17-msix-and-bundles.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-19-automation.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.13.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-18-checking-and-looking-inside.html">En</a><a class="tool" href="https://github.com/rubidus-api/rubrapack/releases/download/v0.13.0/rubrapack-manual-0.13.0-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#원본-검사-lint"><span class="tf-no">18.1</span>원본 검사: lint</a><a class="lv3" href="#패키지-검사-lint-파일"><span class="tf-no">18.2</span>패키지 검사: lint &lt;파일&gt;</a><a class="lv3" href="#표-보기-inspect"><span class="tf-no">18.3</span>표 보기: inspect</a><a class="lv3" href="#파일과-스트림"><span class="tf-no">18.4</span>파일과 스트림</a><a class="lv3" href="#설치하지-않고-풀기-extract"><span class="tf-no">18.5</span>설치하지 않고 풀기: extract</a><a class="lv3" href="#한-곳만을-위한-변경-transform"><span class="tf-no">18.6</span>한 곳만을 위한 변경: transform</a><a class="lv3" href="#서명-verify"><span class="tf-no">18.7</span>서명: verify</a><a class="lv3" href="#msix-패키지"><span class="tf-no">18.8</span>MSIX 패키지</a><a class="lv3" href="#더-빠른-시험-빌드---compress-none"><span class="tf-no">18.9</span>더 빠른 시험 빌드: --compress none</a><a class="lv3" href="#guid-guid"><span class="tf-no">18.10</span>GUID: guid</a><a class="lv3" href="#명령줄의-도움말"><span class="tf-no">18.11</span>명령줄의 도움말</a></div></div>
 <main id="content"><div class="wrap">
 <h2 id="top">18 검사하고 들여다보기</h2>
-<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#원본-검사-lint"><span class="tf-no">18.1</span>원본 검사: lint</a><a class="lv3" href="#패키지-검사-lint-파일"><span class="tf-no">18.2</span>패키지 검사: lint &lt;파일&gt;</a><a class="lv3" href="#표-보기-inspect"><span class="tf-no">18.3</span>표 보기: inspect</a><a class="lv3" href="#파일과-스트림"><span class="tf-no">18.4</span>파일과 스트림</a><a class="lv3" href="#설치하지-않고-풀기-extract"><span class="tf-no">18.5</span>설치하지 않고 풀기: extract</a><a class="lv3" href="#서명-verify"><span class="tf-no">18.6</span>서명: verify</a><a class="lv3" href="#msix-패키지"><span class="tf-no">18.7</span>MSIX 패키지</a><a class="lv3" href="#더-빠른-시험-빌드---compress-none"><span class="tf-no">18.8</span>더 빠른 시험 빌드: --compress none</a><a class="lv3" href="#guid-guid"><span class="tf-no">18.9</span>GUID: guid</a><a class="lv3" href="#명령줄의-도움말"><span class="tf-no">18.10</span>명령줄의 도움말</a></div></div>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#원본-검사-lint"><span class="tf-no">18.1</span>원본 검사: lint</a><a class="lv3" href="#패키지-검사-lint-파일"><span class="tf-no">18.2</span>패키지 검사: lint &lt;파일&gt;</a><a class="lv3" href="#표-보기-inspect"><span class="tf-no">18.3</span>표 보기: inspect</a><a class="lv3" href="#파일과-스트림"><span class="tf-no">18.4</span>파일과 스트림</a><a class="lv3" href="#설치하지-않고-풀기-extract"><span class="tf-no">18.5</span>설치하지 않고 풀기: extract</a><a class="lv3" href="#한-곳만을-위한-변경-transform"><span class="tf-no">18.6</span>한 곳만을 위한 변경: transform</a><a class="lv3" href="#서명-verify"><span class="tf-no">18.7</span>서명: verify</a><a class="lv3" href="#msix-패키지"><span class="tf-no">18.8</span>MSIX 패키지</a><a class="lv3" href="#더-빠른-시험-빌드---compress-none"><span class="tf-no">18.9</span>더 빠른 시험 빌드: --compress none</a><a class="lv3" href="#guid-guid"><span class="tf-no">18.10</span>GUID: guid</a><a class="lv3" href="#명령줄의-도움말"><span class="tf-no">18.11</span>명령줄의 도움말</a></div></div>
 <p>목표: 사용자보다 먼저 실수를 잡는다 - 원본이나 완성된 패키지를 검사하고, 그 안의 모든 표와 파일과 스트림을 보고, 설치하지 않고 풀어 보고, 서명을 확인한다. 이 명령들은 다른 도구로 만든 패키지에도 쓸 수 있다.</p>
 <p>이 장은 17장의 <code>hello.toml</code> 과 그것으로 빌드한 <code>hello.msi</code> 를 쓴다.</p>
 <h3 id="원본-검사-lint">18.1 원본 검사: <code>lint</code><a class="plink" href="#원본-검사-lint" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
@@ -70,7 +70,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.12.0</code></pre>
+  18 = rubrapack 0.13.0</code></pre>
 <p>요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 <em>패키지 코드</em>(빌드마다 새 GUID), 14 필요한 Windows Installer 판(200 = 2.0), 15 단어 플래그(2 = 압축됨), 18 만든 프로그램. <code>--summary</code> 는 이것만 출력한다.</p>
 <h3 id="파일과-스트림">18.4 파일과 스트림<a class="plink" href="#파일과-스트림" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi --files
@@ -101,27 +101,35 @@ rubrapack: error[RP0008]: 'hello.msi': 4 entries, more than the limit 2 (--limit
 C:\work\hello&gt; rubrapack extract hello.msi -d small --limit-bytes 1000
 rubrapack: error[RP0008]: 'hello.msi': more than 1000 bytes to write (--limit-bytes); nothing was extracted</code></pre>
 <p>기본값은 항목 100,000개와 16 GiB 다. (항목 넷은 파일 둘과 폴더 둘, <code>ProgramFiles64Folder</code> 와 <code>Hello</code> 다.)</p>
-<h3 id="서명-verify">18.6 서명: <code>verify</code><a class="plink" href="#서명-verify" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<h3 id="한-곳만을-위한-변경-transform">18.6 한 곳만을 위한 변경: <code>transform</code><a class="plink" href="#한-곳만을-위한-변경-transform" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>Hello 를 자기 컴퓨터들에 설치하는 IT 부서가 자기 패키지를 따로 만들지 않고 인사말만 바꾸고 싶을 수 있다. <code>transform</code> 은 한 패키지를 다른 패키지로 바꾸는 차이를 변환(<code>.mst</code>)으로 쓰고, Windows 는 원래 패키지를 설치하면서 그것을 적용한다. 원본을 복사해 바꾼 패키지를 만들고(여기서는 <code>[registry.Greeting]</code> 에 <code>value = "Hello from the IT desk"</code>) 비교한다:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack build custom.toml -o custom.msi
+C:\work\hello&gt; rubrapack transform hello.msi custom.msi -o custom.mst
+C:\work\hello&gt; rubrapack inspect custom.mst --base hello.msi
+Registry	update	Greeting	Value=Hello from the IT desk
+C:\work\hello&gt; msiexec /i hello.msi TRANSFORMS=custom.mst</code></pre>
+<p><code>inspect &lt;파일.mst&gt; --base &lt;패키지&gt;</code> 는 변환의 행을 보여 준다: <code>insert</code>, <code>update</code>(키, 그다음 바뀐 열), <code>delete</code>. 기본으로 변환은 만든 바탕이 된 제품에만 적용된다(<code>--validate product-code,upgrade-code</code>). <code>--validate none</code> 은 이 확인을 뺀다. 변환은 표를 나르고 파일은 나르지 않는다: 파일이 다른 패키지는 거부한다(<code>RP0013</code>).</p>
+<h3 id="서명-verify">18.7 서명: <code>verify</code><a class="plink" href="#서명-verify" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>16장에서 <code>verify</code> 를 보았다. 배포하기 직전에 돌릴 검사다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack verify hello.msi --system-roots</code></pre>
-<h3 id="msix-패키지">18.7 MSIX 패키지<a class="plink" href="#msix-패키지" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<h3 id="msix-패키지">18.8 MSIX 패키지<a class="plink" href="#msix-패키지" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msix
 C:\work\hello&gt; rubrapack inspect hello.msix --files
 C:\work\hello&gt; rubrapack inspect hello.msix --manifest</code></pre>
 <p>첫 번째는 모든 블록의 해시를 확인한 뒤 정체, 실행 파일, 파일들을 보인다. 나머지 둘은 17장에서 보았다.</p>
-<h3 id="더-빠른-시험-빌드---compress-none">18.8 더 빠른 시험 빌드: <code>--compress none</code><a class="plink" href="#더-빠른-시험-빌드---compress-none" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<h3 id="더-빠른-시험-빌드---compress-none">18.9 더 빠른 시험 빌드: <code>--compress none</code><a class="plink" href="#더-빠른-시험-빌드---compress-none" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>빌드 시간의 대부분은 압축이다. 이것저것 해 보는 동안에는 압축을 뺀다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o fast.msi --compress none</code></pre>
 <p>패키지는 커지지만(여기서는 32768 바이트 대신 45056 바이트) 똑같이 동작한다.</p>
-<h3 id="guid-guid">18.9 GUID: <code>guid</code><a class="plink" href="#guid-guid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<h3 id="guid-guid">18.10 GUID: <code>guid</code><a class="plink" href="#guid-guid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack guid
 {98AE4FED-BF0B-4C77-B712-E0649EB47178}
 C:\work\hello&gt; rubrapack guid --from hello
 {B52FE8EF-B68D-84B5-91AF-E6E01BEC2773}</code></pre>
 <p>첫 번째는 무작위 - 매번 새것 - 로, 업그레이드 코드에 쓴다. 두 번째는 rubrapack 이 글에서 <em>끌어낸</em> GUID 로, 어느 컴퓨터에서든 언제나 같다. rubrapack 은 컴포넌트 GUID 를 이렇게 끌어내므로 판이 바뀌어도 같게 유지된다. 제3부가 <a href="basics-04-guids-and-hashes.html#해시로-만드는-guid-guid---from">그 계산</a>을 보여 준다.</p>
-<h3 id="명령줄의-도움말">18.10 명령줄의 도움말<a class="plink" href="#명령줄의-도움말" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<h3 id="명령줄의-도움말">18.11 명령줄의 도움말<a class="plink" href="#명령줄의-도움말" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack help
-rubrapack 0.12.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.13.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack &lt;command&gt; [arguments]
 
@@ -132,7 +140,7 @@ commands:
 C:\work\hello&gt; rubrapack help sign
 usage: rubrapack sign &lt;file.exe|.dll|.msi|.msix|.msixbundle&gt; (--key &lt;key.pfx|.pem&gt; ...
 C:\work\hello&gt; rubrapack version
-rubrapack 0.12.0 (proven_c_lib-v0.1.1)</code></pre>
+rubrapack 0.13.0 (proven_c_lib-v0.1.1)</code></pre>
 <p><code>rubrapack --help</code> 는 <code>rubrapack help</code> 와 같다. <code>help &lt;명령&gt;</code> 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은 제2부의 짧은 판이다.</p>
 <div class="nav"><a href="tutorial-17-msix-and-bundles.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="tutorial-19-automation.html">다음 &rarr;</a></div>
 </div></main>

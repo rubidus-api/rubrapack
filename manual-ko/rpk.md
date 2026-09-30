@@ -917,6 +917,13 @@ rubrapack version | help [command]
   매니페스트에 정체가 있는지, 매니페스트가 가리키는 파일이 패키지에 있는지 본다(`RP2201`, `RP2202`).
   묶음은 매니페스트의 블록 맵, 그리고 패키지마다 매니페스트가 말하는 자리·크기·정체와 패키지 자체를
   본다. 아키텍처 하나에 패키지 하나다.
+- `transform <base.msi> <target.msi> -o <out.mst>` 는 변환을 쓴다: 바탕 패키지를 대상 패키지로 바꾸는
+  행들(더한 것, 바뀐 것, 지운 것, 더하거나 뺀 표)을 msi.dll 의 `MsiDatabaseGenerateTransform` 이 쓰는
+  모양대로, 두 패키지를 밝히는 요약 정보와 함께. `--validate` 는 Windows 가 변환을 적용하기 전에 확인할
+  것을 정한다: `product-code` 와 `upgrade-code`(기본), `language`, `platform`, 또는 `none`. 거부하는
+  것(`RP0013`): 열이 다른 표, 바뀐 `File` 이나 `Media` 표(변환은 파일을 나르지 않는다), 표의 16번째 뒤의
+  열이 바뀐 것. `inspect <파일.mst> --base <base.msi>` 는 행을, `inspect <파일.mst> --summary` 는
+  요약 정보를 보여 준다.
 - `lint new.msi --previous old.msi` 는 `new.msi` 가 `old.msi` 를 깨끗하게 업그레이드하는지도 본다.
   오류: 다른 UpgradeCode(`RP2301`: 새 패키지가 옛것을 대체하지 않는다), 앞의 세 자리가 높지 않은
   버전(`RP2302`: Windows 는 그 세 자리만 비교한다). 경고: 같은 ProductCode(`RP2303`: 업그레이드에는
@@ -998,7 +1005,7 @@ rubrapack 이 알리는 모든 문제에는 파일, 줄, 열 다음에 코드가
 
 | 코드 | 무엇이 잘못됐나 | 볼 곳 |
 |---|---|---|
-| RP00xx | 명령줄: 모르는 명령이나 옵션, 읽거나 쓸 수 없는 파일 | `rubrapack help <명령>` |
+| RP00xx | 명령줄: 모르는 명령이나 옵션, 읽거나 쓸 수 없는 파일, 변환이 나를 수 없는 차이(`RP0013`) | `rubrapack help <명령>` |
 | RP10xx | 원본 파일의 인코딩: UTF-8(또는 BOM 있는 UTF-16)이 아님, 짝 없는 캐리지 리턴 | 파일을 UTF-8 로 저장한다 |
 | RP11xx | rubrapack 이 읽는 부분집합 밖의 TOML: 여러 줄 문자열, 인라인 표, 두 번 정의한 표 | [TOML 부분집합](#toml-부분집합) |
 | RP12xx | 표와 키: 모르는 표나 키(제안과 함께), 빠진 필수 키나 표, 기능이 생긴 뒤 기능 없는 항목 | [표](#표) |

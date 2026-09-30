@@ -990,6 +990,14 @@ rubrapack version | help [command]
   (`RP2305`), a component that is gone (`RP2306`: its resources are removed with the old version),
   a feature that is gone (`RP2307`: a patch or a change of the installed set loses it). The last
   line names the previous package.
+- `transform <base.msi> <target.msi> -o <out.mst>` writes a transform: the rows that turn the base
+  into the target (inserted, changed, deleted, and tables added or dropped), as msi.dll's own
+  `MsiDatabaseGenerateTransform` writes them, with the summary information that names both
+  packages. `--validate` sets what Windows checks before it applies the transform: `product-code`
+  and `upgrade-code` (the default), `language`, `platform`, or `none`. Refused (`RP0013`): tables
+  whose columns differ, a changed `File` or `Media` table (a transform carries no files), a changed
+  column past the 16th of its table. `inspect <file.mst> --base <base.msi>` lists the rows,
+  `inspect <file.mst> --summary` the summary information.
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.
@@ -1082,7 +1090,7 @@ line and column it is about. The first two digits say what kind of problem it is
 
 | Codes | What went wrong | Where to look |
 |---|---|---|
-| RP00xx | the command line: an unknown command or option, a file that cannot be read or written | `rubrapack help <command>` |
+| RP00xx | the command line: an unknown command or option, a file that cannot be read or written, a difference a transform cannot carry (`RP0013`) | `rubrapack help <command>` |
 | RP10xx | the source file's encoding: not UTF-8 (or UTF-16 with a BOM), stray carriage returns | save the file as UTF-8 |
 | RP11xx | TOML outside the subset rubrapack reads: multi-line strings, inline tables, a table defined twice | [The TOML subset](#the-toml-subset) |
 | RP12xx | tables and keys: an unknown table or key (with a suggestion), a required key or table missing, something without a feature once features exist | [Tables](#tables) |

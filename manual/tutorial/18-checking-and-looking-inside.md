@@ -121,7 +121,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.12.0
+  18 = rubrapack 0.13.0
 ```
 
 The numbers of the summary are property IDs: 2 title, 3 subject, 4 author, 5 keywords, 7 the
@@ -192,6 +192,26 @@ rubrapack: error[RP0008]: 'hello.msi': more than 1000 bytes to write (--limit-by
 The defaults are 100,000 entries and 16 GiB. (The four entries are the two files and the two
 folders, `ProgramFiles64Folder` and `Hello`.)
 
+## A change for one site: `transform`
+
+An IT department that installs Hello on its own machines may want another greeting, without a
+package of its own. `transform` writes what turns one package into another as a transform (`.mst`),
+which Windows applies while it installs the original. Build the changed package from a copy of the
+source - here with `value = "Hello from the IT desk"` in `[registry.Greeting]` - and compare:
+
+```text
+C:\work\hello> rubrapack build custom.toml -o custom.msi
+C:\work\hello> rubrapack transform hello.msi custom.msi -o custom.mst
+C:\work\hello> rubrapack inspect custom.mst --base hello.msi
+Registry	update	Greeting	Value=Hello from the IT desk
+C:\work\hello> msiexec /i hello.msi TRANSFORMS=custom.mst
+```
+
+`inspect <file.mst> --base <package>` lists the transform's rows: `insert`, `update` (the key, then
+the changed columns) and `delete`. By default the transform only applies to the product it was made
+from (`--validate product-code,upgrade-code`); `--validate none` drops the checks. A transform
+carries tables, not files: a package whose files differ is refused (`RP0013`).
+
 ## Signatures: `verify`
 
 Chapter 16 showed `verify`. It is the check to run on what you are about to publish:
@@ -238,7 +258,7 @@ GUIDs this way, which is why they stay the same from version to version. Part II
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.12.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.13.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -249,7 +269,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.12.0 (proven_c_lib-v0.1.1)
+rubrapack 0.13.0 (proven_c_lib-v0.1.1)
 ```
 
 `rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options

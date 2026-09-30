@@ -115,7 +115,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.12.0
+  18 = rubrapack 0.13.0
 ```
 
 요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 *패키지 코드*(빌드마다 새
@@ -181,6 +181,26 @@ rubrapack: error[RP0008]: 'hello.msi': more than 1000 bytes to write (--limit-by
 
 기본값은 항목 100,000개와 16 GiB 다. (항목 넷은 파일 둘과 폴더 둘, `ProgramFiles64Folder` 와 `Hello` 다.)
 
+## 한 곳만을 위한 변경: `transform`
+
+Hello 를 자기 컴퓨터들에 설치하는 IT 부서가 자기 패키지를 따로 만들지 않고 인사말만 바꾸고 싶을 수 있다.
+`transform` 은 한 패키지를 다른 패키지로 바꾸는 차이를 변환(`.mst`)으로 쓰고, Windows 는 원래 패키지를 설치하면서
+그것을 적용한다. 원본을 복사해 바꾼 패키지를 만들고(여기서는 `[registry.Greeting]` 에
+`value = "Hello from the IT desk"`) 비교한다:
+
+```text
+C:\work\hello> rubrapack build custom.toml -o custom.msi
+C:\work\hello> rubrapack transform hello.msi custom.msi -o custom.mst
+C:\work\hello> rubrapack inspect custom.mst --base hello.msi
+Registry	update	Greeting	Value=Hello from the IT desk
+C:\work\hello> msiexec /i hello.msi TRANSFORMS=custom.mst
+```
+
+`inspect <파일.mst> --base <패키지>` 는 변환의 행을 보여 준다: `insert`, `update`(키, 그다음 바뀐 열),
+`delete`. 기본으로 변환은 만든 바탕이 된 제품에만 적용된다(`--validate product-code,upgrade-code`).
+`--validate none` 은 이 확인을 뺀다. 변환은 표를 나르고 파일은 나르지 않는다: 파일이 다른 패키지는
+거부한다(`RP0013`).
+
 ## 서명: `verify`
 
 16장에서 `verify` 를 보았다. 배포하기 직전에 돌릴 검사다:
@@ -225,7 +245,7 @@ C:\work\hello> rubrapack guid --from hello
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.12.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.13.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -236,7 +256,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.12.0 (proven_c_lib-v0.1.1)
+rubrapack 0.13.0 (proven_c_lib-v0.1.1)
 ```
 
 `rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은

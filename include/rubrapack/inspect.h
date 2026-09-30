@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "rubrapack/cfb.h"
+#include "rubrapack/msi.h"
+
 // include/rubrapack/inspect.h - the `inspect` and `build` commands.
 
 // argv as rp_main receives it (argv[1] == "inspect"); returns the exit code.
@@ -15,6 +18,23 @@
 // `rubrapack lint <src.rpk|file.msi> [--strict]` (RFC-0006 1); the source half lives in build.c.
 [[nodiscard]] int rp_cmd_lint(int argc, char **argv);
 [[nodiscard]] int rp_cmd_lint_source(int argc, char **argv);
+
+// A package read as writer tables (RFC-0006 1), for `lint` and `transform` (src/cli/lint.c).
+typedef struct {
+    uint8_t      *data, *sum;
+    rp_cfb_t      cfb;
+    rp_msi_t      msi;
+    rp_msi_view_t view;
+    int           stage;        // what is open: 1 data, 2 cfb, 3 msi, 4 view
+} rp_pkg_t;
+
+// Opens a package; prints why not and returns an exit code. Close it even after a failure.
+[[nodiscard]] int rp_pkg_open(proven_allocator_t heap, const char *path, const rp_limits_t *limits, rp_pkg_t *p);
+void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
+
+// `rubrapack transform <base.msi> <target.msi> -o <out.mst>` and `inspect <file.mst>` (RFC-0016 3).
+[[nodiscard]] int rp_cmd_transform(int argc, char **argv);
+[[nodiscard]] int rp_mst_inspect(const char *path, const char *what, const char *base);
 
 // `rubrapack extract <file.msi|file.cab> -d <new dir>` (RFC-0006 2).
 [[nodiscard]] int rp_cmd_extract(int argc, char **argv);
