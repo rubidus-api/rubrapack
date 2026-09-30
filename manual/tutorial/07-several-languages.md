@@ -55,12 +55,13 @@ and then:
 - every page after it - welcome, license, folder, ready, progress, finished, and the cancel,
   error, files-in-use, disk-space and maintenance pages - speaks the language chosen.
 
-With English alone there is no language page. A silent installation (`/qn`) shows no pages and
-needs no choice; `RPLANGUAGE=ko` on the command line chooses without the page:
+With English alone there is no language page. A silent installation (`/qn`) shows no pages and needs no choice. `RPLANGUAGE=ko` on the command line picks Korean in advance - on the language page, which still comes first, and for a silent installation:
 
 ```text
 msiexec /i hello.msi RPLANGUAGE=ko
 ```
+
+![The language page on a Korean Windows: 한국어 is selected](../images/ch07-language.png)
 
 ## A license per language: `license-xx`
 
@@ -103,6 +104,8 @@ the Malgun Gothic typeface, English ones Segoe UI.
 On a Korean Windows, double-click `hello.msi`: the language page has 한국어 selected; every page
 after it is Korean, with the Korean license. Choose English: the same pages in English with
 `LICENSE.txt`. Try `msiexec /i hello.msi RPLANGUAGE=ko` on an English Windows.
+
+![The welcome page with English chosen: the text of `[ui-text.WelcomeText]`](../images/ch07-welcome.png)
 
 ## What happened inside
 

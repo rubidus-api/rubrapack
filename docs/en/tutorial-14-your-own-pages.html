@@ -181,6 +181,7 @@ when = "DESKTOP_SHORTCUT"</code></pre>
 <p>rubrapack makes the properties of your controls secure by itself, so they reach the elevated part of the installation: <code>[registry.StyleValue]</code> writes <code>[GREETING_STYLE]</code>, and the desktop shortcut's <code>when = "DESKTOP_SHORTCUT"</code> sees the tick box.</p>
 <h3 id="try-it">14.6 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <p>Install: after the folder page comes "Options" with your controls; Back returns to the folder, Next goes to "ready". With Korean chosen on the language page, the page and the labels are Korean. After installing, <code>regedit</code> shows <code>Style</code>, <code>Name</code> and <code>Language</code> under <code>HKLM\SOFTWARE\Example Software\Hello</code>; the desktop shortcut exists only if the box was ticked.</p>
+<figure><img src="img/ch14-options.png" alt="The page &quot;Options&quot; in English" loading="lazy"><figcaption>The page "Options" in English</figcaption></figure>
 <h3 id="what-happened-inside">14.7 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <p>The page is rows of the <code>Control</code> table - the frame's and yours - and its buttons are rows of <code>ControlEvent</code>:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi ControlEvent

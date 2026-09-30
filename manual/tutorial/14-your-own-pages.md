@@ -228,6 +228,8 @@ Next goes to "ready". With Korean chosen on the language page, the page and the 
 After installing, `regedit` shows `Style`, `Name` and `Language` under `HKLM\SOFTWARE\Example
 Software\Hello`; the desktop shortcut exists only if the box was ticked.
 
+![The page "Options" in English](../images/ch14-options.png)
+
 ## What happened inside
 
 The page is rows of the `Control` table - the frame's and yours - and its buttons are rows of

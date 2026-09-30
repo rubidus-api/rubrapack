@@ -111,6 +111,18 @@ Double-click `hello.msi`: welcome (with your text and the banner), the license (
 you tick the box), the install folder, ready, progress, finished with "Launch Hello" ticked. Run
 it again after installing: a page offers Repair and Remove.
 
+![Welcome, with the text of `[ui-text.WelcomeText]`](../images/ch06-welcome.png)
+
+![The license: Next stays grey until the box is ticked](../images/ch06-license.png)
+
+![The install folder, changeable](../images/ch06-folder.png)
+
+![Ready to install](../images/ch06-ready.png)
+
+![Finished, with "Launch Hello" ticked](../images/ch06-finished.png)
+
+![Run again after installing: Repair or Remove](../images/ch06-maintenance.png)
+
 ## What happened inside
 
 A package with dialogs carries them as tables - `Dialog`, `Control`, `ControlEvent` and more -

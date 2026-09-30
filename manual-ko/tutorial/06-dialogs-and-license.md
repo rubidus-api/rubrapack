@@ -106,6 +106,20 @@ msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"
 `hello.msi` 를 두 번 누른다: 환영(내 문구와 배너), 약관(확인란을 표시할 때까지 다음이 회색), 설치 폴더, 준비,
 진행, "Launch Hello" 가 표시된 완료. 설치한 뒤 다시 실행하면 복구와 제거를 권하는 페이지가 나온다.
 
+![환영: `[ui-text.WelcomeText]` 의 글](../images/ch06-welcome.png)
+
+![약관: 확인란을 표시할 때까지 다음은 회색이다](../images/ch06-license.png)
+
+![설치 폴더: 바꿀 수 있다](../images/ch06-folder.png)
+
+![설치 준비](../images/ch06-ready.png)
+
+!["Launch Hello" 가 표시된 완료 페이지](../images/ch06-finished.png)
+
+![설치한 뒤 다시 실행: 복구 또는 제거](../images/ch06-maintenance.png)
+
+이 장의 원본에는 한국어가 없으므로 페이지는 영어다. 한국어 페이지는 7장에서 더한다.
+
 ## 안에서 무슨 일이 일어났나
 
 대화창이 있는 패키지는 그것을 표로 지닌다 - `Dialog`, `Control`, `ControlEvent` 등 - 이 표들이 모든 창, 단추,

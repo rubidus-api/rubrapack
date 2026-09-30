@@ -228,6 +228,8 @@ rubrapack 은 내 컨트롤의 속성을 스스로 보안 속성으로 만들어
 `HKLM\SOFTWARE\Example Software\Hello` 아래에 `Style`, `Name`, `Language` 가 있다. 바탕화면 바로가기는 확인란을
 표시했을 때만 있다.
 
+![한국어로 본 "선택 사항" 페이지](../images/ch14-options.png)
+
 ## 안에서 무슨 일이 일어났나
 
 페이지는 `Control` 표의 행들 - 틀의 것과 내 것 - 이고, 단추는 `ControlEvent` 의 행들이다:

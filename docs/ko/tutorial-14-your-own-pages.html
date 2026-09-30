@@ -182,6 +182,7 @@ when = "DESKTOP_SHORTCUT"</code></pre>
 <p>rubrapack 은 내 컨트롤의 속성을 스스로 보안 속성으로 만들어, 설치의 관리자 권한 부분까지 전해지게 한다: <code>[registry.StyleValue]</code> 가 <code>[GREETING_STYLE]</code> 을 쓰고, 바탕화면 바로가기의 <code>when = "DESKTOP_SHORTCUT"</code> 이 확인란을 본다.</p>
 <h3 id="해-보기">14.6 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>설치한다: 폴더 페이지 뒤에 내 컨트롤이 든 "Options" 가 온다. 뒤로는 폴더 페이지로, 다음은 "준비"로 간다. 언어 페이지에서 한국어를 고르면 페이지 제목과 글자가 한국어("선택 사항")다. 설치한 뒤 <code>regedit</code> 을 열면 <code>HKLM\SOFTWARE\Example Software\Hello</code> 아래에 <code>Style</code>, <code>Name</code>, <code>Language</code> 가 있다. 바탕화면 바로가기는 확인란을 표시했을 때만 있다.</p>
+<figure><img src="img/ch14-options.png" alt="한국어로 본 &quot;선택 사항&quot; 페이지" loading="lazy"><figcaption>한국어로 본 "선택 사항" 페이지</figcaption></figure>
 <h3 id="안에서-무슨-일이-일어났나">14.7 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>페이지는 <code>Control</code> 표의 행들 - 틀의 것과 내 것 - 이고, 단추는 <code>ControlEvent</code> 의 행들이다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi ControlEvent

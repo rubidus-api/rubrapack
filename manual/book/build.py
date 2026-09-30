@@ -93,7 +93,7 @@ def parse_blocks(lines):
             blocks.append(("table", rows[0], rows[1:]))
             i = j
             continue
-        m = re.match(r"^!\[([^\]]*)\]\(([^)\s]+)\)\s*$", line)
+        m = re.match(r"^!\[(.*)\]\(([^)\s]+)\)\s*$", line)   # the caption may hold `[...]`
         if m:
             blocks.append(("image", m.group(1), m.group(2)))
             i += 1
@@ -323,7 +323,7 @@ def ty_blocks(blocks, chapter, book):
             out.append(ty_list(b, chapter, book, 0))
         elif b[0] == "image":
             rel = chapter["lang"] + "/img/" + os.path.basename(b[2])
-            out.append("#figure(image(" + ty_str(rel) + ", width: 80%), caption: [" + ty_inline(b[1], chapter, book) + "])\n")
+            out.append("#figure(image(" + ty_str(rel) + ", width: 55%), caption: [" + ty_inline(b[1], chapter, book) + "])\n")
     return "\n".join(out)
 
 

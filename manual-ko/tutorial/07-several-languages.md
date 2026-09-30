@@ -53,12 +53,13 @@ target = "file:Hello"
 - 그 뒤의 모든 페이지 - 환영, 약관, 폴더, 준비, 진행, 완료, 그리고 취소, 오류, 사용 중인 파일, 디스크 공간, 유지
   관리 페이지 - 가 고른 언어로 말한다.
 
-영어만 있으면 언어 페이지가 없다. 조용한 설치(`/qn`)는 페이지를 보이지 않으므로 고를 필요가 없다. 명령줄의
-`RPLANGUAGE=ko` 는 페이지 없이 고른다:
+영어만 있으면 언어 페이지가 없다. 조용한 설치(`/qn`)는 페이지를 보이지 않으므로 고를 필요가 없다. 명령줄의 `RPLANGUAGE=ko` 는 한국어를 미리 고른다 - 그래도 맨 먼저 나오는 언어 페이지에서, 그리고 조용한 설치에서:
 
 ```text
 msiexec /i hello.msi RPLANGUAGE=ko
 ```
+
+![한국어 Windows 의 언어 페이지: 한국어가 골라져 있다](../images/ch07-language.png)
 
 ## 언어마다 약관: `license-xx`
 
@@ -98,6 +99,8 @@ hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-te
 한국어 Windows 에서 `hello.msi` 를 두 번 누른다: 언어 페이지에 한국어가 골라져 있고, 그 뒤 모든 페이지가 한국어
 약관과 함께 한국어다. English 를 고르면 같은 페이지가 `LICENSE.txt` 와 함께 영어로 나온다. 영어 Windows 에서
 `msiexec /i hello.msi RPLANGUAGE=ko` 도 해 본다.
+
+![한국어를 고른 환영 페이지: `[ui-text.WelcomeText]` 의 `text-ko`](../images/ch07-welcome.png)
 
 ## 안에서 무슨 일이 일어났나
 

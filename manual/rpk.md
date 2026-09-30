@@ -588,7 +588,7 @@ first page asks for the language, and every page after it - welcome, license, fo
 pages, ready, progress, finished, and the cancel, error, files-in-use, disk-space and maintenance
 pages - speaks the one chosen. The choice made for the user in advance is the first added language
 whose LANGIDs hold the user's regional format (`UserLanguageID`), then the system locale
-(`SystemLanguageID`), else English. `RPLANGUAGE=ko` on the command line chooses directly; a silent
+(`SystemLanguageID`), else English. `RPLANGUAGE=ko` on the command line makes that choice instead (the language page still shows, with it selected); a silent
 installation (`/qn`) shows nothing and needs no choice. With English alone there is no language
 page.
 

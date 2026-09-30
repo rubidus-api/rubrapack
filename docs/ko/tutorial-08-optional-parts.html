@@ -106,6 +106,7 @@ target = "file:Hello"</code></pre>
       [ ] More samples        (Samples 를 따라감)</code></pre>
 <p>줄마다 메뉴가 있다: "Will be installed on local hard drive"(로컬 하드 드라이브에 설치), "Entire feature will be installed on local hard drive"(하위까지 모두 설치), "Entire feature will be unavailable"(모두 사용할 수 없음). 줄을 고르면 설명과 필요한 디스크 공간이 보이고, "Disk Usage" 는 드라이브마다 공간을 보인다. (이 글들은 Windows 에서 오므로 영어로 남는다.) Diagnostics 는 보이지 않는다.</p>
 <p>기본 설치(두 번 누르고 다음, 다음, ...)는 Hello 와 문서를 설치한다.</p>
+<figure><img src="img/ch08-features.png" alt="기능 고르기: Samples 와 More samples 는 제안되지만 골라져 있지 않고, Diagnostics 는 숨어 있다" loading="lazy"><figcaption>기능 고르기: Samples 와 More samples 는 제안되지만 골라져 있지 않고, Diagnostics 는 숨어 있다</figcaption></figure>
 <h3 id="명령줄에서-고르기">8.6 명령줄에서 고르기<a class="plink" href="#명령줄에서-고르기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>기능은 속성으로 고르므로 조용한 설치도 고를 수 있다:</p>
 <div class="tblwrap"><table><tr><th>명령</th><th>설치하는 것</th></tr><tr><td><code>msiexec /i hello.msi /qn</code></td><td>기본: Main, Documentation</td></tr><tr><td><code>msiexec /i hello.msi /qn ADDLOCAL=Samples</code></td><td>기본과 예제(따라가는 More samples 포함)</td></tr><tr><td><code>msiexec /i hello.msi /qn ADDLOCAL=ALL</code></td><td>숨긴 것까지 모든 기능</td></tr><tr><td><code>msiexec /i hello.msi /qn INSTALLLEVEL=3</code></td><td>level 이 3 이하인 모든 기능: 여기서는 전부</td></tr><tr><td><code>msiexec /i hello.msi /qn REMOVE=Documentation</code></td><td>문서를 뺀 기본</td></tr></table></div>

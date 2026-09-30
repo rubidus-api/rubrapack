@@ -67,6 +67,13 @@ target = "file:Hello"</code></pre>
 <p><code>launch = "file:Hello"</code> 는 완료 페이지에 "Launch Hello"(Hello 실행) 확인란을 넣는다(<code>launch-checked = false</code> 가 아니면 표시된 채로). <code>launch-args</code> 는 프로그램의 인자다. 표시되어 있으면 마침 단추가 Hello 를 시작한다 - 설치 파일의 관리자 권한이 아니라 설치를 실행한 사용자의 권한으로 - 첫 설치나 업그레이드 뒤에만이고, 복구나 제거 뒤에는 아니며, 조용한 설치에서는 절대 아니다.</p>
 <h3 id="해-보기">6.8 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p><code>hello.msi</code> 를 두 번 누른다: 환영(내 문구와 배너), 약관(확인란을 표시할 때까지 다음이 회색), 설치 폴더, 준비, 진행, "Launch Hello" 가 표시된 완료. 설치한 뒤 다시 실행하면 복구와 제거를 권하는 페이지가 나온다.</p>
+<figure><img src="img/ch06-welcome.png" alt="환영: [ui-text.WelcomeText] 의 글" loading="lazy"><figcaption>환영: <code>[ui-text.WelcomeText]</code> 의 글</figcaption></figure>
+<figure><img src="img/ch06-license.png" alt="약관: 확인란을 표시할 때까지 다음은 회색이다" loading="lazy"><figcaption>약관: 확인란을 표시할 때까지 다음은 회색이다</figcaption></figure>
+<figure><img src="img/ch06-folder.png" alt="설치 폴더: 바꿀 수 있다" loading="lazy"><figcaption>설치 폴더: 바꿀 수 있다</figcaption></figure>
+<figure><img src="img/ch06-ready.png" alt="설치 준비" loading="lazy"><figcaption>설치 준비</figcaption></figure>
+<figure><img src="img/ch06-finished.png" alt="&quot;Launch Hello&quot; 가 표시된 완료 페이지" loading="lazy"><figcaption>"Launch Hello" 가 표시된 완료 페이지</figcaption></figure>
+<figure><img src="img/ch06-maintenance.png" alt="설치한 뒤 다시 실행: 복구 또는 제거" loading="lazy"><figcaption>설치한 뒤 다시 실행: 복구 또는 제거</figcaption></figure>
+<p>이 장의 원본에는 한국어가 없으므로 페이지는 영어다. 한국어 페이지는 7장에서 더한다.</p>
 <h3 id="안에서-무슨-일이-일어났나">6.9 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>대화창이 있는 패키지는 그것을 표로 지닌다 - <code>Dialog</code>, <code>Control</code>, <code>ControlEvent</code> 등 - 이 표들이 모든 창, 단추, 글 상자를 위치와 눌렀을 때 일어나는 일과 함께 기술한다. rubrapack 은 내장 세트에서 이것을 쓴다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Dialog

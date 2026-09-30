@@ -135,6 +135,8 @@ installed on local hard drive"(하위까지 모두 설치), "Entire feature will
 
 기본 설치(두 번 누르고 다음, 다음, ...)는 Hello 와 문서를 설치한다.
 
+![기능 고르기: Samples 와 More samples 는 제안되지만 골라져 있지 않고, Diagnostics 는 숨어 있다](../images/ch08-features.png)
+
 ## 명령줄에서 고르기
 
 기능은 속성으로 고르므로 조용한 설치도 고를 수 있다:

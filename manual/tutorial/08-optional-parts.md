@@ -138,6 +138,8 @@ and stay English.) Diagnostics does not appear.
 
 A default installation (double-click, Next, Next, ...) installs Hello and the documentation.
 
+![Choose features: Samples and More samples are offered but not selected; Diagnostics is hidden](../images/ch08-features.png)
+
 ## Choosing from the command line
 
 Features are chosen with properties, so a silent installation can choose too:
