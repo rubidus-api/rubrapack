@@ -207,7 +207,7 @@ Windows 의 서명기(`APPX_SIP_CLIENT_DATA` 를 준 `mssign32!SignerSignEx2`; P
 
 ## 실제 예: 튜토리얼의 hello.msix
 
-튜토리얼 17장의 MSIX(`--unsigned-test`, x64)는 11009 바이트다. 첫 파일 `hello.exe` 의 로컬 머리로 시작한다:
+튜토리얼 17장의 MSIX(`--unsigned-test`, x64)는 11119 바이트다. 첫 파일 `hello.exe` 의 로컬 머리로 시작한다:
 
 | 오프셋 | 바이트 | 필드 | 값 |
 |---|---|---|---|

@@ -3,6 +3,8 @@
 
 #include "ir_int.h"
 
+#include <stdio.h>
+
 // Properties the tool writes itself, or that belong to the engine (RFC-0003 1).
 bool ir_tool_property(const char *s) {
     static const char *const names[] = { "ALLUSERS", "REBOOT", "SECURECUSTOMPROPERTIES", "MSIHIDDENPROPERTIES",
@@ -682,7 +684,8 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
 }
 
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
-    static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", NULL };
+    static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", "file", "direction",
+                                        "protocol", "ports", "profile", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
@@ -709,8 +712,52 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         if (x->task_id == NULL) x->task_id = ir_dup(c, t->id);
         x->display = ir_get_str(c, t, "display-name", false, NULL);
         if (ir_find_key(t, "alias")) ERR(c, ir_key_pos(t, "alias"), "RP1316", "alias belongs to kind = \"alias\"");
+    } else if (kind && strcmp(kind, "firewall") == 0) {
+        // RFC-0016 2: an inbound or outbound rule for a program of the package (desktop2:FirewallRules).
+        x->kind = RP_MSIX_EXT_FIREWALL;
+        x->file = file_ref(c, t, "file", false);
+        char *dir = ir_get_str(c, t, "direction", true, NULL), *proto = ir_get_str(c, t, "protocol", true, NULL);
+        if (dir && strcmp(dir, "in") != 0 && strcmp(dir, "out") != 0) {
+            ERR(c, ir_key_pos(t, "direction"), "RP1316", "direction must be \"in\" or \"out\" (got '%s')", dir);
+        }
+        if (proto && strcmp(proto, "tcp") != 0 && strcmp(proto, "udp") != 0) {
+            ERR(c, ir_key_pos(t, "protocol"), "RP1316", "protocol must be \"tcp\" or \"udp\" (got '%s')", proto);
+        }
+        x->outbound = dir && strcmp(dir, "out") == 0;
+        x->udp = proto && strcmp(proto, "udp") == 0;
+        rp_mem_free(c->alloc, dir);
+        rp_mem_free(c->alloc, proto);
+        char *ports = ir_get_str(c, t, "ports", false, NULL);
+        if (ports) {
+            unsigned lo = 0, hi = 0;
+            int used = 0;
+            bool ok = sscanf(ports, "%5u%n", &lo, &used) == 1 && used > 0;
+            if (ok && ports[used] == '-') {
+                int more = 0;
+                ok = sscanf(ports + used + 1, "%5u%n", &hi, &more) == 1 && more > 0 && ports[used + 1 + more] == 0;
+            } else if (ok) {
+                hi = lo;
+                ok = ports[used] == 0;
+            }
+            if (!ok || lo < 1 || hi > 65535 || lo > hi) {
+                ERR(c, ir_key_pos(t, "ports"), "RP1316", "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')", ports);
+            } else {
+                x->port_min = lo;
+                x->port_max = hi;
+            }
+            rp_mem_free(c->alloc, ports);
+        }
+        x->profile = ir_get_str(c, t, "profile", false, NULL);
+        static const char *const profiles[] = { "all", "domain", "private", "public", NULL };
+        if (x->profile && !ir_in_list(x->profile, profiles)) {
+            ERR(c, ir_key_pos(t, "profile"), "RP1316", "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')", x->profile);
+        }
+        const char *other[] = { "alias", "task-id", "display-name", "enabled" };
+        for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
+            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"firewall\"", other[k]);
+        }
     } else if (kind) {
-        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\" or \"startup-task\" (got '%s')", kind);
+        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\" or \"firewall\" (got '%s')", kind);
     }
     rp_mem_free(c->alloc, kind);
 }

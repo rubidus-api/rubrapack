@@ -134,7 +134,7 @@ MSIX 는 ZIP 압축 파일이고, ZIP 은 파일마다 그대로("저장", 방�
 |---|---|---|---|
 | `hello.exe` | 17,920 | 6,706 | deflate: 37% |
 | `Registry.dat` | 8,192 | 430 | deflate: 대부분 0 바이트라 5% |
-| `AppxManifest.xml` | 2,537 | 900 | deflate: 글이라 35% |
+| `AppxManifest.xml` | 2,960 | 1,010 | deflate: 글이라 34% |
 | `Assets\Square150x150.png` | 301 | 301 | 저장: PNG 는 이미 압축되어 있다 |
 | `guide.txt` | 6 | 14 | deflate: 너무 작아 얻는 것이 없다 |
 

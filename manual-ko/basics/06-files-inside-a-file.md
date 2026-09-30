@@ -95,8 +95,8 @@ Windows Installer 가 표 이름을 한중일 문자 영역의 글자로 눌러 
   "PK 06 06"  end record: how many files, where the central directory starts
 ```
 
-튜토리얼의 `hello.msix`(11,009 바이트)는 `50 4b 03 04` - ZIP 을 만든 Phil Katz 의 머리글자 "PK" - 로 시작하고 이름
-`hello.exe` 가 뒤따른다. 중앙 디렉터리는 바이트 10,098 에서 시작해 항목 아홉을 나열한다. 읽는 쪽은 먼저 파일 끝으로
+튜토리얼의 `hello.msix`(11,119 바이트)는 `50 4b 03 04` - ZIP 을 만든 Phil Katz 의 머리글자 "PK" - 로 시작하고 이름
+`hello.exe` 가 뒤따른다. 중앙 디렉터리는 바이트 10,208 에서 시작해 항목 아홉을 나열한다. 읽는 쪽은 먼저 파일 끝으로
 가서 끝 기록을 찾고, 거기서 목록으로 간다. (MSIX 는 4 GiB 넘는 묶음을 위해 만든 ZIP64 형태의 끝 기록 `PK 06 06` 을
 쓴다.)
 

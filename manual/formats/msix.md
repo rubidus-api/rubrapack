@@ -230,7 +230,7 @@ PowerShell cmdlet cannot sign a package) and checked by installing rubrapack's s
 
 ## Worked example: the tutorial's hello.msix
 
-The MSIX of tutorial chapter 17 (`--unsigned-test`, x64) is 11009 bytes. It begins with the local
+The MSIX of tutorial chapter 17 (`--unsigned-test`, x64) is 11119 bytes. It begins with the local
 header of its first file, `hello.exe`:
 
 | Offset | Bytes | Field | Value |

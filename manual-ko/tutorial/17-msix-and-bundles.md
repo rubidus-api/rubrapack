@@ -73,6 +73,13 @@ kind = "startup-task"
 display-name = "Hello"
 enabled = false
 
+[msix-extension.Web]
+kind = "firewall"
+direction = "in"
+protocol = "tcp"
+ports = "8080"
+profile = "private"
+
 [dir.INSTALLDIR]
 path = "ProgramFiles/Hello"
 
@@ -122,7 +129,12 @@ msi-only = true
 
 MSIX 는 자기가 담은 *애플리케이션* - 시작 메뉴의 항목 - 을 나열한다. `executable` 은 그것을 시작하는
 `[file.*]` 를 가리키고, 그 파일의 폴더(여기서는 `INSTALLDIR`)가 패키지 자신의 폴더가 된다. `display-name` 과
-`description` 의 기본값은 패키지 이름이다. `[msix-app.*]` 표가 여럿이면 항목도 여럿이 된다.
+`description` 의 기본값은 패키지 이름이다. - `kind = "firewall"`: 패키지가 설치돼 있는 동안 있는 Windows 방화벽 규칙 - 여기서는 사설 네트워크에서 Hello 로
+  들어오는 TCP 8080 연결. `direction` 은 `in` 이나 `out`, `protocol` 은 `tcp` 나 `udp`, `ports` 는 포트 하나나
+  `8000-8100` 같은 범위, `profile` 은 `all`(기본값), `domain`, `private`, `public`. `file = "file:ID"` 는 패키지의
+  다른 프로그램을 가리킨다.
+
+`[msix-app.*]` 표가 여럿이면 항목도 여럿이 된다.
 
 ## 덤: `[msix-extension.ID]`
 
@@ -143,11 +155,13 @@ MSIX 는 자기가 담은 *애플리케이션* - 시작 메뉴의 항목 - 을 �
 - `[assoc.HelloDoc]` 는 애플리케이션의 파일 형식 연결이 된다. 그 파일 형식은 애플리케이션의 로고로 보인다.
 - `[registry.Greeting]` 은 패키지의 *가상 레지스트리*에 들어간다: 애플리케이션은 값이 실제 레지스트리에 있는
   것처럼 보지만, 컴퓨터의 레지스트리는 그대로다. `Software` 아래의 키만 들어갈 수 있다(`RP1612`).
+- `[service.*]`(12장)는 패키지 서비스가 된다: 이름·시작·계정은 같고, Windows 10 2004 판부터 된다
+  (`min-version = "10.0.19041.0"`). 패키지를 지우면 함께 사라진다.
 - `[env.HelloHome]`: MSIX 는 환경 변수를 정하지 못한다. `msi-only = true` 가 없으면 빌드가 멈춘다:
 
 ```text
 C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
-hello.toml:65:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
+hello.toml:72:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
 ```
 
 `msi-only = true` 는 그 표를 MSI 에는 두고 MSIX 에서는 뺀다. rubrapack 은 아무것도 몰래 빼지 않는다: MSIX 가
@@ -197,9 +211,9 @@ rubrapack: error[RP0011]: 'hello.msix': the package's publisher "CN=Example Soft
 C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --unsigned-test
 C:\work\hello> rubrapack inspect hello.msixbundle --files
 AppxMetadata\AppxBundleManifest.xml	1616	deflate
-ExampleSoftware.Hello_2.1.0.0_x64.msix	11009	stored
-ExampleSoftware.Hello_2.1.0.0_x86.msix	11096	stored
-ExampleSoftware.Hello_2.1.0.0_arm64.msix	11012	stored
+ExampleSoftware.Hello_2.1.0.0_x64.msix	11119	stored
+ExampleSoftware.Hello_2.1.0.0_x86.msix	11208	stored
+ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 ```
 
 Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key` 를 주면 번들과 그 안의 패키지 모두에 서명한다.
@@ -207,7 +221,7 @@ Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key`
 ## 압축
 
 파일은 deflate 로 압축되고, 그림처럼 이미 압축된 파일은 그대로 저장된다. `--msix-compress store` 는 모두 그대로
-저장한다. 패키지는 커지지만(여기서는 11009 에서 29961 바이트로) 여는 것은 빨라진다. MSIX 에는 날짜도 시각도
+저장한다. 패키지는 커지지만(여기서는 11119 에서 30072 바이트로) 여는 것은 빨라진다. MSIX 에는 날짜도 시각도
 들어 있지 않다: 같은 원본은 어느 컴퓨터에서든 같은 바이트를 낸다.
 
 ## 안에서 무슨 일이 일어났나
@@ -222,7 +236,7 @@ Assets\Square150x150.png	301	stored
 Assets\Square44x44.png	111	stored
 Assets\StoreLogo.png	117	stored
 Registry.dat	8192	deflate
-AppxManifest.xml	2537	deflate
+AppxManifest.xml	2960	deflate
 ```
 
 `Registry.dat` 가 가상 레지스트리 - 레지스트리 *하이브* 파일 - 다. `AppxManifest.xml` 은 패키지를 설명하고,

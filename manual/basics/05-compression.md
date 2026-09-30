@@ -143,7 +143,7 @@ compressed with deflate (method 8). The tutorial's `hello.msix` (chapter 17):
 |---|---|---|---|
 | `hello.exe` | 17,920 | 6,706 | deflate: 37% |
 | `Registry.dat` | 8,192 | 430 | deflate: mostly zero bytes, 5% |
-| `AppxManifest.xml` | 2,537 | 900 | deflate: text, 35% |
+| `AppxManifest.xml` | 2,960 | 1,010 | deflate: text, 34% |
 | `Assets\Square150x150.png` | 301 | 301 | stored: PNG is compressed already |
 | `guide.txt` | 6 | 14 | deflate: too small to gain |
 

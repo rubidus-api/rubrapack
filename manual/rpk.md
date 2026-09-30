@@ -234,7 +234,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
-| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled), app (an `[msix-app.*]` ID; default the first) - MSIX only |
+| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program)), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -286,8 +286,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `[\]]` are fine).
 - Give the three logos or none: without them the package gets plain one-colour logos. A logo
   must have the exact size (`RP1608`).
-- What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions,
-  services, environment variables, INI files, permissions, launch conditions and searches, files
+- What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions, environment variables, INI files, permissions, launch conditions and searches, files
   removed or copied at install, empty folders.
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
   the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
@@ -402,8 +401,24 @@ display-name = "Example"          # the name in Task Manager; task-id defaults t
 enabled = true
 ```
 
+```toml
+[msix-extension.Web]
+kind = "firewall"                 # a Windows Firewall rule while the package is installed
+direction = "in"
+protocol = "tcp"
+ports = "8080"
+profile = "private"               # default "all"; file = "file:ID" for another program
+```
+
 An MSI build leaves these out. Fonts (`[font.*]`) in an MSIX are shared with other applications
 (`uap4:SharedFonts`) from the package's `Fonts` folder; `title` is not used there.
+
+A `[service.*]` goes into an MSIX as a packaged service (`desktop6:Service`, in the first
+application, with the capability `packagedServices`, and `localSystemServices` for
+`account = "LocalSystem"`): its name, start and account as in the MSI, `args` as plain text.
+`display-name` and `description` are not used there, and the service starts by `start`, not by
+`start-on-install`. It needs `min-version = "10.0.19041.0"` or later (`RP1614`). Removing the
+package stops and removes the service; firewall rules go with the package too.
 
 ### Removing and copying: `[remove.ID]`, `[copy.ID]`
 

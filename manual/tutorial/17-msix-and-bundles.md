@@ -74,6 +74,13 @@ kind = "startup-task"
 display-name = "Hello"
 enabled = false
 
+[msix-extension.Web]
+kind = "firewall"
+direction = "in"
+protocol = "tcp"
+ports = "8080"
+profile = "private"
+
 [dir.INSTALLDIR]
 path = "ProgramFiles/Hello"
 
@@ -135,6 +142,12 @@ own folder. `display-name` and `description` default to the package's name. Seve
   which shows `display-name`. `task-id` names the task for Windows; the default is the table's ID
   (here `AtSignIn`, as the manifest below shows).
 
+- `kind = "firewall"`: a Windows Firewall rule that exists while the package is installed - here
+  incoming TCP connections on port 8080 to Hello, on private networks. `direction` is `in` or `out`,
+  `protocol` `tcp` or `udp`, `ports` one port or a range like `8000-8100`, `profile` `all` (the
+  default), `domain`, `private` or `public`; `file = "file:ID"` names another program of the
+  package.
+
 With several `[msix-app.*]` tables, `app = "Hello"` says which application an extension belongs to;
 the default is the first. An MSI build leaves these tables out.
 
@@ -148,12 +161,14 @@ the default is the first. An MSI build leaves these tables out.
 - `[registry.Greeting]` goes into the package's *virtual registry*: the application sees the value
   as if it were in the real registry, while the computer's registry stays untouched. Only keys
   under `Software` can go there (`RP1612`).
+- A `[service.*]` (chapter 12) becomes a packaged service: the same name, start and account, from
+  Windows 10 version 2004 on (`min-version = "10.0.19041.0"`); it goes when the package goes.
 - `[env.HelloHome]`: an MSIX cannot set environment variables. Without `msi-only = true` the build
   stops:
 
 ```text
 C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
-hello.toml:65:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
+hello.toml:72:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
 ```
 
 `msi-only = true` keeps the table in the MSI and leaves it out of the MSIX. rubrapack never drops
@@ -204,9 +219,9 @@ chapter 15, and puts the packages in one file:
 C:\work\hello> rubrapack build hello.toml -o hello.msixbundle --arch x64,x86,arm64 --unsigned-test
 C:\work\hello> rubrapack inspect hello.msixbundle --files
 AppxMetadata\AppxBundleManifest.xml	1616	deflate
-ExampleSoftware.Hello_2.1.0.0_x64.msix	11009	stored
-ExampleSoftware.Hello_2.1.0.0_x86.msix	11096	stored
-ExampleSoftware.Hello_2.1.0.0_arm64.msix	11012	stored
+ExampleSoftware.Hello_2.1.0.0_x64.msix	11119	stored
+ExampleSoftware.Hello_2.1.0.0_x86.msix	11208	stored
+ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 ```
 
 Windows installs the package for its own processor from it. With `--key` the bundle and each
@@ -216,7 +231,7 @@ package in it are signed.
 
 Files are compressed with deflate; pictures and other files that are compressed already are stored
 as they are. `--msix-compress store` stores everything, which makes the package bigger (here
-11009 to 29961 bytes) but quicker to open. An MSIX holds no date or time: the same source gives the
+11119 to 30072 bytes) but quicker to open. An MSIX holds no date or time: the same source gives the
 same bytes on every computer.
 
 ## What happened inside
@@ -231,7 +246,7 @@ Assets\Square150x150.png	301	stored
 Assets\Square44x44.png	111	stored
 Assets\StoreLogo.png	117	stored
 Registry.dat	8192	deflate
-AppxManifest.xml	2537	deflate
+AppxManifest.xml	2960	deflate
 ```
 
 `Registry.dat` is the virtual registry - a registry *hive* file. `AppxManifest.xml` describes the

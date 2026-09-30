@@ -97,7 +97,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
-                                               "assoc", "protocol", "shortcut", "font", NULL };
+                                               "assoc", "protocol", "shortcut", "font", "service", NULL };
         if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -540,7 +540,7 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->protocols);
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-        char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display };
+        char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display, x->file, x->profile };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->msix_exts);

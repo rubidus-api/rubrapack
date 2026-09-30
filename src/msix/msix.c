@@ -462,7 +462,9 @@ typedef struct {
 
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
-enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8 };
+enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COUNT = 6 };
+// Capabilities the extensions need, in the same flag word (RFC-0016 2).
+enum { CAP_SERVICES = 64, CAP_SYSTEM_SERVICES = 128 };
 
 static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
@@ -478,8 +480,10 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     static const char *const ns_uri[][2] = { { "uap3", "http://schemas.microsoft.com/appx/manifest/uap/windows10/3" },
                                              { "uap4", "http://schemas.microsoft.com/appx/manifest/uap/windows10/4" },
                                              { "desktop", "http://schemas.microsoft.com/appx/manifest/desktop/windows10" },
-                                             { "desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7" } };
-    for (int k = 0; k < 4; ++k) {
+                                             { "desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7" },
+                                             { "desktop2", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" },
+                                             { "desktop6", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" } };
+    for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
         rp_buf_puts(m, ns_uri[k][0]);
@@ -488,7 +492,7 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_puts(m, "\"\r\n");
     }
     rp_buf_puts(m, "         IgnorableNamespaces=\"uap rescap");
-    for (int k = 0; k < 4; ++k) {
+    for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_byte(m, ' ');
         rp_buf_puts(m, ns_uri[k][0]);
@@ -529,8 +533,17 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         }
         rp_buf_puts(m, "    </Application>\r\n");
     }
-    rp_buf_puts(m, "  </Applications>\r\n  <Capabilities>\r\n"
-                   "    <rescap:Capability Name=\"runFullTrust\" />\r\n  </Capabilities>\r\n</Package>\r\n");
+    rp_buf_puts(m, "  </Applications>\r\n");
+    const rp_buf_t *pkg = &ext[ir->msix_app_count];     // package-level extensions (firewall rules)
+    if (pkg->len) {
+        rp_buf_puts(m, "  <Extensions>\r\n");
+        rp_buf_put(m, pkg->data, pkg->len);
+        rp_buf_puts(m, "  </Extensions>\r\n");
+    }
+    rp_buf_puts(m, "  <Capabilities>\r\n    <rescap:Capability Name=\"runFullTrust\" />\r\n");
+    if (ns & CAP_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"packagedServices\" />\r\n");
+    if (ns & CAP_SYSTEM_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"localSystemServices\" />\r\n");
+    rp_buf_puts(m, "  </Capabilities>\r\n</Package>\r\n");
 }
 
 // [Content_Types].xml: one Default per extension in order of first use, the manifest's type for
@@ -595,7 +608,16 @@ static size_t app_by_id(const rp_ir_t *ir, const char *id) {
     return SIZE_MAX;
 }
 
-// Each application's <Extensions> content into ext[a]; *ns gets the namespaces used.
+// The package path of a [file.*], or NULL when it does not go into the package.
+static const char *item_path(const item_t *items, size_t n, const char *file_id) {
+    for (size_t i = 0; file_id && i < n; ++i) {
+        if (items[i].file_id && strcmp(items[i].file_id, file_id) == 0) return items[i].path;
+    }
+    return NULL;
+}
+
+// Each application's <Extensions> content into ext[a], the package's in ext[app count]; *ns gets the
+// namespaces and capabilities used.
 static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, const app_paths_t *ap, rp_buf_t *ext, unsigned *ns,
                              rp_srcdiags_t *d) {
     unsigned build = min_build(ir);
@@ -669,6 +691,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         size_t a = app_by_id(ir, x->app);
         if (a == SIZE_MAX) continue;                        // the IR said so
         rp_buf_t *b = &ext[a];
+        if (x->kind == RP_MSIX_EXT_FIREWALL) continue;        // package level, below
         if (x->kind == RP_MSIX_EXT_ALIAS) {
             NEED(x->pos, "an execution alias", 14393u);
             rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExecutionAlias\"");
@@ -689,6 +712,77 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             rp_buf_puts(b, " />\r\n        </desktop:Extension>\r\n");
             *ns |= NS_DESKTOP;
         }
+    }
+    // Firewall rules (RFC-0016 2): package level, one FirewallRules per program, in ID order.
+    rp_buf_t *pk = &ext[ir->msix_app_count];
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        if (x->kind != RP_MSIX_EXT_FIREWALL) continue;
+        size_t a = app_by_id(ir, x->app);
+        const char *exe = x->file ? item_path(items, n, x->file) : a != SIZE_MAX ? ap[a].exe : NULL;
+        if (exe == NULL) {
+            DERR(x->pos, "RP1613", "[msix-extension.%s]: file must name a program that goes into the package", x->id);
+            continue;
+        }
+        bool first = true;
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+            if (y->kind != RP_MSIX_EXT_FIREWALL) continue;
+            size_t b = app_by_id(ir, y->app);
+            const char *e2 = y->file ? item_path(items, n, y->file) : b != SIZE_MAX ? ap[b].exe : NULL;
+            first &= !(e2 && strcmp(e2, exe) == 0);
+        }
+        if (!first) continue;
+        NEED(x->pos, "a firewall rule", 14393u);
+        rp_buf_puts(pk, "    <desktop2:Extension Category=\"windows.firewallRules\">\r\n      <desktop2:FirewallRules");
+        attr(pk, "Executable", exe);
+        rp_buf_puts(pk, ">\r\n");
+        for (size_t j = k; j < ir->msix_ext_count; ++j) {
+            const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+            if (y->kind != RP_MSIX_EXT_FIREWALL) continue;
+            size_t b = app_by_id(ir, y->app);
+            const char *e2 = y->file ? item_path(items, n, y->file) : b != SIZE_MAX ? ap[b].exe : NULL;
+            if (!(e2 && strcmp(e2, exe) == 0)) continue;
+            char port[16];
+            rp_buf_puts(pk, "        <desktop2:Rule");
+            attr(pk, "Direction", y->outbound ? "out" : "in");
+            attr(pk, "IPProtocol", y->udp ? "UDP" : "TCP");
+            if (y->port_min) {
+                snprintf(port, sizeof port, "%u", y->port_min);
+                attr(pk, "LocalPortMin", port);
+                snprintf(port, sizeof port, "%u", y->port_max);
+                attr(pk, "LocalPortMax", port);
+            }
+            attr(pk, "Profile", y->profile ? y->profile : "all");
+            rp_buf_puts(pk, " />\r\n");
+        }
+        rp_buf_puts(pk, "      </desktop2:FirewallRules>\r\n    </desktop2:Extension>\r\n");
+        *ns |= NS_DESKTOP2;
+    }
+    // Services (RFC-0016 2): [service.*] becomes desktop6:Service in the first application.
+    for (size_t k = 0; k < ir->service_count; ++k) {
+        const rp_ir_service_t *x = &ir->services[k];
+        const char *exe = item_path(items, n, x->file);
+        if (exe == NULL) {
+            DERR(x->pos, "RP1613", "[service.%s]: file must name a program that goes into the package", x->id);
+            continue;
+        }
+        if (x->args && (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0)) {
+            DERR(x->pos, "RP1613", "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)", x->id);
+            continue;
+        }
+        NEED(x->pos, "a service", 19041u);
+        static const char *const accounts[] = { "localSystem", "localService", "networkService" };
+        const char *start = x->start == 2 ? "auto" : x->start == 4 ? "disabled" : "manual";
+        rp_buf_puts(&ext[0], "        <desktop6:Extension Category=\"windows.service\"");
+        attr(&ext[0], "Executable", exe);
+        rp_buf_puts(&ext[0], " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <desktop6:Service");
+        attr(&ext[0], "Name", x->name);
+        attr(&ext[0], "StartupType", start);
+        attr(&ext[0], "StartAccount", accounts[x->account]);
+        if (x->args) attr(&ext[0], "Arguments", args);
+        rp_buf_puts(&ext[0], " />\r\n        </desktop6:Extension>\r\n");
+        *ns |= NS_DESKTOP6 | CAP_SERVICES | (x->account == 0 ? CAP_SYSTEM_SERVICES : 0);
     }
     // Shortcuts: the Start menu entry is the application itself; the desktop gets desktop7:Shortcut.
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
@@ -907,7 +1001,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             if (ieq(items[i].path, items[k].path)) DERR(items[k].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[i].path, items[k].path);
         }
     }
-    rp_buf_t *ext = rp_mem_alloc(alloc, ir->msix_app_count, sizeof *ext);
+    rp_buf_t *ext = rp_mem_alloc(alloc, ir->msix_app_count + 1, sizeof *ext);    // + package level
     unsigned ns = 0;
     if (ext == NULL) {
         for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
@@ -915,9 +1009,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         rp_mem_free(alloc, ap);
         return PROVEN_ERR_NOMEM;
     }
-    for (size_t a = 0; a < ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
+    for (size_t a = 0; a <= ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
     if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
-    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+    for (size_t a = 0; a <= ir->msix_app_count; ++a) {
         if (ext[a].err != PROVEN_OK) DERR(top, "RP1613", "out of memory");
     }
     proven_err_t err = d->errors != errors ? PROVEN_ERR_INVALID_FORMAT : PROVEN_OK;
@@ -963,7 +1057,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, items);
     rp_mem_free(alloc, ap);
-    for (size_t a = 0; a < ir->msix_app_count; ++a) rp_buf_free(&ext[a]);
+    for (size_t a = 0; a <= ir->msix_app_count; ++a) rp_buf_free(&ext[a]);
     rp_mem_free(alloc, ext);
     return err;
 }

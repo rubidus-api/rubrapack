@@ -102,8 +102,8 @@ package never needs to. The ZIP format, which MSIX uses, looks like this:
   "PK 06 06"  end record: how many files, where the central directory starts
 ```
 
-The tutorial's `hello.msix` (11,009 bytes) begins with `50 4b 03 04` - "PK", the initials of Phil
-Katz, who made ZIP - followed by the name `hello.exe`. Its central directory starts at byte 10,098
+The tutorial's `hello.msix` (11,119 bytes) begins with `50 4b 03 04` - "PK", the initials of Phil
+Katz, who made ZIP - followed by the name `hello.exe`. Its central directory starts at byte 10,208
 and lists nine entries; a reader goes to the end of the file first, finds the end record, and from
 there the list. (MSIX uses the ZIP64 form of the end record, `PK 06 06`, made for archives above
 4 GiB.)

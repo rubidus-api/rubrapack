@@ -224,7 +224,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
-| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
+| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램)), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 
 dir 경로의 `기준`은 다른 dir ID 이거나 다음 가운데 하나다: `ProgramFiles`(x64/arm64 는 64비트,
 x86 은 32비트), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -273,8 +273,7 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   (`[INSTALLDIR]`, `[#File]` 등. 이스케이프 `[\[]` 와 `[\]]` 는 괜찮다).
 - 로고는 셋 다 주거나 하나도 주지 않는다. 주지 않으면 한 가지 색의 로고가 들어간다. 로고는 크기가
   정확해야 한다(`RP1608`).
-- MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(`RP1605`): 사용자 지정 동작, 서비스,
-  환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우거나 복사하는 파일, 빈 폴더.
+- MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(`RP1605`): 사용자 지정 동작, 환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우거나 복사하는 파일, 빈 폴더.
   그런 표(또는 `[file.*]`/`[files.*]`)에 `msi-only = true` 를 달면 MSI 에는 들어가고 MSIX 는 그것
   없이 만들어진다. feature·속성·대화창·`[arp]` 은 Windows Installer 에만 해당하므로 MSIX 에는 쓰지
   않는다.
@@ -382,8 +381,23 @@ display-name = "Example"          # 작업 관리자에 보이는 이름; task-i
 enabled = true
 ```
 
+```toml
+[msix-extension.Web]
+kind = "firewall"                 # 패키지가 설치돼 있는 동안의 Windows 방화벽 규칙
+direction = "in"
+protocol = "tcp"
+ports = "8080"
+profile = "private"               # 기본값 "all". 다른 프로그램이면 file = "file:ID"
+```
+
 MSI 빌드는 이것들을 뺀다. MSIX 에서 글꼴(`[font.*]`)은 패키지의 `Fonts` 폴더에서 다른 앱과 나눠
 쓰며(`uap4:SharedFonts`) `title` 은 쓰지 않는다.
+
+`[service.*]` 는 MSIX 에 패키지 서비스(`desktop6:Service`, 첫째 앱 안, 권한 `packagedServices` 와
+`account = "LocalSystem"` 이면 `localSystemServices`)로 들어간다: 이름·시작·계정은 MSI 와 같고 `args` 는
+평문이어야 한다. `display-name` 과 `description` 은 쓰지 않고, 서비스는 `start-on-install` 이 아니라
+`start` 대로 시작한다. `min-version = "10.0.19041.0"` 이상이 필요하다(`RP1614`). 패키지를 지우면 서비스가
+멈추고 지워지며, 방화벽 규칙도 함께 사라진다.
 
 ### 지우기와 복사: `[remove.ID]`, `[copy.ID]`
 
