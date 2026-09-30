@@ -129,17 +129,18 @@ msi-only = true
 
 MSIX 는 자기가 담은 *애플리케이션* - 시작 메뉴의 항목 - 을 나열한다. `executable` 은 그것을 시작하는
 `[file.*]` 를 가리키고, 그 파일의 폴더(여기서는 `INSTALLDIR`)가 패키지 자신의 폴더가 된다. `display-name` 과
-`description` 의 기본값은 패키지 이름이다. - `kind = "firewall"`: 패키지가 설치돼 있는 동안 있는 Windows 방화벽 규칙 - 여기서는 사설 네트워크에서 Hello 로
-  들어오는 TCP 8080 연결. `direction` 은 `in` 이나 `out`, `protocol` 은 `tcp` 나 `udp`, `ports` 는 포트 하나나
-  `8000-8100` 같은 범위, `profile` 은 `all`(기본값), `domain`, `private`, `public`. `file = "file:ID"` 는 패키지의
-  다른 프로그램을 가리킨다.
-
-- `kind = "com-server"`, `"toast"`, `"context-menu"` 는 COM 클래스를 등록한다: 프로그램이나 DLL 이 제공하는 클래스
-  (`file`, `class = "{GUID}"`, `args`, DLL 이면 `threading`), 사용자가 알림을 누를 때 Windows 가 프로그램을 시작하는
-  클래스, 그리고 어떤 파일 `types` 에 대한 탐색기 오른쪽 메뉴 항목(DLL 과 `verb`). 참조의 "MSIX 전용"에 각각의
-  예가 있다.
+`description` 의 기본값은 패키지 이름이다.
 
 `[msix-app.*]` 표가 여럿이면 항목도 여럿이 된다.
+
+### 여러 언어의 이름, 여러 크기의 로고
+
+`display-name-ko = "헬로"`(와 `description-ko`, 패키지는 `[msix]` 의 `display-name-ko` 와
+`publisher-display-name-ko`)는 다른 언어의 이름을 준다. Windows 는 사용자의 언어에 맞는 것을 보이고, 그
+밖에서는 접미사 없는 글을 보인다. 로고는 옆에 더 선명한 것을 두면 된다 - `Square44x44.png` 옆에
+`Square44x44.scale-200.png`(88x88), 원하면 `scale-125`, `-150`, `-400` 도 - 그러면 200% 화면은 그것을 보인다.
+rubrapack 은 둘 다 패키지의 `resources.pri`, 곧 Windows 가 이름과 파일을 찾는 색인에 넣고, 패키지에 그런 것이
+있을 때만 그것을 쓴다.
 
 ## 덤: `[msix-extension.ID]`
 
@@ -148,6 +149,16 @@ MSIX 는 자기가 담은 *애플리케이션* - 시작 메뉴의 항목 - 을 �
 - `kind = "startup-task"`: 사용자가 로그인할 때 애플리케이션이 시작된다(한 번 실행한 뒤부터). `enabled = false`
   는 사용자가 작업 관리자의 시작 앱에서 켤 때까지 꺼 둔다. 그 목록에는 `display-name` 이 보인다. `task-id` 는
   Windows 가 부를 작업 이름이고, 기본값은 표의 ID 다(아래 매니페스트에 보이듯 여기서는 `AtSignIn`).
+
+- `kind = "firewall"`: 패키지가 설치돼 있는 동안 있는 Windows 방화벽 규칙 - 여기서는 사설 네트워크에서 Hello 로
+  들어오는 TCP 8080 연결. `direction` 은 `in` 이나 `out`, `protocol` 은 `tcp` 나 `udp`, `ports` 는 포트 하나나
+  `8000-8100` 같은 범위, `profile` 은 `all`(기본값), `domain`, `private`, `public`. `file = "file:ID"` 는 패키지의
+  다른 프로그램을 가리킨다.
+
+- `kind = "com-server"`, `"toast"`, `"context-menu"` 는 COM 클래스를 등록한다: 프로그램이나 DLL 이 제공하는 클래스
+  (`file`, `class = "{GUID}"`, `args`, DLL 이면 `threading`), 사용자가 알림을 누를 때 Windows 가 프로그램을 시작하는
+  클래스, 그리고 어떤 파일 `types` 에 대한 탐색기 오른쪽 메뉴 항목(DLL 과 `verb`). 참조의 "MSIX 전용"에 각각의
+  예가 있다.
 
 `[msix-app.*]` 표가 여럿이면 `app = "Hello"` 로 덤이 어느 애플리케이션의 것인지 밝힌다. 기본값은 첫 번째다. MSI
 빌드는 이 표들을 뺀다.

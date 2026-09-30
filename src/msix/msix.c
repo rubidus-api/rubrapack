@@ -13,6 +13,7 @@
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/pri.h"
 #include "rubrapack/regf.h"
 #include "rubrapack/text.h"
 #include "rubrapack/zip.h"
@@ -458,7 +459,79 @@ static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp
 typedef struct {
     char exe[2200];             // the executable's package path
     char logo[3][2200];         // Square150x150, Square44x44, StoreLogo
+    bool loc_display, loc_description;      // written as ms-resource: (RFC-0016 3)
 } app_paths_t;
+
+// RFC-0016 3: what resources.pri holds - texts in several languages, logos in several scales.
+enum { LOC_MAX = 512, LOC_LANGS = 32 };
+typedef struct {
+    proven_allocator_t alloc;
+    rp_pri_candidate_t c[LOC_MAX];
+    size_t             n;
+    char              *own[3 * LOC_MAX];
+    size_t             nown;
+    const char        *langs[LOC_LANGS];    // languages besides the package's, in the order first seen
+    size_t             nlangs;
+    const char        *default_lang;
+    bool               pkg_display, pub_display;
+    bool               full;
+} loc_t;
+
+static const char *loc_dup(loc_t *l, const char *fmt, const char *a, const char *b) {
+    char buf[2400];
+    snprintf(buf, sizeof buf, fmt, a, b);
+    size_t n = strlen(buf);
+    if (l->nown == sizeof l->own / sizeof l->own[0]) {
+        l->full = true;
+        return "";
+    }
+    char *s = rp_mem_alloc(l->alloc, n + 1, 1);
+    if (s == NULL) {
+        l->full = true;
+        return "";
+    }
+    memcpy(s, buf, n + 1);
+    l->own[l->nown++] = s;
+    return s;
+}
+
+static void loc_add(loc_t *l, const char *name, int qualifier, const char *qvalue, bool path, const char *value) {
+    for (size_t i = 0; i < l->n; ++i) {        // the same logo for two applications: once
+        if (strcmp(l->c[i].name, name) == 0 && l->c[i].qualifier == qualifier &&
+            (qvalue == NULL ? l->c[i].qvalue == NULL : l->c[i].qvalue && strcmp(l->c[i].qvalue, qvalue) == 0)) {
+            return;
+        }
+    }
+    if (l->n == LOC_MAX) {
+        l->full = true;
+        return;
+    }
+    l->c[l->n++] = (rp_pri_candidate_t){ name, qualifier, qvalue, path, value };
+}
+
+// A text with -xx variants becomes Resources/<name> in each language; false when it has none.
+static bool loc_text(loc_t *l, const char *name, const char *text, const rp_ir_ltext_t *by_lang, size_t count, rp_pos_t pos, rp_srcdiags_t *d) {
+    if (count == 0) return false;
+    const char *res = loc_dup(l, "Resources/%s%s", name, "");
+    loc_add(l, res, RP_PRI_LANGUAGE, l->default_lang, false, text);
+    for (size_t k = 0; k < count; ++k) {
+        if (strncmp(by_lang[k].lang, l->default_lang, 2) == 0) {
+            rp_srcdiag_add(d, pos, "RP1606", false, "'-%s' is the package's own language (%s); give that text without the suffix", by_lang[k].lang,
+                           l->default_lang);
+            continue;
+        }
+        loc_add(l, res, RP_PRI_LANGUAGE, by_lang[k].lang, false, by_lang[k].text);
+        bool seen = false;
+        for (size_t j = 0; j < l->nlangs; ++j) seen |= strcmp(l->langs[j], by_lang[k].lang) == 0;
+        if (!seen && l->nlangs < LOC_LANGS) l->langs[l->nlangs++] = by_lang[k].lang;
+    }
+    return true;
+}
+
+static void loc_free(loc_t *l) {
+    for (size_t i = 0; i < l->nown; ++i) rp_mem_free(l->alloc, l->own[i]);
+    l->nown = 0;
+}
 
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
@@ -467,7 +540,8 @@ enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
 enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17 };
 
-static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns) {
+static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns,
+                     const loc_t *loc) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
     char version[32], publisher[8400];
     unsigned v[4] = { 0 };
@@ -506,16 +580,22 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     attr(m, "Version", version);
     attr(m, "ProcessorArchitecture", arch[ir->arch]);
     rp_buf_puts(m, " />\r\n  <Properties>\r\n    <DisplayName>");
-    xml_text(m, ir->name);
+    xml_text(m, loc->pkg_display ? "ms-resource:PackageDisplayName" : ir->msix_display ? ir->msix_display : ir->name);
     rp_buf_puts(m, "</DisplayName>\r\n    <PublisherDisplayName>");
-    xml_text(m, ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
+    xml_text(m, loc->pub_display ? "ms-resource:PublisherDisplayName" : ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
     rp_buf_puts(m, "</PublisherDisplayName>\r\n    <Logo>");
     xml_text(m, ap[0].logo[2]);
     rp_buf_puts(m, "</Logo>\r\n  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
     attr(m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
     rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n  <Resources>\r\n    <Resource");
     attr(m, "Language", ir->language == 1042 ? "ko-KR" : "en-US");
-    rp_buf_puts(m, " />\r\n  </Resources>\r\n  <Applications>\r\n");
+    rp_buf_puts(m, " />\r\n");
+    for (size_t k = 0; k < loc->nlangs; ++k) {
+        rp_buf_puts(m, "    <Resource");
+        attr(m, "Language", loc->langs[k]);
+        rp_buf_puts(m, " />\r\n");
+    }
+    rp_buf_puts(m, "  </Resources>\r\n  <Applications>\r\n");
     for (size_t i = 0; i < ir->msix_app_count; ++i) {
         const rp_ir_msix_app_t *a = &ir->msix_apps[i];
         const char *display = a->display ? a->display : ir->name;
@@ -523,8 +603,11 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         attr(m, "Id", a->id);
         attr(m, "Executable", ap[i].exe);
         rp_buf_puts(m, " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
-        attr(m, "DisplayName", display);
-        attr(m, "Description", a->description ? a->description : display);
+        char res[160];
+        snprintf(res, sizeof res, "ms-resource:%sDisplayName", a->id);
+        attr(m, "DisplayName", ap[i].loc_display ? res : display);
+        snprintf(res, sizeof res, "ms-resource:%sDescription", a->id);
+        attr(m, "Description", ap[i].loc_description ? res : a->description ? a->description : display);
         rp_buf_puts(m, " BackgroundColor=\"transparent\"");
         attr(m, "Square150x150Logo", ap[i].logo[0]);
         attr(m, "Square44x44Logo", ap[i].logo[1]);
@@ -1013,7 +1096,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
     // The payload.
-    size_t cap = ir->file_count + 3 * ir->msix_app_count + 5, n = 0;
+    size_t cap = ir->file_count + 18 * ir->msix_app_count + 6, n = 0;     // + logo scales, resources.pri
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -1068,6 +1151,17 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     static const char *const logo_default[3] = { "Assets\\DefaultSquare150x150Logo.png", "Assets\\DefaultSquare44x44Logo.png",
                                                  "Assets\\DefaultStoreLogo.png" };
     bool defaults_made = false;
+    loc_t *lp = rp_mem_alloc(alloc, 1, sizeof *lp);
+    if (lp == NULL) {
+        rp_mem_free(alloc, items);
+        rp_mem_free(alloc, ap);
+        return PROVEN_ERR_NOMEM;
+    }
+    memset(lp, 0, sizeof *lp);
+    loc_t *const locp = lp;
+#define loc (*locp)
+    loc.alloc = alloc;
+    loc.default_lang = ir->language == 1042 ? "ko-KR" : "en-US";
     for (size_t a = 0; a < ir->msix_app_count; ++a) {
         const rp_ir_msix_app_t *app = &ir->msix_apps[a];
         const item_t *x = NULL;
@@ -1082,6 +1176,66 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             snprintf(ap[a].exe, sizeof ap[a].exe, "%s", x->path);
         }
         for (int k = 0; k < 3; ++k) {
+            // RFC-0016 3: Logo.scale-NNN.png next to the logo - the logo in several scales, found
+            // through resources.pri; Logo.png itself, when there, is the scale-100 one.
+            static const char *const scale_of[] = { "100", "125", "150", "200", "400" };
+            static const uint32_t scale_n[] = { 100, 125, 150, 200, 400 };
+            char vpath[5][2048];
+            bool have[5] = { false }, any = false;
+            const char *dot = app->logo_path[k] ? strrchr(app->logo_path[k], '.') : NULL, *sl = app->logo_path[k] ? strrchr(app->logo_path[k], '/') : NULL;
+            for (int v = 0; dot && (!sl || dot > sl) && v < 5; ++v) {
+                uint64_t size;
+                snprintf(vpath[v], sizeof vpath[v], "%.*s.scale-%s%s", (int)(dot - app->logo_path[k]), app->logo_path[k], scale_of[v], dot);
+                have[v] = rp_pal_stat(alloc, vpath[v], &size) == RP_FS_FILE;
+                any |= have[v];
+            }
+            if (any) {
+                uint64_t size;
+                bool base = rp_pal_stat(alloc, app->logo_path[k], &size) == RP_FS_FILE;
+                if (base && have[0]) {
+                    DERR(app->pos, "RP1608", "logo '%s' and its .scale-100 variant are both there: keep one", app->logo[k]);
+                } else if (base) {
+                    have[0] = true;
+                    snprintf(vpath[0], sizeof vpath[0], "%s", app->logo_path[k]);
+                }
+                const char *b = strrchr(app->logo[k], '/');
+                b = b ? b + 1 : app->logo[k];
+                const char *bdot = strrchr(b, '.');
+                bool ascii_name = true;
+                for (const char *q = b; *q; ++q) ascii_name &= (unsigned char)*q < 0x80 && *q != '\\';
+                if (!ascii_name || bdot == NULL) {
+                    DERR(app->pos, "RP1608", "logo '%s': a logo with scale variants needs an ASCII file name with an extension", app->logo[k]);
+                    continue;
+                }
+                snprintf(ap[a].logo[k], sizeof ap[a].logo[k], "Assets\\%s", b);
+                const char *res = loc_dup(&loc, "Files/Assets/%s%s", b, "");
+                for (int v = 0; v < 5; ++v) {
+                    if (!have[v]) continue;
+                    uint8_t *png = NULL;
+                    size_t pl = 0;
+                    uint32_t w = 0, h = 0, want = (logo_px[k] * scale_n[v] + 50) / 100;
+                    if (rp_pal_read_file(alloc, vpath[v], 16u << 20, &png, &pl) != PROVEN_OK || !png_size(png, pl, &w, &h)) {
+                        DERR(app->pos, "RP1608", "logo '%s' at scale %s is not a PNG file", app->logo[k], scale_of[v]);
+                    } else if (w != want || h != want) {
+                        DERR(app->pos, "RP1608", "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u", app->logo[k], scale_of[v],
+                             (unsigned)w, (unsigned)h, (unsigned)want, (unsigned)want);
+                    }
+                    rp_mem_free(alloc, png);
+                    char pbuf[2300];
+                    snprintf(pbuf, sizeof pbuf, "Assets\\%.*s.scale-%s%s", (int)(bdot - b), b, scale_of[v], bdot);
+                    const char *pp = loc_dup(&loc, "%s%s", pbuf, "");
+                    bool dup = false;
+                    for (size_t i = 0; i < n; ++i) dup |= strcmp(items[i].path, pp) == 0;
+                    if (!dup) {
+                        item_t *it = &items[n++];
+                        snprintf(it->path, sizeof it->path, "%s", pp);
+                        it->source = loc_dup(&loc, "%s%s", vpath[v], "");
+                        it->pos = app->pos;
+                    }
+                    loc_add(&loc, res, RP_PRI_SCALE, scale_of[v], true, pp);
+                }
+                continue;
+            }
             if (app->logo_path[k]) {
                 const item_t *found = NULL;
                 for (size_t i = 0; i < n && !found; ++i) {
@@ -1122,6 +1276,30 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             }
         }
     }
+    // Texts in several languages (RFC-0016 3), then resources.pri when anything needs it.
+    loc.pkg_display = loc_text(&loc, "PackageDisplayName", ir->msix_display ? ir->msix_display : ir->name, ir->msix_display_by_lang,
+                               ir->msix_display_by_lang_count, ir->msix_pos, d);
+    loc.pub_display = loc_text(&loc, "PublisherDisplayName", ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer,
+                               ir->msix_publisher_display_by_lang, ir->msix_publisher_display_by_lang_count, ir->msix_pos, d);
+    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+        const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+        const char *display = app->display ? app->display : ir->name;
+        char name[128];
+        snprintf(name, sizeof name, "%sDisplayName", app->id);
+        ap[a].loc_display = loc_text(&loc, name, display, app->display_by_lang, app->display_by_lang_count, app->pos, d);
+        snprintf(name, sizeof name, "%sDescription", app->id);
+        ap[a].loc_description = loc_text(&loc, name, app->description ? app->description : display, app->description_by_lang,
+                                         app->description_by_lang_count, app->pos, d);
+    }
+    if (loc.full) DERR(top, "RP1606", "too many localized texts and logo scales for resources.pri");
+    if (loc.n && d->errors == errors) {
+        item_t *it = &items[n++];
+        snprintf(it->path, sizeof it->path, "resources.pri");
+        it->pos = top;
+        if (rp_pri_write(alloc, ir->msix_identity_name, loc.default_lang, loc.c, loc.n, &it->data, &it->data_len) != PROVEN_OK) {
+            DERR(top, "RP1606", "cannot write resources.pri");
+        }
+    }
     // [registry] values: Registry.dat and User.dat.
     rp_regf_t *machine = rp_regf_new(alloc), *user = rp_regf_new(alloc);
     bool used_m = false, used_u = false;
@@ -1151,6 +1329,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
         rp_mem_free(alloc, items);
         rp_mem_free(alloc, ap);
+        loc_free(&loc);
+        rp_mem_free(alloc, locp);
         return PROVEN_ERR_NOMEM;
     }
     for (size_t a = 0; a <= ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
@@ -1182,7 +1362,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (items[i].source) rp_mem_free(alloc, data);
     }
     if (err == PROVEN_OK) {
-        manifest(&man, ir, opt, ap, ext, ns);
+        manifest(&man, ir, opt, ap, ext, ns, &loc);
         err = man.err;
     }
     if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, man.data, man.len, true);
@@ -1198,6 +1378,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     rp_buf_free(&bm);
     rp_buf_free(&man);
     rp_buf_free(&ct);
+    loc_free(&loc);
+    rp_mem_free(alloc, locp);
+#undef loc
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, items);
     rp_mem_free(alloc, ap);

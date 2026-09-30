@@ -55,10 +55,15 @@ static bool four_part_version(const char *s) {
 
 void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", "appinstaller-uri",
-                                        "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background", NULL };
-    ir_check_keys(c, t, keys);
+                                        "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background",
+                                        "display-name", NULL };
+    static const char *const lang_bases[] = { "display-name", "publisher-display-name", NULL };
+    ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
     ir->has_msix = true;
+    ir->msix_display = ir_get_str(c, t, "display-name", false, NULL);
+    ir_get_ltexts(c, t, "display-name", &ir->msix_display_by_lang, &ir->msix_display_by_lang_count);
+    ir_get_ltexts(c, t, "publisher-display-name", &ir->msix_publisher_display_by_lang, &ir->msix_publisher_display_by_lang_count);
     ir->msix_pos = t->pos;
     ir->msix_identity_name = ir_get_str(c, t, "identity-name", true, NULL);
     ir->msix_publisher = ir_get_str(c, t, "publisher", true, NULL);
@@ -108,13 +113,25 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown
     if (!ir_source_path_ok(c, *shown, p)) return NULL;
     char *path = ir_join(c, c->opt->source_dir ? c->opt->source_dir : ".", *shown);
     uint64_t size;
-    if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) ERR(c, p, "RP1507", "logo '%s' not found", *shown);
+    if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
+        // RFC-0016 3: scale variants alone (Logo.scale-100.png ...) stand in for Logo.png.
+        bool variant = false;
+        const char *dot = strrchr(path, '.'), *slash = strrchr(path, '/');
+        static const char *const scales[] = { "100", "125", "150", "200", "400" };
+        for (size_t k = 0; dot && (!slash || dot > slash) && !variant && k < 5; ++k) {
+            char v[2048];
+            snprintf(v, sizeof v, "%.*s.scale-%s%s", (int)(dot - path), path, scales[k], dot);
+            variant = rp_pal_stat(c->alloc, v, &size) == RP_FS_FILE;
+        }
+        if (!variant) ERR(c, p, "RP1507", "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)", *shown);
+    }
     return path;
 }
 
 void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "executable", "display-name", "description", "logo-150", "logo-44", "store-logo", NULL };
-    ir_check_keys(c, t, keys);
+    static const char *const lang_bases[] = { "display-name", "description", NULL };
+    ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
     if (ir->msix_app_count == 100) {
         ERR(c, t->pos, "RP1606", "at most 100 [msix-app.*] tables");
@@ -135,6 +152,8 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     a->exe = ir_get_str(c, t, "executable", true, NULL);
     a->display = ir_get_str(c, t, "display-name", false, NULL);
     a->description = ir_get_str(c, t, "description", false, NULL);
+    ir_get_ltexts(c, t, "display-name", &a->display_by_lang, &a->display_by_lang_count);
+    ir_get_ltexts(c, t, "description", &a->description_by_lang, &a->description_by_lang_count);
     static const char *const logos[3] = { "logo-150", "logo-44", "store-logo" };
     int given = 0;
     for (int i = 0; i < 3; ++i) {

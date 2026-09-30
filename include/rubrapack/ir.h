@@ -352,6 +352,8 @@ typedef struct {
 typedef struct {
     char    *id, *exe;                  // exe: a [file] ID
     char    *display, *description;     // may be NULL
+    rp_ir_ltext_t *display_by_lang, *description_by_lang;       // display-name-xx, description-xx (RFC-0016 3)
+    size_t   display_by_lang_count, description_by_lang_count;
     char    *logo[3];                   // Square150x150, Square44x44, StoreLogo (as written), or NULL
     char    *logo_path[3];              // to open (joined with the .rpk directory)
     rp_pos_t pos;
@@ -448,6 +450,9 @@ typedef struct {
     // [msix] and [msix-app.ID] (RFC-0009; used only when the output is .msix)
     bool      has_msix;
     char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;
+    char     *msix_display;             // [msix] display-name (the package's; default the name)
+    rp_ir_ltext_t *msix_display_by_lang, *msix_publisher_display_by_lang;   // -xx (RFC-0016 3: resources.pri)
+    size_t    msix_display_by_lang_count, msix_publisher_display_by_lang_count;
     char     *msix_appinstaller_uri, *msix_package_uri;  // RFC-0016 3: an .appinstaller beside the output
     int       msix_update_hours;                          // HoursBetweenUpdateChecks (default 24)
     bool      msix_update_prompt, msix_update_blocks, msix_update_background;

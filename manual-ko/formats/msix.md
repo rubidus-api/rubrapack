@@ -98,6 +98,32 @@ Windows 가 설치하고 시작하는 가장 작은 데스크톱 앱(네임스�
 Learn 이 말하는 대로 `AppData` 나 `Local AppData` 에는 없다. rubrapack 이 쓰는 다른 이름(`ProgramFilesX86`,
 `ProgramFilesCommonX64`/`X86`, `SystemX86`, `Windows`)은 Microsoft Learn 이 늘어놓은 것이다. [spec] [observed]
 
+## 자원 색인(`resources.pri`) [observed]
+
+매니페스트의 `ms-resource:Name` 과, `Assets\Logo.scale-200.png` 로만 있는 로고 `Assets\Logo.png` 는
+`resources.pri` 에서 찾는다. 공개된 명세는 없다. 여기 적은 것은 Windows SDK 의 `makepri.exe` 가 쓰는 배치 중
+패키지에 필요한 만큼이고, makepri 자신의 덤프와 Windows 가 rubrapack 의 파일에서 그대로 읽어 낸 것이다. 숫자는
+모두 리틀엔디언, 한정자·이름 표의 문자열은 따로 적지 않으면 UTF-16 이다.
+
+- **파일**: `mrm_pri2`, u16 0, u16 1, u32 파일 크기, u32 32(차례), u32 첫 절의 위치, u16 절 수, u16 0xFFFF, u32 0.
+  이어 절마다 32바이트 항목(16바이트 이름, u32 0, u32 0, 첫 절부터의 u32 위치, u32 길이), 절들, `DE FA FF DE`,
+  u32 파일 크기, `mrm_pri2`.
+- **절**: 16바이트 이름, u32 0, u32 0, u32 길이, u32 0, 자료(8바이트로 채움), `DE FA F5 DE`, u32 길이.
+- **`[mrm_decn_info]`** - 조건: 개수(구별 한정자, 한정자, 한정자 집합, 결정, 색인 항목, 값 글자), 결정과 한정자
+  집합은 (첫 색인 항목, 개수), 한정자는 (구별 한정자, 우선순위, 기본값으로서의 점수 x 1000, 0), 구별 한정자는
+  (2, 형식, 0, 10, u32 값 위치)이고 형식은 Language 0, Scale 2. 집합(한정자 번호)과 결정(집합 번호)이 함께 쓰는
+  u16 색인 표, 그리고 값들. 저마다 0번은 비어 있다. 우선순위: Language 700, Scale 200. 점수: 기본 언어 1.0,
+  다른 언어 0, 배율 100 1.0, 125 0.937, 150 0.875, 200 0.75, 400 0.437. 결정은 집합을 점수가 낮은 것부터 적는다.
+- **`[mrm_pridescex]`** - 스키마, 결정, 자원 지도, 자료 항목이 어느 절에 있는지.
+- **`[mrm_hschemaex]`** - 이름: `ms-appx://<Identity Name>/` 과 이름, 이어 범위와 항목의 나무
+  (`Resources/AppDisplayName`, `Files/Assets/Logo.png`)를 12바이트 항목(부모 항목, 전체 경로 길이, 대문자로 바꾼
+  첫 글자, 이름 길이, 0x10 범위 | 0x20 ASCII 이름, 이름 위치, 범위나 항목 번호)으로 - 범위마다 자식들을 모아
+  이름 순으로. 범위(항목, 자식 수, 첫 자식), 항목(항목), ASCII 이름들. 이름들에 대한 32비트 검사값이 들어
+  있지만 검사되는 것은 보지 못했다.
+- **`[mrm_res_map2_]`** - 항목마다 결정과 첫 후보, 후보마다 값 형식(UTF-16 문자열 0, 경로 1, ASCII 문자열 3,
+  ASCII 경로 5)과 자료 항목(절, 번호).
+- **`[mrm_dataitem]`** - 한정자 집합마다 절 하나: (위치, 길이) 쌍과 끝 문자까지 담은 문자열들.
+
 ## 확장
 
 rubrapack 이 앱의 `<Extensions>`(`uap:VisualElements` 뒤)에 쓰는 것, 그리고 이것뿐이다: 여기 행이 없는 원본

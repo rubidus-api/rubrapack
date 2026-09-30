@@ -108,6 +108,41 @@ change. Measured: `ProgramFilesX64` (%ProgramFiles%), `SystemX64` (System32), `C
 rubrapack uses (`ProgramFilesX86`, `ProgramFilesCommonX64`/`X86`, `SystemX86`, `Windows`) are those
 Microsoft Learn lists. [spec] [observed]
 
+## The resource index (`resources.pri`) [observed]
+
+`ms-resource:Name` in the manifest and a logo `Assets\Logo.png` that exists only as
+`Assets\Logo.scale-200.png` are looked up in `resources.pri`. No specification is published; this
+is the layout Windows SDK's `makepri.exe` writes, as far as a package needs it, and what makepri's
+own dump and Windows read back from rubrapack's files. All numbers little-endian; strings in
+qualifier and name tables UTF-16 unless noted.
+
+- **File**: `mrm_pri2`, u16 0, u16 1, u32 file size, u32 32 (the table of contents), u32 the first
+  section's offset, u16 section count, u16 0xFFFF, u32 0; then one 32-byte entry per section (16-byte
+  name, u32 0, u32 0, u32 offset from the first section, u32 length); the sections; `DE FA FF DE`,
+  u32 file size, `mrm_pri2`.
+- **Section**: its 16-byte name, u32 0, u32 0, u32 length, u32 0, the data (padded to 8 bytes),
+  `DE FA F5 DE`, u32 length.
+- **`[mrm_decn_info]`** - the conditions: counts (distinct qualifiers, qualifiers, qualifier
+  sets, decisions, index entries, value characters); decisions and qualifier sets as (first index
+  entry, count); qualifiers as (distinct qualifier, priority, score as the default x 1000, 0);
+  distinct qualifiers as (2, type, 0, 10, u32 value offset) with types Language 0 and Scale 2; one
+  u16 index table shared by sets (qualifier numbers) and decisions (set numbers); the values. Entry
+  0 of each is empty. Priorities: Language 700, Scale 200. Scores: the default language 1.0, others
+  0; scale 100 1.0, 125 0.937, 150 0.875, 200 0.75, 400 0.437. A decision lists its sets from the
+  lowest score up.
+- **`[mrm_pridescex]`** - which sections hold the schema, the decisions, the resource map and the
+  data items.
+- **`[mrm_hschemaex]`** - the names: `ms-appx://<Identity Name>/` and the name, then a tree of
+  scopes and items (`Resources/AppDisplayName`, `Files/Assets/Logo.png`) as 12-byte entries (parent
+  entry, full path length, first character upper-cased, name length, 0x10 scope | 0x20 ASCII name,
+  name offset, scope or item number), each scope's children together and sorted by name; scopes
+  (entry, child count, first child); items (entry); ASCII names. A 32-bit check value over the names
+  is stored but was not seen checked.
+- **`[mrm_res_map2_]`** - per item a decision and its first candidate; per candidate its value type
+  (UTF-16 string 0, path 1, ASCII string 3, ASCII path 5) and the data item (section, index).
+- **`[mrm_dataitem]`** - one section per qualifier set: (offset, length) pairs and the strings,
+  each with its terminator.
+
 ## Extensions
 
 What rubrapack writes into an application's `<Extensions>` (after `uap:VisualElements`), and only

@@ -223,8 +223,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
-| `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다) |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
@@ -276,6 +276,15 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   (`[INSTALLDIR]`, `[#File]` 등. 이스케이프 `[\[]` 와 `[\]]` 는 괜찮다).
 - 로고는 셋 다 주거나 하나도 주지 않는다. 주지 않으면 한 가지 색의 로고가 들어간다. 로고는 크기가
   정확해야 한다(`RP1608`).
+- 로고와 이름이 같고 확장자 앞에 `.scale-100`, `.scale-125`, `.scale-150`, `.scale-200`, `.scale-400` 이 붙은
+  파일은 그 배율의 화면을 위한 같은 로고이고, 크기는 로고 크기에 배율을 곱한 것이다(`Square44x44.scale-150.png`
+  는 66x66). 로고 자신이 있으면 배율 100 으로 치므로 `.scale-100` 과 함께 있을 수 없다.
+- `display-name-xx`, `description-xx`(`[msix-app.*]`)와 `display-name-xx`, `publisher-display-name-xx`(`[msix]`;
+  `display-name` 의 기본값은 패키지 이름)는 그 글을 다른 언어로 준다(`xx` 는 `[ui]` 처럼 `ko`, `ja`, `de`, ...).
+  접미사 없는 글이 패키지 자신의 언어의 것이므로, 그 언어의 접미사는 오류다(`RP1606`). 그러면 매니페스트는 그
+  글들을 `ms-resource:` 이름으로 가리키고 언어들을 적는다.
+- 여러 배율의 로고와 여러 언어의 글은 `resources.pri`, 곧 Windows 가 그것들을 찾는 패키지 자원 색인에 들어간다.
+  그런 것이 없는 패키지에는 없다.
 - MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(`RP1605`): 사용자 지정 동작, 환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우거나 복사하는 파일, 빈 폴더.
   그런 표(또는 `[file.*]`/`[files.*]`)에 `msi-only = true` 를 달면 MSI 에는 들어가고 MSIX 는 그것
   없이 만들어진다. feature·속성·대화창·`[arp]` 은 Windows Installer 에만 해당하므로 MSIX 에는 쓰지

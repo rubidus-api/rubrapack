@@ -233,8 +233,8 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version, appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
-| `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
+| `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants) |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
@@ -288,7 +288,17 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   Windows Installer fills in at install time (`[INSTALLDIR]`, `[#File]`, ...; the escapes `[\[]` and
   `[\]]` are fine).
 - Give the three logos or none: without them the package gets plain one-colour logos. A logo
-  must have the exact size (`RP1608`).
+  must have the exact size (`RP1608`). Files named like the logo with `.scale-100`, `.scale-125`,
+  `.scale-150`, `.scale-200` or `.scale-400` before the extension are the same logo for screens
+  at that scale, each its size times the scale (`Square44x44.scale-150.png` is 66x66); the logo
+  itself, when there, counts as scale 100, so it cannot be there together with `.scale-100`.
+- `display-name-xx`, `description-xx` (`[msix-app.*]`) and `display-name-xx`,
+  `publisher-display-name-xx` (`[msix]`; `display-name` defaults to the package name) give those
+  texts in another language (`xx` as in `[ui]`: `ko`, `ja`, `de`, ...); the text without a suffix is
+  the one in the package's own language, so a suffix for that language is an error (`RP1606`).
+  The manifest then refers to them as `ms-resource:` names and lists the languages.
+- Logos in several scales and texts in several languages go into `resources.pri`, the package
+  resource index Windows resolves them through; a package without them has none.
 - What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions, environment variables, INI files, permissions, launch conditions and searches, files
   removed or copied at install, empty folders.
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while

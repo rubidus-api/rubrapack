@@ -133,6 +133,16 @@ the `[file.*]` that starts it; the folder of that file (here `INSTALLDIR`) becom
 own folder. `display-name` and `description` default to the package's name. Several
 `[msix-app.*]` tables give several entries.
 
+### Names in several languages, logos in several sizes
+
+`display-name-ko = "헬로"` (and `description-ko`, and in `[msix]` `display-name-ko` and
+`publisher-display-name-ko` for the package) gives a name in another language; Windows shows the
+one that fits the user's language, and the text without a suffix everywhere else. For a logo,
+put sharper versions next to it - `Square44x44.scale-200.png` (88x88) beside `Square44x44.png`,
+with `scale-125`, `-150` and `-400` as you like - and screens set to 200% show those. rubrapack
+puts both into the package's `resources.pri`, the index Windows looks names and files up in, and
+writes it only when a package has them.
+
 ## Extras: `[msix-extension.ID]`
 
 - `kind = "alias"`: typing `hello.exe` in a console starts the application, from any folder - the

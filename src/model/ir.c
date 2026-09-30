@@ -614,6 +614,9 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_identity_name);
     rp_mem_free(a, ir->msix_publisher);
     rp_mem_free(a, ir->msix_publisher_display);
+    rp_mem_free(a, ir->msix_display);
+    free_ltexts(a, ir->msix_display_by_lang, ir->msix_display_by_lang_count);
+    free_ltexts(a, ir->msix_publisher_display_by_lang, ir->msix_publisher_display_by_lang_count);
     rp_mem_free(a, ir->msix_min_version);
     rp_mem_free(a, ir->msix_appinstaller_uri);
     rp_mem_free(a, ir->msix_package_uri);
@@ -623,6 +626,8 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->exe);
         rp_mem_free(a, x->display);
         rp_mem_free(a, x->description);
+        free_ltexts(a, x->display_by_lang, x->display_by_lang_count);
+        free_ltexts(a, x->description_by_lang, x->description_by_lang_count);
         for (int i = 0; i < 3; ++i) {
             rp_mem_free(a, x->logo[i]);
             rp_mem_free(a, x->logo_path[i]);
