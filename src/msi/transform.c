@@ -503,7 +503,7 @@ static proven_err_t summary(wctx_t *w, uint32_t flags, uint8_t **out, size_t *le
         }
         case 16:
             v.type = RP_VT_I4;
-            v.i = (int32_t)flags;
+            v.i = (int32_t)(flags << 16);    // checks in the high word, ignored errors (none) in the low
             break;
         default:
             continue;
@@ -629,7 +629,7 @@ proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         for (size_t k = 0; k < 2 && err == PROVEN_OK; ++k) {
             size_t nl;
             err = bufs[k].err != PROVEN_OK ? bufs[k].err : rp_msi_stream_name(pn[k], true, names[nlist], &nl);
-            if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ names[nlist], (uint32_t)nl, bufs[k].data, bufs[k].len }, nlist++;
+            if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ .name = names[nlist], .name_len = (uint32_t)nl, .data = bufs[k].data, .size = bufs[k].len }, nlist++;
         }
     }
     for (size_t t = 0; err == PROVEN_OK && t < w.ntab; ++t) {
@@ -640,17 +640,17 @@ proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         for (size_t r = 0; r < o->nrec; ++r) put_record(b, &pool, o, &o->recs[r]);
         size_t nl;
         err = b->err != PROVEN_OK ? b->err : rp_msi_stream_name(o->name, true, names[nlist], &nl);
-        if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ names[nlist], (uint32_t)nl, b->data, b->len }, nlist++;
+        if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ .name = names[nlist], .name_len = (uint32_t)nl, .data = b->data, .size = b->len }, nlist++;
     }
     for (size_t s = 0; err == PROVEN_OK && s < w.nstream; ++s) {
         size_t nl;
         err = rp_msi_stream_name(w.streams[s].name, false, names[nlist], &nl);
-        if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ names[nlist], (uint32_t)nl, w.streams[s].data, w.streams[s].len }, nlist++;
+        if (err == PROVEN_OK) list[nlist] = (rp_cfb_stream_t){ .name = names[nlist], .name_len = (uint32_t)nl, .data = w.streams[s].data, .size = w.streams[s].len }, nlist++;
     }
     if (err == PROVEN_OK) {
         static const char sname[] = "\005SummaryInformation";
         for (size_t i = 0; sname[i]; ++i) names[nlist][i] = (uint8_t)sname[i];
-        list[nlist] = (rp_cfb_stream_t){ names[nlist], sizeof sname - 1, sum, sum_len };
+        list[nlist] = (rp_cfb_stream_t){ .name = names[nlist], .name_len = sizeof sname - 1, .data = sum, .size = sum_len };
         nlist++;
         static const uint8_t mst_clsid[16] = { 0x82, 0x10, 0x0C, 0, 0, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46 };
         err = rp_cfb_write(alloc, 9, mst_clsid, list, nlist, limits, out, len);

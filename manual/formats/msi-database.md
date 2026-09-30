@@ -146,8 +146,8 @@ per changed table, a stream per binary cell it adds or changes, and summary info
   order.
 - Summary information: property 7 is the base's platform and languages, 8 the target's, 9
   `{base ProductCode}version;{target ProductCode}version;{UpgradeCode}`, 14 the minimum
-  Windows Installer version, 16 the checks before applying (low word) and the errors to ignore
-  (high word).
+  Windows Installer version, 16 the checks before applying (high word, e.g. `0x0802` product and
+  upgrade code) and the errors to ignore (low word).
 - A transform cannot be read alone: its records carry no column types, which come from the base.
 
 ## IDT archive files (what `MsiDatabaseExport` writes)

@@ -15,8 +15,8 @@
 #include "rubrapack/limits.h"
 #include "rubrapack/msi.h"
 
-// Summary property 16 of a transform: the low word says what msiexec checks before it applies the
-// transform, the high word which errors it ignores while applying.
+// What msiexec checks before it applies a transform: summary property 16 holds these in its high
+// word (and the errors to ignore while applying, none here, in the low word).
 enum {
     RP_MST_VALIDATE_LANGUAGE = 0x0001,
     RP_MST_VALIDATE_PRODUCT = 0x0002,
