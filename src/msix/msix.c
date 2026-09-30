@@ -462,9 +462,10 @@ typedef struct {
 
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
-enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COUNT = 6 };
-// Capabilities the extensions need, in the same flag word (RFC-0016 2).
-enum { CAP_SERVICES = 64, CAP_SYSTEM_SERVICES = 128 };
+enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
+       NS_DESKTOP4 = 128, NS_COUNT = 8 };
+// Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
+enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17 };
 
 static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
@@ -482,7 +483,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "desktop", "http://schemas.microsoft.com/appx/manifest/desktop/windows10" },
                                              { "desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7" },
                                              { "desktop2", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" },
-                                             { "desktop6", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" } };
+                                             { "desktop6", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" },
+                                             { "com", "http://schemas.microsoft.com/appx/manifest/com/windows10" },
+                                             { "desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -691,7 +694,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         size_t a = app_by_id(ir, x->app);
         if (a == SIZE_MAX) continue;                        // the IR said so
         rp_buf_t *b = &ext[a];
-        if (x->kind == RP_MSIX_EXT_FIREWALL) continue;        // package level, below
+        if (x->kind != RP_MSIX_EXT_ALIAS && x->kind != RP_MSIX_EXT_STARTUP) continue;   // below
         if (x->kind == RP_MSIX_EXT_ALIAS) {
             NEED(x->pos, "an execution alias", 14393u);
             rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExecutionAlias\"");
@@ -783,6 +786,110 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         if (x->args) attr(&ext[0], "Arguments", args);
         rp_buf_puts(&ext[0], " />\r\n        </desktop6:Extension>\r\n");
         *ns |= NS_DESKTOP6 | CAP_SERVICES | (x->account == 0 ? CAP_SYSTEM_SERVICES : 0);
+    }
+    // COM classes, toast activators and context menus (RFC-0016 2), per application: one
+    // com:ComServer with an ExeServer per program class and a SurrogateServer per DLL class.
+    for (size_t a = 0; a < ir->msix_app_count; ++a) {
+        // The schema wants every ExeServer before the SurrogateServers: two buffers, joined at the end.
+        rp_buf_t com = rp_buf_new(ext[a].alloc, 1u << 20), sur = rp_buf_new(ext[a].alloc, 1u << 20), menus = rp_buf_new(ext[a].alloc, 1u << 20);
+        for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+            const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+            if ((x->kind != RP_MSIX_EXT_COM && x->kind != RP_MSIX_EXT_TOAST && x->kind != RP_MSIX_EXT_CONTEXT_MENU) || app_by_id(ir, x->app) != a) continue;
+            const char *path = x->file ? item_path(items, n, x->file) : ap[a].exe;
+            if (path == NULL) {
+                DERR(x->pos, "RP1613", "[msix-extension.%s]: file must name a file that goes into the package", x->id);
+                continue;
+            }
+            size_t pl = strlen(path);
+            bool dll = pl > 4 && (strcmp(path + pl - 4, ".dll") == 0 || strcmp(path + pl - 4, ".DLL") == 0);
+            bool exe = pl > 4 && (strcmp(path + pl - 4, ".exe") == 0 || strcmp(path + pl - 4, ".EXE") == 0);
+            if ((x->kind == RP_MSIX_EXT_CONTEXT_MENU && !dll) || (x->kind == RP_MSIX_EXT_TOAST && !exe) || (!dll && !exe)) {
+                DERR(x->pos, "RP1613", "[msix-extension.%s]: file must be %s", x->id,
+                     x->kind == RP_MSIX_EXT_CONTEXT_MENU ? "a DLL (the context menu handler)" : x->kind == RP_MSIX_EXT_TOAST ? "a program (.exe)" : "a program (.exe) or a DLL");
+                continue;
+            }
+            if (x->args && (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0)) {
+                DERR(x->pos, "RP1613", "[msix-extension.%s]: args must be plain text (no [...] filled in at install)", x->id);
+                continue;
+            }
+            char guid[37];
+            snprintf(guid, sizeof guid, "%.36s", x->clsid ? x->clsid + 1 : "");
+            const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+            const char *display = x->display ? x->display : app->display ? app->display : ir->name;
+            NEED(x->pos, x->kind == RP_MSIX_EXT_CONTEXT_MENU ? "a context menu" : "a COM class", x->kind == RP_MSIX_EXT_CONTEXT_MENU ? 17134u : 14393u);
+            if (exe) {
+                rp_buf_puts(&com, "            <com:ExeServer");
+                attr(&com, "Executable", path);
+                if (x->args) attr(&com, "Arguments", args);
+                attr(&com, "DisplayName", display);
+                rp_buf_puts(&com, ">\r\n              <com:Class");
+                attr(&com, "Id", guid);
+                attr(&com, "DisplayName", display);
+                rp_buf_puts(&com, " />\r\n            </com:ExeServer>\r\n");
+            } else {
+                rp_buf_puts(&sur, "            <com:SurrogateServer");
+                attr(&sur, "DisplayName", display);
+                rp_buf_puts(&sur, ">\r\n              <com:Class");
+                attr(&sur, "Id", guid);
+                attr(&sur, "Path", path);
+                attr(&sur, "ThreadingModel", x->threading ? x->threading : "STA");
+                rp_buf_puts(&sur, " />\r\n            </com:SurrogateServer>\r\n");
+            }
+            if (x->kind == RP_MSIX_EXT_TOAST) {
+                rp_buf_puts(&ext[a], "        <desktop:Extension Category=\"windows.toastNotificationActivation\">\r\n          <desktop:ToastNotificationActivation");
+                attr(&ext[a], "ToastActivatorCLSID", guid);
+                rp_buf_puts(&ext[a], " />\r\n        </desktop:Extension>\r\n");
+                *ns |= NS_DESKTOP;
+            }
+        }
+        // Context menus, grouped by item type: every verb registered for that type.
+        for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+            const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+            if (x->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, x->app) != a) continue;
+            for (size_t t = 0; t < x->type_count; ++t) {
+                bool seen = false;
+                for (size_t j = 0; j <= k && !seen; ++j) {
+                    const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, y->app) != a) continue;
+                    for (size_t u = 0; u < (j == k ? t : y->type_count) && !seen; ++u) seen = strcmp(y->types[u], x->types[t]) == 0;
+                }
+                if (seen) continue;
+                rp_buf_puts(&menus, "            <desktop4:ItemType");
+                attr(&menus, "Type", x->types[t]);
+                rp_buf_puts(&menus, ">\r\n");
+                for (size_t j = k; j < ir->msix_ext_count; ++j) {
+                    const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, y->app) != a) continue;
+                    for (size_t u = 0; u < y->type_count; ++u) {
+                        if (strcmp(y->types[u], x->types[t]) != 0) continue;
+                        char g[37];
+                        snprintf(g, sizeof g, "%.36s", y->clsid ? y->clsid + 1 : "");
+                        rp_buf_puts(&menus, "              <desktop4:Verb");
+                        attr(&menus, "Id", y->verb);
+                        attr(&menus, "Clsid", g);
+                        rp_buf_puts(&menus, " />\r\n");
+                    }
+                }
+                rp_buf_puts(&menus, "            </desktop4:ItemType>\r\n");
+            }
+        }
+        if (menus.len) {
+            rp_buf_puts(&ext[a], "        <desktop4:Extension Category=\"windows.fileExplorerContextMenus\">\r\n          <desktop4:FileExplorerContextMenus>\r\n");
+            rp_buf_put(&ext[a], menus.data, menus.len);
+            rp_buf_puts(&ext[a], "          </desktop4:FileExplorerContextMenus>\r\n        </desktop4:Extension>\r\n");
+            *ns |= NS_DESKTOP4;
+        }
+        if (com.len || sur.len) {
+            rp_buf_puts(&ext[a], "        <com:Extension Category=\"windows.comServer\">\r\n          <com:ComServer>\r\n");
+            rp_buf_put(&ext[a], com.data, com.len);
+            rp_buf_put(&ext[a], sur.data, sur.len);
+            rp_buf_puts(&ext[a], "          </com:ComServer>\r\n        </com:Extension>\r\n");
+            *ns |= NS_COM;
+        }
+        if (com.err != PROVEN_OK || sur.err != PROVEN_OK || menus.err != PROVEN_OK) ext[a].err = PROVEN_ERR_NOMEM;
+        rp_buf_free(&com);
+        rp_buf_free(&sur);
+        rp_buf_free(&menus);
     }
     // Shortcuts: the Start menu entry is the application itself; the desktop gets desktop7:Shortcut.
     for (size_t k = 0; k < ir->shortcut_count; ++k) {

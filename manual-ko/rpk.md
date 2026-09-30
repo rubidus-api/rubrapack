@@ -224,7 +224,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
-| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램)), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
+| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 
 dir 경로의 `기준`은 다른 dir ID 이거나 다음 가운데 하나다: `ProgramFiles`(x64/arm64 는 64비트,
 x86 은 32비트), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -392,6 +392,29 @@ profile = "private"               # 기본값 "all". 다른 프로그램이면 f
 
 MSI 빌드는 이것들을 뺀다. MSIX 에서 글꼴(`[font.*]`)은 패키지의 `Fonts` 폴더에서 다른 앱과 나눠
 쓰며(`uap4:SharedFonts`) `title` 은 쓰지 않는다.
+
+```toml
+[msix-extension.Server]
+kind = "com-server"               # 프로그램(또는 DLL)이 제공하는 COM 클래스
+file = "file:MainExe"
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C41}"
+args = "-Embedding"
+
+[msix-extension.Toast]
+kind = "toast"                    # 앱의 알림을 누르면 이 클래스로 앱이 시작된다
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C43}"
+
+[msix-extension.Menu]
+kind = "context-menu"             # DLL(IExplorerCommand)이 처리하는 탐색기 오른쪽 메뉴 항목
+file = "file:MenuDll"
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C44}"
+types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
+```
+
+이것들은 앱의 `com:ComServer`(프로그램이면 `ExeServer`, DLL 이면 `SurrogateServer`), 프로그램을 그 클래스와
+`args` 로 등록하는 `desktop:ToastNotificationActivation`, 그리고 DLL 을 클래스로 쓰는
+`desktop4:FileExplorerContextMenus` 가 된다. 패키지가 설치돼 있는 동안 Windows 는 그 클래스들을 패키지 COM 목록에
+올린다. 오른쪽 메뉴는 DLL 이 그 항목을 구현해야(IExplorerCommand) 보인다. rubrapack 은 등록할 뿐 구현하지 않는다.
 
 `[service.*]` 는 MSIX 에 패키지 서비스(`desktop6:Service`, 첫째 앱 안, 권한 `packagedServices` 와
 `account = "LocalSystem"` 이면 `localSystemServices`)로 들어간다: 이름·시작·계정은 MSI 와 같고 `args` 는

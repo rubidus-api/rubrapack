@@ -148,6 +148,12 @@ own folder. `display-name` and `description` default to the package's name. Seve
   default), `domain`, `private` or `public`; `file = "file:ID"` names another program of the
   package.
 
+- `kind = "com-server"`, `"toast"` and `"context-menu"` register COM classes: a class your program
+  or a DLL serves (`file`, `class = "{GUID}"`, `args`, `threading` for a DLL), the class Windows
+  starts the program as when the user clicks one of its notifications, and an Explorer context
+  menu verb for some file `types` (a DLL with the `verb`). The Reference ("MSIX only") has an
+  example of each.
+
 With several `[msix-app.*]` tables, `app = "Hello"` says which application an extension belongs to;
 the default is the first. An MSI build leaves these tables out.
 

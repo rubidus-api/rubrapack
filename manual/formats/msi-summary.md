@@ -59,7 +59,7 @@ in the `Property` table (`ProductName`), which uses the database code page - and
 
 ## Worked example: the tutorial's hello.msi
 
-The tutorial's first package: the stream is 332 bytes. Its header:
+The tutorial's first package: the stream is 336 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -68,7 +68,7 @@ The tutorial's first package: the stream is 332 bytes. Its header:
 | `0x18` | `01 00 00 00` | section count | 1 |
 | `0x1C` | `e0 85 9f f2 ...` | FMTID | `F29F85E0-...` |
 | `0x2C` | `30 00 00 00` | section offset | 48 |
-| `0x30` | `1c 01 00 00` | section size | 284 |
+| `0x30` | `20 01 00 00` | section size | 288 |
 | `0x34` | `09 00 00 00` | property count | 9 |
 
 Then 9 pairs of (property id, offset), and the values:
@@ -80,10 +80,10 @@ Then 9 pairs of (property id, offset), and the values:
 | 4 | `0xB0` | VT_LPSTR | `1e 00 00 00 11 00 00 00 45 78 61 6d 70 6c 65 20 ...` | `Example Software` |
 | 5 | `0xCC` | VT_LPSTR | `1e 00 00 00 0a 00 00 00 49 6e 73 74 61 6c 6c 65 ...` | `Installer` |
 | 7 | `0xE0` | VT_LPSTR | `1e 00 00 00 09 00 00 00 78 36 34 3b 31 30 33 33 ...` | `x64;1033` |
-| 9 | `0xF4` | VT_LPSTR | `1e 00 00 00 27 00 00 00 7b 37 36 42 42 43 42 34 ...` | `{76BBCB47-2C63-8D31-B2DA-C2FECD1F3225}` |
+| 9 | `0xF4` | VT_LPSTR | `1e 00 00 00 27 00 00 00 7b 39 42 30 37 34 31 35 ...` | `{9B07415A-BF70-8D19-A1DD-364F987484FF}` |
 | 14 | `0x124` | VT_I4 | `03 00 00 00 c8 00 00 00` | 200 |
 | 15 | `0x12C` | VT_I4 | `03 00 00 00 02 00 00 00` | 2 |
-| 18 | `0x134` | VT_LPSTR | `1e 00 00 00 10 00 00 00 72 75 62 72 61 70 61 63 ...` | `rubrapack 0.9.0` |
+| 18 | `0x134` | VT_LPSTR | `1e 00 00 00 11 00 00 00 72 75 62 72 61 70 61 63 ...` | `rubrapack 0.10.0` |
 
 A string value is its type (30), its byte count including the NUL, the bytes, the NUL, and padding
 to a multiple of 4. Property 9, the package code, is derived from the content under

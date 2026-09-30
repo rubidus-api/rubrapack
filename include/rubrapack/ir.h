@@ -203,7 +203,8 @@ typedef struct {
 } rp_ir_protocol_t;
 
 // [msix-extension.ID] (RFC-0010 N4): what only an MSIX has; left out of an MSI.
-typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP, RP_MSIX_EXT_FIREWALL } rp_msix_ext_kind_t;
+typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP, RP_MSIX_EXT_FIREWALL, RP_MSIX_EXT_COM, RP_MSIX_EXT_TOAST,
+               RP_MSIX_EXT_CONTEXT_MENU } rp_msix_ext_kind_t;
 typedef struct {
     char              *id;
     rp_msix_ext_kind_t kind;
@@ -217,6 +218,12 @@ typedef struct {
     bool               udp;         // firewall: protocol = "udp" (else TCP)
     unsigned           port_min, port_max;  // firewall: local ports, 0 = any
     char              *profile;     // firewall: "all" (default), "domain", "private", "public"
+    char              *clsid;       // com-server, toast, context-menu: "{GUID}", upper case
+    char              *threading;   // com-server (a DLL), context-menu: "STA", "MTA", "Both", "Neutral"
+    char              *args;        // com-server (an exe), toast: plain text, or NULL
+    char              *verb;        // context-menu: the verb's ID (default the table's ID)
+    char             **types;       // context-menu: ".ext" or "*"
+    size_t             type_count;
     rp_pos_t           pos;
 } rp_ir_msix_ext_t;
 

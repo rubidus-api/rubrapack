@@ -234,7 +234,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
 | `[msix]` | **identity-name**, **publisher**, publisher-display-name, min-version - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, description, logo-150, logo-44, store-logo |
-| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program)), app (an `[msix-app.*]` ID; default the first) - MSIX only |
+| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 
 `Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
 for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
@@ -412,6 +412,30 @@ profile = "private"               # default "all"; file = "file:ID" for another 
 
 An MSI build leaves these out. Fonts (`[font.*]`) in an MSIX are shared with other applications
 (`uap4:SharedFonts`) from the package's `Fonts` folder; `title` is not used there.
+
+```toml
+[msix-extension.Server]
+kind = "com-server"               # a COM class the program (or a DLL) serves
+file = "file:MainExe"
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C41}"
+args = "-Embedding"
+
+[msix-extension.Toast]
+kind = "toast"                    # a click on the app's notification starts it as this class
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C43}"
+
+[msix-extension.Menu]
+kind = "context-menu"             # an Explorer context menu verb, handled by a DLL (IExplorerCommand)
+file = "file:MenuDll"
+class = "{7A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C44}"
+types = [".txt", "*"]             # file types; "*" = every file
+```
+
+These become the application's `com:ComServer` (an `ExeServer` for a program, a `SurrogateServer`
+for a DLL), `desktop:ToastNotificationActivation` with the program registered for its class and
+`args`, and `desktop4:FileExplorerContextMenus` with the DLL as the class. Windows lists the
+classes in its packaged COM catalog while the package is installed. The context menu shows only if
+the DLL implements the verb (IExplorerCommand); rubrapack registers it, it does not write it.
 
 A `[service.*]` goes into an MSIX as a packaged service (`desktop6:Service`, in the first
 application, with the capability `packagedServices`, and `localSystemServices` for

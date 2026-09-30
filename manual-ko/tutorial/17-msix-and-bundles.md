@@ -134,6 +134,11 @@ MSIX 는 자기가 담은 *애플리케이션* - 시작 메뉴의 항목 - 을 �
   `8000-8100` 같은 범위, `profile` 은 `all`(기본값), `domain`, `private`, `public`. `file = "file:ID"` 는 패키지의
   다른 프로그램을 가리킨다.
 
+- `kind = "com-server"`, `"toast"`, `"context-menu"` 는 COM 클래스를 등록한다: 프로그램이나 DLL 이 제공하는 클래스
+  (`file`, `class = "{GUID}"`, `args`, DLL 이면 `threading`), 사용자가 알림을 누를 때 Windows 가 프로그램을 시작하는
+  클래스, 그리고 어떤 파일 `types` 에 대한 탐색기 오른쪽 메뉴 항목(DLL 과 `verb`). 참조의 "MSIX 전용"에 각각의
+  예가 있다.
+
 `[msix-app.*]` 표가 여럿이면 항목도 여럿이 된다.
 
 ## 덤: `[msix-extension.ID]`

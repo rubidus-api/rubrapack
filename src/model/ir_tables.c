@@ -685,7 +685,7 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
 
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
     static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", "file", "direction",
-                                        "protocol", "ports", "profile", NULL };
+                                        "protocol", "ports", "profile", "class", "threading", "args", "verb", "types", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
@@ -756,8 +756,53 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
             if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"firewall\"", other[k]);
         }
+    } else if (kind && (strcmp(kind, "com-server") == 0 || strcmp(kind, "toast") == 0 || strcmp(kind, "context-menu") == 0)) {
+        // RFC-0016 2: a COM class of the package (com:ComServer), the toast activator (a COM class of
+        // the application's program) and an Explorer context menu verb (a COM class in a DLL).
+        x->kind = strcmp(kind, "com-server") == 0 ? RP_MSIX_EXT_COM : strcmp(kind, "toast") == 0 ? RP_MSIX_EXT_TOAST : RP_MSIX_EXT_CONTEXT_MENU;
+        x->file = file_ref(c, t, "file", x->kind != RP_MSIX_EXT_TOAST);
+        x->clsid = ir_get_str(c, t, "class", true, NULL);
+        if (x->clsid && !ir_guid_ok(x->clsid)) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", x->clsid);
+        x->display = ir_get_str(c, t, "display-name", false, NULL);
+        x->args = ir_get_str(c, t, "args", false, NULL);
+        if (x->kind == RP_MSIX_EXT_TOAST && x->args == NULL) x->args = ir_dup(c, "-ToastActivated");
+        char *th = ir_get_str(c, t, "threading", false, NULL);
+        static const char *const models[][2] = { { "sta", "STA" }, { "mta", "MTA" }, { "both", "Both" }, { "neutral", "Neutral" } };
+        if (th) {
+            for (size_t k = 0; k < 4; ++k) {
+                if (strcmp(th, models[k][0]) == 0) x->threading = ir_dup(c, models[k][1]);
+            }
+            if (x->threading == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+            rp_mem_free(c->alloc, th);
+        } else {
+            x->threading = ir_dup(c, "STA");
+        }
+        if (x->kind == RP_MSIX_EXT_CONTEXT_MENU) {
+            x->verb = ir_get_str(c, t, "verb", false, NULL);
+            if (x->verb == NULL) x->verb = ir_dup(c, t->id);
+            const rp_tkey_t *tk = ir_find_key(t, "types");
+            if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
+                ERR(c, tk ? tk->pos : t->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", t->id);
+            } else {
+                x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
+                if (x->types == NULL) c->nomem = true;
+                for (size_t k = 0; x->types && k < tk->val.count; ++k) {
+                    const rp_tval_t *v = &tk->val.items[k];
+                    char *ty = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+                    bool ok = ty && (strcmp(ty, "*") == 0 || (ty[0] == '.' && ty[1] && !strpbrk(ty + 1, ".\\")));
+                    if (!ok) ERR(c, tk->pos, "RP1316", "types: each is \".ext\" or \"*\" (every file)");
+                    x->types[x->type_count++] = ty;
+                }
+            }
+        } else if (ir_find_key(t, "types") || ir_find_key(t, "verb")) {
+            ERR(c, t->pos, "RP1316", "types and verb belong to kind = \"context-menu\"");
+        }
+        const char *other[] = { "alias", "task-id", "enabled", "direction", "protocol", "ports", "profile" };
+        for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
+            if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"%s\"", other[k], kind);
+        }
     } else if (kind) {
-        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\" or \"firewall\" (got '%s')", kind);
+        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')", kind);
     }
     rp_mem_free(c->alloc, kind);
 }
