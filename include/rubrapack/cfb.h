@@ -78,9 +78,12 @@ typedef struct {
     size_t          name_len;
     const uint8_t  *data;
     size_t          size;
+    size_t          parent;     // 0: the root; k + 1: inside streams[k], which is a storage
+    bool            storage;    // a storage (no data) that other entries name as parent
+    const uint8_t  *clsid;      // a storage's class (16 bytes), or NULL
 } rp_cfb_stream_t;
 
-// Writes a compound file holding `streams` directly under the root, with the root CLSID given.
+// Writes a compound file holding `streams` (and storages; `parent`) with the root CLSID given.
 // sector_shift 9 = version 3 (512-byte sectors), 12 = version 4 (4096). Deterministic: all times
 // are zero and the directory tree depends only on the names. Names must be distinct.
 [[nodiscard]] proven_err_t rp_cfb_write(proven_allocator_t alloc, unsigned sector_shift, const uint8_t clsid[16],

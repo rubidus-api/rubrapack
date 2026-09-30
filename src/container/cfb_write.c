@@ -33,8 +33,10 @@ static void wr64(uint8_t *p, uint64_t v) {
 
 static uint16_t upper(uint16_t c) { return (c >= 'a' && c <= 'z') ? (uint16_t)(c - 32) : c; }
 
-// MS-CFB sibling order: shorter names first, then upper-cased UTF-16 comparison.
+// MS-CFB sibling order: shorter names first, then upper-cased UTF-16 comparison. Entries are
+// grouped by parent storage first, so each storage's children are one run of the sorted order.
 static int name_cmp(const rp_cfb_stream_t *a, const rp_cfb_stream_t *b) {
+    if (a->parent != b->parent) return a->parent < b->parent ? -1 : 1;
     if (a->name_len != b->name_len) return a->name_len < b->name_len ? -1 : 1;
     for (size_t i = 0; i < a->name_len; ++i) {
         uint16_t x = upper(a->name[i]), y = upper(b->name[i]);
@@ -81,6 +83,9 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
     for (size_t k = 0; k < count; ++k) {
         const rp_cfb_stream_t *s = &streams[k];
         if (s->name_len == 0 || s->name_len > 31 || (s->size != 0 && s->data == NULL)) return PROVEN_ERR_INVALID_ARG;
+        if (s->parent > count || s->parent == k + 1 || (s->parent && !streams[s->parent - 1].storage)) return PROVEN_ERR_INVALID_ARG;
+        if (s->storage && s->size != 0) return PROVEN_ERR_INVALID_ARG;
+        if (s->storage) continue;
         if (s->size < CUTOFF) {
             if (ckd_add(&mini_len, mini_len, ceil_div(s->size, MINI) * MINI)) return PROVEN_ERR_OVERFLOW;
         } else if (ckd_add(&big_sectors, big_sectors, ceil_div(s->size, ss))) {
@@ -145,7 +150,17 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
         if (j + 1 <= k && name_cmp(&streams[sorted[j + 1]], &streams[k]) == 0) err = PROVEN_ERR_INVALID_ARG;
     }
     for (size_t i = 0; i <= count; ++i) left[i] = right[i] = FREESECT;
-    uint32_t tree_root = build_tree(sorted, 0, count, left, right);
+    // One tree per storage: the run of entries whose parent it is. child[0] is the root's.
+    uint32_t *child = rp_mem_alloc(alloc, count + 1, sizeof *child);
+    if (child == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0; child && i <= count; ++i) child[i] = FREESECT;
+    for (size_t lo = 0; child && lo < count;) {
+        size_t hi = lo + 1, p = streams[sorted[lo]].parent;
+        while (hi < count && streams[sorted[hi]].parent == p) ++hi;
+        child[p] = build_tree(sorted, lo, hi, left, right);
+        lo = hi;
+    }
+    uint32_t tree_root = child ? child[0] : FREESECT;
 
     // Sector numbers.
     uint32_t next = 0;
@@ -197,13 +212,16 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
         uint8_t *e = dir + (k + 1) * ENTRY;
         for (size_t i = 0; i < s->name_len; ++i) wr16(e + 2 * i, s->name[i]);
         wr16(e + 64, (uint16_t)((s->name_len + 1) * 2));
-        e[66] = 2;
+        e[66] = s->storage ? 1 : 2;
         e[67] = 1;
         wr32(e + 68, left[k + 1]);
         wr32(e + 72, right[k + 1]);
-        wr32(e + 76, FREESECT);
+        wr32(e + 76, s->storage ? child[k + 1] : FREESECT);
         wr64(e + 120, s->size);
-        if (s->size == 0) {
+        if (s->storage) {
+            if (s->clsid) memcpy(e + 80, s->clsid, 16);
+            wr32(e + 116, 0);
+        } else if (s->size == 0) {
             wr32(e + 116, ENDOFCHAIN);
         } else if (s->size < CUTOFF) {
             uint32_t n = (uint32_t)ceil_div(s->size, MINI);
@@ -252,6 +270,7 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
     wr32(f + 72, (uint32_t)difat);
     for (size_t i = 0; i < HEADER_DIFAT; ++i) wr32(f + 76 + 4 * i, i < fat ? fat_first + (uint32_t)i : FREESECT);
 
+    rp_mem_free(alloc, child);
     rp_mem_free(alloc, sorted);
     rp_mem_free(alloc, left);
     rp_mem_free(alloc, right);

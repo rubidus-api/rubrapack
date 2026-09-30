@@ -402,7 +402,7 @@ proven_err_t rp_msi_write_to(proven_allocator_t alloc, const rp_msi_wdb_t *db, u
         } else {
             for (size_t i = 0; i < streams.count; ++i) {
                 const out_stream_t *s = &streams.v[i];
-                list[i] = (rp_cfb_stream_t){ s->name, s->name_len, s->data ? s->data : s->borrowed, s->size };
+                list[i] = (rp_cfb_stream_t){ .name = s->name, .name_len = s->name_len, .data = s->data ? s->data : s->borrowed, .size = s->size };
             }
             static const uint8_t msi_clsid[16] = { 0x84, 0x10, 0x0C, 0, 0, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46 };
             err = rp_cfb_write_to(alloc, sector_shift, msi_clsid, list, streams.count, limits, sink, out, len);

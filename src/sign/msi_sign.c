@@ -165,7 +165,7 @@ static proven_err_t collect(proven_allocator_t alloc, const rp_cfb_t *cfb, rp_cf
         }
         uint16_t *name = (uint16_t *)(void *)(b[k] + name_off);
         memcpy(name, e->name, 2 * (size_t)e->name_len);
-        s[k] = (rp_cfb_stream_t){ name, e->name_len, b[k], (size_t)e->size };
+        s[k] = (rp_cfb_stream_t){ .name = name, .name_len = e->name_len, .data = b[k], .size = (size_t)e->size };
         ++k;
     }
     *out = s;
@@ -223,8 +223,8 @@ proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t le
     }
     if (err == PROVEN_OK) err = rp_authenticode_build(alloc, kf, leaf, RP_HASH_SHA256, MSI_DATA, sizeof MSI_DATA, digest, ts, &p7, &p7_len, why);
     if (err == PROVEN_OK) {
-        streams[ns++] = (rp_cfb_stream_t){ SIG_NAME, 17, p7, p7_len };
-        streams[ns++] = (rp_cfb_stream_t){ EX_NAME, 22, ex, 32 };
+        streams[ns++] = (rp_cfb_stream_t){ .name = SIG_NAME, .name_len = 17, .data = p7, .size = p7_len };
+        streams[ns++] = (rp_cfb_stream_t){ .name = EX_NAME, .name_len = 22, .data = ex, .size = 32 };
         err = rp_cfb_write(alloc, shift, clsid, streams, ns, &lim, out, out_len);
         ns -= 2;
     }
