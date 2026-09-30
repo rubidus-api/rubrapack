@@ -153,7 +153,9 @@ def parse_list(lines, i, indent):
     return ("list", ordered, items), i
 
 
-INLINE = re.compile(r"(`+)(.+?)\1|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)|<(https?://[^>\s]+)>|(?<![\w*])\*(?!\s)([^*]+?)\*(?![\w*])")
+# Emphasis may touch letters of scripts that attach particles without a space (Korean), so only
+# ASCII word characters next to a `*` keep it literal (a*b*c).
+INLINE = re.compile(r"(`+)(.+?)\1|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)|<(https?://[^>\s]+)>|(?<![A-Za-z0-9_*])\*(?!\s)([^*]+?)\*(?![A-Za-z0-9_*])")
 
 
 def inline_tokens(text):
@@ -209,6 +211,11 @@ def chapters(lang):
         lines = open(path, encoding="utf-8").read().splitlines()
         # The pages' own "English: ..." / "Korean: ..." cross-links do not belong in a book.
         lines = [l for l in lines if not re.match(r"^(English|Korean):\s*\[", l)]
+        # A fence indented into a list item is not supported: it would come out as run-on text.
+        for n, l in enumerate(lines, 1):
+            if re.match(r"^ +```", l):
+                sys.exit("build.py: %s:%d: indented code fence; put the block at the left margin"
+                         % (os.path.relpath(path, REPO), n))
         blocks = parse_blocks(lines)
         title = blocks[0][2] if blocks and blocks[0][0] == "heading" and blocks[0][1] == 1 else slug
         body = blocks[1:] if blocks and blocks[0][0] == "heading" and blocks[0][1] == 1 else blocks
