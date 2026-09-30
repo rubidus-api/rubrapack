@@ -132,9 +132,11 @@ own folder. `display-name` and `description` default to the package's name. Seve
   MSIX way of putting a program on the `PATH`.
 - `kind = "startup-task"`: the application starts when the user signs in, once it has been run
   once. `enabled = false` leaves it off until the user turns it on in Task Manager's Startup apps,
-  which shows `display-name`.
+  which shows `display-name`. `task-id` names the task for Windows; the default is the table's ID
+  (here `AtSignIn`, as the manifest below shows).
 
-An MSI build leaves these tables out.
+With several `[msix-app.*]` tables, `app = "Hello"` says which application an extension belongs to;
+the default is the first. An MSI build leaves these tables out.
 
 ## What the other tables become
 

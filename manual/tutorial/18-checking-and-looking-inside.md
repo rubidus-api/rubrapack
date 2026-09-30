@@ -233,3 +233,24 @@ C:\work\hello> rubrapack guid --from hello
 The first is random - new every time - for an upgrade code. The second is the GUID rubrapack
 *derives* from a text; it is the same on every computer, every time. rubrapack derives component
 GUIDs this way, which is why they stay the same from version to version. Part III [shows the calculation](../basics/04-guids-and-hashes.md#guids-from-hashes-guid---from).
+
+## Help on the command line
+
+```text
+C:\work\hello> rubrapack help
+rubrapack 0.7.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+
+usage: rubrapack <command> [arguments]
+
+commands:
+  build    build a package from a source file
+  sign     sign a PE file, an MSI package, an MSIX package or bundle
+  ...
+C:\work\hello> rubrapack help sign
+usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
+C:\work\hello> rubrapack version
+rubrapack 0.7.0 (proven_c_lib-v0.1.1)
+```
+
+`rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options
+- the short form of Part II, which has them all with their meaning.

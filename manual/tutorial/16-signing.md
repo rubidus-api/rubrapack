@@ -33,7 +33,15 @@ It prints the certificate's *thumbprint*, 40 hexadecimal digits that name it.
 A key file holds the private key and the certificate, protected by a password: a `.pfx` (also
 called `.p12`), as Windows exports it (Export-PfxCertificate with
 `-CryptoAlgorithmOption AES256_SHA256`), or a PEM key. The password is never typed on the command
-line (other programs could read it there): it comes from an environment variable or a file.
+line (other programs could read it there): it comes from an environment variable or a file. The
+options that would take one are there only to say so:
+
+```text
+C:\work\hello> rubrapack sign hello.msi --key signer.pfx --pass secret
+rubrapack: error[RP0004]: a password is never taken on the command line (others can see it); use --pass-env or --pass-file
+```
+
+(`--pin` for a token's PIN answers the same way.)
 
 ```text
 C:\work\hello> set SIGN_PASS=...the password...

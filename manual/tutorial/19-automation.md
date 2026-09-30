@@ -65,7 +65,7 @@ Three other forms:
   offer.
 - `rubrapack new hello` (a name without `.toml`, and no options) writes a short starter source
   without asking anything, for filling in by hand.
-- `rubrapack new hello -i` asks the questions. They go to the error output and the answers are read
+- `rubrapack new hello -i` (or `--interactive`) asks the questions. They go to the error output and the answers are read
   one per line, so a file of answers can be piped in: `rubrapack new hello.toml < answers.txt`. If
   the answers run out before the last question, nothing is written.
 

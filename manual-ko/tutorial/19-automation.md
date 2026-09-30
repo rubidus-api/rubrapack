@@ -63,7 +63,7 @@ glob = "dist/samples/**"
   준다. 스크립트용이다. 빠진 옵션은 질문이 제안했을 기본값을 받는다.
 - `rubrapack new hello`(`.toml` 없는 이름, 옵션 없음)는 아무것도 묻지 않고 짧은 시작용 원본을 쓴다. 손으로 채울
   때 쓴다.
-- `rubrapack new hello -i` 는 질문을 한다. 질문은 오류 출력으로 가고 답은 한 줄에 하나씩 읽으므로, 답을 적은 파일을
+- `rubrapack new hello -i`(또는 `--interactive`)는 질문을 한다. 질문은 오류 출력으로 가고 답은 한 줄에 하나씩 읽으므로, 답을 적은 파일을
   흘려 넣을 수 있다: `rubrapack new hello.toml < answers.txt`. 마지막 질문 전에 답이 떨어지면 아무것도 쓰지 않는다.
 
 ## 원본 고치기: `edit`

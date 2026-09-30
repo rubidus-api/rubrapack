@@ -28,7 +28,15 @@ PS> New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=Example Softwar
 
 키 파일은 개인 키와 인증서를 비밀번호로 보호해 담는다: Windows 가 내보내는 `.pfx`(`.p12` 라고도 한다.
 `Export-PfxCertificate` 에 `-CryptoAlgorithmOption AES256_SHA256`), 또는 PEM 키. 비밀번호는 명령줄에 절대 적지
-않는다(다른 프로그램이 거기서 읽을 수 있다): 환경 변수나 파일에서 온다.
+않는다(다른 프로그램이 거기서 읽을 수 있다): 환경 변수나 파일에서 온다. 비밀번호를 받을 법한 옵션은 그렇게
+말하려고만 있다:
+
+```text
+C:\work\hello> rubrapack sign hello.msi --key signer.pfx --pass secret
+rubrapack: error[RP0004]: a password is never taken on the command line (others can see it); use --pass-env or --pass-file
+```
+
+(토큰 PIN 의 `--pin` 도 같은 답을 한다.)
 
 ```text
 C:\work\hello> set SIGN_PASS=...비밀번호...

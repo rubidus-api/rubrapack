@@ -220,3 +220,24 @@ C:\work\hello> rubrapack guid --from hello
 
 첫 번째는 무작위 - 매번 새것 - 로, 업그레이드 코드에 쓴다. 두 번째는 rubrapack 이 글에서 *끌어낸* GUID 로, 어느
 컴퓨터에서든 언제나 같다. rubrapack 은 컴포넌트 GUID 를 이렇게 끌어내므로 판이 바뀌어도 같게 유지된다. 제3부가 [그 계산](../basics/04-guids-and-hashes.md#해시로-만드는-guid-guid---from)을 보여 준다.
+
+## 명령줄의 도움말
+
+```text
+C:\work\hello> rubrapack help
+rubrapack 0.7.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+
+usage: rubrapack <command> [arguments]
+
+commands:
+  build    build a package from a source file
+  sign     sign a PE file, an MSI package, an MSIX package or bundle
+  ...
+C:\work\hello> rubrapack help sign
+usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> ...
+C:\work\hello> rubrapack version
+rubrapack 0.7.0 (proven_c_lib-v0.1.1)
+```
+
+`rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은
+제2부의 짧은 판이다.
