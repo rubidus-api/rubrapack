@@ -924,6 +924,15 @@ rubrapack version | help [command]
   것(`RP0013`): 열이 다른 표, 바뀐 `File` 이나 `Media` 표(변환은 파일을 나르지 않는다), 표의 16번째 뒤의
   열이 바뀐 것. `inspect <파일.mst> --base <base.msi>` 는 행을, `inspect <파일.mst> --summary` 는
   요약 정보를 보여 준다.
+- `patch <base.msi> <target.msi> -o <out.msp>` 는 설치된 바탕 판을 그 자리에서 대상 판으로 고치는 패치를
+  쓴다: 제품 변환(달라진 행; 있던 파일은 바탕 패키지의 캐비닛 속 자리를 지킨다), 패치 변환(새 파일과 바뀐
+  파일의 새 자리, 패치의 캐비닛을 가리키는 Media 행, PatchPackage, PatchFiles 동작), 그리고 그 파일들을
+  통째로 담은 캐비닛을 Microsoft 의 `MsiMsp.exe` 와 같은 모양으로. 두 패키지는 제품 코드와 업그레이드
+  코드가 같고, 판의 앞 두 수가 같고(*작은 업데이트* 나 *마이너 업그레이드*), 캐비닛이 내장이고, 바탕의 파일과
+  구성 요소를 모두 가져야 한다. `--patch-code {GUID}`(기본: 두 패키지 코드에서 끌어냄), `--family <이름>`
+  (MsiPatchSequence; 기본은 제품 이름), `--no-removal`(패치를 따로 제거할 수 없게). 거부는 `RP0013` 이다.
+  `inspect <파일.msp> --base <base.msi>` 는 패치의 표와 두 변환을 보여 준다. `sign` 은 아직 패치에
+  서명하지 않는다.
 - `lint new.msi --previous old.msi` 는 `new.msi` 가 `old.msi` 를 깨끗하게 업그레이드하는지도 본다.
   오류: 다른 UpgradeCode(`RP2301`: 새 패키지가 옛것을 대체하지 않는다), 앞의 세 자리가 높지 않은
   버전(`RP2302`: Windows 는 그 세 자리만 비교한다). 경고: 같은 ProductCode(`RP2303`: 업그레이드에는

@@ -349,6 +349,10 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
 
 int rp_cmd_inspect(int argc, char **argv) {
     size_t n0 = argc >= 3 ? strlen(argv[2]) : 0;
+    if (n0 > 4 && (strcmp(argv[2] + n0 - 4, ".msp") == 0 || strcmp(argv[2] + n0 - 4, ".MSP") == 0) && argc == 5 &&
+        strcmp(argv[3], "--base") == 0) {
+        return rp_msp_inspect(argv[2], argv[4]);
+    }
     if (n0 > 4 && (strcmp(argv[2] + n0 - 4, ".mst") == 0 || strcmp(argv[2] + n0 - 4, ".MST") == 0) &&
         !(argc == 4 && strcmp(argv[3], "--streams") == 0)) {
         bool base = argc == 5 && strcmp(argv[3], "--base") == 0;
@@ -359,7 +363,7 @@ int rp_cmd_inspect(int argc, char **argv) {
         return rp_mst_inspect(argv[2], base ? NULL : argv[3], base ? argv[4] : NULL);
     }
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst> --base <base.msi> | inspect <file.cab>");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;

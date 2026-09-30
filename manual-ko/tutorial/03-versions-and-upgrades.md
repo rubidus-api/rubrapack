@@ -45,8 +45,9 @@ C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
 
 `hello-1.0.0.msi` 를 설치하고 이어서 `hello-1.1.0.msi` 를 설치한다. Windows Installer 는 새 패키지가 같은
 업그레이드 코드에 더 높은 판임을 보고, 1.0.0 을 지운 뒤 1.1.0 을 설치한다 - "설치된 앱"에는 항목 하나가 남고
-이제 1.1.0 을 보인다. 이것을 *메이저 업그레이드*라고 하며, rubrapack 이 만드는 업그레이드는 이것뿐이다. 새 판은
-늘 완전한 패키지이고, 새 판을 설치하는 데 옛 판이 필요하지 않다.
+이제 1.1.0 을 보인다. 이것을 *메이저 업그레이드*라고 하며, rubrapack 의 패키지는 이렇게 업그레이드한다. 새 판은
+늘 완전한 패키지이고, 새 판을 설치하는 데 옛 판이 필요하지 않다. (설치된 판을 그 자리에서 고치는 것은
+[아래](#작은-수정을-패치로-patch)의 패치다.)
 
 이제 `hello-1.0.0.msi` 를 다시 설치해 본다: Windows 가 다운그레이드 안내문을 보이고 아무것도 바꾸지 않는다.
 `hello-1.1.0.msi` 를 한 번 더 실행하는 것도 오류가 아니다. 설치된 판과 제품 코드가 같으므로(아래 참고) Windows
@@ -120,6 +121,38 @@ hello-1.0.0.msi: 1 error, 1 warning (against hello-1.0.0.msi)
 ```
 
 낸 `.msi` 는 모두(예: `releases` 폴더에) 보관해, 다음 판을 그것과 대조할 수 있게 한다.
+
+## 작은 수정을 패치로: `patch`
+
+패치(`.msp`)는 설치된 판을 그 자리에서 고친다: 바뀐 파일만 통째로, 그리고 달라진 표의 행을 나르고,
+Windows 는 아무것도 지우지 않고 그것을 적용한다. 패치는 *같은 제품*의 두 빌드를 잇기 때문에 제품 코드가
+같아야 한다 - rubrapack 은 보통 그것을 판에서 끌어낸다:
+
+```text
+C:\work\hello> rubrapack patch hello-1.0.0.msi hello-1.1.0.msi -o hello-1.1.0.msp
+rubrapack: error[RP0013]: ProductCode differs: that is a major upgrade, which a patch does not carry
+```
+
+패치로 이을 판들에는 `[package]` 에 제품 코드를 고정하고(`rubrapack guid` 가 새것을 찍는다) 셋째 수만
+올린다:
+
+```toml
+product-code = "{5B3E2A71-9C4D-4E8F-A1B2-C3D4E5F60718}"
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
+C:\work\hello> rubrapack build hello.toml -o hello-1.1.1.msi -D VERSION=1.1.1
+C:\work\hello> rubrapack patch hello-1.1.0.msi hello-1.1.1.msi -o hello-1.1.1.msp
+C:\work\hello> msiexec /p hello-1.1.1.msp
+```
+
+1.1.0 이 설치된 컴퓨터는 패치를 적용하고, 새 컴퓨터는 `hello-1.1.1.msi` 를 설치한다. 패치는 따로 제거할
+수 있고, 그러면 1.1.0 의 파일과 값이 돌아온다(`--no-removal` 로 만들면 따로 제거할 수 없다). 패치마다 패치
+코드가 있고, `--patch-code` 로 주지 않으면 두 패키지에서 끌어낸다. `--family` 는 패치가 속한 줄기의
+이름이다(기본은 제품 이름). `inspect hello-1.1.1.msp --base hello-1.1.0.msi` 는 패치가 바꾸는 것을
+보여 준다. 패치는 파일이나 구성 요소를 지우거나, 제품 코드나 업그레이드 코드를 바꾸거나, 판의 앞 두 수를
+바꿀 수 없다(`RP0013`). `sign` 은 아직 패치에 서명하지 않는다.
 
 ## 다른 도구로 만든 옛 판
 

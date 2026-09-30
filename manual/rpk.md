@@ -998,6 +998,16 @@ rubrapack version | help [command]
   whose columns differ, a changed `File` or `Media` table (a transform carries no files), a changed
   column past the 16th of its table. `inspect <file.mst> --base <base.msi>` lists the rows,
   `inspect <file.mst> --summary` the summary information.
+- `patch <base.msi> <target.msi> -o <out.msp>` writes a patch that updates an installed base to
+  the target in place: a product transform (the rows that differ; existing files keep their place
+  in the base's cabinets), a patch transform (the new and changed files' new places, a Media row for
+  the patch's cabinet, PatchPackage, the PatchFiles action) and the cabinet of those files whole, as
+  Microsoft's `MsiMsp.exe` lays them out. Both packages need the same product and upgrade code, the
+  same first two version numbers (a *small update* or *minor upgrade*), embedded cabinets, and every
+  file and component of the base. `--patch-code {GUID}` (default: derived from the two package
+  codes), `--family <name>` (MsiPatchSequence; default the product name), `--no-removal` (the
+  patch cannot be removed on its own). Refusals are `RP0013`. `inspect <file.msp> --base <base.msi>`
+  lists the patch's tables and both transforms. `sign` does not sign a patch yet.
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.

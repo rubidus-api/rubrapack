@@ -69,6 +69,7 @@ static const char *const core_sources[] = {
     "src/msi/lint_prev.c",
     "src/msi/merge.c",
     "src/msi/lower.c",
+    "src/msi/patch.c",
     "src/msi/suminfo.c",
     "src/msi/transform.c",
     "src/msi/ui.c",

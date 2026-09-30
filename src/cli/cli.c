@@ -31,7 +31,9 @@ static const command_t commands[] = {
                  "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
                  "write a transform (.mst): what turns one package into the other", true },
-    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.mst> --base <base.msi> | inspect <file.cab>",
+    { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
+                 "write a patch (.msp): the files and rows that update an installed base to the target", true },
+    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
@@ -163,6 +165,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
     if (strcmp(name, "transform") == 0) return rp_cmd_transform(argc, argv);
+    if (strcmp(name, "patch") == 0) return rp_cmd_patch(argc, argv);
 
     char buf[256];
     const command_t *c = find_command(name);

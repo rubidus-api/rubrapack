@@ -84,8 +84,8 @@ static bool binary_name(const char *table, const rp_msi_wcolumn_t *cols, size_t 
     return o < cap;
 }
 
-static proven_err_t read_stream(proven_allocator_t alloc, const rp_cfb_t *cfb, const char *name, bool table, size_t max,
-                                uint8_t **data, size_t *len) {
+static proven_err_t read_stream(proven_allocator_t alloc, const rp_cfb_t *cfb, uint32_t storage, const char *name, bool table,
+                                size_t max, uint8_t **data, size_t *len) {
     uint16_t packed[32];
     size_t pl;
     uint32_t id;
@@ -93,7 +93,7 @@ static proven_err_t read_stream(proven_allocator_t alloc, const rp_cfb_t *cfb, c
     *len = 0;
     proven_err_t err = rp_msi_stream_name(name, table, packed, &pl);
     if (err != PROVEN_OK) return err;
-    if (rp_cfb_find(cfb, 0, packed, pl, &id) != PROVEN_OK) return PROVEN_ERR_NOT_FOUND;
+    if (rp_cfb_find(cfb, storage, packed, pl, &id) != PROVEN_OK) return PROVEN_ERR_NOT_FOUND;
     if (cfb->entries[id].size > max) return PROVEN_ERR_OUT_OF_BOUNDS;
     size_t n = (size_t)cfb->entries[id].size;
     *data = rp_mem_alloc(alloc, n + 1, 1);
@@ -144,6 +144,7 @@ typedef struct {
     size_t               ntab, tabcap;
     ostream_t           *streams;
     size_t               nstream, streamcap;
+    bool                 files;
     const char          *why;
     char                *table;
     size_t               table_cap;
@@ -198,7 +199,7 @@ static proven_err_t add_binary(wctx_t *w, const otab_t *t, const rp_msi_cell_t *
     ostream_t *s = &w->streams[w->nstream];
     memset(s, 0, sizeof *s);
     if (!binary_name(t->name, t->cols, t->ncols, row, s->name, sizeof s->name)) return PROVEN_ERR_OUT_OF_BOUNDS;
-    proven_err_t err = read_stream(w->alloc, w->target->cfb, s->name, false, (size_t)w->limits->max_output, &s->data, &s->len);
+    proven_err_t err = read_stream(w->alloc, w->target->cfb, 0, s->name, false, (size_t)w->limits->max_output, &s->data, &s->len);
     if (err == PROVEN_OK) w->nstream++;
     return err;
 }
@@ -213,8 +214,8 @@ static bool same_binary(wctx_t *w, const char *table, const rp_msi_wcolumn_t *co
         *err = PROVEN_ERR_OUT_OF_BOUNDS;
         return false;
     }
-    *err = read_stream(w->alloc, w->base->cfb, name, false, (size_t)w->limits->max_output, &x, &xn);
-    if (*err == PROVEN_OK) *err = read_stream(w->alloc, w->target->cfb, name, false, (size_t)w->limits->max_output, &y, &yn);
+    *err = read_stream(w->alloc, w->base->cfb, 0, name, false, (size_t)w->limits->max_output, &x, &xn);
+    if (*err == PROVEN_OK) *err = read_stream(w->alloc, w->target->cfb, 0, name, false, (size_t)w->limits->max_output, &y, &yn);
     bool same = *err == PROVEN_OK && xn == yn && memcmp(x, y, xn) == 0;
     rp_mem_free(w->alloc, x);
     rp_mem_free(w->alloc, y);
@@ -276,8 +277,8 @@ static proven_err_t diff_table(wctx_t *w, const rp_msi_wtable_t *a, const rp_msi
             }
             record = mask != 0;
         }
-        if (err == PROVEN_OK && record && strcmp(b->name, "File") == 0) err = refuse(w, b->name, "changes files; a transform carries no files");
-        if (err == PROVEN_OK && record && strcmp(b->name, "Media") == 0) err = refuse(w, b->name, "changes the cabinets; a transform carries no files");
+        if (err == PROVEN_OK && record && !w->files && strcmp(b->name, "File") == 0) err = refuse(w, b->name, "changes files; a transform carries no files");
+        if (err == PROVEN_OK && record && !w->files && strcmp(b->name, "Media") == 0) err = refuse(w, b->name, "changes the cabinets; a transform carries no files");
         if (err == PROVEN_OK && record && o == NULL) {
             o = add_tab(w, b->name, b->columns, nc);
             if (o == NULL) err = PROVEN_ERR_NOMEM;
@@ -503,7 +504,7 @@ static proven_err_t summary(wctx_t *w, uint32_t flags, uint8_t **out, size_t *le
         }
         case 16:
             v.type = RP_VT_I4;
-            v.i = (int32_t)(flags << 16);    // checks in the high word, ignored errors (none) in the low
+            v.i = (int32_t)flags;     // checks in the high word, ignored errors in the low
             break;
         default:
             continue;
@@ -527,10 +528,11 @@ static const rp_msi_wcolumn_t columns_cols[] = {
 
 static rp_msi_cell_t cstr_cell(const char *s) { return (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) }; }
 
-proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, const rp_mst_side_t *target, uint32_t flags,
+proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, const rp_mst_side_t *target, const rp_mst_opts_t *opts,
                           const rp_limits_t *limits, uint8_t **out, size_t *len, const char **why, char *table, size_t table_cap) {
-    if (base == NULL || target == NULL || limits == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
-    wctx_t w = { .alloc = alloc, .limits = limits, .base = base, .target = target, .table = table, .table_cap = table_cap };
+    if (base == NULL || target == NULL || opts == NULL || limits == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
+    wctx_t w = { .alloc = alloc, .limits = limits, .base = base, .target = target, .files = opts->files, .table = table, .table_cap = table_cap };
+    uint32_t flags = opts->summary_flags;
     if (why) *why = NULL;
     if (table && table_cap) table[0] = '\0';
     const rp_msi_wdb_t *A = base->db, *B = target->db;
@@ -581,7 +583,7 @@ proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         if (ta) {
             err = diff_table(&w, ta, tb);
         } else if (tb->row_count > 0) {
-            if (strcmp(tb->name, "File") == 0 || strcmp(tb->name, "Media") == 0) {
+            if (!w.files && (strcmp(tb->name, "File") == 0 || strcmp(tb->name, "Media") == 0)) {
                 err = refuse(&w, tb->name, "changes files; a transform carries no files");
                 break;
             }
@@ -688,6 +690,7 @@ typedef struct {
 typedef struct {
     proven_allocator_t alloc;
     const rp_cfb_t    *mst;
+    uint32_t           storage;     // the transform's storage in mst
     const rp_limits_t *limits;
     uint8_t           *data;
     size_t             data_len;
@@ -819,7 +822,7 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
                 uint32_t id;
                 rp_buf_puts(out, "[stream ");
                 put_text(out, (const uint8_t *)sname, so < sizeof sname ? so : sizeof sname - 1);
-                if (rp_msi_stream_name(sname, false, packed, &pl) == PROVEN_OK && rp_cfb_find(l->mst, 0, packed, pl, &id) == PROVEN_OK) {
+                if (rp_msi_stream_name(sname, false, packed, &pl) == PROVEN_OK && rp_cfb_find(l->mst, l->storage, packed, pl, &id) == PROVEN_OK) {
                     rp_buf_puts(out, ", ");
                     rp_buf_long(out, (long long)l->mst->entries[id].size);
                     rp_buf_puts(out, " bytes]");
@@ -833,17 +836,17 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
     return PROVEN_OK;
 }
 
-proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, const rp_msi_wdb_t *base, const rp_limits_t *limits,
-                         rp_buf_t *out, const char **why) {
+proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t storage, const rp_msi_wdb_t *base,
+                         const rp_limits_t *limits, rp_buf_t *out, const char **why) {
     static const char *no = "";
     *why = no;
-    lctx_t l = { .alloc = alloc, .mst = mst, .limits = limits };
+    lctx_t l = { .alloc = alloc, .mst = mst, .storage = storage, .limits = limits };
     uint8_t *pool = NULL, *d = NULL;
     size_t pool_len = 0, dn = 0;
     uint32_t *ids = NULL;
     char (*tnames)[64] = NULL;
-    proven_err_t err = read_stream(alloc, mst, "_StringPool", true, limits->max_metadata, &pool, &pool_len);
-    if (err == PROVEN_OK) err = read_stream(alloc, mst, "_StringData", true, limits->max_metadata, &l.data, &l.data_len);
+    proven_err_t err = read_stream(alloc, mst, storage, "_StringPool", true, limits->max_metadata, &pool, &pool_len);
+    if (err == PROVEN_OK) err = read_stream(alloc, mst, storage, "_StringData", true, limits->max_metadata, &l.data, &l.data_len);
     if (err != PROVEN_OK || pool_len < 4) {
         *why = "no string pool: not a transform";
         err = PROVEN_ERR_INVALID_FORMAT;
@@ -873,13 +876,13 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, const rp
     }
     // The table streams: _Tables, _Columns, then the others by name.
     size_t count = 0, nt = 0;
-    if (err == PROVEN_OK) err = rp_cfb_children(mst, 0, NULL, 0, &count);
+    if (err == PROVEN_OK) err = rp_cfb_children(mst, storage, NULL, 0, &count);
     if (err == PROVEN_OK) {
         ids = rp_mem_alloc(alloc, count + 1, sizeof *ids);
         tnames = rp_mem_alloc(alloc, count + 1, sizeof *tnames);
         if (ids == NULL || tnames == NULL) err = PROVEN_ERR_NOMEM;
     }
-    if (err == PROVEN_OK) err = rp_cfb_children(mst, 0, ids, count, &count);
+    if (err == PROVEN_OK) err = rp_cfb_children(mst, storage, ids, count, &count);
     for (size_t i = 0; err == PROVEN_OK && i < count; ++i) {
         const rp_cfb_entry_t *e = &mst->entries[ids[i]];
         bool table = false;
@@ -911,7 +914,7 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, const rp
             err = PROVEN_ERR_INVALID_FORMAT;
             break;
         }
-        err = read_stream(alloc, mst, name, true, limits->max_metadata, &d, &dn);
+        err = read_stream(alloc, mst, storage, name, true, limits->max_metadata, &d, &dn);
         if (err == PROVEN_OK) err = list_table(&l, name, cols, ncols, d, dn, out, why);
         rp_mem_free(alloc, d);
         d = NULL;

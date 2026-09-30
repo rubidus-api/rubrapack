@@ -46,9 +46,10 @@ C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
 
 Install `hello-1.0.0.msi`, then `hello-1.1.0.msi`. Windows Installer sees that the new package has
 the same upgrade code and a higher version, removes 1.0.0 and installs 1.1.0 - one entry in
-Installed apps, now showing 1.1.0. This is called a *major upgrade*, and it is the only kind of
-upgrade rubrapack builds: every new version is a complete package, and nobody needs the old one to
-install the new one.
+Installed apps, now showing 1.1.0. This is called a *major upgrade*, and it is how rubrapack's packages
+upgrade: every new version is a complete package, and nobody needs the old one to install the new
+one. (A patch, [below](#small-fixes-as-a-patch-patch), updates an installed version in place
+instead.)
 
 Now try to install `hello-1.0.0.msi` again: Windows shows the downgrade message and changes
 nothing. Running `hello-1.1.0.msi` a second time is not an error either: it has the same product
@@ -128,6 +129,40 @@ hello-1.0.0.msi: 1 error, 1 warning (against hello-1.0.0.msi)
 
 Keep every released `.msi` (for example in a `releases` folder) so the next one can be checked
 against it.
+
+## Small fixes as a patch: `patch`
+
+A patch (`.msp`) updates an installed version in place: it carries only the files that changed,
+whole, and the table rows that differ, and Windows applies it without removing anything. A patch
+joins two builds of the *same product*, so they need the same product code - which rubrapack
+otherwise derives from the version:
+
+```text
+C:\work\hello> rubrapack patch hello-1.0.0.msi hello-1.1.0.msi -o hello-1.1.0.msp
+rubrapack: error[RP0013]: ProductCode differs: that is a major upgrade, which a patch does not carry
+```
+
+For the releases a patch will join, fix the product code in `[package]` (`rubrapack guid` prints a
+new one) and raise only the third number:
+
+```toml
+product-code = "{5B3E2A71-9C4D-4E8F-A1B2-C3D4E5F60718}"
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
+C:\work\hello> rubrapack build hello.toml -o hello-1.1.1.msi -D VERSION=1.1.1
+C:\work\hello> rubrapack patch hello-1.1.0.msi hello-1.1.1.msi -o hello-1.1.1.msp
+C:\work\hello> msiexec /p hello-1.1.1.msp
+```
+
+Computers with 1.1.0 installed apply the patch; new ones install `hello-1.1.1.msi`. A patch can be
+removed on its own, which brings the files and values of 1.1.0 back, unless it was made with
+`--no-removal`. Each patch has a patch code, derived from the two packages unless `--patch-code`
+gives one; `--family` names the line of patches it belongs to (the product name by default).
+`inspect hello-1.1.1.msp --base hello-1.1.0.msi` lists what the patch changes. A patch cannot
+remove files or components, change the product or upgrade code, or change the first two version
+numbers (`RP0013`); `sign` does not sign patches yet.
 
 ## Earlier versions made by another tool
 

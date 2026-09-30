@@ -150,6 +150,23 @@ per changed table, a stream per binary cell it adds or changes, and summary info
   upgrade code) and the errors to ignore (low word).
 - A transform cannot be read alone: its records carry no column types, which come from the base.
 
+## Patches (`.msp`)
+
+A patch is a compound file of class `{000C1086-0000-0000-C000-000000000046}`. Its root is a small
+database - `MsiPatchMetadata` (display name, classification, whether it can be removed) and
+`MsiPatchSequence` (its family and place in it) - with the cabinet of the files it carries as a
+stream, and transforms as **substorages** (storages inside the file, each holding a transform's
+streams). Summary information: 5 the source list, 7 the product codes it applies to, 8 the
+transform storages in the order they apply (`:RP1;:#RP1`), 9 the patch code, 15 the minimum
+Windows Installer (4 = version 3.0).
+
+- The first transform changes the product (every row that differs). Files already installed keep
+  their Sequence, so the cached package still finds them in its own cabinets.
+- The second (named with `#`) makes it a patch: the carried files get Sequence numbers in a range
+  of their own with attribute `0x1000`, a new Media row points to the patch's cabinet
+  (`#<stream>`), `PatchPackage` ties the patch code to that disk, and `PatchFiles` runs in the
+  execute sequences.
+
 ## IDT archive files (what `MsiDatabaseExport` writes)
 
 Useful as a reference output: a reader that exports byte-identical IDT files decodes the
