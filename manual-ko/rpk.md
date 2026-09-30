@@ -12,6 +12,9 @@ rubrapack 은 프로그램 파일 하나다. 릴리스 페이지에서 `rubrapac
 실행하거나 `PATH` 에 둔다. 따로 설치할 것은 없다: 런타임도, SDK 도, 라이브러리도 필요 없다. 같은 프로그램이
 Windows 에서도 Linux 에서도 같은 패키지를 만든다.
 
+이 절은 설치 파일을 아는 독자를 위한 짧은 판이다. **제1부 튜토리얼**은 같은 것을 처음부터 한 걸음씩 가르치고,
+모든 표와 옵션까지 나아간다: [시작하기 전에](tutorial/01-before-you-start.md)부터 읽는다.
+
 ### 첫 패키지
 
 배포할 것을 `dist/` 폴더에 둔다: 프로그램, 그리고 그것이 필요로 하는 파일은 `dist/files/` 에(하위 폴더도
@@ -133,60 +136,14 @@ target = "file:App"
 `msiexec /i app.msi /qn ADDLOCAL=Samples` 는 예제를 더하고, `REMOVE=Samples` 는 뺀다(`required` 는 트리에만
 적용되고 명령줄은 묶지 않는다). 나머지는 [기능(feature)](#기능feature)과 [조건: when](#조건-when)에 있다.
 
-### Windows 에서 시험하기
+### 나머지를 설명하는 곳
 
-```bat
-:: 대화창과 함께 설치
-msiexec /i app-1.0.0.msi
-:: 조용히 업그레이드(관리자로)
-msiexec /i app-1.0.1.msi /qn
-:: 제거
-msiexec /x app-1.0.1.msi
-:: 문제가 있을 때 전체 기록
-msiexec /i app-1.0.0.msi /l*v install.log
-```
-
-[명령줄로 설치하기](#명령줄로-설치하기)에 대화창 없이 기능, 폴더, 언어를 고르는 속성이 모여 있다.
-
-### 무언가 잘못됐을 때
-
-`rubrapack lint app.toml` 은 빌드가 하는 검사를 모두 하고 아무것도 쓰지 않는다. 모든 문제는 자리와 코드를,
-흔히 고칠 방법까지 알려 준다:
-
-```text
-app.toml:18:1: error[RP1201]: unknown key 'glb' in [files.Rest] (did you mean 'glob'?)
-app.toml:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ across all tables
-```
-
-패키지 안을 보려면: `rubrapack inspect app.msi File` 은 표를 글로 보이고, `rubrapack extract app.msi -d out` 은
-설치되는 모습대로 파일을 풀고, `rubrapack lint app-1.0.1.msi --previous app-1.0.0.msi` 는 새 판이 옛 판을
-깨끗하게 업그레이드하는지 본다. 종료 코드는 정해져 있다: 0 성공, 1 원본 오류, 2 사용법, 3 입출력, 4 서명,
-5 lint, 6 네트워크.
-
-### 자동화하기
-
-빌드는 원본 밖에 상태가 없는 명령 하나라서 어떤 스크립트나 CI 작업에도 맞는다. `--reproducible` 을 주면 같은
-원본은 어느 컴퓨터에서나 같은 바이트가 된다. Linux 러너에서:
-
-```sh
-V=0.7.0                                    # 쓸 릴리스
-curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
-chmod +x rubrapack
-./rubrapack lint app.toml
-./rubrapack build app.toml -o "app-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
-    --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
-```
-
-서명은 선택이다. 서명 없는 패키지라면 `--key` 부터 뒤를 뺀다. 토큰이나 Windows 인증서 저장소의 키는
-[명령줄](#명령줄)(`sign`, `--pkcs11`, `--key-store`)을 본다.
-
-### AI 도우미와 함께
-
-원본은 짧은 평문이고 모든 오류가 어디서 왜인지 말하므로, AI 코딩 도우미가 일 전체를 할 수 있다: 이 매뉴얼
-(또는 책, <https://rubidus-api.github.io/rubrapack/>)을 주고 무엇을 설치할지 말한다. 도우미는 `app.toml` 을
-쓰고, 깨끗해질 때까지 `rubrapack lint app.toml` 을 돌리고, 빌드하고, `inspect` 와 `extract` 로 결과를 확인하고,
-그 과정을 릴리스 스크립트나 위와 같은 CI 작업으로 만들 수 있다. 두 가지는 사람의 몫으로 남는다: 첫 판의
-업그레이드 코드를 간직하는 것, 그리고 내보내기 전에 한 번은 Windows 에 패키지를 설치해 보는 것.
+| 하려는 일 | 읽을 곳 |
+|---|---|
+| `msiexec` 로 설치, 업그레이드, 제거, 기록 남기기 | [첫 설치 파일](tutorial/02-a-first-installer.md), [판과 업그레이드](tutorial/03-versions-and-upgrades.md) |
+| 오류를 이해하고 패키지 안 보기(`lint`, `inspect`, `extract`, 종료 코드) | [검사하고 들여다보기](tutorial/18-checking-and-looking-inside.md), [진단 코드](#진단-코드) |
+| 패키지에 서명하기 | [서명과 타임스탬프](tutorial/16-signing.md) |
+| 스크립트나 CI 작업, 또는 AI 도우미로 빌드하기 | [빨리 시작하기와 자동화](tutorial/19-automation.md) |
 
 ## 예
 
