@@ -59,6 +59,36 @@ refuses to write a package that breaks any of these (diagnostics `RP2001`-`RP201
 - each `Upgrade.ActionProperty` is upper case (public) and listed in `SecureCustomProperties` -
   otherwise a per-machine install does not pass it to the server side.
 
+## Microsoft's ICE rules [observed]
+
+The Windows SDK's "MSI Tools" include MsiVal2 and `darice.cub`, the Internal Consistency Evaluators
+(ICEs) that Microsoft's own authoring tools run: `MsiVal2 package.msi darice.cub -f` prints what
+fails. They run only on Windows, and they go further than the checks above - they know the
+meaning of the tables, not only their shape. What they report for rubrapack's test packages
+(every source of its test suite, 39 packages), and why:
+
+- **ICE03, "Missing specifications in _Validation"** for every column: the `_Validation` table
+  describes each column for validators only; Windows Installer does not read it, and rubrapack
+  does not write it.
+- **ICE82**, duplicate sequence numbers: the language actions of a package with several dialog
+  languages share one number. They are independent set-property actions, so their order does not
+  matter.
+- **ICE34**, the language page's radio property has no `Property` row: on purpose, because the
+  command line (`RPLANGUAGE=ko`) must win over the detection, which only runs `NOT RPLANGUAGE`.
+- **ICE43 and ICE57**, a non-advertised shortcut in a component whose key path is a file: they
+  assume shortcut folders are per user. In a per-machine package (`ALLUSERS=1`) the Start menu and
+  desktop are the all-users folders, and a per-user or dual package installs once per user, so
+  the "first user only" problem these ICEs guard against does not arise.
+- **ICE52**, a private property in `AppSearch` (`RpFound_<ID>`, a remembered folder): private on
+  purpose, so the command line cannot set it; `AppSearch` runs in both sequences, so it needs no
+  passing to the server side.
+
+Three findings were real and are fixed (0.4.3): the finished, cancelled and failed pages were
+missing from `AdminUISequence`, so an administrative installation (`msiexec /a`) with the full UI
+ended without them (ICE20); a component whose key path is its folder (an INI entry, a `[remove]`)
+was not listed in `CreateFolder` (ICE18); and a package with dialogs had no `ControlCondition`
+table, which ICE17 reads for every dialog (it stopped with error 2228 instead of checking).
+
 ## Things that look fine but are not
 
 - An `msi.dll`-made database is not a complete specification: `msi.dll` stores 65001 summary

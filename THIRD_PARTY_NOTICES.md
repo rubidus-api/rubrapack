@@ -88,6 +88,19 @@ against Windows.
   description of a method is made first, and the implementation is written from that
   description alone. No code, names, or comments are taken from them.
 
-Code ported from lowent_lang (MIT, same author) is marked in the source file header
-and listed here when it lands. Planned ports: DER, X.509, big integers, RSA verification,
-P-256/P-384, ECDSA, HMAC, SHA-512, AES, GCM/AEAD, X25519, TLS 1.3 client.
+## Code from the same author's other projects
+
+Parts of the cryptography follow lowent_lang v1.3.0 (MIT License, same author and copyright
+holder); each file says so in its header:
+
+- `src/crypto/ecdsa.c` - ported from `lib/ecdsa.low` and `lib/p256.low` (deterministic nonces,
+  P-256/P-384).
+- `src/crypto/hash.c`, `include/rubrapack/crypto.h` - SHA-384/512 constants and block function
+  ported from lowent_lang; SHA-256 is proven_c_lib's.
+- `src/crypto/bn.c` (Montgomery arithmetic), `src/crypto/x509.c`, `include/rubrapack/der.h`
+  (DER reading rules), `src/net/tls.c` (TLS 1.3 client structure) - written on the design of the
+  corresponding lowent_lang modules.
+- `src/crypto/rsa.c` - verification written anew; lowent_lang has the same algorithm.
+
+AES, GCM, HMAC, X25519, PKCS#8/#12 and the signing code are new. `src/crypto/x25519.c` uses the
+field representation of the public-domain TweetNaCl design (no code copied).

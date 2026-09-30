@@ -97,7 +97,7 @@ app.rpk:25:1: error[RP1301]: ID 'App' is already used (line 17); IDs must differ
 원본은 어느 컴퓨터에서나 같은 바이트가 된다. Linux 러너에서:
 
 ```sh
-V=0.4.2                                    # 쓸 릴리스
+V=0.4.3                                    # 쓸 릴리스
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint app.rpk

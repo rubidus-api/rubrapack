@@ -862,6 +862,7 @@ static void lower_removes(pkg_t *pk) {
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, r->dir));
         i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
+        s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey);     // its key path is the folder (ICE18)
         s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); s_(&pk->removefile, r->name); s_(&pk->removefile, dkey(ir, r->dir));
         i_(&pk->removefile, r->mode);
     }
@@ -911,6 +912,7 @@ static void lower_ini(pkg_t *pk) {
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->dir));
         i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); s_(&pk->component, x->when); null_(&pk->component);
         s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, ckey);
+        s_(&pk->createfolder, dkey(ir, x->dir)); s_(&pk->createfolder, ckey);     // its key path is the folder (ICE18)
         const char *shortn = dirs->ini_short[i];
         const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
         rows_t *t = x->mode == 2 ? &pk->removeini : &pk->inifile;
@@ -1451,6 +1453,10 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     }
     for (size_t i = 0; pk->ui && i < pk->ui->seq_count; ++i) {
         s_(&pk->iui, pk->ui->seqs[i].action); s_(&pk->iui, pk->ui->seqs[i].condition); i_(&pk->iui, pk->ui->seqs[i].sequence);
+        // The finished, cancelled and failed pages end an administrative installation too (ICE20).
+        if (pk->ui->seqs[i].sequence < 0) {
+            s_(&pk->aui, pk->ui->seqs[i].action); s_(&pk->aui, pk->ui->seqs[i].condition); i_(&pk->aui, pk->ui->seqs[i].sequence);
+        }
     }
     for (size_t i = 0; pk->ui && i < pk->ui->ca_count; ++i) {       // RFC-0012: set-property actions
         s_(&pk->customaction, pk->ui->cas[i].action); i_(&pk->customaction, 51); s_(&pk->customaction, pk->ui->cas[i].source);

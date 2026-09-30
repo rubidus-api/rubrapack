@@ -1198,8 +1198,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     for (size_t i = 0; i < 11; ++i) {
         rows_t *r = all[i];
         // FilesInUse fills its ListBox from the ListBox table, which must exist even when empty
-        // (error 2205 otherwise, and the dialog is skipped: observed).
-        if (r->filled == 0 && r != &c->listbox) continue;
+        // (error 2205 otherwise, and the dialog is skipped: observed). ControlCondition is kept
+        // when empty too: ICE17 reads it for every dialog and stops with 2228 without it.
+        if (r->filled == 0 && r != &c->listbox && r != &c->condition) continue;
         tables[nt++] = (rp_msi_wtable_t){ r->name, r->cols, r->ncols, r->cells, r->filled / r->ncols };
     }
     ui->tables = tables;

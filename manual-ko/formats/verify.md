@@ -55,6 +55,30 @@ Windows Installer API(`msi.dll`)만 있으면 된다. SDK 도구는 필요 없�
 - `Upgrade.ActionProperty` 는 저마다 대문자(공개)이고 `SecureCustomProperties` 에 있다 - 그렇지 않으면
   컴퓨터 전체 설치가 그것을 서버 쪽에 넘기지 않는다.
 
+## Microsoft 의 ICE 규칙 [관찰]
+
+Windows SDK 의 "MSI Tools" 에는 MsiVal2 와 `darice.cub` 가 들어 있다. Microsoft 의 작성 도구들이 돌리는 내부
+일관성 검사기(ICE)다: `MsiVal2 package.msi darice.cub -f` 가 실패한 것을 찍는다. Windows 에서만 돌고, 위의
+검사보다 한 걸음 더 간다 - 표의 모양만이 아니라 뜻을 안다. rubrapack 의 시험 패키지(시험에 쓰는 모든 원본,
+39개)에서 나오는 것과 그 까닭:
+
+- **ICE03, "Missing specifications in _Validation"** 이 모든 열에: `_Validation` 표는 검사기만을 위해 열을
+  설명한다. Windows Installer 는 읽지 않고, rubrapack 은 쓰지 않는다.
+- **ICE82**, 겹친 순서 번호: 대화창 언어가 여럿인 패키지의 언어 동작들이 번호 하나를 함께 쓴다. 서로 무관한
+  속성 설정 동작이라 순서가 상관없다.
+- **ICE34**, 언어 페이지 라디오 속성에 `Property` 행이 없다: 일부러다. 명령줄(`RPLANGUAGE=ko`)이 감지보다
+  이겨야 하고, 감지는 `NOT RPLANGUAGE` 일 때만 돈다.
+- **ICE43, ICE57**, 파일을 키 경로로 쓰는 컴포넌트의 광고되지 않은 바로가기: 이 규칙들은 바로가기 폴더를
+  사용자별로 가정한다. 컴퓨터 전체 패키지(`ALLUSERS=1`)에서 시작 메뉴와 바탕화면은 모든 사용자 폴더이고,
+  사용자별·겸용 패키지는 사용자마다 따로 설치되므로, 이 규칙이 막으려는 "첫 사용자만" 문제는 생기지 않는다.
+- **ICE52**, `AppSearch` 의 비공개 속성(`RpFound_<ID>`, 기억하는 폴더): 명령줄이 정하지 못하게 일부러
+  비공개다. `AppSearch` 는 두 순서에서 모두 돌므로 서버 쪽에 넘길 필요가 없다.
+
+셋은 진짜 결함이었고 고쳤다(0.4.3): 완료·취소·실패 페이지가 `AdminUISequence` 에 없어 전체 UI 의 관리
+설치(`msiexec /a`)가 그 페이지 없이 끝났다(ICE20). 폴더를 키 경로로 쓰는 컴포넌트(INI 항목, `[remove]`)가
+`CreateFolder` 에 없었다(ICE18). 대화창이 있는 패키지에 `ControlCondition` 표가 없었는데, ICE17 은 대화창마다
+이 표를 읽는다(검사 대신 오류 2228 로 멈췄다).
+
 ## 멀쩡해 보이지만 아닌 것
 
 - `msi.dll` 이 만든 데이터베이스가 완전한 명세는 아니다: `msi.dll` 은 65001 요약 문자열을 제대로 저장하고도

@@ -102,7 +102,7 @@ A build is one command with no state outside the source, so it fits any script o
 `--reproducible` the same source gives the same bytes on every machine. On a Linux runner:
 
 ```sh
-V=0.4.2                                    # the release to use
+V=0.4.3                                    # the release to use
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint app.rpk

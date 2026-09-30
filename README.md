@@ -1,4 +1,4 @@
-[한국어](README-ko.md) | **English** — **rubrapack v0.4.2** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.2/rubrapack-0.4.2-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.2/rubrapack-0.4.2-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.2/rubrapack-manual-0.4.2-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.2/rubrapack-manual-0.4.2-en.pdf)
+[한국어](README-ko.md) | **English** — **rubrapack v0.4.3** — [Linux(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-0.4.3-linux-x86_64) · [EXE(x64)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-0.4.3-windows-x64.exe) · [PDF(ko)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-manual-0.4.3-ko.pdf) · [PDF(en)](https://github.com/rubidus-api/rubrapack/releases/download/v0.4.3/rubrapack-manual-0.4.3-en.pdf)
 
 # rubrapack
 
@@ -103,7 +103,7 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Status
 
-Version 0.4.2. Every feature above is covered by tests on Linux and by
+Version 0.4.3. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is
