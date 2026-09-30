@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 Running your program during installation - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 13 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-12-services-fonts-permissions.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="rpk.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-13-running-your-program.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#why-not-just-run-a-program"><span class="tf-no">13.1</span>Why not just run a program?</a><a class="lv3" href="#the-source"><span class="tf-no">13.2</span>The source</a><a class="lv3" href="#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="#what-happens-when"><span class="tf-no">13.4</span>What happens when</a><a class="lv3" href="#try-it"><span class="tf-no">13.5</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">13.6</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">13 Running your program during installation</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#why-not-just-run-a-program"><span class="tf-no">13.1</span>Why not just run a program?</a><a class="lv3" href="#the-source"><span class="tf-no">13.2</span>The source</a><a class="lv3" href="#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="#what-happens-when"><span class="tf-no">13.4</span>What happens when</a><a class="lv3" href="#try-it"><span class="tf-no">13.5</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">13.6</span>What happened inside</a></div></div>
+<p>Goal: after its files are in place, run <code>hello.exe --register</code> so that Hello can register itself somewhere (with another program, a plug-in host, the system); before removal, run <code>hello.exe --unregister</code>. And if anything fails, undo it all.</p>
+<h3 id="why-not-just-run-a-program">13.1 Why not just run a program?<a class="plink" href="#why-not-just-run-a-program" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An installation is a transaction: if step 40 fails, Windows Installer undoes steps 1 to 39 and the computer is as before. A program you run is outside that - Windows cannot know how to undo what it did. So rubrapack asks you for <em>two</em> commands, one that does and one that undoes, and arranges that the right one runs whichever way things go.</p>
+<h3 id="the-source">13.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 13: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.11.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[action.Register]
+run = "file:Hello"
+do = "--register"
+undo = "--unregister"</code></pre>
+<h3 id="actionid">13.3 <code>[action.ID]</code><a class="plink" href="#actionid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table><tr><th>Key</th><th>Meaning</th></tr><tr><td><code>run</code></td><td>the program: <code>file:</code> and the ID of an <code>.exe</code> this package installs</td></tr><tr><td><code>do</code></td><td>its arguments after installation - and again on a repair</td></tr><tr><td><code>undo</code></td><td>its arguments at removal, before the files are removed</td></tr><tr><td><code>check</code></td><td>accepted, but not used by this version of rubrapack</td></tr></table></div>
+<p>The arguments are passed as written: they are <em>not</em> formatted strings, so <code>[INSTALLDIR]</code> would arrive as the text <code>[INSTALLDIR]</code>. The program knows where it is (its own path), which is usually all it needs.</p>
+<p>Both commands:</p>
+<ul><li>must finish without asking anything: they run without a window, and nobody is there to answer;</li><li>must be safe to run twice (register when already registered: fine);</li><li>report failure by exiting with a non-zero code - which fails and rolls back the installation.</li></ul>
+<p>In a per-machine package they run with the installer's administrator rights; in a per-user package, as the user.</p>
+<h3 id="what-happens-when">13.4 What happens when<a class="plink" href="#what-happens-when" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table><tr><th>Situation</th><th>Runs</th></tr><tr><td>first installation</td><td><code>do</code> after the files are installed</td></tr><tr><td>repair</td><td><code>do</code> again</td></tr><tr><td>removal</td><td><code>undo</code>, then the files go</td></tr><tr><td>upgrade to a new version</td><td>the old version's <code>undo</code> (its removal), then the new version's <code>do</code></td></tr><tr><td>installation fails after <code>do</code> ran</td><td><code>undo</code>, as part of the rollback</td></tr><tr><td>removal fails after <code>undo</code> ran</td><td><code>do</code>, and the files come back</td></tr></table></div>
+<h3 id="try-it">13.5 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A real program for this reads its arguments and, for example, writes a registry value or calls a registration interface. To watch the order, make <code>hello.exe</code> write its arguments into a log file, install, repair and remove, and read the log.</p>
+<h3 id="what-happened-inside">13.6 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi CustomAction
+RP_Register_Do	3090	Hello	--register
+RP_Register_DoRollback	3410	Hello	--unregister
+RP_Register_RedoRollback	3410	Hello	--register
+RP_Register_Undo	3090	Hello	--unregister
+RP_Register_UndoRollback	3410	Hello	--register</code></pre>
+<p>Five <em>custom actions</em>. The type numbers are bit flags added together: 18 ("run an <code>.exe</code> installed by this package") + 1024 ("deferred": runs in the installation script, in order with the file copying) + 2048 ("no impersonation": with the installer's rights) = 3090; the rollback twins add 256 ("run only while rolling back") and 64 ("ignore the exit code"). The <code>InstallExecuteSequence</code> places them around the file actions, each with a condition on the state of <code>hello.exe</code>'s component:</p>
+<pre><code class="lang-text">RP_Register_UndoRollback	$C_185f...=2 AND ?C_185f...=3	3400
+RP_Register_Undo	$C_185f...=2 AND ?C_185f...=3	3401
+RemoveFiles		3500
+InstallFiles		4000
+RP_Register_DoRollback	$C_185f...&gt;2 AND ?C_185f...&lt;&gt;3	4001
+RP_Register_RedoRollback	$C_185f...&gt;2 AND ?C_185f...=3	4002
+RP_Register_Do	$C_185f...&gt;2	4003</code></pre>
+<p><code>$C</code> is the state the component is going to (2 absent, 3 installed), <code>?C</code> the state it is in now. "Going away while installed" runs undo; "coming" runs do.</p>
+<div class="nav"><a href="tutorial-12-services-fonts-permissions.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="rpk.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

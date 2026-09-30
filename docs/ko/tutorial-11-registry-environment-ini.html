@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 레지스트리, 환경 변수, INI 파일, 파일 형식과 링크 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">11장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-10-scope-and-guard.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="tutorial-12-services-fonts-permissions.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-11-registry-environment-ini.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#2분-만에-보는-레지스트리"><span class="tf-no">11.1</span>2분 만에 보는 레지스트리</a><a class="lv3" href="#원본"><span class="tf-no">11.2</span>원본</a><a class="lv3" href="#레지스트리-값-registryid"><span class="tf-no">11.3</span>레지스트리 값: [registry.ID]</a><a class="lv3" href="#환경-변수-envid"><span class="tf-no">11.4</span>환경 변수: [env.ID]</a><a class="lv3" href="#ini-파일-iniid"><span class="tf-no">11.5</span>INI 파일: [ini.ID]</a><a class="lv3" href="#파일-형식-associd"><span class="tf-no">11.6</span>파일 형식: [assoc.ID]</a><a class="lv3" href="#링크-protocolid"><span class="tf-no">11.7</span>링크: [protocol.ID]</a><a class="lv3" href="#해-보기"><span class="tf-no">11.8</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">11.9</span>안에서 무슨 일이 일어났나</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">11 레지스트리, 환경 변수, INI 파일, 파일 형식과 링크</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#2분-만에-보는-레지스트리"><span class="tf-no">11.1</span>2분 만에 보는 레지스트리</a><a class="lv3" href="#원본"><span class="tf-no">11.2</span>원본</a><a class="lv3" href="#레지스트리-값-registryid"><span class="tf-no">11.3</span>레지스트리 값: [registry.ID]</a><a class="lv3" href="#환경-변수-envid"><span class="tf-no">11.4</span>환경 변수: [env.ID]</a><a class="lv3" href="#ini-파일-iniid"><span class="tf-no">11.5</span>INI 파일: [ini.ID]</a><a class="lv3" href="#파일-형식-associd"><span class="tf-no">11.6</span>파일 형식: [assoc.ID]</a><a class="lv3" href="#링크-protocolid"><span class="tf-no">11.7</span>링크: [protocol.ID]</a><a class="lv3" href="#해-보기"><span class="tf-no">11.8</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">11.9</span>안에서 무슨 일이 일어났나</a></div></div>
+<p>목표: 다른 프로그램이 찾는 설정을 Hello 에 준다 - 모든 형식의 레지스트리 값, 환경 변수, INI 파일의 한 줄 - 그리고 Windows 가 <code>.hello</code> 파일과 <code>hello:</code> 링크를 Hello 로 열게 한다.</p>
+<h3 id="2분-만에-보는-레지스트리">11.1 2분 만에 보는 레지스트리<a class="plink" href="#2분-만에-보는-레지스트리" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>Windows *레지스트리*는 폴더처럼 짜인 설정 데이터베이스다: *키*는 다른 키와 *값*을 담고, 값에는 이름, 형식, 데이터가 있다. 맨 위 키("루트")는:</p>
+<div class="tblwrap"><table><tr><th>루트</th><th>담는 것</th></tr><tr><td><code>HKLM</code>(HKEY_LOCAL_MACHINE)</td><td>컴퓨터 전체의 설정; 쓰려면 관리자 권한이 필요하다</td></tr><tr><td><code>HKCU</code>(HKEY_CURRENT_USER)</td><td>지금 사용자의 설정</td></tr><tr><td><code>HKCR</code>(HKEY_CLASSES_ROOT)</td><td>파일 형식과 링크(둘을 합쳐 보인 것)</td></tr><tr><td><code>HKMU</code></td><td>rubrapack(과 Windows Installer)의 "모든 사용자용이면 HKLM, 한 사용자용이면 HKCU"</td></tr></table></div>
+<p>Windows 에서 <code>regedit</code> 를 실행하면 둘러볼 수 있다(모르는 것은 바꾸지 않는다).</p>
+<h3 id="원본">11.2 원본<a class="plink" href="#원본" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-toml"># tutorial 11: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.9.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Settings]
+dir = "INSTALLDIR"
+source = "dist/settings.ini"
+
+[registry.InstallDir]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "InstallDir"
+value = "[INSTALLDIR]"
+
+[registry.Greeting]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Greeting"
+value = "Hello, world"
+with = "file:Hello"
+
+[registry.Runs]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "MaxRuns"
+type = "dword"
+value = 100
+
+[registry.BigNumber]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Limit"
+type = "qword"
+value = "0x100000000"
+
+[registry.Colors]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Colors"
+type = "multi"
+value = ["red", "green", "blue"]
+
+[registry.LogPath]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "LogPath"
+type = "expand"
+value = "%TEMP%\\hello.log"
+
+[registry.Legacy32]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Mode"
+value = "compatible"
+view = "32"
+
+[registry.OldKey]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello Old'
+remove = true
+
+[registry.UserChoice]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "FirstRun"
+type = "dword"
+value = 1
+keep = true
+
+[env.HelloHome]
+name = "HELLO_HOME"
+value = "[INSTALLDIR]"
+
+[env.Path]
+name = "PATH"
+value = "[INSTALLDIR]"
+mode = "append"
+
+[ini.InstalledVersion]
+dir = "INSTALLDIR"
+file = "settings.ini"
+section = "hello"
+key = "installed"
+value = "[ProductVersion]"
+
+[ini.Plugins]
+dir = "INSTALLDIR"
+file = "settings.ini"
+section = "hello"
+key = "plugins"
+value = "core"
+mode = "add"
+
+[assoc.HelloDoc]
+extension = ".hello"
+prog-id = "Example.HelloDocument"
+description = "Hello document"
+target = "file:Hello"
+icon = "file:Hello"
+args = "--open \"%1\""
+
+[protocol.HelloLink]
+name = "hello"
+description = "Hello link"
+target = "file:Hello"</code></pre>
+<p>TOML 메모: *작은*따옴표 문자열은 쓴 그대로 쓰이므로 <code>'SOFTWARE\Example Software\Hello'</code> 에는 백슬래시를 겹쳐 쓸 필요가 없다. 큰따옴표 안에서는 백슬래시가 이스케이프를 시작한다(<code>"%TEMP%\\hello.log"</code>).</p>
+<h3 id="레지스트리-값-registryid">11.3 레지스트리 값: <code>[registry.ID]</code><a class="plink" href="#레지스트리-값-registryid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table class="key"><tr><th><code>type</code></th><th>TOML 값</th><th>레지스트리 형식</th></tr><tr><td><code>string</code>(기본)</td><td>문자열</td><td>REG_SZ</td></tr><tr><td><code>expand</code></td><td><code>%변수%</code> 가 든 문자열</td><td>REG_EXPAND_SZ - 값을 읽을 때 Windows 가 <code>%TEMP%</code> 를 펼친다</td></tr><tr><td><code>dword</code></td><td>정수 0 .. 4294967295</td><td>REG_DWORD, 32비트</td></tr><tr><td><code>qword</code></td><td>정수, 또는 <code>"0x"</code> 와 16진수 16자리까지</td><td>REG_QWORD, 64비트</td></tr><tr><td><code>binary</code></td><td>16진수, <code>"01ff"</code></td><td>REG_BINARY</td></tr><tr><td><code>multi</code></td><td>문자열 배열</td><td>REG_MULTI_SZ</td></tr></table></div>
+<ul><li><code>name</code> 이 없으면: 키의 기본값(regedit 에서 "(기본값)").</li><li><code>value</code> 는 서식 문자열이다: <code>[INSTALLDIR]</code> 은 설치 폴더, <code>[#Hello]</code> 는 파일 <code>Hello</code> 의 경로가 된다.</li><li>모든 값은 제품과 함께 다시 지워진다. <code>keep = true</code> 는 남긴다(여기서는 프로그램이 바꿀 수 있는 <code>FirstRun</code>).</li><li><code>with = "file:Hello"</code> 는 값을 그 파일에 묶는다: 파일과 함께 설치되고 지워진다(<code>Greeting</code>).</li><li><code>view = "32"</code>: 64비트 Windows 는 32비트 프로그램을 위한 레지스트리를 따로 둔다. <code>SOFTWARE\Example Software\Hello</code> 를 읽는 32비트 프로그램은 그쪽을 본다. x64 패키지의 값은 <code>view = "32"</code> 가 아니면 64비트 쪽으로 간다.</li><li><code>remove = true</code> 는 설치하는 동안 <code>name</code> 이 가리키는 값을 - <code>name</code> 이 없으면 키 전체를 - 지운다(<code>OldKey</code>: 옛 판이 남긴 것).</li></ul>
+<p>Windows Installer 는 REG_QWORD 를 스스로 쓰지 못한다. <code>qword</code> 값을 위해 rubrapack 은 작은 도우미 DLL 을 패키지에 더하고, 이것이 값을 쓰고 설치가 실패하면 이전 값을 되돌린다.</p>
+<h3 id="환경-변수-envid">11.4 환경 변수: <code>[env.ID]</code><a class="plink" href="#환경-변수-envid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>컴퓨터 전체의 변수(사용자별 설치에서는 사용자의 것)다. <code>mode = "set"</code>(기본)은 정하고, <code>append</code> 는 있는 것의 끝에 <code>;값</code> 을, <code>prepend</code> 는 앞에 <code>값;</code> 을 더한다. 제품을 지우면 정확히 그만큼 되돌린다: <code>HELLO_HOME</code> 은 지워지고, <code>PATH</code> 에서는 <code>;C:\Program Files\Hello\</code> 만 빠진다. <code>keep = true</code> 는 남긴다. 설치 뒤에 시작한 프로그램이 바뀐 것을 본다(이미 열려 있던 터미널은 못 본다).</p>
+<h3 id="ini-파일-iniid">11.5 INI 파일: <code>[ini.ID]</code><a class="plink" href="#ini-파일-iniid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>INI 파일은 <code>[섹션]</code> 과 <code>키=값</code> 줄로 된 글 파일이다. <code>mode = "set"</code>(기본)은 섹션에 <code>키=값</code> 을 쓰고, <code>add</code> 는 값을 쉼표로 나눈 목록에 더하고(<code>plugins=core</code>, 또는 <code>plugins=extra</code> 가 있었다면 <code>plugins=extra,core</code>), <code>remove</code> 는 키를 지운다 - 파일을 설치하기 전에 하므로 옛 판이 남긴 INI 파일을 치운다. 제거는 <code>set</code> 과 <code>add</code> 가 쓴 것을 빼낸다. <code>file</code> 은 <code>dir</code> 안의 파일 이름이며, 패키지가 설치하는 파일이 아니어도 된다.</p>
+<p>설치 뒤 <code>settings.ini</code> 는:</p>
+<pre><code class="lang-text">[hello]
+greeting=Hello
+installed=1.9.0
+plugins=core</code></pre>
+<h3 id="파일-형식-associd">11.6 파일 형식: <code>[assoc.ID]</code><a class="plink" href="#파일-형식-associd" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><code>[assoc.HelloDoc]</code> 는 Windows 가 <code>.hello</code> 파일을 Hello 로 열게 한다:</p>
+<ul><li><code>extension</code> 은 점을 포함한 소문자 파일 끝이다.</li><li><code>prog-id</code> 는 문서 종류의 이름이다(<code>회사.종류</code>). 여러 확장자가 하나를 함께 쓸 수 있다.</li><li><code>description</code> 은 탐색기가 그 형식을 부르는 이름("Hello document")이다.</li><li><code>target</code> 은 프로그램, <code>args</code> 는 인자다(<code>"%1"</code> 은 파일 경로이며 기본값이다).</li><li><code>icon</code>(<code>file:ID</code>)은 문서가 보일 첫 아이콘을 가진 파일이다.</li></ul>
+<p>사용자가 <code>.hello</code> 에 이미 다른 프로그램을 골라 두었다면 Windows 는 그 선택을 지킨다.</p>
+<h3 id="링크-protocolid">11.7 링크: <code>[protocol.ID]</code><a class="plink" href="#링크-protocolid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p><code>[protocol.HelloLink]</code> 는 <code>hello:</code> 방식을 등록한다. 브라우저나 실행 상자의 <code>hello:world</code> 링크가 링크 전체를 인자로 Hello 를 시작한다.</p>
+<h3 id="해-보기">11.8 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>설치한 뒤:</p>
+<ul><li><code>regedit</code>: <code>HKEY_LOCAL_MACHINE\SOFTWARE\Example Software\Hello</code> 에 값들이 있고, <code>...\WOW6432Node\Example Software\Hello</code> 에 <code>Mode</code>(32비트 쪽)가 있다.</li><li>새 터미널: <code>echo %HELLO_HOME%</code> 과 <code>echo %PATH%</code>.</li><li><code>C:\Program Files\Hello\settings.ini</code>: 새 두 줄.</li><li>바탕화면의 <code>test.hello</code> 파일이 Hello 로 열리고, Win+R 에 <code>hello:world</code>, Enter 로 Hello 가 시작된다.</li></ul>
+<p>Hello 를 지우면 <code>FirstRun</code> 말고는 모두 사라진다.</p>
+<h3 id="안에서-무슨-일이-일어났나">11.9 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Registry
+...
+Colors	2	SOFTWARE\Example Software\Hello	Colors	[~]red[~]green[~]blue[~]	C_f023...
+Greeting	2	SOFTWARE\Example Software\Hello	Greeting	Hello, world	C_185f...
+HelloDoc.Ext	0	.hello		Example.HelloDocument	C_185f...
+LogPath	2	SOFTWARE\Example Software\Hello	LogPath	#%%TEMP%\hello.log	C_2e80...
+Runs	2	SOFTWARE\Example Software\Hello	MaxRuns	#100	C_97ef...
+...</code></pre>
+<p>둘째 열은 루트다(0 HKCR, 1 HKCU, 2 HKLM, -1 HKMU). 값 열은 Windows Installer 가 원하는 대로 첫 글자에 형식을 싣는다: <code>#100</code> 은 DWORD, <code>#%</code> 는 펼치는 문자열, <code>[~]</code> 는 여러 문자열을 가르고, <code>#x</code> 는 이진 데이터를 시작한다. 파일 형식과 링크는 프로그램 컴포넌트 안의 HKCR 아래 레지스트리 값일 뿐이다. QWORD 값은 이 표에 없다: 도우미 DLL 을 위한 속성 <code>RP_QWORDS</code> 에 실려 간다. 환경 변수는 <code>Environment</code> 표에 있다:</p>
+<pre><code class="lang-text">HelloHome	=-*HELLO_HOME	[INSTALLDIR]	C_0fa9...
+Path	=-*PATH	[~];[INSTALLDIR]	C_82df...</code></pre>
+<p>이름에서 <code>=</code> 는 "정하기", <code>-</code> 는 "제거 때 지우기", <code>*</code> 는 "시스템 변수"다. 값의 <code>[~]</code> 는 원래 있던 것을 뜻한다.</p>
+<div class="nav"><a href="tutorial-10-scope-and-guard.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="tutorial-12-services-fonts-permissions.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

@@ -364,7 +364,8 @@ rubrapack turns the pair into deferred, elevated actions with their rollback twi
 upgrade are all-or-nothing: if anything fails later (or `do`/`undo` itself exits non-zero), the
 files come back and the other command restores the registration. Both commands must be safe to run
 twice and must finish without asking anything - they run without a window, and nothing waits for a
-user. `check` names an optional command that exits 0 when the registration is in place.
+user. The arguments are passed as written (they are not formatted strings). `check` is accepted
+but not used by this version.
 
 ### Registry values: `[registry.ID]`
 

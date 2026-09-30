@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 설치하는 동안 내 프로그램 실행하기 - rubrapack 매뉴얼</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">본문으로 건너뛰기</a>
+<div class="bar"><strong><a href="index.html">rubrapack 매뉴얼</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">13장 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-12-services-fonts-permissions.html" title="이전" aria-label="이전">&larr;</a><a href="index.html" title="목차로" aria-label="목차로">&uarr;</a><a href="rpk.html" title="다음" aria-label="다음">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; 설정</button><a class="tool" href="toc.html">&#9636; 상세 차례</a><a class="tool" href="../en/tutorial-13-running-your-program.html">En</a><a class="tool" href="../rubrapack-manual-ko.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack 의 GitHub 저장소">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - 공개된 모든 프로젝트">&#8962; 전체 사이트</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - 모든 저장소">&#8801; 저장소 목록</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>가로폭 제한</span></label><div class="setrow"><span class="setlbl">테마</span><span class="seg"><button type="button" class="segb" data-theme="auto">시스템</button><button type="button" class="segb" data-theme="light">밝게</button><button type="button" class="segb" data-theme="dark">어둡게</button></span></div><div class="setrow"><span class="setlbl">색</span><label class="col"><span>글자</span><input type="color" id="s-fg"></label><label class="col"><span>배경</span><input type="color" id="s-bg"></label><label class="col"><span>링크</span><input type="color" id="s-link"></label></div><p class="setnote">설정은 이 브라우저에만 저장된다.</p></div><div class="here-head"><strong>이 장의 차례</strong></div><div class="here-body"><a class="lv3" href="#왜-그냥-프로그램을-실행하면-안-되나"><span class="tf-no">13.1</span>왜 그냥 프로그램을 실행하면 안 되나?</a><a class="lv3" href="#원본"><span class="tf-no">13.2</span>원본</a><a class="lv3" href="#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="#무엇이-언제-도나"><span class="tf-no">13.4</span>무엇이 언제 도나</a><a class="lv3" href="#해-보기"><span class="tf-no">13.5</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">13.6</span>안에서 무슨 일이 일어났나</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">13 설치하는 동안 내 프로그램 실행하기</h2>
+<div class="chapter-toc"><div class="rail-label">이 장의 차례</div><div class="rail-body"><a class="lv3" href="#왜-그냥-프로그램을-실행하면-안-되나"><span class="tf-no">13.1</span>왜 그냥 프로그램을 실행하면 안 되나?</a><a class="lv3" href="#원본"><span class="tf-no">13.2</span>원본</a><a class="lv3" href="#actionid"><span class="tf-no">13.3</span>[action.ID]</a><a class="lv3" href="#무엇이-언제-도나"><span class="tf-no">13.4</span>무엇이 언제 도나</a><a class="lv3" href="#해-보기"><span class="tf-no">13.5</span>해 보기</a><a class="lv3" href="#안에서-무슨-일이-일어났나"><span class="tf-no">13.6</span>안에서 무슨 일이 일어났나</a></div></div>
+<p>목표: 파일이 자리 잡은 뒤 <code>hello.exe --register</code> 를 실행해 Hello 가 어딘가(다른 프로그램, 플러그인 호스트, 시스템)에 자신을 등록하게 하고, 제거하기 전에는 <code>hello.exe --unregister</code> 를 실행한다. 그리고 무언가 실패하면 모두 되돌린다.</p>
+<h3 id="왜-그냥-프로그램을-실행하면-안-되나">13.1 왜 그냥 프로그램을 실행하면 안 되나?<a class="plink" href="#왜-그냥-프로그램을-실행하면-안-되나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>설치는 트랜잭션이다: 40단계가 실패하면 Windows Installer 는 1~39단계를 되돌려 컴퓨터를 원래대로 한다. 내가 실행한 프로그램은 그 밖에 있다 - Windows 는 그 프로그램이 한 일을 어떻게 되돌릴지 모른다. 그래서 rubrapack 은 명령을 <em>둘</em> 받는다. 하는 것과 되돌리는 것. 그리고 일이 어떻게 흘러가든 알맞은 것이 돌게 꾸민다.</p>
+<h3 id="원본">13.2 원본<a class="plink" href="#원본" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-toml"># tutorial 13: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.11.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[action.Register]
+run = "file:Hello"
+do = "--register"
+undo = "--unregister"</code></pre>
+<h3 id="actionid">13.3 <code>[action.ID]</code><a class="plink" href="#actionid" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table><tr><th>키</th><th>뜻</th></tr><tr><td><code>run</code></td><td>프로그램: <code>file:</code> 과 이 패키지가 설치하는 <code>.exe</code> 의 ID</td></tr><tr><td><code>do</code></td><td>설치 뒤의 인자 - 복구 때 다시</td></tr><tr><td><code>undo</code></td><td>제거 때, 파일을 지우기 전의 인자</td></tr><tr><td><code>check</code></td><td>받아들이지만 이 판의 rubrapack 은 쓰지 않는다</td></tr></table></div>
+<p>인자는 쓴 그대로 넘어간다: 서식 문자열이 <em>아니어서</em> <code>[INSTALLDIR]</code> 은 글자 <code>[INSTALLDIR]</code> 그대로 도착한다. 프로그램은 자기 자리(자기 경로)를 알고, 대개 그것이면 충분하다.</p>
+<p>두 명령 모두:</p>
+<ul><li>아무것도 묻지 않고 끝나야 한다: 창 없이 돌고, 대답해 줄 사람이 없다.</li><li>두 번 실행해도 안전해야 한다(이미 등록된 것을 등록: 괜찮음).</li><li>실패를 0 이 아닌 종료 코드로 알린다 - 그러면 설치가 실패하고 되돌려진다.</li></ul>
+<p>컴퓨터 전체 패키지에서는 설치 파일의 관리자 권한으로, 사용자별 패키지에서는 사용자로 돈다.</p>
+<h3 id="무엇이-언제-도나">13.4 무엇이 언제 도나<a class="plink" href="#무엇이-언제-도나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<div class="tblwrap"><table><tr><th>상황</th><th>도는 것</th></tr><tr><td>첫 설치</td><td>파일 설치 뒤 <code>do</code></td></tr><tr><td>복구</td><td><code>do</code> 다시</td></tr><tr><td>제거</td><td><code>undo</code>, 그다음 파일이 사라짐</td></tr><tr><td>새 판으로 업그레이드</td><td>옛 판의 <code>undo</code>(옛 판 제거), 그다음 새 판의 <code>do</code></td></tr><tr><td><code>do</code> 가 돈 뒤 설치 실패</td><td>되돌리기의 일부로 <code>undo</code></td></tr><tr><td><code>undo</code> 가 돈 뒤 제거 실패</td><td><code>do</code>, 그리고 파일이 돌아옴</td></tr></table></div>
+<h3 id="해-보기">13.5 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<p>이런 일을 하는 진짜 프로그램은 인자를 읽고, 예를 들어 레지스트리 값을 쓰거나 등록 인터페이스를 부른다. 순서를 보려면 <code>hello.exe</code> 가 인자를 기록 파일에 쓰게 하고, 설치, 복구, 제거를 한 뒤 기록을 읽는다.</p>
+<h3 id="안에서-무슨-일이-일어났나">13.6 안에서 무슨 일이 일어났나<a class="plink" href="#안에서-무슨-일이-일어났나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi CustomAction
+RP_Register_Do	3090	Hello	--register
+RP_Register_DoRollback	3410	Hello	--unregister
+RP_Register_RedoRollback	3410	Hello	--register
+RP_Register_Undo	3090	Hello	--unregister
+RP_Register_UndoRollback	3410	Hello	--register</code></pre>
+<p>*사용자 지정 동작*이 다섯이다. 형식 수는 비트 플래그를 더한 것이다: 18("이 패키지가 설치한 <code>.exe</code> 실행") + 1024 ("지연": 설치 스크립트 안에서 파일 복사와 차례를 맞춰 돈다) + 2048("가장 없음": 설치 파일의 권한으로) = 3090. 되돌리기 짝은 256("되돌릴 때만 실행")과 64("종료 코드 무시")를 더한다. <code>InstallExecuteSequence</code> 는 이것들을 파일 동작 둘레에 두고, 각각 <code>hello.exe</code> 컴포넌트의 상태에 대한 조건을 단다:</p>
+<pre><code class="lang-text">RP_Register_UndoRollback	$C_185f...=2 AND ?C_185f...=3	3400
+RP_Register_Undo	$C_185f...=2 AND ?C_185f...=3	3401
+RemoveFiles		3500
+InstallFiles		4000
+RP_Register_DoRollback	$C_185f...&gt;2 AND ?C_185f...&lt;&gt;3	4001
+RP_Register_RedoRollback	$C_185f...&gt;2 AND ?C_185f...=3	4002
+RP_Register_Do	$C_185f...&gt;2	4003</code></pre>
+<p><code>$C</code> 는 컴포넌트가 갈 상태(2 없음, 3 설치됨), <code>?C</code> 는 지금 상태다. "설치되어 있다가 사라짐"이면 undo, "들어옴"이면 do 가 돈다.</p>
+<div class="nav"><a href="tutorial-12-services-fonts-permissions.html">&larr; 이전</a><span class="sp"></span><a href="index.html">목차로</a><span class="sp"></span><a href="rpk.html">다음 &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="찾은 것이 없다";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

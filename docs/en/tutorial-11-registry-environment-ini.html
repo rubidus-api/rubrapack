@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 The registry, environment variables, INI files, file types and links - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 11 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-10-scope-and-guard.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-12-services-fonts-permissions.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-11-registry-environment-ini.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-registry-in-two-minutes"><span class="tf-no">11.1</span>The registry in two minutes</a><a class="lv3" href="#the-source"><span class="tf-no">11.2</span>The source</a><a class="lv3" href="#registry-values-registryid"><span class="tf-no">11.3</span>Registry values: [registry.ID]</a><a class="lv3" href="#environment-variables-envid"><span class="tf-no">11.4</span>Environment variables: [env.ID]</a><a class="lv3" href="#ini-files-iniid"><span class="tf-no">11.5</span>INI files: [ini.ID]</a><a class="lv3" href="#file-types-associd"><span class="tf-no">11.6</span>File types: [assoc.ID]</a><a class="lv3" href="#links-protocolid"><span class="tf-no">11.7</span>Links: [protocol.ID]</a><a class="lv3" href="#try-it"><span class="tf-no">11.8</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">11.9</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">11 The registry, environment variables, INI files, file types and links</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-registry-in-two-minutes"><span class="tf-no">11.1</span>The registry in two minutes</a><a class="lv3" href="#the-source"><span class="tf-no">11.2</span>The source</a><a class="lv3" href="#registry-values-registryid"><span class="tf-no">11.3</span>Registry values: [registry.ID]</a><a class="lv3" href="#environment-variables-envid"><span class="tf-no">11.4</span>Environment variables: [env.ID]</a><a class="lv3" href="#ini-files-iniid"><span class="tf-no">11.5</span>INI files: [ini.ID]</a><a class="lv3" href="#file-types-associd"><span class="tf-no">11.6</span>File types: [assoc.ID]</a><a class="lv3" href="#links-protocolid"><span class="tf-no">11.7</span>Links: [protocol.ID]</a><a class="lv3" href="#try-it"><span class="tf-no">11.8</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">11.9</span>What happened inside</a></div></div>
+<p>Goal: give Hello the settings other programs look for - registry values of every type, an environment variable, a line in its INI file - and let Windows open <code>.hello</code> files and <code>hello:</code> links with it.</p>
+<h3 id="the-registry-in-two-minutes">11.1 The registry in two minutes<a class="plink" href="#the-registry-in-two-minutes" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>The Windows <em>registry</em> is a database of settings, organised like folders: <em>keys</em> contain other keys and <em>values</em>; a value has a name, a type and data. The top-level keys ("roots") are:</p>
+<div class="tblwrap"><table><tr><th>Root</th><th>Holds</th></tr><tr><td><code>HKLM</code> (HKEY_LOCAL_MACHINE)</td><td>settings for the whole computer; writing needs administrator rights</td></tr><tr><td><code>HKCU</code> (HKEY_CURRENT_USER)</td><td>the current user's settings</td></tr><tr><td><code>HKCR</code> (HKEY_CLASSES_ROOT)</td><td>file types and links (a merged view of both)</td></tr><tr><td><code>HKMU</code></td><td>rubrapack's (and Windows Installer's) "HKLM when installed for everyone, HKCU when for one user"</td></tr></table></div>
+<p>Run <code>regedit</code> on Windows to look around (and do not change what you do not know).</p>
+<h3 id="the-source">11.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 11: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+
+[define]
+VERSION = "1.9.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Settings]
+dir = "INSTALLDIR"
+source = "dist/settings.ini"
+
+[registry.InstallDir]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "InstallDir"
+value = "[INSTALLDIR]"
+
+[registry.Greeting]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Greeting"
+value = "Hello, world"
+with = "file:Hello"
+
+[registry.Runs]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "MaxRuns"
+type = "dword"
+value = 100
+
+[registry.BigNumber]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Limit"
+type = "qword"
+value = "0x100000000"
+
+[registry.Colors]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Colors"
+type = "multi"
+value = ["red", "green", "blue"]
+
+[registry.LogPath]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "LogPath"
+type = "expand"
+value = "%TEMP%\\hello.log"
+
+[registry.Legacy32]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "Mode"
+value = "compatible"
+view = "32"
+
+[registry.OldKey]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello Old'
+remove = true
+
+[registry.UserChoice]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "FirstRun"
+type = "dword"
+value = 1
+keep = true
+
+[env.HelloHome]
+name = "HELLO_HOME"
+value = "[INSTALLDIR]"
+
+[env.Path]
+name = "PATH"
+value = "[INSTALLDIR]"
+mode = "append"
+
+[ini.InstalledVersion]
+dir = "INSTALLDIR"
+file = "settings.ini"
+section = "hello"
+key = "installed"
+value = "[ProductVersion]"
+
+[ini.Plugins]
+dir = "INSTALLDIR"
+file = "settings.ini"
+section = "hello"
+key = "plugins"
+value = "core"
+mode = "add"
+
+[assoc.HelloDoc]
+extension = ".hello"
+prog-id = "Example.HelloDocument"
+description = "Hello document"
+target = "file:Hello"
+icon = "file:Hello"
+args = "--open \"%1\""
+
+[protocol.HelloLink]
+name = "hello"
+description = "Hello link"
+target = "file:Hello"</code></pre>
+<p>TOML note: a string in <em>single</em> quotes is taken as it is, so <code>'SOFTWARE\Example Software\Hello'</code> needs no doubled backslashes; in double quotes a backslash starts an escape (<code>"%TEMP%\\hello.log"</code>).</p>
+<h3 id="registry-values-registryid">11.3 Registry values: <code>[registry.ID]</code><a class="plink" href="#registry-values-registryid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<div class="tblwrap"><table class="key"><tr><th><code>type</code></th><th>TOML value</th><th>Registry type</th></tr><tr><td><code>string</code> (default)</td><td>a string</td><td>REG_SZ</td></tr><tr><td><code>expand</code></td><td>a string with <code>%VARIABLES%</code></td><td>REG_EXPAND_SZ - Windows expands <code>%TEMP%</code> when the value is read</td></tr><tr><td><code>dword</code></td><td>an integer 0 .. 4294967295</td><td>REG_DWORD, 32 bits</td></tr><tr><td><code>qword</code></td><td>an integer, or <code>"0x"</code> and up to 16 hex digits</td><td>REG_QWORD, 64 bits</td></tr><tr><td><code>binary</code></td><td>hex digits, <code>"01ff"</code></td><td>REG_BINARY</td></tr><tr><td><code>multi</code></td><td>an array of strings</td><td>REG_MULTI_SZ</td></tr></table></div>
+<ul><li><code>name</code> omitted: the key's default value (shown as "(Default)" in regedit).</li><li><code>value</code> is a formatted string: <code>[INSTALLDIR]</code> becomes the install folder, <code>[#Hello]</code> the path of the file <code>Hello</code>.</li><li>Every value is removed again with the product; <code>keep = true</code> leaves it (<code>FirstRun</code> here, which the program may change).</li><li><code>with = "file:Hello"</code> ties the value to that file: installed and removed with it (<code>Greeting</code>).</li><li><code>view = "32"</code>: 64-bit Windows keeps a separate registry for 32-bit programs; a 32-bit program reading <code>SOFTWARE\Example Software\Hello</code> sees that one. Values go to the 64-bit view in an x64 package unless <code>view = "32"</code>.</li><li><code>remove = true</code> deletes, during installation, the value named by <code>name</code> - or, without <code>name</code>, the whole key (<code>OldKey</code>: something an older version left behind).</li></ul>
+<p>Windows Installer cannot write REG_QWORD by itself; for <code>qword</code> values rubrapack adds its small helper DLL to the package, which writes them and puts the previous values back if the installation fails.</p>
+<h3 id="environment-variables-envid">11.4 Environment variables: <code>[env.ID]</code><a class="plink" href="#environment-variables-envid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A variable for the whole computer (per user in a per-user installation). <code>mode = "set"</code> (default) sets it, <code>append</code> adds <code>;value</code> to the end of what is there, <code>prepend</code> <code>value;</code> to the front. The product's removal undoes exactly that: <code>HELLO_HOME</code> is deleted; from <code>PATH</code> only <code>;C:\Program Files\Hello\</code> is taken out. <code>keep = true</code> leaves it. Programs started after the installation see the change (a terminal that was already open does not).</p>
+<h3 id="ini-files-iniid">11.5 INI files: <code>[ini.ID]</code><a class="plink" href="#ini-files-iniid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>An INI file is a text file of <code>[section]</code> and <code>key=value</code> lines. <code>mode = "set"</code> (default) writes <code>key=value</code> in the section, <code>add</code> adds the value to a comma-separated list (<code>plugins=core</code> or, if there was <code>plugins=extra</code>, <code>plugins=extra,core</code>), and <code>remove</code> deletes the key - before the files are installed, so it cleans up an INI file that an older version left. Removal takes out what <code>set</code> and <code>add</code> wrote. <code>file</code> is the file's name in <code>dir</code>; it does not have to be installed by the package.</p>
+<p>After installing, <code>settings.ini</code> reads:</p>
+<pre><code class="lang-text">[hello]
+greeting=Hello
+installed=1.9.0
+plugins=core</code></pre>
+<h3 id="file-types-associd">11.6 File types: <code>[assoc.ID]</code><a class="plink" href="#file-types-associd" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>[assoc.HelloDoc]</code> makes Windows open <code>.hello</code> files with Hello:</p>
+<ul><li><code>extension</code> is the file ending, lower case, with the dot;</li><li><code>prog-id</code> names the kind of document (<code>Company.Kind</code>); several extensions may share one;</li><li><code>description</code> is what Explorer calls the type ("Hello document");</li><li><code>target</code> is the program, <code>args</code> its arguments (<code>"%1"</code> is the file's path; the default);</li><li><code>icon</code> (<code>file:ID</code>) is the file whose first icon the documents show.</li></ul>
+<p>If the user has already chosen another program for <code>.hello</code>, Windows keeps that choice.</p>
+<h3 id="links-protocolid">11.7 Links: <code>[protocol.ID]</code><a class="plink" href="#links-protocolid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>[protocol.HelloLink]</code> registers the scheme <code>hello:</code>, so a link <code>hello:world</code> - in a browser, in the Run box - starts Hello with the whole link as its argument.</p>
+<h3 id="try-it">11.8 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Install, then:</p>
+<ul><li><code>regedit</code>: <code>HKEY_LOCAL_MACHINE\SOFTWARE\Example Software\Hello</code> holds the values; <code>...\WOW6432Node\Example Software\Hello</code> holds <code>Mode</code> (the 32-bit view).</li><li>a new terminal: <code>echo %HELLO_HOME%</code> and <code>echo %PATH%</code>.</li><li><code>C:\Program Files\Hello\settings.ini</code>: the two new lines.</li><li>a file <code>test.hello</code> on the desktop opens Hello; Win+R, <code>hello:world</code>, Enter starts Hello.</li></ul>
+<p>Remove Hello: all of it goes, except <code>FirstRun</code>.</p>
+<h3 id="what-happened-inside">11.9 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Registry
+...
+Colors	2	SOFTWARE\Example Software\Hello	Colors	[~]red[~]green[~]blue[~]	C_f023...
+Greeting	2	SOFTWARE\Example Software\Hello	Greeting	Hello, world	C_185f...
+HelloDoc.Ext	0	.hello		Example.HelloDocument	C_185f...
+LogPath	2	SOFTWARE\Example Software\Hello	LogPath	#%%TEMP%\hello.log	C_2e80...
+Runs	2	SOFTWARE\Example Software\Hello	MaxRuns	#100	C_97ef...
+...</code></pre>
+<p>The second column is the root (0 HKCR, 1 HKCU, 2 HKLM, -1 HKMU). The value column carries the type in its first characters, as Windows Installer wants: <code>#100</code> is a DWORD, <code>#%</code> an expandable string, <code>[~]</code> separates the strings of a multi-string, <code>#x</code> starts binary data. File types and links are nothing but registry values under HKCR, in the program's component. The QWORD value is not in this table: it travels in the property <code>RP_QWORDS</code> for the helper DLL. Environment variables are in the <code>Environment</code> table:</p>
+<pre><code class="lang-text">HelloHome	=-*HELLO_HOME	[INSTALLDIR]	C_0fa9...
+Path	=-*PATH	[~];[INSTALLDIR]	C_82df...</code></pre>
+<p>In the name, <code>=</code> means "set", <code>-</code> "remove at uninstall", <code>*</code> "a system variable"; <code>[~]</code> in the value stands for what was there before.</p>
+<div class="nav"><a href="tutorial-10-scope-and-guard.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-12-services-fonts-permissions.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

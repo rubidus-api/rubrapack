@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 Services, fonts, permissions - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 12 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-11-registry-environment-ini.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-13-running-your-program.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-12-services-fonts-permissions.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#the-source"><span class="tf-no">12.1</span>The source</a><a class="lv3" href="#a-service-serviceid"><span class="tf-no">12.2</span>A service: [service.ID]</a><a class="lv3" href="#a-font-fontid"><span class="tf-no">12.3</span>A font: [font.ID]</a><a class="lv3" href="#access-rights-permissionid"><span class="tf-no">12.4</span>Access rights: [permission.ID]</a><a class="lv3" href="#restarting-reboot"><span class="tf-no">12.5</span>Restarting: reboot</a><a class="lv3" href="#try-it"><span class="tf-no">12.6</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">12.7</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">12 Services, fonts, permissions</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#the-source"><span class="tf-no">12.1</span>The source</a><a class="lv3" href="#a-service-serviceid"><span class="tf-no">12.2</span>A service: [service.ID]</a><a class="lv3" href="#a-font-fontid"><span class="tf-no">12.3</span>A font: [font.ID]</a><a class="lv3" href="#access-rights-permissionid"><span class="tf-no">12.4</span>Access rights: [permission.ID]</a><a class="lv3" href="#restarting-reboot"><span class="tf-no">12.5</span>Restarting: reboot</a><a class="lv3" href="#try-it"><span class="tf-no">12.6</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">12.7</span>What happened inside</a></div></div>
+<p>Goal: install a background service that starts by itself, a font every program can use, and a data folder whose access rights you set - the three things only a per-machine package may do.</p>
+<h3 id="the-source">12.1 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p><code>dist\hellosvc.exe</code> is the service program, <code>dist\HelloSans.ttf</code> a font file.</p>
+<pre><code class="lang-toml"># tutorial 12: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+reboot = "suppress"
+
+[define]
+VERSION = "1.10.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+
+[dir.DataDir]
+path = "CommonAppData/Hello"
+
+[dir.FontsDir]
+path = "Fonts"
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[file.Service]
+dir = "INSTALLDIR"
+source = "dist/hellosvc.exe"
+
+[file.Font]
+dir = "FontsDir"
+source = "dist/HelloSans.ttf"
+
+[service.HelloService]
+file = "file:Service"
+name = "HelloService"
+display-name = "Hello background service"
+description = "Keeps Hello's greetings up to date."
+start = "auto"
+account = "LocalService"
+args = "--service"
+start-on-install = true
+
+[font.HelloSans]
+file = "file:Font"
+title = "Hello Sans"
+
+[permission.DataFolder]
+target = "dir:DataDir"
+sddl = "D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1301bf;;;BU)"</code></pre>
+<h3 id="a-service-serviceid">12.2 A service: <code>[service.ID]</code><a class="plink" href="#a-service-serviceid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A <em>service</em> is a program Windows runs in the background, without a window, often before anyone signs in (the Services console, <code>services.msc</code>, lists them).</p>
+<div class="tblwrap"><table><tr><th>Key</th><th>Meaning</th></tr><tr><td><code>file</code></td><td>the service's program: <code>file:</code> and a <code>[file.*]</code> ID</td></tr><tr><td><code>name</code></td><td>the service's internal name (used by <code>sc start HelloService</code>)</td></tr><tr><td><code>display-name</code>, <code>description</code></td><td>what the Services console shows</td></tr><tr><td><code>start</code></td><td><code>auto</code> (at every start of Windows), <code>demand</code> (when something starts it), <code>disabled</code></td></tr><tr><td><code>account</code></td><td>who it runs as: <code>LocalSystem</code> (full rights), <code>LocalService</code> (few rights - prefer it), <code>NetworkService</code></td></tr><tr><td><code>args</code></td><td>its command-line arguments</td></tr><tr><td><code>start-on-install = true</code></td><td>start it at the end of the installation</td></tr></table></div>
+<p>The installer stops the service before its files are replaced (in an upgrade or a repair) and at removal, and deletes it at removal. The program must really be a service - one that answers Windows' service manager; an ordinary program would make the start fail, and with it the installation.</p>
+<h3 id="a-font-fontid">12.3 A font: <code>[font.ID]</code><a class="plink" href="#a-font-fontid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>A font is installed by putting its file into the Fonts folder - <code>[dir.FontsDir]</code> with <code>path = "Fonts"</code>, the known folder alone - and registering it with <code>[font.ID]</code>. <code>title</code> is the name Windows lists; without it Windows reads the name from the font file. Every program sees the font after the installation; removal unregisters and deletes it.</p>
+<h3 id="access-rights-permissionid">12.4 Access rights: <code>[permission.ID]</code><a class="plink" href="#access-rights-permissionid" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Every file, folder and registry key in Windows has an access list saying who may read or change it. <code>[permission.ID]</code> sets that list, written in <em>SDDL</em> (Security Descriptor Definition Language), on a folder the package creates (<code>dir:ID</code>), one of its files (<code>file:ID</code>) or a registry value it writes (<code>registry:ID</code>). A folder given a permission is created even without files in it.</p>
+<p>The SDDL string above, piece by piece:</p>
+<div class="tblwrap"><table><tr><th>Piece</th><th>Meaning</th></tr><tr><td><code>D:</code></td><td>the access list (DACL) follows</td></tr><tr><td><code>PAI</code></td><td>protected (do not inherit from the parent folder), and passed on to what is inside</td></tr><tr><td><code>(A;OICI;FA;;;SY)</code></td><td>Allow, to files and sub folders (Object and Container Inherit), Full Access, to SYSTEM</td></tr><tr><td><code>(A;OICI;FA;;;BA)</code></td><td>the same for the Built-in Administrators</td></tr><tr><td><code>(A;OICI;0x1301bf;;;BU)</code></td><td>Built-in Users may read, write and delete, but not change the rights</td></tr></table></div>
+<p>So <code>C:\ProgramData\Hello</code> is writable by every user, but only administrators may change who may. Get a string for a folder you set up by hand with <code>icacls</code> or PowerShell's <code>(Get-Acl C:\path).Sddl</code>.</p>
+<h3 id="restarting-reboot">12.5 Restarting: <code>reboot</code><a class="plink" href="#restarting-reboot" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Sometimes a file cannot be replaced until Windows restarts. <code>reboot = "suppress"</code> (the default) never restarts by itself: the installation ends with exit code 3010 ("restart needed") and the user restarts later. <code>reboot = "allow"</code> lets Windows Installer ask for, or at <code>/qn</code> perform, a restart when one is needed.</p>
+<h3 id="try-it">12.6 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Install (as administrator), then: <code>services.msc</code> lists "Hello background service", running; a text editor offers the font "Hello Sans"; the Security tab of <code>C:\ProgramData\Hello</code> shows the three entries. Remove Hello: the service, the font and the folder are gone.</p>
+<h3 id="what-happened-inside">12.7 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi ServiceInstall
+HelloService	HelloService	Hello background service	16	2	1			NT AUTHORITY\LocalService		--service	C_d677...	Keeps Hello's greetings up to date.
+C:\work\hello&gt; rubrapack inspect hello.msi ServiceControl
+HelloService	HelloService	163		1	C_d677...</code></pre>
+<p><code>16</code> is "a service in its own process", <code>2</code> "automatic start", <code>1</code> "report errors normally". The <code>163</code> in <code>ServiceControl</code> is a sum of bit flags: 1 (start at install) + 2 (stop at install) + 32 (stop at removal) + 128 (delete at removal). Part III explains how such sums work. A package with permissions declares Windows Installer 5.0 (the summary's schema, <code>14 500</code> in <code>rubrapack inspect hello.msi --summary</code>), because the <code>MsiLockPermissionsEx</code> table is newer than the rest.</p>
+<div class="nav"><a href="tutorial-11-registry-environment-ini.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-13-running-your-program.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>

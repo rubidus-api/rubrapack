@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 Who it installs for, and a guarded folder - rubrapack Manual</title><link rel="stylesheet" href="../book.css">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('rp-read')||'{}');var r=document.documentElement;if(s.theme&&s.theme!=='auto')r.setAttribute('data-theme',s.theme);if(s.fg)r.style.setProperty('--fg',s.fg);if(s.bg)r.style.setProperty('--bg',s.bg);if(s.link)r.style.setProperty('--link',s.link);if(s.width)r.setAttribute('data-measure','on');}catch(e){}})();</script></head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="bar"><strong><a href="index.html">rubrapack Manual</a></strong><button class="here-btn" type="button" aria-expanded="false" aria-controls="here-panel">ch. 10 <span class="caret">&#9662;</span></button><span class="sp"></span><span class="bar-nav"><a href="tutorial-09-conditions-and-searches.html" title="Prev" aria-label="Prev">&larr;</a><a href="index.html" title="Contents" aria-label="Contents">&uarr;</a><a href="tutorial-11-registry-environment-ini.html" title="Next" aria-label="Next">&rarr;</a></span></div><div id="here-panel" class="here-panel" hidden><div class="tools"><span class="ver">0.7.0</span><button class="tool" type="button" id="set-open">&#9881; Settings</button><a class="tool" href="toc.html">&#9636; Detailed contents</a><a class="tool" href="../ko/tutorial-10-scope-and-guard.html">Ko</a><a class="tool" href="../rubrapack-manual-en.pdf">&#10515; PDF</a><a class="tool" href="https://github.com/rubidus-api/rubrapack" title="rubrapack on GitHub">Git</a><a class="tool" href="https://rubidus-api.github.io/" title="rubidus-api.github.io - every published project">&#8962; All projects</a><a class="tool" href="https://github.com/rubidus-api" title="github.com/rubidus-api - every repository">&#8801; All repos</a></div><div class="setbox" id="setbox" hidden><label class="setrow"><input type="checkbox" id="s-width"><span>Limit line width</span></label><div class="setrow"><span class="setlbl">Theme</span><span class="seg"><button type="button" class="segb" data-theme="auto">System</button><button type="button" class="segb" data-theme="light">Light</button><button type="button" class="segb" data-theme="dark">Dark</button></span></div><div class="setrow"><span class="setlbl">Colours</span><label class="col"><span>Text</span><input type="color" id="s-fg"></label><label class="col"><span>Background</span><input type="color" id="s-bg"></label><label class="col"><span>Link</span><input type="color" id="s-link"></label></div><p class="setnote">Settings are kept in this browser only.</p></div><div class="here-head"><strong>In this chapter</strong></div><div class="here-body"><a class="lv3" href="#three-scopes"><span class="tf-no">10.1</span>Three scopes</a><a class="lv3" href="#the-source"><span class="tf-no">10.2</span>The source</a><a class="lv3" href="#a-dual-package"><span class="tf-no">10.3</span>A dual package</a><a class="lv3" href="#a-guarded-install-folder-guard"><span class="tf-no">10.4</span>A guarded install folder: guard</a><a class="lv3" href="#try-it"><span class="tf-no">10.5</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">10.6</span>What happened inside</a></div></div>
+<main id="content"><div class="wrap">
+<h2 id="top">10 Who it installs for, and a guarded folder</h2>
+<div class="chapter-toc"><div class="rail-label">In this chapter</div><div class="rail-body"><a class="lv3" href="#three-scopes"><span class="tf-no">10.1</span>Three scopes</a><a class="lv3" href="#the-source"><span class="tf-no">10.2</span>The source</a><a class="lv3" href="#a-dual-package"><span class="tf-no">10.3</span>A dual package</a><a class="lv3" href="#a-guarded-install-folder-guard"><span class="tf-no">10.4</span>A guarded install folder: guard</a><a class="lv3" href="#try-it"><span class="tf-no">10.5</span>Try it</a><a class="lv3" href="#what-happened-inside"><span class="tf-no">10.6</span>What happened inside</a></div></div>
+<p>Goal: let a user without administrator rights install Hello for themselves, while an administrator can still install it for everyone - and refuse an install folder that someone else prepared.</p>
+<h3 id="three-scopes">10.1 Three scopes<a class="plink" href="#three-scopes" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>So far every package installed <em>per machine</em>: into Program Files, for every user of the computer, which needs administrator rights (the User Account Control prompt). <code>scope</code> in <code>[package]</code> changes that:</p>
+<div class="tblwrap"><table class="key"><tr><th><code>scope</code></th><th>Installs for</th><th>Needs administrator</th><th><code>ProgramFiles/Hello</code> becomes</th><th>Start menu, desktop</th><th>Registry <code>HKMU</code></th></tr><tr><td><code>machine</code> (default)</td><td>everyone</td><td>yes</td><td><code>C:\Program Files\Hello</code></td><td>all users'</td><td><code>HKLM</code></td></tr><tr><td><code>user</code></td><td>the current user</td><td>no</td><td><code>%LOCALAPPDATA%\Programs\Hello</code></td><td>the user's</td><td><code>HKCU</code></td></tr><tr><td><code>dual</code></td><td>the user by default, or everyone when chosen</td><td>only for everyone</td><td>either of the above</td><td>either</td><td>either</td></tr></table></div>
+<p><code>%LOCALAPPDATA%</code> is the user's own <code>C:\Users\&lt;name&gt;\AppData\Local</code>. A per-user installation needs no permission and is invisible to other users of the computer - often right for small tools.</p>
+<p>Some things only exist per machine and need <code>scope = "machine"</code>: services, fonts, permissions, and the folders <code>Windows</code>, <code>System</code>, <code>Fonts</code> and <code>CommonAppData</code>. rubrapack refuses them in a <code>user</code> or <code>dual</code> package.</p>
+<h3 id="the-source">10.2 The source<a class="plink" href="#the-source" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-toml"># tutorial 10: hello.toml
+[package]
+name = "Hello"
+manufacturer = "Example Software"
+version = "$(VERSION)"
+arch = "x64"
+upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
+scope = "dual"
+ui = "installdir"
+
+[define]
+VERSION = "1.8.0"
+
+[dir.INSTALLDIR]
+path = "ProgramFiles/Hello"
+guard = true
+
+[file.Hello]
+dir = "INSTALLDIR"
+source = "dist/hello.exe"
+
+[shortcut.StartMenu]
+dir = "Programs"
+name = "Hello"
+target = "file:Hello"</code></pre>
+<h3 id="a-dual-package">10.3 A dual package<a class="plink" href="#a-dual-package" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>With <code>scope = "dual"</code> and dialogs, a page after the license asks:</p>
+<pre><code class="lang-text">( ) Just me             (the default)
+( ) Everyone on this computer</code></pre>
+<p>"Everyone" asks for administrator rights; the install folder, the Start menu entry and the Installed apps entry follow the choice. Without dialogs, a dual package installs for the current user; from an administrator's terminal it installs for everyone with</p>
+<pre><code class="lang-text">msiexec /i hello.msi ALLUSERS=1 MSIINSTALLPERUSER=""</code></pre>
+<p>(<code>MSIINSTALLPERUSER=""</code> means "empty": the property is cleared.) A <code>user</code> package refuses to install for everyone.</p>
+<h3 id="a-guarded-install-folder-guard">10.4 A guarded install folder: <code>guard</code><a class="plink" href="#a-guarded-install-folder-guard" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>Some programs are loaded by other programs or run with high rights - an input method, a shell extension, a service. For them an install folder that <em>already exists</em> is a risk: whoever created it may have left files in it (a planted DLL would be loaded with the program's rights). <code>guard = true</code> on a dir makes a first installation stop, before any file is placed, when that folder</p>
+<ul><li>already exists and is not owned by SYSTEM, Administrators or TrustedInstaller, or</li><li>is reached through a junction or another link (the folder itself or any folder above it).</li></ul>
+<p>A folder that does not exist yet passes - the installer creates it. Repair, removal and an upgrade into the folder the earlier version created are not affected. The installation ends with the message <code>DirGuardText</code> (in the language chosen in the dialogs), also in a silent installation, and the log names the owner it found. The check is done by a small helper DLL of rubrapack's that the package then carries.</p>
+<h3 id="try-it">10.5 Try it<a class="plink" href="#try-it" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<p>As a normal user (not an administrator), double-click <code>hello.msi</code> and keep "Just me": no permission prompt; Hello lands in <code>%LOCALAPPDATA%\Programs\Hello</code>, and only you see it in the Start menu and in Installed apps. Remove it, and install again choosing "Everyone": Windows asks for administrator rights and installs into Program Files.</p>
+<p>To see the guard: as a normal user, create the folder <code>C:\Users\Public\Hello</code> (its owner is then that user). From an administrator's terminal, install for everyone into it:</p>
+<pre><code class="lang-text">msiexec /i hello.msi ALLUSERS=1 MSIINSTALLPERUSER="" INSTALLDIR="C:\Users\Public\Hello\"</code></pre>
+<p>The installation stops with the guard's message and installs nothing. Delete the folder and run the same command again: now the installer creates the folder itself, and the installation goes through.</p>
+<h3 id="what-happened-inside">10.6 What happened inside<a class="plink" href="#what-happened-inside" aria-label="Link to this section" title="Link to this section">#</a></h3>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect hello.msi Property
+...
+ALLUSERS	2
+MSIINSTALLPERUSER	1
+RP_GUARD	INSTALLDIR
+...</code></pre>
+<p><code>ALLUSERS = 2</code> together with <code>MSIINSTALLPERUSER = 1</code> is Windows Installer's "single package for both": per user unless asked otherwise. A per-machine package has <code>ALLUSERS = 1</code>. <code>RP_GUARD</code> lists the guarded dirs for the helper DLL. The page that asks is <code>RpScopeDlg</code> in the <code>Dialog</code> table.</p>
+<div class="nav"><a href="tutorial-09-conditions-and-searches.html">&larr; Prev</a><span class="sp"></span><a href="index.html">Contents</a><span class="sp"></span><a href="tutorial-11-registry-environment-ini.html">Next &rarr;</a></div>
+</div></main>
+<script>(function(){var b=document.querySelector('.here-btn'),p=document.getElementById('here-panel');function open(o){if(!p)return;p.hidden=!o;if(b)b.setAttribute('aria-expanded',o);}if(b)b.addEventListener('click',function(){open(p.hidden);});if(p)p.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')open(false);});document.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});var box=document.getElementById('setbox'),so=document.getElementById('set-open');if(!box||!so)return;var r=document.documentElement;function load(){try{return JSON.parse(localStorage.getItem('rp-read')||'{}');}catch(e){return {};}}function save(s){try{localStorage.setItem('rp-read',JSON.stringify(s));}catch(e){}}function css(n){return getComputedStyle(r).getPropertyValue(n).trim();}function hex(v){var m=v.match(/^rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);if(!m)return v.charAt(0)==='#'?v:'#000000';return '#'+[1,2,3].map(function(i){return ('0'+parseInt(m[i],10).toString(16)).slice(-2);}).join('');}function paint(){var s=load();document.getElementById('s-width').checked=!!s.width;var t=s.theme||'auto';[].forEach.call(box.querySelectorAll('.segb'),function(x){x.setAttribute('aria-pressed',x.dataset.theme===t);});document.getElementById('s-fg').value=s.fg||hex(css('--fg'));document.getElementById('s-bg').value=s.bg||hex(css('--bg'));document.getElementById('s-link').value=s.link||hex(css('--link'));}so.addEventListener('click',function(){box.hidden=!box.hidden;so.setAttribute('aria-expanded',!box.hidden);if(!box.hidden)paint();});document.getElementById('s-width').addEventListener('change',function(){var s=load();s.width=this.checked;save(s);if(s.width)r.setAttribute('data-measure','on');else r.removeAttribute('data-measure');});[].forEach.call(box.querySelectorAll('.segb'),function(x){x.addEventListener('click',function(){var s=load();s.theme=x.dataset.theme;delete s.fg;delete s.bg;delete s.link;save(s);['--fg','--bg','--link'].forEach(function(n){r.style.removeProperty(n);});if(s.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.theme);setTimeout(paint,0);});});[['s-fg','--fg','fg'],['s-bg','--bg','bg'],['s-link','--link','link']].forEach(function(a){document.getElementById(a[0]).addEventListener('input',function(){var s=load();s[a[2]]=this.value;save(s);r.style.setProperty(a[1],this.value);});});})();</script><script>
+(function(){
+  var q=document.getElementById('q'), out=document.getElementById('qr');
+  if(!q||!out) return;
+  var data=null, NONE="Nothing found";
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function run(){
+    var v=q.value.trim().toLowerCase();
+    out.innerHTML='';
+    if(!v||!data) return;
+    var hits=[];
+    for(var i=0;i<data.length && hits.length<40;i++){
+      if(data[i][0].toLowerCase().indexOf(v)>=0) hits.push(data[i]);
+    }
+    if(!hits.length){ out.innerHTML='<li>'+NONE+'</li>'; return; }
+    out.innerHTML=hits.map(function(h){
+      return '<li><a href="'+h[1]+'">'+esc(h[0])+'</a>'+
+             (h[2]?'<span class="where">'+esc(h[2])+'</span>':'')+'</li>';
+    }).join('');
+  }
+  q.addEventListener('input',function(){
+    if(data){ run(); return; }
+    fetch('search-index.json').then(function(r){return r.json();})
+      .then(function(j){ data=j; run(); })
+      .catch(function(){ out.innerHTML='<li>'+NONE+'</li>'; });
+  });
+})();
+</script></body></html>
