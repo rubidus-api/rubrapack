@@ -237,6 +237,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
+| `[com.ID]` | **file** (`file:ID` of an `.exe` or `.dll`), **class** (`{GUID}`), description, threading (`sta` default, `mta`, `both`, `neutral`; a DLL), args (a program), prog-id, app-id (`{GUID}`), surrogate (a DLL in dllhost), typelib (`{LIBID}`), typelib-version (default `"1.0"`), typelib-file (default: the server), msi-only - a COM class, see [COM classes](#com-classes-comid) |
 | `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "$(Fonts)"`), title |
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
@@ -477,6 +478,44 @@ in it directly; where the user has chosen another program, Windows keeps that ch
 In an MSIX they go into the manifest of the application whose executable is the target (a file
 type association, a protocol), and `args` must be plain text. `icon` is not used there: the
 application's logo stands for the file type.
+
+### COM classes: `[com.ID]`
+
+```toml
+[com.Widget]
+file = "file:WidgetDll"           # an .exe or a .dll of this package serves the class
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D35}"
+description = "Example widget"
+prog-id = "Example.Widget"        # what scripts name it by
+threading = "both"                # a DLL's apartment: sta (default), mta, both, neutral
+app-id = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D36}"
+surrogate = true                  # may run in dllhost, out of the caller's process
+typelib = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D37}"
+typelib-version = "1.2"           # major.minor in hex digits; typelib-file names another file
+
+[com.Server]
+file = "file:MainExe"             # a program: LocalServer32, started with its args
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D38}"
+args = "-Embedding"
+```
+
+In an MSI these are registry values under `HKEY_CLASSES_ROOT`, in the server's component, as for file
+types: `CLSID\{class}` with its description; `InprocServer32` (the DLL and `ThreadingModel`) or
+`LocalServer32` (the program, quoted, then `args`); with a prog-id, `CLSID\{class}\ProgID` and
+`<prog-id>\CLSID`; with an app-id (or `surrogate`, which uses the class ID when there is no app-id),
+the class's `AppID` value and `AppID\{app-id}`, with `DllSurrogate` for a surrogate; with a typelib,
+`CLSID\{class}\TypeLib` and `TypeLib\{typelib}\<version>` (`0\win64` or `0\win32` by the package's
+architecture, `FLAGS`, `HELPDIR`). Removal takes them away. The values are written as Registry rows -
+as Microsoft's tools write a class that is not advertised - rather than through the Class, ProgId,
+TypeLib and AppId tables, whose classes Windows Installer registers as advertised (installed on first
+use); a per-user installation puts them in `HKCU\Software\Classes`. Microsoft's validation (ICE33)
+warns about such rows - it would have the tables used - and the warning is expected for `[com]`. A class ID, a prog-id and an ID
+are each used once (`RP1301`); `threading` and `surrogate` are for a DLL, `args` for a program
+(`RP1316`).
+
+In an MSIX a `[com]` becomes a class of the package's COM catalog (`com:ComServer`: an `ExeServer` for
+a program, a `SurrogateServer` for a DLL) and its prog-id a `com:ProgId`; `app-id` and `typelib` stay
+with the MSI, which a warning says (`RP1612`).
 
 ### MSIX only: `[msix-extension.ID]`
 

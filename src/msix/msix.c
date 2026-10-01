@@ -1179,9 +1179,16 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
     }
     // COM classes, toast activators and context menus (RFC-0016 2), per application: one
     // com:ComServer with an ExeServer per program class and a SurrogateServer per DLL class.
+    for (size_t k = 0; k < ir->com_count; ++k) {
+        const rp_ir_com_t *x = &ir->coms[k];
+        if (!x->msi_only && (x->app_id || x->typelib)) {
+            rp_srcdiag_add(d, x->pos, "RP1612", true, "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them", x->id);
+        }
+    }
     for (size_t a = 0; a < ir->msix_app_count; ++a) {
         // The schema wants every ExeServer before the SurrogateServers: two buffers, joined at the end.
-        rp_buf_t com = rp_buf_new(ext[a].alloc, 1u << 20), sur = rp_buf_new(ext[a].alloc, 1u << 20), menus = rp_buf_new(ext[a].alloc, 1u << 20);
+        rp_buf_t com = rp_buf_new(ext[a].alloc, 1u << 20), sur = rp_buf_new(ext[a].alloc, 1u << 20), menus = rp_buf_new(ext[a].alloc, 1u << 20),
+                 pid = rp_buf_new(ext[a].alloc, 1u << 20);      // com:ProgId, after the servers (RFC-0022)
         for (size_t k = 0; k < ir->msix_ext_count; ++k) {
             const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
             if ((x->kind != RP_MSIX_EXT_COM && x->kind != RP_MSIX_EXT_TOAST && x->kind != RP_MSIX_EXT_CONTEXT_MENU) || app_by_id(ir, x->app) != a) continue;
@@ -1207,6 +1214,12 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             const rp_ir_msix_app_t *app = &ir->msix_apps[a];
             const char *display = x->display ? x->display : app->display ? app->display : ir->name;
             NEED(x->pos, x->kind == RP_MSIX_EXT_CONTEXT_MENU ? "a context menu" : "a COM class", x->kind == RP_MSIX_EXT_CONTEXT_MENU ? 17134u : 14393u);
+            if (x->prog_id) {
+                rp_buf_puts(&pid, "            <com:ProgId");
+                attr(&pid, "Id", x->prog_id);
+                attr(&pid, "Clsid", guid);
+                rp_buf_puts(&pid, " />\r\n");
+            }
             if (exe) {
                 rp_buf_puts(&com, "            <com:ExeServer");
                 attr(&com, "Executable", path);
@@ -1273,10 +1286,12 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             rp_buf_puts(&ext[a], "        <com:Extension Category=\"windows.comServer\">\r\n          <com:ComServer>\r\n");
             rp_buf_put(&ext[a], com.data, com.len);
             rp_buf_put(&ext[a], sur.data, sur.len);
+            rp_buf_put(&ext[a], pid.data, pid.len);
             rp_buf_puts(&ext[a], "          </com:ComServer>\r\n        </com:Extension>\r\n");
             *ns |= NS_COM;
         }
-        if (com.err != PROVEN_OK || sur.err != PROVEN_OK || menus.err != PROVEN_OK) ext[a].err = PROVEN_ERR_NOMEM;
+        if (com.err != PROVEN_OK || sur.err != PROVEN_OK || menus.err != PROVEN_OK || pid.err != PROVEN_OK) ext[a].err = PROVEN_ERR_NOMEM;
+        rp_buf_free(&pid);
         rp_buf_free(&com);
         rp_buf_free(&sur);
         rp_buf_free(&menus);

@@ -800,6 +800,15 @@ static bool lower_name(const char *s, const char *extra, size_t min) {
     return n >= min;
 }
 
+// The prog-id rule shared by [assoc] and [com]: letters, digits, '.', '_', '-', no leading digit, <= 39.
+static void check_prog_id(ctx_t *c, const rp_ttable_t *t, const char *p) {
+    bool ok = strlen(p) <= 39 && p[0] && !(p[0] >= '0' && p[0] <= '9');
+    for (const char *q = p; ok && *q; ++q) {
+        ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '_' || *q == '-';
+    }
+    if (!ok) ERR(c, ir_key_pos(t, "prog-id"), "RP1316", "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')", p);
+}
+
 void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
     static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "args", "msi-only", NULL };
     ir_check_keys(c, t, keys);
@@ -811,13 +820,7 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
         ERR(c, ir_key_pos(t, "extension"), "RP1316", "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')", x->extension);
     }
     x->prog_id = ir_get_str(c, t, "prog-id", true, NULL);
-    if (x->prog_id) {
-        bool ok = strlen(x->prog_id) <= 39 && x->prog_id[0] && !(x->prog_id[0] >= '0' && x->prog_id[0] <= '9');
-        for (const char *q = x->prog_id; ok && *q; ++q) {
-            ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '_' || *q == '-';
-        }
-        if (!ok) ERR(c, ir_key_pos(t, "prog-id"), "RP1316", "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')", x->prog_id);
-    }
+    if (x->prog_id) check_prog_id(c, t, x->prog_id);
     x->description = ir_get_str(c, t, "description", false, NULL);
     x->target_file = file_ref(c, t, "target", true);
     x->icon_file = file_ref(c, t, "icon", false);
@@ -841,6 +844,49 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
     x->target_file = file_ref(c, t, "target", true);
     x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
+}
+
+static char *guid_key(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
+    char *v = ir_get_str(c, t, key, required, NULL);
+    if (v && !ir_guid_ok(v)) ERR(c, ir_key_pos(t, key), "RP1316", "%s must be a GUID like {12345678-...} (got '%s')", key, v);
+    return v;
+}
+
+void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x) {
+    static const char *const keys[] = { "file", "class", "description", "threading", "args", "prog-id", "app-id", "surrogate",
+                                        "typelib", "typelib-version", "typelib-file", "msi-only", NULL };
+    ir_check_keys(c, t, keys);
+    ir_check_id(c, t, 64);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    x->file = file_ref(c, t, "file", true);
+    x->clsid = guid_key(c, t, "class", true);
+    x->description = ir_get_str(c, t, "description", false, NULL);
+    char *th = ir_get_str(c, t, "threading", false, NULL);
+    static const char *const models[][2] = { { "sta", "Apartment" }, { "mta", "Free" }, { "both", "Both" }, { "neutral", "Neutral" } };
+    for (size_t k = 0; th && k < 4; ++k) {
+        if (strcmp(th, models[k][0]) == 0) x->threading = ir_dup(c, models[k][1]);
+    }
+    if (th && x->threading == NULL) ERR(c, ir_key_pos(t, "threading"), "RP1316", "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')", th);
+    rp_mem_free(c->alloc, th);
+    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
+    x->prog_id = ir_get_str(c, t, "prog-id", false, NULL);
+    if (x->prog_id) check_prog_id(c, t, x->prog_id);
+    x->app_id = guid_key(c, t, "app-id", false);
+    x->surrogate = ir_get_bool(c, t, "surrogate", false);
+    x->typelib = guid_key(c, t, "typelib", false);
+    x->typelib_version = ir_get_str(c, t, "typelib-version", false, NULL);
+    x->typelib_file = file_ref(c, t, "typelib-file", false);
+    if (x->typelib_version) {
+        // "major.minor", each 1 to 4 hex digits, as the TypeLib key spells them.
+        const char *v = x->typelib_version, *dot = strchr(v, '.');
+        bool ok = dot && dot > v && dot - v <= 4 && dot[1] && strlen(dot + 1) <= 4;
+        for (const char *q = v; ok && *q; ++q) ok = q == dot || ir_is_hex(*q);
+        if (!ok) ERR(c, ir_key_pos(t, "typelib-version"), "RP1316", "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')", v);
+    }
+    if (x->typelib == NULL && (x->typelib_version || x->typelib_file)) ERR(c, t->pos, "RP1316", "[com.%s]: typelib-version and typelib-file need typelib", t->id);
+    if (x->typelib && x->typelib_version == NULL) x->typelib_version = ir_dup(c, "1.0");
+    x->msi_only = ir_get_bool(c, t, "msi-only", false);
 }
 
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {

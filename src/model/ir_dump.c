@@ -389,6 +389,23 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "args", x->args);
         rp_buf_byte(&b, '\n');
     }
+    for (size_t k = 0; k < ir->com_count; ++k) {
+        const rp_ir_com_t *x = &ir->coms[k];
+        rp_buf_puts(&b, "com ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "file", x->file);
+        kv(&b, "class", x->clsid);
+        kv(&b, "description", x->description);
+        kv(&b, "threading", x->threading);
+        kv(&b, "args", x->args);
+        kv(&b, "prog-id", x->prog_id);
+        kv(&b, "app-id", x->app_id);
+        if (x->surrogate) rp_buf_puts(&b, " surrogate");
+        kv(&b, "typelib", x->typelib);
+        kv(&b, "typelib-version", x->typelib_version);
+        kv(&b, "typelib-file", x->typelib_file);
+        rp_buf_byte(&b, '\n');
+    }
     for (size_t k = 0; k < ir->protocol_count; ++k) {
         const rp_ir_protocol_t *x = &ir->protocols[k];
         rp_buf_puts(&b, "protocol ");

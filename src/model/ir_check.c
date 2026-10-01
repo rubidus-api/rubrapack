@@ -133,6 +133,38 @@ void ir_class_checks(ctx_t *c) {
             }
         }
     }
+    // [com.*] (RFC-0022): a served class of this package, each class and prog-id once.
+    for (size_t k = 0; k < ir->com_count; ++k) {
+        rp_ir_com_t *x = &ir->coms[k];
+        const rp_ir_file_t *f = file_by_id(ir, x->file);
+        const char *n = f && f->name ? f->name : "";
+        size_t l = strlen(n);
+        bool exe = l >= 4 && (strcmp(n + l - 4, ".exe") == 0 || strcmp(n + l - 4, ".EXE") == 0);
+        bool dll = l >= 4 && (strcmp(n + l - 4, ".dll") == 0 || strcmp(n + l - 4, ".DLL") == 0);
+        if (x->file && f == NULL) ERR(c, x->pos, "RP1315", "file: '%s' is not a [file.*] of this package", x->file);
+        else if (f && !exe && !dll) ERR(c, x->pos, "RP1316", "file: '%s' serves COM classes only as an .exe or a .dll", x->file);
+        x->exe = exe;
+        if (exe && x->threading) ERR(c, x->pos, "RP1316", "[com.%s]: threading is for a DLL; a program sets its own apartment", x->id);
+        if (exe && x->surrogate) ERR(c, x->pos, "RP1316", "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program", x->id, x->file);
+        if (dll && x->args) ERR(c, x->pos, "RP1316", "[com.%s]: args are a program's; a DLL is loaded, not started", x->id);
+        if (x->typelib_file && file_by_id(ir, x->typelib_file) == NULL) {
+            ERR(c, x->pos, "RP1315", "typelib-file: '%s' is not a [file.*] of this package", x->typelib_file);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_com_t *y = &ir->coms[j];
+            if (x->clsid && y->clsid && strcmp(x->clsid, y->clsid) == 0) ERR(c, x->pos, "RP1301", "class %s is already served by [com.%s]", x->clsid, y->id);
+            if (x->prog_id && y->prog_id && strcmp(x->prog_id, y->prog_id) == 0) ERR(c, x->pos, "RP1301", "prog-id '%s' is already [com.%s]'s", x->prog_id, y->id);
+        }
+        for (size_t j = 0; j < ir->msix_ext_count; ++j) {
+            const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
+            if (x->clsid && y->clsid && strcmp(x->clsid, y->clsid) == 0) ERR(c, x->pos, "RP1301", "class %s is also in [msix-extension.%s]", x->clsid, y->id);
+        }
+        for (size_t j = 0; x->prog_id && j < ir->assoc_count; ++j) {
+            if (ir->assocs[j].prog_id && strcmp(ir->assocs[j].prog_id, x->prog_id) == 0) {
+                ERR(c, x->pos, "RP1301", "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names", x->prog_id, ir->assocs[j].id);
+            }
+        }
+    }
     if (c->d->errors) return;       // a table with a missing key has NULL fields; the build fails anyway
     for (size_t k = 0; k < ir->assoc_count && !c->nomem; ++k) {
         const rp_ir_assoc_t *x = &ir->assocs[k];
@@ -173,6 +205,76 @@ void ir_class_checks(ctx_t *c) {
         sprintf(cmd, "\"[#%s]\" %s", x->target_file, x->args);
         add_class_value(c, x->id, "Cmd", key, NULL, cmd, x->target_file, x->pos);
         rp_mem_free(c->alloc, cmd);
+    }
+    // [com.*]: HKCR values for the MSI in the server's component, and a com-server extension for the MSIX.
+    for (size_t k = 0; k < ir->com_count && !c->nomem; ++k) {
+        const rp_ir_com_t *x = &ir->coms[k];
+        const char *desc = x->description ? x->description : ir->name;
+        char key[200], val[512];
+        snprintf(key, sizeof key, "CLSID\\%s", x->clsid);
+        add_class_value(c, x->id, "Cls", key, NULL, desc, x->file, x->pos);
+        if (x->exe) {
+            snprintf(key, sizeof key, "CLSID\\%s\\LocalServer32", x->clsid);
+            char *cmd = rp_mem_alloc(c->alloc, strlen(x->file) + (x->args ? strlen(x->args) : 0) + 16, 1);
+            if (cmd == NULL) {
+                c->nomem = true;
+                return;
+            }
+            sprintf(cmd, x->args ? "\"[#%s]\" %s" : "\"[#%s]\"", x->file, x->args);
+            add_class_value(c, x->id, "Srv", key, NULL, cmd, x->file, x->pos);
+            rp_mem_free(c->alloc, cmd);
+        } else {
+            snprintf(key, sizeof key, "CLSID\\%s\\InprocServer32", x->clsid);
+            snprintf(val, sizeof val, "[#%s]", x->file);
+            add_class_value(c, x->id, "Srv", key, NULL, val, x->file, x->pos);
+            add_class_value(c, x->id, "Thr", key, "ThreadingModel", x->threading ? x->threading : "Apartment", x->file, x->pos);
+        }
+        if (x->prog_id) {
+            snprintf(key, sizeof key, "CLSID\\%s\\ProgID", x->clsid);
+            add_class_value(c, x->id, "PidC", key, NULL, x->prog_id, x->file, x->pos);
+            add_class_value(c, x->id, "Pid", x->prog_id, NULL, desc, x->file, x->pos);
+            snprintf(key, sizeof key, "%s\\CLSID", x->prog_id);
+            add_class_value(c, x->id, "PidK", key, NULL, x->clsid, x->file, x->pos);
+        }
+        const char *app = x->app_id ? x->app_id : x->surrogate ? x->clsid : NULL;
+        if (app) {
+            snprintf(key, sizeof key, "CLSID\\%s", x->clsid);
+            add_class_value(c, x->id, "App", key, "AppID", app, x->file, x->pos);
+            snprintf(key, sizeof key, "AppID\\%s", app);
+            add_class_value(c, x->id, "AppK", key, NULL, desc, x->file, x->pos);
+            if (x->surrogate) add_class_value(c, x->id, "Sur", key, "DllSurrogate", "", x->file, x->pos);
+        }
+        if (x->typelib) {
+            const char *tf = x->typelib_file ? x->typelib_file : x->file;
+            snprintf(key, sizeof key, "CLSID\\%s\\TypeLib", x->clsid);
+            add_class_value(c, x->id, "Tlb", key, NULL, x->typelib, x->file, x->pos);
+            snprintf(key, sizeof key, "TypeLib\\%s\\%s", x->typelib, x->typelib_version);
+            add_class_value(c, x->id, "TlbV", key, NULL, desc, tf, x->pos);
+            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\0\\%s", x->typelib, x->typelib_version, ir->arch == RP_ARCH_X86 ? "win32" : "win64");
+            snprintf(val, sizeof val, "[#%s]", tf);
+            add_class_value(c, x->id, "TlbP", key, NULL, val, tf, x->pos);
+            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\FLAGS", x->typelib, x->typelib_version);
+            add_class_value(c, x->id, "TlbF", key, NULL, "0", tf, x->pos);
+            snprintf(key, sizeof key, "TypeLib\\%s\\%s\\HELPDIR", x->typelib, x->typelib_version);
+            const rp_ir_file_t *tff = file_by_id(ir, tf);
+            snprintf(val, sizeof val, "[%s]", tff ? tff->dir : "INSTALLDIR");
+            add_class_value(c, x->id, "TlbH", key, NULL, val, tf, x->pos);
+        }
+        if (x->msi_only) continue;
+        rp_ir_msix_ext_t *e = &ir->msix_exts[ir->msix_ext_count++];
+        memset(e, 0, sizeof *e);
+        e->id = ir_dup(c, x->id);
+        e->kind = RP_MSIX_EXT_COM;
+        e->file = ir_dup(c, x->file);
+        e->clsid = ir_dup(c, x->clsid);
+        e->display = ir_dup(c, desc);
+        static const char *const msix_models[][2] = { { "Apartment", "STA" }, { "Free", "MTA" }, { "Both", "Both" }, { "Neutral", "Neutral" } };
+        for (size_t m = 0; m < 4; ++m) {
+            if (strcmp(x->threading ? x->threading : "Apartment", msix_models[m][0]) == 0) e->threading = ir_dup(c, msix_models[m][1]);
+        }
+        if (x->args) e->args = ir_dup(c, x->args);
+        if (x->prog_id) e->prog_id = ir_dup(c, x->prog_id);
+        e->pos = x->pos;
     }
 }
 

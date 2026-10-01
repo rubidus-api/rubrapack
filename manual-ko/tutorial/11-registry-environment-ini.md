@@ -210,6 +210,28 @@ plugins=core
 `[protocol.HelloLink]` 는 `hello:` 방식을 등록한다. 브라우저나 실행 상자의 `hello:world` 링크가 링크 전체를
 인자로 Hello 를 시작한다.
 
+## COM 클래스: `[com.ID]`
+
+다른 프로그램이 클래스 ID 로, 또는 스크립트에서 `Hello.Widget` 같은 이름으로 객체를 만들어 쓰는 프로그램이나
+DLL 은 COM 클래스로 등록해야 한다. Hello 에는 없지만, 패키지에 DLL `widget.dll` 이 있다면 이것으로 충분하다:
+
+```toml
+[com.Widget]
+file = "file:WidgetDll"
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D35}"     # rubrapack guid 가 하나 만들어 준다
+description = "Hello widget"
+prog-id = "Hello.Widget"
+threading = "both"
+```
+
+- `file` 은 서버다: 호출한 쪽에 올라가는 `.dll`, 또는 시작되는 `.exe`(`args` 가 그 인자이며 흔히 `-Embedding`).
+- `class` 는 서버가 응답하는 클래스 ID, `prog-id` 는 그것을 부르는 읽기 쉬운 이름이다.
+- `threading` 은 DLL 의 아파트다: `sta`(기본), `mta`, `both`, `neutral`.
+- `app-id` 와 `surrogate = true` 는 DLL 이 별도 프로세스(dllhost)에서 돌 수 있게 하고, `typelib`,
+  `typelib-version`, `typelib-file` 은 형식 라이브러리를 함께 등록한다.
+
+그러면 PowerShell 이 `New-Object -ComObject Hello.Widget` 으로 객체를 하나 만든다. 제거하면 등록도 풀린다.
+
 ## 해 보기
 
 설치한 뒤:

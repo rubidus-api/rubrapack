@@ -226,6 +226,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`) |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
+| `[com.ID]` | **file**(`.exe` 나 `.dll` 의 `file:ID`), **class**(`{GUID}`), description, threading(`sta` 기본, `mta`, `both`, `neutral`; DLL), args(프로그램), prog-id, app-id(`{GUID}`), surrogate(dllhost 에서 도는 DLL), typelib(`{LIBID}`), typelib-version(기본 `"1.0"`), typelib-file(기본: 서버), msi-only - COM 클래스, [COM 클래스](#com-클래스-comid) 참고 |
 | `[font.ID]` | **file**(`path = "$(Fonts)"` 인 dir 에 드는 파일의 `file:ID`), title |
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
@@ -443,6 +444,41 @@ Windows 는 그 선택을 지킨다.
 
 MSIX 에서는 대상 실행 파일을 가진 앱의 매니페스트에 들어가고(파일 형식 연결, 프로토콜) `args` 는
 평문이어야 한다. `icon` 은 쓰지 않는다: 앱의 로고가 파일 형식을 나타낸다.
+
+### COM 클래스: `[com.ID]`
+
+```toml
+[com.Widget]
+file = "file:WidgetDll"           # 이 패키지의 .exe 나 .dll 이 클래스를 제공한다
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D35}"
+description = "Example widget"
+prog-id = "Example.Widget"        # 스크립트가 부르는 이름
+threading = "both"                # DLL 의 아파트: sta(기본), mta, both, neutral
+app-id = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D36}"
+surrogate = true                  # 호출한 프로세스 밖 dllhost 에서 돌 수 있다
+typelib = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D37}"
+typelib-version = "1.2"           # 16진 숫자의 major.minor; typelib-file 로 다른 파일을 가리킨다
+
+[com.Server]
+file = "file:MainExe"             # 프로그램: LocalServer32, args 를 붙여 시작한다
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D38}"
+args = "-Embedding"
+```
+
+MSI 에서는 파일 형식처럼 서버의 구성 요소에 든 `HKEY_CLASSES_ROOT` 아래 레지스트리 값이 된다: 설명을 단
+`CLSID\{class}`, `InprocServer32`(DLL 과 `ThreadingModel`) 또는 `LocalServer32`(따옴표 친 프로그램 뒤에 `args`),
+prog-id 가 있으면 `CLSID\{class}\ProgID` 와 `<prog-id>\CLSID`, app-id(또는 app-id 가 없을 때 클래스 ID 를 쓰는
+`surrogate`)가 있으면 클래스의 `AppID` 값과 `AppID\{app-id}`(서로게이트면 `DllSurrogate` 도), typelib 이 있으면
+`CLSID\{class}\TypeLib` 와 `TypeLib\{typelib}\<version>`(패키지 아키텍처에 따라 `0\win64` 또는 `0\win32`,
+`FLAGS`, `HELPDIR`). 제거하면 함께 사라진다. 값은 Class·ProgId·TypeLib·AppId 표가 아니라 Registry 행으로 쓴다 -
+Microsoft 도구가 광고하지 않는 클래스를 쓰는 방식이다. 그 표들의 클래스는 Windows Installer 가 광고된 것(처음 쓸 때
+설치)으로 등록하기 때문이다. 사용자별 설치면 `HKCU\Software\Classes` 에 들어간다. Microsoft 검증(ICE33)은 표를 쓰라며 이런 행에 경고를
+내는데, `[com]` 에서는 예상된 경고다. 클래스 ID, prog-id, ID 는 각각
+한 번만 쓴다(`RP1301`). `threading` 과 `surrogate` 는 DLL 의, `args` 는 프로그램의 것이다(`RP1316`).
+
+MSIX 에서 `[com]` 은 패키지 COM 카탈로그의 클래스(`com:ComServer`: 프로그램은 `ExeServer`, DLL 은
+`SurrogateServer`)가 되고 prog-id 는 `com:ProgId` 가 된다. `app-id` 와 `typelib` 은 MSI 에만 들어가며 경고가
+그렇게 알린다(`RP1612`).
 
 ### MSIX 전용: `[msix-extension.ID]`
 

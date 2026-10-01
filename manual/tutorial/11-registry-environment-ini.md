@@ -216,6 +216,30 @@ If the user has already chosen another program for `.hello`, Windows keeps that 
 `[protocol.HelloLink]` registers the scheme `hello:`, so a link `hello:world` - in a browser, in
 the Run box - starts Hello with the whole link as its argument.
 
+## COM classes: `[com.ID]`
+
+A program or DLL that other programs create objects from - by a class ID, or by a name such as
+`Hello.Widget` in a script - has to be registered as a COM class. Hello has none, but this is all it
+would take for a DLL `widget.dll` in the package:
+
+```toml
+[com.Widget]
+file = "file:WidgetDll"
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D35}"     # rubrapack guid makes one
+description = "Hello widget"
+prog-id = "Hello.Widget"
+threading = "both"
+```
+
+- `file` is the server: a `.dll` (loaded into the caller) or an `.exe` (started; `args` are its
+  arguments, often `-Embedding`);
+- `class` is the class ID the server answers to, `prog-id` the readable name for it;
+- `threading` is the DLL's apartment: `sta` (the default), `mta`, `both` or `neutral`;
+- `app-id` and `surrogate = true` let the DLL run in a separate process (dllhost), and `typelib`,
+  `typelib-version` and `typelib-file` register a type library with it.
+
+PowerShell then makes one with `New-Object -ComObject Hello.Widget`. Removal unregisters it.
+
 ## Try it
 
 Install, then:

@@ -217,6 +217,27 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_protocol_t;
 
+// [com.ID] (RFC-0022): a COM class served by a program or DLL of this package. MSI: HKCR values in
+// the server's component (CLSID, its server, ProgID, AppID, TypeLib); MSIX: com:ComServer and
+// com:ProgId (through an [msix-extension] of kind com-server made from it).
+typedef struct {
+    char    *id;
+    char    *file;              // file ID of the .exe or .dll that serves the class
+    bool     exe;               // the server is an .exe (LocalServer32), else a DLL (InprocServer32)
+    char    *clsid;             // "{GUID}", upper case
+    char    *description;       // literal, or NULL (the product's name)
+    char    *threading;         // a DLL's ThreadingModel: "Apartment" (default), "Free", "Both", "Neutral"
+    char    *args;              // an exe's arguments (formatted), or NULL
+    char    *prog_id;           // or NULL
+    char    *app_id;            // "{GUID}", or NULL (surrogate without it: the class ID)
+    bool     surrogate;         // a DLL run in dllhost (AppID DllSurrogate)
+    char    *typelib;           // "{LIBID}", or NULL
+    char    *typelib_version;   // "major.minor" in hex digits (default "1.0")
+    char    *typelib_file;      // file ID holding the type library (default: the server)
+    bool     msi_only;
+    rp_pos_t pos;
+} rp_ir_com_t;
+
 // [msix-extension.ID] (RFC-0010 N4): what only an MSIX has; left out of an MSI.
 typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP, RP_MSIX_EXT_FIREWALL, RP_MSIX_EXT_COM, RP_MSIX_EXT_TOAST,
                RP_MSIX_EXT_CONTEXT_MENU } rp_msix_ext_kind_t;
@@ -236,6 +257,7 @@ typedef struct {
     char              *clsid;       // com-server, toast, context-menu: "{GUID}", upper case
     char              *threading;   // com-server (a DLL), context-menu: "STA", "MTA", "Both", "Neutral"
     char              *args;        // com-server (an exe), toast: plain text, or NULL
+    char              *prog_id;     // com-server made from a [com.*]: its ProgID, or NULL
     char              *verb;        // context-menu: the verb's ID (default the table's ID)
     char             **types;       // context-menu: ".ext" or "*"
     size_t             type_count;
@@ -435,6 +457,8 @@ typedef struct {
     size_t            assoc_count;
     rp_ir_protocol_t *protocols;            // in ID order
     size_t            protocol_count;
+    rp_ir_com_t      *coms;                 // [com.*], in ID order
+    size_t            com_count;
     rp_ir_msix_ext_t *msix_exts;            // in ID order
     size_t            msix_ext_count;
     // P4 dialogs (RFC-0005)
