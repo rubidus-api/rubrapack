@@ -15,8 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
+#include "proven/time.h"
 #include "proven/heap.h"
 
 enum { MAX_INPUT = 1u << 30, MAX_KEY = 1u << 22 };
@@ -271,7 +271,7 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
     }
     const char *why = NULL;
     bool external = false;
-    int64_t now = (int64_t)time(NULL);
+    int64_t now = (int64_t)(proven_time_now() / 1000000000);
     rp_tsa_t tsa = { .url = a->timestamp, .proxy = a->proxy, .anchors = tsa_anchors, .anchor_count = tsa_kf.cert_count, .tls_anchors = tls_anchors,
                      .tls_anchor_count = tls_kf.cert_count };
     rp_timestamper_t stamper = { rp_tsa_stamp, &tsa };
@@ -377,7 +377,7 @@ void rp_iso_time(int64_t t, char out[64]) {
 // test harness can check an expired certificate without touching a clock (RFC-0001 12.7).
 static int64_t check_time(proven_allocator_t heap) {
     char *v = rp_pal_getenv(heap, "RUBRAPACK_TEST_NOW");
-    int64_t t = (int64_t)time(NULL);
+    int64_t t = (int64_t)(proven_time_now() / 1000000000);
     if (v) {
         char *end;
         long long n = strtoll(v, &end, 10);

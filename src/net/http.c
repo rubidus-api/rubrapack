@@ -6,9 +6,10 @@
 #include "rubrapack/tls.h"
 #include "rubrapack/version.h"
 
+#include "proven/time.h"
+
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
 enum { MAX_HEAD = 65536, DEFAULT_BODY = 4 << 20, CONNECT_MS = 10000, TOTAL_MS = 60000, MAX_REDIRECTS = 3, RETRIES = 2 };
 
@@ -149,7 +150,7 @@ static proven_err_t conn_send(conn_t *c, const uint8_t *data, size_t len) {
 
 // The TLS 1.3 handshake on a connected socket.
 static proven_err_t tls_start(proven_allocator_t alloc, conn_t *c, const rp_http_req_t *req, const char *host, const char **why) {
-    rp_tls_config_t cfg = { host, req->tls_anchors, req->tls_anchor_count, req->tls_now ? req->tls_now : (int64_t)time(NULL), NULL };
+    rp_tls_config_t cfg = { host, req->tls_anchors, req->tls_anchor_count, req->tls_now ? req->tls_now : (int64_t)(proven_time_now() / 1000000000), NULL };
     proven_err_t err = rp_tls_new(alloc, &cfg, &c->tls, why);
     while (err == PROVEN_OK && !rp_tls_connected(c->tls)) {
         err = flush(c);
