@@ -176,16 +176,19 @@ static bool add_file(plan_t *p, char *rel, const uint8_t *data, size_t size) {
     return add_item(p, rel, false, data, size);
 }
 
+// By the folded path, then by the path as written, then folders first: a total order.
 static int cmp_fold(const void *a, const void *b) {
     const item_t *x = a, *y = b;
-    return strcmp(x->fold, y->fold);
+    int c = strcmp(x->fold, y->fold);
+    if (c == 0) c = strcmp(x->rel, y->rel);
+    return c ? c : (int)y->dir - (int)x->dir;
 }
 
 // ---- writing ---------------------------------------------------------------------------------
 
 static int write_plan(plan_t *p, const char *dest) {
     // Paths that differ only in case would be one file on Windows.
-    qsort(p->items, p->count, sizeof *p->items, cmp_fold);
+    rp_sort(p->items, p->count, sizeof *p->items, cmp_fold);
     for (size_t i = 1; i < p->count; ++i) {
         if (strcmp(p->items[i - 1].fold, p->items[i].fold) == 0 && !(p->items[i - 1].dir && p->items[i].dir)) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted",

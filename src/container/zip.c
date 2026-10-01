@@ -192,7 +192,8 @@ void rp_zip_entries_free(proven_allocator_t alloc, rp_zip_entry_t *entries, size
 
 static int by_offset(const void *a, const void *b) {
     const rp_zip_entry_t *x = *(const rp_zip_entry_t *const *)a, *y = *(const rp_zip_entry_t *const *)b;
-    return x->lfh_off < y->lfh_off ? -1 : x->lfh_off > y->lfh_off;
+    if (x->lfh_off != y->lfh_off) return x->lfh_off < y->lfh_off ? -1 : 1;
+    return x < y ? -1 : x > y;      // the same offset twice: central directory order
 }
 
 proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t len, const rp_limits_t *lim, rp_zip_entry_t **entries,
@@ -301,7 +302,7 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
         goto out;
     }
     for (size_t i = 0; i < n; ++i) order[i] = &e[i];
-    qsort(order, n, sizeof *order, by_offset);
+    rp_sort(order, n, sizeof *order, by_offset);
     for (size_t i = 1; i < n; ++i) {
         if (order[i]->lfh_off < order[i - 1]->data_off + order[i - 1]->csize) NO("two ZIP entries overlap");
     }

@@ -90,7 +90,7 @@ static bool is_key(const mod_t *m, const char *s, size_t n) {
     memcpy(buf, s, n);
     buf[n] = '\0';
     const char *p = buf;
-    return m->nkeys && bsearch(&p, m->keys, m->nkeys, sizeof *m->keys, cmp_str) != NULL;
+    return m->nkeys && rp_bsearch(&p, m->keys, m->nkeys, sizeof *m->keys, cmp_str) != NULL;
 }
 
 static rp_msi_cell_t str_cell(const char *s) {
@@ -213,7 +213,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
             }
         }
     }
-    if (m.nkeys) qsort(m.keys, m.nkeys, sizeof *m.keys, cmp_str);
+    if (m.nkeys) rp_sort(m.keys, m.nkeys, sizeof *m.keys, cmp_str);
 
     enum { MAXT = 24 };
     rp_msi_wtable_t mt[MAXT];

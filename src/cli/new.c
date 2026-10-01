@@ -177,8 +177,8 @@ proven_err_t rpn_scan_dist(const char *dist, scan_t *s) {
         rp_mem_free(heap, p);
     }
     rp_mem_free(heap, v);
-    qsort(s->files.v, s->files.n, sizeof(char *), rpn_cmp_name);
-    qsort(s->dirs.v, s->dirs.n, sizeof(char *), rpn_cmp_name);
+    rp_sort(s->files.v, s->files.n, sizeof(char *), rpn_cmp_name);
+    rp_sort(s->dirs.v, s->dirs.n, sizeof(char *), rpn_cmp_name);
     return err;
 }
 
@@ -230,7 +230,7 @@ void rpn_find_license(const char *dist, char *out, size_t cap) {
     for (int w = 0; w < 2; ++w) {
         names_t x = { 0 };
         if (rp_pal_list_dir(heap, where[w], &x.v, &x.n) != PROVEN_OK) continue;
-        qsort(x.v, x.n, sizeof(char *), rpn_cmp_name);
+        rp_sort(x.v, x.n, sizeof(char *), rpn_cmp_name);
         for (size_t i = 0; i < x.n && strcmp(out, "-") == 0; ++i) {
             const char *s = x.v[i];
             bool lic = (s[0] == 'L' || s[0] == 'l') && strlen(s) > 8 && (rpn_ends_ci(s, ".txt") || rpn_ends_ci(s, ".md") || rpn_ends_ci(s, ".rtf"));
