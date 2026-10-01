@@ -56,7 +56,8 @@ static bool four_part_version(const char *s) {
 void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", "appinstaller-uri",
                                         "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background",
-                                        "display-name", "capabilities", "file-system-virtualization", "registry-virtualization", NULL };
+                                        "display-name", "capabilities", "file-system-virtualization", "registry-virtualization",
+                                        "main-package", "main-publisher", "modification", NULL };
     static const char *const lang_bases[] = { "display-name", "publisher-display-name", NULL };
     ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
@@ -97,6 +98,19 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
                 if (s) ir->msix_caps[ir->msix_cap_count++] = s;
             }
         }
+    }
+    // RFC-0019: an optional package of another (main-package), or a modification package of it.
+    ir->msix_main = ir_get_str(c, t, "main-package", false, NULL);
+    ir->msix_main_publisher = ir_get_str(c, t, "main-publisher", false, NULL);
+    ir->msix_modification = ir_get_bool(c, t, "modification", false);
+    if (ir->msix_main && !msix_name_ok(ir->msix_main)) {
+        ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '%s')", ir->msix_main);
+    }
+    if (ir->msix_main_publisher && strchr(ir->msix_main_publisher, '=') == NULL) {
+        ERR(c, ir_key_pos(t, "main-publisher"), "RP1602", "main-publisher is the main package's publisher, such as \"CN=Example\"");
+    }
+    if ((ir->msix_main_publisher || ir->msix_modification) && ir->msix_main == NULL) {
+        ERR(c, t->pos, "RP1617", "main-publisher and modification = true go with main-package (the package this one belongs to)");
     }
     ir->msix_no_fs_virt = !ir_get_bool(c, t, "file-system-virtualization", true);
     ir->msix_no_reg_virt = !ir_get_bool(c, t, "registry-virtualization", true);

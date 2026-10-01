@@ -539,7 +539,7 @@ static void loc_free(loc_t *l) {
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
 enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
-       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_COUNT = 10 };
+       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_COUNT = 11 };
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
 enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17, CAP_UNVIRTUALIZED = 1 << 18 };
 
@@ -790,7 +790,7 @@ static bool env_value(const rp_ir_t *ir, const rp_ir_dir_t *root, const char *v,
 }
 
 static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns,
-                     const loc_t *loc) {
+                     const loc_t *loc, const char *store_logo) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
     char version[32], publisher[8400];
     unsigned v[4] = { 0 };
@@ -810,7 +810,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "com", "http://schemas.microsoft.com/appx/manifest/com/windows10" },
                                              { "desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" },
                                              { "uap6", "http://schemas.microsoft.com/appx/manifest/uap/windows10/6" },
-                                             { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" } };
+                                             { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" },
+                                             { "rescap6", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -835,11 +836,12 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     rp_buf_puts(m, "</DisplayName>\r\n    <PublisherDisplayName>");
     xml_text(m, loc->pub_display ? "ms-resource:PublisherDisplayName" : ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
     rp_buf_puts(m, "</PublisherDisplayName>\r\n    <Logo>");
-    xml_text(m, ap[0].logo[2]);
+    xml_text(m, store_logo);
     rp_buf_puts(m, "</Logo>\r\n");
     // RFC-0018: write virtualization turned off (needs unvirtualizedResources, added below).
     if (ir->msix_no_fs_virt) rp_buf_puts(m, "    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>\r\n");
     if (ir->msix_no_reg_virt) rp_buf_puts(m, "    <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>\r\n");
+    if (ir->msix_modification) rp_buf_puts(m, "    <rescap6:ModificationPackage>true</rescap6:ModificationPackage>\r\n");    // RFC-0019
     rp_buf_puts(m, "  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
     attr(m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
     rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n");
@@ -850,6 +852,15 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         attr(m, "MinVersion", ir->msix_deps[k].min_version);
         rp_buf_puts(m, " />\r\n");
     }
+    // RFC-0019: the main package of an optional or modification package (uap4 when it names the
+    // publisher; a modification package always does, its own when not given).
+    if (ir->msix_main) {
+        bool uap4 = ir->msix_main_publisher || ir->msix_modification;
+        rp_buf_puts(m, uap4 ? "    <uap4:MainPackageDependency" : "    <uap3:MainPackageDependency");
+        attr(m, "Name", ir->msix_main);
+        if (uap4) attr(m, "Publisher", ir->msix_main_publisher ? ir->msix_main_publisher : publisher);
+        rp_buf_puts(m, " />\r\n");
+    }
     rp_buf_puts(m, "  </Dependencies>\r\n  <Resources>\r\n    <Resource");
     attr(m, "Language", ir->language == 1042 ? "ko-KR" : "en-US");
     rp_buf_puts(m, " />\r\n");
@@ -858,7 +869,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         attr(m, "Language", loc->langs[k]);
         rp_buf_puts(m, " />\r\n");
     }
-    rp_buf_puts(m, "  </Resources>\r\n  <Applications>\r\n");
+    rp_buf_puts(m, "  </Resources>\r\n");
+    if (ir->msix_app_count) rp_buf_puts(m, "  <Applications>\r\n");
     for (size_t i = 0; i < ir->msix_app_count; ++i) {
         const rp_ir_msix_app_t *a = &ir->msix_apps[i];
         const char *display = a->display ? a->display : ir->name;
@@ -883,7 +895,7 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         }
         rp_buf_puts(m, "    </Application>\r\n");
     }
-    rp_buf_puts(m, "  </Applications>\r\n");
+    if (ir->msix_app_count) rp_buf_puts(m, "  </Applications>\r\n");
     const rp_buf_t *pkg = &ext[ir->msix_app_count];     // package-level extensions (firewall rules)
     if (pkg->len) {
         rp_buf_puts(m, "  <Extensions>\r\n");
@@ -894,6 +906,11 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     // kinds, then the device capabilities; runFullTrust always, and what the features need.
     static const char *const cap_elem[] = { "Capability", "uap:Capability", "uap3:Capability", "uap6:Capability", "uap7:Capability",
                                             "rescap:Capability", "DeviceCapability" };
+    // An optional or modification package has none: its main package's apply (RFC-0019).
+    if (ir->msix_main) {
+        rp_buf_puts(m, "</Package>\r\n");
+        return;
+    }
     rp_buf_puts(m, "  <Capabilities>\r\n");
     for (int kind = C_FOUNDATION; kind <= C_DEVICE; ++kind) {
         if (kind == C_RESCAP) {
@@ -1366,21 +1383,36 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         DERR(b->pos, "RP1605", "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it", b->kind, b->id);
     }
     if (!ir->has_msix) DERR(top, "RP1604", "a .msix output needs an [msix] table (identity-name, publisher)");
-    if (ir->msix_app_count == 0) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
+    if (ir->msix_app_count == 0 && ir->msix_main == NULL) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
+    // RFC-0019: a modification package changes its main package's files and registry; it has no
+    // applications of its own.
+    if (ir->msix_modification && ir->msix_app_count) DERR(ir->msix_apps[0].pos, "RP1617", "a modification package has no applications of its own");
+    if (ir->msix_main && (ir->msix_cap_count || ir->msix_no_fs_virt || ir->msix_no_reg_virt)) {
+        DERR(ir->msix_caps_pos.line ? ir->msix_caps_pos : ir->msix_pos, "RP1617",
+             "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply");
+    }
+    if (ir->msix_modification && min_build(ir) < 18362) {
+        DERR(ir->msix_pos, "RP1614", "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\"");
+    }
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
-    // The first application's executable decides the package root.
-    const rp_ir_file_t *exe = NULL;
-    const rp_ir_msix_app_t *first = &ir->msix_apps[0];
-    for (size_t i = 0; i < ir->file_count && first->exe; ++i) {
-        if (strcmp(ir->files[i].id, first->exe) == 0) exe = &ir->files[i];
-    }
+    // The first application's executable decides the package root; without applications (an
+    // optional or modification package) the dir INSTALLDIR does, and the rest goes to the VFS.
     const rp_ir_dir_t *root = NULL;
     char exe_dir[1024] = "";
-    if (exe == NULL || exe->msi_only) {
-        DERR(first->pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", first->exe ? first->exe : "");
-    } else if (!below_root(ir, exe->dir, &root, exe_dir, sizeof exe_dir)) {
-        DERR(first->pos, "RP1609", "the executable's folder does not lead to a known location");
+    if (ir->msix_app_count) {
+        const rp_ir_file_t *exe = NULL;
+        const rp_ir_msix_app_t *first = &ir->msix_apps[0];
+        for (size_t i = 0; i < ir->file_count && first->exe; ++i) {
+            if (strcmp(ir->files[i].id, first->exe) == 0) exe = &ir->files[i];
+        }
+        if (exe == NULL || exe->msi_only) {
+            DERR(first->pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", first->exe ? first->exe : "");
+        } else if (!below_root(ir, exe->dir, &root, exe_dir, sizeof exe_dir)) {
+            DERR(first->pos, "RP1609", "the executable's folder does not lead to a known location");
+        }
+    } else if (find_dir(ir, "INSTALLDIR") && !ir->msix_modification) {
+        (void)below_root(ir, "INSTALLDIR", &root, exe_dir, sizeof exe_dir);
     }
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
@@ -1509,12 +1541,12 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     // Each application: its executable's package path, and its logos - the three given (checked),
     // or plain ones made here once for all applications.
-    app_paths_t *ap = rp_mem_alloc(alloc, ir->msix_app_count, sizeof *ap);
+    app_paths_t *ap = rp_mem_alloc(alloc, ir->msix_app_count ? ir->msix_app_count : 1, sizeof *ap);
     if (ap == NULL) {
         rp_mem_free(alloc, items);
         return PROVEN_ERR_NOMEM;
     }
-    memset(ap, 0, ir->msix_app_count * sizeof *ap);
+    memset(ap, 0, (ir->msix_app_count ? ir->msix_app_count : 1) * sizeof *ap);
     static const uint32_t logo_px[3] = { 150, 44, 50 };
     static const char *const logo_default[3] = { "Assets\\DefaultSquare150x150Logo.png", "Assets\\DefaultSquare44x44Logo.png",
                                                  "Assets\\DefaultStoreLogo.png" };
@@ -1648,6 +1680,13 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             }
         }
     }
+    const char *store_logo = ir->msix_app_count ? ap[0].logo[2] : logo_default[2];
+    if (ir->msix_app_count == 0) {          // the package's logo (an optional or modification package)
+        item_t *it = &items[n++];
+        snprintf(it->path, sizeof it->path, "%s", logo_default[2]);
+        it->pos = top;
+        if (default_logo(alloc, logo_px[2], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
+    }
     // Texts in several languages (RFC-0016 3), then resources.pri when anything needs it.
     loc.pkg_display = loc_text(&loc, "PackageDisplayName", ir->msix_display ? ir->msix_display : ir->name, ir->msix_display_by_lang,
                                ir->msix_display_by_lang_count, ir->msix_pos, d);
@@ -1775,6 +1814,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     for (size_t a = 0; a <= ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
     if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
+    if (ir->msix_main) ns |= ir->msix_main_publisher || ir->msix_modification ? NS_UAP4 : NS_UAP3;     // RFC-0019
+    if (ir->msix_modification) ns |= NS_RESCAP6;
     // RFC-0018: the capabilities the source names, and write virtualization turned off.
     for (size_t k = 0; k < ir->msix_cap_count; ++k) {
         const char *c = ir->msix_caps[k];
@@ -1824,7 +1865,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (items[i].source) rp_mem_free(alloc, data);
     }
     if (err == PROVEN_OK) {
-        manifest(&man, ir, opt, ap, ext, ns, &loc);
+        manifest(&man, ir, opt, ap, ext, ns, &loc, store_logo);
         err = man.err;
     }
     if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, man.data, man.len, true);

@@ -194,6 +194,33 @@ background-color = "#1E3A5F"   # 타일 색
 - 자기 설치 폴더나 `HKCU` 에 실제로 써야 하는 애플리케이션은 패키지의 쓰기 가상화를 끌 수 있다:
   `file-system-virtualization = false`, `registry-virtualization = false`(Windows 10 1903 이상).
 
+## 선택적 패키지와 수정 패키지
+
+패키지는 다른 패키지에 딸릴 수 있다. *선택적 패키지*는 주 패키지에 콘텐츠 - 더 많은 단계, 플러그인 - 를 더하고, 그
+패키지가 있는 곳에만 설치된다:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.HelloExtras"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+main-package = "ExampleSoftware.Hello"
+```
+
+*수정 패키지*는 설치된 애플리케이션의 설정 - 기업의 설정 파일과 레지스트리 값 - 을 애플리케이션 자신의 패키지를
+건드리지 않고 바꾼다:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.HelloSiteSettings"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+main-package = "ExampleSoftware.Hello"
+modification = true
+min-version = "10.0.18362.0"
+```
+
+둘 다 `[msix-app.*]` 표가 없어도 된다. 선택적 패키지의 파일은 자기 폴더(dir `INSTALLDIR`)에, 수정 패키지의 파일은
+가상 파일 시스템에 들어가 주 애플리케이션이 본다. 주 패키지의 게시자가 다른 사람이면 `main-publisher` 로 적는다.
+
 ## 다른 표들은 무엇이 되나
 
 - `Programs` 에 있고 애플리케이션의 실행 파일을 가리키는 `[shortcut.StartMenu]` 는 애플리케이션의 시작 메뉴 항목

@@ -237,7 +237,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
@@ -338,6 +338,14 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   패키지를 설치하지 않는다. MSI 빌드는 이 표를 뺀다.
 - `background-color` 는 애플리케이션 타일의 색을 정하고, `hidden = true` 는 애플리케이션(예를 들어 도우미)을 시작
   메뉴에서 뺀다.
+- `main-package = "Contoso.Main"`(주 패키지의 정체 이름)은 이 패키지를 그 패키지의 *선택적 패키지*로 만든다: 주
+  패키지의 컨테이너 안에서 도는 콘텐츠나 애플리케이션이고, 주 패키지와 함께여야만 설치된다
+  (`uap3:MainPackageDependency`; Windows 10 1703). 주 패키지의 게시자가 다르면 `main-publisher` 로 적는다(Store
+  밖에서만). `modification = true` 를 더하면 대신 *수정 패키지*가 된다: 주 애플리케이션의 설정을 바꾸는 파일(가상 파일
+  시스템 안)과 레지스트리 값 - 예를 들어 기업의 설정 - 이고, 자기 애플리케이션은 없다(`rescap6:ModificationPackage`;
+  Windows 10 1903, `min-version = "10.0.18362.0"`). 두 가지 모두 `[msix-app.*]` 표가 꼭 있지는 않고, 능력과 가상화
+  설정은 두지 않는다: 주 패키지의 것이 적용된다(`RP1617`). 애플리케이션이 없으면 dir `INSTALLDIR` 가 패키지 자신의
+  폴더다(선택적 패키지. 수정 패키지는 모두 가상 파일 시스템에 둔다).
   그런 표(또는 `[file.*]`/`[files.*]`)에 `msi-only = true` 를 달면 MSI 에는 들어가고 MSIX 는 그것
   없이 만들어진다. feature·속성·대화창·`[arp]` 은 Windows Installer 에만 해당하므로 MSIX 에는 쓰지
   않는다.

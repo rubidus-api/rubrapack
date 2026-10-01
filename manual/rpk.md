@@ -248,7 +248,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
@@ -362,6 +362,17 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   Windows refuses to install the package without it. An MSI build leaves the table out.
 - `background-color` colours the application's tile and `hidden = true` keeps an application (a
   helper, say) out of the Start menu.
+- `main-package = "Contoso.Main"` (the main package's identity name) makes the package an
+  *optional package* of it: content, or more applications, that run in the main package's
+  container and can only be installed with it (`uap3:MainPackageDependency`; Windows 10 1703).
+  `main-publisher` names the main package's publisher when it differs (outside the Store only).
+  With `modification = true` it is a *modification package* instead: files (in the virtual file
+  system) and registry values that change how the main application is set up - an enterprise's
+  settings, say - without applications of its own (`rescap6:ModificationPackage`; Windows 10
+  1903, `min-version = "10.0.18362.0"`). Neither kind has `[msix-app.*]` tables necessarily, nor
+  capabilities or virtualization settings: the main package's apply (`RP1617`). Without
+  applications the dir `INSTALLDIR` is the package's own folder (an optional package; a
+  modification package keeps everything in the virtual file system).
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
   the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
   Installer only and are not used for an MSIX.

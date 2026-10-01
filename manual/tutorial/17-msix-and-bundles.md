@@ -200,6 +200,34 @@ background-color = "#1E3A5F"   # the tile's colour
   package's write virtualization off: `file-system-virtualization = false`,
   `registry-virtualization = false` (Windows 10 1903 and later).
 
+## Optional and modification packages
+
+A package can belong to another one. An *optional package* adds content - more levels, a plug-in -
+to a main package, and installs only where that package is:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.HelloExtras"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+main-package = "ExampleSoftware.Hello"
+```
+
+A *modification package* changes how an installed application is set up - an enterprise's
+settings file and registry values - without touching the application's own package:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.HelloSiteSettings"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+main-package = "ExampleSoftware.Hello"
+modification = true
+min-version = "10.0.18362.0"
+```
+
+Neither needs `[msix-app.*]` tables; an optional package's files go to its own folder (the dir
+`INSTALLDIR`), a modification package's into the virtual file system, where the main application
+sees them. `main-publisher` names the main package's publisher when it is someone else's.
+
 ## What the other tables become
 
 - `[shortcut.StartMenu]` in `Programs` to the application's executable *is* the application's

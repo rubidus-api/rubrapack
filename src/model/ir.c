@@ -686,6 +686,8 @@ void rp_ir_free(rp_ir_t *ir) {
         }
     }
     rp_mem_free(a, ir->msix_apps);
+    rp_mem_free(a, ir->msix_main);
+    rp_mem_free(a, ir->msix_main_publisher);
     for (size_t k = 0; k < ir->msix_cap_count; ++k) rp_mem_free(a, ir->msix_caps[k]);
     rp_mem_free(a, ir->msix_caps);
     for (size_t k = 0; k < ir->msix_dep_count; ++k) {

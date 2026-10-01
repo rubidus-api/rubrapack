@@ -479,6 +479,8 @@ typedef struct {
     rp_pos_t  msix_caps_pos;
     bool      msix_no_fs_virt, msix_no_reg_virt;    // file-system-/registry-virtualization = false
     rp_ir_msix_dep_t *msix_deps;                // [msix-dependency.*], in source order
+    char     *msix_main, *msix_main_publisher;  // main-package (and its publisher): an optional package (RFC-0019)
+    bool      msix_modification;                // modification = true: a modification package of msix_main
     size_t    msix_dep_count;
     rp_ir_msix_block_t *msix_blocks;            // tables an MSIX cannot carry, without msi-only = true
     size_t    msix_block_count;
