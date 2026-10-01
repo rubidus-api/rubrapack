@@ -13,6 +13,7 @@
 
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pri.h"
 #include "rubrapack/text.h"
 
@@ -211,7 +212,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         } else {                // scales in size order
             for (int a = 1; a <= nq; ++a) {
                 for (int b = a + 1; b <= nq; ++b) {
-                    if (q[a].type == RP_PRI_SCALE && q[b].type == RP_PRI_SCALE && atoi(q[b].value) < atoi(q[a].value)) {
+                    if (q[a].type == RP_PRI_SCALE && q[b].type == RP_PRI_SCALE && rp_int_or_zero(q[b].value) < rp_int_or_zero(q[a].value)) {
                         qual_t s = q[a];
                         q[a] = q[b];
                         q[b] = s;

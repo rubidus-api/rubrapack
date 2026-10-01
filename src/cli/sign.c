@@ -8,6 +8,7 @@
 #include "rubrapack/keys.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msix.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/sign.h"
 
@@ -379,9 +380,9 @@ static int64_t check_time(proven_allocator_t heap) {
     char *v = rp_pal_getenv(heap, "RUBRAPACK_TEST_NOW");
     int64_t t = (int64_t)(proven_time_now() / 1000000000);
     if (v) {
-        char *end;
-        long long n = strtoll(v, &end, 10);
-        if (end != v && *end == '\0') t = n;
+        const char *end = v;
+        int64_t n = 0;
+        if (rp_read_i64(v, &end, &n) && *end == '\0') t = n;
         rp_mem_free(heap, v);
     }
     return t;

@@ -22,6 +22,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/suminfo.h"
 
@@ -627,10 +628,10 @@ static bool ends_with_ci(const char *s, const char *suffix) {
 }
 
 static bool parse_u64(const char *s, uint64_t *out) {
-    char *end = NULL;
+    const char *end = NULL;
+    uint64_t v = 0;
     if (s == NULL || *s < '0' || *s > '9') return false;
-    unsigned long long v = strtoull(s, &end, 10);
-    if (end == NULL || *end != '\0' || v == 0) return false;
+    if (!rp_read_u64(s, &end, &v) || *end != '\0' || v == 0) return false;
     *out = v;
     return true;
 }

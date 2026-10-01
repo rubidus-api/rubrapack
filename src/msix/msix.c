@@ -12,6 +12,7 @@
 #include "rubrapack/crypto.h"
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
 #include "rubrapack/pe.h"
@@ -355,14 +356,16 @@ static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp
         break;
     case RP_REG_DWORD: {
         type = 4;
-        long long v = strtoll(r->value, NULL, 10);
+        int64_t v = rp_int_or_zero(r->value);
         rp_buf_u32le(&data, (uint32_t)v);
         break;
     }
     case RP_REG_QWORD: {
         type = 11;
-        unsigned long long v = strncmp(r->value, "0x", 2) == 0 || strncmp(r->value, "0X", 2) == 0 ? strtoull(r->value + 2, NULL, 16)
-                                                                                                 : (unsigned long long)strtoll(r->value, NULL, 10);
+        uint64_t v = 0;
+        int64_t sv = 0;
+        if (strncmp(r->value, "0x", 2) == 0 || strncmp(r->value, "0X", 2) == 0) (void)rp_read_hex64(r->value, NULL, &v);
+        else if (rp_read_i64(r->value, NULL, &sv)) v = (uint64_t)sv;
         rp_buf_u64le(&data, v);
         break;
     }
@@ -979,7 +982,8 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
 static unsigned min_build(const rp_ir_t *ir) {
     const char *v = ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0";
     for (int dots = 0; *v && dots < 2; ++v) dots += *v == '.';
-    return (unsigned)strtoul(v, NULL, 10);
+    uint64_t b = 0;
+    return rp_read_u64(v, NULL, &b) && b <= 0xFFFFFFFFu ? (unsigned)b : 0;
 }
 
 static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {

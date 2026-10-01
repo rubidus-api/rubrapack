@@ -16,6 +16,7 @@
 #include "rubrapack/cab.h"
 #include "rubrapack/ident.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/patch.h"
 #include "rubrapack/suminfo.h"
 
@@ -111,7 +112,10 @@ static void version(const char *s, long v[4]) {
     for (int i = 0; i < 4; ++i) {
         v[i] = 0;
         if (*s) {
-            v[i] = strtol(s, (char **)&s, 10);
+            const char *end = s;
+            int64_t n = 0;
+            if (rp_read_i64(s, &end, &n) && n >= 0 && n <= 0x7FFFFFFF) v[i] = (long)n;
+            s = end;
             if (*s == '.') ++s;
         }
     }

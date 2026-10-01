@@ -12,6 +12,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/merge.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
 #include "rubrapack/pe.h"
@@ -1736,7 +1737,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     // Tests make several cabinet folders from a small package (RFC-0013 E4).
     char *fb = rp_pal_getenv(alloc, "RP_TEST_CAB_FOLDER_BLOCKS");
     if (fb) {
-        long v = strtol(fb, NULL, 10);
+        int64_t v = rp_int_or_zero(fb);
         if (v > 0 && v <= 0xFFFF) rp_cab_folder_blocks = (size_t)v;
         rp_mem_free(alloc, fb);
     }

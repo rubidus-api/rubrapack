@@ -7,6 +7,7 @@
 #include "rubrapack/ir.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/toml.h"
 
@@ -266,9 +267,9 @@ static int run(int argc, char **argv, bool lint) {
             compress = next;
             ++i;
         } else if (strcmp(a, "--jobs") == 0 && next) {        // RFC-0013 E2: 1..64 (default: the processors)
-            char *end = NULL;
-            long v = strtol(next, &end, 10);
-            if (end == next || *end || v < 1 || v > 64) {
+            const char *end = next;
+            int64_t v = 0;
+            if (!rp_read_i64(next, &end, &v) || *end || v < 1 || v > 64) {
                 rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--jobs takes a number from 1 to 64 (got '%s')", next);
                 goto done;
             }

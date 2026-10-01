@@ -14,6 +14,7 @@
 #include "rubrapack/ident.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
 #include "rubrapack/text.h"
@@ -272,8 +273,10 @@ const char *rpn_check_version(ans_t *a, char *v) {
     const char *s = v;
     while (k < 5) {
         if (*s < '0' || *s > '9') return "a version is 3 or 4 numbers with dots, such as 1.0.0";
-        char *end = NULL;
-        p[k++] = strtoul(s, &end, 10);
+        const char *end = s;
+        uint64_t n = 0;
+        if (!rp_read_u64(s, &end, &n) || n > 0xFFFFFFFFu) return "a version is 3 or 4 numbers with dots, such as 1.0.0";
+        p[k++] = (unsigned long)n;
         s = end;
         if (*s == '\0') break;
         if (*s != '.') return "a version is 3 or 4 numbers with dots, such as 1.0.0";

@@ -12,6 +12,7 @@
 
 #include "rubrapack/merge.h"
 #include "rubrapack/mem.h"
+#include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 
 #include <stdio.h>
@@ -327,8 +328,8 @@ static bool int_text(const char *s, int32_t *v) {
     for (const char *q = p; *q; ++q) {
         if (*q < '0' || *q > '9') return false;
     }
-    long long x = strtoll(s, NULL, 10);
-    if (x < INT32_MIN || x > INT32_MAX) return false;
+    int64_t x = 0;
+    if (!rp_read_i64(*s == '+' ? s + 1 : s, NULL, &x) || x < INT32_MIN || x > INT32_MAX) return false;
     *v = (int32_t)x;
     return true;
 }
@@ -350,7 +351,7 @@ static long find_row(rp_msi_module_t *m, const rp_msi_wtable_t *t, const rp_msi_
             const char *want = cmsm_part(m, row, ++part);
             const rp_msi_cell_t *have = &cells[r * t->column_count + c];
             if (want == NULL) same = have->kind == RP_MSI_NULL || (have->kind == RP_MSI_STR && have->len == 0);
-            else if (have->kind == RP_MSI_INT) same = atoll(want) == have->i;
+            else if (have->kind == RP_MSI_INT) same = rp_int_or_zero(want) == have->i;
             else same = have->kind == RP_MSI_STR && have->len == strlen(want) && memcmp(have->bytes, want, have->len) == 0;
         }
         if (same) return (long)r;
@@ -465,7 +466,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
                 const char *piece = NULL;
                 char num[16];
                 if (it->format == 0) piece = it->value;
-                else if (it->format == 1) piece = cmsm_part(m, it->value, semi ? (size_t)atoi(semi + 1) : 1);
+                else if (it->format == 1) piece = cmsm_part(m, it->value, semi ? (size_t)rp_int_or_zero(semi + 1) : 1);
                 else if (it->format == 2) {
                     int32_t v = 0;
                     (void)int_text(it->value, &v);
@@ -474,7 +475,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
                 } else {
                     int32_t v = 0;
                     (void)int_text(it->value, &v);
-                    int32_t mask = it->ctx ? (int32_t)strtol(it->ctx, NULL, 10) : 0;
+                    int32_t mask = it->ctx ? (int32_t)rp_int_or_zero(it->ctx) : 0;
                     masks |= mask;
                     bits |= v & mask;
                     any_bits = true;

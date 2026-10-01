@@ -3,6 +3,8 @@
 
 #include "ir_int.h"
 
+#include "rubrapack/num.h"
+
 #include <stdio.h>
 
 // Properties the tool writes itself, or that belong to the engine (RFC-0003 1).
@@ -372,8 +374,9 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
                 ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
                 return;
             }
-            unsigned long long q = strtoull(v->val.str + 2, NULL, 16);
-            snprintf(num, sizeof num, "%016llX", q);
+            uint64_t q = 0;
+            (void)rp_read_hex64(v->val.str + 2, NULL, &q);      // checked above: 1 to 16 hex digits
+            snprintf(num, sizeof num, "%016llX", (unsigned long long)q);
         } else {
             ERR(c, v->pos, "RP1316", "a qword value is an integer or \"0x\" and 1 to 16 hex digits");
             return;
