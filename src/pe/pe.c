@@ -88,6 +88,7 @@ proven_err_t rp_pe_read(const uint8_t *data, size_t len, rp_pe_info_t *info) {
     size_t opt = pe_off + 24u;
     if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) return PROVEN_ERR_INVALID_FORMAT;
     uint16_t magic = rd16(data + opt);
+    if (opt_size >= 70) info->subsystem = rd16(data + opt + 68);     // the same place in PE32 and PE32+
     size_t dirs_at = magic == 0x20B ? 112 : magic == 0x10B ? 96 : 0;
     if (dirs_at == 0 || opt_size < dirs_at + 8 * 3) return PROVEN_ERR_INVALID_FORMAT;
     uint32_t ndirs = rd32(data + opt + dirs_at - 4);

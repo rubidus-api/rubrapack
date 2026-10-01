@@ -10,8 +10,8 @@
 | 설치 | 패키지가 말하는 곳 어디든, 시키는 대로 컴퓨터를 바꾼다 | Windows 가 관리하는 봉인된 폴더에. 앱이 쓰는 파일과 레지스트리는 따로 보관된다 |
 | 제거 | 패키지가 만든 만큼 깨끗하게 | 늘 완전히: 아무것도 남지 않는다 |
 | 서명 | 권장 | **필수**: Windows 는 서명 안 된 MSIX 를 설치하지 않는다(아래의 시험용은 예외) |
-| 할 수 있는 것 | 이 튜토리얼의 모든 것 | 파일, 바로가기, 파일 형식, 레지스트리, 글꼴, 명령줄 별칭, 로그인할 때 시작 |
-| 할 수 없는 것 | - | 서비스, 사용자 지정 동작, 환경 변수, INI 파일, 권한, 조건, 대화창 |
+| 할 수 있는 것 | 이 튜토리얼의 모든 것 | 파일, 바로가기, 파일 형식, 레지스트리, INI 파일, 글꼴, 서비스, 명령줄 별칭, 로그인할 때 시작, 앱 자신의 프로세스에 주는 환경 변수 |
+| 할 수 없는 것 | - | 사용자 지정 동작, 컴퓨터 전체의 환경 변수, 권한, 조건, 대화창 |
 
 많은 제품이 둘 다 낸다. rubrapack 은 원본 하나로 어느 쪽이든 빌드한다: 출력 파일의 확장자가 정한다.
 
@@ -204,15 +204,21 @@ background-color = "#1E3A5F"   # 타일 색
   것처럼 보지만, 컴퓨터의 레지스트리는 그대로다. `Software` 아래의 키만 들어갈 수 있다(`RP1612`).
 - `[service.*]`(12장)는 패키지 서비스가 된다: 이름·시작·계정은 같고, Windows 10 2004 판부터 된다
   (`min-version = "10.0.19041.0"`). 패키지를 지우면 함께 사라진다.
-- `[env.HelloHome]`: MSIX 는 환경 변수를 정하지 못한다. `msi-only = true` 가 없으면 빌드가 멈춘다:
+- `[ini.*]` 는 패키지 안의 INI 파일이 된다. 패키지를 빌드할 때 쓴다.
+- `[env.HelloHome]`: MSIX 는 컴퓨터의 환경을 바꾸지 못한다. 할 수 있는 것은 애플리케이션 자신의 프로세스에 변수를
+  주는 것이다: 애플리케이션이 rubrapack 의 작은 실행기(패키지 안의 `rubrapack\Hello.exe`)를 거쳐 시작하고, 실행기가
+  변수를 정한 뒤 `hello.exe` 를 시작한다. `HELLO_HOME` 은 다른 프로그램도 보라고 둔 것이라 이 원본은
+  `msi-only = true` 로 MSI 에만 둔다. 그 줄이 없으면 MSIX 는 그 변수를 Hello 에게만 준다.
+
+`msi-only = true` 는 표를 MSI 에는 두고 MSIX 에서는 뺀다. MSIX 가 아예 담지 못하는 것 - `[require.*]`,
+`[action.*]` - 은 내가 뜻을 밝힐 때까지 빌드를 멈춘다:
 
 ```text
 C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
-hello.toml:72:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
+hello.toml:80:1: error[RP1605]: [require.Win81] cannot go into an MSIX; add msi-only = true to build the MSIX without it
 ```
 
-`msi-only = true` 는 그 표를 MSI 에는 두고 MSIX 에서는 뺀다. rubrapack 은 아무것도 몰래 빼지 않는다: MSIX 가
-담지 못하는 것은 내가 뜻을 밝힐 때까지 오류다.
+rubrapack 은 아무것도 몰래 빼지 않는다.
 
 기능, 속성, 대화창, `[arp]` 는 Windows Installer 에만 해당하므로 쓰이지 않는다.
 `rubrapack lint hello.toml --target msix` 는 빌드하지 않고 원본을 MSIX 기준으로 검사한다.

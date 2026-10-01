@@ -23,6 +23,7 @@ typedef struct {
     bool     has_version;       // VS_FIXEDFILEINFO found
     uint16_t version[4];        // file version a.b.c.d
     uint16_t language;          // first Translation language, else the resource language, else 0
+    uint16_t subsystem;         // optional header Subsystem: 2 GUI, 3 console (0 when not read)
 } rp_pe_info_t;
 
 // Reads what it can. A file that is not PE gives is_pe = false and PROVEN_OK; a PE file whose

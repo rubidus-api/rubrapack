@@ -481,6 +481,7 @@ void ir_parse_copy(ctx_t *c, const rp_ttable_t *t, rp_ir_copy_t *cp) {
     ir_check_id(c, t, 72);
     cp->id = ir_dup(c, t->id);
     cp->pos = t->pos;
+    cp->msi_only = ir_get_bool(c, t, "msi-only", false);
     char *src = ir_get_str(c, t, "source", true, NULL);
     if (src) {
         if (strncmp(src, "file:", 5) != 0 || src[5] == '\0') ERR(c, ir_key_pos(t, "source"), "RP1315", "source must be \"file:<ID>\"");
@@ -498,6 +499,7 @@ void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
     x->pos = t->pos;
+    x->msi_only = ir_get_bool(c, t, "msi-only", false);
     x->when = ir_get_when(c, t);
     x->dir = ir_get_str(c, t, "dir", true, NULL);
     x->file = ir_get_str(c, t, "file", true, NULL);
@@ -952,6 +954,7 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     ir_check_id(c, t, 72);
     e->id = ir_dup(c, t->id);
     e->pos = t->pos;
+    e->msi_only = ir_get_bool(c, t, "msi-only", false);
     e->when = ir_get_when(c, t);
     e->name = ir_get_str(c, t, "name", true, NULL);
     if (e->name && (strchr("=+-!*", e->name[0]) || strchr(e->name, '=') || ir_has_control(e->name))) {

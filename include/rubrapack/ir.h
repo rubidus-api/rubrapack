@@ -125,6 +125,7 @@ typedef struct {
     int      mode;              // 0 set, 1 add (to a comma list), 2 remove (at install)
     char    *feature;           // resolved (G2)
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
+    bool     msi_only;          // msi-only = true: left out of an MSIX
     rp_pos_t pos;
 } rp_ir_ini_t;
 
@@ -259,6 +260,7 @@ typedef struct {
     bool     keep;
     char    *feature;           // resolved (G2)
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
+    bool     msi_only;          // msi-only = true: left out of an MSIX
     rp_pos_t pos;
 } rp_ir_env_t;
 
@@ -267,6 +269,7 @@ typedef struct {
     char    *source_file;       // file ID
     char    *dir;               // dir ID
     char    *name;              // target name; the source's name when omitted
+    bool     msi_only;          // msi-only = true: left out of an MSIX
     rp_pos_t pos;
 } rp_ir_copy_t;
 

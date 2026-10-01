@@ -10,8 +10,8 @@ source, then as one bundle that holds all three architectures.
 | Installs | anywhere the package says, and changes the computer as told | into a sealed folder Windows owns; files and registry the app writes are kept apart |
 | Removal | as clean as the package makes it | always complete: nothing is left behind |
 | Signature | recommended | **required**: Windows does not install an unsigned MSIX (except for testing, below) |
-| Can do | everything in this tutorial | files, shortcuts, file types, registry, fonts, a command-line alias, a start-at-sign-in task |
-| Cannot do | - | services, custom actions, environment variables, INI files, permissions, conditions, dialogs |
+| Can do | everything in this tutorial | files, shortcuts, file types, registry, INI files, fonts, services, a command-line alias, a start-at-sign-in task, environment variables for the application's own processes |
+| Cannot do | - | custom actions, machine-wide environment variables, permissions, conditions, dialogs |
 
 Many products ship both. rubrapack builds either from one source: the output's extension decides.
 
@@ -212,16 +212,22 @@ background-color = "#1E3A5F"   # the tile's colour
   under `Software` can go there (`RP1612`).
 - A `[service.*]` (chapter 12) becomes a packaged service: the same name, start and account, from
   Windows 10 version 2004 on (`min-version = "10.0.19041.0"`); it goes when the package goes.
-- `[env.HelloHome]`: an MSIX cannot set environment variables. Without `msi-only = true` the build
-  stops:
+- `[ini.*]` becomes an INI file in the package, written when the package is built.
+- `[env.HelloHome]`: an MSIX cannot change the computer's environment. What it can do is give the
+  variables to the application's own processes: the application then starts through a small
+  launcher of rubrapack's (`rubrapack\Hello.exe` in the package), which sets them and starts
+  `hello.exe`. `HELLO_HOME` is meant for other programs too, so this source keeps it for the MSI
+  with `msi-only = true`; without that line the MSIX would give it to Hello alone.
+
+`msi-only = true` keeps a table in the MSI and leaves it out of the MSIX. What an MSIX cannot hold
+at all - a `[require.*]`, an `[action.*]` - stops the build until you say what you want:
 
 ```text
 C:\work\hello> rubrapack build hello.toml -o hello.msix --unsigned-test
-hello.toml:72:1: error[RP1605]: [env.HelloHome] cannot go into an MSIX; add msi-only = true to build the MSIX without it
+hello.toml:80:1: error[RP1605]: [require.Win81] cannot go into an MSIX; add msi-only = true to build the MSIX without it
 ```
 
-`msi-only = true` keeps the table in the MSI and leaves it out of the MSIX. rubrapack never drops
-something silently: what an MSIX cannot hold is an error until you say what you want.
+rubrapack never drops something silently.
 
 Features, properties, dialogs and `[arp]` concern Windows Installer only and are not used.
 `rubrapack lint hello.toml --target msix` checks a source for MSIX without building it.

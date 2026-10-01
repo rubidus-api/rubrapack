@@ -13,6 +13,8 @@
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/parts.h"
+#include "rubrapack/pe.h"
 #include "rubrapack/pri.h"
 #include "rubrapack/regf.h"
 #include "rubrapack/text.h"
@@ -458,6 +460,7 @@ static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp
 
 typedef struct {
     char exe[2200];             // the executable's package path
+    char start[2200];           // what the manifest starts: exe, or rubrapack's launcher (RFC-0019)
     char logo[3][2200];         // Square150x150, Square44x44, StoreLogo
     bool loc_display, loc_description;      // written as ms-resource: (RFC-0016 3)
 } app_paths_t;
@@ -613,6 +616,179 @@ static int place(const rp_ir_t *ir, const rp_ir_dir_t *root, const char *dir_id,
     return 1;
 }
 
+// An [ini.*] value in an MSIX (RFC-0019): written when the package is built, so it may hold no
+// part Windows Installer would fill in; [\[] and [\]] stand for the brackets. NULL when it has one.
+static char *ini_literal(proven_allocator_t alloc, const char *v) {
+    size_t n = strlen(v);
+    char *o = rp_mem_alloc(alloc, n + 1, 1);
+    if (o == NULL) return NULL;
+    size_t w = 0;
+    for (size_t i = 0; i < n;) {
+        if (v[i] == '[' && i + 3 < n + 1 && v[i + 1] == '\\' && v[i + 3] == ']') {
+            o[w++] = v[i + 2];
+            i += 4;
+        } else if (v[i] == '[') {
+            rp_mem_free(alloc, o);
+            return NULL;
+        } else {
+            o[w++] = v[i++];
+        }
+    }
+    o[w] = '\0';
+    return o;
+}
+
+// The INI files the [ini.*] tables of one file make, as Windows reads them: ASCII, or UTF-16LE with
+// a BOM when a text is not ASCII; CRLF lines; sections and keys in the order the source first
+// names them; `add` joins the values with commas; `remove` (for what an older version left) has
+// nothing to remove in a new package.
+static proven_err_t ini_file(proven_allocator_t alloc, const rp_ir_t *ir, const char *dir, const char *file, uint8_t **out, size_t *len,
+                             rp_srcdiags_t *d) {
+    rp_buf_t t = rp_buf_new(alloc, 1u << 24);
+    // sections in first-appearance order
+    for (size_t i = 0; i < ir->ini_count; ++i) {
+        const rp_ir_ini_t *x = &ir->inis[i];
+        if (x->msi_only || strcmp(x->dir, dir) != 0 || strcmp(x->file, file) != 0 || x->mode == 2) continue;
+        bool seen = false;
+        for (size_t j = 0; j < i && !seen; ++j) {
+            const rp_ir_ini_t *y = &ir->inis[j];
+            seen = !y->msi_only && y->mode != 2 && strcmp(y->dir, dir) == 0 && strcmp(y->file, file) == 0 && strcmp(y->section, x->section) == 0;
+        }
+        if (seen) continue;
+        rp_buf_puts(&t, "[");
+        rp_buf_puts(&t, x->section);
+        rp_buf_puts(&t, "]\r\n");
+        for (size_t k = i; k < ir->ini_count; ++k) {
+            const rp_ir_ini_t *z = &ir->inis[k];
+            if (z->msi_only || z->mode == 2 || strcmp(z->dir, dir) != 0 || strcmp(z->file, file) != 0 || strcmp(z->section, x->section) != 0) continue;
+            bool done = false;              // a key written already (by an earlier table)
+            for (size_t j = i; j < k && !done; ++j) {
+                const rp_ir_ini_t *y = &ir->inis[j];
+                done = !y->msi_only && y->mode != 2 && strcmp(y->dir, dir) == 0 && strcmp(y->file, file) == 0 && strcmp(y->section, x->section) == 0 &&
+                       strcmp(y->key, z->key) == 0;
+            }
+            if (done) continue;
+            rp_buf_puts(&t, z->key);
+            rp_buf_puts(&t, "=");
+            bool first = true;
+            // set: the last set value; add: every added value after it, comma-separated
+            const rp_ir_ini_t *base = NULL;
+            for (size_t j = k; j < ir->ini_count; ++j) {
+                const rp_ir_ini_t *y = &ir->inis[j];
+                if (!y->msi_only && y->mode == 0 && strcmp(y->dir, dir) == 0 && strcmp(y->file, file) == 0 && strcmp(y->section, x->section) == 0 &&
+                    strcmp(y->key, z->key) == 0) {
+                    base = y;
+                }
+            }
+            for (size_t j = k; j < ir->ini_count; ++j) {
+                const rp_ir_ini_t *y = &ir->inis[j];
+                if (y->msi_only || y->mode == 2 || strcmp(y->dir, dir) != 0 || strcmp(y->file, file) != 0 || strcmp(y->section, x->section) != 0 ||
+                    strcmp(y->key, z->key) != 0 || (y->mode == 0 && y != base)) {
+                    continue;
+                }
+                if (y->when) DERR(y->pos, "RP1612", "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true", y->id);
+                char *v = ini_literal(alloc, y->value ? y->value : "");
+                if (v == NULL) {
+                    DERR(y->pos, "RP1612", "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX "
+                         "writes the file when it is built", y->id);
+                    continue;
+                }
+                if (!first) rp_buf_puts(&t, ",");
+                rp_buf_puts(&t, v);
+                rp_mem_free(alloc, v);
+                first = false;
+            }
+            rp_buf_puts(&t, "\r\n");
+        }
+    }
+    uint8_t *text = NULL;
+    size_t n = 0;
+    proven_err_t err = rp_buf_take(&t, &text, &n);
+    if (err != PROVEN_OK) return err;
+    bool ascii = true;
+    for (size_t i = 0; i < n; ++i) ascii &= text[i] < 0x80;
+    if (ascii) {
+        *out = text;
+        *len = n;
+        return PROVEN_OK;
+    }
+    rp_text_result_t r = rp_utf8_to_utf16(text, n, NULL, 0);
+    uint16_t *w = r.err == PROVEN_OK ? rp_mem_alloc(alloc, r.units + 1, sizeof *w) : NULL;
+    uint8_t *b = w ? rp_mem_alloc(alloc, 2 * r.units + 2, 1) : NULL;
+    if (b == NULL) {
+        rp_mem_free(alloc, w);
+        rp_mem_free(alloc, text);
+        return PROVEN_ERR_NOMEM;
+    }
+    (void)rp_utf8_to_utf16(text, n, w, r.units);
+    b[0] = 0xFF;
+    b[1] = 0xFE;
+    for (size_t i = 0; i < r.units; ++i) {
+        b[2 + 2 * i] = (uint8_t)w[i];
+        b[3 + 2 * i] = (uint8_t)(w[i] >> 8);
+    }
+    rp_mem_free(alloc, w);
+    rp_mem_free(alloc, text);
+    *out = b;
+    *len = 2 * r.units + 2;
+    return PROVEN_OK;
+}
+
+// An [env.*] value for the launcher (RFC-0019): the Windows Installer parts the IR made become what
+// the launcher expands when the application starts - a dir of the package %PKG%\..., a Windows folder
+// or name its environment variable; [\x] is x. False for a part an MSIX has no answer for.
+static bool env_value(const rp_ir_t *ir, const rp_ir_dir_t *root, const char *v, rp_buf_t *out) {
+    static const char *const props[][2] = {
+        { "ProgramFiles64Folder", "%ProgramW6432%\\" }, { "ProgramFilesFolder", "%ProgramFiles(x86)%\\" },
+        { "CommonFiles64Folder", "%CommonProgramW6432%\\" }, { "CommonFilesFolder", "%CommonProgramFiles(x86)%\\" },
+        { "CommonAppDataFolder", "%ProgramData%\\" }, { "AppDataFolder", "%APPDATA%\\" }, { "LocalAppDataFolder", "%LOCALAPPDATA%\\" },
+        { "TempFolder", "%TEMP%\\" }, { "WindowsFolder", "%SystemRoot%\\" }, { "System64Folder", "%SystemRoot%\\System32\\" },
+        { "LogonUser", "%USERNAME%" }, { "ComputerName", "%COMPUTERNAME%" },
+    };
+    for (size_t i = 0; v[i];) {
+        if (v[i] != '[') {
+            rp_buf_byte(out, (uint8_t)v[i++]);
+            continue;
+        }
+        const char *close = strchr(v + i, ']');
+        if (close == NULL) return false;
+        size_t n = (size_t)(close - (v + i + 1));
+        const char *in = v + i + 1;
+        char name[128];
+        if (n == 0 || n >= sizeof name) return false;
+        memcpy(name, in, n);
+        name[n] = 0;
+        i += n + 2;
+        if (name[0] == '\\' && n == 2) {
+            rp_buf_byte(out, (uint8_t)name[1]);
+            continue;
+        }
+        if (name[0] == '%') {
+            rp_buf_byte(out, '%');
+            rp_buf_puts(out, name + 1);
+            rp_buf_byte(out, '%');
+            continue;
+        }
+        bool done = false;
+        for (size_t k = 0; k < sizeof props / sizeof props[0] && !done; ++k) {
+            if (strcmp(name, props[k][0]) == 0) {
+                rp_buf_puts(out, props[k][1]);
+                done = true;
+            }
+        }
+        if (done) continue;
+        const rp_ir_dir_t *r = NULL;
+        char rel[1024];
+        if (find_dir(ir, name) == NULL || !below_root(ir, name, &r, rel, sizeof rel) || r != root) return false;
+        rp_buf_puts(out, "%PKG%\\");
+        if (rel[0]) {
+            rp_buf_puts(out, rel);
+            rp_buf_byte(out, '\\');
+        }
+    }
+    return true;
+}
+
 static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns,
                      const loc_t *loc) {
     static const char *const arch[] = { "x64", "arm64", "x86" };
@@ -688,7 +864,7 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         const char *display = a->display ? a->display : ir->name;
         rp_buf_puts(m, "    <Application");
         attr(m, "Id", a->id);
-        attr(m, "Executable", ap[i].exe);
+        attr(m, "Executable", ap[i].start[0] ? ap[i].start : ap[i].exe);
         rp_buf_puts(m, " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
         char res[160];
         snprintf(res, sizeof res, "ms-resource:%sDisplayName", a->id);
@@ -894,7 +1070,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         if (x->kind == RP_MSIX_EXT_ALIAS) {
             NEED(x->pos, "an execution alias", 14393u);
             rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExecutionAlias\"");
-            attr(b, "Executable", ap[a].exe);
+            attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
             rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <uap3:AppExecutionAlias>\r\n            <desktop:ExecutionAlias");
             attr(b, "Alias", x->alias);
             rp_buf_puts(b, " />\r\n          </uap3:AppExecutionAlias>\r\n        </uap3:Extension>\r\n");
@@ -903,7 +1079,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             NEED(x->pos, "a startup task", 14393u);
             const rp_ir_msix_app_t *app = &ir->msix_apps[a];
             rp_buf_puts(b, "        <desktop:Extension Category=\"windows.startupTask\"");
-            attr(b, "Executable", ap[a].exe);
+            attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
             rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <desktop:StartupTask");
             attr(b, "TaskId", x->task_id);
             attr(b, "Enabled", x->enabled ? "true" : "false");
@@ -1209,7 +1385,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
     // The payload.
-    size_t cap = ir->file_count + ir->copy_count + 18 * ir->msix_app_count + 6, n = 0;     // + copies, logo scales, resources.pri
+    size_t cap = ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -1242,6 +1418,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         for (size_t j = 0; j < ir->file_count && !f; ++j) {
             if (strcmp(ir->files[j].id, cp->source_file) == 0) f = &ir->files[j];
         }
+        if (cp->msi_only) continue;
         if (f == NULL || f->msi_only) {
             DERR(cp->pos, "RP1613", "[copy.%s]: its source must be a file that goes into the package", cp->id);
             continue;
@@ -1257,6 +1434,30 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         ++n;
         it->source = f->source_path;
         it->pos = cp->pos;
+    }
+    // [ini.*] (RFC-0019): each INI file once, made now.
+    for (size_t i = 0; i < ir->ini_count; ++i) {
+        const rp_ir_ini_t *x = &ir->inis[i];
+        if (x->msi_only) continue;
+        bool first = true;
+        for (size_t j = 0; j < i && first; ++j) {
+            first = ir->inis[j].msi_only || strcmp(ir->inis[j].dir, x->dir) != 0 || strcmp(ir->inis[j].file, x->file) != 0;
+        }
+        if (!first) continue;
+        item_t *it = &items[n];
+        const char *why = NULL;
+        int placed = place(ir, root, x->dir, x->file, false, it->path, sizeof it->path, &why);
+        if (placed <= 0) {
+            DERR(x->pos, "RP1609", "[ini.%s] goes to %s; or msi-only = true", x->id, placed < 0 ? "a folder that does not lead to a known location" : why);
+            continue;
+        }
+        if (placed == 2 && reserved(it->path)) DERR(x->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+        if (ini_file(alloc, ir, x->dir, x->file, &it->data, &it->data_len, d) != PROVEN_OK) {
+            DERR(x->pos, "RP1612", "out of memory");
+            continue;
+        }
+        it->pos = x->pos;
+        ++n;
     }
     // Each application: its executable's package path, and its logos - the three given (checked),
     // or plain ones made here once for all applications.
@@ -1293,6 +1494,10 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             DERR(app->pos, "RP1607", "the executable '%s' must be an .exe", x->path);
         } else {
             snprintf(ap[a].exe, sizeof ap[a].exe, "%s", x->path);
+            // [env.*] (RFC-0019): the application starts through rubrapack's launcher (added below).
+            bool env = false;
+            for (size_t i = 0; i < ir->env_count && !env; ++i) env = !ir->envs[i].msi_only;
+            if (env) snprintf(ap[a].start, sizeof ap[a].start, "rubrapack\\%s.exe", app->id);
         }
         for (int k = 0; k < 3; ++k) {
             // RFC-0016 3: Logo.scale-NNN.png next to the logo - the logo in several scales, found
@@ -1436,6 +1641,65 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     rp_regf_free(machine);
     rp_regf_free(user);
+    // [env.*] (RFC-0019): every application starts through rubrapack's launcher, which gives its
+    // processes the variables (an MSIX cannot change the machine's environment).
+    size_t nenv = 0;
+    for (size_t i = 0; i < ir->env_count; ++i) nenv += !ir->envs[i].msi_only;
+    if (nenv && d->errors == errors) {
+        rp_buf_t lt = rp_buf_new(alloc, 1u << 20);
+        for (size_t a = 0; a < ir->msix_app_count; ++a) {
+            const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+            rp_buf_puts(&lt, "app ");
+            rp_buf_puts(&lt, app->id);
+            rp_buf_puts(&lt, "\r\ntarget ");
+            rp_buf_puts(&lt, ap[a].exe);
+            rp_buf_puts(&lt, "\r\n");
+            for (size_t i = 0; i < ir->env_count; ++i) {
+                const rp_ir_env_t *e = &ir->envs[i];
+                if (e->msi_only) continue;
+                if (a == 0 && e->when) DERR(e->pos, "RP1612", "[env.%s]: an MSIX sets all its variables (when); use msi-only = true", e->id);
+                rp_buf_puts(&lt, e->mode == 0 ? "set " : e->mode == 1 ? "append " : "prepend ");
+                rp_buf_puts(&lt, e->name);
+                rp_buf_byte(&lt, '=');
+                if (!env_value(ir, root, e->value ? e->value : "", &lt) && a == 0) {
+                    DERR(e->pos, "RP1612", "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that "
+                         "is not a Windows folder, or an install-time part); use msi-only = true", e->id);
+                }
+                rp_buf_puts(&lt, "\r\n");
+            }
+            // The launcher of the program's own kind: a console program shares its console.
+            const item_t *x = NULL;
+            for (size_t i = 0; i < n && !x; ++i) {
+                if (items[i].file_id && strcmp(items[i].path, ap[a].exe) == 0) x = &items[i];
+            }
+            uint8_t *exe = NULL;
+            size_t exe_len = 0;
+            rp_pe_info_t pi = { 0 };
+            if (x && x->source && rp_pal_read_file(alloc, x->source, 1u << 30, &exe, &exe_len) == PROVEN_OK) (void)rp_pe_read(exe, exe_len, &pi);
+            rp_mem_free(alloc, exe);
+            bool console = pi.subsystem == 3;
+            const unsigned char *bin = ir->arch == RP_ARCH_X64 ? (console ? rp_launchc_x64 : rp_launch_x64)
+                                     : ir->arch == RP_ARCH_X86 ? (console ? rp_launchc_x86 : rp_launch_x86)
+                                                               : (console ? rp_launchc_arm64 : rp_launch_arm64);
+            size_t bin_len = ir->arch == RP_ARCH_X64 ? (console ? rp_launchc_x64_len : rp_launch_x64_len)
+                           : ir->arch == RP_ARCH_X86 ? (console ? rp_launchc_x86_len : rp_launch_x86_len)
+                                                     : (console ? rp_launchc_arm64_len : rp_launch_arm64_len);
+            item_t *it = &items[n++];
+            snprintf(it->path, sizeof it->path, "%s", ap[a].start);
+            it->pos = app->pos;
+            it->data = rp_mem_alloc(alloc, bin_len ? bin_len : 1, 1);
+            if (it->data == NULL) {
+                DERR(top, "RP1612", "out of memory");
+                break;
+            }
+            memcpy(it->data, bin, bin_len);
+            it->data_len = bin_len;
+        }
+        item_t *it = &items[n++];
+        snprintf(it->path, sizeof it->path, "rubrapack\\launch.txt");
+        it->pos = top;
+        if (rp_buf_take(&lt, &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1612", "out of memory");
+    }
     // Two paths that Windows would take for one (letters compared without case).
     for (size_t i = 0; i < n; ++i) {
         for (size_t k = i + 1; k < n; ++k) {

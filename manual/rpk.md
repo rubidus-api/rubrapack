@@ -317,9 +317,22 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   The manifest then refers to them as `ms-resource:` names and lists the languages.
 - Logos in several scales and texts in several languages go into `resources.pri`, the package
   resource index Windows resolves them through; a package without them has none.
-- What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions, environment variables, INI files, permissions, launch conditions and searches, files
-  removed at install, empty folders. A `[copy.*]` puts the file in the package a second time, at the
-  copy's place.
+- What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions,
+  permissions, launch conditions and searches, files removed at install, empty folders. A
+  `[copy.*]` puts the file in the package a second time, at the copy's place.
+- `[ini.*]` entries become INI files in the package (beside the program, or in the virtual file
+  system), written when the package is built: ASCII, or UTF-16 with a BOM when a text is not
+  ASCII; `add` joins the values; `remove` has nothing to remove in a new package. A value with an
+  install-time part (`[...]`) or `when` is refused (`RP1612`).
+- `[env.*]` cannot change the computer's environment from an MSIX. The variables go to the
+  application's own processes instead: every application then starts through rubrapack's launcher
+  (`rubrapack\<AppId>.exe`, a console program for a console application), which reads
+  `rubrapack\launch.txt`, sets the variables (`append`/`prepend` join with `;` to what is there),
+  starts the program in its own folder with the command line it was given and returns its exit
+  code. In a value, a dir of the package becomes its real folder, a Windows folder or name its
+  environment variable, `%NAME%` is read when the program starts; a dir elsewhere, an
+  install-time part or `when` is refused (`RP1612`). Execution aliases and startup tasks start the
+  launcher too; services, COM servers and firewall rules name the program itself.
 - `capabilities` declares what the application asks Windows for beyond `runFullTrust`, which every
   package has; rubrapack writes each name with the element the manifest schema wants for it
   (`RP1616` for a name it does not know):

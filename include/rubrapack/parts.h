@@ -23,4 +23,19 @@ extern const size_t        rp_setup_x86_len;
 extern const unsigned char rp_setup_arm64[];
 extern const size_t        rp_setup_arm64_len;
 
+// The MSIX launcher (src/launch/rubrapack_launch.c, RFC-0019): a windows program (launch) and a
+// console one (launchc), per architecture.
+extern const unsigned char rp_launch_x64[];
+extern const size_t        rp_launch_x64_len;
+extern const unsigned char rp_launch_x86[];
+extern const size_t        rp_launch_x86_len;
+extern const unsigned char rp_launch_arm64[];
+extern const size_t        rp_launch_arm64_len;
+extern const unsigned char rp_launchc_x64[];
+extern const size_t        rp_launchc_x64_len;
+extern const unsigned char rp_launchc_x86[];
+extern const size_t        rp_launchc_x86_len;
+extern const unsigned char rp_launchc_arm64[];
+extern const size_t        rp_launchc_arm64_len;
+
 #endif // RUBRAPACK_PARTS_H
