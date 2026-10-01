@@ -15,8 +15,6 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/limits.h"
 
-// CRC-32 (ISO 3309, as ZIP and PNG use it): crc = rp_crc32(0, data, n), or chained over parts.
-uint32_t rp_crc32(uint32_t crc, const void *data, size_t n);
 
 typedef struct {
     rp_buf_t  out;

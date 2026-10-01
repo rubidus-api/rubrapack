@@ -6,25 +6,10 @@
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
 
+#include "proven/hash.h"
+
 #include <stdlib.h>
 #include <string.h>
-
-uint32_t rp_crc32(uint32_t crc, const void *data, size_t n) {
-    static uint32_t table[256];
-    static bool ready;
-    if (!ready) {
-        for (uint32_t i = 0; i < 256; ++i) {
-            uint32_t c = i;
-            for (int k = 0; k < 8; ++k) c = c & 1 ? 0xEDB88320u ^ (c >> 1) : c >> 1;
-            table[i] = c;
-        }
-        ready = true;
-    }
-    const uint8_t *p = data;
-    crc = ~crc;
-    for (size_t i = 0; i < n; ++i) crc = table[(crc ^ p[i]) & 0xFF] ^ (crc >> 8);
-    return ~crc;
-}
 
 enum { DOS_TIME = 0x0000, DOS_DATE = 0x0021, VERSION = 45, FLAG_DESCRIPTOR = 0x0008 };
 
@@ -362,7 +347,7 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
             return PROVEN_ERR_INVALID_FORMAT;
         }
     }
-    if (rp_crc32(0, buf, (size_t)e->size) != e->crc) {
+    if (proven_crc32((proven_mem_view_t){ buf, (size_t)e->size }) != e->crc) {
         rp_mem_free(alloc, buf);
         *why = "a ZIP entry's CRC-32 does not match";
         return PROVEN_ERR_INVALID_FORMAT;

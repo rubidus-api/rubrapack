@@ -20,6 +20,8 @@
 #include "rubrapack/text.h"
 #include "rubrapack/zip.h"
 
+#include "proven/hash.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -151,7 +153,7 @@ static void png_chunk(rp_buf_t *b, const char *type, const uint8_t *data, size_t
     size_t at = b->len;
     rp_buf_put(b, type, 4);
     rp_buf_put(b, data, n);
-    be32(b, b->err == PROVEN_OK ? rp_crc32(0, b->data + at, 4 + n) : 0);
+    be32(b, b->err == PROVEN_OK ? proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(b->data + at), 4 + n }) : 0);
 }
 
 // A size x size PNG of one colour (8-bit RGB): the logo when the source gives none.
@@ -437,7 +439,7 @@ static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp
     if (deflate) rp_buf_put(&comp, RP_DEFLATE_END, 2);
     size_t lfh = 0;
     if (err == PROVEN_OK && comp.err == PROVEN_OK && blocks.err == PROVEN_OK) {
-        rp_zip_add(z, part, deflate ? 8 : 0, deflate ? comp.data : data, deflate ? comp.len : n, rp_crc32(0, data, n), n, &lfh);
+        rp_zip_add(z, part, deflate ? 8 : 0, deflate ? comp.data : data, deflate ? comp.len : n, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(data), n }), n, &lfh);
         if (bm) {
             rp_buf_puts(bm, "<File");
             attr(bm, "Name", path);
@@ -2477,7 +2479,7 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
         for (size_t i = 0; i < n; ++i) {
             // Stored entries: a local header of 30 bytes and the name, the bytes, a 24-byte ZIP64 descriptor.
             size_t lfh = 0, before = z.out.len;
-            rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, rp_crc32(0, parts[i].data, parts[i].len), parts[i].len, &lfh);
+            rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(parts[i].data), parts[i].len }), parts[i].len, &lfh);
             rp_buf_puts(&man, rids[i][0] ? "\t\t<Package Type=\"resource\"" : "\t\t<Package Type=\"application\"");
             attr(&man, "Version", ids[i].version);
             if (rids[i][0]) attr(&man, "ResourceId", rids[i]);

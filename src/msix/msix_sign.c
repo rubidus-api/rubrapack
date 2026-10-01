@@ -16,6 +16,8 @@
 #include "rubrapack/sign.h"
 #include "rubrapack/zip.h"
 
+#include "proven/hash.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -194,7 +196,7 @@ static proven_err_t add_deflated(proven_allocator_t alloc, rp_zip_writer_t *z, c
     rp_buf_put(&c, RP_DEFLATE_END, 2);
     rp_mem_free(alloc, seg);
     size_t lfh = 0;
-    if (c.err == PROVEN_OK) rp_zip_add(z, name, 8, c.data, c.len, rp_crc32(0, data, n), n, &lfh);
+    if (c.err == PROVEN_OK) rp_zip_add(z, name, 8, c.data, c.len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(data), n }), n, &lfh);
     err = c.err;
     rp_buf_free(&c);
     return err;
@@ -210,7 +212,7 @@ static proven_err_t add_deflated_plain(proven_allocator_t alloc, rp_zip_writer_t
     rp_buf_put(&c, seg, sl);
     rp_buf_put(&c, RP_DEFLATE_END, 2);
     rp_mem_free(alloc, seg);
-    if (c.err == PROVEN_OK) rp_zip_add_plain(z, name, 8, c.data, c.len, rp_crc32(0, data, n), n);
+    if (c.err == PROVEN_OK) rp_zip_add_plain(z, name, 8, c.data, c.len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(data), n }), n);
     err = c.err;
     rp_buf_free(&c);
     return err;
