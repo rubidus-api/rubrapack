@@ -4,3 +4,4 @@ EXPORTS
     RpQwordApply
     RpQwordRollback
     RpGuardDirs
+    RpSaveLog

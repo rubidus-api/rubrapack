@@ -2,7 +2,7 @@
 //
 // Built for x64, x86 and Arm64 by `nob parts` and stored in resources/bin/; `build` puts the one
 // for the package's architecture into the Binary table. It depends on the OS only (msi.dll,
-// advapi32, kernel32 and the Universal CRT).
+// advapi32, kernel32, user32, comdlg32 and the Universal CRT).
 //
 // REG_QWORD values (the Registry table cannot write them):
 //   RpQwordPrepare  immediate: reads the plan from the RP_QWORDS property, decides per value from
@@ -19,6 +19,12 @@
 //                   RpGuardMsg_en; [1] = the folder) and the installation stops before any file is
 //                   placed.
 //
+// Saving the log (RFC-0020):
+//   RpSaveLog       DoAction of the Save log button on the last pages: asks where to save (the
+//                   standard Save As window) and copies the log of this run (MsiLogFileLocation)
+//                   there; on failure the message RpLogMsg_<RPLANGUAGE> (or RpLogMsg_en; [1] = the
+//                   file). It never fails the installation.
+//
 // Data format (RFC-0001 9.6.1): "RPQ1" followed by records; every field is "<decimal length>:" and
 // that many UTF-16 units, so any text (including ':' and ';') round-trips. A plan record is
 // root, view, key, name, value (16 hex digits), component, keep; an apply record is op ("w" write,
@@ -33,6 +39,7 @@
 #include <msiquery.h>
 #include <aclapi.h>
 #include <sddl.h>
+#include <commdlg.h>
 
 enum { MAX_TEXT = 1 << 16, MAX_FIELDS = 16 };
 
@@ -325,4 +332,81 @@ __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
     }
     HeapFree(GetProcessHeap(), 0, list);
     return rc;
+}
+
+// Copies src to dst; src stays open for writing in Windows Installer, so it is shared both ways.
+static bool copy_log(const wchar_t *src, const wchar_t *dst) {
+    HANDLE in = CreateFileW(src, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, 0, NULL);
+    if (in == INVALID_HANDLE_VALUE) return false;
+    HANDLE out = CreateFileW(dst, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (out == INVALID_HANDLE_VALUE) {
+        CloseHandle(in);
+        return false;
+    }
+    static char buf[1 << 16];
+    bool ok = true;
+    for (;;) {
+        DWORD got = 0, put = 0;
+        if (!ReadFile(in, buf, sizeof buf, &got, NULL)) {
+            ok = false;
+            break;
+        }
+        if (got == 0) break;
+        if (!WriteFile(out, buf, got, &put, NULL) || put != got) {
+            ok = false;
+            break;
+        }
+    }
+    CloseHandle(in);
+    if (!CloseHandle(out)) ok = false;
+    if (!ok) DeleteFileW(dst);
+    return ok;
+}
+
+__declspec(dllexport) UINT __stdcall RpSaveLog(MSIHANDLE h) {
+    wchar_t *log = get_property(h, L"MsiLogFileLocation");
+    if (log == NULL || log[0] == 0) {
+        if (log) HeapFree(GetProcessHeap(), 0, log);
+        return ERROR_SUCCESS;
+    }
+    // The suggested name: the product's name, without the characters a file name cannot have.
+    static wchar_t file[MAX_PATH * 4];
+    wchar_t *product = get_property(h, L"ProductName");
+    swprintf(file, MAX_PATH, L"%ls.log", product && product[0] ? product : L"setup");
+    if (product) HeapFree(GetProcessHeap(), 0, product);
+    for (wchar_t *p = file; *p; ++p) {
+        if (*p < 32 || wcschr(L"\\/:*?\"<>|", *p)) *p = L'_';
+    }
+    OPENFILENAMEW ofn;
+    memset(&ofn, 0, sizeof ofn);
+    ofn.lStructSize = sizeof ofn;
+    ofn.hwndOwner = GetForegroundWindow();      // the setup's window, which waits for this action
+    ofn.lpstrFilter = L"*.log\0*.log\0*.*\0*.*\0";
+    ofn.lpstrFile = file;
+    ofn.nMaxFile = sizeof file / sizeof file[0];
+    ofn.lpstrDefExt = L"log";
+    ofn.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
+    if (GetSaveFileNameW(&ofn)) {
+        if (copy_log(log, file)) {
+            log_line(h, L"rubrapack: the log was saved to %ls", file);
+        } else {
+            wchar_t *lang = get_property(h, L"RPLANGUAGE");
+            wchar_t name[64];
+            swprintf(name, 64, L"RpLogMsg_%ls", lang && lang[0] ? lang : L"en");
+            wchar_t *msg = get_property(h, name);
+            if (msg == NULL || msg[0] == 0) {
+                if (msg) HeapFree(GetProcessHeap(), 0, msg);
+                msg = get_property(h, L"RpLogMsg_en");
+            }
+            MSIHANDLE rec = MsiCreateRecord(1);
+            MsiRecordSetStringW(rec, 0, msg && msg[0] ? msg : L"[1]");
+            MsiRecordSetStringW(rec, 1, file);
+            MsiProcessMessage(h, (INSTALLMESSAGE)(INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING), rec);
+            MsiCloseHandle(rec);
+            if (msg) HeapFree(GetProcessHeap(), 0, msg);
+            if (lang) HeapFree(GetProcessHeap(), 0, lang);
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, log);
+    return ERROR_SUCCESS;
 }

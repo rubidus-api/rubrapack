@@ -989,13 +989,16 @@ static void lower_helper_actions(pkg_t *pk) {
     for (size_t i = 0; i < ir->dir_count; ++i) {
         if (ir->dirs[i].guard) guard = guard ? kprintf(k, "%s;%s", guard, dkey(ir, ir->dirs[i].id)) : dkey(ir, ir->dirs[i].id);
     }
-    if (pk->any_qword || guard) {
+    // The last pages' Save log button (RFC-0020): Windows Installer keeps a log of every run
+    // (MsiLogging, unless /l names one), and RpSaveLog copies it where the user says.
+    bool save_log = ir->ui_save_log && ir->ui != RP_UI_NONE;
+    if (pk->any_qword || guard || save_log) {
         const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
         size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           pk->any_qword ? "type = \"qword\"" : "guard = true", arch_text(ir->arch));
+                           pk->any_qword ? "type = \"qword\"" : guard ? "guard = true" : "[ui] save-log", arch_text(ir->arch));
             pk->reg_bad = true;
         }
         s_(&pk->binary, "RpCa"); b_(&pk->binary, part, part_len);
@@ -1011,6 +1014,15 @@ static void lower_helper_actions(pkg_t *pk) {
             s_(&pk->customaction, "RP_Launch"); i_(&pk->customaction, 34 | 0xC0); s_(&pk->customaction, dkey(ir, lf->dir));
             s_(&pk->customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
         }
+    }
+    if (save_log) {
+        s_(&pk->property, "MsiLogging"); s_(&pk->property, "voicewarmup");
+        size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
+        for (size_t li = 0; li < nl; ++li) {
+            s_(&pk->property, kprintf(k, "RpLogMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL));
+            s_(&pk->property, rp_ui_text_for(ir, "SaveLogFail", li));
+        }
+        s_(&pk->customaction, "RP_SaveLog"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpSaveLog");
     }
     // The guard (immediate, first installation only, before any file is placed): its message in
     // each language of the dialogs, picked by RPLANGUAGE (English without dialogs).

@@ -452,6 +452,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             const char *first = NULL;
             for (size_t t = 0; rp_ui_text_id(t); ++t) {
                 const char *id = rp_ui_text_id(t);
+                if (!ir->ui_save_log && strncmp(id, "SaveLog", 7) == 0) continue;    // no button, no texts
                 bool have = false;
                 for (size_t u = 0; u < ir->ui_text_count && !have; ++u) {
                     const rp_ir_ui_text_t *x = &ir->ui_texts[u];
@@ -501,9 +502,10 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
             ir->license_source = ui_source(c, ir->license_shown, pos);
         }
     }
+    ir->ui_save_log = ir->ui != 0 && (uit == NULL || ir_get_bool(c, uit, "save-log", true));
     ui_languages(c, uit);
     if (uit == NULL) return;
-    static const char *const keys[] = { "banner", "install-dir", "languages", "launch", "launch-args", "launch-checked", NULL },
+    static const char *const keys[] = { "banner", "install-dir", "languages", "launch", "launch-args", "launch-checked", "save-log", NULL },
                              *const lkeys[] = { "name", "font", "langid", "license", NULL };
     ir_check_keys_lang(c, uit, keys, lkeys);
     if (ir->ui == 0) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package]");

@@ -80,6 +80,8 @@ static const text_t texts[] = {
     { "DirGuardText", "설치를 멈췄습니다: 폴더 [1] 이(가) 이미 있는데 관리자 소유가 아니거나 다른 곳으로 이어지는 연결입니다. 다른 폴더를 고르거나, 관리자가 먼저 그 폴더를 지우게 하십시오.",
       "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "[ProductName] 실행(&L)", "&Launch [ProductName]" },
+    { "SaveLog", "로그 저장(&S)...", "&Save log..." },
+    { "SaveLogFail", "설치 로그를 [1] 에 저장하지 못했습니다.", "The setup log could not be saved to [1]." },
     { "Change", "변경(&C)", "&Change" },
     { "ChangeText", "설치할 기능을 바꿉니다.", "Choose which features are installed." },
     { "ScopeTitle", "설치 범위", "Installation scope" },
@@ -537,13 +539,22 @@ static void progress_and_exits(ctx_t *c) {
         bool launch = i == 0 && c->ir->ui_launch_file;
         dialog(c, exits[i][0], 370, 270, 3, "Finish", "Finish", "Finish");
         frame(c, exits[i][0], exits[i][1], exits[i][2], NULL);
+        // The log of this run (MsiLogging turns it on without /l): RP_SaveLog (lower.c) asks where
+        // to save a copy. Hidden when Windows Installer keeps no log (MsiLogFileLocation empty).
+        const char *after_finish = launch ? "Launch" : NULL;
+        if (c->ir->ui_save_log) {
+            control(c, exits[i][0], "SaveLog", "PushButton", 25, 243, 90, 17, VIS | EN, NULL, T(c, "SaveLog"), launch ? "Launch" : "Finish");
+            cond(c, exits[i][0], "SaveLog", "Hide", "NOT MsiLogFileLocation");
+            event(c, exits[i][0], "SaveLog", "DoAction", "RP_SaveLog", "MsiLogFileLocation", 1);
+            after_finish = "SaveLog";
+        }
         if (launch) {
             control(c, exits[i][0], "Launch", "CheckBox", 25, 80, 320, 17, VIS | EN, "RPLAUNCH", T(c, "LaunchText"), "Finish");
             cond(c, exits[i][0], "Launch", "Hide", "Installed");
             event(c, exits[i][0], "Finish", "DoAction", "RP_Launch", "RPLAUNCH = \"1\" AND NOT Installed", 1);
         }
         control(c, exits[i][0], "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
-        control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), launch ? "Launch" : NULL);
+        control(c, exits[i][0], "Finish", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Finish"), after_finish);
         control(c, exits[i][0], "Cancel", "PushButton", 304, 243, 56, 17, VIS, NULL, T(c, "Cancel"), NULL);
         event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, launch ? 2 : 1);
     }

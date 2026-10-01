@@ -243,7 +243,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module); in an MSIX its files and registry values only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
-| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
@@ -878,6 +878,11 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   `launch-checked = false`; `launch-args` are its arguments). Finish starts the program after a
   first installation or an upgrade, as the user who ran the setup, not with the installer's
   rights; not after a repair or removal, and never at `/qn`.
+- The finished, cancelled and failed pages have **Save log...**, which saves a copy of the log of
+  this run where the user chooses (rubrapack's helper DLL, `RpSaveLog`). The package sets
+  `MsiLogging` so that Windows Installer keeps a log in the user's temporary folder even without
+  `/l`; the button hides when there is no log. `[ui] save-log = false` leaves out the button, the
+  logging and the helper.
 - `scope = "dual"` with dialogs adds a page after the license: "Just me" (the default) or
   "Everyone on this computer", which needs administrator rights; the install folder moves to
   `%LOCALAPPDATA%\Programs` or Program Files accordingly.

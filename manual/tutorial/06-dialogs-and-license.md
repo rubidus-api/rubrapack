@@ -107,6 +107,16 @@ starts Hello - with the rights of the user who ran the installer, not the instal
 administrator rights - after a first installation or an upgrade, but not after a repair or a
 removal, and never in a silent installation.
 
+## Saving the log: `save-log`
+
+The finished page - and the pages for a cancelled or failed installation - have a **Save log...**
+button at the bottom left. It opens the usual Save As window and saves a copy of what Windows
+Installer wrote about this run: every file, registry value and action, and on a failed page the
+error that stopped it. That is the file to send when someone asks why an installation went wrong.
+For it, the package asks Windows Installer to keep a log of every run (`MsiLogging`), in the
+user's temporary folder, unless `msiexec /l` names one. `save-log = false` in `[ui]` leaves the
+button out, and with it the logging.
+
 ## Try it
 
 Double-click `hello.msi`: welcome (with your text and the banner), the license (Next is grey until
