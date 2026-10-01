@@ -78,7 +78,7 @@ A first package, step by step, is the first chapter of the manual:
   INI files, services, fonts, permissions, launch conditions and searches, a program run to
   register and unregister with rollback, major upgrades with downgrade refusal, per-machine,
   per-user and dual packages, embedded or external MSZIP or LZX cabinets, merge modules (`.msm`)
-  of other vendors merged in, built-in dialog sets
+  merged in or written (`[module]`), built-in dialog sets
   in English with Korean or other languages added to the same package (a language page first;
   Korean chosen for Korean systems), dialog pages of your own, a remembered install folder, and a
   guard that refuses a prepared install folder not owned by administrators. The user's choices:
@@ -109,8 +109,7 @@ A first package, step by step, is the first chapter of the manual:
 ## What it is not
 
 - Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
-- No merge-module authoring: other vendors' merge modules go into a package, but rubrapack does not
-  write `.msm` files (and does not take configurable modules).
+- Configurable merge modules (with `ModuleConfiguration`) are not merged.
 - Patches carry changed files whole (no binary deltas); a transform carries no files.
 - The `setup.exe` chain installs the `.msi` packages it carries; it does not download anything,
   run other installers, or show pages of its own beyond Windows Installer's.
