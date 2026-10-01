@@ -109,7 +109,6 @@ A first package, step by step, is the first chapter of the manual:
 ## What it is not
 
 - Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
-- Configurable merge modules (with `ModuleConfiguration`) are not merged.
 - Patches carry changed files whole (no binary deltas); a transform carries no files.
 - The `setup.exe` chain installs the `.msi` packages it carries; it does not download anything,
   run other installers, or show pages of its own beyond Windows Installer's.

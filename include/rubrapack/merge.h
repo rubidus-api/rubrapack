@@ -19,6 +19,8 @@ typedef struct {
     rp_msi_view_t      view;
     bool               cfb_open, msi_open, view_open;
     char               module_id[128];  // ModuleSignature.ModuleID: <name>.<GUID with underscores>
+    rp_msi_wtable_t   *tabs;            // the module's tables, as configured (rp_msi_module_configure)
+    size_t             ntabs;
     uint8_t           *cab;             // MergeModule.CABinet, or NULL
     size_t             cab_len;
     void             **kept;            // allocations the merged tables use
@@ -31,6 +33,15 @@ void rp_msi_module_close(rp_msi_module_t *m);
 
 // The module's _Validation table (for the tables it adds), or NULL.
 const rp_msi_wtable_t *rp_msi_module_validation(const rp_msi_module_t *m);
+
+// Configures the module (RFC-0017 C; Microsoft Learn "Configurable Merge Modules"): `values` are
+// "Name=value" answers to its ModuleConfiguration items, the others take their defaults; its
+// ModuleSubstitution templates go into the cells they name, a null GUID becomes `feature`, rows
+// that KeyNoOrphan items no longer use are dropped, and ModuleIgnoreTable's tables (with the
+// configuration tables) are left out of the merge. A module without ModuleConfiguration takes no
+// values. Call once, before rp_msi_module_merge.
+[[nodiscard]] proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *values, size_t count, const char *feature,
+                                                   const char **why);
 
 // Merges the module into tables[0..*nt) (room for `cap`): rows appended, new tables added, its
 // TARGETDIR's children under dir_key, its components in `feature`, its actions placed. When it

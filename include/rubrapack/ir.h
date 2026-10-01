@@ -177,6 +177,8 @@ typedef struct {
     char    *shown;             // as written, for messages
     char    *dir;               // dir ID
     char    *feature;           // resolved (G2)
+    char   **config;            // "Name=value" answers for a configurable module (RFC-0017 C)
+    size_t   config_count;
     rp_pos_t pos;
 } rp_ir_merge_t;
 

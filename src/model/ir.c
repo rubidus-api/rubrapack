@@ -579,6 +579,8 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_ir_merge_t *x = &ir->merges[k];
         char *xs[] = { x->id, x->source, x->shown, x->dir, x->feature };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        for (size_t j = 0; j < x->config_count; ++j) rp_mem_free(a, x->config[j]);
+        rp_mem_free(a, x->config);
     }
     rp_mem_free(a, ir->merges);
     for (size_t k = 0; k < ir->font_count; ++k) {

@@ -92,7 +92,6 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ## 하지 않는 일
 
 - WiX 의 앞단이 아니고 WiX 와 호환되지도 않습니다. `.wxs` 파일은 읽지 않습니다.
-- 설정을 받는 병합 모듈(`ModuleConfiguration` 이 있는 것)은 넣지 못합니다.
 - 패치는 바뀐 파일을 통째로 담습니다(바이너리 차분 없음). 변환은 파일을 담지 않습니다.
 - `setup.exe` 체인은 자기가 담은 `.msi` 패키지만 설치합니다: 무엇을 내려받거나 다른 설치 프로그램을 실행하지
   않고, Windows Installer 창 말고 자기 페이지는 없습니다.

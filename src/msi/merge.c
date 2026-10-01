@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 enum { MAX_MSM = 1u << 30 };
@@ -51,8 +52,8 @@ static char *keep_str(rp_msi_module_t *m, const char *s) {
 }
 
 static const rp_msi_wtable_t *mod_table(const rp_msi_module_t *m, const char *name) {
-    for (size_t t = 0; t < m->view.db.table_count; ++t) {
-        if (strcmp(m->view.db.tables[t].name, name) == 0) return &m->view.db.tables[t];
+    for (size_t t = 0; t < m->ntabs; ++t) {
+        if (strcmp(m->tabs[t].name, name) == 0) return &m->tabs[t];
     }
     return NULL;
 }
@@ -89,6 +90,10 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
         return PROVEN_ERR_INVALID_FORMAT;
     }
     m->view_open = true;
+    m->ntabs = m->view.db.table_count;
+    m->tabs = keep_alloc(m, m->ntabs, sizeof *m->tabs);
+    if (m->tabs == NULL) return PROVEN_ERR_NOMEM;
+    if (m->ntabs) memcpy(m->tabs, m->view.db.tables, m->ntabs * sizeof *m->tabs);
     const rp_msi_wtable_t *sig = mod_table(m, "ModuleSignature");
     if (sig == NULL || sig->row_count == 0) {
         *why = "has no ModuleSignature: not a merge module";
@@ -99,11 +104,6 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
     size_t n = id->kind == RP_MSI_STR && id->len < sizeof m->module_id ? id->len : 0;
     memcpy(m->module_id, id->bytes, n);
     m->module_id[n] = 0;
-    const rp_msi_wtable_t *cfg = mod_table(m, "ModuleConfiguration");
-    if (cfg && cfg->row_count) {
-        *why = "is a configurable merge module (ModuleConfiguration), which rubrapack does not merge";
-        return PROVEN_ERR_UNSUPPORTED;
-    }
     // Strings outside ASCII must already be UTF-8: the package's code page is 65001.
     if (m->msi.codepage != 65001) {
         for (size_t i = 0; i < m->msi.string_count; ++i) {
@@ -275,6 +275,302 @@ static proven_err_t merge_sequence(rp_msi_module_t *m, rp_msi_wtable_t *tables, 
     return PROVEN_OK;
 }
 
+// ---- configuration (RFC-0017 C) --------------------------------------------------------------
+
+typedef struct {
+    const char *name, *type, *ctx, *dflt, *value;   // value: the answer, else the default; NULL = null
+    int         format, attrs;                      // 0 Text, 1 Key, 2 Integer, 3 Bitfield; 1 KeyNoOrphan, 2 NonNullable
+    bool        declined, used;
+} item_t;
+
+static const char *cell_text(rp_msi_module_t *m, const rp_msi_cell_t *c) {
+    if (c->kind != RP_MSI_STR || c->len == 0) return NULL;
+    char *s = keep_alloc(m, c->len + 1, 1);
+    if (s == NULL) return NULL;
+    memcpy(s, c->bytes, c->len);
+    s[c->len] = '\0';
+    return s;
+}
+
+static const char *say(rp_msi_module_t *m, const char *fmt, const char *a) {
+    char *s = keep_alloc(m, strlen(fmt) + (a ? strlen(a) : 0) + 1, 1);
+    if (s) sprintf(s, fmt, a ? a : "");
+    return s ? s : "cannot be configured";
+}
+
+// Part `index` (1-based) of a value in CMSM special format: parts are separated by ';', a backslash
+// takes the next character literally. NULL when the part is empty or missing.
+static const char *cmsm_part(rp_msi_module_t *m, const char *s, size_t index) {
+    if (s == NULL) return NULL;
+    char *out = keep_alloc(m, strlen(s) + 1, 1);
+    if (out == NULL) return NULL;
+    size_t part = 1, w = 0;
+    for (size_t i = 0; s[i]; ++i) {
+        if (s[i] == '\\' && s[i + 1]) {
+            if (part == index) out[w++] = s[i + 1];
+            ++i;
+        } else if (s[i] == ';') {
+            if (part == index) break;
+            ++part;
+        } else if (part == index) {
+            out[w++] = s[i];
+        }
+    }
+    out[w] = '\0';
+    return part == index && w ? out : NULL;
+}
+
+static bool int_text(const char *s, int32_t *v) {
+    if (s == NULL || *s == '\0') return false;
+    const char *p = s + (*s == '+' || *s == '-');
+    if (*p == '\0') return false;
+    for (const char *q = p; *q; ++q) {
+        if (*q < '0' || *q > '9') return false;
+    }
+    long long x = strtoll(s, NULL, 10);
+    if (x < INT32_MIN || x > INT32_MAX) return false;
+    *v = (int32_t)x;
+    return true;
+}
+
+static item_t *find_item(item_t *items, size_t n, const char *name, size_t len) {
+    for (size_t i = 0; i < n; ++i) {
+        if (strlen(items[i].name) == len && memcmp(items[i].name, name, len) == 0) return &items[i];
+    }
+    return NULL;
+}
+
+// The row of `t` whose primary key is `row` (CMSM: key values separated by ';'), or -1.
+static long find_row(rp_msi_module_t *m, const rp_msi_wtable_t *t, const rp_msi_cell_t *cells, const char *row) {
+    for (size_t r = 0; r < t->row_count; ++r) {
+        bool same = true;
+        size_t part = 0;
+        for (size_t c = 0; c < t->column_count && same; ++c) {
+            if (!(t->columns[c].type & 0x2000)) continue;
+            const char *want = cmsm_part(m, row, ++part);
+            const rp_msi_cell_t *have = &cells[r * t->column_count + c];
+            if (want == NULL) same = have->kind == RP_MSI_NULL || (have->kind == RP_MSI_STR && have->len == 0);
+            else if (have->kind == RP_MSI_INT) same = atoll(want) == have->i;
+            else same = have->kind == RP_MSI_STR && have->len == strlen(want) && memcmp(have->bytes, want, have->len) == 0;
+        }
+        if (same) return (long)r;
+    }
+    return -1;
+}
+
+proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *values, size_t count, const char *feature,
+                                     const char **why) {
+    *why = NULL;
+    const rp_msi_wtable_t *cfg = mod_table(m, "ModuleConfiguration"), *sub = mod_table(m, "ModuleSubstitution");
+    size_t ni = cfg ? cfg->row_count : 0;
+    if (ni == 0 && count) {
+        *why = "takes no configuration (it has no ModuleConfiguration)";
+        return PROVEN_ERR_INVALID_ARG;
+    }
+    item_t *items = keep_alloc(m, ni, sizeof *items);
+    if (items == NULL) return PROVEN_ERR_NOMEM;
+    for (size_t r = 0; r < ni; ++r) {
+        const rp_msi_cell_t *c = &cfg->cells[r * cfg->column_count];
+        int cn = col_of(cfg, "Name"), cf = col_of(cfg, "Format"), ct = col_of(cfg, "Type"), cx = col_of(cfg, "ContextData"),
+            cd = col_of(cfg, "DefaultValue"), ca = col_of(cfg, "Attributes");
+        if (cn < 0 || cf < 0 || cd < 0) {
+            *why = "has a ModuleConfiguration table without the standard columns";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        items[r] = (item_t){ .name = cell_text(m, &c[cn]), .format = c[cf].kind == RP_MSI_INT ? c[cf].i : -1,
+                             .type = ct >= 0 ? cell_text(m, &c[ct]) : NULL, .ctx = cx >= 0 ? cell_text(m, &c[cx]) : NULL,
+                             .dflt = cell_text(m, &c[cd]), .attrs = ca >= 0 && c[ca].kind == RP_MSI_INT ? c[ca].i : 0, .declined = true };
+        if (items[r].name == NULL || items[r].format < 0 || items[r].format > 3) {
+            *why = "has a ModuleConfiguration item without a name or with an unknown format";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        items[r].value = items[r].dflt;
+    }
+    for (size_t k = 0; k < count; ++k) {
+        const char *eq = strchr(values[k], '=');
+        item_t *it = eq ? find_item(items, ni, values[k], (size_t)(eq - values[k])) : NULL;
+        if (it == NULL) {
+            *why = say(m, "has no configurable item '%s'", values[k]);
+            return PROVEN_ERR_INVALID_ARG;
+        }
+        it->value = eq[1] ? keep_str(m, eq + 1) : NULL;
+        it->declined = false;
+    }
+    for (size_t i = 0; i < ni; ++i) {
+        item_t *it = &items[i];
+        int32_t v;
+        if ((it->format == 2 || it->format == 3) && !int_text(it->value, &v)) {
+            *why = say(m, "needs a whole number for '%s'", it->name);
+            return PROVEN_ERR_INVALID_ARG;
+        }
+        if (it->value == NULL && (it->format == 1 || (it->attrs & 2))) {
+            *why = say(m, "needs a value for '%s' (it may not be empty)", it->name);
+            return PROVEN_ERR_INVALID_ARG;
+        }
+    }
+
+    // Copies of the tables the substitutions write; rows are found by their original keys.
+    const rp_msi_cell_t **orig = keep_alloc(m, m->ntabs, sizeof *orig);
+    if (orig == NULL) return PROVEN_ERR_NOMEM;
+    for (size_t t = 0; t < m->ntabs; ++t) orig[t] = m->tabs[t].cells;
+    for (size_t r = 0; sub && r < sub->row_count; ++r) {
+        const rp_msi_cell_t *c = &sub->cells[r * sub->column_count];
+        int ctab = col_of(sub, "Table"), crow = col_of(sub, "Row"), ccol = col_of(sub, "Column"), cval = col_of(sub, "Value");
+        if (ctab < 0 || crow < 0 || ccol < 0 || cval < 0) {
+            *why = "has a ModuleSubstitution table without the standard columns";
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        const char *tname = cell_text(m, &c[ctab]), *row = cell_text(m, &c[crow]), *cname = cell_text(m, &c[ccol]),
+                   *tmpl = cell_text(m, &c[cval]);
+        size_t ti = m->ntabs;
+        for (size_t t = 0; tname && t < m->ntabs; ++t) {
+            if (strcmp(m->tabs[t].name, tname) == 0) ti = t;
+        }
+        rp_msi_wtable_t *t = ti < m->ntabs ? &m->tabs[ti] : NULL;
+        int col = t && cname ? col_of(t, cname) : -1;
+        long rr = col >= 0 ? find_row(m, t, orig[ti], row) : -1;
+        if (rr < 0) {
+            *why = say(m, "has a ModuleSubstitution for a cell that does not exist (%s)", tname);
+            return PROVEN_ERR_INVALID_FORMAT;
+        }
+        if (t->cells == orig[ti]) {             // first write to this table: copy it
+            rp_msi_cell_t *copy = keep_alloc(m, t->row_count * t->column_count, sizeof *copy);
+            if (copy == NULL) return PROVEN_ERR_NOMEM;
+            memcpy(copy, t->cells, t->row_count * t->column_count * sizeof *copy);
+            t->cells = copy;
+        }
+        // Evaluate the template.
+        size_t tl = tmpl ? strlen(tmpl) : 0;
+        char *out = keep_alloc(m, tl * 2 + 64, 1);
+        size_t cap = tl * 2 + 64, w = 0;
+        if (out == NULL) return PROVEN_ERR_NOMEM;
+        int32_t masks = 0, bits = 0;
+        bool any_bits = false;
+        for (size_t i = 0; i < tl;) {
+            if (tmpl[i] == '\\' && i + 1 < tl) {
+                out[w++] = tmpl[i + 1];
+                i += 2;
+                continue;
+            }
+            if (tmpl[i] == '[' && i + 1 < tl && tmpl[i + 1] == '=') {
+                const char *close = strchr(tmpl + i, ']');
+                const char *semi = memchr(tmpl + i + 2, ';', close ? (size_t)(close - (tmpl + i + 2)) : 0);
+                size_t nl = (size_t)((semi ? semi : close ? close : tmpl + tl) - (tmpl + i + 2));
+                item_t *it = close ? find_item(items, ni, tmpl + i + 2, nl) : NULL;
+                if (it == NULL) {
+                    *why = "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have";
+                    return PROVEN_ERR_INVALID_FORMAT;
+                }
+                it->used = true;
+                const char *piece = NULL;
+                char num[16];
+                if (it->format == 0) piece = it->value;
+                else if (it->format == 1) piece = cmsm_part(m, it->value, semi ? (size_t)atoi(semi + 1) : 1);
+                else if (it->format == 2) {
+                    int32_t v = 0;
+                    (void)int_text(it->value, &v);
+                    snprintf(num, sizeof num, "%d", (int)v);
+                    piece = num;
+                } else {
+                    int32_t v = 0;
+                    (void)int_text(it->value, &v);
+                    int32_t mask = it->ctx ? (int32_t)strtol(it->ctx, NULL, 10) : 0;
+                    masks |= mask;
+                    bits |= v & mask;
+                    any_bits = true;
+                }
+                size_t pl = piece ? strlen(piece) : 0;
+                if (w + pl + 1 > cap) {
+                    char *bigger = keep_alloc(m, (cap + pl) * 2, 1);
+                    if (bigger == NULL) return PROVEN_ERR_NOMEM;
+                    memcpy(bigger, out, w);
+                    out = bigger;
+                    cap = (cap + pl) * 2;
+                }
+                if (pl) memcpy(out + w, piece, pl);
+                w += pl;
+                i = (size_t)(close - tmpl) + 1;
+                continue;
+            }
+            if (w + 2 > cap) break;
+            out[w++] = tmpl[i++];
+        }
+        out[w] = '\0';
+        rp_msi_cell_t *cell = (rp_msi_cell_t *)&t->cells[(size_t)rr * t->column_count + (size_t)col];     // our copy (above)
+        uint16_t type = t->columns[col].type;
+        bool nullable = type & 0x1000;
+        if (!(type & 0x0800)) {                 // an integer column
+            int32_t v = 0;
+            if (any_bits) {
+                const rp_msi_cell_t *was = &orig[ti][(size_t)rr * t->column_count + (size_t)col];
+                int32_t base = was->kind == RP_MSI_INT ? was->i : 0;
+                *cell = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = (base & ~masks) | bits };
+            } else if (w == 0) {
+                if (!nullable) {
+                    *why = say(m, "would put null into a column that must have a value (%s)", tname);
+                    return PROVEN_ERR_INVALID_ARG;
+                }
+                *cell = (rp_msi_cell_t){ .kind = RP_MSI_NULL };
+            } else if (int_text(out, &v)) {
+                *cell = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = v };
+            } else {
+                *why = say(m, "would put text into a number column (%s)", tname);
+                return PROVEN_ERR_INVALID_ARG;
+            }
+        } else if (w == 0) {
+            if (!nullable) {
+                *why = say(m, "would put null into a column that must have a value (%s)", tname);
+                return PROVEN_ERR_INVALID_ARG;
+            }
+            *cell = (rp_msi_cell_t){ .kind = RP_MSI_NULL };
+        } else {
+            if (strcmp(out, "{00000000-0000-0000-0000-000000000000}") == 0) out = keep_str(m, feature ? feature : "");
+            if (out == NULL) return PROVEN_ERR_NOMEM;
+            *cell = (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)out, .len = strlen(out) };
+        }
+    }
+
+    // msmConfigurableOptionKeyNoOrphan: the row a Key item's default names is left out when every
+    // used item with that default has the attribute and none of them took the default.
+    for (size_t i = 0; i < ni; ++i) {
+        const item_t *it = &items[i];
+        if (it->format != 1 || !it->used || !(it->attrs & 1) || it->dflt == NULL || it->type == NULL) continue;
+        bool drop = true;
+        for (size_t j = 0; j < ni && drop; ++j) {
+            const item_t *o = &items[j];
+            if (o->format != 1 || !o->used || o->dflt == NULL || strcmp(o->dflt, it->dflt) != 0) continue;
+            drop = (o->attrs & 1) && !o->declined;
+        }
+        if (!drop) continue;
+        for (size_t t = 0; t < m->ntabs; ++t) {
+            rp_msi_wtable_t *tab = &m->tabs[t];
+            if (strcmp(tab->name, it->type) != 0) continue;
+            long rr = find_row(m, tab, tab->cells, it->dflt);
+            if (rr < 0) continue;
+            rp_msi_cell_t *copy = keep_alloc(m, tab->row_count * tab->column_count, sizeof *copy);
+            if (copy == NULL) return PROVEN_ERR_NOMEM;
+            size_t cc = tab->column_count, n = 0;
+            for (size_t r = 0; r < tab->row_count; ++r) {
+                if ((long)r != rr) memcpy(&copy[n++ * cc], &tab->cells[r * cc], cc * sizeof *copy);
+            }
+            tab->cells = copy;
+            tab->row_count = n;
+        }
+    }
+
+    // The tables that do not go into the package.
+    const rp_msi_wtable_t *ign = mod_table(m, "ModuleIgnoreTable");
+    rp_msi_wtable_t ignored = ign ? *ign : (rp_msi_wtable_t){ 0 };      // read before its own row count goes
+    for (size_t t = 0; t < m->ntabs; ++t) {
+        rp_msi_wtable_t *tab = &m->tabs[t];
+        bool skip = strcmp(tab->name, "ModuleConfiguration") == 0 || strcmp(tab->name, "ModuleSubstitution") == 0 ||
+                    strcmp(tab->name, "ModuleIgnoreTable") == 0;
+        for (size_t r = 0; !skip && r < ignored.row_count; ++r) skip = cell_is(&ignored.cells[r * ignored.column_count], tab->name);
+        if (skip) tab->row_count = 0;
+    }
+    return PROVEN_OK;
+}
+
 proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, size_t *nt, size_t cap, const char *dir_key,
                                  const char *feature, unsigned index, rp_msi_wstream_t *cab_stream, const char **why) {
     *why = NULL;
@@ -282,8 +578,8 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
     int32_t base = max_int(file, "Sequence");
     int32_t last = base;
     // Ordinary tables.
-    for (size_t t = 0; t < m->view.db.table_count; ++t) {
-        const rp_msi_wtable_t *mt = &m->view.db.tables[t];
+    for (size_t t = 0; t < m->ntabs; ++t) {
+        const rp_msi_wtable_t *mt = &m->tabs[t];
         // ModuleSignature and ModuleComponents stay in the package, as Microsoft's mergemod.dll
         // leaves them (they name the merged modules); the Module*Sequence tables are placed below.
         size_t nl = strlen(mt->name);

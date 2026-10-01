@@ -131,6 +131,8 @@ dir = "INSTALLDIR"
 
 모듈의 캐비닛은 패키지 안의 두 번째 캐비닛이 되고, `inspect hello.msi Media` 에 보인다. 합칠 수
 없는 것은 참고 문서의 [병합 모듈](../rpk.md#병합-모듈-mergeid)에 있다.
+어떤 모듈은 설정 - 서버 이름, 폴더 - 을 묻는다. `config` 가 항목마다 `"이름=값"` 하나로 답하고
+(`config = ["ServerName=example.com"]`), 나머지는 모듈의 기본값이 채운다.
 
 거꾸로, 남이 합칠 내 부품은 `[package]` 대신 `[module]` 이 있는 원본으로 만들고 `.msm` 으로 짓는다. 업그레이드
 코드 대신 이름과 자기 GUID(`id`)가 있고, 폴더는 합치는 패키지가 옮기는 `$(TARGETDIR)` 에서 시작한다:

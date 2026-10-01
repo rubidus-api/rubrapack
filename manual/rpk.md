@@ -241,7 +241,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
-| `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature - MSI only |
+| `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module) - MSI only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
@@ -521,10 +521,31 @@ library. `[merge.ID]` copies its tables into the package: the module's files, co
 values and its own actions. Its root folder becomes `dir`, its components join `feature` (default:
 the dir's feature, or `Main`), and its cabinet is embedded as a second cabinet of its own. A
 standard action the module's tables need and the package lacks (`WriteRegistryValues`, for
-example) is added at its usual place. rubrapack does not merge configurable modules (those with a
-`ModuleConfiguration` table), nor a module with non-ASCII text in a code page other than UTF-8
-(`RP1517`). MSIX has no merge modules. The merged module's `ModuleSignature` and
-`ModuleComponents` rows stay in the package, as Microsoft's merge tool leaves them.
+example) is added at its usual place. rubrapack does not merge a module with non-ASCII text in a
+code page other than UTF-8 (`RP1517`). MSIX has no merge modules. The merged module's
+`ModuleSignature` and `ModuleComponents` rows stay in the package, as Microsoft's merge tool leaves
+them; the tables the module lists in `ModuleIgnoreTable` do not go in.
+
+A *configurable* module (one with a `ModuleConfiguration` table) asks for values - a text, a
+number, a set of bits, or a key such as one of its folders - which `config` gives, one
+`"Name=value"` string per item:
+
+```toml
+[merge.Runtime]
+source = "runtime.msm"
+dir = "INSTALLDIR"
+config = ["ServerName=example.com", "Port=8080", "DataDir=DataFolder.6E0A1C52_8F3B_4B7D_9A21_3C4D5E6F7A99"]
+```
+
+An item not given takes the module's default, as when a merge tool declines to answer. The values go
+where the module's `ModuleSubstitution` table says, the way Microsoft's merge tool puts them there:
+a bitfield item sets only the bits of its mask, a key item may name one part of a key with
+`[=Item;2]`, the null GUID becomes the feature's name, and a default row that every answered
+`KeyNoOrphan` item replaced is left out. A key value is written as the module's own key (with its
+GUID) and in the module's escaped form (`\;` for a semicolon). An unknown item, a number item
+without a number and an empty value where the module needs one are refused (`RP1517`), as is
+`config` for a module that takes none. The names, kinds and defaults of the items are in the
+module's `ModuleConfiguration` table: `rubrapack inspect runtime.msm ModuleConfiguration`.
 
 ### Writing a merge module: `[module]`
 

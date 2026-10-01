@@ -666,10 +666,31 @@ void ir_parse_font(ctx_t *c, const rp_ttable_t *t, rp_ir_font_t *x) {
 
 // [merge.ID] (RFC-0016 3).
 void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
-    static const char *const keys[] = { "source", "dir", "feature", NULL };
+    static const char *const keys[] = { "source", "dir", "feature", "config", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
+    // config = ["Name=value", ...]: the answers to a configurable module's items (RFC-0017 C).
+    const rp_tkey_t *cfg = ir_find_key(t, "config");
+    if (cfg) {
+        if (cfg->val.kind != RP_TV_ARRAY) {
+            ERR(c, cfg->pos, "RP1306", "config is an array of \"Name=value\" strings");
+        } else {
+            x->config = rp_mem_alloc(c->alloc, cfg->val.count, sizeof *x->config);
+            if (x->config == NULL) c->nomem = true;
+            for (size_t k = 0; x->config && k < cfg->val.count; ++k) {
+                const rp_tval_t *v = &cfg->val.items[k];
+                char *s = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+                const char *eq = s ? strchr(s, '=') : NULL;
+                if (eq == NULL || eq == s) {
+                    ERR(c, cfg->pos, "RP1306", "config holds \"Name=value\" strings (got '%s')", s ? s : "?");
+                    rp_mem_free(c->alloc, s);
+                    continue;
+                }
+                x->config[x->config_count++] = s;
+            }
+        }
+    }
     x->pos = t->pos;
     x->shown = ir_get_str(c, t, "source", true, NULL);
     x->dir = ir_get_str(c, t, "dir", true, NULL);

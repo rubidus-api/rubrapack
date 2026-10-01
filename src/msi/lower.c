@@ -1656,6 +1656,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
             err = rp_msi_module_open(alloc, x->source, &mods[k], &why);
             nmods = k + 1;
             rp_msi_wstream_t cab = { 0 };
+            if (err == PROVEN_OK) err = rp_msi_module_configure(&mods[k], (const char *const *)x->config, x->config_count, x->feature, &why);
             if (err == PROVEN_OK) {
                 err = rp_msi_module_merge(&mods[k], tables, &nt, sizeof tables / sizeof tables[0] - 1, dkey(ir, x->dir), x->feature,
                                           (unsigned)k + 1, &cab, &why);

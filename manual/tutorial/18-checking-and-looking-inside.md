@@ -121,7 +121,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.22.0
+  18 = rubrapack 0.23.0
 ```
 
 The numbers of the summary are property IDs: 2 title, 3 subject, 4 author, 5 keywords, 7 the
@@ -258,7 +258,7 @@ GUIDs this way, which is why they stay the same from version to version. Part II
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.22.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.23.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -269,7 +269,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.22.0 (proven_c_lib-v0.1.1)
+rubrapack 0.23.0 (proven_c_lib-v0.1.1)
 ```
 
 `rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options

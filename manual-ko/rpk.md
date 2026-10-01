@@ -230,7 +230,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
-| `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature - MSI 전용 |
+| `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`) - MSI 전용 |
 | `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
@@ -492,11 +492,29 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 `[merge.ID]` 는 그 표들을 패키지에 옮겨 담는다: 모듈의 파일, 구성 요소, 레지스트리 값, 모듈 자신의
 동작. 모듈의 뿌리 폴더는 `dir` 이 되고, 구성 요소는 `feature`(기본: 그 폴더의 기능, 없으면 `Main`)에
 들어가며, 모듈의 캐비닛은 따로 두 번째 캐비닛으로 들어간다. 모듈의 표가 필요로 하는데 패키지에
-없는 표준 동작(예를 들어 `WriteRegistryValues`)은 늘 쓰는 자리에 더한다. 설정할 수 있는
-모듈(`ModuleConfiguration` 표가 있는 것)과, UTF-8 이 아닌 코드 페이지에 ASCII 밖의 글자가 있는
-모듈은 합치지 않는다(`RP1517`). MSIX 에는 병합 모듈이 없다.
+없는 표준 동작(예를 들어 `WriteRegistryValues`)은 늘 쓰는 자리에 더한다. UTF-8 이 아닌 코드 페이지에
+ASCII 밖의 글자가 있는 모듈은 합치지 않는다(`RP1517`). MSIX 에는 병합 모듈이 없다.
 
-합친 모듈의 `ModuleSignature` 와 `ModuleComponents` 행은 Microsoft 의 병합 도구처럼 패키지에 남는다.
+합친 모듈의 `ModuleSignature` 와 `ModuleComponents` 행은 Microsoft 의 병합 도구처럼 패키지에 남는다. 모듈이
+`ModuleIgnoreTable` 에 적은 표는 들어가지 않는다.
+
+*설정할 수 있는* 모듈(`ModuleConfiguration` 표가 있는 것)은 값 - 글, 수, 비트 묶음, 또는 모듈의 폴더 같은
+키 - 을 묻고, `config` 가 항목마다 `"이름=값"` 문자열 하나로 준다:
+
+```toml
+[merge.Runtime]
+source = "runtime.msm"
+dir = "INSTALLDIR"
+config = ["ServerName=example.com", "Port=8080", "DataDir=DataFolder.6E0A1C52_8F3B_4B7D_9A21_3C4D5E6F7A99"]
+```
+
+주지 않은 항목은 병합 도구가 답하지 않을 때처럼 모듈의 기본값을 쓴다. 값은 모듈의 `ModuleSubstitution` 표가
+말하는 자리에, Microsoft 의 병합 도구가 넣는 방식대로 들어간다: 비트 묶음 항목은 마스크의 비트만 바꾸고, 키
+항목은 `[=Item;2]` 로 키의 한 부분만 쓸 수 있고, 널 GUID 는 기능의 이름이 되며, 답을 받은 `KeyNoOrphan` 항목이
+모두 대신한 기본 행은 빠진다. 키 값은 모듈 자신의 키(GUID 포함)로, 모듈의 이스케이프 꼴(세미콜론은 `\;`)로
+쓴다. 모르는 항목, 수가 아닌 수 항목, 모듈이 값을 요구하는데 빈 값은 거절하고(`RP1517`), 설정을 받지 않는
+모듈에 준 `config` 도 그렇다. 항목의 이름, 종류, 기본값은 모듈의 `ModuleConfiguration` 표에 있다:
+`rubrapack inspect runtime.msm ModuleConfiguration`.
 
 ### 병합 모듈 만들기: `[module]`
 
