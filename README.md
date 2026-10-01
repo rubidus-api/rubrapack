@@ -28,11 +28,11 @@ rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, u
   write the source, check it, read the errors, fix them and build - and verify its own result.
   Ask an assistant to package your program with rubrapack and it can also turn the steps into a
   release script for you.
-- **Nothing to install.** Download one file - about 1 MB for Windows, 0.9 MB for Linux - and run
+- **Nothing to install.** Download one file - about 1.3 MB for Windows, 1.2 MB for Linux - and run
   it. No .NET, no Python or other interpreter, no SDK, no libraries. The Linux program needs only
   the C library; the Windows program uses only DLLs that are part of Windows (it does not even use
   `msi.dll`). Build Windows packages on a Linux server or CI runner without a Windows machine.
-- **Plain C, small and easy to build.** About 33,000 lines of C23 plus a small vendored base
+- **Plain C, small and easy to build.** About 37,000 lines of C23 plus a small vendored base
   library, with no third-party dependencies. Building it needs a C compiler and nothing else:
   `cc -std=c23 -o nob nob.c && ./nob` (under a minute on an ordinary PC; tested with GCC 14,
   Clang 19 and MinGW-w64 GCC 16). Everything - the compound file and MSI database, cabinets and
@@ -77,18 +77,26 @@ A first package, step by step, is the first chapter of the manual:
   REG_QWORD and the 32-bit view), shortcuts, file types and URL schemes, environment variables,
   INI files, services, fonts, permissions, launch conditions and searches, a program run to
   register and unregister with rollback, major upgrades with downgrade refusal, per-machine,
-  per-user and dual packages, embedded or external MSZIP cabinets, built-in dialog sets
+  per-user and dual packages, embedded or external MSZIP or LZX cabinets, merge modules (`.msm`)
+  of other vendors merged in, built-in dialog sets
   in English with Korean or other languages added to the same package (a language page first;
   Korean chosen for Korean systems), dialog pages of your own, a remembered install folder, and a
   guard that refuses a prepared install folder not owned by administrators. The user's choices:
   a feature tree with required features and Change after installation, conditions (`when`) on
   features, files, shortcuts and settings, "Just me / Everyone" for dual packages, and a program
   started from the finished page; icons for Installed apps and shortcuts; files kept at removal.
-  x64, x86 and Arm64 packages.
+  x64, x86 and Arm64 packages. Windows' folders and environment variables by their own names
+  (`$(ProgramFiles)`, `$(LOCALAPPDATA)`, `$(USERNAME)`).
+- **Updates and suites:** transforms (`.mst`, `rubrapack transform`) and patches (`.msp`,
+  `rubrapack patch`) made from two versions of a package; a `setup.exe` that installs several
+  packages in order, elevating once (`[chain]`).
 - **MSIX:** full-trust desktop applications with a virtual registry (`Registry.dat`,
   `User.dat`) and virtual file system, several applications per package, file types, protocols,
-  execution aliases, startup tasks, desktop shortcuts, shared fonts; bundles of several
-  architectures; unsigned test packages.
+  execution aliases, startup tasks, firewall rules, COM servers, toast activation, context menus,
+  desktop shortcuts, shared fonts; names in several languages and logos in several scales
+  (`resources.pri`); `.appinstaller` files for automatic updates; bundles of several
+  architectures; signed packages with `CodeIntegrity.cat` as Windows' signer makes them; unsigned
+  test packages.
 - **Signing:** Authenticode for PE files, MSI and MSIX packages and bundles, RSA or ECDSA, with
   RFC 3161 timestamps (over HTTP or its own TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
   token (`--pkcs11`), or the Windows certificate store through NCrypt (`--key-store`), so a
@@ -101,12 +109,17 @@ A first package, step by step, is the first chapter of the manual:
 ## What it is not
 
 - Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
-- No patches (`.msp`), transforms (`.mst`), merge-module authoring or bootstrapper bundles.
+- No merge-module authoring: other vendors' merge modules go into a package, but rubrapack does not
+  write `.msm` files (and does not take configurable modules).
+- Patches carry changed files whole (no binary deltas) and are not signed yet; a transform
+  carries no files.
+- The `setup.exe` chain installs the `.msi` packages it carries; it does not download anything,
+  run other installers, or show pages of its own beyond Windows Installer's.
 - The tool itself is 64-bit only (it builds x86 packages too).
 
 ## Status
 
-Version 0.7.0. Every feature above is covered by tests on Linux and by
+The version is the one in the top line. Every feature above is covered by tests on Linux and by
 installing, running, repairing, upgrading and removing the packages on Windows 11 (x64). Not tested
 on real hardware yet: Arm64 packages (structure only - no Arm64 machine), hardware PKCS#11 tokens
 (a software token stands in), and a native build on a Windows host (the Windows binary is
