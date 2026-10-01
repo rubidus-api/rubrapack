@@ -1371,6 +1371,66 @@ proven_err_t rp_msix_appinstaller(proven_allocator_t alloc, const rp_ir_t *ir, c
     return rp_buf_take(&b, out, len);
 }
 
+// A language's resource package (RFC-0019), as makeappx builds one from a packaging layout: the
+// main package's identity with a ResourceId and no architecture, ResourcePackage, no execution,
+// the language as its one Resource, and the language's part of resources.pri as resources.pri.
+static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, const char *lang,
+                             const char *display, const char *publisher_display, const char *store_logo, uint8_t *pri, size_t pri_len,
+                             uint8_t **out, size_t *len) {
+    char version[32], publisher[8400], rid[48];
+    unsigned v[4] = { 0 };
+    for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
+    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+    snprintf(publisher, sizeof publisher, "%s%s%s", ir->msix_publisher, opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
+    snprintf(rid, sizeof rid, "language-%s", lang);
+    rp_buf_t m = rp_buf_new(alloc, 1u << 20);
+    rp_buf_puts(&m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
+                    "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
+                    "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
+                    "         xmlns:uap6=\"http://schemas.microsoft.com/appx/manifest/uap/windows10/6\"\r\n"
+                    "         IgnorableNamespaces=\"uap uap6\">\r\n  <Identity");
+    attr(&m, "Name", ir->msix_identity_name);
+    attr(&m, "Publisher", publisher);
+    attr(&m, "Version", version);
+    attr(&m, "ResourceId", rid);
+    rp_buf_puts(&m, " />\r\n  <Properties>\r\n    <ResourcePackage>true</ResourcePackage>\r\n"
+                    "    <uap6:AllowExecution>false</uap6:AllowExecution>\r\n    <DisplayName>");
+    xml_text(&m, display);
+    rp_buf_puts(&m, "</DisplayName>\r\n    <PublisherDisplayName>");
+    xml_text(&m, publisher_display);
+    rp_buf_puts(&m, "</PublisherDisplayName>\r\n    <Logo>");
+    xml_text(&m, store_logo);
+    rp_buf_puts(&m, "</Logo>\r\n  </Properties>\r\n  <Resources>\r\n    <Resource");
+    attr(&m, "Language", lang);
+    rp_buf_puts(&m, " />\r\n  </Resources>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
+    attr(&m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
+    rp_buf_puts(&m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n</Package>\r\n");
+    item_t it = { .file_id = NULL, .data = pri, .data_len = pri_len };
+    snprintf(it.path, sizeof it.path, "resources.pri");
+    rp_zip_writer_t z;
+    rp_zip_begin(&z, alloc, (size_t)1 << 40);
+    rp_buf_t bm = rp_buf_new(alloc, 1u << 20), ct = rp_buf_new(alloc, 1u << 20);
+    rp_buf_puts(&bm, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><BlockMap "
+                     "xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" xmlns:b4=\"http://schemas.microsoft.com/appx/2021/blockmap\" "
+                     "IgnorableNamespaces=\"b4\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
+    proven_err_t err = m.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "resources.pri", NULL, pri, pri_len, !opt->store);
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, m.data, m.len, true);
+    rp_buf_puts(&bm, "</BlockMap>");
+    if (err == PROVEN_OK) err = bm.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "AppxBlockMap.xml", NULL, bm.data, bm.len, true);
+    content_types(&ct, &it, 1);
+    if (err == PROVEN_OK) err = ct.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "[Content_Types].xml", "[Content_Types].xml", ct.data, ct.len, true);
+    if (err == PROVEN_OK) err = z.out.err;
+    if (err == PROVEN_OK) err = rp_zip_finish(&z, out, len);
+    else rp_zip_abort(&z);
+    rp_buf_free(&m);
+    rp_buf_free(&bm);
+    rp_buf_free(&ct);
+    return err;
+}
+
 proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out, size_t *len,
                              rp_srcdiags_t *d) {
     *out = NULL;
@@ -1703,13 +1763,38 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                                          app->description_by_lang_count, app->pos, d);
     }
     if (loc.full) DERR(top, "RP1606", "too many localized texts and logo scales for resources.pri");
+    // RFC-0019: in a bundle, other languages' texts go into resource packages.
+    bool split = opt->langpacks && !ir->msix_no_langpacks && loc.nlangs > 0;
     if (loc.n && d->errors == errors) {
         item_t *it = &items[n++];
         snprintf(it->path, sizeof it->path, "resources.pri");
         it->pos = top;
-        if (rp_pri_write(alloc, ir->msix_identity_name, loc.default_lang, loc.c, loc.n, &it->data, &it->data_len) != PROVEN_OK) {
+        if (rp_pri_write_part(alloc, ir->msix_identity_name, loc.default_lang, loc.c, loc.n, split ? "" : NULL, &it->data, &it->data_len) !=
+            PROVEN_OK) {
             DERR(top, "RP1606", "cannot write resources.pri");
         }
+    }
+    if (split && d->errors == errors) {
+        rp_msix_langpack_t *lp = rp_mem_alloc(alloc, loc.nlangs, sizeof *lp);
+        if (lp == NULL) DERR(top, "RP1606", "out of memory");
+        size_t nlp = 0;
+        for (size_t k = 0; lp && k < loc.nlangs; ++k) {
+            uint8_t *pri = NULL;
+            size_t pl = 0;
+            rp_msix_langpack_t *p = &lp[nlp];
+            snprintf(p->language, sizeof p->language, "%s", loc.langs[k]);
+            const char *disp = loc.pkg_display ? "ms-resource:PackageDisplayName" : ir->msix_display ? ir->msix_display : ir->name;
+            const char *pub = loc.pub_display ? "ms-resource:PublisherDisplayName" : ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer;
+            if (rp_pri_write_part(alloc, ir->msix_identity_name, loc.default_lang, loc.c, loc.n, loc.langs[k], &pri, &pl) != PROVEN_OK ||
+                langpack(alloc, ir, opt, loc.langs[k], disp, pub, store_logo, pri, pl, &p->data, &p->len) != PROVEN_OK) {
+                DERR(top, "RP1606", "cannot write the resource package of %s", loc.langs[k]);
+            } else {
+                ++nlp;
+            }
+            rp_mem_free(alloc, pri);
+        }
+        *opt->langpacks = lp;
+        *opt->nlangpacks = nlp;
     }
     // [registry] values: Registry.dat and User.dat.
     rp_regf_t *machine = rp_regf_new(alloc), *user = rp_regf_new(alloc);
@@ -2059,14 +2144,20 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             return PROVEN_ERR_INVALID_FORMAT;
         }
         if (!attr_value(from, te, "Type", type, sizeof type)) snprintf(type, sizeof type, "application");
-        if (strcmp(type, "application") != 0) {
-            *why = "a resource package in the bundle (rubrapack reads application packages only)";
+        // RFC-0019: a resource package (a language's resources) has a ResourceId instead of an architecture.
+        bool resource = strcmp(type, "resource") == 0;
+        if (!resource && strcmp(type, "application") != 0) {
+            *why = "a Package of the bundle manifest of an unknown Type";
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        if (!attr_value(from, te, "Version", ver, sizeof ver) || !attr_value(from, te, "Architecture", arch, sizeof arch)) {
-            *why = "a Package of the bundle manifest without Version or Architecture";
+        char rid[64] = "";
+        if (!attr_value(from, te, "Version", ver, sizeof ver) ||
+            (resource ? !attr_value(from, te, "ResourceId", rid, sizeof rid) : !attr_value(from, te, "Architecture", arch, sizeof arch))) {
+            *why = resource ? "a resource Package of the bundle manifest without Version or ResourceId"
+                            : "a Package of the bundle manifest without Version or Architecture";
             return PROVEN_ERR_INVALID_FORMAT;
         }
+        if (resource) snprintf(arch, sizeof arch, "~%.14s", rid);   // kept apart from the architectures below
         size_t k = SIZE_MAX;
         for (size_t i = 0; i < ne && k == SIZE_MAX; ++i) {
             if (!used[i] && zip_name_is(e[i].name, file)) k = i;
@@ -2081,7 +2172,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
         }
         for (size_t i = 0; i < narch; ++i) {
             if (strcmp(archs[i], arch) == 0) {
-                *why = "two packages of one architecture in the bundle";
+                *why = resource ? "two resource packages of one ResourceId in the bundle" : "two packages of one architecture in the bundle";
                 return PROVEN_ERR_INVALID_FORMAT;
             }
         }
@@ -2099,7 +2190,12 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
         err = open_archive(alloc, pkg + off, (size_t)size, lim, false, &inner, &ni, &im, &iml, &iwhy);
         identity_t pid;
         bool bad_id = false;
-        if (err == PROVEN_OK) {
+        if (err == PROVEN_OK && resource) {
+            char prid[64];
+            bad_id = !read_identity((const char *)im, iml, &pid) || !rp_xml_attr((const char *)im, iml, "Identity", "ResourceId", prid, sizeof prid) ||
+                     strcmp(pid.name, bid.name) != 0 || strcmp(pid.publisher, bid.publisher) != 0 || strcmp(pid.version, ver) != 0 ||
+                     strcmp(prid, rid) != 0;
+        } else if (err == PROVEN_OK) {
             bad_id = !read_identity((const char *)im, iml, &pid) ||
                      !rp_xml_attr((const char *)im, iml, "Identity", "ProcessorArchitecture", pid.arch, sizeof pid.arch) ||
                      strcmp(pid.name, bid.name) != 0 || strcmp(pid.publisher, bid.publisher) != 0 || strcmp(pid.version, ver) != 0 ||
@@ -2331,7 +2427,7 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
     uint8_t *mans[MAX_PARTS] = { 0 };
     size_t mlens[MAX_PARTS] = { 0 };
     identity_t ids[MAX_PARTS];
-    char zip_names[MAX_PARTS][1024];
+    char zip_names[MAX_PARTS][1024], rids[MAX_PARTS][64];
     proven_err_t err = PROVEN_OK;
     for (size_t i = 0; i < n && err == PROVEN_OK; ++i) {
         rp_msix_file_t *files = NULL;
@@ -2345,8 +2441,12 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
         }
         const char *m = (const char *)mans[i];
         const char *ext = extension(parts[i].file_name);
-        if (!read_identity(m, mlens[i], &ids[i]) || !rp_xml_attr(m, mlens[i], "Identity", "ProcessorArchitecture", ids[i].arch, sizeof ids[i].arch)) {
-            *why = "a package without Identity Name, Publisher, Version and ProcessorArchitecture";
+        // RFC-0019: a resource package names a ResourceId instead of an architecture.
+        rids[i][0] = '\0';
+        bool resource = rp_xml_attr(m, mlens[i], "Identity", "ResourceId", rids[i], sizeof rids[i]);
+        if (!read_identity(m, mlens[i], &ids[i]) ||
+            (!resource && !rp_xml_attr(m, mlens[i], "Identity", "ProcessorArchitecture", ids[i].arch, sizeof ids[i].arch))) {
+            *why = "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)";
         } else if (i && (strcmp(ids[i].name, ids[0].name) != 0 || strcmp(ids[i].publisher, ids[0].publisher) != 0 || strcmp(ids[i].version, ids[0].version) != 0)) {
             *why = "the packages of a bundle need the same Name, Publisher and Version";
         } else if (strlen(parts[i].file_name) > 255 || !ext || (!ieq(ext, "msix") && !ieq(ext, "appx")) || strpbrk(parts[i].file_name, "/\\")) {
@@ -2354,7 +2454,8 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
         } else {
             part_name(parts[i].file_name, zip_names[i], sizeof zip_names[i]);
             for (size_t k = 0; k < i && !*why; ++k) {
-                if (strcmp(ids[k].arch, ids[i].arch) == 0) *why = "two packages of one architecture in a bundle";
+                if (!resource && !rids[k][0] && strcmp(ids[k].arch, ids[i].arch) == 0) *why = "two packages of one architecture in a bundle";
+                else if (resource && strcmp(rids[k], rids[i]) == 0) *why = "two resource packages of one ResourceId in a bundle";
                 else if (ieq(parts[k].file_name, parts[i].file_name)) *why = "two packages of one name in a bundle";
             }
         }
@@ -2377,9 +2478,10 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
             // Stored entries: a local header of 30 bytes and the name, the bytes, a 24-byte ZIP64 descriptor.
             size_t lfh = 0, before = z.out.len;
             rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, rp_crc32(0, parts[i].data, parts[i].len), parts[i].len, &lfh);
-            rp_buf_puts(&man, "\t\t<Package Type=\"application\"");
+            rp_buf_puts(&man, rids[i][0] ? "\t\t<Package Type=\"resource\"" : "\t\t<Package Type=\"application\"");
             attr(&man, "Version", ids[i].version);
-            attr(&man, "Architecture", ids[i].arch);
+            if (rids[i][0]) attr(&man, "ResourceId", rids[i]);
+            else attr(&man, "Architecture", ids[i].arch);
             attr(&man, "FileName", parts[i].file_name);
             attr_u64(&man, "Offset", before + lfh);
             attr_u64(&man, "Size", parts[i].len);

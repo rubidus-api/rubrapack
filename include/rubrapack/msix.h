@@ -17,9 +17,21 @@
 #include "rubrapack/sign.h"
 #include "rubrapack/srcdiag.h"
 
+// A language's resource package (RFC-0019): its language and the package's bytes.
+typedef struct {
+    char     language[16];
+    uint8_t *data;
+    size_t   len;
+} rp_msix_langpack_t;
+
 typedef struct {
     bool unsigned_test;     // --unsigned-test: the Publisher gets the unsigned-package OID (RFC-0001 13)
     bool store;             // --msix-compress store: no payload file is deflated
+    // RFC-0019, for a bundle: when not NULL, the texts of languages other than the package's go into
+    // resource packages, returned here (free each data and the array with rp_mem_free), and the
+    // package's resources.pri keeps its own language's; [msix] language-packs = false keeps them all.
+    rp_msix_langpack_t **langpacks;
+    size_t              *nlangpacks;
 } rp_msix_options_t;
 
 // Builds the package from the model. Problems are source diagnostics (RP16xx, RP1507...);

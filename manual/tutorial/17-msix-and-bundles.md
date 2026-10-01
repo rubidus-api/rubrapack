@@ -316,6 +316,13 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 Windows installs the package for its own processor from it. With `--key` the bundle and each
 package in it are signed.
 
+When the source has names in other languages (`display-name-ko` and the like), the bundle also
+holds one *resource package* per language, `ExampleSoftware.Hello_2.1.0.0_language-ko.msix`, with
+that language's texts; the architecture packages keep only the source's own language. Windows
+installs the resource packages of the languages the user has set, so nobody downloads texts they
+never see, and a language added to Windows later is fetched with the next update.
+`language-packs = false` in `[msix]` keeps every language in the architecture packages instead.
+
 ## Updates from a web site: `.appinstaller`
 
 Windows can keep an MSIX up to date by itself, from a web site (or a file share) you publish it on.

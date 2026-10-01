@@ -88,11 +88,15 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
                         char (*archs)[8], size_t narch, bool nfc, const rp_msix_options_t *mopt, const rp_sign_args_t *sign,
                         const char *out, const char *src, rp_srcdiags_t *d) {
     static const char *const arch_names[] = { "x64", "arm64", "x86" };
-    rp_msix_part_t parts[3];
-    uint8_t *pkgs[3] = { 0 }, *ai = NULL;
+    enum { MAX_PARTS = 3 + 64 };
+    rp_msix_part_t parts[MAX_PARTS];
+    uint8_t *pkgs[MAX_PARTS] = { 0 }, *ai = NULL;
     size_t ai_len = 0;
-    char names[3][320];
+    static char names[MAX_PARTS][320];
     size_t n = 0;
+    rp_msix_langpack_t *lp = NULL;    // RFC-0019: the language resource packages, from the first build
+    size_t nlp = 0;
+    char lp_prefix[280] = "";
     proven_err_t err = PROVEN_OK;
     for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
         rp_ir_t ir;
@@ -100,17 +104,40 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         err = rp_ir_build(heap, doc, &opt, &ir, d);
         if (err != PROVEN_OK) break;
         size_t len = 0;
-        err = rp_msix_from_ir(heap, &ir, mopt, &pkgs[n], &len, d);
+        // Every architecture's build splits the texts the same way; the first one's packs serve all.
+        rp_msix_langpack_t *more = NULL;
+        size_t nmore = 0;
+        rp_msix_options_t mo = *mopt;
+        mo.langpacks = n == 0 ? &lp : &more;
+        mo.nlangpacks = n == 0 ? &nlp : &nmore;
+        err = rp_msix_from_ir(heap, &ir, &mo, &pkgs[n], &len, d);
+        for (size_t i = 0; i < nmore; ++i) rp_mem_free(heap, more[i].data);
+        rp_mem_free(heap, more);
         if (err == PROVEN_OK && n == 0) err = rp_msix_appinstaller(heap, &ir, mopt, true, &ai, &ai_len);
         if (err == PROVEN_OK) {
             unsigned v[4] = { 0 };
             for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
             snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", ir.msix_identity_name, v[0], v[1], v[2], v[3], arch_names[ir.arch]);
+            if (n == 0) snprintf(lp_prefix, sizeof lp_prefix, "%s_%u.%u.%u.%u", ir.msix_identity_name, v[0], v[1], v[2], v[3]);
             parts[n] = (rp_msix_part_t){ names[n], pkgs[n], len };
             ++n;
         }
         rp_ir_free(&ir);
     }
+    for (size_t i = 0; i < nlp && err == PROVEN_OK; ++i) {
+        if (n == MAX_PARTS) {
+            rp_diag_error(RP_DIAG_OUTPUT, "too many languages for one bundle");
+            err = PROVEN_ERR_INVALID_ARG;
+            break;
+        }
+        snprintf(names[n], sizeof names[n], "%s_language-%s.msix", lp_prefix, lp[i].language);
+        parts[n] = (rp_msix_part_t){ names[n], lp[i].data, lp[i].len };
+        pkgs[n++] = lp[i].data;
+        lp[i].data = NULL;
+    }
+    for (size_t i = 0; i < nlp; ++i) rp_mem_free(heap, lp[i].data);
+    rp_mem_free(heap, lp);
+
     rp_srcdiag_print(d, src);
     int rc = err == PROVEN_OK ? RP_EXIT_OK : d->errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
     if (err == PROVEN_OK) {

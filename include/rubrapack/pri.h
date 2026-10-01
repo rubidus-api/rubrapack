@@ -29,4 +29,11 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_pri_write(proven_allocator_t alloc, const char *identity, const char *default_language,
                                         const rp_pri_candidate_t *cands, size_t count, uint8_t **out, size_t *len);
 
+// The same index for one part of the resources (RFC-0019, as makepri splits languages into resource
+// packages): part "" keeps every candidate but those of languages other than the default (the
+// main package's), part "ko" only that language's (its resource package). Every resource name
+// stays in the index; one without candidates in the part has none (decision 0). NULL: everything.
+[[nodiscard]] proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, const char *default_language,
+                                             const rp_pri_candidate_t *cands, size_t count, const char *part, uint8_t **out, size_t *len);
+
 #endif // RUBRAPACK_PRI_H

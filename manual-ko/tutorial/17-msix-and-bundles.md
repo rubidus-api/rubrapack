@@ -303,6 +303,12 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 
 Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key` 를 주면 번들과 그 안의 패키지 모두에 서명한다.
 
+원본에 다른 언어의 이름(`display-name-ko` 따위)이 있으면 번들은 언어마다 그 언어의 글만 담은 *리소스 패키지*
+`ExampleSoftware.Hello_2.1.0.0_language-ko.msix` 도 담고, 아키텍처 패키지에는 원본 자신의 언어만 남는다. Windows 는
+사용자가 설정한 언어의 리소스 패키지만 설치하므로 보지도 않을 글을 내려받는 사람이 없고, 나중에 Windows 에 더한
+언어는 다음 업데이트 때 받아 온다. `[msix]` 에 `language-packs = false` 를 두면 모든 언어를 아키텍처 패키지에 그대로
+둔다.
+
 ## 웹 사이트에서 업데이트: `.appinstaller`
 
 Windows 는 MSIX 를 올려 둔 웹 사이트(또는 공유 폴더)에서 스스로 최신으로 유지할 수 있다. 패키지를 둘 곳을 적으면

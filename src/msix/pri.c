@@ -155,15 +155,29 @@ typedef struct {
 
 proven_err_t rp_pri_write(proven_allocator_t alloc, const char *identity, const char *default_language,
                           const rp_pri_candidate_t *cands, size_t count, uint8_t **out, size_t *len) {
+    return rp_pri_write_part(alloc, identity, default_language, cands, count, NULL, out, len);
+}
+
+proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, const char *default_language,
+                               const rp_pri_candidate_t *cands, size_t count, const char *part, uint8_t **out, size_t *len) {
     if (identity == NULL || default_language == NULL || (cands == NULL && count) || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
     const size_t limit = (size_t)1 << 26;
+    // Which candidates this file carries (RFC-0019): all; the main package's part (no language but
+    // the default one); or one language's (a resource package). Every name stays in the schema.
+    if (count > 4096) return PROVEN_ERR_OUT_OF_BOUNDS;
+    bool use[4096];
+    for (size_t i = 0; i < count; ++i) {
+        bool lang = cands[i].qualifier == RP_PRI_LANGUAGE && cands[i].qvalue;
+        use[i] = part == NULL || (part[0] == '\0' ? !lang || ascii_icmp(cands[i].qvalue, default_language) == 0
+                                                   : lang && ascii_icmp(cands[i].qvalue, part) == 0);
+    }
 
     // Qualifiers: languages (the default first), then scales from small to large.
     qual_t q[MAX_QUALS + 1];
     int nq = 0;
     for (int pass = 0; pass < 2; ++pass) {
         for (size_t i = 0; i < count; ++i) {
-            if (cands[i].qualifier == RP_PRI_NONE) continue;
+            if (cands[i].qualifier == RP_PRI_NONE || !use[i]) continue;
             if (cands[i].qvalue == NULL) return PROVEN_ERR_INVALID_ARG;
             bool lang = cands[i].qualifier == RP_PRI_LANGUAGE;
             if ((pass == 0) != lang) continue;
@@ -252,7 +266,7 @@ proven_err_t rp_pri_write(proven_allocator_t alloc, const char *identity, const 
     for (int it = 0; err == PROVEN_OK && it < nitems; ++it) {
         first[it] = nc;
         for (size_t i = 0; i < count; ++i) {
-            if (node_of[i] != order_items[it]) continue;
+            if (node_of[i] != order_items[it] || !use[i]) continue;
             int k = nc++;
             while (k > first[it]) {
                 int a = qindex[cand_of[k - 1]], b = qindex[i];
@@ -264,6 +278,10 @@ proven_err_t rp_pri_write(proven_allocator_t alloc, const char *identity, const 
             cand_of[k] = (int)i;
         }
         ncand[it] = nc - first[it];
+        if (ncand[it] == 0) {           // not in this part: no decision (decision 0)
+            decision[it] = 0;
+            continue;
+        }
         bool unq = false, qual = false;
         for (int k = first[it]; k < nc; ++k) {
             unq |= qindex[cand_of[k]] == 0;
