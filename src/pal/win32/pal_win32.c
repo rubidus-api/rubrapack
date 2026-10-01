@@ -69,19 +69,6 @@ proven_err_t rp_pal_puts(rp_out_t out, const char *utf8) {
 
 static proven_err_t wide_path(proven_allocator_t alloc, const char *path_utf8, proven_u16str_t *out);
 
-proven_err_t rp_pal_remove_file(proven_allocator_t alloc, const char *path_utf8) {
-    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
-    proven_u16str_t w = { 0 };
-    proven_err_t err = wide_path(alloc, path_utf8, &w);
-    if (err != PROVEN_OK) return err;
-    if (!DeleteFileW((const wchar_t *)proven_u16str_as_ptr(&w))) {
-        DWORD e = GetLastError();
-        err = e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND ? PROVEN_ERR_NOT_FOUND : PROVEN_ERR_IO;
-    }
-    proven_u16str_destroy(alloc, &w);
-    return err;
-}
-
 proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char **line) {
     if (line == NULL || max_bytes == 0) return PROVEN_ERR_INVALID_ARG;
     *line = NULL;
@@ -191,43 +178,6 @@ proven_err_t rp_pal_read_line(proven_allocator_t alloc, size_t max_bytes, char *
     return PROVEN_OK;
 }
 
-proven_err_t rp_pal_read_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes,
-                              uint8_t **data, size_t *len) {
-    if (path_utf8 == NULL || data == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
-    proven_u16str_t wide = { 0 };
-    proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
-    rp_text_result_t t = rp_utf8_to_u16str(alloc, view, &wide);
-    if (t.err != PROVEN_OK) return t.err;
-    HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&wide), GENERIC_READ, FILE_SHARE_READ, NULL,
-                           OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    proven_u16str_destroy(alloc, &wide);
-    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
-    proven_err_t err = PROVEN_OK;
-    LARGE_INTEGER size;
-    uint8_t *buf = NULL;
-    if (!GetFileSizeEx(h, &size) || size.QuadPart < 0) err = PROVEN_ERR_IO;
-    else if ((unsigned long long)size.QuadPart > max_bytes) err = PROVEN_ERR_OUT_OF_BOUNDS;
-    if (err == PROVEN_OK) {
-        buf = rp_mem_alloc(alloc, (size_t)size.QuadPart, 1);
-        if (buf == NULL) err = PROVEN_ERR_NOMEM;
-    }
-    for (size_t off = 0; err == PROVEN_OK && off < (size_t)size.QuadPart;) {
-        size_t left = (size_t)size.QuadPart - off;
-        DWORD want = left > 0x10000000u ? 0x10000000u : (DWORD)left;
-        DWORD got = 0;
-        if (!ReadFile(h, buf + off, want, &got, NULL) || got == 0) err = PROVEN_ERR_IO;
-        off += got;
-    }
-    CloseHandle(h);
-    if (err != PROVEN_OK) {
-        rp_mem_free(alloc, buf);
-        return err;
-    }
-    *data = buf;
-    *len = (size_t)size.QuadPart;
-    return PROVEN_OK;
-}
-
 static proven_err_t wide_path(proven_allocator_t alloc, const char *path_utf8, proven_u16str_t *out) {
     proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
     rp_text_result_t t = rp_utf8_to_u16str(alloc, view, out);
@@ -247,100 +197,6 @@ rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_
     return RP_FS_FILE;
 }
 
-proven_err_t rp_pal_write_file_atomic(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
-    if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
-    proven_u16str_t w = { 0 }, t = { 0 };
-    size_t n = strlen(path_utf8);
-    char *tmp = rp_mem_alloc(alloc, n + 16, 1);
-    if (tmp == NULL) return PROVEN_ERR_NOMEM;
-    memcpy(tmp, path_utf8, n);
-    memcpy(tmp + n, ".rp-tmp", 8);
-    proven_err_t err = wide_path(alloc, path_utf8, &w);
-    if (err == PROVEN_OK) err = wide_path(alloc, tmp, &t);
-    rp_mem_free(alloc, tmp);
-    if (err != PROVEN_OK) {
-        proven_u16str_destroy(alloc, &w);
-        return err;
-    }
-    const wchar_t *wt = (const wchar_t *)proven_u16str_as_ptr(&t);
-    HANDLE h = CreateFileW(wt, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (h == INVALID_HANDLE_VALUE) {
-        err = PROVEN_ERR_IO;
-    } else {
-        for (size_t off = 0; err == PROVEN_OK && off < len;) {
-            DWORD chunk = (len - off) > 0x10000000u ? 0x10000000u : (DWORD)(len - off), done = 0;
-            if (!WriteFile(h, data + off, chunk, &done, NULL) || done == 0) err = PROVEN_ERR_IO;
-            off += done;
-        }
-        if (!FlushFileBuffers(h)) err = PROVEN_ERR_IO;
-        CloseHandle(h);
-        if (err == PROVEN_OK &&
-            !MoveFileExW(wt, (const wchar_t *)proven_u16str_as_ptr(&w), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
-            err = PROVEN_ERR_IO;
-        }
-        if (err != PROVEN_OK) DeleteFileW(wt);
-    }
-    proven_u16str_destroy(alloc, &w);
-    proven_u16str_destroy(alloc, &t);
-    return err;
-}
-
-proven_err_t rp_pal_list_dir(proven_allocator_t alloc, const char *path_utf8, char ***names, size_t *count) {
-    if (path_utf8 == NULL || names == NULL || count == NULL) return PROVEN_ERR_INVALID_ARG;
-    size_t pl = strlen(path_utf8);
-    char *pattern = rp_mem_alloc(alloc, pl + 3, 1);
-    if (pattern == NULL) return PROVEN_ERR_NOMEM;
-    memcpy(pattern, path_utf8, pl);
-    memcpy(pattern + pl, "\\*", 3);
-    proven_u16str_t w = { 0 };
-    proven_err_t err = wide_path(alloc, pattern, &w);
-    rp_mem_free(alloc, pattern);
-    if (err != PROVEN_OK) return err;
-    WIN32_FIND_DATAW fd;
-    HANDLE h = FindFirstFileW((const wchar_t *)proven_u16str_as_ptr(&w), &fd);
-    proven_u16str_destroy(alloc, &w);
-    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
-    char **v = NULL;
-    size_t n = 0, cap = 0;
-    do {
-        if (wcscmp(fd.cFileName, L".") == 0 || wcscmp(fd.cFileName, L"..") == 0) continue;
-        proven_u8str_t u = { 0 };
-        proven_u16str_view_t view = { .ptr = (const proven_u16 *)fd.cFileName, .size = wcslen(fd.cFileName) };
-        rp_text_result_t r = rp_utf16_to_u8str(alloc, view, &u);
-        if (r.err != PROVEN_OK) {
-            err = r.err;
-            break;
-        }
-        if (n == cap) {
-            size_t ncap = cap ? cap * 2 : 32;
-            char **nv = rp_mem_alloc(alloc, ncap, sizeof *nv);
-            if (nv == NULL) {
-                proven_u8str_destroy(alloc, &u);
-                err = PROVEN_ERR_NOMEM;
-                break;
-            }
-            if (n) memcpy(nv, v, n * sizeof *nv);
-            rp_mem_free(alloc, v);
-            v = nv;
-            cap = ncap;
-        }
-        size_t len = strlen(proven_u8str_as_cstr(&u));
-        v[n] = rp_mem_alloc(alloc, len + 1, 1);
-        if (v[n]) memcpy(v[n++], proven_u8str_as_cstr(&u), len + 1);
-        else err = PROVEN_ERR_NOMEM;
-        proven_u8str_destroy(alloc, &u);
-    } while (err == PROVEN_OK && FindNextFileW(h, &fd));
-    FindClose(h);
-    if (err != PROVEN_OK) {
-        for (size_t k = 0; k < n; ++k) rp_mem_free(alloc, v[k]);
-        rp_mem_free(alloc, v);
-        return err;
-    }
-    *names = v;
-    *count = n;
-    return PROVEN_OK;
-}
-
 static bool file_id(proven_allocator_t alloc, const char *path_utf8, BY_HANDLE_FILE_INFORMATION *info) {
     proven_u16str_t w = { 0 };
     if (wide_path(alloc, path_utf8, &w) != PROVEN_OK) return false;
@@ -358,42 +214,6 @@ bool rp_pal_same_file(proven_allocator_t alloc, const char *a_utf8, const char *
     if (a_utf8 == NULL || b_utf8 == NULL || !file_id(alloc, a_utf8, &a) || !file_id(alloc, b_utf8, &b)) return false;
     return a.dwVolumeSerialNumber == b.dwVolumeSerialNumber && a.nFileIndexHigh == b.nFileIndexHigh &&
            a.nFileIndexLow == b.nFileIndexLow;
-}
-
-proven_err_t rp_pal_mkdir_new(proven_allocator_t alloc, const char *path_utf8) {
-    if (path_utf8 == NULL) return PROVEN_ERR_INVALID_ARG;
-    proven_u16str_t w = { 0 };
-    proven_err_t err = wide_path(alloc, path_utf8, &w);
-    if (err != PROVEN_OK) return err;
-    if (!CreateDirectoryW((const wchar_t *)proven_u16str_as_ptr(&w), NULL)) {
-        err = GetLastError() == ERROR_ALREADY_EXISTS ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
-    }
-    proven_u16str_destroy(alloc, &w);
-    return err;
-}
-
-proven_err_t rp_pal_write_file_new(proven_allocator_t alloc, const char *path_utf8, const uint8_t *data, size_t len) {
-    if (path_utf8 == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
-    proven_u16str_t w = { 0 };
-    proven_err_t err = wide_path(alloc, path_utf8, &w);
-    if (err != PROVEN_OK) return err;
-    const wchar_t *wp = (const wchar_t *)proven_u16str_as_ptr(&w);
-    // CREATE_NEW fails on any existing name; a reparse point is not followed.
-    HANDLE h = CreateFileW(wp, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
-    if (h == INVALID_HANDLE_VALUE) {
-        DWORD e = GetLastError();
-        err = e == ERROR_FILE_EXISTS || e == ERROR_ALREADY_EXISTS ? PROVEN_ERR_BUSY : PROVEN_ERR_IO;
-    } else {
-        for (size_t off = 0; err == PROVEN_OK && off < len;) {
-            DWORD chunk = (len - off) > 0x10000000u ? 0x10000000u : (DWORD)(len - off), done = 0;
-            if (!WriteFile(h, data + off, chunk, &done, NULL) || done == 0) err = PROVEN_ERR_IO;
-            off += done;
-        }
-        if (!CloseHandle(h)) err = PROVEN_ERR_IO;
-        if (err != PROVEN_OK) DeleteFileW(wp);
-    }
-    proven_u16str_destroy(alloc, &w);
-    return err;
 }
 
 char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
@@ -582,62 +402,6 @@ void rp_pal_parallel_for(size_t jobs, size_t count, void (*fn)(void *ctx, size_t
 }
 
 // ---- mapped files (RFC-0013 E1) ------------------------------------------------------------------
-
-struct rp_map {
-    HANDLE      file, mapping;
-    const void *view;
-};
-
-proven_err_t rp_pal_map_file(proven_allocator_t alloc, const char *path_utf8, size_t max_bytes, const uint8_t **data, size_t *len,
-                             rp_map_t **map) {
-    if (path_utf8 == NULL || data == NULL || len == NULL || map == NULL) return PROVEN_ERR_INVALID_ARG;
-    *data = NULL;
-    *len = 0;
-    *map = NULL;
-    proven_u16str_t wide = { 0 };
-    proven_u8str_view_t view = { .ptr = (const proven_byte_t *)path_utf8, .size = strlen(path_utf8) };
-    rp_text_result_t t = rp_utf8_to_u16str(alloc, view, &wide);
-    if (t.err != PROVEN_OK) return t.err;
-    HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&wide), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
-                           FILE_ATTRIBUTE_NORMAL, NULL);
-    proven_u16str_destroy(alloc, &wide);
-    if (h == INVALID_HANDLE_VALUE) return PROVEN_ERR_NOT_FOUND;
-    LARGE_INTEGER size;
-    if (!GetFileSizeEx(h, &size) || size.QuadPart < 0) {
-        CloseHandle(h);
-        return PROVEN_ERR_IO;
-    }
-    if ((unsigned long long)size.QuadPart > max_bytes) {
-        CloseHandle(h);
-        return PROVEN_ERR_OUT_OF_BOUNDS;
-    }
-    rp_map_t *m = rp_mem_alloc(alloc, 1, sizeof *m);
-    if (m == NULL) {
-        CloseHandle(h);
-        return PROVEN_ERR_NOMEM;
-    }
-    *m = (rp_map_t){ h, NULL, NULL };
-    if (size.QuadPart > 0) {
-        m->mapping = CreateFileMappingW(h, NULL, PAGE_READONLY, 0, 0, NULL);
-        m->view = m->mapping ? MapViewOfFile(m->mapping, FILE_MAP_READ, 0, 0, 0) : NULL;
-        if (m->view == NULL) {
-            rp_pal_unmap(alloc, m);
-            return PROVEN_ERR_IO;
-        }
-    }
-    *data = m->view;
-    *len = (size_t)size.QuadPart;
-    *map = m;
-    return PROVEN_OK;
-}
-
-void rp_pal_unmap(proven_allocator_t alloc, rp_map_t *map) {
-    if (map == NULL) return;
-    if (map->view) UnmapViewOfFile(map->view);
-    if (map->mapping) CloseHandle(map->mapping);
-    if (map->file) CloseHandle(map->file);
-    rp_mem_free(alloc, map);
-}
 
 struct rp_outmap {
     HANDLE          file, mapping;

@@ -102,6 +102,7 @@ static const char *const core_sources[] = {
     "src/crypto/rsa.c",
     "src/sign/authenticode.c",
     "src/sign/chain.c",
+    "src/pal/pal_fs.c",
     "src/sign/msi_sign.c",
     "src/sign/pe_sign.c",
     "src/sign/tsp.c",
@@ -124,17 +125,23 @@ static const char *const win32_sources[] = {
 // The parts of proven_c_lib rubrapack links, relative to vendor/proven/.
 static const char *const proven_sources[] = {
     "src/proven/algorithm.c",
+    "src/proven/array.c",
     "src/proven/buffer.c",
     "src/proven/encode.c",
+    "src/proven/fs.c",
     "src/proven/hash.c",
     "src/proven/heap.c",
     "src/proven/memory.c",
+    "src/proven/mmap.c",
     "src/proven/random.c",
     "src/proven/u16str.c",
     "src/proven/u8str.c",
     "src/proven/utf.c",
+    "platform/proven_sys_fs.c",
+    "platform/proven_sys_io.c",
     "platform/proven_sys_mem.c",
     "platform/proven_sys_random.c",
+    "platform/proven_sys_time.c",
 };
 
 #define COUNT(a) (sizeof(a) / sizeof((a)[0]))
