@@ -1,138 +1,81 @@
-// src/text/utf.c - strict UTF-8 <-> UTF-16 conversion (see include/rubrapack/text.h).
+// src/text/utf.c - strict UTF-8 <-> UTF-16 conversion (see include/rubrapack/text.h), on
+// proven_c_lib's converters (proven/utf.h); this file adds the offset of the first bad sequence.
 
 #include "rubrapack/text.h"
 
+#include "proven/utf.h"
+
 #include <stdckdint.h>
 #include <string.h>
-
-// Decodes one scalar value starting at src[i]. Returns the sequence length (1-4), or 0 when
-// the bytes at src[i] do not begin a well-formed sequence (Unicode Table 3-7).
-static size_t decode_utf8(const uint8_t *src, size_t len, size_t i, uint32_t *out) {
-    uint8_t b0 = src[i];
-    if (b0 < 0x80) {
-        *out = b0;
-        return 1;
-    }
-
-    size_t need;
-    uint32_t cp;
-    uint8_t lo = 0x80;
-    uint8_t hi = 0xBF;
-    if (b0 >= 0xC2 && b0 <= 0xDF) {
-        need = 2;
-        cp = b0 & 0x1Fu;
-    } else if (b0 >= 0xE0 && b0 <= 0xEF) {
-        need = 3;
-        cp = b0 & 0x0Fu;
-        if (b0 == 0xE0) lo = 0xA0;      // overlong
-        if (b0 == 0xED) hi = 0x9F;      // UTF-16 surrogates
-    } else if (b0 >= 0xF0 && b0 <= 0xF4) {
-        need = 4;
-        cp = b0 & 0x07u;
-        if (b0 == 0xF0) lo = 0x90;      // overlong
-        if (b0 == 0xF4) hi = 0x8F;      // above U+10FFFF
-    } else {
-        return 0;                       // continuation byte, C0/C1, F5..FF
-    }
-
-    if (len - i < need) return 0;
-    for (size_t k = 1; k < need; ++k) {
-        uint8_t b = src[i + k];
-        uint8_t min = (k == 1) ? lo : 0x80;
-        uint8_t max = (k == 1) ? hi : 0xBF;
-        if (b < min || b > max) return 0;
-        cp = (cp << 6) | (b & 0x3Fu);
-    }
-    *out = cp;
-    return need;
-}
 
 static rp_text_result_t fail(proven_err_t err, size_t offset) {
     return (rp_text_result_t){ .err = err, .units = 0, .offset = offset };
 }
 
+static proven_u8str_view_t view8(const uint8_t *src, size_t len) { return (proven_u8str_view_t){ .ptr = src, .size = len }; }
+
+// Where the first ill-formed sequence starts (len when there is none).
+static size_t bad_utf8_at(const uint8_t *src, size_t len) {
+    for (size_t i = 0; i < len;) {
+        proven_utf8_char_t c = proven_utf8_decode_next(view8(src, len), i);
+        if (c.err != PROVEN_OK) return i;
+        i += c.len;
+    }
+    return len;
+}
+
+static size_t bad_utf16_at(const proven_u16 *src, size_t len) {
+    uint8_t buf[64];
+    for (size_t i = 0; i < len;) {
+        proven_utf_step_t st = proven_utf16_to_utf8_partial(src + i, len - i, buf, sizeof buf);
+        if (st.err != PROVEN_OK && st.err != PROVEN_ERR_OUT_OF_BOUNDS) return i + st.consumed;
+        if (st.consumed == 0) break;
+        i += st.consumed;
+    }
+    return len;
+}
+
 rp_text_result_t rp_utf8_validate(const uint8_t *src, size_t len) {
     if (src == NULL && len != 0) return fail(PROVEN_ERR_INVALID_ARG, 0);
     size_t count = 0;
-    for (size_t i = 0; i < len;) {
-        uint32_t cp;
-        size_t n = decode_utf8(src, len, i, &cp);
-        if (n == 0) return fail(PROVEN_ERR_INVALID_ENCODING, i);
-        i += n;
-        ++count;
+    for (size_t i = 0; i < len; ++count) {
+        proven_utf8_char_t c = proven_utf8_decode_next(view8(src, len), i);
+        if (c.err != PROVEN_OK) return fail(PROVEN_ERR_INVALID_ENCODING, i);
+        i += c.len;
     }
     return (rp_text_result_t){ .err = PROVEN_OK, .units = count };
 }
 
 rp_text_result_t rp_utf8_to_utf16(const uint8_t *src, size_t len, proven_u16 *dst, size_t cap) {
     if (src == NULL && len != 0) return fail(PROVEN_ERR_INVALID_ARG, 0);
-    size_t out = 0;
-    for (size_t i = 0; i < len;) {
-        uint32_t cp;
-        size_t n = decode_utf8(src, len, i, &cp);
-        if (n == 0) return fail(PROVEN_ERR_INVALID_ENCODING, i);
-        size_t units = (cp >= 0x10000) ? 2 : 1;
-        if (dst != NULL) {
-            if (cap - out < units) return fail(PROVEN_ERR_OUT_OF_BOUNDS, i);
-            if (units == 1) {
-                dst[out] = (proven_u16)cp;
-            } else {
-                uint32_t v = cp - 0x10000;
-                dst[out] = (proven_u16)(0xD800 | (v >> 10));
-                dst[out + 1] = (proven_u16)(0xDC00 | (v & 0x3FFu));
-            }
-        }
-        if (ckd_add(&out, out, units)) return fail(PROVEN_ERR_OVERFLOW, i);
-        i += n;
+    proven_err_t err;
+    size_t units = 0;
+    if (dst == NULL) {
+        proven_result_size_t r = proven_utf8_to_utf16_size(view8(src, len));
+        err = r.err;
+        units = r.value;
+    } else {
+        err = proven_utf8_to_utf16(view8(src, len), dst, cap, &units);
     }
-    return (rp_text_result_t){ .err = PROVEN_OK, .units = out };
+    if (err == PROVEN_ERR_INVALID_ENCODING || err == PROVEN_ERR_NEED_MORE) return fail(PROVEN_ERR_INVALID_ENCODING, bad_utf8_at(src, len));
+    if (err != PROVEN_OK) return fail(err, 0);
+    return (rp_text_result_t){ .err = PROVEN_OK, .units = units };
 }
 
 rp_text_result_t rp_utf16_to_utf8(const proven_u16 *src, size_t len, uint8_t *dst, size_t cap) {
     if (src == NULL && len != 0) return fail(PROVEN_ERR_INVALID_ARG, 0);
-    size_t out = 0;
-    for (size_t i = 0; i < len;) {
-        uint32_t cp = src[i];
-        size_t used = 1;
-        if (cp >= 0xD800 && cp <= 0xDBFF) {
-            if (i + 1 >= len) return fail(PROVEN_ERR_INVALID_ENCODING, i);
-            uint32_t lo = src[i + 1];
-            if (lo < 0xDC00 || lo > 0xDFFF) return fail(PROVEN_ERR_INVALID_ENCODING, i);
-            cp = 0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
-            used = 2;
-        } else if (cp >= 0xDC00 && cp <= 0xDFFF) {
-            return fail(PROVEN_ERR_INVALID_ENCODING, i);
-        }
-
-        uint8_t buf[4];
-        size_t n;
-        if (cp < 0x80) {
-            buf[0] = (uint8_t)cp;
-            n = 1;
-        } else if (cp < 0x800) {
-            buf[0] = (uint8_t)(0xC0 | (cp >> 6));
-            buf[1] = (uint8_t)(0x80 | (cp & 0x3F));
-            n = 2;
-        } else if (cp < 0x10000) {
-            buf[0] = (uint8_t)(0xE0 | (cp >> 12));
-            buf[1] = (uint8_t)(0x80 | ((cp >> 6) & 0x3F));
-            buf[2] = (uint8_t)(0x80 | (cp & 0x3F));
-            n = 3;
-        } else {
-            buf[0] = (uint8_t)(0xF0 | (cp >> 18));
-            buf[1] = (uint8_t)(0x80 | ((cp >> 12) & 0x3F));
-            buf[2] = (uint8_t)(0x80 | ((cp >> 6) & 0x3F));
-            buf[3] = (uint8_t)(0x80 | (cp & 0x3F));
-            n = 4;
-        }
-        if (dst != NULL) {
-            if (cap - out < n) return fail(PROVEN_ERR_OUT_OF_BOUNDS, i);
-            memcpy(dst + out, buf, n);
-        }
-        if (ckd_add(&out, out, n)) return fail(PROVEN_ERR_OVERFLOW, i);
-        i += used;
+    proven_err_t err;
+    size_t units = 0;
+    if (dst == NULL) {
+        proven_result_size_t r = proven_utf16_to_utf8_size(src, len);
+        err = r.err;
+        units = r.value;
+    } else {
+        err = proven_utf16_to_utf8(src, len, dst, cap, &units);
     }
-    return (rp_text_result_t){ .err = PROVEN_OK, .units = out };
+    if (err == PROVEN_ERR_INVALID_ENCODING || err == PROVEN_ERR_NEED_MORE) return fail(PROVEN_ERR_INVALID_ENCODING, bad_utf16_at(src, len));
+    if (err != PROVEN_OK) return fail(err, 0);
+    return (rp_text_result_t){ .err = PROVEN_OK, .units = units };
 }
 
 // The allocating forms convert into a scratch block from `alloc`, then hand it to proven's

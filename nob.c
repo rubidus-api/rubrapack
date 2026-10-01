@@ -131,6 +131,7 @@ static const char *const proven_sources[] = {
     "src/proven/random.c",
     "src/proven/u16str.c",
     "src/proven/u8str.c",
+    "src/proven/utf.c",
     "platform/proven_sys_mem.c",
     "platform/proven_sys_random.c",
 };
