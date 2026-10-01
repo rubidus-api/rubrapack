@@ -56,7 +56,7 @@ static bool four_part_version(const char *s) {
 void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", "appinstaller-uri",
                                         "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background",
-                                        "display-name", NULL };
+                                        "display-name", "capabilities", "file-system-virtualization", "registry-virtualization", NULL };
     static const char *const lang_bases[] = { "display-name", "publisher-display-name", NULL };
     ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
@@ -82,6 +82,24 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     if (ir->msix_min_version && !four_part_version(ir->msix_min_version)) {
         ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 10.0.17763.0");
     }
+    // RFC-0018: capabilities beyond runFullTrust (checked by name when the MSIX is built), and
+    // write virtualization turned off.
+    const rp_tkey_t *caps = ir_find_key(t, "capabilities");
+    if (caps) {
+        ir->msix_caps_pos = caps->pos;
+        if (caps->val.kind != RP_TV_ARRAY || caps->val.items[0].kind != RP_TV_STRING) {
+            ERR(c, caps->pos, "RP1306", "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]");
+        } else {
+            ir->msix_caps = rp_mem_alloc(c->alloc, caps->val.count, sizeof *ir->msix_caps);
+            if (ir->msix_caps == NULL) c->nomem = true;
+            for (size_t k = 0; ir->msix_caps && k < caps->val.count; ++k) {
+                char *s = ir_subst(c, &caps->val.items[k]);
+                if (s) ir->msix_caps[ir->msix_cap_count++] = s;
+            }
+        }
+    }
+    ir->msix_no_fs_virt = !ir_get_bool(c, t, "file-system-virtualization", true);
+    ir->msix_no_reg_virt = !ir_get_bool(c, t, "registry-virtualization", true);
     // RFC-0016 3: where the .appinstaller file and the package will be downloaded from.
     ir->msix_appinstaller_uri = ir_get_str(c, t, "appinstaller-uri", false, NULL);
     ir->msix_package_uri = ir_get_str(c, t, "package-uri", false, NULL);
@@ -129,7 +147,8 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown
 }
 
 void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
-    static const char *const keys[] = { "executable", "display-name", "description", "logo-150", "logo-44", "store-logo", NULL };
+    static const char *const keys[] = { "executable", "display-name", "description", "logo-150", "logo-44", "store-logo",
+                                        "background-color", "hidden", NULL };
     static const char *const lang_bases[] = { "display-name", "description", NULL };
     ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
@@ -161,9 +180,45 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
         given += a->logo[i] != NULL;
     }
     if (given != 0 && given != 3) ERR(c, t->pos, "RP1608", "give all three logos (logo-150, logo-44, store-logo) or none");
+    // RFC-0018: the tile's background and whether the application shows in the Start menu.
+    a->background = ir_get_str(c, t, "background-color", false, NULL);
+    if (a->background && strcmp(a->background, "transparent") != 0) {
+        bool ok = strlen(a->background) == 7 && a->background[0] == '#';
+        for (int k = 1; ok && k < 7; ++k) ok = ir_is_hex(a->background[k]);
+        if (!ok) ERR(c, ir_key_pos(t, "background-color"), "RP1308", "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\"");
+    }
+    a->hidden = ir_get_bool(c, t, "hidden", false);
     bool id_ok = t->id[0] != '\0' && strlen(t->id) <= 64 && !(t->id[0] >= '0' && t->id[0] <= '9');
     for (const char *p = t->id; *p; ++p) id_ok &= (*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') || (*p >= '0' && *p <= '9');
     if (!id_ok) ERR(c, t->pos, "RP1606", "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit", t->id);
+}
+
+// [msix-dependency.ID] (RFC-0018): a framework package, such as Microsoft.VCLibs.140.00.UWPDesktop.
+void ir_parse_msix_dep(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "name", "publisher", "min-version", NULL };
+    ir_check_keys(c, t, keys);
+    ir_check_id(c, t, 72);
+    rp_ir_t *ir = c->ir;
+    rp_ir_msix_dep_t *nd = rp_mem_alloc(c->alloc, ir->msix_dep_count + 1, sizeof *nd);
+    if (nd == NULL) {
+        c->nomem = true;
+        return;
+    }
+    if (ir->msix_dep_count) memcpy(nd, ir->msix_deps, ir->msix_dep_count * sizeof *nd);
+    rp_mem_free(c->alloc, ir->msix_deps);
+    ir->msix_deps = nd;
+    rp_ir_msix_dep_t *d = &nd[ir->msix_dep_count++];
+    memset(d, 0, sizeof *d);
+    d->id = ir_dup(c, t->id);
+    d->pos = t->pos;
+    d->name = ir_get_str(c, t, "name", true, NULL);
+    d->publisher = ir_get_str(c, t, "publisher", true, NULL);
+    d->min_version = ir_get_str(c, t, "min-version", true, NULL);
+    if (d->name && !msix_name_ok(d->name)) ERR(c, ir_key_pos(t, "name"), "RP1601", "name is a package's identity name (got '%s')", d->name);
+    if (d->publisher && strchr(d->publisher, '=') == NULL) {
+        ERR(c, ir_key_pos(t, "publisher"), "RP1602", "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\"");
+    }
+    if (d->min_version && !four_part_version(d->min_version)) ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 14.0.24217.0");
 }
 
 void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {

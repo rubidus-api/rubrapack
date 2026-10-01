@@ -8,12 +8,12 @@
 static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", "merge", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", "msix-dependency", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
-                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "merge", NULL };
+                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
 
 bool ir_in_list(const char *s, const char *const *list) {
     for (size_t k = 0; list[k]; ++k) {
@@ -99,10 +99,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "arp") == 0) arp = t;
         else if (strcmp(t->kind, "msix") == 0) ir_parse_msix(&c, t);
         else if (strcmp(t->kind, "msix-app") == 0) ir_parse_msix_app(&c, t);
+        else if (strcmp(t->kind, "msix-dependency") == 0) ir_parse_msix_dep(&c, t);
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
-                                               "assoc", "protocol", "shortcut", "font", "service", NULL };
+                                               "assoc", "protocol", "shortcut", "font", "service", "msix-dependency", "copy", NULL };
         if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -675,6 +676,7 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->id);
         rp_mem_free(a, x->exe);
         rp_mem_free(a, x->display);
+        rp_mem_free(a, x->background);
         rp_mem_free(a, x->description);
         free_ltexts(a, x->display_by_lang, x->display_by_lang_count);
         free_ltexts(a, x->description_by_lang, x->description_by_lang_count);
@@ -684,6 +686,14 @@ void rp_ir_free(rp_ir_t *ir) {
         }
     }
     rp_mem_free(a, ir->msix_apps);
+    for (size_t k = 0; k < ir->msix_cap_count; ++k) rp_mem_free(a, ir->msix_caps[k]);
+    rp_mem_free(a, ir->msix_caps);
+    for (size_t k = 0; k < ir->msix_dep_count; ++k) {
+        rp_ir_msix_dep_t *x = &ir->msix_deps[k];
+        char *xs[] = { x->id, x->name, x->publisher, x->min_version };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->msix_deps);
     for (size_t i = 0; i < ir->msix_block_count; ++i) {
         rp_mem_free(a, ir->msix_blocks[i].kind);
         rp_mem_free(a, ir->msix_blocks[i].id);

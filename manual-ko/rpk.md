@@ -237,8 +237,9 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
-| `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다) |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
+| `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
@@ -300,7 +301,34 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   글들을 `ms-resource:` 이름으로 가리키고 언어들을 적는다.
 - 여러 배율의 로고와 여러 언어의 글은 `resources.pri`, 곧 Windows 가 그것들을 찾는 패키지 자원 색인에 들어간다.
   그런 것이 없는 패키지에는 없다.
-- MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(`RP1605`): 사용자 지정 동작, 환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우거나 복사하는 파일, 빈 폴더.
+- MSIX 가 할 수 없는 것은 조용히 빼지 않고 오류로 알린다(`RP1605`): 사용자 지정 동작, 환경 변수, INI 파일, 권한, 설치 조건과 검색, 설치 때 지우는 파일, 빈 폴더. `[copy.*]` 는 파일을 복사본의 자리에 한 번 더 패키지에 넣는다.
+- `capabilities` 는 모든 패키지에 있는 `runFullTrust` 말고 애플리케이션이 Windows 에 요구하는 것을 선언한다.
+  rubrapack 은 이름마다 매니페스트 스키마가 원하는 요소로 쓴다(모르는 이름은 `RP1616`):
+  - `Capability`: internetClient, internetClientServer, privateNetworkClientServer, allJoyn, codeGeneration
+  - `uap:Capability`: documentsLibrary, picturesLibrary, videosLibrary, musicLibrary, removableStorage,
+    enterpriseAuthentication, sharedUserCertificates, appointments, contacts, userAccountInformation,
+    objects3D, phoneCall, voipCall, chat, blockedChatMessages
+  - `uap3:Capability`: backgroundMediaPlayback, remoteSystem, userNotificationListener; `uap6`:
+    graphicsCapture; `uap7`: globalMediaControl
+  - `rescap:Capability` (제한된 능력: Microsoft Store 가 까닭을 묻는다): allowElevation, unvirtualizedResources,
+    broadFileSystemAccess, packageManagement, packageQuery, confirmAppClose, appDiagnostics,
+    appLicensing, localSystemServices, packagedServices, extendedExecutionUnconstrained,
+    extendedBackgroundTaskTime, inputForegroundObservation, inputObservation, inputSuppression,
+    inputInjectionBrokered, uiAccess, interopServices, customInstallActions, modifiableApp,
+    appCaptureSettings
+  - `DeviceCapability`: webcam, microphone, location, bluetooth, proximity, radios, wiFiControl,
+    lowLevel, gazeInput
+  완전 신뢰로 도는 데스크톱 애플리케이션에는 몇 개만 필요하다: `allowElevation` 은 관리자 권한으로 시작하게 하고,
+  라이브러리와 장치 이름은 그것을 확인하는 API 에서 쓰인다.
+- `file-system-virtualization = false` 와 `registry-virtualization = false` 는 애플리케이션이 패키지의 개인 사본 대신
+  실제 자리(설치 폴더, `HKCU`)에 쓰게 한다. `unvirtualizedResources` 를 더하고 `min-version = "10.0.18362.0"` 이상이
+  필요하다(`RP1614`). Microsoft 는 Store 에서 이것을 일부 게임에만 허락한다. 직접 설치하는 패키지는 쓸 수 있다.
+- `[msix-dependency.ID]` 는 애플리케이션이 필요로 하는 프레임워크 패키지 - C++ 런타임
+  `Microsoft.VCLibs.140.00.UWPDesktop`(게시자 `CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond,
+  S=Washington, C=US`), Windows App SDK - 를 쓸 수 있는 가장 오래된 판과 함께 적는다. 그것이 없으면 Windows 가
+  패키지를 설치하지 않는다. MSI 빌드는 이 표를 뺀다.
+- `background-color` 는 애플리케이션 타일의 색을 정하고, `hidden = true` 는 애플리케이션(예를 들어 도우미)을 시작
+  메뉴에서 뺀다.
   그런 표(또는 `[file.*]`/`[files.*]`)에 `msi-only = true` 를 달면 MSI 에는 들어가고 MSIX 는 그것
   없이 만들어진다. feature·속성·대화창·`[arp]` 은 Windows Installer 에만 해당하므로 MSIX 에는 쓰지
   않는다.

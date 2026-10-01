@@ -81,6 +81,7 @@ void ir_parse_arp(ctx_t *c, const rp_ttable_t *t);
 void ir_parse_msix(ctx_t *c, const rp_ttable_t *t);
 char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown);
 void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t);
+void ir_parse_msix_dep(ctx_t *c, const rp_ttable_t *t);
 void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p);
 void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a);
 void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r);

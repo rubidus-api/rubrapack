@@ -358,8 +358,16 @@ typedef struct {
     size_t   display_by_lang_count, description_by_lang_count;
     char    *logo[3];                   // Square150x150, Square44x44, StoreLogo (as written), or NULL
     char    *logo_path[3];              // to open (joined with the .rpk directory)
+    char    *background;                // background-color: "transparent" or "#RRGGBB" (RFC-0018), or NULL
+    bool     hidden;                    // hidden = true: no entry in the Start menu (AppListEntry="none")
     rp_pos_t pos;
 } rp_ir_msix_app_t;
+
+// [msix-dependency.ID] (RFC-0018): a framework package the MSIX needs (PackageDependency).
+typedef struct {
+    char    *id, *name, *publisher, *min_version;
+    rp_pos_t pos;
+} rp_ir_msix_dep_t;
 
 // A table an MSIX cannot hold (RFC-0009 M6): an error when building .msix, unless msi-only = true.
 typedef struct {
@@ -462,6 +470,12 @@ typedef struct {
     rp_pos_t  msix_pos;
     rp_ir_msix_app_t *msix_apps;                // in source order
     size_t    msix_app_count;
+    char    **msix_caps;                        // [msix] capabilities (RFC-0018), as written
+    size_t    msix_cap_count;
+    rp_pos_t  msix_caps_pos;
+    bool      msix_no_fs_virt, msix_no_reg_virt;    // file-system-/registry-virtualization = false
+    rp_ir_msix_dep_t *msix_deps;                // [msix-dependency.*], in source order
+    size_t    msix_dep_count;
     rp_ir_msix_block_t *msix_blocks;            // tables an MSIX cannot carry, without msi-only = true
     size_t    msix_block_count;
     proven_allocator_t alloc;

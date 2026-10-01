@@ -169,6 +169,37 @@ writes it only when a package has them.
 With several `[msix-app.*]` tables, `app = "Hello"` says which application an extension belongs to;
 the default is the first. An MSI build leaves these tables out.
 
+## What the package asks for: capabilities and dependencies
+
+An MSIX application asks Windows for what it uses beyond running as a desktop program, and names
+the framework packages it needs:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.Hello"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+capabilities = ["internetClient", "allowElevation"]
+
+[msix-dependency.VCLibs]
+name = "Microsoft.VCLibs.140.00.UWPDesktop"
+publisher = "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+min-version = "14.0.24217.0"
+
+[msix-app.Helper]
+executable = "HelperExe"
+hidden = true                  # no Start menu entry
+background-color = "#1E3A5F"   # the tile's colour
+```
+
+- `capabilities` lists names such as `internetClient`, `documentsLibrary`, `webcam` or
+  `allowElevation`; rubrapack writes each one as the manifest wants it. The Reference lists them.
+- A program built with Visual C++ that does not carry its runtime needs the VCLibs framework:
+  `[msix-dependency.VCLibs]` makes Windows require it (from the Microsoft Store it is installed
+  with the application).
+- An application that must write into its own install folder or to `HKCU` for real can turn the
+  package's write virtualization off: `file-system-virtualization = false`,
+  `registry-virtualization = false` (Windows 10 1903 and later).
+
 ## What the other tables become
 
 - `[shortcut.StartMenu]` in `Programs` to the application's executable *is* the application's

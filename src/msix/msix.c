@@ -536,9 +536,82 @@ static void loc_free(loc_t *l) {
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
 enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
-       NS_DESKTOP4 = 128, NS_COUNT = 8 };
+       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_COUNT = 10 };
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
-enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17 };
+enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17, CAP_UNVIRTUALIZED = 1 << 18 };
+
+// [msix] capabilities (RFC-0018): the names Microsoft Learn's "App capability declarations" lists
+// for packaged desktop apps, each with the element that declares it. The manifest lists the
+// Capability elements first, then the DeviceCapability ones, as its schema asks.
+enum { C_FOUNDATION, C_UAP, C_UAP3, C_UAP6, C_UAP7, C_RESCAP, C_DEVICE };
+static const struct {
+    const char *name;
+    int         kind;
+} capability_names[] = {
+    { "internetClient", C_FOUNDATION }, { "internetClientServer", C_FOUNDATION }, { "privateNetworkClientServer", C_FOUNDATION },
+    { "allJoyn", C_FOUNDATION }, { "codeGeneration", C_FOUNDATION },
+    { "documentsLibrary", C_UAP }, { "picturesLibrary", C_UAP }, { "videosLibrary", C_UAP }, { "musicLibrary", C_UAP },
+    { "removableStorage", C_UAP }, { "enterpriseAuthentication", C_UAP }, { "sharedUserCertificates", C_UAP },
+    { "appointments", C_UAP }, { "contacts", C_UAP }, { "userAccountInformation", C_UAP }, { "objects3D", C_UAP },
+    { "phoneCall", C_UAP }, { "voipCall", C_UAP }, { "chat", C_UAP }, { "blockedChatMessages", C_UAP },
+    { "backgroundMediaPlayback", C_UAP3 }, { "remoteSystem", C_UAP3 }, { "userNotificationListener", C_UAP3 },
+    { "graphicsCapture", C_UAP6 }, { "globalMediaControl", C_UAP7 },
+    { "allowElevation", C_RESCAP }, { "unvirtualizedResources", C_RESCAP }, { "broadFileSystemAccess", C_RESCAP },
+    { "packageManagement", C_RESCAP }, { "packageQuery", C_RESCAP }, { "confirmAppClose", C_RESCAP },
+    { "appDiagnostics", C_RESCAP }, { "appLicensing", C_RESCAP }, { "localSystemServices", C_RESCAP },
+    { "packagedServices", C_RESCAP }, { "extendedExecutionUnconstrained", C_RESCAP }, { "extendedBackgroundTaskTime", C_RESCAP },
+    { "inputForegroundObservation", C_RESCAP }, { "inputObservation", C_RESCAP }, { "inputSuppression", C_RESCAP },
+    { "inputInjectionBrokered", C_RESCAP }, { "uiAccess", C_RESCAP }, { "interopServices", C_RESCAP },
+    { "customInstallActions", C_RESCAP }, { "modifiableApp", C_RESCAP }, { "appCaptureSettings", C_RESCAP },
+    { "webcam", C_DEVICE }, { "microphone", C_DEVICE }, { "location", C_DEVICE }, { "bluetooth", C_DEVICE },
+    { "proximity", C_DEVICE }, { "radios", C_DEVICE }, { "wiFiControl", C_DEVICE }, { "lowLevel", C_DEVICE },
+    { "gazeInput", C_DEVICE },
+};
+
+static int capability_kind(const char *name) {
+    for (size_t k = 0; k < sizeof capability_names / sizeof capability_names[0]; ++k) {
+        if (strcmp(capability_names[k].name, name) == 0) return capability_names[k].kind;
+    }
+    return -1;
+}
+
+// Where a file of `name` in the dir `dir_id` goes in the package: below the package's own folder,
+// in its Fonts folder (a [font.*]), or in its virtual file system under the folder's own path.
+// 1 when placed, 0 when the folder has no place in an MSIX (*why says why, with the folder's
+// base), -1 when the dir does not lead to a known location; 2 for the package's own folder, where
+// names the MSIX format keeps for itself must be refused (reserved).
+static int place(const rp_ir_t *ir, const rp_ir_dir_t *root, const char *dir_id, const char *name, bool font, char *out, size_t cap,
+                 const char **why) {
+    const rp_ir_dir_t *r = NULL;
+    char dir[1024];
+    if (!below_root(ir, dir_id, &r, dir, sizeof dir)) return -1;
+    if (r == root) {
+        snprintf(out, cap, "%s%s%s", dir, dir[0] ? "\\" : "", name);
+        return 2;
+    }
+    if (strcmp(r->base, "Fonts") == 0 && font) {
+        // A [font.*] (RFC-0010 N4): in the package's Fonts folder, shared through uap4:SharedFonts.
+        snprintf(out, cap, "Fonts\\%s", name);
+        return 1;
+    }
+    // Elsewhere: the package's virtual file system, under the folder's own path.
+    static char because[256];
+    const char *vfs = vfs_folder(r->base, ir->arch, why);
+    if (vfs == NULL) {
+        snprintf(because, sizeof because, "%s: %s", r->base, *why ? *why : "no place in an MSIX");
+        *why = because;
+        return 0;
+    }
+    char top[1024] = "";
+    size_t o = 0;
+    for (size_t k = 0; k < r->part_count && o < sizeof top; ++k) {
+        int w = snprintf(top + o, sizeof top - o, "%s%s", o ? "\\" : "", r->parts[k]);
+        if (w < 0) break;
+        o += (size_t)w;
+    }
+    snprintf(out, cap, "VFS\\%s%s%s%s%s\\%s", vfs, top[0] ? "\\" : "", top, dir[0] ? "\\" : "", dir, name);
+    return 1;
+}
 
 static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *opt, const app_paths_t *ap, const rp_buf_t *ext, unsigned ns,
                      const loc_t *loc) {
@@ -559,7 +632,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "desktop2", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" },
                                              { "desktop6", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" },
                                              { "com", "http://schemas.microsoft.com/appx/manifest/com/windows10" },
-                                             { "desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" } };
+                                             { "desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" },
+                                             { "uap6", "http://schemas.microsoft.com/appx/manifest/uap/windows10/6" },
+                                             { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -585,9 +660,21 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     xml_text(m, loc->pub_display ? "ms-resource:PublisherDisplayName" : ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
     rp_buf_puts(m, "</PublisherDisplayName>\r\n    <Logo>");
     xml_text(m, ap[0].logo[2]);
-    rp_buf_puts(m, "</Logo>\r\n  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
+    rp_buf_puts(m, "</Logo>\r\n");
+    // RFC-0018: write virtualization turned off (needs unvirtualizedResources, added below).
+    if (ir->msix_no_fs_virt) rp_buf_puts(m, "    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>\r\n");
+    if (ir->msix_no_reg_virt) rp_buf_puts(m, "    <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>\r\n");
+    rp_buf_puts(m, "  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
     attr(m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
-    rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n  <Resources>\r\n    <Resource");
+    rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n");
+    for (size_t k = 0; k < ir->msix_dep_count; ++k) {         // framework packages (RFC-0018)
+        rp_buf_puts(m, "    <PackageDependency");
+        attr(m, "Name", ir->msix_deps[k].name);
+        attr(m, "Publisher", ir->msix_deps[k].publisher);
+        attr(m, "MinVersion", ir->msix_deps[k].min_version);
+        rp_buf_puts(m, " />\r\n");
+    }
+    rp_buf_puts(m, "  </Dependencies>\r\n  <Resources>\r\n    <Resource");
     attr(m, "Language", ir->language == 1042 ? "ko-KR" : "en-US");
     rp_buf_puts(m, " />\r\n");
     for (size_t k = 0; k < loc->nlangs; ++k) {
@@ -608,9 +695,10 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         attr(m, "DisplayName", ap[i].loc_display ? res : display);
         snprintf(res, sizeof res, "ms-resource:%sDescription", a->id);
         attr(m, "Description", ap[i].loc_description ? res : a->description ? a->description : display);
-        rp_buf_puts(m, " BackgroundColor=\"transparent\"");
+        attr(m, "BackgroundColor", a->background ? a->background : "transparent");
         attr(m, "Square150x150Logo", ap[i].logo[0]);
         attr(m, "Square44x44Logo", ap[i].logo[1]);
+        if (a->hidden) rp_buf_puts(m, " AppListEntry=\"none\"");
         rp_buf_puts(m, " />\r\n");
         if (ext[i].len) {
             rp_buf_puts(m, "      <Extensions>\r\n");
@@ -626,9 +714,34 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_put(m, pkg->data, pkg->len);
         rp_buf_puts(m, "  </Extensions>\r\n");
     }
-    rp_buf_puts(m, "  <Capabilities>\r\n    <rescap:Capability Name=\"runFullTrust\" />\r\n");
-    if (ns & CAP_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"packagedServices\" />\r\n");
-    if (ns & CAP_SYSTEM_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"localSystemServices\" />\r\n");
+    // Capabilities: those the source names (RFC-0018), in the element order of capability_names'
+    // kinds, then the device capabilities; runFullTrust always, and what the features need.
+    static const char *const cap_elem[] = { "Capability", "uap:Capability", "uap3:Capability", "uap6:Capability", "uap7:Capability",
+                                            "rescap:Capability", "DeviceCapability" };
+    rp_buf_puts(m, "  <Capabilities>\r\n");
+    for (int kind = C_FOUNDATION; kind <= C_DEVICE; ++kind) {
+        if (kind == C_RESCAP) {
+            rp_buf_puts(m, "    <rescap:Capability Name=\"runFullTrust\" />\r\n");
+            if (ns & CAP_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"packagedServices\" />\r\n");
+            if (ns & CAP_SYSTEM_SERVICES) rp_buf_puts(m, "    <rescap:Capability Name=\"localSystemServices\" />\r\n");
+            if (ns & CAP_UNVIRTUALIZED) rp_buf_puts(m, "    <rescap:Capability Name=\"unvirtualizedResources\" />\r\n");
+        }
+        for (size_t k = 0; k < ir->msix_cap_count; ++k) {
+            const char *c = ir->msix_caps[k];
+            if (capability_kind(c) != kind) continue;
+            if ((strcmp(c, "packagedServices") == 0 && (ns & CAP_SERVICES)) || (strcmp(c, "localSystemServices") == 0 && (ns & CAP_SYSTEM_SERVICES)) ||
+                (strcmp(c, "unvirtualizedResources") == 0 && (ns & CAP_UNVIRTUALIZED))) {
+                continue;               // there already
+            }
+            bool dup = false;
+            for (size_t j = 0; j < k; ++j) dup |= strcmp(ir->msix_caps[j], c) == 0;
+            if (dup) continue;
+            rp_buf_puts(m, "    <");
+            rp_buf_puts(m, cap_elem[kind]);
+            attr(m, "Name", c);
+            rp_buf_puts(m, " />\r\n");
+        }
+    }
     rp_buf_puts(m, "  </Capabilities>\r\n</Package>\r\n");
 }
 
@@ -1096,7 +1209,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
     // The payload.
-    size_t cap = ir->file_count + 18 * ir->msix_app_count + 6, n = 0;     // + logo scales, resources.pri
+    size_t cap = ir->file_count + ir->copy_count + 18 * ir->msix_app_count + 6, n = 0;     // + copies, logo scales, resources.pri
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -1105,39 +1218,45 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (f->msi_only) continue;
         if (f->keep) DERR(f->pos, "RP1612", "'%s': an MSIX removes all its files (keep); use msi-only = true", f->name);
         if (f->when) DERR(f->pos, "RP1612", "'%s': an MSIX installs all its files (when); use msi-only = true", f->name);
-        const rp_ir_dir_t *r = NULL;
-        char dir[1024];
-        if (!below_root(ir, f->dir, &r, dir, sizeof dir)) {
+        item_t *it = &items[n];
+        const char *why = NULL;
+        int placed = place(ir, root, f->dir, f->name, is_font(ir, f->id), it->path, sizeof it->path, &why);
+        if (placed < 0) {
             DERR(f->pos, "RP1609", "'%s': its folder does not lead to a known location", f->name);
             continue;
         }
-        item_t *it = &items[n];
-        if (r == root) {
-            snprintf(it->path, sizeof it->path, "%s%s%s", dir, dir[0] ? "\\" : "", f->name);
-            if (reserved(it->path)) DERR(f->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
-        } else if (strcmp(r->base, "Fonts") == 0 && is_font(ir, f->id)) {
-            // A [font.*] (RFC-0010 N4): in the package's Fonts folder, shared through uap4:SharedFonts.
-            snprintf(it->path, sizeof it->path, "Fonts\\%s", f->name);
-        } else {
-            // Elsewhere: the package's virtual file system, under the folder's own path.
-            const char *why = NULL, *vfs = vfs_folder(r->base, ir->arch, &why);
-            if (vfs == NULL) {
-                DERR(f->pos, "RP1609", "'%s' goes to %s: %s; or msi-only = true", f->name, r->base, why);
-                continue;
-            }
-            char top[1024] = "";
-            size_t o = 0;
-            for (size_t k = 0; k < r->part_count && o < sizeof top; ++k) {
-                int w = snprintf(top + o, sizeof top - o, "%s%s", o ? "\\" : "", r->parts[k]);
-                if (w < 0) break;
-                o += (size_t)w;
-            }
-            snprintf(it->path, sizeof it->path, "VFS\\%s%s%s%s%s\\%s", vfs, top[0] ? "\\" : "", top, dir[0] ? "\\" : "", dir, f->name);
+        if (placed == 0) {
+            DERR(f->pos, "RP1609", "'%s' goes to %s; or msi-only = true", f->name, why);
+            continue;
         }
+        if (placed == 2 && reserved(it->path)) DERR(f->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
         ++n;
         it->file_id = f->id;
         it->source = f->source_path;
         it->pos = f->pos;
+    }
+    // [copy.*] (RFC-0018): the source file once more, at the copy's place.
+    for (size_t i = 0; i < ir->copy_count; ++i) {
+        const rp_ir_copy_t *cp = &ir->copies[i];
+        const rp_ir_file_t *f = NULL;
+        for (size_t j = 0; j < ir->file_count && !f; ++j) {
+            if (strcmp(ir->files[j].id, cp->source_file) == 0) f = &ir->files[j];
+        }
+        if (f == NULL || f->msi_only) {
+            DERR(cp->pos, "RP1613", "[copy.%s]: its source must be a file that goes into the package", cp->id);
+            continue;
+        }
+        item_t *it = &items[n];
+        const char *why = NULL, *name = cp->name ? cp->name : f->name;
+        int placed = place(ir, root, cp->dir, name, false, it->path, sizeof it->path, &why);
+        if (placed <= 0) {
+            DERR(cp->pos, "RP1609", "[copy.%s] goes to %s; or msi-only = true", cp->id, placed < 0 ? "a folder that does not lead to a known location" : why);
+            continue;
+        }
+        if (placed == 2 && reserved(it->path)) DERR(cp->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+        ++n;
+        it->source = f->source_path;
+        it->pos = cp->pos;
     }
     // Each application: its executable's package path, and its logos - the three given (checked),
     // or plain ones made here once for all applications.
@@ -1335,6 +1454,28 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     for (size_t a = 0; a <= ir->msix_app_count; ++a) ext[a] = rp_buf_new(alloc, 1u << 20);
     if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
+    // RFC-0018: the capabilities the source names, and write virtualization turned off.
+    for (size_t k = 0; k < ir->msix_cap_count; ++k) {
+        const char *c = ir->msix_caps[k];
+        int kind = capability_kind(c);
+        if (strcmp(c, "runFullTrust") == 0) continue;           // every package has it
+        if (kind < 0) {
+            DERR(ir->msix_caps_pos, "RP1616", "capability '%s' is not one rubrapack knows (the manual lists them)", c);
+            continue;
+        }
+        if (kind == C_UAP3) ns |= NS_UAP3;
+        if (kind == C_UAP6) ns |= NS_UAP6;
+        if (kind == C_UAP7) ns |= NS_UAP7;
+        if (kind == C_UAP6 && min_build(ir) < 17763) DERR(ir->msix_caps_pos, "RP1614", "capability '%s' needs Windows build 17763 or later", c);
+        if (kind == C_UAP7 && min_build(ir) < 17763) DERR(ir->msix_caps_pos, "RP1614", "capability '%s' needs Windows build 17763 or later", c);
+    }
+    if (ir->msix_no_fs_virt || ir->msix_no_reg_virt) {
+        ns |= NS_DESKTOP6 | CAP_UNVIRTUALIZED;
+        if (min_build(ir) < 18362) {
+            DERR(ir->msix_pos, "RP1614", "file-system-virtualization and registry-virtualization = false need Windows build 18362 or "
+                 "later: set [msix] min-version = \"10.0.18362.0\"");
+        }
+    }
     for (size_t a = 0; a <= ir->msix_app_count; ++a) {
         if (ext[a].err != PROVEN_OK) DERR(top, "RP1613", "out of memory");
     }

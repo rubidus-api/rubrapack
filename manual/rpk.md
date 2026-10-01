@@ -248,8 +248,9 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
-| `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants) |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
+| `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
+| `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
@@ -317,7 +318,37 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 - Logos in several scales and texts in several languages go into `resources.pri`, the package
   resource index Windows resolves them through; a package without them has none.
 - What an MSIX cannot do is an error, not something left out quietly (`RP1605`): custom actions, environment variables, INI files, permissions, launch conditions and searches, files
-  removed or copied at install, empty folders.
+  removed at install, empty folders. A `[copy.*]` puts the file in the package a second time, at the
+  copy's place.
+- `capabilities` declares what the application asks Windows for beyond `runFullTrust`, which every
+  package has; rubrapack writes each name with the element the manifest schema wants for it
+  (`RP1616` for a name it does not know):
+  - `Capability`: internetClient, internetClientServer, privateNetworkClientServer, allJoyn, codeGeneration
+  - `uap:Capability`: documentsLibrary, picturesLibrary, videosLibrary, musicLibrary, removableStorage,
+    enterpriseAuthentication, sharedUserCertificates, appointments, contacts, userAccountInformation,
+    objects3D, phoneCall, voipCall, chat, blockedChatMessages
+  - `uap3:Capability`: backgroundMediaPlayback, remoteSystem, userNotificationListener; `uap6`:
+    graphicsCapture; `uap7`: globalMediaControl
+  - `rescap:Capability` (restricted: the Microsoft Store asks why): allowElevation, unvirtualizedResources,
+    broadFileSystemAccess, packageManagement, packageQuery, confirmAppClose, appDiagnostics,
+    appLicensing, localSystemServices, packagedServices, extendedExecutionUnconstrained,
+    extendedBackgroundTaskTime, inputForegroundObservation, inputObservation, inputSuppression,
+    inputInjectionBrokered, uiAccess, interopServices, customInstallActions, modifiableApp,
+    appCaptureSettings
+  - `DeviceCapability`: webcam, microphone, location, bluetooth, proximity, radios, wiFiControl,
+    lowLevel, gazeInput
+  A desktop application that runs with full trust needs few of them: `allowElevation` lets it start
+  elevated, the libraries and device names matter for the APIs that check them.
+- `file-system-virtualization = false` and `registry-virtualization = false` let the application
+  write where it really is (its install folder, `HKCU`) instead of the package's private copy;
+  they add `unvirtualizedResources` and need `min-version = "10.0.18362.0"` or later (`RP1614`).
+  Microsoft reserves them for certain games in the Store; sideloaded packages may use them.
+- `[msix-dependency.ID]` names a framework package the application needs - the C++ runtime
+  `Microsoft.VCLibs.140.00.UWPDesktop` (publisher `CN=Microsoft Corporation, O=Microsoft Corporation,
+  L=Redmond, S=Washington, C=US`), the Windows App SDK - with the oldest version that will do;
+  Windows refuses to install the package without it. An MSI build leaves the table out.
+- `background-color` colours the application's tile and `hidden = true` keeps an application (a
+  helper, say) out of the Start menu.
   Add `msi-only = true` to such a table (or to a `[file.*]`/`[files.*]`) and the MSI keeps it while
   the MSIX is built without it. Features, properties, dialogs and `[arp]` concern the Windows
   Installer only and are not used for an MSIX.

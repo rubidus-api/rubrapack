@@ -165,6 +165,35 @@ rubrapack 은 둘 다 패키지의 `resources.pri`, 곧 Windows 가 이름과 �
 `[msix-app.*]` 표가 여럿이면 `app = "Hello"` 로 덤이 어느 애플리케이션의 것인지 밝힌다. 기본값은 첫 번째다. MSI
 빌드는 이 표들을 뺀다.
 
+## 패키지가 요구하는 것: 능력과 의존 패키지
+
+MSIX 애플리케이션은 데스크톱 프로그램으로 도는 것 말고 쓰는 것을 Windows 에 요구하고, 필요한 프레임워크 패키지를
+적는다:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.Hello"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+capabilities = ["internetClient", "allowElevation"]
+
+[msix-dependency.VCLibs]
+name = "Microsoft.VCLibs.140.00.UWPDesktop"
+publisher = "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+min-version = "14.0.24217.0"
+
+[msix-app.Helper]
+executable = "HelperExe"
+hidden = true                  # 시작 메뉴 항목 없음
+background-color = "#1E3A5F"   # 타일 색
+```
+
+- `capabilities` 에는 `internetClient`, `documentsLibrary`, `webcam`, `allowElevation` 같은 이름을 적는다. rubrapack 이
+  매니페스트가 원하는 꼴로 쓴다. 목록은 참조에 있다.
+- 런타임을 담지 않은 Visual C++ 프로그램은 VCLibs 프레임워크가 필요하다: `[msix-dependency.VCLibs]` 가 Windows 에
+  그것을 요구하게 한다(Microsoft Store 에서는 애플리케이션과 함께 설치된다).
+- 자기 설치 폴더나 `HKCU` 에 실제로 써야 하는 애플리케이션은 패키지의 쓰기 가상화를 끌 수 있다:
+  `file-system-virtualization = false`, `registry-virtualization = false`(Windows 10 1903 이상).
+
 ## 다른 표들은 무엇이 되나
 
 - `Programs` 에 있고 애플리케이션의 실행 파일을 가리키는 `[shortcut.StartMenu]` 는 애플리케이션의 시작 메뉴 항목
