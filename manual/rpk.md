@@ -241,7 +241,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
-| `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module) - MSI only |
+| `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module); in an MSIX its files and registry values only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
@@ -566,7 +566,11 @@ values and its own actions. Its root folder becomes `dir`, its components join `
 the dir's feature, or `Main`), and its cabinet is embedded as a second cabinet of its own. A
 standard action the module's tables need and the package lacks (`WriteRegistryValues`, for
 example) is added at its usual place. rubrapack does not merge a module with non-ASCII text in a
-code page other than UTF-8 (`RP1517`). MSIX has no merge modules. The merged module's
+code page other than UTF-8 (`RP1517`). In an MSIX a module gives its files (below `dir`, or in the virtual file system when
+they go to a standard folder such as the system folder) and its registry values (in the package's
+hives); a module that needs more - custom actions, conditions on components, environment or INI
+entries, services, fonts, COM registration - or a value filled in at install time is refused
+there (`RP1517`; `msi-only = true` keeps it for the MSI). The merged module's
 `ModuleSignature` and `ModuleComponents` rows stay in the package, as Microsoft's merge tool leaves
 them; the tables the module lists in `ModuleIgnoreTable` do not go in.
 

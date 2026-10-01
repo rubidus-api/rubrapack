@@ -90,4 +90,25 @@ void rp_msix_verify(proven_allocator_t alloc, const uint8_t *pkg, size_t len, rp
 [[nodiscard]] int rp_msix_inspect(const char *path, const char *what);
 [[nodiscard]] int rp_msix_lint(const char *path, bool strict);
 
+// A merge module's part an MSIX can carry (src/msix/msix_merge.c, RFC-0019): its files, each below
+// the module's root (vfs NULL) or below a standard folder (vfs: its VFS folder), and its registry
+// values as [registry.*] tables (id NULL: the caller names them). Configured with `config`.
+typedef struct {
+    char       *rel;            // "sub\\file.txt"
+    const char *vfs;            // "SystemX64" ..., or NULL
+    uint8_t    *data;
+    size_t      len;
+} rp_msix_module_file_t;
+
+typedef struct {
+    rp_msix_module_file_t *files;
+    size_t                 file_count;
+    rp_ir_registry_t      *regs;
+    size_t                 reg_count;
+} rp_msix_module_t;
+
+[[nodiscard]] proven_err_t rp_msix_module_read(proven_allocator_t alloc, const char *path, const char *const *config, size_t nconfig,
+                                               rp_msix_module_t *out, const char **why);
+void rp_msix_module_free(proven_allocator_t alloc, rp_msix_module_t *x);
+
 #endif // RUBRAPACK_MSIX_H

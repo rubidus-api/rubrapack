@@ -727,6 +727,7 @@ void ir_parse_merge(ctx_t *c, const rp_ttable_t *t, rp_ir_merge_t *x) {
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
+    x->msi_only = ir_get_bool(c, t, "msi-only", false);
     // config = ["Name=value", ...]: the answers to a configurable module's items (RFC-0017 C).
     const rp_tkey_t *cfg = ir_find_key(t, "config");
     if (cfg) {

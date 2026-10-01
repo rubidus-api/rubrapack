@@ -230,7 +230,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
-| `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`) - MSI 전용 |
+| `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`). MSIX 에서는 파일과 레지스트리 값만 |
 | `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
@@ -530,7 +530,10 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 동작. 모듈의 뿌리 폴더는 `dir` 이 되고, 구성 요소는 `feature`(기본: 그 폴더의 기능, 없으면 `Main`)에
 들어가며, 모듈의 캐비닛은 따로 두 번째 캐비닛으로 들어간다. 모듈의 표가 필요로 하는데 패키지에
 없는 표준 동작(예를 들어 `WriteRegistryValues`)은 늘 쓰는 자리에 더한다. UTF-8 이 아닌 코드 페이지에
-ASCII 밖의 글자가 있는 모듈은 합치지 않는다(`RP1517`). MSIX 에는 병합 모듈이 없다.
+ASCII 밖의 글자가 있는 모듈은 합치지 않는다(`RP1517`). MSIX 에서 모듈은 파일(`dir` 아래, 또는 시스템 폴더 같은
+표준 폴더로 가는 것은 가상 파일 시스템 안)과 레지스트리 값(패키지의 하이브 안)을 준다. 그 이상 - 사용자 지정 동작,
+구성 요소의 조건, 환경 변수나 INI 항목, 서비스, 글꼴, COM 등록 - 이 필요한 모듈이나 설치 때 채우는 값은 거기서
+거절한다(`RP1517`. `msi-only = true` 는 MSI 에만 둔다).
 
 합친 모듈의 `ModuleSignature` 와 `ModuleComponents` 행은 Microsoft 의 병합 도구처럼 패키지에 남는다. 모듈이
 `ModuleIgnoreTable` 에 적은 표는 들어가지 않는다.

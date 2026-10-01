@@ -180,6 +180,7 @@ typedef struct {
     char    *feature;           // resolved (G2)
     char   **config;            // "Name=value" answers for a configurable module (RFC-0017 C)
     size_t   config_count;
+    bool     msi_only;          // msi-only = true: left out of an MSIX (RFC-0019)
     rp_pos_t pos;
 } rp_ir_merge_t;
 

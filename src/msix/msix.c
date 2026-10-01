@@ -1384,8 +1384,28 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     if (d->errors != errors) return PROVEN_ERR_INVALID_FORMAT;
 
+    // Merge modules (RFC-0019): their files and registry values.
+    rp_msix_module_t *mods = ir->merge_count ? rp_mem_alloc(alloc, ir->merge_count, sizeof *mods) : NULL;
+    size_t mod_files = 0;
+    if (ir->merge_count && mods == NULL) return PROVEN_ERR_NOMEM;
+    if (mods) memset(mods, 0, ir->merge_count * sizeof *mods);
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        const rp_ir_merge_t *x = &ir->merges[k];
+        if (x->msi_only) continue;
+        const char *why = NULL;
+        if (rp_msix_module_read(alloc, x->source, (const char *const *)x->config, x->config_count, &mods[k], &why) != PROVEN_OK) {
+            DERR(x->pos, "RP1517", "[merge.%s]: '%s' %s; or msi-only = true", x->id, x->shown ? x->shown : "", why ? why : "cannot be read");
+            continue;
+        }
+        for (size_t i = 0; i < mods[k].reg_count; ++i) {
+            mods[k].regs[i].id = x->id;
+            mods[k].regs[i].pos = x->pos;
+        }
+        mod_files += mods[k].file_count;
+    }
+
     // The payload.
-    size_t cap = ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri
+    size_t cap = mod_files + ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -1434,6 +1454,34 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         ++n;
         it->source = f->source_path;
         it->pos = cp->pos;
+    }
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        const rp_ir_merge_t *x = &ir->merges[k];
+        for (size_t i = 0; i < mods[k].file_count; ++i) {
+            const rp_msix_module_file_t *mf = &mods[k].files[i];
+            item_t *it = &items[n];
+            if (mf->vfs) {
+                snprintf(it->path, sizeof it->path, "VFS\\%s\\%s", mf->vfs, mf->rel);
+            } else {
+                const char *why = NULL;
+                int placed = place(ir, root, x->dir, mf->rel, false, it->path, sizeof it->path, &why);
+                if (placed <= 0) {
+                    DERR(x->pos, "RP1609", "[merge.%s] goes to %s; or msi-only = true", x->id,
+                         placed < 0 ? "a folder that does not lead to a known location" : why);
+                    break;
+                }
+                if (placed == 2 && reserved(it->path)) DERR(x->pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+            }
+            it->data = rp_mem_alloc(alloc, mf->len ? mf->len : 1, 1);
+            if (it->data == NULL) {
+                DERR(x->pos, "RP1612", "out of memory");
+                break;
+            }
+            memcpy(it->data, mf->data, mf->len);
+            it->data_len = mf->len;
+            it->pos = x->pos;
+            ++n;
+        }
     }
     // [ini.*] (RFC-0019): each INI file once, made now.
     for (size_t i = 0; i < ir->ini_count; ++i) {
@@ -1631,6 +1679,15 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     for (size_t i = 0; machine && user && i < ir->registry_count; ++i) {
         if (!ir->registries[i].msi_only) (void)add_registry(alloc, &ir->registries[i], machine, user, &used_m, &used_u, d);
     }
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        for (size_t i = 0; i < mods[k].reg_count; ++i) (void)add_registry(alloc, &mods[k].regs[i], machine, user, &used_m, &used_u, d);
+    }
+    for (size_t k = 0; k < ir->merge_count; ++k) {
+        for (size_t i = 0; i < mods[k].reg_count; ++i) mods[k].regs[i].id = NULL;     // not owned
+        rp_msix_module_free(alloc, &mods[k]);
+    }
+    rp_mem_free(alloc, mods);
+    mods = NULL;
     for (int h = 0; h < 2; ++h) {
         rp_regf_t *hive = h ? user : machine;
         if (!(h ? used_u : used_m) || d->errors != errors) continue;
