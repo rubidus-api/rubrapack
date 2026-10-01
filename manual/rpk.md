@@ -1000,11 +1000,11 @@ rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target ms
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
-rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> <key> [--cert <chain.pem>]
+rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> <key> [--cert <chain.pem>]
                [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
 rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]
-rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
+rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...
 rubrapack version | help [command]
 
 <key> is one of:
@@ -1114,7 +1114,8 @@ rubrapack version | help [command]
   file and component of the base. `--patch-code {GUID}` (default: derived from the two package
   codes), `--family <name>` (MsiPatchSequence; default the product name), `--no-removal` (the
   patch cannot be removed on its own). Refusals are `RP0013`. `inspect <file.msp> --base <base.msi>`
-  lists the patch's tables and both transforms. `sign` does not sign a patch yet.
+  lists the patch's tables and both transforms. `sign` signs a patch like a package (its
+  transforms are part of the signature), and `verify` checks one.
 - `extract` unpacks a package the way it installs: folders by their long names under the
   Directory tree (a standard folder such as `ProgramFiles64Folder` keeps its name), files from the
   embedded or external cabinets, or from the source folders next to an uncompressed package.

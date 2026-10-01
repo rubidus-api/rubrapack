@@ -23,11 +23,11 @@ typedef struct {
 static const command_t commands[] = {
     { "build",   "build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
                  "build a package from a source file", true },
-    { "sign",    "sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
+    { "sign",    "sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
                  "sign a PE file, an MSI package, an MSIX package or bundle", true },
     { "keys",    "keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]",
                  "list the keys a token or the Windows certificate store can sign with", true },
-    { "verify",  "verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificate>]...",
+    { "verify",  "verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificate>]...",
                  "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
                  "write a transform (.mst): what turns one package into the other", true },

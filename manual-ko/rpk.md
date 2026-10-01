@@ -940,11 +940,11 @@ rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target ms
 rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <새 폴더> [--limit-entries N] [--limit-bytes N]
-rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> <키> [--cert <chain.pem>]
+rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> <키> [--cert <chain.pem>]
                [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
                 [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]
 rubrapack keys list [--pkcs11 <모듈> [--token-label <이름>] [--pin-env VAR | --pin-file FILE]]
-rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <인증서>]... [--system-roots] [--tsa-trust <인증서>]...
+rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <인증서>]... [--system-roots] [--tsa-trust <인증서>]...
 rubrapack version | help [command]
 
 <키> 는 다음 가운데 하나:
@@ -1028,8 +1028,8 @@ rubrapack version | help [command]
   코드가 같고, 판의 앞 두 수가 같고(*작은 업데이트* 나 *마이너 업그레이드*), 캐비닛이 내장이고, 바탕의 파일과
   구성 요소를 모두 가져야 한다. `--patch-code {GUID}`(기본: 두 패키지 코드에서 끌어냄), `--family <이름>`
   (MsiPatchSequence; 기본은 제품 이름), `--no-removal`(패치를 따로 제거할 수 없게). 거부는 `RP0013` 이다.
-  `inspect <파일.msp> --base <base.msi>` 는 패치의 표와 두 변환을 보여 준다. `sign` 은 아직 패치에
-  서명하지 않는다.
+  `inspect <파일.msp> --base <base.msi>` 는 패치의 표와 두 변환을 보여 준다. `sign` 은 패치에도 패키지처럼
+  서명하고(그 변환까지 서명에 든다), `verify` 가 그것을 확인한다.
 - `lint new.msi --previous old.msi` 는 `new.msi` 가 `old.msi` 를 깨끗하게 업그레이드하는지도 본다.
   오류: 다른 UpgradeCode(`RP2301`: 새 패키지가 옛것을 대체하지 않는다), 앞의 세 자리가 높지 않은
   버전(`RP2302`: Windows 는 그 세 자리만 비교한다). 경고: 같은 ProductCode(`RP2303`: 업그레이드에는

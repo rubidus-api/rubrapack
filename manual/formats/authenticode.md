@@ -96,8 +96,17 @@ given non-zero state bits, times and CLSIDs told the fields apart. [observed]
 - The digest in `SpcIndirectDataContent` is the hash of: the 32-byte `MsiDigitalSignatureEx`
   value (when that stream is written), then every stream's contents in the same name order
   (again without the two signature streams), then the root CLSID.
-- Only streams at the root were observed; a package with storages (embedded transforms,
-  sub-databases) is not covered here, and rubrapack refuses to sign one.
+- A storage (a patch's transforms are storages; so are embedded transforms and sub-databases)
+  takes part at its place in the same name order, compared with the streams around it:
+  - in the prehash, its name, its CLSID (16 bytes), its state bits (4 bytes) and its two times
+    (16 bytes) - no size - followed at once by the prehash entries of its own children, in their
+    name order, the same way down;
+  - in the digest, the contents of its children in their name order, the same way down, then its
+    CLSID - as the root's CLSID ends the whole.
+  Worked out against patches signed by Windows' signtool (one written by rubrapack, one by
+  Microsoft's MsiMsp.exe, whose storages carry non-zero times): this is the one layout among the
+  candidates tried that gives both stored `MsiDigitalSignatureEx` values, and with it both digests
+  match. Only storages directly at the root were in those patches.
 - A signature covers what is inside the `.msi` only: cabinets outside it (Media table `Cabinet`
   values that do not start with `#`) are not part of the digest.
 
@@ -181,6 +190,6 @@ The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's
 order, and the root CLSID:
 
 ```text
-f9 63 78 5f a1 c0 29 2c 2c 47 ef 01 9e 9d 4f e1 ed fd a2 4f af ce 8f 7e 33 d2 68 79 f1 1b 3c 9c
+6e f9 20 a2 5c 3d 2c 26 28 cd 1e 70 d5 47 e1 d4 0a b9 a5 0a 8d f5 ba 97 19 ed 29 be b3 10 59 8a
 ```
 

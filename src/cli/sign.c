@@ -333,7 +333,7 @@ int rp_cmd_sign(int argc, char **argv) {
         }
     }
     if (file == NULL || !rp_sign_wanted(&a) || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -407,7 +407,7 @@ int rp_cmd_verify(int argc, char **argv) {
         }
     }
     if (file == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

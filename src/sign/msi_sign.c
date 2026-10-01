@@ -37,45 +37,97 @@ static void put_le(rp_hash_t *h, const uint16_t *name, size_t n) {
     }
 }
 
-bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t ex[32], uint8_t *digest, const char **why) {
-    uint32_t ids[4096];
+// The children of a storage in digest order: UTF-16LE byte order of their names; at the root
+// without the signature streams. Returns false when the directory cannot be read.
+static bool sorted_children(const rp_cfb_t *cfb, uint32_t storage, uint32_t *ids, size_t cap, size_t *count) {
     size_t n = 0;
-    if (rp_cfb_children(cfb, 0, NULL, 0, &n) != PROVEN_OK || n > 4096 || rp_cfb_children(cfb, 0, ids, 4096, &n) != PROVEN_OK) {
-        *why = "the package's directory cannot be read";
+    if (rp_cfb_children(cfb, storage, NULL, 0, &n) != PROVEN_OK || n > cap || rp_cfb_children(cfb, storage, ids, cap, &n) != PROVEN_OK) {
         return false;
     }
-    uint32_t streams[4096];
-    size_t ns = 0;
+    size_t k = 0;
+    for (size_t i = 0; i < n; ++i) {
+        const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
+        if (e->type != RP_CFB_STREAM && e->type != RP_CFB_STORAGE) continue;
+        if (storage == 0 && e->type == RP_CFB_STREAM && (is_name(e, SIG_NAME, 17) || is_name(e, EX_NAME, 22))) continue;
+        ids[k++] = ids[i];
+    }
+    for (size_t i = 1; i < k; ++i) {
+        for (size_t j = i; j > 0 && cmp_le(&cfb->entries[ids[j - 1]], &cfb->entries[ids[j]]) > 0; --j) {
+            uint32_t t = ids[j];
+            ids[j] = ids[j - 1];
+            ids[j - 1] = t;
+        }
+    }
+    *count = k;
+    return true;
+}
+
+static void put_u32(rp_hash_t *h, uint32_t v) {
+    uint8_t b[4] = { (uint8_t)v, (uint8_t)(v >> 8), (uint8_t)(v >> 16), (uint8_t)(v >> 24) };
+    rp_hash_update(h, b, 4);
+}
+
+// MsiDigitalSignatureEx's pre-hash, from one storage down: per child in digest order, a stream's
+// name, size and times; a storage's name, CLSID, state bits and times, followed by its own
+// children (worked out against Windows-signed patches, whose transforms are storages).
+static bool ex_storage(const rp_cfb_t *cfb, uint32_t storage, rp_hash_t *h, int depth) {
+    if (depth > 16) return false;
+    uint32_t ids[4096];
+    size_t n = 0;
+    if (!sorted_children(cfb, storage, ids, 4096, &n)) return false;
+    for (size_t i = 0; i < n; ++i) {
+        const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
+        put_le(h, e->name, e->name_len);
+        if (e->type == RP_CFB_STORAGE) {
+            rp_hash_update(h, e->clsid, 16);
+            put_u32(h, e->state);
+            rp_hash_update(h, e->times, 16);
+            if (!ex_storage(cfb, ids[i], h, depth + 1)) return false;
+            continue;
+        }
+        uint8_t size[8];
+        for (int k = 0; k < 8; ++k) size[k] = (uint8_t)(e->size >> (8 * k));
+        rp_hash_update(h, size, 8);
+        rp_hash_update(h, e->times, 16);
+    }
+    return true;
+}
+
+// The contents of one storage: its streams' data and its storages' contents in digest order, then
+// its CLSID.
+static bool content_storage(const rp_cfb_t *cfb, uint32_t storage, rp_hash_t *h, uint8_t **buf, size_t *cap, int depth) {
+    if (depth > 16) return false;
+    uint32_t ids[4096];
+    size_t n = 0;
+    if (!sorted_children(cfb, storage, ids, 4096, &n)) return false;
     for (size_t i = 0; i < n; ++i) {
         const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
         if (e->type == RP_CFB_STORAGE) {
-            *why = "the package holds storages (embedded transforms or sub-databases), which rubrapack does not sign";
-            return false;
+            if (!content_storage(cfb, ids[i], h, buf, cap, depth + 1)) return false;
+            continue;
         }
-        if (e->type != RP_CFB_STREAM || is_name(e, SIG_NAME, 17) || is_name(e, EX_NAME, 22)) continue;
-        streams[ns++] = ids[i];
-    }
-    for (size_t i = 1; i < ns; ++i) {
-        for (size_t j = i; j > 0 && cmp_le(&cfb->entries[streams[j - 1]], &cfb->entries[streams[j]]) > 0; --j) {
-            uint32_t t = streams[j];
-            streams[j] = streams[j - 1];
-            streams[j - 1] = t;
+        if (e->size > *cap) {
+            rp_mem_free(cfb->alloc, *buf);
+            *cap = (size_t)e->size;
+            *buf = rp_mem_alloc(cfb->alloc, *cap + 1, 1);
+            if (*buf == NULL) return false;
         }
+        if (rp_cfb_read(cfb, ids[i], *buf, *cap) != PROVEN_OK) return false;
+        rp_hash_update(h, *buf, (size_t)e->size);
     }
-    const rp_cfb_entry_t *root = &cfb->entries[0];
+    rp_hash_update(h, cfb->entries[storage].clsid, 16);
+    return true;
+}
+
+bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t ex[32], uint8_t *digest, const char **why) {
     rp_hash_t h;
     if (with_ex) {
         rp_hash_init(&h, RP_HASH_SHA256);
-        rp_hash_update(&h, root->clsid, 16);
-        uint8_t st[4] = { (uint8_t)root->state, (uint8_t)(root->state >> 8), (uint8_t)(root->state >> 16), (uint8_t)(root->state >> 24) };
-        rp_hash_update(&h, st, 4);
-        for (size_t i = 0; i < ns; ++i) {
-            const rp_cfb_entry_t *e = &cfb->entries[streams[i]];
-            uint8_t size[8];
-            for (int k = 0; k < 8; ++k) size[k] = (uint8_t)(e->size >> (8 * k));
-            put_le(&h, e->name, e->name_len);
-            rp_hash_update(&h, size, 8);
-            rp_hash_update(&h, e->times, 16);
+        rp_hash_update(&h, cfb->entries[0].clsid, 16);
+        put_u32(&h, cfb->entries[0].state);
+        if (!ex_storage(cfb, 0, &h, 0)) {
+            *why = "the package's directory cannot be read";
+            return false;
         }
         rp_hash_final(&h, ex);
     }
@@ -83,24 +135,12 @@ bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t
     if (with_ex) rp_hash_update(&h, ex, 32);
     uint8_t *buf = NULL;
     size_t cap = 0;
-    bool ok = true;
-    for (size_t i = 0; ok && i < ns; ++i) {
-        const rp_cfb_entry_t *e = &cfb->entries[streams[i]];
-        if (e->size > cap) {
-            rp_mem_free(cfb->alloc, buf);
-            cap = (size_t)e->size;
-            buf = rp_mem_alloc(cfb->alloc, cap + 1, 1);
-            if (buf == NULL) ok = false;
-        }
-        if (ok && rp_cfb_read(cfb, streams[i], buf, cap) != PROVEN_OK) ok = false;
-        if (ok) rp_hash_update(&h, buf, (size_t)e->size);
-    }
+    bool ok = content_storage(cfb, 0, &h, &buf, &cap, 0);
     rp_mem_free(cfb->alloc, buf);
     if (!ok) {
         *why = "a stream of the package cannot be read";
         return false;
     }
-    rp_hash_update(&h, root->clsid, 16);
     rp_hash_final(&h, digest);
     return true;
 }
@@ -139,34 +179,60 @@ static bool has_external_cabs(proven_allocator_t alloc, const rp_cfb_t *cfb) {
 }
 
 // The root's streams as writer input (names and contents; the contents are owned by the caller).
-static proven_err_t collect(proven_allocator_t alloc, const rp_cfb_t *cfb, rp_cfb_stream_t **out, size_t *count, uint8_t ***bufs) {
+// Every stream and storage below `storage` (0: the root) as rp_cfb_write takes them: a storage's
+// children name it as parent (its index + 1); the bytes of each stream, its name and a storage's
+// CLSID live in one block of *bufs each.
+static proven_err_t collect_from(proven_allocator_t alloc, const rp_cfb_t *cfb, uint32_t storage, size_t parent, rp_cfb_stream_t *s,
+                                 uint8_t **b, size_t cap, size_t *k, int depth) {
+    if (depth > 16) return PROVEN_ERR_INVALID_FORMAT;
     uint32_t ids[4096];
     size_t n = 0;
-    if (rp_cfb_children(cfb, 0, ids, 4096, &n) != PROVEN_OK) return PROVEN_ERR_INVALID_FORMAT;
-    rp_cfb_stream_t *s = rp_mem_alloc(alloc, n + 3, sizeof *s);
-    uint8_t **b = rp_mem_alloc(alloc, n + 3, sizeof *b);
+    if (rp_cfb_children(cfb, storage, NULL, 0, &n) != PROVEN_OK || n > 4096 || rp_cfb_children(cfb, storage, ids, 4096, &n) != PROVEN_OK) {
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
+    for (size_t i = 0; i < n; ++i) {
+        const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
+        if (e->type != RP_CFB_STREAM && e->type != RP_CFB_STORAGE) continue;
+        if (*k >= cap) return PROVEN_ERR_INVALID_FORMAT;
+        bool st = e->type == RP_CFB_STORAGE;
+        // One block: the contents (a storage: its CLSID), then a copy of the name (the directory
+        // goes away with the file).
+        size_t body = st ? 16 : (size_t)e->size;
+        size_t name_off = (body + 1 + 1) & ~(size_t)1;
+        uint8_t *blk = rp_mem_alloc(alloc, name_off + 2 * (size_t)e->name_len + 2, 1);
+        if (blk == NULL) return PROVEN_ERR_NOMEM;
+        b[*k] = blk;
+        if (st) memcpy(blk, e->clsid, 16);
+        else if (rp_cfb_read(cfb, ids[i], blk, (size_t)e->size) != PROVEN_OK) return PROVEN_ERR_INVALID_FORMAT;
+        uint16_t *name = (uint16_t *)(void *)(blk + name_off);
+        memcpy(name, e->name, 2 * (size_t)e->name_len);
+        size_t me = (*k)++;
+        s[me] = (rp_cfb_stream_t){ .name = name, .name_len = e->name_len, .data = st ? NULL : blk, .size = st ? 0 : (size_t)e->size,
+                                   .parent = parent, .storage = st, .clsid = st ? blk : NULL };
+        if (st) {
+            proven_err_t err = collect_from(alloc, cfb, ids[i], me + 1, s, b, cap, k, depth + 1);
+            if (err != PROVEN_OK) return err;
+        }
+    }
+    return PROVEN_OK;
+}
+
+static proven_err_t collect(proven_allocator_t alloc, const rp_cfb_t *cfb, rp_cfb_stream_t **out, size_t *count, uint8_t ***bufs) {
+    size_t cap = cfb->entry_count + 3;
+    rp_cfb_stream_t *s = rp_mem_alloc(alloc, cap, sizeof *s);
+    uint8_t **b = rp_mem_alloc(alloc, cap, sizeof *b);
     if (s == NULL || b == NULL) {
         rp_mem_free(alloc, s);
         rp_mem_free(alloc, b);
         return PROVEN_ERR_NOMEM;
     }
     size_t k = 0;
-    for (size_t i = 0; i < n; ++i) {
-        const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
-        if (e->type != RP_CFB_STREAM) continue;
-        // One block: the contents, then a copy of the name (the directory goes away with the file).
-        size_t name_off = ((size_t)e->size + 1 + 1) & ~(size_t)1;
-        b[k] = rp_mem_alloc(alloc, name_off + 2 * (size_t)e->name_len + 2, 1);
-        if (b[k] == NULL || rp_cfb_read(cfb, ids[i], b[k], (size_t)e->size) != PROVEN_OK) {
-            for (size_t j = 0; j <= k; ++j) rp_mem_free(alloc, b[j]);
-            rp_mem_free(alloc, s);
-            rp_mem_free(alloc, b);
-            return PROVEN_ERR_NOMEM;
-        }
-        uint16_t *name = (uint16_t *)(void *)(b[k] + name_off);
-        memcpy(name, e->name, 2 * (size_t)e->name_len);
-        s[k] = (rp_cfb_stream_t){ .name = name, .name_len = e->name_len, .data = b[k], .size = (size_t)e->size };
-        ++k;
+    proven_err_t err = collect_from(alloc, cfb, 0, 0, s, b, cap - 2, &k, 0);
+    if (err != PROVEN_OK) {
+        for (size_t j = 0; j < k; ++j) rp_mem_free(alloc, b[j]);
+        rp_mem_free(alloc, s);
+        rp_mem_free(alloc, b);
+        return err;
     }
     *out = s;
     *count = k;
@@ -202,7 +268,7 @@ proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t le
     unsigned shift = cfb.major == 4 ? 12 : 9;
     if (err == PROVEN_OK) {
         uint8_t dummy[32];
-        if (!rp_msi_digest(&cfb, RP_HASH_SHA256, false, dummy, dummy, why)) err = PROVEN_ERR_INVALID_FORMAT;     // refuses storages
+        if (!rp_msi_digest(&cfb, RP_HASH_SHA256, false, dummy, dummy, why)) err = PROVEN_ERR_INVALID_FORMAT;     // a readable tree
     }
     if (err == PROVEN_OK) err = collect(alloc, &cfb, &streams, &ns, &bufs);
     rp_cfb_close(&cfb);

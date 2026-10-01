@@ -111,8 +111,7 @@ A first package, step by step, is the first chapter of the manual:
 - Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
 - No merge-module authoring: other vendors' merge modules go into a package, but rubrapack does not
   write `.msm` files (and does not take configurable modules).
-- Patches carry changed files whole (no binary deltas) and are not signed yet; a transform
-  carries no files.
+- Patches carry changed files whole (no binary deltas); a transform carries no files.
 - The `setup.exe` chain installs the `.msi` packages it carries; it does not download anything,
   run other installers, or show pages of its own beyond Windows Installer's.
 - The tool itself is 64-bit only (it builds x86 packages too).
