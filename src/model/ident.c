@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "proven/encode.h"
 #include "proven/hash.h"
 #include "proven/random.h"
 
@@ -45,12 +46,9 @@ proven_err_t rp_uuid_random(char out[39]) {
 void rp_key_derive(char prefix, const char *text, char out[23]) {
     uint8_t d[PROVEN_SHA256_SIZE];
     proven_sha256((proven_mem_view_t){ (const proven_byte_t *)text, strlen(text) }, d);
-    static const char hex[] = "0123456789abcdef";
     out[0] = prefix;
     out[1] = '_';
-    for (int k = 0; k < 10; ++k) {
-        out[2 + 2 * k] = hex[d[k] >> 4];
-        out[3 + 2 * k] = hex[d[k] & 15];
-    }
-    out[22] = '\0';
+    proven_size_t w = 0;
+    if (proven_hex_encode((proven_mem_view_t){ d, 10 }, (proven_byte_t *)out + 2, 20, &w) != PROVEN_OK) w = 0;
+    out[2 + w] = '\0';
 }

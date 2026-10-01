@@ -124,6 +124,7 @@ static const char *const win32_sources[] = {
 // The parts of proven_c_lib rubrapack links, relative to vendor/proven/.
 static const char *const proven_sources[] = {
     "src/proven/buffer.c",
+    "src/proven/encode.c",
     "src/proven/hash.c",
     "src/proven/heap.c",
     "src/proven/memory.c",

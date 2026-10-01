@@ -20,6 +20,7 @@
 #include "rubrapack/text.h"
 #include "rubrapack/zip.h"
 
+#include "proven/encode.h"
 #include "proven/hash.h"
 
 #include <stdio.h>
@@ -63,17 +64,11 @@ static void attr_u64(rp_buf_t *b, const char *name, uint64_t v) {
     attr(b, name, t);
 }
 
+// Standard padded base64 of n bytes, NUL-terminated; out holds (n + 2) / 3 * 4 + 1 characters.
 static void base64(const uint8_t *p, size_t n, char *out) {
-    static const char a[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    size_t o = 0;
-    for (size_t i = 0; i < n; i += 3) {
-        uint32_t v = (uint32_t)p[i] << 16 | (i + 1 < n ? (uint32_t)p[i + 1] << 8 : 0) | (i + 2 < n ? p[i + 2] : 0);
-        out[o++] = a[v >> 18 & 63];
-        out[o++] = a[v >> 12 & 63];
-        out[o++] = i + 1 < n ? a[v >> 6 & 63] : '=';
-        out[o++] = i + 2 < n ? a[v & 63] : '=';
-    }
-    out[o] = 0;
+    proven_size_t w = 0;
+    if (proven_base64_encode((proven_mem_view_t){ p, n }, (proven_byte_t *)out, proven_base64_encoded_size(n), &w) != PROVEN_OK) w = 0;
+    out[w] = 0;
 }
 
 // An OPC part name from a package path ('\' separated, UTF-8): '/' between segments, every byte
@@ -2081,22 +2076,15 @@ static bool zip_name_is(const char *zip, const char *bm) {
     return *bm == 0;
 }
 
-static int b64v(char c) {
-    return c >= 'A' && c <= 'Z' ? c - 'A' : c >= 'a' && c <= 'z' ? c - 'a' + 26 : c >= '0' && c <= '9' ? c - '0' + 52 : c == '+' ? 62 : c == '/' ? 63 : -1;
-}
-
-// Decodes base64 of exactly `n` bytes.
+// Decodes padded base64 of exactly `n` bytes (at most 64: a digest).
 static bool unbase64(const char *s, uint8_t *out, size_t n) {
-    size_t sl = strlen(s), o = 0;
-    if (sl != (n + 2) / 3 * 4) return false;
-    for (size_t i = 0; i < sl; i += 4) {
-        int a = b64v(s[i]), b = b64v(s[i + 1]), c = s[i + 2] == '=' ? 0 : b64v(s[i + 2]), d = s[i + 3] == '=' ? 0 : b64v(s[i + 3]);
-        if (a < 0 || b < 0 || c < 0 || d < 0) return false;
-        uint32_t v = (uint32_t)a << 18 | (uint32_t)b << 12 | (uint32_t)c << 6 | (uint32_t)d;
-        uint8_t t[3] = { (uint8_t)(v >> 16), (uint8_t)(v >> 8), (uint8_t)v };
-        for (int k = 0; k < 3 && o < n; ++k) out[o++] = t[k];
-    }
-    return o == n;
+    size_t sl = strlen(s);
+    uint8_t t[66];
+    proven_size_t w = 0;
+    if (n > 64 || sl != (n + 2) / 3 * 4) return false;
+    if (proven_base64_decode((proven_mem_view_t){ (const proven_byte_t *)s, sl }, t, sizeof t, &w) != PROVEN_OK || w != n) return false;
+    memcpy(out, t, n);
+    return true;
 }
 
 void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t count) {
