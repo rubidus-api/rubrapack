@@ -17,7 +17,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     static const char *const archs[] = { "x64", "arm64", "x86" };
     char num[32];
     rp_buf_t b = rp_buf_new(alloc, (size_t)1 << 24);
-    rp_buf_puts(&b, "package");
+    rp_buf_puts(&b, ir->module ? "module" : "package");      // [module]: a merge module (RFC-0017)
     kv(&b, "name", ir->name);
     kv(&b, "summary-name", ir->summary_name);
     kv(&b, "manufacturer", ir->manufacturer);

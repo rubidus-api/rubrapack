@@ -5,12 +5,12 @@
 
 // ---- tables ----------------------------------------------------------------------------------
 
-static const char *const top_kinds[] = { "package", "define", "arp", "ui", "msix", NULL };
+static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
                                           "ui-text", "dialog", "dialog-control", "assoc", "protocol", "msix-extension", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
-static const char *const all_kinds[] = { "package", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
+static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
                                          "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "merge", NULL };
@@ -66,7 +66,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             ERR(&c, t->pos, "RP1201", "[%s] needs an ID: write [%s.ID]", t->kind, t->kind);
             continue;
         }
-        if (strcmp(t->kind, "package") == 0) package = t;
+        if (strcmp(t->kind, "package") == 0 || strcmp(t->kind, "module") == 0) {
+            if (package) ERR(&c, t->pos, "RP1201", "a source holds one [package] or one [module], not both");
+            package = t;
+        }
         else if (strcmp(t->kind, "define") == 0) c.define = t;
         else if (strcmp(t->kind, "feature") == 0) ++nfeat;
         else if (strcmp(t->kind, "dir") == 0) ++ndir;
@@ -135,7 +138,19 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     }
     if (package == NULL) {
         rp_pos_t top = { 1, 1 };
-        ERR(&c, top, "RP1202", "the file needs a [package] table");
+        ERR(&c, top, "RP1202", "the file needs a [package] table (or [module] for a merge module)");
+    } else if (strcmp(package->kind, "module") == 0) {
+        ir_parse_module(&c, package);
+        // A merge module carries files, folders and the settings that go with them; features,
+        // dialogs and the rest belong to the package that merges it.
+        static const char *const module_ok[] = { "module", "define", "dir", "file", "files", "folder", "registry", "env", "ini",
+                                                 "remove", "copy", NULL };
+        for (size_t k = 0; k < doc->count; ++k) {
+            const rp_ttable_t *t = &doc->tables[k];
+            if (ir_in_list(t->kind, all_kinds) && !ir_in_list(t->kind, module_ok)) {
+                ERR(&c, t->pos, "RP1201", "[%s%s] cannot go into a merge module; the package that merges it has it", t->kind, t->id ? ".*" : "");
+            }
+        }
     } else {
         ir_parse_package(&c, package);
     }
@@ -423,6 +438,25 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (!c.nomem) ir_dialog_checks(&c);
     if (!c.nomem) ir_class_checks(&c);
     if (!c.nomem) ir_cross_checks(&c);
+    if (!c.nomem && ir->module) {
+        // Every key of a module carries ".<GUID>" (37 characters) within the 72 a key may have;
+        // what needs rubrapack's helper DLL stays with packages.
+        for (size_t k = 0; k < doc->count; ++k) {
+            const rp_ttable_t *t = &doc->tables[k];
+            if (t->id && strlen(t->id) > 35 && strcmp(t->kind, "define") != 0) {
+                ERR(&c, t->pos, "RP1301", "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)",
+                    t->kind, t->id);
+            }
+        }
+        for (size_t k = 0; k < ir->dir_count; ++k) {
+            if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry", ir->dirs[k].id);
+        }
+        for (size_t k = 0; k < ir->registry_count; ++k) {
+            if (ir->registries[k].type == RP_REG_QWORD) {
+                ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", ir->registries[k].id);
+            }
+        }
+    }
     if (c.nomem) {
         rp_ir_free(ir);
         return PROVEN_ERR_NOMEM;

@@ -372,7 +372,8 @@ typedef struct {
     uint16_t  version_parts[4];
     size_t    version_count;
     rp_arch_t arch;
-    char     *upgrade_code;     // upper case, braces
+    char     *upgrade_code;     // upper case, braces; a merge module's GUID ([module] id)
+    bool      module;           // [module]: a merge module (.msm), not a package
     char     *product_code;     // NULL = derive
     uint16_t  language;         // 1033 or 1042
     bool      reboot_suppress;

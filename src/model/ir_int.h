@@ -66,6 +66,7 @@ rp_ir_dir_t *ir_push_dir(ctx_t *c);
 rp_ir_file_t *ir_push_file(ctx_t *c);
 bool ir_parse_version(const char *s, uint16_t parts[4], size_t *count);
 void ir_parse_package(ctx_t *c, const rp_ttable_t *t);
+void ir_parse_module(ctx_t *c, const rp_ttable_t *t);
 void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f);
 void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d);
 bool ir_source_path_ok(ctx_t *c, const char *s, rp_pos_t pos);

@@ -3,7 +3,9 @@
 #ifndef RUBRAPACK_MERGE_H
 #define RUBRAPACK_MERGE_H
 
+#include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
+#include "rubrapack/ir.h"
 #include "rubrapack/msi.h"
 
 // An opened merge module. Its tables stay readable (the cells merged into a package point into it)
@@ -36,5 +38,13 @@ const rp_msi_wtable_t *rp_msi_module_validation(const rp_msi_module_t *m);
 [[nodiscard]] proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, size_t *nt, size_t cap,
                                                const char *dir_key, const char *feature, unsigned index,
                                                rp_msi_wstream_t *cab_stream, const char **why);
+
+// Turns the tables of a lowered [module] source into a merge module and writes it (RFC-0017;
+// src/msi/module_out.c): the module's keys get ".<GUID>", ModuleSignature, ModuleComponents and
+// ModuleInstallExecuteSequence are added, the package-only tables left out, and `files` (named by
+// their keys without the GUID) go into MergeModule.CABinet. *why says what is wrong.
+[[nodiscard]] proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msi_wtable_t *tables, size_t count,
+                                        const rp_cab_file_t *files, size_t nfiles, size_t jobs, const rp_limits_t *limits,
+                                        const rp_out_sink_t *sink, uint8_t **out, size_t *len, const char **why);
 
 #endif // RUBRAPACK_MERGE_H

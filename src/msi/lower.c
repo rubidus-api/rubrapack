@@ -288,6 +288,7 @@ static const char *standard_folder(const char *base, rp_arch_t arch) {
         { "System", "System64Folder", "SystemFolder" },
         { "Fonts", "FontsFolder", "FontsFolder" },
         { "Temp", "TempFolder", "TempFolder" },
+        { "TARGETDIR", "TARGETDIR", "TARGETDIR" },      // a merge module's root
     };
     for (size_t i = 0; i < sizeof map / sizeof map[0]; ++i) {
         if (strcmp(base, map[i][0]) == 0) return map[i][w64 ? 1 : 2];
@@ -1566,7 +1567,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     lower_searches(pk);
     lower_copies(pk);
     lower_folders(pk);
-    proven_err_t err = lower_cabinets(pk, cab_stem, limits, jobs);
+    proven_err_t err = ir->module ? PROVEN_OK : lower_cabinets(pk, cab_stem, limits, jobs);     // a module writes its own (rp_msm_write)
     lower_upgrade(pk);
     proven_err_t seq_err = lower_sequences(pk);
     if (seq_err != PROVEN_OK) err = seq_err;
@@ -1607,7 +1608,23 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         nomem |= all[i]->nomem;
     }
     if (err == PROVEN_OK && nomem) err = PROVEN_ERR_NOMEM;
-    if (err == PROVEN_OK) {
+    if (err == PROVEN_OK && ir->module) {         // a merge module (RFC-0017)
+        rp_msi_wtable_t tables[sizeof all / sizeof all[0]];
+        size_t nt = 0;
+        for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) tables[nt++] = all[i]->t;
+        rp_cab_file_t *cf = pk->nfiles ? rp_mem_alloc(alloc, pk->nfiles, sizeof *cf) : NULL;
+        if (pk->nfiles && cf == NULL) err = PROVEN_ERR_NOMEM;
+        for (size_t i = 0; err == PROVEN_OK && i < pk->nfiles; ++i) cf[i] = (rp_cab_file_t){ pk->files[i].key, pk->files[i].data, pk->files[i].size };
+        const char *why = NULL;
+        if (err == PROVEN_OK) {
+            err = rp_msm_write(alloc, ir, tables, nt, cf, pk->nfiles, jobs ? jobs : rp_pal_cpu_count(), limits, sink, out, len, &why);
+            if (err != PROVEN_OK && err != PROVEN_ERR_NOMEM) {
+                rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1518", false, "the merge module %s", why ? why : "cannot be written");
+                err = PROVEN_ERR_INVALID_FORMAT;
+            }
+        }
+        rp_mem_free(alloc, cf);
+    } else if (err == PROVEN_OK) {
         enum { MERGED_TABLES = 64 };     // tables merge modules may add (RFC-0016 3)
         rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 9 + MERGED_TABLES];   // + ui tables + _Validation
         size_t nt = 0;

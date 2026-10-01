@@ -304,14 +304,15 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
     bool bundle = !lint && ends_with(out, ".msixbundle");
     bool msix = (!lint && (bundle || ends_with(out, ".msix"))) || lint_msix;
     bool chain_out = !lint && ends_with(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
-    if (!lint && !msix && !chain_out && !ends_with(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msix, .msixbundle and a chain's setup .exe", out);
+    bool msm_out = !lint && ends_with(out, ".msm");          // a merge module, from a [module] source (RFC-0017)
+    if (!lint && !msix && !chain_out && !msm_out && !ends_with(out, ".msi")) {
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe", out);
         goto done;
     }
     // A bundle takes a list of architectures (RFC-0010 P8b-2); everything else one.
@@ -395,6 +396,13 @@ static int run(int argc, char **argv, bool lint) {
             rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
             rp_toml_free(&doc);
+            if (err == PROVEN_OK && !lint && ir.module != msm_out) {
+                rp_srcdiag_add(&d, (rp_pos_t){ 1, 1 }, "RP1201", false,
+                               ir.module ? "a [module] source builds a merge module: -o <name>.msm"
+                                         : "a .msm output is a merge module, built from a source with [module] instead of [package]");
+                rp_ir_free(&ir);
+                err = PROVEN_ERR_INVALID_FORMAT;
+            }
         }
         rp_mem_free(heap, text);
         if (err == PROVEN_OK && msix) {

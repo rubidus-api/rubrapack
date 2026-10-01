@@ -6,7 +6,8 @@
 // package lacks is added); the module's TARGETDIR row goes, and its children hang under the dir
 // the source names; the files' sequence numbers move past the package's own, and the module's
 // cabinet goes in unchanged as a cabinet of its own (one more Media row); ModuleComponents become
-// FeatureComponents rows of the feature the source names; the Module*Sequence rows place their
+// FeatureComponents rows of the feature the source names (ModuleSignature and ModuleComponents
+// themselves stay, as mergemod.dll leaves them); the Module*Sequence rows place their
 // actions by Sequence, or next to BaseAction (After 1: just after, 0: just before).
 
 #include "rubrapack/merge.h"
@@ -283,7 +284,11 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
     // Ordinary tables.
     for (size_t t = 0; t < m->view.db.table_count; ++t) {
         const rp_msi_wtable_t *mt = &m->view.db.tables[t];
-        if (strncmp(mt->name, "Module", 6) == 0 || strcmp(mt->name, "_Validation") == 0 || mt->row_count == 0) continue;
+        // ModuleSignature and ModuleComponents stay in the package, as Microsoft's mergemod.dll
+        // leaves them (they name the merged modules); the Module*Sequence tables are placed below.
+        size_t nl = strlen(mt->name);
+        bool module_seq = strncmp(mt->name, "Module", 6) == 0 && nl > 8 && strcmp(mt->name + nl - 8, "Sequence") == 0;
+        if (module_seq || strcmp(mt->name, "_Validation") == 0 || mt->row_count == 0) continue;
         size_t cc = mt->column_count;
         rp_msi_cell_t *rows = keep_alloc(m, mt->row_count * cc, sizeof *rows);
         if (rows == NULL) return PROVEN_ERR_NOMEM;

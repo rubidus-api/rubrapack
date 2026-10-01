@@ -377,6 +377,7 @@ char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required
     const winname_t *w = winname(name);
     if (w && w->base) base = w->base;
     else if (w == NULL && is_dir_id(c, name)) base = name;
+    else if (c->ir->module && strcmp(name, "TARGETDIR") == 0) base = "TARGETDIR";
     if (base == NULL) {
         char hint[64];
         name_hint(name, hint, sizeof hint);
@@ -567,7 +568,9 @@ void ir_fold(const char *s, char *out, size_t cap) {
 
 static const char *const known_folders[] = {
     "ProgramFiles", "ProgramFiles32", "CommonFiles", "AppData", "LocalAppData", "CommonAppData", "StartMenu",
-    "Programs", "Desktop", "Startup", "Windows", "System", "Fonts", "Temp", NULL,
+    "Programs", "Desktop", "Startup", "Windows", "System", "Fonts", "Temp",
+    "TARGETDIR",        // a merge module's root: where the package that merges it puts it
+    NULL,
 };
 
 bool ir_known_folder(const char *s) {

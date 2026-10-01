@@ -70,6 +70,7 @@ static const char *const core_sources[] = {
     "src/msi/lint.c",
     "src/msi/lint_prev.c",
     "src/msi/merge.c",
+    "src/msi/module_out.c",
     "src/msi/lower.c",
     "src/msi/patch.c",
     "src/msi/suminfo.c",

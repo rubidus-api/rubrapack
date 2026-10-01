@@ -36,6 +36,15 @@ static const rule_t rules[] = {
     R("_Validation", "Description", "Text"),
 
     R("Property", "Property", "Identifier"), R("Property", "Value", "Text"),
+    // Merge modules (RFC-0017; Microsoft Learn "ModuleSignature Table", "ModuleComponents Table",
+    // "Module Sequence Tables").
+    R("ModuleSignature", "ModuleID", "Identifier"), RN("ModuleSignature", "Language", 0, 32767),
+    R("ModuleSignature", "Version", "Version"),
+    RK("ModuleComponents", "Component", "Component", 1), RK("ModuleComponents", "ModuleID", "ModuleSignature", 1),
+    RN("ModuleComponents", "Language", 0, 32767),
+    R("ModuleInstallExecuteSequence", "Action", "Identifier"), RN("ModuleInstallExecuteSequence", "Sequence", -4, 32767),
+    RK("ModuleInstallExecuteSequence", "BaseAction", "ModuleInstallExecuteSequence", 1),
+    RN("ModuleInstallExecuteSequence", "After", 0, 1), R("ModuleInstallExecuteSequence", "Condition", "Condition"),
     R("Directory", "Directory", "Identifier"), RK("Directory", "Directory_Parent", "Directory", 1),
     R("Directory", "DefaultDir", "DefaultDir"),
     R("Component", "Component", "Identifier"), R("Component", "ComponentId", "Guid"),

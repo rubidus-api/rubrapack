@@ -132,6 +132,33 @@ dir = "INSTALLDIR"
 모듈의 캐비닛은 패키지 안의 두 번째 캐비닛이 되고, `inspect hello.msi Media` 에 보인다. 합칠 수
 없는 것은 참고 문서의 [병합 모듈](../rpk.md#병합-모듈-mergeid)에 있다.
 
+거꾸로, 남이 합칠 내 부품은 `[package]` 대신 `[module]` 이 있는 원본으로 만들고 `.msm` 으로 짓는다. 업그레이드
+코드 대신 이름과 자기 GUID(`id`)가 있고, 폴더는 합치는 패키지가 옮기는 `$(TARGETDIR)` 에서 시작한다:
+
+```toml
+format = 1
+
+[module]
+name = "HelloParts"
+manufacturer = "Example Software"
+version = "1.0.0"
+arch = "x64"
+id = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9D00}"
+
+[dir.PartsDir]
+path = "$(TARGETDIR)/parts"
+
+[files.Parts]
+dir = "PartsDir"
+glob = "parts/*"
+```
+
+```sh
+rubrapack build parts.toml -o hello-parts.msm
+```
+
+모듈에 무엇이 들 수 있는지는 참고 문서의 [병합 모듈 만들기](../rpk.md#병합-모듈-만들기-module)에 있다.
+
 ## 안에서 무슨 일이 일어났나
 
 ```text

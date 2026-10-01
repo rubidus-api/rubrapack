@@ -231,6 +231,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
 | `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature - MSI 전용 |
+| `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
@@ -494,6 +495,53 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 없는 표준 동작(예를 들어 `WriteRegistryValues`)은 늘 쓰는 자리에 더한다. 설정할 수 있는
 모듈(`ModuleConfiguration` 표가 있는 것)과, UTF-8 이 아닌 코드 페이지에 ASCII 밖의 글자가 있는
 모듈은 합치지 않는다(`RP1517`). MSIX 에는 병합 모듈이 없다.
+
+합친 모듈의 `ModuleSignature` 와 `ModuleComponents` 행은 Microsoft 의 병합 도구처럼 패키지에 남는다.
+
+### 병합 모듈 만들기: `[module]`
+
+`[package]` 대신 `[module]` 이 있는 원본은 남이 합칠 병합 모듈을 만든다:
+`rubrapack build runtime.toml -o runtime.msm`.
+
+```toml
+format = 1
+
+[module]
+name = "ExampleRuntime"
+manufacturer = "Example"
+version = "2.1.0"
+arch = "x64"
+id = "{6E0A1C52-8F3B-4B7D-9A21-3C4D5E6F7A99}"     # 모듈 자신의 GUID, 모든 판에서 그대로
+
+[dir.RuntimeDir]
+path = "$(TARGETDIR)/Example Runtime"             # TARGETDIR: 패키지가 모듈을 두는 곳
+
+[files.Runtime]
+dir = "RuntimeDir"
+glob = "runtime/*"
+
+[registry.Home]
+root = "HKLM"
+key = 'SOFTWARE\Example\Runtime'
+name = "Home"
+value = '$(RuntimeDir)'                           # 패키지가 정해 준 폴더
+```
+
+- 모듈에는 `[dir.*]`, `[file.*]`, `[files.*]`, `[folder.*]`, `[registry.*]`, `[env.*]`, `[ini.*]`,
+  `[remove.*]`, `[copy.*]`, `[define]` 이 든다. 기능, 대화창, 동작, 서비스 등은 모듈을 합치는 패키지의 몫이다
+  (`RP1201`). qword 레지스트리 값과 `guard` 는 rubrapack 의 도우미 DLL 이 필요한데 모듈은 그것을 담지 않는다
+  (`RP1316`).
+- 경로는 모듈의 뿌리 `$(TARGETDIR)` - 합치는 패키지가 옮긴다(`[merge.ID] dir`) - 이나 Windows 폴더(`$(System)`
+  등)에서 시작한다.
+- 모듈이 정한 키는 모두 `.<GUID>`(`id`, `-` 는 `_`)로 끝나 패키지의 키와 부딪히지 않는다 - `[dir.RuntimeDir]` 는
+  `RuntimeDir.6E0A1C52_8F3B_...` 가 된다 - 그 키를 가리키는 것도 그렇고, 값 안의 `$(RuntimeDir)` 도 그렇다. 그래서
+  모듈 안의 ID 는 35자 이내다(`RP1301`). 구성 요소 GUID 는 패키지가 업그레이드 코드에서 끌어내듯 `id` 에서
+  끌어낸다.
+- 모듈에는 `ModuleSignature`(`name.<GUID>`, 언어, 판), `ModuleComponents`, 표가 필요로 하는 표준 동작을 담은
+  `ModuleInstallExecuteSequence`, 빈 `FeatureComponents` 와 `InstallExecuteSequence` 표(ICEM04)가 있고, 파일은
+  키 이름으로 `MergeModule.CABinet` 에 든다.
+- Microsoft 의 도구로 확인했다: 모듈 ICE(`mergemod.cub`)는 아무것도 보고하지 않고, 병합 도구(`mergemod.dll`)는
+  오류 없이 `[merge.ID]` 와 같은 표로 합치며, 합친 패키지가 설치된다.
 
 ### 검색과 요구: `[search.ID]`, `[require.ID]`
 
@@ -921,7 +969,7 @@ guard = true
 ## 명령줄
 
 ```text
-rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
+rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <목록> (.msixbundle)]
                 [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<키> [--cert <chain.pem>]

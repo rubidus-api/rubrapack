@@ -242,6 +242,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature - MSI only |
+| `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
@@ -522,7 +523,56 @@ the dir's feature, or `Main`), and its cabinet is embedded as a second cabinet o
 standard action the module's tables need and the package lacks (`WriteRegistryValues`, for
 example) is added at its usual place. rubrapack does not merge configurable modules (those with a
 `ModuleConfiguration` table), nor a module with non-ASCII text in a code page other than UTF-8
-(`RP1517`). MSIX has no merge modules.
+(`RP1517`). MSIX has no merge modules. The merged module's `ModuleSignature` and
+`ModuleComponents` rows stay in the package, as Microsoft's merge tool leaves them.
+
+### Writing a merge module: `[module]`
+
+A source with `[module]` in place of `[package]` builds a merge module for others to merge:
+`rubrapack build runtime.toml -o runtime.msm`.
+
+```toml
+format = 1
+
+[module]
+name = "ExampleRuntime"
+manufacturer = "Example"
+version = "2.1.0"
+arch = "x64"
+id = "{6E0A1C52-8F3B-4B7D-9A21-3C4D5E6F7A99}"     # the module's own GUID, kept in every version
+
+[dir.RuntimeDir]
+path = "$(TARGETDIR)/Example Runtime"             # TARGETDIR: where the package puts the module
+
+[files.Runtime]
+dir = "RuntimeDir"
+glob = "runtime/*"
+
+[registry.Home]
+root = "HKLM"
+key = 'SOFTWARE\Example\Runtime'
+name = "Home"
+value = '$(RuntimeDir)'                           # the folder the package chose for it
+```
+
+- A module holds `[dir.*]`, `[file.*]`, `[files.*]`, `[folder.*]`, `[registry.*]`, `[env.*]`,
+  `[ini.*]`, `[remove.*]`, `[copy.*]` and `[define]`. Features, dialogs, actions, services and the
+  rest belong to the package that merges it (`RP1201`); a qword registry value and `guard` need
+  rubrapack's helper DLL, which a module does not carry (`RP1316`).
+- Its paths start at `$(TARGETDIR)`, the module's root, which the merging package redirects
+  (`[merge.ID] dir`), or at a Windows folder (`$(System)`, ...).
+- Every key the module defines ends in `.<GUID>` (the `id`, `-` as `_`) so it cannot meet the
+  package's keys - `[dir.RuntimeDir]` becomes `RuntimeDir.6E0A1C52_8F3B_...` - and so do the
+  references to them, `$(RuntimeDir)` in a value included. An ID in a module therefore has at
+  most 35 characters (`RP1301`). Component GUIDs derive from the `id`, as a package's from its
+  upgrade code.
+- The module has `ModuleSignature` (`name.<GUID>`, language, version), `ModuleComponents`,
+  `ModuleInstallExecuteSequence` with the standard actions its tables need, empty
+  `FeatureComponents` and `InstallExecuteSequence` tables (ICEM04), and its files in
+  `MergeModule.CABinet` under their keys.
+- Checked against Microsoft's tools: its module ICEs (`mergemod.cub`) report nothing, its merge tool
+  (`mergemod.dll`) merges the module without an error into the same tables as `[merge.ID]`, and the
+  merged package installs.
 
 ### Searching and requiring: `[search.ID]`, `[require.ID]`
 
@@ -981,7 +1031,7 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ## Command line
 
 ```text
-rubrapack build <src.toml> -o <out.msi|out.msix|out.msixbundle> [-D NAME=VALUE]...
+rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE]...
                 [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
                 [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<key> [--cert <chain.pem>]

@@ -222,6 +222,54 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     ir->cab_max = (uint64_t)ir_get_int(c, t, "cab-max-size", 0, 1, 2047) << 20;
 }
 
+// [module]: a merge module (RFC-0017). Its GUID takes the upgrade code's place: component GUIDs
+// derive from it, and every key of the module carries it.
+void ir_parse_module(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "name", "manufacturer", "version", "arch", "id", "language", "compress", NULL };
+    rp_ir_t *ir = c->ir;
+    ir_check_keys(c, t, keys);
+    ir->module = true;
+    ir->name = ir_get_str(c, t, "name", true, NULL);
+    // ModuleSignature.ModuleID is <name>.<GUID>, at most 72 characters.
+    if (ir->name && (!ir_valid_id(ir->name, 35) || strchr(ir->name, '.'))) {
+        ERR(c, ir_key_pos(t, "name"), "RP1308", "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters");
+    }
+    ir->manufacturer = ir_get_str(c, t, "manufacturer", true, NULL);
+    ir->version = ir_get_str(c, t, "version", true, NULL);
+    if (ir->version && !ir_parse_version(ir->version, ir->version_parts, &ir->version_count)) {
+        ERR(c, ir_key_pos(t, "version"), "RP1308", "version '%s' must be a.b.c or a.b.c.d", ir->version);
+    }
+    char *arch = c->opt->arch ? ir_dup(c, c->opt->arch) : ir_get_str(c, t, "arch", true, NULL);
+    if (arch) {
+        if (strcmp(arch, "x64") == 0) ir->arch = RP_ARCH_X64;
+        else if (strcmp(arch, "arm64") == 0) ir->arch = RP_ARCH_ARM64;
+        else if (strcmp(arch, "x86") == 0) ir->arch = RP_ARCH_X86;
+        else ERR(c, ir_key_pos(t, "arch"), "RP1308", "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')", arch);
+        rp_mem_free(c->alloc, arch);
+    }
+    ir->upgrade_code = ir_get_str(c, t, "id", true, NULL);
+    if (ir->upgrade_code && !ir_guid_ok(ir->upgrade_code)) {
+        ERR(c, ir_key_pos(t, "id"), "RP1308", "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version");
+    }
+    ir->language = 0;               // language neutral, as most modules are
+    char *lang = ir_get_str(c, t, "language", false, NULL);
+    if (lang) {
+        if (strcmp(lang, "ko-KR") == 0) ir->language = 1042;
+        else if (strcmp(lang, "en-US") == 0) ir->language = 1033;
+        else if (strcmp(lang, "neutral") != 0) ERR(c, ir_key_pos(t, "language"), "RP1308", "language must be \"neutral\", \"en-US\" or \"ko-KR\"");
+        rp_mem_free(c->alloc, lang);
+    }
+    ir->reboot_suppress = true;
+    ir->compress = 6;
+    char *comp = c->opt->compress ? ir_dup(c, c->opt->compress) : ir_get_str(c, t, "compress", false, NULL);
+    if (comp) {
+        if (strcmp(comp, "none") == 0) ir->compress = -1;
+        else if (strncmp(comp, "mszip:", 6) == 0 && comp[6] >= '0' && comp[6] <= '9' && comp[7] == '\0') ir->compress = comp[6] - '0';
+        else if (strcmp(comp, "mszip") != 0) ERR(c, ir_key_pos(t, "compress"), "RP1308", "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\"");
+        rp_mem_free(c->alloc, comp);
+    }
+}
+
 void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", NULL };
     ir_check_keys(c, t, keys);

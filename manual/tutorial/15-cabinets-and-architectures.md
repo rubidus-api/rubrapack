@@ -136,6 +136,35 @@ dir = "INSTALLDIR"
 The module's cabinet becomes a second cabinet in the package, and `inspect hello.msi Media` shows
 it. [Merge modules](../rpk.md#merge-modules-mergeid) in the reference lists what cannot be merged.
 
+The other way round, a part of your own for others to merge is a source with `[module]` in place
+of `[package]`, built to an `.msm`. It has a name and its own GUID (`id`) instead of an upgrade code,
+and its folders start at `$(TARGETDIR)`, which the merging package redirects:
+
+```toml
+format = 1
+
+[module]
+name = "HelloParts"
+manufacturer = "Example Software"
+version = "1.0.0"
+arch = "x64"
+id = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9D00}"
+
+[dir.PartsDir]
+path = "$(TARGETDIR)/parts"
+
+[files.Parts]
+dir = "PartsDir"
+glob = "parts/*"
+```
+
+```sh
+rubrapack build parts.toml -o hello-parts.msm
+```
+
+[Writing a merge module](../rpk.md#writing-a-merge-module-module) in the reference says what a
+module may hold.
+
 ## What happened inside
 
 ```text
