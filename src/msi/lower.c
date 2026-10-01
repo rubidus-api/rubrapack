@@ -478,7 +478,21 @@ void rp_build_files_free(proven_allocator_t alloc, rp_build_file_t *files, size_
     rp_mem_free(alloc, files);
 }
 
-// A license shown as text gets the Korean face when it has Hangul (the face also shows Latin).
+// The face of a license shown as text: the language's ([ui] font-xx or its built-in face) by a
+// name RTF can carry, else the language's built-in face (the model warns, RP1319); a license common
+// to every language gets the Korean face when it has Hangul (the face also shows Latin), else
+// English's.
+static const char *rtf_face(const char *face, const char *code) {
+    const char *a = rp_ui_face_ascii(face);
+    if (a) return a;
+    static const char *const builtin[][2] = { { "ko", "Malgun Gothic" }, { "ja", "Yu Gothic UI" }, { "zh", "Microsoft YaHei UI" },
+                                              { "th", "Leelawadee UI" } };
+    for (size_t k = 0; k < sizeof builtin / sizeof builtin[0]; ++k) {
+        if (strcmp(code, builtin[k][0]) == 0) return builtin[k][1];
+    }
+    return "Segoe UI";
+}
+
 static bool has_hangul(const uint8_t *t, size_t n) {
     for (size_t i = 0; i + 2 < n; ++i) {
         if (t[i] == 0xEA && t[i + 1] >= 0xB0) return true;      // U+AC00..U+AFFF
@@ -1423,7 +1437,8 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
                 rtf_len = lic_len;
                 pk->lic = NULL;
             } else {
-                err = rp_ui_text_to_rtf(alloc, pk->lic, lic_len, has_hangul(pk->lic, lic_len), &pk->rtf, &rtf_len);
+                const char *face = has_hangul(pk->lic, lic_len) ? "Malgun Gothic" : rtf_face(ir->ui_lang_count ? ir->ui_langs[0].font : NULL, "en");
+                err = rp_ui_text_to_rtf(alloc, pk->lic, lic_len, face, &pk->rtf, &rtf_len);
             }
         }
     }
@@ -1439,7 +1454,7 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
             pk->lang_rtf[li] = raw;
             lang_rtf_len[li] = raw_len;
         } else {
-            err = rp_ui_text_to_rtf(alloc, raw, raw_len, has_hangul(raw, raw_len), &pk->lang_rtf[li], &lang_rtf_len[li]);
+            err = rp_ui_text_to_rtf(alloc, raw, raw_len, rtf_face(ir->ui_langs[li].font, ir->ui_langs[li].code), &pk->lang_rtf[li], &lang_rtf_len[li]);
             rp_mem_free(alloc, raw);
         }
     }

@@ -88,8 +88,28 @@ hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-te
 For such a language, three more keys in `[ui]` may help: `name-ja` (its name on the language
 page), `font-ja` (the typeface of its pages) and `langid-ja` (the Windows language numbers that
 select it in advance - one number or a list). For common languages (`ja`, `zh`, `de`, `fr`, `es`,
-`it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`) these three are built in. Korean pages use
-the Malgun Gothic typeface, English ones Segoe UI.
+`it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`) these three are built in.
+
+## Typefaces
+
+Each language's pages have their own typeface. Without anything in the source it is the face
+Windows itself uses for that language: Malgun Gothic (맑은 고딕) for Korean, Yu Gothic UI for
+Japanese, Microsoft YaHei UI for Chinese, Leelawadee UI for Thai, and Segoe UI for English and
+every other language. `font-xx` chooses another one for that language, and `font-en` for English:
+
+```toml
+[ui]
+languages = ["ko"]
+font-ko = "나눔고딕"       # the Korean pages, and the Korean license text
+font-en = "Tahoma"         # the English pages
+```
+
+Write the name as Windows lists it in Settings > Personalization > Fonts, at most 31 characters.
+The license text needs the face's English name: rubrapack knows it for Windows' own Korean,
+Japanese and Chinese faces and the Nanum faces; for another one write the English name
+(`"Noto Sans KR"`), or the license text stays in the language's usual face and the build warns.
+A typeface the user's computer lacks is replaced by a similar one, so a face that comes with
+Windows is the safe choice; the package does not install it.
 
 ## What is not translated
 

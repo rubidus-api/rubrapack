@@ -678,7 +678,13 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   (빠진 것은 lint 가 이름을 댄다), `name-xx`(언어 페이지에 보일 이름), `font-xx`(그 언어 대화창의 글꼴),
   `langid-xx`(그 언어를 고르게 하는 LANGID: 숫자 하나나 배열)를 줄 수 있다. 흔한 언어는 이것들이 내장되어
   있다: `ja`, `zh`, `de`, `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
-- 한국어 대화창은 맑은 고딕, 영어는 Segoe UI 를 쓴다.
+- 한 언어의 대화창 글꼴은 `font-xx` 가 있으면 그것이다(영어는 `font-en`). 없으면 그 언어에 흔한 글꼴 -
+  `ko` 는 맑은 고딕, `ja` 는 Yu Gothic UI, `zh` 는 Microsoft YaHei UI, `th` 는 Leelawadee UI - 이고, 그 밖의
+  언어는 모두 Segoe UI 다. 그 언어의 라이선스 글(`.txt`·`.md` 인 `license-xx`)도 같은 글꼴로 보인다. 라이선스의
+  RTF 에는 글꼴의 영어 이름이 필요한데, rubrapack 은 한국어·일본어·중국어 Windows 에 딸린 글꼴과 나눔 글꼴의 영어
+  이름을 안다(`나눔고딕` 은 NanumGothic). 그 밖의 현지 이름이면 라이선스 글은 그 언어에 흔한 글꼴로 보이고 경고
+  (`RP1319`)가 난다: 영어 이름으로 쓰면 된다. 글꼴은 Windows 가 늘어놓는 이름으로 1~31자로 쓴다(`RP1308`). 사용자
+  컴퓨터에 없는 글꼴은 Windows 가 비슷한 것으로 바꾼다.
 - `[ProductName]`, `[Manufacturer]`, `[ProductVersion]` 밖의 속성을 쓰는 문구는 언어를 고를 때 서식이
   풀리므로 255자 안이어야 한다.
 - Windows Installer 자신의 문구 - 기능 트리 메뉴, 크기, 남은 시간, 오류 메시지 - 는 패키지 것이 아니다:

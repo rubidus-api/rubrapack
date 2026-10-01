@@ -1260,31 +1260,63 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
 
 // ---- license RTF -----------------------------------------------------------------------------
 
-proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, bool korean, uint8_t **out,
+static const char *const face_names[][2] = {
+    { "맑은 고딕", "Malgun Gothic" }, { "굴림", "Gulim" }, { "굴림체", "GulimChe" }, { "돋움", "Dotum" },
+    { "돋움체", "DotumChe" }, { "바탕", "Batang" }, { "바탕체", "BatangChe" }, { "궁서", "Gungsuh" },
+    { "궁서체", "GungsuhChe" }, { "나눔고딕", "NanumGothic" }, { "나눔명조", "NanumMyeongjo" },
+    { "나눔바른고딕", "NanumBarunGothic" }, { "メイリオ", "Meiryo" }, { "游ゴシック", "Yu Gothic" },
+    { "游明朝", "Yu Mincho" }, { "ＭＳ ゴシック", "MS Gothic" }, { "ＭＳ 明朝", "MS Mincho" },
+    { "ＭＳ Ｐゴシック", "MS PGothic" }, { "微软雅黑", "Microsoft YaHei" }, { "宋体", "SimSun" }, { "黑体", "SimHei" },
+    { "微軟正黑體", "Microsoft JhengHei" }, { "新細明體", "PMingLiU" },
+};
+
+const char *rp_ui_face_ascii(const char *face) {
+    if (face == NULL) return NULL;
+    bool ascii = true;
+    for (const char *p = face; *p && ascii; ++p) ascii = (unsigned char)*p < 0x80;
+    if (ascii) return face;
+    for (size_t k = 0; k < sizeof face_names / sizeof face_names[0]; ++k) {
+        if (strcmp(face, face_names[k][0]) == 0) return face_names[k][1];
+    }
+    return NULL;
+}
+
+// One code point of UTF-8 at t[*i], advanced past it (a stray byte stands for itself).
+static uint32_t utf8_next(const uint8_t *t, size_t len, size_t *i) {
+    uint32_t cp = t[*i];
+    size_t k = 1;
+    if (cp >= 0xF0 && *i + 3 < len) cp = (cp & 7) << 18 | (t[*i + 1] & 63u) << 12 | (t[*i + 2] & 63u) << 6 | (t[*i + 3] & 63u), k = 4;
+    else if (cp >= 0xE0 && *i + 2 < len) cp = (cp & 15) << 12 | (t[*i + 1] & 63u) << 6 | (t[*i + 2] & 63u), k = 3;
+    else if (cp >= 0xC0 && *i + 1 < len) cp = (cp & 31) << 6 | (t[*i + 1] & 63u), k = 2;
+    *i += k;
+    return cp;
+}
+
+// A code point as RTF text: ASCII as it is (\\, \{, \} escaped), the rest as \uN? (UTF-16 units).
+static size_t rtf_char(char *s, size_t cap, uint32_t cp) {
+    if (cp == '\\' || cp == '{' || cp == '}') return (size_t)snprintf(s, cap, "\\%c", (char)cp);
+    if (cp < 0x80) return (size_t)snprintf(s, cap, "%c", (char)cp);
+    if (cp < 0x10000) return (size_t)snprintf(s, cap, "\\u%d?", (int)(int16_t)cp);
+    uint32_t v = cp - 0x10000;      // a surrogate pair, each as its own \uN
+    return (size_t)snprintf(s, cap, "\\u%d?\\u%d?", (int)(int16_t)(0xD800 + (v >> 10)), (int)(int16_t)(0xDC00 + (v & 0x3FF)));
+}
+
+proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, const char *face, uint8_t **out,
                                size_t *out_len) {
-    size_t cap = 256 + len * 10, n = 0;
+    size_t flen = face ? strlen(face) : 0;
+    size_t cap = 256 + flen * 12 + len * 10, n = 0;
     char *s = rp_mem_alloc(alloc, cap, 1);
     if (s == NULL) return PROVEN_ERR_NOMEM;
-    n += (size_t)snprintf(s, cap, "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil %s;}}\\fs18 ",
-                          korean ? "Malgun Gothic" : "Segoe UI");
+    n += (size_t)snprintf(s, cap, "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil ");
+    for (size_t j = 0; j < flen;) n += rtf_char(s + n, cap - n, utf8_next((const uint8_t *)face, flen, &j));
+    n += (size_t)snprintf(s + n, cap - n, ";}}\\fs18 ");
     size_t i = 0;
     if (len >= 3 && text[0] == 0xEF && text[1] == 0xBB && text[2] == 0xBF) i = 3;
     while (i < len && n + 16 < cap) {
-        uint32_t cp = text[i];
-        size_t k = 1;
-        if (cp >= 0xF0 && i + 3 < len) cp = (cp & 7) << 18 | (text[i + 1] & 63u) << 12 | (text[i + 2] & 63u) << 6 | (text[i + 3] & 63u), k = 4;
-        else if (cp >= 0xE0 && i + 2 < len) cp = (cp & 15) << 12 | (text[i + 1] & 63u) << 6 | (text[i + 2] & 63u), k = 3;
-        else if (cp >= 0xC0 && i + 1 < len) cp = (cp & 31) << 6 | (text[i + 1] & 63u), k = 2;
-        i += k;
+        uint32_t cp = utf8_next(text, len, &i);
         if (cp == '\r') continue;
         if (cp == '\n') n += (size_t)snprintf(s + n, cap - n, "\\par\n");
-        else if (cp == '\\' || cp == '{' || cp == '}') n += (size_t)snprintf(s + n, cap - n, "\\%c", (char)cp);
-        else if (cp < 0x80) s[n++] = (char)cp;
-        else if (cp < 0x10000) n += (size_t)snprintf(s + n, cap - n, "\\u%d?", (int)(int16_t)cp);
-        else {  // a surrogate pair, each as its own \uN
-            uint32_t v = cp - 0x10000;
-            n += (size_t)snprintf(s + n, cap - n, "\\u%d?\\u%d?", (int)(int16_t)(0xD800 + (v >> 10)), (int)(int16_t)(0xDC00 + (v & 0x3FF)));
-        }
+        else n += rtf_char(s + n, cap - n, cp);
     }
     n += (size_t)snprintf(s + n, cap - n, "}");
     *out = (uint8_t *)s;

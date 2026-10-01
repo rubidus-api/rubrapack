@@ -406,7 +406,17 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             }
             char *v = ir_subst(c, &key->val);
             if (b == 0) L->name = v;
-            else if (b == 1) L->font = v;
+            else if (b == 1) {
+                // TextStyle.FaceName holds a face name as GDI takes it: at most 31 UTF-16 units.
+                size_t units = 0;
+                for (const unsigned char *p = (const unsigned char *)(v ? v : ""); *p; ++p) {
+                    if ((*p & 0xC0) != 0x80) units += *p >= 0xF0 ? 2 : 1;
+                }
+                if (v && (units == 0 || units > 31 || ir_has_control(v))) {
+                    ERR(c, key->pos, "RP1308", "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)", key->key, units);
+                }
+                L->font = v;
+            }
             else {
                 if (ir->ui < 2) ERR(c, key->pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
                 else if (!license_kind_ok(v)) ERR(c, key->pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
@@ -427,6 +437,15 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         if (L->name == NULL && kl < 0) ERR(c, pos, "RP1202", "language '%s' needs [ui] name-%s (its name on the language page)", L->code, L->code);
         if (L->name == NULL && kl >= 0) L->name = ir_dup(c, known_langs[kl].name);
         if (L->font == NULL) L->font = ir_dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI");
+        // A license shown as text names its face in RTF, which takes no face name it cannot spell in ASCII.
+        bool text_license = L->license_source && !ends_with_ci(L->license_source, ".rtf");
+        if (text_license && L->font && rp_ui_face_ascii(L->font) == NULL) {
+            char key[16];
+            snprintf(key, sizeof key, "font-%s", L->code);
+            rp_srcdiag_add(c->d, uit ? ir_key_pos(uit, key) : pos, "RP1319", true,
+                           "%s '%s': the license text needs the face's English name, so it shows in the language's own face; "
+                           "write the English name (like \"Malgun Gothic\") to use this face there too", key, L->font);
+        }
         // Built-in texts are English and Korean; another language writes every one of them.
         if (strcmp(L->code, "en") != 0 && strcmp(L->code, "ko") != 0) {
             size_t missing = 0;

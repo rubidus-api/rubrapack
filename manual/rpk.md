@@ -718,7 +718,15 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
   choose it: one number or an array). Common languages have these built in: `ja`, `zh`, `de`,
   `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
-- Korean dialogs use Malgun Gothic, English ones Segoe UI.
+- The typeface of a language's dialogs is its `font-xx` when given (`font-en` for English);
+  otherwise the language's usual face - Malgun Gothic (`맑은 고딕`) for `ko`, Yu Gothic UI for `ja`,
+  Microsoft YaHei UI for `zh`, Leelawadee UI for `th` - and Segoe UI for every other language.
+  That language's license text (`license-xx` as `.txt` or `.md`) is shown in the same face; its
+  RTF needs the face's English name, which rubrapack knows for the faces that come with Korean,
+  Japanese and Chinese Windows and for the Nanum faces (`나눔고딕` is NanumGothic). For another
+  local name the license text keeps the language's usual face, with a warning (`RP1319`): write
+  the English name instead. A face is named as Windows lists it, 1 to 31 characters (`RP1308`);
+  one the user's computer lacks is replaced by Windows with a similar one.
 - A text that uses a property other than `[ProductName]`, `[Manufacturer]` and `[ProductVersion]`
   is formatted when the language is chosen, and must fit 255 characters.
 - Windows Installer's own texts - the feature tree's menu, sizes, the time left, and its error

@@ -75,8 +75,14 @@ const char *rp_ui_text_id(size_t i);
 // the language is chosen, and must fit a 255-character column.
 bool rp_ui_text_static(const char *text);
 
-// Plain UTF-8 text -> RTF for the license dialog (ScrollableText): \uN? escapes, one \par per line.
-[[nodiscard]] proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, bool korean,
+// A typeface name as the license text's RTF can name it: an ASCII name as it is, the local name of
+// a common Korean, Japanese or Chinese face as its English one ("맑은 고딕" -> "Malgun Gothic"), else
+// NULL (Windows' rich edit control drops a face name written with \uN escapes).
+const char *rp_ui_face_ascii(const char *face);
+
+// Plain UTF-8 text -> RTF for the license dialog (ScrollableText) in the typeface `face` (UTF-8):
+// \uN? escapes, one \par per line.
+[[nodiscard]] proven_err_t rp_ui_text_to_rtf(proven_allocator_t alloc, const uint8_t *text, size_t len, const char *face,
                                              uint8_t **out, size_t *out_len);
 
 #endif // RUBRAPACK_UI_H

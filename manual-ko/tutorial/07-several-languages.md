@@ -84,8 +84,25 @@ hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-te
 
 그런 언어에는 `[ui]` 의 키 셋이 더 도움이 된다: `name-ja`(언어 페이지에 보일 이름), `font-ja`(그 페이지들의
 글꼴), `langid-ja`(그 언어를 미리 고르게 하는 Windows 언어 번호 - 수 하나나 목록). 흔한 언어(`ja`, `zh`, `de`,
-`fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`)에는 이 셋이 내장되어 있다. 한국어 페이지는
-맑은 고딕, 영어 페이지는 Segoe UI 글꼴을 쓴다.
+`fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`)에는 이 셋이 내장되어 있다.
+
+## 글꼴
+
+언어마다 페이지의 글꼴이 따로 있다. 원본에 아무것도 쓰지 않으면 Windows 가 그 언어에 쓰는 글꼴이다: 한국어는 맑은
+고딕, 일본어는 Yu Gothic UI, 중국어는 Microsoft YaHei UI, 타이어는 Leelawadee UI, 영어와 그 밖의 모든 언어는
+Segoe UI. `font-xx` 는 그 언어에 다른 글꼴을 고르고, `font-en` 은 영어에 고른다:
+
+```toml
+[ui]
+languages = ["ko"]
+font-ko = "나눔고딕"       # 한국어 페이지와 한국어 라이선스 글
+font-en = "Tahoma"         # 영어 페이지
+```
+
+이름은 Windows 가 설정 > 개인 설정 > 글꼴에 늘어놓는 대로, 31자 이내로 쓴다. 라이선스 글에는 글꼴의 영어 이름이
+필요하다: rubrapack 은 Windows 에 딸린 한국어·일본어·중국어 글꼴과 나눔 글꼴의 영어 이름을 안다. 그 밖의 글꼴은
+영어 이름(`"Noto Sans KR"`)으로 쓴다. 그러지 않으면 라이선스 글은 그 언어에 흔한 글꼴로 남고 빌드가 경고한다. 사용자 컴퓨터에 없는 글꼴은 비슷한
+것으로 바뀌므로 Windows 에 딸려 오는 글꼴이 안전하다. 패키지가 글꼴을 설치해 주지는 않는다.
 
 ## 번역되지 않는 것
 

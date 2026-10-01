@@ -285,7 +285,7 @@ enum { RP_UI_LANG_MAX = 8, RP_UI_LANGID_MAX = 16 };
 typedef struct {
     char     code[4];           // "en", "ko", ...
     char    *name;              // [ui] name-xx: the language page's label, or NULL (built in)
-    char    *font;              // [ui] font-xx, or NULL (built in)
+    char    *font;              // [ui] font-xx, else the language's built-in face, else Segoe UI
     uint16_t langids[RP_UI_LANGID_MAX];     // chosen when UserLanguageID or SystemLanguageID is one of them
     size_t   langid_count;
     char    *license_source;    // [ui] license-xx: path to open, or NULL
