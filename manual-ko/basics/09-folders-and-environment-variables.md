@@ -7,7 +7,7 @@ Installer 의 폴더 속성 - 그리고 각 이름이 *언제* 실제 경로로 
 
 ## 환경 변수란
 
-실행 중인 프로그램은 저마다 **환경 변수**라는 작은 목록을 지닌다: `TEMP=C:\Users\kim\AppData\Local\Temp`
+실행 중인 프로그램은 저마다 **환경 변수**라는 작은 목록을 지닌다: `TEMP=C:\Users\<이름>\AppData\Local\Temp`
 처럼 이름과 글 값의 짝이다. 프로그램은 자기를 실행한 프로그램에게서 이 목록의 사본을 받는다. 자기 사본을 바꿔도
 다른 프로그램에게는 아무것도 바뀌지 않는다. 이름은 대소문자를 가리지 않는다: `%TEMP%`, `%Temp%`, `%temp%` 는
 같은 변수다.
@@ -33,7 +33,7 @@ Installer 의 폴더 속성 - 그리고 각 이름이 *언제* 실제 경로로 
 
 ## 흔히 쓰는 변수
 
-Windows 10·11 에서, 사용자 이름이 `kim` 이고 드라이브가 `C:` 일 때의 흔한 값이다.
+Windows 10·11 에서 드라이브가 `C:` 일 때의 흔한 값이다. `<이름>` 은 사용자의 계정 이름이다.
 
 ### 폴더
 
@@ -49,13 +49,13 @@ Windows 10·11 에서, 사용자 이름이 `kim` 이고 드라이브가 `C:` 일
 | `ProgramData` | `C:\ProgramData` | 모든 사용자가 함께 쓰는 데이터 |
 | `ALLUSERSPROFILE` | `C:\ProgramData` | 같은 폴더의 옛 이름 |
 | `PUBLIC` | `C:\Users\Public` | 모든 사용자가 볼 수 있는 파일 |
-| `USERPROFILE` | `C:\Users\kim` | 사용자의 프로필 폴더 |
-| `HOMEDRIVE`, `HOMEPATH` | `C:`, `\Users\kim` | 사용자의 홈을 둘로 나눈 것. 도메인에서는 네트워크 공유(`HOMESHARE`)일 수 있다 |
-| `APPDATA` | `C:\Users\kim\AppData\Roaming` | 로밍 프로필과 함께 옮겨 다니는 설정 |
-| `LOCALAPPDATA` | `C:\Users\kim\AppData\Local` | 이 PC 에만 있는 설정과 캐시 |
-| `TEMP`, `TMP` | `C:\Users\kim\AppData\Local\Temp` | 임시 파일. 서비스에서는 `C:\Windows\Temp` |
+| `USERPROFILE` | `C:\Users\<이름>` | 사용자의 프로필 폴더 |
+| `HOMEDRIVE`, `HOMEPATH` | `C:`, `\Users\<이름>` | 사용자의 홈을 둘로 나눈 것. 도메인에서는 네트워크 공유(`HOMESHARE`)일 수 있다 |
+| `APPDATA` | `C:\Users\<이름>\AppData\Roaming` | 로밍 프로필과 함께 옮겨 다니는 설정 |
+| `LOCALAPPDATA` | `C:\Users\<이름>\AppData\Local` | 이 PC 에만 있는 설정과 캐시 |
+| `TEMP`, `TMP` | `C:\Users\<이름>\AppData\Local\Temp` | 임시 파일. 서비스에서는 `C:\Windows\Temp` |
 
-오래된 안내서에 나오는 `C:\Documents and Settings\kim\Application Data` 같은 경로는 Windows XP 의 것이다.
+오래된 안내서에 나오는 `C:\Documents and Settings\<이름>\Application Data` 같은 경로는 Windows XP 의 것이다.
 Windows Vista 부터 프로필은 `C:\Users` 아래에 있고, `ALLUSERSPROFILE` 은 `C:\ProgramData` 가 되었다.
 
 Program Files 폴더가 둘이라서 32비트 프로그램이 `%ProgramFiles%` 를 물으면 `C:\Program Files (x86)` 을 받는다:
@@ -65,10 +65,10 @@ Windows 는 프로그램마다 자기 종류의 폴더를 준다.
 
 | 변수 | 흔한 값 | 참고 |
 |---|---|---|
-| `USERNAME` | `kim` | 계정 이름 |
+| `USERNAME` | `<이름>` | 계정 이름 |
 | `USERDOMAIN` | `OFFICE`, 또는 PC 이름 | 계정의 도메인. 로컬 계정이면 컴퓨터 이름 |
 | `LOGONSERVER` | `\\DC01`, 또는 `\\` 와 PC 이름 | 비밀번호를 확인한 컴퓨터 |
-| `COMPUTERNAME` | `KIM-PC` | 이 PC 의 이름 |
+| `COMPUTERNAME` | `DESKTOP-1A2B3C` | 이 PC 의 이름 |
 | `ComSpec` | `C:\Windows\system32\cmd.exe` | 명령 해석기 |
 | `Path` | `C:\Windows\system32;C:\Windows;...` | 폴더 없이 입력한 프로그램을 찾는 폴더들, `;` 로 나눈다 |
 | `PATHEXT` | `.COM;.EXE;.BAT;.CMD;...` | 확장자 없이 입력한 프로그램에 붙여 보는 확장자 |
@@ -135,16 +135,32 @@ Windows Installer 에는 대부분의 폴더에 자기 속성이 있고, 설치�
 
 ## rubrapack 에서
 
-- **경로의 기준.** `[dir.*]`, `[search.*]` 경로의 첫 부분은 표준 폴더를 가리키고, rubrapack 은 그것을 알맞은
-  Windows Installer 속성으로, MSIX 에서는 알맞은 패키지 폴더로 바꾼다: `ProgramFiles`, `ProgramFiles32`,
-  `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup`,
-  `Windows`, `System`, `Fonts`, `Temp`(튜토리얼 4장).
-- **설치할 때의 값.** `[registry.*]`, `[env.*]`, `[ini.*]` 의 값과 바로 가기 인수는 Windows Installer 서식
-  문자열이다: `[INSTALLDIR]`, `[LogonUser]`, `[%USERPROFILE]` 이 설치하는 동안 채워진다.
-- **실행할 때의 값.** `%NAME%` 은 그대로 지나간다. `type = "expand"` 레지스트리 값에서는 값을 읽을 때 Windows 가
-  푼다(튜토리얼 11장).
-- **MSIX.** MSIX 에는 설치할 때가 없다: `[...]` 부분이 있는 값은 거절하고(RP1612), 펼칠 수 있는 값 안의 `%NAME%` 은
-  프로그램이 풀므로 그대로 쓸 수 있다.
+rubrapack 은 이 이름들을 모두 한 가지로 쓴다: Windows 의 철자로 쓴 `$(NAME)`(대소문자는 가리지 않는다). `$$` 는
+`$` 한 글자다. 이름이 언제 바뀌는지는 놓인 자리가 정한다:
+
+- **경로의 맨 앞**에서는 폴더다: `path = "$(ProgramFiles)/Hello"`, `path = "$(LOCALAPPDATA)/Hello"`,
+  `path = "$(Fonts)"`. rubrapack 이 알맞은 Windows Installer 폴더로, MSIX 에서는 알맞은 패키지 폴더로
+  바꾼다(튜토리얼 4장).
+- **Windows Installer 가 채우는 값** - 레지스트리·환경 변수·INI 값, 인수, 메시지 - 에서는 설치할 때의 형태다:
+  `'$(USERPROFILE)\notes'` 는 `[%USERPROFILE]\notes` 가 되고, `'$(LOCALAPPDATA)\Hello'` 는
+  `[LocalAppDataFolder]Hello` 가 된다(폴더 속성은 이미 `\` 로 끝나므로 이름 뒤의 `\` 하나는 빠진다).
+- **`type = "expand"` 레지스트리 값**에서는 실행할 때의 형태다: `'$(LOCALAPPDATA)\Hello\log'` 는
+  `%LOCALAPPDATA%\Hello\log` 로 저장되고, 사용자마다 프로그램이 그 사용자의 것으로 푼다.
+
+그래서 위의 사용자마다의 로그 폴더는 이렇게 쓴다:
+
+```toml
+[registry.LogDir]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "LogDir"
+type = "expand"
+value = '$(LOCALAPPDATA)\Hello\log'       # %LOCALAPPDATA%\Hello\log 로 저장된다
+```
+
+`type = "expand"` 가 없으면 같은 값이 설치한 사용자의 폴더를 저장한다. 모든 이름과 그것이 무엇이 되는지는 참조
+부의 [Windows 이름](../rpk.md#windows-이름)에 표로 있다. MSIX 에는 설치할 때가 없다: 그것이 필요한 값은 거기서
+거부하고(RP1612), 실행할 때의 형태는 프로그램이 풀므로 쓸 수 있다.
 
 ## 쓰이는 곳
 

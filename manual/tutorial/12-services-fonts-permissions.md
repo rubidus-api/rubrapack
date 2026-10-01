@@ -9,6 +9,8 @@ data folder whose access rights you set - the three things only a per-machine pa
 
 ```toml
 # tutorial 12: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -21,13 +23,13 @@ reboot = "suppress"
 VERSION = "1.10.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [dir.DataDir]
-path = "CommonAppData/Hello"
+path = "$(ProgramData)/Hello"
 
 [dir.FontsDir]
-path = "Fonts"
+path = "$(Fonts)"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -83,7 +85,7 @@ installation.
 ## A font: `[font.ID]`
 
 A font is installed by putting its file into the Fonts folder - `[dir.FontsDir]` with
-`path = "Fonts"`, the known folder alone - and registering it with `[font.ID]`. `title` is the name
+`path = "$(Fonts)"`, the folder alone - and registering it with `[font.ID]`. `title` is the name
 Windows lists; without it Windows reads the name from the font file. Every program sees the font
 after the installation; removal unregisters and deletes it.
 

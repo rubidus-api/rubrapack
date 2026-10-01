@@ -19,6 +19,8 @@ dist\
 
 ```toml
 # tutorial 15: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -35,7 +37,7 @@ cab-max-size = 500
 VERSION = "2.0.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

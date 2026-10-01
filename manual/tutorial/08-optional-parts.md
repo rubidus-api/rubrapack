@@ -14,6 +14,8 @@ files as you like.
 
 ```toml
 # tutorial 08: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -52,19 +54,19 @@ hidden = true
 level = 3
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 feature = "Main"
 
 [dir.DocsDir]
-path = "INSTALLDIR/docs"
+path = "$(INSTALLDIR)/docs"
 feature = "Documentation"
 
 [dir.SamplesDir]
-path = "INSTALLDIR/samples"
+path = "$(INSTALLDIR)/samples"
 feature = "Samples"
 
 [dir.MoreSamplesDir]
-path = "INSTALLDIR/samples/sub"
+path = "$(INSTALLDIR)/samples/sub"
 feature = "MoreSamples"
 
 [file.Hello]

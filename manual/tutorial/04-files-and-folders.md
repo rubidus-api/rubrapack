@@ -25,6 +25,8 @@ C:\work\hello\
 
 ```toml
 # tutorial 04: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -36,13 +38,13 @@ upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
 VERSION = "1.2.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [dir.DocsDir]
-path = "INSTALLDIR/docs"
+path = "$(INSTALLDIR)/docs"
 
 [dir.SamplesDir]
-path = "INSTALLDIR/samples"
+path = "$(INSTALLDIR)/samples"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -100,18 +102,21 @@ C:\work\hello> rubrapack inspect hello.msi --files
 
 ## Folders: `[dir.ID]`
 
-A dir's `path` starts from a *known folder* or from another dir, then names the folders below it:
+A dir's `path` starts from a Windows folder or from another dir, written `$(...)`, then names the
+folders below it:
 
 | `path` | On the user's computer (typical) |
 |---|---|
-| `ProgramFiles/Hello` | `C:\Program Files\Hello` (for an `x86` package: `C:\Program Files (x86)\Hello`) |
-| `INSTALLDIR/docs` | `C:\Program Files\Hello\docs` - below the dir `INSTALLDIR`, wherever the user put it |
-| `CommonAppData/Hello` | `C:\ProgramData\Hello` - data shared by all users |
-| `LocalAppData/Hello` | `C:\Users\<name>\AppData\Local\Hello` |
+| `$(ProgramFiles)/Hello` | `C:\Program Files\Hello` (for an `x86` package: `C:\Program Files (x86)\Hello`) |
+| `$(INSTALLDIR)/docs` | `C:\Program Files\Hello\docs` - below the dir `INSTALLDIR`, wherever the user put it |
+| `$(ProgramData)/Hello` | `C:\ProgramData\Hello` - data shared by all users |
+| `$(LOCALAPPDATA)/Hello` | `C:\Users\<name>\AppData\Local\Hello` |
 
-Building on `INSTALLDIR` rather than repeating `ProgramFiles/Hello` matters once users may choose
-the install folder (chapter 6): `docs` then follows the folder they chose. The full list of known
-folders is in the Reference part ([Tables](../rpk.md#tables)).
+The Windows folders carry the names of their environment variables (`%ProgramData%`,
+`%LOCALAPPDATA%`); background chapter [9](../basics/09-folders-and-environment-variables.md)
+explains them. Building on `INSTALLDIR` rather than repeating `$(ProgramFiles)/Hello` matters once
+users may choose the install folder (chapter 6): `docs` then follows the folder they chose. The
+full list is in the Reference part ([Windows names](../rpk.md#windows-names)).
 
 ## One file: `[file.ID]`
 

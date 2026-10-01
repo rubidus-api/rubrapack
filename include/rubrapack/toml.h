@@ -49,6 +49,7 @@ typedef struct {
 
 typedef struct {
     proven_allocator_t alloc;
+    rp_ttable_t        root;    // keys before the first table (kind and id NULL), such as `format = 1`
     rp_ttable_t       *tables;  // in file order
     size_t             count;
     size_t             cap;

@@ -10,7 +10,7 @@ So far every package installed *per machine*: into Program Files, for every user
 which needs administrator rights (the User Account Control prompt). `scope` in `[package]` changes
 that:
 
-| `scope` | Installs for | Needs administrator | `ProgramFiles/Hello` becomes | Start menu, desktop | Registry `HKMU` |
+| `scope` | Installs for | Needs administrator | `$(ProgramFiles)/Hello` becomes | Start menu, desktop | Registry `HKMU` |
 |---|---|---|---|---|---|
 | `machine` (default) | everyone | yes | `C:\Program Files\Hello` | all users' | `HKLM` |
 | `user` | the current user | no | `%LOCALAPPDATA%\Programs\Hello` | the user's | `HKCU` |
@@ -20,13 +20,15 @@ that:
 no permission and is invisible to other users of the computer - often right for small tools.
 
 Some things only exist per machine and need `scope = "machine"`: services, fonts, permissions,
-and the folders `Windows`, `System`, `Fonts` and `CommonAppData`. rubrapack refuses them in a
+and the folders `$(SystemRoot)`, `$(System)`, `$(Fonts)` and `$(ProgramData)`. rubrapack refuses them in a
 `user` or `dual` package.
 
 ## The source
 
 ```toml
 # tutorial 10: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -40,7 +42,7 @@ ui = "installdir"
 VERSION = "1.8.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 guard = true
 
 [file.Hello]

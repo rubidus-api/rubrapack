@@ -245,9 +245,10 @@ void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
     ir_check_id(c, t, 72);
     d->id = ir_dup(c, t->id);
     d->pos = t->pos;
+    if (ir_windows_name(t->id)) ERR(c, t->pos, "RP1404", "[dir.%s]: '%s' is a Windows name; give the dir another ID", t->id, t->id);
     d->guard = ir_get_bool(c, t, "guard", false);
     d->feature = ir_get_str(c, t, "feature", false, NULL);
-    char *path = ir_get_str(c, t, "path", true, NULL);
+    char *path = ir_get_path(c, t, "path", true);
     if (path == NULL) return;
     // base/part/part..., or a known folder alone (the folder itself, e.g. "Fonts")
     size_t count = 1;
@@ -259,7 +260,7 @@ void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
         return;
     }
     if (count < 2 || strchr(path, '\\')) {
-        ERR(c, ir_key_pos(t, "path"), "RP1308", "path must be \"Base/relative/path\" with '/' (Base is a known folder or a dir ID)");
+        ERR(c, ir_key_pos(t, "path"), "RP1308", "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)");
         rp_mem_free(c->alloc, path);
         return;
     }

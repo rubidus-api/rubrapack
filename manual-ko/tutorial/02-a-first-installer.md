@@ -9,6 +9,8 @@
 
 ```toml
 # tutorial 02: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -17,7 +19,7 @@ arch = "x64"
 upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -27,6 +29,8 @@ source = "dist/hello.exe"
 한 줄씩 보면:
 
 - `#` 으로 시작하는 줄은 주석이다. rubrapack 은 무시한다.
+- `format = 1` 은 맨 앞에 와서 이 파일이 rubrapack 원본 형식의 몇 판으로 쓰였는지 말한다. 모든 원본이 이것으로
+  시작한다.
 - `[package]` 는 *표*를 시작한다: 그 뒤의 줄은 다음 `[...]` 까지 이 표에 속한다. `package` 표는 제품이 무엇인지
   말한다.
   - `name` 은 사용자가 보는 이름이다: "설치된 앱"에서, 설치 창의 제목에서.
@@ -38,9 +42,9 @@ source = "dist/hello.exe"
     `rubrapack guid` 로 자기 것을 만들어(아래) 여기에 한 번 쓰고 **절대 바꾸지 않는다**. 이후 모든 판이 같은
     코드를 지녀야 한다. 그러지 않으면 Windows 가 다른 제품으로 보고 옛것 옆에 따로 설치한다.
 - `[dir.INSTALLDIR]` 는 ID 가 `INSTALLDIR` 인 폴더를 선언한다. ID 는 다른 표에서 그것을 가리키려고 내가
-  정하는 이름이다(영문자, 숫자, `_`). `path` 는 폴더가 어디인지 말한다: `ProgramFiles/Hello` 는 영어판이든
-  한국어판이든 Windows 에서 `C:\Program Files\Hello` 다 - 알려진 폴더 `ProgramFiles` 는 사용자 컴퓨터에서
-  정해진다.
+  정하는 이름이다(영문자, 숫자, `_`). `path` 는 폴더가 어디인지 말한다: `$(ProgramFiles)/Hello` 는 영어판이든
+  한국어판이든 Windows 에서 `C:\Program Files\Hello` 다 - `$(ProgramFiles)` 는 Windows 폴더의 이름이고(환경
+  변수로는 `%ProgramFiles%`), 사용자 컴퓨터에서 정해진다.
 - `[file.Hello]` 는 파일 하나를 ID `Hello` 로 설치한다. `dir` 은 들어갈 폴더를 ID 로 가리키고, `source` 는
   지금 파일이 있는 곳으로, `hello.toml` 기준의 상대 경로를 `/` 로 쓴다.
 

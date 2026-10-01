@@ -8,7 +8,7 @@
 지금까지의 패키지는 모두 *컴퓨터 전체*에 설치했다: Program Files 에, 컴퓨터의 모든 사용자를 위해. 그래서 관리자
 권한(사용자 계정 컨트롤 창)이 필요했다. `[package]` 의 `scope` 가 이것을 바꾼다:
 
-| `scope` | 설치 대상 | 관리자 필요 | `ProgramFiles/Hello` 는 | 시작 메뉴, 바탕화면 | 레지스트리 `HKMU` |
+| `scope` | 설치 대상 | 관리자 필요 | `$(ProgramFiles)/Hello` 는 | 시작 메뉴, 바탕화면 | 레지스트리 `HKMU` |
 |---|---|---|---|---|---|
 | `machine`(기본) | 모든 사용자 | 예 | `C:\Program Files\Hello` | 모든 사용자의 것 | `HKLM` |
 | `user` | 지금 사용자 | 아니요 | `%LOCALAPPDATA%\Programs\Hello` | 사용자의 것 | `HKCU` |
@@ -17,13 +17,15 @@
 `%LOCALAPPDATA%` 는 사용자 자신의 `C:\Users\<이름>\AppData\Local` 이다. 사용자별 설치는 허락이 필요 없고 컴퓨터의
 다른 사용자에게 보이지 않는다 - 작은 도구에 흔히 알맞다.
 
-어떤 것은 컴퓨터 전체에만 있어서 `scope = "machine"` 이 필요하다: 서비스, 글꼴, 권한, 그리고 `Windows`, `System`,
-`Fonts`, `CommonAppData` 폴더. rubrapack 은 `user` 나 `dual` 패키지에서 이것들을 거부한다.
+어떤 것은 컴퓨터 전체에만 있어서 `scope = "machine"` 이 필요하다: 서비스, 글꼴, 권한, 그리고 `$(SystemRoot)`, `$(System)`,
+`$(Fonts)`, `$(ProgramData)` 폴더. rubrapack 은 `user` 나 `dual` 패키지에서 이것들을 거부한다.
 
 ## 원본
 
 ```toml
 # tutorial 10: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -37,7 +39,7 @@ ui = "installdir"
 VERSION = "1.8.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 guard = true
 
 [file.Hello]

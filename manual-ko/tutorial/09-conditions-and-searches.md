@@ -22,6 +22,8 @@ Windows Installer 는 실행하는 동안 *속성*이라는 이름 붙은 값을
 
 ```toml
 # tutorial 09: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -44,7 +46,7 @@ message = "[ProductName] needs 64-bit Windows."
 [search.Notepad]
 property = "NOTEPAD_PATH"
 kind = "file"
-path = "Windows"
+path = "$(SystemRoot)"
 file = "notepad.exe"
 
 [search.PreviousDir]
@@ -64,7 +66,7 @@ description = "Only offered where Notepad is installed."
 when = "NOTEPAD_PATH"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 feature = "Main"
 
 [file.Hello]

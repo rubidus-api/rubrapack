@@ -241,7 +241,7 @@ static void find_dist(const src_t *s, char *out, size_t cap) {
     }
 }
 
-// A sub folder as `new` writes it: [dir.D] path = "INSTALLDIR/<name>" with a [files] glob
+// A sub folder as `new` writes it: [dir.D] path = "$(INSTALLDIR)/<name>" with a [files] glob
 // "<dist>/<name>/**" into it.
 typedef struct {
     char name[256], dir[64], files[64];
@@ -306,10 +306,10 @@ static int product(src_t *s, ans_t *a) {
 static int install(src_t *s, ans_t *a) {
     int rc;
     const char *p = get(s, "dir", "INSTALLDIR", "path");
-    if (p && strncmp(p, "ProgramFiles/", 13) == 0 && !strchr(p + 13, '/')) {
-        if ((rc = rpn_ask(a, "Folder name under Program Files", p + 13, a->install_dir, sizeof a->install_dir, rpn_check_folder))) return rc;
+    if (p && strncmp(p, "$(ProgramFiles)/", 16) == 0 && !strchr(p + 16, '/')) {
+        if ((rc = rpn_ask(a, "Folder name under Program Files", p + 16, a->install_dir, sizeof a->install_dir, rpn_check_folder))) return rc;
         char path[300];
-        CUT(path, sizeof path, "ProgramFiles/%s", a->install_dir);
+        CUT(path, sizeof path, "$(ProgramFiles)/%s", a->install_dir);
         set_str(s, "dir", "INSTALLDIR", "path", path);
     } else if (p) {
         char path[512];
@@ -643,7 +643,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         char did[64], fid[64], v[800];
         rpn_make_id(&used, f, "_dir", did, sizeof did);
         rpn_make_id(&used, f, "_files", fid, sizeof fid);
-        CUT(v, sizeof v, "INSTALLDIR/%s", f);
+        CUT(v, sizeof v, "$(INSTALLDIR)/%s", f);
         set_str(s, "dir", did, "path", v);
         if (mainf_copy[0]) set_str(s, "dir", did, "feature", mainf_copy);
         set_str(s, "files", fid, "dir", did);

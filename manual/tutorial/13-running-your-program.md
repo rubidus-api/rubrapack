@@ -15,6 +15,8 @@ arranges that the right one runs whichever way things go.
 
 ```toml
 # tutorial 13: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -26,7 +28,7 @@ upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
 VERSION = "1.11.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

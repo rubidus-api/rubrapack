@@ -9,6 +9,8 @@
 
 ```toml
 # tutorial 03: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -21,7 +23,7 @@ downgrade-message = "더 새 Hello 가 이미 설치되어 있습니다. 이 판
 VERSION = "1.0.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

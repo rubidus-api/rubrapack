@@ -10,6 +10,8 @@ text editor - Notepad will do - and write:
 
 ```toml
 # tutorial 02: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -18,7 +20,7 @@ arch = "x64"
 upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -28,6 +30,8 @@ source = "dist/hello.exe"
 Line by line:
 
 - A line starting with `#` is a comment; rubrapack ignores it.
+- `format = 1` comes first and says which version of rubrapack's source format the file is
+  written in. Every source starts with it.
 - `[package]` starts a *table*: the lines after it, up to the next `[...]`, belong to it. The
   `package` table says what the product is.
   - `name` is what users see: in Installed apps, in the title of the installer's windows.
@@ -41,8 +45,9 @@ Line by line:
     as a different product and install it next to the old one.
 - `[dir.INSTALLDIR]` declares a folder with the ID `INSTALLDIR`. An ID is a name you choose
   (letters, digits and `_`) to refer to a thing from other tables. `path` says where the folder is:
-  `ProgramFiles/Hello` means `C:\Program Files\Hello` on an English or Korean Windows alike - the
-  known folder `ProgramFiles` is resolved on the user's computer.
+  `$(ProgramFiles)/Hello` means `C:\Program Files\Hello` on an English or Korean Windows alike -
+  `$(ProgramFiles)` names the Windows folder (its environment variable is `%ProgramFiles%`), and it
+  is resolved on the user's computer.
 - `[file.Hello]` installs one file, with the ID `Hello`. `dir` names the folder it goes into, by
   its ID; `source` is where the file is now, relative to `hello.toml`, written with `/`.
 

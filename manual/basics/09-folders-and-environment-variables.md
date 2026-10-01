@@ -9,7 +9,7 @@ Windows Installer's folder properties - and *when* each name is turned into a re
 ## What an environment variable is
 
 Every running program carries a small list of **environment variables**: names with text values,
-such as `TEMP=C:\Users\kim\AppData\Local\Temp`. A program gets a copy of the list from the program
+such as `TEMP=C:\Users\<name>\AppData\Local\Temp`. A program gets a copy of the list from the program
 that started it; changing its copy changes nothing for anyone else. Names are not case-sensitive:
 `%TEMP%`, `%Temp%` and `%temp%` are the same variable.
 
@@ -35,7 +35,7 @@ seen.
 
 ## The common variables
 
-Typical values on Windows 10 and 11, for a user named `kim` on drive `C:`.
+Typical values on Windows 10 and 11 on drive `C:`; `<name>` is the user's account name.
 
 ### Folders
 
@@ -51,13 +51,13 @@ Typical values on Windows 10 and 11, for a user named `kim` on drive `C:`.
 | `ProgramData` | `C:\ProgramData` | data shared by all users |
 | `ALLUSERSPROFILE` | `C:\ProgramData` | the older name for the same folder |
 | `PUBLIC` | `C:\Users\Public` | files every user may see |
-| `USERPROFILE` | `C:\Users\kim` | the user's profile folder |
-| `HOMEDRIVE`, `HOMEPATH` | `C:`, `\Users\kim` | the user's home, in two parts; in a domain it may be a network share (`HOMESHARE`) |
-| `APPDATA` | `C:\Users\kim\AppData\Roaming` | settings that travel with a roaming profile |
-| `LOCALAPPDATA` | `C:\Users\kim\AppData\Local` | settings and caches of this PC only |
-| `TEMP`, `TMP` | `C:\Users\kim\AppData\Local\Temp` | temporary files; for services `C:\Windows\Temp` |
+| `USERPROFILE` | `C:\Users\<name>` | the user's profile folder |
+| `HOMEDRIVE`, `HOMEPATH` | `C:`, `\Users\<name>` | the user's home, in two parts; in a domain it may be a network share (`HOMESHARE`) |
+| `APPDATA` | `C:\Users\<name>\AppData\Roaming` | settings that travel with a roaming profile |
+| `LOCALAPPDATA` | `C:\Users\<name>\AppData\Local` | settings and caches of this PC only |
+| `TEMP`, `TMP` | `C:\Users\<name>\AppData\Local\Temp` | temporary files; for services `C:\Windows\Temp` |
 
-Older guides give paths such as `C:\Documents and Settings\kim\Application Data`: those are
+Older guides give paths such as `C:\Documents and Settings\<name>\Application Data`: those are
 Windows XP's. Since Windows Vista the profiles are under `C:\Users`, and `ALLUSERSPROFILE` became
 `C:\ProgramData`.
 
@@ -68,10 +68,10 @@ The two Program Files folders are why a 32-bit program asked for `%ProgramFiles%
 
 | Variable | Typical value | Notes |
 |---|---|---|
-| `USERNAME` | `kim` | the account's name |
+| `USERNAME` | `<name>` | the account's name |
 | `USERDOMAIN` | `OFFICE`, or the PC's name | the domain of the account; the computer's name for a local account |
 | `LOGONSERVER` | `\\DC01`, or `\\` and the PC's name | the computer that checked the password |
-| `COMPUTERNAME` | `KIM-PC` | this PC's name |
+| `COMPUTERNAME` | `DESKTOP-1A2B3C` | this PC's name |
 | `ComSpec` | `C:\Windows\system32\cmd.exe` | the command interpreter |
 | `Path` | `C:\Windows\system32;C:\Windows;...` | folders searched for a program typed without a folder, separated by `;` |
 | `PATHEXT` | `.COM;.EXE;.BAT;.CMD;...` | the extensions tried when a program is typed without one |
@@ -145,23 +145,39 @@ not the account; the account is `LogonUser`. Any variable without a property is 
 
 ## In rubrapack
 
-- **Path bases.** The first part of a `[dir.*]` or `[search.*]` path names a standard folder, which
-  rubrapack turns into the matching Windows Installer property or, in an MSIX, the matching
-  package folder: `ProgramFiles`, `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`,
-  `CommonAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup`, `Windows`, `System`, `Fonts`,
-  `Temp` (tutorial chapter 4).
-- **Install-time values.** `[registry.*]`, `[env.*]`, `[ini.*]` values and shortcut arguments are
-  Windows Installer formatted strings: `[INSTALLDIR]`, `[LogonUser]`, `[%USERPROFILE]` are filled in
-  during installation.
-- **Run-time values.** `%NAME%` passes through unchanged; in a `type = "expand"` registry value
-  Windows expands it when the value is read (tutorial chapter 11).
-- **MSIX.** An MSIX has no install time: a value with a `[...]` part is refused (RP1612), while a
-  `%NAME%` in an expandable value still works, since the program expands it.
+rubrapack writes all these names one way, `$(NAME)`, with Windows' spelling (letter case does not
+matter); `$$` is a literal `$`. When the name is replaced depends on where it stands:
+
+- **At the start of a path**, a folder: `path = "$(ProgramFiles)/Hello"`,
+  `path = "$(LOCALAPPDATA)/Hello"`, `path = "$(Fonts)"`. rubrapack turns it into the matching
+  Windows Installer folder, or in an MSIX the matching package folder (tutorial chapter 4).
+- **In a value Windows Installer fills in** - registry, environment and INI values, arguments,
+  messages - the install-time form: `'$(USERPROFILE)\notes'` becomes `[%USERPROFILE]\notes`, and
+  `'$(LOCALAPPDATA)\Hello'` becomes `[LocalAppDataFolder]Hello` (a folder property already ends
+  with `\`, so the one after the name is dropped).
+- **In a `type = "expand"` registry value**, the run-time form: `'$(LOCALAPPDATA)\Hello\log'`
+  is stored as `%LOCALAPPDATA%\Hello\log`, which each user's program expands for that user.
+
+So the log folder for each user from above is written
+
+```toml
+[registry.LogDir]
+root = "HKLM"
+key = 'SOFTWARE\Example Software\Hello'
+name = "LogDir"
+type = "expand"
+value = '$(LOCALAPPDATA)\Hello\log'       # stored as %LOCALAPPDATA%\Hello\log
+```
+
+and without `type = "expand"` the same value would store the installing user's folder. The table
+of every name and what it becomes is in the Reference part
+([Windows names](../rpk.md#windows-names)). An MSIX has no install time: a value that needs one
+is refused there (RP1612), while the run-time form works, since the program expands it.
 
 ## Where this is used
 
 - Tutorial chapter [4](../tutorial/04-files-and-folders.md): install folders and their bases.
 - Tutorial chapter [11](../tutorial/11-registry-environment-ini.md): registry values, environment
   variables and `%TEMP%`.
-- Reference: [Registry values](../rpk.md#registry-values-registryid),
+- Reference: [Windows names](../rpk.md#windows-names), [Registry values](../rpk.md#registry-values-registryid),
   [Environment variables](../rpk.md#environment-variables-envid), [Variables](../rpk.md#variables).

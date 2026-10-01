@@ -10,6 +10,8 @@ save one).
 
 ```toml
 # tutorial 05: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -27,10 +29,10 @@ about = "https://example.com/hello"
 no-repair = true
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [dir.MenuFolder]
-path = "Programs/Example Software"
+path = "$(Programs)/Example Software"
 
 [file.Hello]
 dir = "INSTALLDIR"

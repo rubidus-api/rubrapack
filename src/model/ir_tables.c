@@ -199,9 +199,9 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
         rp_mem_free(c->alloc, run);
     }
     bool has_do = false, has_undo = false;
-    a->do_args = ir_get_str(c, t, "do", false, &has_do);
-    a->undo_args = ir_get_str(c, t, "undo", false, &has_undo);
-    a->check_args = ir_get_str(c, t, "check", false, NULL);
+    a->do_args = ir_get_fmt(c, t, "do", false, &has_do, IR_FMT_INSTALL);
+    a->undo_args = ir_get_fmt(c, t, "undo", false, &has_undo, IR_FMT_INSTALL);
+    a->check_args = ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL);
     if (a->check_args) {
         rp_srcdiag_add(c->d, ir_key_pos(t, "check"), "RP1318", true,
                        "[action.%s] check has no effect: nothing runs it yet; remove it", t->id);
@@ -333,13 +333,15 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
                 ERR(c, v->pos, "RP1316", "a multi value is an array of strings");
                 break;
             }
+            c->fmt = IR_FMT_INSTALL;
             r->items[r->item_count++] = ir_subst(c, &v->val.items[k]);
+            c->fmt = IR_FMT_NONE;
         }
         return;
     default:
         break;
     }
-    r->value = ir_get_str(c, t, "value", false, NULL);
+    r->value = ir_get_fmt(c, t, "value", false, NULL, r->type == RP_REG_EXPAND ? IR_FMT_RUNTIME : IR_FMT_INSTALL);
     if (r->value && (r->type == RP_REG_STRING || r->type == RP_REG_EXPAND) && strstr(r->value, "[~]")) {
         ERR(c, v->pos, "RP1316", "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array");
     }
@@ -379,7 +381,7 @@ void ir_parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
         }
         rp_mem_free(c->alloc, target);
     }
-    s->args = ir_get_str(c, t, "args", false, NULL);
+    s->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     s->description = ir_get_str(c, t, "description", false, NULL);
     s->working_dir = ir_get_str(c, t, "working-dir", false, NULL);
 }
@@ -459,7 +461,7 @@ void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x) {
         rp_mem_free(c->alloc, mode);
     }
     bool has_value = false;
-    x->value = ir_get_str(c, t, "value", false, &has_value);
+    x->value = ir_get_fmt(c, t, "value", false, &has_value, IR_FMT_INSTALL);
     if (x->mode != 2 && !has_value) ERR(c, t->pos, "RP1202", "[ini.%s] needs 'value'", t->id);
     if (x->mode == 2 && has_value) ERR(c, ir_key_pos(t, "value"), "RP1316", "mode = \"remove\" removes the key; it takes no 'value'");
     x->feature = ir_get_str(c, t, "feature", false, NULL);
@@ -496,7 +498,7 @@ void ir_parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
         ERR(c, ir_key_pos(t, "condition"), "RP1316", "condition has an unclosed quote or unbalanced parentheses");
     }
     if (r->condition && strlen(r->condition) > 240) ERR(c, ir_key_pos(t, "condition"), "RP1316", "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")");
-    r->message = ir_get_str(c, t, "message", true, NULL);
+    r->message = ir_get_fmt(c, t, "message", true, NULL, IR_FMT_INSTALL);
 }
 
 void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
@@ -544,11 +546,11 @@ void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x) {
         x->component_guid = ir_get_str(c, t, "component-guid", true, NULL);
         if (x->component_guid && !ir_guid_ok(x->component_guid)) ERR(c, ir_key_pos(t, "component-guid"), "RP1308", "component-guid must be a GUID");
     } else {
-        char *path = ir_get_str(c, t, "path", true, NULL);    // Base or Base/rel/path, like [dir.*]
+        char *path = ir_get_path(c, t, "path", true);         // $(Base) or $(Base)/rel/path, like [dir.*]
         if (path) {
             char *slash = strchr(path, '/');
             x->base = slash ? ir_dup_n(c, path, (size_t)(slash - path)) : ir_dup(c, path);
-            if (x->base && !ir_known_folder(x->base)) ERR(c, ir_key_pos(t, "path"), "RP1316", "path must start with a known folder (like ProgramFiles or System)");
+            if (x->base && !ir_known_folder(x->base)) ERR(c, ir_key_pos(t, "path"), "RP1316", "path must start with a Windows folder (like $(ProgramFiles) or $(System))");
             if (slash && slash[1]) {
                 x->path = ir_dup(c, slash + 1);
                 for (char *p = x->path; p && *p; ++p) {
@@ -597,7 +599,7 @@ void ir_parse_service(ctx_t *c, const rp_ttable_t *t, rp_ir_service_t *x) {
     }
     x->display_name = ir_get_str(c, t, "display-name", false, NULL);
     x->description = ir_get_str(c, t, "description", false, NULL);
-    x->args = ir_get_str(c, t, "args", false, NULL);
+    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     x->start = 3;
     char *start = ir_get_str(c, t, "start", false, NULL);
     if (start) {
@@ -722,7 +724,7 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
     x->description = ir_get_str(c, t, "description", false, NULL);
     x->target_file = file_ref(c, t, "target", true);
     x->icon_file = file_ref(c, t, "icon", false);
-    x->args = ir_get_str(c, t, "args", false, NULL);
+    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
 }
 
@@ -740,7 +742,7 @@ void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
     if (x->name && ir_in_list(x->name, taken)) ERR(c, ir_key_pos(t, "name"), "RP1316", "'%s' belongs to Windows or the browsers", x->name);
     x->description = ir_get_str(c, t, "description", false, NULL);
     x->target_file = file_ref(c, t, "target", true);
-    x->args = ir_get_str(c, t, "args", false, NULL);
+    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
 }
 
@@ -879,7 +881,7 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     if (e->name && (strchr("=+-!*", e->name[0]) || strchr(e->name, '=') || ir_has_control(e->name))) {
         ERR(c, ir_key_pos(t, "name"), "RP1316", "variable name '%s' may not contain '=' or start with = + - ! *", e->name);
     }
-    e->value = ir_get_str(c, t, "value", true, NULL);
+    e->value = ir_get_fmt(c, t, "value", true, NULL, IR_FMT_INSTALL);
     if (e->value && strstr(e->value, "[~]")) {
         ERR(c, ir_key_pos(t, "value"), "RP1316", "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it");
     }

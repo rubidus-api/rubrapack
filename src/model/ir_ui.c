@@ -502,7 +502,7 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
         else ir->ui_launch_file = ir_dup(c, launch + 5);
         rp_mem_free(c->alloc, launch);
     }
-    ir->ui_launch_args = ir_get_str(c, uit, "launch-args", false, NULL);
+    ir->ui_launch_args = ir_get_fmt(c, uit, "launch-args", false, NULL, IR_FMT_INSTALL);
     ir->ui_launch_default = ir_get_bool(c, uit, "launch-checked", true);
     if (ir->ui_launch_args && ir->ui_launch_file == NULL) ERR(c, ir_key_pos(uit, "launch-args"), "RP1316", "launch-args needs launch");
 }

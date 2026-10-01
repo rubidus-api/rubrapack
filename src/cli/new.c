@@ -83,6 +83,8 @@ static int fixed_starter(const char *name, const char *ext) {
         "#   rubrapack build \"%s%s\" -o \"%s.msi\"\n"
         "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n"
         "\n"
+        "format = 1                         # the source format this rubrapack reads\n"
+        "\n"
         "[package]\n"
         "name = \"%s\"\n"
         "%s"
@@ -93,7 +95,7 @@ static int fixed_starter(const char *name, const char *ext) {
         "language = \"en-US\"                # or \"ko-KR\"\n"
         "\n"
         "[dir.INSTALLDIR]\n"
-        "path = \"ProgramFiles/%s\"\n"
+        "path = \"$(ProgramFiles)/%s\"\n"
         "\n"
         "[files.App]\n"
         "dir = \"INSTALLDIR\"\n"
@@ -572,7 +574,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
              "# Every table and key is described in the manual: https://rubidus-api.github.io/rubrapack/\n\n",
              a->stem, a->ext, a->stem, a->ext, a->stem, a->stem, a->ext, a->stem);
     rp_buf_puts(&b, line);
-    rp_buf_puts(&b, "[package]\n");
+    rp_buf_puts(&b, "format = 1                       # the source format this rubrapack reads\n\n[package]\n");
     kv(&b, "name", a->name, NULL);
     char ascii[129];
     bool all_ascii;
@@ -614,7 +616,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
         rp_buf_puts(&b, "level = 2                        # offered, not ticked by default\n");
     }
     rp_buf_puts(&b, "\n[dir.INSTALLDIR]\n");
-    snprintf(line, sizeof line, "ProgramFiles/%s", a->install_dir);
+    snprintf(line, sizeof line, "$(ProgramFiles)/%s", a->install_dir);
     kv(&b, "path", line, strcmp(a->scope, "machine") == 0 ? NULL : "under %LOCALAPPDATA%\\Programs when installed per user");
     if (optional) kv(&b, "feature", "Main", NULL);
     char main_id[64] = "";
@@ -635,7 +637,7 @@ static proven_err_t make_source(const ans_t *a, uint8_t **out, size_t *len) {
         rpn_make_id(&ids, f, "_files", files_id, sizeof files_id);
         snprintf(line, sizeof line, "\n[dir.%s]\n", dir_id);
         rp_buf_puts(&b, line);
-        snprintf(line, sizeof line, "INSTALLDIR/%s", f);
+        snprintf(line, sizeof line, "$(INSTALLDIR)/%s", f);
         kv(&b, "path", line, NULL);
         if (i < 4096 && feat[i][0]) kv(&b, "feature", feat[i], NULL);
         else if (optional) kv(&b, "feature", "Main", NULL);      // a dir does not take its parent's feature

@@ -41,6 +41,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = &dummy };
     size_t errors = diags->errors, npkg = 0;
     const rp_ttable_t *chain = NULL;
+    ir_check_format(&c);
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
         if (strcmp(t->kind, "chain") == 0 || strcmp(t->kind, "define") == 0) {

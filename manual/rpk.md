@@ -44,6 +44,8 @@ line, comment and table as it was. For scripts: `rubrapack edit app.toml --set d
 the folder:
 
 ```toml
+format = 1
+
 [package]
 name = "My App"
 manufacturer = "My Company"            # shown in Settings > Installed apps
@@ -56,7 +58,7 @@ ui = "installdir"
 VERSION = "1.0.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/My App"
+path = "$(ProgramFiles)/My App"
 
 [file.App]
 dir = "INSTALLDIR"
@@ -90,6 +92,8 @@ optional. `license` adds the license page (Next stays off until "I accept" is ti
 always installed and the samples are offered but not selected:
 
 ```toml
+format = 1
+
 [package]
 name = "My App"
 manufacturer = "My Company"
@@ -113,11 +117,11 @@ description = "Example documents to try the program with."
 level = 2                              # offered in the tree, not selected by default
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/My App"
+path = "$(ProgramFiles)/My App"
 feature = "Main"
 
 [dir.SamplesDir]
-path = "INSTALLDIR/samples"
+path = "$(INSTALLDIR)/samples"
 feature = "Samples"
 
 [file.App]
@@ -158,6 +162,8 @@ Installed apps (Change), and the command line does the same without dialogs:
 ## Example
 
 ```toml
+format = 1
+
 [define]
 VERSION = "1.4.0"
 
@@ -170,10 +176,10 @@ upgrade-code = "{0B9A6C1E-3D2F-4A5B-8C7D-6E5F4A3B2C1D}" # generate your own once
 language = "en-US"                                  # or "ko-KR"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Example App"
+path = "$(ProgramFiles)/Example App"
 
 [dir.Docs]
-path = "INSTALLDIR/docs"
+path = "$(INSTALLDIR)/docs"
 
 [file.MainExe]
 dir = "INSTALLDIR"
@@ -190,6 +196,14 @@ rubrapack build example.toml -o example.msi -D VERSION=1.4.1
 rubrapack inspect example.msi File
 ```
 
+## Source format
+
+The first key of a source, before any table, is `format = 1`: the version of the source format,
+one whole number. It goes up only when sources must be written differently; new tables and keys
+do not change it. A source without it is taken for one of rubrapack 0.18 or earlier and draws a
+warning (`RP1108`); what changed since is then refused where it is written - format 1 starts paths
+with `$(...)` (see [Paths](#paths)). A source with a higher number needs a newer rubrapack.
+
 ## The TOML subset
 
 Accepted: tables `[kind]` and `[kind.ID]`, bare keys (`A-Z a-z 0-9 _ -`), basic strings `"..."`
@@ -199,7 +213,7 @@ UTF-8 with or without a BOM, or UTF-16LE with a BOM; LF or CRLF.
 
 Refused with an error: multi-line strings, inline tables, arrays of tables, dotted and quoted
 keys, table names with more than two parts, floats, dates, `_` in numbers, octal/binary numbers,
-empty or mixed arrays, keys before the first table. Table and key order never matters.
+empty or mixed arrays, keys before the first table other than `format`. Table and key order never matters.
 
 ## Tables
 
@@ -208,7 +222,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
-| `[dir.ID]` | **path** = `Base/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
+| `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
@@ -223,7 +237,7 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
-| `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "Fonts"`), title |
+| `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "$(Fonts)"`), title |
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
@@ -239,10 +253,12 @@ empty or mixed arrays, keys before the first table. Table and key order never ma
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
 
-`Base` in a dir path is another dir ID or one of: `ProgramFiles` (64-bit for x64/arm64, 32-bit
-for x86), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
-`StartMenu`, `Programs`, `Desktop`, `Startup`, `Windows`, `System`, `Fonts`, `Temp`. A path may
-also be a known folder alone (`path = "Fonts"`) for files that go into that folder itself.
+`$(Base)` in a dir path is another dir ID or a Windows folder: `$(ProgramFiles)` (64-bit for
+x64/arm64, 32-bit for x86), `$(ProgramFiles(x86))`, `$(CommonProgramFiles)`, `$(APPDATA)`,
+`$(LOCALAPPDATA)`, `$(ProgramData)`, `$(TEMP)`, `$(SystemRoot)`, and the folders without an
+environment variable `$(StartMenu)`, `$(Programs)`, `$(Desktop)`, `$(Startup)`, `$(System)`,
+`$(Fonts)` - see [Windows names](#windows-names). A path may also be a folder alone
+(`path = "$(Fonts)"`) for files that go into that folder itself.
 
 IDs are `[A-Za-z_][A-Za-z0-9_]*` (at most 72 characters, 38 for features) and must differ across
 dirs, files and features.
@@ -271,11 +287,11 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 - The version is `[package] version` with four parts (`1.2.3` becomes `1.2.3.0`), the
   architecture `[package] arch`, the language `[package] language`.
 - The package's own folder is that of the first `[msix-app.*]`'s executable - the dir anchored in a
-  known location, such as `ProgramFiles/Example App`. Files in other known locations go into the
+  known location, such as `$(ProgramFiles)/Example App`. Files in other known locations go into the
   package's virtual file system, where the app sees them at their usual place: Program Files
-  (`VFS\ProgramFilesX64`, or `X86` for an x86 package and for `ProgramFiles32`), `CommonFiles`,
-  `System`, `Windows` and `CommonAppData` (ProgramData). There is none for the user's `AppData` or
-  `LocalAppData`, nor for `Temp`: files there are an error (`RP1609`). A font in `Fonts` goes in
+  (`VFS\ProgramFilesX64`, or `X86` for an x86 package and for `ProgramFiles(x86)`),
+  `CommonProgramFiles`, `System`, `SystemRoot` and `ProgramData`. There is none for the user's
+  `APPDATA` or `LOCALAPPDATA`, nor for `TEMP`: files there are an error (`RP1609`). A font in `Fonts` goes in
   through its `[font.*]`; the Start menu, Programs and Desktop folders take shortcuts
   (`[shortcut.*]`), and Startup a startup task (`[msix-extension.*]`).
 - Several `[msix-app.*]` tables make several entries of one package (at most 100); the first one
@@ -356,7 +372,7 @@ omitted - during installation.
 
 ```toml
 [dir.Menu]
-path = "Programs/Example"         # Start menu > Example
+path = "$(Programs)/Example"         # Start menu > Example
 
 [shortcut.Settings]
 dir = "Menu"
@@ -512,7 +528,7 @@ example) is added at its usual place. rubrapack does not merge configurable modu
 
 A search runs before anything else and puts what it found into a public property (empty when
 nothing is found): a registry value's data, the full path of a file (`path` = a known folder and a
-relative path, like `System` or `ProgramFiles/Example`; `min-version` for program files), a folder,
+relative path, like `$(System)` or `$(ProgramFiles)/Example`; `min-version` for program files), a folder,
 or the key file of another product's component. A requirement stops a first installation with its
 message when its `condition` is false (repair and removal are never blocked); conditions use Windows Installer's syntax
 (`VersionNT >= 603`, `FOUND_TOOL`, `NOT OLDSETTING`) and may test search results.
@@ -521,7 +537,7 @@ message when its `condition` is false (repair and removal are never blocked); co
 [search.Tool]
 property = "FOUND_TOOL"
 kind = "file"
-path = "System"
+path = "$(System)"
 file = "tool.exe"
 
 [require.Tool]
@@ -567,7 +583,7 @@ installs for the current user without elevation: `ProgramFiles` becomes
 a per-machine installation is refused. `scope = "dual"` installs per user by default and per
 machine from an elevated prompt with `msiexec /i x.msi ALLUSERS=1 MSIINSTALLPERUSER=""`; its
 registry values use `HKMU`, which is `HKLM` or `HKCU` as installed. Services, fonts, permissions
-and the machine folders (`Windows`, `System`, `Fonts`, `CommonAppData`) need `scope = "machine"`.
+and the machine folders (`SystemRoot`, `System`, `Fonts`, `ProgramData`) need `scope = "machine"`.
 
 ### Cabinets
 
@@ -640,6 +656,8 @@ out-of-disk-space warning. The dialogs only collect values that all have default
 installs without a window.
 
 ```toml
+format = 1
+
 [package]
 ui = "installdir"
 license = "LICENSE.txt"           # the Install/Next button stays disabled until it is accepted
@@ -849,11 +867,55 @@ when = "DESK"
 
 ### Variables
 
-`$(NAME)` inside a string value is replaced once, from `-D NAME=value` on the command line first,
-then `[define]`. The result is not read again (a value containing `$(X)` stays literal).
-`$$` is a literal `$`. An undefined name is an error. `$(ARCH)` is built in, unless `-D` or
-`[define]` defines it: the architecture being built (`x64`, `arm64` or `x86`) - so one source can
-name each architecture's program, as `source = "bin/$(ARCH)/app.exe"`.
+`$(NAME)` is the one way to put a name into a string, and `$$` is a literal `$`. Every name is
+replaced once; the result is not read again (a value containing `$(X)` stays literal). A name is
+
+- a **build variable**, anywhere: `-D NAME=value` on the command line first, then `[define]`.
+  `$(ARCH)` is built in, unless `-D` or `[define]` defines it: the architecture being built (`x64`,
+  `arm64` or `x86`) - so one source can name each architecture's program, as
+  `source = "bin/$(ARCH)/app.exe"`. An undefined name is an error (`RP1403`).
+- a **dir ID** or a **Windows name**, at the start of a path ([Paths](#paths)) and in the values
+  Windows Installer fills in during installation: `[registry.*]`, `[env.*]` and `[ini.*]` values,
+  `args` of shortcuts, services, file types and links, `[action.*]` `do`/`undo`/`check`,
+  `[require.*]` `message` and `[ui]` `launch-args`. Anywhere else it is an error (`RP1404`).
+
+A build variable may not take a Windows name or a dir ID (`RP1404`).
+
+### Windows names
+
+The names of [Windows folders and environment variables](basics/09-folders-and-environment-variables.md),
+written with Windows' spelling; letter case does not matter (`$(appdata)` is `$(APPDATA)`). In a
+value they become what Windows Installer fills in at install time, for the user who installs - or,
+in a `type = "expand"` registry value, the environment variable that the reading program expands
+at run time, for the user who runs it:
+
+| Name | Path base | Install time (64-bit / 32-bit package) | Run time (`type = "expand"`) |
+|---|---|---|---|
+| `ProgramFiles` | yes | `[ProgramFiles64Folder]` / `[ProgramFilesFolder]` | `%ProgramFiles%` |
+| `ProgramFiles(x86)` | yes | `[ProgramFilesFolder]` | `%ProgramFiles(x86)%` |
+| `ProgramW6432` | - | `[ProgramFiles64Folder]` / `[%ProgramW6432]` | `%ProgramW6432%` |
+| `CommonProgramFiles` | yes | `[CommonFiles64Folder]` / `[CommonFilesFolder]` | `%CommonProgramFiles%` |
+| `CommonProgramFiles(x86)` | - | `[CommonFilesFolder]` | `%CommonProgramFiles(x86)%` |
+| `CommonProgramW6432` | - | `[CommonFiles64Folder]` / `[%CommonProgramW6432]` | `%CommonProgramW6432%` |
+| `ProgramData`, `ALLUSERSPROFILE` | yes | `[CommonAppDataFolder]` | `%ProgramData%` ... |
+| `APPDATA` | yes | `[AppDataFolder]` | `%APPDATA%` |
+| `LOCALAPPDATA` | yes | `[LocalAppDataFolder]` | `%LOCALAPPDATA%` |
+| `TEMP`, `TMP` | yes | `[TempFolder]` | `%TEMP%` ... |
+| `SystemRoot`, `windir` | yes | `[WindowsFolder]` | `%SystemRoot%` ... |
+| `System` | yes | `[System64Folder]` / `[SystemFolder]` | - |
+| `Fonts`, `Desktop`, `StartMenu`, `Programs`, `Startup` | yes | `[FontsFolder]`, `[DesktopFolder]`, `[StartMenuFolder]`, `[ProgramMenuFolder]`, `[StartupFolder]` | - |
+| `USERNAME` | - | `[LogonUser]` | `%USERNAME%` |
+| `COMPUTERNAME` | - | `[ComputerName]` | `%COMPUTERNAME%` |
+| `SystemDrive`, `USERPROFILE`, `PUBLIC`, `HOMEDRIVE`, `HOMEPATH`, `USERDOMAIN`, `LOGONSERVER`, `ComSpec`, `Path`, `PATHEXT`, `OS`, `PROCESSOR_ARCHITECTURE`, `NUMBER_OF_PROCESSORS` | - | `[%NAME]` | `%NAME%` |
+
+A dir ID in a value becomes `[ID]`, its folder at install time. A folder's Windows Installer
+value ends with `\`, so a `\` right after a folder name is dropped: `'$(INSTALLDIR)\app.exe'`
+becomes `[INSTALLDIR]app.exe`. A folder without an environment variable cannot stand in a
+`type = "expand"` value (`RP1404`). An MSIX has no install time: a value that needs one is refused
+there (`RP1612`, `RP1613`), while `%NAME%` in an expandable value works.
+
+`[NAME]` and `%NAME%` written as they are pass through unchanged, for what has no `$(...)` name:
+`[#FileID]`, `[ProductVersion]`, `[\[]` for a literal `[`, `%1` in file type arguments.
 
 ### Program files
 
@@ -890,11 +952,15 @@ refused (lock it with `[permission.*]`).
 
 ```toml
 [dir.INSTALLDIR]
-path = "ProgramFiles/Example"
+path = "$(ProgramFiles)/Example"
 guard = true
 ```
 
 ### Paths
+
+A target path - `[dir.*]` and `[search.*]` `path` - starts with a folder: a dir ID or a Windows
+name that is a path base, as `"$(ProgramFiles)/Example"` or `"$(INSTALLDIR)/docs"`, then `/` and
+the folders below. Build variables may follow (`"$(INSTALLDIR)/v$(VERSION)"`).
 
 Source paths are relative to the source file and use `/`. Absolute paths, `\`, symbolic links and
 missing files are errors. Target names may use any Unicode text except what Windows forbids
@@ -1135,10 +1201,10 @@ line and column it is about. The first two digits say what kind of problem it is
 |---|---|---|
 | RP00xx | the command line: an unknown command or option, a file that cannot be read or written, a difference a transform cannot carry (`RP0013`) | `rubrapack help <command>` |
 | RP10xx | the source file's encoding: not UTF-8 (or UTF-16 with a BOM), stray carriage returns | save the file as UTF-8 |
-| RP11xx | TOML outside the subset rubrapack reads: multi-line strings, inline tables, a table defined twice | [The TOML subset](#the-toml-subset) |
+| RP11xx | TOML outside the subset rubrapack reads: multi-line strings, inline tables, a table defined twice; `format` missing or too new (RP1108) | [The TOML subset](#the-toml-subset), [Source format](#source-format) |
 | RP12xx | tables and keys: an unknown table or key (with a suggestion), a required key or table missing, something without a feature once features exist | [Tables](#tables) |
 | RP13xx | values: IDs (unique across all tables, not reserved), GUIDs, versions, numbers out of range, references to things that do not exist | the table's section |
-| RP14xx | variables: `$(NAME)` without a value, `$(` not closed | [Variables](#variables) |
+| RP14xx | variables: `$(NAME)` without a value, `$(` not closed, a Windows name or dir ID where it cannot stand | [Variables](#variables) |
 | RP15xx | the files to install: not found, a directory, a link, a glob without a match, a program for another architecture, names too long, a file that changed during the build, a package too large | [Paths](#paths), [Program files](#program-files) |
 | RP16xx | MSIX: what an MSIX package needs, and what it cannot carry | [MSIX packages](#msix-packages) |
 | RP19xx | a feature this rubrapack does not provide | - |

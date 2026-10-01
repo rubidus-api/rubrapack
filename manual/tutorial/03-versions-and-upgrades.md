@@ -10,6 +10,8 @@ version be a *variable* with a default, and give the real number when you build:
 
 ```toml
 # tutorial 03: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -22,7 +24,7 @@ downgrade-message = "A newer Hello is already installed. Remove it first if you 
 VERSION = "1.0.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

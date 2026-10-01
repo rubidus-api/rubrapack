@@ -7,6 +7,8 @@
 
 ```toml
 # tutorial 14: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -115,7 +117,7 @@ value = "en"
 value = "1"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

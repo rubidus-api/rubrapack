@@ -24,6 +24,8 @@ C:\work\hello\
 
 ```toml
 # tutorial 04: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -35,13 +37,13 @@ upgrade-code = "{3F2A6C1D-8B4E-4F7A-9C2D-5E6F7A8B9C0D}"
 VERSION = "1.2.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [dir.DocsDir]
-path = "INSTALLDIR/docs"
+path = "$(INSTALLDIR)/docs"
 
 [dir.SamplesDir]
-path = "INSTALLDIR/samples"
+path = "$(INSTALLDIR)/samples"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -99,18 +101,19 @@ C:\work\hello> rubrapack inspect hello.msi --files
 
 ## 폴더: `[dir.ID]`
 
-dir 의 `path` 는 *알려진 폴더*나 다른 dir 에서 시작해 그 아래 폴더 이름을 잇는다:
+dir 의 `path` 는 Windows 폴더나 다른 dir 을 `$(...)` 로 써서 시작하고, 그 아래 폴더 이름을 잇는다:
 
 | `path` | 사용자 컴퓨터에서(흔한 경우) |
 |---|---|
-| `ProgramFiles/Hello` | `C:\Program Files\Hello` (`x86` 패키지는 `C:\Program Files (x86)\Hello`) |
-| `INSTALLDIR/docs` | `C:\Program Files\Hello\docs` - 사용자가 어디에 두든 dir `INSTALLDIR` 아래 |
-| `CommonAppData/Hello` | `C:\ProgramData\Hello` - 모든 사용자가 함께 쓰는 데이터 |
-| `LocalAppData/Hello` | `C:\Users\<이름>\AppData\Local\Hello` |
+| `$(ProgramFiles)/Hello` | `C:\Program Files\Hello` (`x86` 패키지는 `C:\Program Files (x86)\Hello`) |
+| `$(INSTALLDIR)/docs` | `C:\Program Files\Hello\docs` - 사용자가 어디에 두든 dir `INSTALLDIR` 아래 |
+| `$(ProgramData)/Hello` | `C:\ProgramData\Hello` - 모든 사용자가 함께 쓰는 데이터 |
+| `$(LOCALAPPDATA)/Hello` | `C:\Users\<이름>\AppData\Local\Hello` |
 
-`ProgramFiles/Hello` 를 되풀이하지 않고 `INSTALLDIR` 위에 쌓는 것은 사용자가 설치 폴더를 고를 수 있게 되면(6장)
-중요해진다: 그러면 `docs` 가 사용자가 고른 폴더를 따라간다. 알려진 폴더 전체 목록은 참조 부의
-[표](../rpk.md#표)에 있다.
+Windows 폴더는 환경 변수의 이름을 그대로 쓴다(`%ProgramData%`, `%LOCALAPPDATA%`). 기초 지식
+[9](../basics/09-folders-and-environment-variables.md)장이 이것들을 설명한다. `$(ProgramFiles)/Hello` 를 되풀이하지
+않고 `INSTALLDIR` 위에 쌓는 것은 사용자가 설치 폴더를 고를 수 있게 되면(6장) 중요해진다: 그러면 `docs` 가
+사용자가 고른 폴더를 따라간다. 전체 목록은 참조 부의 [Windows 이름](../rpk.md#windows-이름)에 있다.
 
 ## 파일 하나: `[file.ID]`
 

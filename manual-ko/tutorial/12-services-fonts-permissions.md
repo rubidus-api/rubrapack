@@ -9,6 +9,8 @@
 
 ```toml
 # tutorial 12: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -21,13 +23,13 @@ reboot = "suppress"
 VERSION = "1.10.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [dir.DataDir]
-path = "CommonAppData/Hello"
+path = "$(ProgramData)/Hello"
 
 [dir.FontsDir]
-path = "Fonts"
+path = "$(Fonts)"
 
 [file.Hello]
 dir = "INSTALLDIR"
@@ -81,7 +83,7 @@ sddl = "D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1301bf;;;BU)"
 
 ## 글꼴: `[font.ID]`
 
-글꼴은 파일을 글꼴 폴더에 두고 - `path = "Fonts"`, 알려진 폴더만 쓴 `[dir.FontsDir]` - `[font.ID]` 로 등록해
+글꼴은 파일을 글꼴 폴더에 두고 - `path = "$(Fonts)"`, 폴더 하나만 쓴 `[dir.FontsDir]` - `[font.ID]` 로 등록해
 설치한다. `title` 은 Windows 가 보이는 이름이다. 없으면 Windows 가 글꼴 파일에서 이름을 읽는다. 설치 뒤 모든
 프로그램이 그 글꼴을 보고, 제거는 등록을 풀고 파일을 지운다.
 

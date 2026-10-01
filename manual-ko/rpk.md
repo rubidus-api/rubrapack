@@ -37,6 +37,8 @@ rubrapack new app.toml      # 묻고 나서 app.toml 을 쓰고 검사한다
 시작 메뉴에 넣고, 사용자가 폴더를 바꿀 수 있는 대화창을 보인다:
 
 ```toml
+format = 1
+
 [package]
 name = "My App"
 manufacturer = "My Company"            # 설정 > 설치된 앱에 보인다
@@ -49,7 +51,7 @@ ui = "installdir"
 VERSION = "1.0.0"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/My App"
+path = "$(ProgramFiles)/My App"
 
 [file.App]
 dir = "INSTALLDIR"
@@ -82,6 +84,8 @@ rubrapack build app.toml -o app-1.0.1.msi -D VERSION=1.0.1    # 다음 판
 보여 주되 고르지 않은 상태로 둔다:
 
 ```toml
+format = 1
+
 [package]
 name = "My App"
 manufacturer = "My Company"
@@ -105,11 +109,11 @@ description = "Example documents to try the program with."
 level = 2                              # offered in the tree, not selected by default
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/My App"
+path = "$(ProgramFiles)/My App"
 feature = "Main"
 
 [dir.SamplesDir]
-path = "INSTALLDIR/samples"
+path = "$(INSTALLDIR)/samples"
 feature = "Samples"
 
 [file.App]
@@ -148,6 +152,8 @@ target = "file:App"
 ## 예
 
 ```toml
+format = 1
+
 [define]
 VERSION = "1.4.0"
 
@@ -160,10 +166,10 @@ upgrade-code = "{0B9A6C1E-3D2F-4A5B-8C7D-6E5F4A3B2C1D}" # 한 번 만들어 영�
 language = "en-US"                                  # 또는 "ko-KR"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Example App"
+path = "$(ProgramFiles)/Example App"
 
 [dir.Docs]
-path = "INSTALLDIR/docs"
+path = "$(INSTALLDIR)/docs"
 
 [file.MainExe]
 dir = "INSTALLDIR"
@@ -180,6 +186,13 @@ rubrapack build example.toml -o example.msi -D VERSION=1.4.1
 rubrapack inspect example.msi File
 ```
 
+## 원본 형식
+
+원본의 첫 키는 어떤 표보다도 앞에 오는 `format = 1` 이다: 원본 형식의 판을 정수 하나로 적는다. 원본을 다르게
+써야 할 때만 올라가고, 표나 키가 새로 생겨도 그대로다. 이것이 없는 원본은 rubrapack 0.18 이하의 것으로 보고
+경고(`RP1108`)를 낸다. 그 뒤에 바뀐 것은 쓰인 자리에서 거부한다 - 형식 1 은 경로를 `$(...)` 로 시작한다
+([경로](#경로)). 더 큰 수가 적힌 원본에는 더 새 rubrapack 이 필요하다.
+
 ## TOML 부분집합
 
 받는 것: `[kind]`·`[kind.ID]` 표, 맨 키(`A-Z a-z 0-9 _ -`), TOML 이스케이프가 되는 기본 문자열
@@ -188,7 +201,7 @@ rubrapack inspect example.msi File
 BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF 나 CRLF.
 
 오류로 거부하는 것: 여러 줄 문자열, 인라인 표, 표 배열, 점으로 이은 키와 따옴표 키, 세 부분 이상의
-표 이름, 부동소수, 날짜, 숫자 속 `_`, 8진·2진 수, 빈 배열이나 섞인 배열, 첫 표보다 앞의 키. 표와
+표 이름, 부동소수, 날짜, 숫자 속 `_`, 8진·2진 수, 빈 배열이나 섞인 배열, 첫 표보다 앞의 키(`format` 은 빼고). 표와
 키의 순서는 아무 의미가 없다.
 
 ## 표
@@ -213,7 +226,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`) |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
-| `[font.ID]` | **file**(`path = "Fonts"` 인 dir 에 드는 파일의 `file:ID`), title |
+| `[font.ID]` | **file**(`path = "$(Fonts)"` 인 dir 에 드는 파일의 `file:ID`), title |
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
@@ -229,10 +242,11 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
 
-dir 경로의 `기준`은 다른 dir ID 이거나 다음 가운데 하나다: `ProgramFiles`(x64/arm64 는 64비트,
-x86 은 32비트), `ProgramFiles32`, `CommonFiles`, `AppData`, `LocalAppData`, `CommonAppData`,
-`StartMenu`, `Programs`, `Desktop`, `Startup`, `Windows`, `System`, `Fonts`, `Temp`. 알려진 폴더
-하나만 쓴 경로(`path = "Fonts"`)는 그 폴더 바로 안에 드는 파일에 쓴다.
+dir 경로의 `$(기준)`은 다른 dir ID 이거나 Windows 폴더다: `$(ProgramFiles)`(x64/arm64 는 64비트,
+x86 은 32비트), `$(ProgramFiles(x86))`, `$(CommonProgramFiles)`, `$(APPDATA)`, `$(LOCALAPPDATA)`,
+`$(ProgramData)`, `$(TEMP)`, `$(SystemRoot)`, 그리고 환경 변수가 없는 폴더 `$(StartMenu)`, `$(Programs)`,
+`$(Desktop)`, `$(Startup)`, `$(System)`, `$(Fonts)` - [Windows 이름](#windows-이름) 참고. 폴더 하나만 쓴
+경로(`path = "$(Fonts)"`)는 그 폴더 바로 안에 드는 파일에 쓴다.
 
 ID 는 `[A-Za-z_][A-Za-z0-9_]*` 꼴이고(최대 72자, feature 는 38자) dir·파일·feature 를 통틀어
 서로 달라야 한다.
@@ -260,11 +274,11 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
 
 - 판은 `[package] version` 을 네 부분으로 늘린 것(`1.2.3` 은 `1.2.3.0`), 아키텍처는
   `[package] arch`, 언어는 `[package] language` 다.
-- 패키지 자신의 폴더는 첫 `[msix-app.*]` 실행 파일이 드는 폴더 - `ProgramFiles/Example App` 처럼
+- 패키지 자신의 폴더는 첫 `[msix-app.*]` 실행 파일이 드는 폴더 - `$(ProgramFiles)/Example App` 처럼
   알려진 자리에 붙은 dir - 다. 다른 알려진 자리의 파일은 패키지의 가상 파일 시스템(VFS)에 들어가고,
   앱은 그것을 늘 보던 자리에서 본다: Program Files(`VFS\ProgramFilesX64`, x86 패키지와
-  `ProgramFiles32` 는 `X86`), `CommonFiles`, `System`, `Windows`, `CommonAppData`(ProgramData).
-  사용자의 `AppData`·`LocalAppData` 와 `Temp` 에는 가상 폴더가 없어 거기 드는 파일은 오류다
+  `ProgramFiles(x86)` 는 `X86`), `CommonProgramFiles`, `System`, `SystemRoot`, `ProgramData`.
+  사용자의 `APPDATA`·`LOCALAPPDATA` 와 `TEMP` 에는 가상 폴더가 없어 거기 드는 파일은 오류다
   (`RP1609`). `Fonts` 의 글꼴은 그 `[font.*]` 로 들어가고, 시작 메뉴·Programs·바탕화면 폴더는
   바로가기(`[shortcut.*]`)로, Startup 은 시작 작업(`[msix-extension.*]`)으로 쓴다.
 - `[msix-app.*]` 표가 여럿이면 한 패키지에 항목이 여럿 생긴다(최대 100개). 패키지 로고는 첫째 것이다.
@@ -338,7 +352,7 @@ DLL 이 이전 값을 되살린다. 값 하나가 구성 요소(component) 하�
 
 ```toml
 [dir.Menu]
-path = "Programs/Example"         # 시작 메뉴 > Example
+path = "$(Programs)/Example"         # 시작 메뉴 > Example
 
 [shortcut.Settings]
 dir = "Menu"
@@ -484,7 +498,7 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 ### 검색과 요구: `[search.ID]`, `[require.ID]`
 
 검색은 무엇보다 먼저 실행되고 찾은 것을 공개 속성에 넣는다(못 찾으면 비어 있다): 레지스트리 값의 데이터,
-파일의 전체 경로(`path` = 알려진 폴더와 상대 경로, 예 `System` 이나 `ProgramFiles/Example`; 프로그램
+파일의 전체 경로(`path` = 알려진 폴더와 상대 경로, 예 `$(System)` 이나 `$(ProgramFiles)/Example`; 프로그램
 파일은 `min-version`), 폴더, 또는 다른 제품 구성 요소의 키 파일. 요구 사항은 `condition` 이 거짓이면
 그 메시지로 첫 설치를 멈춘다(복구와 제거는 막지 않는다). 조건은 Windows Installer 의 문법을 쓰고
 (`VersionNT >= 603`, `FOUND_TOOL`, `NOT OLDSETTING`) 검색 결과를 볼 수 있다.
@@ -493,7 +507,7 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 [search.Tool]
 property = "FOUND_TOOL"
 kind = "file"
-path = "System"
+path = "$(System)"
 file = "tool.exe"
 
 [require.Tool]
@@ -538,7 +552,7 @@ name = "InstallDir"
 은 기본으로 사용자별로 설치하고, 관리자 명령창에서
 `msiexec /i x.msi ALLUSERS=1 MSIINSTALLPERUSER=""` 로 하면 컴퓨터 전체로 설치한다. 그 레지스트리
 값은 설치된 방식에 따라 `HKLM` 이나 `HKCU` 가 되는 `HKMU` 를 쓴다. 서비스, 글꼴, 권한과 컴퓨터
-폴더(`Windows`, `System`, `Fonts`, `CommonAppData`)는 `scope = "machine"` 이 필요하다.
+폴더(`SystemRoot`, `System`, `Fonts`, `ProgramData`)는 `scope = "machine"` 이 필요하다.
 
 ### 캐비닛
 
@@ -604,6 +618,8 @@ msiexec /x {ProductCode} /qn
 모두 기본값이 있는 값만 모으므로 `/qn` 은 여전히 창 없이 설치한다.
 
 ```toml
+format = 1
+
 [package]
 ui = "installdir"
 license = "LICENSE.txt"           # 동의할 때까지 설치/다음 단추가 꺼져 있다
@@ -807,11 +823,53 @@ when = "DESK"
 
 ### 변수
 
-문자열 값 속 `$(NAME)` 은 한 번 치환된다. 명령줄의 `-D NAME=value` 가 먼저, 그다음 `[define]` 이다.
-치환 결과는 다시 읽지 않는다(`$(X)` 가 든 값은 그대로 남는다). `$$` 는 `$` 한 글자다. 정의되지 않은
-이름은 오류다. `$(ARCH)` 는 `-D` 나 `[define]` 이 정의하지 않는 한 내장이다: 짓고 있는
-아키텍처(`x64`, `arm64`, `x86`) - 그래서 원본 하나가 `source = "bin/$(ARCH)/app.exe"` 처럼
-아키텍처마다 제 프로그램을 가리킬 수 있다.
+문자열에 이름을 넣는 방법은 `$(NAME)` 하나뿐이고, `$$` 는 `$` 한 글자다. 이름은 한 번만 바뀌고 그 결과는
+다시 읽지 않는다(`$(X)` 가 든 값은 그대로 남는다). 이름은 다음 가운데 하나다.
+
+- **빌드 변수**, 어디서나: 명령줄의 `-D NAME=value` 가 먼저, 그다음 `[define]`. `$(ARCH)` 는 `-D` 나
+  `[define]` 이 정의하지 않는 한 내장이다: 짓고 있는 아키텍처(`x64`, `arm64`, `x86`) - 그래서 원본 하나가
+  `source = "bin/$(ARCH)/app.exe"` 처럼 아키텍처마다 제 프로그램을 가리킬 수 있다. 정의되지 않은 이름은
+  오류다(`RP1403`).
+- **dir ID** 나 **Windows 이름**, 경로의 맨 앞([경로](#경로))과 Windows Installer 가 설치하는 동안 채우는
+  값에서: `[registry.*]`·`[env.*]`·`[ini.*]` 의 값, 바로 가기·서비스·파일 형식·링크의 `args`,
+  `[action.*]` 의 `do`/`undo`/`check`, `[require.*]` 의 `message`, `[ui]` 의 `launch-args`. 그 밖의 자리에서는
+  오류다(`RP1404`).
+
+빌드 변수에는 Windows 이름이나 dir ID 를 붙일 수 없다(`RP1404`).
+
+### Windows 이름
+
+[Windows 폴더와 환경 변수](basics/09-folders-and-environment-variables.md)의 이름이고, Windows 의 철자로
+쓴다. 대소문자는 가리지 않는다(`$(appdata)` 는 `$(APPDATA)`). 값 안에서는 Windows Installer 가 설치할 때
+설치하는 사용자의 것으로 채우는 것이 된다 - `type = "expand"` 레지스트리 값에서는, 읽는 프로그램이 실행할 때
+실행하는 사용자의 것으로 푸는 환경 변수가 된다:
+
+| 이름 | 경로 기준 | 설치할 때(64비트 / 32비트 패키지) | 실행할 때(`type = "expand"`) |
+|---|---|---|---|
+| `ProgramFiles` | 예 | `[ProgramFiles64Folder]` / `[ProgramFilesFolder]` | `%ProgramFiles%` |
+| `ProgramFiles(x86)` | 예 | `[ProgramFilesFolder]` | `%ProgramFiles(x86)%` |
+| `ProgramW6432` | - | `[ProgramFiles64Folder]` / `[%ProgramW6432]` | `%ProgramW6432%` |
+| `CommonProgramFiles` | 예 | `[CommonFiles64Folder]` / `[CommonFilesFolder]` | `%CommonProgramFiles%` |
+| `CommonProgramFiles(x86)` | - | `[CommonFilesFolder]` | `%CommonProgramFiles(x86)%` |
+| `CommonProgramW6432` | - | `[CommonFiles64Folder]` / `[%CommonProgramW6432]` | `%CommonProgramW6432%` |
+| `ProgramData`, `ALLUSERSPROFILE` | 예 | `[CommonAppDataFolder]` | `%ProgramData%` ... |
+| `APPDATA` | 예 | `[AppDataFolder]` | `%APPDATA%` |
+| `LOCALAPPDATA` | 예 | `[LocalAppDataFolder]` | `%LOCALAPPDATA%` |
+| `TEMP`, `TMP` | 예 | `[TempFolder]` | `%TEMP%` ... |
+| `SystemRoot`, `windir` | 예 | `[WindowsFolder]` | `%SystemRoot%` ... |
+| `System` | 예 | `[System64Folder]` / `[SystemFolder]` | - |
+| `Fonts`, `Desktop`, `StartMenu`, `Programs`, `Startup` | 예 | `[FontsFolder]`, `[DesktopFolder]`, `[StartMenuFolder]`, `[ProgramMenuFolder]`, `[StartupFolder]` | - |
+| `USERNAME` | - | `[LogonUser]` | `%USERNAME%` |
+| `COMPUTERNAME` | - | `[ComputerName]` | `%COMPUTERNAME%` |
+| `SystemDrive`, `USERPROFILE`, `PUBLIC`, `HOMEDRIVE`, `HOMEPATH`, `USERDOMAIN`, `LOGONSERVER`, `ComSpec`, `Path`, `PATHEXT`, `OS`, `PROCESSOR_ARCHITECTURE`, `NUMBER_OF_PROCESSORS` | - | `[%NAME]` | `%NAME%` |
+
+값 안의 dir ID 는 `[ID]`, 곧 설치할 때의 그 폴더가 된다. 폴더의 Windows Installer 값은 `\` 로 끝나므로 폴더
+이름 바로 뒤의 `\` 하나는 빠진다: `'$(INSTALLDIR)\app.exe'` 는 `[INSTALLDIR]app.exe` 가 된다. 환경 변수가 없는
+폴더는 `type = "expand"` 값에 쓸 수 없다(`RP1404`). MSIX 에는 설치할 때가 없다: 그것이 필요한 값은 거기서
+거부하고(`RP1612`, `RP1613`), 펼칠 수 있는 값 안의 `%NAME%` 은 그대로 쓸 수 있다.
+
+있는 그대로 쓴 `[NAME]` 과 `%NAME%` 은 바뀌지 않고 지나간다. `$(...)` 이름이 없는 것을 위해서다:
+`[#FileID]`, `[ProductVersion]`, 글자 `[` 를 뜻하는 `[\[]`, 파일 형식 인수의 `%1`.
 
 ### 프로그램 파일
 
@@ -837,11 +895,15 @@ PE 파일(`.exe`, `.dll` 등)은 검사한다: 머신 형식이 `arch` 와 맞�
 
 ```toml
 [dir.INSTALLDIR]
-path = "ProgramFiles/Example"
+path = "$(ProgramFiles)/Example"
 guard = true
 ```
 
 ### 경로
+
+설치될 경로 - `[dir.*]` 와 `[search.*]` 의 `path` - 는 폴더로 시작한다: dir ID 나 경로 기준이 되는 Windows
+이름을 `"$(ProgramFiles)/Example"`, `"$(INSTALLDIR)/docs"` 처럼 쓰고, 그다음 `/` 와 그 아래 폴더들을 쓴다. 뒤에는
+빌드 변수가 와도 된다(`"$(INSTALLDIR)/v$(VERSION)"`).
 
 원본 경로는 원본 파일 기준의 상대 경로이고 `/` 를 쓴다. 절대 경로, `\`, 심볼릭 링크, 없는 파일은
 오류다. 설치될 이름에는 Windows 가 금하는 것(`< > : " / \ | ? *`, 제어 문자, 끝의 점이나 공백,
@@ -1045,10 +1107,10 @@ rubrapack 이 알리는 모든 문제에는 파일, 줄, 열 다음에 코드가
 |---|---|---|
 | RP00xx | 명령줄: 모르는 명령이나 옵션, 읽거나 쓸 수 없는 파일, 변환이 나를 수 없는 차이(`RP0013`) | `rubrapack help <명령>` |
 | RP10xx | 원본 파일의 인코딩: UTF-8(또는 BOM 있는 UTF-16)이 아님, 짝 없는 캐리지 리턴 | 파일을 UTF-8 로 저장한다 |
-| RP11xx | rubrapack 이 읽는 부분집합 밖의 TOML: 여러 줄 문자열, 인라인 표, 두 번 정의한 표 | [TOML 부분집합](#toml-부분집합) |
+| RP11xx | rubrapack 이 읽는 부분집합 밖의 TOML: 여러 줄 문자열, 인라인 표, 두 번 정의한 표; `format` 이 없거나 너무 새 것(RP1108) | [TOML 부분집합](#toml-부분집합), [원본 형식](#원본-형식) |
 | RP12xx | 표와 키: 모르는 표나 키(제안과 함께), 빠진 필수 키나 표, 기능이 생긴 뒤 기능 없는 항목 | [표](#표) |
 | RP13xx | 값: ID(모든 표에 걸쳐 유일, 예약어 아님), GUID, 판, 범위를 벗어난 수, 없는 것을 가리키는 참조 | 그 표의 절 |
-| RP14xx | 변수: 값 없는 `$(NAME)`, 닫히지 않은 `$(` | [변수](#변수) |
+| RP14xx | 변수: 값 없는 `$(NAME)`, 닫히지 않은 `$(`, 쓸 수 없는 자리의 Windows 이름이나 dir ID | [변수](#변수) |
 | RP15xx | 설치할 파일: 없음, 폴더임, 링크임, 맞는 것 없는 글롭, 다른 아키텍처의 프로그램, 너무 긴 이름, 빌드 중에 바뀐 파일, 너무 큰 패키지 | [경로](#경로), [프로그램 파일](#프로그램-파일) |
 | RP16xx | MSIX: MSIX 패키지에 필요한 것, 담을 수 없는 것 | [MSIX 패키지](#msix-패키지) |
 | RP19xx | 이 rubrapack 이 제공하지 않는 기능 | - |

@@ -142,6 +142,102 @@ bool ir_msix_output(const ctx_t *c) {
     return (n >= 5 && strcmp(o + n - 5, ".msix") == 0) || (n >= 11 && strcmp(o + n - 11, ".msixbundle") == 0);
 }
 
+// ---- Windows names: $(ProgramFiles), $(LOCALAPPDATA), $(USERNAME) ... -------------------------
+
+// One name Windows knows: the folder it is as a path base (the model's own name for it), what
+// Windows Installer writes for it at install time (64-bit and 32-bit package), and whether it is
+// an environment variable (written %NAME% in a value expanded at run time). A property NULL means
+// the variable itself at install time, [%NAME].
+typedef struct {
+    const char *name, *base, *prop64, *prop32;
+    bool        env;
+} winname_t;
+
+static const winname_t winnames[] = {
+    { "ProgramFiles", "ProgramFiles", "ProgramFiles64Folder", "ProgramFilesFolder", true },
+    { "ProgramFiles(x86)", "ProgramFiles32", "ProgramFilesFolder", "ProgramFilesFolder", true },
+    { "ProgramW6432", NULL, "ProgramFiles64Folder", NULL, true },
+    { "CommonProgramFiles", "CommonFiles", "CommonFiles64Folder", "CommonFilesFolder", true },
+    { "CommonProgramFiles(x86)", NULL, "CommonFilesFolder", "CommonFilesFolder", true },
+    { "CommonProgramW6432", NULL, "CommonFiles64Folder", NULL, true },
+    { "ProgramData", "CommonAppData", "CommonAppDataFolder", "CommonAppDataFolder", true },
+    { "ALLUSERSPROFILE", "CommonAppData", "CommonAppDataFolder", "CommonAppDataFolder", true },
+    { "APPDATA", "AppData", "AppDataFolder", "AppDataFolder", true },
+    { "LOCALAPPDATA", "LocalAppData", "LocalAppDataFolder", "LocalAppDataFolder", true },
+    { "TEMP", "Temp", "TempFolder", "TempFolder", true },
+    { "TMP", "Temp", "TempFolder", "TempFolder", true },
+    { "SystemRoot", "Windows", "WindowsFolder", "WindowsFolder", true },
+    { "windir", "Windows", "WindowsFolder", "WindowsFolder", true },
+    { "System", "System", "System64Folder", "SystemFolder", false },
+    { "Fonts", "Fonts", "FontsFolder", "FontsFolder", false },
+    { "Desktop", "Desktop", "DesktopFolder", "DesktopFolder", false },
+    { "StartMenu", "StartMenu", "StartMenuFolder", "StartMenuFolder", false },
+    { "Programs", "Programs", "ProgramMenuFolder", "ProgramMenuFolder", false },
+    { "Startup", "Startup", "StartupFolder", "StartupFolder", false },
+    { "SystemDrive", NULL, NULL, NULL, true },
+    { "USERPROFILE", NULL, NULL, NULL, true },
+    { "PUBLIC", NULL, NULL, NULL, true },
+    { "HOMEDRIVE", NULL, NULL, NULL, true },
+    { "HOMEPATH", NULL, NULL, NULL, true },
+    { "USERNAME", NULL, "LogonUser", "LogonUser", true },
+    { "USERDOMAIN", NULL, NULL, NULL, true },
+    { "LOGONSERVER", NULL, NULL, NULL, true },
+    { "COMPUTERNAME", NULL, "ComputerName", "ComputerName", true },
+    { "ComSpec", NULL, NULL, NULL, true },
+    { "Path", NULL, NULL, NULL, true },
+    { "PATHEXT", NULL, NULL, NULL, true },
+    { "OS", NULL, NULL, NULL, true },
+    { "PROCESSOR_ARCHITECTURE", NULL, NULL, NULL, true },
+    { "NUMBER_OF_PROCESSORS", NULL, NULL, NULL, true },
+};
+
+// Names of earlier versions, for the error message only.
+static const char *const old_names[][2] = {
+    { "Windows", "SystemRoot" }, { "CommonAppData", "ProgramData" }, { "ProgramFiles32", "ProgramFiles(x86)" },
+    { "CommonFiles", "CommonProgramFiles" },
+};
+
+static const winname_t *winname(const char *s) {
+    for (size_t k = 0; k < sizeof winnames / sizeof winnames[0]; ++k) {
+        if (ir_ascii_casecmp(s, winnames[k].name) == 0) return &winnames[k];
+    }
+    return NULL;
+}
+
+bool ir_windows_name(const char *s) { return winname(s) != NULL; }
+
+static bool is_dir_id(const ctx_t *c, const char *s) {
+    for (size_t k = 0; k < c->doc->count; ++k) {
+        const rp_ttable_t *t = &c->doc->tables[k];
+        if (t->id && strcmp(t->kind, "dir") == 0 && strcmp(t->id, s) == 0) return true;
+    }
+    return false;
+}
+
+// The name in "$(" ... ")" starting at s[i] (s[i] is '$', s[i + 1] '('): one level of parentheses
+// may be inside, as in $(ProgramFiles(x86)). Returns the index after the closing ')', or 0 when the
+// name is not closed or not usable; *name gets the name.
+static size_t read_name(const char *s, size_t len, size_t i, char *name, size_t cap) {
+    size_t depth = 0, k = i + 2;
+    for (; k < len; ++k) {
+        if (s[k] == '(') ++depth;
+        else if (s[k] == ')' && depth-- == 0) break;
+    }
+    if (k >= len) return 0;
+    size_t nl = k - (i + 2);
+    if (nl == 0 || nl >= cap) return 0;
+    memcpy(name, s + i + 2, nl);
+    name[nl] = '\0';
+    return k + 1;
+}
+
+static void name_hint(const char *name, char *out, size_t cap) {
+    out[0] = '\0';
+    for (size_t k = 0; k < sizeof old_names / sizeof old_names[0]; ++k) {
+        if (ir_ascii_casecmp(name, old_names[k][0]) == 0) snprintf(out, cap, " (write $(%s))", old_names[k][1]);
+    }
+}
+
 // The built-in $(ARCH): the architecture being built - --arch, else [package] arch as written.
 static const char *builtin_arch(ctx_t *c) {
     if (c->opt->arch) return c->opt->arch;
@@ -154,8 +250,23 @@ static const char *builtin_arch(ctx_t *c) {
     return NULL;
 }
 
-// $(NAME) substitution, once (RFC-0002 5): -D first, then [define], then the built-in $(ARCH);
-// values are not re-read.
+static const char *define_value(ctx_t *c, const char *name) {
+    for (size_t k = 0; k < c->opt->define_count; ++k) {
+        if (strcmp(c->opt->defines[k].name, name) == 0) return c->opt->defines[k].value;
+    }
+    if (c->define) {
+        const rp_tkey_t *k = ir_find_key(c->define, name);
+        if (k && k->val.kind == RP_TV_STRING) return k->val.str;
+    }
+    if (strcmp(name, "ARCH") == 0) return builtin_arch(c);
+    return NULL;
+}
+
+// $(NAME) substitution, once (RFC-0002 5): a build variable (-D first, then [define], then the
+// built-in $(ARCH)) anywhere; in a value Windows Installer formats (c->fmt) also a dir ID and a
+// Windows name - [INSTALLDIR], [LocalAppDataFolder], [LogonUser], [%USERPROFILE] at install time,
+// or %LOCALAPPDATA% in a value expanded at run time. A folder there swallows the '\' after it,
+// since its Windows Installer value ends with one. Values are not re-read.
 char *ir_subst(ctx_t *c, const rp_tval_t *v) {
     rp_buf_t b = rp_buf_new(c->alloc, (size_t)1 << 24);
     const char *s = v->str;
@@ -167,37 +278,58 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
             continue;
         }
         if (s[i] == '$' && i + 1 < v->len && s[i + 1] == '(') {
-            const char *close = memchr(s + i + 2, ')', v->len - i - 2);
-            if (close == NULL) {
-                ERR(c, v->pos, "RP1403", "'$(' is not closed (write '$$(' for the text '$(')");
-                ok = false;
-                break;
-            }
-            size_t nl = (size_t)(close - (s + i + 2));
             char name[128];
-            if (nl == 0 || nl >= sizeof name) {
-                ERR(c, v->pos, "RP1403", "bad variable name in '$(...)'");
+            size_t next = read_name(s, v->len, i, name, sizeof name);
+            if (next == 0) {
+                ERR(c, v->pos, "RP1403", memchr(s + i, ')', v->len - i) ? "bad variable name in '$(...)'"
+                                                                       : "'$(' is not closed (write '$$(' for the text '$(')");
                 ok = false;
                 break;
             }
-            memcpy(name, s + i + 2, nl);
-            name[nl] = '\0';
-            const char *val = NULL;
-            for (size_t k = 0; k < c->opt->define_count && !val; ++k) {
-                if (strcmp(c->opt->defines[k].name, name) == 0) val = c->opt->defines[k].value;
+            i = next;
+            const char *val = define_value(c, name);
+            if (val) {
+                rp_buf_puts(&b, val);
+                continue;
             }
-            if (!val && c->define) {
-                const rp_tkey_t *k = ir_find_key(c->define, name);
-                if (k && k->val.kind == RP_TV_STRING) val = k->val.str;
-            }
-            if (!val && strcmp(name, "ARCH") == 0) val = builtin_arch(c);
-            if (!val) {
-                ERR(c, v->pos, "RP1403", "variable '%s' is not defined ([define] or -D %s=...)", name, name);
+            const winname_t *w = winname(name);
+            bool dir = w == NULL && is_dir_id(c, name);
+            if ((w || dir) && c->fmt == IR_FMT_NONE) {
+                ERR(c, v->pos, "RP1404", "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in "
+                    "(registry, environment, INI, arguments, messages), not here", name, dir ? "dir" : "Windows name");
                 ok = false;
                 break;
             }
-            rp_buf_puts(&b, val);
-            i += nl + 3;
+            bool folder = false;
+            if (dir) {
+                rp_buf_byte(&b, '[');
+                rp_buf_puts(&b, name);
+                rp_buf_byte(&b, ']');
+                folder = true;
+            } else if (w && c->fmt == IR_FMT_RUNTIME) {
+                if (!w->env) {
+                    ERR(c, v->pos, "RP1404", "$(%s) has no environment variable, so an expandable value cannot hold it; "
+                        "use a string value (filled in at install time)", w->name);
+                    ok = false;
+                    break;
+                }
+                rp_buf_byte(&b, '%');
+                rp_buf_puts(&b, w->name);
+                rp_buf_byte(&b, '%');
+            } else if (w) {
+                const char *prop = c->ir->arch == RP_ARCH_X86 ? w->prop32 : w->prop64;
+                rp_buf_puts(&b, prop ? "[" : "[%");
+                rp_buf_puts(&b, prop ? prop : w->name);
+                rp_buf_byte(&b, ']');
+                folder = prop && strstr(prop, "Folder");
+            } else {
+                char hint[64];
+                name_hint(name, hint, sizeof hint);
+                ERR(c, v->pos, "RP1403", "variable '%s' is not defined ([define] or -D %s=...)%s", name, name, hint);
+                ok = false;
+                break;
+            }
+            if (folder && i < v->len && s[i] == '\\') ++i;
             continue;
         }
         rp_buf_byte(&b, (uint8_t)s[i]);
@@ -216,6 +348,50 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
     char *r = ir_dup_n(c, (const char *)out, n);
     rp_mem_free(c->alloc, out);
     return r;
+}
+
+// A string value Windows Installer formats: as ir_get_str, with Windows names and dir IDs
+// (IR_FMT_INSTALL, or IR_FMT_RUNTIME for a value expanded when it is read).
+char *ir_get_fmt(ctx_t *c, const rp_ttable_t *t, const char *key, bool required, bool *present, int fmt) {
+    int was = c->fmt;
+    c->fmt = fmt;
+    char *s = ir_get_str(c, t, key, required, present);
+    c->fmt = was;
+    return s;
+}
+
+// A path that starts with a folder: "$(ProgramFiles)/Example", "$(INSTALLDIR)/docs" or "$(Fonts)".
+// Returns it in the model's form, the folder's base name or the dir ID first ("ProgramFiles/Example").
+char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
+    const rp_tkey_t *k = ir_find_key(t, key);
+    if (k == NULL || k->val.kind != RP_TV_STRING) return ir_get_str(c, t, key, required, NULL);
+    const char *s = k->val.str;
+    size_t len = k->val.len;
+    char name[128];
+    size_t next = len >= 2 && s[0] == '$' && s[1] == '(' ? read_name(s, len, 0, name, sizeof name) : 0;
+    if (next == 0 || (next < len && s[next] != '/')) {
+        ERR(c, k->pos, "RP1308", "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\"", key);
+        return NULL;
+    }
+    const char *base = NULL;
+    const winname_t *w = winname(name);
+    if (w && w->base) base = w->base;
+    else if (w == NULL && is_dir_id(c, name)) base = name;
+    if (base == NULL) {
+        char hint[64];
+        name_hint(name, hint, sizeof hint);
+        ERR(c, k->pos, "RP1308", "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, "
+            "ProgramData ... - see the manual's Paths)%s", name, hint);
+        return NULL;
+    }
+    rp_tval_t rest = k->val;
+    rest.str = (char *)s + next;
+    rest.len = len - next;
+    char *r = ir_subst(c, &rest);
+    if (r == NULL) return NULL;
+    char *out = r[0] == '/' ? ir_join(c, base, r + 1) : ir_dup(c, base);
+    rp_mem_free(c->alloc, r);
+    return out;
 }
 
 // String value of a key (after substitution); *present tells whether the key was there.
@@ -399,4 +575,28 @@ bool ir_known_folder(const char *s) {
         if (strcmp(s, known_folders[k]) == 0) return true;
     }
     return false;
+}
+
+// ---- the source format ------------------------------------------------------------------------
+
+enum { FORMAT = 1 };    // the source format this rubrapack reads; raised only for an incompatible change
+
+// `format = N` before the first table. Without it the source is taken for one of rubrapack 0.18
+// or earlier, which is only a warning here: what changed since is refused where it is used.
+void ir_check_format(ctx_t *c) {
+    const rp_ttable_t *root = &c->doc->root;
+    const rp_tkey_t *f = NULL;
+    for (size_t k = 0; k < root->count; ++k) {
+        if (strcmp(root->keys[k].key, "format") == 0) f = &root->keys[k];
+        else ERR(c, root->keys[k].pos, "RP1108", "key '%s' outside a table; only 'format' comes before the first table", root->keys[k].key);
+    }
+    if (f == NULL) {
+        rp_srcdiag_add(c->d, (rp_pos_t){ 1, 1 }, "RP1108", true,
+                       "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read "
+                       "(paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format", FORMAT);
+    } else if (f->val.kind != RP_TV_INT || f->val.i < 1) {
+        ERR(c, f->pos, "RP1108", "format is a whole number: format = %d", FORMAT);
+    } else if (f->val.i > FORMAT) {
+        ERR(c, f->pos, "RP1108", "format %lld needs a newer rubrapack (this one reads format %d)", (long long)f->val.i, FORMAT);
+    }
 }

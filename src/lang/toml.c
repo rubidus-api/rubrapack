@@ -578,10 +578,7 @@ static void parse_keyval(parser_t *p) {
         return;
     }
     rp_ttable_t *t = p->cur;
-    if (t == NULL) {
-        if (p->doc->count == 0) {
-            rp_srcdiag_add(p->d, k.pos, "RP1108", false, "key outside a table; start with [package]");
-        }
+    if (t == NULL) {                // after a bad header: its error is enough
         free_val(p->alloc, &k.val);
         return;
     }
@@ -614,18 +611,21 @@ static void parse_keyval(parser_t *p) {
 
 // ---- document ------------------------------------------------------------------------------
 
+static void free_table(proven_allocator_t alloc, rp_ttable_t *x) {
+    for (size_t k = 0; k < x->count; ++k) {
+        rp_mem_free(alloc, x->keys[k].key);
+        free_val(alloc, &x->keys[k].val);
+    }
+    rp_mem_free(alloc, x->keys);
+    rp_mem_free(alloc, x->kind);
+    rp_mem_free(alloc, x->id);
+}
+
 void rp_toml_free(rp_tdoc_t *doc) {
     if (doc == NULL) return;
-    for (size_t t = 0; t < doc->count; ++t) {
-        rp_ttable_t *x = &doc->tables[t];
-        for (size_t k = 0; k < x->count; ++k) {
-            rp_mem_free(doc->alloc, x->keys[k].key);
-            free_val(doc->alloc, &x->keys[k].val);
-        }
-        rp_mem_free(doc->alloc, x->keys);
-        rp_mem_free(doc->alloc, x->kind);
-        rp_mem_free(doc->alloc, x->id);
-    }
+    free_table(doc->alloc, &doc->root);
+    memset(&doc->root, 0, sizeof doc->root);
+    for (size_t t = 0; t < doc->count; ++t) free_table(doc->alloc, &doc->tables[t]);
     rp_mem_free(doc->alloc, doc->tables);
     doc->tables = NULL;
     doc->count = doc->cap = 0;
@@ -682,7 +682,7 @@ proven_err_t rp_toml_parse(proven_allocator_t alloc, const uint8_t *data, size_t
         }
     }
 
-    parser_t p = { .s = s, .n = n, .line = 1, .d = diags, .alloc = alloc, .doc = doc };
+    parser_t p = { .s = s, .n = n, .line = 1, .d = diags, .alloc = alloc, .doc = doc, .cur = &doc->root };
     while (!at_end(&p) && !p.nomem) {
         skip_ws(&p);
         if (at_end(&p)) break;
@@ -823,6 +823,11 @@ proven_err_t rp_toml_dump_json(const rp_tdoc_t *doc, proven_allocator_t alloc, u
     if (doc == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
     jnode_t root = { 0 };
     bool nomem = false;
+    for (size_t k = 0; k < doc->root.count && !nomem; ++k) {
+        jnode_t *leaf = jchild(alloc, &root, doc->root.keys[k].key);
+        if (leaf == NULL) nomem = true;
+        else leaf->val = &doc->root.keys[k].val;
+    }
     for (size_t t = 0; t < doc->count && !nomem; ++t) {
         const rp_ttable_t *x = &doc->tables[t];
         jnode_t *n = jchild(alloc, &root, x->kind);

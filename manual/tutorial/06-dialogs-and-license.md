@@ -9,6 +9,8 @@ progress, finished - that offers to start Hello at the end.
 
 ```toml
 # tutorial 06: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -34,7 +36,7 @@ text = "This will install [ProductName] [ProductVersion]. Close Hello if it is r
 text = "[ProductName] is ready. Thank you for installing it."
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

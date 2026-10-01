@@ -39,6 +39,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->alloc = alloc;
     ctx_t c = { .alloc = alloc, .doc = doc, .opt = opt, .d = diags, .ir = ir };
 
+    ir_check_format(&c);
     const rp_ttable_t *package = NULL;
     size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, next_ = 0, nmerge = 0;
     const rp_ttable_t *uit = NULL;
@@ -116,7 +117,20 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         for (size_t k = 0; k < c.define->count; ++k) {
             const rp_tkey_t *key = &c.define->keys[k];
             if (!ir_valid_id(key->key, 64)) ERR(&c, key->pos, "RP1401", "'%s' is not a valid variable name", key->key);
+            else if (ir_windows_name(key->key)) ERR(&c, key->pos, "RP1404", "'%s' is a Windows name; give the variable another name", key->key);
+            for (size_t j = 0; j < doc->count; ++j) {
+                const rp_ttable_t *dt = &doc->tables[j];
+                if (dt->id && strcmp(dt->kind, "dir") == 0 && strcmp(dt->id, key->key) == 0) {
+                    ERR(&c, key->pos, "RP1404", "'%s' is also a dir ID; give the variable another name", key->key);
+                }
+            }
             if (key->val.kind != RP_TV_STRING) ERR(&c, key->pos, "RP1306", "[define] values must be strings");
+        }
+    }
+    for (size_t k = 0; k < opt->define_count; ++k) {
+        if (ir_windows_name(opt->defines[k].name)) {
+            ERR(&c, ((rp_pos_t){ 1, 1 }), "RP1404", "-D %s: '%s' is a Windows name; give the variable another name",
+                opt->defines[k].name, opt->defines[k].name);
         }
     }
     if (package == NULL) {

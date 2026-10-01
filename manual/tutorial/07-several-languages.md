@@ -9,6 +9,8 @@ chosen in advance on Korean Windows.
 
 ```toml
 # tutorial 07: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -32,7 +34,7 @@ text = "This will install [ProductName] [ProductVersion]."
 text-ko = "[ProductName] [ProductVersion]을(를) 설치합니다."
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 
 [file.Hello]
 dir = "INSTALLDIR"

@@ -23,6 +23,8 @@ and by the dialogs. A *condition* is a small expression over properties, true or
 
 ```toml
 # tutorial 09: hello.toml
+format = 1
+
 [package]
 name = "Hello"
 manufacturer = "Example Software"
@@ -45,7 +47,7 @@ message = "[ProductName] needs 64-bit Windows."
 [search.Notepad]
 property = "NOTEPAD_PATH"
 kind = "file"
-path = "Windows"
+path = "$(SystemRoot)"
 file = "notepad.exe"
 
 [search.PreviousDir]
@@ -65,7 +67,7 @@ description = "Only offered where Notepad is installed."
 when = "NOTEPAD_PATH"
 
 [dir.INSTALLDIR]
-path = "ProgramFiles/Hello"
+path = "$(ProgramFiles)/Hello"
 feature = "Main"
 
 [file.Hello]

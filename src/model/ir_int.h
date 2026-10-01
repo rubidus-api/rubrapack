@@ -24,8 +24,11 @@ typedef struct {
     rp_ir_t               *ir;
     const rp_ttable_t     *define;
     bool                   nomem;
+    int                    fmt;     // IR_FMT_*: what ir_subst may put in
     size_t                 dir_cap, file_cap;
 } ctx_t;
+
+enum { IR_FMT_NONE, IR_FMT_INSTALL, IR_FMT_RUNTIME };
 
 #define ERR(c, pos, code, ...) rp_srcdiag_add((c)->d, (pos), (code), false, __VA_ARGS__)
 
@@ -42,6 +45,10 @@ const rp_tkey_t *ir_find_key(const rp_ttable_t *t, const char *key);
 bool ir_msix_output(const ctx_t *c);
 char *ir_subst(ctx_t *c, const rp_tval_t *v);
 char *ir_get_str(ctx_t *c, const rp_ttable_t *t, const char *key, bool required, bool *present);
+char *ir_get_fmt(ctx_t *c, const rp_ttable_t *t, const char *key, bool required, bool *present, int fmt);
+char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required);
+bool ir_windows_name(const char *s);
+void ir_check_format(ctx_t *c);
 void ir_get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext_t **out, size_t *count);
 bool ir_get_bool(ctx_t *c, const rp_ttable_t *t, const char *key, bool dflt);
 int64_t ir_get_int(ctx_t *c, const rp_ttable_t *t, const char *key, int64_t dflt, int64_t lo, int64_t hi);
