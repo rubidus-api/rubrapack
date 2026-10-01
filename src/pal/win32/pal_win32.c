@@ -184,9 +184,47 @@ static proven_err_t wide_path(proven_allocator_t alloc, const char *path_utf8, p
     return t.err;
 }
 
+// A file path for the W calls, as proven's file calls make it (pal_fs.c): a full path of
+// MAX_PATH or more characters gets the \\?\ (or \\?\UNC\) prefix, so long paths work here too.
+static proven_err_t file_path(proven_allocator_t alloc, const char *path_utf8, proven_u16str_t *out) {
+    proven_u16str_t w = { 0 };
+    proven_err_t err = wide_path(alloc, path_utf8, &w);
+    if (err != PROVEN_OK) return err;
+    const wchar_t *in = (const wchar_t *)proven_u16str_as_ptr(&w);
+    DWORD full = GetFullPathNameW(in, 0, NULL, NULL);
+    if (full < MAX_PATH || wcsncmp(in, L"\\\\?\\", 4) == 0 || wcsncmp(in, L"\\\\.\\", 4) == 0) {
+        *out = w;
+        return PROVEN_OK;
+    }
+    wchar_t *buf = rp_mem_alloc(alloc, (size_t)full + 8, sizeof *buf);
+    if (buf == NULL) {
+        proven_u16str_destroy(alloc, &w);
+        return PROVEN_ERR_NOMEM;
+    }
+    DWORD got = GetFullPathNameW(in, full, buf + 8, NULL);      // the full path, 8 units in
+    proven_u16str_destroy(alloc, &w);
+    if (got == 0 || got >= full) {
+        rp_mem_free(alloc, buf);
+        return PROVEN_ERR_IO;
+    }
+    wchar_t *at = buf + 8;
+    if (at[0] == L'\\' && at[1] == L'\\') {       // \\server\share\... -> \\?\UNC\server\share\...
+        at -= 6;
+        memcpy(at, L"\\\\?\\UNC", 7 * sizeof *at);
+    } else {                                    // C:\... -> \\?\C:\...
+        at -= 4;
+        memcpy(at, L"\\\\?\\", 4 * sizeof *at);
+    }
+    proven_result_u16str_t made = proven_u16str_create_from_view(alloc, (proven_u16str_view_t){ (const proven_u16 *)at, wcslen(at) });
+    rp_mem_free(alloc, buf);
+    if (made.err != PROVEN_OK) return made.err;
+    *out = made.value;
+    return PROVEN_OK;
+}
+
 rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_t *size) {
     proven_u16str_t w = { 0 };
-    if (path_utf8 == NULL || wide_path(alloc, path_utf8, &w) != PROVEN_OK) return RP_FS_NONE;
+    if (path_utf8 == NULL || file_path(alloc, path_utf8, &w) != PROVEN_OK) return RP_FS_NONE;
     WIN32_FILE_ATTRIBUTE_DATA a;
     BOOL ok = GetFileAttributesExW((const wchar_t *)proven_u16str_as_ptr(&w), GetFileExInfoStandard, &a);
     proven_u16str_destroy(alloc, &w);
@@ -199,7 +237,7 @@ rp_fskind_t rp_pal_stat(proven_allocator_t alloc, const char *path_utf8, uint64_
 
 static bool file_id(proven_allocator_t alloc, const char *path_utf8, BY_HANDLE_FILE_INFORMATION *info) {
     proven_u16str_t w = { 0 };
-    if (wide_path(alloc, path_utf8, &w) != PROVEN_OK) return false;
+    if (file_path(alloc, path_utf8, &w) != PROVEN_OK) return false;
     HANDLE h = CreateFileW((const wchar_t *)proven_u16str_as_ptr(&w), 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                            NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
     proven_u16str_destroy(alloc, &w);
@@ -439,8 +477,8 @@ proven_err_t rp_pal_outmap_create(proven_allocator_t alloc, const char *path_utf
     *m = (rp_outmap_t){ .file = INVALID_HANDLE_VALUE };
     memcpy(tmp, path_utf8, n);
     memcpy(tmp + n, ".rp-map", 8);
-    proven_err_t err = wide_path(alloc, path_utf8, &m->path);
-    if (err == PROVEN_OK) err = wide_path(alloc, tmp, &m->tmp);
+    proven_err_t err = file_path(alloc, path_utf8, &m->path);
+    if (err == PROVEN_OK) err = file_path(alloc, tmp, &m->tmp);
     rp_mem_free(alloc, tmp);
     if (err != PROVEN_OK) {
         outmap_free(alloc, m);
