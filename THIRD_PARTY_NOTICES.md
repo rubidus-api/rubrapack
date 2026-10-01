@@ -2,7 +2,7 @@
 
 ## Vendored code
 
-- `vendor/proven/`: proven_c_lib v0.1.1, MIT License, same author. Its own `LICENSE` and
+- `vendor/proven/`: proven_c_lib v0.6.0, MIT License, same author. Its own `LICENSE` and
   notices travel with the copy; `vendor/proven/VENDORED.md` records the snapshot.
 
 ## Prebuilt helper DLLs

@@ -269,7 +269,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.26.0 (proven_c_lib-v0.1.1)
+rubrapack 0.26.0 (proven_c_lib-v0.6.0)
 ```
 
 `rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options
