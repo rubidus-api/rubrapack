@@ -889,6 +889,41 @@ void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x) {
     x->msi_only = ir_get_bool(c, t, "msi-only", false);
 }
 
+void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
+    static const char *const keys[] = { "kind", "class", "types", "description", "msi-only", NULL };
+    ir_check_keys(c, t, keys);
+    ir_check_id(c, t, 48);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    char *kind = ir_get_str(c, t, "kind", true, NULL);
+    if (kind && strcmp(kind, "preview") == 0) x->kind = RP_HANDLER_PREVIEW;
+    else if (kind && strcmp(kind, "thumbnail") == 0) x->kind = RP_HANDLER_THUMBNAIL;
+    else if (kind && strcmp(kind, "property") == 0) x->kind = RP_HANDLER_PROPERTY;
+    else if (kind) ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')", kind);
+    rp_mem_free(c->alloc, kind);
+    x->clsid = guid_key(c, t, "class", true);
+    x->description = ir_get_str(c, t, "description", false, NULL);
+    x->msi_only = ir_get_bool(c, t, "msi-only", false);
+    const rp_tkey_t *tk = ir_find_key(t, "types");
+    if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
+        ERR(c, tk ? tk->pos : t->pos, "RP1316", "[handler.%s]: types is a list of file types, like [\".txt\"]", t->id);
+        return;
+    }
+    x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
+    if (x->types == NULL) {
+        c->nomem = true;
+        return;
+    }
+    for (size_t k = 0; k < tk->val.count; ++k) {
+        const rp_tval_t *v = &tk->val.items[k];
+        char *ty = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+        if (!(ty && ty[0] == '.' && strlen(ty) <= 64 && lower_name(ty + 1, "_-", 1))) {
+            ERR(c, tk->pos, "RP1316", "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')", ty ? ty : "?");
+        }
+        x->types[x->type_count++] = ty;
+    }
+}
+
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
     static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", "file", "direction",
                                         "protocol", "ports", "profile", "class", "threading", "args", "verb", "types", NULL };

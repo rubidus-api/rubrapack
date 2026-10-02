@@ -227,6 +227,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`) |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
 | `[com.ID]` | **file**(`.exe` 나 `.dll` 의 `file:ID`), **class**(`{GUID}`), description, threading(`sta` 기본, `mta`, `both`, `neutral`; DLL), args(프로그램), prog-id, app-id(`{GUID}`), surrogate(dllhost 에서 도는 DLL), typelib(`{LIBID}`), typelib-version(기본 `"1.0"`), typelib-file(기본: 서버), msi-only - COM 클래스, [COM 클래스](#com-클래스-comid) 참고 |
+| `[handler.ID]` | **kind**(`thumbnail`, `preview`, `property`), **class**(`[com.*]` 의 DLL 클래스), **types**(`[".ext", ...]`), description(미리 보기 처리기의 이름), msi-only - 탐색기 처리기, [탐색기 처리기](#탐색기-처리기-handlerid) 참고 |
 | `[font.ID]` | **file**(`path = "$(Fonts)"` 인 dir 에 드는 파일의 `file:ID`), title |
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
@@ -479,6 +480,42 @@ Microsoft 도구가 광고하지 않는 클래스를 쓰는 방식이다. 그 �
 MSIX 에서 `[com]` 은 패키지 COM 카탈로그의 클래스(`com:ComServer`: 프로그램은 `ExeServer`, DLL 은
 `SurrogateServer`)가 되고 prog-id 는 `com:ProgId` 가 된다. `app-id` 와 `typelib` 은 MSI 에만 들어가며 경고가
 그렇게 알린다(`RP1612`).
+
+### 탐색기 처리기: `[handler.ID]`
+
+```toml
+[handler.Thumbs]
+kind = "thumbnail"                # 탐색기가 파일에 보이는 그림
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D41}"   # 패키지 DLL 의 [com.*] 클래스
+types = [".exdoc"]
+
+[handler.Preview]
+kind = "preview"                  # 미리 보기 창에 보이는 것
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D43}"
+types = [".exdoc"]
+description = "Example document preview"
+msi-only = true
+
+[handler.Props]
+kind = "property"                 # 탐색기와 검색이 쓰는 파일 속성(제목, 작성자 ...)
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D42}"
+types = [".exdoc"]
+msi-only = true
+```
+
+처리기는 패키지 DLL 안의 COM 클래스로 `[com.*]`(`threading` 포함)에 적고, `[handler]` 는 그것이 어떤 파일 형식을
+맡는지 Windows 에 알린다. MSI 에서: 썸네일과 미리 보기 처리기는 `HKEY_CLASSES_ROOT` 아래 형식마다의 `ShellEx`
+값이다(썸네일 `{E357FCCD-...}`, 미리 보기 `{8895B1C6-...}`). 미리 보기 처리기는 `PreviewHandlers` 목록에도 오르고,
+그 클래스는 Windows 미리 보기 호스트(`prevhost.exe`, 패키지 아키텍처에 따라 64비트나 32비트)의 `AppID` 를 받으므로
+그 `[com]` 에는 `app-id` 와 `surrogate` 를 쓰지 않는다. 속성 처리기는 `HKLM` 의 `PropertySystem\PropertyHandlers`
+아래이며 Windows 가 컴퓨터 단위로만 읽으므로 패키지는 `scope = "machine"` 이어야 한다. 한 형식에는 종류마다 처리기
+하나다(`RP1301`).
+
+MSIX 에서 썸네일 처리기는 패키지의 파일 형식 연결(`desktop2:ThumbnailHandler`, 클래스는 패키지 COM 카탈로그)에
+들어간다. 형식 묶음마다 연결 하나이며, 그 형식을 여는 `[assoc]` 가 있으면 거기에 들어간다. 패키지가 설치되어 있는
+동안 탐색기가 쓴다. 패키지에 든 미리 보기·속성 처리기는 Windows 11 에서 동작하는 것을 보지 못했다 - 클래스는 COM
+카탈로그에 오르지만 탐색기의 미리 보기 창과 속성 시스템이 쓰지 않았다 - 그래서 MSIX 는 그 종류를 거절하고
+(`RP1612`) `msi-only = true` 가 MSI 에만 남긴다.
 
 ### MSIX 전용: `[msix-extension.ID]`
 

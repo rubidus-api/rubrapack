@@ -240,6 +240,19 @@ threading = "both"
 
 PowerShell then makes one with `New-Object -ComObject Hello.Widget`. Removal unregisters it.
 
+A DLL class can also be an Explorer handler for a file type - the picture Explorer shows for a
+`.hello` file, what its preview pane shows, the properties it lists:
+
+```toml
+[handler.HelloThumbs]
+kind = "thumbnail"                # or "preview", "property"
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D41}"     # a [com.*] class of the DLL
+types = [".hello"]
+```
+
+`description` names a preview handler; a property handler needs a per-machine package; and in an
+MSIX only thumbnail handlers work, so a preview or property handler there takes `msi-only = true`.
+
 ## Try it
 
 Install, then:

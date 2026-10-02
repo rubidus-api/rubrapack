@@ -986,6 +986,40 @@ static unsigned min_build(const rp_ir_t *ir) {
     return rp_read_u64(v, NULL, &b) && b <= 0xFFFFFFFFu ? (unsigned)b : 0;
 }
 
+// RFC-0024: the [handler.*] elements of a file type association (desktop2), for the handlers whose
+// types are all among `exts` (count n); `want` 1 = those, 0 = the handlers with no type there.
+static bool handler_in(const rp_ir_handler_t *h, const char *const *exts, size_t n, bool all) {
+    size_t in = 0;
+    for (size_t t = 0; t < h->type_count; ++t) {
+        for (size_t e = 0; e < n; ++e) {
+            if (h->types[t] && exts[e] && strcmp(h->types[t], exts[e]) == 0) {
+                ++in;
+                break;
+            }
+        }
+    }
+    return all ? in == h->type_count : in > 0;
+}
+
+// The same set of types (as sets).
+static bool same_types(const rp_ir_handler_t *a, const rp_ir_handler_t *b) {
+    return handler_in(a, (const char *const *)b->types, b->type_count, true) && handler_in(b, (const char *const *)a->types, a->type_count, true);
+}
+
+static void handler_elements(rp_buf_t *b, const rp_ir_t *ir, const char *const *exts, size_t n) {
+    static const char *const el[] = { "desktop2:DesktopPreviewHandler", "desktop2:ThumbnailHandler", "desktop2:DesktopPropertyHandler" };
+    for (size_t k = 0; k < ir->handler_count; ++k) {
+        const rp_ir_handler_t *h = &ir->handlers[k];
+        if (h->msi_only || h->kind != RP_HANDLER_THUMBNAIL || !handler_in(h, exts, n, true)) continue;
+        rp_buf_puts(b, "            <");
+        rp_buf_puts(b, el[h->kind]);
+        char guid[37];
+        snprintf(guid, sizeof guid, "%.36s", h->clsid ? h->clsid + 1 : "");
+        attr(b, "Clsid", guid);
+        rp_buf_puts(b, " />\r\n");
+    }
+}
+
 static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {
     for (size_t a = 0; file_id && a < ir->msix_app_count; ++a) {
         if (ir->msix_apps[a].exe && strcmp(ir->msix_apps[a].exe, file_id) == 0) return a;
@@ -1052,14 +1086,101 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             rp_buf_puts(b, "</uap:DisplayName>\r\n");
         }
         rp_buf_puts(b, "            <uap:SupportedFileTypes>\r\n");
+        const char *exts[64];
+        size_t nexts = 0;
         for (size_t j = k; j < ir->assoc_count; ++j) {
             if (strcmp(ir->assocs[j].prog_id, x->prog_id) != 0) continue;
             rp_buf_puts(b, "              <uap:FileType>");
             xml_text(b, ir->assocs[j].extension);
             rp_buf_puts(b, "</uap:FileType>\r\n");
+            if (nexts < 64) exts[nexts++] = ir->assocs[j].extension;
         }
-        rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n          </uap3:FileTypeAssociation>\r\n        </uap:Extension>\r\n");
+        rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n");
+        size_t before = b->len;
+        handler_elements(b, ir, exts, nexts);
+        if (b->len != before) *ns |= NS_DESKTOP2;
+        rp_buf_puts(b, "          </uap3:FileTypeAssociation>\r\n        </uap:Extension>\r\n");
         *ns |= NS_UAP3;
+    }
+    // RFC-0024: handlers for types no [assoc] opens get a file type association of their own (no
+    // verb) in the first application; one that has some types in an [assoc] must have all there.
+    {
+        const char *all[256];
+        size_t nall = 0;
+        for (size_t j = 0; j < ir->assoc_count && nall < 256; ++j) all[nall++] = ir->assocs[j].extension;
+        for (size_t k = 0; k < ir->handler_count; ++k) {
+            const rp_ir_handler_t *h = &ir->handlers[k];
+            if (h->msi_only) continue;
+            // A preview or property handler in a package was not seen working on Windows 11
+            // (BACKLOGS: the classes reach the packaged COM catalog; Explorer's preview pane and the
+            // property system did not use them in our tests): the MSI only, for now.
+            if (h->kind != RP_HANDLER_THUMBNAIL) {
+                DERR(h->pos, "RP1612", "[handler.%s]: an MSIX carries thumbnail handlers only (a packaged %s handler was not seen working); "
+                     "msi-only = true keeps it for the MSI", h->id, h->kind == RP_HANDLER_PREVIEW ? "preview" : "property");
+                continue;
+            }
+            const rp_ir_com_t *cm = NULL;
+            for (size_t j = 0; j < ir->com_count; ++j) {
+                if (h->clsid && ir->coms[j].clsid && strcmp(ir->coms[j].clsid, h->clsid) == 0) cm = &ir->coms[j];
+            }
+            if (cm && cm->msi_only) {
+                DERR(h->pos, "RP1613", "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it", h->id, cm->id);
+                continue;
+            }
+            bool some = handler_in(h, all, nall, false), every = handler_in(h, all, nall, true);
+            if (some && !every) {
+                DERR(h->pos, "RP1613", "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none", h->id);
+                continue;
+            }
+            if (some) continue;
+            // One association per set of types: a handler with the same types as an earlier one is
+            // in that one; types shared only in part would be in two.
+            bool done = false, clash = false;
+            for (size_t j = 0; j < k; ++j) {
+                const rp_ir_handler_t *g = &ir->handlers[j];
+                if (g->msi_only || g->kind != RP_HANDLER_THUMBNAIL || handler_in(g, all, nall, false)) continue;
+                if (same_types(g, h)) done = true;
+                else if (handler_in(g, (const char *const *)h->types, h->type_count, false)) clash = true;
+            }
+            if (clash) {
+                DERR(h->pos, "RP1613", "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)", h->id);
+                continue;
+            }
+            if (done) continue;
+            if (ir->msix_app_count == 0) {
+                DERR(h->pos, "RP1613", "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]", h->id);
+                continue;
+            }
+            NEED(h->pos, "an Explorer handler", 14393u);
+            char name[64];
+            snprintf(name, sizeof name, "rp-handler-");
+            size_t o = strlen(name);
+            for (const char *q = h->id; *q && o + 1 < sizeof name; ++q) name[o++] = (*q >= 'A' && *q <= 'Z') ? (char)(*q + 32) : *q == '_' ? '-' : *q;
+            name[o] = 0;
+            rp_buf_t *b = &ext[0];
+            rp_buf_puts(b, "        <uap:Extension Category=\"windows.fileTypeAssociation\">\r\n          <uap3:FileTypeAssociation");
+            attr(b, "Name", name);
+            rp_buf_puts(b, ">\r\n            <uap:SupportedFileTypes>\r\n");
+            for (size_t t = 0; t < h->type_count; ++t) {
+                rp_buf_puts(b, "              <uap:FileType>");
+                xml_text(b, h->types[t]);
+                rp_buf_puts(b, "</uap:FileType>\r\n");
+            }
+            rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n");
+            static const char *const el[] = { "desktop2:DesktopPreviewHandler", "desktop2:ThumbnailHandler", "desktop2:DesktopPropertyHandler" };
+            for (size_t j = k; j < ir->handler_count; ++j) {
+                const rp_ir_handler_t *g = &ir->handlers[j];
+                if (g->msi_only || g->kind != RP_HANDLER_THUMBNAIL || !same_types(g, h)) continue;
+                char guid[37];
+                snprintf(guid, sizeof guid, "%.36s", g->clsid ? g->clsid + 1 : "");
+                rp_buf_puts(b, "            <");
+                rp_buf_puts(b, el[g->kind]);
+                attr(b, "Clsid", guid);
+                rp_buf_puts(b, " />\r\n");
+            }
+            rp_buf_puts(b, "          </uap3:FileTypeAssociation>\r\n        </uap:Extension>\r\n");
+            *ns |= NS_UAP3 | NS_DESKTOP2;
+        }
     }
     for (size_t k = 0; k < ir->protocol_count; ++k) {
         const rp_ir_protocol_t *x = &ir->protocols[k];

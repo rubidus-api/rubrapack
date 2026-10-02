@@ -232,6 +232,19 @@ threading = "both"
 
 그러면 PowerShell 이 `New-Object -ComObject Hello.Widget` 으로 객체를 하나 만든다. 제거하면 등록도 풀린다.
 
+DLL 클래스는 파일 형식의 탐색기 처리기도 될 수 있다 - 탐색기가 `.hello` 파일에 보이는 그림, 미리 보기 창에 보이는
+것, 나열하는 속성:
+
+```toml
+[handler.HelloThumbs]
+kind = "thumbnail"                # 또는 "preview", "property"
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D41}"     # DLL 의 [com.*] 클래스
+types = [".hello"]
+```
+
+`description` 은 미리 보기 처리기의 이름이다. 속성 처리기는 컴퓨터별 패키지가 필요하다. MSIX 에서는 썸네일
+처리기만 동작하므로, 거기서 미리 보기나 속성 처리기는 `msi-only = true` 를 붙인다.
+
 ## 해 보기
 
 설치한 뒤:

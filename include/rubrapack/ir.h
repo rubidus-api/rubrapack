@@ -238,6 +238,23 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_com_t;
 
+// [handler.ID] (RFC-0024): an Explorer handler for file types, served by a [com.*] DLL class of the
+// package. MSI: HKCR\.ext\ShellEx values (preview, thumbnail), the PreviewHandlers list and the
+// prevhost AppID for a preview handler, PropertySystem\PropertyHandlers (property, per machine).
+// MSIX: desktop2:DesktopPreviewHandler, ThumbnailHandler, DesktopPropertyHandler in a file type
+// association.
+typedef enum { RP_HANDLER_PREVIEW, RP_HANDLER_THUMBNAIL, RP_HANDLER_PROPERTY } rp_handler_kind_t;
+typedef struct {
+    char             *id;
+    rp_handler_kind_t kind;
+    char             *clsid;        // a [com.*] class, "{GUID}" upper case
+    char            **types;        // ".ext", lower case
+    size_t            type_count;
+    char             *description;  // a preview handler's name, or NULL (the [com]'s description)
+    bool              msi_only;
+    rp_pos_t          pos;
+} rp_ir_handler_t;
+
 // [msix-extension.ID] (RFC-0010 N4): what only an MSIX has; left out of an MSI.
 typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP, RP_MSIX_EXT_FIREWALL, RP_MSIX_EXT_COM, RP_MSIX_EXT_TOAST,
                RP_MSIX_EXT_CONTEXT_MENU } rp_msix_ext_kind_t;
@@ -459,6 +476,8 @@ typedef struct {
     size_t            protocol_count;
     rp_ir_com_t      *coms;                 // [com.*], in ID order
     size_t            com_count;
+    rp_ir_handler_t  *handlers;             // [handler.*], in ID order
+    size_t            handler_count;
     rp_ir_msix_ext_t *msix_exts;            // in ID order
     size_t            msix_ext_count;
     // P4 dialogs (RFC-0005)

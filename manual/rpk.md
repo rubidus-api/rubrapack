@@ -238,6 +238,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
 | `[com.ID]` | **file** (`file:ID` of an `.exe` or `.dll`), **class** (`{GUID}`), description, threading (`sta` default, `mta`, `both`, `neutral`; a DLL), args (a program), prog-id, app-id (`{GUID}`), surrogate (a DLL in dllhost), typelib (`{LIBID}`), typelib-version (default `"1.0"`), typelib-file (default: the server), msi-only - a COM class, see [COM classes](#com-classes-comid) |
+| `[handler.ID]` | **kind** (`thumbnail`, `preview`, `property`), **class** (a `[com.*]` DLL class), **types** (`[".ext", ...]`), description (a preview handler's name), msi-only - an Explorer handler, see [Explorer handlers](#explorer-handlers-handlerid) |
 | `[font.ID]` | **file** (`file:ID` of a file in a dir with `path = "$(Fonts)"`), title |
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
@@ -516,6 +517,44 @@ are each used once (`RP1301`); `threading` and `surrogate` are for a DLL, `args`
 In an MSIX a `[com]` becomes a class of the package's COM catalog (`com:ComServer`: an `ExeServer` for
 a program, a `SurrogateServer` for a DLL) and its prog-id a `com:ProgId`; `app-id` and `typelib` stay
 with the MSI, which a warning says (`RP1612`).
+
+### Explorer handlers: `[handler.ID]`
+
+```toml
+[handler.Thumbs]
+kind = "thumbnail"                # the picture Explorer shows for the file
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D41}"   # a [com.*] class of a DLL of the package
+types = [".exdoc"]
+
+[handler.Preview]
+kind = "preview"                  # what the preview pane shows
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D43}"
+types = [".exdoc"]
+description = "Example document preview"
+msi-only = true
+
+[handler.Props]
+kind = "property"                 # the file's properties (title, author, ...) for Explorer and search
+class = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D42}"
+types = [".exdoc"]
+msi-only = true
+```
+
+The handler is a COM class in a DLL of the package, written as a `[com.*]` (with `threading`), and
+`[handler]` tells Windows which file types it serves. In an MSI: a thumbnail or preview handler is
+the `ShellEx` value of each type under `HKEY_CLASSES_ROOT` (`{E357FCCD-...}` thumbnail,
+`{8895B1C6-...}` preview); a preview handler is also on the `PreviewHandlers` list, and its class
+gets the `AppID` of Windows' preview host (`prevhost.exe`, 64-bit or 32-bit by the package's
+architecture), so leave `app-id` and `surrogate` out of its `[com]`; a property handler is under
+`PropertySystem\PropertyHandlers` in `HKLM`, which Windows reads per machine only, so the package
+needs `scope = "machine"`. A type has one handler of each kind (`RP1301`).
+
+In an MSIX a thumbnail handler goes into a file type association of the package
+(`desktop2:ThumbnailHandler`, with its class in the package's COM catalog), one association per set
+of types (or the `[assoc]` that opens them); Explorer uses it while the package is installed. A
+packaged preview or property handler was not seen working on Windows 11 - the classes reach the
+COM catalog, but Explorer's preview pane and the property system did not use them - so an MSIX
+refuses those kinds (`RP1612`) and `msi-only = true` keeps them for the MSI.
 
 ### MSIX only: `[msix-extension.ID]`
 

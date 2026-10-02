@@ -86,6 +86,20 @@ static void add_class_value(ctx_t *c, const char *id, const char *suffix, const 
     r->pos = pos;
 }
 
+// The same under another root (RFC-0024: HKLM / HKMU values of an Explorer handler).
+static void add_root_value(ctx_t *c, const char *id, const char *suffix, rp_reg_root_t root, const char *key, const char *name,
+                           const char *value, const char *with, rp_pos_t pos) {
+    add_class_value(c, id, suffix, key, name, value, with, pos);
+    c->ir->registries[c->ir->registry_count - 1].root = root;
+}
+
+static const rp_ir_com_t *com_by_class(const rp_ir_t *ir, const char *clsid) {
+    for (size_t k = 0; clsid && k < ir->com_count; ++k) {
+        if (ir->coms[k].clsid && strcmp(ir->coms[k].clsid, clsid) == 0) return &ir->coms[k];
+    }
+    return NULL;
+}
+
 // [assoc.*], [protocol.*] and [msix-extension.*] (RFC-0010 N4): programs that exist, one handler per
 // extension and scheme, one description per prog-id; then, for the MSI, their HKCR values in the
 // program's component. HKCR follows the installation: HKLM\Software\Classes per machine,
@@ -165,6 +179,33 @@ void ir_class_checks(ctx_t *c) {
             }
         }
     }
+    // [handler.*] (RFC-0024): a DLL class of a [com.*], one handler of a kind per file type.
+    for (size_t k = 0; k < ir->handler_count; ++k) {
+        const rp_ir_handler_t *x = &ir->handlers[k];
+        const rp_ir_com_t *cm = com_by_class(ir, x->clsid);
+        static const char *const kinds[] = { "preview", "thumbnail", "property" };
+        if (x->clsid && cm == NULL) {
+            ERR(c, x->pos, "RP1315", "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)", x->id, x->clsid);
+        } else if (cm && cm->exe) {
+            ERR(c, x->pos, "RP1316", "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program", x->id, kinds[x->kind], cm->id);
+        } else if (cm && x->kind == RP_HANDLER_PREVIEW && (cm->app_id || cm->surrogate)) {
+            ERR(c, x->pos, "RP1316", "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]", x->id, cm->id);
+        }
+        if (x->kind == RP_HANDLER_PROPERTY && ir->scope != 0) {
+            ERR(c, x->pos, "RP1316", "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\"", x->id);
+        }
+        for (size_t j = 0; j < k; ++j) {
+            const rp_ir_handler_t *y = &ir->handlers[j];
+            if (y->kind != x->kind) continue;
+            for (size_t a = 0; a < x->type_count; ++a) {
+                for (size_t b = 0; b < y->type_count; ++b) {
+                    if (x->types[a] && y->types[b] && strcmp(x->types[a], y->types[b]) == 0) {
+                        ERR(c, x->pos, "RP1301", "'%s' already has a %s handler ([handler.%s])", x->types[a], kinds[x->kind], y->id);
+                    }
+                }
+            }
+        }
+    }
     if (c->d->errors) return;       // a table with a missing key has NULL fields; the build fails anyway
     for (size_t k = 0; k < ir->assoc_count && !c->nomem; ++k) {
         const rp_ir_assoc_t *x = &ir->assocs[k];
@@ -205,6 +246,35 @@ void ir_class_checks(ctx_t *c) {
         sprintf(cmd, "\"[#%s]\" %s", x->target_file, x->args);
         add_class_value(c, x->id, "Cmd", key, NULL, cmd, x->target_file, x->pos);
         rp_mem_free(c->alloc, cmd);
+    }
+    // [handler.*]: Explorer finds a handler under the file type's ShellEx key (preview, thumbnail),
+    // or in PropertySystem\PropertyHandlers (property, HKLM); a preview handler is also on the
+    // PreviewHandlers list and runs in prevhost (its class's AppID). All in the DLL's component.
+    for (size_t k = 0; k < ir->handler_count && !c->nomem; ++k) {
+        const rp_ir_handler_t *x = &ir->handlers[k];
+        const rp_ir_com_t *cm = com_by_class(ir, x->clsid);
+        const char *desc = x->description ? x->description : cm->description ? cm->description : ir->name;
+        char key[256], suffix[24];
+        for (size_t t = 0; t < x->type_count; ++t) {
+            snprintf(suffix, sizeof suffix, "T%zu", t + 1);
+            if (x->kind == RP_HANDLER_PROPERTY) {
+                snprintf(key, sizeof key, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PropertySystem\\PropertyHandlers\\%s", x->types[t]);
+                add_root_value(c, x->id, suffix, RP_ROOT_HKLM, key, NULL, x->clsid, cm->file, x->pos);
+            } else {
+                snprintf(key, sizeof key, "%s\\ShellEx\\%s", x->types[t],
+                         x->kind == RP_HANDLER_PREVIEW ? "{8895B1C6-B41F-4C1C-A562-0D564250836F}" : "{E357FCCD-A995-4576-B01F-234630154E96}");
+                add_class_value(c, x->id, suffix, key, NULL, x->clsid, cm->file, x->pos);
+            }
+        }
+        if (x->kind == RP_HANDLER_PREVIEW) {
+            snprintf(key, sizeof key, "CLSID\\%s", x->clsid);
+            // prevhost.exe: the 64-bit one for an x64 or Arm64 package, the 32-bit one for x86.
+            add_class_value(c, x->id, "App", key, "AppID",
+                            ir->arch == RP_ARCH_X86 ? "{534A1E02-D58F-44F0-B58B-36CBED287C7C}" : "{6D2B5079-2F0B-48DD-AB7F-97CEC514D30B}", cm->file, x->pos);
+            add_class_value(c, x->id, "Name", key, "DisplayName", desc, cm->file, x->pos);
+            add_root_value(c, x->id, "List", RP_ROOT_HKMU, "Software\\Microsoft\\Windows\\CurrentVersion\\PreviewHandlers", x->clsid, desc,
+                           cm->file, x->pos);
+        }
     }
     // [com.*]: HKCR values for the MSI in the server's component, and a com-server extension for the MSIX.
     for (size_t k = 0; k < ir->com_count && !c->nomem; ++k) {
