@@ -278,6 +278,10 @@ When a file to be replaced or removed is held by a running program (a DLL loaded
   aside (`C:\Config.Msi\*.rbf`), puts the new file in place at once and returns 0; the program keeps
   running on the old copy, programs started afterwards load the new file, and the old copy is
   deleted at the next restart. [observed]
+- A held file that is only removed (no new file takes its place) and cannot be moved - jamotong saw
+  this with a memory-mapped data file - is queued for deletion at the next restart, and the
+  installation returns 3010 even with `REBOOT=ReallySuppress`: nobody is asked, the file just stays
+  until then. [observed by jamotong 0.63]
 - A property given on the command line reaches only the package being installed. During an
   upgrade, the removal of the old version follows **the old package's** Property table - author
   the property from the first version on. [observed]

@@ -232,6 +232,9 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
 - Property 표에 `MSIRESTARTMANAGERCONTROL=Disable` 이 있으면 엔진은 쥐인 파일을 옆으로
   옮기고(`C:\Config.Msi\*.rbf`) 새 파일을 곧바로 제자리에 두고 0 을 돌려준다. 프로그램은 옛 사본으로 계속
   돌고, 그 뒤에 시작한 프로그램은 새 파일을 싣고, 옛 사본은 다음 재시작 때 지워진다. [observed]
+- 지우기만 하는(새 파일이 그 자리에 오지 않는) 쥐인 파일을 옮길 수 없으면 - jamotong 이 메모리에 매핑된
+  데이터 파일로 겪었다 - 다음 재시작 때 지우도록 걸리고, `REBOOT=ReallySuppress` 여도 설치는 3010 을
+  돌려준다. 아무도 묻지 않고, 파일은 그때까지 남는다. [observed by jamotong 0.63]
 - 명령줄에서 준 속성은 설치하고 있는 패키지에만 간다. 업그레이드 중 옛 판의 제거는 **옛 패키지의**
   Property 표를 따른다 - 그 속성은 첫 판부터 넣어 둔다. [observed]
 
