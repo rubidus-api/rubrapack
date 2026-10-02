@@ -93,7 +93,7 @@ static int lint_against(const char *path, const char *previous, bool strict) {
         snprintf(line, sizeof line, "%s: %zu error%s, %zu warning%s (against %s)\n", path, d.errors, d.errors == 1 ? "" : "s",
                  d.warnings, d.warnings == 1 ? "" : "s", previous);
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
-        if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
+        if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }
     rp_pkg_close(heap, &a);
     rp_pkg_close(heap, &b);
@@ -148,7 +148,7 @@ static int lint_package(const char *path, bool strict) {
         snprintf(line, sizeof line, "%s: %zu error%s, %zu warning%s\n", path, d.errors, d.errors == 1 ? "" : "s", d.warnings,
                  d.warnings == 1 ? "" : "s");
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
-        if (rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
+        if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
     }
     rp_mem_free(heap, sum);
     rp_msi_close(&msi);
@@ -157,7 +157,31 @@ static int lint_package(const char *path, bool strict) {
     return rc;
 }
 
+static int lint_cmd(int argc, char **argv);
+
+// `--json` (RFC-0025), anywhere on the line: the same checks, the result as one JSON object on stdout.
 int rp_cmd_lint(int argc, char **argv) {
+    char *args[64];
+    int n = 0;
+    bool json = false;
+    for (int i = 0; i < argc && n < 64; ++i) {
+        if (i >= 2 && strcmp(argv[i], "--json") == 0) json = true;
+        else args[n++] = argv[i];
+    }
+    if (!json) return lint_cmd(argc, argv);
+    const char *target = NULL;
+    for (int i = 2; i < n && target == NULL; ++i) {
+        if (args[i][0] != '-') target = args[i];
+        else if ((strcmp(args[i], "-D") == 0 || strcmp(args[i], "--arch") == 0 || strcmp(args[i], "--target") == 0 ||
+                  strcmp(args[i], "--previous") == 0) && i + 1 < n) ++i;
+    }
+    rp_diag_json_begin();
+    int rc = lint_cmd(n, args);
+    rp_diag_json_end(target ? target : "", rc);
+    return rc;
+}
+
+static int lint_cmd(int argc, char **argv) {
     const char *target = NULL, *previous = NULL;
     bool strict = false, other = false;
     for (int i = 2; i < argc; ++i) {

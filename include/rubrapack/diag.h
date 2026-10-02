@@ -7,6 +7,8 @@
 // to stdout. Tool-level messages read `rubrapack: error[RP0001]: text`; source messages will
 // read `file:line:col: error[RP1234]: text`.
 
+#include <stddef.h>
+
 // Process exit codes.
 enum {
     RP_EXIT_OK = 0,
@@ -47,5 +49,15 @@ enum {
 void rp_diag_error(const char *code, const char *fmt, ...);
 [[gnu::format(RP_PRINTF_FORMAT, 2, 3)]]
 void rp_diag_warning(const char *code, const char *fmt, ...);
+
+// `lint --json` (RFC-0025): from begin to end the diagnostics (these and the source ones of
+// srcdiag.h) are collected instead of printed; end prints one JSON object on stdout:
+// {"file", "exit", "errors", "warnings", "not_shown", "diagnostics": [{"file", "line", "column",
+// "severity", "code", "message"}]} (line and column are 0 for one about the file as a whole).
+void rp_diag_json_begin(void);
+bool rp_diag_json_on(void);
+void rp_diag_json_add(const char *path, unsigned line, unsigned col, const char *code, bool warning, const char *msg);
+void rp_diag_json_not_shown(size_t n);
+void rp_diag_json_end(const char *path, int rc);
 
 #endif // RUBRAPACK_DIAG_H

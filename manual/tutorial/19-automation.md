@@ -173,7 +173,7 @@ rubrapack runs on Linux too, and builds the same bytes there with `--reproducibl
 build server (GitHub Actions, GitLab CI, Jenkins) does not need Windows. On a Linux runner:
 
 ```text
-V=0.30.0
+V=0.31.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -185,6 +185,27 @@ The key and its password come from the server's secret store (for example the re
 *secrets* in GitHub Actions) into a file and an environment variable for this step only. Never put
 them in the repository. A key on a hardware token or in a cloud signing service is used with
 `--pkcs11` instead (chapter 16).
+
+## In an editor: `schema`
+
+`rubrapack schema` prints a JSON Schema of sources - every table, its keys, which are required, and
+which take `true`/`false` or a number - so an editor that knows TOML completes the keys while you
+type and underlines a misspelled one. In Visual Studio Code with the *Even Better TOML* extension
+(or anything built on Taplo):
+
+```text
+C:\work\hello> rubrapack schema > rubrapack.schema.json
+```
+
+and put this as the first line of `hello.toml`:
+
+```toml
+#:schema ./rubrapack.schema.json
+```
+
+The schema comes from the same key lists `lint` checks against, so it is right for the rubrapack
+that wrote it; write it again after an upgrade. `lint` stays the full check (paths, values, what
+goes with what).
 
 ## With an AI assistant
 

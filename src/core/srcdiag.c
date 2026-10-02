@@ -34,6 +34,14 @@ void rp_srcdiag_add(rp_srcdiags_t *d, rp_pos_t pos, const char *code, bool warni
 }
 
 void rp_srcdiag_print(const rp_srcdiags_t *d, const char *path) {
+    if (rp_diag_json_on()) {        // `lint --json`: collected, printed at the end as one object
+        for (size_t i = 0; i < d->count; ++i) {
+            const rp_srcdiag_t *e = &d->items[i];
+            rp_diag_json_add(path, e->pos.line, e->pos.col, e->code, e->warning, e->msg);
+        }
+        rp_diag_json_not_shown(d->dropped);
+        return;
+    }
     char line[1024];
     for (size_t i = 0; i < d->count; ++i) {
         const rp_srcdiag_t *e = &d->items[i];

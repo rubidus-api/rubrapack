@@ -320,7 +320,7 @@ static bool utf16z(rp_buf_t *b, const char *s) {
 static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp_regf_t *machine, rp_regf_t *user, bool *used_m, bool *used_u,
                          rp_srcdiags_t *d) {
     if (r->root == RP_ROOT_HKCR) {
-        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*] or [protocol.*] (planned for P8b-3), or msi-only = true", r->id);
+        rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true", r->id);
         return false;
     }
     if (r->when) rp_srcdiag_add(d, r->pos, "RP1612", false, "[registry.%s]: an MSIX writes all its values (when); use msi-only = true", r->id);

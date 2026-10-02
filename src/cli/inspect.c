@@ -8,6 +8,7 @@
 #include "rubrapack/chain.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
+#include "rubrapack/json.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
@@ -381,6 +382,14 @@ static int inspect_chain(const char *path, const uint8_t *data, size_t len, prov
 }
 
 int rp_cmd_inspect(int argc, char **argv) {
+    // `inspect <file.msi> [table|--summary] --json` (RFC-0025).
+    if (argc >= 4 && strcmp(argv[argc - 1], "--json") == 0) {
+        if (argc > 5 || (argc == 5 && argv[3][0] == '-' && strcmp(argv[3], "--summary") != 0)) {
+            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary] --json");
+            return RP_EXIT_USAGE;
+        }
+        return rp_inspect_json(argv[2], argc == 5 ? argv[3] : NULL);
+    }
     size_t n0 = argc >= 3 ? strlen(argv[2]) : 0;
     if (n0 > 4 && (strcmp(argv[2] + n0 - 4, ".msp") == 0 || strcmp(argv[2] + n0 - 4, ".MSP") == 0) && argc == 5 &&
         strcmp(argv[3], "--base") == 0) {

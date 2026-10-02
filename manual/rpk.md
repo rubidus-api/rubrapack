@@ -1207,6 +1207,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
+rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
@@ -1214,8 +1215,10 @@ rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
-rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
-rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
+rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict] [--json]
+rubrapack lint <file.msi> [--previous <old.msi>] [--strict] [--json]
+rubrapack explain [RPnnnn]
+rubrapack schema
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> <key> [--cert <chain.pem>]
@@ -1298,6 +1301,15 @@ rubrapack version | help [command]
   `true`, `["ko"]` - is used as it is, anything else as a string; a table that is not there is
   added), `--unset package.license`, `--sync` (6 without questions). Sources in UTF-16 are
   refused: save them as UTF-8 first.
+- `explain [RPnnnn]` says what a diagnostic code is about, the messages that carry it, what to do
+  and where the manual says more; without a code, the ranges (RFC-0025).
+- `--json` on `lint` (a source, a package, `--previous`) prints one JSON object on stdout - `file`,
+  `exit`, `errors`, `warnings`, `not_shown`, and `diagnostics` with `file`, `line`, `column`,
+  `severity`, `code`, `message` (line and column 0 for one about the file as a whole) - with the
+  same exit code; on `inspect <file.msi>` it gives every table, one table or `--summary` as JSON.
+- `schema` prints the JSON Schema of sources (tables, keys, required keys, booleans and numbers),
+  made from the parser's key lists, for an editor: `#:schema ./rubrapack.schema.json` as the
+  source's first line in Taplo-based editors.
 - `guid` prints a random GUID (version 4). `guid --from <text>` prints the GUID rubrapack derives
   from a text, the same way on every machine: SHA-256 over the 32-bit little-endian length of
   `guid` and those 4 bytes, the 32-bit little-endian number 1, and the 32-bit little-endian length

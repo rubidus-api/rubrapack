@@ -115,7 +115,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.30.0
+  18 = rubrapack 0.31.0
 ```
 
 요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 *패키지 코드*(빌드마다 새
@@ -241,11 +241,46 @@ C:\work\hello> rubrapack guid --from hello
 첫 번째는 무작위 - 매번 새것 - 로, 업그레이드 코드에 쓴다. 두 번째는 rubrapack 이 글에서 *끌어낸* GUID 로, 어느
 컴퓨터에서든 언제나 같다. rubrapack 은 컴포넌트 GUID 를 이렇게 끌어내므로 판이 바뀌어도 같게 유지된다. 제3부가 [그 계산](../basics/04-guids-and-hashes.md#해시로-만드는-guid-guid---from)을 보여 준다.
 
+## 오류의 뜻: `explain`
+
+모든 메시지에는 `RP` 와 네 자리 숫자의 코드가 붙는다. `explain` 은 그 코드가 무엇에 관한 것인지, 그 코드를 단
+메시지들, 할 일, 매뉴얼에서 더 볼 곳을 알려 준다:
+
+```text
+C:\work\hello> rubrapack explain RP1612
+RP1612 - MSIX: what an MSIX package needs, and what it cannot carry
+
+Messages with this code (* stands for a name or a value):
+  - [registry.*]: an MSIX writes all its values (when); use msi-only = true
+  ...
+What to do: give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true.
+Manual: Reference, "MSIX packages" - https://rubidus-api.github.io/rubrapack/en/rpk.html#msix-packages
+```
+
+코드 없이 `rubrapack explain` 을 주면 범위를 나열한다(RP13xx 값, RP16xx MSIX, ...).
+
+## 스크립트용: `--json`
+
+`lint` 와 `inspect` 는 빌드 스크립트나 편집기가 읽도록 JSON 으로도 답한다:
+
+```text
+C:\work\hello> rubrapack lint hello.toml --json
+{"file": "hello.toml", "exit": 1, "errors": 1, "warnings": 0, "not_shown": 0, "diagnostics": [
+  {"file": "hello.toml", "line": 7, "column": 1, "severity": "error", "code": "RP1201", "message": "unknown key 'sorce' in [file.App] (did you mean 'source'?)"}
+]}
+C:\work\hello> rubrapack inspect hello.msi File --json
+C:\work\hello> rubrapack inspect hello.msi --summary --json
+```
+
+종료 코드는 `--json` 이 없을 때와 같고, 메시지는 오류 출력 대신 객체에 들어간다. `inspect <패키지> --json` 은 모든
+표를(`{"codepage", "tables": [...]}`), 표 이름을 주면 그 표 하나를(`{"name", "columns", "rows"}`, 칸은 문자열, 숫자,
+`null`, 또는 있는 스트림이면 `true`), `--summary --json` 은 요약 정보를 준다.
+
 ## 명령줄의 도움말
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.30.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.31.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -256,7 +291,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.30.0 (proven_c_lib-v0.6.0)
+rubrapack 0.31.0 (proven_c_lib-v0.6.0)
 ```
 
 `rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은

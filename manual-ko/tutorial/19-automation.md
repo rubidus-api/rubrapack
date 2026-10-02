@@ -164,7 +164,7 @@ rubrapack 은 Linux 에서도 돌고, `--reproducible` 이면 거기서도 같�
 GitLab CI, Jenkins)에 Windows 가 없어도 된다. Linux 러너에서:
 
 ```text
-V=0.30.0
+V=0.31.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -174,6 +174,25 @@ chmod +x rubrapack
 
 키와 그 비밀번호는 서버의 비밀 저장소(예를 들어 GitHub Actions 저장소의 *secrets*)에서 이 단계 동안만 파일과 환경
 변수로 온다. 절대 저장소에 넣지 않는다. 하드웨어 토큰이나 클라우드 서명 서비스의 키는 대신 `--pkcs11` 로 쓴다(16장).
+
+## 편집기에서: `schema`
+
+`rubrapack schema` 는 원본의 JSON Schema 를 출력한다 - 모든 표, 그 키, 어느 키가 꼭 있어야 하는지, 어느 키가
+`true`/`false` 나 숫자를 받는지 - 그래서 TOML 을 아는 편집기가 입력하는 동안 키를 완성해 주고 틀린 키에 밑줄을 긋는다.
+Visual Studio Code 에 *Even Better TOML* 확장을 쓰면(또는 Taplo 로 만든 무엇이든):
+
+```text
+C:\work\hello> rubrapack schema > rubrapack.schema.json
+```
+
+그리고 `hello.toml` 첫 줄에 이렇게 쓴다:
+
+```toml
+#:schema ./rubrapack.schema.json
+```
+
+스키마는 `lint` 가 검사하는 바로 그 키 목록에서 나오므로, 그것을 쓴 rubrapack 에 맞다. rubrapack 을 올리면 다시
+쓴다. 전체 검사(경로, 값, 무엇과 무엇이 함께 가는지)는 여전히 `lint` 가 한다.
 
 ## AI 도우미와 함께
 

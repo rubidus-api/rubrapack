@@ -1124,6 +1124,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
+rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack new [msi] <name>
@@ -1131,8 +1132,10 @@ rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
-rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]
-rubrapack lint <file.msi> [--previous <old.msi>] [--strict]
+rubrapack lint <src.toml> [-D NAME=VALUE]... [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict] [--json]
+rubrapack lint <file.msi> [--previous <old.msi>] [--strict] [--json]
+rubrapack explain [RPnnnn]
+rubrapack schema
 rubrapack lint <file.msix|file.msixbundle> [--strict]
 rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab> -d <새 폴더> [--limit-entries N] [--limit-bytes N]
 rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> <키> [--cert <chain.pem>]
@@ -1198,6 +1201,14 @@ rubrapack version | help [command]
   순서, 손으로 쓴 표는 그대로다. 구문이 깨질 변경은 하지 않는다. 옵션을 주면 묻지 않고 차례로 적용해 저장한다:
   `--set package.version=1.2.0`(TOML 값 - `"글"`, 수, `true`, `["ko"]` - 이면 그대로, 아니면 문자열로 쓰고, 없는
   표는 더한다), `--unset package.license`, `--sync`(묻지 않는 6). UTF-16 원본은 거부한다: 먼저 UTF-8 로 저장한다.
+- `explain [RPnnnn]` 은 진단 코드가 무엇에 관한 것인지, 그 코드를 단 메시지, 할 일, 매뉴얼에서 더 볼 곳을
+  알려 준다. 코드가 없으면 범위를 나열한다(RFC-0025).
+- `lint`(원본, 패키지, `--previous`)에 `--json` 을 주면 표준 출력에 JSON 객체 하나를 낸다 - `file`, `exit`,
+  `errors`, `warnings`, `not_shown`, 그리고 `file`, `line`, `column`, `severity`, `code`, `message` 를 가진
+  `diagnostics`(파일 전체에 관한 것은 줄과 칸이 0) - 종료 코드는 같다. `inspect <file.msi>` 에서는 모든 표, 한
+  표, `--summary` 를 JSON 으로 준다.
+- `schema` 는 원본의 JSON Schema(표, 키, 필수 키, 참거짓과 숫자)를 파서의 키 목록에서 만들어 출력한다. 편집기용이며,
+  Taplo 기반 편집기에서는 원본 첫 줄에 `#:schema ./rubrapack.schema.json` 을 쓴다.
 - `guid` 는 무작위 GUID(4판)를 찍는다. `guid --from <text>` 는 rubrapack 이 글에서 끌어내는 GUID 를
   어느 컴퓨터에서나 같게 찍는다: `guid` 의 32비트 리틀엔디언 길이와 그 4바이트, 32비트 리틀엔디언 수 1,
   글의 32비트 리틀엔디언 길이와 UTF-8 바이트에 대한 SHA-256. 해시의 앞 16바이트에 판 니블을 8 로,

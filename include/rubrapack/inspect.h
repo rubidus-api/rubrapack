@@ -45,6 +45,8 @@ void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
 
 // `rubrapack new [msi] <name>` and `rubrapack guid [--from <text>]` (RFC-0006 5).
 [[nodiscard]] int rp_cmd_new(int argc, char **argv);
+[[nodiscard]] int rp_cmd_explain(int argc, char **argv);
+[[nodiscard]] int rp_cmd_schema(int argc, char **argv);
 [[nodiscard]] int rp_cmd_edit(int argc, char **argv);
 [[nodiscard]] int rp_cmd_guid(int argc, char **argv);
 

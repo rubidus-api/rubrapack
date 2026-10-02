@@ -127,7 +127,7 @@ int rp_msix_lint(const char *path, bool strict) {
         }
     }
     snprintf(line, sizeof line, "%s: %zu files, %zu errors, 0 warnings\n", path, p.count, errors);
-    rc = out(line);
+    if (!rp_diag_json_on()) rc = out(line);
     close_pkg(&p);
     return errors ? RP_EXIT_LINT : rc;
 }

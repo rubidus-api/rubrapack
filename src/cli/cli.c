@@ -33,15 +33,17 @@ static const command_t commands[] = {
                  "write a transform (.mst): what turns one package into the other", true },
     { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
                  "write a patch (.msp): the files and rows that update an installed base to the target", true },
-    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
+    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msi> [table|--summary] --json | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
                  "dump a package (MSI tables as IDT)", true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
                  "unpack a package into a new directory, laid out as it installs", true },
-    { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] | lint <file.msi> [--previous <old.msi>] [--strict]",
+    { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] [--json] | lint <file.msi> [--previous <old.msi>] [--strict] [--json]",
                  "check a source or package without writing anything", true },
-    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name>", "write a source file (.toml; .rpk names too): made from answers, asked or given as options, or a fixed starter", true },
+    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name> | new <file>.toml --from <package.msi> [--dist <folder>] [--publisher \"CN=...\"]", "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI", true },
     { "edit",    "edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]", "change a source in place: through a menu of questions, or with the options", true },
     { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
+    { "schema",  "schema", "print the JSON Schema of sources (for an editor that completes and checks keys)", true },
+    { "explain", "explain [RPnnnn]", "what a diagnostic code means, the messages that carry it, what to do and where the manual says more", true },
     { "version", "version", "print the version", true },
     { "help",    "help [command]", "print this help, or one command's usage", true },
 };
@@ -161,6 +163,8 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "new") == 0) return rp_cmd_new(argc, argv);
     if (strcmp(name, "edit") == 0) return rp_cmd_edit(argc, argv);
     if (strcmp(name, "guid") == 0) return rp_cmd_guid(argc, argv);
+    if (strcmp(name, "explain") == 0) return rp_cmd_explain(argc, argv);
+    if (strcmp(name, "schema") == 0) return rp_cmd_schema(argc, argv);
     if (strcmp(name, "sign") == 0) return rp_cmd_sign(argc, argv);
     if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
