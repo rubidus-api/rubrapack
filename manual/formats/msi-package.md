@@ -339,7 +339,11 @@ What the engine checks when it shows a dialog (each seen as an error dialog carr
   **ListBox table must exist, even empty**: without it the engine logs 2205 and skips the dialog,
   and the installation goes on as if Ignore was chosen. In a major upgrade the dialog comes twice
   (the new files, then the old version's removal). After Ignore the held file is moved aside and
-  the installation ends with 0. [observed]
+  the installation ends with 0. Only programs with a window are listed; a file held by a program
+  without one brings no dialog. A package whose Dialog table has no `FilesInUse` fails with internal
+  error 2803 when the dialog is due. [observed] rubrapack makes Ignore the default button, labelled
+  Continue, with a text that says what happens (the files are replaced now, open programs keep the
+  old ones until reopened).
 - **Error icon.** The engine puts its own icon for the message type into `ErrorIcon` (a warning
   triangle for a launch condition), whatever the control's Binary holds. [observed]
 - **List order.** A `ComboBox` lists its items alphabetically unless the control has the Sorted

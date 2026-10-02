@@ -807,7 +807,11 @@ msiexec /x {ProductCode} /qn
 | `installdir` | 환영, 사용권, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 끝 | 복구 또는 제거 |
 | `features` | `installdir` 에 더해 기능 트리와 필요한 디스크 공간 | 복구 또는 제거 |
 
-모든 세트에는 취소 확인, 오류 대화창, 사용 중인 파일 목록, 디스크 공간 부족 경고도 있다. 대화창은
+모든 세트에는 취소 확인, 오류 대화창, 사용 중인 파일 목록, 디스크 공간 부족 경고도 있다. 사용 중인 파일
+목록은 창이 있는 프로그램이 바꾸거나 지울 파일을 쥐고 있을 때 나온다 - 입력기나 셸 확장이면 거의 모든
+프로그램이다. 기본 단추는 '계속'이다: 파일은 곧바로 바뀌고, 이미 열린 프로그램은 다시 열 때까지 이전 것을
+쓰며, `reboot = "suppress"`(기본)이면 다시 시작을 묻지 않는다(`FilesInUseText`; `reboot = "allow"` 면
+Windows 가 다시 시작을 물을 수 있다고 적는 `FilesInUseTextRestart`). 대화창은
 모두 기본값이 있는 값만 모으므로 `/qn` 은 여전히 창 없이 설치한다.
 
 ```toml
@@ -834,7 +838,7 @@ text = "This will install [ProductName]. Close other programs first."
 `CustomizeTitle`, `CustomizeText`, `Reset`, `DiskCost`, `DiskCostTitle`, `DiskCostText`, `ReadyTitle`,
 `ReadyText`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
 `UserExitTitle`, `UserExitText`, `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`,
-`FilesInUseText`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
+`FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
 `RepairText`, `Remove`, `RemoveText`, `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지).
 단추 문구에서 `&` 는 바로 가기 키를
 표시한다(`&Next` 는 Alt+N).

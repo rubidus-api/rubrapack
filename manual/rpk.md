@@ -867,7 +867,12 @@ only Windows Installer's own progress bar.
 | `features` | as `installdir`, plus a feature tree and the disk space it needs | repair or remove |
 
 Every set also has the cancel question, the error dialog, the files-in-use list and the
-out-of-disk-space warning. The dialogs only collect values that all have defaults, so `/qn` still
+out-of-disk-space warning. The files-in-use list comes when a program with a window holds a file
+being replaced or removed - for an input method or a shell extension, nearly every program. Its
+default button is Continue: the files are replaced at once, programs already open keep the old
+files until they are reopened, and with `reboot = "suppress"` (the default) no restart is asked for
+(`FilesInUseText`; with `reboot = "allow"`, `FilesInUseTextRestart`, which says Windows may ask to
+restart). The dialogs only collect values that all have defaults, so `/qn` still
 installs without a window.
 
 ```toml
@@ -894,7 +899,8 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `BrowseLookIn`, `BrowseFolder`, `BrowseUp`, `BrowseNew`, `CustomizeTitle`, `CustomizeText`,
 `Reset`, `DiskCost`, `DiskCostTitle`, `DiskCostText`, `ReadyTitle`, `ReadyText`, `ProgressTitle`,
 `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`, `UserExitTitle`, `UserExitText`,
-`FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`, `OutOfDiskTitle`,
+`FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`,
+`FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`,
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
 `LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below). In button texts `&` marks the access key (`&Next` is Alt+N).
 

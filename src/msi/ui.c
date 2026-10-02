@@ -66,8 +66,14 @@ static const text_t texts[] = {
       "An error ended the installation, which was rolled back. Nothing on your computer was changed." },
     { "CancelText", "[ProductName] 설치를 취소하시겠습니까?", "Cancel the installation of [ProductName]?" },
     { "FilesInUseTitle", "사용 중인 파일", "Files in use" },
-    { "FilesInUseText", "다음 프로그램이 바꿔야 할 파일을 쓰고 있습니다. 닫고 '다시 시도'를 누르거나, '무시'를 눌러 다음 재시작 때 바꾸게 하십시오.",
-      "These programs use files that need to be changed. Close them and click Retry, or click Ignore to have them replaced at the next restart." },
+    // Measured (DECISIONS 2026-10-02 "Files in use"): with Restart Manager off (every package) the
+    // engine moves a held file aside and puts the new one in place at once; the old copy goes at
+    // the next restart, which with reboot = "suppress" (the default) nobody is asked for.
+    { "FilesInUseText", "다음 프로그램이 바꿀 파일을 쓰고 있습니다. '계속'을 누르면 지금 바꿉니다. 이미 열린 프로그램은 다시 열 때까지 이전 것을 쓰고, 새로 여는 프로그램부터 새 것을 씁니다. 다시 시작하지 않아도 됩니다.",
+      "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. No restart is needed." },
+    { "FilesInUseTextRestart", "다음 프로그램이 바꿀 파일을 쓰고 있습니다. '계속'을 누르면 지금 바꿉니다. 이미 열린 프로그램은 다시 열 때까지 이전 것을 쓰고, 새로 여는 프로그램부터 새 것을 씁니다. 끝에 Windows 가 다시 시작을 물을 수 있습니다.",
+      "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. Windows may ask to restart at the end." },
+    { "Continue", "계속(&C)", "&Continue" },
     { "OutOfDiskTitle", "디스크 공간 부족", "Not enough disk space" },
     { "OutOfDiskText", "고른 설치에 필요한 공간이 모자랍니다. 파일을 지우거나 다른 위치를 고르십시오.",
       "There is not enough space for this installation. Free some space or choose another location." },
@@ -502,15 +508,27 @@ static void error_dlg(ctx_t *c) {
     prop(c, "ErrorDialog", "RpErrorDlg");
 }
 
+// The engine shows it at InstallValidate when a program with a window holds a file to be replaced
+// or removed (an input method or a shell extension: nearly every program). The engine's Ignore is
+// the default, labelled Continue: the files are replaced at once (the text says how), so there is
+// nothing to close; Retry and Exit stay.
+static bool user_text(const rp_ir_t *ir, const char *id) {
+    for (size_t i = 0; i < ir->ui_text_count; ++i) {
+        if (strcmp(ir->ui_texts[i].id, id) == 0) return true;
+    }
+    return false;
+}
+
 static void files_in_use_dlg(ctx_t *c) {
     const char *d = "FilesInUse";           // the engine looks this dialog up by name
-    dialog(c, d, 370, 270, 3 | 32, "Retry", "Retry", "Exit");
+    const char *text = c->ir->reboot_suppress || user_text(c->ir, "FilesInUseText") ? "FilesInUseText" : "FilesInUseTextRestart";
+    dialog(c, d, 370, 270, 3 | 32, "Ignore", "Ignore", "Exit");
     frame(c, d, "FilesInUseTitle", NULL, NULL);     // the text is too long for the banner (observed cut)
-    control(c, d, "Text", "Text", 20, 52, 330, 30, VIS | NOPREFIX, NULL, T(c, "FilesInUseText"), NULL);
-    control(c, d, "List", "ListBox", 20, 85, 330, 140, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
-    control(c, d, "Retry", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Retry"), "Ignore");
-    control(c, d, "Ignore", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Ignore"), "Exit");
-    control(c, d, "Exit", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Exit"), "Retry");
+    control(c, d, "Text", "Text", 20, 52, 330, 40, VIS | NOPREFIX, NULL, T(c, text), NULL);
+    control(c, d, "List", "ListBox", 20, 97, 330, 128, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
+    control(c, d, "Retry", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Retry"), "Exit");
+    control(c, d, "Ignore", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Continue"), "Retry");
+    control(c, d, "Exit", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Exit"), "Ignore");
     event(c, d, "Retry", "EndDialog", "Retry", NULL, 1);
     event(c, d, "Ignore", "EndDialog", "Ignore", NULL, 1);
     event(c, d, "Exit", "EndDialog", "Exit", NULL, 1);
