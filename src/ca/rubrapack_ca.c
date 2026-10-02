@@ -39,6 +39,18 @@
 //                   folders the plan names, when empty.
 //   None of them fails the installation: a file left behind is not worth a rollback.
 //
+// Cleaning up later (RFC-0026):
+//   RpCleanupPrepare immediate: the package's folders (RP_CLEANUP_DIRS, Directory keys), its scope
+//                   and ProductCode, and where its cleanup folder is, for the commit action.
+//   RpCleanupRegister commit: for a run that removes or replaces files (removal, upgrade,
+//                   maintenance) or that noted files a per-user package could not queue
+//                   (pending.txt), puts rubrapack_clean.exe (embedded in this DLL) and its list in
+//                   the cleanup folder and registers the scheduled task "rubrapack cleanup
+//                   <ProductCode>" (first run two minutes later, then at logon and every 15
+//                   minutes, for 30 days). Windows Installer queues its own deletions for the next
+//                   restart only after the commit actions, so the task looks then; it removes itself
+//                   when nothing is left. It never fails the installation.
+//
 // Data format (RFC-0001 9.6.1): "RPQ1" followed by records; every field is "<decimal length>:" and
 // that many UTF-16 units, so any text (including ':' and ';') round-trips. A plan record is
 // root, view, key, name, value (16 hex digits), component, keep; an apply record is op ("w" write,
@@ -54,6 +66,14 @@
 #include <aclapi.h>
 #include <sddl.h>
 #include <commdlg.h>
+
+// rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
+#if __has_include("rp_clean_part.h")
+#include "rp_clean_part.h"
+#else
+static const unsigned char rp_clean_part[] = { 0 };
+static const size_t rp_clean_part_len = 0;
+#endif
 
 enum { MAX_TEXT = 1 << 16, MAX_FIELDS = 16 };
 
@@ -454,6 +474,43 @@ static void w_rec(writer_t *w, const wchar_t *op, const wchar_t *a, const wchar_
     w_field(w, b);
 }
 
+// The cleanup folder of this product: %ProgramData% (per machine) or the user's %LOCALAPPDATA%
+// (per user), then rubrapack\cleanup\<ProductCode>.
+static bool cleanup_folder(MSIHANDLE h, bool machine, wchar_t out[MAX_PATH * 4]) {
+    wchar_t base[MAX_PATH * 2];
+    DWORD n = GetEnvironmentVariableW(machine ? L"ProgramData" : L"LOCALAPPDATA", base, MAX_PATH * 2);
+    wchar_t *pc = get_property(h, L"ProductCode");
+    bool ok = n > 0 && n < MAX_PATH * 2 && pc && pc[0];
+    if (ok) swprintf(out, MAX_PATH * 4, L"%ls\\rubrapack\\cleanup\\%ls", base, pc);
+    if (pc) HeapFree(GetProcessHeap(), 0, pc);
+    return ok;
+}
+
+static void make_dirs(const wchar_t *path) {
+    wchar_t part[MAX_PATH * 4];
+    size_t n = wcslen(path);
+    for (size_t i = 3; i <= n && i < MAX_PATH * 4; ++i) {
+        if (i < n && path[i] != L'\\') continue;
+        memcpy(part, path, i * sizeof *part);
+        part[i] = 0;
+        CreateDirectoryW(part, NULL);
+    }
+}
+
+// Appends "file<TAB>path" to <folder>\pending.txt (UTF-16LE).
+static void note_pending(MSIHANDLE h, const wchar_t *folder, const wchar_t *path) {
+    wchar_t file[MAX_PATH * 4], line[MAX_PATH * 4 + 16];
+    make_dirs(folder);
+    swprintf(file, MAX_PATH * 4, L"%ls\\pending.txt", folder);
+    HANDLE f = CreateFileW(file, FILE_APPEND_DATA, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (f == INVALID_HANDLE_VALUE) return;
+    int n = swprintf(line, MAX_PATH * 4 + 16, L"file\t%ls\r\n", path);
+    DWORD put = 0;
+    if (n > 0) WriteFile(f, line, (DWORD)n * sizeof(wchar_t), &put, NULL);
+    CloseHandle(f);
+    log_line(h, L"rubrapack: remove: %ls noted for the cleanup task", path);
+}
+
 __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     wchar_t *plan = get_property(h, L"RP_REMOVES");
     wchar_t *root = get_property(h, L"RP_REMOVES_ROOT");
@@ -470,6 +527,9 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
         // One backup folder per volume (or the temporary folder), named once per run.
         wchar_t tag[40];
         swprintf(tag, 40, L"rp-%08lX%08lX", (unsigned long)GetCurrentProcessId(), (unsigned long)GetTickCount());
+        // Where a file that cannot even be queued for the next restart (per user) is noted.
+        static wchar_t cfolder[MAX_PATH * 4];
+        if (cleanup_folder(h, wcscmp(root, L"volume") == 0, cfolder)) w_rec(&apply, L"c", cfolder, L"");
         reader_t r = { plan + 4, plan + wcslen(plan) };
         static wchar_t f[3][MAX_TEXT / 8];
         static wchar_t dir[MAX_PATH * 4], src[MAX_PATH * 4], dst[MAX_PATH * 4], vol[MAX_PATH * 4], bdir[MAX_PATH * 4];
@@ -564,6 +624,8 @@ static void make_private_dir(MSIHANDLE h, const wchar_t *path) {
 static void remove_list(MSIHANDLE h, bool to_backup) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return;
+    static wchar_t note[MAX_PATH * 4];
+    note[0] = 0;
     if (wcsncmp(data, L"RPR1", 4) == 0) {
         reader_t r = { data + 4, data + wcslen(data) };
         static wchar_t f[3][MAX_PATH * 4];
@@ -571,6 +633,10 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
         while (r.p < r.end && r_field(&r, f[0], 8) && r_field(&r, f[1], MAX_PATH * 4) && r_field(&r, f[2], MAX_PATH * 4)) {
             wchar_t op = f[0][0];
             if (op == L'd') {                // apply lists its folders last: make them on the first move instead
+                continue;
+            }
+            if (op == L'c') {
+                wcscpy(note, f[1]);
                 continue;
             }
             if (op == L'm') {
@@ -589,6 +655,7 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
                 if (!ok && to_backup) {          // held: it goes at the next restart instead
                     BOOL later = MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
                     log_line(h, L"rubrapack: remove: %ls at the next restart: %ls", f[1], later ? L"queued" : L"could not queue");
+                    if (!later && note[0]) note_pending(h, note, f[1]);     // per user: the cleanup task's job
                 }
             } else if (op == L'f') {
                 if (!DeleteFileW(f[1]) && GetLastError() != ERROR_FILE_NOT_FOUND) MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
@@ -615,5 +682,274 @@ __declspec(dllexport) UINT __stdcall RpRemoveRollback(MSIHANDLE h) {
 
 __declspec(dllexport) UINT __stdcall RpRemoveCommit(MSIHANDLE h) {
     remove_list(h, false);
+    return ERROR_SUCCESS;
+}
+
+// ---- cleaning up later (RFC-0026) -----------------------------------------------------------------
+
+__declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
+    wchar_t *dirs = get_property(h, L"RP_CLEANUP_DIRS");
+    wchar_t *scope = get_property(h, L"RP_CLEANUP_SCOPE");
+    wchar_t *pc = get_property(h, L"ProductCode");
+    writer_t w = { 0 };
+    w_raw(&w, L"RPC1", 4);
+    static wchar_t folder[MAX_PATH * 4], path[MAX_PATH * 4];
+    bool machine = scope && wcscmp(scope, L"machine") == 0;
+    // Why this run may leave something: Windows Installer writes its deletions for the next
+    // restart only after the commit actions (x40), so the commit cannot see them - it registers
+    // the task for every run that removes or replaces files, and the task's first run, two minutes
+    // later, sees what there is (and removes itself when there is nothing).
+    wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND"), *installed = get_property(h, L"Installed");
+    const wchar_t *why = remove && remove[0] ? L"remove" : older && older[0] ? L"upgrade" : installed && installed[0] ? L"maintenance" : L"";
+    if (dirs && pc && cleanup_folder(h, machine, folder)) {
+        w_field(&w, pc);
+        w_field(&w, machine ? L"machine" : L"user");
+        w_field(&w, folder);
+        w_field(&w, why);
+        wchar_t *ctx = NULL;
+        for (wchar_t *d = wcstok(dirs, L";", &ctx); d; d = wcstok(NULL, L";", &ctx)) {
+            DWORD n = MAX_PATH * 4;
+            if (MsiGetTargetPathW(h, d, path, &n) != ERROR_SUCCESS) continue;
+            size_t len = wcslen(path);
+            if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
+            w_field(&w, path);
+        }
+    }
+    set_data(h, L"RP_CleanupRegister", &w);
+    if (remove) HeapFree(GetProcessHeap(), 0, remove);
+    if (older) HeapFree(GetProcessHeap(), 0, older);
+    if (installed) HeapFree(GetProcessHeap(), 0, installed);
+    if (dirs) HeapFree(GetProcessHeap(), 0, dirs);
+    if (scope) HeapFree(GetProcessHeap(), 0, scope);
+    if (pc) HeapFree(GetProcessHeap(), 0, pc);
+    if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
+    return ERROR_SUCCESS;
+}
+
+// How many renames Windows has queued for the next restart (PendingFileRenameOperations pairs).
+static unsigned long queued_renames(void) {
+    HKEY k;
+    unsigned long n = 0;
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\Session Manager", 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS) return 0;
+    DWORD type = 0, size = 0;
+    if (RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, NULL, &size) == ERROR_SUCCESS && type == REG_MULTI_SZ && size) {
+        wchar_t *buf = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 2 * sizeof(wchar_t));
+        if (buf && RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, (BYTE *)buf, &size) == ERROR_SUCCESS) {
+            for (wchar_t *src = buf; *src; ++n) {
+                wchar_t *dst = src + wcslen(src) + 1;
+                src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+            }
+        }
+        if (buf) HeapFree(GetProcessHeap(), 0, buf);
+    }
+    RegCloseKey(k);
+    return n;
+}
+
+// Appends text to a growing buffer (writer_t without the field lengths).
+static void w_text(writer_t *w, const wchar_t *s) { w_raw(w, s, wcslen(s)); }
+
+static void w_xml(writer_t *w, const wchar_t *s) {
+    for (; *s; ++s) {
+        if (*s == L'&') w_text(w, L"&amp;");
+        else if (*s == L'<') w_text(w, L"&lt;");
+        else if (*s == L'>') w_text(w, L"&gt;");
+        else if (*s == L'"') w_text(w, L"&quot;");
+        else w_raw(w, s, 1);
+    }
+}
+
+static bool write_file(const wchar_t *path, const void *data, size_t len, const SECURITY_ATTRIBUTES *sa) {
+    HANDLE f = CreateFileW(path, GENERIC_WRITE, 0, (SECURITY_ATTRIBUTES *)sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (f == INVALID_HANDLE_VALUE) return false;
+    DWORD put = 0;
+    bool ok = WriteFile(f, data, (DWORD)len, &put, NULL) && put == len;
+    if (!CloseHandle(f)) ok = false;
+    return ok;
+}
+
+static DWORD run_wait(MSIHANDLE h, wchar_t *cmd) {
+    STARTUPINFOW si = { .cb = sizeof si };
+    PROCESS_INFORMATION pi;
+    DWORD code = (DWORD)-1;
+    if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+        WaitForSingleObject(pi.hProcess, 60000);
+        GetExitCodeProcess(pi.hProcess, &code);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
+    log_line(h, L"rubrapack: cleanup: %ls -> %ld", cmd, (long)code);
+    return code;
+}
+
+// Local time `minutes` from now: "YYYY-MM-DDTHH:MM:SS" and "YYYYMMDD".
+static void when_minutes(long long minutes, wchar_t iso[24], wchar_t ymd[12]) {
+    FILETIME ft;
+    GetSystemTimeAsFileTime(&ft);
+    ULARGE_INTEGER u = { .LowPart = ft.dwLowDateTime, .HighPart = ft.dwHighDateTime };
+    u.QuadPart += (unsigned long long)minutes * 600000000ULL;
+    ft.dwLowDateTime = u.LowPart;
+    ft.dwHighDateTime = u.HighPart;
+    FILETIME lt;
+    SYSTEMTIME st;
+    FileTimeToLocalFileTime(&ft, &lt);
+    FileTimeToSystemTime(&lt, &st);
+    swprintf(iso, 24, L"%04u-%02u-%02uT%02u:%02u:%02u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+    swprintf(ymd, 12, L"%04u%02u%02u", st.wYear, st.wMonth, st.wDay);
+}
+
+static void when(int days, wchar_t iso[24], wchar_t ymd[12]) { when_minutes((long long)days * 1440, iso, ymd); }
+
+__declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return ERROR_SUCCESS;
+    reader_t r = { data, data + wcslen(data) };
+    static wchar_t pc[64], scope[16], folder[MAX_PATH * 4], why[16], dirs[64][MAX_PATH * 4];
+    size_t ndirs = 0;
+    if (wcsncmp(data, L"RPC1", 4) != 0) goto done;
+    r.p += 4;
+    if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16)) goto done;
+    while (ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4)) ++ndirs;
+    bool machine = wcscmp(scope, L"machine") == 0;
+    writer_t list = { 0 };
+    size_t found = 0;
+    // Files a per-user package could not queue (RpRemoveApply wrote them down).
+    static wchar_t pend[MAX_PATH * 4];
+    swprintf(pend, MAX_PATH * 4, L"%ls\\pending.txt", folder);
+    writer_t files = { 0 };
+    HANDLE pf = CreateFileW(pend, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (pf != INVALID_HANDLE_VALUE) {
+        DWORD size = GetFileSize(pf, NULL), got = 0;
+        if (size != INVALID_FILE_SIZE && size < (1u << 20) && size % 2 == 0) {
+            wchar_t *t = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + sizeof(wchar_t));
+            if (t && ReadFile(pf, t, size, &got, NULL) && got == size) {
+                wchar_t *ctx = NULL;
+                for (wchar_t *line = wcstok(t, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
+                    if (wcsncmp(line, L"file\t", 5) != 0) continue;
+                    w_text(&files, line);
+                    w_text(&files, L"\r\n");
+                    ++found;
+                }
+            }
+            if (t) HeapFree(GetProcessHeap(), 0, t);
+        }
+        CloseHandle(pf);
+    }
+    log_line(h, L"rubrapack: cleanup: run kind '%ls', %zu file(s) noted", why, found);
+    if ((why[0] == 0 && found == 0) || rp_clean_part_len < 2) {
+        if (rp_clean_part_len < 2) log_line(h, L"rubrapack: cleanup: this helper was built without rubrapack_clean.exe");
+        if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
+        goto done;
+    }
+    static wchar_t name[160], iso0[24], iso1[24], ymd[12], ymd0[12], path[MAX_PATH * 4], exe[MAX_PATH * 4], cmd[MAX_PATH * 8], sys[MAX_PATH];
+    // The task, from an XML file: SYSTEM (per machine) or this user, at logon and every 15 minutes
+    // for 30 days; Windows deletes it when the time is up.
+    wchar_t *sid = NULL;
+    if (!machine) {
+        HANDLE tok = NULL;
+        static BYTE tu[256];
+        DWORD n = 0;
+        if (OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &tok) || OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &tok)) {
+            if (GetTokenInformation(tok, TokenUser, tu, sizeof tu, &n)) ConvertSidToStringSidW(((TOKEN_USER *)tu)->User.Sid, &sid);
+            CloseHandle(tok);
+        }
+    }
+    // Per user the name carries the user's SID: several users may each install the same product.
+    if (machine || sid == NULL) swprintf(name, 160, L"rubrapack cleanup %ls", pc);
+    else swprintf(name, 160, L"rubrapack cleanup %ls %ls", pc, sid);
+    when(0, iso0, ymd0);
+    static wchar_t isofirst[24], ymdfirst[12];
+    when_minutes(2, isofirst, ymdfirst);
+    when(30, iso1, ymd);
+    w_raw(&list, L"\xFEFF" L"RPC1\r\n", 7);
+    w_text(&list, L"task\t"); w_text(&list, name); w_text(&list, L"\r\n");
+    w_text(&list, L"until\t"); w_text(&list, ymd); w_text(&list, L"\r\n");
+    w_text(&list, L"product\t"); w_text(&list, pc); w_text(&list, L"\r\n");
+    w_text(&list, L"scope\t"); w_text(&list, scope); w_text(&list, L"\r\n");
+    wchar_t count[24];
+    swprintf(count, 24, L"%lu", queued_renames());      // what is queued from here on is this run's (the engine's backups)
+    w_text(&list, L"after\t"); w_text(&list, count); w_text(&list, L"\r\n");
+    for (size_t i = 0; i < ndirs; ++i) {
+        w_text(&list, L"root\t"); w_text(&list, dirs[i]); w_text(&list, L"\r\n");
+    }
+    if (files.buf) w_text(&list, files.buf);
+    // The folder: per machine only SYSTEM and Administrators may write (the task runs as SYSTEM), and
+    // it must not exist already with another owner or pass through a link (%ProgramData% lets
+    // users create folders: one planted there is refused, with the guard's own check).
+    SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
+    if (machine) {
+        static wchar_t base[MAX_PATH * 4];
+        wcscpy(base, folder);
+        for (int up = 0; up < 2; ++up) {
+            wchar_t *slash = wcsrchr(base, L'\\');
+            if (slash) *slash = 0;
+        }
+        if (check_dir(h, folder) != 0) {
+            log_line(h, L"rubrapack: cleanup: %ls is not safe to use; nothing registered", folder);
+            if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
+            if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+            goto done;
+        }
+        ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;GRGX;;;BU)", SDDL_REVISION_1,
+                                                             &sa.lpSecurityDescriptor, NULL);
+        make_dirs(folder);
+        if (sa.lpSecurityDescriptor) {
+            SetFileSecurityW(base, DACL_SECURITY_INFORMATION, sa.lpSecurityDescriptor);     // %ProgramData%\rubrapack
+            SetFileSecurityW(folder, DACL_SECURITY_INFORMATION, sa.lpSecurityDescriptor);
+        }
+        if (check_dir(h, folder) != 0) {            // made by someone else in between
+            log_line(h, L"rubrapack: cleanup: %ls is not safe to use; nothing registered", folder);
+            if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
+            if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+            if (sa.lpSecurityDescriptor) LocalFree(sa.lpSecurityDescriptor);
+            goto done;
+        }
+    } else {
+        make_dirs(folder);
+    }
+    swprintf(exe, MAX_PATH * 4, L"%ls\\rubrapack_clean.exe", folder);
+    swprintf(path, MAX_PATH * 4, L"%ls\\list.txt", folder);
+    bool ok = write_file(exe, rp_clean_part, rp_clean_part_len, sa.lpSecurityDescriptor ? &sa : NULL) &&
+              write_file(path, list.buf, list.len * sizeof(wchar_t), sa.lpSecurityDescriptor ? &sa : NULL);
+    writer_t x = { 0 };
+    w_raw(&x, L"\xFEFF", 1);
+    w_text(&x, L"<?xml version=\"1.0\" encoding=\"UTF-16\"?>\r\n<Task version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\">\r\n");
+    w_text(&x, L"<RegistrationInfo><Description>rubrapack: deletes what the installation of ");
+    w_xml(&x, pc);
+    w_text(&x, L" had to leave until the next restart, as soon as nothing holds it.</Description></RegistrationInfo>\r\n<Triggers>\r\n<LogonTrigger><StartBoundary>");
+    w_text(&x, iso0); w_text(&x, L"</StartBoundary><EndBoundary>"); w_text(&x, iso1); w_text(&x, L"</EndBoundary><Enabled>true</Enabled>");
+    if (sid) { w_text(&x, L"<UserId>"); w_text(&x, sid); w_text(&x, L"</UserId>"); }
+    w_text(&x, L"</LogonTrigger>\r\n<TimeTrigger><Repetition><Interval>PT15M</Interval><StopAtDurationEnd>false</StopAtDurationEnd></Repetition><StartBoundary>");
+    w_text(&x, isofirst); w_text(&x, L"</StartBoundary><EndBoundary>"); w_text(&x, iso1); w_text(&x, L"</EndBoundary><Enabled>true</Enabled></TimeTrigger>\r\n</Triggers>\r\n");
+    w_text(&x, L"<Principals><Principal id=\"Author\"><UserId>");
+    w_text(&x, machine ? L"S-1-5-18" : sid ? sid : L"");
+    // HighestAvailable for a user too: a task an elevated installation registered can be deleted
+    // only with the same rights (x40), and the task deletes itself at the end.
+    w_text(&x, machine ? L"</UserId><RunLevel>HighestAvailable</RunLevel>" : L"</UserId><LogonType>InteractiveToken</LogonType><RunLevel>HighestAvailable</RunLevel>");
+    w_text(&x, L"</Principal></Principals>\r\n<Settings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>"
+               L"<StopIfGoingOnBatteries>false</StopIfGoingOnBatteries><StartWhenAvailable>true</StartWhenAvailable><ExecutionTimeLimit>PT10M</ExecutionTimeLimit>"
+               L"<DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter></Settings>\r\n<Actions Context=\"Author\"><Exec><Command>");
+    w_xml(&x, exe);
+    w_text(&x, L"</Command><Arguments>\"");
+    w_xml(&x, folder);
+    w_text(&x, L"\"</Arguments></Exec></Actions>\r\n</Task>\r\n");
+    if (sid) LocalFree(sid);
+    swprintf(path, MAX_PATH * 4, L"%ls\\task.xml", folder);
+    ok = ok && !x.bad && !list.bad && write_file(path, x.buf, x.len * sizeof(wchar_t), NULL);
+    GetSystemDirectoryW(sys, MAX_PATH);
+    if (ok) {
+        swprintf(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /create /tn \"%ls\" /xml \"%ls\" /f", sys, name, path);
+        run_wait(h, cmd);     // first run two minutes from now: the engine's own deletions are queued by then
+    } else {
+        log_line(h, L"rubrapack: cleanup: could not write %ls", folder);
+    }
+    DeleteFileW(path);
+    DeleteFileW(pend);
+    if (sa.lpSecurityDescriptor) LocalFree(sa.lpSecurityDescriptor);
+    if (x.buf) HeapFree(GetProcessHeap(), 0, x.buf);
+    if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+    if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
+done:
+    HeapFree(GetProcessHeap(), 0, data);
     return ERROR_SUCCESS;
 }

@@ -116,6 +116,10 @@ never restarts by itself: the installation ends with exit code 3010 ("restart ne
 user restarts later. `reboot = "allow"` lets Windows Installer ask for, or at `/qn` perform, a
 restart when one is needed.
 
+What waits for the restart is usually a file a running program still holds. The package's cleanup
+task deletes it earlier - as soon as that program closes - and then itself; `cleanup = false` in
+`[package]` leaves the task out (see the reference, "Cleaning up later").
+
 ## Try it
 
 Install (as administrator), then: `services.msc` lists "Hello background service", running; a

@@ -235,6 +235,10 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
 - 지우기만 하는(새 파일이 그 자리에 오지 않는) 쥐인 파일을 옮길 수 없으면 - jamotong 이 메모리에 매핑된
   데이터 파일로 겪었다 - 다음 재시작 때 지우도록 걸리고, `REBOOT=ReallySuppress` 여도 설치는 3010 을
   돌려준다. 아무도 묻지 않고, 파일은 그때까지 남는다. [observed by jamotong 0.63]
+- 그 삭제는 `HKLM\SYSTEM\CurrentControlSet\Control\Session Manager` 의 `PendingFileRenameOperations` 에
+  원본과 대상의 짝으로, 대상은 비운 채 들어간다. 원본은 Windows 11 에서 `*1\??\C:\...` 꼴이다. Windows
+  Installer 는 확정(commit) 사용자 지정 동작이 돈 뒤에야 그것을 더하므로, 확정 동작은 자기 설치가 남기는 것을
+  볼 수 없다. [observed]
 - 명령줄에서 준 속성은 설치하고 있는 패키지에만 간다. 업그레이드 중 옛 판의 제거는 **옛 패키지의**
   Property 표를 따른다 - 그 속성은 첫 판부터 넣어 둔다. [observed]
 

@@ -139,37 +139,39 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 | # | 이름(UTF-16LE) | 이름 | 크기 |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
-| 3 | `40 48 0c 46 f6 45` ... | `CustomAction` | 8 |
-| 4 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
-| 5 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
-| 6 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
-| 7 | `40 48 0f 43 2f 42` | `File` | 20 |
-| 8 | `40 48 16 42 27 43` ... | `Media` | 14 |
-| 9 | `40 48 3f 3b f2 43` ... | `_Columns` | 632 |
-| 10 | `40 48 3f 3f 77 45` ... | `_StringData` | 1544 |
-| 11 | `40 48 3f 3f 77 45` ... | `_StringPool` | 532 |
-| 12 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 120 |
-| 13 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
-| 14 | `40 48 59 45 f2 44` ... | `Property` | 40 |
-| 15 | `40 48 7f 3f 64 41` ... | `_Tables` | 34 |
-| 16 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
-| 17 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
-| 18 | `40 48 ca 41 30 43` ... | `AdminUISequence` | 24 |
-| 19 | `40 48 ca 41 f9 45` ... | `AdvtExecuteSequence` | 42 |
-| 20 | `40 48 de 44 6a 45` ... | `Upgrade` | 32 |
-| 21 | `40 48 ff 3f e4 43` ... | `_Validation` | 1896 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 60928 |
+| 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
+| 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
+| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 24 |
+| 6 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
+| 7 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
+| 8 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
+| 9 | `40 48 0f 43 2f 42` | `File` | 20 |
+| 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
+| 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 1668 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 576 |
+| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 132 |
+| 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 48 |
+| 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
+| 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
+| 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
+| 20 | `40 48 ca 41 30 43` ... | `AdminUISequence` | 24 |
+| 21 | `40 48 ca 41 f9 45` ... | `AdvtExecuteSequence` | 42 |
+| 22 | `40 48 de 44 6a 45` ... | `Upgrade` | 32 |
+| 23 | `40 48 ff 3f e4 43` ... | `_Validation` | 1944 |
 
-프리해시는 뿌리의 CLSID 와 상태 비트(20 바이트)에, 스트림마다 이름, 8 바이트 크기, 0 인 시각 둘을 이은 것으로 모두 840 바이트다. 그 SHA-256 이
+프리해시는 뿌리의 CLSID 와 상태 비트(20 바이트)에, 스트림마다 이름, 8 바이트 크기, 0 인 시각 둘을 이은 것으로 모두 908 바이트다. 그 SHA-256 이
 `\005MsiDigitalSignatureEx` 의 값이다:
 
 ```text
-7b c2 c3 9e de 9d 47 98 32 4e 65 02 11 52 57 d4 8b b9 ad d8 49 66 86 d8 bd 57 c9 56 a3 ae d9 b8
+8a d6 f2 39 91 92 f1 7c 9b 9f 18 e3 16 f8 70 c7 7e a1 db bc 68 e8 cc 13 4e fd 27 fa 56 a5 dc 77
 ```
 
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-93 c8 5a 1c d2 ce 89 cf 27 15 a3 06 a2 5e 0f 17 ef 0c 97 c3 7c 38 de 3c d0 7e 2d 37 0f 9e 1b c7
+86 b6 a8 ed dd 73 30 c3 8d 58 12 d9 15 e8 bc 2e 40 f5 68 ed 5a bb 63 df 7e f1 13 a3 49 b3 8a b8
 ```
 

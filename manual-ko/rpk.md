@@ -208,7 +208,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -979,6 +979,21 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 `msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCONTROL=Disable`. 옛 판을 다른 도구가
 `MSIRESTARTMANAGERCONTROL=Disable` 없이 만들었을 때 쓴다: 그런 판을 업그레이드 도중에 지우면 그 파일을
 불러 쓰는 프로그램을 모두 닫으려 한다(`formats/msi-package.md` 의 "사용 중인 파일" 참고).
+
+### 나중에 정리하기: 정리 작업
+
+실행 중인 프로그램이 쥐고 있는 파일은 곧바로 지울 수 없을 때가 있다. Windows Installer 는 옮길 수 있는 것은
+옆으로 옮기고 나머지는 다음 재시작 때 지우도록 걸어 두는데, 입력기나 셸 확장이 있으면 컴퓨터가 몇 주씩 재시작하지
+않을 수 있다. 그래서 파일을 지우거나 바꾸는 설치(제거, 업그레이드, 복구)는 예약 작업
+`rubrapack cleanup {ProductCode}`(사용자별이면 뒤에 사용자의 SID)를 건다. 작업은 2분 뒤, 그다음엔 로그온 때마다와
+15분마다 돌아서, 이 설치가 재시작 때로 미룬 것 - 패키지 폴더의 파일과 그 파일의 `Config.Msi` 백업 사본 - 을 아무도
+쥐지 않게 되는 대로 지우고, 그 때문에만 남았던 패키지 폴더를 지운 뒤 자신도 지운다. 할 일이 없으면 첫 실행에서
+사라지고, 30일이 지나면 그만두고 나머지는 재시작에 맡긴다. 컴퓨터별 패키지는 SYSTEM 으로, 사용자별 패키지는 그
+사용자로 돌고, 그 계정만 쓸 수 있는 폴더(`%ProgramData%\rubrapack\cleanup\{ProductCode}`, 또는 사용자의
+`%LOCALAPPDATA%`)에서 돌며, 다른 것은 지우지 않는다. `[package] cleanup = false` 면 넣지 않는다.
+
+따로 제거 프로그램은 없다: Windows 의 "설치된 앱"은 MSI 를 Windows Installer 로 지우고, 제거가 남긴 것은
+정리 작업이 맡는다.
 
 ### 와일드카드: `[files.ID]`
 

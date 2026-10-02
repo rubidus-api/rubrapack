@@ -282,6 +282,11 @@ When a file to be replaced or removed is held by a running program (a DLL loaded
   this with a memory-mapped data file - is queued for deletion at the next restart, and the
   installation returns 3010 even with `REBOOT=ReallySuppress`: nobody is asked, the file just stays
   until then. [observed by jamotong 0.63]
+- Those deletions go to `HKLM\SYSTEM\CurrentControlSet\Control\Session Manager`
+  `PendingFileRenameOperations`, pairs of source and target with an empty target, the source
+  written as `*1\??\C:\...` on Windows 11. Windows Installer adds them only after the commit
+  custom actions have run, so a commit action cannot see what its own installation leaves.
+  [observed]
 - A property given on the command line reaches only the package being installed. During an
   upgrade, the removal of the old version follows **the old package's** Property table - author
   the property from the first version on. [observed]

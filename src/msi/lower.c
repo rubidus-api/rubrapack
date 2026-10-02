@@ -550,7 +550,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, reg_bad, reglocator_dir;
+    bool             any_write, any_remove, any_qword, any_rplan, cleanup, reg_bad, reglocator_dir;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
@@ -719,6 +719,8 @@ static void lower_files(pkg_t *pk) {
         }
     }
 }
+
+static int cmp_cstr(const void *a, const void *b) { return strcmp(*(const char *const *)a, *(const char *const *)b); }
 
 // One field of a helper DLL plan (RFC-0001 9.6.1): "<UTF-16 length>:" and the text.
 static const char *plan_field(keep_t *k, const char *plan, const char *field) {
@@ -1007,9 +1009,12 @@ static void lower_helper_actions(pkg_t *pk) {
     // The last pages' Save log button (RFC-0020): Windows Installer keeps a log of every run
     // (MsiLogging, unless /l names one), and RpSaveLog copies it where the user says.
     bool save_log = ir->ui_save_log && ir->ui != RP_UI_NONE;
-    if (pk->any_qword || pk->any_rplan || guard || save_log) {
-        const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
-        size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
+    const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
+    size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
+    // RFC-0026: every package registers a cleanup task when it leaves something for the next
+    // restart, unless cleanup = false (or this rubrapack has no helper DLL, which only it needs).
+    bool cleanup = !ir->no_cleanup && !ir->module && part_len > 0;
+    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1060,6 +1065,30 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpQwordRollback");
         s_(&pk->customaction, "RP_QwordApply"); i_(&pk->customaction, 1 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpQwordApply");
+    }
+    // RFC-0026: the package's folders and scope for the commit action, which registers the cleanup
+    // task only when the installation left something queued for the next restart.
+    if (cleanup) {
+        const char *dirs = "";
+        // Only folders the package makes below a standard one: a [dir] that is the standard folder
+        // itself (the Desktop, the Start menu) is never the cleanup task's to remove.
+        // Sorted, so a source written back by `new --from` builds the same bytes.
+        const char **keys = rp_mem_alloc(pk->alloc, ir->dir_count + 1, sizeof *keys);
+        size_t nkeys = 0;
+        for (size_t i = 0; keys && i < ir->dir_count; ++i) {
+            if (ir->dirs[i].part_count) keys[nkeys++] = dkey(ir, ir->dirs[i].id);
+        }
+        if (nkeys) rp_sort(keys, nkeys, sizeof *keys, cmp_cstr);
+        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "%s;%s", dirs, keys[i]) : keys[i];
+        if (keys) rp_mem_free(pk->alloc, keys);
+        s_(&pk->property, "RP_CLEANUP_DIRS"); s_(&pk->property, *dirs ? dirs : "TARGETDIR");
+        s_(&pk->property, "RP_CLEANUP_SCOPE"); s_(&pk->property, ir->scope == 0 ? "machine" : "user");
+        const int noimp = ir->scope == 0 ? 0x800 : 0;
+        s_(&pk->customaction, "RP_CleanupPrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpCleanupPrepare");
+        s_(&pk->customaction, "RP_CleanupRegister"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpCleanupRegister");
+        pk->cleanup = true;
     }
     // [remove] upgrade = false: prepare (immediate; nothing when UPGRADINGPRODUCTCODE is set) ->
     // rollback twin -> apply (moves the files to a backup folder) -> commit (deletes the backup).
@@ -1372,6 +1401,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
         s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
         s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
+    }
+    if (pk->cleanup) {                  // RFC-0026: last in the script; the commit runs at InstallFinalize
+        s_(&pk->iexec, "RP_CleanupPrepare"); null_(&pk->iexec); i_(&pk->iexec, 6590);
+        s_(&pk->iexec, "RP_CleanupRegister"); null_(&pk->iexec); i_(&pk->iexec, 6591);
     }
     if (pk->any_rplan) {                // after the Undo actions (3401...), before RemoveFiles (3500)
         s_(&pk->iexec, "RP_RemovePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3490);

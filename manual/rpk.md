@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -1054,6 +1054,24 @@ with the command that does it: `msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCO
 Use it when older versions were built by another tool without `MSIRESTARTMANAGERCONTROL=Disable`:
 removing such a version inside an upgrade would try to close every program that has its files
 loaded (see `formats/msi-package.md`, "Files in use").
+
+### Cleaning up later: the cleanup task
+
+A file a running program holds cannot always be removed at once: Windows Installer moves what it can
+aside and queues the rest for deletion at the next restart, and an input method or a shell extension
+may keep a computer from restarting for weeks. So a package that removes or replaces files (a
+removal, an upgrade, a repair) registers a scheduled task, `rubrapack cleanup {ProductCode}` (per
+user, followed by the user's SID). Two minutes later, then at every logon and every 15 minutes, it
+deletes what this installation left for the restart - files in the package's folders and the
+installer's backup copies of them in `Config.Msi` - as soon as nothing holds them, then the
+package's folders that were left only because of them, and finally itself. With nothing to do it
+goes at its first run; after 30 days it gives up and leaves the rest to the restart. It runs as
+SYSTEM for a per-machine package and as the user for a per-user one, from a folder only that account
+can write (`%ProgramData%\rubrapack\cleanup\{ProductCode}`, or the user's `%LOCALAPPDATA%`), and it
+never deletes anything else. `[package] cleanup = false` leaves it out.
+
+There is no separate uninstall program: Windows' Installed apps removes an MSI with Windows
+Installer, and what a removal leaves is the cleanup task's job.
 
 ### Wildcards: `[files.ID]`
 

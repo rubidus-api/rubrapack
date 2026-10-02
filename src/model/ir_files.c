@@ -64,7 +64,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
-                                        "refuse-upgrade-message", NULL };
+                                        "refuse-upgrade-message", "cleanup", NULL };
     rp_ir_t *ir = c->ir;
     ir_check_keys(c, t, keys);
     ir->name = ir_get_str(c, t, "name", true, NULL);
@@ -194,6 +194,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         else if (strcmp(reboot, "suppress") != 0) ERR(c, ir_key_pos(t, "reboot"), "RP1308", "reboot must be \"suppress\" or \"allow\"");
         rp_mem_free(c->alloc, reboot);
     }
+    ir->no_cleanup = !ir_get_bool(c, t, "cleanup", true);     // RFC-0026
     ir->downgrade_message = ir_get_str(c, t, "downgrade-message", false, NULL);
 
     char *comp = c->opt->compress ? ir_dup(c, c->opt->compress) : ir_get_str(c, t, "compress", false, NULL);
