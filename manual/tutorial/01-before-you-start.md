@@ -89,7 +89,7 @@ Try it: `rubrapack version` prints the version, and `rubrapack help` lists the c
 
 ```text
 C:\work\hello> rubrapack version
-rubrapack 0.31.0 (proven_c_lib-v0.6.0)
+rubrapack 0.32.0 (proven_c_lib-v0.6.0)
 ```
 
 ## The folder you work in

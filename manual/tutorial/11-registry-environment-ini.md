@@ -251,7 +251,8 @@ types = [".hello"]
 ```
 
 `description` names a preview handler; a property handler needs a per-machine package; and in an
-MSIX only thumbnail handlers work, so a preview or property handler there takes `msi-only = true`.
+MSIX thumbnail and preview handlers work (a preview handler's class with `threading = "sta"`) but
+property handlers do not, so a property handler there takes `msi-only = true`.
 
 ## Try it
 

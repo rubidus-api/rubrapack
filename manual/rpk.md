@@ -549,12 +549,14 @@ architecture), so leave `app-id` and `surrogate` out of its `[com]`; a property 
 `PropertySystem\PropertyHandlers` in `HKLM`, which Windows reads per machine only, so the package
 needs `scope = "machine"`. A type has one handler of each kind (`RP1301`).
 
-In an MSIX a thumbnail handler goes into a file type association of the package
-(`desktop2:ThumbnailHandler`, with its class in the package's COM catalog), one association per set
-of types (or the `[assoc]` that opens them); Explorer uses it while the package is installed. A
-packaged preview or property handler was not seen working on Windows 11 - the classes reach the
-COM catalog, but Explorer's preview pane and the property system did not use them - so an MSIX
-refuses those kinds (`RP1612`) and `msi-only = true` keeps them for the MSI.
+In an MSIX thumbnail and preview handlers go into a file type association of the package
+(`desktop2:ThumbnailHandler`, `desktop2:DesktopPreviewHandler`, with their classes in the package's
+COM catalog), one association per set of types (or the `[assoc]` that opens them); Explorer uses
+them while the package is installed. A package serves its classes from a surrogate (`dllhost`),
+so give a preview handler's class `threading = "sta"`: with another model its window may get a
+thread without a message loop and stay blank (a warning, `RP1612`). A packaged property handler gave Explorer no values on
+Windows 11 where the same class installed by an MSI did, so an MSIX refuses that kind (`RP1612`)
+and `msi-only = true` keeps it for the MSI.
 
 ### MSIX only: `[msix-extension.ID]`
 

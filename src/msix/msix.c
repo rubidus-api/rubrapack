@@ -1006,18 +1006,48 @@ static bool same_types(const rp_ir_handler_t *a, const rp_ir_handler_t *b) {
     return handler_in(a, (const char *const *)b->types, b->type_count, true) && handler_in(b, (const char *const *)a->types, a->type_count, true);
 }
 
-static void handler_elements(rp_buf_t *b, const rp_ir_t *ir, const char *const *exts, size_t n) {
+// A handler the package carries: thumbnail and preview handlers. A packaged property handler was
+// seen giving Explorer nothing (DECISIONS 2026-10-02), so property handlers are the MSI's only.
+static bool packaged_handler(const rp_ir_handler_t *h) {
+    return !h->msi_only && h->kind != RP_HANDLER_PROPERTY;
+}
+
+// The handler elements of one file type association: preview handlers first, then thumbnail
+// handlers (the order seen working), each for a handler whose types pass keep().
+static void handler_list(rp_buf_t *b, const rp_ir_t *ir, bool (*keep)(const rp_ir_handler_t *, const void *), const void *arg) {
     static const char *const el[] = { "desktop2:DesktopPreviewHandler", "desktop2:ThumbnailHandler", "desktop2:DesktopPropertyHandler" };
-    for (size_t k = 0; k < ir->handler_count; ++k) {
-        const rp_ir_handler_t *h = &ir->handlers[k];
-        if (h->msi_only || h->kind != RP_HANDLER_THUMBNAIL || !handler_in(h, exts, n, true)) continue;
-        rp_buf_puts(b, "            <");
-        rp_buf_puts(b, el[h->kind]);
-        char guid[37];
-        snprintf(guid, sizeof guid, "%.36s", h->clsid ? h->clsid + 1 : "");
-        attr(b, "Clsid", guid);
-        rp_buf_puts(b, " />\r\n");
+    static const rp_handler_kind_t order[] = { RP_HANDLER_PREVIEW, RP_HANDLER_THUMBNAIL };
+    for (size_t o = 0; o < sizeof order / sizeof order[0]; ++o) {
+        for (size_t k = 0; k < ir->handler_count; ++k) {
+            const rp_ir_handler_t *h = &ir->handlers[k];
+            if (h->kind != order[o] || !packaged_handler(h) || !keep(h, arg)) continue;
+            char guid[37];
+            snprintf(guid, sizeof guid, "%.36s", h->clsid ? h->clsid + 1 : "");
+            rp_buf_puts(b, "            <");
+            rp_buf_puts(b, el[h->kind]);
+            attr(b, "Clsid", guid);
+            rp_buf_puts(b, " />\r\n");
+        }
     }
+}
+
+typedef struct {
+    const char *const *exts;
+    size_t n;
+} ext_set_t;
+
+static bool in_exts(const rp_ir_handler_t *h, const void *arg) {
+    const ext_set_t *e = arg;
+    return handler_in(h, e->exts, e->n, true);
+}
+
+static bool same_as(const rp_ir_handler_t *h, const void *arg) {
+    return same_types(h, arg);
+}
+
+static void handler_elements(rp_buf_t *b, const rp_ir_t *ir, const char *const *exts, size_t n) {
+    ext_set_t e = { exts, n };
+    handler_list(b, ir, in_exts, &e);
 }
 
 static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {
@@ -1111,12 +1141,11 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         for (size_t k = 0; k < ir->handler_count; ++k) {
             const rp_ir_handler_t *h = &ir->handlers[k];
             if (h->msi_only) continue;
-            // A preview or property handler in a package was not seen working on Windows 11
-            // (BACKLOGS: the classes reach the packaged COM catalog; Explorer's preview pane and the
-            // property system did not use them in our tests): the MSI only, for now.
-            if (h->kind != RP_HANDLER_THUMBNAIL) {
-                DERR(h->pos, "RP1612", "[handler.%s]: an MSIX carries thumbnail handlers only (a packaged %s handler was not seen working); "
-                     "msi-only = true keeps it for the MSI", h->id, h->kind == RP_HANDLER_PREVIEW ? "preview" : "property");
+            // A packaged property handler gave Explorer nothing on Windows 11 where the same class
+            // installed by an MSI did (DECISIONS 2026-10-02): the MSI only.
+            if (h->kind == RP_HANDLER_PROPERTY) {
+                DERR(h->pos, "RP1612", "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler "
+                     "gave Explorer no values); msi-only = true keeps it for the MSI", h->id);
                 continue;
             }
             const rp_ir_com_t *cm = NULL;
@@ -1126,6 +1155,14 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             if (cm && cm->msi_only) {
                 DERR(h->pos, "RP1613", "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it", h->id, cm->id);
                 continue;
+            }
+            // A package serves its classes from a surrogate (dllhost), which calls a class that is not
+            // single-threaded on a thread without a message loop: a preview window there stays blank
+            // (seen; Windows' prevhost, which the MSI uses, always calls on its own STA).
+            if (cm && h->kind == RP_HANDLER_PREVIEW && cm->threading && strcmp(cm->threading, "Apartment") != 0) {
+                rp_srcdiag_add(d, h->pos, "RP1612", true, "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in "
+                               "[com.%s] gives its window a message loop (with threading = %s the preview may stay blank)", h->id, cm->id,
+                               strcmp(cm->threading, "Free") == 0 ? "\"mta\"" : strcmp(cm->threading, "Both") == 0 ? "\"both\"" : "\"neutral\"");
             }
             bool some = handler_in(h, all, nall, false), every = handler_in(h, all, nall, true);
             if (some && !every) {
@@ -1138,7 +1175,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             bool done = false, clash = false;
             for (size_t j = 0; j < k; ++j) {
                 const rp_ir_handler_t *g = &ir->handlers[j];
-                if (g->msi_only || g->kind != RP_HANDLER_THUMBNAIL || handler_in(g, all, nall, false)) continue;
+                if (!packaged_handler(g) || handler_in(g, all, nall, false)) continue;
                 if (same_types(g, h)) done = true;
                 else if (handler_in(g, (const char *const *)h->types, h->type_count, false)) clash = true;
             }
@@ -1167,17 +1204,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                 rp_buf_puts(b, "</uap:FileType>\r\n");
             }
             rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n");
-            static const char *const el[] = { "desktop2:DesktopPreviewHandler", "desktop2:ThumbnailHandler", "desktop2:DesktopPropertyHandler" };
-            for (size_t j = k; j < ir->handler_count; ++j) {
-                const rp_ir_handler_t *g = &ir->handlers[j];
-                if (g->msi_only || g->kind != RP_HANDLER_THUMBNAIL || !same_types(g, h)) continue;
-                char guid[37];
-                snprintf(guid, sizeof guid, "%.36s", g->clsid ? g->clsid + 1 : "");
-                rp_buf_puts(b, "            <");
-                rp_buf_puts(b, el[g->kind]);
-                attr(b, "Clsid", guid);
-                rp_buf_puts(b, " />\r\n");
-            }
+            handler_list(b, ir, same_as, h);
             rp_buf_puts(b, "          </uap3:FileTypeAssociation>\r\n        </uap:Extension>\r\n");
             *ns |= NS_UAP3 | NS_DESKTOP2;
         }
