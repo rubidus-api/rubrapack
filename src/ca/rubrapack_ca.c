@@ -25,6 +25,20 @@
 //                   there; on failure the message RpLogMsg_<RPLANGUAGE> (or RpLogMsg_en; [1] = the
 //                   file). It never fails the installation.
 //
+// [remove] upgrade = false (DECISIONS 2026-10-02):
+//   RpRemovePrepare immediate: nothing when UPGRADINGPRODUCTCODE is set (an upgrade removing this
+//                   version); otherwise, for each plan record (Directory key, pattern or "" for the
+//                   folder itself, component) whose component is being removed, lists the matching
+//                   files and gives each a place in a backup folder (RP_REMOVES_ROOT "volume": the
+//                   file's volume's Config.Msi, as Windows Installer's own backups; "temp": the
+//                   user's temporary folder).
+//   RpRemoveApply   deferred: moves the files there (a file that cannot be moved, being held, is
+//                   left and deleted at the next restart).
+//   RpRemoveRollback deferred rollback: moves them back.
+//   RpRemoveCommit  commit: deletes the backups (at the next restart if one is held) and the
+//                   folders the plan names, when empty.
+//   None of them fails the installation: a file left behind is not worth a rollback.
+//
 // Data format (RFC-0001 9.6.1): "RPQ1" followed by records; every field is "<decimal length>:" and
 // that many UTF-16 units, so any text (including ':' and ';') round-trips. A plan record is
 // root, view, key, name, value (16 hex digits), component, keep; an apply record is op ("w" write,
@@ -408,5 +422,198 @@ __declspec(dllexport) UINT __stdcall RpSaveLog(MSIHANDLE h) {
         }
     }
     HeapFree(GetProcessHeap(), 0, log);
+    return ERROR_SUCCESS;
+}
+
+// ---- [remove] upgrade = false --------------------------------------------------------------------
+
+// `name` matches `pat` (* any run, ? one character), ignoring case.
+static bool wild(const wchar_t *pat, const wchar_t *name) {
+    const wchar_t *star = NULL, *back = NULL;
+    while (*name) {
+        if (*pat == L'*') {
+            star = pat++;
+            back = name;
+        } else if (*pat == L'?' || (*pat && CharUpperW((LPWSTR)(uintptr_t)(uint16_t)*pat) == CharUpperW((LPWSTR)(uintptr_t)(uint16_t)*name))) {
+            ++pat;
+            ++name;
+        } else if (star) {
+            pat = star + 1;
+            name = ++back;
+        } else {
+            return false;
+        }
+    }
+    while (*pat == L'*') ++pat;
+    return *pat == 0;
+}
+
+static void w_rec(writer_t *w, const wchar_t *op, const wchar_t *a, const wchar_t *b) {
+    w_field(w, op);
+    w_field(w, a);
+    w_field(w, b);
+}
+
+__declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
+    wchar_t *plan = get_property(h, L"RP_REMOVES");
+    wchar_t *root = get_property(h, L"RP_REMOVES_ROOT");
+    wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
+    writer_t apply = { 0 }, rollback = { 0 }, commit = { 0 };
+    w_raw(&apply, L"RPR1", 4);
+    w_raw(&rollback, L"RPR1", 4);
+    w_raw(&commit, L"RPR1", 4);
+    UINT rc = ERROR_SUCCESS;
+    if (plan == NULL || root == NULL || upgrading == NULL || wcsncmp(plan, L"RPR1", 4) != 0) rc = ERROR_INSTALL_FAILURE;
+    if (rc == ERROR_SUCCESS && upgrading[0]) {
+        log_line(h, L"rubrapack: remove: an upgrade (%ls) removes this version: upgrade = false keeps the files", upgrading);
+    } else if (rc == ERROR_SUCCESS) {
+        // One backup folder per volume (or the temporary folder), named once per run.
+        wchar_t tag[40];
+        swprintf(tag, 40, L"rp-%08lX%08lX", (unsigned long)GetCurrentProcessId(), (unsigned long)GetTickCount());
+        reader_t r = { plan + 4, plan + wcslen(plan) };
+        static wchar_t f[3][MAX_TEXT / 8];
+        static wchar_t dir[MAX_PATH * 4], src[MAX_PATH * 4], dst[MAX_PATH * 4], vol[MAX_PATH * 4], bdir[MAX_PATH * 4];
+        static wchar_t dirs[8][MAX_PATH * 4];
+        size_t ndirs = 0, n = 0;
+        while (r.p < r.end) {
+            if (!r_field(&r, f[0], MAX_TEXT / 8) || !r_field(&r, f[1], MAX_TEXT / 8) || !r_field(&r, f[2], MAX_TEXT / 8)) {
+                rc = ERROR_INSTALL_FAILURE;
+                break;
+            }
+            INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
+            MsiGetComponentStateW(h, f[2], &installed, &action);
+            if (action != INSTALLSTATE_ABSENT) continue;
+            DWORD dn = MAX_PATH * 4;
+            if (MsiGetTargetPathW(h, f[0], dir, &dn) != ERROR_SUCCESS) continue;
+            size_t dl = wcslen(dir);
+            if (f[1][0] == 0) {                 // the folder itself, once the engine has emptied it
+                if (dl > 3 && dir[dl - 1] == L'\\') dir[dl - 1] = 0;
+                w_rec(&commit, L"r", dir, L"");
+                continue;
+            }
+            swprintf(src, MAX_PATH * 4, L"%ls*", dir);
+            WIN32_FIND_DATAW fd;
+            HANDLE fh = FindFirstFileExW(src, FindExInfoBasic, &fd, FindExSearchNameMatch, NULL, 0);
+            if (fh == INVALID_HANDLE_VALUE) continue;
+            do {
+                if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
+                if (!wild(f[1], fd.cFileName)) continue;
+                swprintf(src, MAX_PATH * 4, L"%ls%ls", dir, fd.cFileName);
+                if (wcscmp(root, L"volume") == 0 && GetVolumePathNameW(src, vol, MAX_PATH * 4)) {
+                    swprintf(bdir, MAX_PATH * 4, L"%lsConfig.Msi\\%ls", vol, tag);
+                } else {
+                    DWORD tn = GetTempPathW(MAX_PATH * 4, vol);
+                    if (tn == 0 || tn >= MAX_PATH * 4) continue;
+                    swprintf(bdir, MAX_PATH * 4, L"%ls%ls", vol, tag);
+                }
+                swprintf(dst, MAX_PATH * 4, L"%ls\\%zu", bdir, n++);
+                w_rec(&apply, L"m", src, dst);
+                w_rec(&rollback, L"m", dst, src);
+                w_rec(&commit, L"f", dst, L"");
+                bool seen = false;
+                for (size_t i = 0; i < ndirs; ++i) seen = seen || wcscmp(dirs[i], bdir) == 0;
+                if (!seen && ndirs < 8) wcscpy(dirs[ndirs++], bdir);
+                log_line(h, L"rubrapack: remove: %ls", src);
+            } while (FindNextFileW(fh, &fd));
+            FindClose(fh);
+        }
+        // The backup folders go last: after the files in them (commit), after moving back (rollback).
+        for (size_t i = 0; i < ndirs; ++i) {
+            w_rec(&apply, L"d", dirs[i], L"");
+            w_rec(&rollback, L"x", dirs[i], L"");
+            w_rec(&commit, L"x", dirs[i], L"");
+        }
+    }
+    if (rc == ERROR_SUCCESS) rc = set_data(h, L"RP_RemoveApply", &apply);
+    if (rc == ERROR_SUCCESS) rc = set_data(h, L"RP_RemoveApplyRollback", &rollback);
+    if (rc == ERROR_SUCCESS) rc = set_data(h, L"RP_RemoveCommit", &commit);
+    if (plan) HeapFree(GetProcessHeap(), 0, plan);
+    if (root) HeapFree(GetProcessHeap(), 0, root);
+    if (upgrading) HeapFree(GetProcessHeap(), 0, upgrading);
+    if (apply.buf) HeapFree(GetProcessHeap(), 0, apply.buf);
+    if (rollback.buf) HeapFree(GetProcessHeap(), 0, rollback.buf);
+    if (commit.buf) HeapFree(GetProcessHeap(), 0, commit.buf);
+    return rc;
+}
+
+// A backup folder only SYSTEM and Administrators can open (it holds removed files for a moment).
+static void make_private_dir(MSIHANDLE h, const wchar_t *path) {
+    wchar_t parent[MAX_PATH * 4];
+    wcsncpy(parent, path, MAX_PATH * 4 - 1);
+    parent[MAX_PATH * 4 - 1] = 0;
+    wchar_t *slash = wcsrchr(parent, L'\\');
+    if (slash) {
+        *slash = 0;
+        CreateDirectoryW(parent, NULL);      // Config.Msi, normally there already
+    }
+    SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
+    if (ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)", SDDL_REVISION_1,
+                                                             &sa.lpSecurityDescriptor, NULL)) {
+        if (!CreateDirectoryW(path, &sa) && GetLastError() != ERROR_ALREADY_EXISTS) {
+            CreateDirectoryW(path, NULL);    // a per-user installation cannot set that owner list
+        }
+        LocalFree(sa.lpSecurityDescriptor);
+    } else {
+        CreateDirectoryW(path, NULL);
+    }
+    log_line(h, L"rubrapack: remove: backup folder %ls", path);
+}
+
+// Runs a list made by RpRemovePrepare: m move (src, dst), d make the backup folder, f delete a
+// backup file, x delete a backup folder, r delete a folder of the package if empty.
+static void remove_list(MSIHANDLE h, bool to_backup) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return;
+    if (wcsncmp(data, L"RPR1", 4) == 0) {
+        reader_t r = { data + 4, data + wcslen(data) };
+        static wchar_t f[3][MAX_PATH * 4];
+        bool made = false;
+        while (r.p < r.end && r_field(&r, f[0], 8) && r_field(&r, f[1], MAX_PATH * 4) && r_field(&r, f[2], MAX_PATH * 4)) {
+            wchar_t op = f[0][0];
+            if (op == L'd') {                // apply lists its folders last: make them on the first move instead
+                continue;
+            }
+            if (op == L'm') {
+                if (to_backup && !made) {
+                    // Every backup folder named in this list, before the first move.
+                    reader_t s = { data + 4, data + wcslen(data) };
+                    static wchar_t g[3][MAX_PATH * 4];
+                    while (s.p < s.end && r_field(&s, g[0], 8) && r_field(&s, g[1], MAX_PATH * 4) && r_field(&s, g[2], MAX_PATH * 4)) {
+                        if (g[0][0] == L'd') make_private_dir(h, g[1]);
+                    }
+                    made = true;
+                }
+                BOOL ok = MoveFileExW(f[1], f[2], MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH);
+                DWORD e = ok ? 0 : GetLastError();
+                log_line(h, L"rubrapack: remove: move %ls -> %ls: %lu", f[1], f[2], (unsigned long)e);
+                if (!ok && to_backup) {          // held: it goes at the next restart instead
+                    BOOL later = MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+                    log_line(h, L"rubrapack: remove: %ls at the next restart: %ls", f[1], later ? L"queued" : L"could not queue");
+                }
+            } else if (op == L'f') {
+                if (!DeleteFileW(f[1]) && GetLastError() != ERROR_FILE_NOT_FOUND) MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+            } else if (op == L'x') {
+                if (!RemoveDirectoryW(f[1]) && GetLastError() != ERROR_FILE_NOT_FOUND) MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+            } else if (op == L'r') {
+                BOOL ok = RemoveDirectoryW(f[1]);
+                log_line(h, L"rubrapack: remove: folder %ls: %ls", f[1], ok ? L"removed" : L"kept (not empty or not there)");
+            }
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, data);
+}
+
+__declspec(dllexport) UINT __stdcall RpRemoveApply(MSIHANDLE h) {
+    remove_list(h, true);
+    return ERROR_SUCCESS;
+}
+
+__declspec(dllexport) UINT __stdcall RpRemoveRollback(MSIHANDLE h) {
+    remove_list(h, false);
+    return ERROR_SUCCESS;
+}
+
+__declspec(dllexport) UINT __stdcall RpRemoveCommit(MSIHANDLE h) {
+    remove_list(h, false);
     return ERROR_SUCCESS;
 }

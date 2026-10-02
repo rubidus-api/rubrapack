@@ -550,8 +550,9 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, reg_bad, reglocator_dir;
+    bool             any_write, any_remove, any_qword, any_rplan, reg_bad, reglocator_dir;
     const char      *qplan;            // RP_QWORDS
+    const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
     rp_msi_wstream_t *streams;         // embedded cabinets
     rp_build_file_t *ext;              // or external ones
@@ -719,6 +720,14 @@ static void lower_files(pkg_t *pk) {
     }
 }
 
+// One field of a helper DLL plan (RFC-0001 9.6.1): "<UTF-16 length>:" and the text.
+static const char *plan_field(keep_t *k, const char *plan, const char *field) {
+    rp_text_result_t u = rp_utf8_to_utf16((const uint8_t *)field, strlen(field), NULL, 0);
+    char head[24];
+    snprintf(head, sizeof head, "%zu:", u.units);
+    return kprintf(k, "%s%s", kprintf(k, "%s%s", plan, head), field);
+}
+
 // [registry.*] (RFC-0004): own component per value (key path = the value) unless `with`.
 static void lower_registry(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
@@ -771,13 +780,7 @@ static void lower_registry(pkg_t *pk) {
             static const char *const proots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };
             const char *fields[] = { proots[r->root + 1], r->view32 || ir->arch == RP_ARCH_X86 ? "32" : "64", r->key,
                                      r->name ? r->name : "", r->value, ckey, r->keep ? "1" : "0" };
-            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) {
-                rp_text_result_t u = rp_utf8_to_utf16((const uint8_t *)fields[f], strlen(fields[f]), NULL, 0);
-                char head[24];
-                snprintf(head, sizeof head, "%zu:", u.units);
-                pk->qplan = kprintf(k, "%s%s", pk->qplan, head);
-                pk->qplan = kprintf(k, "%s%s", pk->qplan, fields[f]);
-            }
+            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->qplan = plan_field(k, pk->qplan, fields[f]);
             pk->any_qword = true;
             continue;
         }
@@ -886,8 +889,19 @@ static void lower_removes(pkg_t *pk) {
         i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
         s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey);     // its key path is the folder (ICE18)
+        // upgrade = false: the removal part is the helper DLL's (RP_REMOVES: Directory key, pattern or
+        // "" for the folder itself, component), which skips it when an upgrade removes this version;
+        // the RemoveFile row keeps only the installation part.
+        int mode = r->mode;
+        if (r->keep_on_upgrade) {
+            const char *fields[] = { dkey(ir, r->dir), r->name ? r->name : "", ckey };
+            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->rplan = plan_field(k, pk->rplan, fields[f]);
+            pk->any_rplan = true;
+            mode &= 1;
+        }
+        if (mode == 0) continue;
         s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); s_(&pk->removefile, r->name); s_(&pk->removefile, dkey(ir, r->dir));
-        i_(&pk->removefile, r->mode);
+        i_(&pk->removefile, mode);
     }
 }
 
@@ -993,13 +1007,14 @@ static void lower_helper_actions(pkg_t *pk) {
     // The last pages' Save log button (RFC-0020): Windows Installer keeps a log of every run
     // (MsiLogging, unless /l names one), and RpSaveLog copies it where the user says.
     bool save_log = ir->ui_save_log && ir->ui != RP_UI_NONE;
-    if (pk->any_qword || guard || save_log) {
+    if (pk->any_qword || pk->any_rplan || guard || save_log) {
         const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_ca_x64 : ir->arch == RP_ARCH_X86 ? rp_ca_x86 : rp_ca_arm64;
         size_t part_len = ir->arch == RP_ARCH_X64 ? rp_ca_x64_len : ir->arch == RP_ARCH_X86 ? rp_ca_x86_len : rp_ca_arm64_len;
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           pk->any_qword ? "type = \"qword\"" : guard ? "guard = true" : "[ui] save-log", arch_text(ir->arch));
+                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : guard ? "guard = true" : "[ui] save-log",
+                           arch_text(ir->arch));
             pk->reg_bad = true;
         }
         s_(&pk->binary, "RpCa"); b_(&pk->binary, part, part_len);
@@ -1045,6 +1060,20 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpQwordRollback");
         s_(&pk->customaction, "RP_QwordApply"); i_(&pk->customaction, 1 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpQwordApply");
+    }
+    // [remove] upgrade = false: prepare (immediate; nothing when UPGRADINGPRODUCTCODE is set) ->
+    // rollback twin -> apply (moves the files to a backup folder) -> commit (deletes the backup).
+    if (pk->any_rplan) {
+        s_(&pk->property, "RP_REMOVES"); s_(&pk->property, kprintf(k, "%s%s", pk->rplan, NULL));
+        s_(&pk->property, "RP_REMOVES_ROOT"); s_(&pk->property, ir->scope == 0 ? "volume" : "temp");
+        const int noimp = ir->scope == 0 ? 0x800 : 0;
+        s_(&pk->customaction, "RP_RemovePrepare"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpRemovePrepare");
+        s_(&pk->customaction, "RP_RemoveApplyRollback"); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | noimp);
+        s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpRemoveRollback");
+        s_(&pk->customaction, "RP_RemoveApply"); i_(&pk->customaction, 1 | 0x40 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpRemoveApply");
+        s_(&pk->customaction, "RP_RemoveCommit"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpRemoveCommit");
     }
 }
 
@@ -1344,6 +1373,12 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
         s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
     }
+    if (pk->any_rplan) {                // after the Undo actions (3401...), before RemoveFiles (3500)
+        s_(&pk->iexec, "RP_RemovePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3490);
+        s_(&pk->iexec, "RP_RemoveApplyRollback"); null_(&pk->iexec); i_(&pk->iexec, 3491);
+        s_(&pk->iexec, "RP_RemoveApply"); null_(&pk->iexec); i_(&pk->iexec, 3492);
+        s_(&pk->iexec, "RP_RemoveCommit"); null_(&pk->iexec); i_(&pk->iexec, 3493);
+    }
     if (pk->any_qword) {                // after WriteRegistryValues; the prepare step reads component states
         s_(&pk->iexec, "RP_QwordPrepare"); null_(&pk->iexec); i_(&pk->iexec, 5010);
         s_(&pk->iexec, "RP_QwordApplyRollback"); null_(&pk->iexec); i_(&pk->iexec, 5011);
@@ -1516,7 +1551,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs,
                                   const rp_out_sink_t *sink) {
     pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
-                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1" };
+                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1" };
     pkg_t *pk = &pkg;
     rows_init(&pk->property, alloc, "Property", property_cols, 2);
     rows_init(&pk->directory, alloc, "Directory", directory_cols, 3);

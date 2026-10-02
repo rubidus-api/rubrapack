@@ -111,6 +111,7 @@ typedef struct {
     char    *dir;               // dir ID
     char    *name;              // pattern with * and ?, or NULL = the folder itself
     int      mode;              // 1 install, 2 uninstall, 3 both (RemoveFile.InstallMode)
+    bool     keep_on_upgrade;   // upgrade = false: the removal part skips upgrades (helper DLL)
     char    *feature;           // resolved (G2)
     rp_pos_t pos;
 } rp_ir_remove_t;

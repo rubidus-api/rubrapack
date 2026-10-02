@@ -474,7 +474,7 @@ static bool pattern_ok(ctx_t *c, const char *name, rp_pos_t pos) {
 }
 
 void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
-    static const char *const keys[] = { "dir", "name", "on", "feature", NULL };
+    static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     r->id = ir_dup(c, t->id);
@@ -490,6 +490,11 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
         else ERR(c, ir_key_pos(t, "on"), "RP1316", "on must be \"install\", \"uninstall\" or \"both\"");
         rp_mem_free(c->alloc, on);
     }
+    // upgrade = false: the removal at uninstall does not run when an upgrade removes this version
+    // (the new version still wants the files; DECISIONS 2026-10-02 "[remove] upgrade = false").
+    r->keep_on_upgrade = !ir_get_bool(c, t, "upgrade", true);
+    if (r->keep_on_upgrade && r->mode == 1)
+        ERR(c, ir_key_pos(t, "upgrade"), "RP1316", "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)");
     r->feature = ir_get_str(c, t, "feature", false, NULL);
 }
 

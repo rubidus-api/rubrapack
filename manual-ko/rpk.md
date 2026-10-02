@@ -219,7 +219,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
 | `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
 | `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), feature |
+| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -580,6 +580,13 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 있는 폴더 자체를 지운다. 설치가 실패하면 지운 파일은 되돌아온다. `[copy.ID]` 는 이 패키지의 파일을
 다른 폴더에 한 벌 더 설치하고, 원본과 함께 들어오고 함께 나간다. 설치 전부터 있던 폴더는 절대 지우지
 않는다.
+
+업그레이드는 옛 판도 지우고, 그때 옛 판의 `on = "uninstall"` 행도 돈다. `upgrade = false` 는 그 행을
+거기서 뺀다: 파일은 제품(또는 그 기능)을 정말 지울 때만 지워진다 - 새 판이 그대로 쓰는 파일이나, 옛 판을
+아직 돌리는 프로그램이 다시 읽을 수 있는 파일에 쓴다. RemoveFile 표 대신 rubrapack 의 도우미 DLL 이
+한다: 파일을 백업 폴더(그 볼륨의 `Config.Msi`, 사용자별 패키지는 임시 폴더)로 옮기고, 제거가 실패하면
+되돌리고, 성공하면 지운다. 프로그램이 쥐고 있는 파일은 다음 재시작 때 지워진다. 업그레이드는 옛 판 자신의
+행을 돌리므로, 이 키를 넣고 만든 첫 판부터 효과가 있다.
 
 ### 환경 변수: `[env.ID]`
 

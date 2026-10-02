@@ -5,3 +5,7 @@ EXPORTS
     RpQwordRollback
     RpGuardDirs
     RpSaveLog
+    RpRemovePrepare
+    RpRemoveApply
+    RpRemoveRollback
+    RpRemoveCommit

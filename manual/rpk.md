@@ -230,7 +230,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 | `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), feature |
+| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -619,6 +619,15 @@ package stops and removes the service; firewall rules go with the package too.
 `[remove.ID]` deletes files matching `name` in `dir` - for example `*.log` an older version left, at
 `on = "install"`, or files the program writes at run time, at `on = "uninstall"`. Without `name` it
 removes the folder itself when it is empty. A failed installation puts removed files back.
+
+An upgrade removes the old version too, and with it runs the old version's `on = "uninstall"`
+rows. `upgrade = false` keeps them out of that: the files go only when the product (or its
+feature) is really removed - for files the new version still wants, or that programs still running
+the old version may read again. It is done by rubrapack's helper DLL instead of the RemoveFile
+table: the files are moved to a backup folder (the volume's `Config.Msi`, or the temporary folder
+for a per-user package), put back if the removal fails, and deleted when it succeeds; a file a
+program holds is deleted at the next restart. It takes effect from the first version built with
+it, since an upgrade runs the old version's own rows.
 `[copy.ID]` installs a second copy of a file of this package into another folder; it goes and comes
 with its source. Folders that existed before the installation are never removed.
 

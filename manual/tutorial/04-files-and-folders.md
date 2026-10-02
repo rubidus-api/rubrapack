@@ -158,6 +158,11 @@ version left behind), `on = "both"` at either. Without `name`, the folder itself
 empty. Folders that existed before the installation are never removed, and a failed installation
 puts removed files back.
 
+An upgrade removes the old version, so it also runs the old version's `on = "uninstall"` rows. If
+the new version still wants those files - a cache it would rebuild slowly, say - add
+`upgrade = false`: they are then deleted only when the product is really removed. Since the old
+version's own rows run, this helps from the first version that has it.
+
 ## A second copy: `[copy.ID]`
 
 `[copy.ReadmeInDocs]` installs another copy of the file `Readme` into `DocsDir` as `readme.txt`. The
