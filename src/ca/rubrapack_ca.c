@@ -687,6 +687,8 @@ __declspec(dllexport) UINT __stdcall RpRemoveCommit(MSIHANDLE h) {
 
 // ---- cleaning up later (RFC-0026) -----------------------------------------------------------------
 
+static unsigned long queued_renames(void);
+
 __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     wchar_t *dirs = get_property(h, L"RP_CLEANUP_DIRS");
     wchar_t *scope = get_property(h, L"RP_CLEANUP_SCOPE");
@@ -695,9 +697,9 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     w_raw(&w, L"RPC1", 4);
     static wchar_t folder[MAX_PATH * 4], path[MAX_PATH * 4];
     bool machine = scope && wcscmp(scope, L"machine") == 0;
-    // Why this run may leave something: Windows Installer writes its deletions for the next
-    // restart only after the commit actions (x40), so the commit cannot see them - it registers
-    // the task for every run that removes or replaces files, and the task's first run, two minutes
+    // Why this run may leave something. Windows Installer queues the installer's backups for the
+    // next restart only after the commit actions (x40), so the commit cannot know - it registers the
+    // task for every run that removes or replaces files, and the task's first run, two minutes
     // later, sees what there is (and removes itself when there is nothing).
     wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND"), *installed = get_property(h, L"Installed");
     const wchar_t *why = remove && remove[0] ? L"remove" : older && older[0] ? L"upgrade" : installed && installed[0] ? L"maintenance" : L"";
@@ -706,6 +708,12 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         w_field(&w, machine ? L"machine" : L"user");
         w_field(&w, folder);
         w_field(&w, why);
+        // The renames queued before this installation's script runs: what is queued after them is
+        // this installation's (a held file's deletion during the script, the installer's backups
+        // at its end - x40). Counted here, in the immediate pass, before any of it happens.
+        wchar_t count[24];
+        swprintf(count, 24, L"%lu", queued_renames());
+        w_field(&w, count);
         wchar_t *ctx = NULL;
         for (wchar_t *d = wcstok(dirs, L";", &ctx); d; d = wcstok(NULL, L";", &ctx)) {
             DWORD n = MAX_PATH * 4;
@@ -808,7 +816,10 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     size_t ndirs = 0;
     if (wcsncmp(data, L"RPC1", 4) != 0) goto done;
     r.p += 4;
-    if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16)) goto done;
+    static wchar_t count[24];
+    if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16) ||
+        !r_field(&r, count, 24))
+        goto done;
     while (ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4)) ++ndirs;
     bool machine = wcscmp(scope, L"machine") == 0;
     writer_t list = { 0 };
@@ -866,8 +877,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     w_text(&list, L"until\t"); w_text(&list, ymd); w_text(&list, L"\r\n");
     w_text(&list, L"product\t"); w_text(&list, pc); w_text(&list, L"\r\n");
     w_text(&list, L"scope\t"); w_text(&list, scope); w_text(&list, L"\r\n");
-    wchar_t count[24];
-    swprintf(count, 24, L"%lu", queued_renames());      // what is queued from here on is this run's (the engine's backups)
+    w_text(&list, L"kind\t"); w_text(&list, why); w_text(&list, L"\r\n");
     w_text(&list, L"after\t"); w_text(&list, count); w_text(&list, L"\r\n");
     for (size_t i = 0; i < ndirs; ++i) {
         w_text(&list, L"root\t"); w_text(&list, dirs[i]); w_text(&list, L"\r\n");

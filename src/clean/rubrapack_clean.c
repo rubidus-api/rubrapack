@@ -6,10 +6,11 @@
 // (%ProgramData%\rubrapack\cleanup\<ProductCode> for a per-machine package, the user's
 // %LOCALAPPDATA%\rubrapack\cleanup\<ProductCode> for a per-user one) and registers a scheduled
 // task that runs it at logon and every 15 minutes. Each run deletes what it can of:
-//   - the deletions Windows has queued for the next restart (PendingFileRenameOperations) under
-//     one of the list's roots (the package's folders), and, for a per-machine package, the
-//     installer's backup copies (<volume>\Config.Msi\*.rbf) this installation queued (those
-//     after the commit's count; others belong to other installations and are left alone);
+//   - the deletions this installation queued for the next restart (PendingFileRenameOperations,
+//     those after the count taken before it ran: earlier ones are other installations', even in a shared
+//     folder) under one of the list's roots (the package's folders), and, for a per-machine
+//     package, the installer's backup copies of them (<volume>\Config.Msi\*.rbf) - each only
+//     while the same file is at that path (a file installed there since is left alone);
 //   - the files the list names (`file` lines: what a per-user package could not queue);
 //   - each root that is left empty, once the product is no longer installed - only a root that
 //     held a queued deletion (or a folder of the package above one): the folders Windows
@@ -20,8 +21,9 @@
 // restart still deletes it if the task gave up.
 //
 // list.txt, UTF-16LE: "RPC1", then one "<key>\t<value>" per line: task (the task's name), until
-// (the last day, YYYYMMDD, local time), product ({ProductCode}), scope (machine or user), after
-// (how many queued renames there were at the commit), root (a folder), file (a file).
+// (the last day, YYYYMMDD, local time), product ({ProductCode}), scope (machine or user), kind
+// (remove, upgrade or maintenance), after (how many queued renames there were before the script), root
+// (a folder), file (a file). A removal's task deletes nothing once its product is installed again.
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -33,7 +35,7 @@
 
 enum { MAX_ITEMS = 256, PATH_CAP = 32768 };
 
-static wchar_t task[512], product[64], scope[16], until[16];
+static wchar_t task[512], product[64], scope[16], until[16], kind[16];
 static wchar_t *roots[MAX_ITEMS], *files[MAX_ITEMS];
 static bool seen[MAX_ITEMS];        // a root that held a queued deletion (seen.txt keeps it between runs)
 static size_t nroots, nfiles;
@@ -73,6 +75,7 @@ static bool read_list(const wchar_t *path) {
         else if (wcscmp(line, L"scope") == 0) wcsncpy(scope, v, 15);
         else if (wcscmp(line, L"until") == 0) wcsncpy(until, v, 15);
         else if (wcscmp(line, L"after") == 0) after = wcstoul(v, NULL, 10);
+        else if (wcscmp(line, L"kind") == 0) wcsncpy(kind, v, 15);
         else if (wcscmp(line, L"root") == 0 && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
         else if (wcscmp(line, L"file") == 0 && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
     }
@@ -131,20 +134,56 @@ static const wchar_t *nt_path(const wchar_t *src) {
     return wcsncmp(src, L"\\??\\", 4) == 0 ? src + 4 : src;
 }
 
-// The installer's backups (<volume>\Config.Msi\*.rbf) this installation queued: found once, on the
-// first run, among the queued deletions after the first `after` of them (the commit counted those
-// that were there before; Windows Installer adds its own after the commit). Kept in seen.txt.
-static wchar_t *backups[MAX_ITEMS];
-static size_t nbackups;
+// What this installation left: found once, on the first run - the queued deletions after the
+// count taken before its script ran (`after`; earlier ones belong to other installations, even
+// in the same folder)
+// under a root or, per machine, in Config.Msi, and the list's `file` lines - each with the identity
+// of the file there then (volume serial and file index). Later runs delete a path only while the
+// same file is there: a file installed at that path since (a reinstallation) is left alone.
+typedef struct {
+    wchar_t *path;
+    wchar_t  id[40];
+    bool     active;
+} own_t;
+static own_t own[MAX_ITEMS];
+static size_t nown;
 static bool scanned;
 
-// The queued deletions under the roots: tried; returns how many are still there afterwards.
-static int pending(bool machine) {
+// The identity of the file at `path` ("" when there is none).
+static void file_id(const wchar_t *path, wchar_t id[40]) {
+    id[0] = 0;
+    HANDLE h = CreateFileW(path, FILE_READ_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING,
+                           FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+    if (h == INVALID_HANDLE_VALUE) return;
+    BY_HANDLE_FILE_INFORMATION fi;
+    if (GetFileInformationByHandle(h, &fi))
+        swprintf(id, 40, L"%08lX%08lX%08lX", (unsigned long)fi.dwVolumeSerialNumber, (unsigned long)fi.nFileIndexHigh, (unsigned long)fi.nFileIndexLow);
+    CloseHandle(h);
+}
+
+// Takes `path` as this installation's when it is under a root (marking the root) or, per machine,
+// one of the installer's backups.
+static void take(const wchar_t *path, bool machine) {
+    bool mine = machine && installer_backup(path);
+    for (size_t i = 0; i < nroots; ++i) {
+        if (!under(path, roots[i])) continue;
+        seen[i] = mine = true;
+    }
+    if (!mine || nown >= MAX_ITEMS) return;
+    own_t *o = &own[nown];
+    file_id(path, o->id);
+    if (o->id[0] == 0) return;              // already gone
+    o->path = text_dup(path);
+    o->active = o->path != NULL;
+    nown += o->active;
+}
+
+// The first run's scan of the queued deletions.
+static void scan(bool machine) {
     HKEY k;
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\Session Manager", 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS)
-        return 0;
+        return;
     DWORD type = 0, size = 0;
-    int left = 0;
     if (RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, NULL, &size) == ERROR_SUCCESS && type == REG_MULTI_SZ && size) {
         wchar_t *buf = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 2 * sizeof(wchar_t));
         if (buf && RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, (BYTE *)buf, &size) == ERROR_SUCCESS) {
@@ -152,32 +191,47 @@ static int pending(bool machine) {
             unsigned long index = 0;
             for (wchar_t *src = buf; *src; ++index) {
                 wchar_t *dst = src + wcslen(src) + 1;
-                const wchar_t *path = nt_path(src);
-                if (*dst == 0) {
-                    const wchar_t *root = NULL;
-                    for (size_t i = 0; i < nroots; ++i) {
-                        if (!under(path, roots[i])) continue;
-                        seen[i] = true;
-                        if (root == NULL || wcslen(roots[i]) > wcslen(root)) root = roots[i];
-                    }
-                    if (root && no_links(path, root) && !gone(path)) ++left;
-                    if (machine && !scanned && index >= after && installer_backup(path) && nbackups < MAX_ITEMS) backups[nbackups++] = text_dup(path);
-                }
+                if (*dst == 0 && index >= after) take(nt_path(src), machine);
                 src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
             }
         }
         if (buf) HeapFree(GetProcessHeap(), 0, buf);
     }
     RegCloseKey(k);
-    scanned = true;
-    for (size_t i = 0; i < nbackups; ++i) {
-        if (no_links(backups[i], NULL) && !gone(backups[i])) ++left;
+}
+
+// Deletes what is still this installation's; returns how many are still there afterwards.
+static int pending(bool machine) {
+    if (!scanned) {
+        scan(machine);
+        for (size_t i = 0; i < nfiles; ++i) take(files[i], false);
+        scanned = true;
+    }
+    // A removal whose product is installed again: what it left now belongs to that installation.
+    bool back = wcscmp(kind, L"remove") == 0 && product[0] && MsiQueryProductStateW(product) == INSTALLSTATE_DEFAULT;
+    int left = 0;
+    for (size_t i = 0; i < nown; ++i) {
+        own_t *o = &own[i];
+        if (back) o->active = false;
+        if (!o->active) continue;
+        wchar_t id[40];
+        file_id(o->path, id);
+        if (id[0] == 0 || wcscmp(id, o->id) != 0) {      // gone, or another file now
+            o->active = false;
+            continue;
+        }
+        const wchar_t *root = NULL;
+        for (size_t r = 0; r < nroots; ++r) {
+            if (under(o->path, roots[r]) && (root == NULL || wcslen(roots[r]) > wcslen(root))) root = roots[r];
+        }
+        if (!no_links(o->path, root) || !gone(o->path)) ++left;
+        else o->active = false;
     }
     return left;
 }
 
-// seen.txt (UTF-16LE): "scanned", then "root<TAB>path" for each root that held a queued deletion
-// and "backup<TAB>path" for each backup found on the first run.
+// seen.txt (UTF-16LE): "scanned", then "root<TAB>path" for each root that held one of this
+// installation's deletions and "own<TAB>identity<TAB>path" for each item still to delete.
 static void load_seen(const wchar_t *path) {
     HANDLE h = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (h == INVALID_HANDLE_VALUE) return;
@@ -187,7 +241,16 @@ static void load_seen(const wchar_t *path) {
         wchar_t *ctx = NULL;
         for (wchar_t *line = wcstok(t, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
             if (wcscmp(line, L"scanned") == 0) scanned = true;
-            if (wcsncmp(line, L"backup\t", 7) == 0 && nbackups < MAX_ITEMS) backups[nbackups++] = text_dup(line + 7);
+            if (wcsncmp(line, L"own\t", 4) == 0 && nown < MAX_ITEMS) {
+                wchar_t *tab = wcschr(line + 4, L'\t');
+                if (tab == NULL || tab - (line + 4) >= 40) continue;
+                own_t *o = &own[nown];
+                memcpy(o->id, line + 4, (size_t)(tab - (line + 4)) * sizeof(wchar_t));
+                o->id[tab - (line + 4)] = 0;
+                o->path = text_dup(tab + 1);
+                o->active = o->path != NULL;
+                nown += o->active;
+            }
             if (wcsncmp(line, L"root\t", 5) != 0) continue;
             for (size_t i = 0; i < nroots; ++i) {
                 if (CompareStringOrdinal(line + 5, -1, roots[i], -1, TRUE) == CSTR_EQUAL) seen[i] = true;
@@ -197,21 +260,27 @@ static void load_seen(const wchar_t *path) {
     CloseHandle(h);
 }
 
-static void put_line(HANDLE h, const wchar_t *a, const wchar_t *b) {
+static void put_line(HANDLE h, const wchar_t *a, const wchar_t *b, const wchar_t *c) {
     DWORD put = 0;
     WriteFile(h, a, (DWORD)(wcslen(a) * sizeof(wchar_t)), &put, NULL);
     if (b) WriteFile(h, b, (DWORD)(wcslen(b) * sizeof(wchar_t)), &put, NULL);
+    if (c) {
+        WriteFile(h, L"\t", sizeof(wchar_t), &put, NULL);
+        WriteFile(h, c, (DWORD)(wcslen(c) * sizeof(wchar_t)), &put, NULL);
+    }
     WriteFile(h, L"\r\n", 2 * sizeof(wchar_t), &put, NULL);
 }
 
 static void save_seen(const wchar_t *path) {
     HANDLE h = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (h == INVALID_HANDLE_VALUE) return;
-    if (scanned) put_line(h, L"scanned", NULL);
+    if (scanned) put_line(h, L"scanned", NULL, NULL);
     for (size_t i = 0; i < nroots; ++i) {
-        if (seen[i]) put_line(h, L"root\t", roots[i]);
+        if (seen[i]) put_line(h, L"root\t", roots[i], NULL);
     }
-    for (size_t i = 0; i < nbackups; ++i) put_line(h, L"backup\t", backups[i]);
+    for (size_t i = 0; i < nown; ++i) {
+        if (own[i].active) put_line(h, L"own\t", own[i].id, own[i].path);
+    }
     CloseHandle(h);
 }
 
@@ -283,14 +352,6 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     swprintf(seenfile, PATH_CAP, L"%ls\\seen.txt", folder);
     load_seen(seenfile);
     int left = pending(machine);
-    for (size_t i = 0; i < nfiles; ++i) {
-        bool inside = false;
-        for (size_t r = 0; r < nroots; ++r) {
-            if (!under(files[i], roots[r])) continue;
-            inside = seen[r] = true;
-        }
-        if (inside && !gone(files[i])) ++left;
-    }
     // A package folder above a seen one: the installer could not remove it either.
     for (size_t i = 0; i < nroots; ++i) {
         for (size_t j = 0; j < nroots; ++j) {
