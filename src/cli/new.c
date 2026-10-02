@@ -695,11 +695,43 @@ static int usage(void) {
                   "[--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] "
                   "[--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] "
                   "[--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | "
-                  "rubrapack new <name> (a fixed starter <name>.toml); .rpk names are taken too");
+                  "rubrapack new <name> (a fixed starter <name>.toml) | "
+                  "rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too");
     return RP_EXIT_USAGE;
 }
 
+// `new <file>.toml --from <package.msi> [--dist <folder>]`: the dist folder sits beside the source
+// (default <stem>-files) so the source can name it by a relative path.
+static int new_from(int argc, char **argv) {
+    const char *source = NULL, *input = NULL, *dist = NULL, *publisher = NULL;
+    for (int i = 2; i < argc; ++i) {
+        if (strcmp(argv[i], "--from") == 0 && i + 1 < argc) input = argv[++i];
+        else if (strcmp(argv[i], "--dist") == 0 && i + 1 < argc) dist = argv[++i];
+        else if (strcmp(argv[i], "--publisher") == 0 && i + 1 < argc) publisher = argv[++i];
+        else if (argv[i][0] != '-' && source == NULL) source = argv[i];
+        else return usage();
+    }
+    size_t e = source ? rpn_source_ext(source) : 0;
+    if (source == NULL || input == NULL || e == 0 || (dist && (strchr(dist, '/') || strchr(dist, '\\') || dist[0] == '\0'))) {
+        if (dist && (strchr(dist, '/') || strchr(dist, '\\'))) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--dist names a new folder beside the source (no path)");
+        return usage();
+    }
+    const char *slash = strrchr(source, '/');
+#if defined(_WIN32)
+    const char *bs = strrchr(source, '\\');
+    if (bs && (!slash || bs > slash)) slash = bs;
+#endif
+    size_t dir = slash ? (size_t)(slash - source) + 1 : 0;
+    char path[1024];
+    if (dist) snprintf(path, sizeof path, "%.*s%s", (int)dir, source, dist);
+    else snprintf(path, sizeof path, "%.*s-files", (int)(strlen(source) - e), source);
+    return rpn_new_from(source, input, path, publisher);
+}
+
 int rp_cmd_new(int argc, char **argv) {
+    for (int i = 2; i < argc; ++i) {
+        if (strcmp(argv[i], "--from") == 0) return new_from(argc, argv);
+    }
     const char *kind = "msi", *name = NULL;
     bool interactive = false, options = false;
     ans_t *a = rp_mem_alloc(proven_heap_allocator(), 1, sizeof *a);

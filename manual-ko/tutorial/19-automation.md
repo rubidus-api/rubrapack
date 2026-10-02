@@ -66,6 +66,28 @@ glob = "dist/samples/**"
 - `rubrapack new hello -i`(또는 `--interactive`)는 질문을 한다. 질문은 오류 출력으로 가고 답은 한 줄에 하나씩 읽으므로, 답을 적은 파일을
   흘려 넣을 수 있다: `rubrapack new hello.toml < answers.txt`. 마지막 질문 전에 답이 떨어지면 아무것도 쓰지 않는다.
 
+## 이미 있는 패키지에서: `new --from`
+
+다른 도구로 만든 MSI 가 이미 있는 제품은 한 번에 rubrapack 으로 옮긴다:
+
+```text
+C:\work> rubrapack new hello.toml --from hello-old.msi
+hello-files: 12 files, 3402871 bytes
+wrote hello.toml and hello-files/ (build it with: rubrapack build hello.toml -o <package>.msi)
+C:\work> rubrapack build hello.toml -o hello.msi
+```
+
+파일은 `hello-files` 에 풀리고(`--dist` 로 다른 새 폴더를 정한다) `hello.toml` 은 그 파일로 패키지를 설명한다:
+폴더, 파일, 기능, 레지스트리 값, 바로가기 따위를 같은 업그레이드 코드로, 그리고 구성 요소의 키 경로였던 파일마다
+같은 구성 요소 코드로 적으므로, 이것으로 만든 새 판이 옛 패키지를 그 자리에서 업그레이드한다(판을 올린다. 새 판의
+제품 코드는 새것이어야 하므로 새로 정해진다). 빌드하기 전에 원본
+끝을 읽는다: 옛 패키지의 사용자 정의 동작이나 자체 대화창처럼 rubrapack 원본이 말할 수 없는 것이 표마다 적혀
+있고, rubrapack 이 바꾼 것도 거기 있다. 패키지의 프로그램을 실행하던 사용자 정의 동작은 대개 `[action]` 이 된다.
+
+`--publisher "CN=Example Software"` 는 `[msix]` 와 시작 메뉴 바로가기가 실행하는 프로그램의 `[msix-app]` 을 더해
+같은 원본으로 `hello.msix` 도 빌드하게 한다. 그러면 빌드가 MSIX 가 담을 수 없는 것(조건, 제거 때 남기는 파일)을
+알려 주고, 그 표에 `msi-only = true` 를 붙이면 MSI 에만 남는다.
+
 ## 원본 고치기: `edit`
 
 옵션 없는 `edit` 은 메뉴를 보인다:
@@ -142,7 +164,7 @@ rubrapack 은 Linux 에서도 돌고, `--reproducible` 이면 거기서도 같�
 GitLab CI, Jenkins)에 Windows 가 없어도 된다. Linux 러너에서:
 
 ```text
-V=0.28.0
+V=0.29.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict

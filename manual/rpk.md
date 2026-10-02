@@ -1230,6 +1230,21 @@ rubrapack version | help [command]
   `level = 2` next to a required `Main`. It is checked like `lint` after it is written (exit 1 if
   that finds a problem). It never replaces an existing file; `new app.toml` over an existing
   `app.toml` says to use `edit`.
+- `rubrapack new <file>.toml --from <package.msi>` makes a source from an existing package
+  (RFC-0023): its files go into a new folder beside the source (`<stem>-files`, or `--dist <name>`),
+  laid out as `extract` lays them out, and the source describes the package with them - name,
+  version, architecture, upgrade code, folders, files (with each component's code where the file is
+  its key path, so the result upgrades the original; the product code is not carried - a new
+  version needs its own - and is named in a note), features, registry values,
+  shortcuts, environment variables, INI values, services, public properties, launch conditions,
+  copies, removals, fonts, permissions, the Installed apps settings, and for a package rubrapack
+  made, its own dialog set, launch box, actions, qword values and guard. What a source cannot say
+  - custom actions, the original's own dialogs, searches, COM and other tables - is listed at the
+  end of the source, table by table, with what was changed (a folder at the root of a drive moved
+  under Program Files, a per-user value left out of a per-machine package, ...). `--publisher
+  "CN=..."` also writes `[msix]` and an `[msix-app.*]` (the program of the Start menu shortcut), so
+  the same source builds an `.msix`; what an MSIX cannot carry is then refused by the build and
+  takes `msi-only = true`. A merge module is refused (merge it with `[merge.ID]`).
 - `edit <file>.toml` changes a source in place. Without options it shows a menu: 1 name,
   manufacturer, version (in `[define] VERSION` when `version = "$(VERSION)"`) and architecture;
   2 the folder under Program Files and the scope; 3 dialogs, license and Korean dialogs; 4 which

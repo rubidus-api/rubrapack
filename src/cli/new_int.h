@@ -36,6 +36,9 @@ const char *rpn_name_problem(const char *s);
 size_t rpn_source_ext(const char *s);
 char *rpn_join(const char *a, const char *b);
 int rpn_cmp_name(const void *a, const void *b);
+// `new <file>.toml --from <package.msi>` (new_from.c, RFC-0023): the files into `dist`, a folder
+// beside the source, and the source describing them; with `publisher` also the MSIX tables.
+int rpn_new_from(const char *source, const char *input, const char *dist, const char *publisher);
 void rpn_names_free(names_t *x);
 proven_err_t rpn_scan_dist(const char *dist, scan_t *s);
 void rpn_scan_free(scan_t *s);

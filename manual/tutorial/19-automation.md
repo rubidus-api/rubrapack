@@ -69,6 +69,31 @@ Three other forms:
   one per line, so a file of answers can be piped in: `rubrapack new hello.toml < answers.txt`. If
   the answers run out before the last question, nothing is written.
 
+## From an existing package: `new --from`
+
+A product that already has an MSI - made by another tool - moves to rubrapack in one step:
+
+```text
+C:\work> rubrapack new hello.toml --from hello-old.msi
+hello-files: 12 files, 3402871 bytes
+wrote hello.toml and hello-files/ (build it with: rubrapack build hello.toml -o <package>.msi)
+C:\work> rubrapack build hello.toml -o hello.msi
+```
+
+The files come out into `hello-files` (`--dist` names another new folder), and `hello.toml`
+describes the package with them: its folders, files, features, registry values, shortcuts and the
+rest, with the same upgrade code and, for each file that was a component's key path, the same
+component code - so a new version built from it upgrades the old package in place (raise the
+version: the product code is new, as a new version's must be). Read the end of the
+source before building: what rubrapack cannot say in a source, such as the old package's custom
+actions or its own dialogs, is listed there table by table, and so is anything it changed. A
+custom action that ran one of the package's programs usually becomes an `[action]`.
+
+`--publisher "CN=Example Software"` adds `[msix]` and an `[msix-app]` for the program the Start
+menu shortcut starts, so the same source also builds `hello.msix`; the build then names whatever an
+MSIX cannot hold (a condition, a file left behind at removal), and `msi-only = true` on that table
+keeps it for the MSI.
+
 ## Changing a source: `edit`
 
 `edit` without options shows a menu:
@@ -148,7 +173,7 @@ rubrapack runs on Linux too, and builds the same bytes there with `--reproducibl
 build server (GitHub Actions, GitLab CI, Jenkins) does not need Windows. On a Linux runner:
 
 ```text
-V=0.28.0
+V=0.29.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
