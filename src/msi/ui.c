@@ -59,6 +59,16 @@ static const text_t texts[] = {
     { "ProgressStatus", "상태:", "Status:" },
     { "ExitTitle", "설치 완료", "Setup complete" },
     { "ExitText", "[ProductName]을(를) 설치했습니다.", "[ProductName] has been installed." },
+    // The same pages during a removal (RP_REMOVAL_COND). A language other than English and
+    // Korean that gives no Removal* text gets its own install text instead (rp_ui_text_for).
+    { "RemovalProgressTitle", "[ProductName] 제거 중", "Removing [ProductName]" },
+    { "RemovalExitTitle", "제거 완료", "Removal complete" },
+    { "RemovalExitText", "[ProductName]을(를) 제거했습니다.", "[ProductName] has been removed." },
+    { "RemovalUserExitTitle", "제거 취소", "Removal cancelled" },
+    { "RemovalUserExitText", "제거를 취소했습니다. 컴퓨터는 바뀌지 않았습니다.", "The removal was cancelled. Nothing on your computer was changed." },
+    { "RemovalFatalTitle", "제거 실패", "Removal failed" },
+    { "RemovalFatalText", "제거 중 오류가 나서 제거를 되돌렸습니다. 제품은 그대로 설치되어 있습니다.",
+      "An error ended the removal, which was rolled back. The product is still installed." },
     { "UserExitTitle", "설치 취소", "Setup cancelled" },
     { "UserExitText", "설치를 취소했습니다. 컴퓨터는 바뀌지 않았습니다.", "Setup was cancelled. Nothing on your computer was changed." },
     { "FatalTitle", "설치 실패", "Setup failed" },
@@ -348,6 +358,7 @@ const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
         }
         if (x->text) return x->text;
     }
+    if (strncmp(id, "Removal", 7) == 0 && strcmp(code, "en") != 0 && strcmp(code, "ko") != 0) return rp_ui_text_for(ir, id + 7, li);
     for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
         if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
     }
@@ -451,6 +462,24 @@ static void frame_text(ctx_t *c, const char *dlg, const char *title, const char 
     control(c, dlg, "BottomLine", "Line", 0, 234, 370, 0, VIS, NULL, NULL, NULL);
 }
 
+// During a removal the title and, with `text`, the description of the Removal* texts show instead:
+// the maintenance page's Remove sets RP_REMOVING (its Remove event leaves REMOVE unset - observed,
+// x46); REMOVE = "ALL" is a removal asked for on the command line.
+#define RP_REMOVAL_COND "RP_REMOVING = \"1\" OR REMOVE = \"ALL\""
+static void frame_removal(ctx_t *c, const char *dlg, const char *title, const char *text) {
+    char id[64];
+    snprintf(id, sizeof id, "Removal%s", title);
+    control(c, dlg, "RemovalTitle", "Text", 15, 7, 330, 15, TRANSPARENT | NOPREFIX, NULL, TT(c, keep(c, id, "")), NULL);
+    cond(c, dlg, "RemovalTitle", "Show", RP_REMOVAL_COND);
+    cond(c, dlg, "Title", "Hide", RP_REMOVAL_COND);
+    if (text) {
+        snprintf(id, sizeof id, "Removal%s", text);
+        control(c, dlg, "RemovalDescription", "Text", 25, 22, 330, 20, TRANSPARENT | NOPREFIX, NULL, T(c, keep(c, id, "")), NULL);
+        cond(c, dlg, "RemovalDescription", "Show", RP_REMOVAL_COND);
+        cond(c, dlg, "Description", "Hide", RP_REMOVAL_COND);
+    }
+}
+
 // The same with text IDs (`text` may be NULL).
 static void frame(ctx_t *c, const char *dlg, const char *title, const char *text, const char *first) {
     frame_text(c, dlg, TT(c, title), text ? T(c, text) : NULL);
@@ -539,6 +568,7 @@ static void progress_and_exits(ctx_t *c) {
     const char *d = "RpProgressDlg";
     dialog(c, d, 370, 270, 1, "Cancel", "Cancel", "Cancel");
     frame(c, d, "ProgressTitle", "ProgressText", NULL);
+    frame_removal(c, d, "ProgressTitle", NULL);
     control(c, d, "StatusLabel", "Text", 25, 100, 50, 10, VIS | NOPREFIX, NULL, T(c, "ProgressStatus"), NULL);
     control(c, d, "ActionText", "Text", 75, 100, 270, 10, VIS | NOPREFIX, NULL, "", NULL);
     control(c, d, "ProgressBar", "ProgressBar", 25, 115, 320, 10, VIS | 0x10000, NULL, "", NULL);
@@ -557,6 +587,7 @@ static void progress_and_exits(ctx_t *c) {
         bool launch = i == 0 && c->ir->ui_launch_file;
         dialog(c, exits[i][0], 370, 270, 3, "Finish", "Finish", "Finish");
         frame(c, exits[i][0], exits[i][1], exits[i][2], NULL);
+        frame_removal(c, exits[i][0], exits[i][1], exits[i][2]);
         // The log of this run (MsiLogging turns it on without /l): RP_SaveLog (lower.c) asks where
         // to save a copy. Hidden when Windows Installer keeps no log (MsiLogFileLocation empty).
         const char *after_finish = launch ? "Launch" : NULL;
@@ -603,7 +634,8 @@ static void maintenance_dlg(ctx_t *c, bool change) {
     event(c, d, "Repair", "ReinstallMode", "ecmus", NULL, 2);
     event(c, d, "Repair", "EndDialog", "Return", NULL, 3);
     event(c, d, "Remove", "Remove", "ALL", NULL, 1);
-    event(c, d, "Remove", "EndDialog", "Return", NULL, 2);
+    event(c, d, "Remove", "[RP_REMOVING]", "1", NULL, 2);     // the Remove event leaves REMOVE unset (observed)
+    event(c, d, "Remove", "EndDialog", "Return", NULL, 3);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     if (!c->page) seq(c, d, "Installed AND NOT RESUME AND NOT Preselected", 1240);
 }

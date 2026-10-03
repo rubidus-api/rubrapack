@@ -919,7 +919,10 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`,
 `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`,
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
-`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below). In button texts `&` marks the access key (`&Next` is Alt+N).
+`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), and for a removal -
+the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
+`RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
+`RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).
 
 ### Several languages
 
