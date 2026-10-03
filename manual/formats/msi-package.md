@@ -287,6 +287,11 @@ When a file to be replaced or removed is held by a running program (a DLL loaded
   written as `*1\??\C:\...` on Windows 11. A held file's deletion is queued while the script runs;
   the deletion of the installer's backups in `Config.Msi` only after the commit custom actions, so a
   commit action cannot see all that its own installation leaves. [observed]
+- When another installation then installs an identical file at a path whose deletion is queued,
+  Windows Installer keeps the file already there ("Won't Overwrite ... hash matches source file",
+  or "Existing file is of an equal version") and leaves the queued deletion: the restart deletes the
+  newly installed file. [observed] rubrapack's per-machine packages take such deletions back as they
+  install.
 - A property given on the command line reaches only the package being installed. During an
   upgrade, the removal of the old version follows **the old package's** Property table - author
   the property from the first version on. [observed]

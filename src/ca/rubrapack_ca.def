@@ -11,3 +11,6 @@ EXPORTS
     RpRemoveCommit
     RpCleanupPrepare
     RpCleanupRegister
+    RpRescuePrepare
+    RpRescueApply
+    RpRescueRollback

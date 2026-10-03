@@ -31,7 +31,10 @@
 #include <wchar.h>
 #include <windows.h>
 #include <msi.h>
+#include <msiquery.h>
 #include <shellapi.h>
+
+#include "pfro.h"
 
 enum { MAX_ITEMS = 256, PATH_CAP = 32768 };
 
@@ -123,17 +126,6 @@ static bool gone(const wchar_t *path) {
     return DeleteFileW(path) != 0;
 }
 
-// A PendingFileRenameOperations source as a path: Windows writes "*1\??\C:\..." (a flag, then the
-// NT prefix; seen on Windows 11) or "\??\C:\..."; "!" marks a replacing rename.
-static const wchar_t *nt_path(const wchar_t *src) {
-    if (*src == L'*') {
-        ++src;
-        while (*src >= L'0' && *src <= L'9') ++src;
-    }
-    if (*src == L'!') ++src;
-    return wcsncmp(src, L"\\??\\", 4) == 0 ? src + 4 : src;
-}
-
 // What this installation left: found once, on the first run - the queued deletions after the
 // count taken before its script ran (`after`; earlier ones belong to other installations, even
 // in the same folder)
@@ -144,6 +136,7 @@ typedef struct {
     wchar_t *path;
     wchar_t  id[40];
     bool     active;
+    bool     noted;                 // a `file` line (could not be queued), not a queued deletion
 } own_t;
 static own_t own[MAX_ITEMS];
 static size_t nown;
@@ -163,7 +156,7 @@ static void file_id(const wchar_t *path, wchar_t id[40]) {
 
 // Takes `path` as this installation's when it is under a root (marking the root) or, per machine,
 // one of the installer's backups.
-static void take(const wchar_t *path, bool machine) {
+static void take(const wchar_t *path, bool machine, bool noted) {
     bool mine = machine && installer_backup(path);
     for (size_t i = 0; i < nroots; ++i) {
         if (!under(path, roots[i])) continue;
@@ -174,6 +167,7 @@ static void take(const wchar_t *path, bool machine) {
     file_id(path, o->id);
     if (o->id[0] == 0) return;              // already gone
     o->path = text_dup(path);
+    o->noted = noted;
     o->active = o->path != NULL;
     nown += o->active;
 }
@@ -191,7 +185,7 @@ static void scan(bool machine) {
             unsigned long index = 0;
             for (wchar_t *src = buf; *src; ++index) {
                 wchar_t *dst = src + wcslen(src) + 1;
-                if (*dst == 0 && index >= after) take(nt_path(src), machine);
+                if (*dst == 0 && index >= after) take(pfro_path(src), machine, false);
                 src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
             }
         }
@@ -200,11 +194,84 @@ static void scan(bool machine) {
     RegCloseKey(k);
 }
 
+// Whether an installed product has a file at `path`: a component whose key path is a file in the
+// same folder, listing a file of that name (the File table of the product's cached package). Another
+// installation that put an identical file there kept the one already present (x41), so the file's
+// identity cannot tell; this can. Built once per run, only when something is about to be deleted.
+static wchar_t **owned;
+static size_t nowned, capowned;
+static bool owned_built;
+
+static void own_path(const wchar_t *dir, const wchar_t *name) {
+    if (nowned == capowned) {
+        size_t cap = capowned ? capowned * 2 : 256;
+        wchar_t **n = owned ? HeapReAlloc(GetProcessHeap(), 0, owned, cap * sizeof *n) : HeapAlloc(GetProcessHeap(), 0, cap * sizeof *n);
+        if (n == NULL) return;
+        owned = n;
+        capowned = cap;
+    }
+    size_t a = wcslen(dir), b = wcslen(name);
+    wchar_t *p = HeapAlloc(GetProcessHeap(), 0, (a + b + 1) * sizeof *p);
+    if (p == NULL) return;
+    memcpy(p, dir, a * sizeof *p);
+    memcpy(p + a, name, (b + 1) * sizeof *p);
+    owned[nowned++] = p;
+}
+
+static void scan_product(const wchar_t *code) {
+    static wchar_t pkg[PATH_CAP], keypath[PATH_CAP], dir[PATH_CAP], comp[80], cid[80], fname[1024];
+    DWORD n = PATH_CAP;
+    if (MsiGetProductInfoW(code, INSTALLPROPERTY_LOCALPACKAGE, pkg, &n) != ERROR_SUCCESS) return;
+    MSIHANDLE db = 0, view = 0, rec = 0;
+    if (MsiOpenDatabaseW(pkg, MSIDBOPEN_READONLY, &db) != ERROR_SUCCESS) return;
+    if (MsiDatabaseOpenViewW(db, L"SELECT `Component`.`ComponentId`, `File`.`FileName` FROM `File`, `Component` "
+                                 L"WHERE `File`.`Component_` = `Component`.`Component` ORDER BY `Component`.`ComponentId`", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        comp[0] = 0;
+        bool have_dir = false;
+        while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            DWORD cn = 80, fn = 1024;
+            if (MsiRecordGetStringW(rec, 1, cid, &cn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, fname, &fn) == ERROR_SUCCESS) {
+                if (wcscmp(cid, comp) != 0) {        // a new component: where its key path is
+                    wcscpy(comp, cid);
+                    DWORD kn = PATH_CAP;
+                    have_dir = MsiGetComponentPathW(code, cid, keypath, &kn) == INSTALLSTATE_LOCAL && keypath[0] && keypath[1] == L':';
+                    if (have_dir) {
+                        wcscpy(dir, keypath);
+                        wchar_t *slash = wcsrchr(dir, L'\\');
+                        if (slash) slash[1] = 0;
+                        else have_dir = false;
+                    }
+                }
+                if (have_dir) {
+                    wchar_t *bar = wcschr(fname, L'|');      // "SHORT|Long name"
+                    own_path(dir, bar ? bar + 1 : fname);
+                }
+            }
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    MsiCloseHandle(db);
+}
+
+static bool owned_by_installed_product(const wchar_t *path) {
+    if (!owned_built) {
+        owned_built = true;
+        wchar_t code[39];
+        for (DWORD i = 0; MsiEnumProductsW(i, code) == ERROR_SUCCESS; ++i) scan_product(code);
+    }
+    for (size_t i = 0; i < nowned; ++i) {
+        if (CompareStringOrdinal(owned[i], -1, path, -1, TRUE) == CSTR_EQUAL) return true;
+    }
+    return false;
+}
+
 // Deletes what is still this installation's; returns how many are still there afterwards.
 static int pending(bool machine) {
     if (!scanned) {
         scan(machine);
-        for (size_t i = 0; i < nfiles; ++i) take(files[i], false);
+        for (size_t i = 0; i < nfiles; ++i) take(files[i], false, true);
         scanned = true;
     }
     // A removal whose product is installed again: what it left now belongs to that installation.
@@ -217,6 +284,18 @@ static int pending(bool machine) {
         wchar_t id[40];
         file_id(o->path, id);
         if (id[0] == 0 || wcscmp(id, o->id) != 0) {      // gone, or another file now
+            o->active = false;
+            continue;
+        }
+        // Its deletion taken back (a later installation that kept the file did it, pfro.h), or the
+        // file now belongs to an installed product: then it is not this installation's any more -
+        // and per machine its old deletion is taken back here, so the restart keeps it too.
+        if (!o->noted && !pfro_has(o->path)) {
+            o->active = false;
+            continue;
+        }
+        if (!installer_backup(o->path) && owned_by_installed_product(o->path)) {
+            if (machine) pfro_cancel(o->path, (unsigned long)-1);
             o->active = false;
             continue;
         }
@@ -241,12 +320,15 @@ static void load_seen(const wchar_t *path) {
         wchar_t *ctx = NULL;
         for (wchar_t *line = wcstok(t, L"\r\n", &ctx); line; line = wcstok(NULL, L"\r\n", &ctx)) {
             if (wcscmp(line, L"scanned") == 0) scanned = true;
-            if (wcsncmp(line, L"own\t", 4) == 0 && nown < MAX_ITEMS) {
-                wchar_t *tab = wcschr(line + 4, L'\t');
-                if (tab == NULL || tab - (line + 4) >= 40) continue;
+            bool noted = wcsncmp(line, L"note\t", 5) == 0;
+            if ((noted || wcsncmp(line, L"own\t", 4) == 0) && nown < MAX_ITEMS) {
+                const wchar_t *v = line + (noted ? 5 : 4);
+                wchar_t *tab = wcschr(v, L'\t');
+                if (tab == NULL || tab - v >= 40) continue;
                 own_t *o = &own[nown];
-                memcpy(o->id, line + 4, (size_t)(tab - (line + 4)) * sizeof(wchar_t));
-                o->id[tab - (line + 4)] = 0;
+                memcpy(o->id, v, (size_t)(tab - v) * sizeof(wchar_t));
+                o->id[tab - v] = 0;
+                o->noted = noted;
                 o->path = text_dup(tab + 1);
                 o->active = o->path != NULL;
                 nown += o->active;
@@ -279,7 +361,7 @@ static void save_seen(const wchar_t *path) {
         if (seen[i]) put_line(h, L"root\t", roots[i], NULL);
     }
     for (size_t i = 0; i < nown; ++i) {
-        if (own[i].active) put_line(h, L"own\t", own[i].id, own[i].path);
+        if (own[i].active) put_line(h, own[i].noted ? L"note\t" : L"own\t", own[i].id, own[i].path);
     }
     CloseHandle(h);
 }

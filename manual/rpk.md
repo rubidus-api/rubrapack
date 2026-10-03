@@ -1068,7 +1068,15 @@ package's folders that were left only because of them, and finally itself. With 
 goes at its first run; after 30 days it gives up and leaves the rest to the restart. It runs as
 SYSTEM for a per-machine package and as the user for a per-user one, from a folder only that account
 can write (`%ProgramData%\rubrapack\cleanup\{ProductCode}`, or the user's `%LOCALAPPDATA%`), and it
-never deletes anything else. `[package] cleanup = false` leaves it out.
+never deletes anything else: only what this installation queued, only while the same file is still
+at that path, and not a file an installed product now has there. `[package] cleanup = false`
+leaves it out.
+
+A per-machine package also protects its own files from an earlier removal: when another product
+was removed while a program held one of its files, the file's deletion stays queued for the
+restart, and if this package then installs an identical file at that path, Windows Installer keeps
+the one already there - so the restart would delete it. The package takes such deletions back as
+it installs (and queues them again if the installation fails).
 
 There is no separate uninstall program: Windows' Installed apps removes an MSI with Windows
 Installer, and what a removal leaves is the cleanup task's job.

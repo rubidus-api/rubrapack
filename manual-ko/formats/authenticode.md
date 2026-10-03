@@ -139,19 +139,19 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 | # | 이름(UTF-16LE) | 이름 | 크기 |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 61440 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 71168 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
-| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 24 |
+| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 48 |
 | 6 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
 | 7 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
 | 8 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 1668 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 576 |
-| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 132 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 1764 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 600 |
+| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 150 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
 | 16 | `40 48 59 45 f2 44` ... | `Property` | 48 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
@@ -166,12 +166,12 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 `\005MsiDigitalSignatureEx` 의 값이다:
 
 ```text
-04 13 71 28 d1 b6 96 a7 f6 8c ed 4a b5 db 8a 60 2d 7d bd 6d 3a 6a 2b f9 77 bc e4 cd a2 56 b9 f5
+7b 89 24 69 0f e5 8c 13 38 10 88 f9 33 5e bb e0 aa 74 a1 b4 1b 5b b0 15 61 26 1c 3c a2 e5 88 db
 ```
 
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-7a 42 67 1e 47 11 54 85 6e e2 1e 20 25 b2 d0 c0 e0 5c 8a d9 4e 25 6e d5 72 1c 4e cb 1f d8 8b 6d
+db b9 26 59 4c 97 74 13 01 f8 55 b1 42 b3 e8 b6 b4 a9 53 56 fe 6d a1 71 57 d1 84 e9 4c 31 d9 bb
 ```
 

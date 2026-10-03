@@ -67,6 +67,8 @@
 #include <sddl.h>
 #include <commdlg.h>
 
+#include "../clean/pfro.h"
+
 // rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
 #if __has_include("rp_clean_part.h")
 #include "rp_clean_part.h"
@@ -686,6 +688,111 @@ __declspec(dllexport) UINT __stdcall RpRemoveCommit(MSIHANDLE h) {
 }
 
 // ---- cleaning up later (RFC-0026) -----------------------------------------------------------------
+
+// Rescue (RFC-0026, x41): a file this installation installs - or keeps, because an identical one is
+// already there - may carry a deletion an earlier removal queued for the next restart; the restart
+// would then delete this installation's file. Per machine only (the list is in HKLM).
+//   RpRescuePrepare immediate: the files of components being installed whose path has a queued
+//                   deletion now, with how many renames are queued now (later ones are this
+//                   installation's own and stay).
+//   RpRescueApply   deferred, after InstallFiles: takes those deletions out.
+//   RpRescueRollback deferred rollback: queues them again.
+
+__declspec(dllexport) UINT __stdcall RpRescuePrepare(MSIHANDLE h) {
+    writer_t w = { 0 };
+    w_raw(&w, L"RPS1", 4);
+    // The queued deletions now.
+    HKEY k;
+    wchar_t *pend = NULL;
+    DWORD size = 0;
+    unsigned long count = 0;
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, PFRO_KEY, 0, KEY_QUERY_VALUE, &k) == ERROR_SUCCESS) {
+        pend = pfro_read(k, &size);
+        RegCloseKey(k);
+    }
+    for (wchar_t *src = pend; src && *src; ++count) {
+        wchar_t *dst = src + wcslen(src) + 1;
+        src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+    }
+    wchar_t num[24];
+    swprintf(num, 24, L"%lu", count);
+    w_field(&w, num);
+    MSIHANDLE db = pend ? MsiGetActiveDatabase(h) : 0, view = 0, rec = 0;
+    size_t n = 0;
+    if (db && MsiDatabaseOpenViewW(db, L"SELECT `File`.`FileName`, `Component`.`Directory_`, `Component`.`Component` FROM `File`, `Component` "
+                                       L"WHERE `File`.`Component_` = `Component`.`Component`", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        static wchar_t fname[1024], dir[80], comp[80], path[MAX_PATH * 4];
+        while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            DWORD fn = 1024, dn = 80, cn = 80, pn = MAX_PATH * 4;
+            INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
+            if (MsiRecordGetStringW(rec, 1, fname, &fn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, dir, &dn) == ERROR_SUCCESS &&
+                MsiRecordGetStringW(rec, 3, comp, &cn) == ERROR_SUCCESS && MsiGetComponentStateW(h, comp, &installed, &action) == ERROR_SUCCESS &&
+                action == INSTALLSTATE_LOCAL && MsiGetTargetPathW(h, dir, path, &pn) == ERROR_SUCCESS) {
+                wchar_t *bar = wcschr(fname, L'|');
+                size_t len = wcslen(path);
+                if (len + wcslen(bar ? bar + 1 : fname) < MAX_PATH * 4) wcscpy(path + len, bar ? bar + 1 : fname);
+                bool queued = false;
+                for (wchar_t *src = pend; *src && !queued;) {
+                    wchar_t *dst = src + wcslen(src) + 1;
+                    queued = *dst == 0 && CompareStringOrdinal(pfro_path(src), -1, path, -1, TRUE) == CSTR_EQUAL;
+                    src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+                }
+                if (queued) {
+                    w_field(&w, path);
+                    ++n;
+                    log_line(h, L"rubrapack: rescue: %ls has a deletion queued for the next restart", path);
+                }
+            }
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    if (db) MsiCloseHandle(db);
+    if (pend) HeapFree(GetProcessHeap(), 0, pend);
+    if (n == 0) {                       // nothing to do: empty lists
+        w.len = 0;
+        w_raw(&w, L"RPS1", 4);
+        w_field(&w, num);
+    }
+    set_data(h, L"RP_RescueApply", &w);
+    set_data(h, L"RP_RescueApplyRollback", &w);
+    if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
+    return ERROR_SUCCESS;
+}
+
+static void rescue_list(MSIHANDLE h, bool undo) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return;
+    reader_t r = { data, data + wcslen(data) };
+    static wchar_t num[24], path[MAX_PATH * 4];
+    if (wcsncmp(data, L"RPS1", 4) == 0) {
+        r.p += 4;
+        if (r_field(&r, num, 24)) {
+            unsigned long before = wcstoul(num, NULL, 10);
+            while (r_field(&r, path, MAX_PATH * 4)) {
+                if (undo) {
+                    BOOL ok = MoveFileExW(path, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+                    log_line(h, L"rubrapack: rescue: %ls queued again: %ls", path, ok ? L"yes" : L"no");
+                } else {
+                    int taken = pfro_cancel(path, before);
+                    log_line(h, L"rubrapack: rescue: %ls: %d queued deletion(s) taken back", path, taken);
+                }
+            }
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, data);
+}
+
+__declspec(dllexport) UINT __stdcall RpRescueApply(MSIHANDLE h) {
+    rescue_list(h, false);
+    return ERROR_SUCCESS;
+}
+
+__declspec(dllexport) UINT __stdcall RpRescueRollback(MSIHANDLE h) {
+    rescue_list(h, true);
+    return ERROR_SUCCESS;
+}
 
 static unsigned long queued_renames(void);
 

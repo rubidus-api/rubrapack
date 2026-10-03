@@ -1089,6 +1089,16 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RP_CleanupRegister"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpCleanupRegister");
         pk->cleanup = true;
+        // x41: take back the deletions an earlier removal queued for the paths this package installs
+        // (per machine: the list is in HKLM).
+        if (ir->scope == 0) {
+            s_(&pk->customaction, "RP_RescuePrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa");
+            s_(&pk->customaction, "RpRescuePrepare");
+            s_(&pk->customaction, "RP_RescueApplyRollback"); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400 | noimp);
+            s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpRescueRollback");
+            s_(&pk->customaction, "RP_RescueApply"); i_(&pk->customaction, 1 | 0x40 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
+            s_(&pk->customaction, "RpRescueApply");
+        }
     }
     // [remove] upgrade = false: prepare (immediate; nothing when UPGRADINGPRODUCTCODE is set) ->
     // rollback twin -> apply (moves the files to a backup folder) -> commit (deletes the backup).
@@ -1405,6 +1415,11 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     if (pk->cleanup) {                  // RFC-0026: last in the script; the commit runs at InstallFinalize
         s_(&pk->iexec, "RP_CleanupPrepare"); null_(&pk->iexec); i_(&pk->iexec, 6590);
         s_(&pk->iexec, "RP_CleanupRegister"); null_(&pk->iexec); i_(&pk->iexec, 6591);
+        if (ir->scope == 0) {           // after InstallFiles (4000), before DuplicateFiles (4210)
+            s_(&pk->iexec, "RP_RescuePrepare"); null_(&pk->iexec); i_(&pk->iexec, 4190);
+            s_(&pk->iexec, "RP_RescueApplyRollback"); null_(&pk->iexec); i_(&pk->iexec, 4191);
+            s_(&pk->iexec, "RP_RescueApply"); null_(&pk->iexec); i_(&pk->iexec, 4192);
+        }
     }
     if (pk->any_rplan) {                // after the Undo actions (3401...), before RemoveFiles (3500)
         s_(&pk->iexec, "RP_RemovePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3490);

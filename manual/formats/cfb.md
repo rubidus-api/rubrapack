@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 94208 bytes: the
-header sector and 22 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 106496 bytes: the
+header sector and 25 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -161,9 +161,12 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 16 | `0x11000` | 17 | `Binary.RpCa` |
 | 17 | `0x12000` | 18 | `Binary.RpCa` |
 | 18 | `0x13000` | 19 | `Binary.RpCa` |
-| 19 | `0x14000` | `FFFFFFFE` | `Binary.RpCa` |
-| 20 | `0x15000` | 21 | `cab1.cab` |
-| 21 | `0x16000` | `FFFFFFFE` | `cab1.cab` |
+| 19 | `0x14000` | 20 | `Binary.RpCa` |
+| 20 | `0x15000` | 21 | `Binary.RpCa` |
+| 21 | `0x16000` | 22 | `Binary.RpCa` |
+| 22 | `0x17000` | `FFFFFFFE` | `Binary.RpCa` |
+| 23 | `0x18000` | 24 | `cab1.cab` |
+| 24 | `0x19000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 
@@ -176,8 +179,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `07 00 00 00` | child | entry 7 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `80 19 00 00 00 00 00 00` | size | 6528 |
+| 120 | `00 1a 00 00 00 00 00 00` | size | 6656 |
 
-The root's size is the mini stream's: 6528 bytes, holding 21 of the 23 streams in 64-byte mini
+The root's size is the mini stream's: 6656 bytes, holding 21 of the 23 streams in 64-byte mini
 sectors; 2 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
 continues with the streams' names and contents.

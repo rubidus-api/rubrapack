@@ -239,6 +239,9 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
   원본과 대상의 짝으로, 대상은 비운 채 들어간다. 원본은 Windows 11 에서 `*1\??\C:\...` 꼴이다. 쥐인 파일의
   삭제는 스크립트가 도는 동안 걸리고, `Config.Msi` 백업의 삭제는 확정(commit) 사용자 지정 동작 뒤에야 걸린다.
   그래서 확정 동작은 자기 설치가 남기는 것을 다 볼 수 없다. [observed]
+- 그 뒤 다른 설치가 삭제가 걸린 자리에 똑같은 파일을 설치하면, Windows Installer 는 이미 있는 파일을 그대로 두고
+  ("Won't Overwrite ... hash matches source file", 또는 "Existing file is of an equal version") 걸린 삭제도 그대로
+  둔다: 재시작이 새로 설치한 파일을 지운다. [observed] rubrapack 의 컴퓨터별 패키지는 설치하면서 그런 삭제를 거둬들인다.
 - 명령줄에서 준 속성은 설치하고 있는 패키지에만 간다. 업그레이드 중 옛 판의 제거는 **옛 패키지의**
   Property 표를 따른다 - 그 속성은 첫 판부터 넣어 둔다. [observed]
 
