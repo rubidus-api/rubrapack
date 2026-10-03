@@ -7,7 +7,7 @@
 // %LOCALAPPDATA%\rubrapack\cleanup\<ProductCode> for a per-user one) and registers a scheduled
 // task that runs it at logon and every 15 minutes. Each run deletes what it can of:
 //   - the deletions this installation queued for the next restart (PendingFileRenameOperations,
-//     those after the count taken before it ran: earlier ones are other installations', even in a shared
+//     those not already queued before it ran: earlier ones are other installations', even in a shared
 //     folder) under one of the list's roots (the package's folders), and, for a per-machine
 //     package, the installer's backup copies of them (<volume>\Config.Msi\*.rbf) - each only
 //     while the same file is at that path (a file installed there since is left alone);
@@ -22,9 +22,10 @@
 //
 // list.txt, UTF-16LE: "RPC1", then one "<key>\t<value>" per line: task (the task's name), until
 // (the last day, YYYYMMDD, local time), product ({ProductCode}), scope (machine or user), kind
-// (remove, upgrade or maintenance), after (how many queued renames there were before the script), root
+// (remove, upgrade or maintenance), before (a relevant deletion already queued before the script), root
 // (a folder), file (a file). A removal's task deletes nothing once its product is installed again.
 
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,7 +43,30 @@ static wchar_t task[512], product[64], scope[16], until[16], kind[16];
 static wchar_t *roots[MAX_ITEMS], *files[MAX_ITEMS];
 static bool seen[MAX_ITEMS];        // a root that held a queued deletion (seen.txt keeps it between runs)
 static size_t nroots, nfiles;
-static unsigned long after;         // queued renames at the commit (list.txt "after")
+static wchar_t *befores[1024];      // deletions queued before the installation's script (list.txt "before")
+static bool used_before[1024];
+static size_t nbefores;
+
+// With RUBRAPACK_CLEAN_LOG set (by hand, never by the task), each step is appended to that file.
+static void say(const wchar_t *fmt, ...) {
+    static wchar_t path[MAX_PATH];
+    static int state;               // 0 unknown, 1 on, 2 off
+    if (state == 0) state = GetEnvironmentVariableW(L"RUBRAPACK_CLEAN_LOG", path, MAX_PATH) - 1 < MAX_PATH - 1 ? 1 : 2;
+    if (state != 1) return;
+    wchar_t line[2048];
+    va_list ap;
+    va_start(ap, fmt);
+    int n = vswprintf(line, 2046, fmt, ap);
+    va_end(ap);
+    if (n < 0) return;
+    line[n++] = L'\r';
+    line[n++] = L'\n';
+    HANDLE f = CreateFileW(path, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, NULL);
+    if (f == INVALID_HANDLE_VALUE) return;
+    DWORD put = 0;
+    WriteFile(f, line, (DWORD)n * sizeof(wchar_t), &put, NULL);
+    CloseHandle(f);
+}
 
 static wchar_t *text_dup(const wchar_t *s) {
     size_t n = wcslen(s) + 1;
@@ -77,7 +101,7 @@ static bool read_list(const wchar_t *path) {
         else if (wcscmp(line, L"product") == 0) wcsncpy(product, v, 63);
         else if (wcscmp(line, L"scope") == 0) wcsncpy(scope, v, 15);
         else if (wcscmp(line, L"until") == 0) wcsncpy(until, v, 15);
-        else if (wcscmp(line, L"after") == 0) after = wcstoul(v, NULL, 10);
+        else if (wcscmp(line, L"before") == 0 && nbefores < 1024) befores[nbefores++] = text_dup(v);
         else if (wcscmp(line, L"kind") == 0) wcsncpy(kind, v, 15);
         else if (wcscmp(line, L"root") == 0 && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
         else if (wcscmp(line, L"file") == 0 && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
@@ -126,9 +150,9 @@ static bool gone(const wchar_t *path) {
     return DeleteFileW(path) != 0;
 }
 
-// What this installation left: found once, on the first run - the queued deletions after the
-// count taken before its script ran (`after`; earlier ones belong to other installations, even
-// in the same folder)
+// What this installation left: found once, on the first run - the queued deletions that were not
+// already queued before its script ran (list.txt `before`; those belong to other installations,
+// even in the same folder; paths, not positions, since other tasks take entries out - x42)
 // under a root or, per machine, in Config.Msi, and the list's `file` lines - each with the identity
 // of the file there then (volume serial and file index). Later runs delete a path only while the
 // same file is there: a file installed at that path since (a reinstallation) is left alone.
@@ -165,6 +189,7 @@ static void take(const wchar_t *path, bool machine, bool noted) {
     if (!mine || nown >= MAX_ITEMS) return;
     own_t *o = &own[nown];
     file_id(path, o->id);
+    say(L"take %ls: id '%ls' (error %lu)", path, o->id, (unsigned long)GetLastError());
     if (o->id[0] == 0) return;              // already gone
     o->path = text_dup(path);
     o->noted = noted;
@@ -185,7 +210,18 @@ static void scan(bool machine) {
             unsigned long index = 0;
             for (wchar_t *src = buf; *src; ++index) {
                 wchar_t *dst = src + wcslen(src) + 1;
-                if (*dst == 0 && index >= after) take(pfro_path(src), machine, false);
+                if (*dst == 0) {
+                    // One that was queued before the installation's script is not this installation's
+                    // (matched path for path: the same path may be queued more than once).
+                    const wchar_t *path = pfro_path(src);
+                    bool earlier = false;
+                    for (size_t i = 0; i < nbefores && !earlier; ++i) {
+                        if (used_before[i] || CompareStringOrdinal(befores[i], -1, path, -1, TRUE) != CSTR_EQUAL) continue;
+                        used_before[i] = earlier = true;
+                    }
+                    say(L"queued #%lu %ls%ls", index, path, earlier ? L" (before)" : L"");
+                    if (!earlier) take(path, machine, false);
+                }
                 src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
             }
         }
@@ -284,6 +320,7 @@ static int pending(bool machine) {
         wchar_t id[40];
         file_id(o->path, id);
         if (id[0] == 0 || wcscmp(id, o->id) != 0) {      // gone, or another file now
+            say(L"%ls: gone or another file ('%ls')", o->path, id);
             o->active = false;
             continue;
         }
@@ -291,11 +328,13 @@ static int pending(bool machine) {
         // file now belongs to an installed product: then it is not this installation's any more -
         // and per machine its old deletion is taken back here, so the restart keeps it too.
         if (!o->noted && !pfro_has(o->path)) {
+            say(L"%ls: its deletion was taken back", o->path);
             o->active = false;
             continue;
         }
         if (!installer_backup(o->path) && owned_by_installed_product(o->path)) {
             if (machine) pfro_cancel(o->path, (unsigned long)-1);
+            say(L"%ls: an installed product has it", o->path);
             o->active = false;
             continue;
         }
@@ -303,7 +342,9 @@ static int pending(bool machine) {
         for (size_t r = 0; r < nroots; ++r) {
             if (under(o->path, roots[r]) && (root == NULL || wcslen(roots[r]) > wcslen(root))) root = roots[r];
         }
-        if (!no_links(o->path, root) || !gone(o->path)) ++left;
+        bool deleted = no_links(o->path, root) && gone(o->path);
+        say(L"%ls: %ls (error %lu)", o->path, deleted ? L"deleted" : L"still there", (unsigned long)GetLastError());
+        if (!deleted) ++left;
         else o->active = false;
     }
     return left;
@@ -433,7 +474,9 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     static wchar_t seenfile[PATH_CAP];
     swprintf(seenfile, PATH_CAP, L"%ls\\seen.txt", folder);
     load_seen(seenfile);
+    say(L"run: task '%ls' kind '%ls', %zu earlier deletion(s), %zu root(s)", task, kind, nbefores, nroots);
     int left = pending(machine);
+    say(L"left %d", left);
     // A package folder above a seen one: the installer could not remove it either.
     for (size_t i = 0; i < nroots; ++i) {
         for (size_t j = 0; j < nroots; ++j) {

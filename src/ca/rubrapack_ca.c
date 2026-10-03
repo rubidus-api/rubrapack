@@ -794,7 +794,18 @@ __declspec(dllexport) UINT __stdcall RpRescueRollback(MSIHANDLE h) {
     return ERROR_SUCCESS;
 }
 
-static unsigned long queued_renames(void);
+// `path` is inside folder `dir`, ignoring case.
+static bool inside(const wchar_t *path, const wchar_t *dir) {
+    size_t n = wcslen(dir);
+    return n && CompareStringOrdinal(path, (int)n, dir, (int)n, TRUE) == CSTR_EQUAL && path[n] == L'\\' && path[n + 1];
+}
+
+// <volume>\Config.Msi\<name>.rbf, one level down: one of the installer's backups.
+static bool is_backup(const wchar_t *path) {
+    size_t n = wcslen(path);
+    return n > 17 && path[1] == L':' && CompareStringOrdinal(path + 2, 12, L"\\Config.Msi\\", 12, TRUE) == CSTR_EQUAL &&
+           !wcschr(path + 14, L'\\') && CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
+}
 
 __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     wchar_t *dirs = get_property(h, L"RP_CLEANUP_DIRS");
@@ -802,7 +813,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     wchar_t *pc = get_property(h, L"ProductCode");
     writer_t w = { 0 };
     w_raw(&w, L"RPC1", 4);
-    static wchar_t folder[MAX_PATH * 4], path[MAX_PATH * 4];
+    static wchar_t folder[MAX_PATH * 4];
     bool machine = scope && wcscmp(scope, L"machine") == 0;
     // Why this run may leave something. Windows Installer queues the installer's backups for the
     // next restart only after the commit actions (x40), so the commit cannot know - it registers the
@@ -815,19 +826,38 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         w_field(&w, machine ? L"machine" : L"user");
         w_field(&w, folder);
         w_field(&w, why);
-        // The renames queued before this installation's script runs: what is queued after them is
-        // this installation's (a held file's deletion during the script, the installer's backups
-        // at its end - x40). Counted here, in the immediate pass, before any of it happens.
-        wchar_t count[24];
-        swprintf(count, 24, L"%lu", queued_renames());
-        w_field(&w, count);
+        static wchar_t paths[64][MAX_PATH * 4];
+        size_t np = 0;
         wchar_t *ctx = NULL;
-        for (wchar_t *d = wcstok(dirs, L";", &ctx); d; d = wcstok(NULL, L";", &ctx)) {
+        for (wchar_t *d = wcstok(dirs, L";", &ctx); d && np < 64; d = wcstok(NULL, L";", &ctx)) {
             DWORD n = MAX_PATH * 4;
-            if (MsiGetTargetPathW(h, d, path, &n) != ERROR_SUCCESS) continue;
-            size_t len = wcslen(path);
-            if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
-            w_field(&w, path);
+            if (MsiGetTargetPathW(h, d, paths[np], &n) != ERROR_SUCCESS) continue;
+            size_t len = wcslen(paths[np]);
+            if (len > 3 && paths[np][len - 1] == L'\\') paths[np][len - 1] = 0;
+            ++np;
+        }
+        wchar_t num[24];
+        swprintf(num, 24, L"%zu", np);
+        w_field(&w, num);
+        for (size_t i = 0; i < np; ++i) w_field(&w, paths[i]);
+        // The deletions already queued under those folders (and, per machine, the installer's
+        // backups) before this installation's script runs: anything queued there later is this
+        // installation's (a held file's deletion during the script, the backups at its end - x40).
+        // Paths, not positions: other tasks take entries out of the list (x42).
+        HKEY k;
+        if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, PFRO_KEY, 0, KEY_QUERY_VALUE, &k) == ERROR_SUCCESS) {
+            DWORD size = 0;
+            wchar_t *buf = pfro_read(k, &size);
+            RegCloseKey(k);
+            for (wchar_t *src = buf; src && *src;) {
+                wchar_t *dst = src + wcslen(src) + 1;
+                const wchar_t *p = pfro_path(src);
+                bool hit = *dst == 0 && machine && is_backup(p);
+                for (size_t i = 0; *dst == 0 && !hit && i < np; ++i) hit = inside(p, paths[i]);
+                if (hit) w_field(&w, p);
+                src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
+            }
+            if (buf) HeapFree(GetProcessHeap(), 0, buf);
         }
     }
     set_data(h, L"RP_CleanupRegister", &w);
@@ -839,26 +869,6 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     if (pc) HeapFree(GetProcessHeap(), 0, pc);
     if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
     return ERROR_SUCCESS;
-}
-
-// How many renames Windows has queued for the next restart (PendingFileRenameOperations pairs).
-static unsigned long queued_renames(void) {
-    HKEY k;
-    unsigned long n = 0;
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\Session Manager", 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS) return 0;
-    DWORD type = 0, size = 0;
-    if (RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, NULL, &size) == ERROR_SUCCESS && type == REG_MULTI_SZ && size) {
-        wchar_t *buf = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 2 * sizeof(wchar_t));
-        if (buf && RegQueryValueExW(k, L"PendingFileRenameOperations", NULL, &type, (BYTE *)buf, &size) == ERROR_SUCCESS) {
-            for (wchar_t *src = buf; *src; ++n) {
-                wchar_t *dst = src + wcslen(src) + 1;
-                src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
-            }
-        }
-        if (buf) HeapFree(GetProcessHeap(), 0, buf);
-    }
-    RegCloseKey(k);
-    return n;
 }
 
 // Appends text to a growing buffer (writer_t without the field lengths).
@@ -923,11 +933,12 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     size_t ndirs = 0;
     if (wcsncmp(data, L"RPC1", 4) != 0) goto done;
     r.p += 4;
-    static wchar_t count[24];
+    static wchar_t num[24], before[MAX_PATH * 4];
     if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16) ||
-        !r_field(&r, count, 24))
+        !r_field(&r, num, 24))
         goto done;
-    while (ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4)) ++ndirs;
+    for (unsigned long want = wcstoul(num, NULL, 10); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
+    const wchar_t *befores = r.p;         // the rest: the deletions queued before the script
     bool machine = wcscmp(scope, L"machine") == 0;
     writer_t list = { 0 };
     size_t found = 0;
@@ -985,7 +996,9 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     w_text(&list, L"product\t"); w_text(&list, pc); w_text(&list, L"\r\n");
     w_text(&list, L"scope\t"); w_text(&list, scope); w_text(&list, L"\r\n");
     w_text(&list, L"kind\t"); w_text(&list, why); w_text(&list, L"\r\n");
-    w_text(&list, L"after\t"); w_text(&list, count); w_text(&list, L"\r\n");
+    for (reader_t b = { befores, r.end }; r_field(&b, before, MAX_PATH * 4);) {
+        w_text(&list, L"before\t"); w_text(&list, before); w_text(&list, L"\r\n");
+    }
     for (size_t i = 0; i < ndirs; ++i) {
         w_text(&list, L"root\t"); w_text(&list, dirs[i]); w_text(&list, L"\r\n");
     }
