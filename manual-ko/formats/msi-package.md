@@ -242,6 +242,9 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
 - 그 뒤 다른 설치가 삭제가 걸린 자리에 똑같은 파일을 설치하면, Windows Installer 는 이미 있는 파일을 그대로 두고
   ("Won't Overwrite ... hash matches source file", 또는 "Existing file is of an equal version") 걸린 삭제도 그대로
   둔다: 재시작이 새로 설치한 파일을 지운다. [observed] rubrapack 의 컴퓨터별 패키지는 설치하면서 그런 삭제를 거둬들인다.
+- Windows 11 의 "설정 > 설치된 앱"은 MSI 제품을 `msiexec /qb /x {ProductCode}` 로 지우고 `UninstallString` 은 쓰지
+  않는다. `ARPNOREMOVE`(레지스트리 `NoRemove` = 1)가 있으면 제거는 회색이 되고 수정은 `msiexec /i {ProductCode}`, 곧
+  패키지 자신의 대화창을 돌린다. [observed, x44]
 - 명령줄에서 준 속성은 설치하고 있는 패키지에만 간다. 업그레이드 중 옛 판의 제거는 **옛 패키지의**
   Property 표를 따른다 - 그 속성은 첫 판부터 넣어 둔다. [observed]
 

@@ -215,7 +215,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
+| `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
 | `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
 | `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
@@ -775,6 +775,13 @@ MSI 서식 문자열로 해석되는 곳은 이것뿐이다: 레지스트리 `va
 `about`). `[property.NAME]` 은 공개 속성을 더한다. `secure = true` 는 그 값이 설치의 관리자 권한
 부분까지 가게 하고, `hidden = true` 는 로그에 값이 남지 않게 한다. 설치 엔진이나 rubrapack 이
 스스로 쓰는 이름(`ARP*`, `MSI*`, `RP_*`, `ALLUSERS`, `REBOOT` 등)은 거부한다.
+
+"설치된 앱"의 제거는 `msiexec /qb /x {ProductCode}` 를 돌린다: 패키지의 대화창이 아니라 Windows Installer 자신의
+축소 창이고, 창이 있는 프로그램이 파일을 쥐고 있으면 자신의 사용 중인 파일 상자 - 영어이고 '취소'가 기본이다('무시'면
+계속된다) - 를 띄운다. `no-remove = true` 는 그 제품의 제거를 끈다. 남는 수정은 패키지의 대화창을 돌리고(`msiexec /i`),
+거기서 제거를 고르면 패키지 자신의 사용 중인 파일 창('계속'이 기본)으로 간다. 거의 모든 프로그램이 쥐는 입력기나 셸
+확장에 쓸 만하다. `[package] ui` 가 `minimal`, `installdir`, `features`(제거 페이지가 있는 세트)여야 하고 `no-modify`
+는 없어야 한다.
 
 ### 명령줄로 설치하기
 

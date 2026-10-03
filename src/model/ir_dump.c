@@ -143,10 +143,11 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_mem_free(alloc, order);
     }
     // RFC-0003 items, only when present (older goldens stay as they are).
-    if (ir->arp_no_modify || ir->arp_no_repair || ir->arp_help || ir->arp_about || ir->arp_icon_shown) {
+    if (ir->arp_no_modify || ir->arp_no_repair || ir->arp_no_remove || ir->arp_help || ir->arp_about || ir->arp_icon_shown) {
         rp_buf_puts(&b, "arp");
         kv(&b, "no-modify", ir->arp_no_modify ? "1" : "0");
         kv(&b, "no-repair", ir->arp_no_repair ? "1" : "0");
+        if (ir->arp_no_remove) kv(&b, "no-remove", "1");
         kv(&b, "help", ir->arp_help);
         kv(&b, "about", ir->arp_about);
         if (ir->arp_icon_shown) kv(&b, "icon", ir->arp_icon_shown);

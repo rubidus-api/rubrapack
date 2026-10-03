@@ -89,6 +89,7 @@ the shortcuts.
 | `about = "https://..."` | the product's web page |
 | `no-repair = true` | no Repair for this product |
 | `no-modify = true` | no Modify/Change (useful when the package has nothing to change: chapter 8 adds something) |
+| `no-remove = true` | no Uninstall; the product is removed through Modify, with the package's own dialogs (for an input method or a shell extension: see the reference) |
 
 ## A name in another script
 

@@ -19,9 +19,14 @@ bool ir_tool_property(const char *s) {
 }
 
 void ir_parse_arp(ctx_t *c, const rp_ttable_t *t) {
-    static const char *const keys[] = { "no-modify", "no-repair", "help", "about", "icon", NULL };
+    static const char *const keys[] = { "no-modify", "no-repair", "no-remove", "help", "about", "icon", NULL };
     ir_check_keys(c, t, keys);
     c->ir->arp_no_modify = ir_get_bool(c, t, "no-modify", false);
+    // Settings' Uninstall runs `msiexec /qb /x`, the engine's own reduced UI (its files-in-use box has
+    // Cancel as the default); with no-remove the product is removed through Modify, which runs the
+    // package's dialogs (x44).
+    c->ir->arp_no_remove = ir_get_bool(c, t, "no-remove", false);
+    c->ir->arp_no_remove_pos = ir_key_pos(t, "no-remove");
     c->ir->arp_no_repair = ir_get_bool(c, t, "no-repair", false);
     c->ir->arp_help = ir_get_str(c, t, "help", false, NULL);
     c->ir->arp_about = ir_get_str(c, t, "about", false, NULL);

@@ -596,6 +596,7 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     if (arp_icon) { s_(&pk->property, "ARPPRODUCTICON"); s_(&pk->property, arp_icon); }
     if (ir->arp_no_modify) { s_(&pk->property, "ARPNOMODIFY"); s_(&pk->property, "1"); }
     if (ir->arp_no_repair) { s_(&pk->property, "ARPNOREPAIR"); s_(&pk->property, "1"); }
+    if (ir->arp_no_remove) { s_(&pk->property, "ARPNOREMOVE"); s_(&pk->property, "1"); }
     if (ir->arp_help) { s_(&pk->property, "ARPHELPLINK"); s_(&pk->property, ir->arp_help); }
     if (ir->arp_about) { s_(&pk->property, "ARPURLINFOABOUT"); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");

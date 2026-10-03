@@ -292,6 +292,9 @@ When a file to be replaced or removed is held by a running program (a DLL loaded
   or "Existing file is of an equal version") and leaves the queued deletion: the restart deletes the
   newly installed file. [observed] rubrapack's per-machine packages take such deletions back as they
   install.
+- Settings > Installed apps on Windows 11 removes an MSI product with `msiexec /qb /x {ProductCode}`
+  and does not use its `UninstallString`; with `ARPNOREMOVE` (registry `NoRemove` = 1) Uninstall is
+  greyed out and Modify runs `msiexec /i {ProductCode}`, the package's own dialogs. [observed, x44]
 - A property given on the command line reaches only the package being installed. During an
   upgrade, the removal of the old version follows **the old package's** Property table - author
   the property from the first version on. [observed]

@@ -350,6 +350,10 @@ void ir_class_checks(ctx_t *c) {
 
 void ir_cross_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
+    // [arp] no-remove leaves Modify as the way to remove the product: it needs dialogs and Modify.
+    if (ir->arp_no_remove && (ir->arp_no_modify || ir->ui < RP_UI_MINIMAL))
+        ERR(c, ir->arp_no_remove_pos, "RP1316",
+            "no-remove leaves Modify (the dialogs' Remove) as the only way to remove the product: it needs [package] ui = \"minimal\", \"installdir\" or \"features\", and no no-modify");
     // IDs unique across dir, file and feature (RFC-0002 2).
     typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +

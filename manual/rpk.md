@@ -226,7 +226,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
+| `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
 | `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
@@ -835,6 +835,14 @@ writes the text exactly as given.
 `help`, `about`). `[property.NAME]` adds a public property; `secure = true` lets it reach the
 elevated part of the installation, `hidden = true` keeps its value out of logs. Names the installer
 or rubrapack set themselves (`ARP*`, `MSI*`, `RP_*`, `ALLUSERS`, `REBOOT`, ...) are refused.
+
+Uninstall in Installed apps runs `msiexec /qb /x {ProductCode}`: Windows Installer's own reduced
+window, not the package's dialogs, and when a program with a window holds one of the files, its own
+files-in-use box - in English, with Cancel as the default (Ignore goes on). `no-remove = true` turns
+Uninstall off for the product; Modify, still there, runs the package's dialogs (`msiexec /i`), whose
+Remove leads to the package's own files-in-use dialog with Continue as the default. Worth it for an
+input method or a shell extension, which nearly every program holds; it needs `[package] ui` =
+`minimal`, `installdir` or `features` (the sets with a Remove page) and no `no-modify`.
 
 ### Installing from the command line
 
