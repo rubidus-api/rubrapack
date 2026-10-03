@@ -51,6 +51,13 @@
 //                   restart only after the commit actions, so the task looks then; it removes itself
 //                   when nothing is left. It never fails the installation.
 //
+// Add-ons (x46): with RP_REMOVE_ADDONS = 1 ([package] remove-addons), a real removal
+//   (REMOVE=ALL, not inside an upgrade) has RpCleanupPrepare list the installed products named under
+//   SOFTWARE\rubrapack\Addons\<UpgradeCode> (HKLM per machine, HKCU per user; both registry views),
+//   which add-ons write there ([package] parent). RpCleanupRegister writes them into the cleanup list
+//   ("parent", "addon") and lets the task start at once; rubrapack_clean.exe removes them with
+//   msiexec /x once this installation has ended.
+//
 // Data format (RFC-0001 9.6.1): "RPQ1" followed by records; every field is "<decimal length>:" and
 // that many UTF-16 units, so any text (including ':' and ';') round-trips. A plan record is
 // root, view, key, name, value (16 hex digits), component, keep; an apply record is op ("w" write,
@@ -807,6 +814,27 @@ static bool is_backup(const wchar_t *path) {
            !wcschr(path + 14, L'\\') && CompareStringOrdinal(path + n - 4, 4, L".rbf", 4, TRUE) == CSTR_EQUAL;
 }
 
+// x46: the add-ons of the main product `uc` still installed, from one registry root and view.
+static void addons_from(MSIHANDLE h, HKEY root, REGSAM view, const wchar_t *uc, wchar_t codes[][40], size_t *n, size_t cap) {
+    wchar_t key[160];
+    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", uc);
+    HKEY k;
+    if (RegOpenKeyExW(root, key, 0, KEY_QUERY_VALUE | view, &k) != ERROR_SUCCESS) return;
+    for (DWORD i = 0; *n < cap; ++i) {
+        wchar_t name[64];
+        DWORD nl = 64;
+        LONG e = RegEnumValueW(k, i, name, &nl, NULL, NULL, NULL, NULL);
+        if (e == ERROR_NO_MORE_ITEMS) break;
+        if (e != ERROR_SUCCESS || nl != 38 || name[0] != L'{') continue;
+        bool dup = false;
+        for (size_t j = 0; j < *n; ++j) dup = dup || _wcsicmp(codes[j], name) == 0;
+        if (dup || MsiQueryProductStateW(name) != INSTALLSTATE_DEFAULT) continue;
+        wcscpy(codes[(*n)++], name);
+        log_line(h, L"rubrapack: cleanup: add-on %ls will be removed after this removal", name);
+    }
+    RegCloseKey(k);
+}
+
 __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     wchar_t *dirs = get_property(h, L"RP_CLEANUP_DIRS");
     wchar_t *scope = get_property(h, L"RP_CLEANUP_SCOPE");
@@ -826,6 +854,25 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         w_field(&w, machine ? L"machine" : L"user");
         w_field(&w, folder);
         w_field(&w, why);
+        // x46: the add-ons, on a real removal only (an upgrade removing this version keeps them).
+        static wchar_t codes[64][40];
+        size_t nadd = 0;
+        wchar_t *want = get_property(h, L"RP_REMOVE_ADDONS"), *upg = get_property(h, L"UPGRADINGPRODUCTCODE");
+        wchar_t *uc = get_property(h, L"UpgradeCode");
+        bool addons = want && wcscmp(want, L"1") == 0 && remove && wcscmp(remove, L"ALL") == 0 && !(upg && upg[0]) && uc && uc[0];
+        if (addons) {
+            HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
+            addons_from(h, root, KEY_WOW64_64KEY, uc, codes, &nadd, 64);
+            addons_from(h, root, KEY_WOW64_32KEY, uc, codes, &nadd, 64);
+        }
+        w_field(&w, nadd ? uc : L"");
+        wchar_t anum[24];
+        swprintf(anum, 24, L"%zu", nadd);
+        w_field(&w, anum);
+        for (size_t i = 0; i < nadd; ++i) w_field(&w, codes[i]);
+        if (want) HeapFree(GetProcessHeap(), 0, want);
+        if (upg) HeapFree(GetProcessHeap(), 0, upg);
+        if (uc) HeapFree(GetProcessHeap(), 0, uc);
         static wchar_t paths[64][MAX_PATH * 4];
         size_t np = 0;
         wchar_t *ctx = NULL;
@@ -929,14 +976,16 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     wchar_t *data = get_property(h, L"CustomActionData");
     if (data == NULL) return ERROR_SUCCESS;
     reader_t r = { data, data + wcslen(data) };
-    static wchar_t pc[64], scope[16], folder[MAX_PATH * 4], why[16], dirs[64][MAX_PATH * 4];
-    size_t ndirs = 0;
+    static wchar_t pc[64], scope[16], folder[MAX_PATH * 4], why[16], dirs[64][MAX_PATH * 4], parent[64], addons[64][40];
+    size_t ndirs = 0, naddons = 0;
     if (wcsncmp(data, L"RPC1", 4) != 0) goto done;
     r.p += 4;
     static wchar_t num[24], before[MAX_PATH * 4];
     if (!r_field(&r, pc, 64) || !r_field(&r, scope, 16) || !r_field(&r, folder, MAX_PATH * 4) || !r_field(&r, why, 16) ||
-        !r_field(&r, num, 24))
+        !r_field(&r, parent, 64) || !r_field(&r, num, 24))
         goto done;
+    for (unsigned long want = wcstoul(num, NULL, 10); naddons < want && naddons < 64 && r_field(&r, addons[naddons], 40);) ++naddons;
+    if (!r_field(&r, num, 24)) goto done;
     for (unsigned long want = wcstoul(num, NULL, 10); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
     const wchar_t *befores = r.p;         // the rest: the deletions queued before the script
     bool machine = wcscmp(scope, L"machine") == 0;
@@ -964,7 +1013,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
         }
         CloseHandle(pf);
     }
-    log_line(h, L"rubrapack: cleanup: run kind '%ls', %zu file(s) noted", why, found);
+    log_line(h, L"rubrapack: cleanup: run kind '%ls', %zu file(s) noted, %zu add-on(s)", why, found, naddons);
     if ((why[0] == 0 && found == 0) || rp_clean_part_len < 2) {
         if (rp_clean_part_len < 2) log_line(h, L"rubrapack: cleanup: this helper was built without rubrapack_clean.exe");
         if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
@@ -1001,6 +1050,10 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     }
     for (size_t i = 0; i < ndirs; ++i) {
         w_text(&list, L"root\t"); w_text(&list, dirs[i]); w_text(&list, L"\r\n");
+    }
+    if (naddons) { w_text(&list, L"parent\t"); w_text(&list, parent); w_text(&list, L"\r\n"); }
+    for (size_t i = 0; i < naddons; ++i) {
+        w_text(&list, L"addon\t"); w_text(&list, addons[i]); w_text(&list, L"\r\n");
     }
     if (files.buf) w_text(&list, files.buf);
     // The folder: per machine only SYSTEM and Administrators may write (the task runs as SYSTEM), and
@@ -1070,6 +1123,12 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     if (ok) {
         swprintf(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /create /tn \"%ls\" /xml \"%ls\" /f", sys, name, path);
         run_wait(h, cmd);     // first run two minutes from now: the engine's own deletions are queued by then
+        // With add-ons to remove it also runs right away: rubrapack_clean.exe waits for this
+        // installation to end, so the add-ons go seconds after the main product (x46).
+        if (naddons) {
+            swprintf(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /run /tn \"%ls\"", sys, name);
+            run_wait(h, cmd);
+        }
     } else {
         log_line(h, L"rubrapack: cleanup: could not write %ls", folder);
     }

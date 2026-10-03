@@ -208,7 +208,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -1010,6 +1010,19 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 
 따로 제거 프로그램은 없다: Windows 의 "설치된 앱"은 MSI 를 Windows Installer 로 지우고, 제거가 남긴 것은
 정리 작업이 맡는다.
+
+### 제품과 함께 지워지는 추가 기능: `parent`, `remove-addons`
+
+추가 기능은 다른 제품을 넓히는 따로 된 패키지다 - 언어 팩, 플러그인 - 그 제품 없이는 쓸모가 없다. 추가 기능은
+본체 제품을 업그레이드 코드로 적는다: `[package] parent = "{...}"`. 설치하면 자기 제품 코드를
+`SOFTWARE\rubrapack\Addons\<그 업그레이드 코드>` 에 적고(컴퓨터별은 HKLM, 사용자별은 HKCU), 지우면 그 값도
+지운다. 본체는 `remove-addons = true` 로 둔다: 본체를 정말로 지울 때(업그레이드가 바꿔 넣을 때가 아니라) 곧바로
+도는 정리 작업이 제거가 끝나기를 기다렸다가, 거기 적힌 추가 기능 가운데 아직 설치된 것을
+`msiexec /x {ProductCode} /qn` 으로 지운다 - 본체를 어느 길로 지웠든(설치된 앱, 관리 화면, `msiexec /x`).
+그 순간 지울 수 없는 추가 기능(다른 설치가 도는 중)은 작업의 다음 실행에서 다시 해 본다. Windows Installer 는 한
+번에 두 패키지를 지울 수 없으므로 추가 기능은 본체보다 먼저가 아니라 몇 초 뒤에 지워진다 - 본체 없이도 지워지게
+만든다. 이 키로 구운 본체의 첫 판부터 효과가 있고, 정리 작업이 있어야 한다(`cleanup = false` 와 함께면 오류).
+두 키 모두 MSI 패키지에만 쓴다.
 
 ### 와일드카드: `[files.ID]`
 

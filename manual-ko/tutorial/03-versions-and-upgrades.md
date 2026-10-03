@@ -164,3 +164,21 @@ C:\work\hello> msiexec /p hello-1.1.1.msp
 - `refuse-upgrade-below = "0.60.0"`: 이 판보다 낮은 판은 업그레이드하지 않고 거부하며, 사용자에게 먼저 지우는
   방법을 알려 준다 - 업그레이드 도중에 지우면 망가지는 것으로 알려진 옛 패키지를 위한 것이다.
 - `refuse-upgrade-message = "..."`: 그 안내문의 앞부분(지우는 명령은 뒤에 붙는다).
+
+## 제품과 함께 가는 추가 기능
+
+따로 된 패키지로 내는 언어 팩이나 플러그인은 자기 업그레이드 코드와 판이 있고, Windows 도 따로 된 앱으로 보인다.
+제품과 함께 지우려면 추가 기능이 제품의 업그레이드 코드를 적고, 제품은 추가 기능도 함께 지우라고 한다:
+
+```toml
+# hello-pack.toml
+[package]
+parent = "{6F1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C60}"   # hello 의 upgrade-code
+
+# hello.toml
+[package]
+remove-addons = true
+```
+
+그러면 Hello 를 지우면 몇 초 뒤에 팩도 지워지고, Hello 를 업그레이드하면 팩은 남는다. 참조의 "제품과 함께
+지워지는 추가 기능"을 보라.

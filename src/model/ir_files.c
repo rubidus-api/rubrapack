@@ -64,7 +64,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
-                                        "refuse-upgrade-message", "cleanup", NULL };
+                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", NULL };
     rp_ir_t *ir = c->ir;
     ir_check_keys(c, t, keys);
     ir->name = ir_get_str(c, t, "name", true, NULL);
@@ -195,6 +195,22 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         rp_mem_free(c->alloc, reboot);
     }
     ir->no_cleanup = !ir_get_bool(c, t, "cleanup", true);     // RFC-0026
+    // x46 (jamotong): an add-on names its main product; the main product's real removal removes the
+    // add-ons through its cleanup task. MSI only.
+    ir->parent = ir_get_str(c, t, "parent", false, NULL);
+    if (ir->parent && !ir_guid_ok(ir->parent)) {
+        ERR(c, ir_key_pos(t, "parent"), "RP1308", "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}");
+    } else if (ir->parent && ir->upgrade_code && strcmp(ir->parent, ir->upgrade_code) == 0) {
+        ERR(c, ir_key_pos(t, "parent"), "RP1309", "parent must be another product's upgrade-code, not this package's own");
+    }
+    ir->remove_addons = ir_get_bool(c, t, "remove-addons", false);
+    if (ir->remove_addons && ir->no_cleanup) {
+        ERR(c, ir_key_pos(t, "remove-addons"), "RP1314", "remove-addons needs the cleanup task: remove cleanup = false");
+    }
+    if ((ir->parent || ir->remove_addons) && ir_msix_output(c)) {
+        ERR(c, ir_key_pos(t, ir->parent ? "parent" : "remove-addons"), "RP1316",
+            "%s is for MSI packages: an MSIX is not removed by msiexec", ir->parent ? "parent" : "remove-addons");
+    }
     ir->downgrade_message = ir_get_str(c, t, "downgrade-message", false, NULL);
 
     char *comp = c->opt->compress ? ir_dup(c, c->opt->compress) : ir_get_str(c, t, "compress", false, NULL);

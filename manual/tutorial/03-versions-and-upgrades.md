@@ -175,3 +175,22 @@ replaces them as long as they have the same upgrade code. Two keys help when tha
   message that tells the user how to remove them first - for old packages known to break when
   removed as part of an upgrade.
 - `refuse-upgrade-message = "..."`: that message's first part (the removal command is added).
+
+## Add-ons that go with the product
+
+A language pack or a plug-in shipped as a package of its own has its own upgrade code and versions,
+and Windows lists it as an app of its own. To remove it together with the product, the add-on names
+the product's upgrade code and the product asks for its add-ons to go with it:
+
+```toml
+# hello-pack.toml
+[package]
+parent = "{6F1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C60}"   # hello's upgrade-code
+
+# hello.toml
+[package]
+remove-addons = true
+```
+
+Removing Hello then removes the pack a few seconds later; upgrading Hello keeps it. See
+"Add-ons removed with their product" in the reference.

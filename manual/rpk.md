@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -1091,6 +1091,22 @@ it installs (and queues them again if the installation fails).
 
 There is no separate uninstall program: Windows' Installed apps removes an MSI with Windows
 Installer, and what a removal leaves is the cleanup task's job.
+
+### Add-ons removed with their product: `parent`, `remove-addons`
+
+An add-on is a package of its own that extends another product - a language pack, a plug-in - and
+makes no sense without it. The add-on names the main product by its upgrade code,
+`[package] parent = "{...}"`; installing it writes its product code under
+`SOFTWARE\rubrapack\Addons\<that upgrade code>` (HKLM per machine, HKCU per user), and removing it
+takes the value away again. The main product sets `remove-addons = true`: when it is really removed
+(not when an upgrade replaces it), its cleanup task, started at once, waits for the removal to end and
+then removes every add-on still named there with `msiexec /x {ProductCode} /qn`, whichever way the
+main product was removed (Installed apps, its maintenance page, `msiexec /x`). An add-on that cannot
+be removed at that moment (another installation running) is tried again at the task's next run. Two
+packages cannot be removed in one Windows Installer run, so the add-ons go a few seconds after the
+main product, not before it; build them so that they can be removed without it. It takes effect
+from the first main version built with it, and needs the cleanup task (`cleanup = false` is an
+error); both keys are for MSI packages only.
 
 ### Wildcards: `[files.ID]`
 

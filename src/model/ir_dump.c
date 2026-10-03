@@ -29,6 +29,8 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "language", num);
     kv(&b, "reboot", ir->reboot_suppress ? "suppress" : "allow");
     if (ir->no_cleanup) kv(&b, "cleanup", "false");
+    if (ir->parent) kv(&b, "parent", ir->parent);
+    if (ir->remove_addons) kv(&b, "remove-addons", "true");
     kv(&b, "downgrade-message", ir->downgrade_message);
     if (ir->compress >= RP_CAB_LZX(15)) snprintf(num, sizeof num, "lzx:%d", ir->compress - RP_CAB_LZX(0));
     else snprintf(num, sizeof num, "%d", ir->compress);

@@ -432,6 +432,8 @@ typedef struct {
     uint16_t  language;         // 1033 or 1042
     bool      reboot_suppress;
     bool      no_cleanup;       // [package] cleanup = false: no cleanup task (RFC-0026)
+    char     *parent;           // [package] parent: the main product's UpgradeCode (an add-on, x46), or NULL
+    bool      remove_addons;    // [package] remove-addons = true: a real removal removes the add-ons too (x46)
     int       scope;            // 0 machine, 1 user, 2 dual (per-user by default, ALLUSERS=1 for machine)
     char     *downgrade_message;
     char     *refuse_below;     // refuse-upgrade-below (versions below it are refused), or NULL

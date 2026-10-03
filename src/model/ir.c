@@ -501,7 +501,7 @@ void rp_ir_free(rp_ir_t *ir) {
     if (ir == NULL) return;
     proven_allocator_t a = ir->alloc;
     char *strs[] = { ir->name, ir->summary_name, ir->manufacturer, ir->version, ir->upgrade_code, ir->product_code,
-                     ir->downgrade_message, ir->refuse_below, ir->refuse_message };
+                     ir->downgrade_message, ir->refuse_below, ir->refuse_message, ir->parent };
     for (size_t k = 0; k < sizeof strs / sizeof strs[0]; ++k) rp_mem_free(a, strs[k]);
     for (size_t k = 0; k < ir->feature_count; ++k) {
         rp_ir_feature_t *f = &ir->features[k];

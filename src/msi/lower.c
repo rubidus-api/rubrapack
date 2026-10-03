@@ -805,6 +805,30 @@ static void lower_registry(pkg_t *pk) {
     }
 }
 
+// [package] parent (x46): an add-on writes HKLM (per user HKCU, dual HKMU)
+// SOFTWARE\rubrapack\Addons\<parent's UpgradeCode>, value <its ProductCode> = <its name>, in a
+// component of its own in every feature, so the value is there exactly while the add-on is installed.
+// The main product's removal reads it (RpCleanupPrepare, remove-addons = true).
+static void lower_addon(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    if (ir->parent == NULL || ir->module) return;
+    char comp[23], guid[39];
+    rp_key_derive('C', "addon:parent", comp);
+    const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), ir->parent, "addon", "parent" };
+    rp_uuid_derive("rubrapack.component", fields, 6, guid);
+    const char *ckey = kdup(k, comp);
+    s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, "TARGETDIR");
+    i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); null_(&pk->component); s_(&pk->component, "RP_AddonParent");
+    for (size_t i = 0; i < ir->feature_count; ++i) {
+        s_(&pk->featurecomp, ir->features[i].id); s_(&pk->featurecomp, ckey);
+    }
+    s_(&pk->registry, "RP_AddonParent"); i_(&pk->registry, ir->scope == 0 ? 2 : ir->scope == 1 ? 1 : -1);
+    s_(&pk->registry, kprintf(k, "SOFTWARE\\rubrapack\\Addons\\%s", ir->parent, NULL));
+    s_(&pk->registry, "[ProductCode]"); s_(&pk->registry, "[ProductName]"); s_(&pk->registry, ckey);
+    pk->any_write = true;
+}
+
 // [shortcut.*] (RFC-0004): in the target file's component; folders made for them are removed
 // again at uninstall (RemoveFile, mode 2), from the shortcut's folder up to the known folder.
 static void lower_shortcuts(pkg_t *pk) {
@@ -1084,6 +1108,7 @@ static void lower_helper_actions(pkg_t *pk) {
         if (keys) rp_mem_free(pk->alloc, keys);
         s_(&pk->property, "RP_CLEANUP_DIRS"); s_(&pk->property, *dirs ? dirs : "TARGETDIR");
         s_(&pk->property, "RP_CLEANUP_SCOPE"); s_(&pk->property, ir->scope == 0 ? "machine" : "user");
+        if (ir->remove_addons) { s_(&pk->property, "RP_REMOVE_ADDONS"); s_(&pk->property, "1"); }   // x46
         const int noimp = ir->scope == 0 ? 0x800 : 0;
         s_(&pk->customaction, "RP_CleanupPrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpCleanupPrepare");
@@ -1653,6 +1678,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     lower_features(pk);
     lower_files(pk);
     lower_registry(pk);
+    lower_addon(pk);
     lower_shortcuts(pk);
     lower_removes(pk);
     lower_env(pk);

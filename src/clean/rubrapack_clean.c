@@ -23,7 +23,13 @@
 // list.txt, UTF-16LE: "RPC1", then one "<key>\t<value>" per line: task (the task's name), until
 // (the last day, YYYYMMDD, local time), product ({ProductCode}), scope (machine or user), kind
 // (remove, upgrade or maintenance), before (a relevant deletion already queued before the script), root
-// (a folder), file (a file). A removal's task deletes nothing once its product is installed again.
+// (a folder), file (a file), parent (the main product's UpgradeCode) and addon ({ProductCode}).
+// A removal's task deletes nothing once its product is installed again.
+//
+// Add-ons (x46): a removal of a product with [package] remove-addons lists the add-ons installed
+// under SOFTWARE\rubrapack\Addons\<parent>. The task is started at once; this program waits for
+// the removal to end, then runs msiexec /x for each add-on that is still installed and still named
+// there. One that fails (another installation running) is tried again on the next run.
 
 #include <stdarg.h>
 #include <stdbool.h>
@@ -39,7 +45,9 @@
 
 enum { MAX_ITEMS = 256, PATH_CAP = 32768 };
 
-static wchar_t task[512], product[64], scope[16], until[16], kind[16];
+static wchar_t task[512], product[64], scope[16], until[16], kind[16], parent[64];
+static wchar_t addons[64][40];
+static size_t naddons;
 static wchar_t *roots[MAX_ITEMS], *files[MAX_ITEMS];
 static bool seen[MAX_ITEMS];        // a root that held a queued deletion (seen.txt keeps it between runs)
 static size_t nroots, nfiles;
@@ -105,6 +113,8 @@ static bool read_list(const wchar_t *path) {
         else if (wcscmp(line, L"kind") == 0) wcsncpy(kind, v, 15);
         else if (wcscmp(line, L"root") == 0 && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
         else if (wcscmp(line, L"file") == 0 && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
+        else if (wcscmp(line, L"parent") == 0) wcsncpy(parent, v, 63);
+        else if (wcscmp(line, L"addon") == 0 && naddons < 64 && wcslen(v) == 38) wcscpy(addons[naddons++], v);
     }
     return task[0] != 0;
 }
@@ -350,6 +360,75 @@ static int pending(bool machine) {
     return left;
 }
 
+// x46: whether the add-on is still named under the main product's Addons key (either view).
+static bool addon_listed(const wchar_t *code, bool machine) {
+    wchar_t key[160];
+    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
+    static const REGSAM views[] = { KEY_WOW64_64KEY, KEY_WOW64_32KEY };
+    for (int v = 0; v < 2; ++v) {
+        HKEY k;
+        if (RegOpenKeyExW(machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER, key, 0, KEY_QUERY_VALUE | views[v], &k) != ERROR_SUCCESS) continue;
+        bool hit = RegQueryValueExW(k, code, NULL, NULL, NULL, NULL) == ERROR_SUCCESS;
+        RegCloseKey(k);
+        if (hit) return true;
+    }
+    return false;
+}
+
+// The Addons\<parent> key once no add-on is named in it (the add-ons' removal deletes their values).
+static void addons_key_cleanup(bool machine) {
+    wchar_t key[160];
+    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
+    static const REGSAM views[] = { KEY_WOW64_64KEY, KEY_WOW64_32KEY };
+    HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
+    for (int v = 0; v < 2; ++v) {
+        HKEY k;
+        if (RegOpenKeyExW(root, key, 0, KEY_QUERY_VALUE | views[v], &k) != ERROR_SUCCESS) continue;
+        DWORD subkeys = 1, values = 1;
+        RegQueryInfoKeyW(k, NULL, NULL, NULL, &subkeys, NULL, NULL, &values, NULL, NULL, NULL, NULL);
+        RegCloseKey(k);
+        if (subkeys == 0 && values == 0) RegDeleteKeyExW(root, key, views[v], 0);
+    }
+}
+
+// Removes the add-ons still installed; returns how many are left to try again.
+static int remove_addons(bool machine) {
+    if (naddons == 0 || parent[0] == 0) return 0;
+    // The main product installed again: its add-ons stay.
+    if (product[0] && MsiQueryProductStateW(product) == INSTALLSTATE_DEFAULT) {
+        say(L"add-ons: %ls is installed again; they stay", product);
+        return 0;
+    }
+    static wchar_t cmd[PATH_CAP], sys[MAX_PATH];
+    GetSystemDirectoryW(sys, MAX_PATH);
+    int left = 0;
+    for (size_t i = 0; i < naddons; ++i) {
+        if (MsiQueryProductStateW(addons[i]) != INSTALLSTATE_DEFAULT) {
+            say(L"add-on %ls: not installed", addons[i]);
+            continue;
+        }
+        if (!addon_listed(addons[i], machine)) {      // not this product's add-on any more
+            say(L"add-on %ls: no longer named under %ls", addons[i], parent);
+            continue;
+        }
+        swprintf(cmd, PATH_CAP, L"\"%ls\\msiexec.exe\" /x %ls /qn /norestart", sys, addons[i]);
+        STARTUPINFOW si = { .cb = sizeof si };
+        PROCESS_INFORMATION pi;
+        DWORD code = (DWORD)-1;
+        if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+            WaitForSingleObject(pi.hProcess, 240000);
+            GetExitCodeProcess(pi.hProcess, &code);
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
+        }
+        say(L"add-on %ls: msiexec /x -> %lu", addons[i], (unsigned long)code);
+        // 0, 3010 (a held file goes at the restart), 1605 (not installed after all) are done.
+        if (code != 0 && code != 3010 && code != 1605) ++left;
+    }
+    if (left == 0) addons_key_cleanup(machine);
+    return left;
+}
+
 // seen.txt (UTF-16LE): "scanned", then "root<TAB>path" for each root that held one of this
 // installation's deletions and "own<TAB>identity<TAB>path" for each item still to delete.
 static void load_seen(const wchar_t *path) {
@@ -456,11 +535,14 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     while (fl > 3 && folder[fl - 1] == L'\\') folder[--fl] = 0;
     swprintf(list, PATH_CAP, L"%ls\\list.txt", folder);
     if (!read_list(list)) return 3;
-    // Not while Windows Installer runs an installation (its backups may still be needed).
-    HANDLE m = OpenMutexW(SYNCHRONIZE, FALSE, L"Global\\_MSIExecute");
-    if (m) {
+    // Not while Windows Installer runs an installation (its backups may still be needed). With
+    // add-ons to remove, the removal that started this run is still ending: wait for it (x46).
+    for (int waited = 0;; waited += 2) {
+        HANDLE m = OpenMutexW(SYNCHRONIZE, FALSE, L"Global\\_MSIExecute");
+        if (m == NULL) break;
         CloseHandle(m);
-        return 0;
+        if (naddons == 0 || waited >= 300) return 0;
+        Sleep(2000);
     }
     bool machine = wcscmp(scope, L"machine") == 0;
     // The deepest root first, so a folder emptied by its sub folder's removal goes in the same run.
@@ -475,7 +557,8 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     swprintf(seenfile, PATH_CAP, L"%ls\\seen.txt", folder);
     load_seen(seenfile);
     say(L"run: task '%ls' kind '%ls', %zu earlier deletion(s), %zu root(s)", task, kind, nbefores, nroots);
-    int left = pending(machine);
+    int left = remove_addons(machine);
+    left += pending(machine);
     say(L"left %d", left);
     // A package folder above a seen one: the installer could not remove it either.
     for (size_t i = 0; i < nroots; ++i) {
