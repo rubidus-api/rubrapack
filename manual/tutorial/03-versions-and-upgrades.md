@@ -193,4 +193,6 @@ remove-addons = true
 ```
 
 Removing Hello then removes the pack a few seconds later; upgrading Hello keeps it. See
-"Add-ons removed with their product" in the reference.
+"Add-ons removed with their product" in the reference. If the pack later becomes a feature of Hello
+itself, Hello's next version names the pack's upgrade code in `replaces = ["{...}"]`, and installing
+it removes the separate pack.

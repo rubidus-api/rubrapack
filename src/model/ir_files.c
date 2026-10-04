@@ -64,7 +64,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
-                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", NULL };
+                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", "replaces", NULL };
     rp_ir_t *ir = c->ir;
     ir_check_keys(c, t, keys);
     ir->name = ir_get_str(c, t, "name", true, NULL);
@@ -207,9 +207,31 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
     if (ir->remove_addons && ir->no_cleanup) {
         ERR(c, ir_key_pos(t, "remove-addons"), "RP1314", "remove-addons needs the cleanup task: remove cleanup = false");
     }
-    if ((ir->parent || ir->remove_addons) && ir_msix_output(c)) {
-        ERR(c, ir_key_pos(t, ir->parent ? "parent" : "remove-addons"), "RP1316",
-            "%s is for MSI packages: an MSIX is not removed by msiexec", ir->parent ? "parent" : "remove-addons");
+    // x47 (jamotong): products this package takes the place of - removed, any version, as it installs.
+    const rp_tkey_t *rk = ir_find_key(t, "replaces");
+    if (rk && rk->val.kind != RP_TV_ARRAY) {
+        ERR(c, rk->pos, "RP1306", "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]");
+    }
+    for (size_t k = 0; rk && rk->val.kind == RP_TV_ARRAY && k < rk->val.count; ++k) {
+        const rp_tval_t *v = &rk->val.items[k];
+        char *code = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+        if (code == NULL || !ir_guid_ok(code)) {
+            ERR(c, rk->pos, "RP1308", "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')", code ? code : "?");
+        } else if ((ir->upgrade_code && strcmp(code, ir->upgrade_code) == 0) || (ir->parent && strcmp(code, ir->parent) == 0)) {
+            ERR(c, rk->pos, "RP1309", "replaces names %s, which is this package's own upgrade-code or its parent", code);
+        } else if (ir->replace_count == 16) {
+            ERR(c, rk->pos, "RP1308", "replaces holds at most 16 upgrade codes");
+        } else {
+            bool dup = false;
+            for (size_t j = 0; j < ir->replace_count; ++j) dup = dup || strcmp(ir->replaces[j], code) == 0;
+            if (dup) ERR(c, rk->pos, "RP1301", "replaces lists %s twice", code);
+            else memcpy(ir->replaces[ir->replace_count++], code, 39);
+        }
+        rp_mem_free(c->alloc, code);
+    }
+    if ((ir->parent || ir->remove_addons || ir->replace_count) && ir_msix_output(c)) {
+        const char *key = ir->parent ? "parent" : ir->remove_addons ? "remove-addons" : "replaces";
+        ERR(c, ir_key_pos(t, key), "RP1316", "%s is for MSI packages: an MSIX is not removed by msiexec", key);
     }
     ir->downgrade_message = ir_get_str(c, t, "downgrade-message", false, NULL);
 

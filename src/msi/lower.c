@@ -600,6 +600,11 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     if (ir->arp_help) { s_(&pk->property, "ARPHELPLINK"); s_(&pk->property, ir->arp_help); }
     if (ir->arp_about) { s_(&pk->property, "ARPURLINFOABOUT"); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
+    for (size_t i = 0; i < ir->replace_count; ++i) {      // x47: the replaced products' action properties
+        char n[40];
+        snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
+        secure = kprintf(k, "%s;%s", secure, n);
+    }
     char *hidden = NULL;
     for (size_t i = 0; i < ir->property_count; ++i) {
         const rp_ir_property_t *p = &ir->properties[i];
@@ -1362,6 +1367,14 @@ static void lower_upgrade(pkg_t *pk) {
     if (ir->refuse_below) {         // detect only (0x002), below the given version (max exclusive)
         s_(&pk->upgrade, ir->upgrade_code); null_(&pk->upgrade); s_(&pk->upgrade, ir->refuse_below); null_(&pk->upgrade);
         i_(&pk->upgrade, 0x002); null_(&pk->upgrade); s_(&pk->upgrade, "RP_REFUSED_OLD");
+    }
+    // x47: [package] replaces - every version (0.0.0 and up) of those products is removed by
+    // RemoveExistingProducts in this installation, as an older version of this one is.
+    for (size_t i = 0; i < ir->replace_count; ++i) {
+        s_(&pk->upgrade, ir->replaces[i]); s_(&pk->upgrade, "0.0.0"); null_(&pk->upgrade); null_(&pk->upgrade);
+        char n[40];
+        snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
+        i_(&pk->upgrade, 0x100); null_(&pk->upgrade); s_(&pk->upgrade, kdup(k, n));
     }
 
     const char *message = ir->downgrade_message ? escape_formatted(k, ir->downgrade_message)

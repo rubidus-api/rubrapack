@@ -115,7 +115,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.34.0
+  18 = rubrapack 0.35.0
 ```
 
 요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 *패키지 코드*(빌드마다 새
@@ -280,7 +280,7 @@ C:\work\hello> rubrapack inspect hello.msi --summary --json
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.34.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.35.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
 usage: rubrapack <command> [arguments]
 
@@ -291,7 +291,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.34.0 (proven_c_lib-v0.6.0)
+rubrapack 0.35.0 (proven_c_lib-v0.6.0)
 ```
 
 `rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은

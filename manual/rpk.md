@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -1107,6 +1107,14 @@ packages cannot be removed in one Windows Installer run, so the add-ons go a few
 main product, not before it; build them so that they can be removed without it. It takes effect
 from the first main version built with it, and needs the cleanup task (`cleanup = false` is an
 error); both keys are for MSI packages only.
+
+### Taking the place of other products: `replaces`
+
+`replaces = ["{UpgradeCode}", ...]` (at most 16) names products this package takes the place of - say,
+add-ons that were separate packages and are now features of this one. Installing this package
+removes every installed version of them in the same run, as it removes an older version of itself
+(RemoveExistingProducts; their own removal runs, with `UPGRADINGPRODUCTCODE` set), so no two products
+own the same files. The codes must not be this package's own upgrade code or its `parent`. MSI only.
 
 ### Wildcards: `[files.ID]`
 

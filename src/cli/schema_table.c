@@ -783,6 +783,7 @@ const char *const rp_schema_lines[] = {
     "    \"remove-addons\": {\n",
     "     \"type\": \"boolean\"\n",
     "    },\n",
+    "    \"replaces\": {},\n",
     "    \"scope\": {\n",
     "     \"type\": \"string\"\n",
     "    },\n",

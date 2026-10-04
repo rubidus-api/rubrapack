@@ -208,7 +208,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -1023,6 +1023,13 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 번에 두 패키지를 지울 수 없으므로 추가 기능은 본체보다 먼저가 아니라 몇 초 뒤에 지워진다 - 본체 없이도 지워지게
 만든다. 이 키로 구운 본체의 첫 판부터 효과가 있고, 정리 작업이 있어야 한다(`cleanup = false` 와 함께면 오류).
 두 키 모두 MSI 패키지에만 쓴다.
+
+### 다른 제품을 대신하기: `replaces`
+
+`replaces = ["{UpgradeCode}", ...]`(16개까지)는 이 패키지가 대신하는 제품들이다 - 이를테면 따로 된 패키지였다가 이제
+이 패키지의 기능이 된 추가 기능. 이 패키지를 설치하면 그 제품들의 설치된 판을 모두 같은 실행에서 지운다 - 자기
+옛 판을 지우듯이(RemoveExistingProducts; 그들 자신의 제거가 `UPGRADINGPRODUCTCODE` 와 함께 돈다). 그래서 같은
+파일의 주인이 둘이 되지 않는다. 이 패키지의 업그레이드 코드나 `parent` 는 쓸 수 없다. MSI 에만 쓴다.
 
 ### 와일드카드: `[files.ID]`
 
