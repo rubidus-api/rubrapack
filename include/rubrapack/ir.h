@@ -26,6 +26,7 @@ typedef struct {
     bool     required;          // RFC-0013 A3: cannot be set to "not installed" in the tree
     bool     follow_parent;     // RFC-0013 A3: installed where its parent is
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
+    char    *default_when;      // x48: a level above 1, but installed by default when this condition holds
     rp_pos_t pos;
 } rp_ir_feature_t;
 

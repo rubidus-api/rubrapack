@@ -104,6 +104,7 @@ target = "file:Hello"
 | `required = true` | 늘 설치: 트리가 "사용할 수 없음"을 제안하지 않는다 |
 | `parent = "Samples"` | 트리에서 다른 기능 아래의 줄 |
 | `follow-parent = true` | 부모가 설치될 때 정확히 함께 설치 |
+| `default-when = "OLDPACK"` | 기본은 꺼짐(level 이 1보다 큼), 조건이 맞으면 기본으로 켜짐 |
 | `hidden = true` | 트리에 아예 보이지 않음 |
 
 기능 ID 는 dir, 파일과 이름 공간을 함께 쓴다: 기능 `Documentation` 과 폴더 `DocsDir` 는 ID 가 달라야 한다(아니면

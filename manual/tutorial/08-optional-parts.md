@@ -106,6 +106,7 @@ target = "file:Hello"
 | `required = true` | always installed: the tree does not offer "will be unavailable" for it |
 | `parent = "Samples"` | a line under another feature in the tree |
 | `follow-parent = true` | installed exactly when its parent is |
+| `default-when = "OLDPACK"` | off by default (level above 1), on by default when the condition holds |
 | `hidden = true` | not shown in the tree at all |
 
 Feature IDs share one name space with dirs and files: `Documentation` the feature and `DocsDir`

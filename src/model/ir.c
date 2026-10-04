@@ -510,6 +510,7 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, f->description);
         rp_mem_free(a, f->parent);
         rp_mem_free(a, f->when);
+        rp_mem_free(a, f->default_when);
     }
     for (size_t k = 0; k < ir->dir_count; ++k) {
         rp_ir_dir_t *d = &ir->dirs[k];

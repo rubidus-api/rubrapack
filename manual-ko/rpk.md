@@ -210,7 +210,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when |
+| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
 | `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
@@ -1052,6 +1052,9 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 
 - `required = true`: 트리에서 "설치하지 않음"을 고를 수 없다.
 - `follow-parent = true`: 부모가 설치되는 대로 따라간다.
+- `default-when = "<조건>"`(`level` 이 1보다 클 때): 기본으로는 꺼져 있지만, 처음 설치할 때 조건이 맞으면 기본으로
+  켜진다 - 이를테면 검색으로 이 부분이 전에 따로 된 패키지로 설치되어 있었음을 알았을 때(`replaces` 참고). 그러면
+  창 없는 업그레이드도 그것을 남긴다.
 - `when = "<조건>"`: 조건이 참이 아니면 그 기능은 꺼진다 - 설치하지도 보여 주지도 않는다(아래).
 
 ### 조건: `when`

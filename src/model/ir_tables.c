@@ -564,13 +564,15 @@ static bool condition_ok(const char *s) {
     return !quote && depth == 0 && s[0] != '\0';
 }
 
-char *ir_get_when(ctx_t *c, const rp_ttable_t *t) {
-    char *w = ir_get_str(c, t, "when", false, NULL);
+char *ir_get_cond(ctx_t *c, const rp_ttable_t *t, const char *key) {
+    char *w = ir_get_str(c, t, key, false, NULL);
     if (w == NULL) return NULL;
-    if (w[0] == '\0' || !condition_ok(w)) ERR(c, ir_key_pos(t, "when"), "RP1316", "when is an MSI condition with closed quotes and balanced parentheses");
-    else if (strlen(w) > 240) ERR(c, ir_key_pos(t, "when"), "RP1316", "when is longer than 240 characters");
+    if (w[0] == '\0' || !condition_ok(w)) ERR(c, ir_key_pos(t, key), "RP1316", "%s is an MSI condition with closed quotes and balanced parentheses", key);
+    else if (strlen(w) > 240) ERR(c, ir_key_pos(t, key), "RP1316", "%s is longer than 240 characters", key);
     return w;
 }
+
+char *ir_get_when(ctx_t *c, const rp_ttable_t *t) { return ir_get_cond(c, t, "when"); }
 
 void ir_parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r) {
     static const char *const keys[] = { "condition", "message", NULL };

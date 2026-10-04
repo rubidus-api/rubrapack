@@ -91,6 +91,7 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r);
 void ir_parse_copy(ctx_t *c, const rp_ttable_t *t, rp_ir_copy_t *cp);
 void ir_parse_ini(ctx_t *c, const rp_ttable_t *t, rp_ir_ini_t *x);
 char *ir_get_when(ctx_t *c, const rp_ttable_t *t);
+char *ir_get_cond(ctx_t *c, const rp_ttable_t *t, const char *key);
 void ir_parse_require(ctx_t *c, const rp_ttable_t *t, rp_ir_require_t *r);
 void ir_parse_search(ctx_t *c, const rp_ttable_t *t, rp_ir_search_t *x);
 int ir_ascii_casecmp(const char *a, const char *b);

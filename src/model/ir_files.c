@@ -310,7 +310,7 @@ void ir_parse_module(ctx_t *c, const rp_ttable_t *t) {
 }
 
 void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
-    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", NULL };
+    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", "default-when", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 38);
     f->id = ir_dup(c, t->id);
@@ -324,6 +324,12 @@ void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     f->follow_parent = ir_get_bool(c, t, "follow-parent", false);
     if (f->follow_parent && f->parent == NULL) ERR(c, ir_key_pos(t, "follow-parent"), "RP1316", "follow-parent needs a parent");
     f->when = ir_get_when(c, t);
+    // x48 (jamotong): off by default (level above 1), but on by default when the condition holds -
+    // a pack that was installed as a package of its own stays installed as this feature.
+    f->default_when = ir_get_cond(c, t, "default-when");
+    if (f->default_when && f->level <= 1) {
+        ERR(c, ir_key_pos(t, "default-when"), "RP1314", "default-when needs level above 1 (a level-1 feature is installed by default anyway)");
+    }
 }
 
 void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {

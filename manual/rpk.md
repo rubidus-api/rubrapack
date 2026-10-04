@@ -221,7 +221,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when |
+| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
@@ -1140,6 +1140,9 @@ tree, and changes them later from Installed apps (Change on the maintenance page
 - `follow-parent = true`: installed wherever its parent is (on this computer, or not at all).
 - `when = "<condition>"`: the feature is off - not installed and not shown - unless the condition
   holds (see below).
+- `default-when = "<condition>"` (with `level` above 1): off by default, but on by default at the
+  first installation when the condition holds - for example when a search found that this part was
+  installed before as a package of its own (see `replaces`), so a silent upgrade keeps it.
 
 ### Conditions: `when`
 

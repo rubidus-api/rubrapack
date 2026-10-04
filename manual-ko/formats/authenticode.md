@@ -172,6 +172,6 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-ce c9 0a dc 1c 65 e5 99 b3 0c 86 3e 05 c2 76 42 e5 0c 6e 67 e5 4b d0 60 c2 a4 bc 34 2b b8 31 be
+c9 0d c2 9e ff c4 d7 94 43 41 1f 9e b3 57 f9 4f ba af 0a 45 5a d8 89 44 9c f7 3c f9 e8 70 9f c0
 ```
 

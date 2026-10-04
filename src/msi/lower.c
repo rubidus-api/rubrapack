@@ -663,6 +663,9 @@ static void lower_features(pkg_t *pk) {
             // off then would keep its files (observed, r1-vm).
             s_(&pk->condition, f->id); i_(&pk->condition, 0); s_(&pk->condition, kprintf(k, "NOT Installed AND NOT (%s)", f->when, NULL));
         }
+        if (f->default_when) {          // x48: level 1 - installed by default - when its condition holds
+            s_(&pk->condition, f->id); i_(&pk->condition, 1); s_(&pk->condition, kprintf(k, "NOT Installed AND (%s)", f->default_when, NULL));
+        }
     }
 }
 

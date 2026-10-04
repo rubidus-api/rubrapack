@@ -311,6 +311,7 @@ const char *const rp_schema_lines[] = {
     "  \"feature\": {\n",
     "   \"additionalProperties\": false,\n",
     "   \"properties\": {\n",
+    "    \"default-when\": {},\n",
     "    \"description\": {\n",
     "     \"type\": \"string\"\n",
     "    },\n",

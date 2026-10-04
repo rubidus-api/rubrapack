@@ -87,6 +87,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "implicit", f->implicit ? "1" : "0");
                 if (f->required) kv(&b, "required", "1");
                 if (f->follow_parent) kv(&b, "follow-parent", "1");
+                if (f->default_when) kv(&b, "default-when", f->default_when);
                 if (f->when) kv(&b, "when", f->when);
             } else if (kind == 1) {
                 const rp_ir_dir_t *d = &ir->dirs[idx[k]];
