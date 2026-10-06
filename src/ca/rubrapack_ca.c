@@ -329,13 +329,15 @@ static bool trusted_owner(PSID owner) {
     return ok;
 }
 
-// 0: fine (absent, or present and owned by a trusted account), 1: refused.
-static int check_dir(MSIHANDLE h, const wchar_t *path) {
+// 0: fine (present and owned by a trusted account; or absent - then, with `above`, the deepest
+// folder that does exist above it must be owned by one: a folder made inside a user's folder gets
+// that folder's access list, and its owner can put another folder in its place), 1: refused.
+static int check_dir(MSIHANDLE h, const wchar_t *path, bool above) {
     size_t n = wcslen(path);
     wchar_t *part = HeapAlloc(GetProcessHeap(), 0, (n + 1) * sizeof *part);
     if (part == NULL) return 1;
     // Every existing part of the path, from the one under the root down, is a real folder.
-    size_t start = n >= 3 && path[1] == L':' ? 3 : 0;
+    size_t start = n >= 3 && path[1] == L':' ? 3 : 0, last = start;
     bool exists = true;
     for (size_t i = start; i <= n && exists; ++i) {
         if (i < n && path[i] != L'\\') continue;
@@ -352,8 +354,14 @@ static int check_dir(MSIHANDLE h, const wchar_t *path) {
             HeapFree(GetProcessHeap(), 0, part);
             return 1;
         }
+        last = i;
     }
     int rc = 0;
+    if (!exists && above && last >= 3) {        // the deepest folder there is (the volume's root at least)
+        memcpy(part, path, last * sizeof *part);
+        part[last] = 0;
+        exists = true;
+    }
     if (exists) {
         PSID owner = NULL;
         PSECURITY_DESCRIPTOR sd = NULL;
@@ -413,6 +421,10 @@ static bool secure_dir(MSIHANDLE h, const wchar_t *path, PSECURITY_DESCRIPTOR sd
 __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
     wchar_t *list = get_property(h, L"RP_GUARD");
     if (list == NULL) return ERROR_INSTALL_FAILURE;
+    // Per machine also the folder above a folder that is not there yet; per user those are the user's own.
+    wchar_t *allusers = get_property(h, L"ALLUSERS");
+    bool machine = allusers && allusers[0] == L'1';
+    if (allusers) HeapFree(GetProcessHeap(), 0, allusers);
     UINT rc = ERROR_SUCCESS;
     wchar_t *ctx = NULL;
     for (wchar_t *dir = wcstok(list, L";", &ctx); dir && rc == ERROR_SUCCESS; dir = wcstok(NULL, L";", &ctx)) {
@@ -425,7 +437,7 @@ __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
         }
         size_t len = wcslen(path);
         if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
-        if (check_dir(h, path) == 0) continue;
+        if (check_dir(h, path, machine) == 0) continue;
         // The message in the chosen language, with [1] = the folder.
         wchar_t *lang = get_property(h, L"RPLANGUAGE");
         wchar_t name[64];

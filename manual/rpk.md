@@ -1281,9 +1281,13 @@ stay, and a DLL planted beside the program would be loaded with its rights. `gua
 makes a first installation stop before any file is placed when that folder
 
 - already exists and its owner is not SYSTEM, Administrators or TrustedInstaller, or
+- does not exist yet and, in a per-machine installation, the deepest folder above it that does
+  exist has another owner (a folder made inside someone's folder takes that folder's permissions,
+  and its owner can put another folder in its place), or
 - is reached through a junction or another reparse point (the folder itself or any folder above it).
 
-A folder that does not exist yet passes (the installer creates it; `[permission.*]` can lock it).
+A folder that does not exist yet under a folder of a trusted owner - `Program Files`, say - passes
+(the installer creates it; `[permission.*]` can lock it).
 Repair, upgrade-in-place and removal are not checked; a major upgrade is a first installation of
 the new version and is checked like one (the folder the earlier version created passes). The
 installation ends with 1603 after the message `DirGuardText` (`[1]` is the folder; in the language
