@@ -245,6 +245,13 @@ Count 비트 8 은 권한 상승이 필요 없다는 뜻이다. Registry Root -1
 - Windows 11 의 "설정 > 설치된 앱"은 MSI 제품을 `msiexec /qb /x {ProductCode}` 로 지우고 `UninstallString` 은 쓰지
   않는다. `ARPNOREMOVE`(레지스트리 `NoRemove` = 1)가 있으면 제거는 회색이 되고 수정은 `msiexec /i {ProductCode}`, 곧
   패키지 자신의 대화창을 돌린다. [observed, x44]
+- 한 설치가 도는 동안 다른 설치는 곧바로 1618 로 끝난다(`/qn` 에서는 말없이). 설치 프로그램이 중간에 죽으면 제품은 등록되지
+  않았는데 파일은 있고 되돌리기 스크립트가 `Config.Msi` 에서 기다린다. 다음 실행은 "Suspended install detected. Resuming"
+  을 적고, 끝나지 않은 것을 되돌린 뒤 제 일을 한다 - 설치와 업그레이드는 0 으로, 제거는 되돌리기가 제품을 도로 놓은 뒤라
+  1605 로 끝난다. [observed, x50]
+- 사용자 지정 동작은 `MsiProcessMessage(INSTALLMESSAGE_USER | MB_YESNOCANCEL)` 로 물을 수 있다: 상자는 축소·전체 UI
+  에서 뜨고(단추는 패키지의 언어) `/qn` 에서는 0 을 돌려준다. Restart Manager(패키지 파일들에 대한 `RmGetList`)는 그
+  파일을 열었거나 실은 프로그램을, 사용자로 도는 즉시 동작에서도 알려 준다. [observed, x51]
 - 명령줄에서 준 속성은 설치하고 있는 패키지에만 간다. 업그레이드 중 옛 판의 제거는 **옛 패키지의**
   Property 표를 따른다 - 그 속성은 첫 판부터 넣어 둔다. [observed]
 

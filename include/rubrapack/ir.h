@@ -433,6 +433,8 @@ typedef struct {
     uint16_t  language;         // 1033 or 1042
     bool      reboot_suppress;
     bool      no_cleanup;       // [package] cleanup = false: no cleanup task (RFC-0026)
+    bool      no_preflight;     // [package] preflight = false: no checks before the installation goes on
+    int       close_programs;   // 0 ask (fail without UI), 1 always, 2 never
     char     *parent;           // [package] parent: the main product's UpgradeCode (an add-on, x46), or NULL
     bool      remove_addons;    // [package] remove-addons = true: a real removal removes the add-ons too (x46)
     char      replaces[16][39]; // [package] replaces: other products' UpgradeCodes this package removes (x47)

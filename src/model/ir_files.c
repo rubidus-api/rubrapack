@@ -64,7 +64,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
-                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", "replaces", NULL };
+                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", "replaces", "preflight", "close-programs", NULL };
     rp_ir_t *ir = c->ir;
     ir_check_keys(c, t, keys);
     ir->name = ir_get_str(c, t, "name", true, NULL);
@@ -195,6 +195,17 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         rp_mem_free(c->alloc, reboot);
     }
     ir->no_cleanup = !ir_get_bool(c, t, "cleanup", true);     // RFC-0026
+    // DECISIONS 2026-10-06: the checks before an installation, upgrade or removal goes on.
+    ir->no_preflight = !ir_get_bool(c, t, "preflight", true);
+    char *close = ir_get_str(c, t, "close-programs", false, NULL);
+    if (close) {
+        if (strcmp(close, "ask") == 0) ir->close_programs = 0;
+        else if (strcmp(close, "always") == 0) ir->close_programs = 1;
+        else if (strcmp(close, "never") == 0) ir->close_programs = 2;
+        else ERR(c, ir_key_pos(t, "close-programs"), "RP1316", "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')", close);
+        if (ir->no_preflight) ERR(c, ir_key_pos(t, "close-programs"), "RP1316", "close-programs has no effect with preflight = false");
+        rp_mem_free(c->alloc, close);
+    }
     // x46 (jamotong): an add-on names its main product; the main product's real removal removes the
     // add-ons through its cleanup task. MSI only.
     ir->parent = ir_get_str(c, t, "parent", false, NULL);

@@ -295,6 +295,15 @@ When a file to be replaced or removed is held by a running program (a DLL loaded
 - Settings > Installed apps on Windows 11 removes an MSI product with `msiexec /qb /x {ProductCode}`
   and does not use its `UninstallString`; with `ARPNOREMOVE` (registry `NoRemove` = 1) Uninstall is
   greyed out and Modify runs `msiexec /i {ProductCode}`, the package's own dialogs. [observed, x44]
+- While one installation runs, another ends at once with 1618 (silently at `/qn`). After the
+  installer is killed in the middle, the product is not registered though its files are there and a
+  rollback script waits in `Config.Msi`; the next run logs "Suspended install detected. Resuming",
+  undoes the unfinished one and then does its own work - an installation or an upgrade ends with 0,
+  a removal with 1605 after the undo has put the product back. [observed, x50]
+- A custom action can ask through `MsiProcessMessage(INSTALLMESSAGE_USER | MB_YESNOCANCEL)`: the box
+  shows at reduced and full UI (buttons in the package's language) and returns 0 at `/qn`.
+  Restart Manager (`RmGetList` over the package's files) names the programs that have them open or
+  loaded, from an immediate action running as the user. [observed, x51]
 - A property given on the command line reaches only the package being installed. During an
   upgrade, the removal of the old version follows **the old package's** Property table - author
   the property from the first version on. [observed]

@@ -93,6 +93,16 @@ static const text_t texts[] = {
     { "RepairText", "빠지거나 망가진 파일과 설정을 되살립니다.", "Restore missing or damaged files and settings." },
     { "Remove", "제거(&R)", "&Remove" },
     { "RemoveText", "[ProductName]을(를) 이 컴퓨터에서 지웁니다.", "Remove [ProductName] from this computer." },
+    // The preflight's messages (helper DLL, RpPreflight): [1] how many or what, [2] the list or the
+    // removal command, [3] the product. A language that does not give them gets English.
+    { "PreflightAsk", "[1]개 프로그램이 [3]의 파일을 쓰고 있습니다:\r\n[2]\r\n모두 종료할까요?\r\n\r\n예(Yes): 모두 종료하고 계속합니다(저장하지 않은 작업은 잃을 수 있습니다).\r\n아니요(No): 종료하지 않고 계속합니다(열린 프로그램은 다시 열 때까지 이전 파일을 씁니다).\r\n취소(Cancel): 그만둡니다.",
+      "[1] program(s) are using files of [3]:\r\n[2]\r\nClose them all?\r\n\r\nYes: close them all and go on (unsaved work may be lost).\r\nNo: go on without closing (programs already open keep the old files until they are reopened).\r\nCancel: stop." },
+    { "PreflightSilent", "[3]: [1]개 프로그램이 파일을 쓰고 있어 멈췄습니다:\r\n[2]프로그램을 닫고 다시 하거나, RPCLOSE=yes(모두 종료하고 계속) 또는 RPCLOSE=no(종료하지 않고 계속)를 주십시오.",
+      "[3]: stopped, because [1] program(s) are using its files:\r\n[2]Close them and try again, or give RPCLOSE=yes (close them all and go on) or RPCLOSE=no (go on without closing)." },
+    { "PreflightFolder", "[3]을(를) 안전하게 설치할 수 없습니다: [1] 이(가) 폴더가 아니거나 설치 프로그램이 그 안의 파일을 지울 수 없습니다. 먼저 [3]을(를) 제거한 뒤([2]) 다시 설치하십시오.",
+      "[3] cannot be installed safely: [1] is not a folder, or the installer may not delete files in it. Remove [3] first ([2]), then install again." },
+    { "PreflightCache", "[3]을(를) 안전하게 업그레이드할 수 없습니다: 설치된 판 [1] 의 설치 정보 파일이 없어 그 판을 지울 수 없습니다. 먼저 그 판을 원래 설치 파일로 제거한 뒤([2]) 다시 설치하십시오.",
+      "[3] cannot be upgraded safely: the installed version [1] has lost its cached package, so it cannot be removed here. Remove that version with its original package first ([2]), then install again." },
     { "DirGuardText", "설치를 멈췄습니다: 폴더 [1] 이(가) 이미 있는데 관리자 소유가 아니거나 다른 곳으로 이어지는 연결입니다. 다른 폴더를 고르거나, 관리자가 먼저 그 폴더를 지우게 하십시오.",
       "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "[ProductName] 실행(&L)", "&Launch [ProductName]" },
@@ -359,6 +369,21 @@ const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
         if (x->text) return x->text;
     }
     if (strncmp(id, "Removal", 7) == 0 && strcmp(code, "en") != 0 && strcmp(code, "ko") != 0) return rp_ui_text_for(ir, id + 7, li);
+    for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
+        if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
+    }
+    return id;
+}
+
+const char *rp_ui_text_lang(const rp_ir_t *ir, const char *id, const char *code) {
+    for (size_t i = 0; i < ir->ui_text_count; ++i) {
+        const rp_ir_ui_text_t *x = &ir->ui_texts[i];
+        if (strcmp(x->id, id) != 0) continue;
+        for (size_t j = 0; j < x->by_lang_count; ++j) {
+            if (strcmp(x->by_lang[j].lang, code) == 0) return x->by_lang[j].text;
+        }
+        if (x->text) return x->text;
+    }
     for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
         if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
     }

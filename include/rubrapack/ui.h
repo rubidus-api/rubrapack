@@ -66,6 +66,8 @@ bool rp_ui_text_known(const char *id);
 
 // Text `id` in language `li` of ir->ui_langs: [ui-text.ID] text-xx, its text, or the built-in one.
 const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li);
+// The same for a language code, whether or not the dialogs have that language.
+const char *rp_ui_text_lang(const rp_ir_t *ir, const char *id, const char *code);
 
 // The i-th of those IDs, or NULL past the last (RFC-0012: another language gives every one).
 const char *rp_ui_text_id(size_t i);

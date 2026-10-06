@@ -29,6 +29,8 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     kv(&b, "language", num);
     kv(&b, "reboot", ir->reboot_suppress ? "suppress" : "allow");
     if (ir->no_cleanup) kv(&b, "cleanup", "false");
+    if (ir->no_preflight) kv(&b, "preflight", "false");
+    if (ir->close_programs) kv(&b, "close-programs", ir->close_programs == 1 ? "always" : "never");
     if (ir->parent) kv(&b, "parent", ir->parent);
     if (ir->remove_addons) kv(&b, "remove-addons", "true");
     for (size_t i = 0; i < ir->replace_count; ++i) kv(&b, "replaces", ir->replaces[i]);

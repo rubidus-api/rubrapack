@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -919,7 +919,8 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`,
 `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`,
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
-`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), and for a removal -
+`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), `PreflightAsk`,
+`PreflightSilent`, `PreflightFolder`, `PreflightCache` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
 `RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).
@@ -1065,6 +1066,34 @@ with the command that does it: `msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCO
 Use it when older versions were built by another tool without `MSIRESTARTMANAGERCONTROL=Disable`:
 removing such a version inside an upgrade would try to close every program that has its files
 loaded (see `formats/msi-package.md`, "Files in use").
+
+### Before it goes on: the preflight
+
+Before an installation, an upgrade or a removal changes anything, the package looks:
+
+- **Which programs use the product's files** - its own programs that are running, and other
+  programs that have one of its DLLs loaded (for an input method or a shell extension, nearly every
+  open program). Their number and names are shown, with the question whether to close them all.
+  **Yes** asks their windows to close and, a few seconds later, ends what is left (unsaved work in
+  them may be lost); **No** goes on without closing - the files are replaced anyway, and those
+  programs keep the old ones until they are reopened; **Cancel** stops, with nothing changed.
+- **Without a window to ask in** (`/qn`), the run stops with an error (1603; the log names the
+  programs) - unless the command line says what to do: `RPCLOSE=yes` closes them all and goes on,
+  `RPCLOSE=no` goes on without closing.
+- For an installation or an upgrade: **each package folder that exists** is a folder the installer
+  may delete files in, and **the older version still has its cached package** (without it the
+  upgrade could not remove that version). If not, the message says what is wrong and to remove the
+  product first, and nothing is installed. A removal is never refused for these.
+
+`close-programs = "always"` closes without asking, `"never"` never closes and never asks (also at
+`/qn`); `"ask"` is the default. `preflight = false` leaves the whole step out. The texts are
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder` and `PreflightCache` (`[ui-text.*]`; English and
+Korean are built in, another language without them gets English).
+
+Windows Installer looks after two things itself: while another installation is running, a second
+one ends at once with 1618; and after an installation that was cut off (a crash, a power cut), the
+next one first undoes the unfinished one. After a removal that was cut off, that undo puts the
+product back and the removal ends with 1605: run it once more.
 
 ### Cleaning up later: the cleanup task
 

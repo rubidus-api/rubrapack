@@ -1142,3 +1142,285 @@ done:
     HeapFree(GetProcessHeap(), 0, data);
     return ERROR_SUCCESS;
 }
+
+// ---- preflight (DECISIONS 2026-10-06) -------------------------------------------------------------
+//
+// RpPreflight, immediate, before InstallValidate in the execute sequence (every UI level, also a
+// removal started from Installed apps). It only reads - and, when asked, closes programs - so a
+// refusal leaves the computer as it was.
+//   1. The programs using the product's files (its own programs and those that have one of its
+//      DLLs loaded), from Restart Manager: their number and names are shown and the user is asked
+//      whether to close them all - Yes closes them (a close request to their windows, then, after
+//      a few seconds, ended), No goes on without closing (they keep the old files until reopened),
+//      Cancel stops. Without a window to ask in (/qn) the installation fails, unless RPCLOSE says
+//      "yes" (close them all) or "no" (go on). RP_PREFLIGHT_CLOSE is the package's own default:
+//      "ask", "always" or "never".
+//   2. For an installation or an upgrade (never a removal): every package folder that exists is a
+//      folder SYSTEM may delete in, and the installed older versions still have their cached
+//      packages - otherwise the message says what is wrong and to remove the product first.
+// Texts: RpPre<Name>_<language> properties (RPLANGUAGE, else Korean for a Korean user, else en).
+
+#include <restartmanager.h>
+
+static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
+    wchar_t name[80];
+    wchar_t *lang = get_property(h, L"RPLANGUAGE");
+    wchar_t *text = NULL;
+    if (lang && lang[0]) {
+        swprintf(name, 80, L"RpPre%ls_%ls", id, lang);
+        text = get_property(h, name);
+    } else {
+        wchar_t *ul = get_property(h, L"UserLanguageID");
+        if (ul && wcscmp(ul, L"1042") == 0) {
+            swprintf(name, 80, L"RpPre%ls_ko", id);
+            text = get_property(h, name);
+        }
+        if (ul) HeapFree(GetProcessHeap(), 0, ul);
+    }
+    if (text == NULL || text[0] == 0) {
+        if (text) HeapFree(GetProcessHeap(), 0, text);
+        swprintf(name, 80, L"RpPre%ls_en", id);
+        text = get_property(h, name);
+    }
+    if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    return text;
+}
+
+// Shows (or, without UI, logs) a message made from the text `id` with fields 1..3; returns the button.
+static int pre_message(MSIHANDLE h, const wchar_t *id, UINT type, const wchar_t *f1, const wchar_t *f2, const wchar_t *f3) {
+    wchar_t *text = pre_text(h, id);
+    MSIHANDLE rec = MsiCreateRecord(3);
+    MsiRecordSetStringW(rec, 0, text && text[0] ? text : L"[1] [2] [3]");
+    MsiRecordSetStringW(rec, 1, f1 ? f1 : L"");
+    MsiRecordSetStringW(rec, 2, f2 ? f2 : L"");
+    MsiRecordSetStringW(rec, 3, f3 ? f3 : L"");
+    int r = MsiProcessMessage(h, (INSTALLMESSAGE)type, rec);
+    MsiCloseHandle(rec);
+    if (text) HeapFree(GetProcessHeap(), 0, text);
+    return r;
+}
+
+static BOOL CALLBACK close_window(HWND w, LPARAM pid) {
+    DWORD owner = 0;
+    GetWindowThreadProcessId(w, &owner);
+    if (owner == (DWORD)pid && GetWindow(w, GW_OWNER) == NULL) PostMessageW(w, WM_CLOSE, 0, 0);
+    return TRUE;
+}
+
+// The image file name of a process ("" when it cannot be read).
+static void image_name(DWORD pid, wchar_t out[MAX_PATH]) {
+    out[0] = 0;
+    HANDLE p = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+    if (p == NULL) return;
+    wchar_t path[MAX_PATH * 2];
+    DWORD n = MAX_PATH * 2;
+    if (QueryFullProcessImageNameW(p, 0, path, &n)) {
+        const wchar_t *slash = wcsrchr(path, L'\\');
+        wcsncpy(out, slash ? slash + 1 : path, MAX_PATH - 1);
+        out[MAX_PATH - 1] = 0;
+    }
+    CloseHandle(p);
+}
+
+// Whether SYSTEM may delete inside folder `dir`, from its access list (true when it cannot be read:
+// this action runs as the user and must not refuse on what it cannot see).
+static bool system_may_delete(const wchar_t *dir) {
+    PACL dacl = NULL;
+    PSECURITY_DESCRIPTOR sd = NULL;
+    if (GetNamedSecurityInfoW(dir, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &dacl, NULL, &sd) != ERROR_SUCCESS) return true;
+    bool ok = true;
+    PSID sys = NULL;
+    if (dacl && ConvertStringSidToSidW(L"S-1-5-18", &sys)) {
+        TRUSTEEW t;
+        memset(&t, 0, sizeof t);
+        t.TrusteeForm = TRUSTEE_IS_SID;
+        t.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+        t.ptstrName = (LPWSTR)sys;
+        ACCESS_MASK rights = 0;
+        if (GetEffectiveRightsFromAclW(dacl, &t, &rights) == ERROR_SUCCESS) ok = (rights & FILE_DELETE_CHILD) && (rights & FILE_ADD_FILE);
+        LocalFree(sys);
+    }
+    if (sd) LocalFree(sd);
+    return ok;
+}
+
+__declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
+    wchar_t *product = get_property(h, L"ProductName"), *uilevel = get_property(h, L"UILevel");
+    wchar_t *answer = get_property(h, L"RPCLOSE"), *dflt = get_property(h, L"RP_PREFLIGHT_CLOSE");
+    wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND");
+    wchar_t *dirs = get_property(h, L"RP_PREFLIGHT_DIRS"), *code = get_property(h, L"ProductCode");
+    UINT rc = ERROR_SUCCESS;
+    bool silent = uilevel == NULL || wcstol(uilevel, NULL, 10) <= 2;
+    bool removal = remove && _wcsicmp(remove, L"ALL") == 0;
+    // The old version's removal inside an upgrade: the upgrading package has asked already (x51).
+    wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
+    bool nested = upgrading && upgrading[0];
+    if (upgrading) HeapFree(GetProcessHeap(), 0, upgrading);
+    if (nested) {
+        log_line(h, L"rubrapack: preflight: skipped (removed by an upgrade, which has done it)");
+        wchar_t *early[] = { product, uilevel, answer, dflt, remove, older, dirs, code };
+        for (size_t i = 0; i < sizeof early / sizeof early[0]; ++i) {
+            if (early[i]) HeapFree(GetProcessHeap(), 0, early[i]);
+        }
+        return ERROR_SUCCESS;
+    }
+
+    // 1. Who uses the product's files.
+    enum { MAX_FILES = 2048, MAX_PROCS = 256 };
+    static wchar_t *files[MAX_FILES];
+    UINT nfiles = 0;
+    MSIHANDLE db = MsiGetActiveDatabase(h), view = 0, rec = 0;
+    if (db && MsiDatabaseOpenViewW(db, L"SELECT `File`.`FileName`, `Component`.`Directory_` FROM `File`, `Component` "
+                                       L"WHERE `File`.`Component_` = `Component`.`Component`", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        static wchar_t fname[1024], dir[80], path[MAX_PATH * 4];
+        while (nfiles < MAX_FILES && MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            DWORD fn = 1024, dn = 80, pn = MAX_PATH * 4;
+            if (MsiRecordGetStringW(rec, 1, fname, &fn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, dir, &dn) == ERROR_SUCCESS &&
+                MsiGetTargetPathW(h, dir, path, &pn) == ERROR_SUCCESS) {
+                wchar_t *bar = wcschr(fname, L'|');
+                const wchar_t *name = bar ? bar + 1 : fname;
+                size_t len = wcslen(path);
+                if (len + wcslen(name) < MAX_PATH * 4) {
+                    wcscpy(path + len, name);
+                    if (GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES) {
+                        size_t n = wcslen(path) + 1;
+                        wchar_t *copy = HeapAlloc(GetProcessHeap(), 0, n * sizeof *copy);
+                        if (copy) {
+                            memcpy(copy, path, n * sizeof *copy);
+                            files[nfiles++] = copy;
+                        }
+                    }
+                }
+            }
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    if (db) MsiCloseHandle(db);
+
+    static RM_PROCESS_INFO procs[MAX_PROCS];
+    static DWORD pids[MAX_PROCS];
+    UINT nprocs = 0, nlisted = 0;
+    writer_t names = { 0 };
+    if (nfiles) {
+        DWORD session = 0;
+        wchar_t key[CCH_RM_SESSION_KEY + 1] = L"";
+        if (RmStartSession(&session, 0, key) == ERROR_SUCCESS) {
+            if (RmRegisterResources(session, nfiles, (LPCWSTR *)files, 0, NULL, 0, NULL) == ERROR_SUCCESS) {
+                UINT needed = 0, have = MAX_PROCS;
+                DWORD reasons = 0;
+                DWORD e = RmGetList(session, &needed, &have, procs, &reasons);
+                if (e == ERROR_SUCCESS || e == ERROR_MORE_DATA) nprocs = have;
+                else log_line(h, L"rubrapack: preflight: Restart Manager could not list the programs (%lu)", (unsigned long)e);
+            }
+            RmEndSession(session);
+        }
+    }
+    for (UINT i = 0; i < nprocs; ++i) {
+        DWORD pid = procs[i].Process.dwProcessId;
+        wchar_t image[MAX_PATH];
+        image_name(pid, image);
+        // Not the installer itself, and nothing Windows cannot do without.
+        if (pid == GetCurrentProcessId() || _wcsicmp(image, L"msiexec.exe") == 0 || procs[i].ApplicationType == RmCritical) continue;
+        log_line(h, L"rubrapack: preflight: in use by %ls (%ls, process %lu, kind %d)", procs[i].strAppName, image, (unsigned long)pid, (int)procs[i].ApplicationType);
+        if (nlisted < 15) {
+            wchar_t line[400];
+            swprintf(line, 400, L"  - %ls (%ls)\r\n", procs[i].strAppName[0] ? procs[i].strAppName : image, image[0] ? image : L"?");
+            w_raw(&names, line, wcslen(line));
+        }
+        pids[nlisted++] = pid;
+        if (nlisted == MAX_PROCS) break;
+    }
+    if (nlisted > 15) {
+        wchar_t more[64];
+        swprintf(more, 64, L"  ... +%u\r\n", nlisted - 15);
+        w_raw(&names, more, wcslen(more));
+    }
+    if (nlisted) {
+        wchar_t count[16];
+        swprintf(count, 16, L"%u", nlisted);
+        // yes / no from RPCLOSE, else the package's default, else the question.
+        int choice = 0;         // IDYES, IDNO, IDCANCEL
+        if (answer && (_wcsicmp(answer, L"yes") == 0 || wcscmp(answer, L"1") == 0)) choice = IDYES;
+        else if (answer && (_wcsicmp(answer, L"no") == 0 || wcscmp(answer, L"0") == 0)) choice = IDNO;
+        else if (dflt && wcscmp(dflt, L"always") == 0) choice = IDYES;
+        else if (dflt && wcscmp(dflt, L"never") == 0) choice = IDNO;
+        else if (silent) {
+            log_line(h, L"rubrapack: preflight: stopped: %u program(s) use the product's files and there is no window to ask in (RPCLOSE=yes or no)", nlisted);
+            pre_message(h, L"Silent", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, count, names.buf ? names.buf : L"", product);
+            rc = ERROR_INSTALL_FAILURE;
+        } else {
+            choice = pre_message(h, L"Ask", INSTALLMESSAGE_USER | MB_YESNOCANCEL | MB_ICONQUESTION | MB_DEFBUTTON2, count, names.buf ? names.buf : L"", product);
+            if (choice != IDYES && choice != IDNO) rc = ERROR_INSTALL_USEREXIT;
+        }
+        if (rc == ERROR_SUCCESS && choice == IDYES) {
+            // A close request to every window, a few seconds to save and go, then the end.
+            HANDLE open[MAX_PROCS];
+            for (UINT i = 0; i < nlisted; ++i) {
+                open[i] = OpenProcess(PROCESS_TERMINATE | SYNCHRONIZE, FALSE, pids[i]);
+                EnumWindows(close_window, (LPARAM)pids[i]);
+            }
+            DWORD until = GetTickCount() + 6000;
+            for (UINT i = 0; i < nlisted; ++i) {
+                if (open[i] == NULL) {
+                    log_line(h, L"rubrapack: preflight: process %lu could not be opened (%lu); it keeps the old files until it is reopened",
+                             (unsigned long)pids[i], (unsigned long)GetLastError());
+                    continue;
+                }
+                DWORD now = GetTickCount();
+                if (WaitForSingleObject(open[i], now < until ? until - now : 0) != WAIT_OBJECT_0) {
+                    BOOL ended = TerminateProcess(open[i], 1);
+                    log_line(h, L"rubrapack: preflight: process %lu ended: %ls", (unsigned long)pids[i], ended ? L"yes" : L"no");
+                    if (ended) WaitForSingleObject(open[i], 3000);
+                } else {
+                    log_line(h, L"rubrapack: preflight: process %lu closed", (unsigned long)pids[i]);
+                }
+                CloseHandle(open[i]);
+            }
+        } else if (rc == ERROR_SUCCESS) {
+            log_line(h, L"rubrapack: preflight: going on without closing %u program(s)", nlisted);
+        }
+    }
+
+    // 2. Folders and the older versions' cached packages - not for a removal, which must stay possible.
+    if (rc == ERROR_SUCCESS && !removal) {
+        wchar_t path[MAX_PATH * 4], cmd[160];
+        swprintf(cmd, 160, L"msiexec /x %ls", older && older[0] ? older : code ? code : L"");
+        wchar_t *semi = wcschr(cmd, L';');
+        if (semi) *semi = 0;
+        wchar_t *ctx = NULL;
+        for (wchar_t *d = dirs ? wcstok(dirs, L";", &ctx) : NULL; d && rc == ERROR_SUCCESS; d = wcstok(NULL, L";", &ctx)) {
+            DWORD n = MAX_PATH * 4;
+            if (MsiGetTargetPathW(h, d, path, &n) != ERROR_SUCCESS) continue;
+            size_t len = wcslen(path);
+            if (len > 3 && path[len - 1] == L'\\') path[len - 1] = 0;
+            DWORD a = GetFileAttributesW(path);
+            if (a == INVALID_FILE_ATTRIBUTES) continue;
+            if (!(a & FILE_ATTRIBUTE_DIRECTORY) || !system_may_delete(path)) {
+                log_line(h, L"rubrapack: preflight: refused: %ls is not a folder SYSTEM may delete in", path);
+                pre_message(h, L"Folder", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, path, cmd, product);
+                rc = ERROR_INSTALL_FAILURE;
+            }
+        }
+        ctx = NULL;
+        for (wchar_t *pc = older ? wcstok(older, L";", &ctx) : NULL; pc && rc == ERROR_SUCCESS; pc = wcstok(NULL, L";", &ctx)) {
+            wchar_t pkg[MAX_PATH * 2];
+            DWORD n = MAX_PATH * 2;
+            if (MsiGetProductInfoW(pc, L"LocalPackage", pkg, &n) != ERROR_SUCCESS) continue;
+            if (pkg[0] && GetFileAttributesW(pkg) == INVALID_FILE_ATTRIBUTES) {
+                swprintf(cmd, 160, L"msiexec /x %ls", pc);
+                log_line(h, L"rubrapack: preflight: refused: the cached package of %ls is missing (%ls)", pc, pkg);
+                pre_message(h, L"Cache", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, pc, cmd, product);
+                rc = ERROR_INSTALL_FAILURE;
+            }
+        }
+    }
+    for (UINT i = 0; i < nfiles; ++i) HeapFree(GetProcessHeap(), 0, files[i]);
+    wchar_t *all[] = { product, uilevel, answer, dflt, remove, older, dirs, code };
+    for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+        if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
+    }
+    if (names.buf) HeapFree(GetProcessHeap(), 0, names.buf);
+    return rc;
+}

@@ -454,6 +454,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 const char *id = rp_ui_text_id(t);
                 if (!ir->ui_save_log && strncmp(id, "SaveLog", 7) == 0) continue;    // no button, no texts
                 if (strncmp(id, "Removal", 7) == 0) continue;        // falls back to the install text
+                if (strncmp(id, "Preflight", 9) == 0) continue;      // falls back to English
                 bool have = false;
                 for (size_t u = 0; u < ir->ui_text_count && !have; ++u) {
                     const rp_ir_ui_text_t *x = &ir->ui_texts[u];

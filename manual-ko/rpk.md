@@ -208,7 +208,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), preflight(`false`: 진행 전 점검 없음), close-programs(`ask`, `always`, `never`), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -853,7 +853,8 @@ text = "This will install [ProductName]. Close other programs first."
 `ReadyText`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
 `UserExitTitle`, `UserExitText`, `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`,
 `FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
-`RepairText`, `Remove`, `RemoveText`, `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지), 그리고
+`RepairText`, `Remove`, `RemoveText`, `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
 주지 않는 다른 언어는 설치 문구를 쓴다).
@@ -989,6 +990,28 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 `msiexec /x {ProductCode} /qn MSIRESTARTMANAGERCONTROL=Disable`. 옛 판을 다른 도구가
 `MSIRESTARTMANAGERCONTROL=Disable` 없이 만들었을 때 쓴다: 그런 판을 업그레이드 도중에 지우면 그 파일을
 불러 쓰는 프로그램을 모두 닫으려 한다(`formats/msi-package.md` 의 "사용 중인 파일" 참고).
+
+### 진행하기 전에: 사전 점검
+
+설치·업그레이드·제거가 무엇이든 바꾸기 전에 패키지가 살핀다:
+
+- **제품의 파일을 쓰고 있는 프로그램** - 실행 중인 제품 자신의 프로그램과, 제품의 DLL 을 싣고 있는 다른 프로그램(입력기나
+  셸 확장이면 열려 있는 거의 모든 프로그램). 몇 개인지와 이름을 보이고 모두 종료할지 묻는다. **예**는 창들에 닫기를 청하고
+  몇 초 뒤 남은 것을 끝낸다(그 안의 저장하지 않은 작업은 잃을 수 있다). **아니요**는 종료하지 않고 계속한다 - 파일은
+  어차피 바뀌고, 그 프로그램들은 다시 열 때까지 이전 것을 쓴다. **취소**는 아무것도 바꾸지 않고 그만둔다.
+- **물어볼 창이 없으면**(`/qn`) 오류(1603; 로그에 프로그램 이름)로 멈춘다 - 명령줄이 할 일을 말해 주지 않는 한:
+  `RPCLOSE=yes` 는 모두 종료하고 계속하고, `RPCLOSE=no` 는 종료하지 않고 계속한다.
+- 설치와 업그레이드에서: **이미 있는 패키지 폴더**가 설치 프로그램이 그 안의 파일을 지울 수 있는 폴더이고, **옛 판의 캐시된
+  패키지**가 남아 있는지(없으면 업그레이드가 그 판을 지울 수 없다). 아니면 무엇이 잘못됐는지와 제품을 먼저 제거하라는 말을
+  띄우고 아무것도 설치하지 않는다. 제거는 이 때문에 거절되지 않는다.
+
+`close-programs = "always"` 는 묻지 않고 종료하고, `"never"` 는 종료하지도 묻지도 않는다(`/qn` 에서도). 기본은 `"ask"`
+다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
+`PreflightCache` 다(`[ui-text.*]`; 영어와 한국어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
+
+Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 도는 동안 두 번째 설치는 곧바로 1618 로 끝나고, 중간에 끊긴
+설치(충돌, 정전) 뒤의 다음 설치는 끝나지 않은 것을 먼저 되돌린다. 끊긴 제거 뒤에는 그 되돌리기가 제품을 도로 놓고 제거는
+1605 로 끝난다: 한 번 더 제거하면 된다.
 
 ### 나중에 정리하기: 정리 작업
 

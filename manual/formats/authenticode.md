@@ -158,21 +158,21 @@ signature made with any key carries these same values. The streams in order of t
 | # | name (UTF-16LE) | Name | Size |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 80384 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 89088 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
-| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 48 |
+| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 56 |
 | 6 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
 | 7 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
 | 8 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 1764 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 600 |
-| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 150 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 3706 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 684 |
+| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 156 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 42 |
-| 16 | `40 48 59 45 f2 44` ... | `Property` | 48 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 88 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
 | 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
@@ -185,13 +185,13 @@ The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its n
 two zero times: 908 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-7d c4 5c e5 d8 e3 6a f6 0c 70 b8 5a 0a dc 9f 2f 90 79 1a 5f e3 2a 3b 09 6d 11 eb 37 94 4f ae 89
+34 a5 82 a0 bf 98 e5 6e eb bc 09 c3 1a ee 26 95 4f d8 49 45 99 38 9d dc d4 58 6f 98 0f 1b 3c 3f
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-c9 0d c2 9e ff c4 d7 94 43 41 1f 9e b3 57 f9 4f ba af 0a 45 5a d8 89 44 9c f7 3c f9 e8 70 9f c0
+71 30 6a 69 9c ac 2b 09 75 84 c7 44 ab 8d 2a ee 6c 11 fd 32 9a 73 11 f6 c7 e2 fc 0b f2 87 66 38
 ```
 

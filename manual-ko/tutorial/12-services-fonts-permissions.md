@@ -106,6 +106,19 @@ Windows 의 모든 파일, 폴더, 레지스트리 키에는 누가 읽고 바�
 그래서 `C:\ProgramData\Hello` 는 모든 사용자가 쓸 수 있지만, 누가 쓸 수 있는지는 관리자만 바꾼다. 손으로 설정한
 폴더의 문자열은 `icacls` 나 PowerShell 의 `(Get-Acl C:\경로).Sddl` 로 얻는다.
 
+## 아직 실행 중인 프로그램: 사전 점검
+
+패키지는 무엇이든 바꾸기 전에 어떤 프로그램이 제품의 파일을 쓰고 있는지 - 제품 자신의 프로그램과, 제품의 DLL 을 싣고
+있는 프로그램 - 살피고 모두 종료할지 묻는다(예는 종료, 아니요는 종료하지 않고 계속, 취소는 중단). 창이 없으면(`/qn`)
+대신 오류로 멈춘다. 명령줄이 `RPCLOSE=yes` 나 `RPCLOSE=no` 를 주면 그대로 한다:
+
+```text
+C:\work\hello> msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes
+```
+
+`[package]` 의 `close-programs = "always"` 나 `"never"` 는 답을 정해 두고, `preflight = false` 는 이 단계를 뺀다(나머지
+점검은 참조의 "진행하기 전에").
+
 ## 다시 시작하기: `reboot`
 
 어떤 파일은 Windows 를 다시 시작해야 바꿀 수 있다. `reboot = "suppress"`(기본)는 스스로 다시 시작하지 않는다:

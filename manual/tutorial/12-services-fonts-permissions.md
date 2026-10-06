@@ -109,6 +109,20 @@ The SDDL string above, piece by piece:
 So `C:\ProgramData\Hello` is writable by every user, but only administrators may change who may.
 Get a string for a folder you set up by hand with `icacls` or PowerShell's `(Get-Acl C:\path).Sddl`.
 
+## Programs that are still running: the preflight
+
+Before it changes anything, the package looks which programs use the product's files - the
+product's own programs, and programs that have one of its DLLs loaded - and asks whether to close
+them all (Yes closes them, No goes on without closing, Cancel stops). Without a window (`/qn`) it
+stops with an error instead, unless the command line says `RPCLOSE=yes` or `RPCLOSE=no`:
+
+```text
+C:\work\hello> msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes
+```
+
+`close-programs = "always"` or `"never"` in `[package]` fixes the answer, and `preflight = false`
+leaves the step out (the reference, "Before it goes on", has the other checks).
+
 ## Restarting: `reboot`
 
 Sometimes a file cannot be replaced until Windows restarts. `reboot = "suppress"` (the default)

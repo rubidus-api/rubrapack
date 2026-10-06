@@ -550,7 +550,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, cleanup, reg_bad, reglocator_dir;
+    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
@@ -600,6 +600,7 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     if (ir->arp_help) { s_(&pk->property, "ARPHELPLINK"); s_(&pk->property, ir->arp_help); }
     if (ir->arp_about) { s_(&pk->property, "ARPURLINFOABOUT"); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
+    if (!ir->no_preflight && !ir->module) secure = kprintf(k, "%s;%s", secure, "RPCLOSE");     // the answer for a run without UI
     for (size_t i = 0; i < ir->replace_count; ++i) {      // x47: the replaced products' action properties
         char n[40];
         snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
@@ -1047,7 +1048,8 @@ static void lower_helper_actions(pkg_t *pk) {
     // RFC-0026: every package registers a cleanup task when it leaves something for the next
     // restart, unless cleanup = false (or this rubrapack has no helper DLL, which only it needs).
     bool cleanup = !ir->no_cleanup && !ir->module && part_len > 0;
-    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup) {
+    bool preflight = !ir->no_preflight && !ir->module && part_len > 0;
+    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1098,6 +1100,40 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpQwordRollback");
         s_(&pk->customaction, "RP_QwordApply"); i_(&pk->customaction, 1 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpQwordApply");
+    }
+    // DECISIONS 2026-10-06: RpPreflight before InstallValidate - the programs using the product's
+    // files (asked about, or RPCLOSE), the folders and the older versions' cached packages. Its texts
+    // in English, Korean and the dialogs' languages.
+    if (preflight) {
+        const char *dirs = "";
+        const char **keys = rp_mem_alloc(pk->alloc, ir->dir_count + 1, sizeof *keys);
+        size_t nkeys = 0;
+        for (size_t i = 0; keys && i < ir->dir_count; ++i) {
+            if (ir->dirs[i].part_count) keys[nkeys++] = dkey(ir, ir->dirs[i].id);
+        }
+        if (nkeys) rp_sort(keys, nkeys, sizeof *keys, cmp_cstr);
+        for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "%s;%s", dirs, keys[i]) : keys[i];
+        if (keys) rp_mem_free(pk->alloc, keys);
+        if (*dirs) { s_(&pk->property, "RP_PREFLIGHT_DIRS"); s_(&pk->property, dirs); }
+        static const char *const modes[] = { "ask", "always", "never" };
+        s_(&pk->property, "RP_PREFLIGHT_CLOSE"); s_(&pk->property, modes[ir->close_programs]);
+        static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache" };
+        static const char *const base[] = { "en", "ko" };
+        for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
+            const char *id = kprintf(k, "Preflight%s", ids[t], NULL);
+            for (size_t b = 0; b < 2; ++b) {            // English and Korean always
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], base[b]));
+                s_(&pk->property, rp_ui_text_lang(ir, id, base[b]));
+            }
+            for (size_t u = 0; u < ir->ui_lang_count; ++u) {
+                const char *code = ir->ui_langs[u].code;
+                if (strcmp(code, "en") == 0 || strcmp(code, "ko") == 0) continue;
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], code));
+                s_(&pk->property, rp_ui_text_lang(ir, id, code));
+            }
+        }
+        s_(&pk->customaction, "RP_Preflight"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPreflight");
+        pk->preflight = true;
     }
     // RFC-0026: the package's folders and scope for the commit action, which registers the cleanup
     // task only when the installation left something queued for the next restart.
@@ -1453,6 +1489,9 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     if (ir->shortcut_count) {       // MS Learn "Suggested InstallExecuteSequence"
         s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
         s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
+    }
+    if (pk->preflight) {                // before InstallValidate (1400): nothing has been touched yet
+        s_(&pk->iexec, "RP_Preflight"); null_(&pk->iexec); i_(&pk->iexec, 1390);
     }
     if (pk->cleanup) {                  // RFC-0026: last in the script; the commit runs at InstallFinalize
         s_(&pk->iexec, "RP_CleanupPrepare"); null_(&pk->iexec); i_(&pk->iexec, 6590);
