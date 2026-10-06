@@ -19,6 +19,7 @@
 #include <windows.h>
 #include <bcrypt.h>
 #include <msi.h>
+#include <sddl.h>
 #include <shellapi.h>
 
 #include <stdint.h>
@@ -107,6 +108,12 @@ static bool parse(const uint8_t *m, uint32_t n, uint64_t payload_len, chain_t *c
     for (uint32_t i = 0; i < c->count; ++i) {
         package_t *p = &c->p[i];
         STR(p->id, p->id_len);
+        // The id names the package's temporary file: a short plain name, as `rubrapack build` writes.
+        if (p->id_len == 0 || p->id_len > 60) return false;
+        for (uint32_t k = 0; k < p->id_len; ++k) {
+            char ch = p->id[k];
+            if (!((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '_')) return false;
+        }
         STR(p->properties, p->properties_len);
         STR(p->product_code, p->product_code_len);
         STR(p->version, p->version_len);
@@ -209,7 +216,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
               end >= TRAILER && read_at(f, end - TRAILER, t, TRAILER) && memcmp(t + 24, "RPCHAIN!", 8) == 0;
     uint64_t start = ok ? u64(t) : 0, mat = ok ? u64(t + 8) : 0;
     uint32_t mlen = ok ? u32(t + 16) : 0;
-    ok = ok && start <= mat && mat + mlen <= end - TRAILER && mlen > 0 && (manifest = LocalAlloc(LMEM_FIXED, mlen)) != NULL &&
+    ok = ok && start <= mat && mat <= end - TRAILER && mlen <= end - TRAILER - mat && mlen > 0 && (manifest = LocalAlloc(LMEM_FIXED, mlen)) != NULL &&
          read_at(f, mat, manifest, mlen) && parse(manifest, mlen, mat - start, &c);
     if (!ok) {
         say(L"Setup", L"This setup program is damaged: download it again.", true);
@@ -247,13 +254,20 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     }
 
     // A folder of its own under %TEMP% for the packages.
+    // Elevated, only SYSTEM and Administrators may write there: the same user's programs that are
+    // not elevated can write in %TEMP%, and a package swapped after its check would be installed
+    // with this program's rights.
     wchar_t dir[MAX_PATH], path[MAX_PATH + 80];
     DWORD dn = GetTempPathW(MAX_PATH, dir);
     bool made = false;
-    for (unsigned k = 0; dn && dn < MAX_PATH - 40 && !made && k < 100; ++k) {
+    SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
+    bool locked = !elevated() ||
+                  ConvertStringSecurityDescriptorToSecurityDescriptorW(L"O:BAD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)", SDDL_REVISION_1, &sa.lpSecurityDescriptor, NULL);
+    for (unsigned k = 0; locked && dn && dn < MAX_PATH - 40 && !made && k < 100; ++k) {
         wsprintfW(dir + dn, L"rpsetup-%08lx-%u", GetCurrentProcessId() ^ GetTickCount(), k);
-        made = CreateDirectoryW(dir, NULL) != 0;
+        made = CreateDirectoryW(dir, sa.lpSecurityDescriptor ? &sa : NULL) != 0;
     }
+    if (sa.lpSecurityDescriptor) LocalFree(sa.lpSecurityDescriptor);
     if (!made) {
         say(title, L"Setup could not create a temporary folder.", true);
         CloseHandle(f);

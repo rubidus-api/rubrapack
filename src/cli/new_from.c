@@ -535,8 +535,32 @@ static const char *save_stream(cx_t *c, const char *table_name, const char *key,
     uint8_t *buf = own(c, rp_mem_alloc(c->alloc, n + 1, 1));
     if (buf == NULL || rp_cfb_read(c->cfb, id, buf, n) != PROVEN_OK) return NULL;
     if (n < 4 || buf[0] != 0 || buf[1] != 0 || buf[2] != 1 || buf[3] != 0) return NULL;      // an .ico only (not a program's icons)
+    // The name is the package's own text (an Icon key): as a file name it is one plain component,
+    // so a key such as "../x" cannot name a file outside the folder.
     size_t nl = strlen(name);
+    char *plain = own(c, rp_mem_alloc(c->alloc, nl + 2, 1));
+    if (plain == NULL || nl == 0 || nl > 200) return NULL;
+    size_t base = 0;
+    while (base < nl && name[base] != '.') ++base;
+    bool device = false;
+    if (base == 3 || base == 4) {
+        char up[5] = { 0 };
+        for (size_t i = 0; i < base; ++i) up[i] = (char)(name[i] >= 'a' && name[i] <= 'z' ? name[i] - 32 : name[i]);
+        device = base == 3 ? strcmp(up, "CON") == 0 || strcmp(up, "PRN") == 0 || strcmp(up, "AUX") == 0 || strcmp(up, "NUL") == 0
+                           : (memcmp(up, "COM", 3) == 0 || memcmp(up, "LPT", 3) == 0) && up[3] >= '0' && up[3] <= '9';
+    }
+    size_t w = 0;
+    if (device || name[0] == '.') plain[w++] = '_';
+    for (size_t i = 0; i < nl; ++i) {
+        unsigned char ch = (unsigned char)name[i];
+        plain[w++] = ch < 0x20 || ch == 0x7F || strchr("/\\:*?\"<>|", ch) ? '_' : (char)ch;
+    }
+    for (size_t k = w; k > 0 && (plain[k - 1] == ' ' || plain[k - 1] == '.'); --k) plain[k - 1] = '_';
+    plain[w] = '\0';
+    name = plain;
+    nl = w;
     if (nl < 4 || (strcmp(name + nl - 4, ".ico") != 0 && strcmp(name + nl - 4, ".ICO") != 0)) name = fmt2(c, "%s.ico", name, NULL);
+    if (name == NULL) return NULL;
     char *folder = fmt2(c, "%s/_icons", dist, NULL);
     if (folder == NULL) return NULL;
     if (rp_pal_stat(c->alloc, folder, NULL) == RP_FS_NONE && rp_pal_mkdir_new(c->alloc, folder) != PROVEN_OK) return NULL;

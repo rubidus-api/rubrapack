@@ -72,6 +72,7 @@
 #include <msiquery.h>
 #include <aclapi.h>
 #include <sddl.h>
+#include <shlobj.h>
 #include <commdlg.h>
 
 #include "../clean/pfro.h"
@@ -158,11 +159,40 @@ static wchar_t *get_property(MSIHANDLE h, const wchar_t *name) {
     return s;
 }
 
+// Formats into out. A text that does not fit is not cut short (a path cut short is another path):
+// out is then empty and the result -1, so whatever is done with it fails instead.
+static int wfmt(wchar_t *out, size_t cap, const wchar_t *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    int n = vswprintf(out, cap, fmt, ap);
+    va_end(ap);
+    if (n < 0 || (size_t)n >= cap) {
+        out[0] = 0;
+        return -1;
+    }
+    return n;
+}
+
+// "{8-4-4-4-12}" in hex digits: what a ProductCode or UpgradeCode looks like. A code goes into
+// paths, a task's name and a command line, so anything else is refused.
+static bool is_guid(const wchar_t *s) {
+    if (s == NULL || wcslen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
+    for (int i = 1; i < 37; ++i) {
+        bool dash = i == 9 || i == 14 || i == 19 || i == 24;
+        wchar_t c = s[i];
+        bool hex = (c >= L'0' && c <= L'9') || (c >= L'A' && c <= L'F') || (c >= L'a' && c <= L'f');
+        if (dash ? c != L'-' : !hex) return false;
+    }
+    return true;
+}
+
 static void log_line(MSIHANDLE h, const wchar_t *fmt, ...) {
     wchar_t text[1024];
     va_list ap;
     va_start(ap, fmt);
+    text[0] = 0;
     vswprintf(text, 1024, fmt, ap);
+    text[1023] = 0;                 // a line too long is cut, never left without its end
     va_end(ap);
     MSIHANDLE rec = MsiCreateRecord(0);
     MsiRecordSetStringW(rec, 0, text);
@@ -187,7 +217,11 @@ static UINT set_data(MSIHANDLE h, const wchar_t *action, writer_t *w) {
 __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
     wchar_t *plan = get_property(h, L"RP_QWORDS");
     wchar_t *allusers = get_property(h, L"ALLUSERS");
-    if (plan == NULL || allusers == NULL) return ERROR_INSTALL_FAILURE;
+    if (plan == NULL || allusers == NULL) {
+        if (plan) HeapFree(GetProcessHeap(), 0, plan);
+        if (allusers) HeapFree(GetProcessHeap(), 0, allusers);
+        return ERROR_INSTALL_FAILURE;
+    }
     bool machine = allusers[0] == L'1';
     reader_t r = { plan, plan + wcslen(plan) };
     writer_t apply = { 0 }, rollback = { 0 };
@@ -220,7 +254,7 @@ __declspec(dllexport) UINT __stdcall RpQwordPrepare(MSIHANDLE h) {
             RegCloseKey(k);
         }
         wchar_t oldhex[24];
-        swprintf(oldhex, 24, L"%016llX", (unsigned long long)old);
+        wfmt(oldhex, 24, L"%016llX", (unsigned long long)old);
         const wchar_t *rec[6] = { op, root, f[1], f[2], f[3], f[4] };
         for (int i = 0; i < 6; ++i) w_field(&apply, rec[i]);
         const wchar_t *back[6] = { had ? L"w" : L"d", root, f[1], f[2], f[3], oldhex };
@@ -339,6 +373,43 @@ static int check_dir(MSIHANDLE h, const wchar_t *path) {
     return rc;
 }
 
+// Whether `path` is a real folder (not a link) that a trusted account owns. With `dacl`, its access
+// list is then replaced by that one (a folder made before this check existed may let users write).
+static bool trusted_dir(const wchar_t *path, PACL dacl) {
+    HANDLE d = CreateFileW(path, READ_CONTROL | (dacl ? WRITE_DAC : 0), FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,
+                           OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+    if (d == INVALID_HANDLE_VALUE) return false;
+    BY_HANDLE_FILE_INFORMATION fi;
+    PSID owner = NULL;
+    PSECURITY_DESCRIPTOR sd = NULL;
+    bool ok = GetFileInformationByHandle(d, &fi) && (fi.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+              !(fi.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) &&
+              GetSecurityInfo(d, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &owner, NULL, NULL, NULL, &sd) == ERROR_SUCCESS && owner &&
+              trusted_owner(owner);
+    if (sd) LocalFree(sd);
+    if (ok && dacl)
+        ok = SetSecurityInfo(d, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION, NULL, NULL, dacl, NULL) == ERROR_SUCCESS;
+    CloseHandle(d);
+    return ok;
+}
+
+// One folder that only trusted accounts may change: made here with `sd`, or there already as a real
+// folder a trusted account owns (its access list then set to `sd`'s when `reset`). A folder a user
+// made first - anywhere users may create folders, such as %ProgramData% or a volume's root - is
+// refused: its owner could put other files there, or another folder in its place.
+static bool secure_dir(MSIHANDLE h, const wchar_t *path, PSECURITY_DESCRIPTOR sd, bool reset) {
+    SECURITY_ATTRIBUTES sa = { sizeof sa, sd, FALSE };
+    if (path[0] == 0) return false;
+    if (CreateDirectoryW(path, &sa)) return true;
+    DWORD e = GetLastError();
+    BOOL present = FALSE, dflt = FALSE;
+    PACL dacl = NULL;
+    bool ok = e == ERROR_ALREADY_EXISTS && GetSecurityDescriptorDacl(sd, &present, &dacl, &dflt) && present && dacl &&
+              trusted_dir(path, reset ? dacl : NULL);
+    if (!ok) log_line(h, L"rubrapack: %ls is not a folder of a trusted account, or could not be made (%lu)", path, (unsigned long)e);
+    return ok;
+}
+
 __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
     wchar_t *list = get_property(h, L"RP_GUARD");
     if (list == NULL) return ERROR_INSTALL_FAILURE;
@@ -358,7 +429,7 @@ __declspec(dllexport) UINT __stdcall RpGuardDirs(MSIHANDLE h) {
         // The message in the chosen language, with [1] = the folder.
         wchar_t *lang = get_property(h, L"RPLANGUAGE");
         wchar_t name[64];
-        swprintf(name, 64, L"RpGuardMsg_%ls", lang && lang[0] ? lang : L"en");
+        wfmt(name, 64, L"RpGuardMsg_%ls", lang && lang[0] ? lang : L"en");
         wchar_t *msg = get_property(h, name);
         if (msg == NULL || msg[0] == 0) {
             if (msg) HeapFree(GetProcessHeap(), 0, msg);
@@ -415,7 +486,7 @@ __declspec(dllexport) UINT __stdcall RpSaveLog(MSIHANDLE h) {
     // The suggested name: the product's name, without the characters a file name cannot have.
     static wchar_t file[MAX_PATH * 4];
     wchar_t *product = get_property(h, L"ProductName");
-    swprintf(file, MAX_PATH, L"%ls.log", product && product[0] ? product : L"setup");
+    wfmt(file, MAX_PATH, L"%ls.log", product && product[0] ? product : L"setup");
     if (product) HeapFree(GetProcessHeap(), 0, product);
     for (wchar_t *p = file; *p; ++p) {
         if (*p < 32 || wcschr(L"\\/:*?\"<>|", *p)) *p = L'_';
@@ -435,7 +506,7 @@ __declspec(dllexport) UINT __stdcall RpSaveLog(MSIHANDLE h) {
         } else {
             wchar_t *lang = get_property(h, L"RPLANGUAGE");
             wchar_t name[64];
-            swprintf(name, 64, L"RpLogMsg_%ls", lang && lang[0] ? lang : L"en");
+            wfmt(name, 64, L"RpLogMsg_%ls", lang && lang[0] ? lang : L"en");
             wchar_t *msg = get_property(h, name);
             if (msg == NULL || msg[0] == 0) {
                 if (msg) HeapFree(GetProcessHeap(), 0, msg);
@@ -483,16 +554,25 @@ static void w_rec(writer_t *w, const wchar_t *op, const wchar_t *a, const wchar_
     w_field(w, b);
 }
 
-// The cleanup folder of this product: %ProgramData% (per machine) or the user's %LOCALAPPDATA%
-// (per user), then rubrapack\cleanup\<ProductCode>.
-static bool cleanup_folder(MSIHANDLE h, bool machine, wchar_t out[MAX_PATH * 4]) {
+// The cleanup folder of product `pc`: rubrapack\cleanup\<ProductCode> under the user's
+// %LOCALAPPDATA% (per user) or under the computer's program data folder (per machine).
+// Per machine the files there run as SYSTEM, so the folder is asked from Windows and only by the
+// action that runs as SYSTEM: an action that runs as the user has the user's environment, where
+// %ProgramData% is whatever the user set it to.
+static bool cleanup_folder(const wchar_t *pc, bool machine, wchar_t out[MAX_PATH * 4]) {
     wchar_t base[MAX_PATH * 2];
-    DWORD n = GetEnvironmentVariableW(machine ? L"ProgramData" : L"LOCALAPPDATA", base, MAX_PATH * 2);
-    wchar_t *pc = get_property(h, L"ProductCode");
-    bool ok = n > 0 && n < MAX_PATH * 2 && pc && pc[0];
-    if (ok) swprintf(out, MAX_PATH * 4, L"%ls\\rubrapack\\cleanup\\%ls", base, pc);
-    if (pc) HeapFree(GetProcessHeap(), 0, pc);
-    return ok;
+    out[0] = 0;
+    if (!is_guid(pc)) return false;
+    if (machine) {
+        if (SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, base) != S_OK) return false;
+    } else {
+        DWORD n = GetEnvironmentVariableW(L"LOCALAPPDATA", base, MAX_PATH * 2);
+        if (n == 0 || n >= MAX_PATH * 2) return false;
+    }
+    size_t bl = wcslen(base);
+    if (bl < 3 || base[1] != L':') return false;
+    if (base[bl - 1] == L'\\') base[bl - 1] = 0;
+    return wfmt(out, MAX_PATH * 4, L"%ls\\rubrapack\\cleanup\\%ls", base, pc) > 0;
 }
 
 static void make_dirs(const wchar_t *path) {
@@ -510,10 +590,10 @@ static void make_dirs(const wchar_t *path) {
 static void note_pending(MSIHANDLE h, const wchar_t *folder, const wchar_t *path) {
     wchar_t file[MAX_PATH * 4], line[MAX_PATH * 4 + 16];
     make_dirs(folder);
-    swprintf(file, MAX_PATH * 4, L"%ls\\pending.txt", folder);
+    wfmt(file, MAX_PATH * 4, L"%ls\\pending.txt", folder);
     HANDLE f = CreateFileW(file, FILE_APPEND_DATA, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (f == INVALID_HANDLE_VALUE) return;
-    int n = swprintf(line, MAX_PATH * 4 + 16, L"file\t%ls\r\n", path);
+    int n = wfmt(line, MAX_PATH * 4 + 16, L"file\t%ls\r\n", path);
     DWORD put = 0;
     if (n > 0) WriteFile(f, line, (DWORD)n * sizeof(wchar_t), &put, NULL);
     CloseHandle(f);
@@ -535,10 +615,13 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     } else if (rc == ERROR_SUCCESS) {
         // One backup folder per volume (or the temporary folder), named once per run.
         wchar_t tag[40];
-        swprintf(tag, 40, L"rp-%08lX%08lX", (unsigned long)GetCurrentProcessId(), (unsigned long)GetTickCount());
+        wfmt(tag, 40, L"rp-%08lX%08lX", (unsigned long)GetCurrentProcessId(), (unsigned long)GetTickCount());
         // Where a file that cannot even be queued for the next restart (per user) is noted.
+        // Per user only: a per-machine removal runs as SYSTEM, which can always queue.
         static wchar_t cfolder[MAX_PATH * 4];
-        if (cleanup_folder(h, wcscmp(root, L"volume") == 0, cfolder)) w_rec(&apply, L"c", cfolder, L"");
+        wchar_t *pc = get_property(h, L"ProductCode");
+        if (wcscmp(root, L"volume") != 0 && pc && cleanup_folder(pc, false, cfolder)) w_rec(&apply, L"c", cfolder, L"");
+        if (pc) HeapFree(GetProcessHeap(), 0, pc);
         reader_t r = { plan + 4, plan + wcslen(plan) };
         static wchar_t f[3][MAX_TEXT / 8];
         static wchar_t dir[MAX_PATH * 4], src[MAX_PATH * 4], dst[MAX_PATH * 4], vol[MAX_PATH * 4], bdir[MAX_PATH * 4];
@@ -560,22 +643,22 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
                 w_rec(&commit, L"r", dir, L"");
                 continue;
             }
-            swprintf(src, MAX_PATH * 4, L"%ls*", dir);
+            wfmt(src, MAX_PATH * 4, L"%ls*", dir);
             WIN32_FIND_DATAW fd;
             HANDLE fh = FindFirstFileExW(src, FindExInfoBasic, &fd, FindExSearchNameMatch, NULL, 0);
             if (fh == INVALID_HANDLE_VALUE) continue;
             do {
                 if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
                 if (!wild(f[1], fd.cFileName)) continue;
-                swprintf(src, MAX_PATH * 4, L"%ls%ls", dir, fd.cFileName);
+                wfmt(src, MAX_PATH * 4, L"%ls%ls", dir, fd.cFileName);
                 if (wcscmp(root, L"volume") == 0 && GetVolumePathNameW(src, vol, MAX_PATH * 4)) {
-                    swprintf(bdir, MAX_PATH * 4, L"%lsConfig.Msi\\%ls", vol, tag);
+                    wfmt(bdir, MAX_PATH * 4, L"%lsConfig.Msi\\%ls", vol, tag);
                 } else {
                     DWORD tn = GetTempPathW(MAX_PATH * 4, vol);
                     if (tn == 0 || tn >= MAX_PATH * 4) continue;
-                    swprintf(bdir, MAX_PATH * 4, L"%ls%ls", vol, tag);
+                    wfmt(bdir, MAX_PATH * 4, L"%ls%ls", vol, tag);
                 }
-                swprintf(dst, MAX_PATH * 4, L"%ls\\%zu", bdir, n++);
+                wfmt(dst, MAX_PATH * 4, L"%ls\\%zu", bdir, n++);
                 w_rec(&apply, L"m", src, dst);
                 w_rec(&rollback, L"m", dst, src);
                 w_rec(&commit, L"f", dst, L"");
@@ -605,27 +688,63 @@ __declspec(dllexport) UINT __stdcall RpRemovePrepare(MSIHANDLE h) {
     return rc;
 }
 
-// A backup folder only SYSTEM and Administrators can open (it holds removed files for a moment).
-static void make_private_dir(MSIHANDLE h, const wchar_t *path) {
-    wchar_t parent[MAX_PATH * 4];
-    wcsncpy(parent, path, MAX_PATH * 4 - 1);
-    parent[MAX_PATH * 4 - 1] = 0;
+// The folder above `path` when that folder is named Config.Msi (a per-machine backup folder is
+// <volume>\Config.Msi\rp-<tag>; a per-user one is in the user's temporary folder), else false.
+static bool config_msi_above(const wchar_t *path, wchar_t parent[MAX_PATH * 4]) {
+    size_t n = wcslen(path);
+    if (n >= MAX_PATH * 4) return false;
+    memcpy(parent, path, (n + 1) * sizeof *parent);
     wchar_t *slash = wcsrchr(parent, L'\\');
-    if (slash) {
-        *slash = 0;
-        CreateDirectoryW(parent, NULL);      // Config.Msi, normally there already
-    }
-    SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
-    if (ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)", SDDL_REVISION_1,
-                                                             &sa.lpSecurityDescriptor, NULL)) {
-        if (!CreateDirectoryW(path, &sa) && GetLastError() != ERROR_ALREADY_EXISTS) {
-            CreateDirectoryW(path, NULL);    // a per-user installation cannot set that owner list
+    if (slash == NULL) return false;
+    *slash = 0;
+    slash = wcsrchr(parent, L'\\');
+    return slash && _wcsicmp(slash + 1, L"Config.Msi") == 0;
+}
+
+// Whether the backup folder `dir` may be used. Per machine the moves run as SYSTEM, and users may
+// create folders in a volume's root: a Config.Msi (or a backup folder in it) that a user made is
+// the user's to change, so files would be moved back from - or deleted in - a place the user chose.
+// Both must be real folders a trusted account owns. A per-user folder is the user's own.
+static bool backup_ok(const wchar_t *dir) {
+    static wchar_t parent[MAX_PATH * 4];
+    if (!config_msi_above(dir, parent)) return true;
+    return trusted_dir(parent, NULL) && trusted_dir(dir, NULL);
+}
+
+// The same for a file in a backup folder.
+static bool backup_file_ok(const wchar_t *file) {
+    static wchar_t dir[MAX_PATH * 4];
+    size_t n = wcslen(file);
+    if (n >= MAX_PATH * 4) return false;
+    memcpy(dir, file, (n + 1) * sizeof *dir);
+    wchar_t *slash = wcsrchr(dir, L'\\');
+    if (slash == NULL) return false;
+    *slash = 0;
+    return backup_ok(dir);
+}
+
+// A backup folder (it holds removed files for a moment). Per machine: only SYSTEM and
+// Administrators can open it, and it and Config.Msi above it are made here or owned by a trusted
+// account already.
+static void make_private_dir(MSIHANDLE h, const wchar_t *path) {
+    static wchar_t parent[MAX_PATH * 4];
+    bool ok;
+    if (config_msi_above(path, parent)) {
+        PSECURITY_DESCRIPTOR sd = NULL;
+        ok = ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)", SDDL_REVISION_1, &sd, NULL) != 0;
+        if (ok) {
+            bool had = GetFileAttributesW(parent) != INVALID_FILE_ATTRIBUTES;
+            ok = secure_dir(h, parent, sd, false);
+            if (ok && !had) SetFileAttributesW(parent, FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM);   // as Windows Installer makes it
+            ok = ok && secure_dir(h, path, sd, true);
+            LocalFree(sd);
         }
-        LocalFree(sa.lpSecurityDescriptor);
     } else {
-        CreateDirectoryW(path, NULL);
+        // The user's own temporary folder: the user's access list as it is (one naming only SYSTEM
+        // and Administrators would shut a standard user out of the folder just made).
+        ok = CreateDirectoryW(path, NULL) || GetLastError() == ERROR_ALREADY_EXISTS;
     }
-    log_line(h, L"rubrapack: remove: backup folder %ls", path);
+    log_line(h, L"rubrapack: remove: backup folder %ls%ls", path, ok ? L"" : L": not usable");
 }
 
 // Runs a list made by RpRemovePrepare: m move (src, dst), d make the backup folder, f delete a
@@ -658,7 +777,10 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
                     }
                     made = true;
                 }
-                BOOL ok = MoveFileExW(f[1], f[2], MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH);
+                // The backup side of the move: f[2] going there, f[1] coming back.
+                BOOL ok = backup_file_ok(to_backup ? f[2] : f[1]);
+                if (!ok) SetLastError(ERROR_ACCESS_DENIED);
+                ok = ok && MoveFileExW(f[1], f[2], MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH);
                 DWORD e = ok ? 0 : GetLastError();
                 log_line(h, L"rubrapack: remove: move %ls -> %ls: %lu", f[1], f[2], (unsigned long)e);
                 if (!ok && to_backup) {          // held: it goes at the next restart instead
@@ -667,8 +789,10 @@ static void remove_list(MSIHANDLE h, bool to_backup) {
                     if (!later && note[0]) note_pending(h, note, f[1]);     // per user: the cleanup task's job
                 }
             } else if (op == L'f') {
+                if (!backup_file_ok(f[1])) continue;
                 if (!DeleteFileW(f[1]) && GetLastError() != ERROR_FILE_NOT_FOUND) MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
             } else if (op == L'x') {
+                if (!backup_ok(f[1])) continue;
                 if (!RemoveDirectoryW(f[1]) && GetLastError() != ERROR_FILE_NOT_FOUND) MoveFileExW(f[1], NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
             } else if (op == L'r') {
                 BOOL ok = RemoveDirectoryW(f[1]);
@@ -722,7 +846,7 @@ __declspec(dllexport) UINT __stdcall RpRescuePrepare(MSIHANDLE h) {
         src = *dst ? dst + wcslen(dst) + 1 : dst + 1;
     }
     wchar_t num[24];
-    swprintf(num, 24, L"%lu", count);
+    wfmt(num, 24, L"%lu", count);
     w_field(&w, num);
     MSIHANDLE db = pend ? MsiGetActiveDatabase(h) : 0, view = 0, rec = 0;
     size_t n = 0;
@@ -817,7 +941,7 @@ static bool is_backup(const wchar_t *path) {
 // x46: the add-ons of the main product `uc` still installed, from one registry root and view.
 static void addons_from(MSIHANDLE h, HKEY root, REGSAM view, const wchar_t *uc, wchar_t codes[][40], size_t *n, size_t cap) {
     wchar_t key[160];
-    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", uc);
+    wfmt(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", uc);
     HKEY k;
     if (RegOpenKeyExW(root, key, 0, KEY_QUERY_VALUE | view, &k) != ERROR_SUCCESS) return;
     for (DWORD i = 0; *n < cap; ++i) {
@@ -825,7 +949,7 @@ static void addons_from(MSIHANDLE h, HKEY root, REGSAM view, const wchar_t *uc, 
         DWORD nl = 64;
         LONG e = RegEnumValueW(k, i, name, &nl, NULL, NULL, NULL, NULL);
         if (e == ERROR_NO_MORE_ITEMS) break;
-        if (e != ERROR_SUCCESS || nl != 38 || name[0] != L'{') continue;
+        if (e != ERROR_SUCCESS || nl != 38 || !is_guid(name)) continue;
         bool dup = false;
         for (size_t j = 0; j < *n; ++j) dup = dup || _wcsicmp(codes[j], name) == 0;
         if (dup || MsiQueryProductStateW(name) != INSTALLSTATE_DEFAULT) continue;
@@ -849,17 +973,18 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
     // later, sees what there is (and removes itself when there is nothing).
     wchar_t *remove = get_property(h, L"REMOVE"), *older = get_property(h, L"RP_OLDER_FOUND"), *installed = get_property(h, L"Installed");
     const wchar_t *why = remove && remove[0] ? L"remove" : older && older[0] ? L"upgrade" : installed && installed[0] ? L"maintenance" : L"";
-    if (dirs && pc && cleanup_folder(h, machine, folder)) {
+    // Per machine the folder is left empty here: the action that runs as SYSTEM finds it itself.
+    if (dirs && pc && is_guid(pc) && (machine || cleanup_folder(pc, false, folder))) {
         w_field(&w, pc);
         w_field(&w, machine ? L"machine" : L"user");
-        w_field(&w, folder);
+        w_field(&w, machine ? L"" : folder);
         w_field(&w, why);
         // x46: the add-ons, on a real removal only (an upgrade removing this version keeps them).
         static wchar_t codes[64][40];
         size_t nadd = 0;
         wchar_t *want = get_property(h, L"RP_REMOVE_ADDONS"), *upg = get_property(h, L"UPGRADINGPRODUCTCODE");
         wchar_t *uc = get_property(h, L"UpgradeCode");
-        bool addons = want && wcscmp(want, L"1") == 0 && remove && wcscmp(remove, L"ALL") == 0 && !(upg && upg[0]) && uc && uc[0];
+        bool addons = want && wcscmp(want, L"1") == 0 && remove && wcscmp(remove, L"ALL") == 0 && !(upg && upg[0]) && is_guid(uc);
         if (addons) {
             HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
             addons_from(h, root, KEY_WOW64_64KEY, uc, codes, &nadd, 64);
@@ -867,7 +992,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         }
         w_field(&w, nadd ? uc : L"");
         wchar_t anum[24];
-        swprintf(anum, 24, L"%zu", nadd);
+        wfmt(anum, 24, L"%zu", nadd);
         w_field(&w, anum);
         for (size_t i = 0; i < nadd; ++i) w_field(&w, codes[i]);
         if (want) HeapFree(GetProcessHeap(), 0, want);
@@ -884,7 +1009,7 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
             ++np;
         }
         wchar_t num[24];
-        swprintf(num, 24, L"%zu", np);
+        wfmt(num, 24, L"%zu", np);
         w_field(&w, num);
         for (size_t i = 0; i < np; ++i) w_field(&w, paths[i]);
         // The deletions already queued under those folders (and, per machine, the installer's
@@ -966,8 +1091,8 @@ static void when_minutes(long long minutes, wchar_t iso[24], wchar_t ymd[12]) {
     SYSTEMTIME st;
     FileTimeToLocalFileTime(&ft, &lt);
     FileTimeToSystemTime(&lt, &st);
-    swprintf(iso, 24, L"%04u-%02u-%02uT%02u:%02u:%02u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-    swprintf(ymd, 12, L"%04u%02u%02u", st.wYear, st.wMonth, st.wDay);
+    wfmt(iso, 24, L"%04u-%02u-%02uT%02u:%02u:%02u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+    wfmt(ymd, 12, L"%04u%02u%02u", st.wYear, st.wMonth, st.wDay);
 }
 
 static void when(int days, wchar_t iso[24], wchar_t ymd[12]) { when_minutes((long long)days * 1440, iso, ymd); }
@@ -989,13 +1114,23 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     for (unsigned long want = wcstoul(num, NULL, 10); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
     const wchar_t *befores = r.p;         // the rest: the deletions queued before the script
     bool machine = wcscmp(scope, L"machine") == 0;
+    // The codes go into paths, the task's name and command lines; per machine the folder is not
+    // taken from the data (which an action running as the user wrote) but asked from Windows.
+    if (!is_guid(pc) || (naddons && !is_guid(parent))) goto done;
+    for (size_t i = 0; i < naddons; ++i) {
+        if (!is_guid(addons[i])) goto done;
+    }
+    if (machine ? !cleanup_folder(pc, true, folder) : folder[0] == 0) {
+        log_line(h, L"rubrapack: cleanup: no folder for the cleanup task; nothing registered");
+        goto done;
+    }
     writer_t list = { 0 };
     size_t found = 0;
-    // Files a per-user package could not queue (RpRemoveApply wrote them down).
+    // Files a per-user package could not queue (RpRemoveApply wrote them down). Never per machine.
     static wchar_t pend[MAX_PATH * 4];
-    swprintf(pend, MAX_PATH * 4, L"%ls\\pending.txt", folder);
+    wfmt(pend, MAX_PATH * 4, L"%ls\\pending.txt", folder);
     writer_t files = { 0 };
-    HANDLE pf = CreateFileW(pend, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE pf = machine ? INVALID_HANDLE_VALUE : CreateFileW(pend, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if (pf != INVALID_HANDLE_VALUE) {
         DWORD size = GetFileSize(pf, NULL), got = 0;
         if (size != INVALID_FILE_SIZE && size < (1u << 20) && size % 2 == 0) {
@@ -1033,8 +1168,8 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
         }
     }
     // Per user the name carries the user's SID: several users may each install the same product.
-    if (machine || sid == NULL) swprintf(name, 160, L"rubrapack cleanup %ls", pc);
-    else swprintf(name, 160, L"rubrapack cleanup %ls %ls", pc, sid);
+    if (machine || sid == NULL) wfmt(name, 160, L"rubrapack cleanup %ls", pc);
+    else wfmt(name, 160, L"rubrapack cleanup %ls %ls", pc, sid);
     when(0, iso0, ymd0);
     static wchar_t isofirst[24], ymdfirst[12];
     when_minutes(2, isofirst, ymdfirst);
@@ -1056,31 +1191,25 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
         w_text(&list, L"addon\t"); w_text(&list, addons[i]); w_text(&list, L"\r\n");
     }
     if (files.buf) w_text(&list, files.buf);
-    // The folder: per machine only SYSTEM and Administrators may write (the task runs as SYSTEM), and
-    // it must not exist already with another owner or pass through a link (%ProgramData% lets
-    // users create folders: one planted there is refused, with the guard's own check).
+    // The folder: per machine only SYSTEM and Administrators may write (the task runs as SYSTEM).
+    // %ProgramData% lets users create folders, so each of the three levels - rubrapack, cleanup,
+    // <ProductCode> - is made here with that access list or is already a real folder a trusted
+    // account owns; the owner of a level a user made could put another folder (and another
+    // program) in place of the one below it.
     SECURITY_ATTRIBUTES sa = { sizeof sa, NULL, FALSE };
     if (machine) {
-        static wchar_t base[MAX_PATH * 4];
-        wcscpy(base, folder);
-        for (int up = 0; up < 2; ++up) {
-            wchar_t *slash = wcsrchr(base, L'\\');
-            if (slash) *slash = 0;
-        }
-        if (check_dir(h, folder) != 0) {
-            log_line(h, L"rubrapack: cleanup: %ls is not safe to use; nothing registered", folder);
-            if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
-            if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
-            goto done;
-        }
-        ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;GRGX;;;BU)", SDDL_REVISION_1,
-                                                             &sa.lpSecurityDescriptor, NULL);
-        make_dirs(folder);
-        if (sa.lpSecurityDescriptor) {
-            SetFileSecurityW(base, DACL_SECURITY_INFORMATION, sa.lpSecurityDescriptor);     // %ProgramData%\rubrapack
-            SetFileSecurityW(folder, DACL_SECURITY_INFORMATION, sa.lpSecurityDescriptor);
-        }
-        if (check_dir(h, folder) != 0) {            // made by someone else in between
+        static wchar_t base[MAX_PATH * 4], mid[MAX_PATH * 4];
+        wcscpy(mid, folder);
+        wchar_t *slash = wcsrchr(mid, L'\\');
+        if (slash) *slash = 0;
+        wcscpy(base, mid);
+        slash = wcsrchr(base, L'\\');
+        if (slash) *slash = 0;
+        bool safe = ConvertStringSecurityDescriptorToSecurityDescriptorW(L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;GRGX;;;BU)", SDDL_REVISION_1,
+                                                                         &sa.lpSecurityDescriptor, NULL) != 0;
+        safe = safe && secure_dir(h, base, sa.lpSecurityDescriptor, true) && secure_dir(h, mid, sa.lpSecurityDescriptor, true) &&
+               secure_dir(h, folder, sa.lpSecurityDescriptor, true);
+        if (!safe) {
             log_line(h, L"rubrapack: cleanup: %ls is not safe to use; nothing registered", folder);
             if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
             if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
@@ -1090,8 +1219,11 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     } else {
         make_dirs(folder);
     }
-    swprintf(exe, MAX_PATH * 4, L"%ls\\rubrapack_clean.exe", folder);
-    swprintf(path, MAX_PATH * 4, L"%ls\\list.txt", folder);
+    wfmt(exe, MAX_PATH * 4, L"%ls\\rubrapack_clean.exe", folder);
+    wfmt(path, MAX_PATH * 4, L"%ls\\list.txt", folder);
+    // New files, with the folder's access list: never one left there with another owner.
+    DeleteFileW(exe);
+    DeleteFileW(path);
     bool ok = write_file(exe, rp_clean_part, rp_clean_part_len, sa.lpSecurityDescriptor ? &sa : NULL) &&
               write_file(path, list.buf, list.len * sizeof(wchar_t), sa.lpSecurityDescriptor ? &sa : NULL);
     writer_t x = { 0 };
@@ -1099,16 +1231,24 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     w_text(&x, L"<?xml version=\"1.0\" encoding=\"UTF-16\"?>\r\n<Task version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\">\r\n");
     w_text(&x, L"<RegistrationInfo><Description>rubrapack: deletes what the installation of ");
     w_xml(&x, pc);
-    w_text(&x, L" had to leave until the next restart, as soon as nothing holds it.</Description></RegistrationInfo>\r\n<Triggers>\r\n<LogonTrigger><StartBoundary>");
+    w_text(&x, L" had to leave until the next restart, as soon as nothing holds it.</Description>");
+    // Per user the task runs without elevation (below), so the user is given the task itself: an
+    // elevated installation registered it, and it must still be able to delete itself at the end.
+    if (sid) {
+        w_text(&x, L"<SecurityDescriptor>D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;");
+        w_text(&x, sid);
+        w_text(&x, L")</SecurityDescriptor>");
+    }
+    w_text(&x, L"</RegistrationInfo>\r\n<Triggers>\r\n<LogonTrigger><StartBoundary>");
     w_text(&x, iso0); w_text(&x, L"</StartBoundary><EndBoundary>"); w_text(&x, iso1); w_text(&x, L"</EndBoundary><Enabled>true</Enabled>");
     if (sid) { w_text(&x, L"<UserId>"); w_text(&x, sid); w_text(&x, L"</UserId>"); }
     w_text(&x, L"</LogonTrigger>\r\n<TimeTrigger><Repetition><Interval>PT15M</Interval><StopAtDurationEnd>false</StopAtDurationEnd></Repetition><StartBoundary>");
     w_text(&x, isofirst); w_text(&x, L"</StartBoundary><EndBoundary>"); w_text(&x, iso1); w_text(&x, L"</EndBoundary><Enabled>true</Enabled></TimeTrigger>\r\n</Triggers>\r\n");
     w_text(&x, L"<Principals><Principal id=\"Author\"><UserId>");
     w_text(&x, machine ? L"S-1-5-18" : sid ? sid : L"");
-    // HighestAvailable for a user too: a task an elevated installation registered can be deleted
-    // only with the same rights (x40), and the task deletes itself at the end.
-    w_text(&x, machine ? L"</UserId><RunLevel>HighestAvailable</RunLevel>" : L"</UserId><LogonType>InteractiveToken</LogonType><RunLevel>HighestAvailable</RunLevel>");
+    // Never elevated for a user: the program is in a folder the user's own programs can write to,
+    // and a task that ran it with an administrator's full rights would hand them those rights.
+    w_text(&x, machine ? L"</UserId><RunLevel>HighestAvailable</RunLevel>" : L"</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel>");
     w_text(&x, L"</Principal></Principals>\r\n<Settings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>"
                L"<StopIfGoingOnBatteries>false</StopIfGoingOnBatteries><StartWhenAvailable>true</StartWhenAvailable><ExecutionTimeLimit>PT10M</ExecutionTimeLimit>"
                L"<DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter></Settings>\r\n<Actions Context=\"Author\"><Exec><Command>");
@@ -1117,16 +1257,16 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     w_xml(&x, folder);
     w_text(&x, L"\"</Arguments></Exec></Actions>\r\n</Task>\r\n");
     if (sid) LocalFree(sid);
-    swprintf(path, MAX_PATH * 4, L"%ls\\task.xml", folder);
+    wfmt(path, MAX_PATH * 4, L"%ls\\task.xml", folder);
     ok = ok && !x.bad && !list.bad && write_file(path, x.buf, x.len * sizeof(wchar_t), NULL);
     GetSystemDirectoryW(sys, MAX_PATH);
     if (ok) {
-        swprintf(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /create /tn \"%ls\" /xml \"%ls\" /f", sys, name, path);
+        wfmt(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /create /tn \"%ls\" /xml \"%ls\" /f", sys, name, path);
         run_wait(h, cmd);     // first run two minutes from now: the engine's own deletions are queued by then
         // With add-ons to remove it also runs right away: rubrapack_clean.exe waits for this
         // installation to end, so the add-ons go seconds after the main product (x46).
         if (naddons) {
-            swprintf(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /run /tn \"%ls\"", sys, name);
+            wfmt(cmd, MAX_PATH * 8, L"\"%ls\\schtasks.exe\" /run /tn \"%ls\"", sys, name);
             run_wait(h, cmd);
         }
     } else {
@@ -1167,19 +1307,19 @@ static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
     wchar_t *lang = get_property(h, L"RPLANGUAGE");
     wchar_t *text = NULL;
     if (lang && lang[0]) {
-        swprintf(name, 80, L"RpPre%ls_%ls", id, lang);
+        wfmt(name, 80, L"RpPre%ls_%ls", id, lang);
         text = get_property(h, name);
     } else {
         wchar_t *ul = get_property(h, L"UserLanguageID");
         if (ul && wcscmp(ul, L"1042") == 0) {
-            swprintf(name, 80, L"RpPre%ls_ko", id);
+            wfmt(name, 80, L"RpPre%ls_ko", id);
             text = get_property(h, name);
         }
         if (ul) HeapFree(GetProcessHeap(), 0, ul);
     }
     if (text == NULL || text[0] == 0) {
         if (text) HeapFree(GetProcessHeap(), 0, text);
-        swprintf(name, 80, L"RpPre%ls_en", id);
+        wfmt(name, 80, L"RpPre%ls_en", id);
         text = get_property(h, name);
     }
     if (lang) HeapFree(GetProcessHeap(), 0, lang);
@@ -1326,7 +1466,7 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         log_line(h, L"rubrapack: preflight: in use by %ls (%ls, process %lu, kind %d)", procs[i].strAppName, image, (unsigned long)pid, (int)procs[i].ApplicationType);
         if (nlisted < 15) {
             wchar_t line[400];
-            swprintf(line, 400, L"  - %ls (%ls)\r\n", procs[i].strAppName[0] ? procs[i].strAppName : image, image[0] ? image : L"?");
+            wfmt(line, 400, L"  - %ls (%ls)\r\n", procs[i].strAppName[0] ? procs[i].strAppName : image, image[0] ? image : L"?");
             w_raw(&names, line, wcslen(line));
         }
         pids[nlisted++] = pid;
@@ -1334,12 +1474,12 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     }
     if (nlisted > 15) {
         wchar_t more[64];
-        swprintf(more, 64, L"  ... +%u\r\n", nlisted - 15);
+        wfmt(more, 64, L"  ... +%u\r\n", nlisted - 15);
         w_raw(&names, more, wcslen(more));
     }
     if (nlisted) {
         wchar_t count[16];
-        swprintf(count, 16, L"%u", nlisted);
+        wfmt(count, 16, L"%u", nlisted);
         // yes / no from RPCLOSE, else the package's default, else the question.
         int choice = 0;         // IDYES, IDNO, IDCANCEL
         if (answer && (_wcsicmp(answer, L"yes") == 0 || wcscmp(answer, L"1") == 0)) choice = IDYES;
@@ -1386,9 +1526,8 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     // 2. Folders and the older versions' cached packages - not for a removal, which must stay possible.
     if (rc == ERROR_SUCCESS && !removal) {
         wchar_t path[MAX_PATH * 4], cmd[160];
-        swprintf(cmd, 160, L"msiexec /x %ls", older && older[0] ? older : code ? code : L"");
-        wchar_t *semi = wcschr(cmd, L';');
-        if (semi) *semi = 0;
+        // The first older version's code (the list is "{..};{..}").
+        wfmt(cmd, 160, L"msiexec /x %.38ls", older && older[0] ? older : code ? code : L"");
         wchar_t *ctx = NULL;
         for (wchar_t *d = dirs ? wcstok(dirs, L";", &ctx) : NULL; d && rc == ERROR_SUCCESS; d = wcstok(NULL, L";", &ctx)) {
             DWORD n = MAX_PATH * 4;
@@ -1409,7 +1548,7 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
             DWORD n = MAX_PATH * 2;
             if (MsiGetProductInfoW(pc, L"LocalPackage", pkg, &n) != ERROR_SUCCESS) continue;
             if (pkg[0] && GetFileAttributesW(pkg) == INVALID_FILE_ATTRIBUTES) {
-                swprintf(cmd, 160, L"msiexec /x %ls", pc);
+                wfmt(cmd, 160, L"msiexec /x %ls", pc);
                 log_line(h, L"rubrapack: preflight: refused: the cached package of %ls is missing (%ls)", pc, pkg);
                 pre_message(h, L"Cache", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, pc, cmd, product);
                 rc = ERROR_INSTALL_FAILURE;

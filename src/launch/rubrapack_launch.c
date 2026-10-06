@@ -163,7 +163,13 @@ static int run(void) {
     PROCESS_INFORMATION pi;
     memset(&si, 0, sizeof si);
     si.cb = sizeof si;
-    if (!CreateProcessW(target, cmd, NULL, NULL, FALSE, 0, NULL, cwd, &si, &pi)) return fail(L"cannot start the program"), 1;
+    // A console target gets this program's standard handles, so a redirection or a pipe reaches it.
+#if defined(RP_LAUNCH_CONSOLE)
+    const BOOL inherit = TRUE;
+#else
+    const BOOL inherit = FALSE;
+#endif
+    if (!CreateProcessW(target, cmd, NULL, NULL, inherit, 0, NULL, cwd, &si, &pi)) return fail(L"cannot start the program"), 1;
     CloseHandle(pi.hThread);
     WaitForSingleObject(pi.hProcess, INFINITE);
     DWORD code = 1;

@@ -626,7 +626,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
             wild |= has;
             ++g.nseg;
         }
-        if (lit == g.nseg) --lit;           // no wildcard: the last segment is the file itself
+        if (lit == g.nseg && lit) --lit;    // no wildcard: the last segment is the file itself
         char *root = ir_dup(c, c->opt->source_dir ? c->opt->source_dir : ".");
         for (size_t k = 0; k < lit && root; ++k) {
             char *r = ir_join(c, root, g.segs[k]);

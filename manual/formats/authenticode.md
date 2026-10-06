@@ -158,7 +158,7 @@ signature made with any key carries these same values. The streams in order of t
 | # | name (UTF-16LE) | Name | Size |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 89088 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 91136 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
 | 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 56 |
@@ -185,13 +185,13 @@ The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its n
 two zero times: 908 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-34 a5 82 a0 bf 98 e5 6e eb bc 09 c3 1a ee 26 95 4f d8 49 45 99 38 9d dc d4 58 6f 98 0f 1b 3c 3f
+bf 98 be c2 62 21 8d b3 c4 a7 35 04 bc 9d 3a 32 c9 ec f1 5d 9b 42 bd ef 1d 5e 02 6c f9 d5 6c 34
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-9d 6b b8 d5 55 c0 e5 c6 af cf 48 2c 3a 7e b4 53 c2 2a 1a 81 11 86 3e b7 85 65 de a4 2c 1b c8 02
+b5 41 65 05 af d6 c9 14 96 21 86 bd c4 a9 69 1a 2f 42 cd fe 68 12 72 2c d9 bd 33 9a 66 a7 a4 6b
 ```
 

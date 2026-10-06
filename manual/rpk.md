@@ -1110,8 +1110,10 @@ deletes what this installation left for the restart - files in the package's fol
 installer's backup copies of them in `Config.Msi` - as soon as nothing holds them, then the
 package's folders that were left only because of them, and finally itself. With nothing to do it
 goes at its first run; after 30 days it gives up and leaves the rest to the restart. It runs as
-SYSTEM for a per-machine package and as the user for a per-user one, from a folder only that account
-can write (`%ProgramData%\rubrapack\cleanup\{ProductCode}`, or the user's `%LOCALAPPDATA%`), and it
+SYSTEM for a per-machine package and as the user, never elevated, for a per-user one, from a folder
+only that account can write (`%ProgramData%\rubrapack\cleanup\{ProductCode}`, or the user's
+`%LOCALAPPDATA%`; per machine, a `rubrapack` folder there that someone else made first is not used
+and no task is registered), and it
 never deletes anything else: only what this installation queued, only while the same file is still
 at that path, and not a file an installed product now has there. `[package] cleanup = false`
 leaves it out.

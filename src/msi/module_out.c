@@ -263,7 +263,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     }
     size_t ncomp = component ? component->row_count : 0;
     rp_msi_cell_t *mc = cells(&m, ncomp * 3);
-    if (err == PROVEN_OK && mc && module_id) {
+    if (err == PROVEN_OK && mc && module_id && component) {
         int cc = column_of(component, "Component");
         for (size_t r = 0; r < ncomp; ++r) {
             mc[3 * r] = component->cells[r * component->column_count + (size_t)cc];

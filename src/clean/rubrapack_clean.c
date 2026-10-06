@@ -55,6 +55,32 @@ static wchar_t *befores[1024];      // deletions queued before the installation'
 static bool used_before[1024];
 static size_t nbefores;
 
+// Formats into out. A text that does not fit is not cut short (a path cut short is another path):
+// out is then empty and the result -1, so whatever is done with it fails instead.
+static int wfmt(wchar_t *out, size_t cap, const wchar_t *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    int n = vswprintf(out, cap, fmt, ap);
+    va_end(ap);
+    if (n < 0 || (size_t)n >= cap) {
+        out[0] = 0;
+        return -1;
+    }
+    return n;
+}
+
+// "{8-4-4-4-12}" in hex digits: a code goes into a registry path and msiexec's command line.
+static bool is_guid(const wchar_t *s) {
+    if (wcslen(s) != 38 || s[0] != L'{' || s[37] != L'}') return false;
+    for (int i = 1; i < 37; ++i) {
+        bool dash = i == 9 || i == 14 || i == 19 || i == 24;
+        wchar_t c = s[i];
+        bool hex = (c >= L'0' && c <= L'9') || (c >= L'A' && c <= L'F') || (c >= L'a' && c <= L'f');
+        if (dash ? c != L'-' : !hex) return false;
+    }
+    return true;
+}
+
 // With RUBRAPACK_CLEAN_LOG set (by hand, never by the task), each step is appended to that file.
 static void say(const wchar_t *fmt, ...) {
     static wchar_t path[MAX_PATH];
@@ -114,8 +140,10 @@ static bool read_list(const wchar_t *path) {
         else if (wcscmp(line, L"root") == 0 && nroots < MAX_ITEMS) roots[nroots++] = text_dup(v);
         else if (wcscmp(line, L"file") == 0 && nfiles < MAX_ITEMS) files[nfiles++] = text_dup(v);
         else if (wcscmp(line, L"parent") == 0) wcsncpy(parent, v, 63);
-        else if (wcscmp(line, L"addon") == 0 && naddons < 64 && wcslen(v) == 38) wcscpy(addons[naddons++], v);
+        else if (wcscmp(line, L"addon") == 0 && naddons < 64 && is_guid(v)) wcscpy(addons[naddons++], v);
     }
+    if (product[0] && !is_guid(product)) return false;
+    if (parent[0] && !is_guid(parent)) return false;
     return task[0] != 0;
 }
 
@@ -184,7 +212,7 @@ static void file_id(const wchar_t *path, wchar_t id[40]) {
     if (h == INVALID_HANDLE_VALUE) return;
     BY_HANDLE_FILE_INFORMATION fi;
     if (GetFileInformationByHandle(h, &fi))
-        swprintf(id, 40, L"%08lX%08lX%08lX", (unsigned long)fi.dwVolumeSerialNumber, (unsigned long)fi.nFileIndexHigh, (unsigned long)fi.nFileIndexLow);
+        wfmt(id, 40, L"%08lX%08lX%08lX", (unsigned long)fi.dwVolumeSerialNumber, (unsigned long)fi.nFileIndexHigh, (unsigned long)fi.nFileIndexLow);
     CloseHandle(h);
 }
 
@@ -363,7 +391,7 @@ static int pending(bool machine) {
 // x46: whether the add-on is still named under the main product's Addons key (either view).
 static bool addon_listed(const wchar_t *code, bool machine) {
     wchar_t key[160];
-    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
+    wfmt(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
     static const REGSAM views[] = { KEY_WOW64_64KEY, KEY_WOW64_32KEY };
     for (int v = 0; v < 2; ++v) {
         HKEY k;
@@ -378,7 +406,7 @@ static bool addon_listed(const wchar_t *code, bool machine) {
 // The Addons\<parent> key once no add-on is named in it (the add-ons' removal deletes their values).
 static void addons_key_cleanup(bool machine) {
     wchar_t key[160];
-    swprintf(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
+    wfmt(key, 160, L"SOFTWARE\\rubrapack\\Addons\\%ls", parent);
     static const REGSAM views[] = { KEY_WOW64_64KEY, KEY_WOW64_32KEY };
     HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
     for (int v = 0; v < 2; ++v) {
@@ -411,7 +439,7 @@ static int remove_addons(bool machine) {
             say(L"add-on %ls: no longer named under %ls", addons[i], parent);
             continue;
         }
-        swprintf(cmd, PATH_CAP, L"\"%ls\\msiexec.exe\" /x %ls /qn /norestart", sys, addons[i]);
+        wfmt(cmd, PATH_CAP, L"\"%ls\\msiexec.exe\" /x %ls /qn /norestart", sys, addons[i]);
         STARTUPINFOW si = { .cb = sizeof si };
         PROCESS_INFORMATION pi;
         DWORD code = (DWORD)-1;
@@ -488,7 +516,7 @@ static void save_seen(const wchar_t *path) {
 
 static bool empty_dir(const wchar_t *dir) {
     static wchar_t pat[PATH_CAP];
-    swprintf(pat, PATH_CAP, L"%ls\\*", dir);
+    wfmt(pat, PATH_CAP, L"%ls\\*", dir);
     WIN32_FIND_DATAW fd;
     HANDLE h = FindFirstFileExW(pat, FindExInfoBasic, &fd, FindExSearchNameMatch, NULL, 0);
     if (h == INVALID_HANDLE_VALUE) return false;
@@ -506,14 +534,14 @@ static void finish(const wchar_t *folder) {
     GetSystemDirectoryW(sys, MAX_PATH);
     STARTUPINFOW si = { .cb = sizeof si };
     PROCESS_INFORMATION pi;
-    swprintf(cmd, PATH_CAP, L"\"%ls\\schtasks.exe\" /delete /tn \"%ls\" /f", sys, task);
+    wfmt(cmd, PATH_CAP, L"\"%ls\\schtasks.exe\" /delete /tn \"%ls\" /f", sys, task);
     if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
         WaitForSingleObject(pi.hProcess, 30000);
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
     }
     // The parent folders go too when this was the last one (rd leaves a folder that is not empty).
-    swprintf(cmd, PATH_CAP, L"\"%ls\\cmd.exe\" /c ping -n 3 127.0.0.1 >nul & rd /s /q \"%ls\" & rd \"%ls\\..\" 2>nul & rd \"%ls\\..\\..\" 2>nul",
+    wfmt(cmd, PATH_CAP, L"\"%ls\\cmd.exe\" /c ping -n 3 127.0.0.1 >nul & rd /s /q \"%ls\" & rd \"%ls\\..\" 2>nul & rd \"%ls\\..\\..\" 2>nul",
              sys, folder, folder, folder);
     if (CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW | DETACHED_PROCESS, NULL, NULL, &si, &pi)) {
         CloseHandle(pi.hProcess);
@@ -533,7 +561,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     if (GetFullPathNameW(argv[1], PATH_CAP, folder, NULL) == 0) return 2;
     size_t fl = wcslen(folder);
     while (fl > 3 && folder[fl - 1] == L'\\') folder[--fl] = 0;
-    swprintf(list, PATH_CAP, L"%ls\\list.txt", folder);
+    wfmt(list, PATH_CAP, L"%ls\\list.txt", folder);
     if (!read_list(list)) return 3;
     // Not while Windows Installer runs an installation (its backups may still be needed). With
     // add-ons to remove, the removal that started this run is still ending: wait for it (x46).
@@ -554,7 +582,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
         }
     }
     static wchar_t seenfile[PATH_CAP];
-    swprintf(seenfile, PATH_CAP, L"%ls\\seen.txt", folder);
+    wfmt(seenfile, PATH_CAP, L"%ls\\seen.txt", folder);
     load_seen(seenfile);
     say(L"run: task '%ls' kind '%ls', %zu earlier deletion(s), %zu root(s)", task, kind, nbefores, nroots);
     int left = remove_addons(machine);
@@ -578,7 +606,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR line, int show) {
     SYSTEMTIME now;
     GetLocalTime(&now);
     wchar_t today[16];
-    swprintf(today, 16, L"%04u%02u%02u", now.wYear, now.wMonth, now.wDay);
+    wfmt(today, 16, L"%04u%02u%02u", now.wYear, now.wMonth, now.wDay);
     if (left == 0 || (until[0] && wcscmp(today, until) > 0)) finish(folder);
     return 0;
 }
