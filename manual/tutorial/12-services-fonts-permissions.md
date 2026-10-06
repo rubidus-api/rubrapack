@@ -120,7 +120,8 @@ stops with an error instead, unless the command line says `RPCLOSE=yes` or `RPCL
 C:\work\hello> msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes
 ```
 
-`close-programs = "always"` or `"never"` in `[package]` fixes the answer, and `preflight = false`
+`close-programs = "always"` or `"never"` in `[package]` fixes the answer - `"never"` for an input
+method or a shell extension, which nearly every open program has loaded - and `preflight = false`
 leaves the step out (the reference, "Before it goes on", has the other checks).
 
 ## Restarting: `reboot`

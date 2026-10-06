@@ -116,8 +116,8 @@ Windows 의 모든 파일, 폴더, 레지스트리 키에는 누가 읽고 바�
 C:\work\hello> msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes
 ```
 
-`[package]` 의 `close-programs = "always"` 나 `"never"` 는 답을 정해 두고, `preflight = false` 는 이 단계를 뺀다(나머지
-점검은 참조의 "진행하기 전에").
+`[package]` 의 `close-programs = "always"` 나 `"never"` 는 답을 정해 두고 - 열려 있는 거의 모든 프로그램에 실리는 입력기나
+셸 확장은 `"never"` - `preflight = false` 는 이 단계를 뺀다(나머지 점검은 참조의 "진행하기 전에").
 
 ## 다시 시작하기: `reboot`
 

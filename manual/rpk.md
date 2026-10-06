@@ -1086,7 +1086,11 @@ Before an installation, an upgrade or a removal changes anything, the package lo
   product first, and nothing is installed. A removal is never refused for these.
 
 `close-programs = "always"` closes without asking, `"never"` never closes and never asks (also at
-`/qn`); `"ask"` is the default. `preflight = false` leaves the whole step out. The texts are
+`/qn`); `"ask"` is the default. For an input method or a shell extension, `"never"` is the usual
+choice: nearly every open program has its DLL loaded, so `"ask"` would put the question at every
+upgrade and removal and stop every silent one, while the files are replaced safely without closing
+anything (the old copies go through the cleanup task). `RPCLOSE=yes` or `RPCLOSE=no` on the command
+line still wins over the package's setting. `preflight = false` leaves the whole step out. The texts are
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder` and `PreflightCache` (`[ui-text.*]`; English and
 Korean are built in, another language without them gets English).
 

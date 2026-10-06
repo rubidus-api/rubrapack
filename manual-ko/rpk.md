@@ -1006,7 +1006,9 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
   띄우고 아무것도 설치하지 않는다. 제거는 이 때문에 거절되지 않는다.
 
 `close-programs = "always"` 는 묻지 않고 종료하고, `"never"` 는 종료하지도 묻지도 않는다(`/qn` 에서도). 기본은 `"ask"`
-다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
+다. 입력기나 셸 확장에는 보통 `"never"` 를 쓴다: 열려 있는 거의 모든 프로그램이 그 DLL 을 싣고 있어 `"ask"` 면 업그레이드와
+제거 때마다 질문이 나오고 조용한 실행은 매번 멈추는데, 파일은 아무것도 종료하지 않고도 안전하게 바뀐다(옛 사본은 정리 작업이
+치운다). 명령줄의 `RPCLOSE=yes` 나 `RPCLOSE=no` 는 패키지의 설정보다 앞선다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
 `PreflightCache` 다(`[ui-text.*]`; 영어와 한국어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
 
 Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 도는 동안 두 번째 설치는 곧바로 1618 로 끝나고, 중간에 끊긴
