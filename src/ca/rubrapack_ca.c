@@ -1390,8 +1390,11 @@ static void menu_job(MSIHANDLE h, bool remove) {
             log_line(h, L"rubrapack: menu: identity package %ls not registered: 0x%08lX at %ls; the items are in the classic menu only", f[5],
                      (unsigned long)hr, j.step);
         }
-        // Registered: the classic verbs off. Removed (or not registered): on again / cleaned up.
-        for (size_t i = 6; i < n; ++i) legacy_verb(h, j.machine, f[i], !remove && SUCCEEDED(hr));
+        // Registered: the classic verbs off. Removed: the switch and the emptied keys taken away.
+        // A registration that failed changes nothing (a repair must not switch them on again).
+        if (remove || SUCCEEDED(hr)) {
+            for (size_t i = 6; i < n; ++i) legacy_verb(h, j.machine, f[i], !remove);
+        }
     }
     HeapFree(GetProcessHeap(), 0, data);
 }
@@ -1531,6 +1534,8 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     // 1. Who uses the product's files.
     enum { MAX_FILES = 2048, MAX_PROCS = 256 };
     static wchar_t *files[MAX_FILES];
+    static wchar_t menu_dll[MAX_PATH * 4];      // rubrapack's menu part among the product's files
+    menu_dll[0] = 0;
     UINT nfiles = 0;
     MSIHANDLE db = MsiGetActiveDatabase(h), view = 0, rec = 0;
     if (db && MsiDatabaseOpenViewW(db, L"SELECT `File`.`FileName`, `Component`.`Directory_` FROM `File`, `Component` "
@@ -1546,6 +1551,7 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
                 size_t len = wcslen(path);
                 if (len + wcslen(name) < MAX_PATH * 4) {
                     wcscpy(path + len, name);
+                    if (_wcsicmp(name, L"rubrapack_menu.dll") == 0 && wcslen(path) < MAX_PATH * 4) wcscpy(menu_dll, path);
                     if (GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES) {
                         size_t n = wcslen(path) + 1;
                         wchar_t *copy = HeapAlloc(GetProcessHeap(), 0, n * sizeof *copy);
@@ -1566,6 +1572,33 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     static DWORD pids[MAX_PROCS];
     UINT nprocs = 0, nlisted = 0;
     writer_t names = { 0 };
+    // The menu part's own host first: after someone used a [menu.*] item, a dllhost.exe keeps
+    // rubrapack_menu.dll loaded for a while. It serves this package's menu classes only and holds
+    // nothing of the user's, so it is ended without a question - it is not "a program using the
+    // product's files" anyone could be asked to close (Explorer starts a new one when needed).
+    if (menu_dll[0] && GetFileAttributesW(menu_dll) != INVALID_FILE_ATTRIBUTES) {
+        DWORD session = 0;
+        wchar_t key[CCH_RM_SESSION_KEY + 1] = L"";
+        if (RmStartSession(&session, 0, key) == ERROR_SUCCESS) {
+            LPCWSTR one = menu_dll;
+            if (RmRegisterResources(session, 1, &one, 0, NULL, 0, NULL) == ERROR_SUCCESS) {
+                UINT needed = 0, have = MAX_PROCS;
+                DWORD reasons = 0, e = RmGetList(session, &needed, &have, procs, &reasons);
+                for (UINT i = 0; (e == ERROR_SUCCESS || e == ERROR_MORE_DATA) && i < have; ++i) {
+                    wchar_t image[MAX_PATH];
+                    image_name(procs[i].Process.dwProcessId, image);
+                    if (_wcsicmp(image, L"dllhost.exe") != 0) continue;
+                    HANDLE p = OpenProcess(PROCESS_TERMINATE | SYNCHRONIZE, FALSE, procs[i].Process.dwProcessId);
+                    BOOL ended = p && TerminateProcess(p, 0);
+                    if (ended) WaitForSingleObject(p, 3000);
+                    if (p) CloseHandle(p);
+                    log_line(h, L"rubrapack: preflight: the menu part's host (dllhost.exe, process %lu) %ls",
+                             (unsigned long)procs[i].Process.dwProcessId, ended ? L"ended" : L"could not be ended");
+                }
+            }
+            RmEndSession(session);
+        }
+    }
     if (nfiles) {
         DWORD session = 0;
         wchar_t key[CCH_RM_SESSION_KEY + 1] = L"";

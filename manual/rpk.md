@@ -548,9 +548,9 @@ The same table serves both menus of Windows:
     at their next sign-in) and removes it when it is removed. **It needs no certificate**: the
     package is unsigned in the form Windows accepts from an installation with administrator
     rights. With `--key` and `[msix] publisher` (the certificate's subject) it is signed instead.
-    Where it cannot be registered - Windows before 10 version 2004, or a per-user installation
-    without a signature - the installation goes on and the items are in the classic menu only; the
-    log says so (`rubrapack: menu:`).
+    Where it cannot be registered - Windows before 10 version 2004, or a per-user installation by
+    a user without administrator rights - the installation goes on and the items are in the classic
+    menu only; the log says so (`rubrapack: menu:`).
 - Where the package is registered Windows shows its items in the classic menu too, so the registry
   verbs are switched off there (`LegacyDisable`): each item shows once.
 

@@ -169,6 +169,7 @@ typedef struct {
     const wchar_t *full_name;       // remove
     const wchar_t *family;          // provision, deprovision
     bool           machine, allow_unsigned, remove;
+    HANDLE         token;           // the caller's impersonation token, or NULL: the thread works as that user
     HRESULT        result;
     const wchar_t *step;            // what failed
 } appx_job_t;
@@ -177,6 +178,9 @@ typedef struct {
 // another one, and the operations are waited for by polling).
 static DWORD WINAPI appx_thread(void *arg) {
     appx_job_t *j = arg;
+    // A new thread has the process's token; a per-user installation's action is the user only on
+    // its own thread, so the user's token comes along.
+    if (j->token) (void)SetThreadToken(NULL, j->token);
     HRESULT init = RoInitialize(RO_INIT_MULTITHREADED);
     void *pm = NULL, *pm2 = NULL, *pm6 = NULL, *pm8 = NULL, *pm9 = NULL, *uri = NULL, *ext = NULL, *opt = NULL, *op = NULL;
     j->step = L"PackageManager";
@@ -227,6 +231,7 @@ static DWORD WINAPI appx_thread(void *arg) {
     void *all[] = { opt, ext, uri, pm9, pm8, pm6, pm2, pm };
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) appx_release(all[i]);
     if (SUCCEEDED(init)) RoUninitialize();
+    if (j->token) (void)SetThreadToken(NULL, NULL);
     j->result = hr;
     return 0;
 }
@@ -235,10 +240,16 @@ static DWORD WINAPI appx_thread(void *arg) {
 static HRESULT appx_run(appx_job_t *j) {
     j->result = E_FAIL;
     j->step = L"thread";
+    j->token = NULL;
+    if (!OpenThreadToken(GetCurrentThread(), TOKEN_IMPERSONATE | TOKEN_QUERY, TRUE, &j->token)) j->token = NULL;     // not impersonating
     HANDLE t = CreateThread(NULL, 0, appx_thread, j, 0, NULL);
-    if (t == NULL) return HRESULT_FROM_WIN32(GetLastError());
+    if (t == NULL) {
+        if (j->token) CloseHandle(j->token);
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
     WaitForSingleObject(t, INFINITE);
     CloseHandle(t);
+    if (j->token) CloseHandle(j->token);
     return j->result;
 }
 
