@@ -76,6 +76,7 @@
 #include <commdlg.h>
 
 #include "../clean/pfro.h"
+#include "rp_appx.h"
 
 // rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
 #if __has_include("rp_clean_part.h")
@@ -1292,6 +1293,116 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     if (files.buf) HeapFree(GetProcessHeap(), 0, files.buf);
 done:
     HeapFree(GetProcessHeap(), 0, data);
+    return ERROR_SUCCESS;
+}
+
+// ---- the Windows 11 menu's identity package (plan 2026-10-09; rp_appx.h) -----------------------
+//
+// RpMenuRegister / RpMenuRemove, deferred (SYSTEM per machine, the user per user), each also the
+// other's rollback. CustomActionData: "<package file>|RPM1|m or u|u or s|<full name>|<family name>",
+// then the classic verbs' keys.
+// The package's external location is the folder the file is in (the program's). Never a failure of
+// the installation: without the package the classic menu still has the items.
+
+static bool package_name_ok(const wchar_t *s) {
+    if (s[0] == 0 || wcslen(s) > 200) return false;
+    for (; *s; ++s) {
+        if (!((*s >= L'A' && *s <= L'Z') || (*s >= L'a' && *s <= L'z') || (*s >= L'0' && *s <= L'9') || *s == L'.' || *s == L'-' || *s == L'_')) return false;
+    }
+    return true;
+}
+
+// Whether a registry key has neither values nor sub keys.
+static bool key_empty(HKEY root, const wchar_t *path) {
+    HKEY k;
+    if (RegOpenKeyExW(root, path, 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS) return false;
+    DWORD subkeys = 1, values = 1;
+    LONG e = RegQueryInfoKeyW(k, NULL, NULL, NULL, &subkeys, NULL, NULL, &values, NULL, NULL, NULL, NULL);
+    RegCloseKey(k);
+    return e == ERROR_SUCCESS && subkeys == 0 && values == 0;
+}
+
+// The classic verb at Software\Classes\<key>: switched off (the package's item shows there too)
+// or, at removal, the switch taken away again - and the key with it once the installer has removed
+// its own values (this action runs after that), with the "shell" key above when it is left empty.
+static void legacy_verb(MSIHANDLE h, bool machine, const wchar_t *key, bool off) {
+    static wchar_t path[MAX_PATH * 2];
+    if (wfmt(path, MAX_PATH * 2, L"Software\\Classes\\%ls", key) < 0 || wcsstr(key, L"\\shell\\") == NULL) return;
+    HKEY root = machine ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER, k;
+    if (off) {
+        if (RegOpenKeyExW(root, path, 0, KEY_SET_VALUE, &k) != ERROR_SUCCESS) return;       // only a verb that is there
+        RegSetValueExW(k, L"LegacyDisable", 0, REG_SZ, (const BYTE *)L"", sizeof(wchar_t));
+        RegCloseKey(k);
+        return;
+    }
+    if (RegOpenKeyExW(root, path, 0, KEY_SET_VALUE, &k) != ERROR_SUCCESS) return;
+    RegDeleteValueW(k, L"LegacyDisable");
+    RegCloseKey(k);
+    for (int up = 0; up < 2 && key_empty(root, path); ++up) {
+        if (RegDeleteKeyW(root, path) != ERROR_SUCCESS) break;
+        wchar_t *slash = wcsrchr(path, L'\\');
+        if (slash == NULL) break;
+        *slash = 0;
+        if (up == 0 && _wcsicmp(slash - 6 > path ? slash - 6 : path, L"\\shell") != 0) break;   // only the "shell" key above
+    }
+    (void)h;
+}
+
+static void menu_job(MSIHANDLE h, bool remove) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return;
+    enum { MAX_VERBS = 600 };
+    static wchar_t *f[6 + MAX_VERBS];
+    size_t n = 0;
+    for (wchar_t *p = data; n < 6 + MAX_VERBS;) {
+        f[n++] = p;
+        wchar_t *bar = wcschr(p, L'|');
+        if (bar == NULL) break;
+        *bar = 0;
+        p = bar + 1;
+    }
+    static wchar_t dir[MAX_PATH * 4];
+    bool ok = n >= 6 && wcscmp(f[1], L"RPM1") == 0 && package_name_ok(f[4]) && package_name_ok(f[5]) && wcslen(f[0]) < MAX_PATH * 4;
+    if (ok) {
+        wcscpy(dir, f[0]);
+        wchar_t *slash = wcsrchr(dir, L'\\');
+        ok = slash != NULL && slash > dir + 2;
+        if (ok) *slash = 0;
+    }
+    if (!ok) {
+        log_line(h, L"rubrapack: menu: no usable data for the identity package; nothing done");
+    } else {
+        appx_job_t j;
+        memset(&j, 0, sizeof j);
+        j.machine = f[2][0] == L'm';
+        j.allow_unsigned = f[3][0] == L'u';
+        j.remove = remove;
+        j.package = f[0];
+        j.external = dir;
+        j.full_name = f[4];
+        j.family = f[5];
+        HRESULT hr = appx_run(&j);
+        if (SUCCEEDED(hr)) {
+            log_line(h, L"rubrapack: menu: identity package %ls %ls (%ls)", f[5], remove ? L"removed" : L"registered", j.machine ? L"for all users" : L"for this user");
+        } else if (remove) {
+            log_line(h, L"rubrapack: menu: identity package %ls not removed: 0x%08lX at %ls (it may not have been registered)", f[4], (unsigned long)hr, j.step);
+        } else {
+            log_line(h, L"rubrapack: menu: identity package %ls not registered: 0x%08lX at %ls; the items are in the classic menu only", f[5],
+                     (unsigned long)hr, j.step);
+        }
+        // Registered: the classic verbs off. Removed (or not registered): on again / cleaned up.
+        for (size_t i = 6; i < n; ++i) legacy_verb(h, j.machine, f[i], !remove && SUCCEEDED(hr));
+    }
+    HeapFree(GetProcessHeap(), 0, data);
+}
+
+__declspec(dllexport) UINT __stdcall RpMenuRegister(MSIHANDLE h) {
+    menu_job(h, false);
+    return ERROR_SUCCESS;
+}
+
+__declspec(dllexport) UINT __stdcall RpMenuRemove(MSIHANDLE h) {
+    menu_job(h, true);
     return ERROR_SUCCESS;
 }
 

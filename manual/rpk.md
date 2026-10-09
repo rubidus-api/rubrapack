@@ -235,7 +235,8 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
-| `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`) |
+| `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`), content-type, perceived-type, default (`false`: only under "Open with") |
+| `[menu.ID]` | **on** (file types, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`; an item of a sub-menu has none), **text** or text-xx, target (`file:ID` of an `.exe`; none = a sub-menu), args (default `"%1"`), icon (`file:ID`), parent (a sub-menu's ID), multi (`each`, `one`, `single`), extended, windows11 (default `true`) - an item of Explorer's right-click menu: see [Explorer's right-click menu](#explorers-right-click-menu-menuid) |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
 | `[com.ID]` | **file** (`file:ID` of an `.exe` or `.dll`), **class** (`{GUID}`), description, threading (`sta` default, `mta`, `both`, `neutral`; a DLL), args (a program), prog-id, app-id (`{GUID}`), surrogate (a DLL in dllhost), typelib (`{LIBID}`), typelib-version (default `"1.0"`), typelib-file (default: the server), msi-only - a COM class, see [COM classes](#com-classes-comid) |
 | `[handler.ID]` | **kind** (`thumbnail`, `preview`, `property`), **class** (a `[com.*]` DLL class), **types** (`[".ext", ...]`), description (a preview handler's name), msi-only - an Explorer handler, see [Explorer handlers](#explorer-handlers-handlerid) |
@@ -479,6 +480,85 @@ in it directly; where the user has chosen another program, Windows keeps that ch
 In an MSIX they go into the manifest of the application whose executable is the target (a file
 type association, a protocol), and `args` must be plain text. `icon` is not used there: the
 application's logo stands for the file type.
+
+A file type may also say what it holds and whether the program takes it:
+
+```toml
+[assoc.Picture]
+extension = ".png"
+prog-id = "Example.Picture"
+target = "file:MainExe"
+content-type = "image/png"        # the type's media type
+perceived-type = "image"          # image, text, audio, video, compressed, document, system, application
+default = false                   # offer the program under "Open with", do not claim the type
+```
+
+Every `[assoc.*]` lists its prog-id under the extension's `OpenWithProgids`, so the program is
+offered under "Open with"; with `default = false` that is all it does (the extension's own value is
+left alone). In an MSIX `content-type` goes into the manifest; `perceived-type` and `default` are an
+MSI's.
+
+### Explorer's right-click menu: `[menu.ID]`
+
+```toml
+[menu.Convert]
+on = [".png", ".jpg", "folder"]   # where it shows
+text = "Convert with Example"
+text-ko = "Example 로 변환"        # a text per language
+target = "file:MainExe"
+args = "--convert \"%1\""         # "%1" is the selected path; the default is "%1" alone
+icon = "file:MainExe"             # default: the program's own icon
+
+[menu.Tools]                      # no target: a sub-menu
+on = "*"
+text = "Example tools"
+
+[menu.Checksum]
+parent = "Tools"                  # an item of that sub-menu; it shows where the sub-menu shows
+text = "Checksum"
+target = "file:MainExe"
+args = "--sum \"%1\""
+multi = "single"                  # only when one thing is selected
+```
+
+An item starts a program of the package with what was right-clicked. `on` is one place or a list:
+a file type (`".png"`), `"*"` (every file), `"folder"`, `"background"` (the empty part of an open
+folder: `%1` is then that folder), `"drive"`, or `"assoc:ID"` (the file type of an `[assoc.*]`, under
+its prog-id). `multi` says what several selected items mean: `"each"` (the default: one run per
+item), `"one"` (one run with all of them: write `%*` in `args` for all the paths) or `"single"` (the
+item shows only for one). `extended = true` shows the item only with Shift held. One level of
+sub-menus.
+
+The same table serves both menus of Windows:
+
+- **The classic menu** (Windows 10; "Show more options" on Windows 11) reads registry verbs, which
+  the package writes under each place (`SystemFileAssociations\.png\shell\<Product>.<ID>`, `*`,
+  `Directory`, `Directory\Background`, `Drive`). No code of the package runs inside Explorer. A verb
+  has one text: with `text-xx` it is the text of the installation's language (the language of the
+  dialogs, else the user's display language among `[ui] languages`). `"one"` runs once per item
+  there, as `"each"`.
+- **The Windows 11 menu** shows only items that a package with identity declares, each a COM class.
+  rubrapack supplies that class: its menu part `rubrapack_menu.dll` serves every item, shows the
+  text in the user's display language and starts the program. It runs in `dllhost.exe`, not in
+  Explorer, and does nothing but what the installation wrote down for the item.
+  - An **MSIX** has identity: the DLL goes into the package and the manifest declares the items.
+  - An **MSI** installs two more files beside the item's program - the DLL and
+    `rubrapack_menu.msix`, a small package with only a manifest and logos - and registers that
+    package for the program's folder when it is installed (for every user of the computer, others
+    at their next sign-in) and removes it when it is removed. **It needs no certificate**: the
+    package is unsigned in the form Windows accepts from an installation with administrator
+    rights. With `--key` and `[msix] publisher` (the certificate's subject) it is signed instead.
+    Where it cannot be registered - Windows before 10 version 2004, or a per-user installation
+    without a signature - the installation goes on and the items are in the classic menu only; the
+    log says so (`rubrapack: menu:`).
+- Where the package is registered Windows shows its items in the classic menu too, so the registry
+  verbs are switched off there (`LegacyDisable`): each item shows once.
+
+What to expect on Windows 11: an item appears some seconds after the installation ends; two or
+more items of one package for the same kind of thing are put by Windows under one entry named
+after the product; `"drive"` and `windows11 = false` items are in the classic menu only. To see
+what the menu part does, set the value `MenuLog` (a file's path) under
+`HKCU\Software\rubrapack`: each choice and the command it starts are appended there.
 
 ### COM classes: `[com.ID]`
 

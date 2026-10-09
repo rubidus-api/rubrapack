@@ -207,7 +207,10 @@ plugins=core
 - `prog-id` names the kind of document (`Company.Kind`); several extensions may share one;
 - `description` is what Explorer calls the type ("Hello document");
 - `target` is the program, `args` its arguments (`"%1"` is the file's path; the default);
-- `icon` (`file:ID`) is the file whose first icon the documents show.
+- `icon` (`file:ID`) is the file whose first icon the documents show;
+- `content-type` (a media type such as `"text/plain"`) and `perceived-type` (`"text"`, `"image"`, ...)
+  tell Windows what kind of data the files hold;
+- `default = false` only offers the program under "Open with" and leaves the type to whoever has it.
 
 If the user has already chosen another program for `.hello`, Windows keeps that choice.
 
@@ -215,6 +218,35 @@ If the user has already chosen another program for `.hello`, Windows keeps that 
 
 `[protocol.HelloLink]` registers the scheme `hello:`, so a link `hello:world` - in a browser, in
 the Run box - starts Hello with the whole link as its argument.
+
+## Right-click menus: `[menu.ID]`
+
+A program that does something *to* a file - converts it, checks it, opens a folder in itself -
+belongs in Explorer's right-click menu. Hello has no such command, but this is all it would take:
+
+```toml
+[menu.Greet]
+on = [".hello", "folder"]         # on .hello files and on folders
+text = "Greet with Hello"
+text-ko = "Hello 로 인사"
+target = "file:HelloExe"
+args = "--greet \"%1\""           # "%1" is what was right-clicked
+```
+
+- `on` says where the item shows: file types, `"*"` for every file, `"folder"`, `"background"` (the
+  empty part of an open folder), `"drive"`, or `"assoc:HelloDoc"` for the type of an `[assoc.*]`.
+- `text` is what the menu shows; `text-ko` and the like give it in other languages.
+- `target` and `args` are the program and its arguments, as for a file type.
+- A `[menu.*]` without `target` is a sub-menu, and items name it with `parent`.
+- `multi = "single"` shows the item only when one thing is selected; `extended = true` only with
+  Shift held; `windows11 = false` keeps it out of the Windows 11 menu.
+
+Windows has two such menus, and the table fills both. The classic one (Windows 10, and "Show more
+options" on Windows 11) reads the registry, which the package writes. The Windows 11 menu takes only
+items of a package with identity, each served by a small COM class - rubrapack brings that class
+with it (its menu part) and, for an MSI, installs and registers a tiny identity package beside the
+program. Nothing to write and no certificate to buy; the Reference tells the whole story under
+"Explorer's right-click menu".
 
 ## COM classes: `[com.ID]`
 

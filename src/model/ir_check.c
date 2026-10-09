@@ -104,8 +104,380 @@ static const rp_ir_com_t *com_by_class(const rp_ir_t *ir, const char *clsid) {
 // extension and scheme, one description per prog-id; then, for the MSI, their HKCR values in the
 // program's component. HKCR follows the installation: HKLM\Software\Classes per machine,
 // HKCU\Software\Classes per user.
+// ---- [menu.*] --------------------------------------------------------------------------------
+
+static const rp_ir_menu_t *menu_by_id(const rp_ir_t *ir, const char *id) {
+    for (size_t k = 0; id && k < ir->menu_count; ++k) {
+        if (strcmp(ir->menus[k].id, id) == 0) return &ir->menus[k];
+    }
+    return NULL;
+}
+
+// The package's name as a registry key part: its letters and digits (a verb's key is
+// "<that>.<menu ID>", so two products' items do not meet in one key).
+void rp_menu_token(const rp_ir_t *ir, char out[48]) {
+    size_t w = 0;
+    for (const char *p = ir->name ? ir->name : ""; *p && w < 40; ++p) {
+        if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') || (*p >= '0' && *p <= '9')) out[w++] = *p;
+    }
+    if (w == 0) out[w++] = 'R', out[w++] = 'p';
+    out[w] = '\0';
+}
+
+// The Windows 11 menu of an MSI: whether the package wants it, beside which program its two files
+// go, and - when the build command has made them (rp_ir_options_t) - the files themselves. Called
+// when every [file.*] and [menu.*] is known, before features and files are settled.
+void ir_menu_files(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    if (ir->module) return;
+    // The first top-level item by ID with a program (a sub-menu: its first item's).
+    const rp_ir_menu_t *first = NULL;
+    for (size_t k = 0; k < ir->menu_count; ++k) {
+        const rp_ir_menu_t *x = &ir->menus[k];
+        if (x->parent || !x->windows11 || x->id == NULL) continue;
+        if (first == NULL || ir_cmp_str(x->id, first->id) < 0) first = x;
+    }
+    if (first == NULL) return;
+    const char *exe = first->target_file;
+    const rp_ir_menu_t *kid = NULL;
+    for (size_t k = 0; exe == NULL && k < ir->menu_count; ++k) {
+        const rp_ir_menu_t *y = &ir->menus[k];
+        if (y->parent && y->id && y->target_file && strcmp(y->parent, first->id) == 0 && (kid == NULL || ir_cmp_str(y->id, kid->id) < 0)) kid = y;
+    }
+    if (exe == NULL && kid) exe = kid->target_file;
+    const rp_ir_file_t *prog = exe ? file_by_id(ir, exe) : NULL;
+    if (prog == NULL) return;                   // menu_checks says what is wrong
+    ir->menu_package = true;
+    ir->menu_exe = ir_dup(c, exe);
+    if (c->opt->menu_publisher) ir->menu_publisher = ir_dup(c, c->opt->menu_publisher);
+    if (c->opt->menu_dll == NULL) return;
+    // The DLL goes into an MSI and an MSIX; the identity package is an MSI's alone (an MSIX is one).
+    static const char *const ids[] = { "RpMenuDll", "RpMenuPkg" }, *const names[] = { "rubrapack_menu.dll", "rubrapack_menu.msix" };
+    const char *paths[] = { c->opt->menu_dll, c->opt->menu_pkg };
+    // ir_push_file may move the files: what is needed of the program first.
+    char *dir = ir_dup(c, prog->dir), *feature = prog->feature ? ir_dup(c, prog->feature) : NULL;
+    rp_pos_t pos = first->pos;
+    for (int i = 0; i < 2 && dir; ++i) {
+        if (paths[i] == NULL) continue;
+        rp_ir_file_t *f = ir_push_file(c);
+        if (f == NULL) break;
+        f->id = ir_dup(c, ids[i]);
+        f->dir = ir_dup(c, dir);
+        f->source = ir_dup(c, names[i]);
+        f->source_path = ir_dup(c, paths[i]);
+        f->name = ir_dup(c, names[i]);
+        f->vital = true;
+        f->any_arch = true;
+        f->msi_only = i == 1;
+        f->feature = feature ? ir_dup(c, feature) : NULL;
+        f->pos = pos;
+        if (rp_pal_stat(c->alloc, f->source_path, &f->size) != RP_FS_FILE) ERR(c, pos, "RP1508", "'%s' is not a regular file", f->source);
+    }
+    rp_mem_free(c->alloc, dir);
+    rp_mem_free(c->alloc, feature);
+}
+
+// One value of the menu DLL's data: HKLM per machine, HKCU per user (HKMU), msi-only.
+static void add_menu_data(ctx_t *c, const char *id, const char *suffix, const char *key, const char *name, const char *value, int type,
+                          const char *with, rp_pos_t pos) {
+    rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
+    memset(r, 0, sizeof *r);
+    char rid[96];
+    snprintf(rid, sizeof rid, "%s.%s", id, suffix);
+    r->id = ir_dup(c, rid);
+    r->root = RP_ROOT_HKMU;
+    r->key = ir_dup(c, key);
+    r->name = ir_dup(c, name);
+    r->type = (rp_reg_type_t)type;
+    r->value = ir_dup(c, value);
+    r->msi_only = true;
+    r->with_file = ir_dup(c, with);
+    r->pos = pos;
+}
+
+static char *fmt_literal(ctx_t *c, const char *s);
+
+// What the menu DLL reads for one item (src/menu/rubrapack_menu.c): Text, Text.<lang>, Icon,
+// Command, Args, Multi; a sub-menu: Items.
+static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const char *tag, const char *with) {
+    rp_ir_t *ir = c->ir;
+    char rid[48], name[16];
+    static const char *const multi[] = { "each", "one", "single" };
+    if (x->text) {
+        char *t = fmt_literal(c, x->text);
+        snprintf(rid, sizeof rid, "%sText", tag);
+        if (t) add_menu_data(c, x->id, rid, key, "Text", t, RP_REG_STRING, with, x->pos);
+        rp_mem_free(c->alloc, t);
+    }
+    for (size_t w = 0; w < x->text_by_lang_count; ++w) {
+        char *t = fmt_literal(c, x->text_by_lang[w].text);
+        // Without an English text the first language's is the fallback too.
+        bool en = strcmp(x->text_by_lang[w].lang, "en") == 0;
+        if (t && (en || (x->text == NULL && w == 0))) {
+            snprintf(rid, sizeof rid, "%sText", tag);
+            add_menu_data(c, x->id, rid, key, "Text", t, RP_REG_STRING, with, x->pos);
+        }
+        if (t && !en) {
+            snprintf(rid, sizeof rid, "%sText_%s", tag, x->text_by_lang[w].lang);
+            snprintf(name, sizeof name, "Text.%s", x->text_by_lang[w].lang);
+            add_menu_data(c, x->id, rid, key, name, t, RP_REG_STRING, with, x->pos);
+        }
+        rp_mem_free(c->alloc, t);
+    }
+    const char *icon = x->icon_file ? x->icon_file : x->target_file;
+    if (icon) {
+        char val[160];
+        snprintf(val, sizeof val, x->icon_file ? "[#%s]" : "[#%s],0", icon);
+        snprintf(rid, sizeof rid, "%sIcon", tag);
+        add_menu_data(c, x->id, rid, key, "Icon", val, RP_REG_STRING, with, x->pos);
+    }
+    if (x->target_file == NULL) {           // a sub-menu: its items' IDs, in ID order
+        size_t n = 0;
+        for (size_t j = 0; j < ir->menu_count; ++j) n += ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0;
+        snprintf(rid, sizeof rid, "%sItems", tag);
+        add_menu_data(c, x->id, rid, key, "Items", "", RP_REG_MULTI, with, x->pos);
+        rp_ir_registry_t *r = &ir->registries[ir->registry_count - 1];
+        r->items = rp_mem_alloc(c->alloc, n ? n : 1, sizeof *r->items);
+        if (r->items == NULL) {
+            c->nomem = true;
+            return;
+        }
+        for (size_t j = 0; j < ir->menu_count; ++j) {
+            if (ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0) r->items[r->item_count++] = ir_dup(c, ir->menus[j].id);
+        }
+        return;
+    }
+    char val[160];
+    snprintf(val, sizeof val, "[#%s]", x->target_file);
+    snprintf(rid, sizeof rid, "%sCommand", tag);
+    add_menu_data(c, x->id, rid, key, "Command", val, RP_REG_STRING, with, x->pos);
+    snprintf(rid, sizeof rid, "%sArgs", tag);
+    add_menu_data(c, x->id, rid, key, "Args", x->args, RP_REG_STRING, with, x->pos);
+    snprintf(rid, sizeof rid, "%sMulti", tag);
+    add_menu_data(c, x->id, rid, key, "Multi", multi[x->multi], RP_REG_STRING, with, x->pos);
+}
+
+static void menu_checks(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    for (size_t k = 0; k < ir->menu_count; ++k) {
+        rp_ir_menu_t *x = &ir->menus[k];
+        const rp_ir_menu_t *up = menu_by_id(ir, x->parent);
+        if (x->parent && up == NULL) ERR(c, x->pos, "RP1307", "[menu.%s]: parent '%s' is not a [menu.*]", x->id, x->parent);
+        if (up && (up->target_file || up->parent)) {
+            ERR(c, x->pos, "RP1316", "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own",
+                x->id, x->parent);
+        }
+        if (x->parent && x->on_count) ERR(c, x->pos, "RP1316", "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out", x->id);
+        if (!x->parent && x->on_count == 0) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\"", x->id);
+        if (x->target_file) {
+            program_ok(c, x->target_file, x->pos, "target");
+            if (x->icon_file && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", x->icon_file);
+            if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
+        } else {
+            size_t kids = 0;
+            for (size_t j = 0; j < ir->menu_count; ++j) kids += ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0;
+            if (x->parent) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'target': the program the item starts", x->id);
+            else if (kids == 0) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)", x->id, x->id);
+            if (x->args) ERR(c, x->pos, "RP1316", "[menu.%s]: a sub-menu starts nothing: leave 'args' out", x->id);
+        }
+        for (size_t j = 0; j < x->on_count; ++j) {
+            if (x->on[j] == NULL || strncmp(x->on[j], "assoc:", 6) != 0) continue;
+            bool found = false;
+            for (size_t a = 0; a < ir->assoc_count; ++a) found |= strcmp(ir->assocs[a].id, x->on[j] + 6) == 0;
+            if (!found) ERR(c, x->pos, "RP1307", "[menu.%s]: on = \"%s\": there is no [assoc.%s]", x->id, x->on[j], x->on[j] + 6);
+        }
+        // The Windows 11 class of a top-level item: the same in every version of the product.
+        if (!x->parent && ir->upgrade_code) {
+            char guid[39];
+            const char *fields[] = { ir->upgrade_code, x->id };
+            rp_uuid_derive("rubrapack.menu", fields, 2, guid);
+            x->clsid = ir_dup(c, guid);
+        }
+    }
+}
+
+// A literal text as a Formatted value: "[" and "]" written so that they stay.
+static char *fmt_literal(ctx_t *c, const char *s) {
+    size_t n = strlen(s), extra = 0;
+    for (const char *p = s; *p; ++p) extra += (*p == '[' || *p == ']') ? 3 : 0;
+    char *o = rp_mem_alloc(c->alloc, n + extra + 1, 1);
+    if (o == NULL) {
+        c->nomem = true;
+        return NULL;
+    }
+    size_t w = 0;
+    for (const char *p = s; *p; ++p) {
+        if (*p == '[' || *p == ']') {
+            o[w++] = '[';
+            o[w++] = '\\';
+            o[w++] = *p;
+            o[w++] = ']';
+        } else {
+            o[w++] = *p;
+        }
+    }
+    o[w] = '\0';
+    return o;
+}
+
+// The classic menu: registry verbs under each place an item shows (MSI; an MSIX's registry is not
+// what Explorer reads - there the menu DLL serves both menus).
+//   <place>\shell\<Package>.<ID>          MUIVerb, Icon, Extended, MultiSelectModel
+//   <place>\shell\<Package>.<ID>\command  "program" args
+// A sub-menu has SubCommands = "" and its items under ...\shell\<Package>.<ID>\shell\<item>.
+static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, const char *suffix, bool background, const char *with) {
+    char key[400], rid[40], prop[64];
+    char *text = NULL;
+    if (x->text_by_lang_count) {            // the text of the language chosen at installation (lower.c sets the property)
+        snprintf(prop, sizeof prop, "[RpMenuT_%s]", x->id);
+        text = ir_dup(c, prop);
+    } else if (x->text) {
+        text = fmt_literal(c, x->text);
+    }
+    if (text == NULL) return;
+    snprintf(rid, sizeof rid, "Verb%s", suffix);
+    add_class_value(c, x->id, rid, base, "MUIVerb", text, with, x->pos);
+    rp_mem_free(c->alloc, text);
+    const char *icon = x->icon_file ? x->icon_file : x->target_file;
+    if (icon) {
+        char val[160];
+        snprintf(val, sizeof val, x->icon_file ? "[#%s]" : "[#%s],0", icon);
+        snprintf(rid, sizeof rid, "Icon%s", suffix);
+        add_class_value(c, x->id, rid, base, "Icon", val, with, x->pos);
+    }
+    if (x->extended) {
+        snprintf(rid, sizeof rid, "Shift%s", suffix);
+        add_class_value(c, x->id, rid, base, "Extended", "", with, x->pos);
+    }
+    if (x->target_file == NULL) {
+        snprintf(rid, sizeof rid, "Sub%s", suffix);
+        add_class_value(c, x->id, rid, base, "SubCommands", "", with, x->pos);
+        return;
+    }
+    if (x->multi == RP_MENU_SINGLE) {
+        snprintf(rid, sizeof rid, "Multi%s", suffix);
+        add_class_value(c, x->id, rid, base, "MultiSelectModel", "Single", with, x->pos);
+    }
+    // The command; on the folder background there is no "%1": the folder is "%V".
+    size_t al = strlen(x->args);
+    char *cmd = rp_mem_alloc(c->alloc, strlen(x->target_file) + al + 16, 1);
+    if (cmd == NULL) {
+        c->nomem = true;
+        return;
+    }
+    size_t w = (size_t)sprintf(cmd, "\"[#%s]\" ", x->target_file);
+    for (const char *p = x->args; *p; ++p) {
+        cmd[w++] = *p;
+        if (background && p[0] == '%' && p[1] == '1') {
+            cmd[w++] = 'V';
+            ++p;
+        }
+    }
+    cmd[w] = '\0';
+    snprintf(key, sizeof key, "%s\\command", base);
+    snprintf(rid, sizeof rid, "Cmd%s", suffix);
+    add_class_value(c, x->id, rid, key, NULL, cmd, with, x->pos);
+    rp_mem_free(c->alloc, cmd);
+}
+
+// An MSIX declares each top-level item as a context menu verb of rubrapack's menu DLL: the same
+// [msix-extension] an author's own DLL would get (kind = "context-menu").
+static void menu_msix_exts(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    if (file_by_id(ir, "RpMenuDll") == NULL) return;
+    for (size_t k = 0; k < ir->menu_count && !c->nomem; ++k) {
+        const rp_ir_menu_t *x = &ir->menus[k];
+        if (x->parent || !x->windows11 || x->clsid == NULL) continue;
+        rp_ir_msix_ext_t *e = &ir->msix_exts[ir->msix_ext_count++];
+        memset(e, 0, sizeof *e);
+        char id[64];
+        snprintf(id, sizeof id, "RpMenu_%s", x->id);
+        e->id = ir_dup(c, id);
+        e->kind = RP_MSIX_EXT_CONTEXT_MENU;
+        e->file = ir_dup(c, "RpMenuDll");
+        e->clsid = ir_dup(c, x->clsid);
+        e->threading = ir_dup(c, "STA");
+        e->verb = ir_dup(c, x->id);
+        e->pos = x->pos;
+        e->types = rp_mem_alloc(c->alloc, x->on_count ? x->on_count : 1, sizeof *e->types);
+        if (e->types == NULL) {
+            c->nomem = true;
+            return;
+        }
+        for (size_t p = 0; p < x->on_count; ++p) {
+            const char *on = x->on[p], *type = on;
+            if (strcmp(on, "drive") == 0) continue;                 // no item type for it there
+            if (strcmp(on, "folder") == 0) type = "Directory";
+            else if (strcmp(on, "background") == 0) type = "Directory\\Background";
+            else if (strncmp(on, "assoc:", 6) == 0) {
+                for (size_t a = 0; a < ir->assoc_count; ++a) {
+                    if (strcmp(ir->assocs[a].id, on + 6) == 0) type = ir->assocs[a].extension;
+                }
+            }
+            bool seen = false;
+            for (size_t u = 0; u < e->type_count; ++u) seen |= strcmp(e->types[u], type) == 0;
+            if (!seen) e->types[e->type_count++] = ir_dup(c, type);
+        }
+    }
+}
+
+static void menu_values(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    char token[48];
+    rp_menu_token(ir, token);
+    menu_msix_exts(c);
+    for (size_t k = 0; k < ir->menu_count && !c->nomem; ++k) {
+        const rp_ir_menu_t *x = &ir->menus[k];
+        if (x->parent) continue;
+        // The component the values go with: the item's program, or a sub-menu's first item's.
+        const char *with = x->target_file;
+        for (size_t j = 0; with == NULL && j < ir->menu_count; ++j) {
+            if (ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0) with = ir->menus[j].target_file;
+        }
+        if (ir->menu_package && x->windows11 && x->clsid) {
+            char key[128], sub[200];
+            snprintf(key, sizeof key, "Software\\rubrapack\\Menu\\%s", x->clsid);
+            menu_data_at(c, x, key, "D", with);
+            for (size_t j = 0; j < ir->menu_count && !c->nomem; ++j) {
+                const rp_ir_menu_t *y = &ir->menus[j];
+                if (y->parent == NULL || strcmp(y->parent, x->id) != 0) continue;
+                snprintf(sub, sizeof sub, "%s\\%s", key, y->id);
+                menu_data_at(c, y, sub, "D", y->target_file);
+            }
+        }
+        for (size_t p = 0; p < x->on_count && !c->nomem; ++p) {
+            const char *on = x->on[p], *place = on;
+            char sys[96];
+            if (strcmp(on, "folder") == 0) place = "Directory";
+            else if (strcmp(on, "background") == 0) place = "Directory\\Background";
+            else if (strcmp(on, "drive") == 0) place = "Drive";
+            else if (strncmp(on, "assoc:", 6) == 0) {
+                for (size_t a = 0; a < ir->assoc_count; ++a) {
+                    if (strcmp(ir->assocs[a].id, on + 6) == 0) place = ir->assocs[a].prog_id;
+                }
+            } else if (on[0] == '.') {
+                snprintf(sys, sizeof sys, "SystemFileAssociations\\%s", on);
+                place = sys;
+            }
+            bool background = strcmp(on, "background") == 0;
+            char base[320], suffix[24];
+            snprintf(base, sizeof base, "%s\\shell\\%s.%s", place, token, x->id);
+            snprintf(suffix, sizeof suffix, "%zu", p);
+            menu_values_at(c, x, base, suffix, background, with);
+            for (size_t j = 0; j < ir->menu_count && !c->nomem; ++j) {
+                const rp_ir_menu_t *y = &ir->menus[j];
+                if (y->parent == NULL || strcmp(y->parent, x->id) != 0) continue;
+                char sub[400];
+                snprintf(sub, sizeof sub, "%s\\shell\\%s", base, y->id);
+                menu_values_at(c, y, sub, suffix, background, y->target_file);
+            }
+        }
+    }
+}
+
 void ir_class_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
+    menu_checks(c);
     if (ir->ui_launch_file) program_ok(c, ir->ui_launch_file, (rp_pos_t){ 1, 1 }, "[ui] launch");
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
@@ -207,9 +579,17 @@ void ir_class_checks(ctx_t *c) {
         }
     }
     if (c->d->errors) return;       // a table with a missing key has NULL fields; the build fails anyway
+    menu_values(c);
     for (size_t k = 0; k < ir->assoc_count && !c->nomem; ++k) {
         const rp_ir_assoc_t *x = &ir->assocs[k];
-        add_class_value(c, x->id, "Ext", x->extension, NULL, x->prog_id, x->target_file, x->pos);
+        // The extension names the ProgID as its own (unless default = false) and always lists it
+        // among those that open it ("Open with"); Windows 10 and 11 let only the user pick the default.
+        char okey[96];
+        snprintf(okey, sizeof okey, "%s\\OpenWithProgids", x->extension);
+        if (!x->no_default) add_class_value(c, x->id, "Ext", x->extension, NULL, x->prog_id, x->target_file, x->pos);
+        add_class_value(c, x->id, "With", okey, x->prog_id, "", x->target_file, x->pos);
+        if (x->content_type) add_class_value(c, x->id, "Type", x->extension, "Content Type", x->content_type, x->target_file, x->pos);
+        if (x->perceived_type) add_class_value(c, x->id, "Kind", x->extension, "PerceivedType", x->perceived_type, x->target_file, x->pos);
         bool first = true;              // a prog-id shared by several extensions is written once
         for (size_t j = 0; j < k; ++j) first &= strcmp(ir->assocs[j].prog_id, x->prog_id) != 0;
         if (!first) continue;

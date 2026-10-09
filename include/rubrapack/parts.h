@@ -38,4 +38,12 @@ extern const size_t        rp_launchc_x86_len;
 extern const unsigned char rp_launchc_arm64[];
 extern const size_t        rp_launchc_arm64_len;
 
+// The Explorer menu part (src/menu/rubrapack_menu.c): the COM server of every [menu.*] item.
+extern const unsigned char rp_menu_x64[];
+extern const size_t        rp_menu_x64_len;
+extern const unsigned char rp_menu_x86[];
+extern const size_t        rp_menu_x86_len;
+extern const unsigned char rp_menu_arm64[];
+extern const size_t        rp_menu_arm64_len;
+
 #endif // RUBRAPACK_PARTS_H

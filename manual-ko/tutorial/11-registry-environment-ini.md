@@ -202,6 +202,9 @@ plugins=core
 - `description` 은 탐색기가 그 형식을 부르는 이름("Hello document")이다.
 - `target` 은 프로그램, `args` 는 인자다(`"%1"` 은 파일 경로이며 기본값이다).
 - `icon`(`file:ID`)은 문서가 보일 첫 아이콘을 가진 파일이다.
+- `content-type`(`"text/plain"` 같은 미디어 형식)과 `perceived-type`(`"text"`, `"image"`, ...)은 그 파일에 어떤
+  데이터가 들었는지 Windows 에 알린다.
+- `default = false` 면 프로그램을 "연결 프로그램"에만 올리고, 형식은 지금 가진 쪽에 그대로 둔다.
 
 사용자가 `.hello` 에 이미 다른 프로그램을 골라 두었다면 Windows 는 그 선택을 지킨다.
 
@@ -209,6 +212,34 @@ plugins=core
 
 `[protocol.HelloLink]` 는 `hello:` 방식을 등록한다. 브라우저나 실행 상자의 `hello:world` 링크가 링크 전체를
 인자로 Hello 를 시작한다.
+
+## 우클릭 메뉴: `[menu.ID]`
+
+파일*에* 무언가를 하는 프로그램 - 변환한다, 검사한다, 폴더를 자기 안에서 연다 - 은 탐색기의 우클릭 메뉴에
+자리가 있어야 한다. Hello 에는 그런 명령이 없지만, 있다면 이것이 전부다:
+
+```toml
+[menu.Greet]
+on = [".hello", "folder"]         # .hello 파일과 폴더에서
+text = "Greet with Hello"
+text-ko = "Hello 로 인사"
+target = "file:HelloExe"
+args = "--greet \"%1\""           # "%1" 은 우클릭한 것
+```
+
+- `on` 은 항목이 나오는 자리다: 파일 형식, 모든 파일인 `"*"`, `"folder"`, `"background"`(열린 폴더의 빈 곳),
+  `"drive"`, 또는 어느 `[assoc.*]` 의 형식인 `"assoc:HelloDoc"`.
+- `text` 는 메뉴에 보이는 문구다. `text-ko` 같은 키로 다른 언어의 문구를 준다.
+- `target` 과 `args` 는 파일 형식에서처럼 프로그램과 그 인자다.
+- `target` 이 없는 `[menu.*]` 는 하위 메뉴이고, 항목들은 `parent` 로 그것을 가리킨다.
+- `multi = "single"` 이면 하나를 골랐을 때만 나온다. `extended = true` 면 Shift 를 누른 채일 때만 나온다.
+  `windows11 = false` 면 Windows 11 메뉴에는 넣지 않는다.
+
+Windows 에는 이런 메뉴가 둘 있고, 이 표가 둘 다 채운다. 옛 메뉴(Windows 10, Windows 11 의 "추가 옵션 표시")는
+레지스트리를 읽고, 패키지가 그것을 적는다. Windows 11 메뉴는 신원이 있는 패키지의 항목만 받고 항목마다 작은
+COM 클래스가 맡아야 한다 - rubrapack 이 그 클래스(메뉴 부품)를 가져오고, MSI 라면 프로그램 옆에 아주 작은
+신원 패키지를 설치해 등록한다. 직접 쓸 코드도, 살 인증서도 없다. 자세한 이야기는 참조의 "탐색기의 우클릭
+메뉴"에 있다.
 
 ## COM 클래스: `[com.ID]`
 

@@ -539,7 +539,7 @@ static void loc_free(loc_t *l) {
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
 enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
-       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_COUNT = 11 };
+       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_DESKTOP5 = 2048, NS_COUNT = 12 };
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
 enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17, CAP_UNVIRTUALIZED = 1 << 18 };
 
@@ -811,7 +811,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" },
                                              { "uap6", "http://schemas.microsoft.com/appx/manifest/uap/windows10/6" },
                                              { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" },
-                                             { "rescap6", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" } };
+                                             { "rescap6", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" },
+                                             { "desktop5", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/5" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -1120,7 +1121,9 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         size_t nexts = 0;
         for (size_t j = k; j < ir->assoc_count; ++j) {
             if (strcmp(ir->assocs[j].prog_id, x->prog_id) != 0) continue;
-            rp_buf_puts(b, "              <uap:FileType>");
+            rp_buf_puts(b, "              <uap:FileType");
+            if (ir->assocs[j].content_type) attr(b, "ContentType", ir->assocs[j].content_type);
+            rp_buf_byte(b, '>');
             xml_text(b, ir->assocs[j].extension);
             rp_buf_puts(b, "</uap:FileType>\r\n");
             if (nexts < 64) exts[nexts++] = ir->assocs[j].extension;
@@ -1405,7 +1408,12 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                     for (size_t u = 0; u < (j == k ? t : y->type_count) && !seen; ++u) seen = strcmp(y->types[u], x->types[t]) == 0;
                 }
                 if (seen) continue;
-                rp_buf_puts(&menus, "            <desktop4:ItemType");
+                // Folders and the folder background are item types of the desktop5 schema.
+                const char *ins = x->types[t][0] == 'D' ? "desktop5" : "desktop4";
+                if (x->types[t][0] == 'D') *ns |= NS_DESKTOP5;
+                rp_buf_puts(&menus, "            <");
+                rp_buf_puts(&menus, ins);
+                rp_buf_puts(&menus, ":ItemType");
                 attr(&menus, "Type", x->types[t]);
                 rp_buf_puts(&menus, ">\r\n");
                 for (size_t j = k; j < ir->msix_ext_count; ++j) {
@@ -1415,13 +1423,17 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                         if (strcmp(y->types[u], x->types[t]) != 0) continue;
                         char g[37];
                         snprintf(g, sizeof g, "%.36s", y->clsid ? y->clsid + 1 : "");
-                        rp_buf_puts(&menus, "              <desktop4:Verb");
+                        rp_buf_puts(&menus, "              <");
+                        rp_buf_puts(&menus, ins);
+                        rp_buf_puts(&menus, ":Verb");
                         attr(&menus, "Id", y->verb);
                         attr(&menus, "Clsid", g);
                         rp_buf_puts(&menus, " />\r\n");
                     }
                 }
-                rp_buf_puts(&menus, "            </desktop4:ItemType>\r\n");
+                rp_buf_puts(&menus, "            </");
+                rp_buf_puts(&menus, ins);
+                rp_buf_puts(&menus, ":ItemType>\r\n");
             }
         }
         if (menus.len) {
@@ -1589,6 +1601,203 @@ static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (err == PROVEN_OK) err = z.out.err;
     if (err == PROVEN_OK) err = rp_zip_finish(&z, out, len);
     else rp_zip_abort(&z);
+    rp_buf_free(&m);
+    rp_buf_free(&bm);
+    rp_buf_free(&ct);
+    return err;
+}
+
+// ---- the identity package of an MSI's [menu.*] items (plan 2026-10-09) -------------------------
+
+// A text as part of a distinguished name or a package name: only letters, digits, '.', '-' and
+// (with `spaces`) spaces stay.
+static void plain_name(const char *s, bool spaces, char *out, size_t cap) {
+    size_t w = 0;
+    for (; s && *s && w + 1 < cap; ++s) {
+        bool keep = (*s >= 'A' && *s <= 'Z') || (*s >= 'a' && *s <= 'z') || (*s >= '0' && *s <= '9') || *s == '.' || *s == '-' ||
+                    (spaces && *s == ' ');
+        if (keep) out[w++] = *s;
+    }
+    while (w && (out[w - 1] == ' ' || out[w - 1] == '.')) --w;
+    out[w] = '\0';
+}
+
+void rp_msix_sparse_identity(const rp_ir_t *ir, const char *publisher, char name[160], char pub[8400]) {
+    if (ir->msix_identity_name) {
+        snprintf(name, 160, "%s", ir->msix_identity_name);
+    } else {
+        char a[64], b[64];
+        plain_name(ir->manufacturer, false, a, sizeof a);
+        plain_name(ir->name, false, b, sizeof b);
+        snprintf(name, 160, "%.40s%s%.40s.Menu", a[0] ? a : "Rp", ".", b[0] ? b : "Product");
+    }
+    if (publisher) {
+        snprintf(pub, 8400, "%s", publisher);
+    } else {
+        char cn[128];
+        plain_name(ir->manufacturer, true, cn, sizeof cn);
+        snprintf(pub, 8400, "CN=%s, %s", cn[0] ? cn : "Unknown", UNSIGNED_OID);
+    }
+}
+
+proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const char *publisher, const char *executable, const char *dll,
+                            uint8_t **out, size_t *len) {
+    static const char *const arch[] = { "x64", "arm64", "x86" };
+    char version[32], name[160], pub[8400];
+    unsigned v[4] = { 0 };
+    for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
+    snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+    rp_msix_sparse_identity(ir, publisher, name, pub);
+    *out = NULL;
+    *len = 0;
+    rp_buf_t m = rp_buf_new(alloc, 1u << 22);
+    rp_buf_puts(&m, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
+                    "<Package xmlns=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10\"\r\n"
+                    "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
+                    "         xmlns:uap10=\"http://schemas.microsoft.com/appx/manifest/uap/windows10/10\"\r\n"
+                    "         xmlns:rescap=\"http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities\"\r\n"
+                    "         xmlns:desktop4=\"http://schemas.microsoft.com/appx/manifest/desktop/windows10/4\"\r\n"
+                    "         xmlns:desktop5=\"http://schemas.microsoft.com/appx/manifest/desktop/windows10/5\"\r\n"
+                    "         xmlns:com=\"http://schemas.microsoft.com/appx/manifest/com/windows10\"\r\n"
+                    "         IgnorableNamespaces=\"uap uap10 rescap desktop4 desktop5 com\">\r\n  <Identity");
+    attr(&m, "Name", name);
+    attr(&m, "Publisher", pub);
+    attr(&m, "Version", version);
+    attr(&m, "ProcessorArchitecture", arch[ir->arch]);
+    rp_buf_puts(&m, " />\r\n  <Properties>\r\n    <DisplayName>");
+    xml_text(&m, ir->name);
+    rp_buf_puts(&m, "</DisplayName>\r\n    <PublisherDisplayName>");
+    xml_text(&m, ir->manufacturer);
+    rp_buf_puts(&m, "</PublisherDisplayName>\r\n    <Logo>Assets\\StoreLogo.png</Logo>\r\n"
+                    "    <uap10:AllowExternalContent>true</uap10:AllowExternalContent>\r\n  </Properties>\r\n"
+                    "  <Resources>\r\n    <Resource Language=\"en-us\" />\r\n  </Resources>\r\n  <Dependencies>\r\n"
+                    "    <TargetDeviceFamily Name=\"Windows.Desktop\" MinVersion=\"10.0.19041.0\" MaxVersionTested=\"10.0.26100.0\" />\r\n"
+                    "  </Dependencies>\r\n  <Capabilities>\r\n    <rescap:Capability Name=\"runFullTrust\" />\r\n"
+                    "    <rescap:Capability Name=\"unvirtualizedResources\" />\r\n  </Capabilities>\r\n  <Applications>\r\n"
+                    "    <Application Id=\"Menu\"");
+    attr(&m, "Executable", executable);
+    rp_buf_puts(&m, " uap10:TrustLevel=\"mediumIL\" uap10:RuntimeBehavior=\"win32App\">\r\n      <uap:VisualElements AppListEntry=\"none\"");
+    attr(&m, "DisplayName", ir->name);
+    attr(&m, "Description", ir->name);
+    rp_buf_puts(&m, " BackgroundColor=\"transparent\" Square150x150Logo=\"Assets\\Square150x150Logo.png\""
+                    " Square44x44Logo=\"Assets\\Square44x44Logo.png\" />\r\n      <Extensions>\r\n"
+                    "        <desktop4:Extension Category=\"windows.fileExplorerContextMenus\">\r\n          <desktop4:FileExplorerContextMenus>\r\n");
+    // One ItemType per place, each with the verbs that show there. The places in a fixed order:
+    // "*", the file types by name, then folders and the folder background.
+    const char *types[RP_MSIX_SPARSE_TYPES];
+    size_t nt = 0;
+    for (size_t pass = 0; pass < 4; ++pass) {
+        for (size_t k = 0; k < ir->menu_count; ++k) {
+            const rp_ir_menu_t *x = &ir->menus[k];
+            if (x->parent || !x->windows11) continue;
+            for (size_t p = 0; p < x->on_count; ++p) {
+                const char *on = x->on[p], *type = NULL;
+                if (strncmp(on, "assoc:", 6) == 0) {
+                    for (size_t a = 0; a < ir->assoc_count; ++a) {
+                        if (strcmp(ir->assocs[a].id, on + 6) == 0) on = ir->assocs[a].extension;
+                    }
+                }
+                if (pass == 0 && strcmp(on, "*") == 0) type = "*";
+                else if (pass == 1 && on[0] == '.') type = on;
+                else if (pass == 2 && strcmp(on, "folder") == 0) type = "Directory";
+                else if (pass == 3 && strcmp(on, "background") == 0) type = "Directory\\Background";
+                if (type == NULL) continue;
+                bool seen = false;
+                for (size_t t = 0; t < nt; ++t) seen |= strcmp(types[t], type) == 0;
+                if (!seen && nt < RP_MSIX_SPARSE_TYPES) types[nt++] = type;
+            }
+        }
+        if (pass == 1) {            // the file types by name
+            for (size_t i = 1; i < nt; ++i) {
+                for (size_t j = i; j > 0 && types[j - 1][0] == '.' && strcmp(types[j - 1], types[j]) > 0; --j) {
+                    const char *t = types[j];
+                    types[j] = types[j - 1];
+                    types[j - 1] = t;
+                }
+            }
+        }
+    }
+    for (size_t t = 0; t < nt; ++t) {
+        const char *ns = types[t][0] == 'D' ? "desktop5" : "desktop4";
+        rp_buf_puts(&m, "            <");
+        rp_buf_puts(&m, ns);
+        rp_buf_puts(&m, ":ItemType");
+        attr(&m, "Type", types[t]);
+        rp_buf_puts(&m, ">\r\n");
+        for (size_t k = 0; k < ir->menu_count; ++k) {
+            const rp_ir_menu_t *x = &ir->menus[k];
+            if (x->parent || !x->windows11 || x->clsid == NULL) continue;
+            bool here = false;
+            for (size_t p = 0; p < x->on_count; ++p) {
+                const char *on = x->on[p];
+                if (strncmp(on, "assoc:", 6) == 0) {
+                    for (size_t a = 0; a < ir->assoc_count; ++a) {
+                        if (strcmp(ir->assocs[a].id, on + 6) == 0) on = ir->assocs[a].extension;
+                    }
+                }
+                here |= strcmp(on, types[t]) == 0 || (strcmp(on, "folder") == 0 && strcmp(types[t], "Directory") == 0) ||
+                        (strcmp(on, "background") == 0 && strcmp(types[t], "Directory\\Background") == 0);
+            }
+            if (!here) continue;
+            char clsid[40];
+            snprintf(clsid, sizeof clsid, "%.36s", x->clsid + 1);
+            rp_buf_puts(&m, "              <");
+            rp_buf_puts(&m, ns);
+            rp_buf_puts(&m, ":Verb");
+            attr(&m, "Id", x->id);
+            attr(&m, "Clsid", clsid);
+            rp_buf_puts(&m, " />\r\n");
+        }
+        rp_buf_puts(&m, "            </");
+        rp_buf_puts(&m, ns);
+        rp_buf_puts(&m, ":ItemType>\r\n");
+    }
+    rp_buf_puts(&m, "          </desktop4:FileExplorerContextMenus>\r\n        </desktop4:Extension>\r\n"
+                    "        <com:Extension Category=\"windows.comServer\">\r\n          <com:ComServer>\r\n"
+                    "            <com:SurrogateServer");
+    attr(&m, "DisplayName", ir->name);
+    rp_buf_puts(&m, ">\r\n");
+    for (size_t k = 0; k < ir->menu_count; ++k) {
+        const rp_ir_menu_t *x = &ir->menus[k];
+        if (x->parent || !x->windows11 || x->clsid == NULL) continue;
+        char clsid[40];
+        snprintf(clsid, sizeof clsid, "%.36s", x->clsid + 1);
+        rp_buf_puts(&m, "              <com:Class");
+        attr(&m, "Id", clsid);
+        attr(&m, "Path", dll);
+        rp_buf_puts(&m, " ThreadingModel=\"STA\" />\r\n");
+    }
+    rp_buf_puts(&m, "            </com:SurrogateServer>\r\n          </com:ComServer>\r\n        </com:Extension>\r\n"
+                    "      </Extensions>\r\n    </Application>\r\n  </Applications>\r\n</Package>\r\n");
+    // The package: three logos, the manifest, the block map and the content types.
+    static const struct { const char *path; uint32_t size; } logos[] = { { "Assets\\Square150x150Logo.png", 150 },
+                                                                         { "Assets\\Square44x44Logo.png", 44 },
+                                                                         { "Assets\\StoreLogo.png", 50 } };
+    item_t items[3];
+    memset(items, 0, sizeof items);
+    rp_zip_writer_t z;
+    rp_zip_begin(&z, alloc, (size_t)1 << 30);
+    rp_buf_t bm = rp_buf_new(alloc, 1u << 20), ct = rp_buf_new(alloc, 1u << 20);
+    rp_buf_puts(&bm, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><BlockMap "
+                     "xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" xmlns:b4=\"http://schemas.microsoft.com/appx/2021/blockmap\" "
+                     "IgnorableNamespaces=\"b4\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
+    proven_err_t err = m.err;
+    for (size_t i = 0; i < 3 && err == PROVEN_OK; ++i) {
+        snprintf(items[i].path, sizeof items[i].path, "%s", logos[i].path);
+        err = default_logo(alloc, logos[i].size, &items[i].data, &items[i].data_len);
+        if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, logos[i].path, NULL, items[i].data, items[i].data_len, false);
+    }
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, "AppxManifest.xml", NULL, m.data, m.len, true);
+    rp_buf_puts(&bm, "</BlockMap>");
+    if (err == PROVEN_OK) err = bm.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "AppxBlockMap.xml", NULL, bm.data, bm.len, true);
+    content_types(&ct, items, 3);
+    if (err == PROVEN_OK) err = ct.err;
+    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "[Content_Types].xml", "[Content_Types].xml", ct.data, ct.len, true);
+    if (err == PROVEN_OK) err = z.out.err;
+    if (err == PROVEN_OK) err = rp_zip_finish(&z, out, len);
+    else rp_zip_abort(&z);
+    for (size_t i = 0; i < 3; ++i) rp_mem_free(alloc, items[i].data);
     rp_buf_free(&m);
     rp_buf_free(&bm);
     rp_buf_free(&ct);
@@ -1969,6 +2178,65 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     for (size_t k = 0; k < ir->merge_count; ++k) {
         for (size_t i = 0; i < mods[k].reg_count; ++i) (void)add_registry(alloc, &mods[k].regs[i], machine, user, &used_m, &used_u, d);
+    }
+    // [menu.*]: what rubrapack's menu DLL reads (src/menu/rubrapack_menu.c), in the package's own
+    // registry; "%PKG%" stands for the package's folder there.
+    if (machine && item_path(items, n, "RpMenuDll")) {
+        for (size_t k = 0; k < ir->menu_count; ++k) {
+            const rp_ir_menu_t *x = &ir->menus[k];
+            const rp_ir_menu_t *up = NULL;
+            for (size_t j = 0; x->parent && j < ir->menu_count; ++j) {
+                if (strcmp(ir->menus[j].id, x->parent) == 0) up = &ir->menus[j];
+            }
+            const rp_ir_menu_t *top = up ? up : x;
+            if (!top->windows11 || top->clsid == NULL) continue;
+            char key[400], val[2400], text[8192];
+            static const char *const multi[] = { "each", "one", "single" };
+            snprintf(key, sizeof key, "REGISTRY\\MACHINE\\SOFTWARE\\rubrapack\\Menu\\%s%s%s", top->clsid, up ? "\\" : "", up ? x->id : "");
+            rp_buf_t data = rp_buf_new(alloc, 1u << 20);
+#define MENU_SZ(name, value)                                                                                    \
+    do {                                                                                                        \
+        data.len = 0;                                                                                           \
+        if (utf16z(&data, (value)) && rp_regf_set(machine, key, (name), 1, data.data, data.len) == PROVEN_OK) used_m = true; \
+        else DERR(x->pos, "RP1612", "[menu.%s]: its values cannot go into the package's registry", x->id);      \
+    } while (0)
+            if (x->text) MENU_SZ("Text", x->text);
+            for (size_t w = 0; w < x->text_by_lang_count; ++w) {
+                bool en = strcmp(x->text_by_lang[w].lang, "en") == 0;
+                if (en || (x->text == NULL && w == 0)) MENU_SZ("Text", x->text_by_lang[w].text);
+                if (!en) {
+                    snprintf(val, sizeof val, "Text.%s", x->text_by_lang[w].lang);
+                    MENU_SZ(val, x->text_by_lang[w].text);
+                }
+            }
+            const char *icon = item_path(items, n, x->icon_file ? x->icon_file : x->target_file);
+            if (icon) {
+                snprintf(val, sizeof val, "%%PKG%%\\%s%s", icon, x->icon_file ? "" : ",0");
+                MENU_SZ("Icon", val);
+            }
+            const char *prog = item_path(items, n, x->target_file);
+            if (x->target_file == NULL) {
+                data.len = 0;
+                for (size_t j = 0; j < ir->menu_count; ++j) {
+                    if (ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0) (void)utf16z(&data, ir->menus[j].id);
+                }
+                rp_buf_u16le(&data, 0);
+                if (data.err == PROVEN_OK && rp_regf_set(machine, key, "Items", 7, data.data, data.len) == PROVEN_OK) used_m = true;
+            } else if (prog == NULL) {
+                DERR(x->pos, "RP1612", "[menu.%s]: its program is not in the MSIX (msi-only?)", x->id);
+            } else {
+                snprintf(val, sizeof val, "%%PKG%%\\%s", prog);
+                MENU_SZ("Command", val);
+                if (!literal(x->args ? x->args : "\"%1\"", text, sizeof text)) {
+                    DERR(x->pos, "RP1612", "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only", x->id);
+                } else {
+                    MENU_SZ("Args", text);
+                }
+                MENU_SZ("Multi", multi[x->multi]);
+            }
+#undef MENU_SZ
+            rp_buf_free(&data);
+        }
     }
     for (size_t k = 0; k < ir->merge_count; ++k) {
         for (size_t i = 0; i < mods[k].reg_count; ++i) mods[k].regs[i].id = NULL;     // not owned

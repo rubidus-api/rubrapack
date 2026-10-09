@@ -12,6 +12,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/merge.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/msix.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
@@ -550,7 +551,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir;
+    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir, menu;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
@@ -1049,7 +1050,13 @@ static void lower_helper_actions(pkg_t *pk) {
     // restart, unless cleanup = false (or this rubrapack has no helper DLL, which only it needs).
     bool cleanup = !ir->no_cleanup && !ir->module && part_len > 0;
     bool preflight = !ir->no_preflight && !ir->module && part_len > 0;
-    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight) {
+    // [menu.*] for the Windows 11 menu: the identity package is registered by the helper DLL (the
+    // model has its two files once the build command made them).
+    bool menu = false;
+    for (size_t i = 0; i < ir->file_count; ++i) menu |= ir->menu_package && strcmp(ir->files[i].id, "RpMenuPkg") == 0;
+    menu = menu && part_len > 0;
+    pk->menu = menu;
+    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight || menu) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1091,6 +1098,92 @@ static void lower_helper_actions(pkg_t *pk) {
         }
         s_(&pk->customaction, "RP_GuardDirs"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpGuardDirs");
         s_(&pk->iexec, "RP_GuardDirs"); s_(&pk->iexec, "NOT Installed"); i_(&pk->iexec, 1010);
+    }
+    // [menu.*] with text-xx: the classic menu's text is one registry value, so it is the text of the
+    // installation's language - RpMenuT_<ID>, set here (English first, then the chosen language:
+    // RPLANGUAGE, else the user's display language) and named by the MUIVerb value.
+    for (size_t m = 0; m < ir->menu_count; ++m) {
+        const rp_ir_menu_t *x = &ir->menus[m];
+        if (x->text_by_lang_count == 0) continue;
+        const char *prop = kprintf(k, "RpMenuT_%s", x->id, NULL);
+        for (size_t w = 0; w <= x->text_by_lang_count; ++w) {
+            const char *code = w ? x->text_by_lang[w - 1].lang : "en";
+            const char *text = w ? x->text_by_lang[w - 1].text : x->text;
+            if (text == NULL) text = x->text_by_lang[0].text;       // no English text: the first language's
+            if (w && strcmp(code, "en") == 0) continue;
+            // As a Formatted text that stays as written.
+            rp_buf_t lit = rp_buf_new(k->alloc, 1u << 16);
+            for (const char *p = text; *p; ++p) {
+                if (*p == '[' || *p == ']') {
+                    rp_buf_puts(&lit, "[\\");
+                    rp_buf_byte(&lit, (uint8_t)*p);
+                    rp_buf_byte(&lit, ']');
+                } else {
+                    rp_buf_byte(&lit, (uint8_t)*p);
+                }
+            }
+            rp_buf_byte(&lit, 0);
+            const char *cond = NULL;
+            if (w) {
+                cond = kprintf(k, "RPLANGUAGE = \"%s\"", code, NULL);
+                for (size_t li = 1; li < ir->ui_lang_count; ++li) {
+                    const rp_ir_ui_lang_t *L = &ir->ui_langs[li];
+                    if (strcmp(L->code, code) != 0) continue;
+                    for (size_t j = 0; j < L->langid_count; ++j) {
+                        char id[16];
+                        snprintf(id, sizeof id, "%u", (unsigned)L->langids[j]);
+                        cond = kprintf(k, "%s OR (NOT RPLANGUAGE AND UserLanguageID = %s)", cond, id);
+                    }
+                }
+            }
+            const char *action = kprintf(k, "RpMenuT_%s_%s", x->id, code);
+            s_(&pk->customaction, action); i_(&pk->customaction, 51); s_(&pk->customaction, prop);
+            s_(&pk->customaction, lit.err == PROVEN_OK ? kprintf(k, "%s", (const char *)lit.data, NULL) : text);
+            s_(&pk->iexec, action); s_(&pk->iexec, cond); i_(&pk->iexec, w ? 1013 : 1012);
+            rp_buf_free(&lit);
+        }
+    }
+    // The identity package (rp_appx.h): registered after the files and registry values are there,
+    // removed before they go; each with its opposite as the rollback. The actions get
+    // "<file>|RPM1|scope|u or s|full name|family name|<classic verb keys>": the file's path formatted
+    // by a type-51 action, the rest from the property RpMenuData (a Target holds 255 characters).
+    if (menu) {
+        static const char *const arch[] = { "x64", "arm64", "x86" };
+        char name[160], pub[8400], id[14], version[32];
+        unsigned v[4] = { 0 };
+        for (size_t i = 0; i < ir->version_count && i < 4; ++i) v[i] = ir->version_parts[i];
+        snprintf(version, sizeof version, "%u.%u.%u.%u", v[0], v[1], v[2], v[3]);
+        rp_msix_sparse_identity(ir, ir->menu_publisher, name, pub);
+        rp_msix_publisher_id(pub, id);
+        const char *full = kprintf(k, "%s_%s", name, kprintf(k, "%s_%s", version, kprintf(k, "%s__%s", arch[ir->arch], id)));
+        const char *family = kprintf(k, "%s_%s", name, id);
+        const char *data = kprintf(k, "RPM1|%s|%s", ir->scope == 0 ? "m" : "u",
+                                   kprintf(k, "%s|%s", ir->menu_publisher ? "s" : "u", kprintf(k, "%s|%s", full, family)));
+        // Then the classic verbs of the same items (their keys below Software\Classes): where the
+        // package is registered Windows shows its items in the classic menu too, so the registry
+        // verbs are switched off there (LegacyDisable) - or each item would be there twice.
+        for (size_t m = 0; m < ir->menu_count; ++m) {
+            const rp_ir_menu_t *x = &ir->menus[m];
+            if (x->parent || !x->windows11) continue;
+            const char *prefix = kprintf(k, "%s.Verb", x->id, NULL);
+            for (size_t r = 0; r < ir->registry_count; ++r) {
+                const rp_ir_registry_t *g = &ir->registries[r];
+                if (g->root != RP_ROOT_HKCR || g->name == NULL || strcmp(g->name, "MUIVerb") != 0) continue;
+                if (strncmp(g->id, prefix, strlen(prefix)) != 0) continue;
+                data = kprintf(k, "%s|%s", data, g->key);
+            }
+        }
+        s_(&pk->property, "RpMenuData"); s_(&pk->property, data);
+        const int noimp = ir->scope == 0 ? 0x800 : 0;
+        static const struct { const char *action, *entry; int type; } acts[] = {
+            { "RP_MenuRegisterRollback", "RpMenuRemove", 0x100 }, { "RP_MenuRegister", "RpMenuRegister", 0 },
+            { "RP_MenuRemoveRollback", "RpMenuRegister", 0x100 }, { "RP_MenuRemove", "RpMenuRemove", 0 } };
+        for (size_t i = 0; i < 4; ++i) {
+            const char *set = kprintf(k, "RP_MenuData%s", i == 0 ? "1" : i == 1 ? "2" : i == 2 ? "3" : "4", NULL);
+            s_(&pk->customaction, set); i_(&pk->customaction, 51); s_(&pk->customaction, acts[i].action); s_(&pk->customaction, "[#RpMenuPkg]|[RpMenuData]");
+            s_(&pk->customaction, acts[i].action); i_(&pk->customaction, 1 | 0x40 | 0x400 | acts[i].type | noimp);
+            s_(&pk->customaction, "RpCa"); s_(&pk->customaction, acts[i].entry);
+        }
     }
     if (pk->any_qword) {
         s_(&pk->property, "RP_QWORDS"); s_(&pk->property, pk->qplan);
@@ -1507,6 +1600,17 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RP_RemoveApplyRollback"); null_(&pk->iexec); i_(&pk->iexec, 3491);
         s_(&pk->iexec, "RP_RemoveApply"); null_(&pk->iexec); i_(&pk->iexec, 3492);
         s_(&pk->iexec, "RP_RemoveCommit"); null_(&pk->iexec); i_(&pk->iexec, 3493);
+    }
+    if (pk->menu) {
+        for (int i = 1; i <= 4; ++i) {
+            char set[32];
+            snprintf(set, sizeof set, "RP_MenuData%d", i);
+            s_(&pk->iexec, kdup(k, set)); null_(&pk->iexec); i_(&pk->iexec, 1014);
+        }
+        s_(&pk->iexec, "RP_MenuRemoveRollback"); s_(&pk->iexec, "REMOVE = \"ALL\""); i_(&pk->iexec, 3479);
+        s_(&pk->iexec, "RP_MenuRemove"); s_(&pk->iexec, "REMOVE = \"ALL\""); i_(&pk->iexec, 3480);
+        s_(&pk->iexec, "RP_MenuRegisterRollback"); s_(&pk->iexec, "NOT Installed"); i_(&pk->iexec, 5899);
+        s_(&pk->iexec, "RP_MenuRegister"); s_(&pk->iexec, "NOT (REMOVE = \"ALL\")"); i_(&pk->iexec, 5900);
     }
     if (pk->any_qword) {                // after WriteRegistryValues; the prepare step reads component states
         s_(&pk->iexec, "RP_QwordPrepare"); null_(&pk->iexec); i_(&pk->iexec, 5010);

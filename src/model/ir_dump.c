@@ -386,6 +386,27 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         if (sc->when) kv(&b, "when", sc->when);
         rp_buf_byte(&b, '\n');
     }
+    for (size_t k = 0; k < ir->menu_count; ++k) {
+        const rp_ir_menu_t *x = &ir->menus[k];
+        static const char *const multi[] = { "each", "one", "single" };
+        rp_buf_puts(&b, "menu ");
+        rp_buf_puts(&b, x->id);
+        for (size_t j = 0; j < x->on_count; ++j) kv(&b, "on", x->on[j]);
+        kv(&b, "text", x->text);
+        for (size_t j = 0; j < x->text_by_lang_count; ++j) {
+            kv(&b, "text-lang", x->text_by_lang[j].lang);
+            kv(&b, "text", x->text_by_lang[j].text);
+        }
+        kv(&b, "target", x->target_file);
+        kv(&b, "icon", x->icon_file);
+        kv(&b, "args", x->args);
+        kv(&b, "parent", x->parent);
+        kv(&b, "class", x->clsid);
+        kv(&b, "multi", multi[x->multi]);
+        if (x->extended) kv(&b, "extended", "1");
+        if (!x->windows11) kv(&b, "windows11", "0");
+        rp_buf_byte(&b, '\n');
+    }
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         const rp_ir_assoc_t *x = &ir->assocs[k];
         rp_buf_puts(&b, "assoc ");
@@ -396,6 +417,9 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "target", x->target_file);
         kv(&b, "icon", x->icon_file);
         kv(&b, "args", x->args);
+        if (x->content_type) kv(&b, "content-type", x->content_type);
+        if (x->perceived_type) kv(&b, "perceived-type", x->perceived_type);
+        if (x->no_default) kv(&b, "default", "0");
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->com_count; ++k) {

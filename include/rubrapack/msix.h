@@ -39,6 +39,21 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_msix_options_t *opt, uint8_t **out,
                                            size_t *len, rp_srcdiags_t *d);
 
+// The identity package of an MSI's [menu.*] items (plan 2026-10-09): Windows 11 shows in its
+// context menu only what a package with identity declares, so the MSI installs this small package
+// - a manifest and three logos, nothing else - and registers it with the program's folder as its
+// external location. `publisher` is the signing certificate's subject, or NULL for an unsigned
+// package (Windows' unsigned form of the manufacturer). `executable` and `dll` are paths below that
+// folder: any program of the product, and rubrapack's menu DLL (the server of every item's class).
+enum { RP_MSIX_SPARSE_TYPES = 256 };
+[[nodiscard]] proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const char *publisher, const char *executable,
+                                          const char *dll, uint8_t **out, size_t *len);
+// A package's publisher ID: Crockford's base32 of the first 8 bytes of SHA-256 over the Publisher
+// in UTF-16LE, 13 characters (the Publisher is ASCII here).
+void rp_msix_publisher_id(const char *publisher, char id[14]);
+// Its identity name and Publisher as written into the manifest.
+void rp_msix_sparse_identity(const rp_ir_t *ir, const char *publisher, char name[160], char pub[8400]);
+
 // The App Installer file (RFC-0016 3) for a package or, with bundle set, a bundle built from this
 // model: where it and the package are downloaded from ([msix] appinstaller-uri, package-uri) and
 // how often Windows looks for a newer version. NULL output when the source asks for none.

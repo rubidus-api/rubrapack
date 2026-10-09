@@ -8,10 +8,10 @@
 static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "msix-extension", "msix-dependency", "merge", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "msix-extension", "msix-dependency", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
-                                         "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler",
+                                         "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
                                          "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
 
@@ -41,7 +41,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
 
     ir_check_format(&c);
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -96,6 +96,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             const rp_tkey_t *tk = ir_find_key(t, "types");
             nhandler_types += tk && tk->val.kind == RP_TV_ARRAY ? tk->val.count : 0;
         }
+        else if (strcmp(t->kind, "menu") == 0) {
+            ++nmenu;
+            const rp_tkey_t *tk = ir_find_key(t, "on");
+            nmenu_on += tk && tk->val.kind == RP_TV_ARRAY ? tk->val.count : 1;
+        }
         else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
@@ -109,7 +114,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
-                                               "assoc", "protocol", "com", "handler", "shortcut", "font", "service", "msix-dependency", "copy", "ini", "env", "merge", NULL };
+                                               "assoc", "protocol", "com", "handler", "menu", "shortcut", "font", "service", "msix-dependency", "copy", "ini", "env", "merge", NULL };
         if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -173,13 +178,16 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->actions = rp_mem_alloc(alloc, naction + 1, sizeof *ir->actions);
     // [assoc], [protocol] and [com] add their HKCR values for the MSI (add_class_values), and each
     // [com] an [msix-extension] of kind com-server for the MSIX.
-    ir->registries = rp_mem_alloc(alloc, nreg + 4 * nassoc + 4 * nproto + 16 * ncom + 4 * nhandler + 2 * nhandler_types + 1, sizeof *ir->registries);
+    ir->registries = rp_mem_alloc(alloc, nreg + 7 * nassoc + 4 * nproto + 16 * ncom + 4 * nhandler + 2 * nhandler_types + RP_MENU_VALUES * nmenu * (nmenu_on + 1) + nmenu * (8 + RP_UI_LANG_MAX) + 1,
+                                    sizeof *ir->registries);
+    ir->menus = rp_mem_alloc(alloc, nmenu + 1, sizeof *ir->menus);
+    if (ir->menus == NULL) c.nomem = true;
     ir->assocs = rp_mem_alloc(alloc, nassoc + 1, sizeof *ir->assocs);
     ir->protocols = rp_mem_alloc(alloc, nproto + 1, sizeof *ir->protocols);
     ir->coms = rp_mem_alloc(alloc, ncom + 1, sizeof *ir->coms);
     ir->handlers = rp_mem_alloc(alloc, nhandler + 1, sizeof *ir->handlers);
     if (ir->handlers == NULL) c.nomem = true;
-    ir->msix_exts = rp_mem_alloc(alloc, next_ + ncom + 1, sizeof *ir->msix_exts);
+    ir->msix_exts = rp_mem_alloc(alloc, next_ + ncom + nmenu + 1, sizeof *ir->msix_exts);
     if (ir->assocs == NULL || ir->protocols == NULL || ir->coms == NULL || ir->msix_exts == NULL) c.nomem = true;
     ir->shortcuts = rp_mem_alloc(alloc, nshort + 1, sizeof *ir->shortcuts);
     ir->removes = rp_mem_alloc(alloc, nrem + 1, sizeof *ir->removes);
@@ -283,6 +291,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_protocol_t *x = &ir->protocols[ir->protocol_count++];
             memset(x, 0, sizeof *x);
             ir_parse_protocol(&c, t, x);
+        } else if (strcmp(t->kind, "menu") == 0) {
+            rp_ir_menu_t *x = &ir->menus[ir->menu_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_menu(&c, t, x);
         } else if (strcmp(t->kind, "handler") == 0) {
             rp_ir_handler_t *x = &ir->handlers[ir->handler_count++];
             memset(x, 0, sizeof *x);
@@ -318,6 +330,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         const rp_ttable_t *t = &doc->tables[k];
         if (t->id && strcmp(t->kind, "files") == 0) ir_expand_files(&c, t);
     }
+    if (!c.nomem) ir_menu_files(&c);
     if (!c.nomem && ir->feature_count == 0) {       // G2: one hidden default feature
         rp_ir_feature_t *f = &ir->features[ir->feature_count++];
         memset(f, 0, sizeof *f);
@@ -424,6 +437,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     SORT_BY_ID(ir->protocols, ir->protocol_count, rp_ir_protocol_t)
     SORT_BY_ID(ir->coms, ir->com_count, rp_ir_com_t)
     SORT_BY_ID(ir->handlers, ir->handler_count, rp_ir_handler_t)
+    SORT_BY_ID(ir->menus, ir->menu_count, rp_ir_menu_t)
     SORT_BY_ID(ir->msix_exts, ir->msix_ext_count, rp_ir_msix_ext_t)
 #undef SORT_BY_ID
     for (size_t i = 1; !c.nomem && i < ir->registry_count; ++i) {
@@ -613,7 +627,7 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->fonts);
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
-        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->args };
+        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->args, x->content_type, x->perceived_type };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->assocs);
@@ -639,6 +653,21 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->types);
     }
     rp_mem_free(a, ir->handlers);
+    for (size_t k = 0; k < ir->menu_count; ++k) {
+        rp_ir_menu_t *x = &ir->menus[k];
+        char *xs[] = { x->id, x->text, x->target_file, x->icon_file, x->args, x->parent, x->clsid };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        for (size_t j = 0; j < x->on_count; ++j) rp_mem_free(a, x->on[j]);
+        rp_mem_free(a, x->on);
+        for (size_t j = 0; j < x->text_by_lang_count; ++j) {
+            rp_mem_free(a, x->text_by_lang[j].lang);
+            rp_mem_free(a, x->text_by_lang[j].text);
+        }
+        rp_mem_free(a, x->text_by_lang);
+    }
+    rp_mem_free(a, ir->menus);
+    rp_mem_free(a, ir->menu_exe);
+    rp_mem_free(a, ir->menu_publisher);
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         rp_ir_msix_ext_t *x = &ir->msix_exts[k];
         char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display, x->file, x->profile, x->clsid, x->threading, x->args, x->verb,

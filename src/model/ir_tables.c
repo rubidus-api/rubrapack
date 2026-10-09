@@ -822,7 +822,8 @@ static void check_prog_id(ctx_t *c, const rp_ttable_t *t, const char *p) {
 }
 
 void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
-    static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "args", "msi-only", NULL };
+    static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "args", "content-type", "perceived-type",
+                                        "default", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 64);
     x->id = ir_dup(c, t->id);
@@ -838,6 +839,25 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
     x->icon_file = file_ref(c, t, "icon", false);
     x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
+    x->no_default = !ir_get_bool(c, t, "default", true);
+    x->content_type = ir_get_str(c, t, "content-type", false, NULL);
+    if (x->content_type) {
+        // type/subtype in the characters a media type takes.
+        const char *slash = strchr(x->content_type, '/');
+        bool ok = slash && slash > x->content_type && slash[1] && strlen(x->content_type) <= 127 && strchr(slash + 1, '/') == NULL;
+        for (const char *q = x->content_type; ok && *q; ++q) {
+            ok = (*q >= 'a' && *q <= 'z') || (*q >= 'A' && *q <= 'Z') || (*q >= '0' && *q <= '9') || strchr("/.+-_!#$&^", *q) != NULL;
+        }
+        if (!ok) ERR(c, ir_key_pos(t, "content-type"), "RP1316", "content-type is a media type, like \"image/png\" (got '%s')", x->content_type);
+    }
+    x->perceived_type = ir_get_str(c, t, "perceived-type", false, NULL);
+    if (x->perceived_type) {
+        static const char *const kinds[] = { "image", "text", "audio", "video", "compressed", "document", "system", "application", NULL };
+        if (!ir_in_list(x->perceived_type, kinds)) {
+            ERR(c, ir_key_pos(t, "perceived-type"), "RP1316", "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", "
+                                                              "\"document\", \"system\" or \"application\" (got '%s')", x->perceived_type);
+        }
+    }
 }
 
 void ir_parse_protocol(ctx_t *c, const rp_ttable_t *t, rp_ir_protocol_t *x) {
@@ -933,6 +953,50 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
             ERR(c, tk->pos, "RP1316", "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')", ty ? ty : "?");
         }
         x->types[x->type_count++] = ty;
+    }
+}
+
+void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
+    static const char *const keys[] = { "on", "text", "target", "args", "icon", "parent", "multi", "extended", "windows11", NULL };
+    static const char *const lkeys[] = { "text", NULL };
+    ir_check_keys_lang(c, t, keys, lkeys);
+    ir_check_id(c, t, 40);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    ir_get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
+    x->text = ir_get_str(c, t, "text", x->text_by_lang_count == 0, NULL);
+    x->target_file = file_ref(c, t, "target", false);
+    x->icon_file = file_ref(c, t, "icon", false);
+    x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
+    x->parent = ir_get_str(c, t, "parent", false, NULL);
+    x->extended = ir_get_bool(c, t, "extended", false);
+    x->windows11 = ir_get_bool(c, t, "windows11", true);
+    char *multi = ir_get_str(c, t, "multi", false, NULL);
+    if (multi == NULL || strcmp(multi, "each") == 0) x->multi = RP_MENU_EACH;
+    else if (strcmp(multi, "one") == 0) x->multi = RP_MENU_ONE;
+    else if (strcmp(multi, "single") == 0) x->multi = RP_MENU_SINGLE;
+    else ERR(c, ir_key_pos(t, "multi"), "RP1316", "multi must be \"each\", \"one\" or \"single\" (got '%s')", multi);
+    rp_mem_free(c->alloc, multi);
+    // on: one text or a list. An item of a sub-menu shows where its sub-menu shows and has none.
+    const rp_tkey_t *tk = ir_find_key(t, "on");
+    size_t n = tk == NULL ? 0 : tk->val.kind == RP_TV_ARRAY ? tk->val.count : 1;
+    if (tk && n == 0) ERR(c, tk->pos, "RP1316", "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]", t->id);
+    if (n == 0) return;
+    x->on = rp_mem_alloc(c->alloc, n, sizeof *x->on);
+    if (x->on == NULL) {
+        c->nomem = true;
+        return;
+    }
+    for (size_t k = 0; k < n; ++k) {
+        const rp_tval_t *v = tk->val.kind == RP_TV_ARRAY ? &tk->val.items[k] : &tk->val;
+        char *on = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+        bool ok = on && (strcmp(on, "*") == 0 || strcmp(on, "folder") == 0 || strcmp(on, "background") == 0 || strcmp(on, "drive") == 0 ||
+                         (strncmp(on, "assoc:", 6) == 0 && on[6]) || (on[0] == '.' && strlen(on) <= 64 && lower_name(on + 1, "_-", 1)));
+        if (!ok) {
+            ERR(c, tk->pos, "RP1316", "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", "
+                                      "\"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')", on ? on : "?");
+        }
+        x->on[x->on_count++] = on;
     }
 }
 

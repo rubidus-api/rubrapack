@@ -9,6 +9,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/parts.h"
 #include "rubrapack/toml.h"
 
 #include <stdio.h>
@@ -44,6 +45,64 @@ static bool write_appinstaller(proven_allocator_t heap, const char *out, const u
 }
 
 // A chain's setup program (RFC-0016 3): the packages the source names, after rubrapack's bootstrapper.
+// [menu.*] items for the Windows 11 menu (plan 2026-10-09): rubrapack's menu DLL - and, for an MSI,
+// the identity package - are made from the model just built, written beside the output as
+// temporary files (`dll` and `pkg`, removed by the caller at the end), and the model is built again
+// with them as files of the package. Leaves the model as it is when it has no such item.
+// Returns an exit code; *err is the second model's result.
+static int menu_files(proven_allocator_t heap, const rp_tdoc_t *doc, rp_ir_options_t *opt, rp_ir_t *ir, rp_srcdiags_t *d, bool msix,
+                      const rp_sign_args_t *sign, const char *out, char *dll, char *pkg_path, size_t cap, proven_err_t *err) {
+    if (!ir->menu_package) return RP_EXIT_OK;
+    const unsigned char *part = ir->arch == RP_ARCH_X64 ? rp_menu_x64 : ir->arch == RP_ARCH_X86 ? rp_menu_x86 : rp_menu_arm64;
+    size_t part_len = ir->arch == RP_ARCH_X64 ? rp_menu_x64_len : ir->arch == RP_ARCH_X86 ? rp_menu_x86_len : rp_menu_arm64_len;
+    const char *exe_name = NULL;
+    for (size_t k = 0; k < ir->file_count; ++k) {
+        if (strcmp(ir->files[k].id, ir->menu_exe) == 0) exe_name = ir->files[k].name;
+    }
+    if (part_len < 2 || exe_name == NULL) {
+        rp_srcdiag_add(d, (rp_pos_t){ 1, 1 }, "RP1317", true, "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu");
+        return RP_EXIT_OK;
+    }
+    // Signed with --key when the source names the certificate's subject ([msix] publisher);
+    // otherwise Windows' unsigned form, which an elevated installation may register.
+    bool sign_it = !msix && rp_sign_wanted(sign) && ir->msix_publisher;
+    static char publisher[8400];
+    if (sign_it) snprintf(publisher, sizeof publisher, "%s", ir->msix_publisher);
+    uint8_t *pkg = NULL;
+    size_t pkg_len = 0;
+    int rc = RP_EXIT_OK;
+    if (!msix) {
+        if (rp_msix_sparse(heap, ir, sign_it ? publisher : NULL, exe_name, "rubrapack_menu.dll", &pkg, &pkg_len) != PROVEN_OK) rc = RP_EXIT_IO;
+        if (rc == RP_EXIT_OK && sign_it) {
+            uint8_t *signed_pkg = NULL;
+            size_t signed_len = 0;
+            rc = rp_sign_bytes(sign, "rubrapack_menu.msix", pkg, pkg_len, &signed_pkg, &signed_len);
+            rp_mem_free(heap, pkg);
+            pkg = signed_pkg;
+            pkg_len = signed_len;
+        }
+    }
+    snprintf(dll, cap, "%s.rp-menu-dll.tmp", out);
+    if (!msix) snprintf(pkg_path, cap, "%s.rp-menu-pkg.tmp", out);
+    if (rc == RP_EXIT_OK && (rp_pal_write_file_atomic(heap, dll, part, part_len) != PROVEN_OK ||
+                             (!msix && rp_pal_write_file_atomic(heap, pkg_path, pkg, pkg_len) != PROVEN_OK))) {
+        rp_diag_error(RP_DIAG_OUTPUT, "cannot write the menu files beside '%s'", out);
+        rc = RP_EXIT_IO;
+    }
+    rp_mem_free(heap, pkg);
+    if (rc != RP_EXIT_OK) {
+        rp_ir_free(ir);
+        return rc;
+    }
+    rp_ir_free(ir);
+    *d = (rp_srcdiags_t){ 0 };
+    opt->menu_dll = dll;
+    opt->menu_pkg = msix ? NULL : pkg_path;
+    opt->menu_publisher = sign_it ? publisher : NULL;
+    *err = rp_ir_build(heap, doc, opt, ir, d);
+    return RP_EXIT_OK;
+}
+
 static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
                        const char *arch, bool chain_out, bool lint, const rp_sign_args_t *sign, const char *out, const char *src,
                        rp_srcdiags_t *d) {
@@ -55,7 +114,7 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is a [chain]: it builds a setup program, -o setup.exe", src);
         return RP_EXIT_USAGE;
     }
-    rp_ir_options_t opt = { dir, defines, ndef, arch, NULL, NULL, false };
+    rp_ir_options_t opt = { dir, defines, ndef, arch, NULL, NULL, false, NULL, NULL, NULL };
     rp_chain_t chain;
     proven_err_t err = rp_chain_parse(heap, doc, &opt, &chain, d);
     uint8_t *exe = NULL;
@@ -101,9 +160,18 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     proven_err_t err = PROVEN_OK;
     for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
         rp_ir_t ir;
-        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, nfc };
+        rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, nfc, NULL, NULL, NULL };
         err = rp_ir_build(heap, doc, &opt, &ir, d);
-        if (err != PROVEN_OK) break;
+        char menu_dll[1600] = "", menu_none[8] = "";
+        if (err == PROVEN_OK) {
+            char stem[1500];
+            snprintf(stem, sizeof stem, "%s.%zu", out, k);
+            if (menu_files(heap, doc, &opt, &ir, d, true, sign, stem, menu_dll, menu_none, sizeof menu_dll, &err) != RP_EXIT_OK) err = PROVEN_ERR_IO;
+        }
+        if (err != PROVEN_OK) {
+            if (menu_dll[0]) (void)rp_pal_remove_file(heap, menu_dll);
+            break;
+        }
         size_t len = 0;
         // Every architecture's build splits the texts the same way; the first one's packs serve all.
         rp_msix_langpack_t *more = NULL;
@@ -112,6 +180,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         mo.langpacks = n == 0 ? &lp : &more;
         mo.nlangpacks = n == 0 ? &nlp : &nmore;
         err = rp_msix_from_ir(heap, &ir, &mo, &pkgs[n], &len, d);
+        if (menu_dll[0]) (void)rp_pal_remove_file(heap, menu_dll);
         for (size_t i = 0; i < nmore; ++i) rp_mem_free(heap, more[i].data);
         rp_mem_free(heap, more);
         if (err == PROVEN_OK && n == 0) err = rp_msix_appinstaller(heap, &ir, mopt, true, &ai, &ai_len);
@@ -198,6 +267,7 @@ static void outfile_drop(void *ctx, uint8_t *data) {
 }
 
 static int run(int argc, char **argv, bool lint) {
+    char menu_dll[1600] = "", menu_pkg[1600] = "";      // the Windows 11 menu's files beside the output, while building
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
     bool strict = false, nfc = false;
     rp_sign_args_t sign = { 0 };
@@ -421,8 +491,18 @@ static int run(int argc, char **argv, bool lint) {
             goto done;
         }
         if (err == PROVEN_OK) {
-            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc };
+            rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc, NULL, NULL, NULL };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
+            if (err == PROVEN_OK && !lint) {
+                int menu_rc = menu_files(heap, &doc, &opt, &ir, &d, msix, &sign, out, menu_dll, menu_pkg, sizeof menu_dll, &err);
+                if (menu_rc != RP_EXIT_OK) {
+                    rp_toml_free(&doc);
+                    rp_mem_free(heap, text);
+                    rp_srcdiag_print(&d, src);
+                    rc = menu_rc;
+                    goto done;
+                }
+            }
             rp_toml_free(&doc);
             if (err == PROVEN_OK && !lint && ir.module != msm_out) {
                 rp_srcdiag_add(&d, (rp_pos_t){ 1, 1 }, "RP1201", false,
@@ -534,6 +614,8 @@ static int run(int argc, char **argv, bool lint) {
         }
     }
 done:
+    if (menu_dll[0]) (void)rp_pal_remove_file(proven_heap_allocator(), menu_dll);
+    if (menu_pkg[0]) (void)rp_pal_remove_file(proven_heap_allocator(), menu_pkg);
     for (size_t k = 0; k < ndef; ++k) rp_mem_free(proven_heap_allocator(), define_buf[k]);
     return rc;
 }

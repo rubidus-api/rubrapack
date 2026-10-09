@@ -224,7 +224,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
-| `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`) |
+| `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`), content-type, perceived-type, default(`false`: "연결 프로그램"에만) |
+| `[menu.ID]` | **on**(파일 형식, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`. 하위 메뉴의 항목에는 없다), **text** 또는 text-xx, target(`.exe` 를 가리키는 `file:ID`. 없으면 하위 메뉴), args(기본 `"%1"`), icon(`file:ID`), parent(하위 메뉴의 ID), multi(`each`, `one`, `single`), extended, windows11(기본 `true`) - 탐색기 우클릭 메뉴의 항목: [탐색기의 우클릭 메뉴](#탐색기의-우클릭-메뉴-menuid) 참조 |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
 | `[com.ID]` | **file**(`.exe` 나 `.dll` 의 `file:ID`), **class**(`{GUID}`), description, threading(`sta` 기본, `mta`, `both`, `neutral`; DLL), args(프로그램), prog-id, app-id(`{GUID}`), surrogate(dllhost 에서 도는 DLL), typelib(`{LIBID}`), typelib-version(기본 `"1.0"`), typelib-file(기본: 서버), msi-only - COM 클래스, [COM 클래스](#com-클래스-comid) 참고 |
 | `[handler.ID]` | **kind**(`thumbnail`, `preview`, `property`), **class**(`[com.*]` 의 DLL 클래스), **types**(`[".ext", ...]`), description(미리 보기 처리기의 이름), msi-only - 탐색기 처리기, [탐색기 처리기](#탐색기-처리기-handlerid) 참고 |
@@ -445,6 +446,78 @@ Windows 는 그 선택을 지킨다.
 
 MSIX 에서는 대상 실행 파일을 가진 앱의 매니페스트에 들어가고(파일 형식 연결, 프로토콜) `args` 는
 평문이어야 한다. `icon` 은 쓰지 않는다: 앱의 로고가 파일 형식을 나타낸다.
+
+파일 형식에는 무엇이 들었는지, 그리고 프로그램이 그 형식을 가져갈지도 적을 수 있다:
+
+```toml
+[assoc.Picture]
+extension = ".png"
+prog-id = "Example.Picture"
+target = "file:MainExe"
+content-type = "image/png"        # 그 형식의 미디어 형식
+perceived-type = "image"          # image, text, audio, video, compressed, document, system, application
+default = false                   # "연결 프로그램"에만 올리고 형식을 가져가지 않는다
+```
+
+모든 `[assoc.*]` 는 자기 prog-id 를 확장자의 `OpenWithProgids` 에 올려서 "연결 프로그램"에 나오게 한다.
+`default = false` 면 그것만 한다(확장자의 기본값은 건드리지 않는다). MSIX 에서는 `content-type` 이
+매니페스트에 들어가고, `perceived-type` 과 `default` 는 MSI 의 것이다.
+
+### 탐색기의 우클릭 메뉴: `[menu.ID]`
+
+```toml
+[menu.Convert]
+on = [".png", ".jpg", "folder"]   # 어디에 나오는가
+text = "Convert with Example"
+text-ko = "Example 로 변환"        # 언어별 문구
+target = "file:MainExe"
+args = "--convert \"%1\""         # "%1" 은 고른 것의 경로. 기본값은 "%1" 하나
+icon = "file:MainExe"             # 기본: 프로그램 자신의 아이콘
+
+[menu.Tools]                      # target 이 없으면 하위 메뉴
+on = "*"
+text = "Example tools"
+
+[menu.Checksum]
+parent = "Tools"                  # 그 하위 메뉴의 항목. 하위 메뉴가 나오는 곳에 나온다
+text = "Checksum"
+target = "file:MainExe"
+args = "--sum \"%1\""
+multi = "single"                  # 하나만 골랐을 때만
+```
+
+항목은 우클릭한 것을 넘겨 패키지의 프로그램을 시작한다. `on` 은 자리 하나 또는 목록이다: 파일 형식
+(`".png"`), `"*"`(모든 파일), `"folder"`, `"background"`(열린 폴더의 빈 곳: 이때 `%1` 은 그 폴더),
+`"drive"`, `"assoc:ID"`(어느 `[assoc.*]` 의 파일 형식, 그 prog-id 아래). `multi` 는 여러 개를 골랐을 때의
+뜻이다: `"each"`(기본: 항목마다 한 번 실행), `"one"`(전부를 넘겨 한 번 실행: `args` 에 `%*` 를 쓰면 모든
+경로), `"single"`(하나를 골랐을 때만 항목이 나온다). `extended = true` 면 Shift 를 누른 채일 때만 나온다.
+하위 메뉴는 한 단계까지다.
+
+같은 표가 Windows 의 두 메뉴에 다 쓰인다:
+
+- **옛 메뉴**(Windows 10, Windows 11 의 "추가 옵션 표시")는 레지스트리의 동사를 읽는다. 패키지는 자리마다
+  동사를 적는다(`SystemFileAssociations\.png\shell\<제품>.<ID>`, `*`, `Directory`, `Directory\Background`,
+  `Drive`). 패키지의 코드는 탐색기 안에서 돌지 않는다. 동사의 문구는 하나다: `text-xx` 가 있으면 설치
+  언어의 문구가 들어간다(대화 상자의 언어, 없으면 `[ui] languages` 가운데 사용자의 표시 언어). `"one"` 은
+  여기서 `"each"` 처럼 항목마다 실행된다.
+- **Windows 11 메뉴**는 신원이 있는 패키지가 선언한 항목만 보여 주고, 항목 하나하나가 COM 클래스여야 한다.
+  그 클래스는 rubrapack 이 제공한다: 메뉴 부품 `rubrapack_menu.dll` 이 모든 항목을 맡아, 사용자의 표시
+  언어로 문구를 보이고 프로그램을 시작한다. 이 DLL 은 탐색기가 아니라 `dllhost.exe` 에서 돌고, 설치가 그
+  항목에 대해 적어 둔 일만 한다.
+  - **MSIX** 는 신원이 있다: DLL 이 패키지에 들어가고 매니페스트가 항목을 선언한다.
+  - **MSI** 는 항목의 프로그램 옆에 파일 둘을 더 설치한다 - 그 DLL 과, 매니페스트와 로고만 든 작은 패키지
+    `rubrapack_menu.msix`. 설치할 때 이 패키지를 프로그램 폴더에 대해 등록하고(컴퓨터의 모든 사용자용,
+    다른 사용자는 다음 로그인 때) 제거할 때 지운다. **인증서가 필요 없다**: 관리자 권한의 설치에서
+    Windows 가 받아 주는 무서명 형식으로 만든다. `--key` 와 `[msix] publisher`(인증서의 주체)가 있으면
+    서명한다. 등록할 수 없는 곳 - Windows 10 버전 2004 이전, 또는 서명 없는 사용자별 설치 - 에서는 설치가
+    그대로 진행되고 항목은 옛 메뉴에만 나온다. 로그에 그렇게 적힌다(`rubrapack: menu:`).
+- 패키지가 등록된 곳에서는 Windows 가 그 항목을 옛 메뉴에도 보여 주므로, 거기서는 레지스트리 동사를
+  끈다(`LegacyDisable`): 항목은 한 번씩만 나온다.
+
+Windows 11 에서 알아 둘 것: 항목은 설치가 끝나고 몇 초 뒤에 나타난다. 한 패키지의 항목이 같은 종류의
+대상에 둘 이상이면 Windows 가 제품 이름을 단 항목 하나 아래로 묶는다. `"drive"` 와 `windows11 = false` 인
+항목은 옛 메뉴에만 나온다. 메뉴 부품이 무엇을 하는지 보려면 `HKCU\Software\rubrapack` 아래에 `MenuLog`
+값(파일 경로)을 둔다: 고른 항목과 시작한 명령이 그 파일에 덧붙는다.
 
 ### COM 클래스: `[com.ID]`
 

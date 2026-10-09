@@ -267,6 +267,27 @@ static void name_value(rp_buf_t *attrs, proven_allocator_t alloc, const char *na
 
 // "<Name>_<Version>_<Architecture>_<ResourceId>_<PublisherId>": the publisher ID is Crockford's
 // base32 of the first 8 bytes of SHA-256 over the publisher in UTF-16LE, as 13 characters.
+void rp_msix_publisher_id(const char *publisher, char id[14]) {
+    rp_hash_t h;
+    rp_hash_init(&h, RP_HASH_SHA256);
+    uint8_t u[2];
+    for (const unsigned char *p = (const unsigned char *)publisher; *p; ++p) {
+        u[0] = *p;
+        u[1] = 0;
+        rp_hash_update(&h, u, 2);
+    }
+    uint8_t d[32];
+    rp_hash_final(&h, d);
+    uint64_t v = 0;
+    for (int i = 0; i < 8; ++i) v = v << 8 | d[i];
+    static const char a32[] = "0123456789abcdefghjkmnpqrstvwxyz";
+    for (int i = 0; i < 13; ++i) {
+        int shift = 59 - 5 * i;
+        id[i] = a32[(shift >= 0 ? v >> shift : v << -shift) & 31];
+    }
+    id[13] = 0;
+}
+
 static bool full_name(const char *man, size_t ml, char *out, size_t cap) {
     char name[256], ver[64], arch[32] = "neutral", res[128] = "", pub[4200];
     if (!rp_xml_attr(man, ml, "Identity", "Name", name, sizeof name) || !rp_xml_attr(man, ml, "Identity", "Version", ver, sizeof ver) ||

@@ -205,6 +205,9 @@ typedef struct {
     char    *target_file;       // file ID of the program
     char    *icon_file;         // file ID, or NULL (MSI: the program's first icon)
     char    *args;              // formatted; default "\"%1\""
+    char    *content_type;      // "image/png": the extension's Content Type, or NULL
+    char    *perceived_type;    // "image", "text", "audio", "video", "compressed", "document", "system", "application", or NULL
+    bool     no_default;        // default = false: the program is offered ("Open with"), the type is not taken
     rp_pos_t pos;
 } rp_ir_assoc_t;
 
@@ -320,6 +323,29 @@ typedef struct {
     char    *lang;              // "ko", "ja", ...
     char    *text;              // formatted
 } rp_ir_ltext_t;
+
+// [menu.ID] (plan 2026-10-09): an item of Explorer's right-click menu that starts a program.
+// The classic menu (Windows 10; "Show more options" on Windows 11) gets registry verbs; the
+// Windows 11 menu gets a class of rubrapack's menu DLL in a package with identity.
+enum { RP_MENU_EACH, RP_MENU_ONE, RP_MENU_SINGLE };
+enum { RP_MENU_VALUES = 6 };       // registry values one item writes at one place of the classic menu, at most
+typedef struct {
+    char          *id;
+    char         **on;              // ".ext", "*", "folder", "background", "drive", "assoc:ID"
+    size_t         on_count;
+    char          *text;            // or NULL when every language has text-xx
+    rp_ir_ltext_t *text_by_lang;    // text-xx
+    size_t         text_by_lang_count;
+    char          *target_file;     // file ID of the program; NULL = a sub-menu
+    char          *icon_file;       // file ID, or NULL (the program's own icon)
+    char          *args;            // formatted; default "\"%1\""
+    char          *parent;          // [menu.*] ID of the sub-menu this item is in, or NULL
+    char          *clsid;           // "{GUID}" of its Windows 11 class (top-level items), made from the upgrade code and the ID
+    int            multi;           // RP_MENU_*
+    bool           extended;        // classic menu: only with Shift
+    bool           windows11;       // also in the Windows 11 menu (default true)
+    rp_pos_t       pos;
+} rp_ir_menu_t;
 
 typedef struct {
     char    *lang;
@@ -489,6 +515,13 @@ typedef struct {
     size_t            handler_count;
     rp_ir_msix_ext_t *msix_exts;            // in ID order
     size_t            msix_ext_count;
+    rp_ir_menu_t     *menus;                // [menu.*], in ID order
+    size_t            menu_count;
+    // An item for the Windows 11 menu: an MSI then carries rubrapack's menu DLL and an identity
+    // package beside the program `menu_exe` (a file ID), whose folder is the package's location.
+    bool              menu_package;
+    char             *menu_exe;
+    char             *menu_publisher;       // from the options: the signed package's Publisher, or NULL
     // P4 dialogs (RFC-0005)
     int               ui;                   // RP_UI_* (rubrapack/ui.h)
     char             *license_source;       // path to open (joined with the .rpk directory), or NULL
@@ -556,6 +589,10 @@ typedef struct {
     const char        *compress;        // --compress, or NULL
     const char        *output;          // the file being built (refused inside a glob), or NULL
     bool               nfc;             // --nfc: names inside the package in NFC (RFC-0006 L3)
+    // The Windows 11 menu of an MSI (rp_ir_t menu_package): the menu DLL and the identity package as
+    // files on disk, made by the build command from a first model; both or neither.
+    const char        *menu_dll, *menu_pkg;
+    const char        *menu_publisher;  // the identity package is signed: its Publisher (else NULL: unsigned)
 } rp_ir_options_t;
 
 // Checks the document and builds the model. On any error the diagnostics say why, the model is
@@ -563,6 +600,10 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt,
                                        rp_ir_t *ir, rp_srcdiags_t *diags);
 void rp_ir_free(rp_ir_t *ir);
+
+// The package's name as a registry key part (its letters and digits): a [menu.*] verb's key is
+// "<that>.<menu ID>".
+void rp_menu_token(const rp_ir_t *ir, char out[48]);
 
 // A stable text dump of the model for golden tests.
 [[nodiscard]] proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **out, size_t *len);
