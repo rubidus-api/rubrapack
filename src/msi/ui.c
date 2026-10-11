@@ -1292,6 +1292,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         rp_mem_free(alloc, pages);
         maintenance_dlg(c, ir->ui == RP_UI_FEATURES);
         if (ir->ui >= RP_UI_INSTALLDIR) prop(c, "_RpBrowseProperty", dir);
+    } else {
+        maintenance_dlg(c, false);      // basic: no pages, but an installed product is asked what to do
     }
     if (c->multi) language_rows(c);
 

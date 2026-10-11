@@ -1510,6 +1510,56 @@ static bool system_may_delete(const wchar_t *dir) {
     return ok;
 }
 
+// ---- the question an installed product is met with ---------------------------------------------------
+//
+// RpMaintain, immediate, in the UI sequence of a package without dialogs (ui = "none"), when the
+// product is already installed and nothing was chosen on the command line: Repair, Remove or
+// Cancel, in a window of its own. The dialog sets have a page for this (RpMaintenanceDlg). The
+// choice is what the command line would have said: REINSTALL=ALL REINSTALLMODE=ecmus, or REMOVE=ALL.
+// Texts: the RpPreMaint* properties, as the preflight's.
+
+#include "rp_ask.h"
+
+static wchar_t *maint_text(MSIHANDLE h, const wchar_t *id) {
+    wchar_t *text = pre_text(h, id);
+    if (text == NULL) return NULL;
+    MSIHANDLE rec = MsiCreateRecord(1);
+    MsiRecordSetStringW(rec, 0, text);
+    DWORD n = 0;
+    wchar_t *out = NULL;
+    if (MsiFormatRecordW(h, rec, L"", &n) == ERROR_MORE_DATA && (out = HeapAlloc(GetProcessHeap(), 0, ((size_t)n + 1) * sizeof *out)) != NULL) {
+        ++n;
+        if (MsiFormatRecordW(h, rec, out, &n) != ERROR_SUCCESS) out[0] = 0;
+    }
+    MsiCloseHandle(rec);
+    if (out == NULL) return text;
+    HeapFree(GetProcessHeap(), 0, text);
+    return out;
+}
+
+__declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
+    wchar_t *t[5];
+    static const wchar_t *const ids[5] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel" };
+    for (size_t i = 0; i < 5; ++i) t[i] = maint_text(h, ids[i]);
+    rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel" };
+    int r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
+    for (size_t i = 0; i < 5; ++i) {
+        if (t[i]) HeapFree(GetProcessHeap(), 0, t[i]);
+    }
+    if (r == RP_ASK_FIRST) {
+        MsiSetPropertyW(h, L"REINSTALL", L"ALL");
+        MsiSetPropertyW(h, L"REINSTALLMODE", L"ecmus");
+        log_line(h, L"rubrapack: maintain: repair");
+    } else if (r == RP_ASK_SECOND) {
+        MsiSetPropertyW(h, L"REMOVE", L"ALL");
+        log_line(h, L"rubrapack: maintain: remove");
+    } else {
+        log_line(h, L"rubrapack: maintain: cancelled");
+        return ERROR_INSTALL_USEREXIT;
+    }
+    return ERROR_SUCCESS;
+}
+
 __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     wchar_t *product = get_property(h, L"ProductName"), *uilevel = get_property(h, L"UILevel");
     wchar_t *answer = get_property(h, L"RPCLOSE"), *dflt = get_property(h, L"RP_PREFLIGHT_CLOSE");

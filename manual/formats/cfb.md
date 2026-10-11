@@ -187,8 +187,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `07 00 00 00` | child | entry 7 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `00 22 00 00 00 00 00 00` | size | 8704 |
+| 120 | `00 24 00 00 00 00 00 00` | size | 9216 |
 
-The root's size is the mini stream's: 8704 bytes, holding 21 of the 23 streams in 64-byte mini
+The root's size is the mini stream's: 9216 bytes, holding 21 of the 23 streams in 64-byte mini
 sectors; 2 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
 continues with the streams' names and contents.

@@ -729,12 +729,15 @@ files an older version left behind.
 A source with `[chain]` builds a setup program instead of a package: `rubrapack build suite.toml -o
 setup.exe`. The setup program holds the `[chain-package.*]` packages, in the order the source lists
 them, each with its SHA-256; it checks them all, then installs them one after the other with
-Windows Installer. A package already installed (its ProductCode) is skipped. When a `vital` package
+Windows Installer. A package already installed (its ProductCode) is skipped. Started again when
+every package is installed, the setup program asks what to do - Repair, Remove or Cancel (nothing is
+asked at `/quiet` or `/passive`). When a `vital` package
 (the default) fails, the chain stops and returns that package's error; the package rolls itself
 back, the ones before it stay. `properties` are passed to that package as on msiexec's command line.
 
 - `setup.exe` shows Windows Installer's progress windows and a last message; `/passive` only the
-  progress; `/quiet` nothing. `/uninstall` removes the packages, last first. `/log <file>` writes a
+  progress; `/quiet` nothing. `/uninstall` removes the packages, last first; `/repair` repairs the
+  installed ones. `/log <file>` writes a
   verbose log. Exit code: 0, 3010 (a restart is needed), the failing package's error, 1620 for a
   damaged setup program, 1602 when the user refuses elevation.
 - With `elevate = true` (the default) the setup program asks for administrator rights once, for all
@@ -921,8 +924,8 @@ window, not the package's dialogs, and when a program with a window holds one of
 files-in-use box - in English, with Cancel as the default (Ignore goes on). `no-remove = true` turns
 Uninstall off for the product; Modify, still there, runs the package's dialogs (`msiexec /i`), whose
 Remove leads to the package's own files-in-use dialog with Continue as the default. Worth it for an
-input method or a shell extension, which nearly every program holds; it needs `[package] ui` =
-`minimal`, `installdir` or `features` (the sets with a Remove page) and no `no-modify`.
+input method or a shell extension, which nearly every program holds; it cannot go with `no-modify`,
+and the files-in-use dialog is a dialog set's (`ui = "none"` has Windows Installer's own).
 
 ### Installing from the command line
 
@@ -958,10 +961,19 @@ only Windows Installer's own progress bar.
 
 | `ui` | Installing | Already installed |
 |---|---|---|
-| `basic` | progress, then finished (or error) | progress, finished |
+| `none` | Windows Installer's progress bar | a small window: Repair, Remove or Cancel |
+| `basic` | progress, then finished (or error) | repair or remove |
 | `minimal` | welcome, the license if there is one, progress, finished | repair or remove |
 | `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | repair or remove |
 | `features` | as `installdir`, plus a feature tree and the disk space it needs | repair or remove |
+
+"Already installed" is the same package opened again (a double click, `msiexec /i`, or Modify in
+Installed apps) with the product - this version - installed: Repair puts back missing or damaged
+files and settings, Remove removes the product. Nothing is asked when the command line has already
+chosen (`REINSTALL`, `REMOVE`, `ADDLOCAL`, `msiexec /f`, `/x`) or at `/qn`, `/qb` and `/qr`, where
+the run repairs nothing and changes nothing. A newer version's package is an upgrade, not this. The
+window of `none` is in English, or Korean for a Korean user; its texts are `MaintTitle`, `MaintText`,
+`Repair`, `Remove` and `Cancel` below.
 
 Every set also has the cancel question, the error dialog, the files-in-use list and the
 out-of-disk-space warning. The files-in-use list comes when a program with a window holds a file

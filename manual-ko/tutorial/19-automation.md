@@ -164,7 +164,7 @@ rubrapack 은 Linux 에서도 돌고, `--reproducible` 이면 거기서도 같�
 GitLab CI, Jenkins)에 Windows 가 없어도 된다. Linux 러너에서:
 
 ```text
-V=0.39.0
+V=0.40.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -231,7 +231,8 @@ C:\work\suite> setup.exe /passive
 ```
 
 설치 프로그램은 패키지마다 SHA-256 을 확인하고, 이미 설치된 것은 건너뛰며, 처음 실패한 `vital` 패키지에서
-멈춘다. `setup.exe /uninstall` 은 뒤에서부터 다시 지운다. `[chain]` 의 `elevate = false` 는 관리자 권한을
+멈춘다. `setup.exe /uninstall` 은 뒤에서부터 다시 지운다. 모두 설치된 상태에서 다시 실행하면 복구할지
+제거할지 묻는다(`/repair`, `/uninstall` 로 미리 정할 수 있다). `[chain]` 의 `elevate = false` 는 관리자 권한을
 묻지 않게 한다(사용자별 패키지용). 나머지는 [참고 문서](../rpk.md#설치-프로그램-하나에-여러-패키지-chain)에 있다.
 
 ## 여기서 어디로

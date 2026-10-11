@@ -15,5 +15,6 @@ EXPORTS
     RpRescueApply
     RpRescueRollback
     RpPreflight
+    RpMaintain
     RpMenuRegister
     RpMenuRemove

@@ -551,7 +551,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir, menu;
+    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
@@ -1056,7 +1056,10 @@ static void lower_helper_actions(pkg_t *pk) {
     for (size_t i = 0; i < ir->file_count; ++i) menu |= ir->menu_package && strcmp(ir->files[i].id, "RpMenuPkg") == 0;
     menu = menu && part_len > 0;
     pk->menu = menu;
-    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight || menu) {
+    // A package without dialogs: the helper DLL asks an installed product's user what to do
+    // (RpMaintain); the dialog sets have RpMaintenanceDlg.
+    bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
+    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight || menu || maintain) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1227,6 +1230,18 @@ static void lower_helper_actions(pkg_t *pk) {
         }
         s_(&pk->customaction, "RP_Preflight"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPreflight");
         pk->preflight = true;
+    }
+    if (maintain) {
+        static const char *const ids[] = { "MaintTitle", "MaintText", "Repair", "Remove", "Cancel" };
+        static const char *const base[] = { "en", "ko" };
+        for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
+            for (size_t b = 0; b < 2; ++b) {
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], base[b]));
+                s_(&pk->property, rp_ui_text_lang(ir, ids[t], base[b]));
+            }
+        }
+        s_(&pk->customaction, "RP_Maintain"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpMaintain");
+        pk->maintain = true;
     }
     // RFC-0026: the package's folders and scope for the commit action, which registers the cleanup
     // task only when the installation left something queued for the next restart.
@@ -1672,6 +1687,9 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     };
     for (size_t i = 0; i < sizeof ui_rows / sizeof ui_rows[0]; ++i) {
         s_(&pk->iui, ui_rows[i].action); s_(&pk->iui, ui_rows[i].cond); i_(&pk->iui, ui_rows[i].seq);
+    }
+    if (pk->maintain) {                 // where the dialog sets show RpMaintenanceDlg; full UI only
+        s_(&pk->iui, "RP_Maintain"); s_(&pk->iui, "Installed AND NOT RESUME AND NOT Preselected AND NOT PATCH AND UILevel = 5"); i_(&pk->iui, 1240);
     }
     // Administrative installation (msiexec /a: an uncompressed network image) and advertisement
     // (msiexec /jm), from MS Learn "Suggested AdminExecuteSequence / AdvtExecuteSequence" (RFC-0001

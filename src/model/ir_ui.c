@@ -419,6 +419,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             }
             else {
                 if (ir->ui < 2) ERR(c, key->pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
+                else if (v == NULL) (void)0;            // the substitution has said why
                 else if (!license_kind_ok(v)) ERR(c, key->pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
                 else L->license_source = ui_source(c, v, key->pos);
                 L->license_shown = v;

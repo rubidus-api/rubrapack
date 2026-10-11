@@ -173,7 +173,7 @@ rubrapack runs on Linux too, and builds the same bytes there with `--reproducibl
 build server (GitHub Actions, GitLab CI, Jenkins) does not need Windows. On a Linux runner:
 
 ```text
-V=0.39.0
+V=0.40.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -248,6 +248,8 @@ C:\work\suite> setup.exe /passive
 
 The setup program checks every package's SHA-256, skips what is already installed, and stops at
 the first `vital` package that fails; `setup.exe /uninstall` removes them again, last first.
+Started again when everything is installed, it asks whether to repair or remove (`/repair` and
+`/uninstall` say so in advance).
 `elevate = false` in `[chain]` keeps it from asking for administrator rights (for per-user
 packages). Everything else is in [the reference](../rpk.md#several-packages-in-one-setup-chain).
 

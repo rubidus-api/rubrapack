@@ -5,9 +5,11 @@
 // checks every package's SHA-256, writes the packages to a new temporary folder and installs them
 // in order with msi.dll. A package that is already installed is skipped; a vital package that fails
 // stops the chain (each package rolls itself back). /uninstall removes the packages in reverse
-// order. Built by `nob parts` for x64, x86 and arm64, reproducibly; Windows only.
+// order, /repair repairs the installed ones. Started with every package installed and neither
+// switch, it asks which of the two to do (nothing at /quiet or /passive).
+// Built by `nob parts` for x64, x86 and arm64, reproducibly; Windows only.
 //
-//   setup.exe [/quiet | /passive] [/uninstall] [/log <file>]
+//   setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>]
 //
 // Exit code: 0, 3010 when a package asks for a restart, or the failing package's Windows Installer
 // error; 1620 for a damaged payload, 1602 when elevation is refused.
@@ -24,6 +26,8 @@
 
 #include <stdint.h>
 #include <string.h>
+
+#include "../ca/rp_ask.h"
 
 enum {
     TRAILER = 32,
@@ -190,15 +194,16 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     (void)show;
     int argc = 0;
     wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    bool uninstall = false;
+    bool uninstall = false, repair = false;
     const wchar_t *log = NULL;
     for (int i = 1; argv && i < argc; ++i) {
         if (lstrcmpiW(argv[i], L"/quiet") == 0 || lstrcmpiW(argv[i], L"/q") == 0) quiet = true;
         else if (lstrcmpiW(argv[i], L"/passive") == 0) passive = true;
         else if (lstrcmpiW(argv[i], L"/uninstall") == 0 || lstrcmpiW(argv[i], L"/x") == 0) uninstall = true;
+        else if (lstrcmpiW(argv[i], L"/repair") == 0) repair = true;
         else if (lstrcmpiW(argv[i], L"/log") == 0 && i + 1 < argc) log = argv[++i];
         else {
-            say(L"Setup", L"Usage: setup.exe [/quiet | /passive] [/uninstall] [/log <file>]", true);
+            say(L"Setup", L"Usage: setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>]", true);
             return ERROR_INVALID_PARAMETER;
         }
     }
@@ -225,10 +230,33 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     wchar_t *title = wide(c.name, c.name_len);
     if (title == NULL) return EXIT_DAMAGED;
 
+    // Everything is installed already and nothing was said: ask what to do (before any elevation,
+    // which then carries the answer).
+    bool all = c.count > 0;
+    for (uint32_t k = 0; k < c.count; ++k) all = all && installed(&c.p[k]);
+    const wchar_t *extra = L"";
+    if (all && !uninstall && !repair && !quiet && !passive) {
+        rp_ask_t a = { title, L"These programs are already installed. Choose what to do.", L"Re&pair", L"&Remove", L"Cancel" };
+        int r = rp_ask(NULL, &a);
+        if (r == RP_ASK_CANCEL) {
+            CloseHandle(f);
+            return EXIT_CANCELLED;
+        }
+        repair = r == RP_ASK_FIRST;
+        uninstall = r == RP_ASK_SECOND;
+        extra = repair ? L" /repair" : L" /uninstall";
+    }
+
     if ((c.flags & CHAIN_ELEVATE) && !elevated()) {
-        const wchar_t *args = cmdline;
+        size_t an = (size_t)lstrlenW(cmdline) + 16;
+        wchar_t *args = LocalAlloc(LMEM_FIXED, an * sizeof *args);
         CloseHandle(f);
-        return relaunch(self, args);
+        if (args == NULL) return ERROR_OUTOFMEMORY;
+        lstrcpyW(args, cmdline);
+        lstrcatW(args, extra);
+        int code = relaunch(self, args);
+        LocalFree(args);
+        return code;
     }
 
     if (quiet) MsiSetInternalUI(INSTALLUILEVEL_NONE, NULL);
@@ -286,14 +314,18 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     CloseHandle(f);
     for (uint32_t k = 0; k < c.count && (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED); ++k) {
         const package_t *p = &c.p[k];
-        if (installed(p)) continue;
-        wchar_t *id = wide(p->id, p->id_len), *props = wide(p->properties, p->properties_len);
+        // A repair takes the installed packages only, each from its package here: the folder the
+        // product was installed from is gone, and missing files need the package (error 1706 otherwise).
+        // The properties are what the dialogs' Repair sets.
+        if (installed(p) != repair) continue;
+        wchar_t *id = wide(p->id, p->id_len), *props = repair ? wide("REINSTALL=ALL REINSTALLMODE=ecmus", 33) : wide(p->properties, p->properties_len);
         wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
         UINT r = id && props ? MsiInstallProductW(path, props) : ERROR_OUTOFMEMORY;
         if (r == ERROR_SUCCESS_REBOOT_REQUIRED) {
             result = (int)r;
-        } else if (r != ERROR_SUCCESS && (p->flags & FLAG_VITAL)) {
-            wsprintfW(msg, L"%s could not be installed (error %u). Nothing after it was installed.", id ? id : L"A package", r);
+        } else if (r != ERROR_SUCCESS && (repair || (p->flags & FLAG_VITAL))) {
+            wsprintfW(msg, repair ? L"%s could not be repaired (error %u)." : L"%s could not be installed (error %u). Nothing after it was installed.",
+                      id ? id : L"A package", r);
             say(title, msg, true);
             result = (int)r;
         }
@@ -307,7 +339,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         LocalFree(id);
     }
     RemoveDirectoryW(dir);
-    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, L"Setup finished.", false);
+    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, repair ? L"The programs were repaired." : L"Setup finished.", false);
     LocalFree(title);
     LocalFree(manifest);
     return result;
