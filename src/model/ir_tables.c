@@ -366,6 +366,12 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
             size_t wl = strlen(wide[k]);
             if (ieq_n(r->key + 9, wide[k], wl) && (r->key[9 + wl] == '\\' || r->key[9 + wl] == 0) && parts < 4) below = false;
         }
+        // Windows' own settings, however deep.
+        static const char *const own[] = { "Software\\Microsoft\\Windows", "Software\\Microsoft\\Windows NT" };
+        for (size_t k = 0; below && k < sizeof own / sizeof own[0]; ++k) {
+            size_t ol = strlen(own[k]);
+            if (ieq_n(r->key, own[k], ol) && (r->key[ol] == '\\' || r->key[ol] == 0)) below = false;
+        }
         if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software", r->key);
     }
     char *view = ir_get_str(c, t, "view", false, NULL);

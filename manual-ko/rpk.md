@@ -695,16 +695,18 @@ on = "uninstall"            # 키와 그 값, 그 아래 모든 키
 - **프로그램이 쓴 것만이 아니라 거기 있는 것은 무엇이든 지운다.** 그 제품만의 폴더를 적는다. 사용자가 설치
   폴더를 고를 수 있고 다른 것이 든 폴더를 고르면, 그것도 함께 지워진다.
 - 만들 때 거절(`RP1316`): `SystemRoot` 나 `Temp` 아래 폴더; `Software` 아래가 아닌 키, `Software\Microsoft`
-  ·`Classes`·`Policies`·`Wow6432Node` 의 큰 가지; `HKCR`; `recursive` 에 `name`, `upgrade`, `uninstall` 이
+  ·`Classes`·`Policies`·`Wow6432Node` 의 큰 가지, `Software\Microsoft\Windows` 와 `Windows NT` 아래 전부; `HKCR`; `recursive` 에 `name`, `upgrade`, `uninstall` 이
   아닌 `on`; 병합 모듈.
 - 제거할 때 남기고 로그에 한 줄(`rubrapack: purge:`): 드라이브의 뿌리; Windows 자신의 폴더(Program Files,
   ProgramData, 사용자 프로필, AppData, 바탕 화면, 문서 ...)이거나 그것을 품은 폴더; Windows 폴더 안의 모든 것;
-  다른 설치된 제품의 파일이 든 폴더.
+  다른 설치된 제품의 구성 요소가 든 폴더(Windows Installer 가 그 구성 요소를 알아보는 파일이나 폴더 - 그
+  제품의 모든 파일은 아니다).
 - 링크는 따라가지 않는다: 폴더 안의 정션이나 심볼릭 링크는 링크로서 지워지고, 가리키던 곳은 그대로다.
   프로그램이 아직 쥐고 있는 파일은 남고, 그 폴더도 남는다.
 - **AppData 와 `HKCU` 는 제품을 지우는 사용자의 것이다.** 같은 컴퓨터의 다른 사용자 설정은 한 번의 제거로
   닿지 않아 남는다. 이 용도로는 컴퓨터 단위 패키지도 여기에 `HKCU` 를 적을 수 있다(다른 데서는 안 된다).
-  사용자 프로필과 `HKCU` 는 그 사용자 권한으로, 나머지는 컴퓨터 단위 패키지에서 SYSTEM 이 지운다.
+  사용자 프로필과 `HKCU` 는 그 사용자 권한으로, 나머지는 컴퓨터 단위 패키지(`scope = "machine"`)에서 SYSTEM 이
+  지운다. `dual` 패키지는 지우는 사람의 권한으로 전부 지운다.
 - 폴더의 `[dir.ID]` 는 이 패키지의 폴더여야 하므로, 없으면 설치할 때 (빈 채로) 만들어진다.
 - MSIX 에는 필요 없다: Windows 가 패키지의 폴더와 패키지 자신의 레지스트리·AppData 를 함께 지운다.
 

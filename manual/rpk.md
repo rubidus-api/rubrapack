@@ -749,18 +749,20 @@ on = "uninstall"            # the key with its values and every key below it
   things, those go too.
 - Refused when it is built (`RP1316`): a folder below `SystemRoot` or `Temp`; a key that is not below
   `Software`, or that is a whole branch of `Software\Microsoft`, `Classes`, `Policies` or
-  `Wow6432Node`; `HKCR`; `recursive` with `name`, `upgrade`, or an `on` other than `uninstall`; a
+  `Wow6432Node`, or anything below `Software\Microsoft\Windows` and `Windows NT`; `HKCR`; `recursive` with `name`, `upgrade`, or an `on` other than `uninstall`; a
   merge module.
 - Kept when it is removed, with a line in the log (`rubrapack: purge:`): a drive's root; a folder
   that is, or holds, one of Windows' own (Program Files, ProgramData, the user's profile, AppData,
   Desktop, Documents, ...); anything inside the Windows folder; a folder in which another installed
-  product has files.
+  product has a component (the file or folder Windows Installer knows that component by - not
+  every file of it).
 - Links are not followed: a junction or symbolic link inside the folder is deleted as a link, and
   what it points at is left alone. A file a program still holds stays, and its folder with it.
 - **AppData and `HKCU` are those of the user who removes the product.** Other users' settings on the
   same computer are out of reach of one removal and stay. For this purpose a per-machine package may
   name `HKCU` here, which it otherwise may not. The user's profile and `HKCU` are deleted with the
-  user's own rights; the rest, in a per-machine package, by SYSTEM.
+  user's own rights; the rest, in a per-machine package (`scope = "machine"`), by SYSTEM. A `dual`
+  package deletes everything with the rights of whoever removes it.
 - The folder's `[dir.ID]` must be a folder of this package, so it is created (empty) at
   installation if it was not there.
 - An MSIX needs none of this: Windows removes the package's folder and the package's own registry
