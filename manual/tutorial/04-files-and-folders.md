@@ -163,6 +163,13 @@ the new version still wants those files - a cache it would rebuild slowly, say -
 `upgrade = false`: they are then deleted only when the product is really removed. Since the old
 version's own rows run, this helps from the first version that has it.
 
+To have a removal leave nothing at all - the settings the program wrote, the folders it made, the
+install folder itself - add `recursive = true` (without `name`): the folder goes with everything in
+it, but only when the product is really removed, never in an upgrade. `[registry.ID]` with
+`remove = true` and `on = "uninstall"` does the same for a registry key. It deletes whatever is
+there, so name a folder that is the product's alone; the reference's "Wiping at removal" has what it
+refuses and what it cannot reach (other users' settings).
+
 ## A second copy: `[copy.ID]`
 
 `[copy.ReadmeInDocs]` installs another copy of the file `Readme` into `DocsDir` as `readme.txt`. The

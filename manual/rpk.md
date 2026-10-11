@@ -229,8 +229,8 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
-| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), feature |
+| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on (with `remove`: `install`, or `uninstall` - the whole key at removal), keep, view, with, feature, when |
+| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), recursive (`true`: the folder with everything in it, at removal), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -430,7 +430,8 @@ for it, which also restores the previous value if the installation fails. Each v
 (`keep = true` leaves it); `with = "file:ID"` puts it in that file's component instead. In a 64-bit
 package values go to the 64-bit registry view; `view = "32"` writes to the 32-bit view.
 `remove = true` (without `value`) deletes the named value - or the whole key when `name` is
-omitted - during installation.
+omitted - during installation. With `on = "uninstall"` (and no `name`) it is the removal that
+deletes the key, with everything below it: see [Wiping at removal](#wiping-at-removal-recursive-on--uninstall).
 
 ### Shortcuts: `[shortcut.ID]`
 
@@ -710,6 +711,60 @@ program holds is deleted at the next restart. It takes effect from the first ver
 it, since an upgrade runs the old version's own rows.
 `[copy.ID]` installs a second copy of a file of this package into another folder; it goes and comes
 with its source. Folders that existed before the installation are never removed.
+
+### Wiping at removal: `recursive`, `on = "uninstall"`
+
+A removal takes away what the package installed. What the program made while it was used - a
+settings file beside it, a folder under AppData, a key under `HKCU\Software` - stays, and with a
+file left in it the install folder stays too. To have it all go, name the places:
+
+```toml
+[remove.Everything]
+dir = "INSTALLDIR"
+on = "uninstall"
+recursive = true            # the folder with every file and folder in it
+
+[dir.Settings]
+path = "$(APPDATA)/Example/Tip"
+
+[remove.Settings]
+dir = "Settings"
+on = "uninstall"
+recursive = true
+
+[registry.Settings]
+root = "HKCU"
+key = 'Software\Example\Tip'
+remove = true
+on = "uninstall"            # the key with its values and every key below it
+```
+
+- It happens only when the product (or the feature the row belongs to) is really removed -
+  Installed apps, the maintenance page's Remove, `msiexec /x`. **An upgrade never wipes**: the new
+  version finds the settings as they were. A removal that fails and rolls back has touched nothing,
+  for the deleting is done last, once the removal has succeeded - which also means that nothing
+  brings it back afterwards.
+- **It deletes whatever is there**, not only what the program wrote. Name a folder that is the
+  product's alone. If the user may choose the install folder and chooses one that holds other
+  things, those go too.
+- Refused when it is built (`RP1316`): a folder below `SystemRoot` or `Temp`; a key that is not below
+  `Software`, or that is a whole branch of `Software\Microsoft`, `Classes`, `Policies` or
+  `Wow6432Node`; `HKCR`; `recursive` with `name`, `upgrade`, or an `on` other than `uninstall`; a
+  merge module.
+- Kept when it is removed, with a line in the log (`rubrapack: purge:`): a drive's root; a folder
+  that is, or holds, one of Windows' own (Program Files, ProgramData, the user's profile, AppData,
+  Desktop, Documents, ...); anything inside the Windows folder; a folder in which another installed
+  product has files.
+- Links are not followed: a junction or symbolic link inside the folder is deleted as a link, and
+  what it points at is left alone. A file a program still holds stays, and its folder with it.
+- **AppData and `HKCU` are those of the user who removes the product.** Other users' settings on the
+  same computer are out of reach of one removal and stay. For this purpose a per-machine package may
+  name `HKCU` here, which it otherwise may not. The user's profile and `HKCU` are deleted with the
+  user's own rights; the rest, in a per-machine package, by SYSTEM.
+- The folder's `[dir.ID]` must be a folder of this package, so it is created (empty) at
+  installation if it was not there.
+- An MSIX needs none of this: Windows removes the package's folder and the package's own registry
+  and AppData with it.
 
 ### Environment variables: `[env.ID]`
 
@@ -1217,7 +1272,8 @@ the one already there - so the restart would delete it. The package takes such d
 it installs (and queues them again if the installation fails).
 
 There is no separate uninstall program: Windows' Installed apps removes an MSI with Windows
-Installer, and what a removal leaves is the cleanup task's job.
+Installer, and what a removal leaves is the cleanup task's job. What the program itself wrote is not
+the package's and stays, unless the package names it: [Wiping at removal](#wiping-at-removal-recursive-on--uninstall).
 
 ### Add-ons removed with their product: `parent`, `remove-addons`
 

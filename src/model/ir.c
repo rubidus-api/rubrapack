@@ -486,7 +486,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         for (size_t k = 0; k < ir->dir_count; ++k) {
             if (ir->dirs[k].guard) ERR(&c, ir->dirs[k].pos, "RP1316", "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry", ir->dirs[k].id);
         }
+        for (size_t k = 0; k < ir->remove_count; ++k) {
+            if (ir->removes[k].recursive) ERR(&c, ir->removes[k].pos, "RP1316", "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry", ir->removes[k].id);
+        }
         for (size_t k = 0; k < ir->registry_count; ++k) {
+            if (ir->registries[k].purge) ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry", ir->registries[k].id);
             if (ir->registries[k].type == RP_REG_QWORD) {
                 ERR(&c, ir->registries[k].pos, "RP1316", "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry", ir->registries[k].id);
             }

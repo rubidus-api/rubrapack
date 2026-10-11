@@ -191,6 +191,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "value", r->value);
         for (size_t j = 0; j < r->item_count; ++j) kv(&b, "item", r->items[j]);
         kv(&b, "remove", r->remove ? "1" : "0");
+        if (r->purge) kv(&b, "on", "uninstall");
         kv(&b, "keep", r->keep ? "1" : "0");
         kv(&b, "view", r->view32 ? "32" : "native");
         kv(&b, "with", r->with_file);
@@ -207,6 +208,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "name", r->name);
         kv(&b, "on", modes[r->mode & 3]);
         if (r->keep_on_upgrade) kv(&b, "upgrade", "false");
+        if (r->recursive) kv(&b, "recursive", "true");
         kv(&b, "feature", r->feature);
         rp_buf_byte(&b, '\n');
     }

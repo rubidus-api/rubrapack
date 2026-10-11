@@ -2,7 +2,7 @@
 //
 // Built for x64, x86 and Arm64 by `nob parts` and stored in resources/bin/; `build` puts the one
 // for the package's architecture into the Binary table. It depends on the OS only (msi.dll,
-// advapi32, kernel32, user32, comdlg32 and the Universal CRT).
+// advapi32, kernel32, ntdll, user32, comdlg32 and the Universal CRT).
 //
 // REG_QWORD values (the Registry table cannot write them):
 //   RpQwordPrepare  immediate: reads the plan from the RP_QWORDS property, decides per value from
@@ -38,6 +38,8 @@
 //   RpRemoveCommit  commit: deletes the backups (at the next restart if one is held) and the
 //                   folders the plan names, when empty.
 //   None of them fails the installation: a file left behind is not worth a rollback.
+//
+// Wiping at removal (DECISIONS 2026-10-11): RpPurgePrepare, RpPurge - described where they are.
 //
 // Cleaning up later (RFC-0026):
 //   RpCleanupPrepare immediate: the package's folders (RP_CLEANUP_DIRS, Directory keys), its scope
@@ -1508,6 +1510,310 @@ static bool system_may_delete(const wchar_t *dir) {
     }
     if (sd) LocalFree(sd);
     return ok;
+}
+
+// ---- wiping at removal -----------------------------------------------------------------------------
+//
+// [remove] recursive = true and [registry] remove = true, on = "uninstall" (DECISIONS 2026-10-11
+// "Wiping at removal"): what the program made itself - a folder with everything in it, a key with
+// everything below it - goes when the product is really removed.
+//   RpPurgePrepare immediate: nothing when UPGRADINGPRODUCTCODE is set (an upgrade removing this
+//                   version). Otherwise, for each plan record of RP_PURGE (d, Directory key, "", "",
+//                   component / k, root, view, key, component) whose component is being removed,
+//                   one line for a commit action: RP_PurgeMachine (per machine: runs as SYSTEM) or
+//                   RP_PurgeUser (runs as the user: everything of a per-user installation, and the
+//                   user's profile and HKCU of a per-machine one). A folder that is, or holds, one
+//                   of Windows' own folders, or in which another installed product has a component,
+//                   is kept.
+//   RpPurge         commit: deletes them. A removal that fails has run no commit action, so it has
+//                   touched nothing. No link is followed: every folder and file is opened as itself
+//                   (FILE_FLAG_OPEN_REPARSE_POINT), checked to be where its name says by its handle,
+//                   and deleted by that handle; a link is deleted as a link. What a program holds
+//                   stays. Registry keys likewise (REG_OPTION_OPEN_LINK, deleted by handle).
+//   Neither fails the installation.
+
+#define PURGE_PATH 32768
+
+NTSYSAPI LONG NTAPI NtDeleteKey(HANDLE key);
+
+static bool starts_with_i(const wchar_t *s, const wchar_t *prefix) {
+    size_t n = wcslen(prefix);
+    return wcslen(s) >= n && CompareStringOrdinal(s, (int)n, prefix, (int)n, TRUE) == CSTR_EQUAL;
+}
+
+// Why folder `dir` (ending in '\') is not wiped, or NULL: it is not a folder on a drive, it is one
+// of Windows' own folders or holds one, or it is inside the Windows folder.
+static const wchar_t *purge_refused(MSIHANDLE h, const wchar_t *dir) {
+    static const wchar_t *const known[] = {
+        L"WindowsFolder", L"ProgramFilesFolder", L"ProgramFiles64Folder", L"CommonFilesFolder", L"CommonFiles64Folder", L"CommonAppDataFolder",
+        L"AppDataFolder", L"LocalAppDataFolder", L"DesktopFolder", L"PersonalFolder", L"StartMenuFolder", L"ProgramMenuFolder", L"StartupFolder",
+        L"FavoritesFolder", L"SendToFolder", L"TemplateFolder", L"FontsFolder", L"SystemFolder", L"System64Folder", L"TempFolder",
+        L"MyPicturesFolder", L"AdminToolsFolder", L"%USERPROFILE", L"%PUBLIC", L"%ProgramData", L"%SystemRoot", L"%ProgramFiles", L"%ProgramW6432",
+    };
+    size_t n = wcslen(dir);
+    if (n <= 3 || dir[1] != L':' || dir[2] != L'\\' || dir[n - 1] != L'\\') return L"it is not a folder below a drive's root";
+    const wchar_t *why = NULL;
+    for (size_t i = 0; i < sizeof known / sizeof known[0] && why == NULL; ++i) {
+        static wchar_t path[MAX_PATH * 4];
+        path[0] = 0;
+        if (known[i][0] == L'%') {
+            DWORD got = GetEnvironmentVariableW(known[i] + 1, path, MAX_PATH * 4 - 2);
+            if (got == 0 || got >= MAX_PATH * 4 - 2) continue;
+            if (path[got - 1] != L'\\') wcscat(path, L"\\");
+        } else {
+            wchar_t *v = get_property(h, known[i]);
+            if (v && wcslen(v) < MAX_PATH * 4) wcscpy(path, v);
+            if (v) HeapFree(GetProcessHeap(), 0, v);
+        }
+        if (path[0] == 0) continue;
+        if (starts_with_i(path, dir)) why = L"it is, or holds, one of Windows' own folders";
+        else if (i == 0 && starts_with_i(dir, path)) why = L"it is inside the Windows folder";
+    }
+    return why;
+}
+
+// Whether a product other than `self` has a component whose key path is inside `dir`.
+static bool other_product_in(const wchar_t *dir, const wchar_t *self, wchar_t found[39]) {
+    static wchar_t path[MAX_PATH * 4];
+    wchar_t cid[39], prod[39];
+    for (DWORD i = 0; MsiEnumComponentsW(i, cid) == ERROR_SUCCESS; ++i) {
+        for (DWORD j = 0; MsiEnumClientsW(cid, j, prod) == ERROR_SUCCESS; ++j) {
+            if (self && lstrcmpiW(prod, self) == 0) continue;
+            DWORD n = MAX_PATH * 4;
+            INSTALLSTATE st = MsiGetComponentPathW(prod, cid, path, &n);
+            if ((st == INSTALLSTATE_LOCAL || st == INSTALLSTATE_SOURCE) && path[0] && path[1] == L':' && starts_with_i(path, dir)) {
+                wcscpy(found, prod);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+__declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
+    wchar_t *plan = get_property(h, L"RP_PURGE");
+    wchar_t *split = get_property(h, L"RP_PURGE_SPLIT");
+    wchar_t *upgrading = get_property(h, L"UPGRADINGPRODUCTCODE");
+    wchar_t *allusers = get_property(h, L"ALLUSERS");
+    wchar_t *self = get_property(h, L"ProductCode");
+    bool machine = allusers && allusers[0] == L'1';
+    bool two = machine && split && split[0] == L'1';
+    writer_t user = { 0 }, sys = { 0 };
+    w_raw(&user, L"RPP1", 4);
+    w_raw(&sys, L"RPP1", 4);
+    if (plan && upgrading && upgrading[0]) {
+        log_line(h, L"rubrapack: purge: an upgrade (%ls) removes this version: nothing is wiped", upgrading);
+    } else if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
+        static wchar_t profile[MAX_PATH * 4], dir[MAX_PATH * 4];
+        DWORD pn = GetEnvironmentVariableW(L"USERPROFILE", profile, MAX_PATH * 4 - 2);
+        if (pn == 0 || pn >= MAX_PATH * 4 - 2) profile[0] = 0;
+        else if (profile[pn - 1] != L'\\') wcscat(profile, L"\\");
+        reader_t r = { plan + 4, plan + wcslen(plan) };
+        static wchar_t f[5][MAX_TEXT / 8];
+        while (r.p < r.end) {
+            bool ok = true;
+            for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
+            if (!ok) break;
+            INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
+            MsiGetComponentStateW(h, f[4], &installed, &action);
+            if (action != INSTALLSTATE_ABSENT) continue;
+            if (f[0][0] == L'd') {
+                DWORD dn = MAX_PATH * 4;
+                if (MsiGetTargetPathW(h, f[1], dir, &dn) != ERROR_SUCCESS) continue;
+                wchar_t other[39];
+                const wchar_t *why = purge_refused(h, dir);
+                if (why) {
+                    log_line(h, L"rubrapack: purge: %ls is kept: %ls", dir, why);
+                    continue;
+                }
+                if (other_product_in(dir, self, other)) {
+                    log_line(h, L"rubrapack: purge: %ls is kept: the installed product %ls has files there", dir, other);
+                    continue;
+                }
+                writer_t *w = two && !(profile[0] && starts_with_i(dir, profile)) ? &sys : &user;
+                dir[wcslen(dir) - 1] = 0;
+                w_field(w, L"t"); w_field(w, dir); w_field(w, L""); w_field(w, L"");
+                log_line(h, L"rubrapack: purge: folder %ls (%ls)", dir, w == &sys ? L"as SYSTEM" : L"as the user");
+            } else if (f[0][0] == L'k') {
+                const wchar_t *root = wcscmp(f[1], L"HKMU") == 0 ? (machine ? L"HKLM" : L"HKCU") : f[1];
+                if (wcscmp(root, L"HKLM") != 0 && wcscmp(root, L"HKCU") != 0) continue;
+                writer_t *w = two && wcscmp(root, L"HKLM") == 0 ? &sys : &user;
+                w_field(w, L"k"); w_field(w, root); w_field(w, f[2]); w_field(w, f[3]);
+                log_line(h, L"rubrapack: purge: key %ls\\%ls (%ls)", root, f[3], w == &sys ? L"as SYSTEM" : L"as the user");
+            }
+        }
+    }
+    set_data(h, L"RP_PurgeUser", &user);
+    set_data(h, L"RP_PurgeMachine", &sys);
+    wchar_t *all[] = { plan, split, upgrading, allusers, self, user.buf, sys.buf };
+    for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+        if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
+    }
+    return ERROR_SUCCESS;
+}
+
+typedef struct {
+    MSIHANDLE     h;
+    wchar_t      *path;         // "\\?\C:\..." of the entry at hand, PURGE_PATH characters
+    wchar_t      *real;         // where a handle says it is
+    unsigned long gone, left;
+} purge_t;
+
+// Opens the entry at p->path as itself and checks, by the handle, that it is where its name says
+// (a folder above it put elsewhere by a link gives another place). INVALID_HANDLE_VALUE otherwise.
+static HANDLE purge_open(purge_t *p, DWORD *attr) {
+    const DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE;
+    const DWORD flags = FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT;
+    HANDLE f = CreateFileW(p->path, DELETE | FILE_LIST_DIRECTORY | FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES | SYNCHRONIZE, share, NULL,
+                           OPEN_EXISTING, flags, NULL);
+    if (f == INVALID_HANDLE_VALUE)
+        f = CreateFileW(p->path, DELETE | FILE_READ_ATTRIBUTES | SYNCHRONIZE, share, NULL, OPEN_EXISTING, flags, NULL);
+    if (f == INVALID_HANDLE_VALUE) return f;
+    FILE_ATTRIBUTE_TAG_INFO ti;
+    DWORD n = GetFinalPathNameByHandleW(f, p->real, PURGE_PATH, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
+    if (!GetFileInformationByHandleEx(f, FileAttributeTagInfo, &ti, sizeof ti) || n == 0 || n >= PURGE_PATH ||
+        CompareStringOrdinal(p->real, -1, p->path, -1, TRUE) != CSTR_EQUAL) {
+        CloseHandle(f);
+        SetLastError(ERROR_CANT_RESOLVE_FILENAME);
+        return INVALID_HANDLE_VALUE;
+    }
+    *attr = ti.FileAttributes;
+    return f;
+}
+
+static bool purge_delete(HANDLE f, DWORD attr) {
+    if (attr & FILE_ATTRIBUTE_READONLY) {
+        FILE_BASIC_INFO bi;
+        memset(&bi, 0, sizeof bi);
+        bi.FileAttributes = (attr & ~(DWORD)FILE_ATTRIBUTE_READONLY) ? (attr & ~(DWORD)FILE_ATTRIBUTE_READONLY) : FILE_ATTRIBUTE_NORMAL;
+        SetFileInformationByHandle(f, FileBasicInfo, &bi, sizeof bi);
+    }
+    // The name goes at once even while another program has the file open (Windows 10 1709 and
+    // later: class 21, delete | POSIX semantics | ignore read-only); the older way otherwise.
+    struct { DWORD flags; } ex = { 0x1 | 0x2 | 0x10 };
+    if (SetFileInformationByHandle(f, (FILE_INFO_BY_HANDLE_CLASS)21, &ex, sizeof ex)) return true;
+    FILE_DISPOSITION_INFO di = { TRUE };
+    return SetFileInformationByHandle(f, FileDispositionInfo, &di, sizeof di) != 0;
+}
+
+// Empties the folder open as `d` (p->path, `len` characters long, names it).
+static void purge_inside(purge_t *p, HANDLE d, size_t len, int depth) {
+    const DWORD cap = 64 * 1024;
+    BYTE *buf = HeapAlloc(GetProcessHeap(), 0, cap);
+    if (buf == NULL) return;
+    bool first = true;
+    while (GetFileInformationByHandleEx(d, first ? FileIdBothDirectoryRestartInfo : FileIdBothDirectoryInfo, buf, cap)) {
+        first = false;
+        for (FILE_ID_BOTH_DIR_INFO *e = (FILE_ID_BOTH_DIR_INFO *)buf;; e = (FILE_ID_BOTH_DIR_INFO *)((BYTE *)e + e->NextEntryOffset)) {
+            size_t nl = e->FileNameLength / sizeof(wchar_t);
+            bool dots = (nl == 1 && e->FileName[0] == L'.') || (nl == 2 && e->FileName[0] == L'.' && e->FileName[1] == L'.');
+            if (!dots && len + 1 + nl < PURGE_PATH) {
+                p->path[len] = L'\\';
+                memcpy(p->path + len + 1, e->FileName, nl * sizeof(wchar_t));
+                p->path[len + 1 + nl] = 0;
+                DWORD attr = 0;
+                HANDLE f = purge_open(p, &attr);
+                bool ok = f != INVALID_HANDLE_VALUE;
+                if (ok) {
+                    // A real folder is emptied first; a link, whatever it points at, goes as it is.
+                    if ((attr & FILE_ATTRIBUTE_DIRECTORY) && !(attr & FILE_ATTRIBUTE_REPARSE_POINT) && depth < 128) {
+                        purge_inside(p, f, len + 1 + nl, depth + 1);
+                        p->path[len + 1 + nl] = 0;
+                    }
+                    ok = purge_delete(f, attr);
+                }
+                DWORD err = ok ? 0 : GetLastError();
+                if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
+                if (ok) ++p->gone;
+                else {
+                    ++p->left;
+                    if (p->left <= 20) log_line(p->h, L"rubrapack: purge: %ls stays (%lu)", p->path + 4, (unsigned long)err);
+                }
+            } else if (!dots) {
+                ++p->left;
+            }
+            if (e->NextEntryOffset == 0) break;
+        }
+    }
+    p->path[len] = 0;
+    HeapFree(GetProcessHeap(), 0, buf);
+}
+
+static void purge_tree(MSIHANDLE h, const wchar_t *dir) {
+    purge_t p = { h, HeapAlloc(GetProcessHeap(), 0, PURGE_PATH * sizeof(wchar_t)), HeapAlloc(GetProcessHeap(), 0, PURGE_PATH * sizeof(wchar_t)), 0, 0 };
+    size_t len = wcslen(dir);
+    if (p.path && p.real && len + 8 < PURGE_PATH && len > 3 && dir[1] == L':') {
+        wcscpy(p.path, L"\\\\?\\");
+        wcscat(p.path, dir);
+        DWORD attr = 0;
+        HANDLE d = purge_open(&p, &attr);
+        if (d == INVALID_HANDLE_VALUE) {
+            DWORD e = GetLastError();
+            if (e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND) log_line(h, L"rubrapack: purge: %ls is not there", dir);
+            else log_line(h, L"rubrapack: purge: %ls is kept: it cannot be opened as the folder its name says (%lu)", dir, (unsigned long)e);
+        } else if (!(attr & FILE_ATTRIBUTE_DIRECTORY) || (attr & FILE_ATTRIBUTE_REPARSE_POINT)) {
+            log_line(h, L"rubrapack: purge: %ls is kept: it is a link or not a folder", dir);
+            CloseHandle(d);
+        } else {
+            purge_inside(&p, d, len + 4, 0);
+            bool ok = p.left == 0 && purge_delete(d, attr);
+            CloseHandle(d);
+            log_line(h, L"rubrapack: purge: %ls: %lu deleted, %lu left, the folder %ls", dir, p.gone, p.left, ok ? L"removed" : L"stays");
+        }
+    }
+    if (p.path) HeapFree(GetProcessHeap(), 0, p.path);
+    if (p.real) HeapFree(GetProcessHeap(), 0, p.real);
+}
+
+// Deletes the key `name` below `parent` with everything below it; a link is deleted as a link.
+static LSTATUS purge_subkey(HKEY parent, const wchar_t *name, REGSAM view, int depth) {
+    HKEY k;
+    LSTATUS ls = RegOpenKeyExW(parent, name, REG_OPTION_OPEN_LINK, DELETE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | view, &k);
+    if (ls != ERROR_SUCCESS) return ls;
+    DWORD type = 0;
+    bool link = RegQueryValueExW(k, L"SymbolicLinkValue", NULL, &type, NULL, NULL) == ERROR_SUCCESS && type == REG_LINK;
+    if (!link && depth < 128) {
+        wchar_t child[256];
+        DWORD at = 0;
+        for (;;) {
+            DWORD cn = 256;
+            LSTATUS es = RegEnumKeyExW(k, at, child, &cn, NULL, NULL, NULL, NULL);
+            if (es != ERROR_SUCCESS) break;
+            if (purge_subkey(k, child, view, depth + 1) != ERROR_SUCCESS) ++at;     // it stays: go past it
+        }
+    }
+    LONG st = NtDeleteKey(k);
+    RegCloseKey(k);
+    return st == 0 ? ERROR_SUCCESS : ERROR_ACCESS_DENIED;
+}
+
+static void purge_key(MSIHANDLE h, const wchar_t *root, const wchar_t *view, const wchar_t *key) {
+    HKEY base = HKEY_LOCAL_MACHINE;
+    bool user = wcscmp(root, L"HKCU") == 0;
+    // The hive of the user this action runs as, not the process's.
+    if (user && RegOpenCurrentUser(KEY_READ, &base) != ERROR_SUCCESS) {
+        log_line(h, L"rubrapack: purge: key %ls\\%ls: the user's registry cannot be opened", root, key);
+        return;
+    }
+    LSTATUS ls = purge_subkey(base, key, view_flag(view), 0);
+    if (user) RegCloseKey(base);
+    log_line(h, L"rubrapack: purge: key %ls\\%ls: %ls (%ld)", root, key,
+             ls == ERROR_SUCCESS ? L"removed" : ls == ERROR_FILE_NOT_FOUND ? L"not there" : L"stays", (long)ls);
+}
+
+__declspec(dllexport) UINT __stdcall RpPurge(MSIHANDLE h) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return ERROR_SUCCESS;
+    if (wcsncmp(data, L"RPP1", 4) == 0) {
+        reader_t r = { data + 4, data + wcslen(data) };
+        static wchar_t f[4][MAX_PATH * 4];
+        while (r.p < r.end && r_field(&r, f[0], 8) && r_field(&r, f[1], MAX_PATH * 4) && r_field(&r, f[2], 8) && r_field(&r, f[3], MAX_PATH * 4)) {
+            if (f[0][0] == L't') purge_tree(h, f[1]);
+            else if (f[0][0] == L'k') purge_key(h, f[1], f[2], f[3]);
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, data);
+    return ERROR_SUCCESS;
 }
 
 // ---- the question an installed product is met with ---------------------------------------------------

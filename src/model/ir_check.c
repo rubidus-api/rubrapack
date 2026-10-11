@@ -951,6 +951,19 @@ void ir_cross_checks(ctx_t *c) {
             ERR(c, r->pos, "RP1315", "dir '%s' is not a dir ID", r->dir);
             continue;
         }
+        if (r->recursive && d) {
+            // Whatever it is below: Windows' own folders are never emptied.
+            const rp_ir_dir_t *top = d;
+            for (int hop = 0; top->parent && hop < 64; ++hop) {
+                const rp_ir_dir_t *up = ir_find_dir(ir, top->parent);
+                if (up == NULL) break;
+                top = up;
+            }
+            const char *b = top->base;
+            if (b && (strcmp(b, "Windows") == 0 || strcmp(b, "System") == 0 || strcmp(b, "Fonts") == 0 || strcmp(b, "Temp") == 0)) {
+                ERR(c, r->pos, "RP1316", "[remove.%s]: recursive = true is not for a folder below %s", r->id, b);
+            }
+        }
         if (r->feature && !find_feature(ir, r->feature)) {
             ERR(c, r->pos, "RP1307", "feature '%s' is not defined", r->feature);
         } else if (r->feature == NULL) {

@@ -156,6 +156,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
             break;
         }
         char *val = ir_subst(c, v);
+        if (val == NULL) break;         // reported; a list with a hole in it is nobody's to read
         if (val && (val[0] == '\0' || strlen(val) > 64)) ERR(c, vk->pos, "RP1316", "a value is 1 to 64 bytes");
         for (size_t j = 0; val && j < x->value_count; ++j) {
             if (strcmp(x->values[j], val) == 0) ERR(c, vk->pos, "RP1316", "value '%s' is listed twice", val);

@@ -218,8 +218,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
 | `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
-| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), feature |
+| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on(`remove` 와 함께: `install`, 또는 `uninstall` - 제거할 때 키 전체), keep, view, with, feature, when |
+| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), recursive(`true`: 제거할 때 폴더와 그 안 전부), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -399,7 +399,8 @@ value = "[INSTALLDIR]"            # MSI 서식 문자열: [PROPERTY], [#FileID],
 DLL 이 이전 값을 되살린다. 값 하나가 구성 요소(component) 하나이고 제거할 때 지워진다(`keep = true`
 면 남는다). `with = "file:ID"` 는 대신 그 파일의 구성 요소에 넣는다. 64비트 패키지에서 값은 64비트
 레지스트리 보기로 가고, `view = "32"` 는 32비트 보기에 쓴다. `remove = true`(`value` 없이)는 설치
-중에 이름 붙은 값을 - `name` 이 없으면 키 전체를 - 지운다.
+중에 이름 붙은 값을 - `name` 이 없으면 키 전체를 - 지운다. `on = "uninstall"` 을 더하면(`name` 없이)
+키와 그 아래 전부를 제거할 때 지운다: [제거할 때 싹 지우기](#제거할-때-싹-지우기-recursive-on--uninstall).
 
 ### 바로가기: `[shortcut.ID]`
 
@@ -660,6 +661,52 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 한다: 파일을 백업 폴더(그 볼륨의 `Config.Msi`, 사용자별 패키지는 임시 폴더)로 옮기고, 제거가 실패하면
 되돌리고, 성공하면 지운다. 프로그램이 쥐고 있는 파일은 다음 재시작 때 지워진다. 업그레이드는 옛 판 자신의
 행을 돌리므로, 이 키를 넣고 만든 첫 판부터 효과가 있다.
+
+### 제거할 때 싹 지우기: `recursive`, `on = "uninstall"`
+
+제거는 패키지가 설치한 것을 지운다. 프로그램이 쓰이는 동안 스스로 만든 것 - 옆에 둔 설정 파일, AppData 아래
+폴더, `HKCU\Software` 아래 키 - 은 남고, 파일이 하나라도 남으면 설치 폴더도 남는다. 그것까지 지우려면 자리를
+적는다:
+
+```toml
+[remove.Everything]
+dir = "INSTALLDIR"
+on = "uninstall"
+recursive = true            # 폴더와 그 안의 모든 파일·폴더
+
+[dir.Settings]
+path = "$(APPDATA)/Example/Tip"
+
+[remove.Settings]
+dir = "Settings"
+on = "uninstall"
+recursive = true
+
+[registry.Settings]
+root = "HKCU"
+key = 'Software\Example\Tip'
+remove = true
+on = "uninstall"            # 키와 그 값, 그 아래 모든 키
+```
+
+- 제품(또는 그 행이 속한 기능)을 정말 지울 때만 한다 - "설치된 앱", 유지 관리 페이지의 제거, `msiexec /x`.
+  **업그레이드는 절대 지우지 않는다**: 새 판은 설정을 그대로 만난다. 실패해서 되돌려진 제거는 아무것도 건드리지
+  않았다. 지우기는 제거가 성공한 뒤 맨 끝에 하기 때문이다 - 그래서 지운 뒤에는 되살릴 길도 없다.
+- **프로그램이 쓴 것만이 아니라 거기 있는 것은 무엇이든 지운다.** 그 제품만의 폴더를 적는다. 사용자가 설치
+  폴더를 고를 수 있고 다른 것이 든 폴더를 고르면, 그것도 함께 지워진다.
+- 만들 때 거절(`RP1316`): `SystemRoot` 나 `Temp` 아래 폴더; `Software` 아래가 아닌 키, `Software\Microsoft`
+  ·`Classes`·`Policies`·`Wow6432Node` 의 큰 가지; `HKCR`; `recursive` 에 `name`, `upgrade`, `uninstall` 이
+  아닌 `on`; 병합 모듈.
+- 제거할 때 남기고 로그에 한 줄(`rubrapack: purge:`): 드라이브의 뿌리; Windows 자신의 폴더(Program Files,
+  ProgramData, 사용자 프로필, AppData, 바탕 화면, 문서 ...)이거나 그것을 품은 폴더; Windows 폴더 안의 모든 것;
+  다른 설치된 제품의 파일이 든 폴더.
+- 링크는 따라가지 않는다: 폴더 안의 정션이나 심볼릭 링크는 링크로서 지워지고, 가리키던 곳은 그대로다.
+  프로그램이 아직 쥐고 있는 파일은 남고, 그 폴더도 남는다.
+- **AppData 와 `HKCU` 는 제품을 지우는 사용자의 것이다.** 같은 컴퓨터의 다른 사용자 설정은 한 번의 제거로
+  닿지 않아 남는다. 이 용도로는 컴퓨터 단위 패키지도 여기에 `HKCU` 를 적을 수 있다(다른 데서는 안 된다).
+  사용자 프로필과 `HKCU` 는 그 사용자 권한으로, 나머지는 컴퓨터 단위 패키지에서 SYSTEM 이 지운다.
+- 폴더의 `[dir.ID]` 는 이 패키지의 폴더여야 하므로, 없으면 설치할 때 (빈 채로) 만들어진다.
+- MSIX 에는 필요 없다: Windows 가 패키지의 폴더와 패키지 자신의 레지스트리·AppData 를 함께 지운다.
 
 ### 환경 변수: `[env.ID]`
 
@@ -1116,7 +1163,8 @@ Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 �
 다시 걸어 둔다).
 
 따로 제거 프로그램은 없다: Windows 의 "설치된 앱"은 MSI 를 Windows Installer 로 지우고, 제거가 남긴 것은
-정리 작업이 맡는다.
+정리 작업이 맡는다. 프로그램이 스스로 쓴 것은 패키지의 것이 아니라서 남는다 - 패키지가 그 자리를 적지 않는 한:
+[제거할 때 싹 지우기](#제거할-때-싹-지우기-recursive-on--uninstall).
 
 ### 제품과 함께 지워지는 추가 기능: `parent`, `remove-addons`
 

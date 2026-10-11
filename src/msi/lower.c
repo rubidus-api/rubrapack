@@ -551,9 +551,10 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
+    const char      *pplan;            // RP_PURGE ([remove] recursive, [registry] on = "uninstall")
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
     rp_msi_wstream_t *streams;         // embedded cabinets
     rp_build_file_t *ext;              // or external ones
@@ -782,6 +783,13 @@ static void lower_registry(pkg_t *pk) {
         }
         const char *key = escape_formatted(k, r->key);
         const char *name = r->name ? escape_formatted(k, r->name) : NULL;
+        if (r->purge) {         // the helper DLL's, at a real removal (RP_PURGE: k, root, view, key, component)
+            static const char *const proots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };
+            const char *fields[] = { "k", proots[r->root + 1], r->view32 || ir->arch == RP_ARCH_X86 ? "32" : "64", r->key, ckey };
+            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->pplan = plan_field(k, pk->pplan, fields[f]);
+            pk->any_purge = true;
+            continue;
+        }
         if (r->remove) {
             s_(&pk->removereg, r->id); i_(&pk->removereg, (int32_t)r->root); s_(&pk->removereg, key);
             s_(&pk->removereg, name ? name : "-");  // no name: the whole key
@@ -930,6 +938,12 @@ static void lower_removes(pkg_t *pk) {
         // "" for the folder itself, component), which skips it when an upgrade removes this version;
         // the RemoveFile row keeps only the installation part.
         int mode = r->mode;
+        if (r->recursive) {     // the helper DLL's, at a real removal (RP_PURGE: d, Directory key, "", "", component)
+            const char *fields[] = { "d", dkey(ir, r->dir), "", "", ckey };
+            for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->pplan = plan_field(k, pk->pplan, fields[f]);
+            pk->any_purge = true;
+            continue;
+        }
         if (r->keep_on_upgrade) {
             const char *fields[] = { dkey(ir, r->dir), r->name ? r->name : "", ckey };
             for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->rplan = plan_field(k, pk->rplan, fields[f]);
@@ -1059,11 +1073,11 @@ static void lower_helper_actions(pkg_t *pk) {
     // A package without dialogs: the helper DLL asks an installed product's user what to do
     // (RpMaintain); the dialog sets have RpMaintenanceDlg.
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
-    if (pk->any_qword || pk->any_rplan || guard || save_log || cleanup || preflight || menu || maintain) {
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : guard ? "guard = true" : "[ui] save-log",
+                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : pk->any_purge ? "recursive = true" : guard ? "guard = true" : "[ui] save-log",
                            arch_text(ir->arch));
             pk->reg_bad = true;
         }
@@ -1291,6 +1305,20 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RpRemoveApply");
         s_(&pk->customaction, "RP_RemoveCommit"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | noimp); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpRemoveCommit");
+    }
+    // [remove] recursive, [registry] on = "uninstall": prepare (immediate; nothing when
+    // UPGRADINGPRODUCTCODE is set) -> two commit actions, so a removal that fails has touched
+    // nothing: one as the user (the user's profile and HKCU), one - per machine - as SYSTEM.
+    if (pk->any_purge) {
+        s_(&pk->property, "RP_PURGE"); s_(&pk->property, kprintf(k, "%s%s", pk->pplan, NULL));
+        if (ir->scope == 0) { s_(&pk->property, "RP_PURGE_SPLIT"); s_(&pk->property, "1"); }
+        s_(&pk->customaction, "RP_PurgePrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPurgePrepare");
+        s_(&pk->customaction, "RP_PurgeUser"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400); s_(&pk->customaction, "RpCa");
+        s_(&pk->customaction, "RpPurge");
+        if (ir->scope == 0) {
+            s_(&pk->customaction, "RP_PurgeMachine"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, "RpCa");
+            s_(&pk->customaction, "RpPurge");
+        }
     }
 }
 
@@ -1616,6 +1644,11 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RP_RemoveApply"); null_(&pk->iexec); i_(&pk->iexec, 3492);
         s_(&pk->iexec, "RP_RemoveCommit"); null_(&pk->iexec); i_(&pk->iexec, 3493);
     }
+    if (pk->any_purge) {                // with them; the commits run at InstallFinalize, after RemoveFolders
+        s_(&pk->iexec, "RP_PurgePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3494);
+        s_(&pk->iexec, "RP_PurgeUser"); null_(&pk->iexec); i_(&pk->iexec, 3495);
+        if (ir->scope == 0) { s_(&pk->iexec, "RP_PurgeMachine"); null_(&pk->iexec); i_(&pk->iexec, 3496); }
+    }
     if (pk->menu) {
         for (int i = 1; i <= 4; ++i) {
             char set[32];
@@ -1802,7 +1835,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs,
                                   const rp_out_sink_t *sink) {
     pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
-                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1" };
+                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1", .pplan = "RPP1" };
     pkg_t *pk = &pkg;
     rows_init(&pk->property, alloc, "Property", property_cols, 2);
     rows_init(&pk->directory, alloc, "Directory", directory_cols, 3);

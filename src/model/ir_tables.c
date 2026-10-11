@@ -288,9 +288,20 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     }
 }
 
+static bool ieq_n(const char *a, const char *b, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        char x = a[i], y = b[i];
+        if (x >= 'A' && x <= 'Z') x = (char)(x - 'A' + 'a');
+        if (y >= 'A' && y <= 'Z') y = (char)(y - 'A' + 'a');
+        if (x != y) return false;
+        if (x == 0) return true;
+    }
+    return true;
+}
+
 void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     static const char *const keys[] = { "root", "key", "name", "value", "type", "remove", "keep", "view", "with",
-                                        "feature", "when", NULL };
+                                        "feature", "when", "on", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     r->id = ir_dup(c, t->id);
@@ -308,7 +319,10 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         else if (strcmp(root, "HKCU") == 0) r->root = RP_ROOT_HKCU;
         else if (strcmp(root, "HKMU") == 0) r->root = RP_ROOT_HKMU;
         else ERR(c, ir_key_pos(t, "root"), "RP1316", "root must be HKLM, HKCU, HKCR or HKMU (got '%s')", root);
-        if (r->root == RP_ROOT_HKCU && scope == 0) {
+        // on = "uninstall" (a key wiped at removal) may name HKCU in a per-machine package: the
+        // program wrote there as each user, and the removing user's is the one in reach.
+        const rp_tkey_t *onk = ir_find_key(t, "on");
+        if (r->root == RP_ROOT_HKCU && scope == 0 && !(onk && onk->val.kind == RP_TV_STRING && strcmp(onk->val.str, "uninstall") == 0)) {
             ERR(c, ir_key_pos(t, "root"), "RP1316", "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\"");
         } else if (r->root == RP_ROOT_HKLM && scope != 0) {
             ERR(c, ir_key_pos(t, "root"), "RP1316", "a %s package cannot write HKLM; use HKMU", scope == 1 ? "per-user" : "dual");
@@ -328,6 +342,32 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     }
     r->remove = ir_get_bool(c, t, "remove", false);
     r->keep = ir_get_bool(c, t, "keep", false);
+    // remove = true, on = "uninstall": the whole key goes when the product is really removed - what
+    // the program wrote there itself (DECISIONS 2026-10-11 "Wiping at removal").
+    char *on = ir_get_str(c, t, "on", false, NULL);
+    if (on) {
+        if (strcmp(on, "uninstall") == 0) r->purge = true;
+        else if (strcmp(on, "install") != 0) ERR(c, ir_key_pos(t, "on"), "RP1316", "on must be \"install\" or \"uninstall\"");
+        if (!r->remove) ERR(c, ir_key_pos(t, "on"), "RP1316", "on is for remove = true (when the key is removed)");
+        rp_mem_free(c->alloc, on);
+    }
+    if (r->purge && r->remove && r->key) {
+        static const char *const keys2[] = { "name", "with", "when", "keep", NULL };
+        for (size_t k = 0; keys2[k]; ++k) {
+            if (ir_find_key(t, keys2[k])) ERR(c, ir_key_pos(t, keys2[k]), "RP1316", "on = \"uninstall\" removes the whole key at removal; it takes no '%s'", keys2[k]);
+        }
+        if (r->root == RP_ROOT_HKCR) ERR(c, ir_key_pos(t, "root"), "RP1316", "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)");
+        // Only a key of the product: below Software, and not a whole branch of Windows' own.
+        size_t parts = 1;
+        for (const char *p = r->key; *p; ++p) parts += *p == '\\';
+        static const char *const wide[] = { "Microsoft", "Classes", "Policies", "Wow6432Node" };
+        bool below = ieq_n(r->key, "Software\\", 9) && parts >= 2;
+        for (size_t k = 0; below && k < sizeof wide / sizeof wide[0]; ++k) {
+            size_t wl = strlen(wide[k]);
+            if (ieq_n(r->key + 9, wide[k], wl) && (r->key[9 + wl] == '\\' || r->key[9 + wl] == 0) && parts < 4) below = false;
+        }
+        if (!below) ERR(c, ir_key_pos(t, "key"), "RP1316", "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software", r->key);
+    }
     char *view = ir_get_str(c, t, "view", false, NULL);
     if (view) {
         if (strcmp(view, "32") == 0 && c->ir->arch != RP_ARCH_X86) r->view32 = true;
@@ -479,7 +519,7 @@ static bool pattern_ok(ctx_t *c, const char *name, rp_pos_t pos) {
 }
 
 void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
-    static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", NULL };
+    static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", "recursive", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     r->id = ir_dup(c, t->id);
@@ -500,6 +540,15 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
     r->keep_on_upgrade = !ir_get_bool(c, t, "upgrade", true);
     if (r->keep_on_upgrade && r->mode == 1)
         ERR(c, ir_key_pos(t, "upgrade"), "RP1316", "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)");
+    // recursive = true: the folder with everything in it - what the program made there itself - when
+    // the product is really removed, never when an upgrade removes this version.
+    r->recursive = ir_get_bool(c, t, "recursive", false);
+    if (r->recursive) {
+        if (r->name) ERR(c, ir_key_pos(t, "name"), "RP1316", "recursive = true removes the folder with everything in it; it takes no 'name'");
+        if (r->mode != 0 && r->mode != 2) ERR(c, ir_key_pos(t, "on"), "RP1316", "recursive = true is for on = \"uninstall\"");
+        if (ir_find_key(t, "upgrade")) ERR(c, ir_key_pos(t, "upgrade"), "RP1316", "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'");
+        r->keep_on_upgrade = false;
+    }
     r->feature = ir_get_str(c, t, "feature", false, NULL);
 }
 

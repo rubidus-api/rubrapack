@@ -18,3 +18,5 @@ EXPORTS
     RpMaintain
     RpMenuRegister
     RpMenuRemove
+    RpPurgePrepare
+    RpPurge
