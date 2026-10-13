@@ -255,7 +255,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
-| `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
+| `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
 
 `$(Base)` in a dir path is another dir ID or a Windows folder: `$(ProgramFiles)` (64-bit for
@@ -544,7 +544,8 @@ The same table serves both menus of Windows:
   Explorer, and does nothing but what the installation wrote down for the item.
   - An **MSIX** has identity: the DLL goes into the package and the manifest declares the items.
   - An **MSI** installs two more files beside the item's program - the DLL and
-    `rubrapack_menu.msix`, a small package with only a manifest and logos - and registers that
+    `rubrapack_menu.msix`, a small package with only a manifest and logos (made from `[arp] icon`
+    when it has a 32-bit image, else plain) - and registers that
     package for the program's folder when it is installed (for every user of the computer, others
     at their next sign-in) and removes it when it is removed. **It needs no certificate**: the
     package is unsigned in the form Windows accepts from an installation with administrator
@@ -739,6 +740,10 @@ remove = true
 on = "uninstall"            # the key with its values and every key below it
 ```
 
+- With `ui = "installdir"` or `"features"`, the folder page asks before it takes a folder that
+  already holds something, when that folder is one the package wipes: the page says that a removal
+  deletes everything in it, and offers **Choose another** (the default) or **Use this folder**. A
+  silent installation is not asked.
 - A folder of the user's profile (AppData, the Start menu, the desktop) named here is not made at
   installation: it appears when the program makes it. Other folders are made at installation,
   empty, as a plain `[remove]` makes its folder. (0.41.0 made the profile ones too.)
@@ -802,6 +807,9 @@ back, the ones before it stay. `properties` are passed to that package as on msi
   damaged setup program, 1602 when the user refuses elevation.
 - With `elevate = true` (the default) the setup program asks for administrator rights once, for all
   packages; per-user chains set `elevate = false`.
+- The setup program's own texts are English, and Korean for a Korean user; `[chain] languages =
+  ["ja"]` adds a language that has a pack ([Language packs](#language-packs), its `Setup.*` texts).
+  It shows the language of the user's display language.
 - A chain holds only `[chain]`, `[chain-package.ID]` and `[define]`; each package is built from its
   own source first. `--key` signs the setup program like any program; `inspect setup.exe` lists its
   packages and `extract setup.exe -d dir` takes them out.
@@ -1142,6 +1150,47 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - `[package] language` sets only the package's language (`ProductLanguage`, the summary). Since
   0.2 it no longer makes the dialogs Korean: add `languages = ["ko"]` (lint warns, `RP1317`).
 
+### Language packs
+
+A language is one file. English is built into rubrapack, Korean comes with it as
+`resources/lang/ko.po`, and any other language is supported by adding its file - `<code>.po`, in
+the PO format translators' tools read - without changing rubrapack or the source's texts.
+
+```po
+msgid ""
+msgstr ""
+"Language: ja\n"
+"X-Rubrapack-Name: 日本語\n"        # the language's name on the language page
+"X-Rubrapack-LangIDs: 1041\n"      # the Windows LANGIDs it is chosen for
+"X-Rubrapack-Font: Yu Gothic UI\n"
+
+# The command line: msgid is the English text as rubrapack writes it.
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' を読めません ({2})"
+
+# The installers rubrapack builds: msgctxt "installer", msgid is the text's ID.
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "[ProductName] セットアップ"
+```
+
+- **Where a pack is looked for**: built in; then the folder `RUBRAPACK_LANG_DIR` names; then
+  `lang/` beside the source being built; then `lang/` beside the rubrapack program.
+- **The command line**: `--lang ja` (or `RUBRAPACK_LANG=ja`) uses the pack. A translation names the
+  English text's values by number, `{1}` for the first `%s` or `%zu`, so it can put them in the
+  order its language wants; `{-2}` says the second has no place (a plural "s"); `{{` is a brace. It
+  is not a format string: a pack can leave a value out but cannot make rubrapack read one that is
+  not there. A text the pack lacks comes out in English.
+- **Installers**: `[ui] languages = ["ja"]` takes the dialogs' texts (the IDs listed under
+  [Several languages](#several-languages)), the status line (`Action.InstallFiles`, ...), the
+  details box (`Details.FileCopy`, ...) and the helper's messages from the pack, and the language's
+  name, LANGIDs and font from its header - `[ui] name-ja`, `langid-ja`, `font-ja` and
+  `[ui-text.ID] text-ja` in the source still win. A text neither gives is an error (`RP1202` names
+  the first), except the few that fall back to English. A chain's setup program takes `Setup.*`
+  for the languages `[chain] languages` names.
+- **Starting one**: copy `resources/lang/ko.po`, change the header, translate the `msgstr` lines.
+  `RUBRAPACK_LANG_MISSING=<file>` makes a run append every text the chosen pack lacks to that file.
+
 ### Icon, the finished page, and the scope page
 
 - `[arp] icon = "app.ico"` is the product's icon in Installed apps; `[shortcut] icon` gives a
@@ -1298,6 +1347,10 @@ and no task is registered), and it
 never deletes anything else: only what this installation queued, only while the same file is still
 at that path, and not a file an installed product now has there. `[package] cleanup = false`
 leaves it out.
+
+A per-user package removed without administrator rights cannot have Windows Installer queue a file
+a program still holds, so such a file would stay for good: the removal notes each of the product's
+files that is still there, and the task deletes it once it is free.
 
 A per-machine package also protects its own files from an earlier removal: when another product
 was removed while a program held one of its files, the file's deletion stays queued for the
@@ -1751,7 +1804,7 @@ rubrapack version | help [command]
   6 network.
 - `--lang <code>` chooses the language of what the tool prints for a person: errors and warnings,
   `help`, the result lines, `explain`, the questions of `new -i` and `edit`. The codes are `en`
-  (the default) and `ko`. It may stand anywhere on the line (`rubrapack --lang ko build ...`,
+  (the default), `ko`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`); the environment variable `RUBRAPACK_LANG` says the same
   for every run, and the option wins over it. What a program reads stays as it is: the diagnostic
   codes, exit codes, table dumps of `inspect`, `schema`, and the structure of `--json` (whose

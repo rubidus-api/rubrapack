@@ -5,6 +5,7 @@
 // index so a package with many files stays linear.
 
 #include "rubrapack/lint.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
@@ -89,7 +90,7 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
     char what[200], where[200] = "";
     va_list ap;
     va_start(ap, fmt);
-    vsnprintf(what, sizeof what, fmt, ap);
+    rp_lang_vformat(what, sizeof what, fmt, ap);         // in the command line's language
     va_end(ap);
     if (t && row != SIZE_MAX) {
         char name[160];
@@ -99,7 +100,7 @@ static void finding(lint_t *l, const char *code, const rp_msi_wtable_t *t, size_
         snprintf(where, sizeof where, "%s: ", t->name);
     }
     bool warning = l->opts.foreign && !l->opts.strict && !breaking(code);
-    rp_srcdiag_add(l->diags, nopos(), code, warning, "lint: %s%s", where, what);
+    rp_srcdiag_add(l->diags, nopos(), code, warning, TR_N("lint: %s%s"), where, what);
     if (!warning) ++l->errors;
 }
 

@@ -105,6 +105,20 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     return c;
 }
 
+char *rp_pal_exe_dir(proven_allocator_t alloc) {
+    char path[4096];
+    ssize_t n = readlink("/proc/self/exe", path, sizeof path - 1);
+    if (n <= 0) return NULL;
+    path[n] = '\0';
+    char *slash = strrchr(path, '/');
+    if (slash == NULL) return NULL;
+    *slash = '\0';
+    size_t len = strlen(path);
+    char *c = rp_mem_alloc(alloc, len + 1, 1);
+    if (c) memcpy(c, path, len + 1);
+    return c;
+}
+
 // ---- network ----------------------------------------------------------------------------------
 
 struct rp_sock {

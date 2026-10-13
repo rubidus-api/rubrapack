@@ -270,6 +270,22 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     return c;
 }
 
+char *rp_pal_exe_dir(proven_allocator_t alloc) {
+    static wchar_t path[32768];
+    DWORD n = GetModuleFileNameW(NULL, path, 32768);
+    if (n == 0 || n >= 32768) return NULL;
+    while (n > 0 && path[n - 1] != L'\\' && path[n - 1] != L'/') --n;
+    if (n == 0) return NULL;
+    --n;
+    rp_text_result_t r = rp_utf16_to_utf8((const proven_u16 *)path, n, NULL, 0);
+    if (r.err != PROVEN_OK) return NULL;
+    char *c = rp_mem_alloc(alloc, r.units + 1, 1);
+    if (c == NULL) return NULL;
+    (void)rp_utf16_to_utf8((const proven_u16 *)path, n, (uint8_t *)c, r.units);
+    c[r.units] = 0;
+    return c;
+}
+
 // ---- network ----------------------------------------------------------------------------------
 
 struct rp_sock {

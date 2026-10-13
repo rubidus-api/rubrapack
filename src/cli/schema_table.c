@@ -113,6 +113,7 @@ const char *const rp_schema_lines[] = {
     "    \"elevate\": {\n",
     "     \"type\": \"boolean\"\n",
     "    },\n",
+    "    \"languages\": {},\n",
     "    \"manufacturer\": {\n",
     "     \"type\": \"string\"\n",
     "    },\n",

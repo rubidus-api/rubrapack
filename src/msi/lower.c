@@ -19,6 +19,7 @@
 #include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/ui.h"
 #include "rubrapack/version.h"
 
@@ -1101,7 +1102,40 @@ static void lower_services(pkg_t *pk) {
 // The helper DLL for qword values (RFC-0001 9.6): Binary "RpCa" with the part for this
 // architecture, the plan in RP_QWORDS, and prepare (immediate) -> rollback twin -> apply.
 // RFC-0012 V6: the dirs with guard = true, as Directory keys.
+// The languages a package carries its helper texts in: English, the built-in packs, and the
+// dialogs' own. Each once, English first.
+static size_t text_langs(const rp_ir_t *ir, const char *codes[RP_UI_LANG_MAX + 8]) {
+    size_t n = 0;
+    codes[n++] = "en";
+    for (size_t i = 0; i < rp_lang_embedded_count && n < RP_UI_LANG_MAX + 8; ++i) codes[n++] = rp_lang_embedded[i].code;
+    for (size_t u = 0; u < ir->ui_lang_count && n < RP_UI_LANG_MAX + 8; ++u) {
+        bool have = false;
+        for (size_t j = 0; j < n; ++j) have |= strcmp(codes[j], ir->ui_langs[u].code) == 0;
+        if (!have) codes[n++] = ir->ui_langs[u].code;
+    }
+    return n;
+}
+
+// The language code of the package's own language ([package] language, a LANGID): a dialog
+// language or a built-in pack that names it, else English.
+static const char *package_lang(const rp_ir_t *ir) {
+    for (size_t u = 0; u < ir->ui_lang_count; ++u) {
+        for (size_t j = 0; j < ir->ui_langs[u].langid_count; ++j) {
+            if (ir->ui_langs[u].langids[j] == ir->language) return ir->ui_langs[u].code;
+        }
+    }
+    for (size_t i = 0; i < rp_lang_embedded_count; ++i) {
+        const rp_langpack_t *p = rp_langpack_get(rp_lang_embedded[i].code, NULL);
+        for (size_t j = 0; p && j < p->langid_count; ++j) {
+            if (p->langids[j] == ir->language) return p->code;
+        }
+    }
+    return "en";
+}
+
 static void lower_helper_actions(pkg_t *pk) {
+    const char *langs[RP_UI_LANG_MAX + 8];
+    size_t nlangs = text_langs(pk->ir, langs);
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
     rp_srcdiags_t *diags = pk->diags;
@@ -1127,6 +1161,25 @@ static void lower_helper_actions(pkg_t *pk) {
     // A package without dialogs: the helper DLL asks an installed product's user what to do
     // (RpMaintain); the dialog sets have RpMaintenanceDlg.
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
+    // RP_LANGS: which language a user's LANGID means ("1042=ko;1041=ja"), for a run in which no
+    // dialog chose one - the helper's messages then follow the user's language.
+    if ((preflight || maintain) && nlangs > 1) {
+        const char *map = "";
+        for (size_t b = 1; b < nlangs; ++b) {
+            const rp_langpack_t *p = rp_langpack_get(langs[b], NULL);
+            const uint16_t *own = NULL;
+            size_t nown = 0;
+            for (size_t u = 0; u < ir->ui_lang_count; ++u) {
+                if (strcmp(ir->ui_langs[u].code, langs[b]) == 0) { own = ir->ui_langs[u].langids; nown = ir->ui_langs[u].langid_count; }
+            }
+            for (size_t j = 0; j < (own ? nown : p ? p->langid_count : 0); ++j) {
+                char num[16];
+                snprintf(num, sizeof num, "%u", own ? (unsigned)own[j] : p->langids[j]);
+                map = kprintf(k, "%s%s", map, kprintf(k, "%s=%s;", kdup(k, num), langs[b]));
+            }
+        }
+        if (*map) { s_(&pk->property, "RP_LANGS"); s_(&pk->property, map); }
+    }
     // [ui] details: the progress page's box, filled by the helper DLL from the log as it grows.
     bool details = ir->ui_details && ir->ui != RP_UI_NONE && !ir->module && part_len > 0;
     pk->details = details;
@@ -1152,8 +1205,42 @@ static void lower_helper_actions(pkg_t *pk) {
             s_(&pk->customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
         }
     }
+    // The install folder page's question about a folder that holds something (ui.c, RpDirWarnDlg):
+    // RP_DirCheck reads the folder the property named in RP_DIRCHECK holds.
+    if (pk->any_purge && ir->ui >= RP_UI_INSTALLDIR && rp_ui_wipes_dir(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR")) {
+        s_(&pk->property, "RP_DIRCHECK"); s_(&pk->property, dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"));
+        s_(&pk->customaction, "RP_DirCheck"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDirCheck");
+    }
     if (details) {      // "!": each line is written at once, so the box follows the installation
         s_(&pk->property, "MsiLogging"); s_(&pk->property, "voicewarmup!");
+        // The readable lines' labels, per language (RpDet_<operation>_<code>; a pack's "Details.<operation>").
+        static const struct { const char *op, *en; } det[] = {
+        { "FileCopy", "Copy file" },
+        { "FileRemove", "Remove file" },
+        { "FilePatch", "Patch file" },
+        { "FolderCreate", "Create folder" },
+        { "FolderRemove", "Remove folder" },
+        { "RegAddValue", "Write registry value" },
+        { "RegRemoveValue", "Remove registry value" },
+        { "RegRemoveKey", "Remove registry key" },
+        { "ShortcutCreate", "Create shortcut" },
+        { "ShortcutRemove", "Remove shortcut" },
+        { "ServiceInstall", "Install service" },
+        { "ServiceControl", "Control service" },
+        { "IniWriteRemoveValue", "Write INI value" },
+        { "UpdateEnvironmentStrings", "Set environment variable" },
+        { "RegisterFont", "Register font" },
+        { "UnregisterFont", "Unregister font" },
+        { "CustomActionSchedule", "Run action" },
+        };
+        for (size_t t = 0; t < sizeof det / sizeof det[0]; ++t) {
+            for (size_t b = 0; b < nlangs; ++b) {
+                const char *tr = strcmp(langs[b], "en") == 0 ? NULL : rp_langpack_text(rp_langpack_get(langs[b], NULL), "installer", kprintf(k, "Details.%s", det[t].op, NULL));
+                if (tr == NULL && b) continue;          // English is what a language without it shows
+                s_(&pk->property, kprintf(k, "RpDet_%s_%s", det[t].op, langs[b]));
+                s_(&pk->property, tr ? tr : det[t].en);
+            }
+        }
         s_(&pk->customaction, "RP_Details"); i_(&pk->customaction, 1 | 0x80); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetails");
         s_(&pk->customaction, "RP_DetailsDone"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetailsDone");
     }
@@ -1290,18 +1377,11 @@ static void lower_helper_actions(pkg_t *pk) {
         static const char *const modes[] = { "ask", "always", "never" };
         s_(&pk->property, "RP_PREFLIGHT_CLOSE"); s_(&pk->property, modes[ir->close_programs]);
         static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache" };
-        static const char *const base[] = { "en", "ko" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
             const char *id = kprintf(k, "Preflight%s", ids[t], NULL);
-            for (size_t b = 0; b < 2; ++b) {            // English and Korean always
-                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], base[b]));
-                s_(&pk->property, rp_ui_text_lang(ir, id, base[b]));
-            }
-            for (size_t u = 0; u < ir->ui_lang_count; ++u) {
-                const char *code = ir->ui_langs[u].code;
-                if (strcmp(code, "en") == 0 || strcmp(code, "ko") == 0) continue;
-                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], code));
-                s_(&pk->property, rp_ui_text_lang(ir, id, code));
+            for (size_t b = 0; b < nlangs; ++b) {       // English, the built-in packs, the dialogs' languages
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], langs[b]));
+                s_(&pk->property, rp_ui_text_lang(ir, id, langs[b]));
             }
         }
         s_(&pk->customaction, "RP_Preflight"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPreflight");
@@ -1309,16 +1389,15 @@ static void lower_helper_actions(pkg_t *pk) {
     }
     if (maintain) {
         static const char *const ids[] = { "MaintTitle", "MaintText", "Repair", "Remove", "Cancel" };
-        static const char *const base[] = { "en", "ko" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
-            for (size_t b = 0; b < 2; ++b) {
-                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], base[b]));
-                s_(&pk->property, rp_ui_text_lang(ir, ids[t], base[b]));
+            for (size_t b = 0; b < nlangs; ++b) {
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], langs[b]));
+                s_(&pk->property, rp_ui_text_lang(ir, ids[t], langs[b]));
             }
         }
-        for (size_t b = 0; b < 2; ++b) {        // the second question before a removal
-            s_(&pk->property, kprintf(k, "RpPreRemoveAsk_%s", base[b], NULL));
-            s_(&pk->property, rp_ui_text_lang(ir, rp_ui_wipes(ir) ? "RemoveAskAll" : "RemoveAsk", base[b]));
+        for (size_t b = 0; b < nlangs; ++b) {   // the second question before a removal
+            s_(&pk->property, kprintf(k, "RpPreRemoveAsk_%s", langs[b], NULL));
+            s_(&pk->property, rp_ui_text_lang(ir, rp_ui_wipes(ir) ? "RemoveAskAll" : "RemoveAsk", langs[b]));
         }
         s_(&pk->customaction, "RP_Maintain"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpMaintain");
         pk->maintain = true;
@@ -1433,8 +1512,7 @@ static void lower_searches(pkg_t *pk) {
     }
     if (ir->scope == 1) {           // a per-user package stays per user
         s_(&pk->launch, "Installed OR MSIINSTALLPERUSER = 1");
-        s_(&pk->launch, ir->language == 1042 ? "[ProductName]은(는) 사용자별로만 설치합니다(MSIINSTALLPERUSER=1)."
-                                         : "[ProductName] installs for the current user only (MSIINSTALLPERUSER=1).");
+        s_(&pk->launch, rp_ui_text_builtin("PerUserOnly", package_lang(ir)));
     }
     for (size_t i = 0; i < ir->search_count; ++i) {
         const rp_ir_search_t *x = &ir->searches[i];
@@ -1619,16 +1697,14 @@ static void lower_upgrade(pkg_t *pk) {
     }
 
     const char *message = ir->downgrade_message ? escape_formatted(k, ir->downgrade_message)
-                          : ir->language == 1042 ? "더 새 판이나 같은 판의 [ProductName]이(가) 이미 설치되어 있습니다."
-                                                 : "The same or a newer version of [ProductName] is already installed.";
+                          : rp_ui_text_builtin("NewerInstalled", package_lang(ir));
     s_(&pk->customaction, "RP_RefuseDowngrade"); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, message);
     // RFC-0003 section 9 (T1): an old version that must be removed by hand first. The removal command
     // names the found product ([RP_REFUSED_OLD]) and keeps Restart Manager off for that removal.
     if (ir->refuse_below) {
         const char *cmd = "msiexec /x [RP_REFUSED_OLD] /qn MSIRESTARTMANAGERCONTROL=Disable";
         const char *text = ir->refuse_message ? escape_formatted(k, ir->refuse_message)
-                           : ir->language == 1042 ? "설치된 옛 판 [ProductName]은(는) 이 설치로 올릴 수 없습니다. 먼저 지운 뒤 다시 설치하십시오:"
-                                                  : "The installed older version of [ProductName] cannot be upgraded by this package. Remove it first, then run this installation again:";
+                           : rp_ui_text_builtin("OlderRefused", package_lang(ir));
         s_(&pk->customaction, "RP_RefuseOld"); i_(&pk->customaction, 19); null_(&pk->customaction);
         s_(&pk->customaction, kprintf(k, "%s %s", text, cmd));
     }
@@ -1864,7 +1940,7 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &pk->banner, &banner_len);
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 }, pk->details };
+                             { 0 }, { 0 }, pk->details, pk->any_purge };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];

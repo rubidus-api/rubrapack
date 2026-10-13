@@ -55,6 +55,7 @@ typedef struct {
     const uint8_t *license_rtf_by_lang[RP_UI_LANG_MAX];
     size_t         license_len_by_lang[RP_UI_LANG_MAX];
     bool details;               // the helper DLL is in the package: the progress page gets its details box
+    bool helper;                // the helper DLL is in the package at all (the install folder page may call it)
 } rp_ui_input_t;
 
 // Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts
@@ -65,6 +66,11 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui);
 
 // Whether `id` names a text that [ui-text.ID] may override.
 bool rp_ui_text_known(const char *id);
+
+// The text `id` in language `code` without the source's own: the language's pack (its entry with
+// msgctxt "installer"), else English. And whether the language has it at all (English always).
+const char *rp_ui_text_builtin(const char *id, const char *code);
+bool rp_ui_text_in_pack(const char *id, const char *code);
 
 // Text `id` in language `li` of ir->ui_langs: [ui-text.ID] text-xx, its text, or the built-in one.
 const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li);
@@ -82,6 +88,7 @@ bool rp_ui_text_static(const char *text);
 // The package wipes what the program made at removal ([remove] recursive, [registry] on =
 // "uninstall"): the question before a removal says so.
 bool rp_ui_wipes(const rp_ir_t *ir);
+bool rp_ui_wipes_dir(const rp_ir_t *ir, const char *id);
 
 // A typeface name as the license text's RTF can name it: an ASCII name as it is, the local name of
 // a common Korean, Japanese or Chinese face as its English one ("맑은 고딕" -> "Malgun Gothic"), else

@@ -78,11 +78,16 @@ both languages say the same thing.
 
 ## Languages other than English and Korean
 
-rubrapack's built-in pages are written in English and Korean. For another language - `ja`, `de`,
-`fr`, ... - you provide every text as `text-xx` yourself; the build lists the ones missing:
+rubrapack's pages are written in English, and Korean comes with it as a *language pack* - one
+file, `ko.po`. Another language - `ja`, `de`, `fr`, ... - is one more such file: put `ja.po` in a
+folder `lang` beside `hello.toml` and write `languages = ["ja"]`. Nothing else changes. The pack
+holds every text of the pages, the progress page's status line and details, and the language's
+name and font; the reference's [Language packs](../rpk.md#language-packs) shows the format, and
+copying `ko.po` is the quickest start. Without a pack (or for a text you want different) the
+source gives the text itself as `text-xx`; the build lists what neither has:
 
 ```text
-hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-text.ID] text-ja for all of them (64 missing, the first is Back)
+hello.toml:16:1: error[RP1202]: language 'ja' lacks 68 text(s), the first is Back: add them to its language pack (lang/ja.po) or give [ui-text.ID] text-ja
 ```
 
 For such a language, three more keys in `[ui]` may help: `name-ja` (its name on the language

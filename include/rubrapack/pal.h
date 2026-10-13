@@ -77,6 +77,10 @@ typedef enum {
 // An environment variable as UTF-8 (NULL when unset); free with rp_mem_free.
 [[nodiscard]] char *rp_pal_getenv(proven_allocator_t alloc, const char *name);
 
+// The folder the program itself is in, as UTF-8 without a trailing separator (NULL when it cannot
+// be told); free with rp_mem_free.
+[[nodiscard]] char *rp_pal_exe_dir(proven_allocator_t alloc);
+
 // ---- network (RFC-0008) -------------------------------------------------------------------------
 
 typedef struct rp_sock rp_sock_t;

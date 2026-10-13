@@ -19,6 +19,7 @@
 /resources/*
 !/resources/ui/
 !/resources/bin/
+!/resources/lang/
 !/manual/
 !/manual-ko/
 # docs/ is the book GitHub Pages serves (built by manual/book/build.py --out docs), nothing else;

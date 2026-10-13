@@ -1027,6 +1027,41 @@ __declspec(dllexport) UINT __stdcall RpCleanupPrepare(MSIHANDLE h) {
         wfmt(num, 24, L"%zu", np);
         w_field(&w, num);
         for (size_t i = 0; i < np; ++i) w_field(&w, paths[i]);
+        // Per user, a real removal: the files of the components that go. One a program still holds
+        // stays behind, and without administrator rights Windows Installer cannot queue it for the
+        // next restart - the commit action notes those still there for the cleanup task (measured
+        // 2026-10-07). A count, then the paths.
+        writer_t gone = { 0 };
+        size_t ngone = 0;
+        wchar_t *upg2 = get_property(h, L"UPGRADINGPRODUCTCODE");
+        if (!machine && remove && _wcsicmp(remove, L"ALL") == 0 && !(upg2 && upg2[0])) {
+            MSIHANDLE db = MsiGetActiveDatabase(h), view = 0, rec = 0;
+            if (db && MsiDatabaseOpenViewW(db, L"SELECT `File`, `Component_` FROM `File`", &view) == ERROR_SUCCESS && MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+                while (ngone < 4096 && gone.len < 20000 && MsiViewFetch(view, &rec) == ERROR_SUCCESS) {        // the data has a size (MAX_TEXT)
+                    static wchar_t key[80], comp[80], fmt[96], path[MAX_PATH * 4];
+                    DWORD kn = 80, cn = 80, pn = MAX_PATH * 4;
+                    INSTALLSTATE have = INSTALLSTATE_UNKNOWN, act = INSTALLSTATE_UNKNOWN;
+                    if (MsiRecordGetStringW(rec, 1, key, &kn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, comp, &cn) == ERROR_SUCCESS &&
+                        MsiGetComponentStateW(h, comp, &have, &act) == ERROR_SUCCESS && act == INSTALLSTATE_ABSENT && wfmt(fmt, 96, L"[#%ls]", key) > 0) {
+                        MSIHANDLE fr = MsiCreateRecord(1);
+                        MsiRecordSetStringW(fr, 0, fmt);
+                        if (MsiFormatRecordW(h, fr, path, &pn) == ERROR_SUCCESS && path[0]) {
+                            w_field(&gone, path);
+                            ++ngone;
+                        }
+                        MsiCloseHandle(fr);
+                    }
+                    MsiCloseHandle(rec);
+                }
+            }
+            if (view) MsiCloseHandle(view);
+            if (db) MsiCloseHandle(db);
+        }
+        if (upg2) HeapFree(GetProcessHeap(), 0, upg2);
+        wfmt(num, 24, L"%zu", ngone);
+        w_field(&w, num);
+        if (ngone && gone.buf) w_raw(&w, gone.buf, gone.len);
+        if (gone.buf) HeapFree(GetProcessHeap(), 0, gone.buf);
         // The deletions already queued under those folders (and, per machine, the installer's
         // backups) before this installation's script runs: anything queued there later is this
         // installation's (a held file's deletion during the script, the backups at its end - x40).
@@ -1127,6 +1162,13 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
     for (unsigned long want = wcstoul(num, NULL, 10); naddons < want && naddons < 64 && r_field(&r, addons[naddons], 40);) ++naddons;
     if (!r_field(&r, num, 24)) goto done;
     for (unsigned long want = wcstoul(num, NULL, 10); ndirs < want && ndirs < 64 && r_field(&r, dirs[ndirs], MAX_PATH * 4);) ++ndirs;
+    // The files a per-user removal took away (a count, then the paths): looked at below.
+    if (!r_field(&r, num, 24)) goto done;
+    unsigned long ngone = wcstoul(num, NULL, 10);
+    const wchar_t *gone_at = r.p;
+    for (unsigned long i = 0; i < ngone; ++i) {
+        if (!r_field(&r, before, MAX_PATH * 4)) goto done;
+    }
     const wchar_t *befores = r.p;         // the rest: the deletions queued before the script
     bool machine = wcscmp(scope, L"machine") == 0;
     // The codes go into paths, the task's name and command lines; per machine the folder is not
@@ -1162,6 +1204,18 @@ __declspec(dllexport) UINT __stdcall RpCleanupRegister(MSIHANDLE h) {
             if (t) HeapFree(GetProcessHeap(), 0, t);
         }
         CloseHandle(pf);
+    }
+    // A per-user removal: the product's files that are still there (a program holds them).
+    if (!machine) {
+        reader_t g = { gone_at, r.end };
+        for (unsigned long i = 0; i < ngone && r_field(&g, before, MAX_PATH * 4); ++i) {
+            if (GetFileAttributesW(before) == INVALID_FILE_ATTRIBUTES) continue;
+            w_text(&files, L"file\t");
+            w_text(&files, before);
+            w_text(&files, L"\r\n");
+            ++found;
+            log_line(h, L"rubrapack: cleanup: %ls is still there (held); noted for the cleanup task", before);
+        }
     }
     log_line(h, L"rubrapack: cleanup: run kind '%ls', %zu file(s) noted, %zu add-on(s)", why, found, naddons);
     if ((why[0] == 0 && found == 0) || rp_clean_part_len < 2) {
@@ -1438,12 +1492,23 @@ static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
         wfmt(name, 80, L"RpPre%ls_%ls", id, lang);
         text = get_property(h, name);
     } else {
-        wchar_t *ul = get_property(h, L"UserLanguageID");
-        if (ul && wcscmp(ul, L"1042") == 0) {
-            wfmt(name, 80, L"RpPre%ls_ko", id);
+        // No dialog chose a language: the user's, when the package has it (RP_LANGS: "1042=ko;...").
+        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
+        size_t un = ul ? wcslen(ul) : 0;
+        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
+            if (wcsncmp(p, ul, un) != 0 || p[un] != L'=') continue;
+            const wchar_t *code = p + un + 1, *end = wcschr(code, L';');
+            size_t cn = end ? (size_t)(end - code) : wcslen(code);
+            if (cn == 0 || cn > 15) break;
+            wchar_t c[16];
+            memcpy(c, code, cn * sizeof *c);
+            c[cn] = 0;
+            wfmt(name, 80, L"RpPre%ls_%ls", id, c);
             text = get_property(h, name);
+            break;
         }
         if (ul) HeapFree(GetProcessHeap(), 0, ul);
+        if (map) HeapFree(GetProcessHeap(), 0, map);
     }
     if (text == NULL || text[0] == 0) {
         if (text) HeapFree(GetProcessHeap(), 0, text);
@@ -2155,32 +2220,44 @@ static bool det_arg(const wchar_t *args, const wchar_t *key, wchar_t *out, size_
     return false;
 }
 
+enum { DET_OPS = 17 };
+
 typedef struct {
-    bool    ko;
-    wchar_t folder[520], key[520], ini[520];
+    wchar_t *label[DET_OPS];        // each operation's label in the dialog's language (RpDet_<op>_<code>), or NULL
+    wchar_t  folder[520], key[520], ini[520];
 } det_state_t;
+
+// The script's operations that have a readable line: the argument that names the thing, and under
+// what it stands (1 the folder, 2 the registry key, 3 the INI file). The label is the package's
+// (RpDet_<op>_<language>, from the language's pack), English here when it has none.
+typedef struct {
+    const wchar_t *op, *arg, *en;
+    int            where;
+} det_op_t;
+
+static const det_op_t det_ops[DET_OPS] = {
+    { L"FileCopy", L"DestName", L"Copy file", 1 },
+    { L"FileRemove", L"FileName", L"Remove file", 1 },
+    { L"FilePatch", L"TargetName", L"Patch file", 1 },
+    { L"FolderCreate", L"Folder", L"Create folder", 0 },
+    { L"FolderRemove", L"Folder", L"Remove folder", 0 },
+    { L"RegAddValue", L"Name", L"Write registry value", 2 },
+    { L"RegRemoveValue", L"Name", L"Remove registry value", 2 },
+    { L"RegRemoveKey", NULL, L"Remove registry key", 2 },
+    { L"ShortcutCreate", L"Name", L"Create shortcut", 1 },
+    { L"ShortcutRemove", L"Name", L"Remove shortcut", 1 },
+    { L"ServiceInstall", L"Name", L"Install service", 0 },
+    { L"ServiceControl", L"Name", L"Control service", 0 },
+    { L"IniWriteRemoveValue", L"Key", L"Write INI value", 3 },
+    { L"UpdateEnvironmentStrings", L"Name", L"Set environment variable", 0 },
+    { L"RegisterFont", L"Title", L"Register font", 0 },
+    { L"UnregisterFont", L"Title", L"Unregister font", 0 },
+    { L"CustomActionSchedule", L"Action", L"Run action", 0 },
+};
 
 // One log line as a readable line in `out` (empty: nothing to show for it).
 static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, size_t cap) {
-    static const struct { const wchar_t *op, *arg, *en, *ko; int where; } ops[] = {     // where: 1 under the folder, 2 under the key
-        { L"FileCopy", L"DestName", L"Copy file", L"파일 복사", 1 },
-        { L"FileRemove", L"FileName", L"Remove file", L"파일 제거", 1 },
-        { L"FilePatch", L"TargetName", L"Patch file", L"파일 패치", 1 },
-        { L"FolderCreate", L"Folder", L"Create folder", L"폴더 만들기", 0 },
-        { L"FolderRemove", L"Folder", L"Remove folder", L"폴더 제거", 0 },
-        { L"RegAddValue", L"Name", L"Write registry value", L"레지스트리 값 쓰기", 2 },
-        { L"RegRemoveValue", L"Name", L"Remove registry value", L"레지스트리 값 제거", 2 },
-        { L"RegRemoveKey", NULL, L"Remove registry key", L"레지스트리 키 제거", 2 },
-        { L"ShortcutCreate", L"Name", L"Create shortcut", L"바로 가기 만들기", 1 },
-        { L"ShortcutRemove", L"Name", L"Remove shortcut", L"바로 가기 제거", 1 },
-        { L"ServiceInstall", L"Name", L"Install service", L"서비스 설치", 0 },
-        { L"ServiceControl", L"Name", L"Control service", L"서비스 제어", 0 },
-        { L"IniWriteRemoveValue", L"Key", L"Write INI value", L"INI 값 쓰기", 3 },
-        { L"UpdateEnvironmentStrings", L"Name", L"Set environment variable", L"환경 변수 설정", 0 },
-        { L"RegisterFont", L"Title", L"Register font", L"글꼴 등록", 0 },
-        { L"UnregisterFont", L"Title", L"Unregister font", L"글꼴 등록 제거", 0 },
-        { L"CustomActionSchedule", L"Action", L"Run action", L"동작 실행", 0 },
-    };
+    const det_op_t *ops = det_ops;
     out[0] = 0;
     const wchar_t *own = wcsstr(line, L"rubrapack: ");
     if (own) {                              // the helper's own lines (what was closed, kept, wiped), not its housekeeping
@@ -2225,7 +2302,7 @@ static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, siz
         return;
     }
     if (on == 11 && wcsncmp(op, L"IniFilePath", 11) == 0) { if (!det_arg(args, L"File", st->ini, 520)) st->ini[0] = 0; return; }
-    for (size_t i = 0; i < sizeof ops / sizeof ops[0]; ++i) {
+    for (size_t i = 0; i < DET_OPS; ++i) {
         if (wcslen(ops[i].op) != on || wcsncmp(op, ops[i].op, on) != 0) continue;
         v[0] = 0;
         if (ops[i].arg) det_arg(args, ops[i].arg, v, 1024);
@@ -2248,7 +2325,7 @@ static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, siz
         if (ops[i].where == 1 && ((shown_name[0] && shown_name[1] == L':') || (shown_name[0] == L'\\' && shown_name[1] == L'\\'))) base = L"";    // a whole path already (a rollback)
         size_t bn = wcslen(base);
         const wchar_t *sep = bn && shown_name[0] && base[bn - 1] != L'\\' ? (ops[i].where == 3 ? L": " : L"\\") : L"";
-        wfmt(out, cap, L"  %ls: %.500ls%ls%.380ls", st->ko ? ops[i].ko : ops[i].en, base, sep, shown_name);
+        wfmt(out, cap, L"  %.80ls: %.500ls%ls%.380ls", st->label[i] && st->label[i][0] ? st->label[i] : ops[i].en, base, sep, shown_name);
         return;
     }
 }
@@ -2290,7 +2367,11 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     det_win_t win = { .title = product };
     static det_state_t st;
     memset(&st, 0, sizeof st);
-    st.ko = lang && wcscmp(lang, L"ko") == 0;
+    for (size_t i = 0; i < DET_OPS; ++i) {
+        wchar_t name[96];
+        st.label[i] = NULL;
+        if (lang && lang[0] && wfmt(name, 96, L"RpDet_%ls_%.15ls", det_ops[i].op, lang) > 0) st.label[i] = get_property(h, name);
+    }
     // The whole log so far as text (raw), and how much of it the box has: both views are made from it.
     size_t cap = 1u << 16, len = 0, shown = 0, bytes_cap = 1u << 16, carry = 0;
     wchar_t *raw = HeapAlloc(GetProcessHeap(), 0, cap * sizeof *raw);
@@ -2414,8 +2495,37 @@ out:
     if (done) CloseHandle(done);
     if (raw) HeapFree(GetProcessHeap(), 0, raw);
     if (bytes) HeapFree(GetProcessHeap(), 0, bytes);
+    for (size_t i = 0; i < DET_OPS; ++i) {
+        if (st.label[i]) HeapFree(GetProcessHeap(), 0, st.label[i]);
+    }
     if (log) HeapFree(GetProcessHeap(), 0, log);
     if (lang) HeapFree(GetProcessHeap(), 0, lang);
     if (product) HeapFree(GetProcessHeap(), 0, product);
+    return ERROR_SUCCESS;
+}
+
+// ---- the install folder page: a folder that holds something (DECISIONS 2026-10-13) --------------------
+//
+// RpDirCheck, immediate, called by the folder page's Next of a package that wipes its install folder
+// at removal: RP_DIR_NOTEMPTY = "1" when the folder the user chose (the property RP_DIRCHECK names)
+// exists and has anything in it, else empty. The page then asks before going on.
+__declspec(dllexport) UINT __stdcall RpDirCheck(MSIHANDLE h) {
+    wchar_t *prop = get_property(h, L"RP_DIRCHECK");
+    wchar_t *dir = prop && prop[0] ? get_property(h, prop) : NULL;
+    bool holds = false;
+    static wchar_t pattern[MAX_PATH * 4];
+    if (dir && dir[0] && wfmt(pattern, MAX_PATH * 4, L"%ls%ls*", dir, dir[wcslen(dir) - 1] == L'\\' ? L"" : L"\\") > 0) {
+        WIN32_FIND_DATAW fd;
+        HANDLE f = FindFirstFileW(pattern, &fd);
+        if (f != INVALID_HANDLE_VALUE) {
+            do {
+                holds = wcscmp(fd.cFileName, L".") != 0 && wcscmp(fd.cFileName, L"..") != 0;
+            } while (!holds && FindNextFileW(f, &fd));
+            FindClose(f);
+        }
+    }
+    MsiSetPropertyW(h, L"RP_DIR_NOTEMPTY", holds ? L"1" : L"");
+    if (prop) HeapFree(GetProcessHeap(), 0, prop);
+    if (dir) HeapFree(GetProcessHeap(), 0, dir);
     return ERROR_SUCCESS;
 }

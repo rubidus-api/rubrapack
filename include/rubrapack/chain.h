@@ -42,6 +42,8 @@ typedef struct {
     bool               elevate;     // run elevated (default): per-machine packages need it
     rp_chain_pkg_t    *pkgs;
     size_t             count;
+    char               languages[8][16];    // [chain] languages: packs whose texts the setup program carries
+    size_t             language_count;      // (beside English and the built-in packs)
 } rp_chain_t;
 
 // Whether the document is a chain (has a [chain] table).

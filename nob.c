@@ -64,7 +64,6 @@ static const char *const core_sources[] = {
     "src/core/limits.c",
     "src/core/srcdiag.c",
     "src/core/lang.c",
-    "src/core/lang_ko.c",
     "src/lang/toml.c",
     "src/model/ident.c",
     "src/model/ir.c", "src/model/ir_common.c", "src/model/ir_files.c", "src/model/ir_tables.c",
@@ -443,6 +442,27 @@ static int gen_parts(const char *gen_dir, const char *gen_c) {
             free(data);
         }
     }
+    // The built-in language packs (resources/lang/<code>.po), as the bytes of the files.
+    static const char *const langs[] = { "ko" };
+    for (size_t i = 0; i < COUNT(langs); ++i) {
+        char path[128];
+        snprintf(path, sizeof path, "resources/lang/%s.po", langs[i]);
+        size_t len = 0;
+        unsigned char *data = read_all(path, &len);
+        if (data == NULL) {
+            fclose(f);
+            fprintf(stderr, "nob: cannot read %s\n", path);
+            return 1;
+        }
+        fprintf(f, "static const unsigned char lang_%s[] = {", langs[i]);
+        for (size_t b = 0; b < len; ++b) fprintf(f, "%s%u", b == 0 ? "\n" : b % 32 ? "," : ",\n", data[b]);
+        fprintf(f, "%s};\n", len ? "" : "0");
+        free(data);
+    }
+    fprintf(f, "typedef struct { const char *code; const unsigned char *data; size_t len; } rp_lang_embedded_t;\n"
+               "const rp_lang_embedded_t rp_lang_embedded[] = {\n");
+    for (size_t i = 0; i < COUNT(langs); ++i) fprintf(f, "    { \"%s\", lang_%s, sizeof lang_%s },\n", langs[i], langs[i], langs[i]);
+    fprintf(f, "};\nconst size_t rp_lang_embedded_count = %zu;\n", (size_t)COUNT(langs));
     fclose(f);
     return 0;
 }

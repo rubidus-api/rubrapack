@@ -48,8 +48,47 @@ typedef struct {
 typedef struct {
     const char *name;
     uint32_t    name_len, flags, count;
+    uint32_t    texts_at;           // where the manifest goes on after the packages (the texts block, if any)
     package_t   p[MAX_PACKAGES];
 } chain_t;
+
+// The program's own texts: English here; another language from the manifest's texts block, which
+// `rubrapack build` fills from language packs ("Setup.*"), picked by the user's display language.
+// {1} is a package's ID, {2} an error number.
+enum { T_DAMAGED, T_ASK, T_REPAIR, T_REMOVE, T_CANCEL, T_REMOVEASK, T_REMOVED, T_REMOVEFAILED, T_TEMPFAILED, T_REPAIRFAILED,
+       T_INSTALLFAILED, T_REPAIRED, T_FINISHED, T_COUNT };
+static const wchar_t *texts[T_COUNT] = {
+    L"This setup program is damaged: download it again.",
+    L"These programs are already installed. Choose what to do.",
+    L"Re&pair",
+    L"&Remove",
+    L"Cancel",
+    L"Remove these programs from this computer?",
+    L"The programs were removed.",
+    L"A program could not be removed.",
+    L"Setup could not create a temporary folder.",
+    L"{1} could not be repaired (error {2}).",
+    L"{1} could not be installed (error {2}). Nothing after it was installed.",
+    L"The programs were repaired.",
+    L"Setup finished.",
+};
+
+// `tmpl` with {1} as `one` and {2} as the number `two`.
+static void fill(wchar_t *out, size_t cap, const wchar_t *tmpl, const wchar_t *one, unsigned two) {
+    wchar_t num[16];
+    wsprintfW(num, L"%u", two);
+    size_t o = 0;
+    for (const wchar_t *p = tmpl; *p && o + 1 < cap; ++p) {
+        const wchar_t *ins = NULL;
+        if (p[0] == L'{' && (p[1] == L'1' || p[1] == L'2') && p[2] == L'}') {
+            ins = p[1] == L'1' ? one : num;
+            p += 2;
+        }
+        if (ins == NULL) { out[o++] = *p; continue; }
+        for (; *ins && o + 1 < cap; ++ins) out[o++] = *ins;
+    }
+    out[o] = 0;
+}
 
 static bool quiet, passive;
 
@@ -131,9 +170,43 @@ static bool parse(const uint8_t *m, uint32_t n, uint64_t payload_len, chain_t *c
     }
     (void)skip;
     (void)skip_len;
+    c->texts_at = at;
     return true;
 #undef STR
 #undef NEED
+}
+
+// The texts block: "RPTEXTS1", the number of languages; each its code, the number of its LANGIDs
+// and those, then T_COUNT texts (an empty one stays English). Anything out of place: English.
+static void texts_load(const uint8_t *m, uint32_t n, uint32_t at) {
+    if (at > n || n - at < 12 || memcmp(m + at, "RPTEXTS1", 8) != 0) return;
+    uint32_t langs = u32(m + at + 8);
+    at += 12;
+    LANGID ui = GetUserDefaultUILanguage();
+    for (uint32_t i = 0; i < langs && i < 64; ++i) {
+        if (n - at < 4) return;
+        uint32_t cl = u32(m + at);
+        if (cl > n - at - 4) return;
+        at += 4 + cl;
+        if (n - at < 4) return;
+        uint32_t ids = u32(m + at);
+        at += 4;
+        if (ids > 64 || ids * 4 > n - at) return;
+        bool mine = false;
+        for (uint32_t k = 0; k < ids; ++k) mine = mine || u32(m + at + 4 * k) == ui;
+        at += ids * 4;
+        for (int t = 0; t < T_COUNT; ++t) {
+            if (n - at < 4) return;
+            uint32_t l = u32(m + at);
+            if (l > n - at - 4) return;
+            if (mine && l) {
+                wchar_t *w = wide((const char *)m + at + 4, l);
+                if (w) texts[t] = w;
+            }
+            at += 4 + l;
+        }
+        if (mine) return;
+    }
 }
 
 // Copies bytes [at, at + size) of f to a new file `path`, checking their SHA-256.
@@ -224,9 +297,10 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     ok = ok && start <= mat && mat <= end - TRAILER && mlen <= end - TRAILER - mat && mlen > 0 && (manifest = LocalAlloc(LMEM_FIXED, mlen)) != NULL &&
          read_at(f, mat, manifest, mlen) && parse(manifest, mlen, mat - start, &c);
     if (!ok) {
-        say(L"Setup", L"This setup program is damaged: download it again.", true);
+        say(L"Setup", texts[T_DAMAGED], true);
         return EXIT_DAMAGED;
     }
+    texts_load(manifest, mlen, c.texts_at);
     wchar_t *title = wide(c.name, c.name_len);
     if (title == NULL) return EXIT_DAMAGED;
 
@@ -236,11 +310,11 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     for (uint32_t k = 0; k < c.count; ++k) all = all && installed(&c.p[k]);
     const wchar_t *extra = L"";
     if (all && !uninstall && !repair && !quiet && !passive) {
-        rp_ask_t a = { title, L"These programs are already installed. Choose what to do.", L"Re&pair", L"&Remove", L"Cancel" };
+        rp_ask_t a = { title, texts[T_ASK], texts[T_REPAIR], texts[T_REMOVE], texts[T_CANCEL] };
         int r;
         for (;;) {      // Remove is asked once more (No is the default button, and leads back)
             r = rp_ask(NULL, &a);
-            if (r != RP_ASK_SECOND || MessageBoxW(NULL, L"Remove these programs from this computer?", title,
+            if (r != RP_ASK_SECOND || MessageBoxW(NULL, texts[T_REMOVEASK], title,
                                                   MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) break;
         }
         if (r == RP_ASK_CANCEL) {
@@ -280,8 +354,8 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
             if (r == ERROR_SUCCESS_REBOOT_REQUIRED) result = (int)r;
             else if (r != ERROR_SUCCESS && result == 0) result = (int)r;
         }
-        if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, L"The programs were removed.", false);
-        else say(title, L"A program could not be removed.", true);
+        if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, texts[T_REMOVED], false);
+        else say(title, texts[T_REMOVEFAILED], true);
         CloseHandle(f);
         return result;
     }
@@ -302,7 +376,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     }
     if (sa.lpSecurityDescriptor) LocalFree(sa.lpSecurityDescriptor);
     if (!made) {
-        say(title, L"Setup could not create a temporary folder.", true);
+        say(title, texts[T_TEMPFAILED], true);
         CloseHandle(f);
         return ERROR_CANNOT_MAKE;
     }
@@ -311,7 +385,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         wchar_t *id = wide(p->id, p->id_len);
         wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
         if (id == NULL || !extract(f, start + p->offset, p->size, p->sha256, path)) {
-            say(title, L"This setup program is damaged: download it again.", true);
+            say(title, texts[T_DAMAGED], true);
             result = EXIT_DAMAGED;
         }
         LocalFree(id);
@@ -329,8 +403,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         if (r == ERROR_SUCCESS_REBOOT_REQUIRED) {
             result = (int)r;
         } else if (r != ERROR_SUCCESS && (repair || (p->flags & FLAG_VITAL))) {
-            wsprintfW(msg, repair ? L"%s could not be repaired (error %u)." : L"%s could not be installed (error %u). Nothing after it was installed.",
-                      id ? id : L"A package", r);
+            fill(msg, sizeof msg / sizeof msg[0], repair ? texts[T_REPAIRFAILED] : texts[T_INSTALLFAILED], id ? id : L"?", (unsigned)r);
             say(title, msg, true);
             result = (int)r;
         }
@@ -344,7 +417,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         LocalFree(id);
     }
     RemoveDirectoryW(dir);
-    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, repair ? L"The programs were repaired." : L"Setup finished.", false);
+    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, repair ? texts[T_REPAIRED] : texts[T_FINISHED], false);
     LocalFree(title);
     LocalFree(manifest);
     return result;

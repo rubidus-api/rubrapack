@@ -91,7 +91,7 @@ static int print_usage(rp_out_t out) {
     if (err == PROVEN_OK) {
         err = rp_pal_puts(out, TR(" - build Windows Installer (.msi) and MSIX (.msix) packages\n"
                                   "\n"
-                                  "usage: rubrapack [--lang en|ko] <command> [arguments]\n"
+                                  "usage: rubrapack [--lang <code>] <command> [arguments]\n"
                                   "\n"
                                   "commands:\n"));
     }
@@ -103,7 +103,7 @@ static int print_usage(rp_out_t out) {
     if (err == PROVEN_OK) {
         err = rp_pal_puts(out, TR("\n"
                                   "Results go to stdout, diagnostics to stderr.\n"
-                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko.\n"
+                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, or one with a language pack.\n"
                                   "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
                                   "5 lint, 6 network.\n"));
     }
@@ -156,8 +156,9 @@ int rp_main(int argc, char **argv) {
         proven_allocator_t heap = proven_heap_allocator();
         char *env = rp_pal_getenv(heap, "RUBRAPACK_LANG");
         if (env && env[0] && !rp_lang_set(env)) {
-            char buf[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: the languages are en and ko", shown(env, buf, sizeof buf));
+            char buf[64], buf2[64];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (en and ko are built in; another needs its language pack, %s.po)",
+                          shown(env, buf, sizeof buf), shown(env, buf2, sizeof buf2));
             rp_mem_free(heap, env);
             return RP_EXIT_USAGE;
         }
@@ -168,7 +169,7 @@ int rp_main(int argc, char **argv) {
         const char *code = NULL;
         if (strcmp(argv[i], "--lang") == 0) {
             if (i + 1 >= argc) {
-                rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang needs a language: en or ko");
+                rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang needs a language, such as en or ko");
                 return RP_EXIT_USAGE;
             }
             code = argv[++i];
@@ -179,8 +180,9 @@ int rp_main(int argc, char **argv) {
             continue;
         }
         if (!rp_lang_set(code)) {
-            char buf[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: the languages are en and ko", shown(code, buf, sizeof buf));
+            char buf[64], buf2[64];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (en and ko are built in; another needs its language pack, %s.po)",
+                          shown(code, buf, sizeof buf), shown(code, buf2, sizeof buf2));
             return RP_EXIT_USAGE;
         }
     }

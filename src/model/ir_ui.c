@@ -1,5 +1,6 @@
 // src/model/ir_ui.c - dialogs, languages, [ui] checks and NFC names (RFC-0005, RFC-0012).
 
+#include "rubrapack/lang.h"
 #include "ir_int.h"
 
 // ---- dialogs (RFC-0005) ------------------------------------------------------------------------
@@ -432,6 +433,14 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         rp_ir_ui_lang_t *L = &ir->ui_langs[i];
         int kl = known_lang(L->code);
         rp_pos_t pos = lk ? lk->pos : (uit ? uit->pos : (rp_pos_t){ 0 });
+        // The language's pack (lang/<code>.po beside the source, RUBRAPACK_LANG_DIR, beside the
+        // program, or built in): its texts, and what its header says of the language. What the
+        // source says itself comes first.
+        const rp_langpack_t *pack = strcmp(L->code, "en") == 0 ? NULL : rp_langpack_get(L->code, c->opt->source_dir);
+        for (size_t j = 0; pack && L->langid_count == 0 && j < pack->langid_count && j < RP_UI_LANGID_MAX; ++j) L->langids[j] = (uint16_t)pack->langids[j];
+        if (pack && L->langid_count == 0) L->langid_count = pack->langid_count < RP_UI_LANGID_MAX ? pack->langid_count : RP_UI_LANGID_MAX;
+        if (pack && L->name == NULL && pack->name) L->name = ir_dup(c, pack->name);
+        if (pack && L->font == NULL && pack->font) L->font = ir_dup(c, pack->font);
         if (L->langid_count == 0 && kl >= 0) {
             for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
         }
@@ -448,14 +457,17 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                            "%s '%s': the license text needs the face's English name, so it shows in the language's own face; "
                            "write the English name (like \"Malgun Gothic\") to use this face there too", key, L->font);
         }
-        // Built-in texts are English and Korean; another language writes every one of them.
-        if (strcmp(L->code, "en") != 0 && strcmp(L->code, "ko") != 0) {
+        // English is built in; another language has its texts in its pack, or the source writes them.
+        if (strcmp(L->code, "en") != 0) {
             size_t missing = 0;
             const char *first = NULL;
             for (size_t t = 0; rp_ui_text_id(t); ++t) {
                 const char *id = rp_ui_text_id(t);
                 if (!ir->ui_save_log && strncmp(id, "SaveLog", 7) == 0) continue;    // no button, no texts
-                if (strcmp(id, "DetailsFull") == 0) continue;                        // falls back to English
+                if (strncmp(id, "DirNotEmpty", 11) == 0 || strcmp(id, "DirChoose") == 0 || strcmp(id, "DirContinue") == 0) continue;
+                if (strcmp(id, "DetailsFull") == 0 || strcmp(id, "PerUserOnly") == 0 || strcmp(id, "NewerInstalled") == 0 || strcmp(id, "OlderRefused") == 0)
+                    continue;                                                        // fall back to English
+                if (pack && rp_langpack_text(pack, "installer", id)) continue;      // the pack has it
                 if (strncmp(id, "Removal", 7) == 0) continue;        // falls back to the install text
                 if (strncmp(id, "Preflight", 9) == 0) continue;      // falls back to English
                 if (strncmp(id, "RemoveConfirm", 13) == 0 || strncmp(id, "RemoveAsk", 9) == 0) continue;     // the same
@@ -468,8 +480,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 }
                 if (!have && missing++ == 0) first = id;
             }
-            if (missing) ERR(c, pos, "RP1202", "language '%s' has no built-in texts: give [ui-text.ID] text-%s for all of them (%zu missing, the first is %s)",
-                             L->code, L->code, missing, first);
+            if (missing) ERR(c, pos, "RP1202", "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s",
+                             L->code, missing, first, L->code, L->code);
         }
     }
     // text-xx / title-xx / labels-xx name languages of the dialogs.

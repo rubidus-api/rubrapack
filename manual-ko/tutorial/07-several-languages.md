@@ -75,11 +75,14 @@ msiexec /i hello.msi RPLANGUAGE=ko
 
 ## 영어와 한국어 말고 다른 언어
 
-rubrapack 의 내장 페이지는 영어와 한국어로 쓰여 있다. 다른 언어 - `ja`, `de`, `fr` 등 - 는 모든 글을 `text-xx` 로
-직접 준다. 빠진 것은 빌드가 알려 준다:
+rubrapack 의 페이지는 영어로 쓰여 있고, 한국어는 *언어팩* - 파일 하나, `ko.po` - 으로 함께 온다. 다른 언어 - `ja`,
+`de`, `fr` 등 - 도 그런 파일 하나다: `hello.toml` 옆의 `lang` 폴더에 `ja.po` 를 두고 `languages = ["ja"]` 라고 쓰면
+된다. 그 밖에는 바꿀 것이 없다. 팩에는 페이지의 모든 글, 진행 페이지의 상태 줄과 상세 내역, 그 언어의 이름과 글꼴이
+들어 있다. 형식은 참고 문서의 [언어팩](../rpk.md#언어팩)에 있고, `ko.po` 를 복사해 시작하는 것이 가장 빠르다. 팩이
+없거나 어떤 글을 다르게 하고 싶으면 원본이 `text-xx` 로 직접 준다. 어느 쪽에도 없는 것은 빌드가 알려 준다:
 
 ```text
-hello.toml:16:1: error[RP1202]: language 'ja' has no built-in texts: give [ui-text.ID] text-ja for all of them (64 missing, the first is Back)
+hello.toml:16:1: error[RP1202]: language 'ja' lacks 68 text(s), the first is Back: add them to its language pack (lang/ja.po) or give [ui-text.ID] text-ja
 ```
 
 그런 언어에는 `[ui]` 의 키 셋이 더 도움이 된다: `name-ja`(언어 페이지에 보일 이름), `font-ja`(그 페이지들의

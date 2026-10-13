@@ -6,6 +6,7 @@
 // its own banner. The wording below is rubrapack's own, in Korean and English.
 
 #include "rubrapack/ui.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 
 #include <stdio.h>
@@ -13,123 +14,120 @@
 
 // ---- texts ------------------------------------------------------------------------------------
 
+// A text's ID and its English. Every other language is a language pack (include/rubrapack/lang.h):
+// its entry with msgctxt "installer" and this ID; Korean is resources/lang/ko.po.
 typedef struct {
-    const char *id, *ko, *en;
+    const char *id, *en;
 } text_t;
 
 static const text_t texts[] = {
-    { "Back", "< 뒤로(&B)", "< &Back" },
-    { "Next", "다음(&N) >", "&Next >" },
-    { "Cancel", "취소", "Cancel" },
-    { "Install", "설치(&I)", "&Install" },
-    { "Finish", "마침(&F)", "&Finish" },
-    { "OK", "확인", "OK" },
-    { "Yes", "예(&Y)", "&Yes" },
-    { "No", "아니요(&N)", "&No" },
-    { "Retry", "다시 시도(&R)", "&Retry" },
-    { "Ignore", "무시(&I)", "&Ignore" },
-    { "Abort", "중단(&A)", "&Abort" },
-    { "Exit", "끝내기(&X)", "E&xit" },
-    { "Browse", "찾아보기(&R)...", "B&rowse..." },
-    { "WelcomeTitle", "[ProductName] 설치", "Welcome to [ProductName] Setup" },
-    { "WelcomeText", "이 프로그램은 [ProductName]을(를) 이 컴퓨터에 설치합니다. 계속하려면 '다음'을 누르십시오.",
-      "This will install [ProductName] on your computer. Click Next to continue." },
-    { "LicenseTitle", "사용권 계약", "License agreement" },
-    { "LicenseText", "다음 사용권 계약을 읽어 주십시오.", "Please read the following license agreement." },
-    { "LicenseAccept", "사용권 계약에 동의합니다(&A)", "I &accept the terms of the license agreement" },
-    { "DirTitle", "설치 폴더", "Installation folder" },
-    { "DirText", "[ProductName]을(를) 설치할 폴더를 고르십시오.", "Choose the folder to install [ProductName] in." },
-    { "DirLabel", "설치 폴더(&F):", "Install &to:" },
-    { "BrowseTitle", "폴더 바꾸기", "Change the folder" },
-    { "BrowseText", "설치할 폴더를 찾아 고르십시오.", "Browse to the folder to install in." },
-    { "BrowseLookIn", "찾는 위치(&L):", "&Look in:" },
-    { "BrowseFolder", "폴더 이름(&N):", "&Folder name:" },
-    { "BrowseUp", "위로", "Up" },
-    { "BrowseNew", "새 폴더", "New folder" },
-    { "CustomizeTitle", "기능 고르기", "Choose features" },
-    { "CustomizeText", "설치할 기능을 고르십시오.", "Choose the features to install." },
-    { "Reset", "처음대로(&S)", "Re&set" },
-    { "DiskCost", "디스크 공간(&D)", "&Disk usage" },
-    { "DiskCostTitle", "디스크 공간", "Disk space" },
-    { "DiskCostText", "고른 기능을 설치할 공간과 남은 공간입니다.", "Space needed for the chosen features, and space available." },
-    { "ReadyTitle", "설치 준비 완료", "Ready to install" },
-    { "ReadyText", "'설치'를 누르면 [ProductName]을(를) 설치합니다.", "Click Install to install [ProductName]." },
-    { "ProgressTitle", "[ProductName] 설치 중", "Installing [ProductName]" },
-    { "ProgressText", "잠시 기다려 주십시오.", "Please wait." },
-    { "ProgressStatus", "상태:", "Status:" },
-    { "ExitTitle", "설치 완료", "Setup complete" },
-    { "ExitText", "[ProductName]을(를) 설치했습니다.", "[ProductName] has been installed." },
+    { "Back", "< &Back" },
+    { "Next", "&Next >" },
+    { "Cancel", "Cancel" },
+    { "Install", "&Install" },
+    { "Finish", "&Finish" },
+    { "OK", "OK" },
+    { "Yes", "&Yes" },
+    { "No", "&No" },
+    { "Retry", "&Retry" },
+    { "Ignore", "&Ignore" },
+    { "Abort", "&Abort" },
+    { "Exit", "E&xit" },
+    { "Browse", "B&rowse..." },
+    { "WelcomeTitle", "Welcome to [ProductName] Setup" },
+    { "WelcomeText", "This will install [ProductName] on your computer. Click Next to continue." },
+    { "LicenseTitle", "License agreement" },
+    { "LicenseText", "Please read the following license agreement." },
+    { "LicenseAccept", "I &accept the terms of the license agreement" },
+    { "DirTitle", "Installation folder" },
+    { "DirText", "Choose the folder to install [ProductName] in." },
+    { "DirLabel", "Install &to:" },
+    { "BrowseTitle", "Change the folder" },
+    { "BrowseText", "Browse to the folder to install in." },
+    { "BrowseLookIn", "&Look in:" },
+    { "BrowseFolder", "&Folder name:" },
+    { "BrowseUp", "Up" },
+    { "BrowseNew", "New folder" },
+    { "CustomizeTitle", "Choose features" },
+    { "CustomizeText", "Choose the features to install." },
+    { "Reset", "Re&set" },
+    { "DiskCost", "&Disk usage" },
+    { "DiskCostTitle", "Disk space" },
+    { "DiskCostText", "Space needed for the chosen features, and space available." },
+    { "ReadyTitle", "Ready to install" },
+    { "ReadyText", "Click Install to install [ProductName]." },
+    { "ProgressTitle", "Installing [ProductName]" },
+    { "ProgressText", "Please wait." },
+    { "ProgressStatus", "Status:" },
+    { "ExitTitle", "Setup complete" },
+    { "ExitText", "[ProductName] has been installed." },
     // The same pages during a removal (RP_REMOVAL_COND). A language other than English and
     // Korean that gives no Removal* text gets its own install text instead (rp_ui_text_for).
-    { "RemovalProgressTitle", "[ProductName] 제거 중", "Removing [ProductName]" },
-    { "RemovalExitTitle", "제거 완료", "Removal complete" },
-    { "RemovalExitText", "[ProductName]을(를) 제거했습니다.", "[ProductName] has been removed." },
-    { "RemovalUserExitTitle", "제거 취소", "Removal cancelled" },
-    { "RemovalUserExitText", "제거를 취소했습니다. 컴퓨터는 바뀌지 않았습니다.", "The removal was cancelled. Nothing on your computer was changed." },
-    { "RemovalFatalTitle", "제거 실패", "Removal failed" },
-    { "RemovalFatalText", "제거 중 오류가 나서 제거를 되돌렸습니다. 제품은 그대로 설치되어 있습니다.",
-      "An error ended the removal, which was rolled back. The product is still installed." },
-    { "UserExitTitle", "설치 취소", "Setup cancelled" },
-    { "UserExitText", "설치를 취소했습니다. 컴퓨터는 바뀌지 않았습니다.", "Setup was cancelled. Nothing on your computer was changed." },
-    { "FatalTitle", "설치 실패", "Setup failed" },
-    { "FatalText", "설치 중 오류가 나서 설치를 되돌렸습니다. 컴퓨터는 바뀌지 않았습니다.",
-      "An error ended the installation, which was rolled back. Nothing on your computer was changed." },
-    { "CancelText", "[ProductName] 설치를 취소하시겠습니까?", "Cancel the installation of [ProductName]?" },
-    { "FilesInUseTitle", "사용 중인 파일", "Files in use" },
+    { "RemovalProgressTitle", "Removing [ProductName]" },
+    { "RemovalExitTitle", "Removal complete" },
+    { "RemovalExitText", "[ProductName] has been removed." },
+    { "RemovalUserExitTitle", "Removal cancelled" },
+    { "RemovalUserExitText", "The removal was cancelled. Nothing on your computer was changed." },
+    { "RemovalFatalTitle", "Removal failed" },
+    { "RemovalFatalText", "An error ended the removal, which was rolled back. The product is still installed." },
+    { "UserExitTitle", "Setup cancelled" },
+    { "UserExitText", "Setup was cancelled. Nothing on your computer was changed." },
+    { "FatalTitle", "Setup failed" },
+    { "FatalText", "An error ended the installation, which was rolled back. Nothing on your computer was changed." },
+    { "CancelText", "Cancel the installation of [ProductName]?" },
+    { "FilesInUseTitle", "Files in use" },
     // Measured (DECISIONS 2026-10-02 "Files in use"): with Restart Manager off (every package) the
     // engine moves a held file aside and puts the new one in place at once; the old copy goes at
     // the next restart, which with reboot = "suppress" (the default) nobody is asked for.
-    { "FilesInUseText", "다음 프로그램이 바꿀 파일을 쓰고 있습니다. '계속'을 누르면 지금 바꿉니다. 이미 열린 프로그램은 다시 열 때까지 이전 것을 쓰고, 새로 여는 프로그램부터 새 것을 씁니다. 다시 시작하지 않아도 됩니다.",
-      "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. No restart is needed." },
-    { "FilesInUseTextRestart", "다음 프로그램이 바꿀 파일을 쓰고 있습니다. '계속'을 누르면 지금 바꿉니다. 이미 열린 프로그램은 다시 열 때까지 이전 것을 쓰고, 새로 여는 프로그램부터 새 것을 씁니다. 끝에 Windows 가 다시 시작을 물을 수 있습니다.",
-      "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. Windows may ask to restart at the end." },
-    { "Continue", "계속(&C)", "&Continue" },
-    { "OutOfDiskTitle", "디스크 공간 부족", "Not enough disk space" },
-    { "OutOfDiskText", "고른 설치에 필요한 공간이 모자랍니다. 파일을 지우거나 다른 위치를 고르십시오.",
-      "There is not enough space for this installation. Free some space or choose another location." },
-    { "MaintTitle", "[ProductName] 관리", "Maintain [ProductName]" },
-    { "MaintText", "할 일을 고르십시오.", "Choose what to do." },
-    { "Repair", "복구(&P)", "Re&pair" },
-    { "RepairText", "빠지거나 망가진 파일과 설정을 되살립니다.", "Restore missing or damaged files and settings." },
-    { "Remove", "제거(&R)", "&Remove" },
-    { "RemoveText", "[ProductName]을(를) 이 컴퓨터에서 지웁니다.", "Remove [ProductName] from this computer." },
+    { "FilesInUseText", "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. No restart is needed." },
+    { "FilesInUseTextRestart", "These programs use files that are being replaced. Click Continue to replace them now: programs already open keep the old files until they are reopened, programs opened afterwards get the new ones. Windows may ask to restart at the end." },
+    { "Continue", "&Continue" },
+    { "OutOfDiskTitle", "Not enough disk space" },
+    { "OutOfDiskText", "There is not enough space for this installation. Free some space or choose another location." },
+    { "MaintTitle", "Maintain [ProductName]" },
+    { "MaintText", "Choose what to do." },
+    { "Repair", "Re&pair" },
+    { "RepairText", "Restore missing or damaged files and settings." },
+    { "Remove", "&Remove" },
+    { "RemoveText", "Remove [ProductName] from this computer." },
     // The second question before a removal chosen on the maintenance page (RpRemoveDlg), and the
     // same in one sentence for the window of a package without dialogs (RemoveAsk). The *All texts
     // are for a package that wipes what the program made ([remove] recursive, [registry] on =
     // "uninstall"). A language that does not give them gets English.
-    { "RemoveConfirmTitle", "[ProductName] 제거", "Remove [ProductName]" },
-    { "RemoveConfirmText", "'제거'를 누르면 [ProductName]을(를) 이 컴퓨터에서 지웁니다. 그만두려면 '뒤로'나 '취소'를 누르십시오.",
-      "Click Remove to remove [ProductName] from this computer. Click Back or Cancel to keep it." },
-    { "RemoveConfirmTextAll", "'제거'를 누르면 [ProductName]을(를) 이 컴퓨터에서 지웁니다. 이 프로그램의 설정과 데이터도 함께 지워지며 되돌릴 수 없습니다. 그만두려면 '뒤로'나 '취소'를 누르십시오.",
-      "Click Remove to remove [ProductName] from this computer. Its settings and data are deleted with it and cannot be brought back. Click Back or Cancel to keep it." },
-    { "RemoveAsk", "[ProductName]을(를) 이 컴퓨터에서 제거할까요?", "Remove [ProductName] from this computer?" },
-    { "RemoveAskAll", "[ProductName]을(를) 이 컴퓨터에서 제거할까요? 이 프로그램의 설정과 데이터도 함께 지워지며 되돌릴 수 없습니다.",
-      "Remove [ProductName] from this computer? Its settings and data are deleted with it and cannot be brought back." },
+    { "RemoveConfirmTitle", "Remove [ProductName]" },
+    { "RemoveConfirmText", "Click Remove to remove [ProductName] from this computer. Click Back or Cancel to keep it." },
+    { "RemoveConfirmTextAll", "Click Remove to remove [ProductName] from this computer. Its settings and data are deleted with it and cannot be brought back. Click Back or Cancel to keep it." },
+    { "RemoveAsk", "Remove [ProductName] from this computer?" },
+    { "RemoveAskAll", "Remove [ProductName] from this computer? Its settings and data are deleted with it and cannot be brought back." },
     // The preflight's messages (helper DLL, RpPreflight): [1] how many or what, [2] the list or the
     // removal command, [3] the product. A language that does not give them gets English.
-    { "PreflightAsk", "[1]개 프로그램이 [3]의 파일을 쓰고 있습니다:\r\n[2]\r\n모두 종료할까요?\r\n\r\n예(Yes): 모두 종료하고 계속합니다(저장하지 않은 작업은 잃을 수 있습니다).\r\n아니요(No): 종료하지 않고 계속합니다(열린 프로그램은 다시 열 때까지 이전 파일을 씁니다).\r\n취소(Cancel): 그만둡니다.",
-      "[1] program(s) are using files of [3]:\r\n[2]\r\nClose them all?\r\n\r\nYes: close them all and go on (unsaved work may be lost).\r\nNo: go on without closing (programs already open keep the old files until they are reopened).\r\nCancel: stop." },
-    { "PreflightSilent", "[3]: [1]개 프로그램이 파일을 쓰고 있어 멈췄습니다:\r\n[2]프로그램을 닫고 다시 하거나, RPCLOSE=yes(모두 종료하고 계속) 또는 RPCLOSE=no(종료하지 않고 계속)를 주십시오.",
-      "[3]: stopped, because [1] program(s) are using its files:\r\n[2]Close them and try again, or give RPCLOSE=yes (close them all and go on) or RPCLOSE=no (go on without closing)." },
-    { "PreflightFolder", "[3]을(를) 안전하게 설치할 수 없습니다: [1] 이(가) 폴더가 아니거나 설치 프로그램이 그 안의 파일을 지울 수 없습니다. 먼저 [3]을(를) 제거한 뒤([2]) 다시 설치하십시오.",
-      "[3] cannot be installed safely: [1] is not a folder, or the installer may not delete files in it. Remove [3] first ([2]), then install again." },
-    { "PreflightCache", "[3]을(를) 안전하게 업그레이드할 수 없습니다: 설치된 판 [1] 의 설치 정보 파일이 없어 그 판을 지울 수 없습니다. 먼저 그 판을 원래 설치 파일로 제거한 뒤([2]) 다시 설치하십시오.",
-      "[3] cannot be upgraded safely: the installed version [1] has lost its cached package, so it cannot be removed here. Remove that version with its original package first ([2]), then install again." },
-    { "DirGuardText", "설치를 멈췄습니다: 폴더 [1] 이(가) 이미 있는데 관리자 소유가 아니거나 다른 곳으로 이어지는 연결입니다. 다른 폴더를 고르거나, 관리자가 먼저 그 폴더를 지우게 하십시오.",
-      "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
-    { "LaunchText", "[ProductName] 실행(&L)", "&Launch [ProductName]" },
-    { "SaveLog", "로그 저장(&S)...", "&Save log..." },
+    { "PreflightAsk", "[1] program(s) are using files of [3]:\r\n[2]\r\nClose them all?\r\n\r\nYes: close them all and go on (unsaved work may be lost).\r\nNo: go on without closing (programs already open keep the old files until they are reopened).\r\nCancel: stop." },
+    { "PreflightSilent", "[3]: stopped, because [1] program(s) are using its files:\r\n[2]Close them and try again, or give RPCLOSE=yes (close them all and go on) or RPCLOSE=no (go on without closing)." },
+    { "PreflightFolder", "[3] cannot be installed safely: [1] is not a folder, or the installer may not delete files in it. Remove [3] first ([2]), then install again." },
+    { "PreflightCache", "[3] cannot be upgraded safely: the installed version [1] has lost its cached package, so it cannot be removed here. Remove that version with its original package first ([2]), then install again." },
+    { "DirGuardText", "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
+    { "LaunchText", "&Launch [ProductName]" },
+    { "SaveLog", "&Save log..." },
     // The progress page's details box ([ui] details): its check box shows the log's own lines.
-    { "DetailsFull", "전체 로그 보기(&L)", "Show the full &log" },
-    { "SaveLogFail", "설치 로그를 [1] 에 저장하지 못했습니다.", "The setup log could not be saved to [1]." },
-    { "Change", "변경(&C)", "&Change" },
-    { "ChangeText", "설치할 기능을 바꿉니다.", "Choose which features are installed." },
-    { "ScopeTitle", "설치 범위", "Installation scope" },
-    { "ScopeText", "[ProductName]을(를) 누가 쓸지 고르십시오.", "Choose who can use [ProductName]." },
-    { "ScopeUser", "나만(&M)", "Just &me" },
-    { "ScopeMachine", "이 컴퓨터의 모든 사용자(&E) - 관리자 권한이 필요합니다", "&Everyone on this computer - needs administrator rights" },
-    { "LanguageTitle", "언어", "Language" },
-    { "LanguageText", "설치에 쓸 언어를 고르십시오.", "Choose the language for setup." },
+    // Messages of a package whatever its dialogs: in the package's language ([package] language).
+    { "PerUserOnly", "[ProductName] installs for the current user only (MSIINSTALLPERUSER=1)." },
+    { "NewerInstalled", "The same or a newer version of [ProductName] is already installed." },
+    { "OlderRefused", "The installed older version of [ProductName] cannot be upgraded by this package. Remove it first, then run this installation again:" },
+    // The install folder page of a package that wipes that folder at removal ([remove] recursive):
+    // a folder that already holds something is asked about (RpDirWarnDlg).
+    { "DirNotEmptyText", "This folder already has files or folders in it. When [ProductName] is removed, everything in the folder is deleted - what is there now too. An empty or a new folder is the safe choice." },
+    { "DirChoose", "&Choose another" },
+    { "DirContinue", "&Use this folder" },
+    { "DetailsFull", "Show the full &log" },
+    { "SaveLogFail", "The setup log could not be saved to [1]." },
+    { "Change", "&Change" },
+    { "ChangeText", "Choose which features are installed." },
+    { "ScopeTitle", "Installation scope" },
+    { "ScopeText", "Choose who can use [ProductName]." },
+    { "ScopeUser", "Just &me" },
+    { "ScopeMachine", "&Everyone on this computer - needs administrator rights" },
+    { "LanguageTitle", "Language" },
+    { "LanguageText", "Choose the language for setup." },
 };
 
 bool rp_ui_text_known(const char *id) {
@@ -137,6 +135,22 @@ bool rp_ui_text_known(const char *id) {
         if (strcmp(texts[i].id, id) == 0) return true;
     }
     return false;
+}
+
+// The text `id` without the source's own: the language's pack, else English.
+const char *rp_ui_text_builtin(const char *id, const char *code) {
+    if (strcmp(code, "en") != 0) {
+        const char *t = rp_langpack_text(rp_langpack_get(code, NULL), "installer", id);
+        if (t) return t;
+    }
+    for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
+        if (strcmp(texts[i].id, id) == 0) return texts[i].en;
+    }
+    return id;
+}
+
+bool rp_ui_text_in_pack(const char *id, const char *code) {
+    return strcmp(code, "en") == 0 || rp_langpack_text(rp_langpack_get(code, NULL), "installer", id) != NULL;
 }
 
 const char *rp_ui_text_id(size_t i) { return i < sizeof texts / sizeof texts[0] ? texts[i].id : NULL; }
@@ -165,91 +179,87 @@ bool rp_ui_text_static(const char *text) {
 // Windows - English under a Korean dialog, on an English Windows. The template is the line the log
 // gets for each item, in English as Windows Installer's own.
 typedef struct {
-    const char *action, *ko, *en, *tmpl;
+    const char *action, *en, *tmpl;         // a pack's entry is "Action.<action>"
 } action_text_t;
 
 static const action_text_t action_texts[] = {
-    { "AppSearch", "설치된 프로그램 찾는 중", "Searching for installed applications", "Property: [1], Signature: [2]" },
-    { "CostFinalize", "필요한 공간 계산 중", "Computing space requirements", NULL },
-    { "CostInitialize", "필요한 공간 계산 중", "Computing space requirements", NULL },
-    { "CreateFolders", "폴더 만드는 중", "Creating folders", "Folder: [1]" },
-    { "CreateShortcuts", "바로 가기 만드는 중", "Creating shortcuts", "Shortcut: [1]" },
-    { "DeleteServices", "서비스 지우는 중", "Deleting services", "Service: [1]" },
-    { "DuplicateFiles", "파일 사본 만드는 중", "Creating duplicate files", "File: [1], Directory: [9], Size: [6]" },
-    { "FileCost", "필요한 공간 계산 중", "Computing space requirements", NULL },
-    { "FindRelatedProducts", "관련 프로그램 찾는 중", "Searching for related applications", "Found application: [1]" },
-    { "GenerateScript", "할 일 정리 중:", "Generating script operations for action:", "[1]" },
-    { "InstallFiles", "새 파일 복사 중", "Copying new files", "File: [1], Directory: [9], Size: [6]" },
-    { "InstallServices", "새 서비스 설치 중", "Installing new services", "Service: [2]" },
-    { "InstallValidate", "설치 확인 중", "Validating install", NULL },
-    { "LaunchConditions", "설치 조건 확인 중", "Evaluating launch conditions", NULL },
-    { "MigrateFeatureStates", "이전 판의 기능 선택 옮기는 중", "Migrating feature states from related applications", "Application: [1]" },
-    { "MoveFiles", "파일 옮기는 중", "Moving files", "File: [1], Directory: [9], Size: [6]" },
-    { "PatchFiles", "파일 패치 중", "Patching files", "File: [1], Directory: [2], Size: [3]" },
-    { "ProcessComponents", "구성 요소 등록 갱신 중", "Updating component registration", NULL },
-    { "PublishFeatures", "제품 기능 등록 중", "Publishing product features", "Feature: [1]" },
-    { "PublishProduct", "제품 정보 등록 중", "Publishing product information", NULL },
-    { "RegisterClassInfo", "클래스 등록 중", "Registering class servers", "Class ID: [1]" },
-    { "RegisterExtensionInfo", "파일 확장명 등록 중", "Registering extension servers", "Extension: [1]" },
-    { "RegisterFonts", "글꼴 등록 중", "Registering fonts", "Font: [1]" },
-    { "RegisterMIMEInfo", "MIME 정보 등록 중", "Registering MIME info", "MIME Content Type: [1], Extension: [2]" },
-    { "RegisterProduct", "제품 등록 중", "Registering product", "[1]" },
-    { "RegisterProgIdInfo", "프로그램 식별자 등록 중", "Registering program identifiers", "ProgID: [1]" },
-    { "RegisterUser", "사용자 등록 중", "Registering user", "[1]" },
-    { "RemoveEnvironmentStrings", "환경 변수 갱신 중", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
-    { "RemoveExistingProducts", "이전 판 제거 중", "Removing the older version", "Application: [1], Command line: [2]" },
-    { "RemoveFiles", "파일 제거 중", "Removing files", "File: [1], Directory: [9]" },
-    { "RemoveFolders", "폴더 제거 중", "Removing folders", "Folder: [1]" },
-    { "RemoveIniValues", "INI 파일 항목 제거 중", "Removing INI file entries", "File: [1], Section: [2], Key: [3], Value: [4]" },
-    { "RemoveRegistryValues", "레지스트리 값 제거 중", "Removing system registry values", "Key: [1], Name: [2]" },
-    { "RemoveShortcuts", "바로 가기 제거 중", "Removing shortcuts", "Shortcut: [1]" },
-    { "Rollback", "되돌리는 중:", "Rolling back action:", "[1]" },
-    { "RollbackCleanup", "백업 파일 지우는 중", "Removing backup files", "File: [1]" },
-    { "StartServices", "서비스 시작 중", "Starting services", "Service: [1]" },
-    { "StopServices", "서비스 중지 중", "Stopping services", "Service: [1]" },
-    { "UnpublishFeatures", "제품 기능 등록 지우는 중", "Unpublishing product features", "Feature: [1]" },
-    { "UnregisterClassInfo", "클래스 등록 지우는 중", "Unregistering class servers", "Class ID: [1]" },
-    { "UnregisterExtensionInfo", "파일 확장명 등록 지우는 중", "Unregistering extension servers", "Extension: [1]" },
-    { "UnregisterFonts", "글꼴 등록 지우는 중", "Unregistering fonts", "Font: [1]" },
-    { "UnregisterMIMEInfo", "MIME 정보 등록 지우는 중", "Unregistering MIME info", "MIME Content Type: [1], Extension: [2]" },
-    { "UnregisterProgIdInfo", "프로그램 식별자 등록 지우는 중", "Unregistering program identifiers", "ProgID: [1]" },
-    { "WriteEnvironmentStrings", "환경 변수 갱신 중", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
-    { "WriteIniValues", "INI 파일 값 쓰는 중", "Writing INI file values", "File: [1], Section: [2], Key: [3], Value: [4]" },
-    { "WriteRegistryValues", "레지스트리 값 쓰는 중", "Writing system registry values", "Key: [1], Name: [2], Value: [3]" },
+    { "AppSearch", "Searching for installed applications", "Property: [1], Signature: [2]" },
+    { "CostFinalize", "Computing space requirements", NULL },
+    { "CostInitialize", "Computing space requirements", NULL },
+    { "CreateFolders", "Creating folders", "Folder: [1]" },
+    { "CreateShortcuts", "Creating shortcuts", "Shortcut: [1]" },
+    { "DeleteServices", "Deleting services", "Service: [1]" },
+    { "DuplicateFiles", "Creating duplicate files", "File: [1], Directory: [9], Size: [6]" },
+    { "FileCost", "Computing space requirements", NULL },
+    { "FindRelatedProducts", "Searching for related applications", "Found application: [1]" },
+    { "GenerateScript", "Generating script operations for action:", "[1]" },
+    { "InstallFiles", "Copying new files", "File: [1], Directory: [9], Size: [6]" },
+    { "InstallServices", "Installing new services", "Service: [2]" },
+    { "InstallValidate", "Validating install", NULL },
+    { "LaunchConditions", "Evaluating launch conditions", NULL },
+    { "MigrateFeatureStates", "Migrating feature states from related applications", "Application: [1]" },
+    { "MoveFiles", "Moving files", "File: [1], Directory: [9], Size: [6]" },
+    { "PatchFiles", "Patching files", "File: [1], Directory: [2], Size: [3]" },
+    { "ProcessComponents", "Updating component registration", NULL },
+    { "PublishFeatures", "Publishing product features", "Feature: [1]" },
+    { "PublishProduct", "Publishing product information", NULL },
+    { "RegisterClassInfo", "Registering class servers", "Class ID: [1]" },
+    { "RegisterExtensionInfo", "Registering extension servers", "Extension: [1]" },
+    { "RegisterFonts", "Registering fonts", "Font: [1]" },
+    { "RegisterMIMEInfo", "Registering MIME info", "MIME Content Type: [1], Extension: [2]" },
+    { "RegisterProduct", "Registering product", "[1]" },
+    { "RegisterProgIdInfo", "Registering program identifiers", "ProgID: [1]" },
+    { "RegisterUser", "Registering user", "[1]" },
+    { "RemoveEnvironmentStrings", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
+    { "RemoveExistingProducts", "Removing the older version", "Application: [1], Command line: [2]" },
+    { "RemoveFiles", "Removing files", "File: [1], Directory: [9]" },
+    { "RemoveFolders", "Removing folders", "Folder: [1]" },
+    { "RemoveIniValues", "Removing INI file entries", "File: [1], Section: [2], Key: [3], Value: [4]" },
+    { "RemoveRegistryValues", "Removing system registry values", "Key: [1], Name: [2]" },
+    { "RemoveShortcuts", "Removing shortcuts", "Shortcut: [1]" },
+    { "Rollback", "Rolling back action:", "[1]" },
+    { "RollbackCleanup", "Removing backup files", "File: [1]" },
+    { "StartServices", "Starting services", "Service: [1]" },
+    { "StopServices", "Stopping services", "Service: [1]" },
+    { "UnpublishFeatures", "Unpublishing product features", "Feature: [1]" },
+    { "UnregisterClassInfo", "Unregistering class servers", "Class ID: [1]" },
+    { "UnregisterExtensionInfo", "Unregistering extension servers", "Extension: [1]" },
+    { "UnregisterFonts", "Unregistering fonts", "Font: [1]" },
+    { "UnregisterMIMEInfo", "Unregistering MIME info", "MIME Content Type: [1], Extension: [2]" },
+    { "UnregisterProgIdInfo", "Unregistering program identifiers", "ProgID: [1]" },
+    { "WriteEnvironmentStrings", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
+    { "WriteIniValues", "Writing INI file values", "File: [1], Section: [2], Key: [3], Value: [4]" },
+    { "WriteRegistryValues", "Writing system registry values", "Key: [1], Name: [2], Value: [3]" },
 };
 
 static const text_t uitexts[] = {
-    { "AbsentPath", "", "" },
-    { "bytes", "바이트", "bytes" },
-    { "GB", "GB", "GB" },
-    { "KB", "KB", "KB" },
-    { "MB", "MB", "MB" },
-    { "MenuAbsent", "이 기능을 설치하지 않음", "Entire feature will be unavailable" },
-    { "MenuAllLocal", "이 기능과 하위 기능 모두 이 컴퓨터에 설치", "Entire feature will be installed on local hard drive" },
-    { "MenuLocal", "이 기능을 이 컴퓨터에 설치", "Will be installed on local hard drive" },
-    { "MenuAdvertise", "필요할 때 설치", "Will be installed when required" },
-    { "NewFolder", "새폴더|새 폴더", "Folder|New Folder" },
-    { "SelAbsentAbsent", "설치되지 않은 채로 둡니다.", "This feature will remain uninstalled." },
-    { "SelAbsentLocal", "이 컴퓨터에 설치합니다.", "This feature will be installed on the local hard drive." },
-    { "SelLocalAbsent", "지웁니다.", "This feature will be removed." },
-    { "SelLocalLocal", "이 컴퓨터에 설치된 채로 둡니다.", "This feature will remain on your local hard drive." },
-    { "SelChildCostNeg", "[1] 줄어듭니다.", "This feature frees up [1] on your hard drive." },
-    { "SelChildCostPos", "[1] 필요합니다.", "This feature requires [1] on your hard drive." },
-    { "SelCostPending", "계산 중...", "Compiling cost for this feature..." },
-    { "SelParentCostNegNeg", "이 기능은 [1] 줄어듭니다. 하위 기능 [2]/[3]개가 [4] 줄어듭니다.",
-      "This feature frees up [1]. It has [2] of [3] subfeatures selected, which free up [4]." },
-    { "SelParentCostNegPos", "이 기능은 [1] 줄어듭니다. 하위 기능 [2]/[3]개가 [4] 필요합니다.",
-      "This feature frees up [1]. It has [2] of [3] subfeatures selected, which require [4]." },
-    { "SelParentCostPosNeg", "이 기능은 [1] 필요합니다. 하위 기능 [2]/[3]개가 [4] 줄어듭니다.",
-      "This feature requires [1]. It has [2] of [3] subfeatures selected, which free up [4]." },
-    { "SelParentCostPosPos", "이 기능은 [1] 필요합니다. 하위 기능 [2]/[3]개가 [4] 필요합니다.",
-      "This feature requires [1]. It has [2] of [3] subfeatures selected, which require [4]." },
-    { "TimeRemaining", "남은 시간: {[1]분 }{[2]초}", "Time remaining: {[1] minutes }{[2] seconds}" },
-    { "VolumeCostAvailable", "남은 공간", "Available" },
-    { "VolumeCostDifference", "차이", "Difference" },
-    { "VolumeCostRequired", "필요한 공간", "Required" },
-    { "VolumeCostSize", "디스크 크기", "Disk size" },
-    { "VolumeCostVolume", "볼륨", "Volume" },
+    { "AbsentPath", "" },
+    { "bytes", "bytes" },
+    { "GB", "GB" },
+    { "KB", "KB" },
+    { "MB", "MB" },
+    { "MenuAbsent", "Entire feature will be unavailable" },
+    { "MenuAllLocal", "Entire feature will be installed on local hard drive" },
+    { "MenuLocal", "Will be installed on local hard drive" },
+    { "MenuAdvertise", "Will be installed when required" },
+    { "NewFolder", "Folder|New Folder" },
+    { "SelAbsentAbsent", "This feature will remain uninstalled." },
+    { "SelAbsentLocal", "This feature will be installed on the local hard drive." },
+    { "SelLocalAbsent", "This feature will be removed." },
+    { "SelLocalLocal", "This feature will remain on your local hard drive." },
+    { "SelChildCostNeg", "This feature frees up [1] on your hard drive." },
+    { "SelChildCostPos", "This feature requires [1] on your hard drive." },
+    { "SelCostPending", "Compiling cost for this feature..." },
+    { "SelParentCostNegNeg", "This feature frees up [1]. It has [2] of [3] subfeatures selected, which free up [4]." },
+    { "SelParentCostNegPos", "This feature frees up [1]. It has [2] of [3] subfeatures selected, which require [4]." },
+    { "SelParentCostPosNeg", "This feature requires [1]. It has [2] of [3] subfeatures selected, which free up [4]." },
+    { "SelParentCostPosPos", "This feature requires [1]. It has [2] of [3] subfeatures selected, which require [4]." },
+    { "TimeRemaining", "Time remaining: {[1] minutes }{[2] seconds}" },
+    { "VolumeCostAvailable", "Available" },
+    { "VolumeCostDifference", "Difference" },
+    { "VolumeCostRequired", "Required" },
+    { "VolumeCostSize", "Disk size" },
+    { "VolumeCostVolume", "Volume" },
 };
 
 // ---- rows --------------------------------------------------------------------------------------
@@ -281,6 +291,8 @@ typedef struct {
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
     bool               details;         // the progress page has its details box (the helper DLL is there)
+    bool               details_dll;     // the helper DLL is in the package (RP_DirCheck can be called)
+    const char        *next_when;       // buttons(): Next moves on only when this holds (its events come later, at 5)
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
     int                lseq;            // the next InstallUISequence number of a language action
@@ -443,11 +455,10 @@ const char *rp_ui_text_for(const rp_ir_t *ir, const char *id, size_t li) {
         }
         if (x->text) return x->text;
     }
-    if (strncmp(id, "Removal", 7) == 0 && strcmp(code, "en") != 0 && strcmp(code, "ko") != 0) return rp_ui_text_for(ir, id + 7, li);
-    for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
-        if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
-    }
-    return id;
+    // A language that gives no Removal* text shows its own install text instead.
+    if (strncmp(id, "Removal", 7) == 0 && strcmp(code, "en") != 0 && rp_langpack_text(rp_langpack_get(code, NULL), "installer", id) == NULL)
+        return rp_ui_text_for(ir, id + 7, li);
+    return rp_ui_text_builtin(id, code);
 }
 
 const char *rp_ui_text_lang(const rp_ir_t *ir, const char *id, const char *code) {
@@ -459,10 +470,7 @@ const char *rp_ui_text_lang(const rp_ir_t *ir, const char *id, const char *code)
         }
         if (x->text) return x->text;
     }
-    for (size_t i = 0; i < sizeof texts / sizeof texts[0]; ++i) {
-        if (strcmp(texts[i].id, id) == 0) return strcmp(code, "ko") == 0 ? texts[i].ko : texts[i].en;
-    }
-    return id;
+    return rp_ui_text_builtin(id, code);
 }
 
 static const char *text_for(const ctx_t *c, const char *id, size_t li) { return rp_ui_text_for(c->ir, id, li); }
@@ -603,7 +611,8 @@ static void buttons(ctx_t *c, const char *dlg, const char *back, const char *nex
     } else if (back) {
         event(c, dlg, "Back", "NewDialog", back, NULL, 1);
     }
-    if (next && next[0]) event(c, dlg, "Next", "NewDialog", next, next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
+    if (next && next[0] && c->next_when) event(c, dlg, "Next", "NewDialog", next, c->next_when, 5);
+    else if (next && next[0]) event(c, dlg, "Next", "NewDialog", next, next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
     else event(c, dlg, "Next", "EndDialog", "Return", next_cond_disable ? keep(c, "NOT (", keep(c, next_cond_disable, ")")) : NULL, 1);
     if (next_cond_disable) {
         cond(c, dlg, "Next", "Disable", next_cond_disable);
@@ -734,6 +743,14 @@ bool rp_ui_wipes(const rp_ir_t *ir) {
     return false;
 }
 
+// The package wipes the folder of dir `id` at removal (a [remove] recursive on that dir).
+bool rp_ui_wipes_dir(const rp_ir_t *ir, const char *id) {
+    for (size_t i = 0; i < ir->remove_count; ++i) {
+        if (ir->removes[i].recursive && ir->removes[i].dir && strcmp(ir->removes[i].dir, id) == 0) return true;
+    }
+    return false;
+}
+
 // A feature the user may turn on or off: the maintenance page then has Change, in every set.
 static bool choosable(const rp_ir_t *ir) {
     for (size_t i = 0; i < ir->feature_count; ++i) {
@@ -826,9 +843,30 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     control(c, d, "Browse", "PushButton", 20, 98, 70, 17, VIS | EN, NULL, T(c, "Browse"), "Back");
     event(c, d, "Browse", "[_RpBrowseProperty]", dir, NULL, 1);
     event(c, d, "Browse", "SpawnDialog", "RpBrowseDlg", NULL, 2);
+    // A package that wipes this folder at removal asks before it takes a folder that holds
+    // something: RP_DirCheck (helper DLL) looks, RpDirWarnDlg asks, and Next moves on only for an
+    // empty or new folder or after "Use this folder". Not for an installed product (its own folder).
+    bool ask = c->details_dll && rp_ui_wipes_dir(c->ir, c->ir->ui_install_dir ? c->ir->ui_install_dir : "INSTALLDIR");
+    c->next_when = ask ? "RP_DIR_NOTEMPTY <> \"1\" OR Installed" : NULL;
     buttons(c, d, back, next, NULL, NULL, "Path");
+    c->next_when = NULL;
     // Next first commits the path (SetTargetPath checks it), then moves on.
     event(c, d, "Next", "SetTargetPath", dir, NULL, 0);
+    if (ask) {
+        event(c, d, "Next", "DoAction", "RP_DirCheck", "NOT Installed", 2);
+        event(c, d, "Next", "NewDialog", "RpDirWarnDlg", "RP_DIR_NOTEMPTY = \"1\" AND NOT Installed", 5);
+        const char *w = "RpDirWarnDlg";         // Back ("Choose another") is the default button
+        dialog(c, w, 370, 270, 3, "Back", "Back", "Cancel");
+        frame(c, w, "DirTitle", NULL, NULL);
+        control(c, w, "Text", "Text", 25, 65, 320, 70, VIS | NOPREFIX, NULL, T(c, "DirNotEmptyText"), NULL);
+        control(c, w, "Back", "PushButton", 120, 243, 86, 17, VIS | EN, NULL, T(c, "DirChoose"), "Next");
+        control(c, w, "Next", "PushButton", 210, 243, 86, 17, VIS | EN, NULL, T(c, "DirContinue"), "Cancel");
+        control(c, w, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
+        event(c, w, "Back", "NewDialog", d, NULL, 1);
+        if (next && next[0]) event(c, w, "Next", "NewDialog", next, NULL, 1);
+        else event(c, w, "Next", "EndDialog", "Return", NULL, 1);
+        event(c, w, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
+    }
 
     const char *b = "RpBrowseDlg";
     dialog(c, b, 370, 270, 3, "PathEdit", "OK", "Cancel");
@@ -1316,6 +1354,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->multi = c->nlang > 1;
     c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
     c->details = in->details;
+    c->details_dll = in->helper;
     rows_init(&c->dialog, "Dialog", dialog_cols, 10);
     rows_init(&c->control, "Control", control_cols, 12);
     rows_init(&c->event, "ControlEvent", event_cols, 6);
@@ -1343,16 +1382,20 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
         s_(c, &c->uitext, uitexts[i].id); s_(c, &c->uitext, uitexts[i].en);
     }
-    // The status line's texts, when every language is one these are written in (another language
-    // keeps Windows Installer's own, which follow Windows). With several languages the text is a
+    // The status line's texts, when every language has them (English here, another in its pack;
+    // a language without them keeps Windows Installer's own, which follow Windows). With several languages the text is a
     // property the chosen language fills, as every other text.
     bool act = true;
-    for (size_t i = 0; i < c->nlang; ++i) act = act && (strcmp(lang_code(c, i), "en") == 0 || strcmp(lang_code(c, i), "ko") == 0);
+    for (size_t i = 0; i < c->nlang; ++i) act = act && rp_ui_text_in_pack("Action.InstallFiles", lang_code(c, i));
     c->act = act;
     for (size_t i = 0; act && i < sizeof action_texts / sizeof action_texts[0]; ++i) {
         const action_text_t *a = &action_texts[i];
         const char *src[RP_UI_LANG_MAX] = { 0 };
-        for (size_t li = 0; li < c->nlang; ++li) src[li] = strcmp(lang_code(c, li), "ko") == 0 ? a->ko : a->en;
+        for (size_t li = 0; li < c->nlang; ++li) {
+            const char *t = strcmp(lang_code(c, li), "en") == 0 ? NULL
+                          : rp_langpack_text(rp_langpack_get(lang_code(c, li), NULL), "installer", keep(c, "Action.", a->action));
+            src[li] = t ? t : a->en;
+        }
         s_(c, &c->acttext, a->action);
         s_(c, &c->acttext, c->multi ? reg_text(c, keep(c, "Act_", a->action), src, false) : src[0]);
         s_(c, &c->acttext, a->tmpl);

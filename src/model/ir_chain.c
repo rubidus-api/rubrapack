@@ -62,7 +62,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         ERR(&c, top, "RP1202", "a chain needs [chain]");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    static const char *const keys[] = { "name", "manufacturer", "version", "arch", "elevate", NULL };
+    static const char *const keys[] = { "name", "manufacturer", "version", "arch", "elevate", "languages", NULL };
     ir_check_keys(&c, chain, keys);
     out->name = ir_get_str(&c, chain, "name", true, NULL);
     out->manufacturer = ir_get_str(&c, chain, "manufacturer", true, NULL);
@@ -86,6 +86,20 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         rp_mem_free(alloc, arch);
     }
     out->elevate = ir_get_bool(&c, chain, "elevate", true);
+    // languages: the setup program's own texts in these languages too (English and the built-in
+    // packs always); each needs its pack - lang/<code>.po beside the source, or where packs are found.
+    const rp_tkey_t *lk = ir_find_key(chain, "languages");
+    if (lk && lk->val.kind != RP_TV_ARRAY) ERR(&c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
+    for (size_t i = 0; lk && lk->val.kind == RP_TV_ARRAY && i < lk->val.count; ++i) {
+        const rp_tval_t *v = &lk->val.items[i];
+        const char *code = v->kind == RP_TV_STRING ? v->str : "";
+        if (strcmp(code, "en") == 0) continue;
+        if (rp_langpack_get(code, opt->source_dir ? opt->source_dir : ".") == NULL) {
+            ERR(&c, lk->pos, "RP1509", "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)", code, code);
+        } else if (out->language_count < 8) {
+            snprintf(out->languages[out->language_count++], 16, "%s", code);
+        }
+    }
     if (npkg == 0) ERR(&c, chain->pos, "RP1202", "a chain needs at least one [chain-package.ID]");
     if (npkg > RP_CHAIN_MAX) ERR(&c, chain->pos, "RP1308", "a chain holds at most %d packages", RP_CHAIN_MAX);
     out->pkgs = rp_mem_alloc(alloc, npkg + 1, sizeof *out->pkgs);
@@ -177,6 +191,13 @@ static const char *msi_codes(proven_allocator_t alloc, const uint8_t *data, size
     return bad;
 }
 
+// The setup program's texts a language pack may give (msgctxt "installer"), in the order
+// src/setup/rubrapack_setup.c reads them.
+static const char *const setup_texts[] = {
+    "Setup.Damaged", "Setup.Ask", "Setup.Repair", "Setup.Remove", "Setup.Cancel", "Setup.RemoveAsk", "Setup.Removed",
+    "Setup.RemoveFailed", "Setup.TempFailed", "Setup.RepairFailed", "Setup.InstallFailed", "Setup.Repaired", "Setup.Finished",
+};
+
 proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const rp_limits_t *limits, uint8_t **out, size_t *len,
                             rp_srcdiags_t *diags) {
     if (c == NULL || limits == NULL || out == NULL || len == NULL || diags == NULL) return PROVEN_ERR_INVALID_ARG;
@@ -229,6 +250,31 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
         rp_mem_free(alloc, code);
         rp_mem_free(alloc, version);
         rp_mem_free(alloc, data);
+    }
+    // The setup program's texts in other languages than its own English: after the packages, a
+    // block "RPTEXTS1", the number of languages, and for each its code, its LANGIDs and the texts
+    // in the order of setup_texts (an empty one: English). The built-in packs, then [chain] languages.
+    if (err == PROVEN_OK) {
+        const char *codes[16];
+        size_t ncodes = 0;
+        for (size_t i = 0; i < rp_lang_embedded_count && ncodes < 16; ++i) codes[ncodes++] = rp_lang_embedded[i].code;
+        for (size_t i = 0; i < c->language_count && ncodes < 16; ++i) {
+            bool have = false;
+            for (size_t j = 0; j < ncodes; ++j) have |= strcmp(codes[j], c->languages[i]) == 0;
+            if (!have) codes[ncodes++] = c->languages[i];
+        }
+        rp_buf_put(&m, "RPTEXTS1", 8);
+        rp_buf_u32le(&m, (uint32_t)ncodes);
+        for (size_t i = 0; i < ncodes; ++i) {
+            const rp_langpack_t *p = rp_langpack_get(codes[i], NULL);
+            put_str(&m, codes[i]);
+            rp_buf_u32le(&m, p ? (uint32_t)p->langid_count : 0);
+            for (size_t j = 0; p && j < p->langid_count; ++j) rp_buf_u32le(&m, p->langids[j]);
+            for (size_t t = 0; t < sizeof setup_texts / sizeof setup_texts[0]; ++t) {
+                const char *tr = rp_langpack_text(p, "installer", setup_texts[t]);
+                put_str(&m, tr ? tr : "");
+            }
+        }
     }
     uint64_t mat = b.len;
     if (err == PROVEN_OK && m.err == PROVEN_OK) rp_buf_put(&b, m.data, m.len);

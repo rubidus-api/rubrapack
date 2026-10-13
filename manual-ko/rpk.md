@@ -244,7 +244,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
-| `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
+| `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
 
 dir 경로의 `$(기준)`은 다른 dir ID 이거나 Windows 폴더다: `$(ProgramFiles)`(x64/arm64 는 64비트,
@@ -507,7 +507,7 @@ multi = "single"                  # 하나만 골랐을 때만
   항목에 대해 적어 둔 일만 한다.
   - **MSIX** 는 신원이 있다: DLL 이 패키지에 들어가고 매니페스트가 항목을 선언한다.
   - **MSI** 는 항목의 프로그램 옆에 파일 둘을 더 설치한다 - 그 DLL 과, 매니페스트와 로고만 든 작은 패키지
-    `rubrapack_menu.msix`. 설치할 때 이 패키지를 프로그램 폴더에 대해 등록하고(컴퓨터의 모든 사용자용,
+    `rubrapack_menu.msix`(로고는 `[arp] icon` 에 32비트 이미지가 있으면 그것으로, 없으면 단색으로 만든다). 설치할 때 이 패키지를 프로그램 폴더에 대해 등록하고(컴퓨터의 모든 사용자용,
     다른 사용자는 다음 로그인 때) 제거할 때 지운다. **인증서가 필요 없다**: 관리자 권한의 설치에서
     Windows 가 받아 주는 무서명 형식으로 만든다. `--key` 와 `[msix] publisher`(인증서의 주체)가 있으면
     서명한다. 등록할 수 없는 곳 - Windows 10 버전 2004 이전, 또는 관리자 권한이 없는 사용자의 사용자별 설치 - 에서는 설치가
@@ -689,6 +689,9 @@ remove = true
 on = "uninstall"            # 키와 그 값, 그 아래 모든 키
 ```
 
+- `ui = "installdir"` 나 `"features"` 에서, 패키지가 싹 지우는 폴더를 설치 폴더로 고르는데 그 폴더에 이미 무언가 들어
+  있으면 폴더 페이지가 먼저 묻는다: 제거하면 그 안의 모든 것이 지워진다고 알리고 **다른 폴더 고르기**(기본)와 **이 폴더
+  사용**을 내놓는다. 조용한 설치에서는 묻지 않는다.
 - 여기에 이름이 나온 사용자 프로필의 폴더(AppData, 시작 메뉴, 바탕 화면)는 설치할 때 만들지 않는다: 프로그램이 만들 때
   생긴다. 다른 폴더는 보통의 `[remove]` 처럼 설치할 때 빈 채로 만든다. (0.41.0 은 프로필의 폴더도 만들었다.)
 - 제품(또는 그 행이 속한 기능)을 정말 지울 때만 한다 - "설치된 앱", 유지 관리 페이지의 제거, `msiexec /x`.
@@ -738,6 +741,8 @@ on = "uninstall"            # 키와 그 값, 그 아래 모든 키
   0, 3010(다시 시작 필요), 실패한 패키지의 오류, 설치 프로그램이 손상되면 1620, 사용자가 권한 올리기를 거절하면 1602.
 - `elevate = true`(기본)면 설치 프로그램이 모든 패키지를 위해 관리자 권한을 한 번 묻는다. 사용자별 체인은
   `elevate = false` 로 한다.
+- 설치 프로그램 자신의 문구는 영어이고 한국어 사용자에게는 한국어다. `[chain] languages = ["ja"]` 는 언어팩이 있는
+  언어를 더한다([언어팩](#언어팩)의 `Setup.*` 문구). 사용자의 표시 언어에 맞는 것이 나온다.
 - 체인에는 `[chain]`, `[chain-package.ID]`, `[define]` 만 들어간다. 패키지마다 먼저 자기 원본으로 빌드한다.
   `--key` 는 여느 프로그램처럼 설치 프로그램에 서명한다. `inspect setup.exe` 는 패키지 목록을, `extract setup.exe
   -d 폴더` 는 패키지들을 꺼내 준다.
@@ -1050,6 +1055,44 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - `[package] language` 는 패키지의 언어(`ProductLanguage`, 요약 정보)만 정한다. 0.2 부터는 대화창을
   한국어로 만들지 않는다: `languages = ["ko"]` 를 넣는다(lint 가 `RP1317` 로 경고한다).
 
+### 언어팩
+
+언어 하나는 파일 하나다. 영어는 rubrapack 에 들어 있고, 한국어는 `resources/lang/ko.po` 로 함께 오며, 다른 언어는 그
+언어의 파일 - 번역 도구들이 읽는 PO 형식의 `<코드>.po` - 을 더하기만 하면 지원된다. rubrapack 도 원본의 문구도 바꿀
+필요가 없다.
+
+```po
+msgid ""
+msgstr ""
+"Language: ja\n"
+"X-Rubrapack-Name: 日本語\n"        # 언어 페이지에 보일 그 언어의 이름
+"X-Rubrapack-LangIDs: 1041\n"      # 이 언어가 골라지는 Windows LANGID
+"X-Rubrapack-Font: Yu Gothic UI\n"
+
+# 명령줄: msgid 는 rubrapack 이 쓰는 영어 문구 그대로다.
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' を読めません ({2})"
+
+# rubrapack 이 만드는 설치 파일: msgctxt "installer", msgid 는 문구의 ID 다.
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "[ProductName] セットアップ"
+```
+
+- **언어팩을 찾는 곳**: 내장된 것, 그다음 `RUBRAPACK_LANG_DIR` 가 가리키는 폴더, 빌드하는 원본 옆의 `lang/`, rubrapack
+  프로그램 옆의 `lang/`.
+- **명령줄**: `--lang ja`(또는 `RUBRAPACK_LANG=ja`)가 그 팩을 쓴다. 번역은 영어 문구의 값을 번호로 가리킨다 - 첫
+  `%s` 나 `%zu` 가 `{1}` - 그래서 자기 언어가 원하는 순서로 놓을 수 있다. `{-2}` 는 둘째가 설 자리가 없다는 뜻이고(복수형
+  "s"), `{{` 는 중괄호다. 형식 문자열이 아니므로 팩은 값을 빠뜨릴 수는 있어도 없는 값을 읽게 만들 수는 없다. 팩에 없는
+  문구는 영어로 나온다.
+- **설치 파일**: `[ui] languages = ["ja"]` 는 대화창 문구([여러 언어](#여러-언어)에 나열된 ID), 상태 줄
+  (`Action.InstallFiles`, ...), 상세 상자(`Details.FileCopy`, ...), 도우미의 메시지를 팩에서 가져오고, 언어의 이름과
+  LANGID 와 글꼴은 팩의 머리에서 가져온다. 원본의 `[ui] name-ja`, `langid-ja`, `font-ja` 와 `[ui-text.ID] text-ja` 가
+  여전히 앞선다. 어느 쪽에도 없는 문구는 오류다(`RP1202` 가 첫째를 알려 준다). 영어로 대신하는 몇 가지는 예외다. 체인의
+  설치 프로그램은 `[chain] languages` 에 적힌 언어의 `Setup.*` 를 가져온다.
+- **새로 만들기**: `resources/lang/ko.po` 를 복사해 머리를 바꾸고 `msgstr` 줄을 번역한다.
+  `RUBRAPACK_LANG_MISSING=<파일>` 을 주면 실행하는 동안 고른 팩에 없는 문구를 그 파일에 덧붙여 준다.
+
 ### 아이콘, 완료 페이지, 설치 범위 페이지
 
 - `[arp] icon = "app.ico"` 는 "설치된 앱"에 보일 제품 아이콘이다. `[shortcut] icon` 은 바로가기에 따로
@@ -1182,6 +1225,10 @@ Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 �
 사용자의 `%LOCALAPPDATA%`)에서 돈다. 컴퓨터별의 경우 그 자리의 `rubrapack` 폴더를 다른 누가 먼저 만들어 두었으면 쓰지
 않고 작업도 걸지 않는다. 다른 것은 지우지 않는다: 이 설치가 걸어 둔 것만, 같은 파일이 아직 그 자리에 있을 때만,
 그리고 설치된 제품이 지금 그 자리에 가진 파일은 지우지 않는다. `[package] cleanup = false` 면 넣지 않는다.
+
+관리자 권한 없이 지우는 사용자별 패키지에서는, 프로그램이 아직 쥐고 있는 파일을 Windows Installer 가 다음 재시작에
+지우도록 예약할 수 없어 그 파일이 영영 남게 된다: 제거는 제품의 파일 가운데 아직 남아 있는 것을 적어 두고, 정리 작업이
+그 파일이 풀리면 지운다.
 
 컴퓨터별 패키지는 앞선 제거로부터 자기 파일도 지킨다: 다른 제품을 지울 때 프로그램이 그 파일을 쥐고 있었으면 그
 파일의 삭제가 재시작 때로 걸려 남는데, 이 패키지가 같은 자리에 똑같은 파일을 설치하면 Windows Installer 는 이미 있는
@@ -1572,7 +1619,7 @@ rubrapack version | help [command]
   시각으로 맞춘 시계가 허용하지 않을 것은 아무것도 넓히지 않는다.)
 - 종료 코드: 0 성공, 1 원본 오류, 2 사용법, 3 입출력, 4 서명, 5 lint, 6 네트워크.
 - `--lang <코드>` 는 도구가 사람에게 보이는 글의 언어를 고른다: 오류와 경고, `help`, 결과 줄, `explain`, `new -i` 와
-  `edit` 의 질문. 코드는 `en`(기본)과 `ko` 다. 명령줄 어디에나 둘 수 있고(`rubrapack --lang ko build ...`,
+  `edit` 의 질문. 코드는 `en`(기본), `ko`, 그리고 언어팩이 있는 언어다([언어팩](#언어팩)). 명령줄 어디에나 둘 수 있고(`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`), 환경 변수 `RUBRAPACK_LANG` 은 모든 실행에 같은 것을 말하며 옵션이 그것보다
   앞선다. 프로그램이 읽는 것은 그대로다: 진단 코드, 종료 코드, `inspect` 의 표 덤프, `schema`, `--json` 의 구조(그
   안의 `message` 글은 언어를 따른다). 만들어지는 것은 절대 바꾸지 않는다 - 패키지 대화창의 언어는 원본이
