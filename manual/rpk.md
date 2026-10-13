@@ -739,6 +739,8 @@ remove = true
 on = "uninstall"            # the key with its values and every key below it
 ```
 
+- Nothing is made at installation: a folder named only here appears when the program makes it. (A
+  plain `[remove]` creates its folder at installation; 0.41.0 did so for `recursive` too.)
 - It happens only when the product (or the feature the row belongs to) is really removed -
   Installed apps, the maintenance page's Remove, `msiexec /x`. **An upgrade never wipes**: the new
   version finds the settings as they were. A removal that fails and rolls back has touched nothing,

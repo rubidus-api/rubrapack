@@ -919,6 +919,32 @@ static void lower_shortcuts(pkg_t *pk) {
 }
 
 // [remove.*] (RFC-0004): own component in that folder (no key path file), one RemoveFile row.
+// A [remove] name for RemoveFile.FileName, whose type wants a short (8.3) name, or "short|long"
+// (ICE03 otherwise: "*.cache"). The short pattern keeps the wildcards and cuts the rest to 8.3; a
+// volume without long names is the only place it would be used.
+static const char *remove_name(keep_t *k, const char *name) {
+    if (name == NULL) return NULL;
+    const char *dot = strrchr(name, '.');
+    size_t nb = dot ? (size_t)(dot - name) : strlen(name), ne = dot ? strlen(dot + 1) : 0;
+    bool ok = nb >= 1 && nb <= 8 && ne <= 3 && !(dot && ne == 0) && memchr(name, '.', nb) == NULL;
+    char sh[13];
+    size_t n = 0;
+    for (size_t i = 0; name[i]; ++i) {
+        unsigned char ch = (unsigned char)name[i];
+        bool plain = (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch && strchr("*?!#$%&'()-@^_`{}~", ch));
+        if (name + i == dot) {
+            if (ne) { sh[n++] = '.'; }
+            continue;
+        }
+        if (!plain) ok = false;
+        size_t at = dot && name + i > dot ? (size_t)(name + i - dot - 1) : i;
+        if (at < (dot && name + i > dot ? 3u : 8u)) sh[n++] = plain ? (char)(ch >= 'a' && ch <= 'z' ? ch - 32 : ch) : '_';
+    }
+    sh[n] = 0;
+    if (ok) return name;
+    return kprintf(k, "%s|%s", kdup(k, sh[0] && sh[0] != '.' ? sh : "_"), name);
+}
+
 static void lower_removes(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -930,10 +956,12 @@ static void lower_removes(pkg_t *pk) {
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, r->dir));
+        // A recursive remove installs nothing: its component sits at TARGETDIR, as the registry
+        // ones, and creates no folder (in the user's profile that is ICE38 and ICE64).
+        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, r->recursive ? "TARGETDIR" : dkey(ir, r->dir));
         i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
-        s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey);     // its key path is the folder (ICE18)
+        if (!r->recursive) { s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey); }       // its key path is the folder (ICE18)
         // upgrade = false: the removal part is the helper DLL's (RP_REMOVES: Directory key, pattern or
         // "" for the folder itself, component), which skips it when an upgrade removes this version;
         // the RemoveFile row keeps only the installation part.
@@ -942,6 +970,10 @@ static void lower_removes(pkg_t *pk) {
             const char *fields[] = { "d", dkey(ir, r->dir), "", "", ckey };
             for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->pplan = plan_field(k, pk->pplan, fields[f]);
             pk->any_purge = true;
+            // The folder itself, when it is left empty, also goes the installer's way: a folder of
+            // the user's profile has to be in RemoveFile (ICE64). Nothing in it is touched by this.
+            s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); null_(&pk->removefile); s_(&pk->removefile, dkey(ir, r->dir));
+            i_(&pk->removefile, 2);
             continue;
         }
         if (r->keep_on_upgrade) {
@@ -951,7 +983,7 @@ static void lower_removes(pkg_t *pk) {
             mode &= 1;
         }
         if (mode == 0) continue;
-        s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); s_(&pk->removefile, r->name); s_(&pk->removefile, dkey(ir, r->dir));
+        s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); s_(&pk->removefile, remove_name(k, r->name)); s_(&pk->removefile, dkey(ir, r->dir));
         i_(&pk->removefile, mode);
     }
 }
@@ -1657,7 +1689,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         for (int i = 1; i <= 4; ++i) {
             char set[32];
             snprintf(set, sizeof set, "RP_MenuData%d", i);
-            s_(&pk->iexec, kdup(k, set)); null_(&pk->iexec); i_(&pk->iexec, 1014);
+            s_(&pk->iexec, kdup(k, set)); null_(&pk->iexec); i_(&pk->iexec, 1013 + i);       // 1014..1017: each its own (ICE82)
         }
         s_(&pk->iexec, "RP_MenuRemoveRollback"); s_(&pk->iexec, "REMOVE = \"ALL\""); i_(&pk->iexec, 3479);
         s_(&pk->iexec, "RP_MenuRemove"); s_(&pk->iexec, "REMOVE = \"ALL\""); i_(&pk->iexec, 3480);

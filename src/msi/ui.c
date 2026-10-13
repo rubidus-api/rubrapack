@@ -277,6 +277,7 @@ typedef struct {
     const rp_ir_t     *ir;
     bool               multi;           // more than one language
     bool               page;            // ... and the language page leads the flow
+    bool               act;             // the status line's texts are the package's (ActionText)
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
     int                lseq;            // the next InstallUISequence number of a language action
@@ -1108,7 +1109,8 @@ static const char *settle(ctx_t *c, const char *src) {
 }
 
 // The status line's texts (ActionText) are set in InstallExecuteSequence as well: RPLANGUAGE
-// reaches it from the dialogs (it is a secure property), and a run without them (/qb) shows English.
+// reaches it from the dialogs (it is a secure property); a run without them (/qb) settles the
+// language there, by the same rules (RpLangU_*, RpLangS_*, RpLangEn).
 // Rows that put the chosen language's texts into the RpT_* properties (the oracle of RFC-0012: a
 // property's value is shown as it is, so each text is formatted when it is put in):
 //   - Property RpT_<key>_<code>: the text settled at build time (with its title style);
@@ -1132,12 +1134,17 @@ static void language_rows(ctx_t *c) {
         snprintf(name, sizeof name, "RpLangU_%s", L->code);
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
         seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, u, ")")), 17);
+        if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
         snprintf(name, sizeof name, "RpLangS_%s", L->code);
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
         seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, sy, ")")), 18);
+        if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
     }
     ca(c, "RpLangEn", "RPLANGUAGE", "en");
     seq(c, "RpLangEn", "NOT RPLANGUAGE", 19);
+    // With the status line's texts the language is settled in the execute sequence too: a run
+    // without dialogs (/qb) never goes through the UI sequence.
+    if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
     if (c->page) {
         prop(c, "RPLANGUAGEUI", "en");
         ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
@@ -1330,6 +1337,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     // property the chosen language fills, as every other text.
     bool act = true;
     for (size_t i = 0; i < c->nlang; ++i) act = act && (strcmp(lang_code(c, i), "en") == 0 || strcmp(lang_code(c, i), "ko") == 0);
+    c->act = act;
     for (size_t i = 0; act && i < sizeof action_texts / sizeof action_texts[0]; ++i) {
         const action_text_t *a = &action_texts[i];
         const char *src[RP_UI_LANG_MAX] = { 0 };
