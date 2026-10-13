@@ -945,6 +945,26 @@ static const char *remove_name(keep_t *k, const char *name) {
     return kprintf(k, "%s|%s", kdup(k, sh[0] && sh[0] != '.' ? sh : "_"), name);
 }
 
+// The dir `id` lies in the user's profile (its base is one of the profile's folders).
+static bool dir_in_profile(const rp_ir_t *ir, const char *id) {
+    for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
+        const rp_ir_dir_t *d = NULL;
+        for (size_t i = 0; i < ir->dir_count; ++i) {
+            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
+        }
+        if (d == NULL) return false;
+        if (d->base) {
+            static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
+            for (size_t i = 0; i < sizeof profile / sizeof profile[0]; ++i) {
+                if (strcmp(d->base, profile[i]) == 0) return true;
+            }
+            return false;
+        }
+        id = d->parent;
+    }
+    return false;
+}
+
 static void lower_removes(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -956,12 +976,14 @@ static void lower_removes(pkg_t *pk) {
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
-        // A recursive remove installs nothing: its component sits at TARGETDIR, as the registry
-        // ones, and creates no folder (in the user's profile that is ICE38 and ICE64).
-        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, r->recursive ? "TARGETDIR" : dkey(ir, r->dir));
+        // A recursive remove of a folder in the user's profile: its component sits at TARGETDIR, as
+        // the registry ones, and creates no folder - a component in the profile wants an HKCU key
+        // path (ICE38). Elsewhere the folder is made at installation, by the installer, as before.
+        bool aside = r->recursive && dir_in_profile(ir, r->dir);
+        s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, aside ? "TARGETDIR" : dkey(ir, r->dir));
         i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
-        if (!r->recursive) { s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey); }       // its key path is the folder (ICE18)
+        if (!aside) { s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey); }       // its key path is the folder (ICE18)
         // upgrade = false: the removal part is the helper DLL's (RP_REMOVES: Directory key, pattern or
         // "" for the folder itself, component), which skips it when an upgrade removes this version;
         // the RemoveFile row keeps only the installation part.
