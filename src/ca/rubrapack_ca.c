@@ -2094,8 +2094,8 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
 // done under it (a file copied, a value written, a shortcut made). With the page's check box
 // ticked the box holds the log's lines as they are.
 // It ends when the log says ExecuteAction has ended, when RpDetailsDone (after ExecuteAction) sets
-// its event, when the box is gone, or when nothing was logged for a while and no installation
-// holds Windows Installer's execution mutex. It never fails the installation: without a log, a
+// its event, when the box is gone, or when nothing was logged for three seconds and no installation
+// holds Windows Installer's execution mutex (after the service was seen at work). It never fails the installation: without a log, a
 // box or a readable line, the page simply shows the progress bar as before.
 
 typedef struct {
@@ -2295,7 +2295,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     size_t cap = 1u << 16, len = 0, shown = 0, bytes_cap = 1u << 16, carry = 0;
     wchar_t *raw = HeapAlloc(GetProcessHeap(), 0, cap * sizeof *raw);
     uint8_t *bytes = HeapAlloc(GetProcessHeap(), 0, bytes_cap + 2);
-    bool utf16 = false, first = true, full = false, started = false, ended = false;
+    bool utf16 = false, first = true, full = false, started = false, seen = false, ended = false;
     DWORD quiet_since = GetTickCount(), born = GetTickCount();
     if (log == NULL || log[0] == 0 || raw == NULL || bytes == NULL) goto out;
     for (int i = 0; i < 100 && win.dlg == NULL; ++i) {         // the progress page, up to ten seconds
@@ -2399,8 +2399,14 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         if (ended) break;
         if (WaitForSingleObject(done ? done : GetCurrentProcess(), 150) == WAIT_OBJECT_0 && done) break;
         if (!IsWindow(win.edit)) break;
+        // A failed or cancelled run may say nothing more (and a log without the flush flag, one
+        // named with /l, says its last lines late): once the service was at work - by its lines or
+        // by the execution mutex - quiet and a free mutex mean the run is over.
         DWORD now = GetTickCount();
-        if (now - quiet_since > 3000 && started && !det_executing()) break;         // a failed or cancelled run says nothing more
+        bool executing = det_executing();
+        if (executing) seen = true;
+        if (now - quiet_since > 3000 && (started || seen) && !executing) break;
+        if (now - quiet_since > 60000 && !started && !seen) break;                  // nothing ever ran
         if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
     }
 out:
