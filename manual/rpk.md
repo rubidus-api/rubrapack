@@ -1019,18 +1019,25 @@ only Windows Installer's own progress bar.
 | `ui` | Installing | Already installed |
 |---|---|---|
 | `none` | Windows Installer's progress bar | a small window: Repair, Remove or Cancel |
-| `basic` | progress, then finished (or error) | repair or remove |
-| `minimal` | welcome, the license if there is one, progress, finished | repair or remove |
-| `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | repair or remove |
-| `features` | as `installdir`, plus a feature tree and the disk space it needs | repair or remove |
+| `basic` | progress, then finished (or error) | change (with features to choose), repair or remove |
+| `minimal` | welcome, the license if there is one, progress, finished | change (with features to choose), repair or remove |
+| `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | change (with features to choose), repair or remove |
+| `features` | as `installdir`, plus a feature tree and the disk space it needs | change, repair or remove |
 
 "Already installed" is the same package opened again (a double click, `msiexec /i`, or Modify in
 Installed apps) with the product - this version - installed: Repair puts back missing or damaged
-files and settings, Remove removes the product. Nothing is asked when the command line has already
+files and settings, Remove removes the product. **Remove asks once more** before anything is
+removed: the dialog sets show a page that says what goes (the program's settings and data too, when
+the package wipes them - see [Wiping at removal](#wiping-at-removal-recursive-on--uninstall)), on
+which Back is the default button; the window of `none` asks Yes or No, with No as the default.
+**Change** is there when the package has a feature the user may turn on or off (one that is not
+`hidden` and not `required`), in every set: it leads to the feature tree, and Install there adds
+the features turned on and takes out those turned off. The window of `none` has no Change (it
+cannot show a tree): there the command line does it (`ADDLOCAL=`, `REMOVE=`). Nothing is asked when the command line has already
 chosen (`REINSTALL`, `REMOVE`, `ADDLOCAL`, `msiexec /f`, `/x`) or at `/qn`, `/qb` and `/qr`, where
 the run repairs nothing and changes nothing. A newer version's package is an upgrade, not this. The
 window of `none` is in English, or Korean for a Korean user; its texts are `MaintTitle`, `MaintText`,
-`Repair`, `Remove` and `Cancel` below.
+`Repair`, `Remove`, `Cancel` and `RemoveAsk` (`RemoveAskAll` when the package wipes) below.
 
 Every set also has the cancel question, the error dialog, the files-in-use list and the
 out-of-disk-space warning. The files-in-use list comes when a program with a window holds a file
@@ -1068,6 +1075,9 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`, `FilesInUseText`,
 `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`,
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
+`Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`, `RemoveConfirmTextAll`,
+`RemoveAsk`, `RemoveAskAll` (the second question before a removal; another language that does not
+give these five gets English),
 `LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), `PreflightAsk`,
 `PreflightSilent`, `PreflightFolder`, `PreflightCache` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
@@ -1120,6 +1130,10 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   one the user's computer lacks is replaced by Windows with a similar one.
 - A text that uses a property other than `[ProductName]`, `[Manufacturer]` and `[ProductVersion]`
   is formatted when the language is chosen, and must fit 255 characters.
+- The progress page's status line ("Copying new files", "Updating component registration") is the
+  package's, in English and Korean, and follows the chosen language. A package with another
+  language among its `languages` keeps Windows Installer's own words there, which follow Windows;
+  so does a package without dialogs.
 - Windows Installer's own texts - the feature tree's menu, sizes, the time left, and its error
   messages - are not the package's: the first stay English, the error messages follow Windows.
 - `[package] language` sets only the package's language (`ProductLanguage`, the summary). Since
@@ -1235,7 +1249,10 @@ Before an installation, an upgrade or a removal changes anything, the package lo
   product first, and nothing is installed. A removal is never refused for these.
 
 `close-programs = "always"` closes without asking, `"never"` never closes and never asks (also at
-`/qn`); `"ask"` is the default. For an input method or a shell extension, `"never"` is the usual
+`/qn`); `"ask"` is the default. A removal is no different: with `"always"` (or `RPCLOSE=yes`) the
+product's running programs are asked to close and, a few seconds later, ended, and then the product
+is removed; a silent removal (`/qn`) of a package that says nothing stops with 1603 while one of
+them is open, rather than end a program nobody was asked about. For an input method or a shell extension, `"never"` is the usual
 choice: nearly every open program has its DLL loaded, so `"ask"` would put the question at every
 upgrade and removal and stop every silent one, while the files are replaced safely without closing
 anything (the old copies go through the cleanup task). `RPCLOSE=yes` or `RPCLOSE=no` on the command
@@ -1319,7 +1336,9 @@ stays after uninstall (for data the program writes).
 Without any `[feature.*]` table everything goes into one hidden feature. As soon as one feature is
 declared, every file needs one: its own `feature` key, or the `feature` of its dir. A feature with
 a `level` above 1 is not installed by default. With `ui = "features"` the user picks features in a
-tree, and changes them later from Installed apps (Change on the maintenance page).
+tree. Later - in every dialog set, not only `features` - the same package opened again (or Modify
+in Installed apps) offers Change, which leads to that tree: a feature left out at first is added, one
+no longer wanted is taken out (see [Dialogs: `ui`](#dialogs-ui)).
 
 - `required = true`: the tree offers no "will be unavailable" for it.
 - `follow-parent = true`: installed wherever its parent is (on this computer, or not at all).

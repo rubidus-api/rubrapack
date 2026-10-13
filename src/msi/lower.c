@@ -1254,6 +1254,10 @@ static void lower_helper_actions(pkg_t *pk) {
                 s_(&pk->property, rp_ui_text_lang(ir, ids[t], base[b]));
             }
         }
+        for (size_t b = 0; b < 2; ++b) {        // the second question before a removal
+            s_(&pk->property, kprintf(k, "RpPreRemoveAsk_%s", base[b], NULL));
+            s_(&pk->property, rp_ui_text_lang(ir, rp_ui_wipes(ir) ? "RemoveAskAll" : "RemoveAsk", base[b]));
+        }
         s_(&pk->customaction, "RP_Maintain"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpMaintain");
         pk->maintain = true;
     }
@@ -1808,6 +1812,9 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     }
     for (size_t i = 0; pk->ui && i < pk->ui->seq_count; ++i) {
         s_(&pk->iui, pk->ui->seqs[i].action); s_(&pk->iui, pk->ui->seqs[i].condition); i_(&pk->iui, pk->ui->seqs[i].sequence);
+        if (pk->ui->seqs[i].exec) {
+            s_(&pk->iexec, pk->ui->seqs[i].action); s_(&pk->iexec, pk->ui->seqs[i].condition); i_(&pk->iexec, pk->ui->seqs[i].sequence);
+        }
         // The finished, cancelled and failed pages end an administrative installation too (ICE20).
         if (pk->ui->seqs[i].sequence < 0) {
             s_(&pk->aui, pk->ui->seqs[i].action); s_(&pk->aui, pk->ui->seqs[i].condition); i_(&pk->aui, pk->ui->seqs[i].sequence);

@@ -54,11 +54,13 @@ target = "file:Hello"
 
 | `ui` | When installing | When run again after installation |
 |---|---|---|
-| (none) | Windows Installer's own small progress window only | the same |
-| `basic` | progress, then finished (or an error) | progress, finished |
+| (none) | Windows Installer's own small progress window only | a small window: repair or remove |
+| `basic` | progress, then finished (or an error) | repair or remove |
 | `minimal` | welcome, the license (if any), progress, finished | repair or remove |
 | `installdir` | welcome, license, install folder (with a folder browser), ready, progress, finished | repair or remove |
-| `features` | as `installdir`, plus a tree of features and the disk space they need (chapter 8) | repair, change or remove |
+| `features` | as `installdir`, plus a tree of features and the disk space they need (chapter 8) | change, repair or remove |
+
+A package with optional parts (chapter 8) has Change in every row but the first.
 
 Every set also has the pages Windows needs when something happens: "Are you sure you want to
 cancel?", an error message, "these programs use files that must be replaced" (files in use), and
@@ -121,7 +123,8 @@ button out, and with it the logging.
 
 Double-click `hello.msi`: welcome (with your text and the banner), the license (Next is grey until
 you tick the box), the install folder, ready, progress, finished with "Launch Hello" ticked. Run
-it again after installing: a page offers Repair and Remove.
+it again after installing: a page offers Repair and Remove. Remove does not remove at once: a
+second page says what will go, and its Remove button does it (Back, the default, returns).
 
 ![Welcome, with the text of `[ui-text.WelcomeText]`](../images/ch06-welcome.png)
 

@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 151552 bytes: the
-header sector and 36 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 155648 bytes: the
+header sector and 37 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -146,9 +146,9 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 1 | `0x2000` | `FFFFFFFE` | directory |
 | 2 | `0x3000` | `FFFFFFFE` | mini FAT |
 | 3 | `0x4000` | 4 | mini stream |
-| 4 | `0x5000` | 5 | mini stream |
-| 5 | `0x6000` | `FFFFFFFE` | mini stream |
-| 6 | `0x7000` | 7 | `Binary.RpCa` |
+| 4 | `0x5000` | `FFFFFFFE` | mini stream |
+| 5 | `0x6000` | 6 | `_StringData` |
+| 6 | `0x7000` | `FFFFFFFE` | `_StringData` |
 | 7 | `0x8000` | 8 | `Binary.RpCa` |
 | 8 | `0x9000` | 9 | `Binary.RpCa` |
 | 9 | `0xA000` | 10 | `Binary.RpCa` |
@@ -175,9 +175,10 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 30 | `0x1F000` | 31 | `Binary.RpCa` |
 | 31 | `0x20000` | 32 | `Binary.RpCa` |
 | 32 | `0x21000` | 33 | `Binary.RpCa` |
-| 33 | `0x22000` | `FFFFFFFE` | `Binary.RpCa` |
-| 34 | `0x23000` | 35 | `cab1.cab` |
-| 35 | `0x24000` | `FFFFFFFE` | `cab1.cab` |
+| 33 | `0x22000` | 34 | `Binary.RpCa` |
+| 34 | `0x23000` | `FFFFFFFE` | `Binary.RpCa` |
+| 35 | `0x24000` | 36 | `cab1.cab` |
+| 36 | `0x25000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 
@@ -190,8 +191,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `07 00 00 00` | child | entry 7 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `00 24 00 00 00 00 00 00` | size | 9216 |
+| 120 | `40 14 00 00 00 00 00 00` | size | 5184 |
 
-The root's size is the mini stream's: 9216 bytes, holding 21 of the 23 streams in 64-byte mini
-sectors; 2 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
+The root's size is the mini stream's: 5184 bytes, holding 20 of the 23 streams in 64-byte mini
+sectors; 3 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
 continues with the streams' names and contents.

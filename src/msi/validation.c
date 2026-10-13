@@ -149,6 +149,7 @@ static const rule_t rules[] = {
     R("TextStyle", "TextStyle", "Identifier"), R("TextStyle", "FaceName", "Text"), RN("TextStyle", "Size", 0, 32767),
     RN("TextStyle", "Color", 0, 16777215), RN("TextStyle", "StyleBits", 0, 15),
     R("UIText", "Key", "Identifier"), R("UIText", "Text", "Text"),
+    R("ActionText", "Action", "Identifier"), R("ActionText", "Description", "Text"), R("ActionText", "Template", "Template"),
     R("RadioButton", "Property", "Identifier"), RN("RadioButton", "Order", 1, 32767),
     R("RadioButton", "Value", "Formatted"), RN("RadioButton", "X", 0, 32767), RN("RadioButton", "Y", 0, 32767),
     RN("RadioButton", "Width", 0, 32767), RN("RadioButton", "Height", 0, 32767), R("RadioButton", "Text", "Text"),

@@ -940,16 +940,22 @@ msiexec /x {ProductCode} /qn
 | `ui` | 설치할 때 | 이미 설치되어 있을 때 |
 |---|---|---|
 | `none` | Windows Installer 의 진행 막대 | 작은 창: 복구, 제거 또는 취소 |
-| `basic` | 진행, 끝(또는 오류) | 복구 또는 제거 |
-| `minimal` | 환영, 사용권(있으면), 진행, 끝 | 복구 또는 제거 |
-| `installdir` | 환영, 사용권, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 끝 | 복구 또는 제거 |
-| `features` | `installdir` 에 더해 기능 트리와 필요한 디스크 공간 | 복구 또는 제거 |
+| `basic` | 진행, 끝(또는 오류) | 변경(고를 기능이 있으면), 복구 또는 제거 |
+| `minimal` | 환영, 사용권(있으면), 진행, 끝 | 변경(고를 기능이 있으면), 복구 또는 제거 |
+| `installdir` | 환영, 사용권, 설치 폴더(폴더 찾아보기 포함), 준비, 진행, 끝 | 변경(고를 기능이 있으면), 복구 또는 제거 |
+| `features` | `installdir` 에 더해 기능 트리와 필요한 디스크 공간 | 변경, 복구 또는 제거 |
 
 "이미 설치되어 있을 때"는 제품 - 이 버전 - 이 설치된 상태에서 같은 패키지를 다시 연 경우다(두 번 누르기,
-`msiexec /i`, "설치된 앱"의 수정). 복구는 빠지거나 망가진 파일과 설정을 되살리고, 제거는 제품을 지운다. 명령줄이
+`msiexec /i`, "설치된 앱"의 수정). 복구는 빠지거나 망가진 파일과 설정을 되살리고, 제거는 제품을 지운다. **제거는 지우기 전에 한 번 더 묻는다**:
+대화창 세트는 무엇이 지워지는지 말하는 페이지를 보이고(패키지가 프로그램의 설정과 데이터까지 지우면 그것도 말한다 -
+[제거할 때 싹 지우기](#제거할-때-싹-지우기-recursive-on--uninstall) 참고) 그 페이지의 기본 단추는 '뒤로'다. `none` 의
+창은 예/아니요로 묻고 기본은 '아니요'다. **변경**은 패키지에 사용자가 켜고 끌 수 있는 기능(`hidden` 도 `required` 도
+아닌 기능)이 있으면 모든 세트에 나온다: 기능 트리로 가고, 거기서 '설치'를 누르면 켠 기능을 더하고 끈 기능을 뺀다.
+`none` 의 창에는 변경이 없다(트리를 보일 수 없다): 거기서는 명령줄로 한다(`ADDLOCAL=`, `REMOVE=`). 명령줄이
 이미 골랐거나(`REINSTALL`, `REMOVE`, `ADDLOCAL`, `msiexec /f`, `/x`) `/qn`, `/qb`, `/qr` 이면 묻지 않고, 그때는
 아무것도 복구하거나 바꾸지 않는다. 더 새 버전의 패키지는 업그레이드이지 이 경우가 아니다. `none` 의 창은 영어이고
-한국어 사용자에게는 한국어다. 그 글은 아래의 `MaintTitle`, `MaintText`, `Repair`, `Remove`, `Cancel` 이다.
+한국어 사용자에게는 한국어다. 그 글은 아래의 `MaintTitle`, `MaintText`, `Repair`, `Remove`, `Cancel`, `RemoveAsk`(패키지가 싹 지우면
+`RemoveAskAll`)다.
 
 모든 세트에는 취소 확인, 오류 대화창, 사용 중인 파일 목록, 디스크 공간 부족 경고도 있다. 사용 중인 파일
 목록은 창이 있는 프로그램이 바꾸거나 지울 파일을 쥐고 있을 때 나온다 - 입력기나 셸 확장이면 거의 모든
@@ -983,7 +989,9 @@ text = "This will install [ProductName]. Close other programs first."
 `ReadyText`, `ProgressTitle`, `ProgressText`, `ProgressStatus`, `ExitTitle`, `ExitText`,
 `UserExitTitle`, `UserExitText`, `FatalTitle`, `FatalText`, `CancelText`, `FilesInUseTitle`,
 `FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
-`RepairText`, `Remove`, `RemoveText`, `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
+`RepairText`, `Remove`, `RemoveText`, `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`,
+`RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
+쓴다), `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
@@ -1032,6 +1040,9 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   컴퓨터에 없는 글꼴은 Windows 가 비슷한 것으로 바꾼다.
 - `[ProductName]`, `[Manufacturer]`, `[ProductVersion]` 밖의 속성을 쓰는 문구는 언어를 고를 때 서식이
   풀리므로 255자 안이어야 한다.
+- 진행 페이지의 상태 줄("새 파일 복사 중", "구성 요소 등록 갱신 중")은 패키지의 것으로, 영어와 한국어가 있고 고른
+  언어를 따른다. `languages` 에 다른 언어가 든 패키지는 거기에 Windows Installer 자신의 말이 그대로 나오고, 그것은
+  Windows 를 따른다. 대화창 없는 패키지도 그렇다.
 - Windows Installer 자신의 문구 - 기능 트리 메뉴, 크기, 남은 시간, 오류 메시지 - 는 패키지 것이 아니다:
   앞의 것들은 영어로 남고, 오류 메시지는 Windows 를 따른다.
 - `[package] language` 는 패키지의 언어(`ProductLanguage`, 요약 정보)만 정한다. 0.2 부터는 대화창을
@@ -1136,7 +1147,9 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
   띄우고 아무것도 설치하지 않는다. 제거는 이 때문에 거절되지 않는다.
 
 `close-programs = "always"` 는 묻지 않고 종료하고, `"never"` 는 종료하지도 묻지도 않는다(`/qn` 에서도). 기본은 `"ask"`
-다. 입력기나 셸 확장에는 보통 `"never"` 를 쓴다: 열려 있는 거의 모든 프로그램이 그 DLL 을 싣고 있어 `"ask"` 면 업그레이드와
+다. 제거도 다르지 않다: `"always"`(또는 `RPCLOSE=yes`)면 제품의 실행 중인 프로그램에 닫으라고 하고 몇 초 뒤 남은 것을
+끝낸 다음 제품을 제거한다. 아무 말도 없는 패키지의 조용한 제거(`/qn`)는 그 프로그램이 하나라도 열려 있으면 1603 으로
+멈춘다 - 아무에게도 묻지 않은 프로그램을 끝내지 않기 위해서다. 입력기나 셸 확장에는 보통 `"never"` 를 쓴다: 열려 있는 거의 모든 프로그램이 그 DLL 을 싣고 있어 `"ask"` 면 업그레이드와
 제거 때마다 질문이 나오고 조용한 실행은 매번 멈추는데, 파일은 아무것도 종료하지 않고도 안전하게 바뀐다(옛 사본은 정리 작업이
 치운다). 명령줄의 `RPCLOSE=yes` 나 `RPCLOSE=no` 는 패키지의 설정보다 앞선다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
 `PreflightCache` 다(`[ui-text.*]`; 영어와 한국어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
@@ -1204,8 +1217,9 @@ Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 �
 
 `[feature.*]` 표가 없으면 모든 것이 숨은 기능 하나에 든다. 기능을 하나라도 선언하면 모든 파일에
 기능이 있어야 한다: 파일 자신의 `feature` 키, 또는 그 dir 의 `feature`. `level` 이 1 보다 큰 기능은
-기본으로 설치하지 않는다. `ui = "features"` 면 사용자가 트리에서 기능을 고르고, 나중에 "설치된 앱"에서
-바꿀 수 있다(유지보수 페이지의 "변경").
+기본으로 설치하지 않는다. `ui = "features"` 면 사용자가 트리에서 기능을 고른다. 나중에는 - `features` 만이
+아니라 모든 대화창 세트에서 - 같은 패키지를 다시 열면(또는 "설치된 앱"의 수정) "변경"이 나오고, 그것이 그 트리로
+간다: 처음에 뺀 기능을 더하고, 필요 없어진 기능을 뺀다([대화창: ui](#대화창-ui) 참고).
 
 - `required = true`: 트리에서 "설치하지 않음"을 고를 수 없다.
 - `follow-parent = true`: 부모가 설치되는 대로 따라간다.

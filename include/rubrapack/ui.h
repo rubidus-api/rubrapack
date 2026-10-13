@@ -23,6 +23,7 @@ typedef struct {
 typedef struct {
     const char *action, *condition;
     int         sequence;
+    bool        exec;           // in InstallExecuteSequence too (the status line's language)
 } rp_ui_seq_t;
 
 typedef struct rp_ui rp_ui_t;
@@ -76,6 +77,10 @@ const char *rp_ui_text_id(size_t i);
 // [ProductName], [Manufacturer], [ProductVersion] and [\x] escapes. Other texts are formatted when
 // the language is chosen, and must fit a 255-character column.
 bool rp_ui_text_static(const char *text);
+
+// The package wipes what the program made at removal ([remove] recursive, [registry] on =
+// "uninstall"): the question before a removal says so.
+bool rp_ui_wipes(const rp_ir_t *ir);
 
 // A typeface name as the license text's RTF can name it: an ASCII name as it is, the local name of
 // a common Korean, Japanese or Chinese face as its English one ("맑은 고딕" -> "Malgun Gothic"), else

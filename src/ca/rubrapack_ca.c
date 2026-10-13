@@ -1820,7 +1820,8 @@ __declspec(dllexport) UINT __stdcall RpPurge(MSIHANDLE h) {
 //
 // RpMaintain, immediate, in the UI sequence of a package without dialogs (ui = "none"), when the
 // product is already installed and nothing was chosen on the command line: Repair, Remove or
-// Cancel, in a window of its own. The dialog sets have a page for this (RpMaintenanceDlg). The
+// Cancel, in a window of its own; Remove is asked once more (Yes / No). The dialog sets have pages
+// for this (RpMaintenanceDlg, RpRemoveDlg). The
 // choice is what the command line would have said: REINSTALL=ALL REINSTALLMODE=ecmus, or REMOVE=ALL.
 // Texts: the RpPreMaint* properties, as the preflight's.
 
@@ -1844,12 +1845,18 @@ static wchar_t *maint_text(MSIHANDLE h, const wchar_t *id) {
 }
 
 __declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
-    wchar_t *t[5];
-    static const wchar_t *const ids[5] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel" };
-    for (size_t i = 0; i < 5; ++i) t[i] = maint_text(h, ids[i]);
+    wchar_t *t[6];
+    static const wchar_t *const ids[6] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel", L"RemoveAsk" };
+    for (size_t i = 0; i < 6; ++i) t[i] = maint_text(h, ids[i]);
     rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel" };
-    int r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
-    for (size_t i = 0; i < 5; ++i) {
+    int r;
+    for (;;) {
+        r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
+        // Remove is asked once more (No is the default button, and leads back to the question).
+        if (r != RP_ASK_SECOND || MessageBoxW(NULL, t[5] ? t[5] : L"Remove?", a.title,
+                                              MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) break;
+    }
+    for (size_t i = 0; i < 6; ++i) {
         if (t[i]) HeapFree(GetProcessHeap(), 0, t[i]);
     }
     if (r == RP_ASK_FIRST) {

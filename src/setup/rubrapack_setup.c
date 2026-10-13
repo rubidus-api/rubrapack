@@ -237,7 +237,12 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     const wchar_t *extra = L"";
     if (all && !uninstall && !repair && !quiet && !passive) {
         rp_ask_t a = { title, L"These programs are already installed. Choose what to do.", L"Re&pair", L"&Remove", L"Cancel" };
-        int r = rp_ask(NULL, &a);
+        int r;
+        for (;;) {      // Remove is asked once more (No is the default button, and leads back)
+            r = rp_ask(NULL, &a);
+            if (r != RP_ASK_SECOND || MessageBoxW(NULL, L"Remove these programs from this computer?", title,
+                                                  MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) break;
+        }
         if (r == RP_ASK_CANCEL) {
             CloseHandle(f);
             return EXIT_CANCELLED;

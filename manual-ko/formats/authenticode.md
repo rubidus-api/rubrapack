@@ -149,11 +149,11 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 4088 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 776 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 4220 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 792 |
 | 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 156 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 48 |
-| 16 | `40 48 59 45 f2 44` ... | `Property` | 128 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 136 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
 | 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
@@ -166,12 +166,12 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 `\005MsiDigitalSignatureEx` 의 값이다:
 
 ```text
-f1 fb af a5 af e5 2a e2 25 de b5 20 78 2a 18 80 0f 4c 54 c4 11 f7 74 73 df 7e de ef 3b 17 d7 34
+23 ae 8c c8 7f 25 a3 19 97 cc 93 28 4e 2c 2b 3c 40 f8 b7 f6 48 23 b0 69 0e 44 c3 2c d8 a8 2d 3f
 ```
 
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-5f f9 43 1e 82 0d df 9b 29 a3 99 1f 06 2a 8f 64 ab c9 90 a1 96 97 ad 99 bb 91 6d d5 5d 8d 87 78
+bb 59 1d 13 41 ed af 14 98 55 c0 8c a0 8a e4 0b a4 ec ea e8 b1 65 13 13 f3 19 06 23 4c d5 60 5b
 ```
 

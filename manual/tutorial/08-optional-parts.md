@@ -163,7 +163,9 @@ Windows Installer works).
 
 After installation, Installed apps offers Modify for Hello; it opens the installer's maintenance
 page with **Change**, **Repair** and **Remove**. Change shows the same tree with what is installed
-ticked; the user adds or removes parts. From the command line on an installed product:
+ticked; the user adds or removes parts - the samples left out at first are installed this way,
+without removing anything. The page has Change with the other dialog sets too (`basic`, `minimal`,
+`installdir`), although they show no tree at installation. From the command line on an installed product:
 
 ```text
 msiexec /i hello.msi ADDLOCAL=Samples

@@ -93,6 +93,18 @@ static const text_t texts[] = {
     { "RepairText", "빠지거나 망가진 파일과 설정을 되살립니다.", "Restore missing or damaged files and settings." },
     { "Remove", "제거(&R)", "&Remove" },
     { "RemoveText", "[ProductName]을(를) 이 컴퓨터에서 지웁니다.", "Remove [ProductName] from this computer." },
+    // The second question before a removal chosen on the maintenance page (RpRemoveDlg), and the
+    // same in one sentence for the window of a package without dialogs (RemoveAsk). The *All texts
+    // are for a package that wipes what the program made ([remove] recursive, [registry] on =
+    // "uninstall"). A language that does not give them gets English.
+    { "RemoveConfirmTitle", "[ProductName] 제거", "Remove [ProductName]" },
+    { "RemoveConfirmText", "'제거'를 누르면 [ProductName]을(를) 이 컴퓨터에서 지웁니다. 그만두려면 '뒤로'나 '취소'를 누르십시오.",
+      "Click Remove to remove [ProductName] from this computer. Click Back or Cancel to keep it." },
+    { "RemoveConfirmTextAll", "'제거'를 누르면 [ProductName]을(를) 이 컴퓨터에서 지웁니다. 이 프로그램의 설정과 데이터도 함께 지워지며 되돌릴 수 없습니다. 그만두려면 '뒤로'나 '취소'를 누르십시오.",
+      "Click Remove to remove [ProductName] from this computer. Its settings and data are deleted with it and cannot be brought back. Click Back or Cancel to keep it." },
+    { "RemoveAsk", "[ProductName]을(를) 이 컴퓨터에서 제거할까요?", "Remove [ProductName] from this computer?" },
+    { "RemoveAskAll", "[ProductName]을(를) 이 컴퓨터에서 제거할까요? 이 프로그램의 설정과 데이터도 함께 지워지며 되돌릴 수 없습니다.",
+      "Remove [ProductName] from this computer? Its settings and data are deleted with it and cannot be brought back." },
     // The preflight's messages (helper DLL, RpPreflight): [1] how many or what, [2] the list or the
     // removal command, [3] the product. A language that does not give them gets English.
     { "PreflightAsk", "[1]개 프로그램이 [3]의 파일을 쓰고 있습니다:\r\n[2]\r\n모두 종료할까요?\r\n\r\n예(Yes): 모두 종료하고 계속합니다(저장하지 않은 작업은 잃을 수 있습니다).\r\n아니요(No): 종료하지 않고 계속합니다(열린 프로그램은 다시 열 때까지 이전 파일을 씁니다).\r\n취소(Cancel): 그만둡니다.",
@@ -146,6 +158,64 @@ bool rp_ui_text_static(const char *text) {
 }
 
 // UIText rows the engine asks for (sizes, selection tree menus, volume list columns).
+// The progress page's status line: what each of Windows Installer's actions is doing (the
+// ActionText table). Without the table Windows Installer shows its own words, in the language of
+// Windows - English under a Korean dialog, on an English Windows. The template is the line the log
+// gets for each item, in English as Windows Installer's own.
+typedef struct {
+    const char *action, *ko, *en, *tmpl;
+} action_text_t;
+
+static const action_text_t action_texts[] = {
+    { "AppSearch", "설치된 프로그램 찾는 중", "Searching for installed applications", "Property: [1], Signature: [2]" },
+    { "CostFinalize", "필요한 공간 계산 중", "Computing space requirements", NULL },
+    { "CostInitialize", "필요한 공간 계산 중", "Computing space requirements", NULL },
+    { "CreateFolders", "폴더 만드는 중", "Creating folders", "Folder: [1]" },
+    { "CreateShortcuts", "바로 가기 만드는 중", "Creating shortcuts", "Shortcut: [1]" },
+    { "DeleteServices", "서비스 지우는 중", "Deleting services", "Service: [1]" },
+    { "DuplicateFiles", "파일 사본 만드는 중", "Creating duplicate files", "File: [1], Directory: [9], Size: [6]" },
+    { "FileCost", "필요한 공간 계산 중", "Computing space requirements", NULL },
+    { "FindRelatedProducts", "관련 프로그램 찾는 중", "Searching for related applications", "Found application: [1]" },
+    { "GenerateScript", "할 일 정리 중:", "Generating script operations for action:", "[1]" },
+    { "InstallFiles", "새 파일 복사 중", "Copying new files", "File: [1], Directory: [9], Size: [6]" },
+    { "InstallServices", "새 서비스 설치 중", "Installing new services", "Service: [2]" },
+    { "InstallValidate", "설치 확인 중", "Validating install", NULL },
+    { "LaunchConditions", "설치 조건 확인 중", "Evaluating launch conditions", NULL },
+    { "MigrateFeatureStates", "이전 판의 기능 선택 옮기는 중", "Migrating feature states from related applications", "Application: [1]" },
+    { "MoveFiles", "파일 옮기는 중", "Moving files", "File: [1], Directory: [9], Size: [6]" },
+    { "PatchFiles", "파일 패치 중", "Patching files", "File: [1], Directory: [2], Size: [3]" },
+    { "ProcessComponents", "구성 요소 등록 갱신 중", "Updating component registration", NULL },
+    { "PublishFeatures", "제품 기능 등록 중", "Publishing product features", "Feature: [1]" },
+    { "PublishProduct", "제품 정보 등록 중", "Publishing product information", NULL },
+    { "RegisterClassInfo", "클래스 등록 중", "Registering class servers", "Class ID: [1]" },
+    { "RegisterExtensionInfo", "파일 확장명 등록 중", "Registering extension servers", "Extension: [1]" },
+    { "RegisterFonts", "글꼴 등록 중", "Registering fonts", "Font: [1]" },
+    { "RegisterMIMEInfo", "MIME 정보 등록 중", "Registering MIME info", "MIME Content Type: [1], Extension: [2]" },
+    { "RegisterProduct", "제품 등록 중", "Registering product", "[1]" },
+    { "RegisterProgIdInfo", "프로그램 식별자 등록 중", "Registering program identifiers", "ProgID: [1]" },
+    { "RegisterUser", "사용자 등록 중", "Registering user", "[1]" },
+    { "RemoveEnvironmentStrings", "환경 변수 갱신 중", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
+    { "RemoveExistingProducts", "이전 판 제거 중", "Removing the older version", "Application: [1], Command line: [2]" },
+    { "RemoveFiles", "파일 제거 중", "Removing files", "File: [1], Directory: [9]" },
+    { "RemoveFolders", "폴더 제거 중", "Removing folders", "Folder: [1]" },
+    { "RemoveIniValues", "INI 파일 항목 제거 중", "Removing INI file entries", "File: [1], Section: [2], Key: [3], Value: [4]" },
+    { "RemoveRegistryValues", "레지스트리 값 제거 중", "Removing system registry values", "Key: [1], Name: [2]" },
+    { "RemoveShortcuts", "바로 가기 제거 중", "Removing shortcuts", "Shortcut: [1]" },
+    { "Rollback", "되돌리는 중:", "Rolling back action:", "[1]" },
+    { "RollbackCleanup", "백업 파일 지우는 중", "Removing backup files", "File: [1]" },
+    { "StartServices", "서비스 시작 중", "Starting services", "Service: [1]" },
+    { "StopServices", "서비스 중지 중", "Stopping services", "Service: [1]" },
+    { "UnpublishFeatures", "제품 기능 등록 지우는 중", "Unpublishing product features", "Feature: [1]" },
+    { "UnregisterClassInfo", "클래스 등록 지우는 중", "Unregistering class servers", "Class ID: [1]" },
+    { "UnregisterExtensionInfo", "파일 확장명 등록 지우는 중", "Unregistering extension servers", "Extension: [1]" },
+    { "UnregisterFonts", "글꼴 등록 지우는 중", "Unregistering fonts", "Font: [1]" },
+    { "UnregisterMIMEInfo", "MIME 정보 등록 지우는 중", "Unregistering MIME info", "MIME Content Type: [1], Extension: [2]" },
+    { "UnregisterProgIdInfo", "프로그램 식별자 등록 지우는 중", "Unregistering program identifiers", "ProgID: [1]" },
+    { "WriteEnvironmentStrings", "환경 변수 갱신 중", "Updating environment strings", "Name: [1], Value: [2], Action [3]" },
+    { "WriteIniValues", "INI 파일 값 쓰는 중", "Writing INI file values", "File: [1], Section: [2], Key: [3], Value: [4]" },
+    { "WriteRegistryValues", "레지스트리 값 쓰는 중", "Writing system registry values", "Key: [1], Name: [2], Value: [3]" },
+};
+
 static const text_t uitexts[] = {
     { "AbsentPath", "", "" },
     { "bytes", "바이트", "bytes" },
@@ -213,7 +283,7 @@ typedef struct {
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext;
     rp_ui_prop_t      *props;
     size_t             nprops, capprops;
     rp_ui_seq_t       *seqs;
@@ -253,6 +323,7 @@ static const rp_msi_wcolumn_t mapping_cols[] = { { "Dialog_", KEY_S(72) }, { "Co
 static const rp_msi_wcolumn_t style_cols[] = { { "TextStyle", KEY_S(72) }, { "FaceName", S(32) }, { "Size", I2 },
     { "Color", I4_N }, { "StyleBits", I2_N } };
 static const rp_msi_wcolumn_t uitext_cols[] = { { "Key", KEY_S(72) }, { "Text", L_N(255) } };
+static const rp_msi_wcolumn_t acttext_cols[] = { { "Action", KEY_S(72) }, { "Description", L_N(0) }, { "Template", L_N(0) } };
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t radio_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
     { "X", I2 }, { "Y", I2 }, { "Width", I2 }, { "Height", I2 }, { "Text", L_N(0) }, { "Help", L_N(50) } };
@@ -347,7 +418,7 @@ static int lang_seq(ctx_t *c) {
 }
 
 static void seq(ctx_t *c, const char *action, const char *cond, int n) {
-    if (grow(c, (void **)&c->seqs, &c->capseqs, c->nseqs, sizeof *c->seqs)) c->seqs[c->nseqs++] = (rp_ui_seq_t){ action, cond, n };
+    if (grow(c, (void **)&c->seqs, &c->capseqs, c->nseqs, sizeof *c->seqs)) c->seqs[c->nseqs++] = (rp_ui_seq_t){ action, cond, n, false };
 }
 
 static void ca(ctx_t *c, const char *action, const char *source, const char *target) {
@@ -517,12 +588,14 @@ static void frame(ctx_t *c, const char *dlg, const char *title, const char *text
 // Back; Cancel closes the cycle back to it.
 static void buttons(ctx_t *c, const char *dlg, const char *back, const char *next, const char *next_text,
                     const char *next_cond_disable, const char *first) {
-    control(c, dlg, "Back", "PushButton", 180, 243, 56, 17, back ? VIS | EN : VIS, NULL, T(c, "Back"), "Next");
+    control(c, dlg, "Back", "PushButton", 180, 243, 56, 17, back || c->maint_back ? VIS | EN : VIS, NULL, T(c, "Back"), "Next");
     control(c, dlg, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, next_text ? next_text : "Next"), "Cancel");
     control(c, dlg, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), first ? first : "Back");
     if (back && c->maint_back) {            // the feature tree, reached from the maintenance page too
         event(c, dlg, "Back", "NewDialog", back, "NOT Installed", 1);
         event(c, dlg, "Back", "NewDialog", "RpMaintenanceDlg", "Installed", 1);
+    } else if (c->maint_back) {             // ... and from nowhere else (a set without the tree page)
+        event(c, dlg, "Back", "NewDialog", "RpMaintenanceDlg", NULL, 1);
     } else if (back) {
         event(c, dlg, "Back", "NewDialog", back, NULL, 1);
     }
@@ -639,7 +712,28 @@ static void progress_and_exits(ctx_t *c) {
     seq(c, "RpProgressDlg", NULL, 1280);
 }
 
-// RFC-0013 A4: with the features set, Change (to the feature tree) comes first.
+// A package wipes what the program made at removal ([remove] recursive, [registry] on = "uninstall").
+bool rp_ui_wipes(const rp_ir_t *ir) {
+    for (size_t i = 0; i < ir->remove_count; ++i) {
+        if (ir->removes[i].recursive) return true;
+    }
+    for (size_t i = 0; i < ir->registry_count; ++i) {
+        if (ir->registries[i].purge) return true;
+    }
+    return false;
+}
+
+// A feature the user may turn on or off: the maintenance page then has Change, in every set.
+static bool choosable(const rp_ir_t *ir) {
+    for (size_t i = 0; i < ir->feature_count; ++i) {
+        const rp_ir_feature_t *f = &ir->features[i];
+        if (!f->implicit && !f->hidden && !f->required) return true;
+    }
+    return false;
+}
+
+// RFC-0013 A4: with features to choose, Change (to the feature tree) comes first. Remove asks once
+// more on a page of its own (RpRemoveDlg) before anything is removed.
 static void maintenance_dlg(ctx_t *c, bool change) {
     const char *d = "RpMaintenanceDlg";
     int y = change ? 40 : 0;
@@ -658,11 +752,22 @@ static void maintenance_dlg(ctx_t *c, bool change) {
     event(c, d, "Repair", "Reinstall", "ALL", NULL, 1);
     event(c, d, "Repair", "ReinstallMode", "ecmus", NULL, 2);
     event(c, d, "Repair", "EndDialog", "Return", NULL, 3);
-    event(c, d, "Remove", "Remove", "ALL", NULL, 1);
-    event(c, d, "Remove", "[RP_REMOVING]", "1", NULL, 2);     // the Remove event leaves REMOVE unset (observed)
-    event(c, d, "Remove", "EndDialog", "Return", NULL, 3);
+    event(c, d, "Remove", "NewDialog", "RpRemoveDlg", NULL, 1);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     if (!c->page) seq(c, d, "Installed AND NOT RESUME AND NOT Preselected", 1240);
+
+    const char *r = "RpRemoveDlg";          // Back is the default button: Enter does not remove
+    dialog(c, r, 370, 270, 3, "Back", "Back", "Cancel");
+    frame(c, r, "RemoveConfirmTitle", NULL, NULL);
+    control(c, r, "Text", "Text", 25, 65, 320, 60, VIS | NOPREFIX, NULL, T(c, rp_ui_wipes(c->ir) ? "RemoveConfirmTextAll" : "RemoveConfirmText"), NULL);
+    control(c, r, "Back", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Back"), "Next");
+    control(c, r, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Remove"), "Cancel");
+    control(c, r, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "Back");
+    event(c, r, "Back", "NewDialog", d, NULL, 1);
+    event(c, r, "Next", "Remove", "ALL", NULL, 1);
+    event(c, r, "Next", "[RP_REMOVING]", "1", NULL, 2);       // the Remove event leaves REMOVE unset (observed)
+    event(c, r, "Next", "EndDialog", "Return", NULL, 3);
+    event(c, r, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
 }
 
 static void welcome_dlg(ctx_t *c, const char *next, const char *next_text) {
@@ -734,7 +839,7 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     event(c, b, "Cancel", "EndDialog", "Return", NULL, 2);
 }
 
-static void customize_dlg(ctx_t *c, const char *back, const char *next) {
+static void customize_dlg(ctx_t *c, const char *back, const char *next, const char *next_text) {
     const char *d = "RpCustomizeDlg";
     dialog(c, d, 370, 270, 3 | 32, "Tree", "Next", "Cancel");
     frame(c, d, "CustomizeTitle", "CustomizeText", NULL);
@@ -748,7 +853,7 @@ static void customize_dlg(ctx_t *c, const char *back, const char *next) {
     event(c, d, "Reset", "Reset", "0", NULL, 1);
     event(c, d, "DiskCost", "SpawnDialog", "RpDiskCostDlg", NULL, 1);
     c->maint_back = true;
-    buttons(c, d, back, next, NULL, NULL, "Tree");
+    buttons(c, d, back, next, next_text, NULL, "Tree");
     c->maint_back = false;
 
     const char *k = "RpDiskCostDlg";
@@ -1002,6 +1107,8 @@ static const char *settle(ctx_t *c, const char *src) {
     return out;
 }
 
+// The status line's texts (ActionText) are set in InstallExecuteSequence as well: RPLANGUAGE
+// reaches it from the dialogs (it is a secure property), and a run without them (/qb) shows English.
 // Rows that put the chosen language's texts into the RpT_* properties (the oracle of RFC-0012: a
 // property's value is shown as it is, so each text is formatted when it is put in):
 //   - Property RpT_<key>_<code>: the text settled at build time (with its title style);
@@ -1066,6 +1173,9 @@ static void language_rows(ctx_t *c) {
                 snprintf(name, sizeof name, "RpL_%s_%d", code, ++n);
                 ca(c, keep(c, name, NULL), target, arg);
                 seq(c, keep(c, name, NULL), cnd, lang_seq(c));
+                // The status line is formatted where the installation is done (observed, x55): the
+                // property has to be set there too, in the execute sequence.
+                if (strncmp(r->key, "Act_", 4) == 0 && c->nseqs) c->seqs[c->nseqs - 1].exec = true;
             }
         }
     }
@@ -1175,7 +1285,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     *out = NULL;
     ctx_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     rp_ui_t *ui = rp_mem_alloc(alloc, 1, sizeof *ui);
-    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 11, sizeof *tables);
+    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 12, sizeof *tables);
     if (c == NULL || ui == NULL || tables == NULL) {
         rp_mem_free(alloc, c);
         rp_mem_free(alloc, ui);
@@ -1199,6 +1309,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->radio, "RadioButton", radio_cols, 9);
     rows_init(&c->combo, "ComboBox", combo_cols, 4);
     rows_init(&c->listbox, "ListBox", listbox_cols, 4);
+    rows_init(&c->acttext, "ActionText", acttext_cols, 3);
 
     // Fonts: each language's face (P1a: Hangul shows in the Korean face), Segoe UI for English.
     // With several languages the styles carry the language's code, and the chosen language picks
@@ -1213,6 +1324,19 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     // The engine's own texts (sizes, feature tree menus) have one table: English.
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
         s_(c, &c->uitext, uitexts[i].id); s_(c, &c->uitext, uitexts[i].en);
+    }
+    // The status line's texts, when every language is one these are written in (another language
+    // keeps Windows Installer's own, which follow Windows). With several languages the text is a
+    // property the chosen language fills, as every other text.
+    bool act = true;
+    for (size_t i = 0; i < c->nlang; ++i) act = act && (strcmp(lang_code(c, i), "en") == 0 || strcmp(lang_code(c, i), "ko") == 0);
+    for (size_t i = 0; act && i < sizeof action_texts / sizeof action_texts[0]; ++i) {
+        const action_text_t *a = &action_texts[i];
+        const char *src[RP_UI_LANG_MAX] = { 0 };
+        for (size_t li = 0; li < c->nlang; ++li) src[li] = strcmp(lang_code(c, li), "ko") == 0 ? a->ko : a->en;
+        s_(c, &c->acttext, a->action);
+        s_(c, &c->acttext, c->multi ? reg_text(c, keep(c, "Act_", a->action), src, false) : src[0]);
+        s_(c, &c->acttext, a->tmpl);
     }
     white_bmp(c->white);
     rp_msi_cell_t *bn = NULL;
@@ -1286,20 +1410,22 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
             else if (strcmp(p, "RpLicenseDlg") == 0) license_dlg(c, rtf, back, next, next_text);
             else if (strcmp(p, "RpInstallDirDlg") == 0) installdir_dlg(c, back, next, dir);
             else if (strcmp(p, "RpScopeDlg") == 0) scope_dlg(c, back, next, next_text, dir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR");
-            else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next);
+            else if (strcmp(p, "RpCustomizeDlg") == 0) customize_dlg(c, back, next, NULL);
             else ready_dlg(c, back);
         }
         rp_mem_free(alloc, pages);
-        maintenance_dlg(c, ir->ui == RP_UI_FEATURES);
-        if (ir->ui >= RP_UI_INSTALLDIR) prop(c, "_RpBrowseProperty", dir);
-    } else {
-        maintenance_dlg(c, false);      // basic: no pages, but an installed product is asked what to do
     }
+    // Every set: an installed product is asked what to do (basic has no other page). With features
+    // to choose, Change leads to the feature tree - the set's own page, or one made for this.
+    bool change = ir->ui == RP_UI_FEATURES || choosable(ir);
+    if (change && ir->ui != RP_UI_FEATURES) customize_dlg(c, NULL, "", "Install");
+    maintenance_dlg(c, change);
+    if (ir->ui >= RP_UI_INSTALLDIR || change) prop(c, "_RpBrowseProperty", dir);
     if (c->multi) language_rows(c);
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox };
+    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext };
     size_t nt = 0;
-    for (size_t i = 0; i < 11; ++i) {
+    for (size_t i = 0; i < 12; ++i) {
         rows_t *r = all[i];
         // FilesInUse fills its ListBox from the ListBox table, which must exist even when empty
         // (error 2205 otherwise, and the dialog is skipped: observed). ControlCondition is kept
@@ -1332,8 +1458,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox };
-        for (size_t i = 0; i < 11; ++i) rp_mem_free(alloc, all[i]->cells);
+        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext };
+        for (size_t i = 0; i < 12; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
         rp_mem_free(alloc, c->props);
