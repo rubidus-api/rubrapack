@@ -235,7 +235,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
 | `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`). MSIX 에서는 파일과 레지스트리 값만 |
 | `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
-| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
+| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), details(기본 `true`: 진행 페이지가 하는 일을 보인다), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
@@ -993,7 +993,7 @@ text = "This will install [ProductName]. Close other programs first."
 `FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
 `RepairText`, `Remove`, `RemoveText`, `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`,
 `RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
-쓴다), `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
+쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
@@ -1060,8 +1060,17 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   띄우지 않는다.
 - 완료·취소·실패 페이지에는 **로그 저장...** 이 있어, 이번 실행의 로그 사본을 사용자가 고른 곳에 저장한다
   (rubrapack 도우미 DLL 의 `RpSaveLog`). 패키지는 `MsiLogging` 을 두어 `/l` 이 없어도 Windows Installer 가 사용자의
-  임시 폴더에 로그를 남기게 하고, 로그가 없으면 단추를 숨긴다. `[ui] save-log = false` 는 단추와 로그 남기기와
-  도우미를 모두 뺀다.
+  임시 폴더에 로그를 남기게 하고, 로그가 없으면 단추를 숨긴다. `[ui] save-log = false` 는 단추를 뺀다(`details = false`
+  까지 주면 로그 남기기도 뺀다).
+- **진행 페이지는 막대만이 아니라 하는 일을 보인다**: 막대 아래의 스크롤되는 상자가 설치·제거·복구가 도는 동안 한 줄씩
+  채워진다 - Windows Installer 가 시작하는 단계("새 파일 복사 중")와 그 아래에서 한 일: 복사하거나 지운 파일과 그 폴더,
+  레지스트리 값과 그 키, 바로 가기, 폴더, 서비스, 환경 변수, INI 값, 원본 자신의 `[action.*]`, 그리고 되돌리기가 거둬
+  가는 것. 줄은 대화창의 언어(영어와 한국어)로 나온다. 그 아래의 확인란 **전체 로그 보기**(`DetailsFull`)는 상자를 로그
+  파일의 줄 그대로 - "로그 저장"이 저장하는 것, Windows Installer 가 적는 전부, 영어 - 로 바꾼다. 명령줄의
+  `RPDETAILSFULL=1` 은 처음부터 그렇게 시작한다. 상자는 rubrapack 의 도우미 DLL(`RpDetails`)이 실행 중인 로그를
+  읽어 채우고, 그러려고 패키지의 `MsiLogging` 에 줄마다 쓰는 표시가 붙는다(`voicewarmup!`). 설치를 붙잡지 않는다:
+  로그가 없으면(정책으로 로그를 끈 경우) 상자는 빈 채로 있다. `[ui] details = false` 는 상자와 확인란을 뺀다. `/qb` 와
+  `/qn` 에는 상자가 없다.
 - 대화창이 있는 `scope = "dual"` 패키지는 사용권 다음에 "나만"(기본) / "이 컴퓨터의 모든 사용자"(관리자
   권한 필요) 페이지를 둔다. 설치 폴더도 그에 따라 `%LOCALAPPDATA%\Programs` 나 Program Files 로 옮긴다.
 

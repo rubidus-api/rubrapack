@@ -2082,3 +2082,334 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     if (names.buf) HeapFree(GetProcessHeap(), 0, names.buf);
     return rc;
 }
+
+// ---- the details box of the progress page (DECISIONS 2026-10-13) -------------------------------------
+//
+// RpDetails, immediate and asynchronous, in the UI sequence after the progress page is up and
+// before ExecuteAction: while the installation runs it reads the log of this run as it grows
+// (MsiLogFileLocation; MsiLogging has the flush flag) and puts lines into the progress page's
+// scrolling box - a ScrollableText control of the dialog, which lives in the client's process and
+// is written to with the edit control's own messages. By default the lines are the readable ones:
+// each action Windows Installer starts (its description, in the dialog's language) and each thing
+// done under it (a file copied, a value written, a shortcut made). With the page's check box
+// ticked the box holds the log's lines as they are.
+// It ends when the log says ExecuteAction has ended, when RpDetailsDone (after ExecuteAction) sets
+// its event, when the box is gone, or when nothing was logged for a while and no installation
+// holds Windows Installer's execution mutex. It never fails the installation: without a log, a
+// box or a readable line, the page simply shows the progress bar as before.
+
+typedef struct {
+    const wchar_t *title;
+    HWND dlg, edit, check;
+} det_win_t;
+
+static BOOL CALLBACK det_child(HWND w, LPARAM lp) {
+    det_win_t *d = (det_win_t *)lp;
+    wchar_t cls[32];
+    if (GetClassNameW(w, cls, 32) == 0) return TRUE;
+    LONG style = GetWindowLongW(w, GWL_STYLE);
+    if (_wcsnicmp(cls, L"RichEdit", 8) == 0 && d->edit == NULL) d->edit = w;
+    else if (_wcsicmp(cls, L"Button") == 0 && ((style & 0xF) == BS_AUTOCHECKBOX || (style & 0xF) == BS_CHECKBOX)) d->check = w;
+    return TRUE;
+}
+
+static BOOL CALLBACK det_top(HWND w, LPARAM lp) {
+    det_win_t *d = (det_win_t *)lp;
+    wchar_t cls[40], title[300];
+    if (!IsWindowVisible(w) || GetClassNameW(w, cls, 40) == 0 || _wcsnicmp(cls, L"MsiDialog", 9) != 0) return TRUE;
+    title[0] = 0;
+    GetWindowTextW(w, title, 300);
+    if (d->title && d->title[0] && wcscmp(title, d->title) != 0) return TRUE;
+    d->edit = d->check = NULL;
+    EnumChildWindows(w, det_child, lp);
+    if (d->edit == NULL) return TRUE;
+    d->dlg = w;
+    return FALSE;
+}
+
+static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
+    DWORD_PTR r = 0;
+    SendMessageTimeoutW(w, m, wp, lp, SMTO_ABORTIFHUNG, 2000, &r);
+    return (LRESULT)r;
+}
+
+// The value of `key` in an operation's arguments ("A=1,B=two,C=3"): up to the next ",Name=" or the end.
+static bool det_arg(const wchar_t *args, const wchar_t *key, wchar_t *out, size_t cap) {
+    size_t kn = wcslen(key);
+    for (const wchar_t *p = args; p && *p; p = wcschr(p, L',') ? wcschr(p, L',') + 1 : NULL) {
+        if (wcsncmp(p, key, kn) != 0 || p[kn] != L'=') continue;
+        const wchar_t *v = p + kn + 1, *e = v;
+        for (;; ++e) {
+            if (*e == 0) break;
+            if (*e != L',') continue;
+            const wchar_t *q = e + 1;           // a comma ends the value when a name and '=' follow, or another comma
+            while ((*q >= L'A' && *q <= L'Z') || (*q >= L'a' && *q <= L'z') || (*q >= L'0' && *q <= L'9')) ++q;
+            if ((q > e + 1 && *q == L'=') || e[1] == L',' || e[1] == 0) break;
+        }
+        size_t n = (size_t)(e - v);
+        if (n >= cap) n = cap - 1;
+        memcpy(out, v, n * sizeof *out);
+        out[n] = 0;
+        return n > 0;
+    }
+    return false;
+}
+
+typedef struct {
+    bool    ko;
+    wchar_t folder[520], key[520], ini[520];
+} det_state_t;
+
+// One log line as a readable line in `out` (empty: nothing to show for it).
+static void det_readable(det_state_t *st, const wchar_t *line, wchar_t *out, size_t cap) {
+    static const struct { const wchar_t *op, *arg, *en, *ko; int where; } ops[] = {     // where: 1 under the folder, 2 under the key
+        { L"FileCopy", L"DestName", L"Copy file", L"파일 복사", 1 },
+        { L"FileRemove", L"FileName", L"Remove file", L"파일 제거", 1 },
+        { L"FilePatch", L"TargetName", L"Patch file", L"파일 패치", 1 },
+        { L"FolderCreate", L"Folder", L"Create folder", L"폴더 만들기", 0 },
+        { L"FolderRemove", L"Folder", L"Remove folder", L"폴더 제거", 0 },
+        { L"RegAddValue", L"Name", L"Write registry value", L"레지스트리 값 쓰기", 2 },
+        { L"RegRemoveValue", L"Name", L"Remove registry value", L"레지스트리 값 제거", 2 },
+        { L"RegRemoveKey", NULL, L"Remove registry key", L"레지스트리 키 제거", 2 },
+        { L"ShortcutCreate", L"Name", L"Create shortcut", L"바로 가기 만들기", 1 },
+        { L"ShortcutRemove", L"Name", L"Remove shortcut", L"바로 가기 제거", 1 },
+        { L"ServiceInstall", L"Name", L"Install service", L"서비스 설치", 0 },
+        { L"ServiceControl", L"Name", L"Control service", L"서비스 제어", 0 },
+        { L"IniWriteRemoveValue", L"Key", L"Write INI value", L"INI 값 쓰기", 3 },
+        { L"UpdateEnvironmentStrings", L"Name", L"Set environment variable", L"환경 변수 설정", 0 },
+        { L"RegisterFont", L"Title", L"Register font", L"글꼴 등록", 0 },
+        { L"UnregisterFont", L"Title", L"Unregister font", L"글꼴 등록 제거", 0 },
+        { L"CustomActionSchedule", L"Action", L"Run action", L"동작 실행", 0 },
+    };
+    out[0] = 0;
+    const wchar_t *own = wcsstr(line, L"rubrapack: ");
+    if (own) {                              // the helper's own lines (what was closed, kept, wiped), not its housekeeping
+        if (wcsncmp(own + 11, L"cleanup:", 8) != 0 && wcsncmp(own + 11, L"details:", 8) != 0) wfmt(out, cap, L"  %.900ls", own + 11);
+        return;
+    }
+    const wchar_t *op = wcsstr(line, L"Executing op: ");
+    if (op == NULL) return;
+    op += 14;
+    const wchar_t *paren = wcschr(op, L'(');
+    if (paren == NULL) return;
+    size_t on = (size_t)(paren - op);
+    static wchar_t args[4096], v[1024];
+    size_t an = wcslen(paren + 1);
+    if (an >= 4096) an = 4095;
+    memcpy(args, paren + 1, an * sizeof *args);
+    args[an] = 0;
+    if (an && args[an - 1] == L')') args[an - 1] = 0;
+    if (on == 11 && wcsncmp(op, L"ActionStart", 11) == 0) {
+        if (det_arg(args, L"Description", v, 1024)) wfmt(out, cap, L"%.900ls", v);
+        return;
+    }
+    if (on == 15 && wcsncmp(op, L"SetTargetFolder", 15) == 0) {
+        if (!det_arg(args, L"Folder", st->folder, 520)) st->folder[0] = 0;
+        // A shell folder is given by its number ("23\"): its path, when the system has one.
+        wchar_t *end = NULL;
+        long csidl = wcstol(st->folder, &end, 10);
+        static wchar_t shell[MAX_PATH], rest[520];
+        if (end != st->folder && (*end == L'\\' || *end == 0) && csidl >= 0 && csidl < 256 && SHGetFolderPathW(NULL, (int)csidl, NULL, 0, shell) == S_OK) {
+            wfmt(rest, 520, L"%ls", end);
+            wfmt(st->folder, 520, L"%ls%ls", shell, rest);
+        }
+        return;
+    }
+    if (on == 10 && wcsncmp(op, L"RegOpenKey", 10) == 0) {
+        static wchar_t root[40], key[480];
+        if (!det_arg(args, L"Key", key, 480)) key[0] = 0;
+        if (!det_arg(args, L"Root", root, 40)) root[0] = 0;
+        long r = wcstol(root, NULL, 10);
+        const wchar_t *hive = r == (long)0x80000000 ? L"HKCR\\" : r == (long)0x80000001 ? L"HKCU\\" : r == (long)0x80000002 ? L"HKLM\\" : r == (long)0x80000003 ? L"HKU\\" : L"";
+        wfmt(st->key, 520, L"%ls%ls", hive, key);
+        return;
+    }
+    if (on == 11 && wcsncmp(op, L"IniFilePath", 11) == 0) { if (!det_arg(args, L"File", st->ini, 520)) st->ini[0] = 0; return; }
+    for (size_t i = 0; i < sizeof ops / sizeof ops[0]; ++i) {
+        if (wcslen(ops[i].op) != on || wcsncmp(op, ops[i].op, on) != 0) continue;
+        v[0] = 0;
+        if (ops[i].arg) det_arg(args, ops[i].arg, v, 1024);
+        const wchar_t *shown_name = v;
+        wchar_t *bar = wcschr(v, L'|');                     // "short|long": the long name
+        if (bar && ops[i].where == 1) shown_name = bar + 1;
+        if (wcscmp(ops[i].op, L"CustomActionSchedule") == 0) {
+            // The source's own actions are RP_<ID>_Do / RP_<ID>_Undo; the rest of rubrapack's (and
+            // every rollback twin) is housekeeping.
+            size_t vn = wcslen(v);
+            if (vn > 8 && wcscmp(v + vn - 8, L"Rollback") == 0) return;
+            if (wcsncmp(v, L"RP_", 3) == 0) {
+                bool is_do = vn > 6 && wcscmp(v + vn - 3, L"_Do") == 0, is_undo = vn > 8 && wcscmp(v + vn - 5, L"_Undo") == 0;
+                if (!is_do && !is_undo) return;
+                v[vn - (is_do ? 3 : 5)] = 0;
+                shown_name = v + 3;
+            }
+        }
+        const wchar_t *base = ops[i].where == 1 ? st->folder : ops[i].where == 2 ? st->key : ops[i].where == 3 ? st->ini : L"";
+        if (ops[i].where == 1 && ((shown_name[0] && shown_name[1] == L':') || (shown_name[0] == L'\\' && shown_name[1] == L'\\'))) base = L"";    // a whole path already (a rollback)
+        size_t bn = wcslen(base);
+        const wchar_t *sep = bn && shown_name[0] && base[bn - 1] != L'\\' ? (ops[i].where == 3 ? L": " : L"\\") : L"";
+        wfmt(out, cap, L"  %ls: %.500ls%ls%.380ls", st->ko ? ops[i].ko : ops[i].en, base, sep, shown_name);
+        return;
+    }
+}
+
+// Whether an installation is running its script (Windows Installer's execution mutex is held).
+static bool det_executing(void) {
+    HANDLE m = OpenMutexW(SYNCHRONIZE, FALSE, L"Global\\_MSIExecute");
+    if (m == NULL) return false;
+    DWORD r = WaitForSingleObject(m, 0);
+    if (r == WAIT_OBJECT_0 || r == WAIT_ABANDONED) ReleaseMutex(m);
+    CloseHandle(m);
+    return r == WAIT_TIMEOUT;
+}
+
+static void det_event_name(MSIHANDLE h, wchar_t name[80]) {
+    wchar_t *code = get_property(h, L"ProductCode");
+    wfmt(name, 80, L"Local\\rubrapack-details-%.38ls", code && is_guid(code) ? code : L"x");
+    if (code) HeapFree(GetProcessHeap(), 0, code);
+}
+
+__declspec(dllexport) UINT __stdcall RpDetailsDone(MSIHANDLE h) {
+    wchar_t name[80];
+    det_event_name(h, name);
+    HANDLE e = OpenEventW(EVENT_MODIFY_STATE, FALSE, name);
+    if (e) {
+        SetEvent(e);
+        CloseHandle(e);
+    }
+    return ERROR_SUCCESS;
+}
+
+__declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
+    wchar_t *log = get_property(h, L"MsiLogFileLocation"), *lang = get_property(h, L"RPLANGUAGE");
+    wchar_t *product = get_property(h, L"ProductName");
+    wchar_t evname[80];
+    det_event_name(h, evname);
+    HANDLE done = CreateEventW(NULL, TRUE, FALSE, evname);
+    HANDLE f = INVALID_HANDLE_VALUE;
+    det_win_t win = { .title = product };
+    static det_state_t st;
+    memset(&st, 0, sizeof st);
+    st.ko = lang && wcscmp(lang, L"ko") == 0;
+    // The whole log so far as text (raw), and how much of it the box has: both views are made from it.
+    size_t cap = 1u << 16, len = 0, shown = 0, bytes_cap = 1u << 16, carry = 0;
+    wchar_t *raw = HeapAlloc(GetProcessHeap(), 0, cap * sizeof *raw);
+    uint8_t *bytes = HeapAlloc(GetProcessHeap(), 0, bytes_cap + 2);
+    bool utf16 = false, first = true, full = false, started = false, ended = false;
+    DWORD quiet_since = GetTickCount(), born = GetTickCount();
+    if (log == NULL || log[0] == 0 || raw == NULL || bytes == NULL) goto out;
+    for (int i = 0; i < 100 && win.dlg == NULL; ++i) {         // the progress page, up to ten seconds
+        EnumWindows(det_top, (LPARAM)&win);
+        if (win.dlg == NULL) Sleep(100);
+    }
+    if (win.dlg == NULL) goto out;
+    f = CreateFileW(log, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, 0, NULL);
+    if (f == INVALID_HANDLE_VALUE) {
+        log_line(h, L"rubrapack: details: the log cannot be opened (%lu)", (unsigned long)GetLastError());
+        goto out;
+    }
+    det_send(win.edit, WM_USER + 53, 0, 16 * 1024 * 1024);      // EM_EXLIMITTEXT: the box takes more than 64 KB
+    while (!ended) {
+        // What the log has gained, as text.
+        DWORD got = 0;
+        bool grew = false;
+        while (ReadFile(f, bytes + carry, (DWORD)(bytes_cap - carry), &got, NULL) && got) {
+            size_t n = carry + got, at = 0;
+            carry = 0;
+            if (first) {
+                utf16 = n >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE;
+                at = utf16 ? 2 : 0;
+                first = false;
+            }
+            size_t units;
+            if (utf16) {
+                units = (n - at) / 2;
+                carry = (n - at) % 2;
+            } else {
+                units = n - at;
+            }
+            if (len + units + 1 > cap) {
+                size_t ncap = cap * 2 > len + units + 1 ? cap * 2 : len + units + 1;
+                wchar_t *nr = ncap <= (48u << 20) ? HeapReAlloc(GetProcessHeap(), 0, raw, ncap * sizeof *raw) : NULL;
+                if (nr == NULL) { ended = true; break; }
+                raw = nr;
+                cap = ncap;
+            }
+            if (utf16) memcpy(raw + len, bytes + at, units * 2);
+            else units = (size_t)MultiByteToWideChar(CP_ACP, 0, (const char *)bytes + at, (int)units, raw + len, (int)(cap - len));
+            len += units;
+            if (carry) bytes[0] = bytes[n - 1];
+            grew = true;
+        }
+        // The check box: the other view is made from the start.
+        bool want_full = win.check && det_send(win.check, BM_GETCHECK, 0, 0) == BST_CHECKED;
+        if (want_full != full) {
+            full = want_full;
+            shown = 0;
+            memset(st.folder, 0, sizeof st.folder);
+            det_send(win.edit, WM_SETTEXT, 0, (LPARAM)L"");
+            grew = true;
+        }
+        if (grew) {
+            // Whole lines only; the views' text for them, appended in one go.
+            size_t end = len;
+            while (end > shown && raw[end - 1] != L'\n') --end;
+            size_t ocap = (end - shown) + 4096, o = 0;
+            wchar_t *add = HeapAlloc(GetProcessHeap(), 0, ocap * sizeof *add);
+            static wchar_t line[8192], nice[1024];
+            for (size_t p = shown; add && p < end;) {
+                size_t e = p;
+                while (e < end && raw[e] != L'\n') ++e;
+                size_t n = e - p;
+                if (n && raw[p + n - 1] == L'\r') --n;
+                if (n > 8191) n = 8191;
+                memcpy(line, raw + p, n * sizeof *line);
+                line[n] = 0;
+                p = e + 1;
+                // The end of the run: the line that says ExecuteAction has ended - after the
+                // service's lines, its name with something behind it ("Return value 1."), whatever
+                // language Windows writes the rest in.
+                if (wcsstr(line, L"MSI (s)")) started = true;
+                const wchar_t *ea = started ? wcsstr(line, L": ExecuteAction. ") : NULL;
+                if (ea && ea[17] > L' ') ended = true;
+                const wchar_t *text = line;
+                if (!full) {
+                    det_readable(&st, line, nice, 1024);
+                    text = nice;
+                }
+                size_t tn = wcslen(text);
+                if (tn == 0 || o + tn + 3 > ocap) continue;
+                memcpy(add + o, text, tn * sizeof *add);
+                o += tn;
+                add[o++] = L'\r';
+                add[o++] = L'\n';
+            }
+            if (add && o) {
+                add[o] = 0;
+                det_send(win.edit, EM_SETREADONLY, FALSE, 0);
+                det_send(win.edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+                det_send(win.edit, EM_REPLACESEL, FALSE, (LPARAM)add);
+                det_send(win.edit, EM_SETREADONLY, TRUE, 0);
+                det_send(win.edit, WM_VSCROLL, SB_BOTTOM, 0);
+            }
+            if (add) HeapFree(GetProcessHeap(), 0, add);
+            shown = end;
+            quiet_since = GetTickCount();
+        }
+        if (ended) break;
+        if (WaitForSingleObject(done ? done : GetCurrentProcess(), 150) == WAIT_OBJECT_0 && done) break;
+        if (!IsWindow(win.edit)) break;
+        DWORD now = GetTickCount();
+        if (now - quiet_since > 3000 && started && !det_executing()) break;         // a failed or cancelled run says nothing more
+        if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
+    }
+out:
+    if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
+    if (done) CloseHandle(done);
+    if (raw) HeapFree(GetProcessHeap(), 0, raw);
+    if (bytes) HeapFree(GetProcessHeap(), 0, bytes);
+    if (log) HeapFree(GetProcessHeap(), 0, log);
+    if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    if (product) HeapFree(GetProcessHeap(), 0, product);
+    return ERROR_SUCCESS;
+}

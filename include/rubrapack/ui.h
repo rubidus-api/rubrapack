@@ -54,6 +54,7 @@ typedef struct {
     // RFC-0012: a license per language of ir->ui_langs ([ui] license-xx), or NULL: license_rtf.
     const uint8_t *license_rtf_by_lang[RP_UI_LANG_MAX];
     size_t         license_len_by_lang[RP_UI_LANG_MAX];
+    bool details;               // the helper DLL is in the package: the progress page gets its details box
 } rp_ui_input_t;
 
 // Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts

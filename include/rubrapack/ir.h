@@ -534,6 +534,7 @@ typedef struct {
     char             *ui_launch_args;       // [ui] launch-args (formatted), or NULL
     bool              ui_launch_default;    // [ui] launch-checked (default true)
     bool              ui_save_log;          // [ui] save-log (default true): the last page saves the log
+    bool              ui_details;           // [ui] details (default true): the progress page shows what is being done
     rp_ir_ui_lang_t   ui_langs[RP_UI_LANG_MAX];     // RFC-0012: [0] is English; one entry = English only
     size_t            ui_lang_count;
     rp_ir_ui_text_t  *ui_texts;

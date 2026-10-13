@@ -119,6 +119,8 @@ static const text_t texts[] = {
       "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "[ProductName] 실행(&L)", "&Launch [ProductName]" },
     { "SaveLog", "로그 저장(&S)...", "&Save log..." },
+    // The progress page's details box ([ui] details): its check box shows the log's own lines.
+    { "DetailsFull", "전체 로그 보기(&L)", "Show the full &log" },
     { "SaveLogFail", "설치 로그를 [1] 에 저장하지 못했습니다.", "The setup log could not be saved to [1]." },
     { "Change", "변경(&C)", "&Change" },
     { "ChangeText", "설치할 기능을 바꿉니다.", "Choose which features are installed." },
@@ -278,6 +280,7 @@ typedef struct {
     bool               multi;           // more than one language
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
+    bool               details;         // the progress page has its details box (the helper DLL is there)
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
     int                lseq;            // the next InstallUISequence number of a language action
@@ -673,7 +676,14 @@ static void progress_and_exits(ctx_t *c) {
     control(c, d, "ProgressBar", "ProgressBar", 25, 115, 320, 10, VIS | 0x10000, NULL, "", NULL);
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
     control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS, NULL, T(c, "Next"), NULL);
-    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), NULL);
+    // [ui] details: a scrolling box the helper DLL fills while the installation runs (RpDetails),
+    // and the check box that turns it to the log's own lines. Empty RTF: the box starts blank.
+    bool details = c->ir->ui_details && c->details;
+    if (details) {
+        control(c, d, "Details", "ScrollableText", 25, 132, 320, 82, VIS | EN | SUNKEN, NULL, "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Segoe UI;}}\\fs16 }", NULL);
+        control(c, d, "FullLog", "CheckBox", 25, 218, 320, 12, VIS | EN, "RPDETAILSFULL", T(c, "DetailsFull"), "Cancel");
+    }
+    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), details ? "FullLog" : NULL);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     mapping(c, d, "ActionText", "ActionText", "Text");
     mapping(c, d, "ProgressBar", "SetProgress", "Progress");
@@ -1305,6 +1315,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->nlang = ir->ui_lang_count ? ir->ui_lang_count : 1;
     c->multi = c->nlang > 1;
     c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
+    c->details = in->details;
     rows_init(&c->dialog, "Dialog", dialog_cols, 10);
     rows_init(&c->control, "Control", control_cols, 12);
     rows_init(&c->event, "ControlEvent", event_cols, 6);

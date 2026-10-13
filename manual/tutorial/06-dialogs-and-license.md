@@ -109,6 +109,25 @@ starts Hello - with the rights of the user who ran the installer, not the instal
 administrator rights - after a first installation or an upgrade, but not after a repair or a
 removal, and never in a silent installation.
 
+## Seeing what is being done: `details`
+
+While the installation runs, the progress page shows more than the bar: a box under it fills with
+what is being done, as it is done.
+
+```text
+Copying new files
+  Copy file: C:\Program Files\Hello\hello.exe
+  Copy file: C:\Program Files\Hello\readme.txt
+Creating shortcuts
+  Create shortcut: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Hello
+Writing system registry values
+  Write registry value: HKLM\Software\Example\Hello\Version
+```
+
+A removal and a repair show theirs the same way, and a failed installation shows what it takes
+back. Tick **Show the full log** under the box and it holds the log file's own lines instead -
+everything Windows Installer writes about the run. `details = false` in `[ui]` leaves the box out.
+
 ## Saving the log: `save-log`
 
 The finished page - and the pages for a cancelled or failed installation - have a **Save log...**

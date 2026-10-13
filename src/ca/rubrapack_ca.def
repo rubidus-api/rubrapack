@@ -20,3 +20,5 @@ EXPORTS
     RpMenuRemove
     RpPurgePrepare
     RpPurge
+    RpDetails
+    RpDetailsDone

@@ -246,7 +246,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
 | `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module); in an MSIX its files and registry values only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
-| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), details (default `true`: the progress page shows what is being done), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
@@ -1080,7 +1080,7 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`, `RepairText`, `Remove`, `RemoveText`,
 `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`, `RemoveConfirmTextAll`,
 `RemoveAsk`, `RemoveAskAll` (the second question before a removal; another language that does not
-give these five gets English),
+give these five gets English), `DetailsFull` (the details box's check box),
 `LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), `PreflightAsk`,
 `PreflightSilent`, `PreflightFolder`, `PreflightCache` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
@@ -1154,8 +1154,20 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - The finished, cancelled and failed pages have **Save log...**, which saves a copy of the log of
   this run where the user chooses (rubrapack's helper DLL, `RpSaveLog`). The package sets
   `MsiLogging` so that Windows Installer keeps a log in the user's temporary folder even without
-  `/l`; the button hides when there is no log. `[ui] save-log = false` leaves out the button, the
-  logging and the helper.
+  `/l`; the button hides when there is no log. `[ui] save-log = false` leaves out the button (and,
+  with `details = false` too, the logging).
+- **The progress page shows what is being done**, not only the bar: a scrolling box under it fills,
+  line by line, while the installation, removal or repair runs - each step Windows Installer starts
+  ("Copying new files") and under it each thing done: a file copied or removed with its folder, a
+  registry value with its key, a shortcut, a folder, a service, an environment variable, an INI
+  value, one of the source's own `[action.*]`, and what a rollback takes back. The lines are in
+  the dialog's language (English and Korean). The check box below it, **Show the full log**
+  (`DetailsFull`), turns the box to the log file's own lines, as Save log saves them - everything
+  Windows Installer writes, in English. `RPDETAILSFULL=1` on the command line starts that way.
+  The box is filled by rubrapack's helper DLL (`RpDetails`), which reads the log of the run as it
+  grows; for that the package's `MsiLogging` has the flush flag (`voicewarmup!`). It never holds
+  the installation up: without a log (logging turned off by policy) the box stays empty.
+  `[ui] details = false` leaves the box and the check box out. `/qb` and `/qn` have no box.
 - `scope = "dual"` with dialogs adds a page after the license: "Just me" (the default) or
   "Everyone on this computer", which needs administrator rights; the install folder moves to
   `%LOCALAPPDATA%\Programs` or Program Files accordingly.

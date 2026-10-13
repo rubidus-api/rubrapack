@@ -139,7 +139,7 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 | # | 이름(UTF-16LE) | 이름 | 크기 |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 112640 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 122880 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
 | 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 64 |
@@ -166,12 +166,12 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 `\005MsiDigitalSignatureEx` 의 값이다:
 
 ```text
-23 ae 8c c8 7f 25 a3 19 97 cc 93 28 4e 2c 2b 3c 40 f8 b7 f6 48 23 b0 69 0e 44 c3 2c d8 a8 2d 3f
+0a 9a f6 80 4c 4c 86 ec ce 5b 7e 04 4f 6e ea 4f 89 20 bd 58 71 66 f8 64 66 0d 3d 15 b5 03 28 c5
 ```
 
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-7b 22 38 7a f3 ec 2e fa a1 c9 5f 04 04 3c dd e2 01 04 e1 48 89 17 35 b5 a7 ae 68 fd e7 e3 2d 2d
+49 79 7b 45 95 d6 80 7f 1d 37 2f a5 53 b7 33 a3 41 0f d3 a2 b2 49 f8 38 28 c6 61 59 71 27 66 0f
 ```
 

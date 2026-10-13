@@ -551,7 +551,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain, details;
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     const char      *pplan;            // RP_PURGE ([remove] recursive, [registry] on = "uninstall")
@@ -1127,7 +1127,10 @@ static void lower_helper_actions(pkg_t *pk) {
     // A package without dialogs: the helper DLL asks an installed product's user what to do
     // (RpMaintain); the dialog sets have RpMaintenanceDlg.
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
-    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain) {
+    // [ui] details: the progress page's box, filled by the helper DLL from the log as it grows.
+    bool details = ir->ui_details && ir->ui != RP_UI_NONE && !ir->module && part_len > 0;
+    pk->details = details;
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1149,8 +1152,13 @@ static void lower_helper_actions(pkg_t *pk) {
             s_(&pk->customaction, ir->ui_launch_args ? kprintf(k, "\"[#%s]\" %s", lf->id, ir->ui_launch_args) : kprintf(k, "\"[#%s]\"", lf->id, NULL));
         }
     }
+    if (details) {      // "!": each line is written at once, so the box follows the installation
+        s_(&pk->property, "MsiLogging"); s_(&pk->property, "voicewarmup!");
+        s_(&pk->customaction, "RP_Details"); i_(&pk->customaction, 1 | 0x80); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetails");
+        s_(&pk->customaction, "RP_DetailsDone"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetailsDone");
+    }
     if (save_log) {
-        s_(&pk->property, "MsiLogging"); s_(&pk->property, "voicewarmup");
+        if (!details) { s_(&pk->property, "MsiLogging"); s_(&pk->property, "voicewarmup"); }
         size_t nl = ir->ui_lang_count ? ir->ui_lang_count : 1;
         for (size_t li = 0; li < nl; ++li) {
             s_(&pk->property, kprintf(k, "RpLogMsg_%s", ir->ui_lang_count ? ir->ui_langs[li].code : "en", NULL));
@@ -1779,6 +1787,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     for (size_t i = 0; i < sizeof ui_rows / sizeof ui_rows[0]; ++i) {
         s_(&pk->iui, ui_rows[i].action); s_(&pk->iui, ui_rows[i].cond); i_(&pk->iui, ui_rows[i].seq);
     }
+    if (pk->details) {                  // with the progress page up (1280), around ExecuteAction (1300)
+        s_(&pk->iui, "RP_Details"); null_(&pk->iui); i_(&pk->iui, 1290);
+        s_(&pk->iui, "RP_DetailsDone"); null_(&pk->iui); i_(&pk->iui, 1301);
+    }
     if (pk->maintain) {                 // where the dialog sets show RpMaintenanceDlg; full UI only
         s_(&pk->iui, "RP_Maintain"); s_(&pk->iui, "Installed AND NOT RESUME AND NOT Preselected AND NOT PATCH AND UILevel = 5"); i_(&pk->iui, 1240);
     }
@@ -1852,7 +1864,7 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
     if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &pk->banner, &banner_len);
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 } };
+                             { 0 }, { 0 }, pk->details };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];

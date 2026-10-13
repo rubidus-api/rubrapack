@@ -105,6 +105,24 @@ msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"
 파일의 관리자 권한이 아니라 설치를 실행한 사용자의 권한으로 - 첫 설치나 업그레이드 뒤에만이고, 복구나 제거
 뒤에는 아니며, 조용한 설치에서는 절대 아니다.
 
+## 하는 일 보기: `details`
+
+설치가 도는 동안 진행 페이지는 막대만 보이지 않는다: 그 아래의 상자가 하는 일로, 하는 그때 채워진다.
+
+```text
+새 파일 복사 중
+  파일 복사: C:\Program Files\Hello\hello.exe
+  파일 복사: C:\Program Files\Hello\readme.txt
+바로 가기 만드는 중
+  바로 가기 만들기: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Hello
+레지스트리 값 쓰는 중
+  레지스트리 값 쓰기: HKLM\Software\Example\Hello\Version
+```
+
+제거와 복구도 같은 식으로 보이고, 실패한 설치는 거둬 가는 것을 보인다. 상자 아래의 **전체 로그 보기**를 표시하면
+상자가 로그 파일의 줄 그대로 - Windows Installer 가 이번 실행에 대해 적는 전부 - 를 담는다. `[ui]` 의
+`details = false` 는 상자를 뺀다.
+
 ## 로그 저장하기: `save-log`
 
 완료 페이지와, 설치를 취소했거나 실패했을 때의 페이지 왼쪽 아래에는 **로그 저장...** 단추가 있다. 누르면 늘
