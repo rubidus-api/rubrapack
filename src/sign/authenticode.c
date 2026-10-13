@@ -12,6 +12,7 @@
 //    (mssign32!SignerTimeStampEx2, tests/fixtures/timestamp; nothing else in the SignedData changes).
 
 #include "rubrapack/mem.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/sign.h"
 
 #include <string.h>
@@ -50,17 +51,17 @@ static void put_alg(rp_buf_t *b, const uint8_t *oid, size_t n) {
 bool rp_sign_check_key(const rp_keyfile_t *kf, int64_t now, int *leaf, const char **why) {
     *leaf = rp_keyfile_leaf(kf);
     if (*leaf < 0) {
-        *why = "no certificate in the key file (or the --cert file) belongs to the key";
+        *why = TR_N("no certificate in the key file (or the --cert file) belongs to the key");
         return false;
     }
     rp_cert_t c;
     if (!rp_cert_parse(kf->certs[*leaf], kf->cert_len[*leaf], &c, why)) return false;
-    if (!c.has_eku || !(c.eku_code || c.eku_any)) *why = "the certificate is not for code signing (no code-signing extended key usage)";
-    else if (c.ca) *why = "the certificate is a CA certificate, not a signing certificate";
-    else if (c.has_ku && !c.ku_sign) *why = "the certificate's key usage does not allow digital signatures";
-    else if (c.unknown_critical) *why = "the certificate has a critical extension rubrapack does not understand";
-    else if (now < c.not_before) *why = "the certificate is not valid yet";
-    else if (now > c.not_after) *why = "the certificate has expired";
+    if (!c.has_eku || !(c.eku_code || c.eku_any)) *why = TR_N("the certificate is not for code signing (no code-signing extended key usage)");
+    else if (c.ca) *why = TR_N("the certificate is a CA certificate, not a signing certificate");
+    else if (c.has_ku && !c.ku_sign) *why = TR_N("the certificate's key usage does not allow digital signatures");
+    else if (c.unknown_critical) *why = TR_N("the certificate has a critical extension rubrapack does not understand");
+    else if (now < c.not_before) *why = TR_N("the certificate is not valid yet");
+    else if (now > c.not_after) *why = TR_N("the certificate has expired");
     else return true;
     return false;
 }
@@ -75,7 +76,7 @@ static proven_err_t stamp(proven_allocator_t alloc, const rp_timestamper_t *ts, 
     rp_tsp_token_t t;
     if (!rp_tsp_token(tok, tl, sig, sig_len, NULL, &t, why)) err = PROVEN_ERR_INVALID_FORMAT;
     else if (t.gen_time < lc->not_before || t.gen_time > lc->not_after) {
-        *why = "the timestamp server's time lies outside the signing certificate's validity";
+        *why = TR_N("the timestamp server's time lies outside the signing certificate's validity");
         err = PROVEN_ERR_INVALID_STATE;
     }
     if (err == PROVEN_OK) {
@@ -164,7 +165,7 @@ static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *k
             sig_len = sizeof sig;
             err = kf->ext_sign(kf->ext_ctx, (int)alg, attrs_hash, sig, &sig_len, why);
             if (err == PROVEN_OK && !rp_cert_verify_sig(&lc, alg, attrs_hash, sig, sig_len)) {
-                *why = "the token's signature does not verify with the certificate (the key and the certificate do not belong together)";
+                *why = TR_N("the token's signature does not verify with the certificate (the key and the certificate do not belong together)");
                 err = PROVEN_ERR_INVALID_STATE;
             }
         } else if (kf->ec) {
@@ -250,7 +251,7 @@ static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *k
         return err;
     }
     if (all.err != PROVEN_OK) {
-        *why = "out of memory";
+        *why = TR_N("out of memory");
         err = all.err;
         rp_buf_free(&all);
         return err;
@@ -433,6 +434,6 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
             else r->ts_legacy = true;
         }
     }
-    if (!r->attrs_ok) *why = "the signed attributes do not match the signed content";
-    else if (!r->signature_ok) *why = "the signature does not verify with the signer's certificate";
+    if (!r->attrs_ok) *why = TR_N("the signed attributes do not match the signed content");
+    else if (!r->signature_ok) *why = TR_N("the signature does not verify with the signer's certificate");
 }

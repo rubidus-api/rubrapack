@@ -4,6 +4,8 @@
 #include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
+#include "rubrapack/lang.h"
+#include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/text.h"
 #include "rubrapack/version.h"
@@ -11,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "proven/heap.h"
 #include "proven/version.h"
 
 typedef struct {
@@ -22,30 +25,30 @@ typedef struct {
 
 static const command_t commands[] = {
     { "build",   "build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
-                 "build a package from a source file", true },
+                 TR_N("build a package from a source file"), true },
     { "sign",    "sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
-                 "sign a PE file, an MSI package, an MSIX package or bundle", true },
+                 TR_N("sign a PE file, an MSI package, an MSIX package or bundle"), true },
     { "keys",    "keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]",
-                 "list the keys a token or the Windows certificate store can sign with", true },
+                 TR_N("list the keys a token or the Windows certificate store can sign with"), true },
     { "verify",  "verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificate>]...",
-                 "check a signature: structure, digest, signature, and the path to a trusted certificate", true },
+                 TR_N("check a signature: structure, digest, signature, and the path to a trusted certificate"), true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
-                 "write a transform (.mst): what turns one package into the other", true },
+                 TR_N("write a transform (.mst): what turns one package into the other"), true },
     { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
-                 "write a patch (.msp): the files and rows that update an installed base to the target", true },
+                 TR_N("write a patch (.msp): the files and rows that update an installed base to the target"), true },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msi> [table|--summary] --json | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
-                 "dump a package (MSI tables as IDT)", true },
+                 TR_N("dump a package (MSI tables as IDT)"), true },
     { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
-                 "unpack a package into a new directory, laid out as it installs", true },
+                 TR_N("unpack a package into a new directory, laid out as it installs"), true },
     { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] [--json] | lint <file.msi> [--previous <old.msi>] [--strict] [--json]",
-                 "check a source or package without writing anything", true },
-    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name> | new <file>.toml --from <package.msi> [--dist <folder>] [--publisher \"CN=...\"]", "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI", true },
-    { "edit",    "edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]", "change a source in place: through a menu of questions, or with the options", true },
-    { "guid",    "guid [--from <text>]", "print a random GUID, or the one rubrapack derives from a text", true },
-    { "schema",  "schema", "print the JSON Schema of sources (for an editor that completes and checks keys)", true },
-    { "explain", "explain [RPnnnn]", "what a diagnostic code means, the messages that carry it, what to do and where the manual says more", true },
-    { "version", "version", "print the version", true },
-    { "help",    "help [command]", "print this help, or one command's usage", true },
+                 TR_N("check a source or package without writing anything"), true },
+    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name> | new <file>.toml --from <package.msi> [--dist <folder>] [--publisher \"CN=...\"]", TR_N("write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"), true },
+    { "edit",    "edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]", TR_N("change a source in place: through a menu of questions, or with the options"), true },
+    { "guid",    "guid [--from <text>]", TR_N("print a random GUID, or the one rubrapack derives from a text"), true },
+    { "schema",  "schema", TR_N("print the JSON Schema of sources (for an editor that completes and checks keys)"), true },
+    { "explain", "explain [RPnnnn]", TR_N("what a diagnostic code means, the messages that carry it, what to do and where the manual says more"), true },
+    { "version", "version", TR_N("print the version"), true },
+    { "help",    "help [command]", TR_N("print this help, or one command's usage"), true },
 };
 
 enum { COMMAND_COUNT = sizeof commands / sizeof commands[0] };
@@ -84,24 +87,25 @@ static const char *shown(const char *arg, char *out, size_t cap) {
 
 static int print_usage(rp_out_t out) {
     char line[256];
-    proven_err_t err = rp_pal_puts(out,
-        "rubrapack " RUBRAPACK_VERSION_STRING
-        " - build Windows Installer (.msi) and MSIX (.msix) packages\n"
-        "\n"
-        "usage: rubrapack <command> [arguments]\n"
-        "\n"
-        "commands:\n");
+    proven_err_t err = rp_pal_puts(out, "rubrapack " RUBRAPACK_VERSION_STRING);
+    if (err == PROVEN_OK) {
+        err = rp_pal_puts(out, TR(" - build Windows Installer (.msi) and MSIX (.msix) packages\n"
+                                  "\n"
+                                  "usage: rubrapack [--lang en|ko] <command> [arguments]\n"
+                                  "\n"
+                                  "commands:\n"));
+    }
     for (size_t i = 0; i < COMMAND_COUNT && err == PROVEN_OK; ++i) {
-        snprintf(line, sizeof line, "  %-9s %s%s\n", commands[i].name, commands[i].summary,
+        snprintf(line, sizeof line, "  %-9s %s%s\n", commands[i].name, rp_tr(commands[i].summary),
                  commands[i].implemented ? "" : " (not implemented yet)");
         err = rp_pal_puts(out, line);
     }
     if (err == PROVEN_OK) {
-        err = rp_pal_puts(out,
-            "\n"
-            "Results go to stdout, diagnostics to stderr.\n"
-            "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
-            "5 lint, 6 network.\n");
+        err = rp_pal_puts(out, TR("\n"
+                                  "Results go to stdout, diagnostics to stderr.\n"
+                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko.\n"
+                                  "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
+                                  "5 lint, 6 network.\n"));
     }
     return err == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
@@ -130,8 +134,8 @@ static int cmd_help(int argc, char **argv) {
         return RP_EXIT_USAGE;
     }
     char line[512];
-    snprintf(line, sizeof line, "usage: rubrapack %s\n\n%s%s\n", c->usage, c->summary,
-             c->implemented ? "" : " (not implemented yet)");
+    rp_lang_format(line, sizeof line, "usage: rubrapack %s\n\n%s%s\n", c->usage, rp_tr(c->summary),
+                   c->implemented ? "" : " (not implemented yet)");
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -144,6 +148,44 @@ int rp_main(int argc, char **argv) {
             return RP_EXIT_USAGE;
         }
     }
+
+    // The language of the texts: RUBRAPACK_LANG, then --lang <code> (or --lang=<code>) anywhere on
+    // the line, which is taken out here so that no command sees it and a usage error is already in
+    // that language. English when neither is given; it never changes what is built.
+    {
+        proven_allocator_t heap = proven_heap_allocator();
+        char *env = rp_pal_getenv(heap, "RUBRAPACK_LANG");
+        if (env && env[0] && !rp_lang_set(env)) {
+            char buf[64];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: the languages are en and ko", shown(env, buf, sizeof buf));
+            rp_mem_free(heap, env);
+            return RP_EXIT_USAGE;
+        }
+        if (env) rp_mem_free(heap, env);
+    }
+    int kept = 1;
+    for (int i = 1; i < argc; ++i) {
+        const char *code = NULL;
+        if (strcmp(argv[i], "--lang") == 0) {
+            if (i + 1 >= argc) {
+                rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang needs a language: en or ko");
+                return RP_EXIT_USAGE;
+            }
+            code = argv[++i];
+        } else if (strncmp(argv[i], "--lang=", 7) == 0) {
+            code = argv[i] + 7;
+        } else {
+            argv[kept++] = argv[i];
+            continue;
+        }
+        if (!rp_lang_set(code)) {
+            char buf[64];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: the languages are en and ko", shown(code, buf, sizeof buf));
+            return RP_EXIT_USAGE;
+        }
+    }
+    argc = kept;
+    argv[argc] = NULL;
 
     if (argc < 2) {
         (void)print_usage(RP_OUT_STDERR);

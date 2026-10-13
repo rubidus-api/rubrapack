@@ -1,6 +1,7 @@
 // src/net/http.c - HTTP/1.1 POST for timestamp servers (include/rubrapack/net.h; RFC 9110, RFC 9112).
 
 #include "rubrapack/mem.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/net.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/tls.h"
@@ -223,7 +224,7 @@ static proven_err_t read_head(conn_t *c, head_t *h, const char **why) {
         return err;
     }
     if (strncmp(line, "HTTP/1.", 7) != 0 || strlen(line) < 12 || line[8] != ' ') {
-        *why = "the server did not answer with HTTP/1.x";
+        *why = TR_N("the server did not answer with HTTP/1.x");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     h->status = (line[9] - '0') * 100 + (line[10] - '0') * 10 + (line[11] - '0');
@@ -249,7 +250,7 @@ static proven_err_t read_head(conn_t *c, head_t *h, const char **why) {
         } else if (ieq_prefix(line, "transfer-encoding")) {
             const char *v = value_of(line);
             if (strcmp(v, "chunked") != 0) {
-                *why = "the response uses a transfer coding other than chunked";
+                *why = TR_N("the response uses a transfer coding other than chunked");
                 return PROVEN_ERR_UNSUPPORTED;
             }
             h->chunked = true;
@@ -260,12 +261,12 @@ static proven_err_t read_head(conn_t *c, head_t *h, const char **why) {
         }
     }
     if (h->chunked && h->has_length) {
-        *why = "the response has both Content-Length and chunked (refused: a smuggling risk)";
+        *why = TR_N("the response has both Content-Length and chunked (refused: a smuggling risk)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     return PROVEN_OK;
 bad_length:
-    *why = "the response has a malformed or conflicting Content-Length";
+    *why = TR_N("the response has a malformed or conflicting Content-Length");
     return PROVEN_ERR_INVALID_FORMAT;
 }
 
@@ -291,7 +292,7 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
     proven_err_t err = PROVEN_OK;
     if (h->has_length) {
         if (h->length > max) {
-            *why = "the response is larger than 4 MiB";
+            *why = TR_N("the response is larger than 4 MiB");
             err = PROVEN_ERR_OUT_OF_BOUNDS;
         } else {
             err = read_n(c, body, h->length);
@@ -324,7 +325,7 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
                 break;
             }
             if (size > max - n) {
-                *why = "the response is larger than 4 MiB";
+                *why = TR_N("the response is larger than 4 MiB");
                 err = PROVEN_ERR_OUT_OF_BOUNDS;
                 break;
             }
@@ -334,7 +335,7 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
             if (err == PROVEN_OK && line[0]) err = PROVEN_ERR_INVALID_FORMAT;
             if (err != PROVEN_OK) break;
         }
-        if (err == PROVEN_ERR_INVALID_FORMAT && *why == NULL) *why = "the chunked response is malformed";
+        if (err == PROVEN_ERR_INVALID_FORMAT && *why == NULL) *why = TR_N("the chunked response is malformed");
     } else {                                        // until the server closes
         for (;;) {
             if (c->pos == c->len) {
@@ -347,7 +348,7 @@ static proven_err_t read_body(proven_allocator_t alloc, conn_t *c, const head_t 
             }
             size_t take = c->len - c->pos;
             if (take > max - n) {
-                *why = "the response is larger than 4 MiB";
+                *why = TR_N("the response is larger than 4 MiB");
                 err = PROVEN_ERR_OUT_OF_BOUNDS;
                 break;
             }
@@ -432,13 +433,13 @@ static proven_err_t choose_proxy(proven_allocator_t alloc, const rp_http_req_t *
     char path[256];
     proven_err_t err = PROVEN_OK;
     if (strchr(full, '@')) {
-        *why = "a proxy with a user name or password is not supported";
+        *why = TR_N("a proxy with a user name or password is not supported");
         err = PROVEN_ERR_UNSUPPORTED;
     } else if (!rp_url_parse(full, &proxy_https, px->host, sizeof px->host, &px->port, path, sizeof path)) {
-        *why = "not a proxy URL rubrapack accepts (http://host:port)";
+        *why = TR_N("not a proxy URL rubrapack accepts (http://host:port)");
         err = PROVEN_ERR_INVALID_ARG;
     } else if (proxy_https) {
-        *why = "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)";
+        *why = TR_N("an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)");
         err = PROVEN_ERR_UNSUPPORTED;
     } else {
         px->on = true;
@@ -457,11 +458,11 @@ static proven_err_t tunnel(conn_t *c, const char *hostport, const char **why) {
     head_t h;
     if (err == PROVEN_OK) err = read_head(c, &h, why);
     if (err != PROVEN_OK) {
-        if (*why == NULL) *why = "the proxy did not answer the tunnel request";
+        if (*why == NULL) *why = TR_N("the proxy did not answer the tunnel request");
         return err;
     }
     if (h.status == 407) {
-        *why = "the proxy asks for a password (407), which rubrapack does not support";
+        *why = TR_N("the proxy asks for a password (407), which rubrapack does not support");
         return PROVEN_ERR_PERMISSION;
     }
     if (h.status < 200 || h.status > 299) {
@@ -471,7 +472,7 @@ static proven_err_t tunnel(conn_t *c, const char *hostport, const char **why) {
         return PROVEN_ERR_PERMISSION;
     }
     if (c->pos != c->len) {                               // nothing may follow the proxy's answer
-        *why = "the proxy sent data after its answer to CONNECT";
+        *why = TR_N("the proxy sent data after its answer to CONNECT");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     return PROVEN_OK;
@@ -515,7 +516,7 @@ static proven_err_t exchange(proven_allocator_t alloc, const rp_http_req_t *req,
     if (err == PROVEN_OK && (hn < 0 || (size_t)hn >= sizeof head_text)) err = PROVEN_ERR_OUT_OF_BOUNDS;
     if (err == PROVEN_OK) err = conn_send(c, (const uint8_t *)head_text, (size_t)hn);
     if (err == PROVEN_OK) err = conn_send(c, req->body, req->len);
-    if (err != PROVEN_OK && *why == NULL) *why = "the request could not be sent";
+    if (err != PROVEN_OK && *why == NULL) *why = TR_N("the request could not be sent");
     if (err == PROVEN_OK) err = read_head(c, head, why);
     if (err == PROVEN_OK) err = read_body(alloc, c, head, req->max_body ? req->max_body : DEFAULT_BODY, body, blen, why);
     if (c->tls_why && err != PROVEN_OK) *why = c->tls_why;        // TLS said what really went wrong
@@ -541,16 +542,16 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
         char host[256], path[2048];
         uint16_t port;
         if (!rp_url_parse(url, &https, host, sizeof host, &port, path, sizeof path)) {
-            *why = "not an http:// or https:// URL rubrapack accepts";
+            *why = TR_N("not an http:// or https:// URL rubrapack accepts");
             return PROVEN_ERR_INVALID_ARG;
         }
         if (was_https && !https) {
-            *why = "the server redirected from https to http (refused)";
+            *why = TR_N("the server redirected from https to http (refused)");
             return PROVEN_ERR_PERMISSION;
         }
         was_https = https;
         if (https && req->tls_anchor_count == 0) {
-            *why = "an https server needs --tls-trust <certificates> or --system-roots to check it against";
+            *why = TR_N("an https server needs --tls-trust <certificates> or --system-roots to check it against");
             return PROVEN_ERR_PERMISSION;
         }
         proxy_t px;
@@ -570,13 +571,13 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
         if (err != PROVEN_OK) return err;
         if (px.on && head.status == 407) {                // a plain request the proxy itself refused
             rp_mem_free(alloc, body);
-            *why = "the proxy asks for a password (407), which rubrapack does not support";
+            *why = TR_N("the proxy asks for a password (407), which rubrapack does not support");
             return PROVEN_ERR_PERMISSION;
         }
         if (head.status == 301 || head.status == 302 || head.status == 307 || head.status == 308) {
             rp_mem_free(alloc, body);
             if (redirects == MAX_REDIRECTS) {
-                *why = "more than 3 redirects";
+                *why = TR_N("more than 3 redirects");
                 return PROVEN_ERR_OUT_OF_BOUNDS;
             }
             if (head.location[0] == '/') {          // a path on the same server
@@ -584,7 +585,7 @@ proven_err_t rp_http_post(proven_allocator_t alloc, const rp_http_req_t *req, rp
                 snprintf(base, sizeof base, "%s://%s%s%s:%u", https ? "https" : "http", strchr(host, ':') ? "[" : "", host,
                          strchr(host, ':') ? "]" : "", (unsigned)port);
                 if (strlen(base) + strlen(head.location) >= sizeof url) {
-                    *why = "the redirect location is too long";
+                    *why = TR_N("the redirect location is too long");
                     return PROVEN_ERR_OUT_OF_BOUNDS;
                 }
                 memcpy(url, base, strlen(base));

@@ -14,6 +14,7 @@
 // new files only - an existing name is never opened, followed or replaced.
 
 #include "rubrapack/cab.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/diag.h"
@@ -102,15 +103,15 @@ static char *join(plan_t *p, const char *a, const char *b) {
 
 // Why one path component is refused, or NULL.
 static const char *name_problem(const char *s, size_t n) {
-    if (n == 0) return "an empty name";
-    if (n > MAX_NAME) return "a name longer than 255 bytes";
+    if (n == 0) return TR_N("an empty name");
+    if (n > MAX_NAME) return TR_N("a name longer than 255 bytes");
     if ((n == 1 && s[0] == '.') || (n == 2 && s[0] == '.' && s[1] == '.')) return "'.' or '..'";
     for (size_t i = 0; i < n; ++i) {
         unsigned char c = (unsigned char)s[i];
-        if (c < 0x20 || c == 0x7F) return "a control character";
-        if (strchr("/\\:*?\"<>|", c)) return "a character Windows does not allow in a name (/ \\ : * ? \" < > |)";
+        if (c < 0x20 || c == 0x7F) return TR_N("a control character");
+        if (strchr("/\\:*?\"<>|", c)) return TR_N("a character Windows does not allow in a name (/ \\ : * ? \" < > |)");
     }
-    if (s[n - 1] == ' ' || s[n - 1] == '.') return "a name ending with a space or a dot";
+    if (s[n - 1] == ' ' || s[n - 1] == '.') return TR_N("a name ending with a space or a dot");
     // Reserved device names, with or without an extension.
     size_t base = 0;
     while (base < n && s[base] != '.') ++base;
@@ -119,10 +120,10 @@ static const char *name_problem(const char *s, size_t n) {
     if (base == 3 || base == 4) {
         for (size_t i = 0; i < base; ++i) up[i] = (char)(s[i] >= 'a' && s[i] <= 'z' ? s[i] - 32 : s[i]);
         for (size_t i = 0; base == 3 && dev[i]; ++i) {
-            if (memcmp(up, dev[i], 3) == 0) return "a reserved device name";
+            if (memcmp(up, dev[i], 3) == 0) return TR_N("a reserved device name");
         }
         if (base == 4 && (memcmp(up, "COM", 3) == 0 || memcmp(up, "LPT", 3) == 0) && up[3] >= '1' && up[3] <= '9') {
-            return "a reserved device name";
+            return TR_N("a reserved device name");
         }
     }
     return NULL;
@@ -249,7 +250,7 @@ static int write_plan(plan_t *p, const char *dest) {
         }
     }
     char line[1200];
-    snprintf(line, sizeof line, "%s: %zu files, %llu bytes\n", dest, files, (unsigned long long)total);
+    rp_lang_format(line, sizeof line, "%s: %zu files, %llu bytes\n", dest, files, (unsigned long long)total);
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 

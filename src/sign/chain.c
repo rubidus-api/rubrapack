@@ -4,6 +4,7 @@
 // what is checked). Revocation is never looked up: `verify` reports it as not checked.
 
 #include "rubrapack/sign.h"
+#include "rubrapack/lang.h"
 
 #include <string.h>
 
@@ -65,15 +66,15 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
     rp_cert_t cur;
     if (!rp_cert_parse(signer.p, signer.n, &cur, why)) return false;
     if (purpose == RP_PURPOSE_CODE && (!cur.has_eku || !(cur.eku_code || cur.eku_any))) {
-        *why = "the signer's certificate is not for code signing";
+        *why = TR_N("the signer's certificate is not for code signing");
         return false;
     }
     if (purpose == RP_PURPOSE_TIMESTAMP && (!cur.has_eku || !cur.eku_time)) {
-        *why = "the timestamp server's certificate is not for time stamping";
+        *why = TR_N("the timestamp server's certificate is not for time stamping");
         return false;
     }
     if (purpose == RP_PURPOSE_SERVER && cur.has_eku && !cur.eku_server && !cur.eku_any) {
-        *why = "the server's certificate is not for TLS servers (its extended key usage)";
+        *why = TR_N("the server's certificate is not for TLS servers (its extended key usage)");
         return false;
     }
     for (int depth = 0; depth < 8; ++depth) {
@@ -82,7 +83,7 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
             return false;
         }
         if (cur.unknown_critical) {
-            *why = "a certificate in the path has a critical extension rubrapack does not understand";
+            *why = TR_N("a certificate in the path has a critical extension rubrapack does not understand");
             return false;
         }
         // An anchor that is this certificate, or that signed it, ends the path.
@@ -92,7 +93,7 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
             if (anchor.der.n == cur.der.n && memcmp(anchor.der.p, cur.der.p, cur.der.n) == 0) return true;
             if (rp_cert_signed_by(&cur, &anchor)) {
                 if (!valid_at(&anchor, now)) {
-                    *why = "the trusted certificate is expired or not valid yet";
+                    *why = TR_N("the trusted certificate is expired or not valid yet");
                     return false;
                 }
                 return true;
@@ -107,7 +108,7 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
             if (!rp_cert_parse(e.whole.p, e.whole.n, &cand, NULL) || cand.der.p == cur.der.p) continue;
             if (!rp_cert_signed_by(&cur, &cand)) continue;
             if (!cand.ca || (cand.has_ku && !cand.ku_cert_sign)) {
-                *why = "a certificate in the path is signed by a certificate that is not a CA";
+                *why = TR_N("a certificate in the path is signed by a certificate that is not a CA");
                 return false;
             }
             cur = cand;
@@ -120,6 +121,6 @@ bool rp_chain_trusted_for(rp_der_span_t signer, rp_der_span_t certs, const rp_de
             return false;
         }
     }
-    *why = "the certificate path is longer than 8";
+    *why = TR_N("the certificate path is longer than 8");
     return false;
 }

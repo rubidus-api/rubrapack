@@ -3,6 +3,7 @@
 // checked with the same table rules (rubrapack/lint.h, foreign mode).
 
 #include "rubrapack/cfb.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/lint.h"
@@ -90,7 +91,7 @@ static int lint_against(const char *path, const char *previous, bool strict) {
         if (err == PROVEN_OK) err = rp_msi_lint_previous(heap, &a.view.db, &b.view.db, &d);
         rp_srcdiag_print(&d, path);
         char line[512];
-        snprintf(line, sizeof line, "%s: %zu error%s, %zu warning%s (against %s)\n", path, d.errors, d.errors == 1 ? "" : "s",
+        rp_lang_format(line, sizeof line, "%s: %zu error%s, %zu warning%s (against %s)\n", path, d.errors, d.errors == 1 ? "" : "s",
                  d.warnings, d.warnings == 1 ? "" : "s", previous);
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;
@@ -145,7 +146,7 @@ static int lint_package(const char *path, bool strict) {
         rp_msi_view_free(&msi, &view);
         rp_srcdiag_print(&d, path);
         char line[512];
-        snprintf(line, sizeof line, "%s: %zu error%s, %zu warning%s\n", path, d.errors, d.errors == 1 ? "" : "s", d.warnings,
+        rp_lang_format(line, sizeof line, "%s: %zu error%s, %zu warning%s\n", path, d.errors, d.errors == 1 ? "" : "s", d.warnings,
                  d.warnings == 1 ? "" : "s");
         rc = err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : d.errors || (strict && d.warnings) ? RP_EXIT_LINT : RP_EXIT_OK;
         if (!rp_diag_json_on() && rp_pal_puts(RP_OUT_STDOUT, line) != PROVEN_OK && rc == RP_EXIT_OK) rc = RP_EXIT_IO;

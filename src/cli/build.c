@@ -1,6 +1,7 @@
 // src/cli/build.c - `rubrapack build <src.toml> -o <out.msi> [options]` (RFC-0001 7, 7.1).
 
 #include "rubrapack/build.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -506,8 +507,8 @@ static int run(int argc, char **argv, bool lint) {
             rp_toml_free(&doc);
             if (err == PROVEN_OK && !lint && ir.module != msm_out) {
                 rp_srcdiag_add(&d, (rp_pos_t){ 1, 1 }, "RP1201", false,
-                               ir.module ? "a [module] source builds a merge module: -o <name>.msm"
-                                         : "a .msm output is a merge module, built from a source with [module] instead of [package]");
+                               ir.module ? TR_N("a [module] source builds a merge module: -o <name>.msm")
+                                         : TR_N("a .msm output is a merge module, built from a source with [module] instead of [package]"));
                 rp_ir_free(&ir);
                 err = PROVEN_ERR_INVALID_FORMAT;
             }

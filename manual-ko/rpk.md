@@ -1562,6 +1562,12 @@ rubrapack version | help [command]
   `verify` 검사의 "지금"을 대신한다. 그래서 시계를 바꾸지 않고 만료된 인증서를 확인할 수 있다. 그
   시각으로 맞춘 시계가 허용하지 않을 것은 아무것도 넓히지 않는다.)
 - 종료 코드: 0 성공, 1 원본 오류, 2 사용법, 3 입출력, 4 서명, 5 lint, 6 네트워크.
+- `--lang <코드>` 는 도구가 사람에게 보이는 글의 언어를 고른다: 오류와 경고, `help`, 결과 줄, `explain`, `new -i` 와
+  `edit` 의 질문. 코드는 `en`(기본)과 `ko` 다. 명령줄 어디에나 둘 수 있고(`rubrapack --lang ko build ...`,
+  `rubrapack lint app.toml --lang=ko`), 환경 변수 `RUBRAPACK_LANG` 은 모든 실행에 같은 것을 말하며 옵션이 그것보다
+  앞선다. 프로그램이 읽는 것은 그대로다: 진단 코드, 종료 코드, `inspect` 의 표 덤프, `schema`, `--json` 의 구조(그
+  안의 `message` 글은 언어를 따른다). 만들어지는 것은 절대 바꾸지 않는다 - 패키지 대화창의 언어는 원본이
+  정한다(`[ui] languages`). 한국어로 쓰려면 `RUBRAPACK_LANG=ko` 를 한 번 설정해 두면 된다.
 
 ## 진단 코드
 

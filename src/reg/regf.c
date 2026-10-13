@@ -1,6 +1,7 @@
 // src/reg/regf.c - registry hive files (include/rubrapack/regf.h; RFC-0010, RFC-0001 F12).
 
 #include "rubrapack/regf.h"
+#include "rubrapack/lang.h"
 
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
@@ -560,7 +561,7 @@ static bool append_name(rd_t *r, const uint8_t *p, size_t nb, bool comp) {
 static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
     if (depth > 512) RFAIL("the hive's keys nest deeper than 512");
     if (++r->count > r->max) {
-        *r->why = "more keys and values than allowed";
+        *r->why = TR_N("more keys and values than allowed");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
     size_t av;
@@ -585,7 +586,7 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
         if (vl == NULL || nval > lav / 4) RFAIL("a value list does not fit its cell");
         for (uint32_t i = 0; i < nval; ++i) {
             if (++r->count > r->max) {
-                *r->why = "more keys and values than allowed";
+                *r->why = TR_N("more keys and values than allowed");
                 return PROVEN_ERR_OUT_OF_BOUNDS;
             }
             size_t vav;
@@ -675,7 +676,7 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
 proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t len, const rp_limits_t *lim, const rp_regf_visitor_t *v,
                           const char **why) {
     if (len < BLOCK + BLOCK || memcmp(hive, "regf", 4) != 0) {
-        *why = "not a registry hive";
+        *why = TR_N("not a registry hive");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     uint32_t sum = 0;
@@ -683,20 +684,20 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
     if (sum == 0) sum = 1;
     else if (sum == 0xFFFFFFFF) sum = 0xFFFFFFFE;
     if (sum != r32(hive + 508)) {
-        *why = "the hive's base block checksum does not match";
+        *why = TR_N("the hive's base block checksum does not match");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     if (r32(hive + 4) != r32(hive + 8)) {
-        *why = "the hive was not closed cleanly (its log would be needed)";
+        *why = TR_N("the hive was not closed cleanly (its log would be needed)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     if (r32(hive + 20) != 1 || r32(hive + 24) < 3 || r32(hive + 24) > 6 || r32(hive + 28) != 0 || r32(hive + 32) != 1) {
-        *why = "a hive version or type rubrapack does not read";
+        *why = TR_N("a hive version or type rubrapack does not read");
         return PROVEN_ERR_UNSUPPORTED;
     }
     size_t blen = r32(hive + 40);
     if (blen > len - BLOCK || blen % BLOCK) {
-        *why = "the hive's bins lie outside the file";
+        *why = TR_N("the hive's bins lie outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     // Every bin must be where its header says, and no cell may cross into the next.
@@ -704,14 +705,14 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
         const uint8_t *b = hive + BLOCK + at;
         uint32_t size = r32(b + 8);
         if (memcmp(b, "hbin", 4) != 0 || r32(b + 4) != at || size < BLOCK || size % BLOCK || size > blen - at) {
-            *why = "a damaged hive bin";
+            *why = TR_N("a damaged hive bin");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t c = at + BIN_HEADER; c < at + size;) {
             int32_t cs = (int32_t)r32(hive + BLOCK + c);
             size_t n = cs < 0 ? (size_t)-(int64_t)cs : (size_t)cs;
             if (n < 8 || n & 7 || n > at + size - c) {
-                *why = "a hive cell crosses its bin";
+                *why = TR_N("a hive cell crosses its bin");
                 return PROVEN_ERR_INVALID_FORMAT;
             }
             c += n;

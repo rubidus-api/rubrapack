@@ -2,6 +2,7 @@
 // the layout observed from Windows' packaging API: docs/research/2026-09-27-p8a-msix-oracle.md).
 
 #include "rubrapack/zip.h"
+#include "rubrapack/lang.h"
 
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
@@ -205,7 +206,7 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
     rp_zip_entry_t **order = NULL;
     size_t n = 0;
     if (len < 22) {
-        *why = "not a ZIP archive (too short)";
+        *why = TR_N("not a ZIP archive (too short)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     // The end record: the last one, within the 64 KiB a comment may take.
@@ -217,14 +218,14 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
         }
     }
     if (eocd == SIZE_MAX) {
-        *why = "not a ZIP archive (no end record)";
+        *why = TR_N("not a ZIP archive (no end record)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     uint64_t entries_n = u16(zip + eocd + 10), cd_size = u32(zip + eocd + 12), cd_off = u32(zip + eocd + 16);
     if (eocd >= 20 && u32(zip + eocd - 20) == 0x07064B50) {
         uint64_t z = u64(zip + eocd - 20 + 8);
         if (z > len - 56 || u32(zip + z) != 0x06064B50) {
-            *why = "a damaged ZIP64 end record";
+            *why = TR_N("a damaged ZIP64 end record");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         entries_n = u64(zip + z + 32);
@@ -232,11 +233,11 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
         cd_off = u64(zip + z + 48);
     }
     if (cd_off > len || cd_size > len - cd_off) {
-        *why = "the ZIP central directory lies outside the file";
+        *why = TR_N("the ZIP central directory lies outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     if (entries_n > lim->max_entries || entries_n > cd_size / 46) {
-        *why = "more ZIP entries than allowed or than the directory holds";
+        *why = TR_N("more ZIP entries than allowed or than the directory holds");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
     e = rp_mem_alloc(alloc, entries_n ? entries_n : 1, sizeof *e);
@@ -322,11 +323,11 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
                          const char **why) {
     *out = NULL;
     if (e->size > max || e->size > SIZE_MAX - 1) {
-        *why = "a ZIP entry larger than allowed";
+        *why = TR_N("a ZIP entry larger than allowed");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
     if (e->data_off > len || e->csize > len - e->data_off) {
-        *why = "a ZIP entry's data lies outside the file";
+        *why = TR_N("a ZIP entry's data lies outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     uint8_t *buf = rp_mem_alloc(alloc, (size_t)e->size + 1, 1);
@@ -335,7 +336,7 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
     if (e->method == 0) {
         if (e->csize != e->size) {
             rp_mem_free(alloc, buf);
-            *why = "a stored ZIP entry whose sizes differ";
+            *why = TR_N("a stored ZIP entry whose sizes differ");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         memcpy(buf, src, (size_t)e->size);
@@ -344,13 +345,13 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
         proven_err_t err = rp_inflate(src, (size_t)e->csize, buf, (size_t)e->size, &pos, &used);
         if (err != PROVEN_OK || pos != e->size) {
             rp_mem_free(alloc, buf);
-            *why = "a ZIP entry does not inflate to its size";
+            *why = TR_N("a ZIP entry does not inflate to its size");
             return PROVEN_ERR_INVALID_FORMAT;
         }
     }
     if (proven_crc32((proven_mem_view_t){ buf, (size_t)e->size }) != e->crc) {
         rp_mem_free(alloc, buf);
-        *why = "a ZIP entry's CRC-32 does not match";
+        *why = TR_N("a ZIP entry's CRC-32 does not match");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     *out = buf;
@@ -360,36 +361,36 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
 bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, uint64_t skip_lfh_off, rp_buf_t *out, const char **why) {
     // The ZIP64 end record gives the central directory (rp_zip_read has checked the archive).
     if (len < 98) {
-        *why = "the archive has no ZIP64 end record";
+        *why = TR_N("the archive has no ZIP64 end record");
         return false;
     }
     size_t z = len - 22 - 20 - 56;
     if (u32(zip + len - 22) != 0x06054B50 || u32(zip + z) != 0x06064B50) {
-        *why = "the archive does not end in ZIP64 end records as MSIX packages do";
+        *why = TR_N("the archive does not end in ZIP64 end records as MSIX packages do");
         return false;
     }
     uint64_t cd_size = u64(zip + z + 40), cd_off = u64(zip + z + 48);
     if (cd_off > len || cd_size > len - cd_off) {
-        *why = "the central directory lies outside the archive";
+        *why = TR_N("the central directory lies outside the archive");
         return false;
     }
     size_t sl = strlen(skip), count = 0, kept = 0;
     bool found = false;
     for (uint64_t o = cd_off; o < cd_off + cd_size;) {
         if (o + 46 > cd_off + cd_size || u32(zip + o) != 0x02014B50) {
-            *why = "a malformed central directory";
+            *why = TR_N("a malformed central directory");
             return false;
         }
         size_t n = u16(zip + o + 28), e = u16(zip + o + 30), c = u16(zip + o + 32), rl = 46 + n + e + c;
         if (o + rl > cd_off + cd_size) {
-            *why = "a malformed central directory";
+            *why = TR_N("a malformed central directory");
             return false;
         }
         if (n == sl && memcmp(zip + o + 46, skip, sl) == 0) {
             // Windows takes the entry's place from the ZIP32 offset field (measured, RFC-0011): an
             // entry described the ZIP64 way is a hash mismatch there, so it is here.
             if (u32(zip + o + 42) == 0xFFFFFFFF || u32(zip + o + 20) == 0xFFFFFFFF) {
-                *why = "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields";
+                *why = TR_N("the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields");
                 return false;
             }
             found = true;
@@ -401,7 +402,7 @@ bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, ui
         o += rl;
     }
     if (!found) {
-        *why = "the entry is not in the central directory";
+        *why = TR_N("the entry is not in the central directory");
         return false;
     }
     // The file's own end records, with counts, sizes and offsets as if the entry did not exist.

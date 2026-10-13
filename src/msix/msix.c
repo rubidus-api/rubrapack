@@ -7,6 +7,7 @@
 // ('\', as written) and the manifest's references ('\').
 
 #include "rubrapack/msix.h"
+#include "rubrapack/lang.h"
 
 #include "rubrapack/buf.h"
 #include "rubrapack/crypto.h"
@@ -260,15 +261,15 @@ static const char *vfs_folder(const char *base, rp_arch_t arch, const char **why
     if (strcmp(base, "CommonFiles") == 0) return x86 ? "ProgramFilesCommonX86" : "ProgramFilesCommonX64";
     if (strcmp(base, "System") == 0) return x86 ? "SystemX86" : "SystemX64";
     if (strcmp(base, "Windows") == 0) return "Windows";
-    if (strcmp(base, "CommonAppData") == 0) return "Common AppData";
+    if (strcmp(base, "CommonAppData") == 0) return TR_N("Common AppData");
     if (strcmp(base, "AppData") == 0 || strcmp(base, "LocalAppData") == 0) {
-        *why = "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs";
+        *why = TR_N("MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs");
     } else if (strcmp(base, "Fonts") == 0) {
-        *why = "a font goes into an MSIX through a [font.*] that names it";
+        *why = TR_N("a font goes into an MSIX through a [font.*] that names it");
     } else if (strcmp(base, "Temp") == 0) {
-        *why = "an MSIX cannot place files in the temporary folder";
+        *why = TR_N("an MSIX cannot place files in the temporary folder");
     } else {
-        *why = "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]";
+        *why = TR_N("Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]");
     }
     return NULL;
 }
@@ -2553,7 +2554,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
     char archs[64][16];
     size_t narch = 0;
     if (!read_identity(man, ml, &bid)) {
-        *why = "the bundle manifest has no Identity Name, Publisher and Version";
+        *why = TR_N("the bundle manifest has no Identity Name, Publisher and Version");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     xr_t x = { man, man + ml };
@@ -2565,14 +2566,14 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
         x.p = te;
         if (!attr_value(from, te, "FileName", file, sizeof file) || !attr_value(from, te, "Offset", off_s, sizeof off_s) ||
             !attr_value(from, te, "Size", size_s, sizeof size_s) || !parse_u64(off_s, &off) || !parse_u64(size_s, &size)) {
-            *why = "a Package of the bundle manifest without FileName, Offset or Size";
+            *why = TR_N("a Package of the bundle manifest without FileName, Offset or Size");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         if (!attr_value(from, te, "Type", type, sizeof type)) snprintf(type, sizeof type, "application");
         // RFC-0019: a resource package (a language's resources) has a ResourceId instead of an architecture.
         bool resource = strcmp(type, "resource") == 0;
         if (!resource && strcmp(type, "application") != 0) {
-            *why = "a Package of the bundle manifest of an unknown Type";
+            *why = TR_N("a Package of the bundle manifest of an unknown Type");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         char rid[64] = "";
@@ -2588,11 +2589,11 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             if (!used[i] && zip_name_is(e[i].name, file)) k = i;
         }
         if (k == SIZE_MAX) {
-            *why = "a package named in the bundle manifest is not in the bundle";
+            *why = TR_N("a package named in the bundle manifest is not in the bundle");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         if (e[k].method != 0 || e[k].data_off != off || e[k].size != size) {
-            *why = "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)";
+            *why = TR_N("a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t i = 0; i < narch; ++i) {
@@ -2602,7 +2603,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             }
         }
         if (narch == sizeof archs / sizeof archs[0]) {
-            *why = "too many packages in the bundle";
+            *why = TR_N("too many packages in the bundle");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         snprintf(archs[narch++], sizeof archs[0], "%s", arch);
@@ -2633,7 +2634,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             return err;
         }
         if (bad_id) {
-            *why = "a package's identity differs from what the bundle manifest says of it";
+            *why = TR_N("a package's identity differs from what the bundle manifest says of it");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         rp_msix_file_t *o = &f[(*nf)++];
@@ -2646,7 +2647,7 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
         o->deflated = false;
     }
     if (narch == 0) {
-        *why = "a bundle without packages";
+        *why = TR_N("a bundle without packages");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     return PROVEN_OK;
@@ -2727,7 +2728,7 @@ static proven_err_t open_archive(proven_allocator_t alloc, const uint8_t *pkg, s
         out_f->size = size;
         out_f->deflated = e[k].method == 8;
         if (size > lim->max_output) {
-            *why = "a file larger than allowed";
+            *why = TR_N("a file larger than allowed");
             err = PROVEN_ERR_OUT_OF_BOUNDS;
             goto out;
         }
@@ -2871,17 +2872,17 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
         bool resource = rp_xml_attr(m, mlens[i], "Identity", "ResourceId", rids[i], sizeof rids[i]);
         if (!read_identity(m, mlens[i], &ids[i]) ||
             (!resource && !rp_xml_attr(m, mlens[i], "Identity", "ProcessorArchitecture", ids[i].arch, sizeof ids[i].arch))) {
-            *why = "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)";
+            *why = TR_N("a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)");
         } else if (i && (strcmp(ids[i].name, ids[0].name) != 0 || strcmp(ids[i].publisher, ids[0].publisher) != 0 || strcmp(ids[i].version, ids[0].version) != 0)) {
-            *why = "the packages of a bundle need the same Name, Publisher and Version";
+            *why = TR_N("the packages of a bundle need the same Name, Publisher and Version");
         } else if (strlen(parts[i].file_name) > 255 || !ext || (!ieq(ext, "msix") && !ieq(ext, "appx")) || strpbrk(parts[i].file_name, "/\\")) {
-            *why = "a package's name in the bundle must be a file name ending in .msix or .appx";
+            *why = TR_N("a package's name in the bundle must be a file name ending in .msix or .appx");
         } else {
             part_name(parts[i].file_name, zip_names[i], sizeof zip_names[i]);
             for (size_t k = 0; k < i && !*why; ++k) {
-                if (!resource && !rids[k][0] && strcmp(ids[k].arch, ids[i].arch) == 0) *why = "two packages of one architecture in a bundle";
-                else if (resource && strcmp(rids[k], rids[i]) == 0) *why = "two resource packages of one ResourceId in a bundle";
-                else if (ieq(parts[k].file_name, parts[i].file_name)) *why = "two packages of one name in a bundle";
+                if (!resource && !rids[k][0] && strcmp(ids[k].arch, ids[i].arch) == 0) *why = TR_N("two packages of one architecture in a bundle");
+                else if (resource && strcmp(rids[k], rids[i]) == 0) *why = TR_N("two resource packages of one ResourceId in a bundle");
+                else if (ieq(parts[k].file_name, parts[i].file_name)) *why = TR_N("two packages of one name in a bundle");
             }
         }
         if (*why) err = PROVEN_ERR_INVALID_ARG;

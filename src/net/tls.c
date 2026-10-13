@@ -9,6 +9,7 @@
 // certificates.
 
 #include "rubrapack/tls.h"
+#include "rubrapack/lang.h"
 
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
@@ -165,7 +166,7 @@ bool rp_tls_cv_check(const uint8_t *leaf, size_t leaf_len, uint16_t scheme, cons
         return false;
     }
     if (pss ? !c.rsa : c.ec_curve != curve) {
-        *why = "the server's signature scheme does not fit its certificate's key";
+        *why = TR_N("the server's signature scheme does not fit its certificate's key");
         return false;
     }
     // 64 spaces, the context string, a zero byte, the transcript hash (RFC 8446 4.4.3).
@@ -177,7 +178,7 @@ bool rp_tls_cv_check(const uint8_t *leaf, size_t leaf_len, uint16_t scheme, cons
     rp_hash(alg, content, 64 + sizeof ctx + hl, d);
     bool ok = pss ? rp_rsa_pss_verify(c.rsa_n.p, c.rsa_n.n, c.rsa_e.p, c.rsa_e.n, alg, d, sig, sig_len, rp_hash_size(alg))
                   : rp_cert_verify_sig(&c, alg, d, sig, sig_len);
-    if (!ok) *why = "the server's CertificateVerify signature does not verify";
+    if (!ok) *why = TR_N("the server's CertificateVerify signature does not verify");
     return ok;
 }
 
@@ -322,7 +323,7 @@ proven_err_t rp_tls_new(proven_allocator_t alloc, const rp_tls_config_t *cfg, rp
     *out = NULL;
     size_t hl = cfg->host ? strlen(cfg->host) : 0;
     if (hl == 0 || hl >= 256) {
-        *why = "no server name, or one longer than 255 bytes";
+        *why = TR_N("no server name, or one longer than 255 bytes");
         return PROVEN_ERR_INVALID_ARG;
     }
     rp_tls_t *t = rp_mem_alloc(alloc, 1, sizeof *t);
@@ -346,7 +347,7 @@ proven_err_t rp_tls_new(proven_allocator_t alloc, const rp_tls_config_t *cfg, rp
     if (cfg->test_random) memcpy(rnd, cfg->test_random, sizeof rnd);
     else if (!proven_random_bytes(rnd, sizeof rnd)) {
         rp_tls_free(t);
-        *why = "the system random source failed";
+        *why = TR_N("the system random source failed");
         return PROVEN_ERR_IO;
     }
     memcpy(t->random, rnd, 32);
@@ -357,14 +358,14 @@ proven_err_t rp_tls_new(proven_allocator_t alloc, const rp_tls_config_t *cfg, rp
     static const uint8_t base[32] = { 9 };
     if (!rp_x25519(t->x_pub, t->x_priv, base)) {
         rp_tls_free(t);
-        *why = "cannot make a key share";
+        *why = TR_N("cannot make a key share");
         return PROVEN_ERR_IO;
     }
     t->group = GROUP_X25519;
     t->st = ST_WAIT_SH;
     if (!client_hello(t, true)) {
         rp_tls_free(t);
-        *why = "cannot build the ClientHello";
+        *why = TR_N("cannot build the ClientHello");
         return PROVEN_ERR_NOMEM;
     }
     *out = t;
@@ -723,7 +724,7 @@ static proven_err_t content(rp_tls_t *t, uint8_t type, const uint8_t *p, size_t 
 
 proven_err_t rp_tls_feed(rp_tls_t *t, const uint8_t *in, size_t len, const char **why) {
     if (t->st == ST_FAILED) {
-        *why = "the connection has failed";
+        *why = TR_N("the connection has failed");
         return PROVEN_ERR_INVALID_STATE;
     }
     rp_buf_put(&t->in, in, len);

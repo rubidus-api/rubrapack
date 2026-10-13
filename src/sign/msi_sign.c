@@ -6,6 +6,7 @@
 // directory entries were given non-zero state bits, times and CLSIDs to tell the fields apart.
 
 #include "rubrapack/mem.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/sign.h"
 
@@ -126,7 +127,7 @@ bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t
         rp_hash_update(&h, cfb->entries[0].clsid, 16);
         put_u32(&h, cfb->entries[0].state);
         if (!ex_storage(cfb, 0, &h, 0)) {
-            *why = "the package's directory cannot be read";
+            *why = TR_N("the package's directory cannot be read");
             return false;
         }
         rp_hash_final(&h, ex);
@@ -138,7 +139,7 @@ bool rp_msi_digest(const rp_cfb_t *cfb, rp_hash_alg_t alg, bool with_ex, uint8_t
     bool ok = content_storage(cfb, 0, &h, &buf, &cap, 0);
     rp_mem_free(cfb->alloc, buf);
     if (!ok) {
-        *why = "a stream of the package cannot be read";
+        *why = TR_N("a stream of the package cannot be read");
         return false;
     }
     rp_hash_final(&h, digest);
@@ -251,11 +252,11 @@ proven_err_t rp_msi_sign(proven_allocator_t alloc, const uint8_t *msi, size_t le
     proven_err_t err = PROVEN_OK;
     int leaf = -1;
     if (rp_cfb_find(&cfb, 0, SIG_NAME, 17, &id) == PROVEN_OK) {
-        *why = "the package is signed already; rubrapack does not sign twice or replace a signature";
+        *why = TR_N("the package is signed already; rubrapack does not sign twice or replace a signature");
         err = PROVEN_ERR_INVALID_STATE;
     } else if ((*external_cabs = has_external_cabs(alloc, &cfb)) && !allow_external_cabs) {
-        *why = "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded "
-               "cabinets, or sign anyway with --allow-unsigned-cabs";
+        *why = TR_N("the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded "
+               "cabinets, or sign anyway with --allow-unsigned-cabs");
         err = PROVEN_ERR_INVALID_ARG;
     } else if (!rp_sign_check_key(kf, now, &leaf, why)) {
         err = PROVEN_ERR_INVALID_ARG;
@@ -312,7 +313,7 @@ void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_
     if (rp_cfb_open(&cfb, alloc, msi, len, &lim, why) != PROVEN_OK) return;
     uint32_t sid, xid;
     if (rp_cfb_find(&cfb, 0, SIG_NAME, 17, &sid) != PROVEN_OK) {
-        *why = "the package is not signed";
+        *why = TR_N("the package is not signed");
         rp_cfb_close(&cfb);
         return;
     }
@@ -322,7 +323,7 @@ void rp_msi_verify(proven_allocator_t alloc, const uint8_t *msi, size_t len, rp_
     bool ok = sig && rp_cfb_read(&cfb, sid, sig, sl) == PROVEN_OK;
     if (ok && has_ex) ok = cfb.entries[xid].size == 32 && rp_cfb_read(&cfb, xid, stored_ex, 32) == PROVEN_OK;
     if (!ok) {
-        *why = "the signature streams cannot be read";
+        *why = TR_N("the signature streams cannot be read");
     } else {
         rp_authenticode_verify(sig, sl, NULL, r, why);
         uint8_t ex[32], digest[RP_HASH_MAX];

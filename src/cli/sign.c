@@ -4,6 +4,7 @@
 // (process lists show arguments), and are wiped after use.
 
 #include "rubrapack/diag.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/keys.h"
 #include "rubrapack/mem.h"
@@ -57,12 +58,12 @@ int rp_sign_key_option(rp_sign_args_t *a, const char *arg, const char *next) {
 // The key options that go together (usage errors otherwise), or NULL when they are fine.
 static const char *key_options_problem(const rp_sign_args_t *a) {
     int kinds = (a->key != NULL) + (a->pkcs11 != NULL) + (a->key_store != NULL);
-    if (kinds > 1) return "give one of --key, --pkcs11 and --key-store";
+    if (kinds > 1) return TR_N("give one of --key, --pkcs11 and --key-store");
     if ((a->pass_env || a->pass_file) && !a->key) return "--pass-env and --pass-file go with --key (a token takes --pin-env or --pin-file)";
-    if (a->pass_env && a->pass_file) return "give --pass-env or --pass-file, not both";
+    if (a->pass_env && a->pass_file) return TR_N("give --pass-env or --pass-file, not both");
     if ((a->key_label || a->token_label || a->pin_env || a->pin_file) && !a->pkcs11) return "--key-label, --token-label, --pin-env and --pin-file go with --pkcs11";
     if (a->pkcs11 && !a->key_label) return "--pkcs11 needs --key-label";
-    if (a->pin_env && a->pin_file) return "give --pin-env or --pin-file, not both";
+    if (a->pin_env && a->pin_file) return TR_N("give --pin-env or --pin-file, not both");
     if (a->machine_store && !a->key_store) return "--machine-store goes with --key-store";
     return NULL;
 }
@@ -356,7 +357,7 @@ int rp_cmd_sign(int argc, char **argv) {
         return RP_EXIT_IO;
     }
     char line[1200];
-    snprintf(line, sizeof line, "signed %s\n", target);
+    rp_lang_format(line, sizeof line, "signed %s\n", target);
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
 }
 
@@ -447,53 +448,54 @@ int rp_cmd_verify(int argc, char **argv) {
         snprintf(ts_line, sizeof ts_line, "-");
     } else if (r.ts_bad) {
         ts_ok = false;
-        ts_why = "the unsigned attributes are malformed or hold more than one timestamp";
-        snprintf(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+        ts_why = TR_N("the unsigned attributes are malformed or hold more than one timestamp");
+        rp_lang_format(ts_line, sizeof ts_line, "invalid - %s", ts_why);
     } else if (r.ts_legacy) {
         ts_ok = false;
-        ts_why = "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check";
-        snprintf(ts_line, sizeof ts_line, "unsupported - %s", ts_why);
+        ts_why = TR_N("an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check");
+        rp_lang_format(ts_line, sizeof ts_line, "unsupported - %s", ts_why);
     } else if (r.ts_token.n == 0) {
-        snprintf(ts_line, sizeof ts_line, "not-present");
+        snprintf(ts_line, sizeof ts_line, "%s", TR("not-present"));
     } else {
         rp_tsp_token_t t;
         if (!rp_tsp_token(r.ts_token.p, r.ts_token.n, r.sig.p, r.sig.n, NULL, &t, &ts_why)) {
             ts_ok = false;
-            snprintf(ts_line, sizeof ts_line, "invalid - %s", ts_why);
+            rp_lang_format(ts_line, sizeof ts_line, "invalid - %s", ts_why);
         } else {
             rp_iso_time(t.gen_time, when);
             if (ntsa == 0) {
-                snprintf(ts_line, sizeof ts_line, "%s, TSA not-checked (give --tsa-trust)", when);
+                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA not-checked (give --tsa-trust)", when);
             } else if (rp_chain_trusted_for(t.tsa_cert, t.certs, ta, tsa_anchors.cert_count, t.gen_time, RP_PURPOSE_TIMESTAMP, &ts_why)) {
-                snprintf(ts_line, sizeof ts_line, "%s, TSA trusted", when);
+                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA trusted", when);
                 at = t.gen_time;
             } else {
                 ts_ok = false;
-                snprintf(ts_line, sizeof ts_line, "%s, TSA untrusted - %s", when, ts_why);
+                rp_lang_format(ts_line, sizeof ts_line, "%s, TSA untrusted - %s", when, ts_why);
             }
         }
     }
 
-    const char *chain = "not-checked (give --trust or --system-roots)";
+    const char *chain = TR_N("not-checked (give --trust or --system-roots)");
     const char *chain_why = NULL;
     bool trusted = false;
     size_t nanchors = anchors.cert_count;
     if (r.parsed && nanchors) {
         trusted = rp_chain_trusted(r.signer_cert, r.certs, a, anchors.cert_count, at, &chain_why);
-        chain = trusted ? "trusted" : "untrusted";
+        chain = trusted ? TR_N("trusted") : TR_N("untrusted");
     }
     char out[2048];
-    snprintf(out, sizeof out,
+    rp_lang_format(out, sizeof out,
              "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n",
-             file, r.parsed ? "ok" : "invalid", r.parsed ? (r.digest_ok ? "ok" : "mismatch") : "-",
-             r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : "invalid") : "-", chain, chain_why ? " - " : "", chain_why ? chain_why : "", ts_line);
+             file, r.parsed ? "ok" : TR("invalid"), r.parsed ? (r.digest_ok ? "ok" : TR("mismatch")) : "-",
+             r.parsed ? (r.attrs_ok && r.signature_ok ? "ok" : TR("invalid")) : "-", rp_tr(chain), chain_why ? " - " : "", chain_why ? rp_tr(chain_why) : "",
+             ts_line);
     bool sig_ok = r.parsed && r.digest_ok && r.attrs_ok && r.signature_ok;
     bool ok = sig_ok && ts_ok && trusted;
     if (!ok) {
-        const char *reason = !sig_ok ? (why ? why : "the signature does not verify")
+        const char *reason = !sig_ok ? (why ? why : TR("the signature does not verify"))
                            : !ts_ok ? ts_why
-                           : nanchors ? (chain_why ? chain_why : "untrusted") : "no --trust given: the signature verifies but nothing says whom to trust";
-        rp_diag_error(RP_DIAG_VERIFY, "'%s': %s%s", file, !sig_ok || ts_ok ? "" : "timestamp: ", reason);
+                           : nanchors ? (chain_why ? chain_why : TR("untrusted")) : TR("no --trust given: the signature verifies but nothing says whom to trust");
+        rp_diag_error(RP_DIAG_VERIFY, "'%s': %s%s", file, !sig_ok || ts_ok ? "" : TR("timestamp: "), reason);
     }
     rc = rp_pal_puts(RP_OUT_STDOUT, out) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
     if (!ok) rc = RP_EXIT_SIGN;

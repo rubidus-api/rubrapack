@@ -7,6 +7,7 @@
 // (AppxMetadata/CodeIntegrity.cat); each a SHA-256. A bundle's packages are signed first.
 
 #include "rubrapack/buf.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/deflate.h"
 #include "rubrapack/der.h"
@@ -398,7 +399,7 @@ static proven_err_t code_integrity(proven_allocator_t alloc, const uint8_t *pkg,
     }
     char fn[600], t[32];
     if (err == PROVEN_OK && ns && (man == NULL || !full_name((const char *)man, ml, fn, sizeof fn))) {
-        *why = "the manifest's Identity cannot be read for the package full name";
+        *why = TR_N("the manifest's Identity cannot be read for the package full name");
         err = PROVEN_ERR_INVALID_FORMAT;
     }
     if (err == PROVEN_OK && ns) {
@@ -448,14 +449,14 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
     uint8_t *sig = NULL, *cat = NULL;
     size_t sl = 0, catl = 0;
     if (ct == NULL || strcmp(ct->name, "[Content_Types].xml") != 0 || bm == NULL) {
-        *why = "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)";
+        *why = TR_N("[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)");
         err = PROVEN_ERR_INVALID_FORMAT;
         goto out;
     }
     // Everything before the content types, as it is.
     for (size_t i = 0; i + 1 < ne && err == PROVEN_OK; ++i) {
         if (e[i].lfh_size != 30 + strlen(e[i].name)) {
-            *why = "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)";
+            *why = TR_N("a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)");
             err = PROVEN_ERR_INVALID_FORMAT;
             break;
         }
@@ -472,7 +473,7 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
             if (memcmp(t + k - 8, "</Types>", 8) == 0) end = t + k - 8;
         }
         if (end == NULL) {
-            *why = "[Content_Types].xml has no </Types>";
+            *why = TR_N("[Content_Types].xml has no </Types>");
             err = PROVEN_ERR_INVALID_FORMAT;
         } else {
             rp_buf_put(&newct, t, (size_t)(end - t));
@@ -550,7 +551,7 @@ proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t l
     size_t ne = 0;
     err = rp_zip_read(alloc, pkg, len, &lim, &e, &ne, why);
     if (err == PROVEN_OK && (entry(e, ne, SIG_NAME) || entry(e, ne, CI_NAME))) {
-        *why = "the package is signed already; rubrapack signs unsigned packages (and never twice)";
+        *why = TR_N("the package is signed already; rubrapack signs unsigned packages (and never twice)");
         err = PROVEN_ERR_INVALID_STATE;
     }
     rp_zip_entries_free(alloc, e, ne);
@@ -559,10 +560,10 @@ proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t l
     rp_cert_t lc;
     if (err == PROVEN_OK) {
         if (!rp_xml_attr((const char *)man, ml, "Identity", "Publisher", publisher, sizeof publisher)) {
-            *why = "the manifest has no Identity Publisher";
+            *why = TR_N("the manifest has no Identity Publisher");
             err = PROVEN_ERR_INVALID_FORMAT;
         } else if (!rp_cert_parse(kf->certs[leaf], kf->cert_len[leaf], &lc, why) || !windows_name(alloc, lc.subject, subject, sizeof subject)) {
-            *why = "the certificate's subject cannot be written as an MSIX publisher";
+            *why = TR_N("the certificate's subject cannot be written as an MSIX publisher");
             err = PROVEN_ERR_INVALID_ARG;
         } else if (strcmp(publisher, subject) != 0) {
             snprintf(why_buf, sizeof why_buf,
@@ -620,18 +621,18 @@ void rp_msix_verify(proven_allocator_t alloc, const uint8_t *pkg, size_t len, rp
     const rp_zip_entry_t *s = entry(e, ne, SIG_NAME), *ct = entry(e, ne, "[Content_Types].xml"), *bm = entry(e, ne, "AppxBlockMap.xml"),
                          *ci = entry(e, ne, CI_NAME);
     if (s == NULL) {
-        *why = "the package is not signed (no AppxSignature.p7x)";
+        *why = TR_N("the package is not signed (no AppxSignature.p7x)");
         goto out;
     }
     for (size_t i = 0; i < ne; ++i) {
         if (e[i].lfh_off > s->lfh_off) {
-            *why = "AppxSignature.p7x is not the last entry";
+            *why = TR_N("AppxSignature.p7x is not the last entry");
             goto out;
         }
     }
     if (rp_zip_data(alloc, pkg, len, s, 1u << 24, &p7, why) != PROVEN_OK) goto out;
     if (s->size < 4 || memcmp(p7, "PKCX", 4) != 0) {
-        *why = "AppxSignature.p7x does not start with PKCX";
+        *why = TR_N("AppxSignature.p7x does not start with PKCX");
         goto out;
     }
     *sig = p7;
@@ -661,7 +662,7 @@ void rp_msix_verify(proven_allocator_t alloc, const uint8_t *pkg, size_t len, rp
         put_record(&rec, "AXCI", h);
     }
     r->digest_ok = rec.err == PROVEN_OK && r->signed_digest.n == rec.len && memcmp(r->signed_digest.p, rec.data, rec.len) == 0;
-    if (!r->digest_ok) *why = "the package's contents do not match its signature (it was changed after signing)";
+    if (!r->digest_ok) *why = TR_N("the package's contents do not match its signature (it was changed after signing)");
     // A bundle's packages are signed too, each on its own.
     for (size_t i = 1; bundle && r->digest_ok && i < nf; ++i) {
         rp_authenticode_check_t ir;

@@ -14,6 +14,7 @@
 // cannot ask for any: RFC-0017) - is left out.
 
 #include "rubrapack/cab.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/merge.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/suminfo.h"
@@ -344,7 +345,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     if (err == PROVEN_OK) {
         const char *missing = NULL;
         err = rp_msi_validation(alloc, mt, nt, NULL, 0, &mt[nt], &missing);
-        if (err == PROVEN_ERR_NOT_FOUND) *why = "internal: a module table has no _Validation rule";
+        if (err == PROVEN_ERR_NOT_FOUND) *why = TR_N("internal: a module table has no _Validation rule");
         if (err == PROVEN_OK) {
             rp_msi_wstream_t streams[1] = { { "MergeModule.CABinet", cab, cab_len } };
             rp_msi_wdb_t db = { 65001, mt, nt + 1, summary, summary_len, streams, cab ? 1 : 0 };
@@ -357,6 +358,6 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     for (size_t i = 0; i < m.nkept; ++i) rp_mem_free(alloc, m.kept[i]);
     rp_mem_free(alloc, m.kept);
     rp_mem_free(alloc, m.keys);
-    if (err == PROVEN_ERR_NOMEM && *why == NULL) *why = "out of memory";
+    if (err == PROVEN_ERR_NOMEM && *why == NULL) *why = TR_N("out of memory");
     return err;
 }

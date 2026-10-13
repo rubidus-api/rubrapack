@@ -7,6 +7,7 @@
 // environment or INI entries, services, fonts - is refused, as is a value filled in at install time.
 
 #include "rubrapack/cab.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/merge.h"
 #include "rubrapack/msix.h"
@@ -83,7 +84,7 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
             if (c[ck].kind == RP_MSI_STR && k->kind == RP_MSI_STR && c[ck].len == k->len && memcmp(c[ck].bytes, k->bytes, k->len) == 0) row = c;
         }
         if (row == NULL) {
-            *why = "names a folder its Directory table does not have";
+            *why = TR_N("names a folder its Directory table does not have");
             return false;
         }
         char *name = text(a, &row[ck]);
@@ -105,7 +106,7 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
         rp_mem_free(a, dd);
         if (parts[n][0]) ++n;
         if (row[cp].kind != RP_MSI_STR) {
-            *why = "has a folder outside its TARGETDIR that an MSIX has no place for";
+            *why = TR_N("has a folder outside its TARGETDIR that an MSIX has no place for");
             return false;
         }
         k = &row[cp];
@@ -164,7 +165,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
         for (size_t r = 0; cc >= 0 && r < comps->row_count; ++r) {
             const rp_msi_cell_t *c = &comps->cells[r * comps->column_count + (size_t)cc];
             if (c->kind == RP_MSI_STR && c->len) {
-                *why = "has a component with a condition; an MSIX installs everything";
+                *why = TR_N("has a component with a condition; an MSIX installs everything");
                 err = PROVEN_ERR_UNSUPPORTED;
             }
         }
@@ -175,12 +176,12 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
     uint8_t *arena = NULL;
     if (err == PROVEN_OK && files && files->row_count) {
         if (m.cab == NULL || dirs == NULL || comps == NULL) {
-            *why = "has files but no MergeModule.CABinet or Directory table";
+            *why = TR_N("has files but no MergeModule.CABinet or Directory table");
             err = PROVEN_ERR_INVALID_FORMAT;
         } else {
             rp_limits_t lim = rp_limits_default();
             err = rp_cab_read(a, m.cab, m.cab_len, &lim, &ents, &nents, &arena);
-            if (err != PROVEN_OK) *why = "has a MergeModule.CABinet that cannot be read";
+            if (err != PROVEN_OK) *why = TR_N("has a MergeModule.CABinet that cannot be read");
         }
     }
     if (err == PROVEN_OK && files && files->row_count) {
@@ -200,7 +201,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
                 if (f[fk].kind == RP_MSI_STR && strlen(ents[q].name) == f[fk].len && memcmp(ents[q].name, f[fk].bytes, f[fk].len) == 0) e = &ents[q];
             }
             if (crow == NULL || e == NULL) {
-                *why = "has a file whose component or cabinet entry is missing";
+                *why = TR_N("has a file whose component or cabinet entry is missing");
                 err = PROVEN_ERR_INVALID_FORMAT;
                 break;
             }

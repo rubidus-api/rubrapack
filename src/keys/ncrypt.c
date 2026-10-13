@@ -5,6 +5,7 @@
 // from CertGetCertificateChain, without the root.
 
 #include "rubrapack/keys.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/der.h"
@@ -17,13 +18,13 @@
 
 proven_err_t rp_ncrypt_open(proven_allocator_t alloc, const char *thumbprint, bool machine, rp_keyfile_t *kf, const char **why) {
     (void)alloc, (void)thumbprint, (void)machine, (void)kf;
-    *why = "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11";
+    *why = TR_N("--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11");
     return PROVEN_ERR_UNSUPPORTED;
 }
 
 proven_err_t rp_ncrypt_list(proven_allocator_t alloc, void (*visit)(void *ctx, const rp_key_entry_t *e), void *ctx, const char **why) {
     (void)alloc, (void)visit, (void)ctx;
-    *why = "without --pkcs11, `keys list` shows the Windows certificate store";
+    *why = TR_N("without --pkcs11, `keys list` shows the Windows certificate store");
     return PROVEN_ERR_UNSUPPORTED;
 }
 
@@ -76,7 +77,7 @@ static proven_err_t nk_sign(void *ctx, int alg, const uint8_t *digest, uint8_t *
     }
     // ECDSA: NCrypt gives r || s; the file holds DER SEQUENCE { r, s }.
     if (got != 2 * k->ec_size) {
-        *why = "NCrypt returned an ECDSA signature of the wrong length";
+        *why = TR_N("NCrypt returned an ECDSA signature of the wrong length");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     rp_buf_t rs = rp_buf_new(k->alloc, 256), seq = rp_buf_new(k->alloc, 256);
@@ -104,20 +105,20 @@ proven_err_t rp_ncrypt_open(proven_allocator_t alloc, const char *thumbprint, bo
         if (*p == ' ' || *p == ':') continue;
         int h = hexv(*p), l = p[1] ? hexv(p[1]) : -1;
         if (h < 0 || l < 0 || tl == 20) {
-            *why = "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)";
+            *why = TR_N("--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)");
             return PROVEN_ERR_INVALID_ARG;
         }
         sha1[tl++] = (uint8_t)(h << 4 | l);
         ++p;
     }
     if (tl != 20) {
-        *why = "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)";
+        *why = TR_N("--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)");
         return PROVEN_ERR_INVALID_ARG;
     }
     HCERTSTORE store = CertOpenStore(CERT_STORE_PROV_SYSTEM_W, 0, 0,
                                      (machine ? CERT_SYSTEM_STORE_LOCAL_MACHINE : CERT_SYSTEM_STORE_CURRENT_USER) | CERT_STORE_READONLY_FLAG, L"MY");
     if (store == NULL) {
-        *why = "cannot open the certificate store";
+        *why = TR_N("cannot open the certificate store");
         return PROVEN_ERR_IO;
     }
     CRYPT_HASH_BLOB hb = { 20, sha1 };

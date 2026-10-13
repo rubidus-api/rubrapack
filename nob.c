@@ -63,6 +63,8 @@ static const char *const core_sources[] = {
     "src/core/diag.c",
     "src/core/limits.c",
     "src/core/srcdiag.c",
+    "src/core/lang.c",
+    "src/core/lang_ko.c",
     "src/lang/toml.c",
     "src/model/ident.c",
     "src/model/ir.c", "src/model/ir_common.c", "src/model/ir_files.c", "src/model/ir_tables.c",

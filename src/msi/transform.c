@@ -12,6 +12,7 @@
 // This is the layout msi.dll's GenerateTransform writes (tests/fixtures/mst/ref.mst, T108).
 
 #include "rubrapack/mem.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/transform.h"
 
@@ -743,18 +744,18 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
                                rp_buf_t *out, const char **why) {
     size_t ref = l->long_refs ? 3 : 2;
     if (ncols > 32) {
-        *why = "a table has more than 32 columns";
+        *why = TR_N("a table has more than 32 columns");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     for (size_t o = 0; o < n;) {
         if (n - o < 2) {
-            *why = "a record is cut short";
+            *why = TR_N("a record is cut short");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         uint32_t mask = (uint32_t)(d[o] | d[o + 1] << 8);
         o += 2;
         if ((mask & 1) && (mask >> 8) > ncols) {
-            *why = "a record has more columns than its table";
+            *why = TR_N("a record has more columns than its table");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         lval_t v[32];
@@ -764,7 +765,7 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
             if (!present(type, c, mask)) continue;
             size_t w = (type & RP_MSI_COL_STRING) ? (is_binary(type) ? 2 : ref) : (type & RP_MSI_COL_WIDTH) == 4 ? 4 : 2;
             if (n - o < w) {
-                *why = "a record is cut short";
+                *why = TR_N("a record is cut short");
                 return PROVEN_ERR_INVALID_FORMAT;
             }
             uint32_t x = w == 4 ? (uint32_t)d[o] | (uint32_t)d[o + 1] << 8 | (uint32_t)d[o + 2] << 16 | (uint32_t)d[o + 3] << 24
@@ -775,7 +776,7 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
             if (is_binary(type)) v[c] = (lval_t){ .kind = RP_MSI_BINARY, .s = x };
             else if (type & RP_MSI_COL_STRING) {
                 if (x >= l->nstr) {
-                    *why = "a record names a string the pool does not have";
+                    *why = TR_N("a record names a string the pool does not have");
                     return PROVEN_ERR_INVALID_FORMAT;
                 }
                 v[c] = (lval_t){ .kind = RP_MSI_STR, .s = x };
@@ -848,7 +849,7 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
     proven_err_t err = read_stream(alloc, mst, storage, "_StringPool", true, limits->max_metadata, &pool, &pool_len);
     if (err == PROVEN_OK) err = read_stream(alloc, mst, storage, "_StringData", true, limits->max_metadata, &l.data, &l.data_len);
     if (err != PROVEN_OK || pool_len < 4) {
-        *why = "no string pool: not a transform";
+        *why = TR_N("no string pool: not a transform");
         err = PROVEN_ERR_INVALID_FORMAT;
     }
     if (err == PROVEN_OK) {
@@ -866,7 +867,7 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
                 i += 4;
             }
             if (off + n > l.data_len) {
-                *why = "string lengths exceed the string data";
+                *why = TR_N("string lengths exceed the string data");
                 err = PROVEN_ERR_INVALID_FORMAT;
                 break;
             }
@@ -910,7 +911,7 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
         else if (bt) cols = bt->columns, ncols = bt->column_count;
         else if ((s = added_schema(&l, (const uint8_t *)name, strlen(name))) != NULL && s->ncols) cols = s->cols, ncols = s->ncols;
         if (cols == NULL) {
-            *why = "has records for a table neither the base nor the transform defines";
+            *why = TR_N("has records for a table neither the base nor the transform defines");
             err = PROVEN_ERR_INVALID_FORMAT;
             break;
         }

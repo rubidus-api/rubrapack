@@ -1,3 +1,4 @@
+#include "rubrapack/lang.h"
 // src/model/ir_common.c - shared helpers of the .rpk model: names, keys, values, known folders.
 
 #include "ir_int.h"
@@ -281,8 +282,8 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
             char name[128];
             size_t next = read_name(s, v->len, i, name, sizeof name);
             if (next == 0) {
-                ERR(c, v->pos, "RP1403", memchr(s + i, ')', v->len - i) ? "bad variable name in '$(...)'"
-                                                                       : "'$(' is not closed (write '$$(' for the text '$(')");
+                ERR(c, v->pos, "RP1403", memchr(s + i, ')', v->len - i) ? TR_N("bad variable name in '$(...)'")
+                                                                       : TR_N("'$(' is not closed (write '$$(' for the text '$(')"));
                 ok = false;
                 break;
             }
@@ -508,15 +509,15 @@ bool ir_has_control(const char *s) {
 bool ir_target_name_ok(ctx_t *c, const char *name, rp_pos_t pos) {
     size_t n = strlen(name);
     const char *why = NULL;
-    if (n == 0) why = "is empty";
-    else if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) why = "is '.' or '..'";
-    else if (ir_has_control(name)) why = "contains a control character";
-    else if (strpbrk(name, "<>:\"/\\|?*")) why = "contains one of < > : \" / \\ | ? *";
-    else if (name[n - 1] == ' ' || name[n - 1] == '.') why = "ends with a space or a dot";
+    if (n == 0) why = TR_N("is empty");
+    else if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) why = TR_N("is '.' or '..'");
+    else if (ir_has_control(name)) why = TR_N("contains a control character");
+    else if (strpbrk(name, "<>:\"/\\|?*")) why = TR_N("contains one of < > : \" / \\ | ? *");
+    else if (name[n - 1] == ' ' || name[n - 1] == '.') why = TR_N("ends with a space or a dot");
     else {
         uint16_t units[300];
         rp_text_result_t r = rp_utf8_to_utf16((const uint8_t *)name, n, units, 300);
-        if (r.err != PROVEN_OK || r.units > 255) why = "is longer than 255 UTF-16 units";
+        if (r.err != PROVEN_OK || r.units > 255) why = TR_N("is longer than 255 UTF-16 units");
     }
     if (why == NULL) {
         static const char *const devices[] = { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5",
@@ -532,7 +533,7 @@ bool ir_target_name_ok(ctx_t *c, const char *name, rp_pos_t pos) {
                 if (ch >= 'a' && ch <= 'z') ch = (char)(ch - 32);
                 same &= ch == devices[k][j];
             }
-            if (same) why = "is a reserved device name";
+            if (same) why = TR_N("is a reserved device name");
         }
     }
     if (why) {

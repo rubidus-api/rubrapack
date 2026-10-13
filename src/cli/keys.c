@@ -3,6 +3,7 @@
 // and, for MSIX, the publisher each certificate signs for. Nothing secret is printed.
 
 #include "rubrapack/diag.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/keys.h"
 #include "rubrapack/mem.h"
@@ -83,6 +84,6 @@ int rp_cmd_keys(int argc, char **argv) {
         rp_diag_error(RP_DIAG_SIGN, "%s", why ? why : "cannot list the keys");
         return err == PROVEN_ERR_UNSUPPORTED ? RP_EXIT_USAGE : err == PROVEN_ERR_PERMISSION ? RP_EXIT_SIGN : RP_EXIT_IO;
     }
-    if (l.count == 0 && l.rc == RP_EXIT_OK) l.rc = rp_pal_puts(RP_OUT_STDOUT, "no keys\n") == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
+    if (l.count == 0 && l.rc == RP_EXIT_OK) l.rc = rp_pal_puts(RP_OUT_STDOUT, TR("no keys\n")) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
     return l.rc;
 }

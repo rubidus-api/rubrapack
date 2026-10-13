@@ -2,6 +2,7 @@
 
 #include "rubrapack/diag.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/lang.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -88,7 +89,7 @@ void rp_diag_json_end(const char *path, int rc) {
 
 static void emit(const char *kind, const char *code, const char *fmt, va_list ap) {
     char msg[1024];
-    int n = vsnprintf(msg, sizeof msg, fmt, ap);
+    int n = rp_lang_vformat(msg, sizeof msg, fmt, ap);
     if (n < 0) {
         msg[0] = '\0';
     } else if ((size_t)n >= sizeof msg) {
@@ -108,7 +109,7 @@ static void emit(const char *kind, const char *code, const char *fmt, va_list ap
         return;
     }
     char line[1100];
-    int m = snprintf(line, sizeof line, "rubrapack: %s[%s]: %s\n", kind, code, msg);
+    int m = snprintf(line, sizeof line, "rubrapack: %s[%s]: %s\n", rp_tr(kind), code, msg);
     if (m < 0) return;
     size_t len = strlen(line);
     (void)rp_pal_write(RP_OUT_STDERR, (const uint8_t *)line, len);

@@ -5,6 +5,7 @@
 // specification's 1-byte packing is what Windows modules use; there rubrapack uses NCrypt).
 
 #include "rubrapack/keys.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/der.h"
@@ -18,14 +19,14 @@
 proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const char *token_label, const char *key_label, const uint8_t *pin,
                             size_t pin_len, rp_keyfile_t *kf, const char **why) {
     (void)alloc, (void)module, (void)token_label, (void)key_label, (void)pin, (void)pin_len, (void)kf;
-    *why = "on Windows a token is used through the certificate store (--key-store <thumbprint>)";
+    *why = TR_N("on Windows a token is used through the certificate store (--key-store <thumbprint>)");
     return PROVEN_ERR_UNSUPPORTED;
 }
 
 proven_err_t rp_pkcs11_list(proven_allocator_t alloc, const char *module, const char *token_label, const uint8_t *pin, size_t pin_len,
                             void (*visit)(void *ctx, const rp_key_entry_t *e), void *ctx, const char **why) {
     (void)alloc, (void)module, (void)token_label, (void)pin, (void)pin_len, (void)visit, (void)ctx;
-    *why = "on Windows `keys list` shows the certificate store";
+    *why = TR_N("on Windows `keys list` shows the certificate store");
     return PROVEN_ERR_UNSUPPORTED;
 }
 
@@ -119,10 +120,10 @@ static char msg[400];
 static const char *rv_text(CK_RV rv) {
     switch (rv) {
     case CKR_PIN_INCORRECT: return "wrong PIN";
-    case CKR_PIN_INVALID: case CKR_PIN_LEN_RANGE: return "the PIN has characters or a length the token does not take";
-    case CKR_PIN_EXPIRED: return "the PIN has expired: change it on the token first";
-    case CKR_PIN_LOCKED: return "the PIN is locked (too many wrong tries)";
-    case CKR_TOKEN_NOT_PRESENT: return "the token is not present";
+    case CKR_PIN_INVALID: case CKR_PIN_LEN_RANGE: return TR_N("the PIN has characters or a length the token does not take");
+    case CKR_PIN_EXPIRED: return TR_N("the PIN has expired: change it on the token first");
+    case CKR_PIN_LOCKED: return TR_N("the PIN is locked (too many wrong tries)");
+    case CKR_TOKEN_NOT_PRESENT: return TR_N("the token is not present");
     default: return NULL;
     }
 }
@@ -168,7 +169,7 @@ static proven_err_t p11_sign(void *ctx, int alg, const uint8_t *digest, uint8_t 
         il = rp_hash_size((rp_hash_alg_t)alg);
         memcpy(in, digest, il);
     } else if (!digest_info(alg, digest, in, &il)) {
-        *why = "a hash the token signing does not know";
+        *why = TR_N("a hash the token signing does not know");
         return PROVEN_ERR_UNSUPPORTED;
     }
     CK_RV rv = p->f->C_SignInit(p->session, &m, p->key);
@@ -187,7 +188,7 @@ static proven_err_t p11_sign(void *ctx, int alg, const uint8_t *digest, uint8_t 
     // ECDSA: r || s from the token, DER SEQUENCE { r, s } in the file (the one conversion, RFC-0001 12).
     if (p->ec_size == 0 && (rl == 64 || rl == 96)) p->ec_size = rl / 2;         // the certificate came from --cert
     if (rl != 2 * p->ec_size) {
-        *why = "the token returned an ECDSA signature of the wrong length";
+        *why = TR_N("the token returned an ECDSA signature of the wrong length");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     rp_buf_t rs = rp_buf_new(p->alloc, 256), seq = rp_buf_new(p->alloc, 256);
@@ -222,7 +223,7 @@ static proven_err_t p11_load(proven_allocator_t alloc, const char *module, p11_t
     memcpy(&get, &sym, sizeof get);
     CK_RV rv = get ? get(&p->f) : 1;
     if (rv != CKR_OK || p->f == NULL || p->f->version.major < 2) {
-        *why = "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)";
+        *why = TR_N("the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)");
         p11_close(p);
         return PROVEN_ERR_INVALID_FORMAT;
     }
@@ -324,7 +325,7 @@ proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const 
     CK_ULONG ns = 0;
     err = find_slots(p, tlabel, slots, &ns, why);
     if (err == PROVEN_OK && ns > 1) {
-        *why = "more than one token is present: name one with --token-label";
+        *why = TR_N("more than one token is present: name one with --token-label");
         err = PROVEN_ERR_INVALID_ARG;
     }
     if (err == PROVEN_OK) err = login(p, slots[0], pin, pin_len, why);
@@ -346,7 +347,7 @@ proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const 
             id = attr(p, o[0], CKA_ID, &idl);
             type = attr(p, o[0], CKA_KEY_TYPE, &tl);
             if (type == NULL || tl != sizeof(CK_ULONG)) {
-                *why = "the token does not say what kind of key it is";
+                *why = TR_N("the token does not say what kind of key it is");
                 err = PROVEN_ERR_INVALID_FORMAT;
             }
         }
@@ -355,7 +356,7 @@ proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const 
         CK_ULONG kt;
         memcpy(&kt, type, sizeof kt);
         if (kt != CKK_RSA && kt != CKK_EC) {
-            *why = "the key is neither RSA nor EC";
+            *why = TR_N("the key is neither RSA nor EC");
             err = PROVEN_ERR_UNSUPPORTED;
         }
         p->ec = kt == CKK_EC;
@@ -377,7 +378,7 @@ proven_err_t rp_pkcs11_open(proven_allocator_t alloc, const char *module, const 
             rp_cert_t c;
             if (err == PROVEN_OK && rp_cert_parse(kf->certs[0], kf->cert_len[0], &c, why)) {
                 if (p->ec && c.ec_curve < 0) {
-                    *why = "the token's EC key has a certificate that is not an EC one";
+                    *why = TR_N("the token's EC key has a certificate that is not an EC one");
                     err = PROVEN_ERR_INVALID_FORMAT;
                 } else if (p->ec) {
                     kf->ec_curve = c.ec_curve;

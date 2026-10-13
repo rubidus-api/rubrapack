@@ -1737,6 +1737,14 @@ rubrapack version | help [command]
   clock set to that time would not.)
 - Exit codes: 0 success, 1 error in the source, 2 usage, 3 input/output, 4 signing, 5 lint,
   6 network.
+- `--lang <code>` chooses the language of what the tool prints for a person: errors and warnings,
+  `help`, the result lines, `explain`, the questions of `new -i` and `edit`. The codes are `en`
+  (the default) and `ko`. It may stand anywhere on the line (`rubrapack --lang ko build ...`,
+  `rubrapack lint app.toml --lang=ko`); the environment variable `RUBRAPACK_LANG` says the same
+  for every run, and the option wins over it. What a program reads stays as it is: the diagnostic
+  codes, exit codes, table dumps of `inspect`, `schema`, and the structure of `--json` (whose
+  `message` texts follow the language). It never changes what is built - the languages of a
+  package's dialogs are the source's (`[ui] languages`).
 
 ## Diagnostic codes
 

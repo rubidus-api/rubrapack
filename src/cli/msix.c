@@ -2,6 +2,7 @@
 // RFC-0010 P8b-2).
 
 #include "rubrapack/diag.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msix.h"
@@ -126,7 +127,7 @@ int rp_msix_lint(const char *path, bool strict) {
             ++errors;
         }
     }
-    snprintf(line, sizeof line, "%s: %zu files, %zu errors, 0 warnings\n", path, p.count, errors);
+    rp_lang_format(line, sizeof line, "%s: %zu files, %zu errors, 0 warnings\n", path, p.count, errors);
     if (!rp_diag_json_on()) rc = out(line);
     close_pkg(&p);
     return errors ? RP_EXIT_LINT : rc;

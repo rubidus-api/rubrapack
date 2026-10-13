@@ -5,6 +5,7 @@
 // TOML is undone at once; saving checks the source like `lint`.
 
 #include "rubrapack/buf.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
@@ -279,26 +280,26 @@ static bool feature_used(const src_t *s, const char *f) {
     return false;
 }
 
-static void say(const char *text) { (void)rp_pal_puts(RP_OUT_STDERR, text); }
+static void say(const char *text) { (void)rp_pal_puts(RP_OUT_STDERR, rp_tr(text)); }
 
 // ---- the menu items -------------------------------------------------------------------------
 
 static int product(src_t *s, ans_t *a) {
     int rc;
     const char *v = get(s, "package", NULL, "name");
-    if ((rc = rpn_ask(a, "Product name", v ? v : "", a->name, sizeof a->name, rpn_check_product))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Product name"), v ? v : "", a->name, sizeof a->name, rpn_check_product))) return rc;
     set_str(s, "package", NULL, "name", a->name);
     v = get(s, "package", NULL, "manufacturer");
-    if ((rc = rpn_ask(a, "Manufacturer", v ? v : "", a->manufacturer, sizeof a->manufacturer, rpn_check_product))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Manufacturer"), v ? v : "", a->manufacturer, sizeof a->manufacturer, rpn_check_product))) return rc;
     set_str(s, "package", NULL, "manufacturer", a->manufacturer);
     v = get(s, "package", NULL, "version");
     bool via_define = v && strcmp(v, "$(VERSION)") == 0 && get(s, "define", NULL, "VERSION");
     if (via_define) v = get(s, "define", NULL, "VERSION");
-    if ((rc = rpn_ask(a, via_define ? "Version ([define] VERSION)" : "Version", v ? v : "1.0.0", a->version, sizeof a->version,
+    if ((rc = rpn_ask(a, via_define ? TR_N("Version ([define] VERSION)") : TR_N("Version"), v ? v : "1.0.0", a->version, sizeof a->version,
                       rpn_check_version))) return rc;
     set_str(s, via_define ? "define" : "package", NULL, via_define ? "VERSION" : "version", a->version);
     v = get(s, "package", NULL, "arch");
-    if ((rc = rpn_ask(a, "Architecture (x64, x86, arm64)", v ? v : "x64", a->arch, sizeof a->arch, rpn_check_arch))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Architecture (x64, x86, arm64)"), v ? v : "x64", a->arch, sizeof a->arch, rpn_check_arch))) return rc;
     set_str(s, "package", NULL, "arch", a->arch);
     return 0;
 }
@@ -307,17 +308,17 @@ static int install(src_t *s, ans_t *a) {
     int rc;
     const char *p = get(s, "dir", "INSTALLDIR", "path");
     if (p && strncmp(p, "$(ProgramFiles)/", 16) == 0 && !strchr(p + 16, '/')) {
-        if ((rc = rpn_ask(a, "Folder name under Program Files", p + 16, a->install_dir, sizeof a->install_dir, rpn_check_folder))) return rc;
+        if ((rc = rpn_ask(a, TR_N("Folder name under Program Files"), p + 16, a->install_dir, sizeof a->install_dir, rpn_check_folder))) return rc;
         char path[300];
         CUT(path, sizeof path, "$(ProgramFiles)/%s", a->install_dir);
         set_str(s, "dir", "INSTALLDIR", "path", path);
     } else if (p) {
         char path[512];
-        if ((rc = rpn_ask(a, "Install folder ([dir.INSTALLDIR] path)", p, path, sizeof path, NULL))) return rc;
+        if ((rc = rpn_ask(a, TR_N("Install folder ([dir.INSTALLDIR] path)"), p, path, sizeof path, NULL))) return rc;
         set_str(s, "dir", "INSTALLDIR", "path", path);
     }
     const char *sc = get(s, "package", NULL, "scope");
-    if ((rc = rpn_ask(a, "Install for (machine, user, dual)", sc ? sc : "machine", a->scope, sizeof a->scope, rpn_check_scope))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Install for (machine, user, dual)"), sc ? sc : "machine", a->scope, sizeof a->scope, rpn_check_scope))) return rc;
     if (strcmp(a->scope, "machine") == 0) unset(s, "package", NULL, "scope");
     else set_str(s, "package", NULL, "scope", a->scope);
     return 0;
@@ -326,12 +327,12 @@ static int install(src_t *s, ans_t *a) {
 static int dialogs(src_t *s, ans_t *a) {
     int rc;
     const char *u = get(s, "package", NULL, "ui");
-    if ((rc = rpn_ask(a, "Dialogs (none, basic, minimal, installdir, features)", u ? u : "none", a->ui, sizeof a->ui, rpn_check_ui))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Dialogs (none, basic, minimal, installdir, features)"), u ? u : "none", a->ui, sizeof a->ui, rpn_check_ui))) return rc;
     if (strcmp(a->ui, "none") == 0) unset(s, "package", NULL, "ui");
     else set_str(s, "package", NULL, "ui", a->ui);
     if (strcmp(a->ui, "none") != 0 && strcmp(a->ui, "basic") != 0) {
         const char *l = get(s, "package", NULL, "license");
-        if ((rc = rpn_ask(a, "License to accept (.txt, .md, .rtf; - for none)", l ? l : "-", a->license, sizeof a->license, rpn_check_license))) return rc;
+        if ((rc = rpn_ask(a, TR_N("License to accept (.txt, .md, .rtf; - for none)"), l ? l : "-", a->license, sizeof a->license, rpn_check_license))) return rc;
         if (strcmp(a->license, "-") == 0) unset(s, "package", NULL, "license");
         else set_str(s, "package", NULL, "license", a->license);
     }
@@ -344,9 +345,9 @@ static int dialogs(src_t *s, ans_t *a) {
             else others = true;
         }
         bool want = ko;
-        if ((rc = rpn_ask_yes(a, "Korean dialogs as well as English?", ko, &want))) return rc;
+        if ((rc = rpn_ask_yes(a, TR_N("Korean dialogs as well as English?"), ko, &want))) return rc;
         if (want != ko) {
-            if (others) say("  other languages in [ui] languages are kept; change that list with 7 (any key)\n");
+            if (others) say(TR_N("  other languages in [ui] languages are kept; change that list with 7 (any key)\n"));
             else if (want) set_raw(s, "ui", NULL, "languages", "[\"ko\"]");
             else unset(s, "ui", NULL, "languages");
         }
@@ -384,7 +385,7 @@ static int optional_parts(src_t *s, ans_t *a) {
     if (subs == NULL) return RP_EXIT_IO;
     size_t n = sub_folders(s, dist, subs, 256);
     if (n == 0) {
-        say("  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n");
+        say(TR_N("  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"));
         rp_mem_free(heap(), subs);
         return 0;
     }
@@ -403,11 +404,11 @@ static int optional_parts(src_t *s, ans_t *a) {
         }
     }
     char line[1400];
-    size_t o = (size_t)snprintf(line, sizeof line, "  sub folders:");
+    size_t o = (size_t)snprintf(line, sizeof line, "%s", TR("  sub folders:"));
     for (size_t i = 0; i < n && o < sizeof line - 1; ++i) o += (size_t)snprintf(line + o, sizeof line - o, " %s", subs[i].name);
     if (o < sizeof line - 1) CUT(line + o, sizeof line - o, "\n");
     say(line);
-    int rc = rpn_ask(a, "Optional parts the user may tick (sub folders, commas; - for none)", cur[0] ? cur : "-", a->optional,
+    int rc = rpn_ask(a, TR_N("Optional parts the user may tick (sub folders, commas; - for none)"), cur[0] ? cur : "-", a->optional,
                      sizeof a->optional, rpn_check_optional);
     if (rc) {
         rp_mem_free(heap(), subs);
@@ -481,7 +482,7 @@ static int shortcuts(src_t *s, ans_t *a) {
     static char ids[4096][64], names[4096][256];
     size_t n = file_tables(s, ids, names, 4096);
     if (n == 0) {
-        say("  the source has no [file] tables for a shortcut to point at\n");
+        say(TR_N("  the source has no [file] tables for a shortcut to point at\n"));
         return 0;
     }
     rpn_names_free(&a->scan.files);
@@ -503,11 +504,11 @@ static int shortcuts(src_t *s, ans_t *a) {
         if (rpn_ends_ci(names[i], ".exe")) CUT(cur, sizeof cur, "%s", names[i]);
     }
     int rc;
-    if ((rc = rpn_ask(a, "Program the shortcuts open (- for no shortcuts)", cur, a->main, sizeof a->main, rpn_check_main))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Program the shortcuts open (- for no shortcuts)"), cur, a->main, sizeof a->main, rpn_check_main))) return rc;
     bool want_start = false, want_desk = false;
     if (strcmp(a->main, "-") != 0) {
-        if ((rc = rpn_ask_yes(a, "Start menu shortcut?", start != NULL || !desk, &want_start))) return rc;
-        if ((rc = rpn_ask_yes(a, "Desktop shortcut?", desk != NULL, &want_desk))) return rc;
+        if ((rc = rpn_ask_yes(a, TR_N("Start menu shortcut?"), start != NULL || !desk, &want_start))) return rc;
+        if ((rc = rpn_ask_yes(a, TR_N("Desktop shortcut?"), desk != NULL, &want_desk))) return rc;
     }
     char tgt[80] = "";
     for (size_t i = 0; i < n; ++i) {
@@ -547,7 +548,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
     const char *why = rpn_check_dist(a, dist);
     if (why) {
         char m[700];
-        CUT(m, sizeof m, "  the program folder '%s': %s\n", dist, why);
+        rp_lang_format(m, sizeof m, "  the program folder '%s': %s\n", dist, why);
         say(m);
         return ask ? 0 : RP_EXIT_IO;
     }
@@ -573,16 +574,16 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         }
         char m[700];
         if (target) {
-            CUT(m, sizeof m, "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n", src);
+            rp_lang_format(m, sizeof m, "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n", src);
             say(m);
             continue;
         }
         bool yes = true;
-        CUT(m, sizeof m, "%s is gone. Remove [file.%s]?", src, ids[i]);
+        rp_lang_format(m, sizeof m, "%s is gone. Remove [file.%s]?", src, ids[i]);
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (yes) {
             remove_table(s, "file", ids[i]);
-            CUT(m, sizeof m, "  removed [file.%s]\n", ids[i]);
+            rp_lang_format(m, sizeof m, "  removed [file.%s]\n", ids[i]);
             say(m);
         }
     }
@@ -591,7 +592,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (rpn_in_names(&a->scan.dirs, subs[i].name)) continue;
         char m[700];
         bool yes = true;
-        CUT(m, sizeof m, "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?", dist, subs[i].name, subs[i].files, subs[i].dir);
+        rp_lang_format(m, sizeof m, "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?", dist, subs[i].name, subs[i].files, subs[i].dir);
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         remove_table(s, "files", subs[i].files);
@@ -601,7 +602,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
             dir_used |= v && strcmp(v, subs[i].dir) == 0;
         }
         if (!dir_used) remove_table(s, "dir", subs[i].dir);
-        CUT(m, sizeof m, "  removed [files.%s]%s\n", subs[i].files, dir_used ? "" : " and its dir");
+        rp_lang_format(m, sizeof m, "  removed [files.%s]%s\n", subs[i].files, dir_used ? "" : TR(" and its dir"));
         say(m);
     }
     // New files and sub folders.
@@ -618,7 +619,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (known) continue;
         char m[900];
         bool yes = true;
-        CUT(m, sizeof m, "%s is new. Add it?", src);
+        rp_lang_format(m, sizeof m, "%s is new. Add it?", src);
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         all_ids(s, &used);
@@ -626,7 +627,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         rpn_make_id(&used, f, "", id, sizeof id);
         set_str(s, "file", id, "dir", "INSTALLDIR");
         set_str(s, "file", id, "source", src);
-        CUT(m, sizeof m, "  added [file.%s]\n", id);
+        rp_lang_format(m, sizeof m, "  added [file.%s]\n", id);
         say(m);
     }
     for (size_t i = 0; i < a->scan.dirs.n; ++i) {
@@ -636,7 +637,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         if (known) continue;
         char m[900];
         bool yes = true;
-        CUT(m, sizeof m, "%s/%s/ is a new folder. Add it?", dist, f);
+        rp_lang_format(m, sizeof m, "%s/%s/ is a new folder. Add it?", dist, f);
         if (ask && rpn_ask_yes(a, m, true, &yes)) break;
         if (!yes) continue;
         all_ids(s, &used);
@@ -649,7 +650,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         set_str(s, "files", fid, "dir", did);
         CUT(v, sizeof v, "%s/%s/**", dist, f);
         set_str(s, "files", fid, "glob", v);
-        CUT(m, sizeof m, "  added [dir.%s] and [files.%s]\n", did, fid);
+        rp_lang_format(m, sizeof m, "  added [dir.%s] and [files.%s]\n", did, fid);
         say(m);
     }
     rp_mem_free(heap(), subs);
@@ -687,16 +688,16 @@ static bool set_any(src_t *s, const char *kind, const char *id, const char *k, c
 static int any_key(src_t *s, ans_t *a) {
     char name[200], value[1000];
     int rc;
-    if ((rc = rpn_ask(a, "Key as table.key (package.version, dir.INSTALLDIR.path, ...)", "", name, sizeof name, NULL))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Key as table.key (package.version, dir.INSTALLDIR.path, ...)"), "", name, sizeof name, NULL))) return rc;
     char kind[64], id[100], k[64];
     if (!split_name(name, kind, id, k)) {
-        say("  give it as table.key, such as package.version or dir.INSTALLDIR.path\n");
+        say(TR_N("  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"));
         return 0;
     }
     const char *cur = get(s, kind, id[0] ? id : NULL, k);
-    if ((rc = rpn_ask(a, "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)", cur ? cur : "", value, sizeof value, NULL))) return rc;
+    if ((rc = rpn_ask(a, TR_N("Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"), cur ? cur : "", value, sizeof value, NULL))) return rc;
     bool ok = strcmp(value, "-") == 0 ? unset(s, kind, id[0] ? id : NULL, k) : set_any(s, kind, id, k, value);
-    if (!ok) say("  that does not fit the TOML subset; nothing was changed\n");
+    if (!ok) say(TR_N("  that does not fit the TOML subset; nothing was changed\n"));
     return 0;
 }
 
@@ -711,7 +712,7 @@ static int check(src_t *s, char *argv0) {
     char *lint_argv[] = { argv0, "lint", tmp, NULL };
     int rc = rp_cmd_lint_source(3, lint_argv);
     (void)rp_pal_remove_file(heap(), tmp);
-    say(rc == RP_EXIT_OK ? "  lint: no problems\n" : "  lint: see the problems above (the file named there is a check copy)\n");
+    say(rc == RP_EXIT_OK ? TR_N("  lint: no problems\n") : TR_N("  lint: see the problems above (the file named there is a check copy)\n"));
     return rc;
 }
 
@@ -722,11 +723,11 @@ static int save(src_t *s, char *argv0) {
     }
     s->dirty = false;
     char line[1200];
-    CUT(line, sizeof line, "wrote %s\n", s->path);
+    rp_lang_format(line, sizeof line, "wrote %s\n", s->path);
     (void)rp_pal_puts(RP_OUT_STDOUT, line);
     char *lint_argv[] = { argv0, "lint", (char *)s->path, NULL };
     int rc = rp_cmd_lint_source(3, lint_argv);
-    (void)rp_pal_puts(RP_OUT_STDOUT, rc == RP_EXIT_OK ? "lint: no problems\n" : "lint: see the problems above\n");
+    (void)rp_pal_puts(RP_OUT_STDOUT, rc == RP_EXIT_OK ? TR("lint: no problems\n") : TR("lint: see the problems above\n"));
     return rc;
 }
 
@@ -735,14 +736,14 @@ static void summary(const src_t *s) {
     if (v && strcmp(v, "$(VERSION)") == 0 && get(s, "define", NULL, "VERSION")) v = get(s, "define", NULL, "VERSION");
     const char *sc = get(s, "package", NULL, "scope"), *ui = get(s, "package", NULL, "ui");
     char line[1400];
-    CUT(line, sizeof line,
+    rp_lang_format(line, sizeof line,
              "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n"
              "  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n"
              "  3 dialogs, license, languages                  4 optional parts\n"
              "  5 shortcuts                                    6 files: match the program folder\n"
              "  7 any key                                      v view   l lint   s save   q quit\n",
-             s->path, nm ? nm : "?", v ? v : "?", ar ? ar : "?", sc ? sc : "machine", ui ? ui : "none", s->dirty ? " (changed)" : "");
-    say(line);
+             s->path, nm ? nm : "?", v ? v : "?", ar ? ar : "?", sc ? sc : "machine", ui ? ui : "none", s->dirty ? TR(" (changed)") : "");
+    (void)rp_pal_puts(RP_OUT_STDERR, line);
 }
 
 static int usage(void) {
@@ -758,7 +759,7 @@ int rp_cmd_edit(int argc, char **argv) {
     size_t len = 0;
     proven_err_t err = rp_pal_read_file(heap(), s.path, (size_t)1 << 22, &data, &len);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, err == PROVEN_ERR_NOT_FOUND ? "cannot find '%s'; make one with `rubrapack new %s`" : "cannot read '%s'", s.path, s.path);
+        rp_diag_error(RP_DIAG_INPUT, err == PROVEN_ERR_NOT_FOUND ? TR_N("cannot find '%s'; make one with `rubrapack new %s`") : TR_N("cannot read '%s'"), s.path, s.path);
         return RP_EXIT_IO;
     }
     if (len >= 2 && ((data[0] == 0xFF && data[1] == 0xFE) || (data[0] == 0xFE && data[1] == 0xFF))) {
@@ -807,12 +808,12 @@ int rp_cmd_edit(int argc, char **argv) {
                 rc = usage();
             }
         }
-        if (rc == RP_EXIT_OK) rc = s.dirty ? save(&s, argv[0]) : (say("nothing changed\n"), RP_EXIT_OK);
+        if (rc == RP_EXIT_OK) rc = s.dirty ? save(&s, argv[0]) : (say(TR_N("nothing changed\n")), RP_EXIT_OK);
     } else {
         for (bool done = false; !done && rc == RP_EXIT_OK;) {
             summary(&s);
             char c[16];
-            rc = rpn_ask(a, "Choose", s.dirty ? "s" : "q", c, sizeof c, NULL);
+            rc = rpn_ask(a, TR_N("Choose"), s.dirty ? "s" : "q", c, sizeof c, NULL);
             if (rc) break;
             switch (c[0]) {
             case '1': rc = product(&s, a); break;
@@ -830,11 +831,11 @@ int rp_cmd_edit(int argc, char **argv) {
                 break;
             case 'q': {
                 bool leave = true;
-                if (s.dirty && (rc = rpn_ask_yes(a, "Leave without saving the changes?", false, &leave))) break;
+                if (s.dirty && (rc = rpn_ask_yes(a, TR_N("Leave without saving the changes?"), false, &leave))) break;
                 done = leave;
                 break;
             }
-            default: say("  1-7, v, l, s or q\n");
+            default: say(TR_N("  1-7, v, l, s or q\n"));
             }
         }
     }

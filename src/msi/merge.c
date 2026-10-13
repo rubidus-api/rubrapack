@@ -11,6 +11,7 @@
 // actions by Sequence, or next to BaseAction (After 1: just after, 0: just before).
 
 #include "rubrapack/merge.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
@@ -72,22 +73,22 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
     *why = NULL;
     proven_err_t err = rp_pal_read_file(alloc, path, MAX_MSM, &m->data, &m->len);
     if (err != PROVEN_OK) {
-        *why = "cannot be read";
+        *why = TR_N("cannot be read");
         return err;
     }
     rp_limits_t lim = rp_limits_default();
     if (rp_cfb_open(&m->cfb, alloc, m->data, m->len, &lim, why) != PROVEN_OK) {
-        if (*why == NULL) *why = "is not a compound file";
+        if (*why == NULL) *why = TR_N("is not a compound file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     m->cfb_open = true;
     if (rp_msi_open(&m->msi, alloc, &m->cfb, &lim, why) != PROVEN_OK) {
-        if (*why == NULL) *why = "is not a Windows Installer database";
+        if (*why == NULL) *why = TR_N("is not a Windows Installer database");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     m->msi_open = true;
     if (rp_msi_view(&m->msi, NULL, 0, &m->view) != PROVEN_OK) {
-        *why = "has a table that cannot be read";
+        *why = TR_N("has a table that cannot be read");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     m->view_open = true;
@@ -97,7 +98,7 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
     if (m->ntabs) memcpy(m->tabs, m->view.db.tables, m->ntabs * sizeof *m->tabs);
     const rp_msi_wtable_t *sig = mod_table(m, "ModuleSignature");
     if (sig == NULL || sig->row_count == 0) {
-        *why = "has no ModuleSignature: not a merge module";
+        *why = TR_N("has no ModuleSignature: not a merge module");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     // ModuleID is <name>.<GUID with underscores>
@@ -109,7 +110,7 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
     if (m->msi.codepage != 65001) {
         for (size_t i = 0; i < m->msi.string_count; ++i) {
             if (m->msi.strings[i].non_ascii) {
-                *why = "has text outside ASCII in another code page than 65001 (UTF-8)";
+                *why = TR_N("has text outside ASCII in another code page than 65001 (UTF-8)");
                 return PROVEN_ERR_UNSUPPORTED;
             }
         }
@@ -123,7 +124,7 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
         m->cab = rp_mem_alloc(alloc, m->cab_len ? m->cab_len : 1, 1);
         if (m->cab == NULL) return PROVEN_ERR_NOMEM;
         if (rp_cfb_read(&m->cfb, sid, m->cab, m->cab_len) != PROVEN_OK) {
-            *why = "has a MergeModule.CABinet stream that cannot be read";
+            *why = TR_N("has a MergeModule.CABinet stream that cannot be read");
             return PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -219,13 +220,13 @@ static proven_err_t merge_sequence(rp_msi_module_t *m, rp_msi_wtable_t *tables, 
     rp_msi_wtable_t *ps = pkg_table(tables, nt, pkg_name);
     if (ms == NULL || ms->row_count == 0) return PROVEN_OK;
     if (ps == NULL) {
-        *why = "has actions for a sequence table the package does not have";
+        *why = TR_N("has actions for a sequence table the package does not have");
         return PROVEN_ERR_UNSUPPORTED;
     }
     int ca = col_of(ms, "Action"), cs = col_of(ms, "Sequence"), cb = col_of(ms, "BaseAction"), cf = col_of(ms, "After"),
         cc = col_of(ms, "Condition");
     if (ca < 0 || cs < 0 || cb < 0 || cf < 0 || cc < 0) {
-        *why = "has a Module*Sequence table without the standard columns";
+        *why = TR_N("has a Module*Sequence table without the standard columns");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     bool *done = keep_alloc(m, ms->row_count, sizeof *done);
@@ -269,7 +270,7 @@ static proven_err_t merge_sequence(rp_msi_module_t *m, rp_msi_wtable_t *tables, 
     }
     for (size_t r = 0; r < ms->row_count; ++r) {
         if (!done[r]) {
-            *why = "sequences an action next to one that neither the package nor the module runs";
+            *why = TR_N("sequences an action next to one that neither the package nor the module runs");
             return PROVEN_ERR_INVALID_FORMAT;
         }
     }
@@ -365,7 +366,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
     const rp_msi_wtable_t *cfg = mod_table(m, "ModuleConfiguration"), *sub = mod_table(m, "ModuleSubstitution");
     size_t ni = cfg ? cfg->row_count : 0;
     if (ni == 0 && count) {
-        *why = "takes no configuration (it has no ModuleConfiguration)";
+        *why = TR_N("takes no configuration (it has no ModuleConfiguration)");
         return PROVEN_ERR_INVALID_ARG;
     }
     item_t *items = keep_alloc(m, ni, sizeof *items);
@@ -375,14 +376,14 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
         int cn = col_of(cfg, "Name"), cf = col_of(cfg, "Format"), ct = col_of(cfg, "Type"), cx = col_of(cfg, "ContextData"),
             cd = col_of(cfg, "DefaultValue"), ca = col_of(cfg, "Attributes");
         if (cn < 0 || cf < 0 || cd < 0) {
-            *why = "has a ModuleConfiguration table without the standard columns";
+            *why = TR_N("has a ModuleConfiguration table without the standard columns");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         items[r] = (item_t){ .name = cell_text(m, &c[cn]), .format = c[cf].kind == RP_MSI_INT ? c[cf].i : -1,
                              .type = ct >= 0 ? cell_text(m, &c[ct]) : NULL, .ctx = cx >= 0 ? cell_text(m, &c[cx]) : NULL,
                              .dflt = cell_text(m, &c[cd]), .attrs = ca >= 0 && c[ca].kind == RP_MSI_INT ? c[ca].i : 0, .declined = true };
         if (items[r].name == NULL || items[r].format < 0 || items[r].format > 3) {
-            *why = "has a ModuleConfiguration item without a name or with an unknown format";
+            *why = TR_N("has a ModuleConfiguration item without a name or with an unknown format");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         items[r].value = items[r].dflt;
@@ -418,7 +419,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
         const rp_msi_cell_t *c = &sub->cells[r * sub->column_count];
         int ctab = col_of(sub, "Table"), crow = col_of(sub, "Row"), ccol = col_of(sub, "Column"), cval = col_of(sub, "Value");
         if (ctab < 0 || crow < 0 || ccol < 0 || cval < 0) {
-            *why = "has a ModuleSubstitution table without the standard columns";
+            *why = TR_N("has a ModuleSubstitution table without the standard columns");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         const char *tname = cell_text(m, &c[ctab]), *row = cell_text(m, &c[crow]), *cname = cell_text(m, &c[ccol]),
@@ -459,7 +460,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
                 size_t nl = (size_t)((semi ? semi : close ? close : tmpl + tl) - (tmpl + i + 2));
                 item_t *it = close ? find_item(items, ni, tmpl + i + 2, nl) : NULL;
                 if (it == NULL) {
-                    *why = "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have";
+                    *why = TR_N("has a ModuleSubstitution template naming an item that ModuleConfiguration does not have");
                     return PROVEN_ERR_INVALID_FORMAT;
                 }
                 it->used = true;
@@ -622,12 +623,12 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
         }
         if (pt) {
             if (pt->column_count != cc) {
-                *why = "has a table whose columns differ from the package's";
+                *why = TR_N("has a table whose columns differ from the package's");
                 return PROVEN_ERR_UNSUPPORTED;
             }
             for (size_t c = 0; c < cc; ++c) {
                 if (strcmp(pt->columns[c].name, mt->columns[c].name) != 0) {
-                    *why = "has a table whose columns differ from the package's";
+                    *why = TR_N("has a table whose columns differ from the package's");
                     return PROVEN_ERR_UNSUPPORTED;
                 }
             }
@@ -635,7 +636,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
             if (err != PROVEN_OK) return err;
         } else {
             if (*nt == cap) {
-                *why = "adds too many tables";
+                *why = TR_N("adds too many tables");
                 return PROVEN_ERR_OUT_OF_BOUNDS;
             }
             tables[(*nt)++] = (rp_msi_wtable_t){ mt->name, mt->columns, cc, rows, n };
@@ -646,7 +647,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
     rp_msi_wtable_t *fc = pkg_table(tables, *nt, "FeatureComponents");
     if (mc && mc->row_count) {
         if (fc == NULL) {
-            *why = "has components, but the package has no FeatureComponents table";
+            *why = TR_N("has components, but the package has no FeatureComponents table");
             return PROVEN_ERR_INVALID_STATE;
         }
         rp_msi_cell_t *rows = keep_alloc(m, mc->row_count * 2, sizeof *rows);
@@ -696,12 +697,12 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
     *cab_stream = (rp_msi_wstream_t){ 0 };
     if (last > base) {
         if (m->cab == NULL) {
-            *why = "has files but no MergeModule.CABinet stream";
+            *why = TR_N("has files but no MergeModule.CABinet stream");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         rp_msi_wtable_t *media = pkg_table(tables, *nt, "Media");
         if (media == NULL || media->column_count != 6) {
-            *why = "has files, but the package has no Media table";
+            *why = TR_N("has files, but the package has no Media table");
             return PROVEN_ERR_INVALID_STATE;
         }
         char name[32], ref[34];

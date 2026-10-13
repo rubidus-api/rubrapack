@@ -2,6 +2,7 @@
 // "Windows Authenticode Portable Executable Signature Format" and the PE/COFF specification.
 
 #include "rubrapack/limits.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/sign.h"
 
@@ -28,25 +29,25 @@ typedef struct {
 static bool layout(const uint8_t *pe, size_t len, layout_t *l, const char **why) {
     memset(l, 0, sizeof *l);
     if (len < 0x40 || pe[0] != 'M' || pe[1] != 'Z') {
-        *why = "not a PE file (no MZ header)";
+        *why = TR_N("not a PE file (no MZ header)");
         return false;
     }
     uint32_t nt = rd32(pe + 0x3C);
     if (!rp_range_ok(nt, 24, len) || memcmp(pe + nt, "PE\0\0", 4) != 0) {
-        *why = "not a PE file (no PE header)";
+        *why = TR_N("not a PE file (no PE header)");
         return false;
     }
     l->nsections = rd16(pe + nt + 6);
     uint16_t opt_size = rd16(pe + nt + 20);
     size_t opt = nt + 24;
     if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) {
-        *why = "a damaged PE optional header";
+        *why = TR_N("a damaged PE optional header");
         return false;
     }
     uint16_t magic = rd16(pe + opt);
     size_t nrva_off = magic == 0x20B ? 108 : magic == 0x10B ? 92 : 0, dd_off = magic == 0x20B ? 112 : 96;
     if (nrva_off == 0 || opt_size < dd_off + 5 * 8 || rd32(pe + opt + nrva_off) < 5) {
-        *why = "a PE file without a certificate table entry";
+        *why = TR_N("a PE file without a certificate table entry");
         return false;
     }
     l->checksum = opt + 64;
@@ -56,11 +57,11 @@ static bool layout(const uint8_t *pe, size_t len, layout_t *l, const char **why)
     l->cert_size = rd32(pe + l->certdir + 4);
     l->sections = opt + opt_size;
     if (!rp_range_ok(l->sections, (uint64_t)l->nsections * 40, len) || l->headers > len || l->headers < l->sections + (size_t)l->nsections * 40) {
-        *why = "a damaged PE section table";
+        *why = TR_N("a damaged PE section table");
         return false;
     }
     if (l->cert_size && ((uint64_t)l->cert_off + l->cert_size != len || l->cert_off < l->headers)) {
-        *why = "the certificate table is not at the end of the file";
+        *why = TR_N("the certificate table is not at the end of the file");
         return false;
     }
     return true;
@@ -79,7 +80,7 @@ static bool pe_stream(const uint8_t *pe, size_t len, void (*feed)(void *, const 
     uint32_t order[96];
     size_t n = 0;
     if (l.nsections > 96) {
-        *why = "more than 96 sections";
+        *why = TR_N("more than 96 sections");
         return false;
     }
     for (uint16_t k = 0; k < l.nsections; ++k) {
@@ -100,7 +101,7 @@ static bool pe_stream(const uint8_t *pe, size_t len, void (*feed)(void *, const 
         const uint8_t *s = pe + l.sections + 40u * order[i];
         uint32_t size = rd32(s + 16), off = rd32(s + 20);
         if (!rp_range_ok(off, size, end)) {
-            *why = "a section lies outside the file";
+            *why = TR_N("a section lies outside the file");
             return false;
         }
         feed(ctx, pe + off, size);
@@ -171,14 +172,14 @@ proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len,
     layout_t l;
     if (!layout(pe, len, &l, why)) return PROVEN_ERR_INVALID_FORMAT;
     if (l.cert_off || l.cert_size) {
-        *why = "the file is signed already; rubrapack does not sign twice or replace a signature";
+        *why = TR_N("the file is signed already; rubrapack does not sign twice or replace a signature");
         return PROVEN_ERR_INVALID_STATE;
     }
     int leaf;
     if (!rp_sign_check_key(kf, now, &leaf, why)) return PROVEN_ERR_INVALID_ARG;
     size_t padded = (len + 7) & ~(size_t)7;
     if (padded > 0xFFFFFFF0u - 65536) {
-        *why = "the file is too large to sign";
+        *why = TR_N("the file is too large to sign");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
     uint8_t *work = rp_mem_alloc(alloc, padded, 1);
@@ -227,20 +228,20 @@ void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, con
     layout_t l;
     if (!layout(pe, len, &l, why)) return;
     if (l.cert_size < 8) {
-        *why = "the file is not signed";
+        *why = TR_N("the file is not signed");
         return;
     }
     const uint8_t *w = pe + l.cert_off;
     uint32_t wl = rd32(w);
     if (wl < 8 || wl > l.cert_size || rd16(w + 4) != 0x0200 || rd16(w + 6) != 0x0002) {
-        *why = "the certificate table does not hold an Authenticode signature";
+        *why = TR_N("the certificate table does not hold an Authenticode signature");
         return;
     }
     // The PKCS#7 inside ends where its DER says; the rest is padding.
     rp_der_span_t s = { w + 8, wl - 8 };
     rp_der_t ci;
     if (!rp_der_read(&s, &ci)) {
-        *why = "the signature is not DER";
+        *why = TR_N("the signature is not DER");
         return;
     }
     uint8_t digest[RP_HASH_MAX];
@@ -251,6 +252,6 @@ void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, con
     rp_authenticode_check_t again;
     rp_authenticode_verify(ci.whole.p, ci.whole.n, digest, &again, &vwhy);
     *r = again;
-    if (!r->digest_ok) *why = "the file was changed after it was signed (its digest does not match)";
+    if (!r->digest_ok) *why = TR_N("the file was changed after it was signed (its digest does not match)");
     else *why = vwhy;
 }

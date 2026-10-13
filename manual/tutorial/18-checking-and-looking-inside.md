@@ -121,7 +121,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.42.0
+  18 = rubrapack 0.43.0
 ```
 
 The numbers of the summary are property IDs: 2 title, 3 subject, 4 author, 5 keywords, 7 the
@@ -272,6 +272,10 @@ Manual: Reference, "MSIX packages" - https://rubidus-api.github.io/rubrapack/en/
 
 `rubrapack explain` without a code lists the ranges (RP13xx values, RP16xx MSIX, ...).
 
+The messages, `help` and `explain` are in English unless you ask for Korean: `--lang ko` on the
+command line (anywhere on it), or the environment variable `RUBRAPACK_LANG=ko` for every run. The
+codes stay the same in both languages, so a search for `RP1612` finds the same thing.
+
 ## For scripts: `--json`
 
 `lint` and `inspect` also answer in JSON, for a build script or an editor to read:
@@ -294,9 +298,9 @@ for a stream that is there), `--summary --json` the summary information.
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.42.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.43.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
-usage: rubrapack <command> [arguments]
+usage: rubrapack [--lang en|ko] <command> [arguments]
 
 commands:
   build    build a package from a source file
@@ -305,7 +309,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.42.0 (proven_c_lib-v0.6.0)
+rubrapack 0.43.0 (proven_c_lib-v0.6.0)
 ```
 
 `rubrapack --help` is the same as `rubrapack help`. `help <command>` prints that command's options

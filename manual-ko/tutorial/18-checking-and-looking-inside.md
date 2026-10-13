@@ -115,7 +115,7 @@ summary:
   9 = {7FC806A2-F359-4941-A159-26A77B78F839}
   14 = 200
   15 = 2
-  18 = rubrapack 0.42.0
+  18 = rubrapack 0.43.0
 ```
 
 요약 정보의 수는 속성 ID 다: 2 제목, 3 주제, 4 작성자, 5 키워드, 7 플랫폼과 언어, 9 *패키지 코드*(빌드마다 새
@@ -259,6 +259,10 @@ Manual: Reference, "MSIX packages" - https://rubidus-api.github.io/rubrapack/en/
 
 코드 없이 `rubrapack explain` 을 주면 범위를 나열한다(RP13xx 값, RP16xx MSIX, ...).
 
+메시지와 `help`, `explain` 은 한국어를 청하지 않으면 영어다: 명령줄(어디에나)의 `--lang ko`, 또는 모든 실행에 적용되는
+환경 변수 `RUBRAPACK_LANG=ko`. 코드는 두 언어에서 같으므로 `RP1612` 로 찾으면 같은 것이 나온다. 이 책의 출력 예는
+영어로 적혀 있다.
+
 ## 스크립트용: `--json`
 
 `lint` 와 `inspect` 는 빌드 스크립트나 편집기가 읽도록 JSON 으로도 답한다:
@@ -280,9 +284,9 @@ C:\work\hello> rubrapack inspect hello.msi --summary --json
 
 ```text
 C:\work\hello> rubrapack help
-rubrapack 0.42.0 - build Windows Installer (.msi) and MSIX (.msix) packages
+rubrapack 0.43.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
-usage: rubrapack <command> [arguments]
+usage: rubrapack [--lang en|ko] <command> [arguments]
 
 commands:
   build    build a package from a source file
@@ -291,7 +295,7 @@ commands:
 C:\work\hello> rubrapack help sign
 usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
-rubrapack 0.42.0 (proven_c_lib-v0.6.0)
+rubrapack 0.43.0 (proven_c_lib-v0.6.0)
 ```
 
 `rubrapack --help` 는 `rubrapack help` 와 같다. `help <명령>` 은 그 명령의 옵션을 출력한다 - 모든 옵션과 뜻을 담은

@@ -3,6 +3,7 @@
 
 #include "ir_int.h"
 #include "rubrapack/cfb.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/msi.h"
@@ -141,15 +142,15 @@ static const char *msi_codes(proven_allocator_t alloc, const uint8_t *data, size
     rp_msi_t msi;
     const char *why = NULL;
     *code = *version = NULL;
-    if (rp_cfb_open(&cfb, alloc, data, len, limits, &why) != PROVEN_OK) return "is not a compound file";
+    if (rp_cfb_open(&cfb, alloc, data, len, limits, &why) != PROVEN_OK) return TR_N("is not a compound file");
     const char *bad = NULL;
     size_t t;
     rp_msi_rows_t rows = { 0 };
     if (rp_msi_open(&msi, alloc, &cfb, limits, &why) != PROVEN_OK) {
-        bad = "is not a Windows Installer database";
+        bad = TR_N("is not a Windows Installer database");
     } else {
         if (rp_msi_find_table(&msi, "Property", &t) != PROVEN_OK || rp_msi_read_rows(&msi, t, &rows) != PROVEN_OK || rows.column_count < 2) {
-            bad = "has no Property table";
+            bad = TR_N("has no Property table");
         }
         for (size_t r = 0; bad == NULL && r < rows.row_count; ++r) {
             const rp_msi_value_t *row = &rows.cells[r * rows.column_count];
@@ -168,7 +169,7 @@ static const char *msi_codes(proven_allocator_t alloc, const uint8_t *data, size
                 }
             }
         }
-        if (bad == NULL && (*code == NULL || *version == NULL)) bad = "has no ProductCode or ProductVersion";
+        if (bad == NULL && (*code == NULL || *version == NULL)) bad = TR_N("has no ProductCode or ProductVersion");
         rp_msi_rows_free(&msi, &rows);
         rp_msi_close(&msi);
     }

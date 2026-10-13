@@ -2,6 +2,7 @@
 // RFC 3161, RFC 5816 (ESSCertIDv2 is not required here), RFC 5652 for the token's SignedData.
 
 #include "rubrapack/mem.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/net.h"
 #include "rubrapack/sign.h"
 
@@ -232,7 +233,7 @@ proven_err_t rp_tsa_stamp(void *ctx, proven_allocator_t alloc, const uint8_t *si
     uint8_t digest[32], nonce[8];
     rp_hash(RP_HASH_SHA256, sig, sig_len, digest);
     if (!proven_random_bytes(nonce, sizeof nonce)) {
-        *why = "the system random source failed";
+        *why = TR_N("the system random source failed");
         return PROVEN_ERR_IO;
     }
     uint8_t *req;
@@ -247,7 +248,7 @@ proven_err_t rp_tsa_stamp(void *ctx, proven_allocator_t alloc, const uint8_t *si
     if (err != PROVEN_OK) return err;
     rp_tsp_token_t t;
     if (r.status != 200) {
-        *why = "the timestamp server answered with an HTTP error";
+        *why = TR_N("the timestamp server answered with an HTTP error");
         err = PROVEN_ERR_IO;
     } else if (!rp_tsp_response(r.body, r.len, sig, sig_len, nonce, &t, why)) {
         err = PROVEN_ERR_INVALID_FORMAT;

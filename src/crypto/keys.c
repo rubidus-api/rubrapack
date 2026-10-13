@@ -7,6 +7,7 @@
 // decryption, in constant time.
 
 #include "rubrapack/limits.h"
+#include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pki.h"
 #include "rubrapack/text.h"
@@ -546,7 +547,7 @@ proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size
     memset(out, 0, sizeof *out);
     out->alloc = alloc;
     if (len > MAX_FILE) {
-        *why = "the key file is larger than 4 MiB";
+        *why = TR_N("the key file is larger than 4 MiB");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
     ctx_t c = { alloc, pass, pass_len, out, why, PROVEN_OK, 0 };
@@ -559,7 +560,7 @@ proven_err_t rp_keyfile_load(proven_allocator_t alloc, const uint8_t *data, size
         size_t der_len = 0;
         rp_limits_t lim = rp_limits_default();
         if (rp_ber_to_der(alloc, data, len, lim.max_depth, MAX_FILE, &der, &der_len) != PROVEN_OK) {
-            *why = "not a PEM, PKCS#8 or PKCS#12 file";
+            *why = TR_N("not a PEM, PKCS#8 or PKCS#12 file");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         rp_der_span_t s = { der, der_len };
