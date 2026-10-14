@@ -363,6 +363,7 @@ typedef struct {
     char    *font;              // [ui] font-xx, else the language's built-in face, else Segoe UI
     uint16_t langids[RP_UI_LANGID_MAX];     // chosen when UserLanguageID or SystemLanguageID is one of them
     size_t   langid_count;
+    bool     rtl;               // the language reads right to left (its pack's X-Rubrapack-Direction)
     char    *license_source;    // [ui] license-xx: path to open, or NULL
     char    *license_shown;     // as written
     rp_pos_t pos;

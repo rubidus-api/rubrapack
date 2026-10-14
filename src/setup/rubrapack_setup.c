@@ -91,10 +91,11 @@ static void fill(wchar_t *out, size_t cap, const wchar_t *tmpl, const wchar_t *o
 }
 
 static bool quiet, passive;
+static bool rtl;            // the texts are in a language that reads right to left (texts_load)
 
 static void say(const wchar_t *title, const wchar_t *text, bool error) {
     if (quiet || (passive && !error)) return;
-    MessageBoxW(NULL, text, title, MB_OK | (error ? MB_ICONERROR : MB_ICONINFORMATION));
+    MessageBoxW(NULL, text, title, MB_OK | (error ? MB_ICONERROR : MB_ICONINFORMATION) | rp_mb_rtl(rtl));
 }
 
 // UTF-8 to a new wide string (LocalFree), or NULL.
@@ -205,7 +206,10 @@ static void texts_load(const uint8_t *m, uint32_t n, uint32_t at) {
             }
             at += 4 + l;
         }
-        if (mine) return;
+        if (mine) {
+            rtl = rp_lcid_rtl(ui);
+            return;
+        }
     }
 }
 
@@ -310,12 +314,12 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     for (uint32_t k = 0; k < c.count; ++k) all = all && installed(&c.p[k]);
     const wchar_t *extra = L"";
     if (all && !uninstall && !repair && !quiet && !passive) {
-        rp_ask_t a = { title, texts[T_ASK], texts[T_REPAIR], texts[T_REMOVE], texts[T_CANCEL] };
+        rp_ask_t a = { title, texts[T_ASK], texts[T_REPAIR], texts[T_REMOVE], texts[T_CANCEL], rtl };
         int r;
         for (;;) {      // Remove is asked once more (No is the default button, and leads back)
             r = rp_ask(NULL, &a);
             if (r != RP_ASK_SECOND || MessageBoxW(NULL, texts[T_REMOVEASK], title,
-                                                  MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) break;
+                                                  MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND | rp_mb_rtl(rtl)) == IDYES) break;
         }
         if (r == RP_ASK_CANCEL) {
             CloseHandle(f);

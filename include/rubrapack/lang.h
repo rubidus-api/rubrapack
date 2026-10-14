@@ -33,6 +33,7 @@ typedef struct {
     char           code[16];
     const char    *name;        // X-Rubrapack-Name: the language's own name, or NULL
     const char    *font;        // X-Rubrapack-Font, or NULL
+    bool           rtl;         // X-Rubrapack-Direction: rtl (the language reads right to left)
     unsigned       langids[RP_LANGPACK_LANGIDS];    // X-Rubrapack-LangIDs
     size_t         langid_count;
     rp_lang_row_t *rows;

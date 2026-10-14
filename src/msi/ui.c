@@ -299,6 +299,14 @@ typedef struct {
     const char        *next_when;       // buttons(): Next moves on only when this holds (its events come later, at 5)
     bool               maint_back;      // buttons(): Back also leads to the maintenance page
     size_t             nlang;
+    bool               rtl_any;         // a language reads right to left: every dialog has a mirrored twin
+    bool               rtl;             // ... and the twins are being made now
+    int                dw;              // the width of the dialog being made (to mirror its controls)
+    const char        *dfirst;          // ... and its Control_First
+    struct { const char *dlg, *ctl, *action, *expr; } *mcond;  // the exit pages' conditions, settled at the end (merge_rows)
+    size_t             nmcond, capmcond;
+    struct { const char *dlg, *ctl; bool vis; } *mctl;         // ... and their controls
+    size_t             nmctl, capmctl;
     int                lseq;            // the next InstallUISequence number of a language action
     bool               nomem;
     char             **strings;
@@ -427,6 +435,7 @@ static bool grow(ctx_t *c, void **p, size_t *cap, size_t n, size_t size) {
 }
 
 static void prop(ctx_t *c, const char *name, const char *value) {
+    if (c->rtl) return;                     // the twins share the properties
     if (grow(c, (void **)&c->props, &c->capprops, c->nprops, sizeof *c->props)) c->props[c->nprops++] = (rp_ui_prop_t){ name, value };
 }
 
@@ -537,9 +546,42 @@ static const char *AT(ctx_t *c, const char *all, const rp_ir_ltext_t *by, size_t
 enum { VIS = 1, EN = 2, SUNKEN = 4, INDIRECT = 8, TRANSPARENT = 0x10000, NOPREFIX = 0x20000,
        FIXEDSIZE = 0x100000, ICON32 = 0x400000 };
 
+// Right-to-left languages (X-Rubrapack-Direction: rtl). The Dialog and Control attributes are fixed
+// per row while the language is chosen at run time, so a package with such a language has every
+// dialog twice: as made, and mirrored as <name>_RTL - the controls at the other side, RTL reading
+// order, right-aligned text, scroll bars on the left. The private property RpRtl picks the set:
+// each dialog event and sequence row goes to both, with NOT RpRtl or RpRtl. FilesInUse, which the
+// engine finds by its name, has no twin.
+enum { DLG_BIDI = 0x80 | 0x100 | 0x200, CTL_RTLRO = 0x20, CTL_RIGHT = 0x40, CTL_LEFTSCROLL = 0x80 };
+
+// The exit pages are shown by their InstallUISequence numbers (-1, -2, -3), where the engine takes
+// one row for each number (observed, x62): they hold both sets instead - the mirrored controls as
+// <name>_R in the same dialog, each set shown by RpRtl (merge_rows).
+static bool merged(const ctx_t *c, const char *dlg) {
+    return c->rtl_any && dlg && (strcmp(dlg, "RpExitDlg") == 0 || strcmp(dlg, "RpUserExitDlg") == 0 || strcmp(dlg, "RpFatalDlg") == 0);
+}
+
+static const char *dn(ctx_t *c, const char *name) {
+    return c->rtl && name && strcmp(name, "FilesInUse") != 0 && !merged(c, name) ? keep(c, name, "_RTL") : name;
+}
+
+// A control's name in a merged page's mirrored set.
+static const char *mn(ctx_t *c, const char *dlg, const char *ctl) {
+    return c->rtl && ctl && merged(c, dlg) ? keep(c, ctl, "_R") : ctl;
+}
+
+static const char *rtl_and(ctx_t *c, const char *cnd, bool rtl) {
+    const char *r = rtl ? "RpRtl" : "NOT RpRtl";
+    return cnd && strcmp(cnd, "1") != 0 ? keep(c, "(", keep(c, cnd, keep(c, ") AND ", r))) : r;
+}
+
 static void dialog(ctx_t *c, const char *name, int w, int h, int attrs, const char *first, const char *def,
                    const char *cancel) {
     rows_t *r = &c->dialog;
+    c->dw = w;
+    c->dfirst = first;
+    if (c->rtl && merged(c, name)) return;  // the page has its row already
+    if (c->rtl) name = dn(c, name), attrs |= DLG_BIDI;
     s_(c, r, name); i_(c, r, 50); i_(c, r, 50); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
     s_(c, r, "[ProductName]"); s_(c, r, first); s_(c, r, def); s_(c, r, cancel);
 }
@@ -547,22 +589,103 @@ static void dialog(ctx_t *c, const char *name, int w, int h, int attrs, const ch
 static void control(ctx_t *c, const char *dlg, const char *name, const char *type, int x, int y, int w, int h,
                     int attrs, const char *prop, const char *text, const char *next) {
     rows_t *r = &c->control;
+    if (merged(c, dlg)) {
+        // One tab cycle through both sets: the last control of each leads to the other's first.
+        bool to_first = next && c->dfirst && strcmp(next, c->dfirst) == 0;
+        if (!c->rtl && to_first) next = keep(c, next, "_R");
+        else if (c->rtl && next && !to_first) next = keep(c, next, "_R");
+        if (!c->rtl && grow(c, (void **)&c->mctl, &c->capmctl, c->nmctl, sizeof *c->mctl))
+            c->mctl[c->nmctl++] = (typeof(*c->mctl)){ dlg, name, (attrs & VIS) != 0 };
+        name = mn(c, dlg, name);
+        if (c->rtl) attrs &= ~VIS;          // shown by its conditions
+    }
+    if (c->rtl && strcmp(dlg, "FilesInUse") != 0) {
+        dlg = dn(c, dlg);
+        x = c->dw - x - w;
+        if (strcmp(type, "PathEdit") == 0 || strcmp(type, "Edit") == 0 || strcmp(type, "DirectoryCombo") == 0) attrs |= CTL_RIGHT | CTL_LEFTSCROLL;
+        else if (strcmp(type, "Line") != 0 && strcmp(type, "Bitmap") != 0 && strcmp(type, "Icon") != 0 && strcmp(type, "ProgressBar") != 0)
+            attrs |= CTL_RTLRO | CTL_RIGHT | CTL_LEFTSCROLL;
+    }
     s_(c, r, dlg); s_(c, r, name); s_(c, r, type); i_(c, r, x); i_(c, r, y); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
     s_(c, r, prop); s_(c, r, text); s_(c, r, next); n_(c, r);
 }
 
-static void event(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *arg, const char *cond, int order) {
+static void event1(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *arg, const char *cond, int order) {
     rows_t *r = &c->event;
     s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, arg); s_(c, r, cond ? cond : "1"); i_(c, r, order);
 }
 
-static void cond(ctx_t *c, const char *dlg, const char *ctl, const char *action, const char *expr) {
+// An event; one that opens a dialog goes to both sets when there are twins.
+static void event(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *arg, const char *cond, int order) {
+    ctl = mn(c, dlg, ctl);
+    dlg = dn(c, dlg);
+    bool opens = strcmp(ev, "NewDialog") == 0 || strcmp(ev, "SpawnDialog") == 0 || strcmp(ev, "SpawnWaitDialog") == 0;
+    if (!c->rtl_any || !opens || strcmp(arg, "FilesInUse") == 0) {
+        event1(c, dlg, ctl, ev, arg, cond, order);
+        return;
+    }
+    event1(c, dlg, ctl, ev, arg, rtl_and(c, cond, false), order);
+    event1(c, dlg, ctl, ev, keep(c, arg, "_RTL"), rtl_and(c, cond, true), order);
+}
+
+// A dialog's InstallUISequence row; with twins the set's own (the twin one number later, the exit
+// dialogs at the same negative number).
+static void dseq(ctx_t *c, const char *dlg, const char *cnd, int n) {
+    if (merged(c, dlg)) {
+        if (!c->rtl) seq(c, dlg, cnd, n);
+        return;
+    }
+    if (!c->rtl_any) seq(c, dlg, cnd, n);
+    else seq(c, dn(c, dlg), rtl_and(c, cnd, c->rtl), n < 0 || !c->rtl ? n : n + 1);
+}
+
+static void cond1(ctx_t *c, const char *dlg, const char *ctl, const char *action, const char *expr) {
     rows_t *r = &c->condition;
     s_(c, r, dlg); s_(c, r, ctl); s_(c, r, action); s_(c, r, expr);
 }
 
+static void cond(ctx_t *c, const char *dlg, const char *ctl, const char *action, const char *expr) {
+    if (merged(c, dlg)) {                   // settled by merge_rows, for both sets
+        if (!c->rtl && grow(c, (void **)&c->mcond, &c->capmcond, c->nmcond, sizeof *c->mcond))
+            c->mcond[c->nmcond++] = (typeof(*c->mcond)){ dlg, ctl, action, expr };
+        return;
+    }
+    cond1(c, dn(c, dlg), ctl, action, expr);
+}
+
+// The merged exit pages' conditions. The left-to-right control: its own conditions while not RpRtl,
+// hidden with RpRtl. Its mirrored twin starts hidden: shown with RpRtl when the original would show.
+static void merge_rows(ctx_t *c) {
+    for (size_t k = 0; k < c->nmctl; ++k) {
+        const char *dlg = c->mctl[k].dlg, *ctl = c->mctl[k].ctl, *twin = keep(c, ctl, "_R");
+        const char *show_r = "RpRtl";
+        bool hides = false;
+        for (size_t j = 0; j < c->nmcond; ++j) {
+            const char *a = c->mcond[j].action, *e = c->mcond[j].expr;
+            if (strcmp(c->mcond[j].dlg, dlg) != 0 || strcmp(c->mcond[j].ctl, ctl) != 0) continue;
+            if (strcmp(a, "Show") == 0) {
+                cond1(c, dlg, ctl, a, keep(c, "(", keep(c, e, ") AND NOT RpRtl")));
+                cond1(c, dlg, twin, a, keep(c, "(", keep(c, e, ") AND RpRtl")));
+            } else if (strcmp(a, "Hide") == 0) {
+                hides = true;
+                cond1(c, dlg, ctl, a, keep(c, "(", keep(c, e, ") OR RpRtl")));
+                cond1(c, dlg, twin, a, keep(c, "(", keep(c, e, ") OR NOT RpRtl")));
+                show_r = keep(c, show_r, keep(c, " AND NOT (", keep(c, e, ")")));
+            } else {
+                cond1(c, dlg, ctl, a, e);
+                cond1(c, dlg, twin, a, e);
+            }
+        }
+        if (!c->mctl[k].vis) continue;
+        if (!hides) cond1(c, dlg, ctl, "Hide", "RpRtl");
+        cond1(c, dlg, twin, "Show", show_r);
+    }
+}
+
 static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *attr) {
     rows_t *r = &c->mapping;
+    ctl = mn(c, dlg, ctl);
+    dlg = dn(c, dlg);
     s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, attr);
 }
 
@@ -732,10 +855,10 @@ static void progress_and_exits(ctx_t *c) {
         event(c, exits[i][0], "Finish", "EndDialog", "Return", NULL, launch ? 2 : 1);
     }
     if (c->ir->ui_launch_file && c->ir->ui_launch_default) prop(c, "RPLAUNCH", "1");
-    seq(c, "RpExitDlg", NULL, -1);
-    seq(c, "RpUserExitDlg", NULL, -2);
-    seq(c, "RpFatalDlg", NULL, -3);
-    seq(c, "RpProgressDlg", NULL, 1280);
+    dseq(c, "RpExitDlg", NULL, -1);
+    dseq(c, "RpUserExitDlg", NULL, -2);
+    dseq(c, "RpFatalDlg", NULL, -3);
+    dseq(c, "RpProgressDlg", NULL, 1280);
 }
 
 // A package wipes what the program made at removal ([remove] recursive, [registry] on = "uninstall").
@@ -788,7 +911,7 @@ static void maintenance_dlg(ctx_t *c, bool change) {
     event(c, d, "Repair", "EndDialog", "Return", NULL, 3);
     event(c, d, "Remove", "NewDialog", "RpRemoveDlg", NULL, 1);
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
-    if (!c->page) seq(c, d, "Installed AND NOT RESUME AND NOT Preselected", 1240);
+    if (!c->page) dseq(c, d, "Installed AND NOT RESUME AND NOT Preselected", 1240);
 
     const char *r = "RpRemoveDlg";          // Back is the default button: Enter does not remove
     dialog(c, r, 370, 270, 3, "Back", "Back", "Cancel");
@@ -810,7 +933,7 @@ static void welcome_dlg(ctx_t *c, const char *next, const char *next_text) {
     frame(c, d, "WelcomeTitle", NULL, NULL);
     control(c, d, "Body", "Text", 25, 60, 320, 100, VIS | NOPREFIX, NULL, T(c, "WelcomeText"), NULL);
     buttons(c, d, c->page ? "RpLanguageDlg" : NULL, next, next_text, NULL, NULL);
-    if (!c->page) seq(c, d, "NOT Installed", 1230);
+    if (!c->page) dseq(c, d, "NOT Installed", 1230);
 }
 
 static const char *lang_cond(ctx_t *c, size_t li);
@@ -954,7 +1077,7 @@ static void scope_dlg(ctx_t *c, const char *back, const char *next, const char *
     frame(c, d, "ScopeTitle", "ScopeText", NULL);
     control(c, d, "Scope", "RadioButtonGroup", 25, 60, 320, 36, VIS | EN, "RPSCOPE", NULL, "Back");
     const char *vals[2] = { "user", "machine" }, *labels[2] = { T(c, "ScopeUser"), T(c, "ScopeMachine") };
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 2 && !c->rtl; ++i) {      // the twin shares the buttons (they span the group)
         rows_t *r = &c->radio;
         s_(c, r, "RPSCOPE"); i_(c, r, i + 1); s_(c, r, vals[i]); i_(c, r, 0);
         i_(c, r, i * 18); i_(c, r, 320); i_(c, r, 16); s_(c, r, labels[i]); n_(c, r);
@@ -1043,7 +1166,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
         case RP_DC_RADIO: {
             control(c, d->id, x->id, "RadioButtonGroup", x->x, x->y, x->width, x->height, VIS | EN, x->property, NULL, to);
             int step = x->value_count ? x->height / (int)x->value_count : x->height;
-            for (size_t j = 0; j < x->value_count; ++j) {
+            for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->radio;
                 s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
                 i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, label(c, x, j)); n_(c, r);
@@ -1054,7 +1177,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                                     // Sorted (0x10000) the engine lists them alphabetically (observed).
             control(c, d->id, x->id, "ComboBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN | 0x20000 | 0x10000,
                     x->property, NULL, to);
-            for (size_t j = 0; j < x->value_count; ++j) {
+            for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->combo;
                 s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
             }
@@ -1111,7 +1234,7 @@ static void language_dlg(ctx_t *c) {
     // The buttons set RPLANGUAGEUI, which has a Property row (ICE34); RPLANGUAGE itself has none, so
     // that a missing one means "not given on the command line". Next copies it back first.
     control(c, d, "Lang", "RadioButtonGroup", 25, 60, 200, h, VIS | EN, "RPLANGUAGEUI", NULL, "Back");
-    for (size_t i = 0; i < c->nlang; ++i) {
+    for (size_t i = 0; i < c->nlang && !c->rtl; ++i) {
         rows_t *r = &c->radio;
         const char *name = c->ir->ui_langs[i].name ? c->ir->ui_langs[i].name : lang_code(c, i);
         s_(c, r, "RPLANGUAGEUI"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
@@ -1125,7 +1248,7 @@ static void language_dlg(ctx_t *c) {
     // Next: the texts and fonts of the chosen language first (language_rows), then the page.
     event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
     event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
-    seq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
+    dseq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
 }
 
 // Settles a text for one language at build time: the source's own values and [\x] escapes put in.
@@ -1176,6 +1299,15 @@ static const char *settle(ctx_t *c, const char *src) {
 //     first language whose LANGIDs hold UserLanguageID, then SystemLanguageID, else English; then
 //     one type-51 action per text of that language (English needs them only for formatted texts);
 //   - the language page's Next: the same for the language picked there.
+// An event of the language page's Next (order 1: after RPLANGUAGE, before the next page), on its twin too.
+static void page_event(ctx_t *c, const char *ev, const char *arg, const char *cnd) {
+    for (int pass = 0; pass <= (int)c->rtl_any; ++pass) {
+        c->rtl = pass == 1;
+        event(c, "RpLanguageDlg", "Next", ev, arg, cnd, 1);
+    }
+    c->rtl = false;
+}
+
 static void language_rows(ctx_t *c) {
     int n = 0;
     char name[40];
@@ -1210,6 +1342,25 @@ static void language_rows(ctx_t *c) {
         ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
         seq(c, "RpLangUi", NULL, 20);
     }
+    // The set of dialogs: RpRtl while a right-to-left language is chosen, and the error dialog of
+    // that set (the engine shows the one ErrorDialog names).
+    if (c->rtl_any) {
+        const char *rtl = "";
+        for (size_t li = 1; li < c->nlang; ++li) {
+            if (c->ir->ui_langs[li].rtl) rtl = keep(c, rtl, keep(c, *rtl ? " OR " : "", lang_cond(c, li)));
+        }
+        ca(c, "RpRtlSet", "RpRtl", "1");
+        seq(c, "RpRtlSet", rtl, 21);
+        ca(c, "RpRtlErr", "ErrorDialog", "RpErrorDlg_RTL");
+        seq(c, "RpRtlErr", "RpRtl", 22);
+        if (c->page) {
+            const char *ltr = keep(c, "NOT (", keep(c, rtl, ")"));
+            page_event(c, "[RpRtl]", "1", rtl);
+            page_event(c, "[RpRtl]", "{}", ltr);
+            page_event(c, "[ErrorDialog]", "RpErrorDlg_RTL", rtl);
+            page_event(c, "[ErrorDialog]", "RpErrorDlg", ltr);
+        }
+    }
     for (size_t li = 0; li < c->nlang; ++li) {
         const char *code = lang_code(c, li), *cnd = lang_cond(c, li);
         const char *font = keep(c, "RpNormal_", code);
@@ -1218,7 +1369,7 @@ static void language_rows(ctx_t *c) {
             ca(c, keep(c, name, NULL), "DefaultUIFont", font);
             seq(c, keep(c, name, NULL), cnd, lang_seq(c));
         }
-        if (c->page) event(c, "RpLanguageDlg", "Next", "[DefaultUIFont]", font, cnd, 1);
+        if (c->page) page_event(c, "[DefaultUIFont]", font, cnd);
         for (size_t k = 0; k < c->nreg; ++k) {
             const regtext_t *r = &c->reg[k];
             const char *src = r->src[li] ? r->src[li] : "";
@@ -1235,7 +1386,7 @@ static void language_rows(ctx_t *c) {
             } else {
                 arg = keep(c, pre, src);
             }
-            if (c->page) event(c, "RpLanguageDlg", "Next", keep(c, "[", keep(c, target, "]")), arg, cnd, 1);
+            if (c->page) page_event(c, keep(c, "[", keep(c, target, "]")), arg, cnd);
             if (li || v == NULL) {
                 snprintf(name, sizeof name, "RpL_%s_%d", code, ++n);
                 ca(c, keep(c, name, NULL), target, arg);
@@ -1427,10 +1578,6 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rp_msi_cell_t *ic = cell(c, &c->binary);
     if (ic) *ic = (rp_msi_cell_t){ .kind = RP_MSI_BINARY, .bytes = c->icon, .len = sizeof c->icon };
 
-    cancel_dlg(c);
-    error_dlg(c);
-    files_in_use_dlg(c);
-    progress_and_exits(c);
     // The license in each language: its own (license-xx), else the common one, else English's.
     const char *rtf[RP_UI_LANG_MAX] = { 0 };
     bool any_license = false;
@@ -1455,6 +1602,15 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         if (rtf[i] == NULL) rtf[i] = "";
     }
     const char *dir = in->install_dir ? in->install_dir : "TARGETDIR";
+    for (size_t i = 0; i < c->nlang && ir->ui_lang_count; ++i) c->rtl_any |= ir->ui_langs[i].rtl;
+    c->rtl_any = c->rtl_any && c->multi;
+    for (int pass = 0; pass <= (int)c->rtl_any; ++pass) {     // the dialogs, then their mirrored twins
+    c->rtl = pass == 1;
+    c->ncustom = 0;                         // the twins' own texts get the same keys
+    cancel_dlg(c);
+    error_dlg(c);
+    if (!c->rtl) files_in_use_dlg(c);
+    progress_and_exits(c);
     if (c->page) language_dlg(c);
     if (ir->ui >= RP_UI_MINIMAL) {
         // The pages in order: the set's own, each followed by the author's pages placed after it.
@@ -1495,6 +1651,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     if (change && ir->ui != RP_UI_FEATURES) customize_dlg(c, NULL, "", "Install");
     maintenance_dlg(c, change);
     if (ir->ui >= RP_UI_INSTALLDIR || change) prop(c, "_RpBrowseProperty", dir);
+    }
+    c->rtl = false;
+    merge_rows(c);
     if (c->multi) language_rows(c);
 
     rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext };
@@ -1540,6 +1699,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
         rp_mem_free(alloc, c->seqs);
         rp_mem_free(alloc, c->cas);
         rp_mem_free(alloc, c->reg);
+        rp_mem_free(alloc, c->mcond);
+        rp_mem_free(alloc, c->mctl);
         rp_mem_free(alloc, c);
     }
     rp_mem_free(alloc, ui->tables);

@@ -1251,6 +1251,11 @@ static void lower_helper_actions(pkg_t *pk) {
             const char *code = ir->ui_lang_count ? ir->ui_langs[li].code : "en";
             const char *face = ir->ui_lang_count && ir->ui_langs[li].font ? ir->ui_langs[li].font : "Segoe UI";
             s_(&pk->property, kprintf(k, "RpDetFont_%s", code, NULL)); s_(&pk->property, face);
+            // ... and its first LANGID, which gives the helper the language's character set.
+            unsigned id = ir->ui_lang_count && ir->ui_langs[li].langid_count ? ir->ui_langs[li].langids[0] : 1033;
+            char num[16];
+            snprintf(num, sizeof num, "%u", id);
+            s_(&pk->property, kprintf(k, "RpDetLcid_%s", code, NULL)); s_(&pk->property, kdup(k, num));
         }
         s_(&pk->customaction, "RP_Details"); i_(&pk->customaction, 1 | 0x80); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetails");
         s_(&pk->customaction, "RP_DetailsDone"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetailsDone");

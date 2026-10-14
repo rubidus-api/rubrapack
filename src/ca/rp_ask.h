@@ -12,7 +12,15 @@
 
 typedef struct {
     const wchar_t *title, *text, *first, *second, *cancel;
+    bool           rtl;     // the texts read right to left: the window is mirrored
 } rp_ask_t;
+
+// Whether a language reads right to left (LOCALE_IREADINGLAYOUT 1), and the message box flags for it.
+static inline bool rp_lcid_rtl(LCID lcid) {
+    DWORD v = 0;
+    return lcid && GetLocaleInfoW(lcid, LOCALE_IREADINGLAYOUT | LOCALE_RETURN_NUMBER, (LPWSTR)&v, sizeof v / sizeof(wchar_t)) && v == 1;
+}
+static inline UINT rp_mb_rtl(bool rtl) { return rtl ? MB_RTLREADING | MB_RIGHT : 0; }
 
 enum { RP_ASK_CANCEL = 0, RP_ASK_FIRST = 1, RP_ASK_SECOND = 2, RP_ASK_ID_TEXT = 100, RP_ASK_ID_FIRST = 101, RP_ASK_ID_SECOND = 102 };
 
@@ -38,9 +46,9 @@ static INT_PTR CALLBACK rp_ask_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 }
 
 // One control: the class by its atom (0x0080 button, 0x0082 static), no text (set when the window opens).
-static WORD *rp_ask_item(WORD *p, DWORD style, short x, short y, short cx, short cy, WORD id, WORD cls) {
+static WORD *rp_ask_item(WORD *p, DWORD style, DWORD ex, short x, short y, short cx, short cy, WORD id, WORD cls) {
     p = (WORD *)(((uintptr_t)p + 3) & ~(uintptr_t)3);
-    DLGITEMTEMPLATE it = { .style = style | WS_CHILD | WS_VISIBLE, .x = x, .y = y, .cx = cx, .cy = cy, .id = id };
+    DLGITEMTEMPLATE it = { .style = style | WS_CHILD | WS_VISIBLE, .dwExtendedStyle = ex, .x = x, .y = y, .cx = cx, .cy = cy, .id = id };
     memcpy(p, &it, sizeof it);
     p = (WORD *)((uint8_t *)p + sizeof it);
     *p++ = 0xFFFF;
@@ -56,7 +64,7 @@ static int rp_ask(HWND owner, const rp_ask_t *a) {
     DWORD buf[96];
     memset(buf, 0, sizeof buf);
     DLGTEMPLATE t = { .style = DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_SETFOREGROUND | WS_POPUP | WS_CAPTION | WS_SYSMENU,
-                      .dwExtendedStyle = WS_EX_TOPMOST, .cdit = 4, .cx = 232, .cy = 66 };
+                      .dwExtendedStyle = WS_EX_TOPMOST | (a->rtl ? WS_EX_LAYOUTRTL : 0), .cdit = 4, .cx = 232, .cy = 66 };
     memcpy(buf, &t, sizeof t);
     WORD *p = (WORD *)((uint8_t *)buf + sizeof t);
     *p++ = 0;               // no menu
@@ -65,10 +73,11 @@ static int rp_ask(HWND owner, const rp_ask_t *a) {
     *p++ = 9;
     memcpy(p, face, sizeof face);
     p += sizeof face / sizeof face[0];
-    p = rp_ask_item(p, SS_LEFT | SS_NOPREFIX, 10, 8, 212, 28, RP_ASK_ID_TEXT, 0x0082);
-    p = rp_ask_item(p, BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 44, 66, 14, RP_ASK_ID_FIRST, 0x0080);
-    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, 83, 44, 66, 14, RP_ASK_ID_SECOND, 0x0080);
-    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, 156, 44, 66, 14, IDCANCEL, 0x0080);
+    DWORD rd = a->rtl ? WS_EX_RTLREADING : 0;       // the mirrored window puts the text at the right
+    p = rp_ask_item(p, SS_LEFT | SS_NOPREFIX, rd, 10, 8, 212, 28, RP_ASK_ID_TEXT, 0x0082);
+    p = rp_ask_item(p, BS_DEFPUSHBUTTON | WS_TABSTOP, rd, 10, 44, 66, 14, RP_ASK_ID_FIRST, 0x0080);
+    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 83, 44, 66, 14, RP_ASK_ID_SECOND, 0x0080);
+    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 156, 44, 66, 14, IDCANCEL, 0x0080);
     (void)p;
     INT_PTR r = DialogBoxIndirectParamW(GetModuleHandleW(NULL), (const DLGTEMPLATE *)buf, owner, rp_ask_proc, (LPARAM)a);
     return r == RP_ASK_FIRST || r == RP_ASK_SECOND ? (int)r : RP_ASK_CANCEL;

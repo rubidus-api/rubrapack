@@ -440,6 +440,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         if (pack && L->langid_count == 0) L->langid_count = pack->langid_count < RP_UI_LANGID_MAX ? pack->langid_count : RP_UI_LANGID_MAX;
         if (pack && L->name == NULL && pack->name) L->name = ir_dup(c, pack->name);
         if (pack && L->font == NULL && pack->font) L->font = ir_dup(c, pack->font);
+        if (pack) L->rtl = pack->rtl;
         if (L->langid_count == 0 && kl >= 0) {
             for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
         }

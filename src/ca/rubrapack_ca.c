@@ -1918,13 +1918,22 @@ __declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
     wchar_t *t[6];
     static const wchar_t *const ids[6] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel", L"RemoveAsk" };
     for (size_t i = 0; i < 6; ++i) t[i] = maint_text(h, ids[i]);
-    rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel" };
+    rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel", false };
+    {   // the texts are the user's language when the package has it (pre_text): mirrored for one read right to left
+        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
+        size_t un = ul ? wcslen(ul) : 0;
+        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
+            if (wcsncmp(p, ul, un) == 0 && p[un] == L'=') a.rtl = rp_lcid_rtl((LCID)wcstoul(ul, NULL, 10));
+        }
+        if (ul) HeapFree(GetProcessHeap(), 0, ul);
+        if (map) HeapFree(GetProcessHeap(), 0, map);
+    }
     int r;
     for (;;) {
         r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
         // Remove is asked once more (No is the default button, and leads back to the question).
         if (r != RP_ASK_SECOND || MessageBoxW(NULL, t[5] ? t[5] : L"Remove?", a.title,
-                                              MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) break;
+                                              MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_TOPMOST | MB_SETFOREGROUND | rp_mb_rtl(a.rtl)) == IDYES) break;
     }
     for (size_t i = 0; i < 6; ++i) {
         if (t[i]) HeapFree(GetProcessHeap(), 0, t[i]);
@@ -2387,7 +2396,8 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // RTF sent across processes do not change it (WM_SETTEXT and EM_REPLACESEL insert RTF literally,
 // observed); EM_SETCHARFORMAT takes a pointer, so the format is written into the dialog's process
 // first (below 2 GiB when the helper is 32-bit and the dialog 64-bit). The face is the dialog
-// language's (RpDetFont_<code>), else Segoe UI, with that language's character set: with the
+// language's (RpDetFont_<code>), else Segoe UI, with that language's character set (its LANGID's
+// ANSI code page, RpDetLcid_<code>; none for a Unicode-only language such as Hindi): with the
 // default set RichEdit's font binding gives the Chinese or Japanese characters of a line the
 // system's own CJK face (Malgun Gothic on a Korean Windows), and the path after them stays in it,
 // with won signs for backslashes (x59, zh_TW).
@@ -2396,16 +2406,22 @@ typedef struct {
     void  *remote;
 } det_fmt_t;
 
-static BYTE det_charset(const wchar_t *lang) {
-    if (lang == NULL) return DEFAULT_CHARSET;
-    if (wcscmp(lang, L"ja") == 0) return SHIFTJIS_CHARSET;
-    if (wcscmp(lang, L"ko") == 0) return HANGEUL_CHARSET;
-    if (wcscmp(lang, L"zh") == 0) return GB2312_CHARSET;
-    if (wcscmp(lang, L"zh_TW") == 0) return CHINESEBIG5_CHARSET;
+static BYTE det_charset(LCID lcid) {
+    static const struct { WORD cp; BYTE cs; } map[] = {
+        { 874, THAI_CHARSET }, { 932, SHIFTJIS_CHARSET }, { 936, GB2312_CHARSET }, { 949, HANGEUL_CHARSET },
+        { 950, CHINESEBIG5_CHARSET }, { 1250, EASTEUROPE_CHARSET }, { 1251, RUSSIAN_CHARSET }, { 1252, ANSI_CHARSET },
+        { 1253, GREEK_CHARSET }, { 1254, TURKISH_CHARSET }, { 1255, HEBREW_CHARSET }, { 1256, ARABIC_CHARSET },
+        { 1257, BALTIC_CHARSET }, { 1258, VIETNAMESE_CHARSET },
+    };
+    DWORD cp = 0;
+    if (lcid == 0 || GetLocaleInfoW(lcid, LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, (LPWSTR)&cp, sizeof cp / sizeof(wchar_t)) == 0) return DEFAULT_CHARSET;
+    for (size_t i = 0; i < sizeof map / sizeof map[0]; ++i) {
+        if (map[i].cp == cp) return map[i].cs;
+    }
     return DEFAULT_CHARSET;
 }
 
-static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, const wchar_t *lang) {
+static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lcid) {
     DWORD pid = 0;
     GetWindowThreadProcessId(edit, &pid);
     fm->proc = pid ? OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid) : NULL;
@@ -2421,7 +2437,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, const w
     cf.cbSize = sizeof cf;
     cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
     cf.yHeight = 8 * 20;                                    // twips
-    cf.bCharSet = det_charset(lang);
+    cf.bCharSet = det_charset(lcid);
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
     size_t fl = face && face[0] ? wcslen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
@@ -2650,10 +2666,12 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     det_send(win.edit, WM_USER + 53, 0, 16 * 1024 * 1024);      // EM_EXLIMITTEXT: the box takes more than 64 KB
     {   // the dialog language's face (RpDetFont_<code>): a CJK face draws its own script and the paths
         wchar_t name[48];
-        wchar_t *face = NULL;
+        wchar_t *face = NULL, *lcid = NULL;
         if (wfmt(name, 48, L"RpDetFont_%.15ls", lang && lang[0] ? lang : L"en") > 0) face = get_property(h, name);
-        det_font_open(&fmt, win.edit, face, lang && lang[0] ? lang : NULL);
+        if (wfmt(name, 48, L"RpDetLcid_%.15ls", lang && lang[0] ? lang : L"en") > 0) lcid = get_property(h, name);
+        det_font_open(&fmt, win.edit, face, lcid ? (LCID)wcstoul(lcid, NULL, 10) : 0);
         if (face) HeapFree(GetProcessHeap(), 0, face);
+        if (lcid) HeapFree(GetProcessHeap(), 0, lcid);
     }
     det_font_apply(&fmt, win.edit);
     while (!ended) {
