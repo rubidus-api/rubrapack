@@ -304,8 +304,8 @@ void ir_nfc_names(ctx_t *c) {
 }
 
 // Languages the dialogs know without help (RFC-0012): their LANGIDs for the automatic choice, the
-// name on the language page and the face. Built-in texts exist for en and ko only; any other
-// language gives every text itself ([ui-text.ID] text-xx).
+// name on the language page and the face. A language's pack says them too and comes first; a
+// language without a pack gives every text itself ([ui-text.ID] text-xx).
 static const struct {
     const char *code, *name, *font;
     uint16_t    ids[6];

@@ -123,6 +123,8 @@ msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"
 상자가 로그 파일의 줄 그대로 - Windows Installer 가 이번 실행에 대해 적는 전부 - 를 담는다. `[ui]` 의
 `details = false` 는 상자를 뺀다.
 
+![상세 상자가 있는 진행 페이지](../images/ch06-details.png)
+
 ## 로그 저장하기: `save-log`
 
 완료 페이지와, 설치를 취소했거나 실패했을 때의 페이지 왼쪽 아래에는 **로그 저장...** 단추가 있다. 누르면 늘

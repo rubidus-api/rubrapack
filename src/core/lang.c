@@ -152,15 +152,7 @@ const rp_langpack_t *rp_langpack_get(const char *code, const char *near) {
     if (npacks == MAX_PACKS) return NULL;
     proven_allocator_t heap = proven_heap_allocator();
     char *text = NULL;
-    for (size_t i = 0; i < rp_lang_embedded_count && text == NULL; ++i) {
-        if (strcmp(rp_lang_embedded[i].code, code) != 0) continue;
-        text = rp_mem_alloc(heap, rp_lang_embedded[i].len + 1, 1);
-        if (text) {
-            memcpy(text, rp_lang_embedded[i].data, rp_lang_embedded[i].len);
-            text[rp_lang_embedded[i].len] = '\0';
-        }
-    }
-    if (text == NULL) {
+    {
         char *dir = rp_pal_getenv(heap, "RUBRAPACK_LANG_DIR");
         if (dir && dir[0]) text = file_text(dir, "", code);
         if (dir) rp_mem_free(heap, dir);
@@ -170,6 +162,14 @@ const rp_langpack_t *rp_langpack_get(const char *code, const char *near) {
         char *exe = rp_pal_exe_dir(heap);
         if (exe) text = file_text(exe, "/lang", code);
         if (exe) rp_mem_free(heap, exe);
+    }
+    for (size_t i = 0; i < rp_lang_embedded_count && text == NULL; ++i) {     // built in: the last resort
+        if (strcmp(rp_lang_embedded[i].code, code) != 0) continue;
+        text = rp_mem_alloc(heap, rp_lang_embedded[i].len + 1, 1);
+        if (text) {
+            memcpy(text, rp_lang_embedded[i].data, rp_lang_embedded[i].len);
+            text[rp_lang_embedded[i].len] = '\0';
+        }
     }
     if (text == NULL) return NULL;
     rp_langpack_t *pk = parse_pack(code, text);

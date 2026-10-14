@@ -1162,16 +1162,19 @@ static void lower_helper_actions(pkg_t *pk) {
     // (RpMaintain); the dialog sets have RpMaintenanceDlg.
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
     // RP_LANGS: which language a user's LANGID means ("1042=ko;1041=ja"), for a run in which no
-    // dialog chose one - the helper's messages then follow the user's language.
+    // dialog chose one - the helper's messages then follow the user's language. The first match
+    // wins, so the dialogs' own languages come before the other built-in packs.
     if ((preflight || maintain) && nlangs > 1) {
         const char *map = "";
-        for (size_t b = 1; b < nlangs; ++b) {
+        for (size_t i = 0; i < 2 * (nlangs - 1); ++i) {        // two passes over langs[1..]
+            size_t pass = i / (nlangs - 1), b = 1 + i % (nlangs - 1);
             const rp_langpack_t *p = rp_langpack_get(langs[b], NULL);
             const uint16_t *own = NULL;
             size_t nown = 0;
             for (size_t u = 0; u < ir->ui_lang_count; ++u) {
                 if (strcmp(ir->ui_langs[u].code, langs[b]) == 0) { own = ir->ui_langs[u].langids; nown = ir->ui_langs[u].langid_count; }
             }
+            if ((own != NULL) != (pass == 0)) continue;
             for (size_t j = 0; j < (own ? nown : p ? p->langid_count : 0); ++j) {
                 char num[16];
                 snprintf(num, sizeof num, "%u", own ? (unsigned)own[j] : p->langids[j]);

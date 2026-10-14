@@ -103,7 +103,7 @@ static int print_usage(rp_out_t out) {
     if (err == PROVEN_OK) {
         err = rp_pal_puts(out, TR("\n"
                                   "Results go to stdout, diagnostics to stderr.\n"
-                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, or one with a language pack.\n"
+                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, es, fr, de, or one with a language pack.\n"
                                   "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
                                   "5 lint, 6 network.\n"));
     }
@@ -157,7 +157,7 @@ int rp_main(int argc, char **argv) {
         char *env = rp_pal_getenv(heap, "RUBRAPACK_LANG");
         if (env && env[0] && !rp_lang_set(env)) {
             char buf[64], buf2[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (en and ko are built in; another needs its language pack, %s.po)",
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)",
                           shown(env, buf, sizeof buf), shown(env, buf2, sizeof buf2));
             rp_mem_free(heap, env);
             return RP_EXIT_USAGE;
@@ -181,7 +181,7 @@ int rp_main(int argc, char **argv) {
         }
         if (!rp_lang_set(code)) {
             char buf[64], buf2[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (en and ko are built in; another needs its language pack, %s.po)",
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)",
                           shown(code, buf, sizeof buf), shown(code, buf2, sizeof buf2));
             return RP_EXIT_USAGE;
         }

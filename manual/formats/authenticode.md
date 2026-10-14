@@ -168,11 +168,11 @@ signature made with any key carries these same values. The streams in order of t
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 4236 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 800 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 10637 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 1200 |
 | 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 156 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 48 |
-| 16 | `40 48 59 45 f2 44` ... | `Property` | 140 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 340 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
 | 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
@@ -185,13 +185,13 @@ The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its n
 two zero times: 908 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-82 9f c9 c9 81 33 37 f3 85 15 0c 4a b2 53 1d 86 87 eb a8 e1 ca ea 0d 03 94 80 71 2f a0 06 ec d7
+27 3d 00 e9 7d a5 16 27 a9 bd a7 d6 19 04 4d 49 f0 75 8a 82 5b 1b 11 58 f3 63 b5 71 0a 41 d9 d3
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-c2 ae e8 91 cf 23 4d ee c2 9c af 19 ee df 9d 8a 34 91 22 dc 3f 5a 81 16 04 5a 8a 04 7c 5a a0 9b
+c9 33 cc ad f1 67 c4 69 4b 51 49 d8 36 a3 1b 5b b2 8c 9b b9 24 21 eb f5 b7 0b 8d 12 43 cf f1 ce
 ```
 

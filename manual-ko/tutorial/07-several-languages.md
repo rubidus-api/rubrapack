@@ -73,21 +73,32 @@ msiexec /i hello.msi RPLANGUAGE=ko
 `[ui-text.ID]` 에서 `text` 는 모든 언어의 글, `text-ko` 는 한국어 글이다. 내장 글은 모두 이미 영어와 한국어로
 있다. `text` 를 준 곳에만 `text-ko` 를 주어 두 언어가 같은 말을 하게 한다.
 
-## 영어와 한국어 말고 다른 언어
+## 더 많은 언어
 
-rubrapack 의 페이지는 영어로 쓰여 있고, 한국어는 *언어팩* - 파일 하나, `ko.po` - 으로 함께 온다. 다른 언어 - `ja`,
-`de`, `fr` 등 - 도 그런 파일 하나다: `hello.toml` 옆의 `lang` 폴더에 `ja.po` 를 두고 `languages = ["ja"]` 라고 쓰면
-된다. 그 밖에는 바꿀 것이 없다. 팩에는 페이지의 모든 글, 진행 페이지의 상태 줄과 상세 내역, 그 언어의 이름과 글꼴이
-들어 있다. 형식은 참고 문서의 [언어팩](../rpk.md#언어팩)에 있고, `ko.po` 를 복사해 시작하는 것이 가장 빠르다. 팩이
-없거나 어떤 글을 다르게 하고 싶으면 원본이 `text-xx` 로 직접 준다. 어느 쪽에도 없는 것은 빌드가 알려 준다:
+rubrapack 의 페이지는 영어로 쓰여 있고, 여섯 언어가 *언어팩* - 언어마다 파일 하나 - 으로 함께 온다: 한국어(`ko`),
+일본어(`ja`), 중국어 간체(`zh`), 스페인어(`es`), 프랑스어(`fr`), 독일어(`de`). 목록에 코드를 하나 더 쓰면 되고, 그 밖에는
+바꿀 것이 없다:
 
-```text
-hello.toml:16:1: error[RP1202]: language 'ja' lacks 68 text(s), the first is Back: add them to its language pack (lang/ja.po) or give [ui-text.ID] text-ja
+```toml
+[ui]
+languages = ["ko", "ja", "de"]
 ```
 
-그런 언어에는 `[ui]` 의 키 셋이 더 도움이 된다: `name-ja`(언어 페이지에 보일 이름), `font-ja`(그 페이지들의
-글꼴), `langid-ja`(그 언어를 미리 고르게 하는 Windows 언어 번호 - 수 하나나 목록). 흔한 언어(`ja`, `zh`, `de`,
-`fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`)에는 이 셋이 내장되어 있다.
+그러면 언어 페이지에 English, 한국어, 日本語, Deutsch 가 나오고, Windows 자신의 언어가 그중 하나를 미리 고른다. 팩에는
+페이지의 모든 글, 진행 페이지의 상태 줄과 상세 내역, 그 언어의 이름과 글꼴이 들어 있다.
+
+다른 언어 - `it`, `pt`, `ru` 등 - 도 그런 파일 하나다: `hello.toml` 옆의 `lang` 폴더에 `it.po` 를 두고
+`languages = ["it"]` 라고 쓰면 된다. 형식은 참고 문서의 [언어팩](../rpk.md#언어팩)에 있고, rubrapack 과 함께 오는 팩
+하나를 복사해 시작하는 것이 가장 빠르다. 원본 옆의 파일은 같은 코드의 내장 팩도 대신한다. 팩이 없거나 어떤 글을 다르게
+하고 싶으면 원본이 `text-xx` 로 직접 준다. 어느 쪽에도 없는 것은 빌드가 알려 준다:
+
+```text
+hello.toml:18:1: error[RP1202]: language 'it' lacks 68 text(s), the first is Back: add them to its language pack (lang/it.po) or give [ui-text.ID] text-it
+```
+
+그런 언어에는 `[ui]` 의 키 셋이 더 도움이 된다: `name-it`(언어 페이지에 보일 이름), `font-it`(그 페이지들의
+글꼴), `langid-it`(그 언어를 미리 고르게 하는 Windows 언어 번호 - 수 하나나 목록). 흔한 언어(`it`, `pt`, `nl`, `pl`,
+`ru`, `uk`, `tr`, `vi`, `th`)에는 이 셋이 내장되어 있다.
 
 ## 글꼴
 

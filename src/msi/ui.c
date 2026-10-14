@@ -1087,7 +1087,7 @@ static const char *lang_cond(ctx_t *c, size_t li) {
 }
 
 // The first page when the dialogs speak several languages: the heading and the line under it in
-// every language, a radio button per language (the automatic choice already selected), then the
+// every language (the line: up to three), a radio button per language (the automatic choice already selected), then the
 // welcome page or, when installed, the maintenance page.
 static void language_dlg(ctx_t *c) {
     const char *d = "RpLanguageDlg";
@@ -1096,6 +1096,9 @@ static void language_dlg(ctx_t *c) {
         title = keep(c, title, keep(c, i ? " / " : "", text_for(c, "LanguageTitle", i)));
         text = keep(c, text, keep(c, i ? " / " : "", text_for(c, "LanguageText", i)));
     }
+    // Four languages or more do not fit the two lines under the heading: the line is then the
+    // language chosen in advance (the user's), whose texts are already in place.
+    if (c->nlang > 3) text = T(c, "LanguageText");
     dialog(c, d, 370, 270, 3, "Lang", "Next", "Cancel");
     frame_text(c, d, keep(c, "{\\RpTitle_en}", title), text);
     int h = 14 * (int)c->nlang;

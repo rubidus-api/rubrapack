@@ -78,6 +78,7 @@ target = "file:Hello"</code></pre>
 레지스트리 값 쓰는 중
   레지스트리 값 쓰기: HKLM\Software\Example\Hello\Version</code></pre>
 <p>제거와 복구도 같은 식으로 보이고, 실패한 설치는 거둬 가는 것을 보인다. 상자 아래의 <strong>전체 로그 보기</strong>를 표시하면 상자가 로그 파일의 줄 그대로 - Windows Installer 가 이번 실행에 대해 적는 전부 - 를 담는다. <code>[ui]</code> 의 <code>details = false</code> 는 상자를 뺀다.</p>
+<figure><img src="img/ch06-details.png" alt="상세 상자가 있는 진행 페이지" loading="lazy"><figcaption>상세 상자가 있는 진행 페이지</figcaption></figure>
 <h3 id="로그-저장하기-save-log">6.9 로그 저장하기: <code>save-log</code><a class="plink" href="#로그-저장하기-save-log" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>완료 페이지와, 설치를 취소했거나 실패했을 때의 페이지 왼쪽 아래에는 <strong>로그 저장...</strong> 단추가 있다. 누르면 늘 보던 "다른 이름으로 저장" 창이 열리고, Windows Installer 가 이번 실행에 대해 적은 기록 - 모든 파일, 레지스트리 값, 동작, 실패한 페이지라면 설치를 멈춘 오류까지 - 의 사본을 저장한다. 설치가 왜 잘못됐는지 물어 오면 보낼 파일이 이것이다. 이를 위해 패키지는 Windows Installer 에 실행마다 로그를 남기게 한다(<code>MsiLogging</code>). 로그는 사용자의 임시 폴더에 생기고, <code>msiexec /l</code> 로 따로 정하면 그 파일이다. <code>[ui]</code> 의 <code>save-log = false</code> 는 단추를 빼고, 로그 남기기도 함께 뺀다.</p>
 <h3 id="해-보기">6.10 해 보기<a class="plink" href="#해-보기" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>

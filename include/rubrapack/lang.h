@@ -6,8 +6,10 @@
 // Languages. A language is one file, a language pack (gettext PO): its header names the language,
 // an entry without msgctxt is a text of the command line (msgid: the English text as it is written
 // in src/), an entry with msgctxt "installer" a text of the installers rubrapack builds (msgid: the
-// text's ID). English is in the code, and what a text without an entry comes out as. Korean is the
-// pack resources/lang/ko.po, built in; another language is a file found at run time.
+// text's ID). English is in the code, and what a text without an entry comes out as. The packs of
+// resources/lang/ (ko, ja, zh, es, fr, de) are built in; a file found at run time (RUBRAPACK_LANG_DIR,
+// lang/ beside the source, lang/ beside the program) comes first, so it adds a language or replaces
+// a built-in one.
 //
 // A command-line translation is not a printf format: it names the English text's conversions by
 // number, {1} for the first, and may put them in another order ("{2} 의 {1}"); {-2} says that the

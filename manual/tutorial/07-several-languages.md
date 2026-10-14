@@ -76,24 +76,36 @@ In `[ui-text.ID]`, `text` is the text for every language and `text-ko` the Korea
 built-in text already exists in English and Korean; give `text-ko` only where you give `text`, so
 both languages say the same thing.
 
-## Languages other than English and Korean
+## More languages
 
-rubrapack's pages are written in English, and Korean comes with it as a *language pack* - one
-file, `ko.po`. Another language - `ja`, `de`, `fr`, ... - is one more such file: put `ja.po` in a
-folder `lang` beside `hello.toml` and write `languages = ["ja"]`. Nothing else changes. The pack
-holds every text of the pages, the progress page's status line and details, and the language's
-name and font; the reference's [Language packs](../rpk.md#language-packs) shows the format, and
-copying `ko.po` is the quickest start. Without a pack (or for a text you want different) the
-source gives the text itself as `text-xx`; the build lists what neither has:
+rubrapack's pages are written in English, and six more languages come with it as *language packs*,
+one file each: Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`), Spanish (`es`), French
+(`fr`) and German (`de`). Each is one more code in the list - nothing else changes:
 
-```text
-hello.toml:16:1: error[RP1202]: language 'ja' lacks 68 text(s), the first is Back: add them to its language pack (lang/ja.po) or give [ui-text.ID] text-ja
+```toml
+[ui]
+languages = ["ko", "ja", "de"]
 ```
 
-For such a language, three more keys in `[ui]` may help: `name-ja` (its name on the language
-page), `font-ja` (the typeface of its pages) and `langid-ja` (the Windows language numbers that
-select it in advance - one number or a list). For common languages (`ja`, `zh`, `de`, `fr`, `es`,
-`it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`) these three are built in.
+The language page then lists English, 한국어, 日本語 and Deutsch, and Windows' own language
+chooses one in advance. A pack holds every text of the pages, the progress page's status line and
+details, and the language's name and font.
+
+Another language - `it`, `pt`, `ru`, ... - is one more such file: put `it.po` in a folder `lang`
+beside `hello.toml` and write `languages = ["it"]`. The reference's
+[Language packs](../rpk.md#language-packs) shows the format, and copying one of the packs that
+come with rubrapack is the quickest start; a file beside the source also replaces a pack of the
+same code. Without a pack (or for a text you want different) the source gives the text itself as
+`text-xx`; the build lists what neither has:
+
+```text
+hello.toml:18:1: error[RP1202]: language 'it' lacks 68 text(s), the first is Back: add them to its language pack (lang/it.po) or give [ui-text.ID] text-it
+```
+
+For such a language, three more keys in `[ui]` may help: `name-it` (its name on the language
+page), `font-it` (the typeface of its pages) and `langid-it` (the Windows language numbers that
+select it in advance - one number or a list). For common languages (`it`, `pt`, `nl`, `pl`, `ru`,
+`uk`, `tr`, `vi`, `th`) these three are built in.
 
 ## Typefaces
 

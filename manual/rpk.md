@@ -1125,8 +1125,11 @@ labels = ["&Typical", "&Portable"]
 labels-ko = ["표준(&T)", "휴대용(&P)"]
 ```
 
-- The built-in texts exist in English and Korean (`ko`). Another language (`ja`, `de`, ...) gives
-  every built-in text as `text-xx` (lint names the ones missing), and may give `name-xx` (its name
+- The built-in texts exist in English and in the languages whose packs come with rubrapack:
+  Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`), Spanish (`es`), French (`fr`) and
+  German (`de`) ([Language packs](#language-packs)). Another language (`it`, `ru`, ...) brings a
+  pack of its own, or gives every built-in text as `text-xx` (lint names the ones missing), and
+  may give `name-xx` (its name
   on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
   choose it: one number or an array). Common languages have these built in: `ja`, `zh`, `de`,
   `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
@@ -1142,9 +1145,12 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 - A text that uses a property other than `[ProductName]`, `[Manufacturer]` and `[ProductVersion]`
   is formatted when the language is chosen, and must fit 255 characters.
 - The progress page's status line ("Copying new files", "Updating component registration") is the
-  package's, in English and Korean, and follows the chosen language. A package with another
-  language among its `languages` keeps Windows Installer's own words there, which follow Windows;
-  so does a package without dialogs.
+  package's, in English and every language with a pack, and follows the chosen language. A package
+  with a language that has no pack among its `languages` keeps Windows Installer's own words
+  there, which follow Windows; so does a package without dialogs.
+- The language page lists every language by its own name. Its heading names the page in each of
+  them; the line under it does too for up to three languages, and with four or more it is in the
+  language chosen in advance (the user's), as the two lines would not hold them all.
 - Windows Installer's own texts - the feature tree's menu, sizes, the time left, and its error
   messages - are not the package's: the first stay English, the error messages follow Windows.
 - `[package] language` sets only the package's language (`ProductLanguage`, the summary). Since
@@ -1152,9 +1158,12 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### Language packs
 
-A language is one file. English is built into rubrapack, Korean comes with it as
-`resources/lang/ko.po`, and any other language is supported by adding its file - `<code>.po`, in
-the PO format translators' tools read - without changing rubrapack or the source's texts.
+A language is one file. English is built into rubrapack; Korean, Japanese, Chinese (Simplified),
+Spanish, French and German come with it as `resources/lang/<code>.po` (`ko`, `ja`, `zh`, `es`,
+`fr`, `de`); any other language is supported by adding its file - `<code>.po`, in the PO format
+translators' tools read - without changing rubrapack or the source's texts. `zh` is Simplified
+Chinese; it is also chosen in advance on a Traditional Chinese Windows (Taiwan, Hong Kong, Macao),
+for which no pack of its own exists yet.
 
 ```po
 msgid ""
@@ -1174,8 +1183,10 @@ msgid "WelcomeTitle"
 msgstr "[ProductName] セットアップ"
 ```
 
-- **Where a pack is looked for**: built in; then the folder `RUBRAPACK_LANG_DIR` names; then
-  `lang/` beside the source being built; then `lang/` beside the rubrapack program.
+- **Where a pack is looked for**: the folder `RUBRAPACK_LANG_DIR` names; then `lang/` beside the
+  source being built; then `lang/` beside the rubrapack program; then the packs built in. A file
+  with a built-in language's code comes first, so a corrected or reworded `de.po` beside the
+  source replaces the built-in German.
 - **The command line**: `--lang ja` (or `RUBRAPACK_LANG=ja`) uses the pack. A translation names the
   English text's values by number, `{1}` for the first `%s` or `%zu`, so it can put them in the
   order its language wants; `{-2}` says the second has no place (a plural "s"); `{{` is a brace. It
@@ -1188,7 +1199,8 @@ msgstr "[ProductName] セットアップ"
   `[ui-text.ID] text-ja` in the source still win. A text neither gives is an error (`RP1202` names
   the first), except the few that fall back to English. A chain's setup program takes `Setup.*`
   for the languages `[chain] languages` names.
-- **Starting one**: copy `resources/lang/ko.po`, change the header, translate the `msgstr` lines.
+- **Starting one**: copy one of `resources/lang/*.po`, change the header, translate the `msgstr`
+  lines.
   `RUBRAPACK_LANG_MISSING=<file>` makes a run append every text the chosen pack lacks to that file.
 
 ### Icon, the finished page, and the scope page
@@ -1322,7 +1334,7 @@ upgrade and removal and stop every silent one, while the files are replaced safe
 anything (the old copies go through the cleanup task). `RPCLOSE=yes` or `RPCLOSE=no` on the command
 line still wins over the package's setting. `preflight = false` leaves the whole step out. The texts are
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder` and `PreflightCache` (`[ui-text.*]`; English and
-Korean are built in, another language without them gets English).
+the packs' languages are built in, another language without them gets English).
 
 Windows Installer looks after two things itself: while another installation is running, a second
 one ends at once with 1618; and after an installation that was cut off (a crash, a power cut), the
@@ -1804,7 +1816,7 @@ rubrapack version | help [command]
   6 network.
 - `--lang <code>` chooses the language of what the tool prints for a person: errors and warnings,
   `help`, the result lines, `explain`, the questions of `new -i` and `edit`. The codes are `en`
-  (the default), `ko`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
+  (the default), `ko`, `ja`, `zh`, `es`, `fr`, `de`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`); the environment variable `RUBRAPACK_LANG` says the same
   for every run, and the option wins over it. What a program reads stays as it is: the diagnostic
   codes, exit codes, table dumps of `inspect`, `schema`, and the structure of `--json` (whose

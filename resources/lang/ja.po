@@ -1,0 +1,3778 @@
+# rubrapack language pack: Japanese.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: ja\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Rubrapack-Name: 日本語\n"
+"X-Rubrapack-LangIDs: 1041\n"
+"X-Rubrapack-Font: Yu Gothic UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, ダイアログ {6}{7}\n  1 名前、製造元、バージョン、アーキテクチャ       2 インストール先、対象ユーザー\n  3 ダイアログ、使用許諾、言語                    4 選択可能な部分\n  5 ショートカット                                6 ファイル: プログラム フォルダーに合わせる\n  7 任意のキー                                    v 表示   l lint   s 保存   q 終了\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nこのコードを使うメッセージ (* は名前または値):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, es, fr, de, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "\n結果は stdout に、診断は stderr に出力します。\n--lang (または RUBRAPACK_LANG) でこれらの表示の言語を選びます: en、ko、ja、zh、es、fr、de、または言語パックのある言語。\n終了コード: 0 正常、1 ソースのエラー、2 使い方、3 入出力、4 署名または検証、\n5 lint、6 ネットワーク。\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\n対処: {1}。\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} はなくなりましたが、ショートカットがそれを開きます: 先にショートカット (5) を変更してください\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  そこにファイル {1} 個とフォルダー {2} 個があります\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7、v、l、s または q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  [dir.{1}] と [files.{2}] を追加しました\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  [file.{1}] を追加しました\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  package.version や dir.INSTALLDIR.path のように table.key の形で指定してください\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: 問題なし\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: 上の問題を見てください (そこに書かれたファイルは検査用のコピーです)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  [ui] languages のほかの言語はそのままです。その一覧は 7 (任意のキー) で変更してください\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  [file.{1}] を削除しました\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  [files.{1}]{2} を削除しました\n"
+
+msgid "  sub folders:"
+msgstr "  サブフォルダー:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  それは TOML のサブセットに合いません。何も変更していません\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  読み取れる文字列ではありませんでした。もう一度どうぞ\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  プログラム フォルダー '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  ソースにはショートカットが指す [file] テーブルがありません\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  ソースには `new` が書く形のサブフォルダー ([files] \"<folder>/<name>/**\") がありません。6 で追加してください\n"
+
+msgid "  too long; again, please\n"
+msgstr "  長すぎます。もう一度どうぞ\n"
+
+msgid "  y or n\n"
+msgstr "  y または n\n"
+
+msgid " (changed)"
+msgstr " (変更あり)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - Windows インストーラー (.msi) と MSIX (.msix) のパッケージを作ります\n\n使い方: rubrapack [--lang <code>] <command> [arguments]\n\nコマンド:\n"
+
+msgid " and its dir"
+msgstr " とその dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) には環境変数がないので、展開可能な値には入れられません。文字列値 (インストール時に埋まる) を使ってください"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) は {2} です: パスの先頭か、Windows インストーラーが埋める値 (レジストリ、環境変数、INI、引数、メッセージ) にだけ書けます。ここには書けません"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) はパスの起点にできるフォルダーではありません (dir ID、または ProgramFiles、LOCALAPPDATA、ProgramData ... - マニュアルの Paths を参照){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  構造:         {2}\n  ダイジェスト: {3}\n  署名:         {4}\n  証明書チェーン: {5}{6}{7}\n  失効確認:     未確認\n  タイムスタンプ: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: 変数が設定されていません"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' はこのダイアログのコントロールではありません"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' は {3} にありません"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': 使用許諾の文章には書体の英語名が必要なので、その言語の標準の書体で表示します。ここでもこの書体を使うには英語名 (\"Malgun Gothic\" など) を書いてください"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "{1} のコンポーネントですが、パッケージのプラットフォームは {2} です"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} は kind = \"{2}\" には属しません"
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} は kind = \"firewall\" には属しません"
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} には 1041 のような LANGID (1..65535) を書きます"
+
+msgid "%s holds strings"
+msgstr "{1} には文字列を書きます"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} は 1 から 31 文字の書体名です (\"Segoe UI\" など。{2} 文字でした)"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} は引用符が閉じ、かっこの対応が取れた MSI の条件です"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} は値ごとに 1 つの文字列の配列です"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} は MSI パッケージ用です: MSIX は msiexec では削除されません"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} はなくなりました。[file.{2}] を削除しますか?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} が 240 文字を超えています"
+
+msgid "%s is new. Add it?"
+msgstr "{1} は新しいファイルです。追加しますか?"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} はこの rubrapack が使うコードではありません{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
+
+msgid "%s must be a GUID"
+msgstr "{1} は GUID でなければなりません"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} は {12345678-...} のような GUID でなければなりません ('{2}' でした)"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} は https://、http://、file:// のアドレスか \\\\server\\share のパスでなければなりません ('{2}' でした)"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} は upgrade-code と違う値でなければなりません (アーキテクチャごとに 1 つのアップグレード ファミリ)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} には Windows ビルド {2} 以降が必要です: [msix] min-version = \"10.0.{3}.0\" を設定してください"
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} には resources/bin/rubrapack_ca-{2}.dll が必要ですが、この rubrapack はそれなしでビルドされています"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}、TSA 未確認 (--tsa-trust を指定してください)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}、TSA 信頼済み"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}、TSA 信頼されていません - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} はなくなったか空です。[files.{3}] と [dir.{4}] を削除しますか?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ は新しいフォルダーです。追加しますか?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: エラー {2} 件{-3}、警告 {4} 件{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: エラー {2} 件{-3}、警告 {4} 件{-5} ({6} と比較)\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: ファイル {2} 個、{3} バイト\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: ファイル {2} 個、エラー {3} 件、警告 0 件\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: ほかに {2} 件の診断を表示していません\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: ファイル '{2}' はこのパッケージの [file.*] ではありません"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: ファイル '{2}' はプログラム (.exe) ではありません"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' が閉じていません (文字列 '$(' は '$$(' と書きます)"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' は既にあります。そのままにします"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' は既にあります。削除するか別のフォルダーにビルドしてください"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' には既に {2} ハンドラーがあります ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' には既にアクセス許可があります"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' と '{2}' はパッケージ内で同じパスです"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' は Windows またはブラウザーのものです"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' を '{2}' と比べて読めません: {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' は TOML のサブセットに合いません。何も保存していません"
+
+msgid "'%s' exists already"
+msgstr "'{1}' は既にあります"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' は既にあります。`rubrapack edit {2}` で変更してください"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' は既にあり、空のディレクトリではありません。新しいディレクトリに展開してください"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' は {2} に入ります。または msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' の概要情報ストリームが読めません"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' には展開元になる Directory、Component、File、Media テーブルがありません"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' には読める概要情報がありません"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' には変換 '{2}' がありません"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' は UTF-16 です: edit は UTF-8 のソースだけを変更します (先に UTF-8 で保存してください)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' は Windows の名前です。変数には別の名前を付けてください"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' は [chain] です: セットアップ プログラムをビルドします。-o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' は組み込みの枠のコントロールです。別の ID を選んでください"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' はコンピューター全体のフォルダーです。{2} パッケージはそこに書き込めません"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' はマージ モジュールです: 代わりに [merge.ID] でマージしてください"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' は MSIX 形式が自分用に予約している名前です"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' はシンボリック リンクです。リンクはたどりません"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' は [property.*] でもあります"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' は dir ID でもあります。変数には別の名前を付けてください"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' はマシン 0x{2} 用にビルドされており、このパッケージの arch 用ではありません。意図したものなら any-arch = true を設定してください"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' は PE ファイル (.exe、.dll)、MSI パッケージ、MSIX パッケージやバンドルのどれでもありません"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' は PE ファイル、MSI パッケージ、MSIX パッケージやバンドルのどれでもありません"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' は既知のフォルダーでも dir ID でもありません (既知のフォルダー: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' は rubrapack が読めるキャビネット (stored または MSZIP) ではありません"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' は診断コード (RP と 4 桁の数字、RP1612 など) ではありません"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' はプログラム (.exe) ではありません"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' は通常のファイルではありません"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' は rubrapack のセットアップ プログラムではありません{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' は有効な ID ではありません (英字、数字、'_'。数字で始めず、{2} 文字まで)"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' は有効な MSI データベースではありません: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' は有効な MSIX パッケージではありません: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' は有効なパッケージではありません: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' は有効なソース (TOML のサブセット) ではありません。先に手で直してください"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' は有効な変換ではありません: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' は有効な変数名ではありません"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' は予約されていて ID には使えません"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' は dir の名前です: dir を埋められるのはレジストリ検索か dir 検索だけです"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' はプログラム ファイル (PE) に見えますが、ヘッダーかリソースが壊れています"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' は文字列でなければなりません"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' は整数でなければなりません"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' は {2} から {3} の間でなければなりません"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' は true か false でなければなりません"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' は空にできません"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' は変換を指定していません (概要プロパティ 8): パッチではありません"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' はフォルダーで始めます: \"$(ProgramFiles)/Example\"、\"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' には {4} があります。何も展開していません"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': 項目が {2} 個あり、上限 {3} (--limit-entries) を超えています。何も展開していません"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' と '{3}' は Windows では同じパスになります。何も展開していません"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' は [ui] languages にありません"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': テーブルを読めません"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': 読めないテーブルがあります"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX はすべてのファイルをインストールします (when)。msi-only = true を使ってください"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX はすべてのファイルを削除します (keep)。msi-only = true を使ってください"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': キャビネット '{2}' は壊れているか、stored/MSZIP ではありません"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': キャビネット名 '{2}' は単純なファイル名ではありません"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': 圧縮ファイル '{2}' (シーケンス {3}) にはキャビネットがありません"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': ディレクトリ '{2}' の親 '{3}' がありません"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': ディレクトリ '{2}' は自分自身の祖先か、入れ子が深すぎます"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': ファイル '{2}' は MsiFileHash と一致しません"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': ファイル '{2}' にはコンポーネントかディレクトリがありません"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': ファイル '{2}' は {3} バイトですが、File テーブルでは {4} です"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': ファイル '{2}' はキャビネット '{3}' にありません"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': 外部キャビネットは署名の対象外です (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': そのフォルダーは既知の場所につながっていません"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': 書き込みが {2} バイトを超えます (--limit-bytes)。何も展開していません"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': --timestamp がありません: 証明書の期限が切れると署名は無効になります"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': パッケージ '{2}' は SHA-256 と一致しません"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': キャビネット ストリーム '{2}' がありません"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': マニフェストに {2} {3} がありません"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': マニフェストが '{2}' を指していますが、パッケージにありません"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': {2} のタイムスタンプ: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': 変換 '{2}' を '{3}' と比べて読めません: {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' はパッケージ自身の言語 ({2}) です。その文字列は接尾辞なしで書いてください"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' があると Windows インストーラーは複数文字列を書きます。type = \"multi\" と配列を使ってください"
+
+msgid "'_' in numbers is not supported"
+msgstr "数値の '_' には対応していません"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' に指定できるコマンド名は 1 つまでです"
+
+msgid "'version' takes no arguments"
+msgstr "'version' は引数を取りません"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs は .msi 用です"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "バンドルの --arch: x64、x86、arm64 をそれぞれ 1 回ずつ並べます ('{1}' でした)"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch はアーキテクチャを 1 つ取ります。.msixbundle の出力なら一覧を取ります"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert、--pass-env、--pass-file、--timestamp、--allow-unsigned-cabs は --key と一緒に使います"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress は .msi 用です。MSIX は --msix-compress deflate|store を取ります"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist はソースの隣の新しいフォルダーを指定します (パスなし)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs は 1 から 64 の数を取ります ('{1}' でした)"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store は Windows の証明書ストアです。ほかの環境ではキー ファイルか --pkcs11 を使ってください"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store は証明書の SHA-1 拇印 (16 進 40 桁) を取ります"
+
+msgid "--lang %s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
+msgstr "--lang {1}: その言語はありません (en、ko、ja、zh、es、fr、de は組み込み。ほかの言語には言語パック {2}.po が必要です)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang には en や ko のような言語が必要です"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages にはダイアログが必要です: --ui も指定してください"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress は deflate か store を取ります ('{1}' でした)"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: 変数が設定されていません"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code は中かっこ付きの大文字の GUID を取ります: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: 変数が設定されていません"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous は 2 つの .msi パッケージを比べます"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: オペレーティング システムのルート証明書を読めません"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} は出力 '{2}' と合いません"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} は実装されていません (msi または msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target は msi か msix を取ります ('{1}' でした)"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust、--tls-trust、--system-roots、--proxy は --timestamp と一緒に使います"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test と --msix-compress は .msix の出力用です"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test は署名のないパッケージ用です。--key があるなら外してください"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate は none か、product-code,upgrade-code,language,platform のいくつかを取ります"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} が 2 回指定されています"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' は Windows の名前です。変数には別の名前を付けてください"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D には NAME=VALUE が必要です ('{1}' でした)"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i はすべての答えを尋ねます。-i かオプションのどちらかを指定してください"
+
+msgid "; its range is "
+msgstr "。範囲は "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' は SecureCustomProperties にありません"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty はパブリック (大文字) のプロパティでなければなりません"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "すべてのコード: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x が PKCX で始まっていません"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x が最後の項目ではありません"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "アーキテクチャ (x64、x86、arm64)"
+
+msgid "Choose"
+msgstr "選んでください"
+
+msgid "Command line"
+msgstr "コマンド ライン"
+
+msgid "Command line (lint)"
+msgstr "コマンド ライン (lint)"
+
+msgid "Common AppData"
+msgstr "共通の AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId がレジストリ形式の GUID ではありません"
+
+msgid "Desktop shortcut?"
+msgstr "デスクトップのショートカットを作りますか?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "ダイアログ (none、basic、minimal、installdir、features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "File、Component、Directory テーブルに標準の列が欠けています"
+
+msgid "Folder name under Program Files"
+msgstr "Program Files の下のフォルダー名"
+
+msgid "Folder with the files to install"
+msgstr "インストールするファイルのフォルダー"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' は既に使われています ({2} 行目)。ID はすべてのテーブルで異なる必要があります"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "インストール先フォルダー ([dir.INSTALLDIR] path)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "インストール対象 (machine、user、dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "table.key 形式のキー (package.version、dir.INSTALLDIR.path、...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' はほかのコンポーネントのものです"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' は File にありません"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' は Registry にありません"
+
+msgid "Korean dialogs as well as English?"
+msgstr "英語に加えて韓国語のダイアログも付けますか?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} が、より小さい DiskId のものより小さくなっています"
+
+msgid "Leave without saving the changes?"
+msgstr "変更を保存せずに終了しますか?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "同意を求める使用許諾 (.txt、.md、.rtf。なしは -)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX にはユーザーの AppData の仮想フォルダーがありません。アプリが実行時に必要なものをそこに作ります"
+
+msgid "MSIX packages"
+msgstr "MSIX パッケージ"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: MSIX パッケージに必要なものと入れられないもの"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "ショートカット用のメイン プログラム (なしは -)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "マニュアル: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "製造元"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "製造元 (インストールされているアプリに表示)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt が誤った長さの ECDSA 署名を返しました"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "ユーザーが選べる選択可能な部分 (サブフォルダー、コンマ区切り。なしは -)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 トークン: トークンにキーの CKA_ID を持つ証明書がありません (--cert で指定してください)"
+
+msgid "Paths"
+msgstr "パス"
+
+msgid "Product name"
+msgstr "製品名"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} は最初の 3 つのフィールドで前の {2} より大きくありません: Windows インストーラーはアップグレードしません"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "ショートカットが開くプログラム (ショートカットなしは -)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: その言語はありません (en、ko、ja、zh、es、fr、de は組み込み。ほかの言語には言語パック {2}.po が必要です)"
+
+msgid "Reference, "
+msgstr "リファレンス、"
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "シーケンス {1} はどの Media 行にも含まれていません (最後は {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "シーケンス {1} はほかのファイルが使っています"
+
+msgid "Source file to write"
+msgstr "書き込むソース ファイル"
+
+msgid "Source format"
+msgstr "ソースの形式"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source は種類 {1} の File 行を指す必要があります"
+
+msgid "Start menu shortcut?"
+msgstr "スタート メニューのショートカットを作りますか?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "スタート メニュー、プログラム、デスクトップ、スタートアップの項目は [shortcut.*] と [msix-extension.*] から作ります"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "rubrapack が読むサブセット外の TOML か、`format` がないか新しすぎます"
+
+msgid "Tables"
+msgstr "テーブル"
+
+msgid "The TOML subset"
+msgstr "TOML のサブセット"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 ビッグ エンディアンのファイルには対応していません。UTF-8 で保存してください"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} は前のバージョンの {2} と違います: このパッケージはそれを置き換えません"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode がレジストリ形式の GUID ではありません"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "値 (文字列、数値、true/false、[\"a\", \"b\"]。- でキーを削除)"
+
+msgid "Variables"
+msgstr "変数"
+
+msgid "Version"
+msgstr "バージョン"
+
+msgid "Version ([define] VERSION)"
+msgstr "バージョン ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "バージョンとアップグレード"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows インストーラーで使えるのは 255.255.65535(.65535) までです"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] には '{4}' が必要です"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] はマージ モジュールに入れられません。マージする側のパッケージが持ちます"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] にはまだ対応していません ({3} で予定)"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] は MSIX に入れられません。msi-only = true を追加すると、それなしで MSIX をビルドします"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: マージ モジュールの ID は 35 文字までです (モジュールの GUID が付け足されます)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] には ID が必要です: [{2}.ID] と書いてください"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] は ID を取りません: [{2}] と書いてください"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml に </Types> がありません"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml が最後の項目ではありません (rubrapack や Windows のパッケージ API が書いたパッケージではありません)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "[[...]] のテーブル配列には対応していません。項目ごとに [kind.ID] を書いてください"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] の check には効果がありません: まだ何も実行しません。削除してください"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] には do と undo の両方が必要です (undo は失敗した do も元に戻します)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: MSIX ではファイルの種類はアプリケーションが開きます: target は [msix-app.*] の実行ファイルでなければなりません"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] が 2 回あります"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] には ID が必要です: [chain-package.ID] と書いてください"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id と typelib は MSI にだけ書きます。MSIX はそれらなしでクラスを登録します"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args はプログラム用です。DLL は読み込まれるもので、起動されません"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate は DLL を dllhost で実行します。'{2}' はプログラムです"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading は DLL 用です。プログラムは自分でアパートメントを設定します"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version と typelib-file には typelib が必要です"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] は {2} に入ります。または msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: コピー元はパッケージに入るファイルでなければなりません"
+
+msgid "[define] values must be strings"
+msgstr "[define] の値は文字列でなければなりません"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] には '{2}' が必要です"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] には 'property' が必要です"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] には 'text' が必要です"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] には 'values' が必要です"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] にはコントロールが {2} 個あります。64 個までです"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] には [dialog-control.*] がありません"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] はほかのダイアログを経て自分自身の後に置かれています"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] には ui = \"minimal\"、\"installdir\"、\"features\" のいずれかが必要です"
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' は Windows の名前です。dir には別の ID を付けてください"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard には rubrapack のヘルパー DLL が必要ですが、マージ モジュールはそれを持てません"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] には機能が必要です"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX はすべての変数を設定します (when)。msi-only = true を使ってください"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: 値が MSIX では与えられない場所 (Windows のフォルダーではないパッケージ外のフォルダー、またはインストール時に決まる部分) を指しています。msi-only = true を使ってください"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: エクスプローラーは {2} ハンドラーを DLL から読み込みます。[com.{3}] はプログラムです"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows はプロパティ ハンドラーをコンピューター単位でしか読みません。パッケージには scope = \"machine\" が必要です"
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: プレビュー ハンドラーは Windows の prevhost で動きます。[com.{2}] から app-id と surrogate を外してください"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX が持てるのはサムネイルとプレビューのハンドラーだけです (パッケージ化したプロパティ ハンドラーはエクスプローラーに値を返しませんでした)。msi-only = true で MSI 用に残せます"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: MSIX のファイルの種類はアプリケーションに属します。[msix-app.*] を追加してください"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: クラス {2} はこのパッケージの [com.*] ではありません (ハンドラーの DLL がそれを提供します)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: MSIX ではハンドラーは種類をすべて共有するか、まったく共有しません (種類は 1 つのファイルの種類の関連付けに入ります)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: MSIX ではクラスはサロゲートで動きます。[com.{2}] の threading = \"sta\" でウィンドウにメッセージ ループができます (threading = {3} ではプレビューが空のままになることがあります)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: MSIX では種類はすべて 1 つの [assoc] ファイルの種類に入るか、どれにも入りません"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: クラスが msi-only です ([com.{2}])。MSIX にはそのサーバーがなくなります"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types は [\".txt\"] のようなファイルの種類の一覧です"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] は {2} に入ります。または msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] には 'value' が必要です"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] には機能が必要です: ここか dir に 'feature' を設定してください"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX はすべての INI 項目を書きます (when)。msi-only = true を使ってください"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: 値に Windows インストーラーがインストール時に埋める部分 ([...]) があります。MSIX はビルド時にファイルを書きます"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] には 'on' が必要です: [\".txt\"] や \"folder\" のような、項目を表示する場所"
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] には 'target' (起動するプログラム) か、parent = \"{2}\" の項目 (サブメニュー) が必要です"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] には 'target' が必要です: 項目が起動するプログラム"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: サブメニューは何も起動しません: 'args' を外してください"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: サブメニューの項目はサブメニューと同じ場所に表示されます: 'on' を外してください"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args に Windows インストーラーがインストール時に埋める部分 ([...]) があります。MSIX は固定の文字列しか持てません"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: そのプログラムが MSIX にありません (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: その値はパッケージのレジストリに入れられません"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] がありません"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on は [\".txt\", \"folder\"] のようなファイルの種類か、その一覧です"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' は [menu.*] ではありません"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' はサブメニュー (target も自身の parent もない [menu.*]) でなければなりません"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] は {2} に入ります。または msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] には機能が必要です: ここか dir に 'feature' を設定してください"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}。または msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file は {2} でなければなりません"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file はパッケージに入るファイルを指す必要があります"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file はパッケージに入るプログラムを指す必要があります"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types は [\".txt\", \"*\"] のようなファイルの種類の一覧です"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] には、その dir に機能が必要です"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: MSIX ではスキームはアプリケーションを開きます: target は [msix-app.*] の実行ファイルでなければなりません"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] には 'value' (または remove = true) が必要です"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR は MSIX の外には届きません。[assoc.*]、[protocol.*]、[com.*]、[handler.*] か msi-only = true を使ってください"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: qword の値には rubrapack のヘルパー DLL が必要ですが、マージ モジュールはそれを持てません"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX が持てる値は {2}\\Software の下だけです"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX は値を削除も残しもしません (remove、keep)。msi-only = true を使ってください"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX はすべての値を書きます (when)。msi-only = true を使ってください"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: 値に Windows インストーラーがインストール時に埋める部分 ([...]) があります。MSIX は固定の値しか持てません"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" には rubrapack のヘルパー DLL が必要ですが、マージ モジュールはそれを持てません"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: そのキー名か値の名前はレジストリ ハイブに入れられません"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] には機能が必要です: ここか dir に 'feature' を設定してください"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true は {2} の下のフォルダーには使えません"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true には rubrapack のヘルパー DLL が必要ですが、マージ モジュールはそれを持てません"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file はパッケージに入るプログラムを指す必要があります"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX のショートカットはデスクトップとスタート メニューにだけ置けます{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX のショートカットには working-dir がありません"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX のショートカットは常にあります (when は MSI 用です)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX のショートカットはアプリケーションのロゴを表示します。icon は MSI 用です"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: MSIX ではショートカットはアプリケーションを起動します: target は [msix-app.*] の実行ファイルでなければなりません"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX のスタート メニュー項目はアプリケーションそのもので、args を取りません"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: この ID のダイアログ文字列はありません"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] には [package] の ui = \"basic\" かほかのダイアログ セットが必要です"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "\\{1} エスケープは Unicode スカラー値ではありません"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: このパッケージは前のものをきれいにアップグレードできません"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "パッケージの `lint`: ダイアログ、コード ページ、文字列の正規化"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "MSIX パッケージやバンドルの `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "{1} コントロールに文字列がありません。隣にテキスト コントロールを置いてください"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "{1} コントロールには、値の 1 つを既定値とする [property.{2}] が必要です (サイレント インストールがそれを使います)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "{1} パッケージは HKLM に書き込めません。HKMU を使ってください"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr ".msix の出力には実行ファイルを指す [msix-app.ID] テーブルが必要です"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr ".msix の出力には [msix] テーブル (identity-name、publisher) が必要です"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr ".msm の出力はマージ モジュールで、[package] ではなく [module] のあるソースからビルドします"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr ".txt、.md、.rtf のファイル。なしは -"
+
+msgid "a PE file without a certificate table entry"
+msgstr "証明書テーブルの項目がない PE ファイル"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN はコマンド ラインでは決して受け取りません (他人に見えます)。--pin-env か --pin-file を使ってください"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "バンドル マニフェストに不明な Type の Package があります"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "バンドル マニフェストに FileName、Offset、Size のない Package があります"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP の項目が展開後にそのサイズになりません"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "許容より大きい ZIP の項目"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ZIP の項目の CRC-32 が一致しません"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ZIP の項目のデータがファイルの外にあります"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "[module] のソースはマージ モジュールをビルドします: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "バイナリ値は \"01A0FF\" のような偶数桁の 16 進数です"
+
+msgid "a bundle without packages"
+msgstr "パッケージのないバンドル"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "パスの証明書に rubrapack が理解できない重要な拡張があります"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "パスの証明書が CA ではない証明書で署名されています"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "チェーンに書けるのは [chain]、[chain-package.ID]、[define] だけで、[{1}] は書けません。パッケージはそれぞれのソースからビルドします"
+
+msgid "a chain holds at most %d packages"
+msgstr "チェーンに入れられるパッケージは {1} 個までです"
+
+msgid "a chain needs [chain]"
+msgstr "チェーンには [chain] が必要です"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "チェーンには [chain-package.ID] が 1 つ以上必要です"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "Windows が名前に許さない文字 (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "制御文字"
+
+msgid "a damaged PE optional header"
+msgstr "壊れた PE オプション ヘッダー"
+
+msgid "a damaged PE section table"
+msgstr "壊れた PE セクション テーブル"
+
+msgid "a damaged ZIP64 end record"
+msgstr "壊れた ZIP64 終端レコード"
+
+msgid "a damaged hive bin"
+msgstr "壊れたハイブ bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapack の診断"
+
+msgid "a disabled service cannot be started"
+msgstr "無効にしたサービスは開始できません"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "dual パッケージはユーザー変数とシステム変数のどちらかを選べません"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "dual パッケージは HKCU ではなく HKMU (インストールに応じて HKLM か HKCU) に書きます"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "dword の値は 0..4294967295 (0x0..0xFFFFFFFF) の整数です"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "この rubrapack が提供しない (またはそれなしでビルドされた) 機能"
+
+msgid "a file larger than allowed"
+msgstr "許容より大きいファイル"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "'{1}' の下のファイル名が有効な Unicode ではないため、パッケージに入れられません"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "/ \\ : * ? \" < > | $ を含まないファイル名"
+
+msgid "a file's component or directory chain is broken"
+msgstr "ファイルのコンポーネントかディレクトリのつながりが壊れています"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "フォントはそれを指す [font.*] を通して MSIX に入ります"
+
+msgid "a hash the token signing does not know"
+msgstr "トークン署名が知らないハッシュ"
+
+msgid "a hive cell crosses its bin"
+msgstr "ハイブのセルが bin をまたいでいます"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "rubrapack が読めないハイブのバージョンか種類"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "既知のフォルダーそのもの ('{1}') にはアクセス許可を付けられません"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "使用許諾には ui = \"minimal\"、\"installdir\"、\"features\" のいずれかが必要です"
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "追加フィールドのあるローカル ヘッダー (rubrapack や Windows のパッケージ API が書いたパッケージではありません)"
+
+msgid "a malformed central directory"
+msgstr "形式の崩れた中央ディレクトリ"
+
+msgid "a modification package has no applications of its own"
+msgstr "変更パッケージは自分のアプリケーションを持ちません"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "変更パッケージには Windows ビルド 18362 以降が必要です: [msix] min-version = \"10.0.18362.0\" を設定してください"
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "モジュールの compress は \"none\"、\"mszip\"、\"mszip:0\" ... \"mszip:9\" です"
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "モジュールの名前は ModuleID の中の ID です: 英字、数字、_ で 35 文字まで"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "multi の値は空でない文字列の配列です"
+
+msgid "a multi value is an array of strings"
+msgstr "multi の値は文字列の配列です"
+
+msgid "a name ending with a space or a dot"
+msgstr "空白かピリオドで終わる名前"
+
+msgid "a name longer than 255 bytes"
+msgstr "255 バイトより長い名前"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "バンドル マニフェストにあるパッケージがバンドルにありません"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "Identity の Name、Publisher、Version、ProcessorArchitecture (または ResourceId) のないパッケージ"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "バンドル マニフェストのパッケージの Offset か Size が実際の位置と合いません (または圧縮されています)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "パッケージの ID がバンドル マニフェストの記述と違います"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "バンドル内のパッケージの名前は .msix か .appx で終わるファイル名でなければなりません"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "パスワードはコマンド ラインでは決して受け取りません (他人に見えます)。--pass-env か --pass-file を使ってください"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "コンピューター単位のパッケージは HKCU に書きません (インストールしたユーザーのものになります)。scope = \"user\" を使ってください"
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "ユーザー名かパスワードのあるプロキシには対応していません"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "qword の値は整数か、\"0x\" と 1 から 16 桁の 16 進数です"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "ラジオ コントロールはボタンを縦に並べます: height は値ごとに 12 以上必要です ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "レコードの列がテーブルより多くあります"
+
+msgid "a record is cut short"
+msgstr "レコードが途中で切れています"
+
+msgid "a record names a string the pool does not have"
+msgstr "レコードが文字列プールにない文字列を指しています"
+
+msgid "a reserved device name"
+msgstr "予約されたデバイス名"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "ロールバック アクションは非同期にできません"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "スキームは小文字で始まり、小文字、数字、'+'、'-'、'.' が続きます ('{1}' でした)"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "InstallInitialize と RemoveExistingProducts の間のスクリプト アクション (エラー 2613)"
+
+msgid "a section lies outside the file"
+msgstr "セクションがファイルの外にあります"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "サービス名には '/' や '\\' を使えません (256 文字まで)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "セットアップ .exe は [chain] のあるソースからビルドします。'{1}' はパッケージ (.msi、.msix) をビルドします"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "ソースには [package] か [module] のどちらか 1 つを書きます。両方は書けません"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "RP1xxx の検査を通ったソースがこれに当たることはないはずです: ソースを添えて報告してください"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "サイズが一致しない stored の ZIP 項目"
+
+msgid "a stream of the package cannot be read"
+msgstr "パッケージのストリームを読めません"
+
+msgid "a table has more than 32 columns"
+msgstr "テーブルの列が 32 を超えています"
+
+msgid "a text control has no property"
+msgstr "テキスト コントロールにプロパティがありません"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "ファイルと `with` の値はそのコンポーネントを共有します: `when` はファイルに付けてください"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "値は 1 から 64 バイトです"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "ファイルと 'with' の値はそのファイルの機能に入ります"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "バージョンは 1.0.0 のようにピリオドで区切った 3 つか 4 つの数です"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account は LocalSystem、LocalService、NetworkService のいずれかでなければなりません"
+
+msgid "action '%s' is already defined"
+msgstr "アクション '{1}' は既に定義されています"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "アクションが標準アクションでも CustomAction のものでもありません"
+
+msgid "adds too many tables"
+msgstr "テーブルを追加しすぎます"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' はこのダイアログ セットのページ (RpWelcomeDlg{2}{3}{4}) でも [dialog.*] でもありません"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias は kind = \"alias\" に属します"
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias は .exe で終わるファイル名でなければなりません: 英字、数字、'.'、'_'、'-' ('{1}' でした)"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI のセクションには ']' を、キーには '=' を使えません"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX は一時フォルダーにファイルを置けません"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "アプリケーションの alias は 1 つです ([msix-extension.{1}] が既にそれです)"
+
+msgid "an empty name"
+msgstr "空の名前"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https サーバーを確認するには --tls-trust <certificates> か --system-roots が必要です"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "https:// のプロキシには対応していません。http:// のプロキシを指定してください (https サーバーには CONNECT で接続します)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "旧形式の Authenticode タイムスタンプ (PKCS#9 counterSignature) で、rubrapack は確認しません"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "オプション パッケージか変更パッケージは機能も仮想化の設定も宣言しません: メイン パッケージのものが適用されます"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "x86 パッケージは 32 ビットのレジストリ ビューにだけ書きます"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "アプリ '{1}' は [msix-app.*] ではありません"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri と package-uri は対です: .appinstaller ファイルとパッケージの置き場所"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch は \"x64\"、\"arm64\"、\"x86\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch は \"x64\"、\"x86\"、\"arm64\" のいずれかでなければなりません (セットアップ プログラム自身のもの)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "引数 {1} は有効な UTF-8 ではありません (バイト {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "引数 {1} は有効な Unicode ではありません (UTF-16 単位 {2})"
+
+msgid "array is not closed"
+msgstr "配列が閉じていません"
+
+msgid "arrays inside arrays are not supported"
+msgstr "配列の中の配列には対応していません"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "配列には文字列だけか整数だけを入れます"
+
+msgid "at most %d languages besides English"
+msgstr "英語のほかの言語は {1} 個までです"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "[msix-app.*] テーブルは 100 個までです"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "[action.*] テーブルは 50 個までです (このファイルには {1} 個あります)"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color は \"transparent\" か \"#1E3A5F\" のような \"#RRGGBB\" です"
+
+msgid "bad variable name in '$(...)'"
+msgstr "'$(...)' の変数名が正しくありません"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner は .bmp ファイルでなければなりません (Windows インストーラーが表示するのは BMP だけです)"
+
+msgid "build a package from a source file"
+msgstr "ソース ファイルからパッケージをビルドします"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{2} のソースから {1} をビルドするには専用のアップグレード ファミリが必要です: [package] に {3} = \"{...}\" を追加してください"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab は \"embed\" か \"external\" でなければなりません"
+
+msgid "cannot be read"
+msgstr "読めません"
+
+msgid "cannot build the ClientHello"
+msgstr "ClientHello を作れません"
+
+msgid "cannot bundle the packages: %s"
+msgstr "パッケージをバンドルにまとめられません: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' を作れません"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' を作れません{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' が見つかりません。`rubrapack new {2}` で作ってください"
+
+msgid "cannot make a default logo"
+msgstr "既定のロゴを作れません"
+
+msgid "cannot make a key share"
+msgstr "鍵共有を作れません"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "'{1}' から '{2}' へのパッチを作れません"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "'{1}' から '{2}' への変換を作れません"
+
+msgid "cannot open the certificate store"
+msgstr "証明書ストアを開けません"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' を読めません"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' を読めません ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "パッケージ '{1}' を読めません"
+
+msgid "cannot read source file '%s'"
+msgstr "ソース ファイル '{1}' を読めません"
+
+msgid "cannot read that folder"
+msgstr "そのフォルダーを読めません"
+
+msgid "cannot read the %s file '%s'"
+msgstr "{1} ファイル '{2}' を読めません"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "PIN ファイル '{1}' を読めません"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "'{2}' の隣のキャビネット '{1}' を読めません"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "証明書ファイル '{1}' を読めません"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "'{1}' の証明書を読めません"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "'{1}' の証明書を読めません: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "キー ファイル '{1}' を読めません"
+
+msgid "cannot read the password file '%s'"
+msgstr "パスワード ファイル '{1}' を読めません"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "'{2}' の隣の非圧縮ファイル '{1}' を読めません"
+
+msgid "cannot write %s"
+msgstr "{1} を書けません"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' を書けません"
+
+msgid "cannot write '%s' to check it"
+msgstr "確認用に '{1}' を書けません"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri を書けません"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "'{1}' の隣にメニューのファイルを書けません"
+
+msgid "cannot write the resource package of %s"
+msgstr "{1} のリソース パッケージを書けません"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities は [\"internetClient\", \"allowElevation\"] のような名前の配列です"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "機能 '{1}' は rubrapack が知っているものではありません (マニュアルに一覧があります)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "機能 '{1}' には Windows ビルド 17763 以降が必要です"
+
+msgid "carriage return without a line feed"
+msgstr "改行のない復帰文字"
+
+msgid "certificate file '%s': %s"
+msgstr "証明書ファイル '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "ソースをその場で変更します: 質問のメニューか、オプションで"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "署名を確認します: 構造、ダイジェスト、署名、信頼された証明書までのパス"
+
+msgid "check a source or package without writing anything"
+msgstr "何も書かずにソースかパッケージを検査します"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "ソースのパス (ソース ファイルからの相対パス) を確認してください。意図して別のアーキテクチャを使うなら any-arch = true を設定してください"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "綴りを確認してください (メッセージがいちばん近い名前を示します)。テーブルのキーも確認してください"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "クラス {1} は既に [com.{2}] が提供しています"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "クラス {1} は [msix-extension.{2}] にもあります"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class は {12345678-...} のような GUID でなければなりません ('{1}' でした)"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "preflight = false のときは close-programs に効果はありません"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs は \"ask\"、\"always\"、\"never\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "列 {1} の値の種類が違います"
+
+msgid "column %s is not valid UTF-8"
+msgstr "列 {1} が有効な UTF-8 ではありません"
+
+msgid "column %s may not be null"
+msgstr "列 {1} は null にできません"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "列 {1}: {2} は列の範囲外です"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "列 {1}: UTF-16 単位で {2} ありますが、列に入るのは {3} までです"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "列 {1}: {2} 文字ありますが、列に入るのは {3} 文字までです"
+
+msgid "command '%s' is not implemented yet"
+msgstr "コマンド '{1}' はまだ実装されていません"
+
+msgid "command-line"
+msgstr "コマンド ライン"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "コンポーネント {1} {2} は 32 ビットと 64 ビットの間で変わりました: コンポーネントの規則では新しい GUID が必要です"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "コンポーネント {1} {2} はなくなりました (そのリソースは前のバージョンと一緒に削除されます)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "コンポーネント {1} {2} のキー パスは {4} から {3} に変わりました: コンポーネントの規則では新しい GUID が必要です"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid は GUID でなければなりません"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress は \"none\"、\"mszip\"、\"mszip:0\" ... \"mszip:9\"、\"lzx\"、\"lzx:15\" ... \"lzx:21\" のいずれかでなければなりません"
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "条件の引用符が閉じていないか、かっこの対応が取れていません"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "条件が 240 文字を超えています (rubrapack が \"Installed OR ( )\" を付け足します)"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config には \"Name=value\" の文字列を書きます ('{1}' でした)"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config は \"Name=value\" の文字列の配列です"
+
+msgid "contains a control character"
+msgstr "制御文字を含んでいます"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "< > : \" / \\ | ? * のどれかを含んでいます"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type は \"image/png\" のようなメディア タイプです ('{1}' でした)"
+
+msgid "control character"
+msgstr "制御文字"
+
+msgid "control character in a comment"
+msgstr "コメント内の制御文字"
+
+msgid "control character in a string"
+msgstr "文字列内の制御文字"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "日付と時刻には対応していません。文字列で書いてください"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when には 1 より大きい level が必要です (level 1 の機能はどのみち既定でインストールされます)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "変数を定義するか ([define] または -D NAME=value)、文字の $ には $$ と書いてください"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "ダイアログ '{1}' は [dialog.*] ではありません"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "'Rp' で始まるダイアログ ID (と FilesInUse) は rubrapack 自身のものです"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' が自分自身の中にあります (パスのループ)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' は dir ID でも Programs、Desktop、StartMenu、Startup でもありません"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' は dir ID ではありません"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' は定義されていません"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction は \"in\" か \"out\" でなければなりません ('{1}' でした)"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo の引数が 255 文字を超えています"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "ドット付きのキーには対応していません。キーは専用のテーブルに置いてください"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "パッケージをダンプします (MSI テーブルを IDT で)"
+
+msgid "duplicate primary key"
+msgstr "主キーが重複しています"
+
+msgid "empty arrays are not supported"
+msgstr "空の配列には対応していません"
+
+msgid "ends with a space or a dot"
+msgstr "空白かピリオドで終わっています"
+
+msgid "error"
+msgstr "エラー"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" はパッケージに入る [file.*] を指す必要があります"
+
+msgid "expected ',' or ']' in the array"
+msgstr "配列に ',' か ']' が必要です"
+
+msgid "expected '=' after the key"
+msgstr "キーの後に '=' が必要です"
+
+msgid "expected ']' to close the table name"
+msgstr "テーブル名を閉じる ']' が必要です"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "キー、[table]、コメントのいずれかが必要です"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "拡張子 '{1}' には既にプログラムがあります ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension は '.' と小文字、数字、'_'、'-' でなければなりません ('{1}' でした)"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "機能 {1} はなくなりました: それを持っていたインストールは中身を失います"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "機能 '{1}' が自分自身の祖先です"
+
+msgid "feature '%s' is not defined"
+msgstr "機能 '{1}' は定義されていません"
+
+msgid "feature parent '%s' is not defined"
+msgstr "機能の親 '{1}' は定義されていません"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "ファイル '{1}' は既にサービス '{2}' を実行しています"
+
+msgid "file '%s' is already registered as a font"
+msgstr "ファイル '{1}' は既にフォントとして登録されています"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "ファイル '{1}' は Fonts フォルダーそのものにインストールする必要があります (path = \"Fonts\" の [dir.*])"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "ファイル '{1}' には機能が必要です: ここか dir に 'feature' を設定してください"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file は \"file:<ID>\" でなければなりません"
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "ファイル名は UTF-16 単位で {1} あります。8.3 の短い名前と合わせて MSI に入るのは {2} までです"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization と registry-virtualization = false には Windows ビルド 18362 以降が必要です: [msix] min-version = \"10.0.18362.0\" を設定してください"
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' が COM クラスを提供できるのは .exe か .dll の場合だけです"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "メッセージが示す値を直してください。ID は英字、数字、'_' で、すべてのテーブルで異なります"
+
+msgid "floating-point numbers are not supported"
+msgstr "浮動小数点数には対応していません"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "フォルダー '{1}' には機能が必要です: ここか dir に 'feature' を設定してください"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "フォルダー名は UTF-16 単位で {1} あります。8.3 の短い名前と合わせて MSI に入るのは {2} までです"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent には parent が必要です"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "フォントには scope = \"machine\" が必要です (これは {1} です)"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} にはより新しい rubrapack が必要です (これが読めるのは format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format は整数です: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "--pass-env か --pass-file のどちらかを指定してください。両方は指定できません"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "--pin-env か --pin-file のどちらかを指定してください。両方は指定できません"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "[msix] と [msix-app.*] に必要なものを書くか、msi-only = true で項目を MSI 用に残してください"
+
+msgid "give a file below this folder"
+msgstr "このフォルダーの下のファイルを指定してください"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "プログラム フォルダー直下のファイルを指定してください。なしは -"
+
+msgid "give a folder below this one, such as dist"
+msgstr "dist のような、このフォルダーの下のフォルダーを指定してください"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "1 から 128 バイトの名前を指定してください"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "3 つのロゴ (logo-150、logo-44、store-logo) をすべて指定するか、どれも指定しないでください"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "--key、--pkcs11、--key-store のどれか 1 つを指定してください"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "プログラム フォルダーのサブフォルダーをコンマで区切って指定してください。なしは -"
+
+msgid "glob '%s' matches no file"
+msgstr "glob '{1}' に一致するファイルはありません"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "glob '{1}' が出力ファイル '{2}' に一致します"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "読めない MergeModule.CABinet ストリームがあります"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "読めない MergeModule.CABinet があります"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "標準の列のない Module*Sequence テーブルがあります"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "名前がないか形式が不明な ModuleConfiguration の項目があります"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "標準の列のない ModuleConfiguration テーブルがあります"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "標準の列のない ModuleSubstitution テーブルがあります"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "ModuleConfiguration にない項目を指す ModuleSubstitution のテンプレートがあります"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "条件付きのコンポーネントがあります。MSIX はすべてをインストールします"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "コンポーネントかキャビネットの項目が欠けているファイルがあります"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "MSIX に置き場所のない、TARGETDIR の外のフォルダーがあります"
+
+msgid "has a table that cannot be read"
+msgstr "読めないテーブルがあります"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "パッケージのものと列が違うテーブルがあります"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "パッケージにないシーケンス テーブルへのアクションがあります"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "コンポーネントがありますが、パッケージに FeatureComponents テーブルがありません"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "ファイルがありますが、MergeModule.CABinet か Directory テーブルがありません"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "ファイルがありますが、MergeModule.CABinet ストリームがありません"
+
+msgid "has files, but the package has no Media table"
+msgstr "ファイルがありますが、パッケージに Media テーブルがありません"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "ModuleSignature がありません: マージ モジュールではありません"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "ProductCode か ProductVersion がありません"
+
+msgid "has no Property table"
+msgstr "Property テーブルがありません"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "ベースでも変換でも定義されていないテーブルのレコードがあります"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "65001 (UTF-8) 以外のコード ページで ASCII 外の文字列があります"
+
+msgid "icon must be an .ico file"
+msgstr "icon は .ico ファイルでなければなりません"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id は {12345678-1234-1234-1234-123456789ABC} のような GUID でなければなりません: モジュール自身のもので、どのバージョンでも変えません"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name は A-Z、a-z、0-9、'.'、'-' の 3 から 50 文字でなければなりません ('{1}' でした)"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "インライン テーブルには対応していません。[kind.ID] テーブルを使ってください"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "{1} 行目と同じパスにインストールされます (Windows は名前の大文字と小文字を区別しません{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "内部エラー: 組み込みのダイアログのタブ順が壊れています。報告してください"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "内部: モジュールのテーブルに _Validation の規則がありません"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "内部: {1} の列に _Validation の規則がありません"
+
+msgid "invalid"
+msgstr "無効"
+
+msgid "invalid - %s"
+msgstr "無効 - {1}"
+
+msgid "is '.' or '..'"
+msgstr "'.' か '..' です"
+
+msgid "is a reserved device name"
+msgstr "予約されたデバイス名です"
+
+msgid "is empty"
+msgstr "空です"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "UTF-16 単位で 255 を超えています"
+
+msgid "is not a Windows Installer database"
+msgstr "Windows インストーラーのデータベースではありません"
+
+msgid "is not a compound file"
+msgstr "複合ファイルではありません"
+
+msgid "is not valid UTF-8"
+msgstr "有効な UTF-8 ではありません"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "アップグレード コードはそのまま、バージョンは上げ、残るファイルのコンポーネント コードはそのままにしてください"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "キー '{1}' がこのテーブルで 2 回設定されています (最初は {2} 行目)"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "キー '{1}' は '\\' で始めたり終えたりできず、空の部分も持てません"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "キー '{1}' がテーブルの外にあります。最初のテーブルの前に書けるのは 'format' だけです"
+
+msgid "key file '%s': %s"
+msgstr "キー ファイル '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind は \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\"、\"context-menu\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind は \"preview\"、\"thumbnail\"、\"property\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind は registry、file、dir、component のいずれかでなければなりません"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels は値ごとに 1 つの文字列の配列です"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "言語 '{1}' には言語パックがありません (ソースの隣の lang/{2}.po、または RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "言語 '{1}' が 2 回並んでいます"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "言語 '{1}' は [ui] languages にありません"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "言語 '{1}' には文字列が {2} 個足りません。最初は {3} です: 言語パック (lang/{4}.po) に追加するか、[ui-text.ID] text-{5} を書いてください"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "言語 '{1}' には [ui] langid-{2} (自動選択のための LANGID) が必要です"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "言語 '{1}' には [ui] name-{2} (言語ページに表示する名前) が必要です"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" ではもうダイアログは韓国語になりません: [ui] languages = [\"ko\"] で韓国語を追加しない限り英語です"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language は \"ko-KR\" か \"en-US\" でなければなりません"
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language は \"neutral\"、\"en-US\"、\"ko-KR\" のいずれかでなければなりません"
+
+msgid "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')"
+msgstr "languages には \"ko\" のような 2 か 3 文字の小文字のコードを書きます ('{1}' でした)"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages は [\"ko\"] のような言語コードの配列です"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages にはダイアログ セット (ui = \"basic\" など) が必要です"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
+
+msgid "launch-args needs launch"
+msgstr "launch-args には launch が必要です"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license は .txt、.md (平文で表示)、.rtf のファイルでなければなりません"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} 行 {2}: 列 {3} が NFC ではありません ({4} 行{-5})。build --nfc でフォルダー、ファイル、ショートカットの名前を NFC にします"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: コード ページ {1} は 65001 ではありません: 文字列は UTF-8 として確認せず、幅は ASCII だけ確認します"
+
+msgid "lint: no problems\n"
+msgstr "lint: 問題なし\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: 上の問題を見てください\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "トークンか Windows の証明書ストアで署名に使えるキーを一覧にします"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "ロゴ '{1}' とその .scale-100 の版が両方あります: どちらか 1 つにしてください"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "ロゴ '{1}' の倍率 {2} は {3}x{4} ピクセルです。{5}x{6} でなければなりません"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "ロゴ '{1}' の倍率 {2} は PNG ファイルではありません"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "ロゴ '{1}' は {2}x{3} ピクセルです。{4}x{5} でなければなりません"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "ロゴ '{1}' は PNG ファイルではありません"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "ロゴ '{1}' が見つかりません (.scale-100 ... .scale-400 の版としても)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "ロゴ '{1}': 倍率の版があるロゴには拡張子付きの ASCII のファイル名が必要です"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package はメイン パッケージの ID 名です ('{1}' でした)"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher と modification = true は main-package (このパッケージが属するパッケージ) と一緒に使います"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher は \"CN=Example\" のような、メイン パッケージの発行元です"
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "制御文字や / \\ : * ? \" < > | $ は使えません"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "空白で始めたり、空白かピリオドで終えたりできません"
+
+msgid "merge module '%s' not found"
+msgstr "マージ モジュール '{1}' が見つかりません"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version は 1.2.3 のようなバージョンでなければなりません"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version は 10.0.17763.0 のように 4 つの部分が必要です"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version は 14.0.24217.0 のように 4 つの部分が必要です"
+
+msgid "mismatch"
+msgstr "不一致"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" はキーを削除します。'value' は取りません"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode は \"set\"、\"add\"、\"remove\" のいずれかでなければなりません"
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode は \"set\"、\"append\"、\"prepend\" のいずれかでなければなりません"
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "ZIP の項目が許容数かディレクトリの記載数を超えています"
+
+msgid "more keys and values than allowed"
+msgstr "キーと値が許容数を超えています"
+
+msgid "more than 3 redirects"
+msgstr "リダイレクトが 3 回を超えました"
+
+msgid "more than 96 sections"
+msgstr "セクションが 96 を超えています"
+
+msgid "more than one source file ('%s')"
+msgstr "ソース ファイルが複数あります ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "トークンが複数あります: --token-label で 1 つを指定してください"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi は \"each\"、\"one\"、\"single\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "multi-line strings are not supported"
+msgstr "複数行の文字列には対応していません"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "複数行の文字列には対応していません。\\n を使って 1 行で書いてください"
+
+msgid "must be 1 to 64 bytes"
+msgstr "1 から 64 バイトでなければなりません"
+
+msgid "name contains a control character"
+msgstr "名前に制御文字が含まれています"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name はパッケージの ID 名です ('{1}' でした)"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "name が ASCII ではなく summary-name もありません。概要の Subject は 'rubrapack package' になります"
+
+msgid "names a folder its Directory table does not have"
+msgstr "Directory テーブルにないフォルダーを指しています"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix はまだ実装されていません: MSI のソースを作って [msix] を追加してください (マニュアル参照)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "'format = {1}' の行がありません: rubrapack 0.18 以前の形式のソースで、このバージョンは読めません (今はパスを $(ProgramFiles) か $(INSTALLDIR) で始めます)。マニュアルの Source format を参照してください"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "--trust がありません: 署名は検証されますが、だれを信頼するかの指定がありません"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "キー ファイル (または --cert のファイル) にキーに対応する証明書がありません"
+
+msgid "no control characters"
+msgstr "制御文字なし"
+
+msgid "no keys\n"
+msgstr "キーなし\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "メイン プログラムがないのでショートカットもありません: なし"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "サーバー名がないか、255 バイトを超えています"
+
+msgid "no string pool: not a transform"
+msgstr "文字列プールがありません: 変換ではありません"
+
+msgid "no table '%s' in '%s'"
+msgstr "'{2}' にテーブル '{1}' はありません"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove では製品を削除する方法が [変更] (その中の削除) だけになります: no-modify とは一緒に使えません"
+
+msgid "not a PE file (no MZ header)"
+msgstr "PE ファイルではありません (MZ ヘッダーなし)"
+
+msgid "not a PE file (no PE header)"
+msgstr "PE ファイルではありません (PE ヘッダーなし)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "PEM、PKCS#8、PKCS#12 のファイルではありません"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ZIP アーカイブではありません (終端レコードなし)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ZIP アーカイブではありません (短すぎます)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "rubrapack が受け付けるプロキシの URL (http://host:port) ではありません"
+
+msgid "not a registry hive"
+msgstr "レジストリ ハイブではありません"
+
+msgid "not a valid number"
+msgstr "有効な数ではありません"
+
+msgid "not a value"
+msgstr "値ではありません"
+
+msgid "not a value (strings need quotes)"
+msgstr "値ではありません (文字列には引用符が必要です)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "rubrapack が受け付ける http:// か https:// の URL ではありません"
+
+msgid "not valid UTF-8"
+msgstr "有効な UTF-8 ではありません"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "未確認 (--trust か --system-roots を指定してください)"
+
+msgid "not-present"
+msgstr "なし"
+
+msgid "nothing changed\n"
+msgstr "変更はありません\n"
+
+msgid "number out of range"
+msgstr "数値が範囲外です"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "8 進数と 2 進数には対応していません。10 進数か 0x を使ってください"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" は HKLM、HKCU、HKMU 用です (クラスは [assoc.*]、[com.*] などで扱います)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" はキーをその下ごと削除します: '{1}' は Software の下の製品自身のキーではありません"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" は削除時にキー全体を削除します。'{1}' は取りません"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "Windows では `keys list` は証明書ストアを表示します"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "Windows ではトークンは証明書ストアを通して使います (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on は remove = true 用です (キーをいつ削除するか)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on は \"install\" か \"uninstall\" でなければなりません"
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on は \"install\"、\"uninstall\"、\"both\" のいずれかでなければなりません"
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: それぞれファイルの種類 ('.' と小文字、数字、'_'、'-')、\"*\" (すべてのファイル)、\"folder\"、\"background\" (フォルダーの空いた部分)、\"drive\"、\"assoc:<ID>\" のいずれかです ('{1}' でした)"
+
+msgid "only radio and combo controls take labels"
+msgstr "labels を取るのはラジオとコンボのコントロールだけです"
+
+msgid "only radio and combo controls take values"
+msgstr "values を取るのはラジオとコンボのコントロールだけです"
+
+msgid "out of memory"
+msgstr "メモリ不足"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "出力 '{1}': rubrapack が書くのは .msi、.msm、.msix、.msixbundle とチェーンのセットアップ .exe です"
+
+msgid "package '%s' %s"
+msgstr "パッケージ '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "パッケージ '{1}' が見つかりません"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent はこのパッケージ自身のものではなく、ほかの製品の upgrade-code でなければなりません"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent はメイン製品の upgrade-code で、{12345678-1234-1234-1234-123456789ABC} のような GUID でなければなりません"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path は '/' を使った \"$(Base)/relative/path\" でなければなりません (Base は ProgramFiles のようなフォルダーか dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path は Windows のフォルダー ($(ProgramFiles) や $(System) など) で始めなければなりません"
+
+msgid "paths"
+msgstr "パス"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type は \"image\"、\"text\"、\"audio\"、\"video\"、\"compressed\"、\"document\"、\"system\"、\"application\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "アクセス許可には scope = \"machine\" が必要です (これは {1} です)"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports は 1-65535 の範囲のポートか、\"8000-8100\" のような範囲でなければなりません ('{1}' でした)"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "ランダムな GUID か、rubrapack が文字列から導く GUID を表示します"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "ソースの JSON Schema を表示します (キーを補完、確認するエディター用)"
+
+msgid "print the version"
+msgstr "バージョンを表示します"
+
+msgid "print this help, or one command's usage"
+msgstr "このヘルプか、1 つのコマンドの使い方を表示します"
+
+msgid "product-code must be a GUID"
+msgstr "product-code は GUID でなければなりません"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile は \"all\"、\"domain\"、\"private\"、\"public\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' は既に [com.{2}] のものです"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' は [assoc.{2}] のものでもあります: ファイルの種類と COM クラスには別々の名前が必要です"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' は [assoc.{2}] にも、別の description、target、icon、args で書かれています"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id は英字、数字、'.'、'_'、'-' で、数字で始めず 39 文字まででなければなりません ('{1}' でした)"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "プロパティ '{1}' は既にコントロール '{2}' のものです"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "プロパティ '{1}' は dir か機能の名前です"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "プロパティ '{1}' は既に定義されています ({2} 行目)"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "プロパティ '{1}' は既に検索されています ({2} 行目)"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "プロパティ '{1}' は rubrapack かインストーラーが設定するので、ここでは定義できません"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "プロパティ '{1}' は自分で決めたパブリックな名前 (大文字) でなければなりません"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "プロパティ '{1}' はパブリックな名前でなければなりません: 大文字、数字、'_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol は \"tcp\" か \"udp\" でなければなりません ('{1}' でした)"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher はパッケージの発行元です。例: \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher は \"CN=Example, O=Example, C=KR\" のような、署名証明書のサブジェクトでなければなりません"
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher に unsigned-test の OID を含めてはいけません。--unsigned-test が付けます"
+
+msgid "quoted keys are not supported"
+msgstr "引用符付きのキーには対応していません"
+
+msgid "quoted table names are not supported"
+msgstr "引用符付きのテーブル名には対応していません"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot は \"suppress\" か \"allow\" でなければなりません"
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true は on = \"uninstall\" 用です"
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true はアップグレードがこのバージョンを削除するときには決して動きません。'upgrade' は取りません"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true はフォルダーを中身ごと削除します。'name' は取りません"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} はこのパッケージのバージョン {2} より上です"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' は 1.2.3 のようなバージョンでなければなりません"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message には refuse-upgrade-below が必要です"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "registry '{1}' は値を削除します。保護するものはありません"
+
+msgid "registry value '%s' needs a feature"
+msgstr "レジストリ値 '{1}' には機能が必要です"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true はインストール時に値を削除します。'value' は取りません"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons には後始末のタスクが必要です: cleanup = false を外してください"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces に書けるアップグレード コードは 16 個までです"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces には {12345678-1234-1234-1234-123456789ABC} のような GUID のアップグレード コードを書きます ('{1}' でした)"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces は [\"{12345678-1234-1234-1234-123456789ABC}\"] のようなアップグレード コードの配列です"
+
+msgid "replaces lists %s twice"
+msgstr "replaces に {1} が 2 回あります"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces が {1} を指していますが、それはこのパッケージ自身の upgrade-code かその parent です"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "ロールバックの対は {1} より前に来なければなりません ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root は HKLM、HKCR、HKCU のいずれかでなければなりません"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root は HKLM、HKCU、HKCR、HKMU のいずれかでなければなりません ('{1}' でした)"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: 診断コードの意味。範囲ごとのコード:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: いくつかの質問でソースを作ります (Enter で [ ] の中の値を使います)。\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "`rubrapack help <command>` を実行してください。パスと出力フォルダーがあるかを確認してください"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (マシン 0x{2}) はこのパッケージのマシンでは実行できません"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' はプログラム (.exe) ではありません"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "ソースは UTF-8 (または BOM 付きの UTF-16) で、改行は LF か CRLF で保存してください"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "スキーム '{1}' には既にプログラムがあります ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope は \"machine\"、\"user\"、\"dual\" のいずれかでなければなりません"
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl は \"D:PAI(A;OICI;FA;;;BA)\" のような SDDL 文字列でなければなりません"
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "検索プロパティ '{1}' は自分で決めたパブリックな名前 (大文字) でなければなりません"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "メッセージを見てください。ほとんどは rubrapack でビルドし直すと直ります"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "シーケンス {1} が {2} ({3}) の後にありません"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "パッケージもモジュールも実行しないアクションの隣にアクションを並べています"
+
+msgid "service name '%s' is already used"
+msgstr "サービス名 '{1}' は既に使われています"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "サービスには scope = \"machine\" が必要です (これは {1} です)"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "ショートカット名は UTF-16 単位で {1} あります。8.3 の短い名前と合わせて MSI に入るのは {2} までです"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "PE ファイル、MSI パッケージ、MSIX パッケージやバンドルに署名します"
+
+msgid "signed %s\n"
+msgstr "{1} に署名しました\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "ソース '{1}' はディレクトリです。多くのファイルには [files.ID] を使ってください"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "ソース '{1}' はシンボリック リンクです。リンクはたどりません"
+
+msgid "source '%s' is not a regular file"
+msgstr "ソース '{1}' は通常のファイルではありません"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "パッケージのビルド中にソース ファイル '{1}' が変わりました"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "ソース ファイル '{1}' が 2 GiB を超えています"
+
+msgid "source file '%s' not found"
+msgstr "ソース ファイル '{1}' が見つかりません"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source は \"file:<ID>\" でなければなりません"
+
+msgid "source must be an .msi package"
+msgstr "source は .msi パッケージでなければなりません"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "ソースのパス '{1}' はソース ファイルからの相対パスでなければなりません"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "ソースのパスは '\\\\' ではなく '/' を使います ('{1}' でした)"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start は auto、demand、disabled のいずれかでなければなりません"
+
+msgid "string is not closed on this line"
+msgstr "文字列がこの行で閉じていません"
+
+msgid "string lengths exceed the string data"
+msgstr "文字列の長さが文字列データを超えています"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "概要情報はまだ IDT で表示できません"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name は ASCII でなければなりません (概要情報は ASCII しか持てません)"
+
+msgid "table %s %s"
+msgstr "テーブル {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "テーブル '{1}' が読めません"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "テーブル [{1}{2}{3}] が 2 回定義されています (最初は {4} 行目)"
+
+msgid "table name expected"
+msgstr "テーブル名が必要です"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "テーブル名は 2 つの部分までです: [kind] か [kind.ID]"
+
+msgid "tables"
+msgstr "テーブル"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "テーブルとキー: 不明なテーブルやキー、必須のものの欠落、機能があるのに機能のない項目"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "構成を取りません (ModuleConfiguration がありません)"
+
+msgid "target '%s' does not exist"
+msgstr "ターゲット '{1}' がありません"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target は \"dir:<ID>\"、\"file:<ID>\"、\"registry:<ID>\" のいずれかでなければなりません"
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
+
+msgid "target name '%s' %s"
+msgstr "ターゲット名 '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' は既に [msix-extension.{2}] が使っています"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id、display-name、enabled は kind = \"startup-task\" に属します"
+
+msgid "that file exists already; give another name"
+msgstr "そのファイルは既にあります。別の名前を指定してください"
+
+msgid "that folder holds no files"
+msgstr "そのフォルダーにはファイルがありません"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "FilesInUse ダイアログには空でも ListBox テーブルが必要です (エラー 2205。ダイアログは飛ばされます)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN にトークンが受け付けない文字か長さがあります"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN の期限が切れています: 先にトークンで変更してください"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN がロックされています (間違いが多すぎます)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode が前のバージョンのものです: これはマイナー アップグレード (REINSTALLMODE) で、rubrapack がビルドするメジャー アップグレードではありません"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16 のファイルが有効な UTF-16 ではありません"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP の中央ディレクトリがファイルの外にあります"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "アプリケーション ID '{1}' は Application Id になります: 英字と数字だけで、数字で始めません"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "アーカイブが MSIX パッケージのように ZIP64 終端レコードで終わっていません"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "アーカイブに ZIP64 終端レコードがありません"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "バンドル マニフェストに Identity の Name、Publisher、Version がありません"
+
+msgid "the central directory lies outside the archive"
+msgstr "中央ディレクトリがアーカイブの外にあります"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "証明書に rubrapack が理解できない重要な拡張があります"
+
+msgid "the certificate has expired"
+msgstr "証明書の期限が切れています"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "証明書は署名用ではなく CA の証明書です"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "証明書はコード署名用ではありません (コード署名の拡張キー使用法がありません)"
+
+msgid "the certificate is not valid yet"
+msgstr "証明書はまだ有効になっていません"
+
+msgid "the certificate path is longer than 8"
+msgstr "証明書のパスが 8 を超えています"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "証明書テーブルに Authenticode の署名がありません"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "証明書テーブルがファイルの末尾にありません"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "証明書のキー使用法がデジタル署名を許していません"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "証明書のサブジェクトを MSIX の発行元として書けません"
+
+msgid "the chunked response is malformed"
+msgstr "チャンク形式の応答が壊れています"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "コマンド ライン: 不明なコマンドやオプション、読み書きできないファイル、署名、変換で運べない差分"
+
+msgid "the connection has failed"
+msgstr "接続に失敗しました"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "埋め込みキャビネットでパッケージが 2 GiB 以上になり、Windows インストーラーが開けません。cab = \"external\" を使ってください"
+
+msgid "the entry is not in the central directory"
+msgstr "項目が中央ディレクトリにありません"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "エラー ダイアログ '{1}' には {3} という名前の {2} コントロールが必要です (エラー 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "実行ファイル '{1}' は .exe でなければなりません"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "実行ファイルのフォルダーが既知の場所につながっていません"
+
+msgid "the file is not signed"
+msgstr "ファイルは署名されていません"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "ファイルは既に署名されています。rubrapack は二重に署名したり署名を置き換えたりしません"
+
+msgid "the file is too large to sign"
+msgstr "ファイルが大きすぎて署名できません"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "ファイルには [package] テーブル (マージ モジュールなら [module]) が必要です"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "ファイルは署名の後に変更されました (ダイジェストが一致しません)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "インストールするファイル: 見つからない、フォルダー、リンク、一致のない glob、別のアーキテクチャのプログラム、長すぎる名前"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "完成したテーブルが Windows インストーラーの規則に反しています"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "ハイブがきれいに閉じられていません (ログが必要になります)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "ハイブのベース ブロックのチェックサムが一致しません"
+
+msgid "the hive's bins lie outside the file"
+msgstr "ハイブの bin がファイルの外にあります"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "インストールされているアプリの一覧のアイコンは [arp] icon = \"app.ico\" です"
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "すべての質問に答える前に入力が終わりました。何も書いていません"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "キー ファイルが 4 MiB を超えています"
+
+msgid "the key is neither RSA nor EC"
+msgstr "キーは RSA でも EC でもありません"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "ライブラリは PKCS#11 モジュールではありません (C_GetFunctionList がないか、バージョン 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "マニフェストに Identity の Publisher がありません"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "パッケージの完全名を作るためのマニフェストの Identity を読めません"
+
+msgid "the merge module %s"
+msgstr "マージ モジュール {1}"
+
+msgid "the name %s"
+msgstr "名前 {1}"
+
+msgid "the package is not signed"
+msgstr "パッケージは署名されていません"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "パッケージは署名されていません (AppxSignature.p7x がありません)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "パッケージは既に署名されています。rubrapack は二重に署名したり署名を置き換えたりしません"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "パッケージは既に署名されています。rubrapack が署名するのは署名のないパッケージだけです (二重には決して署名しません)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "パッケージは外部のキャビネットを使っていて、.msi の署名はそれを含みません。キャビネットを埋め込んでビルドするか、--allow-unsigned-cabs でそれでも署名してください"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "パッケージの内容が署名と一致しません (署名の後に変更されました)"
+
+msgid "the package's directory cannot be read"
+msgstr "パッケージのディレクトリを読めません"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "バンドルのパッケージは同じ Name、Publisher、Version でなければなりません"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "プロキシがパスワードを求めています (407)。rubrapack は対応していません"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "プロキシがトンネルの要求に応答しませんでした"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "プロキシが CONNECT への応答の後にデータを送ってきました"
+
+msgid "the redirect location is too long"
+msgstr "リダイレクト先が長すぎます"
+
+msgid "the request could not be sent"
+msgstr "要求を送れませんでした"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "応答の Content-Length が壊れているか矛盾しています"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "応答に Content-Length と chunked の両方があります (拒否: スマグリングの危険)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "応答が 4 MiB を超えています"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "応答が chunked 以外の転送コーディングを使っています"
+
+msgid "the same condition is already required (line %u)"
+msgstr "同じ条件が既に必須になっています ({1} 行目)"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "同じことを質問なしで:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "サーバーが HTTP/1.x で応答しませんでした"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "サーバーが https から http にリダイレクトしました (拒否)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "サーバーの CertificateVerify の署名を検証できません"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "サーバーの証明書は TLS サーバー用ではありません (拡張キー使用法)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "サーバーの署名方式が証明書の鍵と合いません"
+
+msgid "the signature does not verify"
+msgstr "署名を検証できません"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "署名者の証明書では署名を検証できません"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "署名の項目が ZIP64 の方法で書かれています。Windows はその位置を ZIP32 のフィールドから読みます"
+
+msgid "the signature is not DER"
+msgstr "署名が DER ではありません"
+
+msgid "the signature streams cannot be read"
+msgstr "署名のストリームを読めません"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "署名された属性が署名された内容と一致しません"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "署名者の証明書はコード署名用ではありません"
+
+msgid "the source file's encoding"
+msgstr "ソース ファイルのエンコーディング"
+
+msgid "the system random source failed"
+msgstr "システムの乱数源が失敗しました"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "タブ順 (Control_Next) が Control_First から {1} 個のコントロールを 1 周していません (Windows インストーラーはエラー 2809 か 2810 で止まります)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "タイムスタンプ サーバーが HTTP エラーで応答しました"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "タイムスタンプ サーバーの証明書はタイムスタンプ用ではありません"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "タイムスタンプ サーバーの時刻が署名証明書の有効期間外です"
+
+msgid "the token does not say what kind of key it is"
+msgstr "トークンがキーの種類を示しません"
+
+msgid "the token is not present"
+msgstr "トークンがありません"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "トークンが誤った長さの ECDSA 署名を返しました"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "トークンの EC キーの証明書が EC のものではありません"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "トークンの署名を証明書で検証できません (キーと証明書が対になっていません)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "信頼された証明書の期限が切れているか、まだ有効ではありません"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "署名されていない属性が壊れているか、タイムスタンプが複数あります"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "ここにそのファイルはありません"
+
+msgid "there is no such folder here"
+msgstr "ここにそのフォルダーはありません"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "この rubrapack はメニューの部品なしでビルドされています: [menu.*] の項目は Windows 11 のメニューに届きません"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "この rubrapack はセットアップ プログラムなしでビルドされています (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading は \"sta\"、\"mta\"、\"both\"、\"neutral\" のいずれかでなければなりません ('{1}' でした)"
+
+msgid "timestamp: "
+msgstr "タイムスタンプ: "
+
+msgid "too many languages for one bundle"
+msgstr "1 つのバンドルには言語が多すぎます"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "resources.pri にはローカライズされた文字列とロゴの倍率が多すぎます"
+
+msgid "too many packages in the bundle"
+msgstr "バンドルのパッケージが多すぎます"
+
+msgid "trusted"
+msgstr "信頼済み"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "バンドルに同じアーキテクチャのパッケージが 2 つあります"
+
+msgid "two packages of one name in a bundle"
+msgstr "バンドルに同じ名前のパッケージが 2 つあります"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "バンドルに同じ ResourceId のリソース パッケージが 2 つあります"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type は string、expand、dword、qword、binary、multi のいずれかでなければなりません ('{1}' でした)"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type は text、checkbox、edit、radio、combo のいずれかでなければなりません ('{1}' でした)"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version は \"1.0\" のような 16 進数の major.minor です ('{1}' でした)"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types と verb は kind = \"context-menu\" に属します"
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: それぞれ \".ext\" か \"*\" (すべてのファイル) です"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: それぞれ '.' と小文字、数字、'_'、'-' です ('{1}' でした)"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" ではユーザーが dir '{2}' のフォルダーを選べますが、その dir がありません ([ui] install-dir を設定してください)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" には選ぶための [feature.*] テーブルが必要です"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui は none、basic、minimal、installdir、features のいずれかでなければなりません ('{1}' でした)"
+
+msgid "unexpected text after the value"
+msgstr "値の後に予期しない文字列があります"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "不明なコマンド '{1}' ('rubrapack help' を参照)"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "不明なエスケープ \\{1} (バックスラッシュを含む文字列には '...' を使ってください)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "不明な inspect のオプション (テーブル名、--summary、--files、--streams を使ってください)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "[{2}{3}{4}] の不明なキー '{1}'{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "不明か不完全な {1} のオプション '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "不明なテーブル [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "パッケージを新しいディレクトリに、インストールされる形で展開します"
+
+msgid "unsupported - %s"
+msgstr "未対応 - {1}"
+
+msgid "untrusted"
+msgstr "信頼されていません"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* のキーには appinstaller-uri と package-uri が必要です"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false は on = \"uninstall\" か \"both\" 用です (インストールがアップグレードによる削除になることはありません)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code は {12345678-1234-1234-1234-123456789ABC} のような GUID でなければなりません"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "使い方: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "使い方: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (バンドルなら一覧)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "使い方: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "使い方: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "使い方: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "使い方: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "使い方: rubrapack inspect <file.cab> (テーブルもオプションもなし)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "使い方: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "使い方: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "使い方: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "使い方: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "使い方: rubrapack inspect <setup.exe> (テーブルもオプションもなし)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "使い方: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "使い方: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "使い方: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "使い方: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "使い方: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (固定のひな形 <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]。.rpk の名前も使えます"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "使い方: rubrapack schema (ソースの JSON Schema を stdout に)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "使い方: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "使い方: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "path には '/' を使ってください"
+
+msgid "use a full rubrapack build or another way"
+msgstr "完全な rubrapack のビルドか別の方法を使ってください"
+
+msgid "used by more than one component"
+msgstr "複数のコンポーネントが使っています"
+
+msgid "value '%s' is listed twice"
+msgstr "値 '{1}' が 2 回並んでいます"
+
+msgid "value missing"
+msgstr "値がありません"
+
+msgid "values and labels are strings"
+msgstr "values と labels は文字列です"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values は 1 から 32 個の文字列の配列です"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "値: ID、GUID、バージョン、範囲外の数、存在しないものへの参照"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "変数 '{1}' は定義されていません ([define] または -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "変数名 '{1}' には '=' を含めたり、= + - ! * で始めたりできません"
+
+msgid "variables"
+msgstr "変数"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "変数: 値のない $(NAME)、閉じていない $(、置けない場所にある Windows の名前や dir ID"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "バージョン '{1}' は a.b.c か a.b.c.d でなければなりません"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "バージョン '{1}' は a, b <= 255、c, d <= 65535 の a.b.c か a.b.c.d でなければなりません"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" は 64 ビット パッケージのファイルと 'with' にできません"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view は \"32\" か \"64\" でなければなりません"
+
+msgid "warning"
+msgstr "警告"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "診断コードの意味、そのコードを使うメッセージ、対処、マニュアルの詳しい説明の場所"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with は \"file:<ID>\" でなければなりません"
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: ファイル '{1}' はこのパッケージの [file.*] ではありません"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "--pkcs11 がなければ `keys list` は Windows の証明書ストアを表示します"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' は dir ID ではありません"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "パッチ (.msp) を書きます: インストール済みのベースをターゲットに更新するファイルと行"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "ソース ファイル (.toml。.rpk の名前も可) を書きます: 質問かオプションで与えた答え、固定のひな形、既存の MSI から作ります"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "変換 (.mst) を書きます: あるパッケージを別のパッケージに変えるもの"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "テーブルか値をマニュアルが示す素直な形で書いてください"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "値は '[~]' なしで書いてください。mode = \"append\" か \"prepend\" で追加します"
+
+msgid "wrote %s\n"
+msgstr "{1} を書きました\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width は 370 (ページの幅) までです"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height は 234 (ボタンの上の線) までです"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< 戻る(&B)"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "次へ(&N) >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "インストール(&I)"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "完了(&F)"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "はい(&Y)"
+
+msgctxt "installer"
+msgid "No"
+msgstr "いいえ(&N)"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "再試行(&R)"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "無視(&I)"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "中止(&A)"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "終了(&X)"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "参照(&R)..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "[ProductName] セットアップへようこそ"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "このプログラムは [ProductName] をこのコンピューターにインストールします。続けるには「次へ」をクリックしてください。"
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "使用許諾契約"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "次の使用許諾契約をお読みください。"
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "使用許諾契約の条項に同意します(&A)"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "インストール先フォルダー"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "[ProductName] をインストールするフォルダーを選んでください。"
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "インストール先(&T):"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "フォルダーの変更"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "インストールするフォルダーを選んでください。"
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "場所(&L):"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "フォルダー名(&F):"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "上へ"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "新しいフォルダー"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "機能の選択"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "インストールする機能を選んでください。"
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "リセット(&S)"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "ディスク使用量(&D)"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "ディスク領域"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "選んだ機能に必要な領域と、使用できる領域です。"
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "インストールの準備完了"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "「インストール」をクリックすると [ProductName] をインストールします。"
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "[ProductName] をインストールしています"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "しばらくお待ちください。"
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "状態:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "セットアップ完了"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] をインストールしました。"
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "[ProductName] を削除しています"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "削除完了"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] を削除しました。"
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "削除の取り消し"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "削除を取り消しました。コンピューターは何も変更されていません。"
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "削除の失敗"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "エラーのため削除を中断し、元に戻しました。製品はインストールされたままです。"
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "セットアップの取り消し"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "セットアップを取り消しました。コンピューターは何も変更されていません。"
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "セットアップの失敗"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "エラーのためインストールを中断し、元に戻しました。コンピューターは何も変更されていません。"
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "[ProductName] のインストールを取り消しますか?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "使用中のファイル"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "次のプログラムが、置き換えるファイルを使用しています。「続行」をクリックすると今すぐ置き換えます。開いているプログラムは開き直すまで古いファイルを使い、これから開くプログラムは新しいファイルを使います。再起動は必要ありません。"
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "次のプログラムが、置き換えるファイルを使用しています。「続行」をクリックすると今すぐ置き換えます。開いているプログラムは開き直すまで古いファイルを使い、これから開くプログラムは新しいファイルを使います。最後に Windows が再起動を求めることがあります。"
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "続行(&C)"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "ディスク領域の不足"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "このインストールに必要な領域が足りません。空き領域を増やすか、別の場所を選んでください。"
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "[ProductName] の管理"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "実行する操作を選んでください。"
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "修復(&P)"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "見つからないファイルや壊れたファイルと設定を元に戻します。"
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "削除(&R)"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "[ProductName] をこのコンピューターから削除します。"
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "[ProductName] の削除"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "「削除」をクリックすると [ProductName] をこのコンピューターから削除します。残す場合は「戻る」か「キャンセル」をクリックしてください。"
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "「削除」をクリックすると [ProductName] をこのコンピューターから削除します。設定とデータも一緒に削除され、元に戻せません。残す場合は「戻る」か「キャンセル」をクリックしてください。"
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "[ProductName] をこのコンピューターから削除しますか?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "[ProductName] をこのコンピューターから削除しますか? 設定とデータも一緒に削除され、元に戻せません。"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] 個のプログラムが [3] のファイルを使用しています:\r\n[2]\r\nすべて終了しますか?\r\n\r\nはい: すべて終了して続けます (保存していない作業は失われることがあります)。\r\nいいえ: 終了せずに続けます (開いているプログラムは開き直すまで古いファイルを使います)。\r\nキャンセル: 中止します。"
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: [1] 個のプログラムがファイルを使用しているため中止しました:\r\n[2]プログラムを閉じてやり直すか、RPCLOSE=yes (すべて終了して続ける) または RPCLOSE=no (終了せずに続ける) を指定してください。"
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] を安全にインストールできません: [1] はフォルダーではないか、インストーラーがその中のファイルを削除できません。先に [3] を削除してから ([2])、もう一度インストールしてください。"
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] を安全にアップグレードできません: インストール済みのバージョン [1] はキャッシュされたパッケージを失っているため、ここでは削除できません。先にそのバージョンを元のパッケージで削除してから ([2])、もう一度インストールしてください。"
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "セットアップを中止しました: フォルダー [1] が既にあり、管理者の所有ではないか、リンクで別の場所につながっています。別のフォルダーを選ぶか、管理者に先に削除してもらってください。"
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "[ProductName] を起動する(&L)"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "ログを保存(&S)..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "ログ全体を表示(&L)"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "セットアップのログを [1] に保存できませんでした。"
+
+msgctxt "installer"
+msgid "Change"
+msgstr "変更(&C)"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "インストールする機能を変更します。"
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "インストールの範囲"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "[ProductName] を使うユーザーを選んでください。"
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "自分のみ(&M)"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "このコンピューターのすべてのユーザー(&E) - 管理者権限が必要です"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "言語"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "セットアップの言語を選んでください。"
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "インストール済みのアプリケーションを検索しています"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "必要な領域を計算しています"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "必要な領域を計算しています"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "フォルダーを作成しています"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "ショートカットを作成しています"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "サービスを削除しています"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "ファイルの複製を作成しています"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "必要な領域を計算しています"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "関連するアプリケーションを検索しています"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "処理を準備しています:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "新しいファイルをコピーしています"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "新しいサービスをインストールしています"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "インストールを検証しています"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "起動条件を確認しています"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "以前のバージョンの機能の選択を引き継いでいます"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "ファイルを移動しています"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "ファイルにパッチを適用しています"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "コンポーネントの登録を更新しています"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "製品の機能を登録しています"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "製品の情報を登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "クラスを登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "拡張子を登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "フォントを登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "MIME 情報を登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "製品を登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "プログラム ID を登録しています"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "ユーザーを登録しています"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "環境変数を更新しています"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "以前のバージョンを削除しています"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "ファイルを削除しています"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "フォルダーを削除しています"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "INI ファイルの項目を削除しています"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "レジストリ値を削除しています"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "ショートカットを削除しています"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "元に戻しています:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "バックアップ ファイルを削除しています"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "サービスを開始しています"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "サービスを停止しています"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "製品の機能の登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "クラスの登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "拡張子の登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "フォントの登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "MIME 情報の登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "プログラム ID の登録を解除しています"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "環境変数を更新しています"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "INI ファイルの値を書き込んでいます"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "レジストリ値を書き込んでいます"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] は現在のユーザーにのみインストールされます (MSIINSTALLPERUSER=1)。"
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "同じまたは新しいバージョンの [ProductName] が既にインストールされています。"
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "インストール済みの古いバージョンの [ProductName] はこのパッケージでアップグレードできません。先に削除してから、もう一度このインストールを実行してください:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "ファイルのコピー"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "ファイルの削除"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "ファイルのパッチ"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "フォルダーの作成"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "フォルダーの削除"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "レジストリ値の書き込み"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "レジストリ値の削除"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "レジストリ キーの削除"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "ショートカットの作成"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "ショートカットの削除"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "サービスのインストール"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "サービスの制御"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "INI 値の書き込み"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "環境変数の設定"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "フォントの登録"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "フォントの登録解除"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "アクションの実行"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "このセットアップ プログラムは壊れています。もう一度ダウンロードしてください。"
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "これらのプログラムは既にインストールされています。実行する操作を選んでください。"
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "修復(&P)"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "削除(&R)"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "キャンセル"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "これらのプログラムをこのコンピューターから削除しますか?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "プログラムを削除しました。"
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "削除できなかったプログラムがあります。"
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "セットアップが一時フォルダーを作成できませんでした。"
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} を修復できませんでした (エラー {2})。"
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} をインストールできませんでした (エラー {2})。それ以降のものはインストールしていません。"
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "プログラムを修復しました。"
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "セットアップが完了しました。"
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "このフォルダーには既にファイルやフォルダーがあります。[ProductName] を削除すると、このフォルダーの中身はすべて削除されます - 今あるものも含めて。空のフォルダーか新しいフォルダーを選ぶのが安全です。"
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "別のフォルダーを選ぶ(&C)"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "このフォルダーを使う(&U)"
