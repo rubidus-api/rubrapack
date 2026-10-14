@@ -1,0 +1,3816 @@
+# rubrapack language pack: Thai.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: th\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: ไทย\n"
+"X-Rubrapack-LangIDs: 1054\n"
+"X-Rubrapack-Font: Leelawadee UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, กล่องโต้ตอบ {6}{7}\n  1 ชื่อ, ผู้ผลิต, เวอร์ชัน, สถาปัตยกรรม              2 โฟลเดอร์ที่ติดตั้ง, ติดตั้งให้ใคร\n  3 กล่องโต้ตอบ, สิทธิ์การใช้งาน, ภาษา             4 ส่วนที่เลือกได้\n  5 ทางลัด                                        6 ไฟล์: ให้ตรงกับโฟลเดอร์โปรแกรม\n  7 คีย์ใดก็ได้                                     v ดู   l lint   s บันทึก   q ออก\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nข้อความที่มีรหัสนี้ (* แทนชื่อหรือค่า):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nผลลัพธ์ไปที่ stdout ส่วนข้อความวินิจฉัยไปที่ stderr\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (หรือ RUBRAPACK_LANG) เลือกภาษาของข้อความเหล่านี้: {1} หรือภาษาที่มีชุดภาษา\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "รหัสการออก: 0 สำเร็จ, 1 ข้อผิดพลาดในต้นฉบับ, 2 วิธีใช้, 3 อินพุต/เอาต์พุต, 4 การลงนามหรือการตรวจสอบ,\n5 lint, 6 เครือข่าย\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nสิ่งที่ต้องทำ: {1}\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} หายไปแล้ว แต่มีทางลัดที่เปิดมัน: เปลี่ยนทางลัด (5) ก่อน\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  มี {1} ไฟล์และ {2} โฟลเดอร์ที่นั่น\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s หรือ q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  เพิ่ม [dir.{1}] และ [files.{2}] แล้ว\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  เพิ่ม [file.{1}] แล้ว\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  ระบุเป็น table.key เช่น package.version หรือ dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: ไม่มีปัญหา\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: ดูปัญหาด้านบน (ไฟล์ที่ระบุไว้นั้นเป็นสำเนาสำหรับตรวจ)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  ภาษาอื่นใน [ui] languages จะคงไว้ เปลี่ยนรายการนั้นด้วย 7 (คีย์ใดก็ได้)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  ลบ [file.{1}] แล้ว\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  ลบ [files.{1}]{2} แล้ว\n"
+
+msgid "  sub folders:"
+msgstr "  โฟลเดอร์ย่อย:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  สิ่งนี้ไม่เข้ากับ TOML ส่วนย่อยที่รองรับ ไม่มีการเปลี่ยนแปลงใด\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  นั่นไม่ใช่ข้อความที่อ่านได้ โปรดลองอีกครั้ง\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  โฟลเดอร์โปรแกรม '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  ต้นฉบับไม่มีตาราง [file] ให้ทางลัดชี้ไป\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  ต้นฉบับไม่มีโฟลเดอร์ย่อยแบบที่ `new` เขียน ([files] \"<folder>/<name>/**\") เพิ่มได้ด้วย 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  ยาวเกินไป โปรดลองอีกครั้ง\n"
+
+msgid "  y or n\n"
+msgstr "  y หรือ n\n"
+
+msgid " (changed)"
+msgstr " (เปลี่ยนแล้ว)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - สร้างแพ็กเกจ Windows Installer (.msi) และ MSIX (.msix)\n\nวิธีใช้: rubrapack [--lang <code>] <command> [arguments]\n\nคำสั่ง:\n"
+
+msgid " and its dir"
+msgstr " และ dir ของมัน"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) ไม่มีตัวแปรสภาพแวดล้อม จึงใส่ในค่าแบบขยายได้ไม่ได้ ใช้ค่าสตริงแทน (เติมให้ตอนติดตั้ง)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) เป็น {2}: ใช้ขึ้นต้นพาธได้ หรือแทนค่าที่ Windows Installer เติมให้ (รีจิสทรี, สภาพแวดล้อม, INI, อาร์กิวเมนต์, ข้อความ) แต่ใช้ที่นี่ไม่ได้"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) ไม่ใช่โฟลเดอร์ที่พาธเริ่มได้ (ID ของ dir หรือ ProgramFiles, LOCALAPPDATA, ProgramData ... - ดู Paths ในคู่มือ){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  โครงสร้าง:    {2}\n  ไดเจสต์:      {3}\n  ลายเซ็น:      {4}\n  สายใบรับรอง:  {5}{6}{7}\n  การเพิกถอน:   ไม่ได้ตรวจ\n  การประทับเวลา: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: ไม่ได้ตั้งค่าตัวแปร"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' ไม่ใช่ตัวควบคุมของกล่องโต้ตอบนี้"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' ไม่อยู่ใน {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': ข้อความสิทธิ์การใช้งานต้องใช้ชื่อภาษาอังกฤษของแบบอักษร จึงแสดงด้วยแบบอักษรของภาษานั้นเอง เขียนชื่อภาษาอังกฤษ (เช่น \"Malgun Gothic\") เพื่อใช้แบบอักษรนี้ที่นั่นด้วย"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "คอมโพเนนต์ {1} แต่แพลตฟอร์มของแพ็กเกจคือ {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} ไม่ได้อยู่ใน kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} ไม่ได้อยู่ใน kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} เก็บ LANGID (1..65535) เช่น 1041"
+
+msgid "%s holds strings"
+msgstr "{1} เก็บสตริง"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} เป็นชื่อแบบอักษรยาว 1 ถึง 31 อักขระ เช่น \"Segoe UI\" (ได้ {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} เป็นเงื่อนไข MSI ที่ปิดเครื่องหมายคำพูดและวงเล็บครบคู่"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} เป็นอาร์เรย์ของสตริง หนึ่งตัวต่อหนึ่งค่า"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} ใช้กับแพ็กเกจ MSI: msiexec ไม่ได้ถอน MSIX"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} หายไปแล้ว ลบ [file.{2}] หรือไม่"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} ยาวเกิน 240 อักขระ"
+
+msgid "%s is new. Add it?"
+msgstr "{1} เป็นของใหม่ เพิ่มหรือไม่"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} ไม่ใช่ GUID ในรูปแบบรีจิสทรี"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} ไม่ใช่รหัสที่ rubrapack นี้ใช้{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
+
+msgid "%s must be a GUID"
+msgstr "{1} ต้องเป็น GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} ต้องเป็น GUID เช่น {{12345678-...} (ได้ '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} ต้องเป็นที่อยู่ https://, http:// หรือ file:// หรือพาธ \\\\server\\share (ได้ '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} ต้องต่างจาก upgrade-code (หนึ่งตระกูลการอัปเกรดต่อสถาปัตยกรรม)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} ต้องใช้ Windows build {2} ขึ้นไป: ตั้ง [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} ต้องใช้ resources/bin/rubrapack_ca-{2}.dll ซึ่ง rubrapack นี้ไม่ได้สร้างมาพร้อม"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, ไม่ได้ตรวจ TSA (ระบุ --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA เชื่อถือได้"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA ไม่น่าเชื่อถือ - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} หายไปหรือว่างเปล่า ลบ [files.{3}] และ [dir.{4}] หรือไม่"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ เป็นโฟลเดอร์ใหม่ เพิ่มหรือไม่"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: ข้อผิดพลาด {2}{-3}, คำเตือน {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: ข้อผิดพลาด {2}{-3}, คำเตือน {4}{-5} (เทียบกับ {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} ไฟล์, {3} ไบต์\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} ไฟล์, ข้อผิดพลาด {3}, คำเตือน 0\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: ยังมีข้อความวินิจฉัยอีก {2} รายการที่ไม่ได้แสดง\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: ไฟล์ '{2}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: ไฟล์ '{2}' ไม่ใช่โปรแกรม (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' ไม่ได้ปิด (เขียน '$$(' สำหรับข้อความ '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' มีอยู่แล้ว จะคงไว้ตามเดิม"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' มีอยู่แล้ว ลบออกหรือสร้างลงในโฟลเดอร์อื่น"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' มีตัวจัดการ {2} อยู่แล้ว ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' มีสิทธิ์อยู่แล้ว"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' และ '{2}' เป็นพาธเดียวกันในแพ็กเกจ"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' เป็นของ Windows หรือเบราว์เซอร์"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "อ่าน '{1}' เทียบกับ '{2}' ไม่ได้: {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' ไม่เข้ากับ TOML ส่วนย่อยที่รองรับ ไม่ได้บันทึกอะไร"
+
+msgid "'%s' exists already"
+msgstr "'{1}' มีอยู่แล้ว"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' มีอยู่แล้ว เปลี่ยนด้วย `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' มีอยู่และไม่ใช่ไดเรกทอรีว่าง แตกไฟล์ลงไดเรกทอรีใหม่"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' ไปที่ {2} หรือ msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' มีสตรีมข้อมูลสรุปที่อ่านไม่ได้"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' ไม่มีตาราง Directory, Component, File และ Media ให้แตกไฟล์"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' ไม่มีข้อมูลสรุปที่อ่านได้"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' ไม่มีทรานส์ฟอร์ม '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' เป็น UTF-16: edit เปลี่ยนได้เฉพาะต้นฉบับ UTF-8 (บันทึกเป็น UTF-8 ก่อน)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' เป็นชื่อของ Windows ตั้งชื่ออื่นให้ตัวแปร"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' เป็น [chain]: สร้างโปรแกรมติดตั้ง, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' เป็นตัวควบคุมของกรอบในตัว เลือก ID อื่น"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' เป็นโฟลเดอร์ระดับเครื่อง แพ็กเกจ {2} เขียนลงที่นั่นไม่ได้"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' เป็นโมดูลผสาน ให้ผสานด้วย [merge.ID] แทน"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' เป็นชื่อที่รูปแบบ MSIX สงวนไว้ใช้เอง"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' เป็นลิงก์สัญลักษณ์ จะไม่ตามลิงก์"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' เป็น [property.*] ด้วย"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' เป็น ID ของ dir ด้วย ตั้งชื่ออื่นให้ตัวแปร"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' สร้างสำหรับเครื่อง 0x{2} ไม่ใช่ arch ของแพ็กเกจนี้ ถ้าตั้งใจเช่นนั้นให้ตั้ง any-arch = true"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ไม่ใช่ไฟล์ PE (.exe, .dll) ไม่ใช่แพ็กเกจ MSI และไม่ใช่แพ็กเกจหรือบันเดิล MSIX"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ไม่ใช่ไฟล์ PE ไม่ใช่แพ็กเกจ MSI และไม่ใช่แพ็กเกจหรือบันเดิล MSIX"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' ไม่ใช่โฟลเดอร์ที่รู้จักและไม่ใช่ ID ของ dir (โฟลเดอร์ที่รู้จัก: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' ไม่ใช่ cabinet ที่ rubrapack อ่านได้ (stored หรือ MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' ไม่ใช่รหัสวินิจฉัย (RP ตามด้วยตัวเลขสี่หลัก เช่น RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' ไม่ใช่โปรแกรม (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' ไม่ใช่ไฟล์ปกติ"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' ไม่ใช่โปรแกรมติดตั้งของ rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' ไม่ใช่ ID ที่ถูกต้อง (ตัวอักษร ตัวเลข และ '_' ห้ามขึ้นต้นด้วยตัวเลข ไม่เกิน {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' ไม่ใช่ฐานข้อมูล MSI ที่ถูกต้อง: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' ไม่ใช่แพ็กเกจ MSIX ที่ถูกต้อง: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' ไม่ใช่แพ็กเกจที่ถูกต้อง: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' ไม่ใช่ต้นฉบับที่ถูกต้อง (TOML ส่วนย่อย) แก้ด้วยมือก่อน"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' ไม่ใช่ทรานส์ฟอร์มที่ถูกต้อง: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' ไม่ใช่ชื่อตัวแปรที่ถูกต้อง"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' เป็นคำสงวน ใช้เป็น ID ไม่ได้"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' เป็นชื่อของ dir: มีเพียงการค้นหารีจิสทรีหรือ dir ที่เติม dir ได้"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' ดูเหมือนไฟล์โปรแกรม (PE) แต่ส่วนหัวหรือทรัพยากรเสียหาย"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' ต้องเป็นสตริง"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' ต้องเป็นจำนวนเต็ม"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' ต้องอยู่ระหว่าง {2} ถึง {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' ต้องเป็น true หรือ false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' ต้องไม่ว่าง"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' ไม่ได้ระบุทรานส์ฟอร์มใด (คุณสมบัติสรุป 8): ไม่ใช่แพตช์"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' ขึ้นต้นด้วยโฟลเดอร์: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' มี {4} ไม่ได้แตกไฟล์ใด"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} รายการ เกินขีดจำกัด {3} (--limit-entries) ไม่ได้แตกไฟล์ใด"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' และ '{3}' จะเป็นพาธเดียวกันบน Windows ไม่ได้แตกไฟล์ใด"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' ไม่อยู่ใน [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': อ่านตารางไม่ได้"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': มีตารางที่อ่านไม่ได้"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX ติดตั้งไฟล์ทั้งหมดของมัน (when) ใช้ msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX ลบไฟล์ทั้งหมดของมัน (keep) ใช้ msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' เสียหายหรือไม่ใช่ stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': ชื่อ cabinet '{2}' ไม่ใช่ชื่อไฟล์ธรรมดา"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': ไฟล์บีบอัด '{2}' (ลำดับ {3}) ไม่มี cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': ไดเรกทอรี '{2}' มีพาเรนต์ '{3}' ที่ไม่มีอยู่"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': ไดเรกทอรี '{2}' เป็นบรรพบุรุษของตัวเองหรือซ้อนลึกเกินไป"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': ไฟล์ '{2}' ไม่ตรงกับ MsiFileHash ของมัน"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': ไฟล์ '{2}' ไม่มีคอมโพเนนต์หรือไดเรกทอรี"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': ไฟล์ '{2}' มีขนาด {3} ไบต์ แต่ตาราง File ระบุ {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': ไฟล์ '{2}' ไม่อยู่ใน cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': cabinet ภายนอกของมันไม่อยู่ในขอบเขตลายเซ็น (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': โฟลเดอร์ของมันไม่ได้นำไปยังตำแหน่งที่รู้จัก"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': ต้องเขียนเกิน {2} ไบต์ (--limit-bytes) ไม่ได้แตกไฟล์ใด"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': ไม่มี --timestamp: ลายเซ็นจะหมดอายุเมื่อใบรับรองหมดอายุ"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': แพ็กเกจ '{2}' ไม่ตรงกับ SHA-256 ของมัน"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': ไม่มีสตรีม cabinet '{2}'"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': แมนิเฟสต์ไม่มี {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': แมนิเฟสต์ระบุ '{2}' ซึ่งไม่อยู่ในแพ็กเกจ"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': การประทับเวลาจาก {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': อ่านทรานส์ฟอร์ม '{2}' เทียบกับ '{3}' ไม่ได้: {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' เป็นภาษาของแพ็กเกจเอง ({2}) ให้เขียนข้อความนั้นโดยไม่มีคำต่อท้าย"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' ทำให้ Windows Installer เขียนสตริงหลายค่า ใช้ type = \"multi\" กับอาร์เรย์"
+
+msgid "'_' in numbers is not supported"
+msgstr "ไม่รองรับ '_' ในตัวเลข"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' รับชื่อคำสั่งได้ไม่เกินหนึ่งชื่อ"
+
+msgid "'version' takes no arguments"
+msgstr "'version' ไม่รับอาร์กิวเมนต์"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs ใช้กับ .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch สำหรับบันเดิล: รายการ x64, x86 และ arm64 อย่างละครั้ง (ได้ '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch รับสถาปัตยกรรมเดียว หรือรายการสำหรับผลลัพธ์ .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp และ --allow-unsigned-cabs ใช้คู่กับ --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress ใช้กับ .msi ส่วน MSIX ใช้ --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist ระบุโฟลเดอร์ใหม่ข้างต้นฉบับ (ไม่มีพาธ)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs รับตัวเลข 1 ถึง 64 (ได้ '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store เป็นที่เก็บใบรับรองของ Windows ที่อื่นให้ใช้ไฟล์คีย์หรือ --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store รับ thumbprint SHA-1 ของใบรับรอง (เลขฐานสิบหก 40 หลัก)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: ไม่มีภาษานี้ (ที่มีในตัว: {2} ภาษาอื่นต้องมีชุดภาษาของมัน {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang ต้องระบุภาษา เช่น en หรือ ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages ต้องมีกล่องโต้ตอบ ให้ระบุ --ui ด้วย"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress รับ deflate หรือ store (ได้ '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: ไม่ได้ตั้งค่าตัวแปร"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code รับ GUID ตัวพิมพ์ใหญ่พร้อมวงเล็บปีกกา: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: ไม่ได้ตั้งค่าตัวแปร"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous เปรียบเทียบแพ็กเกจ .msi สองแพ็กเกจ"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: อ่านใบรับรองรากของระบบปฏิบัติการไม่ได้"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} ไม่ตรงกับผลลัพธ์ '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} ยังไม่รองรับ (msi หรือ msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target รับ msi หรือ msix (ได้ '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots และ --proxy ใช้คู่กับ --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test และ --msix-compress ใช้กับผลลัพธ์ .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test ใช้กับแพ็กเกจที่ไม่มีลายเซ็น ถ้ามี --key ให้ตัดออก"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate รับ none หรือบางตัวจาก product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "ระบุ -D {1} สองครั้ง"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' เป็นชื่อของ Windows ตั้งชื่ออื่นให้ตัวแปร"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D ต้องเป็น NAME=VALUE (ได้ '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i จะถามทุกคำตอบ ให้ระบุ -i หรือตัวเลือกอย่างใดอย่างหนึ่ง"
+
+msgid "; its range is "
+msgstr " ช่วงของมันคือ "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' ไม่อยู่ใน SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty ต้องเป็นคุณสมบัติสาธารณะ (ตัวพิมพ์ใหญ่)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "รหัสทั้งหมด: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x ไม่ได้ขึ้นต้นด้วย PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x ไม่ใช่รายการสุดท้าย"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "สถาปัตยกรรม (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "เลือก"
+
+msgid "Command line"
+msgstr "บรรทัดคำสั่ง"
+
+msgid "Command line (lint)"
+msgstr "บรรทัดคำสั่ง (lint)"
+
+msgid "Common AppData"
+msgstr "AppData ที่ใช้ร่วมกัน"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId ไม่ใช่ GUID ในรูปแบบรีจิสทรี"
+
+msgid "Desktop shortcut?"
+msgstr "ทางลัดบนเดสก์ท็อปหรือไม่"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "กล่องโต้ตอบ (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "ตาราง File, Component หรือ Directory ขาดคอลัมน์มาตรฐาน"
+
+msgid "Folder name under Program Files"
+msgstr "ชื่อโฟลเดอร์ใต้ Program Files"
+
+msgid "Folder with the files to install"
+msgstr "โฟลเดอร์ที่มีไฟล์ที่จะติดตั้ง"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' ถูกใช้แล้ว (บรรทัด {2}) ID ต้องไม่ซ้ำกันทุกตาราง"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "โฟลเดอร์ที่ติดตั้ง (พาธ [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "ติดตั้งให้ (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "คีย์แบบ table.key (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' เป็นของคอมโพเนนต์อื่น"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' ไม่อยู่ใน File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' ไม่อยู่ใน Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "กล่องโต้ตอบภาษาเกาหลีด้วยนอกจากภาษาอังกฤษหรือไม่"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} ต่ำกว่าของ DiskId ที่น้อยกว่า"
+
+msgid "Leave without saving the changes?"
+msgstr "ออกโดยไม่บันทึกการเปลี่ยนแปลงหรือไม่"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "สิทธิ์การใช้งานที่ต้องยอมรับ (.txt, .md, .rtf; - ถ้าไม่มี)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX ไม่มีโฟลเดอร์เสมือนสำหรับ AppData ของผู้ใช้ แอปจะสร้างสิ่งที่ต้องใช้ที่นั่นเองเมื่อทำงาน"
+
+msgid "MSIX packages"
+msgstr "แพ็กเกจ MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: สิ่งที่แพ็กเกจ MSIX ต้องมี และสิ่งที่บรรจุไม่ได้"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "โปรแกรมหลัก สำหรับทางลัด (- ถ้าไม่มี)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "คู่มือ: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "ผู้ผลิต"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "ผู้ผลิต (แสดงในแอปที่ติดตั้ง)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt ส่งลายเซ็น ECDSA ที่ความยาวผิดกลับมา"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "ส่วนที่เลือกได้ที่ผู้ใช้ทำเครื่องหมายได้ (โฟลเดอร์ย่อย คั่นด้วยจุลภาค; - ถ้าไม่มี)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "โทเค็น PKCS#11: โทเค็นไม่มีใบรับรองที่มี CKA_ID ของคีย์ (ระบุด้วย --cert)"
+
+msgid "Paths"
+msgstr "พาธ"
+
+msgid "Product name"
+msgstr "ชื่อผลิตภัณฑ์"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode และ UpgradeCode เป็น GUID เดียวกัน"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} ไม่สูงกว่า {2} เดิมในสามช่องแรก: Windows Installer จะไม่อัปเกรด"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "โปรแกรมที่ทางลัดเปิด (- ถ้าไม่มีทางลัด)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: ไม่มีภาษานี้ (ที่มีในตัว: {2} ภาษาอื่นต้องมีชุดภาษาของมัน {3}.po)"
+
+msgid "Reference, "
+msgstr "ข้อมูลอ้างอิง, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "ลำดับ {1} ไม่อยู่ในแถว Media ใดเลย (สุดท้าย {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "ลำดับ {1} ถูกใช้โดยไฟล์อื่น"
+
+msgid "Source file to write"
+msgstr "ไฟล์ต้นฉบับที่จะเขียน"
+
+msgid "Source format"
+msgstr "รูปแบบต้นฉบับ"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source ต้องระบุแถว File สำหรับชนิด {1}"
+
+msgid "Start menu shortcut?"
+msgstr "ทางลัดในเมนูเริ่มหรือไม่"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "รายการในเมนูเริ่ม, Programs, เดสก์ท็อป และ Startup มาจาก [shortcut.*] และ [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML อยู่นอกส่วนย่อยที่ rubrapack อ่านได้ หรือไม่มี `format` หรือใหม่เกินไป"
+
+msgid "Tables"
+msgstr "ตาราง"
+
+msgid "The TOML subset"
+msgstr "TOML ส่วนย่อย"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "ไม่รองรับไฟล์ UTF-16 แบบ big-endian บันทึกเป็น UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} ต่างจาก {2} ของเวอร์ชันก่อน แพ็กเกจนี้จะไม่แทนที่มัน"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode ไม่ใช่ GUID ในรูปแบบรีจิสทรี"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "ค่า (ข้อความ ตัวเลข true/false หรือ [\"a\", \"b\"]; - ลบคีย์)"
+
+msgid "Variables"
+msgstr "ตัวแปร"
+
+msgid "Version"
+msgstr "เวอร์ชัน"
+
+msgid "Version ([define] VERSION)"
+msgstr "เวอร์ชัน ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "เวอร์ชันและการอัปเกรด"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer อนุญาตได้สูงสุด 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] ต้องมี '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] ใส่ในโมดูลผสานไม่ได้ แพ็กเกจที่ผสานมันเป็นผู้มีสิ่งนี้"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] ยังไม่รองรับ (วางแผนไว้สำหรับ {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] ใส่ใน MSIX ไม่ได้ เพิ่ม msi-only = true เพื่อสร้าง MSIX โดยไม่มีมัน"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ID ในโมดูลผสานยาวได้ไม่เกิน 35 อักขระ (GUID ของโมดูลจะต่อท้าย)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] ต้องมี ID: เขียน [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] ไม่รับ ID: เขียน [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml ไม่มี </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml ไม่ใช่รายการสุดท้าย (ไม่ใช่แพ็กเกจที่ rubrapack หรือ API สร้างแพ็กเกจของ Windows เขียน)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "ไม่รองรับอาร์เรย์ของตาราง [[...]] ให้แต่ละรายการมี [kind.ID] ของตัวเอง"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "check ของ [action.{1}] ไม่มีผล ยังไม่มีอะไรเรียกใช้ ให้ลบออก"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] ต้องมีทั้ง do และ undo (undo ใช้ย้อน do ที่ล้มเหลวด้วย)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: ใน MSIX ชนิดไฟล์จะเปิดแอปพลิเคชัน target ต้องเป็นไฟล์ปฏิบัติการของ [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] มีอยู่สองครั้ง"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] ต้องมี ID: เขียน [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id และ typelib เขียนให้เฉพาะ MSI ส่วน MSIX ลงทะเบียนคลาสโดยไม่มีสองค่านี้"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args เป็นของโปรแกรม DLL ถูกโหลด ไม่ได้ถูกเรียกทำงาน"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate เรียก DLL ใน dllhost แต่ '{2}' เป็นโปรแกรม"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading ใช้กับ DLL โปรแกรมกำหนด apartment ของตัวเอง"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version และ typelib-file ต้องมี typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] ไปที่ {2} หรือ msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: ต้นทางต้องเป็นไฟล์ที่อยู่ในแพ็กเกจ"
+
+msgid "[define] values must be strings"
+msgstr "ค่าของ [define] ต้องเป็นสตริง"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] ต้องมี '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] ต้องมี 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] ต้องมี 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] ต้องมี 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] มีตัวควบคุม {2} ตัว ไม่เกิน 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] ไม่มี [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] ถูกวางต่อจากตัวเองผ่านกล่องโต้ตอบอื่น"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] ต้องใช้ ui = \"minimal\", \"installdir\" หรือ \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' เป็นชื่อของ Windows ตั้ง ID อื่นให้ dir"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard ต้องใช้ DLL ตัวช่วยของ rubrapack ซึ่งโมดูลผสานไม่มี"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] ต้องมีฟีเจอร์"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX ตั้งค่าตัวแปรทั้งหมดของมัน (when) ใช้ msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: ค่าของมันระบุตำแหน่งที่ MSIX ให้ไม่ได้ (โฟลเดอร์นอกแพ็กเกจที่ไม่ใช่โฟลเดอร์ของ Windows หรือส่วนที่กำหนดตอนติดตั้ง) ใช้ msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer โหลดตัวจัดการ {2} จาก DLL แต่ [com.{3}] เป็นโปรแกรม"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows อ่านตัวจัดการคุณสมบัติระดับเครื่องเท่านั้น แพ็กเกจต้องใช้ scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: ตัวจัดการแสดงตัวอย่างทำงานใน prevhost ของ Windows ไม่ต้องใส่ app-id และ surrogate ใน [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX มีได้เฉพาะตัวจัดการภาพขนาดย่อและแสดงตัวอย่าง (ตัวจัดการคุณสมบัติในแพ็กเกจไม่ให้ค่าแก่ Explorer) msi-only = true เก็บไว้ให้ MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: ชนิดไฟล์ของ MSIX เป็นของแอปพลิเคชัน เพิ่ม [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: คลาส {2} ไม่ใช่ [com.*] ของแพ็กเกจนี้ (DLL ของตัวจัดการให้บริการคลาสนี้)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: ใน MSIX ตัวจัดการต้องใช้ชนิดร่วมกันทั้งหมดหรือไม่ใช้เลย (ชนิดหนึ่งอยู่ในการเชื่อมโยงชนิดไฟล์เดียว)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: ใน MSIX คลาสของมันทำงานใน surrogate; threading = \"sta\" ใน [com.{2}] ให้หน้าต่างมีลูปข้อความ (ถ้า threading = {3} ตัวอย่างอาจว่างเปล่า)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: ใน MSIX ชนิดทั้งหมดของมันต้องอยู่ในชนิดไฟล์ [assoc] เดียว หรือไม่มีเลย"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: คลาสของมันเป็น msi-only ([com.{2}]) MSIX จะไม่มีเซิร์ฟเวอร์ให้"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types เป็นรายการชนิดไฟล์ เช่น [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] ไปที่ {2} หรือ msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] ต้องมี 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX เขียนรายการ INI ทั้งหมดของมัน (when) ใช้ msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: ค่าของมันมีส่วนที่ Windows Installer เติมตอนติดตั้ง ([...]) แต่ MSIX เขียนไฟล์ตอนสร้าง"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] ต้องมี 'on': ตำแหน่งที่รายการแสดง เช่น [\".txt\"] หรือ \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] ต้องมี 'target' (โปรแกรมที่มันเรียก) หรือรายการที่มี parent = \"{2}\" (เมนูย่อย)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] ต้องมี 'target': โปรแกรมที่รายการเรียก"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: เมนูย่อยไม่ได้เรียกอะไร ไม่ต้องใส่ 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: รายการของเมนูย่อยแสดงที่เดียวกับเมนูย่อยของมัน ไม่ต้องใส่ 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args มีส่วนที่ Windows Installer เติมตอนติดตั้ง ([...]) แต่ MSIX เก็บได้เฉพาะข้อความคงที่"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: โปรแกรมของมันไม่อยู่ใน MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: ค่าของมันใส่ในรีจิสทรีของแพ็กเกจไม่ได้"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": ไม่มี [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on เป็นชนิดไฟล์หรือรายการของชนิดไฟล์ เช่น [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' ไม่ใช่ [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' ต้องเป็นเมนูย่อย คือ [menu.*] ที่ไม่มี target และไม่มี parent ของตัวเอง"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] ไปที่ {2} หรือ msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3} หรือ msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file ต้องเป็น {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file ต้องระบุไฟล์ที่อยู่ในแพ็กเกจ"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file ต้องระบุโปรแกรมที่อยู่ในแพ็กเกจ"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types เป็นรายการชนิดไฟล์ เช่น [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] ต้องให้ dir ของมันมีฟีเจอร์"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: ใน MSIX สคีมจะเปิดแอปพลิเคชัน target ต้องเป็นไฟล์ปฏิบัติการของ [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] ต้องมี 'value' (หรือ remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR ไปไม่ถึงภายนอก MSIX ใช้ [assoc.*], [protocol.*], [com.*] หรือ [handler.*] หรือ msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: ค่า qword ต้องใช้ DLL ตัวช่วยของ rubrapack ซึ่งโมดูลผสานไม่มี"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX เก็บค่าได้เฉพาะใต้ {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX ไม่ลบค่าและไม่ทิ้งค่าไว้ (remove, keep) ใช้ msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX เขียนค่าทั้งหมดของมัน (when) ใช้ msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: ค่าของมันมีส่วนที่ Windows Installer เติมตอนติดตั้ง ([...]) แต่ MSIX เก็บได้เฉพาะค่าคงที่"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" ต้องใช้ DLL ตัวช่วยของ rubrapack ซึ่งโมดูลผสานไม่มี"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: ชื่อคีย์หรือค่าใส่ในไฮฟ์รีจิสทรีไม่ได้"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true ใช้กับโฟลเดอร์ใต้ {2} ไม่ได้"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true ต้องใช้ DLL ตัวช่วยของ rubrapack ซึ่งโมดูลผสานไม่มี"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file ต้องระบุโปรแกรมที่อยู่ในแพ็กเกจ"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX มีทางลัดเฉพาะบนเดสก์ท็อปและในเมนูเริ่ม{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: ทางลัดของ MSIX ไม่มี working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: ทางลัดของ MSIX มีอยู่เสมอ (when ใช้กับ MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: ทางลัดของ MSIX แสดงโลโก้ของแอปพลิเคชัน icon ใช้กับ MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: ใน MSIX ทางลัดเรียกแอปพลิเคชัน target ต้องเป็นไฟล์ปฏิบัติการของ [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: รายการในเมนูเริ่มของ MSIX คือแอปพลิเคชันของมัน ซึ่งไม่รับ args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: ไม่มีข้อความกล่องโต้ตอบที่มี ID นี้"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] ต้องมี ui = \"basic\" หรือชุดกล่องโต้ตอบอื่นใน [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "เอสเคป \\{1} ไม่ใช่ค่าสเกลาร์ Unicode"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: แพ็กเกจนี้จะอัปเกรดแพ็กเกจก่อนหน้าได้ไม่เรียบร้อย"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` ของแพ็กเกจ: กล่องโต้ตอบ, โค้ดเพจ, การปรับข้อความให้เป็นมาตรฐาน"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` ของแพ็กเกจหรือบันเดิล MSIX"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "ตัวควบคุม {1} ไม่มีข้อความ ให้วางตัวควบคุมข้อความไว้ข้างๆ"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "ตัวควบคุม {1} ต้องมี [property.{2}] ที่ใช้ค่าหนึ่งของมันเป็นค่าเริ่มต้น (การติดตั้งแบบเงียบใช้ค่านี้)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "แพ็กเกจ {1} เขียน HKLM ไม่ได้ ใช้ HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "ผลลัพธ์ .msix ต้องมีตาราง [msix-app.ID] ที่ระบุไฟล์ปฏิบัติการ"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "ผลลัพธ์ .msix ต้องมีตาราง [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "ผลลัพธ์ .msm เป็นโมดูลผสาน สร้างจากต้นฉบับที่มี [module] แทน [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "ไฟล์ .txt, .md หรือ .rtf หรือ - ถ้าไม่มี"
+
+msgid "a PE file without a certificate table entry"
+msgstr "ไฟล์ PE ที่ไม่มีรายการตารางใบรับรอง"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "จะไม่รับ PIN จากบรรทัดคำสั่งเด็ดขาด (ผู้อื่นมองเห็นได้) ใช้ --pin-env หรือ --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "Package ในแมนิเฟสต์บันเดิลที่มี Type ที่ไม่รู้จัก"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "Package ในแมนิเฟสต์บันเดิลที่ไม่มี FileName, Offset หรือ Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "รายการ ZIP คลายออกมาไม่ได้ขนาดตามที่ระบุ"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "รายการ ZIP ใหญ่เกินที่อนุญาต"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "CRC-32 ของรายการ ZIP ไม่ตรงกัน"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ข้อมูลของรายการ ZIP อยู่นอกไฟล์"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "ต้นฉบับ [module] สร้างโมดูลผสาน: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "ค่าไบนารีคือเลขฐานสิบหกจำนวนคู่หลัก เช่น \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "บันเดิลที่ไม่มีแพ็กเกจ"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "ใบรับรองในเส้นทางมีส่วนขยายสำคัญที่ rubrapack ไม่เข้าใจ"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "ใบรับรองในเส้นทางลงนามโดยใบรับรองที่ไม่ใช่ CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "chain มีได้เฉพาะ [chain], [chain-package.ID] และ [define] ไม่ใช่ [{1}] แพ็กเกจสร้างจากต้นฉบับของตัวเอง"
+
+msgid "a chain holds at most %d packages"
+msgstr "chain มีแพ็กเกจได้ไม่เกิน {1}"
+
+msgid "a chain needs [chain]"
+msgstr "chain ต้องมี [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "chain ต้องมี [chain-package.ID] อย่างน้อยหนึ่งรายการ"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "อักขระที่ Windows ไม่อนุญาตในชื่อ (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "อักขระควบคุม"
+
+msgid "a damaged PE optional header"
+msgstr "PE optional header เสียหาย"
+
+msgid "a damaged PE section table"
+msgstr "ตารางเซกชัน PE เสียหาย"
+
+msgid "a damaged ZIP64 end record"
+msgstr "ระเบียนท้าย ZIP64 เสียหาย"
+
+msgid "a damaged hive bin"
+msgstr "hive bin เสียหาย"
+
+msgid "a diagnostic of rubrapack"
+msgstr "ข้อความวินิจฉัยของ rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "เริ่มบริการที่ปิดใช้งานไม่ได้"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "แพ็กเกจแบบ dual เลือกระหว่างตัวแปรผู้ใช้กับตัวแปรระบบไม่ได้"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "แพ็กเกจแบบ dual เขียน HKMU (HKLM หรือ HKCU ตามการติดตั้ง) ไม่ใช่ HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "ค่า dword เป็นจำนวนเต็ม 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "ความสามารถที่ rubrapack นี้ไม่มี (หรือสร้างมาโดยไม่มี)"
+
+msgid "a file larger than allowed"
+msgstr "ไฟล์ใหญ่เกินที่อนุญาต"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "ชื่อไฟล์ใต้ '{1}' ไม่ใช่ Unicode ที่ถูกต้องและใส่ในแพ็กเกจไม่ได้"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "ชื่อไฟล์ที่ไม่มี / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "สายคอมโพเนนต์หรือไดเรกทอรีของไฟล์ขาด"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "แบบอักษรเข้าสู่ MSIX ผ่าน [font.*] ที่ระบุมัน"
+
+msgid "a hash the token signing does not know"
+msgstr "แฮชที่การลงนามด้วยโทเค็นไม่รู้จัก"
+
+msgid "a hive cell crosses its bin"
+msgstr "hive cell ข้ามขอบ bin ของมัน"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "เวอร์ชันหรือชนิดของ hive ที่ rubrapack อ่านไม่ได้"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "ตั้งสิทธิ์ให้โฟลเดอร์ที่รู้จัก ('{1}') เองไม่ได้"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "สิทธิ์การใช้งานต้องใช้ ui = \"minimal\", \"installdir\" หรือ \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "local header ที่มีฟิลด์เพิ่มเติม (ไม่ใช่แพ็กเกจที่ rubrapack หรือ API สร้างแพ็กเกจของ Windows เขียน)"
+
+msgid "a malformed central directory"
+msgstr "central directory ผิดรูปแบบ"
+
+msgid "a modification package has no applications of its own"
+msgstr "แพ็กเกจปรับแต่งไม่มีแอปพลิเคชันของตัวเอง"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "แพ็กเกจปรับแต่งต้องใช้ Windows build 18362 ขึ้นไป: ตั้ง [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "compress ของโมดูลคือ \"none\", \"mszip\" หรือ \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "ชื่อโมดูลคือ ID ของมันใน ModuleID: ตัวอักษร ตัวเลข และ _ ไม่เกิน 35 อักขระ"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "ค่า multi เป็นอาร์เรย์ของสตริงที่ไม่ว่าง"
+
+msgid "a multi value is an array of strings"
+msgstr "ค่า multi เป็นอาร์เรย์ของสตริง"
+
+msgid "a name ending with a space or a dot"
+msgstr "ชื่อที่ลงท้ายด้วยช่องว่างหรือจุด"
+
+msgid "a name longer than 255 bytes"
+msgstr "ชื่อยาวเกิน 255 ไบต์"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "แพ็กเกจที่ระบุในแมนิเฟสต์บันเดิลไม่อยู่ในบันเดิล"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "แพ็กเกจที่ไม่มี Identity Name, Publisher, Version และ ProcessorArchitecture (หรือ ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "Offset หรือ Size ของแพ็กเกจในแมนิเฟสต์บันเดิลไม่ตรงกับตำแหน่งจริง (หรือถูกบีบอัด)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "เอกลักษณ์ของแพ็กเกจต่างจากที่แมนิเฟสต์บันเดิลระบุ"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "ชื่อแพ็กเกจในบันเดิลต้องเป็นชื่อไฟล์ที่ลงท้ายด้วย .msix หรือ .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "จะไม่รับรหัสผ่านจากบรรทัดคำสั่งเด็ดขาด (ผู้อื่นมองเห็นได้) ใช้ --pass-env หรือ --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "แพ็กเกจระดับเครื่องไม่เขียน HKCU (จะเป็นของผู้ใช้ที่ติดตั้ง) ใช้ scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "ไม่รองรับพร็อกซีที่มีชื่อผู้ใช้หรือรหัสผ่าน"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "ค่า qword เป็นจำนวนเต็ม หรือ \"0x\" ตามด้วยเลขฐานสิบหก 1 ถึง 16 หลัก"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "ตัวควบคุม radio วางปุ่มซ้อนกันในแนวตั้ง ความสูงต้องอย่างน้อย 12 ต่อค่า ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "ระเบียนมีคอลัมน์มากกว่าตารางของมัน"
+
+msgid "a record is cut short"
+msgstr "ระเบียนถูกตัดสั้น"
+
+msgid "a record names a string the pool does not have"
+msgstr "ระเบียนอ้างถึงสตริงที่ไม่มีในพูล"
+
+msgid "a reserved device name"
+msgstr "ชื่ออุปกรณ์ที่สงวนไว้"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "การกระทำ rollback เป็นแบบอะซิงโครนัสไม่ได้"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "สคีมคือตัวอักษรพิมพ์เล็กหนึ่งตัว ตามด้วยตัวอักษรพิมพ์เล็ก ตัวเลข '+', '-' หรือ '.' (ได้ '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "การกระทำแบบสคริปต์อยู่ระหว่าง InstallInitialize กับ RemoveExistingProducts (ข้อผิดพลาด 2613)"
+
+msgid "a section lies outside the file"
+msgstr "เซกชันอยู่นอกไฟล์"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "ชื่อบริการต้องไม่มี '/' หรือ '\\' (ไม่เกิน 256 อักขระ)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "setup .exe สร้างจากต้นฉบับที่มี [chain] แต่ '{1}' สร้างแพ็กเกจ (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "ต้นฉบับมี [package] หนึ่งรายการหรือ [module] หนึ่งรายการ ไม่ใช่ทั้งสอง"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "ต้นฉบับที่ผ่านการตรวจ RP1xxx ไม่ควรพบสิ่งเหล่านี้ โปรดรายงานพร้อมต้นฉบับ"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "รายการ ZIP แบบ stored ที่ขนาดไม่ตรงกัน"
+
+msgid "a stream of the package cannot be read"
+msgstr "อ่านสตรีมของแพ็กเกจไม่ได้"
+
+msgid "a table has more than 32 columns"
+msgstr "ตารางมีคอลัมน์มากกว่า 32"
+
+msgid "a text control has no property"
+msgstr "ตัวควบคุมข้อความไม่มีคุณสมบัติ"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "ค่าที่อยู่ `with` ไฟล์ใช้คอมโพเนนต์ร่วมกับไฟล์ ให้ใส่ `when` ที่ไฟล์"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "ค่ามีขนาด 1 ถึง 64 ไบต์"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "ค่าที่ไป 'with' ไฟล์จะใช้ฟีเจอร์ของไฟล์นั้น"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "เวอร์ชันคือตัวเลข 3 หรือ 4 ชุดคั่นด้วยจุด เช่น 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account ต้องเป็น LocalSystem, LocalService หรือ NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "การกระทำ '{1}' ถูกกำหนดไว้แล้ว"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "การกระทำนี้ไม่ใช่การกระทำมาตรฐานและไม่อยู่ใน CustomAction"
+
+msgid "adds too many tables"
+msgstr "เพิ่มตารางมากเกินไป"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' ไม่ใช่หน้าในชุดกล่องโต้ตอบนี้ (RpWelcomeDlg{2}{3}{4}) และไม่ใช่ [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias อยู่ใน kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias ต้องเป็นชื่อไฟล์ที่ลงท้ายด้วย .exe: ตัวอักษร ตัวเลข '.', '_', '-' (ได้ '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "ส่วน INI ต้องไม่มี ']' และคีย์ต้องไม่มี '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX วางไฟล์ในโฟลเดอร์ชั่วคราวไม่ได้"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "แอปพลิเคชันมี alias ได้หนึ่งชื่อ ([msix-extension.{1}] เป็นหนึ่งอยู่แล้ว)"
+
+msgid "an empty name"
+msgstr "ชื่อว่าง"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "เซิร์ฟเวอร์ https ต้องมี --tls-trust <certificates> หรือ --system-roots เพื่อใช้ตรวจสอบ"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "ไม่รองรับพร็อกซี https:// ให้ใช้พร็อกซี http:// (เข้าถึงเซิร์ฟเวอร์ https ผ่าน CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "การประทับเวลา Authenticode แบบเก่า (PKCS#9 counterSignature) ซึ่ง rubrapack ไม่ตรวจ"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "แพ็กเกจทางเลือกหรือแพ็กเกจปรับแต่งไม่ประกาศความสามารถหรือการตั้งค่าการจำลอง จะใช้ของแพ็กเกจหลัก"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "แพ็กเกจ x86 เขียนเฉพาะมุมมองรีจิสทรี 32 บิต"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "แอป '{1}' ไม่ใช่ [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri และ package-uri ต้องมาด้วยกัน: ตำแหน่งของไฟล์ .appinstaller และแพ็กเกจ"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch ต้องเป็น \"x64\", \"arm64\" หรือ \"x86\" (ได้ '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch ต้องเป็น \"x64\", \"x86\" หรือ \"arm64\" (ของโปรแกรมติดตั้งเอง)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "อาร์กิวเมนต์ {1} ไม่ใช่ UTF-8 ที่ถูกต้อง (ไบต์ {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "อาร์กิวเมนต์ {1} ไม่ใช่ Unicode ที่ถูกต้อง (หน่วย UTF-16 ที่ {2})"
+
+msgid "array is not closed"
+msgstr "อาร์เรย์ไม่ได้ปิด"
+
+msgid "arrays inside arrays are not supported"
+msgstr "ไม่รองรับอาร์เรย์ซ้อนในอาร์เรย์"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "อาร์เรย์ต้องมีเฉพาะสตริงหรือเฉพาะจำนวนเต็ม"
+
+msgid "at most %d languages besides English"
+msgstr "นอกจากภาษาอังกฤษแล้วมีได้ไม่เกิน {1} ภาษา"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "ตาราง [msix-app.*] ไม่เกิน 100"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "ตาราง [action.*] ไม่เกิน 50 (ไฟล์นี้มี {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color คือ \"transparent\" หรือ \"#RRGGBB\" เช่น \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "ชื่อตัวแปรไม่ถูกต้องใน '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner ต้องเป็นไฟล์ .bmp (Windows Installer แสดงได้เฉพาะ BMP)"
+
+msgid "build a package from a source file"
+msgstr "สร้างแพ็กเกจจากไฟล์ต้นฉบับ"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "การสร้าง {1} จากต้นฉบับ {2} ต้องมีตระกูลการอัปเกรดของตัวเอง เพิ่ม {3} = \"{{...}\" ใน [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab ต้องเป็น \"embed\" หรือ \"external\""
+
+msgid "cannot be read"
+msgstr "อ่านไม่ได้"
+
+msgid "cannot build the ClientHello"
+msgstr "สร้าง ClientHello ไม่ได้"
+
+msgid "cannot bundle the packages: %s"
+msgstr "รวมแพ็กเกจเป็นบันเดิลไม่ได้: {1}"
+
+msgid "cannot create '%s'"
+msgstr "สร้าง '{1}' ไม่ได้"
+
+msgid "cannot create '%s'%s"
+msgstr "สร้าง '{1}' ไม่ได้{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "ไม่พบ '{1}' สร้างได้ด้วย `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "สร้างโลโก้เริ่มต้นไม่ได้"
+
+msgid "cannot make a key share"
+msgstr "สร้าง key share ไม่ได้"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "สร้างแพตช์จาก '{1}' ไป '{2}' ไม่ได้"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "สร้างทรานส์ฟอร์มจาก '{1}' ไป '{2}' ไม่ได้"
+
+msgid "cannot open the certificate store"
+msgstr "เปิดที่เก็บใบรับรองไม่ได้"
+
+msgid "cannot read '%s'"
+msgstr "อ่าน '{1}' ไม่ได้"
+
+msgid "cannot read '%s' (%s)"
+msgstr "อ่าน '{1}' ไม่ได้ ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "อ่านแพ็กเกจ '{1}' ไม่ได้"
+
+msgid "cannot read source file '%s'"
+msgstr "อ่านไฟล์ต้นฉบับ '{1}' ไม่ได้"
+
+msgid "cannot read that folder"
+msgstr "อ่านโฟลเดอร์นั้นไม่ได้"
+
+msgid "cannot read the %s file '%s'"
+msgstr "อ่านไฟล์ {1} '{2}' ไม่ได้"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "อ่านไฟล์ PIN '{1}' ไม่ได้"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "อ่าน cabinet '{1}' ข้าง '{2}' ไม่ได้"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "อ่านไฟล์ใบรับรอง '{1}' ไม่ได้"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "อ่านใบรับรองใน '{1}' ไม่ได้"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "อ่านใบรับรองใน '{1}' ไม่ได้: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "อ่านไฟล์คีย์ '{1}' ไม่ได้"
+
+msgid "cannot read the password file '%s'"
+msgstr "อ่านไฟล์รหัสผ่าน '{1}' ไม่ได้"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "อ่านไฟล์ที่ไม่บีบอัด '{1}' ข้าง '{2}' ไม่ได้"
+
+msgid "cannot write %s"
+msgstr "เขียน {1} ไม่ได้"
+
+msgid "cannot write '%s'"
+msgstr "เขียน '{1}' ไม่ได้"
+
+msgid "cannot write '%s' to check it"
+msgstr "เขียน '{1}' เพื่อตรวจสอบไม่ได้"
+
+msgid "cannot write resources.pri"
+msgstr "เขียน resources.pri ไม่ได้"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "เขียนไฟล์เมนูข้าง '{1}' ไม่ได้"
+
+msgid "cannot write the resource package of %s"
+msgstr "เขียนแพ็กเกจทรัพยากรของ {1} ไม่ได้"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities เป็นอาร์เรย์ของชื่อ เช่น [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "ความสามารถ '{1}' ไม่ใช่สิ่งที่ rubrapack รู้จัก (คู่มือมีรายการ)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "ความสามารถ '{1}' ต้องใช้ Windows build 17763 ขึ้นไป"
+
+msgid "carriage return without a line feed"
+msgstr "carriage return ที่ไม่มี line feed"
+
+msgid "certificate file '%s': %s"
+msgstr "ไฟล์ใบรับรอง '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "เปลี่ยนต้นฉบับในที่: ผ่านเมนูคำถาม หรือด้วยตัวเลือก"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "ตรวจลายเซ็น: โครงสร้าง ไดเจสต์ ลายเซ็น และเส้นทางไปยังใบรับรองที่เชื่อถือได้"
+
+msgid "check a source or package without writing anything"
+msgstr "ตรวจต้นฉบับหรือแพ็กเกจโดยไม่เขียนอะไร"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "ตรวจพาธต้นทาง (เทียบกับไฟล์ต้นฉบับ) ตั้ง any-arch = true ถ้าตั้งใจใช้สถาปัตยกรรมอื่น"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "ตรวจการสะกด (ข้อความจะแนะนำชื่อที่ใกล้ที่สุด) และคีย์ของตาราง"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "คลาส {1} มี [com.{2}] ให้บริการอยู่แล้ว"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "คลาส {1} อยู่ใน [msix-extension.{2}] ด้วย"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class ต้องเป็น GUID เช่น {{12345678-...} (ได้ '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs ไม่มีผลเมื่อ preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs ต้องเป็น \"ask\", \"always\" หรือ \"never\" (ได้ '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "คอลัมน์ {1} เก็บค่าผิดชนิด"
+
+msgid "column %s is not valid UTF-8"
+msgstr "คอลัมน์ {1} ไม่ใช่ UTF-8 ที่ถูกต้อง"
+
+msgid "column %s may not be null"
+msgstr "คอลัมน์ {1} เป็น null ไม่ได้"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "คอลัมน์ {1}: {2} อยู่นอกช่วงของคอลัมน์"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "คอลัมน์ {1}: {2} หน่วย UTF-16 แต่คอลัมน์รับได้ {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "คอลัมน์ {1}: {2} อักขระ แต่คอลัมน์รับได้ {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "คำสั่ง '{1}' ยังไม่รองรับ"
+
+msgid "command-line"
+msgstr "บรรทัดคำสั่ง"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "คอมโพเนนต์ {1} {2} เปลี่ยนระหว่าง 32 และ 64 บิต กฎของคอมโพเนนต์ต้องการ GUID ใหม่"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "คอมโพเนนต์ {1} {2} หายไป (ทรัพยากรของมันถูกลบไปพร้อมเวอร์ชันก่อน)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "คอมโพเนนต์ {1} {2} ตอนนี้มีพาธคีย์ {3} แทน {4} กฎของคอมโพเนนต์ต้องการ GUID ใหม่"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid ต้องเป็น GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress ต้องเป็น \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" หรือ \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "เงื่อนไขมีเครื่องหมายคำพูดที่ไม่ได้ปิดหรือวงเล็บไม่ครบคู่"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "เงื่อนไขยาวเกิน 240 อักขระ (rubrapack เติม \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config เก็บสตริงแบบ \"Name=value\" (ได้ '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config เป็นอาร์เรย์ของสตริงแบบ \"Name=value\""
+
+msgid "contains a control character"
+msgstr "มีอักขระควบคุม"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "มีอักขระใดอักขระหนึ่งใน < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type เป็นชนิดสื่อ เช่น \"image/png\" (ได้ '{1}')"
+
+msgid "control character"
+msgstr "อักขระควบคุม"
+
+msgid "control character in a comment"
+msgstr "อักขระควบคุมในความคิดเห็น"
+
+msgid "control character in a string"
+msgstr "อักขระควบคุมในสตริง"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "ไม่รองรับวันที่และเวลา ให้เขียนเป็นสตริง"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when ต้องมี level มากกว่า 1 (ฟีเจอร์ระดับ 1 ติดตั้งเป็นค่าเริ่มต้นอยู่แล้ว)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "กำหนดตัวแปร ([define] หรือ -D NAME=value) หรือเขียน $$ สำหรับ $ ตามตัวอักษร"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "กล่องโต้ตอบ '{1}' ไม่ใช่ [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "ID ของกล่องโต้ตอบที่ขึ้นต้นด้วย 'Rp' (และ FilesInUse) เป็นของ rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' อยู่ภายในตัวเอง (พาธวนซ้ำ)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' ไม่ใช่ ID ของ dir และไม่ใช่ Programs, Desktop, StartMenu หรือ Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' ไม่ใช่ ID ของ dir"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' ไม่ได้ถูกกำหนด"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction ต้องเป็น \"in\" หรือ \"out\" (ได้ '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "อาร์กิวเมนต์ do/undo ยาวเกิน 255 อักขระ"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "ไม่รองรับคีย์แบบมีจุด ให้ใส่คีย์ในตารางของมันเอง"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "ถ่ายข้อมูลแพ็กเกจ (ตาราง MSI เป็น IDT)"
+
+msgid "duplicate primary key"
+msgstr "คีย์หลักซ้ำ"
+
+msgid "empty arrays are not supported"
+msgstr "ไม่รองรับอาร์เรย์ว่าง"
+
+msgid "ends with a space or a dot"
+msgstr "ลงท้ายด้วยช่องว่างหรือจุด"
+
+msgid "error"
+msgstr "ข้อผิดพลาด"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" ต้องระบุ [file.*] ที่อยู่ในแพ็กเกจ"
+
+msgid "expected ',' or ']' in the array"
+msgstr "คาดว่าจะพบ ',' หรือ ']' ในอาร์เรย์"
+
+msgid "expected '=' after the key"
+msgstr "คาดว่าจะพบ '=' หลังคีย์"
+
+msgid "expected ']' to close the table name"
+msgstr "คาดว่าจะพบ ']' เพื่อปิดชื่อตาราง"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "คาดว่าจะพบคีย์, [table] หรือความคิดเห็น"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "นามสกุล '{1}' มีโปรแกรมอยู่แล้ว ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension ต้องเป็น '.' ตามด้วยตัวพิมพ์เล็ก ตัวเลข '_' หรือ '-' (ได้ '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files ไม่มีผลเมื่อ preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files ต้องเป็น \"ask\", \"keep\" หรือ \"delete\" (ได้ '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "ฟีเจอร์ {1} หายไป การติดตั้งที่เคยมีจะเสียสิ่งที่ฟีเจอร์นั้นบรรจุ"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "ฟีเจอร์ '{1}' เป็นบรรพบุรุษของตัวเอง"
+
+msgid "feature '%s' is not defined"
+msgstr "ฟีเจอร์ '{1}' ไม่ได้ถูกกำหนด"
+
+msgid "feature parent '%s' is not defined"
+msgstr "ฟีเจอร์แม่ '{1}' ไม่ได้ถูกกำหนด"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "ไฟล์ '{1}' เรียกใช้บริการ '{2}' อยู่แล้ว"
+
+msgid "file '%s' is already registered as a font"
+msgstr "ไฟล์ '{1}' ลงทะเบียนเป็นแบบอักษรแล้ว"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "ไฟล์ '{1}' ต้องติดตั้งในโฟลเดอร์ Fonts โดยตรง ([dir.*] ที่มี path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "ไฟล์ '{1}' ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file ต้องเป็น \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "ชื่อไฟล์ยาว {1} หน่วย UTF-16 เมื่อรวมชื่อสั้น 8.3 แล้ว MSI รับได้ไม่เกิน {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization และ registry-virtualization = false ต้องใช้ Windows build 18362 ขึ้นไป: ตั้ง [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' ให้บริการคลาส COM ได้เฉพาะเมื่อเป็น .exe หรือ .dll"
+
+msgid "files but no Media row"
+msgstr "มีไฟล์แต่ไม่มีแถว Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "แก้ค่าที่ข้อความระบุ ID ประกอบด้วยตัวอักษร ตัวเลข และ '_' และต้องไม่ซ้ำกันทุกตาราง"
+
+msgid "floating-point numbers are not supported"
+msgstr "ไม่รองรับเลขทศนิยมแบบ floating-point"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "โฟลเดอร์ '{1}' ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "ชื่อโฟลเดอร์ยาว {1} หน่วย UTF-16 เมื่อรวมชื่อสั้น 8.3 แล้ว MSI รับได้ไม่เกิน {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent ต้องมี parent"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "แบบอักษรต้องใช้ scope = \"machine\" (อันนี้เป็น {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} ต้องใช้ rubrapack ที่ใหม่กว่า (ตัวนี้อ่าน format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format เป็นจำนวนเต็ม: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "ระบุ --pass-env หรือ --pass-file อย่างใดอย่างหนึ่ง"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "ระบุ --pin-env หรือ --pin-file อย่างใดอย่างหนึ่ง"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "ใส่สิ่งที่ [msix] และ [msix-app.*] ต้องการ หรือเก็บรายการไว้ให้ MSI ด้วย msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "ระบุไฟล์ภายใต้โฟลเดอร์นี้"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "ระบุไฟล์ที่อยู่ในโฟลเดอร์โปรแกรมโดยตรง หรือ - ถ้าไม่มี"
+
+msgid "give a folder below this one, such as dist"
+msgstr "ระบุโฟลเดอร์ภายใต้โฟลเดอร์นี้ เช่น dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "ระบุชื่อยาว 1 ถึง 128 ไบต์"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "ระบุโลโก้ทั้งสาม (logo-150, logo-44, store-logo) หรือไม่ระบุเลย"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "ระบุหนึ่งใน --key, --pkcs11 และ --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "ระบุโฟลเดอร์ย่อยของโฟลเดอร์โปรแกรม คั่นด้วยจุลภาค หรือ - ถ้าไม่มี"
+
+msgid "glob '%s' matches no file"
+msgstr "glob '{1}' ไม่ตรงกับไฟล์ใด"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "glob '{1}' ตรงกับไฟล์ผลลัพธ์ '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "มีสตรีม MergeModule.CABinet ที่อ่านไม่ได้"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "มี MergeModule.CABinet ที่อ่านไม่ได้"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "มีตาราง Module*Sequence ที่ไม่มีคอลัมน์มาตรฐาน"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "มีรายการ ModuleConfiguration ที่ไม่มีชื่อหรือรูปแบบไม่รู้จัก"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "มีตาราง ModuleConfiguration ที่ไม่มีคอลัมน์มาตรฐาน"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "มีตาราง ModuleSubstitution ที่ไม่มีคอลัมน์มาตรฐาน"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "มีเทมเพลต ModuleSubstitution ที่อ้างถึงรายการที่ ModuleConfiguration ไม่มี"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "มีคอมโพเนนต์ที่มีเงื่อนไข แต่ MSIX ติดตั้งทุกอย่าง"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "มีไฟล์ที่ขาดคอมโพเนนต์หรือรายการใน cabinet"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "มีโฟลเดอร์นอก TARGETDIR ที่ MSIX ไม่มีที่ให้"
+
+msgid "has a table that cannot be read"
+msgstr "มีตารางที่อ่านไม่ได้"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "มีตารางที่คอลัมน์ต่างจากของแพ็กเกจ"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "มีการกระทำสำหรับตารางลำดับที่แพ็กเกจไม่มี"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "มีคอมโพเนนต์ แต่แพ็กเกจไม่มีตาราง FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "มีไฟล์แต่ไม่มี MergeModule.CABinet หรือตาราง Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "มีไฟล์แต่ไม่มีสตรีม MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "มีไฟล์ แต่แพ็กเกจไม่มีตาราง Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "ไม่มี ModuleSignature: ไม่ใช่โมดูลผสาน"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "ไม่มี ProductCode หรือ ProductVersion"
+
+msgid "has no Property table"
+msgstr "ไม่มีตาราง Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "มีระเบียนของตารางที่ทั้งฐานและทรานส์ฟอร์มไม่ได้กำหนด"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "มีข้อความนอก ASCII ในโค้ดเพจอื่นที่ไม่ใช่ 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon ต้องเป็นไฟล์ .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id ต้องเป็น GUID เช่น {{12345678-1234-1234-1234-123456789ABC}: ของโมดูลเอง คงเดิมทุกเวอร์ชัน"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name ต้องยาว 3 ถึง 50 อักขระจาก A-Z, a-z, 0-9, '.' และ '-' (ได้ '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "ไม่รองรับตารางแบบ inline ให้ใช้ตาราง [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "ติดตั้งลงพาธเดียวกับบรรทัด {1} (Windows ไม่สนตัวพิมพ์เล็กใหญ่ในชื่อ{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "ข้อผิดพลาดภายใน: ลำดับแท็บของกล่องโต้ตอบในตัวเสีย โปรดรายงาน"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "ภายใน: ตารางของโมดูลไม่มีกฎ _Validation"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "ภายใน: ไม่มีกฎ _Validation สำหรับคอลัมน์ของ {1}"
+
+msgid "invalid"
+msgstr "ไม่ถูกต้อง"
+
+msgid "invalid - %s"
+msgstr "ไม่ถูกต้อง - {1}"
+
+msgid "is '.' or '..'"
+msgstr "เป็น '.' หรือ '..'"
+
+msgid "is a reserved device name"
+msgstr "เป็นชื่ออุปกรณ์ที่สงวนไว้"
+
+msgid "is empty"
+msgstr "ว่างเปล่า"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "ยาวเกิน 255 หน่วย UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "ไม่ใช่ฐานข้อมูล Windows Installer"
+
+msgid "is not a compound file"
+msgstr "ไม่ใช่ compound file"
+
+msgid "is not valid UTF-8"
+msgstr "ไม่ใช่ UTF-8 ที่ถูกต้อง"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "คงรหัสอัปเกรดไว้ เพิ่มเวอร์ชัน และคงรหัสคอมโพเนนต์ของไฟล์ที่ยังอยู่"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "คีย์ '{1}' ถูกตั้งค่าสองครั้งในตารางนี้ (ครั้งแรกที่บรรทัด {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "คีย์ '{1}' ต้องไม่ขึ้นต้นหรือลงท้ายด้วย '\\' และต้องไม่มีส่วนว่าง"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "คีย์ '{1}' อยู่นอกตาราง มีเพียง 'format' ที่มาก่อนตารางแรกได้"
+
+msgid "key file '%s': %s"
+msgstr "ไฟล์คีย์ '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind ต้องเป็น \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" หรือ \"context-menu\" (ได้ '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind ต้องเป็น \"preview\", \"thumbnail\" หรือ \"property\" (ได้ '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind ต้องเป็น registry, file, dir หรือ component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels เป็นอาร์เรย์ของสตริง หนึ่งตัวต่อหนึ่งค่า"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "ภาษา '{1}' ไม่มีชุดภาษา (lang/{2}.po ข้างต้นฉบับ หรือ RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "ภาษา '{1}' อยู่ในรายการสองครั้ง"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "ภาษา '{1}' ไม่อยู่ใน [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "ภาษา '{1}' ขาดข้อความ {2} รายการ รายการแรกคือ {3} เพิ่มลงในชุดภาษา (lang/{4}.po) หรือระบุ [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "ภาษา '{1}' ต้องมี [ui] langid-{2} (LANGID ของมัน สำหรับการเลือกอัตโนมัติ)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "ภาษา '{1}' ต้องมี [ui] name-{2} (ชื่อของมันในหน้าภาษา)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" ไม่ทำให้กล่องโต้ตอบเป็นภาษาเกาหลีอีกต่อไป จะเป็นภาษาอังกฤษเว้นแต่ [ui] languages = [\"ko\"] เพิ่มภาษาเกาหลี"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language ต้องเป็น \"ko-KR\" หรือ \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language ต้องเป็น \"neutral\", \"en-US\" หรือ \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages เก็บรหัสเช่น \"ko\" หรือ \"zh_TW\" (ตัวพิมพ์เล็ก 2 หรือ 3 ตัว แล้ว _ กับตัวพิมพ์ใหญ่สองตัวของภูมิภาค) (ได้ '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages เป็นอาร์เรย์ของรหัสภาษา เช่น [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages ต้องมีชุดกล่องโต้ตอบ (ui = \"basic\" หรือชุดอื่น)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
+
+msgid "launch-args needs launch"
+msgstr "launch-args ต้องมี launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license ต้องเป็นไฟล์ .txt, .md (แสดงเป็นข้อความธรรมดา) หรือ .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} แถว {2}: คอลัมน์ {3} ไม่อยู่ในรูป NFC ({4} แถว{-5}) build --nfc ปรับชื่อโฟลเดอร์ ไฟล์ และทางลัดให้เป็น NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: โค้ดเพจ {1} ไม่ใช่ 65001 ข้อความจะไม่ถูกตรวจเป็น UTF-8 ตรวจความกว้างได้เฉพาะ ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: ไม่มีปัญหา\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: ดูปัญหาด้านบน\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "แสดงรายการคีย์ที่โทเค็นหรือที่เก็บใบรับรองของ Windows ใช้ลงนามได้"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "มีทั้งโลโก้ '{1}' และแบบ .scale-100 ของมัน ให้เก็บไว้แบบเดียว"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "โลโก้ '{1}' ที่สเกล {2} มีขนาด {3}x{4} พิกเซล ต้องเป็น {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "โลโก้ '{1}' ที่สเกล {2} ไม่ใช่ไฟล์ PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "โลโก้ '{1}' มีขนาด {2}x{3} พิกเซล ต้องเป็น {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "โลโก้ '{1}' ไม่ใช่ไฟล์ PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "ไม่พบโลโก้ '{1}' (รวมถึงแบบ .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "โลโก้ '{1}': โลโก้ที่มีแบบต่างสเกลต้องมีชื่อไฟล์ ASCII พร้อมนามสกุล"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package คือชื่อเอกลักษณ์ของแพ็กเกจหลัก (ได้ '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher และ modification = true ใช้คู่กับ main-package (แพ็กเกจที่แพ็กเกจนี้สังกัด)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher คือผู้เผยแพร่ของแพ็กเกจหลัก เช่น \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "ต้องไม่มีอักขระควบคุมหรือ / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "ต้องไม่ขึ้นต้นด้วยช่องว่าง และต้องไม่ลงท้ายด้วยช่องว่างหรือจุด"
+
+msgid "merge module '%s' not found"
+msgstr "ไม่พบโมดูลผสาน '{1}'"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version ต้องเป็นเวอร์ชันเช่น 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version ต้องมีสี่ส่วน เช่น 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version ต้องมีสี่ส่วน เช่น 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "ไม่ตรงกัน"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" ลบคีย์ และไม่รับ 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode ต้องเป็น \"set\", \"add\" หรือ \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode ต้องเป็น \"set\", \"append\" หรือ \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "รายการ ZIP มากกว่าที่อนุญาตหรือมากกว่าที่ไดเรกทอรีมี"
+
+msgid "more keys and values than allowed"
+msgstr "คีย์และค่ามากเกินที่อนุญาต"
+
+msgid "more than 3 redirects"
+msgstr "เปลี่ยนเส้นทางเกิน 3 ครั้ง"
+
+msgid "more than 96 sections"
+msgstr "มีเซกชันเกิน 96"
+
+msgid "more than one source file ('%s')"
+msgstr "มีไฟล์ต้นฉบับมากกว่าหนึ่งไฟล์ ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "มีโทเค็นมากกว่าหนึ่งตัว ระบุหนึ่งตัวด้วย --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi ต้องเป็น \"each\", \"one\" หรือ \"single\" (ได้ '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "ไม่รองรับสตริงหลายบรรทัด"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "ไม่รองรับสตริงหลายบรรทัด ใช้บรรทัดเดียวกับ \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "ต้องมีขนาด 1 ถึง 64 ไบต์"
+
+msgid "name contains a control character"
+msgstr "ชื่อมีอักขระควบคุม"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name คือชื่อเอกลักษณ์ของแพ็กเกจ (ได้ '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "ชื่อไม่ใช่ ASCII และไม่มี summary-name; Subject ของสรุปจะเป็น 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "อ้างถึงโฟลเดอร์ที่ตาราง Directory ของมันไม่มี"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix ยังไม่รองรับ ให้สร้างต้นฉบับ MSI แล้วเพิ่ม [msix] (ดูคู่มือ)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "ไม่มีบรรทัด 'format = {1}': เป็นต้นฉบับรูปแบบของ rubrapack 0.18 หรือเก่ากว่าซึ่งเวอร์ชันนี้ไม่อ่าน (ตอนนี้พาธขึ้นต้นด้วย $(ProgramFiles) หรือ $(INSTALLDIR)) ดู Source format ในคู่มือ"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "ไม่ได้ระบุ --trust: ลายเซ็นถูกต้องแต่ไม่มีอะไรบอกว่าจะเชื่อถือใคร"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "ไม่มีใบรับรองในไฟล์คีย์ (หรือไฟล์ --cert) ที่เป็นของคีย์นี้"
+
+msgid "no control characters"
+msgstr "ห้ามมีอักขระควบคุม"
+
+msgid "no keys\n"
+msgstr "ไม่มีคีย์\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "ไม่มีโปรแกรมหลัก จึงไม่มีทางลัด: ไม่มี"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "ไม่มีชื่อเซิร์ฟเวอร์ หรือยาวเกิน 255 ไบต์"
+
+msgid "no string pool: not a transform"
+msgstr "ไม่มีพูลสตริง: ไม่ใช่ทรานส์ฟอร์ม"
+
+msgid "no table '%s' in '%s'"
+msgstr "ไม่มีตาราง '{1}' ใน '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove ทำให้ Modify (ส่วน Remove ของมัน) เป็นทางเดียวที่จะถอนผลิตภัณฑ์ จึงใช้ร่วมกับ no-modify ไม่ได้"
+
+msgid "not a PE file (no MZ header)"
+msgstr "ไม่ใช่ไฟล์ PE (ไม่มีส่วนหัว MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "ไม่ใช่ไฟล์ PE (ไม่มีส่วนหัว PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "ไม่ใช่ไฟล์ PEM, PKCS#8 หรือ PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ไม่ใช่ไฟล์ ZIP (ไม่มีระเบียนท้าย)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ไม่ใช่ไฟล์ ZIP (สั้นเกินไป)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "ไม่ใช่ URL ของพร็อกซีที่ rubrapack ยอมรับ (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "ไม่ใช่ไฮฟ์รีจิสทรี"
+
+msgid "not a valid number"
+msgstr "ไม่ใช่ตัวเลขที่ถูกต้อง"
+
+msgid "not a value"
+msgstr "ไม่ใช่ค่า"
+
+msgid "not a value (strings need quotes)"
+msgstr "ไม่ใช่ค่า (สตริงต้องมีเครื่องหมายคำพูด)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "ไม่ใช่ URL แบบ http:// หรือ https:// ที่ rubrapack ยอมรับ"
+
+msgid "not valid UTF-8"
+msgstr "ไม่ใช่ UTF-8 ที่ถูกต้อง"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "ไม่ได้ตรวจ (ระบุ --trust หรือ --system-roots)"
+
+msgid "not-present"
+msgstr "ไม่มี"
+
+msgid "nothing changed\n"
+msgstr "ไม่มีการเปลี่ยนแปลง\n"
+
+msgid "number out of range"
+msgstr "ตัวเลขอยู่นอกช่วง"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "ไม่รองรับเลขฐานแปดและฐานสอง ใช้ฐานสิบหรือ 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" ใช้กับ HKLM, HKCU และ HKMU (คลาสใช้ [assoc.*], [com.*] และอื่นๆ)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" ลบคีย์พร้อมทุกอย่างข้างใต้ '{1}' ไม่ใช่คีย์ของผลิตภัณฑ์เองใต้ Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" ลบทั้งคีย์ตอนถอนการติดตั้ง และไม่รับ '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "บน Windows `keys list` แสดงที่เก็บใบรับรอง"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "บน Windows ใช้โทเค็นผ่านที่เก็บใบรับรอง (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on ใช้กับ remove = true (เมื่อใดที่คีย์ถูกลบ)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on ต้องเป็น \"install\" หรือ \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on ต้องเป็น \"install\", \"uninstall\" หรือ \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: แต่ละค่าเป็นชนิดไฟล์ ('.' ตามด้วยตัวพิมพ์เล็ก ตัวเลข '_' หรือ '-'), \"*\" (ทุกไฟล์), \"folder\", \"background\" (พื้นที่ว่างของโฟลเดอร์), \"drive\" หรือ \"assoc:<ID>\" (ได้ '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "มีเพียงตัวควบคุม radio และ combo ที่รับ labels"
+
+msgid "only radio and combo controls take values"
+msgstr "มีเพียงตัวควบคุม radio และ combo ที่รับ values"
+
+msgid "out of memory"
+msgstr "หน่วยความจำไม่พอ"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "ผลลัพธ์ '{1}': rubrapack เขียน .msi, .msm, .msix, .msixbundle และ setup .exe ของ chain"
+
+msgid "package '%s' %s"
+msgstr "แพ็กเกจ '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "ไม่พบแพ็กเกจ '{1}'"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent ต้องเป็น upgrade-code ของผลิตภัณฑ์อื่น ไม่ใช่ของแพ็กเกจนี้เอง"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent ต้องเป็น upgrade-code ของผลิตภัณฑ์หลัก เป็น GUID เช่น {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path ต้องเป็น \"$(Base)/relative/path\" โดยใช้ '/' (Base เป็นโฟลเดอร์เช่น ProgramFiles หรือ ID ของ dir)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path ต้องขึ้นต้นด้วยโฟลเดอร์ของ Windows (เช่น $(ProgramFiles) หรือ $(System))"
+
+msgid "paths"
+msgstr "พาธ"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type ต้องเป็น \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" หรือ \"application\" (ได้ '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "สิทธิ์ต้องใช้ scope = \"machine\" (อันนี้เป็น {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports ต้องเป็นพอร์ตหรือช่วงเช่น \"8000-8100\" ภายใน 1-65535 (ได้ '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "พิมพ์ GUID แบบสุ่ม หรือ GUID ที่ rubrapack สร้างจากข้อความ"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "พิมพ์ JSON Schema ของต้นฉบับ (สำหรับโปรแกรมแก้ไขที่เติมและตรวจคีย์)"
+
+msgid "print the version"
+msgstr "พิมพ์เวอร์ชัน"
+
+msgid "print this help, or one command's usage"
+msgstr "พิมพ์วิธีใช้นี้ หรือวิธีใช้ของคำสั่งหนึ่ง"
+
+msgid "product-code must be a GUID"
+msgstr "product-code ต้องเป็น GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile ต้องเป็น \"all\", \"domain\", \"private\" หรือ \"public\" (ได้ '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' เป็นของ [com.{2}] อยู่แล้ว"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' เป็นของ [assoc.{2}] ด้วย ชนิดไฟล์และคลาส COM ต้องใช้ชื่อต่างกัน"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' อยู่ใน [assoc.{2}] ด้วยแต่มีคำอธิบาย, target, icon หรือ args ต่างกัน"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id ต้องเป็นตัวอักษร ตัวเลข '.', '_' หรือ '-' ห้ามขึ้นต้นด้วยตัวเลข ไม่เกิน 39 (ได้ '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "คุณสมบัติ '{1}' เป็นของตัวควบคุม '{2}' อยู่แล้ว"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "คุณสมบัติ '{1}' มีชื่อซ้ำกับ dir หรือฟีเจอร์"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "คุณสมบัติ '{1}' ถูกกำหนดแล้ว (บรรทัด {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "คุณสมบัติ '{1}' ถูกค้นหาอยู่แล้ว (บรรทัด {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "คุณสมบัติ '{1}' ถูกตั้งโดย rubrapack หรือตัวติดตั้ง กำหนดที่นี่ไม่ได้"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "คุณสมบัติ '{1}' ต้องเป็นชื่อสาธารณะของคุณเอง (ตัวพิมพ์ใหญ่)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "คุณสมบัติ '{1}' ต้องเป็นชื่อสาธารณะ: ตัวพิมพ์ใหญ่ ตัวเลข และ '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol ต้องเป็น \"tcp\" หรือ \"udp\" (ได้ '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher คือผู้เผยแพร่ของแพ็กเกจ เช่น \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher ต้องเป็น subject ของใบรับรองที่ใช้ลงนาม เช่น \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher ต้องไม่มี OID ของ unsigned-test; --unsigned-test จะเติมให้"
+
+msgid "quoted keys are not supported"
+msgstr "ไม่รองรับคีย์ที่อยู่ในเครื่องหมายคำพูด"
+
+msgid "quoted table names are not supported"
+msgstr "ไม่รองรับชื่อตารางที่อยู่ในเครื่องหมายคำพูด"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot ต้องเป็น \"suppress\" หรือ \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true ใช้กับ on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true จะไม่ทำงานเมื่อการอัปเกรดถอนเวอร์ชันนี้ และไม่รับ 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true ลบโฟลเดอร์พร้อมทุกอย่างข้างใน และไม่รับ 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} สูงกว่าเวอร์ชันของแพ็กเกจนี้ {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' ต้องเป็นเวอร์ชันเช่น 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message ต้องมี refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "รีจิสทรี '{1}' ลบค่า จึงไม่มีอะไรต้องปกป้อง"
+
+msgid "registry value '%s' needs a feature"
+msgstr "ค่ารีจิสทรี '{1}' ต้องมีฟีเจอร์"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true ลบค่าตอนติดตั้ง และไม่รับ 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons ต้องมีงานล้างข้อมูล ให้ลบ cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces มีรหัสอัปเกรดได้ไม่เกิน 16"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces เก็บรหัสอัปเกรด เป็น GUID เช่น {{12345678-1234-1234-1234-123456789ABC} (ได้ '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces เป็นอาร์เรย์ของรหัสอัปเกรด เช่น [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces ระบุ {1} สองครั้ง"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces ระบุ {1} ซึ่งเป็น upgrade-code ของแพ็กเกจนี้เองหรือของแพ็กเกจแม่"
+
+msgid "required property %s is missing"
+msgstr "ไม่มีคุณสมบัติที่จำเป็น {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "คู่ rollback ต้องมาก่อน {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root ต้องเป็น HKLM, HKCR หรือ HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root ต้องเป็น HKLM, HKCU, HKCR หรือ HKMU (ได้ '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: ความหมายของรหัสวินิจฉัย รหัสตามช่วง:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: คำถามไม่กี่ข้อจะสร้างต้นฉบับ (Enter ใช้ค่าใน [ ])\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "เรียก `rubrapack help <command>` ตรวจพาธและตรวจว่ามีโฟลเดอร์ผลลัพธ์อยู่"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (เครื่อง 0x{2}) ทำงานบนเครื่องของแพ็กเกจนี้ไม่ได้"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' ไม่ใช่โปรแกรม (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "บันทึกต้นฉบับเป็น UTF-8 (หรือ UTF-16 ที่มี BOM) โดยใช้ตัวจบบรรทัด LF หรือ CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "สคีม '{1}' มีโปรแกรมอยู่แล้ว ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope ต้องเป็น \"machine\", \"user\" หรือ \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl ต้องเป็นสตริง SDDL เช่น \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "คุณสมบัติการค้นหา '{1}' ต้องเป็นชื่อสาธารณะของคุณเอง (ตัวพิมพ์ใหญ่)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "ดูข้อความ การสร้างใหม่ด้วย rubrapack แก้ส่วนใหญ่ได้"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "ลำดับ {1} ไม่ได้อยู่หลัง {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "วางลำดับการกระทำไว้ถัดจากการกระทำที่ทั้งแพ็กเกจและโมดูลไม่ได้เรียก"
+
+msgid "service name '%s' is already used"
+msgstr "ชื่อบริการ '{1}' ถูกใช้แล้ว"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "บริการต้องใช้ scope = \"machine\" (อันนี้เป็น {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "ชื่อทางลัดยาว {1} หน่วย UTF-16 เมื่อรวมชื่อสั้น 8.3 แล้ว MSI รับได้ไม่เกิน {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "ลงนามไฟล์ PE แพ็กเกจ MSI แพ็กเกจหรือบันเดิล MSIX"
+
+msgid "signed %s\n"
+msgstr "ลงนาม {1} แล้ว\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "ต้นทาง '{1}' เป็นไดเรกทอรี ใช้ [files.ID] สำหรับหลายไฟล์"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "ต้นทาง '{1}' เป็นลิงก์สัญลักษณ์ จะไม่ตามลิงก์"
+
+msgid "source '%s' is not a regular file"
+msgstr "ต้นทาง '{1}' ไม่ใช่ไฟล์ปกติ"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "ไฟล์ต้นทาง '{1}' เปลี่ยนไประหว่างสร้างแพ็กเกจ"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "ไฟล์ต้นทาง '{1}' ใหญ่กว่า 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "ไม่พบไฟล์ต้นทาง '{1}'"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source ต้องเป็น \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source ต้องเป็นแพ็กเกจ .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "พาธต้นทาง '{1}' ต้องสัมพัทธ์กับไฟล์ต้นฉบับ"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "พาธต้นทางใช้ '/' ไม่ใช่ '\\\\' (ได้ '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start ต้องเป็น auto, demand หรือ disabled"
+
+msgid "string is not closed on this line"
+msgstr "สตริงไม่ได้ปิดในบรรทัดนี้"
+
+msgid "string lengths exceed the string data"
+msgstr "ความยาวสตริงเกินข้อมูลสตริง"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "ยังแสดงข้อมูลสรุปเป็น IDT ไม่ได้"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name ต้องเป็น ASCII (ข้อมูลสรุปเก็บได้เฉพาะ ASCII)"
+
+msgid "table %s %s"
+msgstr "ตาราง {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "ตาราง '{1}' อ่านไม่ได้"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "ตาราง [{1}{2}{3}] ถูกกำหนดสองครั้ง (ครั้งแรกที่บรรทัด {4})"
+
+msgid "table name expected"
+msgstr "คาดว่าจะพบชื่อตาราง"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "ชื่อตารางมีได้ไม่เกินสองส่วน: [kind] หรือ [kind.ID]"
+
+msgid "tables"
+msgstr "ตาราง"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "ตารางและคีย์: ตารางหรือคีย์ที่ไม่รู้จัก ขาดสิ่งที่จำเป็น รายการที่ไม่มีฟีเจอร์เมื่อมีฟีเจอร์แล้ว"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "ไม่รับการกำหนดค่า (ไม่มี ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "ไม่มีเป้าหมาย '{1}'"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target ต้องเป็น \"dir:<ID>\", \"file:<ID>\" หรือ \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
+
+msgid "target name '%s' %s"
+msgstr "ชื่อเป้าหมาย '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' ถูกใช้โดย [msix-extension.{2}] แล้ว"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name และ enabled อยู่ใน kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "ไฟล์นั้นมีอยู่แล้ว ให้ตั้งชื่ออื่น"
+
+msgid "that folder holds no files"
+msgstr "โฟลเดอร์นั้นไม่มีไฟล์"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "กล่องโต้ตอบ FilesInUse ต้องมีตาราง ListBox แม้ว่างเปล่า (ข้อผิดพลาด 2205 กล่องโต้ตอบจะถูกข้าม)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN มีอักขระหรือความยาวที่โทเค็นไม่รับ"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN หมดอายุแล้ว เปลี่ยนที่โทเค็นก่อน"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN ถูกล็อก (ใส่ผิดหลายครั้งเกินไป)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode เป็นของเวอร์ชันก่อน นั่นคือการอัปเกรดย่อย (REINSTALLMODE) ไม่ใช่การอัปเกรดหลักที่ rubrapack สร้าง"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "ไฟล์ UTF-16 ไม่ใช่ UTF-16 ที่ถูกต้อง"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "central directory ของ ZIP อยู่นอกไฟล์"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "ID ของแอปพลิเคชัน '{1}' จะกลายเป็น Application Id: ตัวอักษรและตัวเลขเท่านั้น ห้ามขึ้นต้นด้วยตัวเลข"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "ไฟล์เก็บถาวรไม่ได้ลงท้ายด้วยระเบียนท้าย ZIP64 อย่างแพ็กเกจ MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "ไฟล์เก็บถาวรไม่มีระเบียนท้าย ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "แมนิเฟสต์บันเดิลไม่มี Identity Name, Publisher และ Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "central directory อยู่นอกไฟล์เก็บถาวร"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "ใบรับรองมีส่วนขยายสำคัญที่ rubrapack ไม่เข้าใจ"
+
+msgid "the certificate has expired"
+msgstr "ใบรับรองหมดอายุแล้ว"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "ใบรับรองเป็นใบรับรอง CA ไม่ใช่ใบรับรองสำหรับลงนาม"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "ใบรับรองไม่ได้ใช้สำหรับลงนามโค้ด (ไม่มี extended key usage สำหรับลงนามโค้ด)"
+
+msgid "the certificate is not valid yet"
+msgstr "ใบรับรองยังไม่มีผล"
+
+msgid "the certificate path is longer than 8"
+msgstr "เส้นทางใบรับรองยาวเกิน 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "ตารางใบรับรองไม่มีลายเซ็น Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "ตารางใบรับรองไม่ได้อยู่ท้ายไฟล์"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "key usage ของใบรับรองไม่อนุญาตลายเซ็นดิจิทัล"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "เขียน subject ของใบรับรองเป็นผู้เผยแพร่ MSIX ไม่ได้"
+
+msgid "the chunked response is malformed"
+msgstr "การตอบกลับแบบ chunked ผิดรูปแบบ"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "บรรทัดคำสั่ง: คำสั่งหรือตัวเลือกที่ไม่รู้จัก ไฟล์ที่อ่านหรือเขียนไม่ได้ ลายเซ็น ความต่างที่ทรานส์ฟอร์มบรรจุไม่ได้"
+
+msgid "the connection has failed"
+msgstr "การเชื่อมต่อล้มเหลว"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "cabinet ที่ฝังไว้ทำให้แพ็กเกจมีขนาด 2 GiB ขึ้นไป ซึ่ง Windows Installer เปิดไม่ได้ ใช้ cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "รายการไม่อยู่ใน central directory"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "กล่องโต้ตอบข้อผิดพลาด '{1}' ต้องมีตัวควบคุม {2} ชื่อ {3} (ข้อผิดพลาด 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "ไฟล์ปฏิบัติการ '{1}' ต้องเป็น .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "โฟลเดอร์ของไฟล์ปฏิบัติการไม่ได้นำไปยังตำแหน่งที่รู้จัก"
+
+msgid "the file is not signed"
+msgstr "ไฟล์ไม่ได้ลงนาม"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "ไฟล์ลงนามแล้ว rubrapack ไม่ลงนามซ้ำหรือแทนที่ลายเซ็น"
+
+msgid "the file is too large to sign"
+msgstr "ไฟล์ใหญ่เกินกว่าจะลงนาม"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "ไฟล์ต้องมีตาราง [package] (หรือ [module] สำหรับโมดูลผสาน)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "ไฟล์ถูกเปลี่ยนหลังลงนาม (ไดเจสต์ไม่ตรงกัน)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "ไฟล์ที่จะติดตั้ง: ไม่พบ เป็นโฟลเดอร์ เป็นลิงก์ glob ที่ไม่ตรงกับอะไร โปรแกรมของสถาปัตยกรรมอื่น ชื่อยาวเกินไป"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "ตารางที่เสร็จแล้วละเมิดกฎของ Windows Installer"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "ไฮฟ์ไม่ได้ปิดอย่างเรียบร้อย (ต้องใช้ล็อกของมัน)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "checksum ของ base block ของไฮฟ์ไม่ตรงกัน"
+
+msgid "the hive's bins lie outside the file"
+msgstr "bin ของไฮฟ์อยู่นอกไฟล์"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "ไอคอนในรายการแอปที่ติดตั้งคือ [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "อินพุตจบก่อนตอบครบทุกคำถาม ไม่ได้เขียนอะไร"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "ไฟล์คีย์ใหญ่กว่า 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "คีย์ไม่ใช่ทั้ง RSA และ EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "ไลบรารีไม่ใช่โมดูล PKCS#11 (ไม่มี C_GetFunctionList หรือเป็นเวอร์ชัน 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "แมนิเฟสต์ไม่มี Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "อ่าน Identity ของแมนิเฟสต์เพื่อหาชื่อเต็มของแพ็กเกจไม่ได้"
+
+msgid "the merge module %s"
+msgstr "โมดูลผสาน {1}"
+
+msgid "the name %s"
+msgstr "ชื่อ {1}"
+
+msgid "the package is not signed"
+msgstr "แพ็กเกจไม่ได้ลงนาม"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "แพ็กเกจไม่ได้ลงนาม (ไม่มี AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "แพ็กเกจลงนามแล้ว rubrapack ไม่ลงนามซ้ำหรือแทนที่ลายเซ็น"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "แพ็กเกจลงนามแล้ว rubrapack ลงนามเฉพาะแพ็กเกจที่ยังไม่ลงนาม (และไม่ลงนามซ้ำ)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "แพ็กเกจใช้ cabinet ภายนอกซึ่งลายเซ็นของ .msi ไม่ครอบคลุม ให้สร้างแบบฝัง cabinet หรือลงนามต่อด้วย --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "เนื้อหาของแพ็กเกจไม่ตรงกับลายเซ็น (ถูกเปลี่ยนหลังลงนาม)"
+
+msgid "the package's directory cannot be read"
+msgstr "อ่านไดเรกทอรีของแพ็กเกจไม่ได้"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "แพ็กเกจในบันเดิลต้องมี Name, Publisher และ Version เหมือนกัน"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "พร็อกซีขอรหัสผ่าน (407) ซึ่ง rubrapack ไม่รองรับ"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "พร็อกซีไม่ตอบคำขอทันเนล"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "พร็อกซีส่งข้อมูลหลังคำตอบต่อ CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "ตำแหน่งที่เปลี่ยนเส้นทางยาวเกินไป"
+
+msgid "the request could not be sent"
+msgstr "ส่งคำขอไม่ได้"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "การตอบกลับมี Content-Length ผิดรูปแบบหรือขัดแย้งกัน"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "การตอบกลับมีทั้ง Content-Length และ chunked (ปฏิเสธ: เสี่ยงต่อ smuggling)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "การตอบกลับใหญ่กว่า 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "การตอบกลับใช้ transfer coding อื่นที่ไม่ใช่ chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "เงื่อนไขเดียวกันถูกกำหนดไว้แล้ว (บรรทัด {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "แบบเดียวกันโดยไม่ถาม:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "เซิร์ฟเวอร์ไม่ได้ตอบด้วย HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "เซิร์ฟเวอร์เปลี่ยนเส้นทางจาก https เป็น http (ปฏิเสธ)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "ลายเซ็น CertificateVerify ของเซิร์ฟเวอร์ตรวจสอบไม่ผ่าน"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "ใบรับรองของเซิร์ฟเวอร์ไม่ได้ใช้กับเซิร์ฟเวอร์ TLS (extended key usage ของมัน)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "รูปแบบลายเซ็นของเซิร์ฟเวอร์ไม่เข้ากับคีย์ในใบรับรอง"
+
+msgid "the signature does not verify"
+msgstr "ลายเซ็นตรวจสอบไม่ผ่าน"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "ลายเซ็นตรวจสอบกับใบรับรองของผู้ลงนามไม่ผ่าน"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "รายการลายเซ็นอธิบายแบบ ZIP64 แต่ Windows อ่านตำแหน่งจากฟิลด์ ZIP32"
+
+msgid "the signature is not DER"
+msgstr "ลายเซ็นไม่ใช่ DER"
+
+msgid "the signature streams cannot be read"
+msgstr "อ่านสตรีมลายเซ็นไม่ได้"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "แอตทริบิวต์ที่ลงนามไม่ตรงกับเนื้อหาที่ลงนาม"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "ใบรับรองของผู้ลงนามไม่ได้ใช้สำหรับลงนามโค้ด"
+
+msgid "the source file's encoding"
+msgstr "การเข้ารหัสอักขระของไฟล์ต้นฉบับ"
+
+msgid "the system random source failed"
+msgstr "แหล่งสุ่มของระบบล้มเหลว"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "ลำดับแท็บ (Control_Next) ไม่ได้เป็นวงเดียวผ่านตัวควบคุม {1} ตัวจาก Control_First (Windows Installer หยุดด้วยข้อผิดพลาด 2809 หรือ 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "เซิร์ฟเวอร์ประทับเวลาตอบด้วยข้อผิดพลาด HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "ใบรับรองของเซิร์ฟเวอร์ประทับเวลาไม่ได้ใช้สำหรับประทับเวลา"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "เวลาของเซิร์ฟเวอร์ประทับเวลาอยู่นอกช่วงอายุของใบรับรองที่ใช้ลงนาม"
+
+msgid "the token does not say what kind of key it is"
+msgstr "โทเค็นไม่บอกว่าเป็นคีย์ชนิดใด"
+
+msgid "the token is not present"
+msgstr "ไม่มีโทเค็นอยู่"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "โทเค็นส่งลายเซ็น ECDSA ที่ความยาวผิดกลับมา"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "คีย์ EC ของโทเค็นมีใบรับรองที่ไม่ใช่ EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "ลายเซ็นของโทเค็นตรวจกับใบรับรองไม่ผ่าน (คีย์และใบรับรองไม่ใช่คู่กัน)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "ใบรับรองที่เชื่อถือหมดอายุหรือยังไม่มีผล"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "แอตทริบิวต์ที่ไม่ได้ลงนามผิดรูปแบบหรือมีการประทับเวลามากกว่าหนึ่ง"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "ไม่มีไฟล์นี้ที่นี่"
+
+msgid "there is no such folder here"
+msgstr "ไม่มีโฟลเดอร์นี้ที่นี่"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "rubrapack นี้สร้างโดยไม่มีส่วนเมนู รายการ [menu.*] จะไปไม่ถึงเมนูของ Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "rubrapack นี้สร้างโดยไม่มีโปรแกรมติดตั้ง (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading ต้องเป็น \"sta\", \"mta\", \"both\" หรือ \"neutral\" (ได้ '{1}')"
+
+msgid "timestamp: "
+msgstr "การประทับเวลา: "
+
+msgid "too many languages for one bundle"
+msgstr "ภาษามากเกินไปสำหรับบันเดิลเดียว"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "ข้อความแปลและสเกลโลโก้มากเกินไปสำหรับ resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "แพ็กเกจในบันเดิลมากเกินไป"
+
+msgid "trusted"
+msgstr "เชื่อถือได้"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "มีแพ็กเกจสถาปัตยกรรมเดียวกันสองแพ็กเกจในบันเดิล"
+
+msgid "two packages of one name in a bundle"
+msgstr "มีแพ็กเกจชื่อเดียวกันสองแพ็กเกจในบันเดิล"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "มีแพ็กเกจทรัพยากร ResourceId เดียวกันสองแพ็กเกจในบันเดิล"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type ต้องเป็น string, expand, dword, qword, binary หรือ multi (ได้ '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type ต้องเป็น text, checkbox, edit, radio หรือ combo (ได้ '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version คือ major.minor เป็นเลขฐานสิบหก เช่น \"1.0\" (ได้ '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types และ verb อยู่ใน kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: แต่ละค่าเป็น \".ext\" หรือ \"*\" (ทุกไฟล์)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: แต่ละค่าเป็น '.' ตามด้วยตัวพิมพ์เล็ก ตัวเลข '_' หรือ '-' (ได้ '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" ให้ผู้ใช้เลือกโฟลเดอร์ของ dir '{2}' ซึ่งไม่มีอยู่ (ตั้ง [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" ต้องมีตาราง [feature.*] ให้เลือก"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui ต้องเป็น none, basic, minimal, installdir หรือ features (ได้ '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "มีข้อความที่ไม่คาดคิดหลังค่า"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "ไม่รู้จักคำสั่ง '{1}' (ดู 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "ไม่รู้จักเอสเคป \\{1} (ใช้ '...' สำหรับข้อความที่มีแบ็กสแลช)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "ไม่รู้จักตัวเลือกของ inspect (ใช้ชื่อตาราง, --summary, --files หรือ --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "ไม่รู้จักคีย์ '{1}' ใน [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "ตัวเลือก {1} '{2}' ไม่รู้จักหรือไม่ครบ"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "ไม่รู้จักตาราง [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "แตกแพ็กเกจลงไดเรกทอรีใหม่ จัดวางแบบเดียวกับตอนติดตั้ง"
+
+msgid "unsupported - %s"
+msgstr "ไม่รองรับ - {1}"
+
+msgid "untrusted"
+msgstr "ไม่น่าเชื่อถือ"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "คีย์ update-* ต้องมี appinstaller-uri และ package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false ใช้กับ on = \"uninstall\" หรือ \"both\" (การติดตั้งไม่เคยเป็นการถอนจากการอัปเกรด)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code ต้องเป็น GUID เช่น {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "วิธีใช้: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "วิธีใช้: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (รายการสำหรับบันเดิล)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "วิธีใช้: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "วิธีใช้: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "วิธีใช้: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "วิธีใช้: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "วิธีใช้: rubrapack inspect <file.cab> (ไม่มีตารางหรือตัวเลือก)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "วิธีใช้: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "วิธีใช้: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "วิธีใช้: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "วิธีใช้: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "วิธีใช้: rubrapack inspect <setup.exe> (ไม่มีตารางหรือตัวเลือก)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "วิธีใช้: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "วิธีใช้: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "วิธีใช้: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "วิธีใช้: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "วิธีใช้: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (ไฟล์เริ่มต้นแบบตายตัว <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; รับชื่อ .rpk ด้วย"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "วิธีใช้: rubrapack schema (JSON Schema ของต้นฉบับ ทาง stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "วิธีใช้: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "วิธีใช้: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "ใช้ '/' ในพาธ"
+
+msgid "use a full rubrapack build or another way"
+msgstr "ใช้ rubrapack ที่สร้างแบบเต็มหรือวิธีอื่น"
+
+msgid "used by more than one component"
+msgstr "ถูกใช้โดยคอมโพเนนต์มากกว่าหนึ่ง"
+
+msgid "value '%s' is listed twice"
+msgstr "ค่า '{1}' อยู่ในรายการสองครั้ง"
+
+msgid "value missing"
+msgstr "ไม่มีค่า"
+
+msgid "values and labels are strings"
+msgstr "values และ labels เป็นสตริง"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values เป็นอาร์เรย์ของสตริง 1 ถึง 32 ตัว"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "ค่า: ID, GUID, เวอร์ชัน, ตัวเลขนอกช่วง, การอ้างถึงสิ่งที่ไม่มีอยู่"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "ตัวแปร '{1}' ไม่ได้ถูกกำหนด ([define] หรือ -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "ชื่อตัวแปร '{1}' ต้องไม่มี '=' และต้องไม่ขึ้นต้นด้วย = + - ! *"
+
+msgid "variables"
+msgstr "ตัวแปร"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "ตัวแปร: $(NAME) ที่ไม่มีค่า $( ที่ไม่ได้ปิด ชื่อของ Windows หรือ ID ของ dir ในที่ที่ใช้ไม่ได้"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "เวอร์ชัน '{1}' ต้องเป็น a.b.c หรือ a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "เวอร์ชัน '{1}' ต้องเป็น a.b.c หรือ a.b.c.d โดย a, b <= 255 และ c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" ไป 'with' ไฟล์ของแพ็กเกจ 64 บิตไม่ได้"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view ต้องเป็น \"32\" หรือ \"64\""
+
+msgid "warning"
+msgstr "คำเตือน"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "ความหมายของรหัสวินิจฉัย ข้อความที่มีรหัสนั้น สิ่งที่ต้องทำ และคู่มือส่วนที่อธิบายเพิ่ม"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with ต้องเป็น \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "ถ้าไม่มี --pkcs11, `keys list` จะแสดงที่เก็บใบรับรองของ Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' ไม่ใช่ ID ของ dir"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "เขียนแพตช์ (.msp): ไฟล์และแถวที่อัปเดตฐานที่ติดตั้งแล้วไปเป็นเป้าหมาย"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "เขียนไฟล์ต้นฉบับ (.toml; ชื่อ .rpk ก็ได้): จากคำตอบที่ถามหรือให้เป็นตัวเลือก ไฟล์เริ่มต้นแบบตายตัว หรือ MSI ที่มีอยู่"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "เขียนทรานส์ฟอร์ม (.mst): สิ่งที่เปลี่ยนแพ็กเกจหนึ่งเป็นอีกแพ็กเกจ"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "เขียนตารางหรือค่าตามแบบธรรมดาที่คู่มือแสดง"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "เขียนค่าโดยไม่มี '[~]' โดย mode = \"append\" หรือ \"prepend\" จะเพิ่มให้"
+
+msgid "wrote %s\n"
+msgstr "เขียน {1} แล้ว\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width ต้องไม่เกิน 370 (ความกว้างของหน้า)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height ต้องไม่เกิน 234 (เส้นเหนือปุ่ม)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< ย้อนกลับ(&B)"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "ถัดไป(&N) >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "ติดตั้ง(&I)"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "เสร็จสิ้น(&F)"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "ตกลง"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "ใช่(&Y)"
+
+msgctxt "installer"
+msgid "No"
+msgstr "ไม่(&N)"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "ลองอีกครั้ง(&R)"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "ละเว้น(&I)"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "หยุด(&A)"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "ออก(&X)"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "เรียกดู(&R)..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "ยินดีต้อนรับสู่การติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "โปรแกรมนี้จะติดตั้ง [ProductName] ลงในคอมพิวเตอร์ของคุณ คลิก \"ถัดไป\" เพื่อดำเนินการต่อ"
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "ข้อตกลงสิทธิ์การใช้งาน"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "โปรดอ่านข้อตกลงสิทธิ์การใช้งานต่อไปนี้"
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "ฉันยอมรับข้อกำหนดของข้อตกลงสิทธิ์การใช้งาน(&A)"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "โฟลเดอร์ที่ติดตั้ง"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "เลือกโฟลเดอร์ที่จะติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "ติดตั้งไปที่(&T):"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "เปลี่ยนโฟลเดอร์"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "เรียกดูไปยังโฟลเดอร์ที่จะติดตั้ง"
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "ค้นหาใน(&L):"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "ชื่อโฟลเดอร์(&F):"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "ขึ้น"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "โฟลเดอร์ใหม่"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "เลือกคุณลักษณะ"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "เลือกคุณลักษณะที่จะติดตั้ง"
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "รีเซ็ต(&S)"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "การใช้ดิสก์(&D)"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "พื้นที่ดิสก์"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "พื้นที่ที่ต้องใช้สำหรับคุณลักษณะที่เลือก และพื้นที่ที่ว่างอยู่"
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "พร้อมติดตั้ง"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "คลิก \"ติดตั้ง\" เพื่อติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "กำลังติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "โปรดรอสักครู่"
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "สถานะ:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "การติดตั้งเสร็จสมบูรณ์"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "ติดตั้ง [ProductName] แล้ว"
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "กำลังถอนการติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "ถอนการติดตั้งเสร็จสมบูรณ์"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "ถอนการติดตั้ง [ProductName] แล้ว"
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "ยกเลิกการถอนการติดตั้งแล้ว"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "ยกเลิกการถอนการติดตั้งแล้ว ไม่มีอะไรในคอมพิวเตอร์ของคุณเปลี่ยนแปลง"
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "การถอนการติดตั้งล้มเหลว"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "เกิดข้อผิดพลาดทำให้การถอนการติดตั้งหยุดลงและถูกย้อนกลับ ผลิตภัณฑ์ยังติดตั้งอยู่"
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "ยกเลิกการติดตั้งแล้ว"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "ยกเลิกการติดตั้งแล้ว ไม่มีอะไรในคอมพิวเตอร์ของคุณเปลี่ยนแปลง"
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "การติดตั้งล้มเหลว"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "เกิดข้อผิดพลาดทำให้การติดตั้งหยุดลงและถูกย้อนกลับ ไม่มีอะไรในคอมพิวเตอร์ของคุณเปลี่ยนแปลง"
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "ยกเลิกการติดตั้ง [ProductName] หรือไม่"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "ไฟล์ที่กำลังใช้งาน"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "โปรแกรมเหล่านี้ใช้ไฟล์ที่กำลังถูกแทนที่ คลิก \"ดำเนินการต่อ\" เพื่อแทนที่ทันที โปรแกรมที่เปิดอยู่จะใช้ไฟล์เดิมจนกว่าจะเปิดใหม่ ส่วนโปรแกรมที่เปิดภายหลังจะได้ไฟล์ใหม่ ไม่ต้องรีสตาร์ต"
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "โปรแกรมเหล่านี้ใช้ไฟล์ที่กำลังถูกแทนที่ คลิก \"ดำเนินการต่อ\" เพื่อแทนที่ทันที โปรแกรมที่เปิดอยู่จะใช้ไฟล์เดิมจนกว่าจะเปิดใหม่ ส่วนโปรแกรมที่เปิดภายหลังจะได้ไฟล์ใหม่ Windows อาจขอให้รีสตาร์ตในตอนท้าย"
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "ดำเนินการต่อ(&C)"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "พื้นที่ดิสก์ไม่เพียงพอ"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "พื้นที่ไม่เพียงพอสำหรับการติดตั้งนี้ ให้เพิ่มพื้นที่ว่างหรือเลือกตำแหน่งอื่น"
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "บำรุงรักษา [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "เลือกสิ่งที่จะทำ"
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "ซ่อมแซม(&P)"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "กู้คืนไฟล์และการตั้งค่าที่หายไปหรือเสียหาย"
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "ถอนการติดตั้ง(&R)"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "ถอนการติดตั้ง [ProductName] ออกจากคอมพิวเตอร์นี้"
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "ถอนการติดตั้ง [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "คลิก \"ถอนการติดตั้ง\" เพื่อถอน [ProductName] ออกจากคอมพิวเตอร์นี้ คลิก \"ย้อนกลับ\" หรือ \"ยกเลิก\" เพื่อเก็บไว้"
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "คลิก \"ถอนการติดตั้ง\" เพื่อถอน [ProductName] ออกจากคอมพิวเตอร์นี้ การตั้งค่าและข้อมูลของโปรแกรมจะถูกลบไปด้วยและกู้คืนไม่ได้ คลิก \"ย้อนกลับ\" หรือ \"ยกเลิก\" เพื่อเก็บไว้"
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "ถอนการติดตั้ง [ProductName] ออกจากคอมพิวเตอร์นี้หรือไม่"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "ถอนการติดตั้ง [ProductName] ออกจากคอมพิวเตอร์นี้หรือไม่ การตั้งค่าและข้อมูลของโปรแกรมจะถูกลบไปด้วยและกู้คืนไม่ได้"
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "ติดตั้ง [3] อย่างปลอดภัยไม่ได้: [1] ไม่ใช่โฟลเดอร์ หรือตัวติดตั้งอาจลบไฟล์ในนั้นไม่ได้ ให้ถอน [3] ก่อน ([2]) แล้วติดตั้งอีกครั้ง"
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "อัปเกรด [3] อย่างปลอดภัยไม่ได้: เวอร์ชันที่ติดตั้ง [1] สูญเสียแพ็กเกจที่แคชไว้ จึงถอนจากที่นี่ไม่ได้ ให้ถอนเวอร์ชันนั้นด้วยแพ็กเกจต้นฉบับก่อน ([2]) แล้วติดตั้งอีกครั้ง"
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "การติดตั้งหยุดลง: มีโฟลเดอร์ [1] อยู่แล้วและไม่ได้เป็นของผู้ดูแลระบบ หรือชี้ไปที่อื่นผ่านลิงก์ เลือกโฟลเดอร์อื่น หรือให้ผู้ดูแลระบบลบออกก่อน"
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "เปิด [ProductName](&L)"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "บันทึกล็อก(&S)..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "แสดงล็อกทั้งหมด(&L)"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "บันทึกล็อกการติดตั้งไปที่ [1] ไม่ได้"
+
+msgctxt "installer"
+msgid "Change"
+msgstr "เปลี่ยน(&C)"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "เลือกคุณลักษณะที่จะติดตั้ง"
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "ขอบเขตการติดตั้ง"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "เลือกผู้ที่ใช้ [ProductName] ได้"
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "เฉพาะฉัน(&M)"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "ทุกคนบนคอมพิวเตอร์นี้(&E) - ต้องใช้สิทธิ์ผู้ดูแลระบบ"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "ภาษา"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "เลือกภาษาสำหรับการติดตั้ง"
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "กำลังค้นหาแอปพลิเคชันที่ติดตั้ง"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "กำลังคำนวณพื้นที่ที่ต้องใช้"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "กำลังคำนวณพื้นที่ที่ต้องใช้"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "กำลังสร้างโฟลเดอร์"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "กำลังสร้างทางลัด"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "กำลังลบบริการ"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "กำลังสร้างไฟล์สำเนา"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "กำลังคำนวณพื้นที่ที่ต้องใช้"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "กำลังค้นหาแอปพลิเคชันที่เกี่ยวข้อง"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "กำลังสร้างการดำเนินการสคริปต์สำหรับการกระทำ:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "กำลังคัดลอกไฟล์ใหม่"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "กำลังติดตั้งบริการใหม่"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "กำลังตรวจสอบการติดตั้ง"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "กำลังประเมินเงื่อนไขการเริ่ม"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "กำลังย้ายสถานะคุณลักษณะจากแอปพลิเคชันที่เกี่ยวข้อง"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "กำลังย้ายไฟล์"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "กำลังแพตช์ไฟล์"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "กำลังอัปเดตการลงทะเบียนคอมโพเนนต์"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "กำลังเผยแพร่คุณลักษณะของผลิตภัณฑ์"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "กำลังเผยแพร่ข้อมูลผลิตภัณฑ์"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "กำลังลงทะเบียนเซิร์ฟเวอร์คลาส"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "กำลังลงทะเบียนเซิร์ฟเวอร์ส่วนขยาย"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "กำลังลงทะเบียนแบบอักษร"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "กำลังลงทะเบียนข้อมูล MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "กำลังลงทะเบียนผลิตภัณฑ์"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "กำลังลงทะเบียนตัวระบุโปรแกรม"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "กำลังลงทะเบียนผู้ใช้"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "กำลังอัปเดตสตริงสภาพแวดล้อม"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "กำลังถอนเวอร์ชันเก่า"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "กำลังลบไฟล์"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "กำลังลบโฟลเดอร์"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "กำลังลบรายการในไฟล์ INI"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "กำลังลบค่าในรีจิสทรีของระบบ"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "กำลังลบทางลัด"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "กำลังย้อนการกระทำ:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "กำลังลบไฟล์สำรอง"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "กำลังเริ่มบริการ"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "กำลังหยุดบริการ"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "กำลังยกเลิกการเผยแพร่คุณลักษณะของผลิตภัณฑ์"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "กำลังยกเลิกการลงทะเบียนเซิร์ฟเวอร์คลาส"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "กำลังยกเลิกการลงทะเบียนเซิร์ฟเวอร์ส่วนขยาย"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "กำลังยกเลิกการลงทะเบียนแบบอักษร"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "กำลังยกเลิกการลงทะเบียนข้อมูล MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "กำลังยกเลิกการลงทะเบียนตัวระบุโปรแกรม"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "กำลังอัปเดตสตริงสภาพแวดล้อม"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "กำลังเขียนค่าในไฟล์ INI"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "กำลังเขียนค่าในรีจิสทรีของระบบ"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] ติดตั้งสำหรับผู้ใช้ปัจจุบันเท่านั้น (MSIINSTALLPERUSER=1)"
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "มีการติดตั้ง [ProductName] เวอร์ชันเดียวกันหรือใหม่กว่าอยู่แล้ว"
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "แพ็กเกจนี้อัปเกรด [ProductName] เวอร์ชันเก่าที่ติดตั้งอยู่ไม่ได้ ให้ถอนออกก่อน แล้วเรียกการติดตั้งนี้อีกครั้ง:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "คัดลอกไฟล์"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "ลบไฟล์"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "แพตช์ไฟล์"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "สร้างโฟลเดอร์"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "ลบโฟลเดอร์"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "เขียนค่ารีจิสทรี"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "ลบค่ารีจิสทรี"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "ลบคีย์รีจิสทรี"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "สร้างทางลัด"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "ลบทางลัด"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "ติดตั้งบริการ"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "ควบคุมบริการ"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "เขียนค่า INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "ตั้งค่าตัวแปรสภาพแวดล้อม"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "ลงทะเบียนแบบอักษร"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "ยกเลิกการลงทะเบียนแบบอักษร"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "เรียกการกระทำ"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "โปรแกรมติดตั้งนี้เสียหาย ให้ดาวน์โหลดใหม่"
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "โปรแกรมเหล่านี้ติดตั้งอยู่แล้ว เลือกสิ่งที่จะทำ"
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "ซ่อมแซม(&P)"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "ถอนการติดตั้ง(&R)"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "ยกเลิก"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "ถอนโปรแกรมเหล่านี้ออกจากคอมพิวเตอร์นี้หรือไม่"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "ถอนโปรแกรมแล้ว"
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "ถอนโปรแกรมหนึ่งไม่ได้"
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "โปรแกรมติดตั้งสร้างโฟลเดอร์ชั่วคราวไม่ได้"
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "ซ่อมแซม {1} ไม่ได้ (ข้อผิดพลาด {2})"
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "ติดตั้ง {1} ไม่ได้ (ข้อผิดพลาด {2}) ไม่ได้ติดตั้งสิ่งใดหลังจากนั้น"
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "ซ่อมแซมโปรแกรมแล้ว"
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "การติดตั้งเสร็จสิ้น"
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "โฟลเดอร์นี้มีไฟล์หรือโฟลเดอร์อยู่แล้ว เมื่อถอน [ProductName] ทุกอย่างในโฟลเดอร์จะถูกลบ รวมถึงสิ่งที่อยู่ตอนนี้ด้วย โฟลเดอร์ว่างหรือโฟลเดอร์ใหม่จึงปลอดภัยกว่า"
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "เลือกโฟลเดอร์อื่น(&C)"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "ใช้โฟลเดอร์นี้(&U)"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "มี [1] โปรแกรมที่ใช้ไฟล์ของ [3]:\r\n[2]\r\nปิดทั้งหมดหรือไม่\r\n\r\nใช่: ปิดทั้งหมดแล้วดำเนินการต่อ (งานที่ยังไม่บันทึกอาจหายไป)\r\nไม่: ดำเนินการต่อโดยไม่ปิด (โปรแกรมที่เปิดอยู่จะใช้ไฟล์เดิมจนกว่าจะเปิดใหม่)\r\nยกเลิก: หยุด"
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: หยุดแล้ว เพราะมี [1] โปรแกรมที่ใช้ไฟล์ของมัน:\r\n[2]ปิดโปรแกรมเหล่านั้นแล้วลองอีกครั้ง หรือระบุ RPCLOSE=yes (ปิดทั้งหมดแล้วดำเนินการต่อ) หรือ RPCLOSE=no (ดำเนินการต่อโดยไม่ปิด)"
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "มี [1] รายการในโฟลเดอร์ของ [3] ที่ไม่ได้ติดตั้งมาพร้อมกัน:\r\n[2]\r\nลบรายการเหล่านี้ด้วยหรือไม่\r\n\r\nใช่: ลบพร้อมกับ [3] (กู้คืนไม่ได้)\r\nไม่: ถอน [3] และเก็บรายการเหล่านี้ไว้\r\nยกเลิก: หยุด"
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: หยุดแล้ว เพราะมี [1] รายการในโฟลเดอร์ของมันที่ไม่ได้ติดตั้งมาพร้อมกัน:\r\n[2]ระบุ RPEXTRA=delete (ลบด้วย) หรือ RPEXTRA=keep (เก็บไว้) แล้วถอนอีกครั้ง"

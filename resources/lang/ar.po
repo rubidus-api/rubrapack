@@ -1,0 +1,3818 @@
+# rubrapack language pack: Arabic.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+# The language reads right to left (X-Rubrapack-Direction: rtl): its dialogs are mirrored.
+
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: العربية\n"
+"X-Rubrapack-LangIDs: 1025, 3073, 14337, 2049, 11265, 6145, 5121, 13313\n"
+"X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Direction: rtl\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}، {4}، {5}، مربعات الحوار {6}{7}\n  1 الاسم، الشركة المصنعة، الإصدار، البنية      2 مجلد التثبيت، لمن يتم التثبيت\n  3 مربعات الحوار، الترخيص، اللغات               4 الأجزاء الاختيارية\n  5 الاختصارات                                   6 الملفات: مطابقة مجلد البرنامج\n  7 أي مفتاح                                     v عرض   l lint   s حفظ   q خروج\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nالرسائل التي تحمل هذا الرمز (* تعني اسماً أو قيمة):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nتذهب النتائج إلى stdout، والتشخيصات إلى stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (أو RUBRAPACK_LANG) يختار لغة هذه النصوص: {1}، أو لغة لها حزمة لغة.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "رموز الخروج: 0 نجاح، 1 خطأ في المصدر، 2 الاستخدام، 3 الإدخال/الإخراج، 4 التوقيع أو التحقق،\n5 lint، 6 الشبكة.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nما الذي يجب فعله: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} لم يعد موجوداً، لكن اختصاراً يفتحه: غيّر الاختصارات (5) أولاً\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} ملف و{2} مجلد هناك\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7 أو v أو l أو s أو q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  تمت إضافة [dir.{1}] و[files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  تمت إضافة [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  اكتبه على شكل table.key، مثل package.version أو dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: لا توجد مشكلات\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: راجع المشكلات أعلاه (الملف المذكور هناك نسخة للفحص)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  تُحفظ اللغات الأخرى في [ui] languages؛ غيّر تلك القائمة بالخيار 7 (أي مفتاح)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  تمت إزالة [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  تمت إزالة [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  المجلدات الفرعية:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  هذا لا يتوافق مع مجموعة TOML الفرعية؛ لم يتغير شيء\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  لم يكن ذلك نصاً مقروءاً؛ مرة أخرى من فضلك\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  مجلد البرنامج '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  لا يحتوي المصدر على جداول [file] يشير إليها اختصار\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  لا يحتوي المصدر على مجلدات فرعية كما يكتبها `new` ([files] \"<folder>/<name>/**\")؛ أضفها بالخيار 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  طويل جداً؛ مرة أخرى من فضلك\n"
+
+msgid "  y or n\n"
+msgstr "  y أو n\n"
+
+msgid " (changed)"
+msgstr " (تم التغيير)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - إنشاء حزم Windows Installer (.msi) وMSIX (.msix)\n\nالاستخدام: rubrapack [--lang <code>] <command> [arguments]\n\nالأوامر:\n"
+
+msgid " and its dir"
+msgstr " ومجلده"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) ليس متغير بيئة، لذا لا يمكن أن تحمله قيمة قابلة للتوسيع؛ استخدم قيمة نصية (تُملأ وقت التثبيت)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) هو {2}: يمكن أن يبدأ به مسار، أو أن يحل محل قيمة يملؤها Windows Installer (السجل، البيئة، INI، الوسيطات، الرسائل)، وليس هنا"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) ليس مجلداً يمكن أن يبدأ منه مسار (معرّف dir، أو ProgramFiles أو LOCALAPPDATA أو ProgramData ... - راجع Paths في الدليل){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  البنية:       {2}\n  الملخص:       {3}\n  التوقيع:      {4}\n  السلسلة:      {5}{6}{7}\n  الإبطال:      لم يُفحص\n  الطابع الزمني: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: المتغير غير معيّن"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' ليس عنصر تحكم في مربع الحوار هذا"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' ليس في {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': يحتاج نص الترخيص إلى الاسم الإنجليزي للخط، لذا يظهر بخط اللغة نفسها؛ اكتب الاسم الإنجليزي (مثل \"Malgun Gothic\") لاستخدام هذا الخط هناك أيضاً"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "مكوّن {1}، لكن نظام الحزمة الأساسي هو {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} لا ينتمي إلى kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} لا ينتمي إلى kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} يحمل معرّفات LANGID ‏(1..65535)، مثل 1041"
+
+msgid "%s holds strings"
+msgstr "{1} يحمل سلاسل نصية"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} اسم خط من 1 إلى 31 حرفاً، مثل \"Segoe UI\" (الموجود {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} شرط MSI بعلامات اقتباس مغلقة وأقواس متوازنة"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} مصفوفة سلاسل نصية، واحدة لكل قيمة"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} مخصص لحزم MSI: لا تتم إزالة MSIX بواسطة msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} لم يعد موجوداً. هل تريد إزالة [file.{2}]؟"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} أطول من 240 حرفاً"
+
+msgid "%s is new. Add it?"
+msgstr "{1} جديد. هل تريد إضافته؟"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} ليس GUID بتنسيق السجل"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} ليس رمزاً يستخدمه rubrapack هذا{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "يجب أن يكون {1} على شكل \"file:<ID>\" يسمّي [file.*] في هذه الحزمة"
+
+msgid "%s must be a GUID"
+msgstr "يجب أن يكون {1} معرّف GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "يجب أن يكون {1} معرّف GUID مثل {{12345678-...} (الموجود '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "يجب أن يكون {1} عنوان https:// أو http:// أو file://، أو مساراً \\\\server\\share (الموجود '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "يجب أن يختلف {1} عن upgrade-code (عائلة ترقية واحدة لكل بنية)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "يحتاج {1} إلى إصدار Windows {2} أو أحدث: عيّن [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "يحتاج {1} إلى resources/bin/rubrapack_ca-{2}.dll، وقد بُني rubrapack هذا بدونه"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}، لم يُفحص TSA (حدد --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}، TSA موثوق"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}، TSA غير موثوق - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} لم يعد موجوداً أو أنه فارغ. هل تريد إزالة [files.{3}] و[dir.{4}]؟"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ مجلد جديد. هل تريد إضافته؟"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: الأخطاء: {2}{-3}، التحذيرات: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: الأخطاء: {2}{-3}، التحذيرات: {4}{-5} (مقارنة بـ {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} ملف، {3} بايت\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} ملف، {3} خطأ، 0 تحذير\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: {2} تشخيصاً آخر لم يُعرض\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: الملف '{2}' ليس [file.*] في هذه الحزمة"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: الملف '{2}' ليس برنامجاً (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' غير مغلق (اكتب '$$(' للنص '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' موجود بالفعل؛ يُترك كما هو"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' موجود بالفعل؛ أزله أو قم بالبناء في مجلد آخر"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' لديه بالفعل معالج {2} ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' لديه أذونات بالفعل"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' و'{2}' هما المسار نفسه في الحزمة"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' تابع لـ Windows أو المستعرضات"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "لا يمكن قراءة '{1}' مقابل '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' لا يتوافق مع مجموعة TOML الفرعية؛ لم يُحفظ شيء"
+
+msgid "'%s' exists already"
+msgstr "'{1}' موجود بالفعل"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' موجود بالفعل؛ غيّره باستخدام `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' موجود وليس دليلاً فارغاً؛ استخرج إلى دليل جديد"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' يذهب إلى {2}؛ أو msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' يحتوي على دفق معلومات ملخص غير قابل للقراءة"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' لا يحتوي على جداول Directory وComponent وFile وMedia للاستخراج منها"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' لا يحتوي على معلومات ملخص قابلة للقراءة"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' لا يحتوي على التحويل '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' بترميز UTF-16: يغيّر edit مصادر UTF-8 فقط (احفظه بترميز UTF-8 أولاً)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' اسم من أسماء Windows؛ أعط المتغير اسماً آخر"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' هو [chain]: يبني برنامج إعداد، -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' عنصر تحكم في الإطار المضمّن؛ اختر معرّفاً آخر"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' مجلد على مستوى الجهاز؛ لا يمكن لحزمة {2} الكتابة فيه"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' وحدة دمج: ادمجها باستخدام [merge.ID] بدلاً من ذلك"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' اسم يحتفظ به تنسيق MSIX لنفسه"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' ارتباط رمزي؛ لا يتم تتبّع الارتباطات"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' هو أيضاً [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' هو أيضاً معرّف dir؛ أعط المتغير اسماً آخر"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' مبني للجهاز 0x{2}، وليس لبنية هذه الحزمة؛ عيّن any-arch = true إذا كان ذلك مقصوداً"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ليس ملف PE ‏(.exe، .dll)، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ليس ملف PE، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' ليس مجلداً معروفاً ولا معرّف dir (المجلدات المعروفة: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' ليس ملف cabinet يستطيع rubrapack قراءته (مخزّن أو MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' ليس رمز تشخيص (RP وأربعة أرقام، مثل RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' ليس برنامجاً (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' ليس ملفاً عادياً"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' ليس برنامج إعداد من rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' ليس معرّفاً صالحاً (حروف وأرقام و'_'، لا يبدأ برقم، {2} حرفاً على الأكثر)"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' ليس قاعدة بيانات MSI صالحة: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' ليس حزمة MSIX صالحة: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' ليس حزمة صالحة: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' ليس مصدراً صالحاً (مجموعة TOML الفرعية)؛ أصلحه يدوياً أولاً"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' ليس تحويلاً صالحاً: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' ليس اسم متغير صالحاً"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' محجوز ولا يمكن استخدامه كمعرّف"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' هو اسم dir: لا يملأ dir إلا بحث في السجل أو بحث عن dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "يبدو '{1}' ملف برنامج (PE) لكن رؤوسه أو موارده تالفة"
+
+msgid "'%s' must be a string"
+msgstr "يجب أن يكون '{1}' سلسلة نصية"
+
+msgid "'%s' must be an integer"
+msgstr "يجب أن يكون '{1}' عدداً صحيحاً"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "يجب أن يكون '{1}' بين {2} و{3}"
+
+msgid "'%s' must be true or false"
+msgstr "يجب أن يكون '{1}' true أو false"
+
+msgid "'%s' must not be empty"
+msgstr "يجب ألا يكون '{1}' فارغاً"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' لا يسمّي أي تحويلات (خاصية الملخص 8): ليس تصحيحاً"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' يبدأ بمجلد: \"$(ProgramFiles)/Example\"، \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' فيه {4}؛ لم يُستخرج شيء"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} إدخالاً، أكثر من الحد {3} ‏(--limit-entries)؛ لم يُستخرج شيء"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': سيكون '{2}' و'{3}' المسار نفسه على Windows؛ لم يُستخرج شيء"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' ليست في [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': لا يمكن قراءة جدول"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': جدول غير قابل للقراءة"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': تثبّت حزمة MSIX كل ملفاتها (when)؛ استخدم msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': تزيل حزمة MSIX كل ملفاتها (keep)؛ استخدم msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': ملف cabinet '{2}' تالف أو ليس stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': اسم cabinet '{2}' ليس اسم ملف بسيطاً"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': الملف المضغوط '{2}' (التسلسل {3}) ليس له cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': الدليل '{2}' له أصل '{3}' غير موجود"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': الدليل '{2}' هو سلفه الخاص أو متداخل بعمق شديد"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': الملف '{2}' لا يطابق MsiFileHash الخاص به"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': الملف '{2}' ليس له مكوّن أو دليل"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': حجم الملف '{2}' هو {3} بايت، ويذكر جدول File ‏{4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': الملف '{2}' ليس في cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': ملفات cabinet الخارجية الخاصة به لا يغطيها التوقيع (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': مجلده لا يؤدي إلى موقع معروف"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': أكثر من {2} بايت للكتابة (--limit-bytes)؛ لم يُستخرج شيء"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': لا يوجد --timestamp: يتوقف التوقيع عن الصلاحية عند انتهاء صلاحية الشهادة"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': الحزمة '{2}' لا تطابق قيمة SHA-256 الخاصة بها"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': دفق cabinet ‏'{2}' غير موجود"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': البيان لا يحتوي على {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': يسمّي البيان '{2}'، وهو ليس في الحزمة"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': طابع زمني من {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': لا يمكن قراءة التحويل '{2}' مقابل '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' هي لغة الحزمة نفسها ({2})؛ اكتب ذلك النص بدون اللاحقة"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' يجعل Windows Installer يكتب سلسلة متعددة؛ استخدم type = \"multi\" ومصفوفة"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' في الأرقام غير مدعوم"
+
+msgid "'help' takes at most one command name"
+msgstr "يأخذ 'help' اسم أمر واحد على الأكثر"
+
+msgid "'version' takes no arguments"
+msgstr "لا يأخذ 'version' أي وسيطات"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs مخصص لملفات .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch لمجموعة حزم: قائمة من x64 وx86 وarm64، كل منها مرة واحدة (الموجود '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "يأخذ --arch بنية واحدة، أو قائمة لإخراج .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "تُستخدم --cert و--pass-env و--pass-file و--timestamp و--allow-unsigned-cabs مع --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress مخصص لملفات .msi؛ تأخذ MSIX الخيار --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "يسمّي --dist مجلداً جديداً بجوار المصدر (بدون مسار)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "يأخذ --jobs رقماً من 1 إلى 64 (الموجود '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store هو مخزن شهادات Windows؛ في غير Windows استخدم ملف مفتاح أو --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "يأخذ --key-store بصمة SHA-1 للشهادة (40 رقماً ستة عشرياً)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: لا توجد لغة كهذه (المضمّنة: {2}؛ تحتاج لغة أخرى إلى حزمة لغتها، {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "يحتاج --lang إلى لغة، مثل en أو ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "يحتاج --languages إلى مربعات حوار: أعطِ --ui أيضاً"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "يأخذ --msix-compress القيمة deflate أو store (الموجود '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: المتغير غير معيّن"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "يأخذ --patch-code معرّف GUID بأحرف كبيرة مع أقواس: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: المتغير غير معيّن"
+
+msgid "--previous compares two .msi packages"
+msgstr "يقارن --previous بين حزمتي .msi"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: لا يمكن قراءة شهادات الجذر في نظام التشغيل"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} لا يطابق الإخراج '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} غير منفّذ (msi أو msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "يأخذ --target القيمة msi أو msix (الموجود '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "تُستخدم --tsa-trust و--tls-trust و--system-roots و--proxy مع --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test و--msix-compress مخصصان لمخرجات .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test مخصص للحزم غير الموقّعة؛ احذفه مع --key"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "يأخذ --validate القيمة none، أو بعضاً من product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "أُعطي -D {1} مرتين"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' اسم من أسماء Windows؛ أعط المتغير اسماً آخر"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "يحتاج -D إلى NAME=VALUE (الموجود '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "يطلب -i كل إجابة؛ أعطِ إما -i أو الخيارات"
+
+msgid "; its range is "
+msgstr "؛ نطاقه "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' ليست في SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "يجب أن تكون ActionProperty خاصية عامة (بأحرف كبيرة)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "جميع الرموز: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "لا يبدأ AppxSignature.p7x بـ PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x ليس الإدخال الأخير"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "البنية (x64، x86، arm64)"
+
+msgid "Choose"
+msgstr "اختر"
+
+msgid "Command line"
+msgstr "سطر الأوامر"
+
+msgid "Command line (lint)"
+msgstr "سطر الأوامر (lint)"
+
+msgid "Common AppData"
+msgstr "AppData المشترك"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId ليس GUID بتنسيق السجل"
+
+msgid "Desktop shortcut?"
+msgstr "اختصار على سطح المكتب؟"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "مربعات الحوار (none، basic، minimal، installdir، features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "ينقص جدول File أو Component أو Directory عموداً قياسياً"
+
+msgid "Folder name under Program Files"
+msgstr "اسم المجلد تحت Program Files"
+
+msgid "Folder with the files to install"
+msgstr "المجلد الذي يحتوي على الملفات المطلوب تثبيتها"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "المعرّف '{1}' مستخدم بالفعل (السطر {2})؛ يجب أن تختلف المعرّفات عبر كل الجداول"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "مجلد التثبيت (مسار [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "التثبيت لـ (machine، user، dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "المفتاح على شكل table.key ‏(package.version، dir.INSTALLDIR.path، ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' تابع لمكوّن آخر"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' ليس في File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' ليس في Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "مربعات حوار باللغة الكورية إلى جانب الإنجليزية؟"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence ‏{1} أقل من تسلسل DiskId أدنى"
+
+msgid "Leave without saving the changes?"
+msgstr "هل تريد المغادرة دون حفظ التغييرات؟"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "الترخيص المطلوب قبوله (.txt، .md، .rtf؛ - لعدم وجوده)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "لا تحتوي MSIX على مجلد ظاهري لـ AppData الخاص بالمستخدم؛ ينشئ التطبيق ما يحتاجه هناك عند تشغيله"
+
+msgid "MSIX packages"
+msgstr "حزم MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: ما تحتاجه حزمة MSIX، وما لا يمكنها حمله"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "البرنامج الرئيسي، للاختصارات (- لعدم وجوده)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "الدليل: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "الشركة المصنعة"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "الشركة المصنعة (تظهر في التطبيقات المثبتة)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "أعاد NCrypt توقيع ECDSA بطول خاطئ"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "الأجزاء الاختيارية التي يمكن للمستخدم تحديدها (مجلدات فرعية، مفصولة بفواصل؛ - لعدم وجودها)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "رمز PKCS#11 المميز: لا يحمل الرمز أي شهادة بمعرّف CKA_ID الخاص بالمفتاح (أعطها باستخدام --cert)"
+
+msgid "Paths"
+msgstr "المسارات"
+
+msgid "Product name"
+msgstr "اسم المنتج"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode وUpgradeCode هما GUID نفسه"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion ‏{1} ليس أعلى من السابق {2} في حقوله الثلاثة الأولى: لا يقوم Windows Installer بالترقية"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "البرنامج الذي تفتحه الاختصارات (- لعدم وجود اختصارات)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: لا توجد لغة كهذه (المضمّنة: {2}؛ تحتاج لغة أخرى إلى حزمة لغتها، {3}.po)"
+
+msgid "Reference, "
+msgstr "المرجع، "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "التسلسل {1} لا يغطيه أي صف في Media (الأخير {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "التسلسل {1} يستخدمه ملف آخر"
+
+msgid "Source file to write"
+msgstr "ملف المصدر المطلوب كتابته"
+
+msgid "Source format"
+msgstr "تنسيق المصدر"
+
+msgid "Source must name a File row for type %ld"
+msgstr "يجب أن يسمّي Source صفاً في File للنوع {1}"
+
+msgid "Start menu shortcut?"
+msgstr "اختصار في قائمة ابدأ؟"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "تأتي إدخالات قائمة ابدأ والبرامج وسطح المكتب وبدء التشغيل من [shortcut.*] و[msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML خارج المجموعة الفرعية التي يقرؤها rubrapack، أو `format` مفقود أو أحدث من اللازم"
+
+msgid "Tables"
+msgstr "الجداول"
+
+msgid "The TOML subset"
+msgstr "مجموعة TOML الفرعية"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "ملفات UTF-16 بترتيب big-endian غير مدعومة؛ احفظها بترميز UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode ‏{1} يختلف عن {2} للإصدار السابق: هذه الحزمة لا تستبدله"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode ليس GUID بتنسيق السجل"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "القيمة (نص، رقم، true/false، [\"a\", \"b\"]؛ - تزيل المفتاح)"
+
+msgid "Variables"
+msgstr "المتغيرات"
+
+msgid "Version"
+msgstr "الإصدار"
+
+msgid "Version ([define] VERSION)"
+msgstr "الإصدار ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "الإصدارات والترقيات"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "يسمح Windows Installer بحد أقصى 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] يحتاج إلى '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "لا يمكن أن يدخل [{1}{2}] في وحدة دمج؛ الحزمة التي تدمجها هي التي تحتويه"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] غير مدعوم بعد (مخطط له في {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "لا يمكن أن يدخل [{1}.{2}] في MSIX؛ أضف msi-only = true لبناء MSIX بدونه"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: للمعرّف في وحدة الدمج 35 حرفاً على الأكثر (يُضاف إليه GUID الوحدة)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "يحتاج [{1}] إلى معرّف: اكتب [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "لا يأخذ [{1}] معرّفاً: اكتب [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "لا يحتوي [Content_Types].xml على </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml ليس الإدخال الأخير (ليست حزمة كتبها rubrapack أو واجهة الحزم في Windows)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "مصفوفات الجداول [[...]] غير مدعومة؛ أعط كل عنصر [kind.ID] خاصاً به"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "لا أثر لـ check في [action.{1}]: لا شيء يشغّله بعد؛ أزله"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "يحتاج [action.{1}] إلى do وundo معاً (undo يتراجع أيضاً عن do فاشل)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: في MSIX يفتح نوع الملف تطبيقاً: يجب أن يكون target ملفاً تنفيذياً لـ [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] موجود مرتين"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "يحتاج [chain-package] إلى معرّف: اكتب [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: يُكتب app-id وtypelib لحزمة MSI فقط؛ تسجّل MSIX الفئة بدونهما"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args خاصة ببرنامج؛ ملف DLL يُحمَّل ولا يُشغَّل"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: يشغّل surrogate ملف DLL في dllhost؛ '{2}' برنامج"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading خاص بملف DLL؛ البرنامج يحدد apartment الخاص به"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: يحتاج typelib-version وtypelib-file إلى typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] يذهب إلى {2}؛ أو msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: يجب أن يكون مصدره ملفاً يدخل في الحزمة"
+
+msgid "[define] values must be strings"
+msgstr "يجب أن تكون قيم [define] سلاسل نصية"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "يحتاج [dialog-control.{1}] إلى '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "يحتاج [dialog-control.{1}] إلى 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "يحتاج [dialog-control.{1}] إلى 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "يحتاج [dialog-control.{1}] إلى 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "في [dialog.{1}] ‏{2} عنصر تحكم؛ 64 على الأكثر"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "لا يحتوي [dialog.{1}] على أي [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] موضوع بعد نفسه عبر مربعات حوار أخرى"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "يحتاج [dialog.{1}] إلى ui = \"minimal\" أو \"installdir\" أو \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' اسم من أسماء Windows؛ أعط dir معرّفاً آخر"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: يحتاج guard إلى DLL المساعد الخاص بـ rubrapack، ولا تحمله وحدة الدمج"
+
+msgid "[env.%s] needs a feature"
+msgstr "يحتاج [env.{1}] إلى ميزة"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: تعيّن MSIX كل متغيراتها (when)؛ استخدم msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: قيمته تسمّي مكاناً لا تستطيع MSIX تقديمه (مجلد خارج الحزمة ليس من مجلدات Windows، أو جزء يُحدد وقت التثبيت)؛ استخدم msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: يحمّل المستكشف معالج {2} من DLL؛ [com.{3}] برنامج"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: يقرأ Windows معالجات الخصائص على مستوى الجهاز فقط؛ تحتاج الحزمة إلى scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: يعمل معالج المعاينة في prevhost الخاص بـ Windows؛ اترك app-id وsurrogate خارج [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: تحمل MSIX معالجات الصور المصغرة والمعاينة فقط (معالج الخصائص المحزّم لم يعطِ المستكشف أي قيم)؛ msi-only = true يبقيه لحزمة MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: نوع ملف MSIX ينتمي إلى تطبيق؛ أضف [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: الفئة {2} ليست [com.*] في هذه الحزمة (DLL المعالج هو الذي يخدمها)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: في MSIX تتشارك المعالجات كل أنواعها أو لا شيء منها (النوع موجود في ارتباط نوع ملف واحد)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: في MSIX تعمل فئته في surrogate؛ threading = \"sta\" في [com.{2}] يمنح نافذته حلقة رسائل (مع threading = {3} قد تبقى المعاينة فارغة)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: في MSIX تكون كل أنواعه في نوع ملف [assoc] واحد، أو لا شيء"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: فئته msi-only ‏([com.{2}])؛ لن يكون لـ MSIX خادم لها"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types قائمة بأنواع الملفات، مثل [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] يذهب إلى {2}؛ أو msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "يحتاج [ini.{1}] إلى 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "يحتاج [ini.{1}] إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: تكتب MSIX كل إدخالات INI الخاصة بها (when)؛ استخدم msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: قيمته تحتوي جزءاً يملؤه Windows Installer وقت التثبيت ([...])؛ تكتب MSIX الملف عند بنائها"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "يحتاج [menu.{1}] إلى 'on': حيث يظهر العنصر، مثل [\".txt\"] أو \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "يحتاج [menu.{1}] إلى 'target' (البرنامج الذي يشغّله)، أو عناصر بـ parent = \"{2}\" (قائمة فرعية)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "يحتاج [menu.{1}] إلى 'target': البرنامج الذي يشغّله العنصر"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: القائمة الفرعية لا تشغّل شيئاً: اترك 'args' خارجاً"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: عنصر القائمة الفرعية يظهر حيث تظهر قائمته الفرعية: اترك 'on' خارجاً"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args فيه جزء يملؤه Windows Installer وقت التثبيت ([...])؛ لا تحمل MSIX إلا نصاً ثابتاً"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: برنامجه ليس في MSIX ‏(msi-only؟)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: لا يمكن أن تدخل قيمه في سجل الحزمة"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": لا يوجد [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on نوع ملف أو قائمة منها، مثل [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' ليس [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: يجب أن يكون parent '{2}' قائمة فرعية: [menu.*] بلا target وبلا parent خاص به"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] يذهب إلى {2}؛ أو msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "يحتاج [merge.{1}] إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}؛ أو msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: يجب أن تكون args نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: يجب أن يكون file ‏{2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: يجب أن يسمّي file ملفاً يدخل في الحزمة"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: يجب أن يسمّي file برنامجاً يدخل في الحزمة"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types قائمة بأنواع الملفات، مثل [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "يحتاج [permission.{1}] إلى أن يكون لـ dir الخاص به ميزة"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: في MSIX يفتح المخطط تطبيقاً: يجب أن يكون target ملفاً تنفيذياً لـ [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "يحتاج [registry.{1}] إلى 'value' (أو remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: لا يصل HKCR إلى خارج MSIX؛ استخدم [assoc.*] أو [protocol.*] أو [com.*] أو [handler.*]، أو msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: تحتاج قيمة qword إلى DLL المساعد الخاص بـ rubrapack، ولا تحمله وحدة الدمج"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: تحمل MSIX القيم تحت {2}\\Software فقط"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: لا تزيل MSIX القيم ولا تتركها خلفها (remove، keep)؛ استخدم msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: تكتب MSIX كل قيمها (when)؛ استخدم msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: قيمته تحتوي جزءاً يملؤه Windows Installer وقت التثبيت ([...])؛ لا تحمل MSIX إلا قيماً ثابتة"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: يحتاج on = \"uninstall\" إلى DLL المساعد الخاص بـ rubrapack، ولا تحمله وحدة الدمج"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: لا يمكن أن يدخل اسم المفتاح أو القيمة في خلية سجل"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "يحتاج [remove.{1}] إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true ليس لمجلد تحت {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: يحتاج recursive = true إلى DLL المساعد الخاص بـ rubrapack، ولا تحمله وحدة الدمج"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: يجب أن يسمّي file برنامجاً يدخل في الحزمة"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: لا تحتوي MSIX على اختصارات إلا على سطح المكتب وفي قائمة ابدأ{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: لا يحتوي اختصار MSIX على working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: اختصار MSIX موجود دائماً (when خاص بـ MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: يعرض اختصار MSIX شعار تطبيقه؛ icon خاص بـ MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: في MSIX يشغّل الاختصار تطبيقاً: يجب أن يكون target ملفاً تنفيذياً لـ [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: إدخال قائمة ابدأ في MSIX هو تطبيقها، ولا يأخذ args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: لا يوجد نص حوار بهذا المعرّف"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "يحتاج [ui] إلى ui = \"basic\" أو مجموعة حوار أخرى في [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "تسلسل الهروب \\{1} ليس قيمة Unicode قياسية"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: لن تقوم هذه الحزمة بترقية السابقة بشكل سليم"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` لحزمة: مربعات الحوار، صفحة الترميز، توحيد النص"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` لحزمة MSIX أو مجموعة حزم"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "لا يحتوي عنصر التحكم {1} على نص؛ ضع عنصر تحكم نصياً بجانبه"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "يحتاج عنصر التحكم {1} إلى [property.{2}] بإحدى قيمه كقيمة افتراضية (يستخدمها التثبيت الصامت)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "لا يمكن لحزمة {1} الكتابة في HKLM؛ استخدم HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "يحتاج إخراج .msix إلى جدول [msix-app.ID] يسمّي الملف التنفيذي"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "يحتاج إخراج .msix إلى جدول [msix] ‏(identity-name، publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "إخراج .msm هو وحدة دمج، تُبنى من مصدر فيه [module] بدلاً من [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "ملف .txt أو .md أو .rtf، أو - لعدم وجوده"
+
+msgid "a PE file without a certificate table entry"
+msgstr "ملف PE بلا إدخال لجدول الشهادات"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "لا يُؤخذ رقم PIN أبداً من سطر الأوامر (يمكن للآخرين رؤيته)؛ استخدم --pin-env أو --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "Package في بيان مجموعة الحزم من Type غير معروف"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "Package في بيان مجموعة الحزم بدون FileName أو Offset أو Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "إدخال ZIP لا يُفك ضغطه إلى حجمه"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "إدخال ZIP أكبر من المسموح"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "قيمة CRC-32 لإدخال ZIP غير مطابقة"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "بيانات إدخال ZIP تقع خارج الملف"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "مصدر [module] يبني وحدة دمج: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "القيمة الثنائية عدد زوجي من الأرقام الست عشرية، مثل \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "مجموعة حزم بلا حزم"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "شهادة في المسار لها ملحق حرج لا يفهمه rubrapack"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "شهادة في المسار موقّعة بشهادة ليست CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "تحمل السلسلة [chain] و[chain-package.ID] و[define] فقط، وليس [{1}]؛ تُبنى الحزم من مصادرها الخاصة"
+
+msgid "a chain holds at most %d packages"
+msgstr "تحمل السلسلة {1} حزمة على الأكثر"
+
+msgid "a chain needs [chain]"
+msgstr "تحتاج السلسلة إلى [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "تحتاج السلسلة إلى [chain-package.ID] واحد على الأقل"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "حرف لا يسمح به Windows في الاسم (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "حرف تحكم"
+
+msgid "a damaged PE optional header"
+msgstr "رأس PE اختياري تالف"
+
+msgid "a damaged PE section table"
+msgstr "جدول أقسام PE تالف"
+
+msgid "a damaged ZIP64 end record"
+msgstr "سجل نهاية ZIP64 تالف"
+
+msgid "a damaged hive bin"
+msgstr "hive bin تالف"
+
+msgid "a diagnostic of rubrapack"
+msgstr "تشخيص من rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "لا يمكن بدء خدمة معطّلة"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "لا يمكن للحزمة المزدوجة الاختيار بين متغير مستخدم ومتغير نظام"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "تكتب الحزمة المزدوجة في HKMU (‏HKLM أو HKCU حسب التثبيت)، وليس في HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "قيمة dword عدد صحيح 0..4294967295 ‏(0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "ميزة لا يوفرها rubrapack هذا (أو بُني بدونها)"
+
+msgid "a file larger than allowed"
+msgstr "ملف أكبر من المسموح"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "اسم ملف تحت '{1}' ليس Unicode صالحاً ولا يمكن تحزيمه"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "اسم ملف بدون / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "سلسلة المكوّن أو الدليل لملف ما مكسورة"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "يدخل الخط في MSIX عبر [font.*] يسمّيه"
+
+msgid "a hash the token signing does not know"
+msgstr "تجزئة لا يعرفها توقيع الرمز المميز"
+
+msgid "a hive cell crosses its bin"
+msgstr "خلية hive تتجاوز bin الخاص بها"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "إصدار أو نوع hive لا يقرؤه rubrapack"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "لا يمكن إعطاء مجلد معروف نفسه ('{1}') أذونات"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "يحتاج الترخيص إلى ui = \"minimal\" أو \"installdir\" أو \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "رأس محلي بحقول إضافية (ليست حزمة كتبها rubrapack أو واجهة الحزم في Windows)"
+
+msgid "a malformed central directory"
+msgstr "دليل مركزي مشوّه"
+
+msgid "a modification package has no applications of its own"
+msgstr "حزمة التعديل ليس لها تطبيقات خاصة بها"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "تحتاج حزمة التعديل إلى إصدار Windows ‏18362 أو أحدث: عيّن [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "قيمة compress للوحدة هي \"none\" أو \"mszip\" أو \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "اسم الوحدة هو معرّفها في ModuleID: حروف وأرقام و_، 35 حرفاً على الأكثر"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "القيمة multi مصفوفة غير فارغة من السلاسل النصية"
+
+msgid "a multi value is an array of strings"
+msgstr "القيمة multi مصفوفة من السلاسل النصية"
+
+msgid "a name ending with a space or a dot"
+msgstr "اسم ينتهي بمسافة أو نقطة"
+
+msgid "a name longer than 255 bytes"
+msgstr "اسم أطول من 255 بايت"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "حزمة مذكورة في بيان مجموعة الحزم ليست في المجموعة"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "حزمة بلا Identity Name وPublisher وVersion وProcessorArchitecture (أو ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "Offset أو Size لحزمة في بيان مجموعة الحزم لا يطابق موضعها (أو أنها مضغوطة)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "هوية حزمة تختلف عما يقوله بيان مجموعة الحزم عنها"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "يجب أن يكون اسم الحزمة في المجموعة اسم ملف ينتهي بـ .msix أو .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "لا تُؤخذ كلمة المرور أبداً من سطر الأوامر (يمكن للآخرين رؤيتها)؛ استخدم --pass-env أو --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "لا تكتب الحزمة على مستوى الجهاز في HKCU (سيكون خاصاً بالمستخدم الذي يثبّت)؛ استخدم scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "الوكيل باسم مستخدم أو كلمة مرور غير مدعوم"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "قيمة qword عدد صحيح أو \"0x\" ومن 1 إلى 16 رقماً ست عشرياً"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "يرصّ عنصر التحكم radio أزراره: يجب أن يكون الارتفاع 12 على الأقل لكل قيمة ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "يحتوي سجل على أعمدة أكثر من جدوله"
+
+msgid "a record is cut short"
+msgstr "سجل مقطوع"
+
+msgid "a record names a string the pool does not have"
+msgstr "يسمّي سجل سلسلة نصية غير موجودة في المجموعة"
+
+msgid "a reserved device name"
+msgstr "اسم جهاز محجوز"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "لا يمكن أن يكون إجراء التراجع غير متزامن"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "المخطط حرف صغير، ثم حروف صغيرة أو أرقام أو '+' أو '-' أو '.' (الموجود '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "إجراء نصي بين InstallInitialize وRemoveExistingProducts (الخطأ 2613)"
+
+msgid "a section lies outside the file"
+msgstr "يقع قسم خارج الملف"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "لا يجوز أن يحتوي اسم الخدمة على '/' أو '\\' (256 حرفاً على الأكثر)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "يُبنى ملف إعداد .exe من مصدر فيه [chain]؛ '{1}' يبني حزمة (.msi، .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "يحمل المصدر [package] واحداً أو [module] واحداً، وليس كليهما"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "يجب ألا يواجه مصدر يجتاز فحوص RP1xxx هذه أبداً: يرجى الإبلاغ عنه مع المصدر"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "إدخال ZIP مخزّن بأحجام مختلفة"
+
+msgid "a stream of the package cannot be read"
+msgstr "لا يمكن قراءة دفق من الحزمة"
+
+msgid "a table has more than 32 columns"
+msgstr "جدول به أكثر من 32 عموداً"
+
+msgid "a text control has no property"
+msgstr "عنصر تحكم نصي بلا خاصية"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "القيمة التي تكون `with` ملف تشاركه مكوّنه: ضع `when` على الملف"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "القيمة من 1 إلى 64 بايت"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "القيمة التي تذهب 'with' ملف تأخذ ميزة ذلك الملف"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "الإصدار 3 أو 4 أرقام بنقاط، مثل 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "يجب أن يكون account هو LocalSystem أو LocalService أو NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "الإجراء '{1}' معرّف بالفعل"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "الإجراء ليس إجراءً قياسياً وليس في CustomAction"
+
+msgid "adds too many tables"
+msgstr "يضيف جداول كثيرة جداً"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' ليست صفحة في مجموعة الحوار هذه (RpWelcomeDlg{2}{3}{4}) ولا [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias ينتمي إلى kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "يجب أن يكون alias اسم ملف ينتهي بـ .exe: حروف وأرقام و'.' و'_' و'-' (الموجود '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "لا يجوز أن يحتوي قسم INI على ']' ولا أن يحتوي المفتاح على '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "لا يمكن لـ MSIX وضع ملفات في المجلد المؤقت"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "للتطبيق اسم مستعار واحد ([msix-extension.{1}] هو واحد بالفعل)"
+
+msgid "an empty name"
+msgstr "اسم فارغ"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "يحتاج خادم https إلى --tls-trust <certificates> أو --system-roots للتحقق منه"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "وكيل https:// غير مدعوم؛ أعطِ وكيل http:// (يُوصل إلى خوادم https عبر CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "طابع زمني Authenticode قديم النمط (PKCS#9 counterSignature)، لا يفحصه rubrapack"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "حزمة اختيارية أو حزمة تعديل لا تعلن أي قدرات ولا إعدادات ظاهرية: تنطبق إعدادات حزمتها الرئيسية"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "حزمة x86 تكتب في عرض السجل 32 بت فقط"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "التطبيق '{1}' ليس [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri وpackage-uri يأتيان معاً: حيث سيكون ملف .appinstaller والحزمة"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "يجب أن يكون arch هو \"x64\" أو \"arm64\" أو \"x86\" (الموجود '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "يجب أن يكون arch هو \"x64\" أو \"x86\" أو \"arm64\" (الخاص ببرنامج الإعداد نفسه)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "الوسيطة {1} ليست UTF-8 صالحاً (البايت {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "الوسيطة {1} ليست Unicode صالحاً (وحدة UTF-16 رقم {2})"
+
+msgid "array is not closed"
+msgstr "المصفوفة غير مغلقة"
+
+msgid "arrays inside arrays are not supported"
+msgstr "المصفوفات داخل المصفوفات غير مدعومة"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "يجب أن تحمل المصفوفات سلاسل نصية فقط أو أعداداً صحيحة فقط"
+
+msgid "at most %d languages besides English"
+msgstr "{1} لغات على الأكثر إلى جانب الإنجليزية"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "100 جدول [msix-app.*] على الأكثر"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "50 جدول [action.*] على الأكثر (في هذا الملف {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color هو \"transparent\" أو \"#RRGGBB\"، مثل \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "اسم متغير غير صالح في '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "يجب أن يكون banner ملف .bmp ‏(Windows Installer يعرض BMP فقط)"
+
+msgid "build a package from a source file"
+msgstr "بناء حزمة من ملف مصدر"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "يحتاج بناء {1} من مصدر {2} إلى عائلة ترقية خاصة به: أضف {3} = \"{{...}\" إلى [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "يجب أن يكون cab هو \"embed\" أو \"external\""
+
+msgid "cannot be read"
+msgstr "لا يمكن قراءته"
+
+msgid "cannot build the ClientHello"
+msgstr "لا يمكن بناء ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "لا يمكن تجميع الحزم: {1}"
+
+msgid "cannot create '%s'"
+msgstr "لا يمكن إنشاء '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "لا يمكن إنشاء '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "لا يمكن العثور على '{1}'؛ أنشئ واحداً باستخدام `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "لا يمكن إنشاء شعار افتراضي"
+
+msgid "cannot make a key share"
+msgstr "لا يمكن إنشاء مشاركة مفتاح"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "لا يمكن إنشاء تصحيح من '{1}' إلى '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "لا يمكن إنشاء تحويل من '{1}' إلى '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "لا يمكن فتح مخزن الشهادات"
+
+msgid "cannot read '%s'"
+msgstr "لا يمكن قراءة '{1}'"
+
+msgid "cannot read '%s' (%s)"
+msgstr "لا يمكن قراءة '{1}' ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "لا يمكن قراءة الحزمة '{1}'"
+
+msgid "cannot read source file '%s'"
+msgstr "لا يمكن قراءة ملف المصدر '{1}'"
+
+msgid "cannot read that folder"
+msgstr "لا يمكن قراءة ذلك المجلد"
+
+msgid "cannot read the %s file '%s'"
+msgstr "لا يمكن قراءة ملف {1} ‏'{2}'"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "لا يمكن قراءة ملف PIN ‏'{1}'"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "لا يمكن قراءة ملف cabinet ‏'{1}' بجوار '{2}'"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "لا يمكن قراءة ملف الشهادة '{1}'"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "لا يمكن قراءة الشهادات في '{1}'"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "لا يمكن قراءة الشهادات في '{1}': {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "لا يمكن قراءة ملف المفتاح '{1}'"
+
+msgid "cannot read the password file '%s'"
+msgstr "لا يمكن قراءة ملف كلمة المرور '{1}'"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "لا يمكن قراءة الملف غير المضغوط '{1}' بجوار '{2}'"
+
+msgid "cannot write %s"
+msgstr "لا يمكن كتابة {1}"
+
+msgid "cannot write '%s'"
+msgstr "لا يمكن كتابة '{1}'"
+
+msgid "cannot write '%s' to check it"
+msgstr "لا يمكن كتابة '{1}' لفحصه"
+
+msgid "cannot write resources.pri"
+msgstr "لا يمكن كتابة resources.pri"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "لا يمكن كتابة ملفات القائمة بجوار '{1}'"
+
+msgid "cannot write the resource package of %s"
+msgstr "لا يمكن كتابة حزمة الموارد لـ {1}"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities مصفوفة أسماء، مثل [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "القدرة '{1}' ليست مما يعرفه rubrapack (يسردها الدليل)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "تحتاج القدرة '{1}' إلى إصدار Windows ‏17763 أو أحدث"
+
+msgid "carriage return without a line feed"
+msgstr "إرجاع إلى بداية السطر بدون سطر جديد"
+
+msgid "certificate file '%s': %s"
+msgstr "ملف الشهادة '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "تغيير مصدر في مكانه: عبر قائمة أسئلة، أو بالخيارات"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "فحص توقيع: البنية، الملخص، التوقيع، والمسار إلى شهادة موثوقة"
+
+msgid "check a source or package without writing anything"
+msgstr "فحص مصدر أو حزمة دون كتابة أي شيء"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "تحقق من مسارات المصدر (بالنسبة لملف المصدر)؛ عيّن any-arch = true لبنية أخرى عن قصد"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "تحقق من الإملاء (تقترح الرسالة أقرب اسم) ومن مفاتيح الجدول"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "الفئة {1} يخدمها بالفعل [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "الفئة {1} موجودة أيضاً في [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "يجب أن تكون class معرّف GUID مثل {{12345678-...} (الموجود '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "لا أثر لـ close-programs مع preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "يجب أن يكون close-programs هو \"ask\" أو \"always\" أو \"never\" (الموجود '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "العمود {1} يحمل نوعاً خاطئاً من القيم"
+
+msgid "column %s is not valid UTF-8"
+msgstr "العمود {1} ليس UTF-8 صالحاً"
+
+msgid "column %s may not be null"
+msgstr "لا يجوز أن يكون العمود {1} فارغاً (null)"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "العمود {1}: ‏{2} خارج نطاق العمود"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "العمود {1}: ‏{2} وحدة UTF-16، والعمود يتسع لـ {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "العمود {1}: ‏{2} حرفاً، والعمود يتسع لـ {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "الأمر '{1}' غير منفّذ بعد"
+
+msgid "command-line"
+msgstr "سطر الأوامر"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "المكوّن {1} {2} تغيّر بين 32 و64 بت: تتطلب قواعد المكوّنات GUID جديداً"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "المكوّن {1} {2} لم يعد موجوداً (تُزال موارده مع الإصدار السابق)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "المكوّن {1} {2} أصبح له مسار المفتاح {3} بدلاً من {4}: تتطلب قواعد المكوّنات GUID جديداً"
+
+msgid "component-guid must be a GUID"
+msgstr "يجب أن يكون component-guid معرّف GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "يجب أن يكون compress هو \"none\" أو \"mszip\" أو \"mszip:0\" ... \"mszip:9\" أو \"lzx\" أو \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "في الشرط علامة اقتباس غير مغلقة أو أقواس غير متوازنة"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "الشرط أطول من 240 حرفاً (يضيف rubrapack \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "يحمل config سلاسل \"Name=value\" (الموجود '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config مصفوفة من سلاسل \"Name=value\""
+
+msgid "contains a control character"
+msgstr "يحتوي على حرف تحكم"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "يحتوي على أحد < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type نوع وسائط، مثل \"image/png\" (الموجود '{1}')"
+
+msgid "control character"
+msgstr "حرف تحكم"
+
+msgid "control character in a comment"
+msgstr "حرف تحكم في تعليق"
+
+msgid "control character in a string"
+msgstr "حرف تحكم في سلسلة نصية"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "التواريخ والأوقات غير مدعومة؛ اكتبها كسلاسل نصية"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "يحتاج default-when إلى level أعلى من 1 (الميزة ذات المستوى 1 تُثبَّت افتراضياً على أي حال)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "عرّف المتغير ([define] أو -D NAME=value)، أو اكتب $$ للحصول على $ حرفية"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "مربع الحوار '{1}' ليس [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "معرّفات مربعات الحوار التي تبدأ بـ 'Rp' (وFilesInUse) خاصة بـ rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir ‏'{1}' داخل نفسه (حلقة مسار)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir ‏'{1}' ليس معرّف dir ولا Programs أو Desktop أو StartMenu أو Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir ‏'{1}' ليس معرّف dir"
+
+msgid "dir '%s' is not defined"
+msgstr "dir ‏'{1}' غير معرّف"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "يجب أن يكون direction هو \"in\" أو \"out\" (الموجود '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "وسيطات do/undo أطول من 255 حرفاً"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "المفاتيح المنقّطة غير مدعومة؛ ضع المفتاح في جدوله الخاص"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "تفريغ حزمة (جداول MSI بصيغة IDT)"
+
+msgid "duplicate primary key"
+msgstr "مفتاح أساسي مكرر"
+
+msgid "empty arrays are not supported"
+msgstr "المصفوفات الفارغة غير مدعومة"
+
+msgid "ends with a space or a dot"
+msgstr "ينتهي بمسافة أو نقطة"
+
+msgid "error"
+msgstr "خطأ"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "يجب أن يسمّي executable = \"{1}\" ‏[file.*] يدخل في الحزمة"
+
+msgid "expected ',' or ']' in the array"
+msgstr "كان متوقعاً ',' أو ']' في المصفوفة"
+
+msgid "expected '=' after the key"
+msgstr "كان متوقعاً '=' بعد المفتاح"
+
+msgid "expected ']' to close the table name"
+msgstr "كان متوقعاً ']' لإغلاق اسم الجدول"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "كان متوقعاً مفتاح أو [table] أو تعليق"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "للامتداد '{1}' برنامج بالفعل ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "يجب أن يكون extension هو '.' ثم حروف صغيرة أو أرقام أو '_' أو '-' (الموجود '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "لا أثر لـ extra-files مع preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "يجب أن يكون extra-files هو \"ask\" أو \"keep\" أو \"delete\" (الموجود '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "الميزة {1} لم تعد موجودة: تفقد التثبيتات التي كانت تحتوي عليها ما كانت تحمله"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "الميزة '{1}' هي سلفها الخاص"
+
+msgid "feature '%s' is not defined"
+msgstr "الميزة '{1}' غير معرّفة"
+
+msgid "feature parent '%s' is not defined"
+msgstr "أصل الميزة '{1}' غير معرّف"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "الملف '{1}' يشغّل الخدمة '{2}' بالفعل"
+
+msgid "file '%s' is already registered as a font"
+msgstr "الملف '{1}' مسجل بالفعل كخط"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "يجب تثبيت الملف '{1}' في مجلد Fonts نفسه ([dir.*] بالمسار path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "يحتاج الملف '{1}' إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
+
+msgid "file must be \"file:<ID>\""
+msgstr "يجب أن يكون file على شكل \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "اسم الملف {1} وحدة UTF-16؛ مع اسمه القصير 8.3 يتسع MSI لـ {2} على الأكثر"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "يحتاج file-system-virtualization وregistry-virtualization = false إلى إصدار Windows ‏18362 أو أحدث: عيّن [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: ‏'{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: ‏'{1}' يخدم فئات COM فقط كملف .exe أو .dll"
+
+msgid "files but no Media row"
+msgstr "ملفات بلا صف Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "أصلح القيمة التي تذكرها الرسالة؛ المعرّفات حروف وأرقام و'_' وتختلف عبر كل الجداول"
+
+msgid "floating-point numbers are not supported"
+msgstr "الأرقام العشرية غير مدعومة"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "يحتاج المجلد '{1}' إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "اسم المجلد {1} وحدة UTF-16؛ مع اسمه القصير 8.3 يتسع MSI لـ {2} على الأكثر"
+
+msgid "follow-parent needs a parent"
+msgstr "يحتاج follow-parent إلى أصل"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "تحتاج الخطوط إلى scope = \"machine\" (هذه {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "يحتاج format {1} إلى rubrapack أحدث (هذا يقرأ format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format عدد صحيح: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "أعطِ --pass-env أو --pass-file، وليس كليهما"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "أعطِ --pin-env أو --pin-file، وليس كليهما"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "أعطِ [msix] و[msix-app.*] ما يحتاجان إليه، أو أبقِ العنصر لـ MSI باستخدام msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "أعطِ ملفاً تحت هذا المجلد"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "أعطِ ملفاً موجوداً مباشرة في مجلد البرنامج، أو - لعدم وجوده"
+
+msgid "give a folder below this one, such as dist"
+msgstr "أعطِ مجلداً تحت هذا المجلد، مثل dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "أعطِ اسماً من 1 إلى 128 بايت"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "أعطِ الشعارات الثلاثة كلها (logo-150، logo-44، store-logo) أو لا شيء"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "أعطِ واحداً من --key و--pkcs11 و--key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "أعطِ مجلدات فرعية من مجلد البرنامج، مفصولة بفواصل، أو - لعدم وجودها"
+
+msgid "glob '%s' matches no file"
+msgstr "النمط '{1}' لا يطابق أي ملف"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "النمط '{1}' يطابق ملف الإخراج '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "يحتوي على دفق MergeModule.CABinet لا يمكن قراءته"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "يحتوي على MergeModule.CABinet لا يمكن قراءته"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "يحتوي على جدول Module*Sequence بلا الأعمدة القياسية"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "يحتوي على عنصر ModuleConfiguration بلا اسم أو بتنسيق غير معروف"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "يحتوي على جدول ModuleConfiguration بلا الأعمدة القياسية"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "يحتوي على جدول ModuleSubstitution بلا الأعمدة القياسية"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "يحتوي على قالب ModuleSubstitution يسمّي عنصراً ليس في ModuleConfiguration"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "يحتوي على مكوّن بشرط؛ تثبّت MSIX كل شيء"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "يحتوي على ملف ينقصه مكوّنه أو إدخاله في cabinet"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "يحتوي على مجلد خارج TARGETDIR الخاص به لا مكان له في MSIX"
+
+msgid "has a table that cannot be read"
+msgstr "يحتوي على جدول لا يمكن قراءته"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "يحتوي على جدول تختلف أعمدته عن أعمدة الحزمة"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "يحتوي على إجراءات لجدول تسلسل ليس في الحزمة"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "يحتوي على مكوّنات، لكن الحزمة ليس فيها جدول FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "يحتوي على ملفات لكن بلا MergeModule.CABinet أو جدول Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "يحتوي على ملفات لكن بلا دفق MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "يحتوي على ملفات، لكن الحزمة ليس فيها جدول Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "لا يحتوي على ModuleSignature: ليس وحدة دمج"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "لا يحتوي على ProductCode أو ProductVersion"
+
+msgid "has no Property table"
+msgstr "لا يحتوي على جدول Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "يحتوي على سجلات لجدول لا يعرّفه الأساس ولا التحويل"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "يحتوي على نص خارج ASCII في صفحة ترميز غير 65001 ‏(UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "يجب أن يكون icon ملف .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "يجب أن يكون id معرّف GUID مثل {{12345678-1234-1234-1234-123456789ABC}: معرّف الوحدة نفسها، يُحفظ في كل إصدار"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "يجب أن يكون identity-name من 3 إلى 50 حرفاً من A-Z وa-z و0-9 و'.' و'-' (الموجود '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "الجداول المضمّنة inline غير مدعومة؛ استخدم جدول [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "يُثبَّت في المسار نفسه الذي في السطر {1} (يتجاهل Windows حالة الأحرف في الأسماء{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "خطأ داخلي: ترتيب الجدولة في مربع حوار مضمّن مكسور؛ يرجى الإبلاغ عنه"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "داخلي: لا توجد قاعدة _Validation لجدول في الوحدة"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "داخلي: لا توجد قاعدة _Validation لعمود في {1}"
+
+msgid "invalid"
+msgstr "غير صالح"
+
+msgid "invalid - %s"
+msgstr "غير صالح - {1}"
+
+msgid "is '.' or '..'"
+msgstr "هو '.' أو '..'"
+
+msgid "is a reserved device name"
+msgstr "اسم جهاز محجوز"
+
+msgid "is empty"
+msgstr "فارغ"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "أطول من 255 وحدة UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "ليس قاعدة بيانات Windows Installer"
+
+msgid "is not a compound file"
+msgstr "ليس ملفاً مركّباً"
+
+msgid "is not valid UTF-8"
+msgstr "ليس UTF-8 صالحاً"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "أبقِ رمز الترقية، وارفع الإصدار، وأبقِ رموز مكوّنات الملفات التي تبقى"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "المفتاح '{1}' معيّن مرتين في هذا الجدول (أول مرة في السطر {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "يجب ألا يبدأ المفتاح '{1}' أو ينتهي بـ '\\' أو يحتوي على جزء فارغ"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "المفتاح '{1}' خارج جدول؛ لا يأتي قبل الجدول الأول إلا 'format'"
+
+msgid "key file '%s': %s"
+msgstr "ملف المفتاح '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "يجب أن يكون kind هو \"alias\" أو \"startup-task\" أو \"firewall\" أو \"com-server\" أو \"toast\" أو \"context-menu\" (الموجود '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "يجب أن يكون kind هو \"preview\" أو \"thumbnail\" أو \"property\" (الموجود '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "يجب أن يكون kind هو registry أو file أو dir أو component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels مصفوفة سلاسل نصية، واحدة لكل قيمة"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "اللغة '{1}' ليس لها حزمة لغة (lang/{2}.po بجوار المصدر، أو RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "اللغة '{1}' مدرجة مرتين"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "اللغة '{1}' ليست في [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "تنقص اللغة '{1}' ‏{2} نص، أولها {3}: أضفها إلى حزمة لغتها (lang/{4}.po) أو أعطِ [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "تحتاج اللغة '{1}' إلى [ui] langid-{2} (معرّفات LANGID الخاصة بها، للاختيار التلقائي)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "تحتاج اللغة '{1}' إلى [ui] name-{2} (اسمها في صفحة اللغة)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "لم يعد language = \"ko-KR\" يجعل مربعات الحوار كورية: إنها إنجليزية ما لم يضف [ui] languages = [\"ko\"] الكورية"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "يجب أن يكون language هو \"ko-KR\" أو \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "يجب أن يكون language هو \"neutral\" أو \"en-US\" أو \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "يحمل languages رموزاً مثل \"ko\" أو \"zh_TW\" (حرفان أو ثلاثة أحرف صغيرة، ثم _ وحرفان كبيران للمنطقة) (الموجود '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages مصفوفة رموز لغات، مثل [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "يحتاج languages إلى مجموعة حوار (ui = \"basic\" أو غيرها)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "يجب أن يكون launch على شكل \"file:<ID>\" يسمّي [file.*] في هذه الحزمة"
+
+msgid "launch-args needs launch"
+msgstr "يحتاج launch-args إلى launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "يجب أن يكون license ملف .txt أو .md (يُعرض كنص عادي) أو .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: ‏{1} الصف {2}: العمود {3} ليس بصيغة NFC ‏({4} صف{-5})؛ يضع build --nfc أسماء المجلدات والملفات والاختصارات بصيغة NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: صفحة الترميز {1}، وليست 65001: لا يُفحص النص كـ UTF-8، والعروض لـ ASCII فقط"
+
+msgid "lint: no problems\n"
+msgstr "lint: لا توجد مشكلات\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: راجع المشكلات أعلاه\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "سرد المفاتيح التي يمكن لرمز مميز أو لمخزن شهادات Windows التوقيع بها"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "الشعار '{1}' ومتغيره .scale-100 موجودان كلاهما: احتفظ بواحد"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "الشعار '{1}' عند المقياس {2} هو {3}x{4} بكسل؛ يجب أن يكون {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "الشعار '{1}' عند المقياس {2} ليس ملف PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "الشعار '{1}' هو {2}x{3} بكسل؛ يجب أن يكون {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "الشعار '{1}' ليس ملف PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "لم يُعثر على الشعار '{1}' (ولا على متغيراته .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "الشعار '{1}': يحتاج الشعار ذو متغيرات المقياس إلى اسم ملف ASCII بامتداد"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package هو اسم هوية الحزمة الرئيسية (الموجود '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher وmodification = true يأتيان مع main-package (الحزمة التي تنتمي إليها هذه الحزمة)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher هو ناشر الحزمة الرئيسية، مثل \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "لا يجوز أن يحتوي على أحرف تحكم أو / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "لا يجوز أن يبدأ بمسافة أو ينتهي بمسافة أو نقطة"
+
+msgid "merge module '%s' not found"
+msgstr "لم يُعثر على وحدة الدمج '{1}'"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "يجب أن يكون min-version إصداراً مثل 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "يجب أن يتكون min-version من أربعة أجزاء، مثل 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "يجب أن يتكون min-version من أربعة أجزاء، مثل 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "عدم تطابق"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" يزيل المفتاح؛ ولا يأخذ 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "يجب أن يكون mode هو \"set\" أو \"add\" أو \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "يجب أن يكون mode هو \"set\" أو \"append\" أو \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "إدخالات ZIP أكثر من المسموح أو مما يحمله الدليل"
+
+msgid "more keys and values than allowed"
+msgstr "مفاتيح وقيم أكثر من المسموح"
+
+msgid "more than 3 redirects"
+msgstr "أكثر من 3 عمليات إعادة توجيه"
+
+msgid "more than 96 sections"
+msgstr "أكثر من 96 قسماً"
+
+msgid "more than one source file ('%s')"
+msgstr "أكثر من ملف مصدر واحد ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "يوجد أكثر من رمز مميز واحد: سمِّ واحداً باستخدام --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "يجب أن يكون multi هو \"each\" أو \"one\" أو \"single\" (الموجود '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "السلاسل متعددة الأسطر غير مدعومة"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "السلاسل متعددة الأسطر غير مدعومة؛ استخدم سطراً واحداً مع \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "يجب أن يكون من 1 إلى 64 بايت"
+
+msgid "name contains a control character"
+msgstr "يحتوي الاسم على حرف تحكم"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name هو اسم هوية الحزمة (الموجود '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "الاسم ليس ASCII وsummary-name مفقود؛ سيكون Subject الملخص 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "يسمّي مجلداً ليس في جدول Directory الخاص به"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix غير منفّذ بعد: أنشئ مصدر MSI وأضف [msix] (راجع الدليل)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "لا يوجد سطر 'format = {1}': مصدر بتنسيق rubrapack 0.18 أو أقدم، لا يقرؤه هذا الإصدار (تبدأ المسارات الآن بـ $(ProgramFiles) أو $(INSTALLDIR))؛ راجع Source format في الدليل"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "لم يُعطَ --trust: التوقيع سليم لكن لا شيء يحدد بمن يُوثق"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "لا توجد في ملف المفتاح (أو ملف --cert) شهادة تنتمي إلى المفتاح"
+
+msgid "no control characters"
+msgstr "لا أحرف تحكم"
+
+msgid "no keys\n"
+msgstr "لا توجد مفاتيح\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "لا يوجد برنامج رئيسي، لذا لا اختصارات: لا شيء"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "لا يوجد اسم خادم، أو أنه أطول من 255 بايت"
+
+msgid "no string pool: not a transform"
+msgstr "لا توجد مجموعة سلاسل: ليس تحويلاً"
+
+msgid "no table '%s' in '%s'"
+msgstr "لا يوجد جدول '{1}' في '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "يترك no-remove الخيار Modify (الإزالة فيه) الطريقة الوحيدة لإزالة المنتج: لا يمكن أن يأتي مع no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "ليس ملف PE (لا يوجد رأس MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "ليس ملف PE (لا يوجد رأس PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "ليس ملف PEM أو PKCS#8 أو PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ليس أرشيف ZIP (لا يوجد سجل النهاية)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ليس أرشيف ZIP (قصير جداً)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "ليس عنوان URL لوكيل يقبله rubrapack ‏(http://host:port)"
+
+msgid "not a registry hive"
+msgstr "ليس خلية سجل"
+
+msgid "not a valid number"
+msgstr "ليس رقماً صالحاً"
+
+msgid "not a value"
+msgstr "ليس قيمة"
+
+msgid "not a value (strings need quotes)"
+msgstr "ليس قيمة (تحتاج السلاسل النصية إلى علامات اقتباس)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "ليس عنوان URL من نوع http:// أو https:// يقبله rubrapack"
+
+msgid "not valid UTF-8"
+msgstr "ليس UTF-8 صالحاً"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "لم يُفحص (أعطِ --trust أو --system-roots)"
+
+msgid "not-present"
+msgstr "غير موجود"
+
+msgid "nothing changed\n"
+msgstr "لم يتغير شيء\n"
+
+msgid "number out of range"
+msgstr "رقم خارج النطاق"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "الأرقام الثمانية والثنائية غير مدعومة؛ استخدم العشري أو 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" مخصص لـ HKLM وHKCU وHKMU (تذهب الفئات مع [assoc.*] و[com.*] وما شابه)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" يزيل مفتاحاً بكل ما تحته: '{1}' ليس مفتاحاً خاصاً بمنتج تحت Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" يزيل المفتاح كله عند الإزالة؛ ولا يأخذ '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "على Windows يعرض `keys list` مخزن الشهادات"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "على Windows يُستخدم الرمز المميز عبر مخزن الشهادات (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on مخصص لـ remove = true (متى يُزال المفتاح)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "يجب أن يكون on هو \"install\" أو \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "يجب أن يكون on هو \"install\" أو \"uninstall\" أو \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: كل منها نوع ملف ('.' ثم حروف صغيرة أو أرقام أو '_' أو '-')، أو \"*\" (كل ملف)، أو \"folder\"، أو \"background\" (الجزء الفارغ من مجلد)، أو \"drive\"، أو \"assoc:<ID>\" (الموجود '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "لا تأخذ labels إلا عناصر التحكم radio وcombo"
+
+msgid "only radio and combo controls take values"
+msgstr "لا تأخذ values إلا عناصر التحكم radio وcombo"
+
+msgid "out of memory"
+msgstr "نفدت الذاكرة"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "الإخراج '{1}': يكتب rubrapack ملفات .msi و.msm و.msix و.msixbundle وملف setup .exe للسلسلة"
+
+msgid "package '%s' %s"
+msgstr "الحزمة '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "لم يُعثر على الحزمة '{1}'"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "يجب أن يكون parent هو upgrade-code لمنتج آخر، وليس الخاص بهذه الحزمة"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "يجب أن يكون parent هو upgrade-code للمنتج الرئيسي، معرّف GUID مثل {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "يجب أن يكون path على شكل \"$(Base)/relative/path\" مع '/' (‏Base مجلد مثل ProgramFiles، أو معرّف dir)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "يجب أن يبدأ path بمجلد من مجلدات Windows (مثل $(ProgramFiles) أو $(System))"
+
+msgid "paths"
+msgstr "المسارات"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "يجب أن يكون perceived-type هو \"image\" أو \"text\" أو \"audio\" أو \"video\" أو \"compressed\" أو \"document\" أو \"system\" أو \"application\" (الموجود '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "تحتاج الأذونات إلى scope = \"machine\" (هذه {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "يجب أن يكون ports منفذاً أو نطاقاً مثل \"8000-8100\" ضمن 1-65535 (الموجود '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "طباعة GUID عشوائي، أو الذي يشتقه rubrapack من نص"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "طباعة JSON Schema للمصادر (لمحرر يُكمل المفاتيح ويفحصها)"
+
+msgid "print the version"
+msgstr "طباعة الإصدار"
+
+msgid "print this help, or one command's usage"
+msgstr "طباعة هذه المساعدة، أو طريقة استخدام أمر واحد"
+
+msgid "product-code must be a GUID"
+msgstr "يجب أن يكون product-code معرّف GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "يجب أن يكون profile هو \"all\" أو \"domain\" أو \"private\" أو \"public\" (الموجود '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id ‏'{1}' تابع بالفعل لـ [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id ‏'{1}' تابع أيضاً لـ [assoc.{2}]: يحتاج نوع الملف وفئة COM إلى اسمين"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id ‏'{1}' موجود أيضاً في [assoc.{2}] بوصف أو هدف أو أيقونة أو وسيطات أخرى"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "يجب أن يتكون prog-id من حروف وأرقام و'.' و'_' و'-'، لا يبدأ برقم، 39 حرفاً على الأكثر (الموجود '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "الخاصية '{1}' تابعة بالفعل لعنصر التحكم '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "للخاصية '{1}' اسم dir أو ميزة"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "الخاصية '{1}' معرّفة بالفعل (السطر {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "الخاصية '{1}' يُبحث عنها بالفعل (السطر {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "الخاصية '{1}' يعيّنها rubrapack أو المثبّت ولا يمكن تعريفها هنا"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "يجب أن تكون الخاصية '{1}' اسماً عاماً خاصاً بك (بأحرف كبيرة)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "يجب أن تكون الخاصية '{1}' اسماً عاماً: أحرف كبيرة وأرقام و'_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "يجب أن يكون protocol هو \"tcp\" أو \"udp\" (الموجود '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher هو ناشر الحزمة، مثل \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "يجب أن يكون publisher هو موضوع شهادة التوقيع، مثل \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "يجب ألا يحمل publisher معرّف OID الخاص بـ unsigned-test؛ يضيفه --unsigned-test"
+
+msgid "quoted keys are not supported"
+msgstr "المفاتيح المقتبسة غير مدعومة"
+
+msgid "quoted table names are not supported"
+msgstr "أسماء الجداول المقتبسة غير مدعومة"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "يجب أن يكون reboot هو \"suppress\" أو \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true مخصص لـ on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "لا يعمل recursive = true أبداً عندما تزيل ترقيةٌ هذا الإصدار؛ ولا يأخذ 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "يزيل recursive = true المجلد بكل ما فيه؛ ولا يأخذ 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below ‏{1} أعلى من إصدار هذه الحزمة {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "يجب أن يكون refuse-upgrade-below ‏'{1}' إصداراً مثل 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "يحتاج refuse-upgrade-message إلى refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "السجل '{1}' يزيل قيمة؛ ليس لديه ما يحميه"
+
+msgid "registry value '%s' needs a feature"
+msgstr "تحتاج قيمة السجل '{1}' إلى ميزة"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "يزيل remove = true القيمة عند التثبيت؛ ولا يأخذ 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "يحتاج remove-addons إلى مهمة التنظيف: أزل cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "يحمل replaces ‏16 رمز ترقية على الأكثر"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "يحمل replaces رموز ترقية، معرّفات GUID مثل {{12345678-1234-1234-1234-123456789ABC} (الموجود '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces مصفوفة رموز ترقية، مثل [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "يسرد replaces ‏{1} مرتين"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "يسمّي replaces ‏{1}، وهو upgrade-code الخاص بهذه الحزمة أو بأصلها"
+
+msgid "required property %s is missing"
+msgstr "الخاصية المطلوبة {1} مفقودة"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "يجب أن يأتي توأم rollback قبل {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "يجب أن يكون root هو HKLM أو HKCR أو HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "يجب أن يكون root هو HKLM أو HKCU أو HKCR أو HKMU (الموجود '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: معنى رمز التشخيص. الرموز حسب النطاق:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: بضعة أسئلة تنشئ المصدر (يأخذ Enter القيمة الموجودة بين [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "شغّل `rubrapack help <command>`؛ تحقق من المسارات ومن وجود مجلد الإخراج"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "يجب أن يكون run على شكل \"file:<ID>\" يسمّي [file.*] في هذه الحزمة"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: لا يمكن تشغيل '{1}' ‏(الجهاز 0x{2}) على أجهزة هذه الحزمة"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' ليس برنامجاً (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "احفظ المصدر بترميز UTF-8 (أو UTF-16 مع BOM)، بنهايات أسطر LF أو CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "للمخطط '{1}' برنامج بالفعل ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "يجب أن يكون scope هو \"machine\" أو \"user\" أو \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "يجب أن يكون sddl سلسلة SDDL مثل \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "يجب أن تكون خاصية البحث '{1}' اسماً عاماً خاصاً بك (بأحرف كبيرة)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "راجع الرسالة؛ إعادة البناء باستخدام rubrapack تصلح معظم هذه"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "التسلسل {1} ليس بعد {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "يضع إجراءً بجوار إجراء لا تشغّله الحزمة ولا الوحدة"
+
+msgid "service name '%s' is already used"
+msgstr "اسم الخدمة '{1}' مستخدم بالفعل"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "تحتاج الخدمات إلى scope = \"machine\" (هذه {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "اسم الاختصار {1} وحدة UTF-16؛ مع اسمه القصير 8.3 يتسع MSI لـ {2} على الأكثر"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "توقيع ملف PE أو حزمة MSI أو حزمة MSIX أو مجموعة حزم"
+
+msgid "signed %s\n"
+msgstr "تم توقيع {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "المصدر '{1}' دليل؛ استخدم [files.ID] لملفات كثيرة"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "المصدر '{1}' ارتباط رمزي؛ لا يتم تتبّع الارتباطات"
+
+msgid "source '%s' is not a regular file"
+msgstr "المصدر '{1}' ليس ملفاً عادياً"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "تغيّر ملف المصدر '{1}' أثناء بناء الحزمة"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "ملف المصدر '{1}' أكبر من 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "لم يُعثر على ملف المصدر '{1}'"
+
+msgid "source must be \"file:<ID>\""
+msgstr "يجب أن يكون source على شكل \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "يجب أن يكون source حزمة .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "يجب أن يكون مسار المصدر '{1}' نسبياً لملف المصدر"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "تستخدم مسارات المصدر '/'، وليس '\\\\' (الموجود '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "start must be auto, demand or disabled"
+msgstr "يجب أن يكون start هو auto أو demand أو disabled"
+
+msgid "string is not closed on this line"
+msgstr "السلسلة النصية غير مغلقة في هذا السطر"
+
+msgid "string lengths exceed the string data"
+msgstr "أطوال السلاسل تتجاوز بيانات السلاسل"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "لا يمكن عرض معلومات الملخص بصيغة IDT بعد"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "يجب أن يكون summary-name بأحرف ASCII (تحمل معلومات الملخص ASCII فقط)"
+
+msgid "table %s %s"
+msgstr "الجدول {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "الجدول '{1}' غير قابل للقراءة"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "الجدول [{1}{2}{3}] معرّف مرتين (أول مرة في السطر {4})"
+
+msgid "table name expected"
+msgstr "كان متوقعاً اسم جدول"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "لأسماء الجداول جزءان على الأكثر: [kind] أو [kind.ID]"
+
+msgid "tables"
+msgstr "الجداول"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "الجداول والمفاتيح: جدول أو مفتاح غير معروف، أو مطلوب مفقود، أو عنصر بلا ميزة بعد وجود الميزات"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "لا يأخذ إعداداً (ليس فيه ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "الهدف '{1}' غير موجود"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "يجب أن يكون target هو \"dir:<ID>\" أو \"file:<ID>\" أو \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "يجب أن يكون target على شكل \"file:<ID>\" يسمّي [file.*] في هذه الحزمة"
+
+msgid "target name '%s' %s"
+msgstr "اسم الهدف '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id ‏'{1}' يستخدمه بالفعل [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id وdisplay-name وenabled تنتمي إلى kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "هذا الملف موجود بالفعل؛ أعطِ اسماً آخر"
+
+msgid "that folder holds no files"
+msgstr "هذا المجلد لا يحتوي على ملفات"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "يحتاج مربع الحوار FilesInUse إلى جدول ListBox، ولو كان فارغاً (الخطأ 2205؛ يُتخطى مربع الحوار)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "في PIN أحرف أو طول لا يقبله الرمز المميز"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "انتهت صلاحية PIN: غيّره على الرمز المميز أولاً"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN مقفل (محاولات خاطئة كثيرة جداً)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode هو الخاص بالإصدار السابق: هذه ترقية ثانوية (REINSTALLMODE)، وليست الترقية الرئيسية التي يبنيها rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "ملف UTF-16 ليس UTF-16 صالحاً"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "يقع الدليل المركزي لـ ZIP خارج الملف"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "معرّف التطبيق '{1}' يصبح Application Id: حروف وأرقام فقط، لا يبدأ برقم"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "لا ينتهي الأرشيف بسجلات نهاية ZIP64 كما تفعل حزم MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "ليس في الأرشيف سجل نهاية ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "لا يحتوي بيان مجموعة الحزم على Identity Name وPublisher وVersion"
+
+msgid "the central directory lies outside the archive"
+msgstr "يقع الدليل المركزي خارج الأرشيف"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "للشهادة ملحق حرج لا يفهمه rubrapack"
+
+msgid "the certificate has expired"
+msgstr "انتهت صلاحية الشهادة"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "الشهادة شهادة CA، وليست شهادة توقيع"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "الشهادة ليست لتوقيع التعليمات البرمجية (لا يوجد استخدام مفتاح موسّع لتوقيع التعليمات البرمجية)"
+
+msgid "the certificate is not valid yet"
+msgstr "الشهادة ليست صالحة بعد"
+
+msgid "the certificate path is longer than 8"
+msgstr "مسار الشهادات أطول من 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "جدول الشهادات لا يحمل توقيع Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "جدول الشهادات ليس في نهاية الملف"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "استخدام مفتاح الشهادة لا يسمح بالتوقيعات الرقمية"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "لا يمكن كتابة موضوع الشهادة كناشر MSIX"
+
+msgid "the chunked response is malformed"
+msgstr "الاستجابة المجزّأة مشوّهة"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "سطر الأوامر: أمر أو خيار غير معروف، أو ملف لا يمكن قراءته أو كتابته، أو توقيع، أو فرق لا يستطيع التحويل حمله"
+
+msgid "the connection has failed"
+msgstr "فشل الاتصال"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "تجعل ملفات cabinet المضمّنة الحزمة 2 GiB أو أكثر، ولا يستطيع Windows Installer فتحها؛ استخدم cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "الإدخال ليس في الدليل المركزي"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "يحتاج مربع حوار الخطأ '{1}' إلى عنصر تحكم {2} باسم {3} (الخطأ 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "يجب أن يكون الملف التنفيذي '{1}' ملف .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "مجلد الملف التنفيذي لا يؤدي إلى موقع معروف"
+
+msgid "the file is not signed"
+msgstr "الملف غير موقّع"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "الملف موقّع بالفعل؛ لا يوقّع rubrapack مرتين ولا يستبدل توقيعاً"
+
+msgid "the file is too large to sign"
+msgstr "الملف أكبر من أن يُوقّع"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "يحتاج الملف إلى جدول [package] (أو [module] لوحدة دمج)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "تغيّر الملف بعد توقيعه (ملخصه غير مطابق)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "الملفات المطلوب تثبيتها: غير موجودة، مجلد، ارتباط، نمط بلا تطابق، برنامج لبنية أخرى، أسماء طويلة جداً"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "الجداول النهائية تخالف قاعدة من قواعد Windows Installer"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "لم تُغلق الخلية بشكل سليم (سيلزم سجلها)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "المجموع الاختباري للكتلة الأساسية للخلية غير مطابق"
+
+msgid "the hive's bins lie outside the file"
+msgstr "تقع bins الخلية خارج الملف"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "أيقونة قائمة التطبيقات المثبتة هي [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "انتهى الإدخال قبل الإجابة عن كل سؤال؛ لم يُكتب شيء"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "ملف المفتاح أكبر من 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "المفتاح ليس RSA ولا EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "المكتبة ليست وحدة PKCS#11 ‏(لا يوجد C_GetFunctionList، أو الإصدار 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "لا يحتوي البيان على Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "لا يمكن قراءة Identity في البيان لاسم الحزمة الكامل"
+
+msgid "the merge module %s"
+msgstr "وحدة الدمج {1}"
+
+msgid "the name %s"
+msgstr "الاسم {1}"
+
+msgid "the package is not signed"
+msgstr "الحزمة غير موقّعة"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "الحزمة غير موقّعة (لا يوجد AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "الحزمة موقّعة بالفعل؛ لا يوقّع rubrapack مرتين ولا يستبدل توقيعاً"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "الحزمة موقّعة بالفعل؛ يوقّع rubrapack الحزم غير الموقّعة (ولا يوقّع مرتين أبداً)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "تستخدم الحزمة ملفات cabinet خارجها، لا يغطيها توقيع ملف .msi؛ ابنها بملفات cabinet مضمّنة، أو وقّع على أي حال باستخدام --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "محتويات الحزمة لا تطابق توقيعها (تغيّرت بعد التوقيع)"
+
+msgid "the package's directory cannot be read"
+msgstr "لا يمكن قراءة دليل الحزمة"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "تحتاج حزم المجموعة إلى Name وPublisher وVersion متطابقة"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "يطلب الوكيل كلمة مرور (407)، ولا يدعم rubrapack ذلك"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "لم يُجب الوكيل على طلب النفق"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "أرسل الوكيل بيانات بعد إجابته على CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "موقع إعادة التوجيه طويل جداً"
+
+msgid "the request could not be sent"
+msgstr "تعذر إرسال الطلب"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "في الاستجابة Content-Length مشوّه أو متعارض"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "في الاستجابة Content-Length وchunked معاً (مرفوض: خطر تهريب)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "الاستجابة أكبر من 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "تستخدم الاستجابة ترميز نقل غير chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "الشرط نفسه مطلوب بالفعل (السطر {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "الشيء نفسه بدون أسئلة:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "لم يُجب الخادم بـ HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "أعاد الخادم التوجيه من https إلى http (مرفوض)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "توقيع CertificateVerify من الخادم غير سليم"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "شهادة الخادم ليست لخوادم TLS (استخدام المفتاح الموسّع الخاص بها)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "مخطط توقيع الخادم لا يناسب مفتاح شهادته"
+
+msgid "the signature does not verify"
+msgstr "التوقيع غير سليم"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "التوقيع غير سليم مع شهادة الموقّع"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "إدخال التوقيع موصوف بطريقة ZIP64؛ يقرأ Windows موضعه من حقول ZIP32"
+
+msgid "the signature is not DER"
+msgstr "التوقيع ليس DER"
+
+msgid "the signature streams cannot be read"
+msgstr "لا يمكن قراءة دفقات التوقيع"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "السمات الموقّعة لا تطابق المحتوى الموقّع"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "شهادة الموقّع ليست لتوقيع التعليمات البرمجية"
+
+msgid "the source file's encoding"
+msgstr "ترميز ملف المصدر"
+
+msgid "the system random source failed"
+msgstr "فشل مصدر العشوائية في النظام"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "ترتيب الجدولة (Control_Next) ليس دورة واحدة عبر عناصر التحكم الـ {1} بدءاً من Control_First ‏(يتوقف Windows Installer بالخطأ 2809 أو 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "أجاب خادم الطابع الزمني بخطأ HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "شهادة خادم الطابع الزمني ليست لختم الوقت"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "وقت خادم الطابع الزمني يقع خارج فترة صلاحية شهادة التوقيع"
+
+msgid "the token does not say what kind of key it is"
+msgstr "لا يذكر الرمز المميز نوع المفتاح"
+
+msgid "the token is not present"
+msgstr "الرمز المميز غير موجود"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "أعاد الرمز المميز توقيع ECDSA بطول خاطئ"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "لمفتاح EC في الرمز المميز شهادة ليست من نوع EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "توقيع الرمز المميز غير سليم مع الشهادة (المفتاح والشهادة لا ينتميان لبعضهما)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "الشهادة الموثوقة منتهية الصلاحية أو ليست صالحة بعد"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "السمات غير الموقّعة مشوّهة أو تحمل أكثر من طابع زمني واحد"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "لا يوجد ملف كهذا هنا"
+
+msgid "there is no such folder here"
+msgstr "لا يوجد مجلد كهذا هنا"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "بُني rubrapack هذا بدون جزء القائمة: لا تصل عناصر [menu.*] إلى قائمة Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "بُني rubrapack هذا بدون برنامج الإعداد (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "يجب أن يكون threading هو \"sta\" أو \"mta\" أو \"both\" أو \"neutral\" (الموجود '{1}')"
+
+msgid "timestamp: "
+msgstr "الطابع الزمني: "
+
+msgid "too many languages for one bundle"
+msgstr "لغات كثيرة جداً لمجموعة حزم واحدة"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "نصوص مترجمة ومقاييس شعارات كثيرة جداً لـ resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "حزم كثيرة جداً في المجموعة"
+
+msgid "trusted"
+msgstr "موثوق"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "حزمتان للبنية نفسها في مجموعة حزم"
+
+msgid "two packages of one name in a bundle"
+msgstr "حزمتان بالاسم نفسه في مجموعة حزم"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "حزمتا موارد بـ ResourceId نفسه في مجموعة حزم"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "يجب أن يكون type هو string أو expand أو dword أو qword أو binary أو multi (الموجود '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "يجب أن يكون type هو text أو checkbox أو edit أو radio أو combo (الموجود '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: ‏'{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version هو major.minor بأرقام ست عشرية، مثل \"1.0\" (الموجود '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types وverb ينتميان إلى kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: كل منها \".ext\" أو \"*\" (كل ملف)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: كل منها '.' ثم حروف صغيرة أو أرقام أو '_' أو '-' (الموجود '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "يتيح ui = \"{1}\" للمستخدم اختيار مجلد dir ‏'{2}'، وهو غير موجود (عيّن [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "يحتاج ui = \"features\" إلى جداول [feature.*] للاختيار منها"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "يجب أن يكون ui هو none أو basic أو minimal أو installdir أو features (الموجود '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "نص غير متوقع بعد القيمة"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "أمر غير معروف '{1}' (راجع 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "تسلسل هروب غير معروف \\{1} (استخدم '...' للنص الذي فيه شرطات مائلة عكسية)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "خيار inspect غير معروف (استخدم اسم جدول، أو --summary أو --files أو --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "مفتاح غير معروف '{1}' في [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "خيار {1} غير معروف أو غير مكتمل '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "جدول غير معروف [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "فك حزمة في دليل جديد، بالترتيب الذي تُثبَّت به"
+
+msgid "unsupported - %s"
+msgstr "غير مدعوم - {1}"
+
+msgid "untrusted"
+msgstr "غير موثوق"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "تحتاج مفاتيح update-* إلى appinstaller-uri وpackage-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false مخصص لـ on = \"uninstall\" أو \"both\" (التثبيت ليس أبداً إزالة ضمن ترقية)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "يجب أن يكون upgrade-code معرّف GUID مثل {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "الاستخدام: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "الاستخدام: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (قائمة لمجموعة حزم)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "الاستخدام: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "الاستخدام: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "الاستخدام: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "الاستخدام: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "الاستخدام: rubrapack inspect <file.cab> (بلا جدول أو خيار)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "الاستخدام: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "الاستخدام: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "الاستخدام: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "الاستخدام: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "الاستخدام: rubrapack inspect <setup.exe> (بلا جدول أو خيار)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "الاستخدام: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "الاستخدام: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "الاستخدام: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "الاستخدام: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "الاستخدام: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (ملف بداية ثابت <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]؛ تُقبل أسماء .rpk أيضاً"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "الاستخدام: rubrapack schema (‏JSON Schema للمصادر، على stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "الاستخدام: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "الاستخدام: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "استخدم '/' في المسار"
+
+msgid "use a full rubrapack build or another way"
+msgstr "استخدم بناءً كاملاً لـ rubrapack أو طريقة أخرى"
+
+msgid "used by more than one component"
+msgstr "يستخدمه أكثر من مكوّن واحد"
+
+msgid "value '%s' is listed twice"
+msgstr "القيمة '{1}' مدرجة مرتين"
+
+msgid "value missing"
+msgstr "القيمة مفقودة"
+
+msgid "values and labels are strings"
+msgstr "values وlabels سلاسل نصية"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values مصفوفة من 1 إلى 32 سلسلة نصية"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "القيم: المعرّفات، معرّفات GUID، الإصدارات، الأرقام خارج النطاق، الإشارات إلى أشياء غير موجودة"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "المتغير '{1}' غير معرّف ([define] أو -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "لا يجوز أن يحتوي اسم المتغير '{1}' على '=' أو أن يبدأ بـ = + - ! *"
+
+msgid "variables"
+msgstr "المتغيرات"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "المتغيرات: $(NAME) بلا قيمة، $( غير مغلق، اسم من Windows أو معرّف dir حيث لا يجوز"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "يجب أن يكون الإصدار '{1}' على شكل a.b.c أو a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "يجب أن يكون الإصدار '{1}' على شكل a.b.c أو a.b.c.d حيث a وb ‏<= 255 وc وd ‏<= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "لا يمكن أن يذهب view = \"32\" 'with' ملف في حزمة 64 بت"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "يجب أن يكون view هو \"32\" أو \"64\""
+
+msgid "warning"
+msgstr "تحذير"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "معنى رمز التشخيص، والرسائل التي تحمله، وما يجب فعله وأين يقول الدليل المزيد"
+
+msgid "with must be \"file:<ID>\""
+msgstr "يجب أن يكون with على شكل \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: الملف '{1}' ليس [file.*] في هذه الحزمة"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "بدون --pkcs11، يعرض `keys list` مخزن شهادات Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir ‏'{1}' ليس معرّف dir"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "كتابة تصحيح (.msp): الملفات والصفوف التي تحدّث أساساً مثبتاً إلى الهدف"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "كتابة ملف مصدر (.toml؛ وأسماء .rpk أيضاً): من إجابات، مسؤول عنها أو معطاة كخيارات، أو ملف بداية ثابت، أو MSI موجود"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "كتابة تحويل (.mst): ما يحوّل حزمة إلى الأخرى"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "اكتب الجدول أو القيمة بالطريقة البسيطة التي يعرضها الدليل"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "اكتب القيمة بدون '[~]'؛ يضيفها mode = \"append\" أو \"prepend\""
+
+msgid "wrote %s\n"
+msgstr "تمت كتابة {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "يجب أن يكون x + width ‏370 على الأكثر (عرض الصفحة)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "يجب أن يكون y + height ‏234 على الأكثر (الخط فوق الأزرار)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &السابق"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "ال&تالي >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "إلغاء الأمر"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "ت&ثبيت"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "إ&نهاء"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "موافق"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&نعم"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&لا"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "إعادة الم&حاولة"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "ت&جاهل"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "إ&يقاف"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&خروج"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "است&عراض..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "مرحباً بك في إعداد [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "سيتم تثبيت [ProductName] على الكمبيوتر. انقر فوق \"التالي\" للمتابعة."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "اتفاقية الترخيص"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "يرجى قراءة اتفاقية الترخيص التالية."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "أ&وافق على شروط اتفاقية الترخيص"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "مجلد التثبيت"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "اختر المجلد الذي سيتم تثبيت [ProductName] فيه."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "التثبيت &في:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "تغيير المجلد"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "استعرض وصولاً إلى المجلد الذي تريد التثبيت فيه."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "ال&بحث في:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "ا&سم المجلد:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "لأعلى"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "مجلد جديد"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "اختيار الميزات"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "اختر الميزات المطلوب تثبيتها."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "إعادة ت&عيين"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "استخدام ال&قرص"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "مساحة القرص"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "المساحة المطلوبة للميزات المختارة، والمساحة المتوفرة."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "جاهز للتثبيت"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "انقر فوق \"تثبيت\" لتثبيت [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "جارٍ تثبيت [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "يرجى الانتظار."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "الحالة:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "اكتمل الإعداد"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "تم تثبيت [ProductName]."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "جارٍ إزالة [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "اكتملت الإزالة"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "تمت إزالة [ProductName]."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "تم إلغاء الإزالة"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "تم إلغاء الإزالة. لم يتغير شيء على الكمبيوتر."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "فشلت الإزالة"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "أنهى خطأ عملية الإزالة، وتم التراجع عنها. لا يزال المنتج مثبتاً."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "تم إلغاء الإعداد"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "تم إلغاء الإعداد. لم يتغير شيء على الكمبيوتر."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "فشل الإعداد"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "أنهى خطأ عملية التثبيت، وتم التراجع عنها. لم يتغير شيء على الكمبيوتر."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "هل تريد إلغاء تثبيت [ProductName]؟"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "ملفات قيد الاستخدام"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "تستخدم هذه البرامج ملفات يجري استبدالها. انقر فوق \"متابعة\" لاستبدالها الآن: تحتفظ البرامج المفتوحة بالملفات القديمة إلى أن يُعاد فتحها، وتحصل البرامج التي تُفتح لاحقاً على الملفات الجديدة. لا حاجة إلى إعادة التشغيل."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "تستخدم هذه البرامج ملفات يجري استبدالها. انقر فوق \"متابعة\" لاستبدالها الآن: تحتفظ البرامج المفتوحة بالملفات القديمة إلى أن يُعاد فتحها، وتحصل البرامج التي تُفتح لاحقاً على الملفات الجديدة. قد يطلب Windows إعادة التشغيل في النهاية."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "م&تابعة"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "لا توجد مساحة كافية على القرص"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "لا توجد مساحة كافية لهذا التثبيت. حرّر بعض المساحة أو اختر موقعاً آخر."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "صيانة [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "اختر ما تريد فعله."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "إ&صلاح"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "استعادة الملفات والإعدادات المفقودة أو التالفة."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "إ&زالة"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "إزالة [ProductName] من هذا الكمبيوتر."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "إزالة [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "انقر فوق \"إزالة\" لإزالة [ProductName] من هذا الكمبيوتر. انقر فوق \"السابق\" أو \"إلغاء الأمر\" للإبقاء عليه."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "انقر فوق \"إزالة\" لإزالة [ProductName] من هذا الكمبيوتر. ستُحذف إعداداته وبياناته معه ولا يمكن استعادتها. انقر فوق \"السابق\" أو \"إلغاء الأمر\" للإبقاء عليه."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "هل تريد إزالة [ProductName] من هذا الكمبيوتر؟"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "هل تريد إزالة [ProductName] من هذا الكمبيوتر؟ ستُحذف إعداداته وبياناته معه ولا يمكن استعادتها."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "لا يمكن تثبيت [3] بأمان: [1] ليس مجلداً، أو قد لا يُسمح لبرنامج التثبيت بحذف الملفات فيه. أزل [3] أولاً ([2])، ثم ثبّته مرة أخرى."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "لا يمكن ترقية [3] بأمان: فقد الإصدار المثبت [1] الحزمة المخزنة مؤقتاً، لذا لا يمكن إزالته هنا. أزل ذلك الإصدار بحزمته الأصلية أولاً ([2])، ثم ثبّت مرة أخرى."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "توقف الإعداد: المجلد [1] موجود بالفعل وليس مملوكاً للمسؤولين، أو أنه يؤدي إلى مكان آخر عبر ارتباط. اختر مجلداً آخر، أو اطلب من مسؤول إزالته أولاً."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "ت&شغيل [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&حفظ السجل..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "إظهار ال&سجل الكامل"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "تعذر حفظ سجل الإعداد في [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "ت&غيير"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "اختر الميزات المثبتة."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "نطاق التثبيت"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "اختر من يمكنه استخدام [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "أنا &فقط"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&كل مستخدمي هذا الكمبيوتر - يتطلب حقوق المسؤول"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "اللغة"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "اختر لغة الإعداد."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "جارٍ البحث عن التطبيقات المثبتة"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "جارٍ حساب المساحة المطلوبة"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "جارٍ حساب المساحة المطلوبة"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "جارٍ إنشاء المجلدات"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "جارٍ إنشاء الاختصارات"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "جارٍ حذف الخدمات"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "جارٍ إنشاء نسخ مكررة من الملفات"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "جارٍ حساب المساحة المطلوبة"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "جارٍ البحث عن التطبيقات ذات الصلة"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "جارٍ إنشاء عمليات البرنامج النصي للإجراء:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "جارٍ نسخ الملفات الجديدة"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "جارٍ تثبيت الخدمات الجديدة"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "جارٍ التحقق من صحة التثبيت"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "جارٍ تقييم شروط التشغيل"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "جارٍ ترحيل حالات الميزات من التطبيقات ذات الصلة"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "جارٍ نقل الملفات"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "جارٍ تصحيح الملفات"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "جارٍ تحديث تسجيل المكونات"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "جارٍ نشر ميزات المنتج"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "جارٍ نشر معلومات المنتج"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "جارٍ تسجيل خوادم الفئات"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "جارٍ تسجيل خوادم الملحقات"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "جارٍ تسجيل الخطوط"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "جارٍ تسجيل معلومات MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "جارٍ تسجيل المنتج"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "جارٍ تسجيل معرّفات البرامج"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "جارٍ تسجيل المستخدم"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "جارٍ تحديث سلاسل البيئة"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "جارٍ إزالة الإصدار الأقدم"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "جارٍ إزالة الملفات"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "جارٍ إزالة المجلدات"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "جارٍ إزالة إدخالات ملفات INI"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "جارٍ إزالة قيم سجل النظام"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "جارٍ إزالة الاختصارات"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "جارٍ التراجع عن الإجراء:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "جارٍ إزالة ملفات النسخ الاحتياطي"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "جارٍ بدء الخدمات"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "جارٍ إيقاف الخدمات"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "جارٍ إلغاء نشر ميزات المنتج"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "جارٍ إلغاء تسجيل خوادم الفئات"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "جارٍ إلغاء تسجيل خوادم الملحقات"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "جارٍ إلغاء تسجيل الخطوط"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "جارٍ إلغاء تسجيل معلومات MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "جارٍ إلغاء تسجيل معرّفات البرامج"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "جارٍ تحديث سلاسل البيئة"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "جارٍ كتابة قيم ملفات INI"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "جارٍ كتابة قيم سجل النظام"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "يتم تثبيت [ProductName] للمستخدم الحالي فقط (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "الإصدار نفسه من [ProductName] أو إصدار أحدث منه مثبت بالفعل."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "لا يمكن لهذه الحزمة ترقية الإصدار الأقدم المثبت من [ProductName]. أزله أولاً، ثم شغّل هذا التثبيت مرة أخرى:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "نسخ ملف"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "إزالة ملف"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "تصحيح ملف"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "إنشاء مجلد"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "إزالة مجلد"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "كتابة قيمة في السجل"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "إزالة قيمة من السجل"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "إزالة مفتاح من السجل"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "إنشاء اختصار"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "إزالة اختصار"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "تثبيت خدمة"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "التحكم في خدمة"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "كتابة قيمة INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "تعيين متغير بيئة"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "تسجيل خط"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "إلغاء تسجيل خط"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "تشغيل إجراء"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "برنامج الإعداد هذا تالف: قم بتنزيله مرة أخرى."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "هذه البرامج مثبتة بالفعل. اختر ما تريد فعله."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "إ&صلاح"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "إ&زالة"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "إلغاء الأمر"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "هل تريد إزالة هذه البرامج من هذا الكمبيوتر؟"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "تمت إزالة البرامج."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "تعذرت إزالة أحد البرامج."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "تعذر على برنامج الإعداد إنشاء مجلد مؤقت."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "تعذر إصلاح {1} (الخطأ {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "تعذر تثبيت {1} (الخطأ {2}). لم يتم تثبيت شيء بعده."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "تم إصلاح البرامج."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "انتهى الإعداد."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "يحتوي هذا المجلد بالفعل على ملفات أو مجلدات. عند إزالة [ProductName]، يُحذف كل ما في المجلد - بما في ذلك ما هو موجود الآن. المجلد الفارغ أو الجديد هو الاختيار الآمن."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "اختيار م&جلد آخر"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "اس&تخدام هذا المجلد"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] برنامج يستخدم ملفات [3]:\r\n[2]\r\nهل تريد إغلاقها كلها؟\r\n\r\nنعم: إغلاقها كلها والمتابعة (قد يُفقد العمل غير المحفوظ).\r\nلا: المتابعة دون إغلاق (تحتفظ البرامج المفتوحة بالملفات القديمة إلى أن يُعاد فتحها).\r\nإلغاء الأمر: التوقف."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: توقف، لأن [1] برنامج يستخدم ملفاته:\r\n[2]أغلقها وحاول مرة أخرى، أو حدد RPCLOSE=yes (إغلاقها كلها والمتابعة) أو RPCLOSE=no (المتابعة دون إغلاق)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] عنصر في مجلدات [3] لم يُثبَّت معه:\r\n[2]\r\nهل تريد حذفها أيضاً؟\r\n\r\nنعم: حذفها مع [3] (لا يمكن استعادتها).\r\nلا: إزالة [3] والإبقاء عليها.\r\nإلغاء الأمر: التوقف."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: توقف، لأن [1] عنصر في مجلداته لم يُثبَّت معه:\r\n[2]حدد RPEXTRA=delete (حذفها أيضاً) أو RPEXTRA=keep (الإبقاء عليها)، ثم قم بالإزالة مرة أخرى."

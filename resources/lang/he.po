@@ -1,0 +1,3818 @@
+# rubrapack language pack: Hebrew.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+# The language reads right to left (X-Rubrapack-Direction: rtl): its dialogs are mirrored.
+
+msgid ""
+msgstr ""
+"Language: he\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: עברית\n"
+"X-Rubrapack-LangIDs: 1037\n"
+"X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Direction: rtl\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, תיבות דו-שיח {6}{7}\n  1 שם, יצרן, גרסה, ארכיטקטורה                  2 תיקיית התקנה, עבור מי ההתקנה\n  3 תיבות דו-שיח, רישיון, שפות                  4 חלקים אופציונליים\n  5 קיצורי דרך                                  6 קבצים: התאמה לתיקיית התוכנית\n  7 מפתח כלשהו                                  v הצג   l lint   s שמור   q יציאה\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nהודעות עם קוד זה (* מייצג שם או ערך):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nהתוצאות נשלחות ל-stdout, האבחונים ל-stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (או RUBRAPACK_LANG) בוחר את שפת הטקסטים האלה: {1}, או שפה שיש לה חבילת שפה.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "קודי יציאה: 0 תקין, 1 שגיאה במקור, 2 שימוש, 3 קלט/פלט, 4 חתימה או אימות,\n5 lint, 6 רשת.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nמה לעשות: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} כבר לא קיים, אבל קיצור דרך פותח אותו: שנה קודם את קיצורי הדרך (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} קבצים ו-{2} תיקיות שם\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s או q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  נוספו [dir.{1}] ו-[files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  נוסף [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  כתוב אותו בצורה table.key, כמו package.version או dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: אין בעיות\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: ראה את הבעיות למעלה (הקובץ ששמו מופיע שם הוא עותק בדיקה)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  שפות אחרות ב-[ui] languages נשמרות; שנה את הרשימה הזו עם 7 (מפתח כלשהו)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  הוסר [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  הוסר [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  תיקיות משנה:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  זה לא מתאים לתת-הקבוצה של TOML; דבר לא השתנה\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  זה לא היה טקסט קריא; שוב, בבקשה\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  תיקיית התוכנית '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  במקור אין טבלאות [file] שקיצור דרך יכול להצביע עליהן\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  במקור אין תיקיות משנה כפי ש-`new` כותב אותן ([files] \"<folder>/<name>/**\"); הוסף אותן עם 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  ארוך מדי; שוב, בבקשה\n"
+
+msgid "  y or n\n"
+msgstr "  y או n\n"
+
+msgid " (changed)"
+msgstr " (שונה)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - בניית חבילות Windows Installer (.msi) ו-MSIX (.msix)\n\nשימוש: rubrapack [--lang <code>] <command> [arguments]\n\nפקודות:\n"
+
+msgid " and its dir"
+msgstr " והתיקייה שלו"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) אינו משתנה סביבה, ולכן ערך הניתן להרחבה אינו יכול להכיל אותו; השתמש בערך מחרוזת (ימולא בזמן ההתקנה)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) הוא {2}: הוא יכול לפתוח נתיב, או לעמוד במקום ערך ש-Windows Installer ממלא (רישום, סביבה, INI, ארגומנטים, הודעות), לא כאן"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) אינו תיקייה שנתיב יכול להתחיל ממנה (מזהה dir, או ProgramFiles, LOCALAPPDATA, ProgramData ... - ראה Paths במדריך){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  מבנה:         {2}\n  תקציר:        {3}\n  חתימה:        {4}\n  שרשרת:        {5}{6}{7}\n  ביטול:        לא נבדק\n  חותמת זמן:    {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: המשתנה אינו מוגדר"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' אינו פקד של תיבת דו-שיח זו"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' אינו ב-{3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': טקסט הרישיון צריך את השם האנגלי של הגופן, ולכן הוא מוצג בגופן של השפה עצמה; כתוב את השם האנגלי (כמו \"Malgun Gothic\") כדי להשתמש בגופן הזה גם שם"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "רכיב {1}, אך פלטפורמת החבילה היא {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} אינו שייך ל-kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} אינו שייך ל-kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} מכיל מזהי LANGID ‏(1..65535), כמו 1041"
+
+msgid "%s holds strings"
+msgstr "{1} מכיל מחרוזות"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} הוא שם גופן בן 1 עד 31 תווים, כמו \"Segoe UI\" (התקבל {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} הוא תנאי MSI עם מירכאות סגורות וסוגריים מאוזנים"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} הוא מערך מחרוזות, אחת לכל ערך"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} מיועד לחבילות MSI: חבילת MSIX אינה מוסרת על ידי msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} כבר לא קיים. להסיר את [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} ארוך מ-240 תווים"
+
+msgid "%s is new. Add it?"
+msgstr "{1} חדש. להוסיף אותו?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} אינו GUID בתבנית הרישום"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} אינו קוד שה-rubrapack הזה משתמש בו{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} חייב להיות \"file:<ID>\" שמציין [file.*] של חבילה זו"
+
+msgid "%s must be a GUID"
+msgstr "{1} חייב להיות GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} חייב להיות GUID כמו {{12345678-...} (התקבל '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} חייב להיות כתובת https://, http:// או file://, או נתיב \\\\server\\share (התקבל '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} חייב להיות שונה מ-upgrade-code (משפחת שדרוג אחת לכל ארכיטקטורה)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} דורש Windows build {2} ואילך: הגדר [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} דורש את resources/bin/rubrapack_ca-{2}.dll, שה-rubrapack הזה נבנה בלעדיו"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA לא נבדק (תן --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA מהימן"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA לא מהימן - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} לא קיים או ריק. להסיר את [files.{3}] ואת [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ היא תיקייה חדשה. להוסיף אותה?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: שגיאות: {2}{-3}, אזהרות: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: שגיאות: {2}{-3}, אזהרות: {4}{-5} (מול {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} קבצים, {3} בתים\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} קבצים, {3} שגיאות, 0 אזהרות\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: עוד {2} אבחונים שלא הוצגו\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: הקובץ '{2}' אינו [file.*] של חבילה זו"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: הקובץ '{2}' אינו תוכנית (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' לא נסגר (כתוב '$$(' עבור הטקסט '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' כבר קיים; הוא נשאר כמו שהוא"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' כבר קיים; הסר אותו או בנה לתיקייה אחרת"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "ל-'{1}' כבר יש מטפל {2} ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "ל-'{1}' כבר יש הרשאות"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' ו-'{2}' הם אותו נתיב בחבילה"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' שייך ל-Windows או לדפדפנים"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "לא ניתן לקרוא את '{1}' מול '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' לא מתאים לתת-הקבוצה של TOML; דבר לא נשמר"
+
+msgid "'%s' exists already"
+msgstr "'{1}' כבר קיים"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' כבר קיים; שנה אותו עם `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' קיים ואינו תיקייה ריקה; חלץ לתיקייה חדשה"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' הולך אל {2}; או msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "ל-'{1}' יש זרם מידע תקציר שאינו קריא"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "ל-'{1}' אין טבלאות Directory, Component, File ו-Media לחלץ מהן"
+
+msgid "'%s' has no readable summary information"
+msgstr "ל-'{1}' אין מידע תקציר קריא"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "ל-'{1}' אין טרנספורם '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' הוא UTF-16: edit משנה מקורות UTF-8 בלבד (שמור אותו קודם כ-UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' הוא שם של Windows; תן למשתנה שם אחר"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' הוא [chain]: הוא בונה תוכנית התקנה, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' הוא פקד של המסגרת המובנית; בחר מזהה אחר"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' היא תיקיית מחשב; חבילת {2} אינה יכולה לכתוב שם"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' הוא מודול מיזוג: מזג אותו עם [merge.ID] במקום זאת"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' הוא שם שתבנית MSIX שומרת לעצמה"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' הוא קישור סמלי; לא עוקבים אחר קישורים"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' הוא גם [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' הוא גם מזהה dir; תן למשתנה שם אחר"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' בנוי למכונה 0x{2}, לא לארכיטקטורה של חבילה זו; הגדר any-arch = true אם זו הכוונה"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' אינו קובץ PE ‏(.exe, .dll), לא חבילת MSI ולא חבילת MSIX או צרור"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' אינו קובץ PE, לא חבילת MSI ולא חבילת MSIX או צרור"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' אינו תיקייה מוכרת וגם לא מזהה dir (תיקיות מוכרות: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' אינו cabinet ש-rubrapack יכול לקרוא (מאוחסן או MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' אינו קוד אבחון (RP וארבע ספרות, כמו RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' אינו תוכנית (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' אינו קובץ רגיל"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' אינו תוכנית התקנה של rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' אינו מזהה תקין (אותיות, ספרות ו-'_', לא מתחיל בספרה, לכל היותר {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' אינו מסד נתונים MSI תקין: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' אינו חבילת MSIX תקינה: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' אינו חבילה תקינה: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' אינו מקור תקין (תת-הקבוצה של TOML); תקן אותו ידנית קודם"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' אינו טרנספורם תקין: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' אינו שם משתנה תקין"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' שמור ואי אפשר להשתמש בו כמזהה"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' הוא שם של dir: רק חיפוש ברישום או חיפוש dir יכול למלא dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' נראה כמו קובץ תוכנית (PE) אבל הכותרות או המשאבים שלו פגומים"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' חייב להיות מחרוזת"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' חייב להיות מספר שלם"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' חייב להיות בין {2} ל-{3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' חייב להיות true או false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' לא יכול להיות ריק"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' אינו מציין טרנספורמים (מאפיין תקציר 8): אינו תיקון"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' מתחיל בתיקייה: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': ל-{2} '{3}' יש {4}; דבר לא חולץ"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} רשומות, יותר מהמגבלה {3} ‏(--limit-entries); דבר לא חולץ"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' ו-'{3}' יהיו אותו נתיב ב-Windows; דבר לא חולץ"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' אינה ב-[ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': לא ניתן לקרוא טבלה"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': טבלה אינה קריאה"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': חבילת MSIX מתקינה את כל הקבצים שלה (when); השתמש ב-msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': חבילת MSIX מסירה את כל הקבצים שלה (keep); השתמש ב-msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': ה-cabinet '{2}' פגום או אינו stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': שם ה-cabinet '{2}' אינו שם קובץ פשוט"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': לקובץ הדחוס '{2}' (רצף {3}) אין cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': לתיקייה '{2}' יש הורה '{3}' שאינו קיים"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': התיקייה '{2}' היא אב קדמון של עצמה או מקוננת עמוק מדי"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': הקובץ '{2}' אינו תואם ל-MsiFileHash שלו"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': לקובץ '{2}' אין רכיב או תיקייה"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': הקובץ '{2}' בגודל {3} בתים, טבלת File אומרת {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': הקובץ '{2}' אינו ב-cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': ה-cabinets החיצוניים שלו אינם מכוסים בחתימה (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': התיקייה שלו אינה מובילה למיקום מוכר"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': יותר מ-{2} בתים לכתיבה (--limit-bytes); דבר לא חולץ"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': אין --timestamp: החתימה מפסיקה להיות תקפה כשהאישור פג"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': החבילה '{2}' אינה תואמת ל-SHA-256 שלה"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': זרם ה-cabinet '{2}' אינו קיים"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': במניפסט אין {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': המניפסט מציין את '{2}', שאינו בחבילה"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': חותמת זמן מ-{2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': לא ניתן לקרוא את הטרנספורם '{2}' מול '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' היא השפה של החבילה עצמה ({2}); כתוב את הטקסט הזה בלי הסיומת"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' גורם ל-Windows Installer לכתוב מחרוזת מרובה; השתמש ב-type = \"multi\" ובמערך"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' במספרים אינו נתמך"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' מקבל לכל היותר שם פקודה אחד"
+
+msgid "'version' takes no arguments"
+msgstr "'version' אינו מקבל ארגומנטים"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs מיועד ל-.msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch עבור צרור: רשימה של x64, x86 ו-arm64, כל אחד פעם אחת (התקבל '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch מקבל ארכיטקטורה אחת, או רשימה עבור פלט .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp ו---allow-unsigned-cabs באים עם --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress מיועד ל-.msi; MSIX מקבלת --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist מציין תיקייה חדשה לצד המקור (ללא נתיב)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs מקבל מספר מ-1 עד 64 (התקבל '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store הוא מאגר אישורים של Windows; במקומות אחרים השתמש בקובץ מפתח או ב---pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store מקבל את טביעת ה-SHA-1 של האישור (40 ספרות הקסדצימליות)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: אין שפה כזו (מובנות: {2}; שפה אחרת צריכה את חבילת השפה שלה, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang דורש שפה, כמו en או ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages דורש תיבות דו-שיח: תן גם --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress מקבל deflate או store (התקבל '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: המשתנה אינו מוגדר"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code מקבל GUID באותיות גדולות עם סוגריים מסולסלים: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: המשתנה אינו מוגדר"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous משווה שתי חבילות .msi"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: לא ניתן לקרוא את אישורי השורש של מערכת ההפעלה"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} אינו תואם לפלט '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} אינו ממומש (msi או msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target מקבל msi או msix (התקבל '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots ו---proxy באים עם --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test ו---msix-compress מיועדים לפלטי .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test מיועד לחבילות ללא חתימה; עם --key השמט אותו"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate מקבל none, או חלק מ-product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} ניתן פעמיים"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' הוא שם של Windows; תן למשתנה שם אחר"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D דורש NAME=VALUE (התקבל '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i שואל על כל תשובה; תן או -i או את האפשרויות"
+
+msgid "; its range is "
+msgstr "; הטווח שלו הוא "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' אינו ב-SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty חייב להיות מאפיין ציבורי (באותיות גדולות)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "כל הקודים: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x אינו מתחיל ב-PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x אינו הרשומה האחרונה"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "ארכיטקטורה (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "בחר"
+
+msgid "Command line"
+msgstr "שורת הפקודה"
+
+msgid "Command line (lint)"
+msgstr "שורת הפקודה (lint)"
+
+msgid "Common AppData"
+msgstr "AppData משותף"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId אינו GUID בתבנית הרישום"
+
+msgid "Desktop shortcut?"
+msgstr "קיצור דרך בשולחן העבודה?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "תיבות דו-שיח (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "בטבלת File, Component או Directory חסרה עמודה סטנדרטית"
+
+msgid "Folder name under Program Files"
+msgstr "שם התיקייה תחת Program Files"
+
+msgid "Folder with the files to install"
+msgstr "התיקייה עם הקבצים להתקנה"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "המזהה '{1}' כבר בשימוש (שורה {2}); המזהים חייבים להיות שונים בכל הטבלאות"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "תיקיית ההתקנה (נתיב [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "התקנה עבור (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "מפתח בצורה table.key ‏(package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' שייך לרכיב אחר"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' אינו ב-File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' אינו ב-Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "תיבות דו-שיח בקוריאנית בנוסף לאנגלית?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence ‏{1} נמוך מזה של DiskId נמוך יותר"
+
+msgid "Leave without saving the changes?"
+msgstr "לצאת בלי לשמור את השינויים?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "רישיון לאישור (.txt, .md, .rtf; - ללא)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "ל-MSIX אין תיקייה וירטואלית עבור AppData של המשתמש; היישום יוצר שם את מה שהוא צריך כשהוא רץ"
+
+msgid "MSIX packages"
+msgstr "חבילות MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: מה חבילת MSIX צריכה, ומה היא לא יכולה לשאת"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "התוכנית הראשית, עבור קיצורי דרך (- ללא)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "מדריך: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "יצרן"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "יצרן (מוצג ביישומים מותקנים)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt החזיר חתימת ECDSA באורך שגוי"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "חלקים אופציונליים שהמשתמש יכול לסמן (תיקיות משנה, בפסיקים; - ללא)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "אסימון PKCS#11: באסימון אין אישור עם ה-CKA_ID של המפתח (תן אותו עם --cert)"
+
+msgid "Paths"
+msgstr "נתיבים"
+
+msgid "Product name"
+msgstr "שם המוצר"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode ו-UpgradeCode הם אותו GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion ‏{1} אינו גבוה מהקודם {2} בשלושת השדות הראשונים: Windows Installer לא משדרג"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "התוכנית שקיצורי הדרך פותחים (- ללא קיצורי דרך)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: אין שפה כזו (מובנות: {2}; שפה אחרת צריכה את חבילת השפה שלה, {3}.po)"
+
+msgid "Reference, "
+msgstr "עיון, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "הרצף {1} אינו מכוסה בשום שורת Media (האחרון {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "הרצף {1} בשימוש של קובץ אחר"
+
+msgid "Source file to write"
+msgstr "קובץ המקור לכתיבה"
+
+msgid "Source format"
+msgstr "תבנית המקור"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source חייב לציין שורת File עבור סוג {1}"
+
+msgid "Start menu shortcut?"
+msgstr "קיצור דרך בתפריט התחל?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "רשומות תפריט התחל, Programs, שולחן העבודה ו-Startup מגיעות מ-[shortcut.*] ומ-[msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML מחוץ לתת-הקבוצה ש-rubrapack קורא, או ש-`format` חסר או חדש מדי"
+
+msgid "Tables"
+msgstr "טבלאות"
+
+msgid "The TOML subset"
+msgstr "תת-הקבוצה של TOML"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "קובצי UTF-16 בסדר big-endian אינם נתמכים; שמור כ-UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode ‏{1} שונה מ-{2} של הגרסה הקודמת: חבילה זו אינה מחליפה אותה"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode אינו GUID בתבנית הרישום"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "ערך (טקסט, מספר, true/false, [\"a\", \"b\"]; - מסיר את המפתח)"
+
+msgid "Variables"
+msgstr "משתנים"
+
+msgid "Version"
+msgstr "גרסה"
+
+msgid "Version ([define] VERSION)"
+msgstr "גרסה ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "גרסאות ושדרוגים"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer מאפשר לכל היותר 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] דורש '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] לא יכול להיכנס למודול מיזוג; החבילה שממזגת אותו היא שמכילה אותו"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] עדיין אינו נתמך (מתוכנן ל-{3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] לא יכול להיכנס ל-MSIX; הוסף msi-only = true כדי לבנות את ה-MSIX בלעדיו"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: למזהה במודול מיזוג יש לכל היותר 35 תווים (ה-GUID של המודול מתווסף אליו)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] דורש מזהה: כתוב [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] אינו מקבל מזהה: כתוב [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "ב-[Content_Types].xml אין </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml אינו הרשומה האחרונה (לא חבילה ש-rubrapack או ממשק האריזה של Windows כתבו)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "מערכי טבלאות [[...]] אינם נתמכים; תן לכל פריט [kind.ID] משלו"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "ל-check של [action.{1}] אין השפעה: שום דבר עדיין לא מריץ אותו; הסר אותו"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] דורש גם do וגם undo (ה-undo גם מבטל do שנכשל)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: ב-MSIX סוג קובץ פותח יישום: target חייב להיות קובץ הפעלה של [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] מופיע פעמיים"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] דורש מזהה: כתוב [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id ו-typelib נכתבים עבור ה-MSI בלבד; ה-MSIX רושם את המחלקה בלעדיהם"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args שייכים לתוכנית; DLL נטען, לא מופעל"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate מריץ DLL בתוך dllhost; '{2}' הוא תוכנית"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading מיועד ל-DLL; תוכנית קובעת את ה-apartment שלה בעצמה"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version ו-typelib-file דורשים typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] הולך אל {2}; או msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: המקור שלו חייב להיות קובץ שנכנס לחבילה"
+
+msgid "[define] values must be strings"
+msgstr "ערכי [define] חייבים להיות מחרוזות"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] דורש '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] דורש 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] דורש 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] דורש 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "ב-[dialog.{1}] יש {2} פקדים; לכל היותר 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "ל-[dialog.{1}] אין [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] ממוקם אחרי עצמו דרך תיבות דו-שיח אחרות"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] דורש ui = \"minimal\", \"installdir\" או \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' הוא שם של Windows; תן ל-dir מזהה אחר"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard דורש את ה-DLL המסייע של rubrapack, שמודול מיזוג אינו נושא"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] דורש תכונה"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX מגדירה את כל המשתנים שלה (when); השתמש ב-msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: הערך שלו מציין מקום ש-MSIX לא יכולה לתת (תיקייה מחוץ לחבילה שאינה תיקיית Windows, או חלק שנקבע בהתקנה); השתמש ב-msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: הסייר טוען מטפל {2} מ-DLL; [com.{3}] הוא תוכנית"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows קורא מטפלי מאפיינים ברמת המחשב בלבד; החבילה צריכה scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: מטפל תצוגה מקדימה רץ ב-prevhost של Windows; השאר את app-id ו-surrogate מחוץ ל-[com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX נושאת רק מטפלי תמונות ממוזערות ותצוגה מקדימה (מטפל מאפיינים ארוז לא נתן לסייר ערכים); msi-only = true שומר אותו עבור ה-MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: סוג קובץ של MSIX שייך ליישום; הוסף [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: המחלקה {2} אינה [com.*] של חבילה זו (ה-DLL של המטפל משרת אותה)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: ב-MSIX מטפלים חולקים את כל הסוגים שלהם או אף אחד (סוג נמצא בשיוך סוג קובץ אחד)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: ב-MSIX המחלקה שלו רצה ב-surrogate; threading = \"sta\" ב-[com.{2}] נותן לחלון שלה לולאת הודעות (עם threading = {3} התצוגה המקדימה עלולה להישאר ריקה)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: ב-MSIX כל הסוגים שלו נמצאים בסוג קובץ [assoc] אחד, או באף אחד"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: המחלקה שלו היא msi-only ‏([com.{2}]); ל-MSIX לא יהיה שרת עבורה"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types הוא רשימה של סוגי קבצים, כמו [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] הולך אל {2}; או msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] דורש 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] דורש תכונה: הגדר 'feature' כאן או ב-dir שלו"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX כותבת את כל רשומות ה-INI שלה (when); השתמש ב-msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: בערך שלו יש חלק ש-Windows Installer ממלא בזמן ההתקנה ([...]); MSIX כותבת את הקובץ כשהיא נבנית"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] דורש 'on': היכן הפריט מוצג, כמו [\".txt\"] או \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] דורש 'target' (התוכנית שהוא מפעיל), או פריטים עם parent = \"{2}\" (תפריט משנה)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] דורש 'target': התוכנית שהפריט מפעיל"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: תפריט משנה אינו מפעיל דבר: השמט את 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: פריט של תפריט משנה מוצג היכן שתפריט המשנה שלו מוצג: השמט את 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: ב-args יש חלק ש-Windows Installer ממלא בזמן ההתקנה ([...]); MSIX מכילה טקסט קבוע בלבד"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: התוכנית שלו אינה ב-MSIX ‏(msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: הערכים שלו לא יכולים להיכנס לרישום של החבילה"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": אין [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on הוא סוג קובץ או רשימה שלהם, כמו [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: ה-parent '{2}' אינו [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: ה-parent '{2}' חייב להיות תפריט משנה: [menu.*] בלי target ובלי parent משלו"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] הולך אל {2}; או msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] דורש תכונה: הגדר 'feature' כאן או ב-dir שלו"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; או msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: ה-args חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file חייב להיות {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file חייב לציין קובץ שנכנס לחבילה"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file חייב לציין תוכנית שנכנסת לחבילה"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types הוא רשימה של סוגי קבצים, כמו [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] דורש שלתיקייה שלו תהיה תכונה"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: ב-MSIX סכמה פותחת יישום: target חייב להיות קובץ הפעלה של [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] דורש 'value' (או remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR אינו מגיע אל מחוץ ל-MSIX; השתמש ב-[assoc.*], [protocol.*], [com.*] או [handler.*], או msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: ערך qword דורש את ה-DLL המסייע של rubrapack, שמודול מיזוג אינו נושא"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX נושאת ערכים תחת {2}\\Software בלבד"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX לא מסירה ערכים ולא משאירה אותם (remove, keep); השתמש ב-msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX כותבת את כל הערכים שלה (when); השתמש ב-msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: בערך שלו יש חלק ש-Windows Installer ממלא בזמן ההתקנה ([...]); MSIX מכילה ערכים קבועים בלבד"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" דורש את ה-DLL המסייע של rubrapack, שמודול מיזוג אינו נושא"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: שם המפתח או הערך לא יכול להיכנס לכוורת רישום"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] דורש תכונה: הגדר 'feature' כאן או ב-dir שלו"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true אינו מיועד לתיקייה מתחת ל-{2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true דורש את ה-DLL המסייע של rubrapack, שמודול מיזוג אינו נושא"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file חייב לציין תוכנית שנכנסת לחבילה"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: ל-MSIX יש קיצורי דרך רק בשולחן העבודה ובתפריט התחל{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: לקיצור דרך של MSIX אין working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: קיצור דרך של MSIX תמיד קיים (when מיועד ל-MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: קיצור דרך של MSIX מציג את הלוגו של היישום שלו; icon מיועד ל-MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: ב-MSIX קיצור דרך מפעיל יישום: target חייב להיות קובץ הפעלה של [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: רשומת תפריט התחל של MSIX היא היישום שלה, שאינו מקבל args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: לאף טקסט של תיבת דו-שיח אין מזהה זה"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] דורש ui = \"basic\" או ערכת תיבות דו-שיח אחרת ב-[package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "רצף הבריחה \\{1} אינו ערך סקלרי של Unicode"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: חבילה זו לא תשדרג את הקודמת בצורה נקייה"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` של חבילה: תיבות דו-שיח, דף קוד, נרמול טקסט"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` של חבילת MSIX או צרור"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "לפקד {1} אין טקסט; שים פקד טקסט לידו"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "פקד {1} דורש [property.{2}] עם אחד מערכיו כברירת מחדל (התקנה שקטה משתמשת בו)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "חבילת {1} לא יכולה לכתוב ל-HKLM; השתמש ב-HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "פלט .msix דורש טבלת [msix-app.ID] שמציינת את קובץ ההפעלה"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "פלט .msix דורש טבלת [msix] ‏(identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "פלט .msm הוא מודול מיזוג, הנבנה ממקור עם [module] במקום [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "קובץ .txt, .md או .rtf, או - ללא"
+
+msgid "a PE file without a certificate table entry"
+msgstr "קובץ PE ללא רשומת טבלת אישורים"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "קוד PIN לעולם אינו נלקח משורת הפקודה (אחרים יכולים לראות אותו); השתמש ב---pin-env או ב---pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "Package במניפסט הצרור עם Type לא ידוע"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "Package במניפסט הצרור ללא FileName, Offset או Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "רשומת ZIP אינה נפרסת לגודל שלה"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "רשומת ZIP גדולה מהמותר"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ה-CRC-32 של רשומת ZIP אינו תואם"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "הנתונים של רשומת ZIP נמצאים מחוץ לקובץ"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "מקור [module] בונה מודול מיזוג: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "ערך בינארי הוא מספר זוגי של ספרות הקסדצימליות, כמו \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "צרור ללא חבילות"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "לאישור בנתיב יש הרחבה קריטית ש-rubrapack אינו מבין"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "אישור בנתיב חתום על ידי אישור שאינו CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "שרשרת מכילה רק [chain], [chain-package.ID] ו-[define], לא [{1}]; החבילות נבנות מהמקורות שלהן"
+
+msgid "a chain holds at most %d packages"
+msgstr "שרשרת מכילה לכל היותר {1} חבילות"
+
+msgid "a chain needs [chain]"
+msgstr "שרשרת דורשת [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "שרשרת דורשת לפחות [chain-package.ID] אחד"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "תו ש-Windows אינו מתיר בשם (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "תו בקרה"
+
+msgid "a damaged PE optional header"
+msgstr "כותרת PE אופציונלית פגומה"
+
+msgid "a damaged PE section table"
+msgstr "טבלת מקטעי PE פגומה"
+
+msgid "a damaged ZIP64 end record"
+msgstr "רשומת סיום ZIP64 פגומה"
+
+msgid "a damaged hive bin"
+msgstr "hive bin פגום"
+
+msgid "a diagnostic of rubrapack"
+msgstr "אבחון של rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "לא ניתן להפעיל שירות מושבת"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "חבילה כפולה אינה יכולה לבחור בין משתנה משתמש למשתנה מערכת"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "חבילה כפולה כותבת ל-HKMU (‏HKLM או HKCU לפי ההתקנה), לא ל-HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "ערך dword הוא מספר שלם 0..4294967295 ‏(0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "תכונה שה-rubrapack הזה אינו מספק (או נבנה בלעדיה)"
+
+msgid "a file larger than allowed"
+msgstr "קובץ גדול מהמותר"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "שם קובץ תחת '{1}' אינו Unicode תקין ולא ניתן לארוז אותו"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "שם קובץ ללא / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "שרשרת הרכיב או התיקייה של קובץ שבורה"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "גופן נכנס ל-MSIX דרך [font.*] שמציין אותו"
+
+msgid "a hash the token signing does not know"
+msgstr "גיבוב שחתימת האסימון אינה מכירה"
+
+msgid "a hive cell crosses its bin"
+msgstr "תא hive חוצה את ה-bin שלו"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "גרסה או סוג של hive ש-rubrapack אינו קורא"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "תיקייה מוכרת עצמה ('{1}') אינה יכולה לקבל הרשאות"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "רישיון דורש ui = \"minimal\", \"installdir\" או \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "כותרת מקומית עם שדות נוספים (לא חבילה ש-rubrapack או ממשק האריזה של Windows כתבו)"
+
+msgid "a malformed central directory"
+msgstr "ספרייה מרכזית פגומה"
+
+msgid "a modification package has no applications of its own"
+msgstr "לחבילת שינוי אין יישומים משלה"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "חבילת שינוי דורשת Windows build 18362 ואילך: הגדר [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "ה-compress של מודול הוא \"none\", \"mszip\" או \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "שם מודול הוא המזהה שלו ב-ModuleID: אותיות, ספרות ו-_, לכל היותר 35 תווים"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "ערך multi הוא מערך מחרוזות שאינו ריק"
+
+msgid "a multi value is an array of strings"
+msgstr "ערך multi הוא מערך מחרוזות"
+
+msgid "a name ending with a space or a dot"
+msgstr "שם שמסתיים ברווח או בנקודה"
+
+msgid "a name longer than 255 bytes"
+msgstr "שם ארוך מ-255 בתים"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "חבילה שמופיעה במניפסט הצרור אינה בצרור"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "חבילה ללא Identity Name, Publisher, Version ו-ProcessorArchitecture (או ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "ה-Offset או ה-Size של חבילה במניפסט הצרור אינם תואמים למיקומה (או שהיא דחוסה)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "הזהות של חבילה שונה ממה שמניפסט הצרור אומר עליה"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "שם חבילה בצרור חייב להיות שם קובץ שמסתיים ב-.msix או .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "סיסמה לעולם אינה נלקחת משורת הפקודה (אחרים יכולים לראות אותה); השתמש ב---pass-env או ב---pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "חבילה ברמת המחשב אינה כותבת ל-HKCU (זה יהיה של המשתמש המתקין); השתמש ב-scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "שרת proxy עם שם משתמש או סיסמה אינו נתמך"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "ערך qword הוא מספר שלם או \"0x\" ו-1 עד 16 ספרות הקסדצימליות"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "פקד radio עורם את הכפתורים שלו: הגובה חייב להיות לפחות 12 לכל ערך ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "לרשומה יש יותר עמודות מאשר לטבלה שלה"
+
+msgid "a record is cut short"
+msgstr "רשומה קטועה"
+
+msgid "a record names a string the pool does not have"
+msgstr "רשומה מציינת מחרוזת שאינה במאגר"
+
+msgid "a reserved device name"
+msgstr "שם התקן שמור"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "פעולת rollback אינה יכולה להיות אסינכרונית"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "סכמה היא אות קטנה, ואחריה אותיות קטנות, ספרות, '+', '-' או '.' (התקבל '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "פעולת סקריפט בין InstallInitialize ל-RemoveExistingProducts (שגיאה 2613)"
+
+msgid "a section lies outside the file"
+msgstr "מקטע נמצא מחוץ לקובץ"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "שם שירות לא יכול להכיל '/' או '\\' (לכל היותר 256 תווים)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "קובץ התקנה ‎.exe נבנה ממקור עם [chain]; '{1}' בונה חבילה (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "מקור מכיל [package] אחד או [module] אחד, לא את שניהם"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "מקור שעובר את בדיקות RP1xxx לעולם לא אמור לפגוש את אלה: אנא דווח על כך יחד עם המקור"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "רשומת ZIP מאוחסנת שהגדלים שלה שונים"
+
+msgid "a stream of the package cannot be read"
+msgstr "לא ניתן לקרוא זרם של החבילה"
+
+msgid "a table has more than 32 columns"
+msgstr "לטבלה יש יותר מ-32 עמודות"
+
+msgid "a text control has no property"
+msgstr "לפקד טקסט אין מאפיין"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "ערך `with` קובץ חולק את הרכיב שלו: שים את `when` על הקובץ"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "ערך הוא 1 עד 64 בתים"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "ערך שהולך 'with' קובץ מקבל את התכונה של הקובץ"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "גרסה היא 3 או 4 מספרים עם נקודות, כמו 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account חייב להיות LocalSystem, LocalService או NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "הפעולה '{1}' כבר מוגדרת"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "הפעולה אינה פעולה סטנדרטית וגם אינה ב-CustomAction"
+
+msgid "adds too many tables"
+msgstr "מוסיף יותר מדי טבלאות"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' אינו עמוד בערכת תיבות דו-שיח זו (RpWelcomeDlg{2}{3}{4}) וגם לא [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias שייך ל-kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias חייב להיות שם קובץ שמסתיים ב-.exe: אותיות, ספרות, '.', '_', '-' (התקבל '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "מקטע INI לא יכול להכיל ']' ומפתח לא יכול להכיל '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX אינה יכולה למקם קבצים בתיקייה הזמנית"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "ליישום יש alias אחד ([msix-extension.{1}] כבר אחד כזה)"
+
+msgid "an empty name"
+msgstr "שם ריק"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "שרת https דורש --tls-trust <certificates> או --system-roots כדי לבדוק אותו מולם"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "proxy מסוג https:// אינו נתמך; תן proxy מסוג http:// (שרתי https מושגים דרך CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "חותמת זמן Authenticode בסגנון ישן (PKCS#9 counterSignature), ש-rubrapack אינו בודק"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "חבילה אופציונלית או חבילת שינוי אינה מצהירה על יכולות או הגדרות וירטואליזציה: אלה של החבילה הראשית שלה חלות"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "חבילת x86 כותבת לתצוגת הרישום של 32 סיביות בלבד"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "היישום '{1}' אינו [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri ו-package-uri באים יחד: היכן יהיו קובץ ה-.appinstaller והחבילה"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch חייב להיות \"x64\", \"arm64\" או \"x86\" (התקבל '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch חייב להיות \"x64\", \"x86\" או \"arm64\" (של תוכנית ההתקנה עצמה)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "הארגומנט {1} אינו UTF-8 תקין (בית {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "הארגומנט {1} אינו Unicode תקין (יחידת UTF-16 {2})"
+
+msgid "array is not closed"
+msgstr "המערך לא נסגר"
+
+msgid "arrays inside arrays are not supported"
+msgstr "מערכים בתוך מערכים אינם נתמכים"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "מערכים חייבים להכיל רק מחרוזות או רק מספרים שלמים"
+
+msgid "at most %d languages besides English"
+msgstr "לכל היותר {1} שפות מלבד אנגלית"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "לכל היותר 100 טבלאות [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "לכל היותר 50 טבלאות [action.*] (בקובץ זה יש {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color הוא \"transparent\" או \"#RRGGBB\", כמו \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "שם משתנה שגוי ב-'$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner חייב להיות קובץ .bmp ‏(Windows Installer מציג BMP בלבד)"
+
+msgid "build a package from a source file"
+msgstr "בניית חבילה מקובץ מקור"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "בניית {1} ממקור {2} דורשת משפחת שדרוג משלה: הוסף {3} = \"{{...}\" ל-[package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab חייב להיות \"embed\" או \"external\""
+
+msgid "cannot be read"
+msgstr "לא ניתן לקרוא"
+
+msgid "cannot build the ClientHello"
+msgstr "לא ניתן לבנות את ה-ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "לא ניתן לצרור את החבילות: {1}"
+
+msgid "cannot create '%s'"
+msgstr "לא ניתן ליצור את '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "לא ניתן ליצור את '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "לא ניתן למצוא את '{1}'; צור אחד עם `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "לא ניתן ליצור לוגו ברירת מחדל"
+
+msgid "cannot make a key share"
+msgstr "לא ניתן ליצור key share"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "לא ניתן ליצור תיקון מ-'{1}' ל-'{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "לא ניתן ליצור טרנספורם מ-'{1}' ל-'{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "לא ניתן לפתוח את מאגר האישורים"
+
+msgid "cannot read '%s'"
+msgstr "לא ניתן לקרוא את '{1}'"
+
+msgid "cannot read '%s' (%s)"
+msgstr "לא ניתן לקרוא את '{1}' ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "לא ניתן לקרוא את החבילה '{1}'"
+
+msgid "cannot read source file '%s'"
+msgstr "לא ניתן לקרוא את קובץ המקור '{1}'"
+
+msgid "cannot read that folder"
+msgstr "לא ניתן לקרוא את התיקייה הזו"
+
+msgid "cannot read the %s file '%s'"
+msgstr "לא ניתן לקרוא את קובץ ה-{1} '{2}'"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "לא ניתן לקרוא את קובץ ה-PIN '{1}'"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "לא ניתן לקרוא את ה-cabinet '{1}' לצד '{2}'"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "לא ניתן לקרוא את קובץ האישור '{1}'"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "לא ניתן לקרוא את האישורים ב-'{1}'"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "לא ניתן לקרוא את האישורים ב-'{1}': {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "לא ניתן לקרוא את קובץ המפתח '{1}'"
+
+msgid "cannot read the password file '%s'"
+msgstr "לא ניתן לקרוא את קובץ הסיסמה '{1}'"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "לא ניתן לקרוא את הקובץ הלא דחוס '{1}' לצד '{2}'"
+
+msgid "cannot write %s"
+msgstr "לא ניתן לכתוב את {1}"
+
+msgid "cannot write '%s'"
+msgstr "לא ניתן לכתוב את '{1}'"
+
+msgid "cannot write '%s' to check it"
+msgstr "לא ניתן לכתוב את '{1}' כדי לבדוק אותו"
+
+msgid "cannot write resources.pri"
+msgstr "לא ניתן לכתוב את resources.pri"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "לא ניתן לכתוב את קובצי התפריט לצד '{1}'"
+
+msgid "cannot write the resource package of %s"
+msgstr "לא ניתן לכתוב את חבילת המשאבים של {1}"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities הוא מערך שמות, כמו [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "היכולת '{1}' אינה מוכרת ל-rubrapack (המדריך מפרט אותן)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "היכולת '{1}' דורשת Windows build 17763 ואילך"
+
+msgid "carriage return without a line feed"
+msgstr "החזרת גרר ללא ירידת שורה"
+
+msgid "certificate file '%s': %s"
+msgstr "קובץ אישור '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "שינוי מקור במקומו: דרך תפריט שאלות, או עם האפשרויות"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "בדיקת חתימה: מבנה, תקציר, חתימה, והנתיב לאישור מהימן"
+
+msgid "check a source or package without writing anything"
+msgstr "בדיקת מקור או חבילה בלי לכתוב דבר"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "בדוק את נתיבי המקור (יחסית לקובץ המקור); הגדר any-arch = true לארכיטקטורה אחרת במכוון"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "בדוק את האיות (ההודעה מציעה את השם הקרוב ביותר) ואת המפתחות של הטבלה"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "המחלקה {1} כבר משורתת על ידי [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "המחלקה {1} נמצאת גם ב-[msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class חייב להיות GUID כמו {{12345678-...} (התקבל '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "ל-close-programs אין השפעה עם preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs חייב להיות \"ask\", \"always\" או \"never\" (התקבל '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "העמודה {1} מכילה סוג ערך שגוי"
+
+msgid "column %s is not valid UTF-8"
+msgstr "העמודה {1} אינה UTF-8 תקין"
+
+msgid "column %s may not be null"
+msgstr "העמודה {1} לא יכולה להיות null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "העמודה {1}: ‏{2} מחוץ לטווח של העמודה"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "העמודה {1}: ‏{2} יחידות UTF-16, העמודה מכילה {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "העמודה {1}: ‏{2} תווים, העמודה מכילה {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "הפקודה '{1}' עדיין אינה ממומשת"
+
+msgid "command-line"
+msgstr "שורת הפקודה"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "הרכיב {1} {2} השתנה בין 32 ל-64 סיביות: כללי הרכיבים דורשים GUID חדש"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "הרכיב {1} {2} נעלם (המשאבים שלו מוסרים עם הגרסה הקודמת)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "לרכיב {1} {2} יש עכשיו נתיב מפתח {3} במקום {4}: כללי הרכיבים דורשים GUID חדש"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid חייב להיות GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress חייב להיות \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" או \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "בתנאי יש מירכאה לא סגורה או סוגריים לא מאוזנים"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "התנאי ארוך מ-240 תווים (rubrapack מוסיף \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config מכיל מחרוזות \"Name=value\" (התקבל '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config הוא מערך של מחרוזות \"Name=value\""
+
+msgid "contains a control character"
+msgstr "מכיל תו בקרה"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "מכיל אחד מ-< > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type הוא סוג מדיה, כמו \"image/png\" (התקבל '{1}')"
+
+msgid "control character"
+msgstr "תו בקרה"
+
+msgid "control character in a comment"
+msgstr "תו בקרה בהערה"
+
+msgid "control character in a string"
+msgstr "תו בקרה במחרוזת"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "תאריכים ושעות אינם נתמכים; כתוב אותם כמחרוזות"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when דורש level מעל 1 (תכונה ברמה 1 מותקנת כברירת מחדל בכל מקרה)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "הגדר את המשתנה ([define] או -D NAME=value), או כתוב $$ עבור $ מילולי"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "תיבת הדו-שיח '{1}' אינה [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "מזהי תיבות דו-שיח שמתחילים ב-'Rp' (ו-FilesInUse) שייכים ל-rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "ה-dir '{1}' נמצא בתוך עצמו (לולאת נתיב)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "ה-dir '{1}' אינו מזהה dir וגם לא Programs, Desktop, StartMenu או Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "ה-dir '{1}' אינו מזהה dir"
+
+msgid "dir '%s' is not defined"
+msgstr "ה-dir '{1}' אינו מוגדר"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction חייב להיות \"in\" או \"out\" (התקבל '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "הארגומנטים של do/undo ארוכים מ-255 תווים"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "מפתחות עם נקודות אינם נתמכים; שים את המפתח בטבלה משלו"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "הצגת חבילה (טבלאות MSI כ-IDT)"
+
+msgid "duplicate primary key"
+msgstr "מפתח ראשי כפול"
+
+msgid "empty arrays are not supported"
+msgstr "מערכים ריקים אינם נתמכים"
+
+msgid "ends with a space or a dot"
+msgstr "מסתיים ברווח או בנקודה"
+
+msgid "error"
+msgstr "שגיאה"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" חייב לציין [file.*] שנכנס לחבילה"
+
+msgid "expected ',' or ']' in the array"
+msgstr "צפוי ',' או ']' במערך"
+
+msgid "expected '=' after the key"
+msgstr "צפוי '=' אחרי המפתח"
+
+msgid "expected ']' to close the table name"
+msgstr "צפוי ']' לסגירת שם הטבלה"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "צפוי מפתח, [table] או הערה"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "לסיומת '{1}' כבר יש תוכנית ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension חייב להיות '.' ואחריו אותיות קטנות, ספרות, '_' או '-' (התקבל '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "ל-extra-files אין השפעה עם preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files חייב להיות \"ask\", \"keep\" או \"delete\" (התקבל '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "התכונה {1} נעלמה: התקנות שהיו בהן מאבדות את מה שהיא הכילה"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "התכונה '{1}' היא אב קדמון של עצמה"
+
+msgid "feature '%s' is not defined"
+msgstr "התכונה '{1}' אינה מוגדרת"
+
+msgid "feature parent '%s' is not defined"
+msgstr "התכונה ההורה '{1}' אינה מוגדרת"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "הקובץ '{1}' כבר מריץ את השירות '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "הקובץ '{1}' כבר רשום כגופן"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "הקובץ '{1}' חייב להיות מותקן בתיקיית Fonts עצמה ([dir.*] עם path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "הקובץ '{1}' דורש תכונה: הגדר 'feature' כאן או ב-dir שלו"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file חייב להיות \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "שם הקובץ הוא {1} יחידות UTF-16; עם השם הקצר שלו בתבנית 8.3, MSI מכיל לכל היותר {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization ו-registry-virtualization = false דורשים Windows build 18362 ואילך: הגדר [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: ‏'{1}' אינו [file.*] של חבילה זו"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: ‏'{1}' משרת מחלקות COM רק כ-.exe או כ-.dll"
+
+msgid "files but no Media row"
+msgstr "קבצים אבל אין שורת Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "תקן את הערך שההודעה מציינת; מזהים הם אותיות, ספרות ו-'_' ושונים בכל הטבלאות"
+
+msgid "floating-point numbers are not supported"
+msgstr "מספרים עם נקודה צפה אינם נתמכים"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "התיקייה '{1}' דורשת תכונה: הגדר 'feature' כאן או ב-dir שלה"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "שם התיקייה הוא {1} יחידות UTF-16; עם השם הקצר שלה בתבנית 8.3, MSI מכיל לכל היותר {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent דורש הורה"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "גופנים דורשים scope = \"machine\" (זו {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} דורש rubrapack חדש יותר (זה קורא format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format הוא מספר שלם: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "תן --pass-env או --pass-file, לא את שניהם"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "תן --pin-env או --pin-file, לא את שניהם"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "תן ל-[msix] ול-[msix-app.*] את מה שהם צריכים, או שמור את הפריט עבור ה-MSI עם msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "תן קובץ מתחת לתיקייה זו"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "תן קובץ ישירות בתיקיית התוכנית, או - ללא"
+
+msgid "give a folder below this one, such as dist"
+msgstr "תן תיקייה מתחת לזו, כמו dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "תן שם באורך 1 עד 128 בתים"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "תן את שלושת הלוגואים (logo-150, logo-44, store-logo) או אף אחד"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "תן אחד מ---key, --pkcs11 ו---key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "תן תיקיות משנה של תיקיית התוכנית, מופרדות בפסיקים, או - ללא"
+
+msgid "glob '%s' matches no file"
+msgstr "התבנית '{1}' אינה תואמת אף קובץ"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "התבנית '{1}' תואמת לקובץ הפלט '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "יש בו זרם MergeModule.CABinet שאינו קריא"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "יש בו MergeModule.CABinet שאינו קריא"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "יש בו טבלת Module*Sequence ללא העמודות הסטנדרטיות"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "יש בו פריט ModuleConfiguration ללא שם או בתבנית לא ידועה"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "יש בו טבלת ModuleConfiguration ללא העמודות הסטנדרטיות"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "יש בו טבלת ModuleSubstitution ללא העמודות הסטנדרטיות"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "יש בו תבנית ModuleSubstitution שמציינת פריט שאין ב-ModuleConfiguration"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "יש בו רכיב עם תנאי; MSIX מתקינה הכול"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "יש בו קובץ שחסר לו רכיב או רשומת cabinet"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "יש בו תיקייה מחוץ ל-TARGETDIR שלו שאין לה מקום ב-MSIX"
+
+msgid "has a table that cannot be read"
+msgstr "יש בו טבלה שאינה קריאה"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "יש בו טבלה שהעמודות שלה שונות מאלה של החבילה"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "יש בו פעולות לטבלת רצף שאין בחבילה"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "יש בו רכיבים, אבל בחבילה אין טבלת FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "יש בו קבצים אבל אין MergeModule.CABinet או טבלת Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "יש בו קבצים אבל אין זרם MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "יש בו קבצים, אבל בחבילה אין טבלת Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "אין בו ModuleSignature: אינו מודול מיזוג"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "אין בו ProductCode או ProductVersion"
+
+msgid "has no Property table"
+msgstr "אין בו טבלת Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "יש בו רשומות לטבלה שלא הבסיס ולא הטרנספורם מגדירים"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "יש בו טקסט מחוץ ל-ASCII בדף קוד שאינו 65001 ‏(UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon חייב להיות קובץ .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id חייב להיות GUID כמו {{12345678-1234-1234-1234-123456789ABC}: של המודול עצמו, נשמר בכל גרסה"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name חייב להיות 3 עד 50 תווים מתוך A-Z, a-z, 0-9, '.' ו-'-' (התקבל '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "טבלאות inline אינן נתמכות; השתמש בטבלת [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "מותקן לאותו נתיב כמו שורה {1} (Windows מתעלם מגודל אותיות בשמות{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "שגיאה פנימית: סדר הטאבים של תיבת דו-שיח מובנית שבור; אנא דווח על כך"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "פנימי: לטבלת מודול אין כלל _Validation"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "פנימי: אין כלל _Validation לעמודה של {1}"
+
+msgid "invalid"
+msgstr "לא תקין"
+
+msgid "invalid - %s"
+msgstr "לא תקין - {1}"
+
+msgid "is '.' or '..'"
+msgstr "הוא '.' או '..'"
+
+msgid "is a reserved device name"
+msgstr "הוא שם התקן שמור"
+
+msgid "is empty"
+msgstr "ריק"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "ארוך מ-255 יחידות UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "אינו מסד נתונים של Windows Installer"
+
+msgid "is not a compound file"
+msgstr "אינו קובץ מורכב"
+
+msgid "is not valid UTF-8"
+msgstr "אינו UTF-8 תקין"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "שמור את קוד השדרוג, העלה את הגרסה, שמור את קודי הרכיבים של קבצים שנשארים"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "המפתח '{1}' מוגדר פעמיים בטבלה זו (לראשונה בשורה {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "המפתח '{1}' לא יכול להתחיל או להסתיים ב-'\\' או להכיל חלק ריק"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "המפתח '{1}' מחוץ לטבלה; רק 'format' בא לפני הטבלה הראשונה"
+
+msgid "key file '%s': %s"
+msgstr "קובץ מפתח '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind חייב להיות \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" או \"context-menu\" (התקבל '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind חייב להיות \"preview\", \"thumbnail\" או \"property\" (התקבל '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind חייב להיות registry, file, dir או component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels הוא מערך מחרוזות, אחת לכל ערך"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "לשפה '{1}' אין חבילת שפה (lang/{2}.po לצד המקור, או RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "השפה '{1}' מופיעה פעמיים"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "השפה '{1}' אינה ב-[ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "לשפה '{1}' חסרים {2} טקסטים, הראשון הוא {3}: הוסף אותם לחבילת השפה שלה (lang/{4}.po) או תן [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "השפה '{1}' דורשת [ui] langid-{2} (מזהי ה-LANGID שלה, לבחירה האוטומטית)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "השפה '{1}' דורשת [ui] name-{2} (השם שלה בעמוד השפה)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" כבר לא הופך את תיבות הדו-שיח לקוריאנית: הן באנגלית, אלא אם [ui] languages = [\"ko\"] מוסיף קוריאנית"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language חייב להיות \"ko-KR\" או \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language חייב להיות \"neutral\", \"en-US\" או \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages מכיל קודים כמו \"ko\" או \"zh_TW\" (2 או 3 אותיות קטנות, ו-_ ושתי אותיות גדולות של אזור) (התקבל '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages הוא מערך של קודי שפה, כמו [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages דורש ערכת תיבות דו-שיח (ui = \"basic\" או אחרת)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch חייב להיות \"file:<ID>\" שמציין [file.*] של חבילה זו"
+
+msgid "launch-args needs launch"
+msgstr "launch-args דורש launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license חייב להיות קובץ .txt, .md (מוצג כטקסט פשוט) או .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: ‏{1} שורה {2}: העמודה {3} אינה ב-NFC ‏({4} שורות{-5}); build --nfc מעביר שמות של תיקיות, קבצים וקיצורי דרך ל-NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: דף קוד {1}, לא 65001: הטקסט אינו נבדק כ-UTF-8, רוחבים רק עבור ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: אין בעיות\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: ראה את הבעיות למעלה\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "הצגת המפתחות שאסימון או מאגר האישורים של Windows יכולים לחתום בהם"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "הלוגו '{1}' והגרסה .scale-100 שלו קיימים שניהם: השאר אחד"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "הלוגו '{1}' בקנה מידה {2} הוא {3}x{4} פיקסלים; הוא חייב להיות {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "הלוגו '{1}' בקנה מידה {2} אינו קובץ PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "הלוגו '{1}' הוא {2}x{3} פיקסלים; הוא חייב להיות {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "הלוגו '{1}' אינו קובץ PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "הלוגו '{1}' לא נמצא (וגם לא הגרסאות .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "הלוגו '{1}': לוגו עם גרסאות קנה מידה דורש שם קובץ ASCII עם סיומת"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package הוא שם הזהות של החבילה הראשית (התקבל '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher ו-modification = true באים עם main-package (החבילה שזו שייכת אליה)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher הוא המפרסם של החבילה הראשית, כמו \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "לא יכול להכיל תווי בקרה או / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "לא יכול להתחיל ברווח או להסתיים ברווח או בנקודה"
+
+msgid "merge module '%s' not found"
+msgstr "מודול המיזוג '{1}' לא נמצא"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version חייב להיות גרסה כמו 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "ל-min-version חייבים להיות ארבעה חלקים, כמו 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "ל-min-version חייבים להיות ארבעה חלקים, כמו 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "אי-התאמה"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" מסיר את המפתח; הוא אינו מקבל 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode חייב להיות \"set\", \"add\" או \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode חייב להיות \"set\", \"append\" או \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "יותר רשומות ZIP מהמותר או ממה שהספרייה מכילה"
+
+msgid "more keys and values than allowed"
+msgstr "יותר מפתחות וערכים מהמותר"
+
+msgid "more than 3 redirects"
+msgstr "יותר מ-3 הפניות"
+
+msgid "more than 96 sections"
+msgstr "יותר מ-96 מקטעים"
+
+msgid "more than one source file ('%s')"
+msgstr "יותר מקובץ מקור אחד ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "קיים יותר מאסימון אחד: ציין אחד עם --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi חייב להיות \"each\", \"one\" או \"single\" (התקבל '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "מחרוזות מרובות שורות אינן נתמכות"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "מחרוזות מרובות שורות אינן נתמכות; השתמש בשורה אחת עם \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "חייב להיות 1 עד 64 בתים"
+
+msgid "name contains a control character"
+msgstr "השם מכיל תו בקרה"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name הוא שם הזהות של חבילה (התקבל '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "השם אינו ASCII ו-summary-name חסר; ה-Subject בתקציר יהיה 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "מציין תיקייה שאין בטבלת Directory שלו"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix עדיין אינו ממומש: צור מקור MSI והוסף [msix] (ראה את המדריך)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "אין שורת 'format = {1}': מקור בתבנית של rubrapack 0.18 או קודם, שגרסה זו אינה קוראת (נתיבים מתחילים כעת ב-$(ProgramFiles) או $(INSTALLDIR)); ראה Source format במדריך"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "לא ניתן --trust: החתימה מאומתת אבל שום דבר לא אומר במי לבטוח"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "אף אישור בקובץ המפתח (או בקובץ --cert) אינו שייך למפתח"
+
+msgid "no control characters"
+msgstr "ללא תווי בקרה"
+
+msgid "no keys\n"
+msgstr "אין מפתחות\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "אין תוכנית ראשית, ולכן אין קיצורי דרך: ללא"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "אין שם שרת, או שהוא ארוך מ-255 בתים"
+
+msgid "no string pool: not a transform"
+msgstr "אין מאגר מחרוזות: אינו טרנספורם"
+
+msgid "no table '%s' in '%s'"
+msgstr "אין טבלה '{1}' ב-'{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove משאיר את Modify (ה-Remove שלו) כדרך היחידה להסיר את המוצר: הוא לא יכול לבוא עם no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "אינו קובץ PE (אין כותרת MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "אינו קובץ PE (אין כותרת PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "אינו קובץ PEM, PKCS#8 או PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "אינו ארכיון ZIP (אין רשומת סיום)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "אינו ארכיון ZIP (קצר מדי)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "אינו URL של proxy ש-rubrapack מקבל (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "אינו כוורת רישום"
+
+msgid "not a valid number"
+msgstr "אינו מספר תקין"
+
+msgid "not a value"
+msgstr "אינו ערך"
+
+msgid "not a value (strings need quotes)"
+msgstr "אינו ערך (מחרוזות צריכות מירכאות)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "אינו URL מסוג http:// או https:// ש-rubrapack מקבל"
+
+msgid "not valid UTF-8"
+msgstr "אינו UTF-8 תקין"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "לא נבדק (תן --trust או --system-roots)"
+
+msgid "not-present"
+msgstr "לא קיים"
+
+msgid "nothing changed\n"
+msgstr "דבר לא השתנה\n"
+
+msgid "number out of range"
+msgstr "מספר מחוץ לטווח"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "מספרים אוקטליים ובינאריים אינם נתמכים; השתמש בעשרוני או ב-0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" מיועד ל-HKLM, HKCU ו-HKMU (מחלקות הולכות עם [assoc.*], [com.*] וכדומה)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" מסיר מפתח עם כל מה שמתחתיו: '{1}' אינו מפתח של מוצר עצמו מתחת ל-Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" מסיר את כל המפתח בהסרה; הוא אינו מקבל '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "ב-Windows `keys list` מציג את מאגר האישורים"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "ב-Windows משתמשים באסימון דרך מאגר האישורים (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on מיועד ל-remove = true (מתי המפתח מוסר)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on חייב להיות \"install\" או \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on חייב להיות \"install\", \"uninstall\" או \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: כל אחד הוא סוג קובץ ('.' ואחריו אותיות קטנות, ספרות, '_' או '-'), \"*\" (כל קובץ), \"folder\", \"background\" (החלק הריק של תיקייה), \"drive\" או \"assoc:<ID>\" (התקבל '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "רק פקדי radio ו-combo מקבלים labels"
+
+msgid "only radio and combo controls take values"
+msgstr "רק פקדי radio ו-combo מקבלים values"
+
+msgid "out of memory"
+msgstr "אין די זיכרון"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "פלט '{1}': rubrapack כותב .msi, .msm, .msix, .msixbundle וקובץ setup .exe של שרשרת"
+
+msgid "package '%s' %s"
+msgstr "החבילה '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "החבילה '{1}' לא נמצאה"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent חייב להיות upgrade-code של מוצר אחר, לא של חבילה זו"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent חייב להיות upgrade-code של המוצר הראשי, GUID כמו {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path חייב להיות \"$(Base)/relative/path\" עם '/' (‏Base היא תיקייה כמו ProgramFiles, או מזהה dir)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path חייב להתחיל בתיקיית Windows (כמו $(ProgramFiles) או $(System))"
+
+msgid "paths"
+msgstr "נתיבים"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type חייב להיות \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" או \"application\" (התקבל '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "הרשאות דורשות scope = \"machine\" (זו {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports חייב להיות פורט או טווח כמו \"8000-8100\" בתוך 1-65535 (התקבל '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "הדפסת GUID אקראי, או זה ש-rubrapack גוזר מטקסט"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "הדפסת ה-JSON Schema של מקורות (לעורך שמשלים ובודק מפתחות)"
+
+msgid "print the version"
+msgstr "הדפסת הגרסה"
+
+msgid "print this help, or one command's usage"
+msgstr "הדפסת עזרה זו, או אופן השימוש בפקודה אחת"
+
+msgid "product-code must be a GUID"
+msgstr "product-code חייב להיות GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile חייב להיות \"all\", \"domain\", \"private\" או \"public\" (התקבל '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id ‏'{1}' כבר שייך ל-[com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id ‏'{1}' שייך גם ל-[assoc.{2}]: סוג קובץ ומחלקת COM צריכים שני שמות"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id ‏'{1}' נמצא גם ב-[assoc.{2}] עם תיאור, target, icon או args אחרים"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id חייב להיות אותיות, ספרות, '.', '_' או '-', לא מתחיל בספרה, לכל היותר 39 (התקבל '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "המאפיין '{1}' כבר שייך לפקד '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "למאפיין '{1}' יש שם של dir או תכונה"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "המאפיין '{1}' כבר מוגדר (שורה {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "המאפיין '{1}' כבר מחופש (שורה {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "המאפיין '{1}' נקבע על ידי rubrapack או המתקין ולא ניתן להגדיר אותו כאן"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "המאפיין '{1}' חייב להיות שם ציבורי משלך (באותיות גדולות)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "המאפיין '{1}' חייב להיות שם ציבורי: אותיות גדולות, ספרות ו-'_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol חייב להיות \"tcp\" או \"udp\" (התקבל '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher הוא המפרסם של החבילה, כמו \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher חייב להיות ה-subject של אישור החתימה, כמו \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher לא יכול לשאת את ה-OID של unsigned-test; --unsigned-test מוסיף אותו"
+
+msgid "quoted keys are not supported"
+msgstr "מפתחות במירכאות אינם נתמכים"
+
+msgid "quoted table names are not supported"
+msgstr "שמות טבלאות במירכאות אינם נתמכים"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot חייב להיות \"suppress\" או \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true מיועד ל-on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true לעולם לא רץ כששדרוג מסיר גרסה זו; הוא אינו מקבל 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true מסיר את התיקייה עם כל מה שבתוכה; הוא אינו מקבל 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below ‏{1} גבוה מהגרסה של חבילה זו {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below ‏'{1}' חייב להיות גרסה כמו 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message דורש refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "הרישום '{1}' מסיר ערך; אין לו מה להגן"
+
+msgid "registry value '%s' needs a feature"
+msgstr "ערך הרישום '{1}' דורש תכונה"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true מסיר את הערך בהתקנה; הוא אינו מקבל 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons דורש את משימת הניקוי: הסר את cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces מכיל לכל היותר 16 קודי שדרוג"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces מכיל קודי שדרוג, מזהי GUID כמו {{12345678-1234-1234-1234-123456789ABC} (התקבל '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces הוא מערך של קודי שדרוג, כמו [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces מפרט את {1} פעמיים"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces מציין את {1}, שהוא ה-upgrade-code של חבילה זו או של ההורה שלה"
+
+msgid "required property %s is missing"
+msgstr "המאפיין הנדרש {1} חסר"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "התאום של rollback חייב לבוא לפני {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root חייב להיות HKLM, HKCR או HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root חייב להיות HKLM, HKCU, HKCR או HKMU (התקבל '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: מה פירוש קוד אבחון. הקודים לפי טווח:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: כמה שאלות יוצרות את המקור (Enter לוקח את הערך שב-[ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "הרץ `rubrapack help <command>`; בדוק את הנתיבים ושתיקיית הפלט קיימת"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run חייב להיות \"file:<ID>\" שמציין [file.*] של חבילה זו"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' ‏(מכונה 0x{2}) לא יכול לרוץ על המכונות של חבילה זו"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' אינו תוכנית (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "שמור את המקור כ-UTF-8 (או UTF-16 עם BOM), עם סיומות שורה LF או CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "לסכמה '{1}' כבר יש תוכנית ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope חייב להיות \"machine\", \"user\" או \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl חייב להיות מחרוזת SDDL כמו \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "מאפיין החיפוש '{1}' חייב להיות שם ציבורי משלך (באותיות גדולות)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "ראה את ההודעה; בנייה מחדש עם rubrapack מתקנת את רוב אלה"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "הרצף {1} אינו אחרי {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "ממקם פעולה ליד פעולה שלא החבילה ולא המודול מריצים"
+
+msgid "service name '%s' is already used"
+msgstr "שם השירות '{1}' כבר בשימוש"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "שירותים דורשים scope = \"machine\" (זו {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "שם קיצור הדרך הוא {1} יחידות UTF-16; עם השם הקצר שלו בתבנית 8.3, MSI מכיל לכל היותר {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "חתימה על קובץ PE, חבילת MSI, חבילת MSIX או צרור"
+
+msgid "signed %s\n"
+msgstr "נחתם {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "המקור '{1}' הוא תיקייה; השתמש ב-[files.ID] עבור קבצים רבים"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "המקור '{1}' הוא קישור סמלי; לא עוקבים אחר קישורים"
+
+msgid "source '%s' is not a regular file"
+msgstr "המקור '{1}' אינו קובץ רגיל"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "קובץ המקור '{1}' השתנה בזמן שהחבילה נבנתה"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "קובץ המקור '{1}' גדול מ-2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "קובץ המקור '{1}' לא נמצא"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source חייב להיות \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source חייב להיות חבילת .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "נתיב המקור '{1}' חייב להיות יחסי לקובץ המקור"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "נתיבי מקור משתמשים ב-'/', לא ב-'\\\\' (התקבל '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start חייב להיות auto, demand או disabled"
+
+msgid "string is not closed on this line"
+msgstr "המחרוזת לא נסגרה בשורה זו"
+
+msgid "string lengths exceed the string data"
+msgstr "אורכי המחרוזות חורגים מנתוני המחרוזות"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "עדיין לא ניתן להציג מידע תקציר כ-IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name חייב להיות ASCII (מידע התקציר מכיל ASCII בלבד)"
+
+msgid "table %s %s"
+msgstr "טבלה {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "הטבלה '{1}' אינה קריאה"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "הטבלה [{1}{2}{3}] מוגדרת פעמיים (לראשונה בשורה {4})"
+
+msgid "table name expected"
+msgstr "צפוי שם טבלה"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "לשמות טבלאות יש לכל היותר שני חלקים: [kind] או [kind.ID]"
+
+msgid "tables"
+msgstr "טבלאות"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "טבלאות ומפתחות: טבלה או מפתח לא ידועים, חסר אחד נדרש, פריט ללא תכונה כשיש תכונות"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "אינו מקבל תצורה (אין בו ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "היעד '{1}' אינו קיים"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target חייב להיות \"dir:<ID>\", \"file:<ID>\" או \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target חייב להיות \"file:<ID>\" שמציין [file.*] של חבילה זו"
+
+msgid "target name '%s' %s"
+msgstr "שם היעד '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id ‏'{1}' כבר בשימוש של [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name ו-enabled שייכים ל-kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "הקובץ הזה כבר קיים; תן שם אחר"
+
+msgid "that folder holds no files"
+msgstr "התיקייה הזו אינה מכילה קבצים"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "תיבת הדו-שיח FilesInUse דורשת טבלת ListBox, אפילו ריקה (שגיאה 2205; תיבת הדו-שיח מדולגת)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "ב-PIN יש תווים או אורך שהאסימון אינו מקבל"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "תוקף ה-PIN פג: שנה אותו קודם באסימון"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "ה-PIN נעול (יותר מדי ניסיונות שגויים)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ה-ProductCode הוא של הגרסה הקודמת: זה שדרוג משני (REINSTALLMODE), לא השדרוג הראשי ש-rubrapack בונה"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "קובץ ה-UTF-16 אינו UTF-16 תקין"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "הספרייה המרכזית של ה-ZIP נמצאת מחוץ לקובץ"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "מזהה היישום '{1}' הופך ל-Application Id: אותיות וספרות בלבד, לא מתחיל בספרה"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "הארכיון אינו מסתיים ברשומות סיום ZIP64 כמו חבילות MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "בארכיון אין רשומת סיום ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "במניפסט הצרור אין Identity Name, Publisher ו-Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "הספרייה המרכזית נמצאת מחוץ לארכיון"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "לאישור יש הרחבה קריטית ש-rubrapack אינו מבין"
+
+msgid "the certificate has expired"
+msgstr "תוקף האישור פג"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "האישור הוא אישור CA, לא אישור חתימה"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "האישור אינו לחתימת קוד (אין שימוש מורחב במפתח לחתימת קוד)"
+
+msgid "the certificate is not valid yet"
+msgstr "האישור עדיין אינו בתוקף"
+
+msgid "the certificate path is longer than 8"
+msgstr "נתיב האישורים ארוך מ-8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "טבלת האישורים אינה מכילה חתימת Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "טבלת האישורים אינה בסוף הקובץ"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "השימוש במפתח של האישור אינו מתיר חתימות דיגיטליות"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "לא ניתן לכתוב את ה-subject של האישור כמפרסם MSIX"
+
+msgid "the chunked response is malformed"
+msgstr "התגובה המחולקת לגושים פגומה"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "שורת הפקודה: פקודה או אפשרות לא ידועה, קובץ שלא ניתן לקרוא או לכתוב, חתימה, הבדל שטרנספורם לא יכול לשאת"
+
+msgid "the connection has failed"
+msgstr "החיבור נכשל"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "ה-cabinets המוטמעים הופכים את החבילה ל-2 GiB או יותר, ש-Windows Installer לא יכול לפתוח; השתמש ב-cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "הרשומה אינה בספרייה המרכזית"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "תיבת דו-שיח השגיאה '{1}' דורשת פקד {2} בשם {3} (שגיאה 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "קובץ ההפעלה '{1}' חייב להיות .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "התיקייה של קובץ ההפעלה אינה מובילה למיקום מוכר"
+
+msgid "the file is not signed"
+msgstr "הקובץ אינו חתום"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "הקובץ כבר חתום; rubrapack אינו חותם פעמיים ואינו מחליף חתימה"
+
+msgid "the file is too large to sign"
+msgstr "הקובץ גדול מדי לחתימה"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "הקובץ דורש טבלת [package] (או [module] עבור מודול מיזוג)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "הקובץ שונה לאחר שנחתם (התקציר שלו אינו תואם)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "הקבצים להתקנה: לא נמצא, תיקייה, קישור, תבנית ללא התאמה, תוכנית של ארכיטקטורה אחרת, שמות ארוכים מדי"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "הטבלאות הסופיות מפרות כלל של Windows Installer"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "הכוורת לא נסגרה בצורה נקייה (יידרש היומן שלה)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "סכום הביקורת של בלוק הבסיס של הכוורת אינו תואם"
+
+msgid "the hive's bins lie outside the file"
+msgstr "ה-bins של הכוורת נמצאים מחוץ לקובץ"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "הסמל ברשימת היישומים המותקנים הוא [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "הקלט הסתיים לפני שכל השאלות נענו; דבר לא נכתב"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "קובץ המפתח גדול מ-4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "המפתח אינו RSA וגם לא EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "הספרייה אינה מודול PKCS#11 ‏(אין C_GetFunctionList, או גרסה 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "במניפסט אין Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "לא ניתן לקרוא את ה-Identity של המניפסט עבור השם המלא של החבילה"
+
+msgid "the merge module %s"
+msgstr "מודול המיזוג {1}"
+
+msgid "the name %s"
+msgstr "השם {1}"
+
+msgid "the package is not signed"
+msgstr "החבילה אינה חתומה"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "החבילה אינה חתומה (אין AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "החבילה כבר חתומה; rubrapack אינו חותם פעמיים ואינו מחליף חתימה"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "החבילה כבר חתומה; rubrapack חותם על חבילות לא חתומות (ולעולם לא פעמיים)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "החבילה משתמשת ב-cabinets מחוץ לה, שחתימה של ה-.msi אינה מכסה; בנה אותה עם cabinets מוטמעים, או חתום בכל זאת עם --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "התוכן של החבילה אינו תואם לחתימה שלה (היא שונתה לאחר החתימה)"
+
+msgid "the package's directory cannot be read"
+msgstr "לא ניתן לקרוא את הספרייה של החבילה"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "החבילות של צרור צריכות את אותם Name, Publisher ו-Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "ה-proxy מבקש סיסמה (407), ש-rubrapack אינו תומך בה"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "ה-proxy לא ענה לבקשת המנהרה"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "ה-proxy שלח נתונים אחרי התשובה שלו ל-CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "מיקום ההפניה ארוך מדי"
+
+msgid "the request could not be sent"
+msgstr "לא ניתן היה לשלוח את הבקשה"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "בתגובה יש Content-Length פגום או סותר"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "בתגובה יש גם Content-Length וגם chunked (נדחה: סיכון הברחה)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "התגובה גדולה מ-4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "התגובה משתמשת בקידוד העברה שאינו chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "אותו תנאי כבר נדרש (שורה {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "אותו דבר בלי שאלות:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "השרת לא ענה ב-HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "השרת הפנה מ-https ל-http (נדחה)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "חתימת ה-CertificateVerify של השרת אינה מאומתת"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "האישור של השרת אינו לשרתי TLS (השימוש המורחב במפתח שלו)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "שיטת החתימה של השרת אינה מתאימה למפתח של האישור שלו"
+
+msgid "the signature does not verify"
+msgstr "החתימה אינה מאומתת"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "החתימה אינה מאומתת מול אישור החותם"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "רשומת החתימה מתוארת בדרך ZIP64; Windows קורא את מיקומה משדות ZIP32"
+
+msgid "the signature is not DER"
+msgstr "החתימה אינה DER"
+
+msgid "the signature streams cannot be read"
+msgstr "לא ניתן לקרוא את זרמי החתימה"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "המאפיינים החתומים אינם תואמים לתוכן החתום"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "אישור החותם אינו לחתימת קוד"
+
+msgid "the source file's encoding"
+msgstr "הקידוד של קובץ המקור"
+
+msgid "the system random source failed"
+msgstr "מקור האקראיות של המערכת נכשל"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "סדר הטאבים (Control_Next) אינו מחזור אחד דרך {1} הפקדים שלו מ-Control_First (Windows Installer נעצר עם שגיאה 2809 או 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "שרת חותמות הזמן ענה בשגיאת HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "האישור של שרת חותמות הזמן אינו לחתימת זמן"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "הזמן של שרת חותמות הזמן נמצא מחוץ לתקופת התוקף של אישור החתימה"
+
+msgid "the token does not say what kind of key it is"
+msgstr "האסימון אינו אומר איזה סוג מפתח זה"
+
+msgid "the token is not present"
+msgstr "האסימון אינו נוכח"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "האסימון החזיר חתימת ECDSA באורך שגוי"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "למפתח ה-EC של האסימון יש אישור שאינו EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "החתימה של האסימון אינה מאומתת מול האישור (המפתח והאישור אינם שייכים זה לזה)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "האישור המהימן פג תוקף או עדיין אינו בתוקף"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "המאפיינים הלא חתומים פגומים או מכילים יותר מחותמת זמן אחת"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "אין כאן קובץ כזה"
+
+msgid "there is no such folder here"
+msgstr "אין כאן תיקייה כזו"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "ה-rubrapack הזה נבנה בלי חלק התפריט שלו: פריטי [menu.*] לא מגיעים לתפריט של Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "ה-rubrapack הזה נבנה בלי תוכנית ההתקנה (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading חייב להיות \"sta\", \"mta\", \"both\" או \"neutral\" (התקבל '{1}')"
+
+msgid "timestamp: "
+msgstr "חותמת זמן: "
+
+msgid "too many languages for one bundle"
+msgstr "יותר מדי שפות לצרור אחד"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "יותר מדי טקסטים מתורגמים וקני מידה של לוגו עבור resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "יותר מדי חבילות בצרור"
+
+msgid "trusted"
+msgstr "מהימן"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "שתי חבילות של אותה ארכיטקטורה בצרור"
+
+msgid "two packages of one name in a bundle"
+msgstr "שתי חבילות באותו שם בצרור"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "שתי חבילות משאבים עם אותו ResourceId בצרור"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type חייב להיות string, expand, dword, qword, binary או multi (התקבל '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type חייב להיות text, checkbox, edit, radio או combo (התקבל '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: ‏'{1}' אינו [file.*] של חבילה זו"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version הוא major.minor בספרות הקסדצימליות, כמו \"1.0\" (התקבל '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types ו-verb שייכים ל-kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: כל אחד הוא \".ext\" או \"*\" (כל קובץ)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: כל אחד הוא '.' ואחריו אותיות קטנות, ספרות, '_' או '-' (התקבל '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" מאפשר למשתמש לבחור את התיקייה של ה-dir '{2}', שאינו קיים (הגדר [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" דורש טבלאות [feature.*] לבחור מהן"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui חייב להיות none, basic, minimal, installdir או features (התקבל '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "טקסט לא צפוי אחרי הערך"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "פקודה לא ידועה '{1}' (ראה 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "רצף בריחה לא ידוע \\{1} (השתמש ב-'...' עבור טקסט עם לוכסנים הפוכים)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "אפשרות inspect לא ידועה (השתמש בשם טבלה, --summary, --files או --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "מפתח לא ידוע '{1}' ב-[{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "אפשרות {1} לא ידועה או לא שלמה '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "טבלה לא ידועה [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "פריסת חבילה לתיקייה חדשה, בסידור שבו היא מותקנת"
+
+msgid "unsupported - %s"
+msgstr "לא נתמך - {1}"
+
+msgid "untrusted"
+msgstr "לא מהימן"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "מפתחות update-* דורשים appinstaller-uri ו-package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false מיועד ל-on = \"uninstall\" או \"both\" (התקנה לעולם אינה הסרה של שדרוג)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code חייב להיות GUID כמו {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "שימוש: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "שימוש: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (רשימה עבור צרור)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "שימוש: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "שימוש: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "שימוש: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "שימוש: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "שימוש: rubrapack inspect <file.cab> (ללא טבלה או אפשרות)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "שימוש: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "שימוש: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "שימוש: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "שימוש: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "שימוש: rubrapack inspect <setup.exe> (ללא טבלה או אפשרות)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "שימוש: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "שימוש: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "שימוש: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "שימוש: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "שימוש: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (קובץ פתיחה קבוע <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; גם שמות .rpk מתקבלים"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "שימוש: rubrapack schema (ה-JSON Schema של מקורות, ב-stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "שימוש: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "שימוש: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "השתמש ב-'/' בנתיב"
+
+msgid "use a full rubrapack build or another way"
+msgstr "השתמש בבנייה מלאה של rubrapack או בדרך אחרת"
+
+msgid "used by more than one component"
+msgstr "בשימוש של יותר מרכיב אחד"
+
+msgid "value '%s' is listed twice"
+msgstr "הערך '{1}' מופיע פעמיים"
+
+msgid "value missing"
+msgstr "חסר ערך"
+
+msgid "values and labels are strings"
+msgstr "values ו-labels הם מחרוזות"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values הוא מערך של 1 עד 32 מחרוזות"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "ערכים: מזהים, מזהי GUID, גרסאות, מספרים מחוץ לטווח, הפניות לדברים שאינם קיימים"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "המשתנה '{1}' אינו מוגדר ([define] או -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "שם המשתנה '{1}' לא יכול להכיל '=' או להתחיל ב-= + - ! *"
+
+msgid "variables"
+msgstr "משתנים"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "משתנים: $(NAME) ללא ערך, $( לא סגור, שם של Windows או מזהה dir במקום שבו הוא לא יכול לעמוד"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "הגרסה '{1}' חייבת להיות a.b.c או a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "הגרסה '{1}' חייבת להיות a.b.c או a.b.c.d עם a, b <= 255 ו-c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" לא יכול ללכת 'with' קובץ של חבילת 64 סיביות"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view חייב להיות \"32\" או \"64\""
+
+msgid "warning"
+msgstr "אזהרה"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "מה פירוש קוד אבחון, ההודעות שנושאות אותו, מה לעשות והיכן המדריך מרחיב"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with חייב להיות \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: הקובץ '{1}' אינו [file.*] של חבילה זו"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "בלי --pkcs11, `keys list` מציג את מאגר האישורים של Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir ‏'{1}' אינו מזהה dir"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "כתיבת תיקון (.msp): הקבצים והשורות שמעדכנים בסיס מותקן ליעד"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "כתיבת קובץ מקור (.toml; גם שמות .rpk): מתשובות, שנשאלו או ניתנו כאפשרויות, קובץ פתיחה קבוע, או MSI קיים"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "כתיבת טרנספורם (.mst): מה שהופך חבילה אחת לשנייה"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "כתוב את הטבלה או הערך בדרך הפשוטה שהמדריך מראה"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "כתוב את הערך בלי '[~]'; mode = \"append\" או \"prepend\" מוסיף אותו"
+
+msgid "wrote %s\n"
+msgstr "נכתב {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width חייב להיות לכל היותר 370 (רוחב העמוד)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height חייב להיות לכל היותר 234 (הקו שמעל הכפתורים)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< ה&קודם"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "ה&בא >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "ביטול"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&התקן"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&סיום"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "אישור"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&כן"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&לא"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&נסה שוב"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "ה&תעלם"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "ה&פסק"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&יציאה"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&עיון..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "ברוכים הבאים להתקנה של [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "פעולה זו תתקין את [ProductName] במחשב שלך. לחץ על \"הבא\" כדי להמשיך."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "הסכם רישיון"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "קרא את הסכם הרישיון הבא."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "אני &מקבל את תנאי הסכם הרישיון"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "תיקיית התקנה"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "בחר את התיקייה שבה יותקן [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "ה&תקן אל:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "שינוי התיקייה"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "עבור אל התיקייה שבה תתבצע ההתקנה."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&חפש ב:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&שם התיקייה:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "למעלה"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "תיקייה חדשה"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "בחירת תכונות"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "בחר את התכונות להתקנה."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&איפוס"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&שימוש בדיסק"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "שטח דיסק"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "השטח הדרוש לתכונות שנבחרו, והשטח הפנוי."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "מוכן להתקנה"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "לחץ על \"התקן\" כדי להתקין את [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "מתקין את [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "אנא המתן."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "מצב:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "ההתקנה הושלמה"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] הותקן."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "מסיר את [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "ההסרה הושלמה"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] הוסר."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "ההסרה בוטלה"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "ההסרה בוטלה. דבר לא השתנה במחשב שלך."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "ההסרה נכשלה"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "שגיאה סיימה את ההסרה, והיא בוטלה. המוצר עדיין מותקן."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "ההתקנה בוטלה"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "ההתקנה בוטלה. דבר לא השתנה במחשב שלך."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "ההתקנה נכשלה"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "שגיאה סיימה את ההתקנה, והיא בוטלה. דבר לא השתנה במחשב שלך."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "לבטל את ההתקנה של [ProductName]?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "קבצים בשימוש"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "התוכניות האלה משתמשות בקבצים שמוחלפים. לחץ על \"המשך\" כדי להחליף אותם עכשיו: תוכניות שכבר פתוחות ממשיכות להשתמש בקבצים הישנים עד שייפתחו מחדש, ותוכניות שייפתחו אחר כך יקבלו את החדשים. אין צורך בהפעלה מחדש."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "התוכניות האלה משתמשות בקבצים שמוחלפים. לחץ על \"המשך\" כדי להחליף אותם עכשיו: תוכניות שכבר פתוחות ממשיכות להשתמש בקבצים הישנים עד שייפתחו מחדש, ותוכניות שייפתחו אחר כך יקבלו את החדשים. ייתכן ש-Windows יבקש הפעלה מחדש בסוף."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "ה&משך"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "אין די שטח בדיסק"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "אין די שטח להתקנה זו. פנה מעט שטח או בחר מיקום אחר."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "תחזוקת [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "בחר מה לעשות."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&תיקון"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "שחזור קבצים והגדרות חסרים או פגומים."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "ה&סר"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "הסרת [ProductName] ממחשב זה."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "הסרת [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "לחץ על \"הסר\" כדי להסיר את [ProductName] ממחשב זה. לחץ על \"הקודם\" או \"ביטול\" כדי להשאיר אותו."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "לחץ על \"הסר\" כדי להסיר את [ProductName] ממחשב זה. ההגדרות והנתונים שלו יימחקו יחד איתו ואי אפשר יהיה לשחזר אותם. לחץ על \"הקודם\" או \"ביטול\" כדי להשאיר אותו."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "להסיר את [ProductName] ממחשב זה?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "להסיר את [ProductName] ממחשב זה? ההגדרות והנתונים שלו יימחקו יחד איתו ואי אפשר יהיה לשחזר אותם."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "לא ניתן להתקין את [3] בבטחה: [1] אינו תיקייה, או שייתכן שהמתקין אינו רשאי למחוק בה קבצים. הסר קודם את [3] ([2]), ואז התקן שוב."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "לא ניתן לשדרג את [3] בבטחה: הגרסה המותקנת [1] איבדה את החבילה השמורה שלה, ולכן לא ניתן להסיר אותה כאן. הסר קודם את הגרסה הזו עם החבילה המקורית שלה ([2]), ואז התקן שוב."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "ההתקנה נעצרה: התיקייה [1] כבר קיימת ואינה בבעלות מנהלי המערכת, או שהיא מובילה למקום אחר דרך קישור. בחר תיקייה אחרת, או בקש ממנהל מערכת להסיר אותה קודם."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&הפעל את [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&שמור יומן..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "הצג את ה&יומן המלא"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "לא ניתן היה לשמור את יומן ההתקנה ב-[1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&שנה"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "בחר אילו תכונות מותקנות."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "היקף ההתקנה"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "בחר מי יכול להשתמש ב-[ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "רק &אני"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&כל המשתמשים במחשב זה - נדרשות הרשאות מנהל מערכת"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "שפה"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "בחר את שפת ההתקנה."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "מחפש יישומים מותקנים"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "מחשב את דרישות השטח"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "מחשב את דרישות השטח"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "יוצר תיקיות"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "יוצר קיצורי דרך"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "מוחק שירותים"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "יוצר קבצים כפולים"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "מחשב את דרישות השטח"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "מחפש יישומים קשורים"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "יוצר פעולות סקריפט עבור הפעולה:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "מעתיק קבצים חדשים"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "מתקין שירותים חדשים"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "מאמת את ההתקנה"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "מעריך תנאי הפעלה"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "מעביר מצבי תכונות מיישומים קשורים"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "מעביר קבצים"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "מתקן קבצים"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "מעדכן רישום רכיבים"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "מפרסם את תכונות המוצר"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "מפרסם את פרטי המוצר"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "רושם שרתי מחלקות"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "רושם שרתי הרחבות"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "רושם גופנים"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "רושם פרטי MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "רושם את המוצר"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "רושם מזהי תוכניות"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "רושם את המשתמש"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "מעדכן מחרוזות סביבה"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "מסיר את הגרסה הישנה"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "מסיר קבצים"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "מסיר תיקיות"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "מסיר רשומות מקובצי INI"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "מסיר ערכים מרישום המערכת"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "מסיר קיצורי דרך"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "מבטל את הפעולה:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "מסיר קובצי גיבוי"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "מפעיל שירותים"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "עוצר שירותים"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "מבטל פרסום של תכונות המוצר"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "מבטל רישום של שרתי מחלקות"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "מבטל רישום של שרתי הרחבות"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "מבטל רישום של גופנים"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "מבטל רישום של פרטי MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "מבטל רישום של מזהי תוכניות"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "מעדכן מחרוזות סביבה"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "כותב ערכים לקובצי INI"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "כותב ערכים לרישום המערכת"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] מותקן עבור המשתמש הנוכחי בלבד (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "אותה גרסה של [ProductName] או גרסה חדשה יותר כבר מותקנת."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "חבילה זו אינה יכולה לשדרג את הגרסה הישנה המותקנת של [ProductName]. הסר אותה קודם, ואז הפעל שוב את ההתקנה הזו:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "העתקת קובץ"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "הסרת קובץ"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "תיקון קובץ"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "יצירת תיקייה"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "הסרת תיקייה"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "כתיבת ערך רישום"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "הסרת ערך רישום"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "הסרת מפתח רישום"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "יצירת קיצור דרך"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "הסרת קיצור דרך"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "התקנת שירות"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "בקרת שירות"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "כתיבת ערך INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "הגדרת משתנה סביבה"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "רישום גופן"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "ביטול רישום גופן"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "הפעלת פעולה"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "תוכנית התקנה זו פגומה: הורד אותה שוב."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "התוכניות האלה כבר מותקנות. בחר מה לעשות."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&תיקון"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "ה&סר"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "ביטול"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "להסיר את התוכניות האלה ממחשב זה?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "התוכניות הוסרו."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "לא ניתן היה להסיר תוכנית."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "תוכנית ההתקנה לא הצליחה ליצור תיקייה זמנית."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "לא ניתן היה לתקן את {1} (שגיאה {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "לא ניתן היה להתקין את {1} (שגיאה {2}). דבר שאחריו לא הותקן."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "התוכניות תוקנו."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "ההתקנה הסתיימה."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "בתיקייה זו כבר יש קבצים או תיקיות. כש-[ProductName] יוסר, כל מה שבתיקייה יימחק - גם מה שיש בה עכשיו. תיקייה ריקה או חדשה היא הבחירה הבטוחה."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&בחר אחרת"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "ה&שתמש בתיקייה זו"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] תוכניות משתמשות בקבצים של [3]:\r\n[2]\r\nלסגור את כולן?\r\n\r\nכן: לסגור את כולן ולהמשיך (עבודה שלא נשמרה עלולה ללכת לאיבוד).\r\nלא: להמשיך בלי לסגור (תוכניות שכבר פתוחות ממשיכות להשתמש בקבצים הישנים עד שייפתחו מחדש).\r\nביטול: לעצור."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: נעצר, כי [1] תוכניות משתמשות בקבצים שלו:\r\n[2]סגור אותן ונסה שוב, או תן RPCLOSE=yes (לסגור את כולן ולהמשיך) או RPCLOSE=no (להמשיך בלי לסגור)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] פריטים בתיקיות של [3] לא הותקנו איתו:\r\n[2]\r\nלמחוק גם אותם?\r\n\r\nכן: למחוק אותם יחד עם [3] (אי אפשר יהיה לשחזר אותם).\r\nלא: להסיר את [3] ולהשאיר אותם.\r\nביטול: לעצור."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: נעצר, כי [1] פריטים בתיקיות שלו לא הותקנו איתו:\r\n[2]תן RPEXTRA=delete (למחוק גם אותם) או RPEXTRA=keep (להשאיר אותם), ואז הסר שוב."
