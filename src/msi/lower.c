@@ -1105,11 +1105,11 @@ static void lower_services(pkg_t *pk) {
 // RFC-0012 V6: the dirs with guard = true, as Directory keys.
 // The languages a package carries its helper texts in: English, the built-in packs, and the
 // dialogs' own. Each once, English first.
-static size_t text_langs(const rp_ir_t *ir, const char *codes[RP_UI_LANG_MAX + 16]) {
+static size_t text_langs(const rp_ir_t *ir, const char *codes[RP_UI_LANG_MAX + 64]) {
     size_t n = 0;
     codes[n++] = "en";
-    for (size_t i = 0; i < rp_lang_embedded_count && n < RP_UI_LANG_MAX + 16; ++i) codes[n++] = rp_lang_embedded[i].code;
-    for (size_t u = 0; u < ir->ui_lang_count && n < RP_UI_LANG_MAX + 16; ++u) {
+    for (size_t i = 0; i < rp_lang_embedded_count && n < RP_UI_LANG_MAX + 64; ++i) codes[n++] = rp_lang_embedded[i].code;
+    for (size_t u = 0; u < ir->ui_lang_count && n < RP_UI_LANG_MAX + 64; ++u) {
         bool have = false;
         for (size_t j = 0; j < n; ++j) have |= strcmp(codes[j], ir->ui_langs[u].code) == 0;
         if (!have) codes[n++] = ir->ui_langs[u].code;
@@ -1135,7 +1135,7 @@ static const char *package_lang(const rp_ir_t *ir) {
 }
 
 static void lower_helper_actions(pkg_t *pk) {
-    const char *langs[RP_UI_LANG_MAX + 16];
+    const char *langs[RP_UI_LANG_MAX + 64];
     size_t nlangs = text_langs(pk->ir, langs);
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -1244,6 +1244,13 @@ static void lower_helper_actions(pkg_t *pk) {
                 s_(&pk->property, kprintf(k, "RpDet_%s_%s", det[t].op, langs[b]));
                 s_(&pk->property, tr ? tr : det[t].en);
             }
+        }
+        // The box's face per dialog language (the language's own: Segoe UI draws no CJK, and the CJK
+        // a fallback picks may draw the backslash as a currency sign).
+        for (size_t li = 0; li < (ir->ui_lang_count ? ir->ui_lang_count : 1); ++li) {
+            const char *code = ir->ui_lang_count ? ir->ui_langs[li].code : "en";
+            const char *face = ir->ui_lang_count && ir->ui_langs[li].font ? ir->ui_langs[li].font : "Segoe UI";
+            s_(&pk->property, kprintf(k, "RpDetFont_%s", code, NULL)); s_(&pk->property, face);
         }
         s_(&pk->customaction, "RP_Details"); i_(&pk->customaction, 1 | 0x80); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetails");
         s_(&pk->customaction, "RP_DetailsDone"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpDetailsDone");

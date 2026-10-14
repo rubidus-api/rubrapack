@@ -16,7 +16,7 @@ static const char *lang = "en";
 
 // ---- packs --------------------------------------------------------------------------------------
 
-enum { MAX_PACKS = 24, MAX_PACK_BYTES = 4u << 20 };
+enum { MAX_PACKS = 64, MAX_PACK_BYTES = 4u << 20 };
 static rp_langpack_t *packs[MAX_PACKS];
 static size_t npacks;
 

@@ -26,8 +26,14 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 대화창 {6}{7}\n  1 이름, 제조사, �
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\n이 코드를 쓰는 메시지(* 는 이름이나 값의 자리):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\n결과는 stdout 으로, 진단은 stderr 로 나갑니다.\n--lang(또는 RUBRAPACK_LANG)이 이 글들의 언어를 고릅니다: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, 또는 언어팩이 있는 언어.\n종료 코드: 0 정상, 1 소스 오류, 2 사용법, 3 입출력, 4 서명 또는 검증,\n5 lint, 6 네트워크.\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\n결과는 stdout 으로, 진단은 stderr 로 나갑니다.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang(또는 RUBRAPACK_LANG)이 이 글들의 언어를 고릅니다: {1}, 또는 언어팩이 있는 언어.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "종료 코드: 0 정상, 1 소스 오류, 2 사용법, 3 입출력, 4 서명 또는 검증,\n5 lint, 6 네트워크.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n할 일: {1}.\n"
@@ -512,8 +518,8 @@ msgstr "--key-store 는 Windows 인증서 저장소입니다. 다른 곳에서�
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store 는 인증서의 SHA-1 지문(16진수 40자리)을 받습니다"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: 그런 언어가 없습니다(en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: 그런 언어가 없습니다(내장: {2}; 다른 언어는 언어팩 {3}.po 가 필요합니다)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang 에는 en 이나 ko 같은 언어가 필요합니다"
@@ -701,8 +707,8 @@ msgstr "ProductVersion {1} 이(가) 앞 세 자리에서 이전의 {2} 보다 �
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "바로 가기가 여는 프로그램(바로 가기가 없으면 -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: 그런 언어가 없습니다(en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: 그런 언어가 없습니다(내장: {2}; 다른 언어는 언어팩 {3}.po 가 필요합니다)"
 
 msgid "Reference, "
 msgstr "레퍼런스, "

@@ -26,8 +26,14 @@ msgstr "\n{1} : \"{2}\" {3}, {4}, {5}, dialogues {6}{7}\n  1 nom, fabricant, ver
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\nMessages avec ce code (* représente un nom ou une valeur) :\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\nLes résultats vont sur stdout, les diagnostics sur stderr.\n--lang (ou RUBRAPACK_LANG) choisit la langue de ces textes : en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, ou une langue avec un pack de langue.\nCodes de sortie : 0 succès, 1 erreur de source, 2 utilisation, 3 entrée/sortie, 4 signature ou vérification,\n5 lint, 6 réseau.\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nLes résultats vont sur stdout, les diagnostics sur stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (ou RUBRAPACK_LANG) choisit la langue de ces textes : {1}, ou une langue avec un pack de langue.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Codes de sortie : 0 succès, 1 erreur de source, 2 utilisation, 3 entrée/sortie, 4 signature ou vérification,\n5 lint, 6 réseau.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nQue faire : {1}.\n"
@@ -512,8 +518,8 @@ msgstr "--key-store est un magasin de certificats Windows ; ailleurs, utilisez u
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store prend l'empreinte SHA-1 du certificat (40 chiffres hexadécimaux)"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1} : cette langue n'existe pas (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru et it sont intégrées ; une autre a besoin de son pack de langue, {2}.po)"
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1} : cette langue n'existe pas (intégrées : {2} ; une autre a besoin de son pack de langue, {3}.po)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang a besoin d'une langue, comme en ou ko"
@@ -701,8 +707,8 @@ msgstr "ProductVersion {1} n'est pas supérieure à la précédente {2} dans ses
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Programme qu'ouvrent les raccourcis (- pour aucun raccourci)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1} : cette langue n'existe pas (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru et it sont intégrées ; une autre a besoin de son pack de langue, {2}.po)"
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1} : cette langue n'existe pas (intégrées : {2} ; une autre a besoin de son pack de langue, {3}.po)"
 
 msgid "Reference, "
 msgstr "Référence, "

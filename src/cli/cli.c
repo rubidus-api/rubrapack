@@ -60,6 +60,14 @@ static const command_t *find_command(const char *name) {
     return nullptr;
 }
 
+// The languages this rubrapack has built in, for the error of a code it does not know: "en, ko, ...".
+static const char *built_in_langs(char *out, size_t cap) {
+    size_t o = (size_t)snprintf(out, cap, "en");
+    for (size_t i = 0; i < rp_lang_embedded_count && o < cap; ++i)
+        o += (size_t)snprintf(out + o, cap - o, ", %s", rp_lang_embedded[i].code);
+    return out;
+}
+
 // Copies a user argument for a diagnostic: control characters become \xNN, and a long
 // argument is cut on a character boundary and marked with "...". `arg` is valid UTF-8.
 static const char *shown(const char *arg, char *out, size_t cap) {
@@ -102,9 +110,16 @@ static int print_usage(rp_out_t out) {
     }
     if (err == PROVEN_OK) {
         err = rp_pal_puts(out, TR("\n"
-                                  "Results go to stdout, diagnostics to stderr.\n"
-                                  "--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\n"
-                                  "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
+                                  "Results go to stdout, diagnostics to stderr.\n"));
+    }
+    if (err == PROVEN_OK) {
+        char list[256], text[1024];
+        rp_lang_format(text, sizeof text, "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n",
+                       built_in_langs(list, sizeof list));
+        err = rp_pal_puts(out, text);
+    }
+    if (err == PROVEN_OK) {
+        err = rp_pal_puts(out, TR("Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n"
                                   "5 lint, 6 network.\n"));
     }
     return err == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;
@@ -156,9 +171,9 @@ int rp_main(int argc, char **argv) {
         proven_allocator_t heap = proven_heap_allocator();
         char *env = rp_pal_getenv(heap, "RUBRAPACK_LANG");
         if (env && env[0] && !rp_lang_set(env)) {
-            char buf[64], buf2[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)",
-                          shown(env, buf, sizeof buf), shown(env, buf2, sizeof buf2));
+            char buf[64], buf2[64], list[256];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)",
+                          shown(env, buf, sizeof buf), built_in_langs(list, sizeof list), shown(env, buf2, sizeof buf2));
             rp_mem_free(heap, env);
             return RP_EXIT_USAGE;
         }
@@ -180,9 +195,9 @@ int rp_main(int argc, char **argv) {
             continue;
         }
         if (!rp_lang_set(code)) {
-            char buf[64], buf2[64];
-            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)",
-                          shown(code, buf, sizeof buf), shown(code, buf2, sizeof buf2));
+            char buf[64], buf2[64], list[256];
+            rp_diag_error(RP_DIAG_BAD_ARG_TEXT, "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)",
+                          shown(code, buf, sizeof buf), built_in_langs(list, sizeof list), shown(code, buf2, sizeof buf2));
             return RP_EXIT_USAGE;
         }
     }

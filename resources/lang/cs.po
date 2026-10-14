@@ -1,0 +1,3816 @@
+# rubrapack language pack: Czech.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: cs\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Čeština\n"
+"X-Rubrapack-LangIDs: 1029\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogy {6}{7}\n  1 název, výrobce, verze, architektura         2 instalační složka, pro koho\n  3 dialogy, licence, jazyky                    4 volitelné části\n  5 zástupci                                    6 soubory: podle složky programu\n  7 libovolný klíč                              v zobrazit   l lint   s uložit   q konec\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nZprávy s tímto kódem (* zastupuje název nebo hodnotu):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nVýsledky jdou na stdout, diagnostika na stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (nebo RUBRAPACK_LANG) volí jazyk těchto textů: {1}, nebo jazyk s jazykovým balíčkem.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Návratové kódy: 0 ok, 1 chyba zdroje, 2 použití, 3 vstup/výstup, 4 podepisování nebo ověření,\n5 lint, 6 síť.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nCo udělat: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} už neexistuje, ale otevírá ho zástupce: nejprve změňte zástupce (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  je tam souborů: {1}, složek: {2}\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s nebo q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  přidáno [dir.{1}] a [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  přidáno [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  zadejte to jako tabulka.klíč, například package.version nebo dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: žádné problémy\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: viz problémy výše (soubor tam uvedený je kontrolní kopie)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  ostatní jazyky v [ui] languages zůstávají; seznam změňte volbou 7 (libovolný klíč)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  odebráno [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  odebráno [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  podsložky:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  to se nevejde do podmnožiny TOML; nic se nezměnilo\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  to nebyl čitelný text; znovu, prosím\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  složka programu '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  zdroj nemá žádné tabulky [file], na které by mohl zástupce ukazovat\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  zdroj nemá podsložky tak, jak je zapisuje `new` ([files] \"<folder>/<name>/**\"); přidejte je volbou 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  příliš dlouhé; znovu, prosím\n"
+
+msgid "  y or n\n"
+msgstr "  y nebo n\n"
+
+msgid " (changed)"
+msgstr " (změněno)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - vytváří balíčky Windows Installer (.msi) a MSIX (.msix)\n\npoužití: rubrapack [--lang <code>] <command> [arguments]\n\npříkazy:\n"
+
+msgid " and its dir"
+msgstr " a jeho dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) nemá proměnnou prostředí, takže ji rozbalitelná hodnota nemůže obsahovat; použijte řetězcovou hodnotu (doplní se při instalaci)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) je {2}: může začínat cestu nebo zastupovat hodnotu, kterou doplní Instalační služba systému Windows (registr, prostředí, INI, argumenty, zprávy), ale ne zde"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) není složka, od které může začínat cesta (ID dir, nebo ProgramFiles, LOCALAPPDATA, ProgramData ... - viz Paths v příručce){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  struktura:    {2}\n  otisk:        {3}\n  podpis:       {4}\n  řetěz:        {5}{6}{7}\n  odvolání:     nekontrolováno\n  časové razítko: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: proměnná není nastavena"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' není ovládací prvek tohoto dialogu"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' není v {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': text licence potřebuje anglický název písma, a proto se zobrazí ve vlastním písmu jazyka; zapište anglický název (například \"Malgun Gothic\"), aby se toto písmo použilo i tam"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "součást {1}, ale platforma balíčku je {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} nepatří ke kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} nepatří ke kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} obsahuje LANGID (1..65535), například 1041"
+
+msgid "%s holds strings"
+msgstr "{1} obsahuje řetězce"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} je název písma o 1 až 31 znacích, například \"Segoe UI\" (zadáno {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} je podmínka MSI s uzavřenými uvozovkami a vyváženými závorkami"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} je pole řetězců, jeden na hodnotu"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} je pro balíčky MSI: MSIX msiexec neodebere"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} už neexistuje. Odebrat [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} je delší než 240 znaků"
+
+msgid "%s is new. Add it?"
+msgstr "{1} je nový. Přidat ho?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} není GUID ve formátu registru"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} není kód, který tento rubrapack používá{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
+
+msgid "%s must be a GUID"
+msgstr "{1} musí být GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} musí být GUID jako {12345678-...} (zadáno '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} musí být adresa https://, http:// nebo file://, nebo cesta \\\\server\\share (zadáno '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} se musí lišit od upgrade-code (jedna rodina upgradů na architekturu)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} vyžaduje sestavení Windows {2} nebo novější: nastavte [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} vyžaduje resources/bin/rubrapack_ca-{2}.dll, bez které byl tento rubrapack sestaven"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA nekontrolováno (zadejte --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA důvěryhodný"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA nedůvěryhodný - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} už neexistuje nebo je prázdná. Odebrat [files.{3}] a [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ je nová složka. Přidat ji?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: chyby: {2}{-3}, varování: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: chyby: {2}{-3}, varování: {4}{-5} (oproti {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: souborů: {2}, bajtů: {3}\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: souborů: {2}, chyb: {3}, varování: 0\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: dalších diagnostik nezobrazeno: {2}\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: soubor '{2}' není [file.*] tohoto balíčku"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: soubor '{2}' není program (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' není uzavřeno (pro text '$(' napište '$$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' už existuje; zůstává, jak je"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' už existuje; odstraňte ho nebo sestavte do jiné složky"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' už má obslužnou rutinu {2} ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' už má oprávnění"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' a '{2}' jsou v balíčku stejná cesta"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' patří systému Windows nebo prohlížečům"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' nelze číst oproti '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' se nevejde do podmnožiny TOML; nic se neuložilo"
+
+msgid "'%s' exists already"
+msgstr "'{1}' už existuje"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' už existuje; změňte ho příkazem `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' existuje a není prázdný adresář; rozbalte do nového"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' jde do {2}; nebo msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' má nečitelný datový proud souhrnných informací"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' nemá tabulky Directory, Component, File a Media, ze kterých lze rozbalovat"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' nemá čitelné souhrnné informace"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' nemá transformaci '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' je v UTF-16: edit mění jen zdroje v UTF-8 (nejprve ho uložte jako UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' je název systému Windows; pojmenujte proměnnou jinak"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' je [chain]: vytváří instalační program, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' je ovládací prvek vestavěného rámce; zvolte jiné ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' je složka počítače; balíček {2} tam nemůže zapisovat"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' je slučovací modul: slučte ho místo toho pomocí [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' je název, který si formát MSIX vyhrazuje"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' je symbolický odkaz; odkazy se nesledují"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' je také [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' je také ID dir; pojmenujte proměnnou jinak"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' je sestaven pro stroj 0x{2}, ne pro arch tohoto balíčku; nastavte any-arch = true, je-li to záměr"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' není soubor PE (.exe, .dll), balíček MSI ani balíček či sada MSIX"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' není soubor PE, balíček MSI ani balíček či sada MSIX"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' není známá složka ani ID dir (známé složky: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' není cabinet, který rubrapack umí číst (stored nebo MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' není diagnostický kód (RP a čtyři číslice, například RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' není program (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' není běžný soubor"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' není instalační program rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' není platné ID (písmena, číslice a '_', nezačíná číslicí, nejvýše {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' není platná databáze MSI: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' není platný balíček MSIX: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' není platný balíček: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' není platný zdroj (podmnožina TOML); nejprve ho opravte ručně"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' není platná transformace: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' není platný název proměnné"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' je vyhrazené a nelze je použít jako ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' je název dir: dir může vyplnit jen hledání v registru nebo dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' vypadá jako programový soubor (PE), ale jeho hlavičky nebo prostředky jsou poškozené"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' musí být řetězec"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' musí být celé číslo"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' musí být mezi {2} a {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' musí být true nebo false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' nesmí být prázdné"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' neuvádí žádné transformace (souhrnná vlastnost 8): není to oprava"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' začíná složkou: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' má {4}; nic se nerozbalilo"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': položek: {2}, víc než limit {3} (--limit-entries); nic se nerozbalilo"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' a '{3}' by byly ve Windows stejná cesta; nic se nerozbalilo"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' není v [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': tabulku nelze číst"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': tabulka je nečitelná"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX instaluje všechny své soubory (when); použijte msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX odebere všechny své soubory (keep); použijte msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' je poškozený nebo není stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': název cabinet '{2}' není prostý název souboru"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': komprimovaný soubor '{2}' (pořadí {3}) nemá cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': adresář '{2}' má nadřazený '{3}', který neexistuje"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': adresář '{2}' je svým vlastním předkem nebo je vnořen příliš hluboko"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': soubor '{2}' neodpovídá svému MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': soubor '{2}' nemá součást ani adresář"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': soubor '{2}' má {3} B, tabulka File uvádí {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': soubor '{2}' není v cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': jeho externí soubory cabinet nejsou pokryty podpisem (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': jeho složka nevede do známého umístění"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': k zápisu přes {2} B (--limit-bytes); nic se nerozbalilo"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': chybí --timestamp: podpis přestane platit, až vyprší certifikát"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': balíček '{2}' neodpovídá svému SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': datový proud cabinet '{2}' tam není"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': manifest nemá {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': manifest uvádí '{2}', který v balíčku není"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': časové razítko z {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': transformaci '{2}' nelze číst oproti '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' je vlastní jazyk balíčku ({2}); zadejte ten text bez přípony"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' způsobí, že Instalační služba systému Windows zapíše vícenásobný řetězec; použijte type = \"multi\" a pole"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' v číslech není podporováno"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' přijímá nejvýše jeden název příkazu"
+
+msgid "'version' takes no arguments"
+msgstr "'version' nepřijímá argumenty"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs je pro .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch pro sadu: seznam x64, x86 a arm64, každá jednou (zadáno '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch přijímá jednu architekturu, nebo seznam pro výstup .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp a --allow-unsigned-cabs patří k --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress je pro .msi; MSIX přijímá --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist pojmenuje novou složku vedle zdroje (bez cesty)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs přijímá číslo od 1 do 64 (zadáno '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store je úložiště certifikátů Windows; jinde použijte soubor klíče nebo --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store přijímá kryptografický otisk SHA-1 certifikátu (40 šestnáctkových číslic)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: takový jazyk neexistuje (vestavěné: {2}; jiný potřebuje svůj jazykový balíček, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang potřebuje jazyk, například en nebo ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages potřebuje dialogy: zadejte také --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress přijímá deflate nebo store (zadáno '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: proměnná není nastavena"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code přijímá GUID velkými písmeny se složenými závorkami: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: proměnná není nastavena"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous porovnává dva balíčky .msi"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: kořenové certifikáty operačního systému nelze číst"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} neodpovídá výstupu '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} není implementován (msi nebo msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target přijímá msi nebo msix (zadáno '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots a --proxy patří k --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test a --msix-compress jsou pro výstupy .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test je pro balíčky bez podpisu; s --key ho vynechte"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate přijímá none, nebo některé z product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} je zadáno dvakrát"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' je název systému Windows; pojmenujte proměnnou jinak"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D potřebuje NÁZEV=HODNOTA (zadáno '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i se ptá na každou odpověď; zadejte buď -i, nebo volby"
+
+msgid "; its range is "
+msgstr "; jeho rozsah je "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' není v SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty musí být veřejná vlastnost (velká písmena)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Všechny kódy: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x nezačíná PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x není poslední položka"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Architektura (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Zvolte"
+
+msgid "Command line"
+msgstr "Příkazový řádek"
+
+msgid "Command line (lint)"
+msgstr "Příkazový řádek (lint)"
+
+msgid "Common AppData"
+msgstr "Společná AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId není GUID ve formátu registru"
+
+msgid "Desktop shortcut?"
+msgstr "Zástupce na ploše?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialogy (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "Tabulce File, Component nebo Directory chybí standardní sloupec"
+
+msgid "Folder name under Program Files"
+msgstr "Název složky v Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Složka se soubory k instalaci"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' je již použito (řádek {2}); ID se musí lišit napříč všemi tabulkami"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Instalační složka (cesta [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Instalovat pro (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Klíč jako tabulka.klíč (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' patří jiné součásti"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' není v File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' není v Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Korejské dialogy kromě anglických?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} je nižší než u nižšího DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Ukončit bez uložení změn?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Licence k přijetí (.txt, .md, .rtf; - pro žádnou)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX nemá virtuální složku pro AppData uživatele; aplikace si tam při spuštění vytvoří, co potřebuje"
+
+msgid "MSIX packages"
+msgstr "Balíčky MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: co balíček MSIX potřebuje a co nemůže obsahovat"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Hlavní program, pro zástupce (- pro žádný)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Příručka: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Výrobce"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Výrobce (zobrazuje se v Nainstalovaných aplikacích)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt vrátil podpis ECDSA nesprávné délky"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Volitelné části, které uživatel může zaškrtnout (podsložky, čárkami; - pro žádné)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "Token PKCS#11: token neobsahuje certifikát s CKA_ID klíče (zadejte ho pomocí --cert)"
+
+msgid "Paths"
+msgstr "Cesty"
+
+msgid "Product name"
+msgstr "Název produktu"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode a UpgradeCode jsou stejný GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} není v prvních třech polích vyšší než předchozí {2}: Instalační služba systému Windows neupgraduje"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Program, který otevírají zástupci (- bez zástupců)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: takový jazyk neexistuje (vestavěné: {2}; jiný potřebuje svůj jazykový balíček, {3}.po)"
+
+msgid "Reference, "
+msgstr "Reference, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Pořadí {1} nepokrývá žádný řádek Media (poslední {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Pořadí {1} používá jiný soubor"
+
+msgid "Source file to write"
+msgstr "Zdrojový soubor k zápisu"
+
+msgid "Source format"
+msgstr "Formát zdroje"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source musí jmenovat řádek File pro typ {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Zástupce v nabídce Start?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Položky nabídky Start, Programy, Plocha a Po spuštění pocházejí z [shortcut.*] a [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML mimo podmnožinu, kterou rubrapack čte, nebo `format` chybí či je příliš nový"
+
+msgid "Tables"
+msgstr "Tabulky"
+
+msgid "The TOML subset"
+msgstr "Podmnožina TOML"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "Soubory UTF-16 big-endian nejsou podporovány; uložte jako UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} se liší od kódu předchozí verze {2}: tento balíček ji nenahrazuje"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode není GUID ve formátu registru"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Hodnota (text, číslo, true/false, [\"a\", \"b\"]; - odebere klíč)"
+
+msgid "Variables"
+msgstr "Proměnné"
+
+msgid "Version"
+msgstr "Verze"
+
+msgid "Version ([define] VERSION)"
+msgstr "Verze ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Verze a upgrady"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Instalační služba systému Windows povoluje nejvýše 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] potřebuje '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] nemůže být ve slučovacím modulu; má to balíček, který ho slučuje"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] zatím není podporováno (plánováno na {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] nemůže být v MSIX; přidejte msi-only = true a MSIX se sestaví bez něj"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ID ve slučovacím modulu má nejvýše 35 znaků (přidá se k němu GUID modulu)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] potřebuje ID: napište [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] nepřijímá ID: napište [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml nemá </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml není poslední položka (není to balíček, který zapsal rubrapack nebo rozhraní Windows pro balíčky)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "Pole tabulek [[...]] nejsou podporována; dejte každé položce vlastní [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check nemá účinek: zatím ho nic nespouští; odeberte ho"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] potřebuje do i undo (undo vrací také neúspěšné do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: args pro MSIX musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: v MSIX otevírá typ souboru aplikaci: target musí být spustitelný soubor [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] je tam dvakrát"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] potřebuje ID: napište [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id a typelib se zapisují jen pro MSI; MSIX registruje třídu bez nich"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args patří programu; DLL se načítá, nespouští"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate spouští DLL v dllhost; '{2}' je program"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading je pro DLL; program si apartment nastavuje sám"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version a typelib-file potřebují typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] jde do {2}; nebo msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: jeho zdrojem musí být soubor, který jde do balíčku"
+
+msgid "[define] values must be strings"
+msgstr "Hodnoty [define] musí být řetězce"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] potřebuje '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] potřebuje 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] potřebuje 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] potřebuje 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] má ovládacích prvků: {2}; nejvýše 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] nemá [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] je přes jiné dialogy umístěn za sebou samým"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] potřebuje ui = \"minimal\", \"installdir\" nebo \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' je název systému Windows; dejte dir jiné ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard potřebuje pomocnou DLL rubrapack, kterou slučovací modul nenese"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] potřebuje funkci"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX nastaví všechny své proměnné (when); použijte msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: jeho hodnota jmenuje místo, které MSIX nemůže poskytnout (složku mimo balíček, která není složkou Windows, nebo část z doby instalace); použijte msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Průzkumník načítá obslužnou rutinu {2} z DLL; [com.{3}] je program"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows čte obslužné rutiny vlastností jen pro počítač; balíček potřebuje scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: obslužná rutina náhledu běží v prevhost systému Windows; vynechte app-id a surrogate z [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX nese jen obslužné rutiny miniatur a náhledu (zabalená obslužná rutina vlastností nedala Průzkumníku žádné hodnoty); msi-only = true ji ponechá pro MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: typ souboru MSIX patří aplikaci; přidejte [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: třída {2} není [com.*] tohoto balíčku (obsluhuje ji DLL obslužné rutiny)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: v MSIX sdílejí obslužné rutiny všechny své typy, nebo žádný (typ je v jednom přidružení typu souboru)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: v MSIX běží jeho třída v surrogate; threading = \"sta\" v [com.{2}] dá jeho oknu smyčku zpráv (s threading = {3} může náhled zůstat prázdný)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: v MSIX jsou všechny jeho typy v jednom typu souboru [assoc], nebo v žádném"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: jeho třída je msi-only ([com.{2}]); MSIX by pro ni neměl server"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types je seznam typů souborů, například [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] jde do {2}; nebo msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] potřebuje 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] potřebuje funkci: nastavte 'feature' zde nebo u jeho dir"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX zapíše všechny své položky INI (when); použijte msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: jeho hodnota má část, kterou Instalační služba systému Windows doplní při instalaci ([...]); MSIX zapíše soubor při sestavení"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] potřebuje 'on': kde se položka zobrazuje, například [\".txt\"] nebo \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] potřebuje 'target' (program, který spouští), nebo položky s parent = \"{2}\" (podnabídku)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] potřebuje 'target': program, který položka spouští"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: podnabídka nic nespouští: vynechte 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: položka podnabídky se zobrazuje tam, kde její podnabídka: vynechte 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args má část, kterou Instalační služba systému Windows doplní při instalaci ([...]); MSIX nese jen pevný text"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: jeho program není v MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: jeho hodnoty nemohou jít do registru balíčku"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": neexistuje [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on je typ souboru nebo jejich seznam, například [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' není [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' musí být podnabídka: [menu.*] bez target a bez vlastního parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] jde do {2}; nebo msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] potřebuje funkci: nastavte 'feature' zde nebo u jeho dir"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; nebo msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file musí být {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file musí jmenovat soubor, který jde do balíčku"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file musí jmenovat program, který jde do balíčku"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types je seznam typů souborů, například [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] potřebuje, aby jeho dir měl funkci"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: args pro MSIX musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: v MSIX otevírá schéma aplikaci: target musí být spustitelný soubor [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] potřebuje 'value' (nebo remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR nesahá mimo MSIX; použijte [assoc.*], [protocol.*], [com.*] nebo [handler.*], nebo msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: hodnota qword potřebuje pomocnou DLL rubrapack, kterou slučovací modul nenese"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX nese hodnoty jen pod {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX hodnoty ani neodebírá, ani je nenechává (remove, keep); použijte msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX zapíše všechny své hodnoty (when); použijte msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: jeho hodnota má část, kterou Instalační služba systému Windows doplní při instalaci ([...]); MSIX nese jen pevné hodnoty"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" potřebuje pomocnou DLL rubrapack, kterou slučovací modul nenese"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: název klíče nebo hodnoty nemůže jít do podregistru"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] potřebuje funkci: nastavte 'feature' zde nebo u jeho dir"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true není pro složku pod {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true potřebuje pomocnou DLL rubrapack, kterou slučovací modul nenese"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: args pro MSIX musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file musí jmenovat program, který jde do balíčku"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX má zástupce jen na ploše a v nabídce Start{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: zástupce MSIX nemá working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: zástupce MSIX je tam vždy (when je pro MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: zástupce MSIX ukazuje logo své aplikace; icon je pro MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: args pro MSIX musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: v MSIX spouští zástupce aplikaci: target musí být spustitelný soubor [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: položka nabídky Start v MSIX je jeho aplikace, která nepřijímá args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: žádný text dialogu nemá toto ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] potřebuje ui = \"basic\" nebo jinou sadu dialogů v [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "escape sekvence \\{1} není skalární hodnota Unicode"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: tento balíček by předchozí neupgradoval čistě"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` balíčku: dialogy, znaková stránka, normalizace textu"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` balíčku nebo sady MSIX"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "ovládací prvek {1} nemá text; dejte vedle něj textový prvek"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "ovládací prvek {1} potřebuje [property.{2}] s jednou ze svých hodnot jako výchozí (použije ji tichá instalace)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "balíček {1} nemůže zapisovat do HKLM; použijte HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "výstup .msix potřebuje tabulku [msix-app.ID] se spustitelným souborem"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "výstup .msix potřebuje tabulku [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "výstup .msm je slučovací modul, sestavený ze zdroje s [module] místo [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "soubor .txt, .md nebo .rtf, nebo - pro žádný"
+
+msgid "a PE file without a certificate table entry"
+msgstr "soubor PE bez položky tabulky certifikátů"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN se nikdy nepřijímá na příkazovém řádku (ostatní ho mohou vidět); použijte --pin-env nebo --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "Package manifestu sady s neznámým Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "Package manifestu sady bez FileName, Offset nebo Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "položka ZIP se nerozbalí na svou velikost"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "položka ZIP větší, než je povoleno"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "CRC-32 položky ZIP nesouhlasí"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "data položky ZIP leží mimo soubor"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "zdroj [module] sestavuje slučovací modul: -o <název>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "binární hodnota je sudý počet šestnáctkových číslic, například \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "sada bez balíčků"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "certifikát v cestě má kritické rozšíření, kterému rubrapack nerozumí"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "certifikát v cestě je podepsán certifikátem, který není CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "řetěz obsahuje jen [chain], [chain-package.ID] a [define], ne [{1}]; balíčky se sestavují z vlastních zdrojů"
+
+msgid "a chain holds at most %d packages"
+msgstr "řetěz obsahuje nejvýše {1} balíčků"
+
+msgid "a chain needs [chain]"
+msgstr "řetěz potřebuje [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "řetěz potřebuje alespoň jeden [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "znak, který Windows v názvu nepovoluje (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "řídicí znak"
+
+msgid "a damaged PE optional header"
+msgstr "poškozená volitelná hlavička PE"
+
+msgid "a damaged PE section table"
+msgstr "poškozená tabulka oddílů PE"
+
+msgid "a damaged ZIP64 end record"
+msgstr "poškozený koncový záznam ZIP64"
+
+msgid "a damaged hive bin"
+msgstr "poškozený blok podregistru (hive bin)"
+
+msgid "a diagnostic of rubrapack"
+msgstr "diagnostika rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "zakázanou službu nelze spustit"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "balíček dual nemůže volit mezi proměnnou uživatele a systému"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "balíček dual zapisuje do HKMU (HKLM nebo HKCU podle instalace), ne do HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "hodnota dword je celé číslo 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "funkce, kterou tento rubrapack neposkytuje (nebo bez které byl sestaven)"
+
+msgid "a file larger than allowed"
+msgstr "soubor větší, než je povoleno"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "název souboru pod '{1}' není platný Unicode a nelze jej zabalit"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "název souboru bez / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "řetěz součásti nebo adresáře souboru je přerušen"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "písmo jde do MSIX přes [font.*], který ho jmenuje"
+
+msgid "a hash the token signing does not know"
+msgstr "hash, který podepisování tokenem nezná"
+
+msgid "a hive cell crosses its bin"
+msgstr "buňka podregistru přesahuje svůj blok"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "verze nebo typ podregistru, které rubrapack nečte"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "samotná známá složka ('{1}') nemůže dostat oprávnění"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "licence potřebuje ui = \"minimal\", \"installdir\" nebo \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "místní hlavička s dalšími poli (není to balíček, který zapsal rubrapack nebo rozhraní Windows pro balíčky)"
+
+msgid "a malformed central directory"
+msgstr "chybně utvořený centrální adresář"
+
+msgid "a modification package has no applications of its own"
+msgstr "balíček úprav nemá vlastní aplikace"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "balíček úprav vyžaduje sestavení Windows 18362 nebo novější: nastavte [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "compress modulu je \"none\", \"mszip\" nebo \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "název modulu je jeho ID v ModuleID: písmena, číslice a _, nejvýše 35 znaků"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "hodnota multi je neprázdné pole řetězců"
+
+msgid "a multi value is an array of strings"
+msgstr "hodnota multi je pole řetězců"
+
+msgid "a name ending with a space or a dot"
+msgstr "název končící mezerou nebo tečkou"
+
+msgid "a name longer than 255 bytes"
+msgstr "název delší než 255 bajtů"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "balíček uvedený v manifestu sady v sadě není"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "balíček bez Identity Name, Publisher, Version a ProcessorArchitecture (nebo ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "Offset nebo Size balíčku v manifestu sady neodpovídá jeho umístění (nebo je komprimovaný)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "identita balíčku se liší od toho, co o něm říká manifest sady"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "název balíčku v sadě musí být název souboru končící .msix nebo .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "heslo se nikdy nepřijímá na příkazovém řádku (ostatní ho mohou vidět); použijte --pass-env nebo --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "balíček pro počítač nezapisuje do HKCU (patřil by instalujícímu uživateli); použijte scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "proxy s uživatelským jménem nebo heslem není podporován"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "hodnota qword je celé číslo, nebo \"0x\" a 1 až 16 šestnáctkových číslic"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "přepínač skládá svá tlačítka pod sebe: výška musí být alespoň 12 na hodnotu ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "záznam má víc sloupců než jeho tabulka"
+
+msgid "a record is cut short"
+msgstr "záznam je zkrácený"
+
+msgid "a record names a string the pool does not have"
+msgstr "záznam jmenuje řetězec, který fond nemá"
+
+msgid "a reserved device name"
+msgstr "vyhrazený název zařízení"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "akce vrácení nemůže být asynchronní"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "schéma je malé písmeno, pak malá písmena, číslice, '+', '-' nebo '.' (zadáno '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "akce skriptu mezi InstallInitialize a RemoveExistingProducts (chyba 2613)"
+
+msgid "a section lies outside the file"
+msgstr "oddíl leží mimo soubor"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "název služby nesmí obsahovat '/' ani '\\' (nejvýše 256 znaků)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "instalační .exe se sestavuje ze zdroje s [chain]; '{1}' sestavuje balíček (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "zdroj obsahuje jeden [package] nebo jeden [module], ne oba"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "zdroj, který projde kontrolami RP1xxx, by na tohle nikdy neměl narazit: nahlaste to i se zdrojem"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "uložená položka ZIP s rozdílnými velikostmi"
+
+msgid "a stream of the package cannot be read"
+msgstr "datový proud balíčku nelze číst"
+
+msgid "a table has more than 32 columns"
+msgstr "tabulka má víc než 32 sloupců"
+
+msgid "a text control has no property"
+msgstr "textový prvek nemá vlastnost"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "hodnota `with` souborem sdílí jeho součást: dejte `when` na soubor"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "hodnota má 1 až 64 bajtů"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "hodnota jdoucí 'with' souborem přebírá funkci toho souboru"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "verze jsou 3 nebo 4 čísla s tečkami, například 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account musí být LocalSystem, LocalService nebo NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "akce '{1}' je již definována"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "akce není standardní akce ani není v CustomAction"
+
+msgid "adds too many tables"
+msgstr "přidává příliš mnoho tabulek"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' není stránka této sady dialogů (RpWelcomeDlg{2}{3}{4}) ani [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias patří ke kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias musí být název souboru končící .exe: písmena, číslice, '.', '_', '-' (zadáno '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "oddíl INI nesmí obsahovat ']' a klíč '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX nemůže umístit soubory do dočasné složky"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "aplikace má jeden alias ([msix-extension.{1}] už jím je)"
+
+msgid "an empty name"
+msgstr "prázdný název"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "server https potřebuje --tls-trust <certifikáty> nebo --system-roots, proti kterým se ověří"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "proxy https:// není podporován; zadejte proxy http:// (servery https se dosahují přes CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "časové razítko Authenticode starého typu (PKCS#9 counterSignature), které rubrapack nekontroluje"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "volitelný balíček nebo balíček úprav nedeklaruje žádné schopnosti ani nastavení virtualizace: platí ty z hlavního balíčku"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "balíček x86 zapisuje jen do 32bitového zobrazení registru"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "aplikace '{1}' není [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri a package-uri patří k sobě: kde bude soubor .appinstaller a balíček"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch musí být \"x64\", \"arm64\" nebo \"x86\" (zadáno '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch musí být \"x64\", \"x86\" nebo \"arm64\" (vlastní instalačního programu)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "argument {1} není platné UTF-8 (bajt {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "argument {1} není platný Unicode (jednotka UTF-16 {2})"
+
+msgid "array is not closed"
+msgstr "pole není uzavřeno"
+
+msgid "arrays inside arrays are not supported"
+msgstr "pole uvnitř polí nejsou podporována"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "pole smí obsahovat jen řetězce, nebo jen celá čísla"
+
+msgid "at most %d languages besides English"
+msgstr "nejvýše {1} jazyků kromě angličtiny"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "nejvýše 100 tabulek [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "nejvýše 50 tabulek [action.*] (tento soubor má {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color je \"transparent\" nebo \"#RRGGBB\", například \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "chybný název proměnné v '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner musí být soubor .bmp (Instalační služba systému Windows ukazuje jen BMP)"
+
+msgid "build a package from a source file"
+msgstr "sestaví balíček ze zdrojového souboru"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "sestavení {1} ze zdroje {2} potřebuje vlastní rodinu upgradů: přidejte {3} = \"{...}\" do [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab musí být \"embed\" nebo \"external\""
+
+msgid "cannot be read"
+msgstr "nelze číst"
+
+msgid "cannot build the ClientHello"
+msgstr "nelze sestavit ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "balíčky nelze spojit do sady: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' nelze vytvořit"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' nelze vytvořit{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' nelze najít; vytvořte ho příkazem `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "nelze vytvořit výchozí logo"
+
+msgid "cannot make a key share"
+msgstr "nelze vytvořit sdílení klíče"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "nelze vytvořit opravu z '{1}' na '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "nelze vytvořit transformaci z '{1}' na '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "úložiště certifikátů nelze otevřít"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' nelze číst"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' nelze číst ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "balíček '{1}' nelze číst"
+
+msgid "cannot read source file '%s'"
+msgstr "zdrojový soubor '{1}' nelze číst"
+
+msgid "cannot read that folder"
+msgstr "tuto složku nelze číst"
+
+msgid "cannot read the %s file '%s'"
+msgstr "soubor {1} '{2}' nelze číst"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "soubor PIN '{1}' nelze číst"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "cabinet '{1}' vedle '{2}' nelze číst"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "soubor certifikátu '{1}' nelze číst"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "certifikáty v '{1}' nelze číst"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "certifikáty v '{1}' nelze číst: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "soubor klíče '{1}' nelze číst"
+
+msgid "cannot read the password file '%s'"
+msgstr "soubor hesla '{1}' nelze číst"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "nekomprimovaný soubor '{1}' vedle '{2}' nelze číst"
+
+msgid "cannot write %s"
+msgstr "{1} nelze zapsat"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' nelze zapsat"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' nelze zapsat ke kontrole"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri nelze zapsat"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "soubory nabídky vedle '{1}' nelze zapsat"
+
+msgid "cannot write the resource package of %s"
+msgstr "balíček prostředků {1} nelze zapsat"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities je pole názvů, například [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "schopnost '{1}' rubrapack nezná (příručka je uvádí)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "schopnost '{1}' vyžaduje sestavení Windows 17763 nebo novější"
+
+msgid "carriage return without a line feed"
+msgstr "návrat vozíku bez odřádkování"
+
+msgid "certificate file '%s': %s"
+msgstr "soubor certifikátu '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "změní zdroj na místě: přes nabídku otázek, nebo volbami"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "ověří podpis: strukturu, otisk, podpis a cestu k důvěryhodnému certifikátu"
+
+msgid "check a source or package without writing anything"
+msgstr "zkontroluje zdroj nebo balíček, aniž by cokoli zapsal"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "zkontrolujte cesty zdroje (relativně k souboru zdroje); pro záměrně jinou architekturu nastavte any-arch = true"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "zkontrolujte pravopis (zpráva navrhuje nejbližší název) a klíče tabulky"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "třídu {1} již obsluhuje [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "třída {1} je také v [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class musí být GUID jako {12345678-...} (zadáno '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs nemá s preflight = false účinek"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs musí být \"ask\", \"always\" nebo \"never\" (zadáno '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "sloupec {1} obsahuje hodnotu nesprávného druhu"
+
+msgid "column %s is not valid UTF-8"
+msgstr "sloupec {1} není platné UTF-8"
+
+msgid "column %s may not be null"
+msgstr "sloupec {1} nesmí být null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "sloupec {1}: {2} je mimo rozsah sloupce"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "sloupec {1}: jednotek UTF-16: {2}, sloupec pojme {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "sloupec {1}: znaků: {2}, sloupec pojme {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "příkaz '{1}' zatím není implementován"
+
+msgid "command-line"
+msgstr "příkazový řádek"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "součást {1} {2} se změnila mezi 32 a 64 bity: pravidla součástí chtějí nový GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "součást {1} {2} zmizela (její prostředky se odeberou s předchozí verzí)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "součást {1} {2} má nyní cestu ke klíči {3} místo {4}: pravidla součástí chtějí nový GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid musí být GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress musí být \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" nebo \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "condition má neuzavřené uvozovky nebo nevyvážené závorky"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "condition je delší než 240 znaků (rubrapack přidává \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config obsahuje řetězce \"Název=hodnota\" (zadáno '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config je pole řetězců \"Název=hodnota\""
+
+msgid "contains a control character"
+msgstr "obsahuje řídicí znak"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "obsahuje jeden z < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type je typ média, například \"image/png\" (zadáno '{1}')"
+
+msgid "control character"
+msgstr "řídicí znak"
+
+msgid "control character in a comment"
+msgstr "řídicí znak v komentáři"
+
+msgid "control character in a string"
+msgstr "řídicí znak v řetězci"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "data a časy nejsou podporovány; zapište je jako řetězce"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when potřebuje level nad 1 (funkce s level 1 se stejně instaluje ve výchozím stavu)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "definujte proměnnou ([define] nebo -D NÁZEV=hodnota), nebo pro doslovné $ napište $$"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialog '{1}' není [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "ID dialogů začínající 'Rp' (a FilesInUse) patří rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' je uvnitř sebe (smyčka cesty)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' není ID dir ani Programs, Desktop, StartMenu nebo Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' není ID dir"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' není definován"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction musí být \"in\" nebo \"out\" (zadáno '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "argumenty do/undo jsou delší než 255 znaků"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "klíče s tečkami nejsou podporovány; dejte klíč do vlastní tabulky"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "vypíše balíček (tabulky MSI jako IDT)"
+
+msgid "duplicate primary key"
+msgstr "duplicitní primární klíč"
+
+msgid "empty arrays are not supported"
+msgstr "prázdná pole nejsou podporována"
+
+msgid "ends with a space or a dot"
+msgstr "končí mezerou nebo tečkou"
+
+msgid "error"
+msgstr "chyba"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" musí jmenovat [file.*], který jde do balíčku"
+
+msgid "expected ',' or ']' in the array"
+msgstr "v poli se očekává ',' nebo ']'"
+
+msgid "expected '=' after the key"
+msgstr "za klíčem se očekává '='"
+
+msgid "expected ']' to close the table name"
+msgstr "k uzavření názvu tabulky se očekává ']'"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "očekává se klíč, [tabulka] nebo komentář"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "přípona '{1}' už má program ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension musí být '.' a malá písmena, číslice, '_' nebo '-' (zadáno '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files nemá s preflight = false účinek"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files musí být \"ask\", \"keep\" nebo \"delete\" (zadáno '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "funkce {1} zmizela: instalace, které ji měly, přijdou o její obsah"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "funkce '{1}' je svým vlastním předkem"
+
+msgid "feature '%s' is not defined"
+msgstr "funkce '{1}' není definována"
+
+msgid "feature parent '%s' is not defined"
+msgstr "nadřazená funkce '{1}' není definována"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "soubor '{1}' už spouští službu '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "soubor '{1}' je už registrován jako písmo"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "soubor '{1}' musí být nainstalován přímo do složky Fonts ([dir.*] s path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "soubor '{1}' potřebuje funkci: nastavte 'feature' zde nebo u jeho dir"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file musí být \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "název souboru má jednotek UTF-16: {1}; s krátkým názvem 8.3 pojme MSI nejvýše {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization a registry-virtualization = false vyžadují sestavení Windows 18362 nebo novější: nastavte [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' není [file.*] tohoto balíčku"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' obsluhuje třídy COM jen jako .exe nebo .dll"
+
+msgid "files but no Media row"
+msgstr "soubory, ale žádný řádek Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "opravte hodnotu, kterou zpráva uvádí; ID jsou písmena, číslice a '_' a liší se napříč všemi tabulkami"
+
+msgid "floating-point numbers are not supported"
+msgstr "čísla s plovoucí čárkou nejsou podporována"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "složka '{1}' potřebuje funkci: nastavte 'feature' zde nebo u jejího dir"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "název složky má jednotek UTF-16: {1}; s krátkým názvem 8.3 pojme MSI nejvýše {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent potřebuje parent"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "písma potřebují scope = \"machine\" (toto je {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} potřebuje novější rubrapack (tento čte format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format je celé číslo: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "zadejte --pass-env, nebo --pass-file, ne obojí"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "zadejte --pin-env, nebo --pin-file, ne obojí"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "dejte [msix] a [msix-app.*], co potřebují, nebo ponechte položku pro MSI pomocí msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "zadejte soubor pod touto složkou"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "zadejte soubor přímo ve složce programu, nebo - pro žádný"
+
+msgid "give a folder below this one, such as dist"
+msgstr "zadejte složku pod touto, například dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "zadejte název o 1 až 128 bajtech"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "zadejte všechna tři loga (logo-150, logo-44, store-logo), nebo žádné"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "zadejte jedno z --key, --pkcs11 a --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "zadejte podsložky složky programu oddělené čárkami, nebo - pro žádné"
+
+msgid "glob '%s' matches no file"
+msgstr "vzor '{1}' neodpovídá žádnému souboru"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "vzor '{1}' odpovídá výstupnímu souboru '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "má datový proud MergeModule.CABinet, který nelze číst"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "má MergeModule.CABinet, který nelze číst"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "má tabulku Module*Sequence bez standardních sloupců"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "má položku ModuleConfiguration bez názvu nebo s neznámým formátem"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "má tabulku ModuleConfiguration bez standardních sloupců"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "má tabulku ModuleSubstitution bez standardních sloupců"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "má šablonu ModuleSubstitution jmenující položku, kterou ModuleConfiguration nemá"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "má součást s podmínkou; MSIX instaluje vše"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "má soubor, jehož součást nebo položka v cabinet chybí"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "má složku mimo svůj TARGETDIR, pro kterou MSIX nemá místo"
+
+msgid "has a table that cannot be read"
+msgstr "má tabulku, kterou nelze číst"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "má tabulku, jejíž sloupce se liší od sloupců balíčku"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "má akce pro tabulku pořadí, kterou balíček nemá"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "má součásti, ale balíček nemá tabulku FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "má soubory, ale žádný MergeModule.CABinet ani tabulku Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "má soubory, ale žádný datový proud MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "má soubory, ale balíček nemá tabulku Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "nemá ModuleSignature: není to slučovací modul"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "nemá ProductCode ani ProductVersion"
+
+msgid "has no Property table"
+msgstr "nemá tabulku Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "má záznamy pro tabulku, kterou nedefinuje ani základ, ani transformace"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "má text mimo ASCII v jiné znakové stránce než 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon musí být soubor .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id musí být GUID jako {12345678-1234-1234-1234-123456789ABC}: vlastní GUID modulu, zachovaný v každé verzi"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name musí mít 3 až 50 znaků z A-Z, a-z, 0-9, '.' a '-' (zadáno '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "vložené tabulky nejsou podporovány; použijte tabulku [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "instaluje se do stejné cesty jako řádek {1} (Windows v názvech nerozlišuje velikost písmen{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "vnitřní chyba: vestavěný dialog má porušené pořadí tabulátoru; nahlaste to"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "interní: tabulka modulu nemá pravidlo _Validation"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "interní: žádné pravidlo _Validation pro sloupec {1}"
+
+msgid "invalid"
+msgstr "neplatný"
+
+msgid "invalid - %s"
+msgstr "neplatný - {1}"
+
+msgid "is '.' or '..'"
+msgstr "je '.' nebo '..'"
+
+msgid "is a reserved device name"
+msgstr "je vyhrazený název zařízení"
+
+msgid "is empty"
+msgstr "je prázdný"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "je delší než 255 jednotek UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "není databáze Instalační služby systému Windows"
+
+msgid "is not a compound file"
+msgstr "není složený soubor"
+
+msgid "is not valid UTF-8"
+msgstr "není platné UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "zachovejte kód upgradu, zvyšte verzi, zachovejte kódy součástí souborů, které zůstávají"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "klíč '{1}' je v této tabulce nastaven dvakrát (poprvé na řádku {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "klíč '{1}' nesmí začínat ani končit '\\' ani obsahovat prázdnou část"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "klíč '{1}' mimo tabulku; před první tabulkou je jen 'format'"
+
+msgid "key file '%s': %s"
+msgstr "soubor klíče '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind musí být \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" nebo \"context-menu\" (zadáno '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind musí být \"preview\", \"thumbnail\" nebo \"property\" (zadáno '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind musí být registry, file, dir nebo component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels je pole řetězců, jeden na hodnotu"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "jazyk '{1}' nemá jazykový balíček (lang/{2}.po vedle zdroje, nebo RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "jazyk '{1}' je uveden dvakrát"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "jazyk '{1}' není v [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "jazyku '{1}' chybí textů: {2}, první je {3}: přidejte je do jeho jazykového balíčku (lang/{4}.po), nebo zadejte [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "jazyk '{1}' potřebuje [ui] langid-{2} (jeho LANGID, pro automatickou volbu)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "jazyk '{1}' potřebuje [ui] name-{2} (jeho název na stránce jazyka)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" už nedělá dialogy korejské: jsou anglické, pokud [ui] languages = [\"ko\"] nepřidá korejštinu"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language musí být \"ko-KR\" nebo \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language musí být \"neutral\", \"en-US\" nebo \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages obsahuje kódy jako \"ko\" nebo \"zh_TW\" (2 nebo 3 malá písmena, a _ a dvě velká písmena regionu) (zadáno '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages je pole kódů jazyků, například [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages potřebuje sadu dialogů (ui = \"basic\" nebo jinou)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
+
+msgid "launch-args needs launch"
+msgstr "launch-args potřebuje launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license musí být soubor .txt, .md (zobrazený jako prostý text) nebo .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} řádek {2}: sloupec {3} není v NFC (řádků: {4}{-5}); build --nfc převede názvy složek, souborů a zástupců do NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: znaková stránka {1}, ne 65001: text se nekontroluje jako UTF-8, šířky jen pro ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: žádné problémy\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: viz problémy výše\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "vypíše klíče, kterými může podepisovat token nebo úložiště certifikátů Windows"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logo '{1}' i jeho varianta .scale-100 jsou obě přítomné: ponechte jedno"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' v měřítku {2} má {3}x{4} pixelů; musí mít {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logo '{1}' v měřítku {2} není soubor PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' má {2}x{3} pixelů; musí mít {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logo '{1}' není soubor PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logo '{1}' nebylo nalezeno (ani jako varianty .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logo '{1}': logo s variantami měřítka potřebuje název souboru v ASCII s příponou"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package je název identity hlavního balíčku (zadáno '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher a modification = true patří k main-package (balíčku, ke kterému tento patří)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher je vydavatel hlavního balíčku, například \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "nesmí obsahovat řídicí znaky ani / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "nesmí začínat mezerou ani končit mezerou nebo tečkou"
+
+msgid "merge module '%s' not found"
+msgstr "slučovací modul '{1}' nebyl nalezen"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version musí být verze jako 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version musí mít čtyři části, například 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version musí mít čtyři části, například 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "neshoda"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" odebere klíč; nepřijímá 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode musí být \"set\", \"add\" nebo \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode musí být \"set\", \"append\" nebo \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "víc položek ZIP, než je povoleno nebo než adresář obsahuje"
+
+msgid "more keys and values than allowed"
+msgstr "víc klíčů a hodnot, než je povoleno"
+
+msgid "more than 3 redirects"
+msgstr "víc než 3 přesměrování"
+
+msgid "more than 96 sections"
+msgstr "víc než 96 oddílů"
+
+msgid "more than one source file ('%s')"
+msgstr "víc než jeden zdrojový soubor ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "je přítomen víc než jeden token: jeden pojmenujte pomocí --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi musí být \"each\", \"one\" nebo \"single\" (zadáno '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "víceřádkové řetězce nejsou podporovány"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "víceřádkové řetězce nejsou podporovány; použijte jeden řádek s \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "musí mít 1 až 64 bajtů"
+
+msgid "name contains a control character"
+msgstr "název obsahuje řídicí znak"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name je název identity balíčku (zadáno '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "name není v ASCII a chybí summary-name; předmět souhrnu bude 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "jmenuje složku, kterou jeho tabulka Directory nemá"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix zatím není implementován: vytvořte zdroj MSI a přidejte [msix] (viz příručka)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "chybí řádek 'format = {1}': zdroj ve formátu rubrapack 0.18 nebo starším, který tato verze nečte (cesty nyní začínají $(ProgramFiles) nebo $(INSTALLDIR)); viz Source format v příručce"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "nebylo zadáno --trust: podpis se ověří, ale nic neříká, komu důvěřovat"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "žádný certifikát v souboru klíče (ani v souboru --cert) nepatří ke klíči"
+
+msgid "no control characters"
+msgstr "žádné řídicí znaky"
+
+msgid "no keys\n"
+msgstr "žádné klíče\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "žádný hlavní program, tedy žádní zástupci: žádné"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "žádný název serveru, nebo delší než 255 bajtů"
+
+msgid "no string pool: not a transform"
+msgstr "žádný fond řetězců: není to transformace"
+
+msgid "no table '%s' in '%s'"
+msgstr "v '{2}' není tabulka '{1}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove ponechá Změnit (jeho Odebrat) jako jediný způsob odebrání produktu: nelze kombinovat s no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "není soubor PE (chybí hlavička MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "není soubor PE (chybí hlavička PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "není soubor PEM, PKCS#8 ani PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "není archiv ZIP (chybí koncový záznam)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "není archiv ZIP (příliš krátký)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "není adresa URL proxy, kterou rubrapack přijímá (http://hostitel:port)"
+
+msgid "not a registry hive"
+msgstr "není podregistr"
+
+msgid "not a valid number"
+msgstr "neplatné číslo"
+
+msgid "not a value"
+msgstr "není hodnota"
+
+msgid "not a value (strings need quotes)"
+msgstr "není hodnota (řetězce potřebují uvozovky)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "není adresa URL http:// ani https://, kterou rubrapack přijímá"
+
+msgid "not valid UTF-8"
+msgstr "neplatné UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "nekontrolováno (zadejte --trust nebo --system-roots)"
+
+msgid "not-present"
+msgstr "nepřítomno"
+
+msgid "nothing changed\n"
+msgstr "nic se nezměnilo\n"
+
+msgid "number out of range"
+msgstr "číslo mimo rozsah"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "osmičková a dvojková čísla nejsou podporována; použijte desítková nebo 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" je pro HKLM, HKCU a HKMU (třídy patří k [assoc.*], [com.*] a podobným)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" odebere klíč se vším pod ním: '{1}' není vlastní klíč produktu pod Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" při odebrání odebere celý klíč; nepřijímá '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "ve Windows `keys list` ukazuje úložiště certifikátů"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "ve Windows se token používá přes úložiště certifikátů (--key-store <otisk>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on je pro remove = true (kdy se klíč odebere)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on musí být \"install\" nebo \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on musí být \"install\", \"uninstall\" nebo \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: každý je typ souboru ('.' a malá písmena, číslice, '_' nebo '-'), \"*\" (každý soubor), \"folder\", \"background\" (prázdná část složky), \"drive\" nebo \"assoc:<ID>\" (zadáno '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "labels přijímají jen přepínače a pole se seznamem"
+
+msgid "only radio and combo controls take values"
+msgstr "values přijímají jen přepínače a pole se seznamem"
+
+msgid "out of memory"
+msgstr "nedostatek paměti"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "výstup '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle a instalační .exe řetězu"
+
+msgid "package '%s' %s"
+msgstr "balíček '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "balíček '{1}' nebyl nalezen"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent musí být upgrade-code jiného produktu, ne tohoto balíčku"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent musí být upgrade-code hlavního produktu, GUID jako {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path musí být \"$(Base)/relativní/cesta\" s '/' (Base je složka jako ProgramFiles, nebo ID dir)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path musí začínat složkou Windows (například $(ProgramFiles) nebo $(System))"
+
+msgid "paths"
+msgstr "cesty"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type musí být \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" nebo \"application\" (zadáno '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "oprávnění potřebují scope = \"machine\" (toto je {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports musí být port nebo rozsah jako \"8000-8100\" v rámci 1-65535 (zadáno '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "vypíše náhodný GUID, nebo ten, který rubrapack odvodí z textu"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "vypíše JSON Schema zdrojů (pro editor, který doplňuje a kontroluje klíče)"
+
+msgid "print the version"
+msgstr "vypíše verzi"
+
+msgid "print this help, or one command's usage"
+msgstr "vypíše tuto nápovědu, nebo použití jednoho příkazu"
+
+msgid "product-code must be a GUID"
+msgstr "product-code musí být GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile musí být \"all\", \"domain\", \"private\" nebo \"public\" (zadáno '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' už patří [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' patří také [assoc.{2}]: typ souboru a třída COM potřebují dva názvy"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' je také v [assoc.{2}] s jiným description, target, icon nebo args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id musí být písmena, číslice, '.', '_' nebo '-', nezačínat číslicí, nejvýše 39 (zadáno '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "vlastnost '{1}' už patří ovládacímu prvku '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "vlastnost '{1}' má název dir nebo funkce"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "vlastnost '{1}' je již definována (řádek {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "vlastnost '{1}' se již vyhledává (řádek {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "vlastnost '{1}' nastavuje rubrapack nebo instalační program a nelze ji zde definovat"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "vlastnost '{1}' musí být vlastní veřejný název (velká písmena)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "vlastnost '{1}' musí být veřejný název: velká písmena, číslice a '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol musí být \"tcp\" nebo \"udp\" (zadáno '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher je vydavatel balíčku, například \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher musí být subjekt podpisového certifikátu, například \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher nesmí nést OID unsigned-test; přidá ho --unsigned-test"
+
+msgid "quoted keys are not supported"
+msgstr "klíče v uvozovkách nejsou podporovány"
+
+msgid "quoted table names are not supported"
+msgstr "názvy tabulek v uvozovkách nejsou podporovány"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot musí být \"suppress\" nebo \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true je pro on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true se nikdy nespustí, když upgrade odebírá tuto verzi; nepřijímá 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true odebere složku se vším v ní; nepřijímá 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} je nad verzí {2} tohoto balíčku"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' musí být verze jako 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message potřebuje refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "registr '{1}' odebírá hodnotu; nemá co chránit"
+
+msgid "registry value '%s' needs a feature"
+msgstr "hodnota registru '{1}' potřebuje funkci"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true odebere hodnotu při instalaci; nepřijímá 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons potřebuje úlohu úklidu: odeberte cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces obsahuje nejvýše 16 kódů upgradu"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces obsahuje kódy upgradu, GUID jako {12345678-1234-1234-1234-123456789ABC} (zadáno '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces je pole kódů upgradu, například [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces uvádí {1} dvakrát"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces jmenuje {1}, což je vlastní upgrade-code tohoto balíčku nebo jeho parent"
+
+msgid "required property %s is missing"
+msgstr "chybí povinná vlastnost {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "dvojče pro vrácení musí být před {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root musí být HKLM, HKCR nebo HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root musí být HKLM, HKCU, HKCR nebo HKMU (zadáno '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: co znamená diagnostický kód. Kódy podle rozsahu:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: několik otázek vytvoří zdroj (Enter převezme hodnotu v [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "spusťte `rubrapack help <příkaz>`; zkontrolujte cesty a že výstupní složka existuje"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (stroj 0x{2}) nemůže běžet na strojích tohoto balíčku"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' není program (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "uložte zdroj jako UTF-8 (nebo UTF-16 s BOM) s konci řádků LF nebo CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "schéma '{1}' už má program ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope musí být \"machine\", \"user\" nebo \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl musí být řetězec SDDL jako \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "vlastnost hledání '{1}' musí být vlastní veřejný název (velká písmena)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "viz zpráva; nové sestavení pomocí rubrapack opraví většinu z nich"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "pořadí {1} není za {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "řadí akci vedle akce, kterou nespouští balíček ani modul"
+
+msgid "service name '%s' is already used"
+msgstr "název služby '{1}' je již použit"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "služby potřebují scope = \"machine\" (toto je {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "název zástupce má jednotek UTF-16: {1}; s krátkým názvem 8.3 pojme MSI nejvýše {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "podepíše soubor PE, balíček MSI, balíček nebo sadu MSIX"
+
+msgid "signed %s\n"
+msgstr "podepsáno {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "zdroj '{1}' je adresář; pro mnoho souborů použijte [files.ID]"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "zdroj '{1}' je symbolický odkaz; odkazy se nesledují"
+
+msgid "source '%s' is not a regular file"
+msgstr "zdroj '{1}' není běžný soubor"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "zdrojový soubor '{1}' se změnil během sestavování balíčku"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "zdrojový soubor '{1}' je větší než 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "zdrojový soubor '{1}' nebyl nalezen"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source musí být \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source musí být balíček .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "zdrojová cesta '{1}' musí být relativní k souboru zdroje"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "zdrojové cesty používají '/', ne '\\\\' (zadáno '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start musí být auto, demand nebo disabled"
+
+msgid "string is not closed on this line"
+msgstr "řetězec není na tomto řádku uzavřen"
+
+msgid "string lengths exceed the string data"
+msgstr "délky řetězců přesahují data řetězců"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "souhrnné informace zatím nelze zobrazit jako IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name musí být v ASCII (souhrnné informace obsahují jen ASCII)"
+
+msgid "table %s %s"
+msgstr "tabulka {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "tabulka '{1}' je nečitelná"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "tabulka [{1}{2}{3}] je definována dvakrát (poprvé na řádku {4})"
+
+msgid "table name expected"
+msgstr "očekává se název tabulky"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "názvy tabulek mají nejvýše dvě části: [kind] nebo [kind.ID]"
+
+msgid "tables"
+msgstr "tabulky"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "tabulky a klíče: neznámá tabulka nebo klíč, chybějící povinný, položka bez funkce, když funkce existují"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "nepřijímá konfiguraci (nemá ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "cíl '{1}' neexistuje"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target musí být \"dir:<ID>\", \"file:<ID>\" nebo \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
+
+msgid "target name '%s' %s"
+msgstr "název cíle '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' už používá [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name a enabled patří ke kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "ten soubor už existuje; zadejte jiný název"
+
+msgid "that folder holds no files"
+msgstr "tato složka neobsahuje žádné soubory"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "dialog FilesInUse potřebuje tabulku ListBox, i prázdnou (chyba 2205; dialog se přeskočí)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN má znaky nebo délku, které token nepřijímá"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN vypršel: nejprve ho změňte na tokenu"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN je zablokován (příliš mnoho chybných pokusů)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode je z předchozí verze: to je menší upgrade (REINSTALLMODE), ne velký upgrade, který sestavuje rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "soubor UTF-16 není platné UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "centrální adresář ZIP leží mimo soubor"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "ID aplikace '{1}' se stává Application Id: jen písmena a číslice, nezačíná číslicí"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "archiv nekončí koncovými záznamy ZIP64, jak to dělají balíčky MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "archiv nemá koncový záznam ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "manifest sady nemá Identity Name, Publisher a Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "centrální adresář leží mimo archiv"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "certifikát má kritické rozšíření, kterému rubrapack nerozumí"
+
+msgid "the certificate has expired"
+msgstr "certifikát vypršel"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "certifikát je certifikát CA, ne podpisový certifikát"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "certifikát není pro podepisování kódu (chybí rozšířené použití klíče pro podepisování kódu)"
+
+msgid "the certificate is not valid yet"
+msgstr "certifikát ještě není platný"
+
+msgid "the certificate path is longer than 8"
+msgstr "cesta certifikátů je delší než 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "tabulka certifikátů neobsahuje podpis Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "tabulka certifikátů není na konci souboru"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "použití klíče certifikátu nedovoluje digitální podpisy"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "subjekt certifikátu nelze zapsat jako vydavatele MSIX"
+
+msgid "the chunked response is malformed"
+msgstr "odpověď po částech (chunked) je chybná"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "příkazový řádek: neznámý příkaz nebo volba, soubor, který nelze číst nebo zapsat, podpis, rozdíl, který transformace nepřenese"
+
+msgid "the connection has failed"
+msgstr "připojení selhalo"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "vložené soubory cabinet dělají balíček velký 2 GiB nebo víc, což Instalační služba systému Windows neotevře; použijte cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "položka není v centrálním adresáři"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "chybový dialog '{1}' potřebuje ovládací prvek {2} s názvem {3} (chyba 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "spustitelný soubor '{1}' musí být .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "složka spustitelného souboru nevede do známého umístění"
+
+msgid "the file is not signed"
+msgstr "soubor není podepsán"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "soubor je již podepsán; rubrapack nepodepisuje dvakrát ani nenahrazuje podpis"
+
+msgid "the file is too large to sign"
+msgstr "soubor je příliš velký k podepsání"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "soubor potřebuje tabulku [package] (nebo [module] pro slučovací modul)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "soubor byl po podepsání změněn (jeho otisk nesouhlasí)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "soubory k instalaci: nenalezeno, složka, odkaz, vzor bez shody, program jiné architektury, příliš dlouhé názvy"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "hotové tabulky porušují pravidlo Instalační služby systému Windows"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "podregistr nebyl čistě uzavřen (byl by potřeba jeho protokol)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "kontrolní součet základního bloku podregistru nesouhlasí"
+
+msgid "the hive's bins lie outside the file"
+msgstr "bloky podregistru leží mimo soubor"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "ikona seznamu nainstalovaných aplikací je [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "vstup skončil dřív, než byly zodpovězeny všechny otázky; nic se nezapsalo"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "soubor klíče je větší než 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "klíč není RSA ani EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "knihovna není modul PKCS#11 (chybí C_GetFunctionList, nebo verze 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "manifest nemá Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "Identity manifestu nelze přečíst pro úplný název balíčku"
+
+msgid "the merge module %s"
+msgstr "slučovací modul {1}"
+
+msgid "the name %s"
+msgstr "název {1}"
+
+msgid "the package is not signed"
+msgstr "balíček není podepsán"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "balíček není podepsán (chybí AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "balíček je již podepsán; rubrapack nepodepisuje dvakrát ani nenahrazuje podpis"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "balíček je již podepsán; rubrapack podepisuje nepodepsané balíčky (a nikdy dvakrát)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "balíček používá soubory cabinet mimo sebe, které podpis .msi nepokrývá; sestavte ho s vloženými soubory cabinet, nebo i tak podepište s --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "obsah balíčku neodpovídá jeho podpisu (po podepsání byl změněn)"
+
+msgid "the package's directory cannot be read"
+msgstr "adresář balíčku nelze číst"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "balíčky sady potřebují stejné Name, Publisher a Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "proxy žádá heslo (407), což rubrapack nepodporuje"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "proxy neodpověděl na žádost o tunel"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "proxy poslal data po své odpovědi na CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "umístění přesměrování je příliš dlouhé"
+
+msgid "the request could not be sent"
+msgstr "požadavek nelze odeslat"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "odpověď má chybný nebo rozporný Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "odpověď má Content-Length i chunked zároveň (odmítnuto: riziko podvržení)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "odpověď je větší než 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "odpověď používá jiné přenosové kódování než chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "stejná podmínka je již vyžadována (řádek {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "totéž bez otázek:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "server neodpověděl pomocí HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "server přesměroval z https na http (odmítnuto)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "podpis CertificateVerify serveru se neověřil"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "certifikát serveru není pro servery TLS (jeho rozšířené použití klíče)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "schéma podpisu serveru neodpovídá klíči jeho certifikátu"
+
+msgid "the signature does not verify"
+msgstr "podpis se neověřil"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "podpis se neověřil certifikátem podepisujícího"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "položka podpisu je popsána způsobem ZIP64; Windows čte její umístění z polí ZIP32"
+
+msgid "the signature is not DER"
+msgstr "podpis není DER"
+
+msgid "the signature streams cannot be read"
+msgstr "datové proudy podpisu nelze číst"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "podepsané atributy neodpovídají podepsanému obsahu"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "certifikát podepisujícího není pro podepisování kódu"
+
+msgid "the source file's encoding"
+msgstr "kódování zdrojového souboru"
+
+msgid "the system random source failed"
+msgstr "systémový zdroj náhodnosti selhal"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "pořadí tabulátoru (Control_Next) není jeden cyklus přes jeho ovládací prvky ({1}) od Control_First (Instalační služba systému Windows skončí chybou 2809 nebo 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "server časových razítek odpověděl chybou HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "certifikát serveru časových razítek není pro časová razítka"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "čas serveru časových razítek leží mimo platnost podpisového certifikátu"
+
+msgid "the token does not say what kind of key it is"
+msgstr "token neříká, o jaký druh klíče jde"
+
+msgid "the token is not present"
+msgstr "token není přítomen"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "token vrátil podpis ECDSA nesprávné délky"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "klíč EC tokenu má certifikát, který není EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "podpis tokenu se neověřil certifikátem (klíč a certifikát k sobě nepatří)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "důvěryhodný certifikát vypršel nebo ještě není platný"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "nepodepsané atributy jsou chybné nebo obsahují víc než jedno časové razítko"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "takový soubor tu není"
+
+msgid "there is no such folder here"
+msgstr "taková složka tu není"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "tento rubrapack byl sestaven bez své části nabídky: položky [menu.*] se nedostanou do nabídky Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "tento rubrapack byl sestaven bez instalačního programu (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading musí být \"sta\", \"mta\", \"both\" nebo \"neutral\" (zadáno '{1}')"
+
+msgid "timestamp: "
+msgstr "časové razítko: "
+
+msgid "too many languages for one bundle"
+msgstr "příliš mnoho jazyků pro jednu sadu"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "příliš mnoho lokalizovaných textů a měřítek loga pro resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "příliš mnoho balíčků v sadě"
+
+msgid "trusted"
+msgstr "důvěryhodný"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "dva balíčky jedné architektury v sadě"
+
+msgid "two packages of one name in a bundle"
+msgstr "dva balíčky stejného názvu v sadě"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "dva balíčky prostředků se stejným ResourceId v sadě"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type musí být string, expand, dword, qword, binary nebo multi (zadáno '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type musí být text, checkbox, edit, radio nebo combo (zadáno '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' není [file.*] tohoto balíčku"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version je major.minor v šestnáctkových číslicích, například \"1.0\" (zadáno '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types a verb patří ke kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: každý je \".ext\" nebo \"*\" (každý soubor)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: každý je '.' a malá písmena, číslice, '_' nebo '-' (zadáno '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" nechá uživatele zvolit složku dir '{2}', která neexistuje (nastavte [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" potřebuje tabulky [feature.*], ze kterých lze vybírat"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui musí být none, basic, minimal, installdir nebo features (zadáno '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "neočekávaný text za hodnotou"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "neznámý příkaz '{1}' (viz 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "neznámá escape sekvence \\{1} (pro text se zpětnými lomítky použijte '...')"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "neznámá volba inspect (použijte název tabulky, --summary, --files nebo --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "neznámý klíč '{1}' v [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "neznámá nebo neúplná volba {1} '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "neznámá tabulka [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "rozbalí balíček do nového adresáře, uspořádaný tak, jak se instaluje"
+
+msgid "unsupported - %s"
+msgstr "nepodporováno - {1}"
+
+msgid "untrusted"
+msgstr "nedůvěryhodný"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "klíče update-* potřebují appinstaller-uri a package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false je pro on = \"uninstall\" nebo \"both\" (instalace nikdy není odebrání při upgradu)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code musí být GUID jako {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "použití: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "použití: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (seznam pro sadu)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "použití: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "použití: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "použití: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "použití: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "použití: rubrapack inspect <file.cab> (bez tabulky či volby)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "použití: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "použití: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "použití: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "použití: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "použití: rubrapack inspect <setup.exe> (bez tabulky či volby)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "použití: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "použití: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "použití: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "použití: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "použití: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (pevný počáteční soubor <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; přijímají se i názvy .rpk"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "použití: rubrapack schema (JSON Schema zdrojů, na stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "použití: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "použití: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "v cestě použijte '/'"
+
+msgid "use a full rubrapack build or another way"
+msgstr "použijte úplné sestavení rubrapack nebo jiný způsob"
+
+msgid "used by more than one component"
+msgstr "používáno více než jednou součástí"
+
+msgid "value '%s' is listed twice"
+msgstr "hodnota '{1}' je uvedena dvakrát"
+
+msgid "value missing"
+msgstr "chybí hodnota"
+
+msgid "values and labels are strings"
+msgstr "values a labels jsou řetězce"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values je pole 1 až 32 řetězců"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "hodnoty: ID, GUID, verze, čísla mimo rozsah, odkazy na věci, které neexistují"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "proměnná '{1}' není definována ([define] nebo -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "název proměnné '{1}' nesmí obsahovat '=' ani začínat = + - ! *"
+
+msgid "variables"
+msgstr "proměnné"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "proměnné: $(NÁZEV) bez hodnoty, neuzavřené $(, název Windows nebo ID dir tam, kde nemůže stát"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "verze '{1}' musí být a.b.c nebo a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "verze '{1}' musí být a.b.c nebo a.b.c.d s a, b <= 255 a c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" nemůže jít 'with' souborem 64bitového balíčku"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view musí být \"32\" nebo \"64\""
+
+msgid "warning"
+msgstr "varování"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "co znamená diagnostický kód, zprávy, které ho nesou, co dělat a kde příručka říká víc"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with musí být \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: soubor '{1}' není [file.*] tohoto balíčku"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "bez --pkcs11 ukazuje `keys list` úložiště certifikátů Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' není ID dir"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "zapíše opravu (.msp): soubory a řádky, které aktualizují nainstalovaný základ na cíl"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "zapíše zdrojový soubor (.toml; i názvy .rpk): z odpovědí, dotázaných nebo zadaných jako volby, z pevného počátečního souboru nebo z existujícího MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "zapíše transformaci (.mst): to, co mění jeden balíček na druhý"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "zapište tabulku nebo hodnotu jednoduchým způsobem, který ukazuje příručka"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "zapište hodnotu bez '[~]'; mode = \"append\" nebo \"prepend\" ji přidá"
+
+msgid "wrote %s\n"
+msgstr "zapsáno {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width smí být nejvýše 370 (šířka stránky)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height smí být nejvýše 234 (čára nad tlačítky)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Zpět"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Další >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Storno"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Instalovat"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "Do&končit"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Ano"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Ne"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Opakovat"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Ignorovat"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "&Přerušit"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Konec"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&Procházet..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Vítá vás instalace [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "Tento program nainstaluje [ProductName] do počítače. Pokračujte kliknutím na Další."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Licenční smlouva"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Přečtěte si následující licenční smlouvu."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Souhlasím s podmínkami licenční smlouvy"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Instalační složka"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Vyberte složku, do které se nainstaluje [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "&Instalovat do:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Změnit složku"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Přejděte do složky, do které chcete instalovat."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Hledat v:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&Název složky:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Nahoru"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Nová složka"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Výběr funkcí"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Vyberte funkce, které se mají nainstalovat."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&Obnovit"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Využití disku"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Místo na disku"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Místo potřebné pro vybrané funkce a dostupné místo."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Připraveno k instalaci"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Klikněte na Instalovat a nainstalujte [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "Instalace [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Čekejte prosím."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Stav:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Instalace dokončena"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] byl nainstalován."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "Odebírání [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Odebrání dokončeno"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] byl odebrán."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Odebrání zrušeno"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Odebrání bylo zrušeno. V počítači se nic nezměnilo."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Odebrání se nezdařilo"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Chyba přerušila odebrání, které bylo vráceno zpět. Produkt je stále nainstalován."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Instalace zrušena"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Instalace byla zrušena. V počítači se nic nezměnilo."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Instalace se nezdařila"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Chyba přerušila instalaci, která byla vrácena zpět. V počítači se nic nezměnilo."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Zrušit instalaci [ProductName]?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Používané soubory"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Tyto programy používají soubory, které budou nahrazeny. Klikněte na Pokračovat a nahraďte je hned: již otevřené programy si ponechají staré soubory, dokud se znovu neotevřou, později otevřené dostanou nové. Restartování není nutné."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Tyto programy používají soubory, které budou nahrazeny. Klikněte na Pokračovat a nahraďte je hned: již otevřené programy si ponechají staré soubory, dokud se znovu neotevřou, později otevřené dostanou nové. Na konci může Windows požádat o restartování."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Pokračovat"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Nedostatek místa na disku"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Pro tuto instalaci není dost místa. Uvolněte místo nebo zvolte jiné umístění."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "Údržba [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Vyberte, co chcete udělat."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Opravit"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Obnoví chybějící nebo poškozené soubory a nastavení."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Odeb&rat"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Odebere [ProductName] z tohoto počítače."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "Odebrat [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Klikněte na Odebrat a odeberte [ProductName] z tohoto počítače. Chcete-li jej ponechat, klikněte na Zpět nebo Storno."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Klikněte na Odebrat a odeberte [ProductName] z tohoto počítače. Jeho nastavení a data se odstraní spolu s ním a nelze je obnovit. Chcete-li jej ponechat, klikněte na Zpět nebo Storno."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Odebrat [ProductName] z tohoto počítače?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Odebrat [ProductName] z tohoto počítače? Jeho nastavení a data se odstraní spolu s ním a nelze je obnovit."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] nelze bezpečně nainstalovat: [1] není složka, nebo v ní instalační program nesmí odstraňovat soubory. Nejprve odeberte [3] ([2]) a pak instalujte znovu."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] nelze bezpečně upgradovat: nainstalovaná verze [1] přišla o balíček v mezipaměti, takže ji zde nelze odebrat. Nejprve tuto verzi odeberte jejím původním balíčkem ([2]) a pak instalujte znovu."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Instalace byla zastavena: složka [1] již existuje a nepatří správcům, nebo vede odkazem jinam. Zvolte jinou složku, nebo ji nechte nejprve odebrat správcem."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Spustit [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Uložit protokol..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Zobrazit celý &protokol"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Protokol instalace se nepodařilo uložit do [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "Z&měnit"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Vyberte, které funkce jsou nainstalovány."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Rozsah instalace"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Vyberte, kdo může používat [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Pouze pro &mě"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "Pro &všechny uživatele tohoto počítače - vyžaduje oprávnění správce"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Jazyk"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Vyberte jazyk instalace."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Hledání nainstalovaných aplikací"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Výpočet potřebného místa"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Výpočet potřebného místa"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Vytváření složek"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Vytváření zástupců"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Odstraňování služeb"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Vytváření kopií souborů"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Výpočet potřebného místa"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Hledání souvisejících aplikací"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Příprava operací pro akci:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Kopírování nových souborů"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Instalace nových služeb"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Ověřování instalace"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Kontrola podmínek spuštění"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Přenos výběru funkcí z předchozí verze"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Přesouvání souborů"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Opravování souborů"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Aktualizace registrace součástí"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Publikování funkcí produktu"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Publikování informací o produktu"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Registrace serverů tříd"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Registrace přípon"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Registrace písem"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "Registrace informací MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Registrace produktu"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Registrace identifikátorů programů"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Registrace uživatele"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Aktualizace proměnných prostředí"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Odebírání předchozí verze"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Odebírání souborů"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Odebírání složek"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "Odebírání položek souborů INI"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Odebírání hodnot registru"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Odebírání zástupců"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Vracení akce:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Odebírání záložních souborů"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Spouštění služeb"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Zastavování služeb"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Rušení publikování funkcí produktu"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Rušení registrace serverů tříd"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Rušení registrace přípon"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Rušení registrace písem"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Rušení registrace informací MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Rušení registrace identifikátorů programů"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Aktualizace proměnných prostředí"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "Zápis hodnot souborů INI"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Zápis hodnot registru"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] se instaluje pouze pro aktuálního uživatele (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Stejná nebo novější verze [ProductName] je již nainstalována."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Tento balíček nemůže upgradovat nainstalovanou starší verzi [ProductName]. Nejprve ji odeberte a pak tuto instalaci spusťte znovu:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Kopírovat soubor"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Odebrat soubor"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Opravit soubor"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Vytvořit složku"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Odebrat složku"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Zapsat hodnotu registru"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Odebrat hodnotu registru"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Odebrat klíč registru"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Vytvořit zástupce"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Odebrat zástupce"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Nainstalovat službu"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Řídit službu"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Zapsat hodnotu INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Nastavit proměnnou prostředí"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Zaregistrovat písmo"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Zrušit registraci písma"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Spustit akci"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Tento instalační program je poškozený: stáhněte jej znovu."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Tyto programy jsou již nainstalovány. Vyberte, co chcete udělat."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Opravit"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Odeb&rat"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Storno"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Odebrat tyto programy z tohoto počítače?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Programy byly odebrány."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Program se nepodařilo odebrat."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Instalační program nemohl vytvořit dočasnou složku."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} nelze opravit (chyba {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} nelze nainstalovat (chyba {2}). Nic po něm nebylo nainstalováno."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Programy byly opraveny."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Instalace byla dokončena."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Tato složka již obsahuje soubory nebo složky. Při odebrání [ProductName] se odstraní vše ve složce - i to, co v ní je nyní. Prázdná nebo nová složka je bezpečná volba."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "Zvolit &jinou"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "Použít &tuto složku"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "Soubory [3] používá [1] program(ů):\r\n[2]\r\nZavřít všechny?\r\n\r\nAno: zavřít všechny a pokračovat (neuložená práce se může ztratit).\r\nNe: pokračovat bez zavírání (již otevřené programy si ponechají staré soubory, dokud se znovu neotevřou).\r\nStorno: zastavit."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: zastaveno, protože jeho soubory používá [1] program(ů):\r\n[2]Zavřete je a zkuste to znovu, nebo zadejte RPCLOSE=yes (zavřít všechny a pokračovat) nebo RPCLOSE=no (pokračovat bez zavírání)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "Ve složkách [3] je [1] položek, které s ním nebyly nainstalovány:\r\n[2]\r\nOdstranit i je?\r\n\r\nAno: odstranit je spolu s [3] (nelze je obnovit).\r\nNe: odebrat [3] a ponechat je.\r\nStorno: zastavit."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: zastaveno, protože v jeho složkách je [1] položek, které s ním nebyly nainstalovány:\r\n[2]Zadejte RPEXTRA=delete (odstranit i je) nebo RPEXTRA=keep (ponechat je) a odeberte jej znovu."

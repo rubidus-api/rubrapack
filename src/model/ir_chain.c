@@ -255,10 +255,10 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
     // block "RPTEXTS1", the number of languages, and for each its code, its LANGIDs and the texts
     // in the order of setup_texts (an empty one: English). The built-in packs, then [chain] languages.
     if (err == PROVEN_OK) {
-        const char *codes[16];
+        const char *codes[64];
         size_t ncodes = 0;
-        for (size_t i = 0; i < rp_lang_embedded_count && ncodes < 16; ++i) codes[ncodes++] = rp_lang_embedded[i].code;
-        for (size_t i = 0; i < c->language_count && ncodes < 16; ++i) {
+        for (size_t i = 0; i < rp_lang_embedded_count && ncodes < 64; ++i) codes[ncodes++] = rp_lang_embedded[i].code;
+        for (size_t i = 0; i < c->language_count && ncodes < 64; ++i) {
             bool have = false;
             for (size_t j = 0; j < ncodes; ++j) have |= strcmp(codes[j], c->languages[i]) == 0;
             if (!have) codes[ncodes++] = c->languages[i];

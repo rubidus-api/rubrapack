@@ -1127,8 +1127,10 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 - The built-in texts exist in English and in the languages whose packs come with rubrapack:
   Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`) and Traditional (`zh_TW`), Spanish
-  (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`), Russian (`ru`) and Italian
-  (`it`) ([Language packs](#language-packs)). Another language (`nl`, `pl`, ...) brings a
+  (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`) and of Portugal (`pt_PT`),
+  Russian (`ru`), Italian (`it`), Dutch (`nl`), Swedish (`sv`), Danish (`da`), Norwegian Bokmål
+  (`nb`), Finnish (`fi`), Polish (`pl`), Czech (`cs`), Ukrainian (`uk`), Hungarian (`hu`), Romanian
+  (`ro`) and Turkish (`tr`) ([Language packs](#language-packs)). Another language (`el`, `vi`, ...) brings a
   pack of its own, or gives every built-in text as `text-xx` (lint names the ones missing), and
   may give `name-xx` (its name
   on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
@@ -1159,10 +1161,10 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### Language packs
 
-A language is one file. English is built into rubrapack; ten languages come with it as
+A language is one file. English is built into rubrapack; twenty-two languages come with it as
 `resources/lang/<code>.po`: `ko`, `ja`, `zh` (Simplified Chinese), `zh_TW` (Traditional Chinese, for
-Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (also chosen in advance on a Portuguese
-Windows), `ru` and `it`. Any other language is supported by adding its file - `<code>.po`, in the
+Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (Brazil), `pt_PT` (Portugal), `ru`, `it`,
+`nl`, `sv`, `da`, `nb` (Norwegian Bokmål), `fi`, `pl`, `cs`, `uk`, `hu`, `ro` and `tr`. Any other language is supported by adding its file - `<code>.po`, in the
 PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
 or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
 gettext names its files. One package holds English and at most seven more languages.
@@ -1834,7 +1836,7 @@ rubrapack version | help [command]
   6 network.
 - `--lang <code>` chooses the language of what the tool prints for a person: errors and warnings,
   `help`, the result lines, `explain`, the questions of `new -i` and `edit`. The codes are `en`
-  (the default), `ko`, `ja`, `zh`, `zh_TW`, `es`, `fr`, `de`, `pt_BR`, `ru`, `it`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
+  (the default), the codes of the built-in packs (`ko`, `ja`, `zh`, `zh_TW`, `es`, `fr`, `de`, `pt_BR`, `pt_PT`, `ru`, `it`, `nl`, `sv`, `da`, `nb`, `fi`, `pl`, `cs`, `uk`, `hu`, `ro`, `tr`; `help` lists them), and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`); the environment variable `RUBRAPACK_LANG` says the same
   for every run, and the option wins over it. What a program reads stays as it is: the diagnostic
   codes, exit codes, table dumps of `inspect`, `schema`, and the structure of `--json` (whose

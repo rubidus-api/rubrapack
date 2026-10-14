@@ -26,8 +26,14 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 對話方塊 {6}{7}\n  1 名稱、製造�
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\n使用此代碼的消息(* 表示名稱或值):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\n結果輸出到 stdout，診斷輸出到 stderr。\n--lang(或 RUBRAPACK_LANG)選擇這些文字的語言: en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it，或有語言包的語言。\n退出代碼: 0 正常，1 源檔案錯誤，2 用法，3 輸入/輸出，4 簽章或驗證，\n5 lint，6 網路。\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\n結果輸出到 stdout，診斷輸出到 stderr。\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang(或 RUBRAPACK_LANG)選擇這些文字的語言: {1}，或有語言包的語言。\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "退出代碼: 0 正常，1 源檔案錯誤，2 用法，3 輸入/輸出，4 簽章或驗證，\n5 lint，6 網路。\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n處理方法: {1}。\n"
@@ -512,8 +518,8 @@ msgstr "--key-store 是 Windows 憑證存儲；其他系統請使用密鑰檔案
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store 接受憑證的 SHA-1 指紋(40 位十六進制數字)"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: 沒有該語言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是內置的；其他語言需要語言包 {2}.po)"
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: 沒有該語言(內置：{2}；其他語言需要語言包 {3}.po)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang 需要一種語言，如 en 或 ko"
@@ -701,8 +707,8 @@ msgstr "ProductVersion {1} 的前三個字段不高於之前的 {2}: Windows Ins
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "捷徑開啟的程式(不建捷徑則為 -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: 沒有該語言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是內置的；其他語言需要語言包 {2}.po)"
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: 沒有該語言(內置：{2}；其他語言需要語言包 {3}.po)"
 
 msgid "Reference, "
 msgstr "參考，"

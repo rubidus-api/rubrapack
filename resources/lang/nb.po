@@ -1,0 +1,3816 @@
+# rubrapack language pack: Norwegian (Bokmål).
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: nb\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Norsk (bokmål)\n"
+"X-Rubrapack-LangIDs: 1044, 2068\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogbokser {6}{7}\n  1 navn, produsent, versjon, arkitektur        2 installasjonsmappe, hvem den installeres for\n  3 dialogbokser, lisens, språk                 4 valgfrie deler\n  5 snarveier                                   6 filer: tilpass til programmappen\n  7 vilkårlig nøkkel                            v vis   l lint   s lagre   q avslutt\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nMeldinger med denne koden (* står for et navn eller en verdi):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nResultater går til stdout, diagnostikk til stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (eller RUBRAPACK_LANG) velger språket for disse tekstene: {1}, eller et språk med en språkpakke.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Avslutningskoder: 0 ok, 1 kildefeil, 2 bruk, 3 inn-/utdata, 4 signering eller verifisering,\n5 lint, 6 nettverk.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nHva du skal gjøre: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} finnes ikke lenger, men en snarvei åpner den: endre snarveiene (5) først\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  der er det {1} filer og {2} mapper\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s eller q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  la til [dir.{1}] og [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  la til [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  oppgi det som tabell.nøkkel, for eksempel package.version eller dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: ingen problemer\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: se problemene ovenfor (filen som nevnes der, er en kontrollkopi)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  andre språk i [ui] languages beholdes; endre listen med 7 (vilkårlig nøkkel)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  fjernet [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  fjernet [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  undermapper:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  det passer ikke i TOML-delmengden; ingenting ble endret\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  det var ikke lesbar tekst; prøv igjen\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  programmappen '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  kilden har ingen [file]-tabeller som en snarvei kan peke på\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  kilden har ingen undermapper slik `new` skriver dem ([files] \"<folder>/<name>/**\"); legg dem til med 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  for langt; prøv igjen\n"
+
+msgid "  y or n\n"
+msgstr "  y eller n\n"
+
+msgid " (changed)"
+msgstr " (endret)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - bygger Windows Installer- (.msi) og MSIX-pakker (.msix)\n\nbruk: rubrapack [--lang <code>] <command> [arguments]\n\nkommandoer:\n"
+
+msgid " and its dir"
+msgstr " og dens dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) har ingen miljøvariabel, så en utvidbar verdi kan ikke inneholde den; bruk en strengverdi (fylles inn ved installasjonen)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) er en {2}: den kan innlede en bane eller stå for en verdi som Windows Installer fyller inn (register, miljø, INI, argumenter, meldinger), men ikke her"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) er ikke en mappe en bane kan begynne fra (en dir-ID, eller ProgramFiles, LOCALAPPDATA, ProgramData ... - se Paths i håndboken){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  struktur:     {2}\n  digest:       {3}\n  signatur:     {4}\n  kjede:        {5}{6}{7}\n  tilbakekall:  ikke kontrollert\n  tidsstempel:  {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: variabelen er ikke satt"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' er ikke en kontroll i denne dialogboksen"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' er ikke i {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': lisensteksten trenger skriftens engelske navn og vises derfor i språkets egen skrift; skriv det engelske navnet (som \"Malgun Gothic\") for å bruke skriften også der"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "{1}-komponent, men pakkens plattform er {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} hører ikke til kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} hører ikke til kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} inneholder LANGID-er (1..65535), som 1041"
+
+msgid "%s holds strings"
+msgstr "{1} inneholder strenger"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} er et skriftnavn på 1 til 31 tegn, som \"Segoe UI\" (fikk {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} er en MSI-betingelse med lukkede anførselstegn og balanserte parenteser"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} er en matrise av strenger, én per verdi"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} gjelder MSI-pakker: en MSIX fjernes ikke av msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} finnes ikke lenger. Fjerne [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} er lengre enn 240 tegn"
+
+msgid "%s is new. Add it?"
+msgstr "{1} er ny. Legge den til?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} er ikke en GUID i registerformat"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} er ikke en kode denne rubrapack bruker{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
+
+msgid "%s must be a GUID"
+msgstr "{1} må være en GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} må være en GUID som {12345678-...} (fikk '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} må være en https://-, http://- eller file://-adresse, eller en \\\\server\\share-bane (fikk '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} må være forskjellig fra upgrade-code (én oppgraderingsfamilie per arkitektur)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} krever Windows-bygg {2} eller nyere: angi [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} krever resources/bin/rubrapack_ca-{2}.dll, som denne rubrapack ble bygget uten"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA ikke kontrollert (oppgi --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA klarert"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA ikke klarert - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} finnes ikke lenger eller er tom. Fjerne [files.{3}] og [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ er en ny mappe. Legge den til?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: {2} feil{-3}, {4} advarsel/advarsler{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: {2} feil{-3}, {4} advarsel/advarsler{-5} (sammenlignet med {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} filer, {3} byte\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} filer, {3} feil, 0 advarsler\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: ytterligere {2} diagnoser vises ikke\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: filen '{2}' er ikke en [file.*] i denne pakken"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: filen '{2}' er ikke et program (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' er ikke lukket (skriv '$$(' for teksten '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' finnes allerede; den blir som den er"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' finnes allerede; fjern den eller bygg i en annen mappe"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' har allerede en {2}-behandler ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' har allerede tillatelser"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' og '{2}' er samme bane i pakken"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' tilhører Windows eller nettleserne"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' kan ikke leses mot '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' passer ikke i TOML-delmengden; ingenting ble lagret"
+
+msgid "'%s' exists already"
+msgstr "'{1}' finnes allerede"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' finnes allerede; endre den med `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' finnes og er ikke en tom katalog; pakk ut til en ny"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' havner i {2}; eller msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' har en uleselig strøm med sammendragsinformasjon"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' har ingen Directory-, Component-, File- og Media-tabeller å pakke ut fra"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' har ingen lesbar sammendragsinformasjon"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' har ingen transformering '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' er UTF-16: edit endrer bare UTF-8-kilder (lagre den som UTF-8 først)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' er et Windows-navn; gi variabelen et annet navn"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' er en [chain]: den bygger et installasjonsprogram, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' er en kontroll i den innebygde rammen; velg en annen ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' er en datamaskinmappe; en {2}-pakke kan ikke skrive der"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' er en flettemodul: flett den med [merge.ID] i stedet"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' er et navn som MSIX-formatet holder for seg selv"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' er en symbolsk lenke; lenker følges ikke"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' er også en [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' er også en dir-ID; gi variabelen et annet navn"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' er bygget for maskin 0x{2}, ikke for denne pakkens arch; angi any-arch = true hvis det er meningen"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' er verken en PE-fil (.exe, .dll), en MSI-pakke eller en MSIX-pakke eller -samling"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' er verken en PE-fil, en MSI-pakke eller en MSIX-pakke eller -samling"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' er verken en kjent mappe eller en dir-ID (kjente mapper: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' er ikke en cabinet rubrapack kan lese (stored eller MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' er ikke en diagnosekode (RP og fire sifre, som RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' er ikke et program (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' er ikke en vanlig fil"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' er ikke et installasjonsprogram fra rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' er ikke en gyldig ID (bokstaver, sifre og '_', begynner ikke med et siffer, høyst {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' er ikke en gyldig MSI-database: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' er ikke en gyldig MSIX-pakke: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' er ikke en gyldig pakke: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' er ikke en gyldig kilde (TOML-delmengden); rett den for hånd først"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' er ikke en gyldig transformering: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' er ikke et gyldig variabelnavn"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' er reservert og kan ikke brukes som ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' er navnet på en dir: bare et register- eller dir-søk kan fylle en dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' ser ut som en programfil (PE), men hodene eller ressursene er skadet"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' må være en streng"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' må være et heltall"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' må være mellom {2} og {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' må være true eller false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' kan ikke være tom"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' navngir ingen transformeringer (sammendragsegenskap 8): ikke en oppdatering"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' begynner med en mappe: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' har {4}; ingenting ble pakket ut"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} oppføringer, flere enn grensen {3} (--limit-entries); ingenting ble pakket ut"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' og '{3}' ville vært samme bane i Windows; ingenting ble pakket ut"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' er ikke i [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': en tabell kan ikke leses"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': en tabell er uleselig"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': en MSIX installerer alle filene sine (when); bruk msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': en MSIX fjerner alle filene sine (keep); bruk msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' er skadet eller ikke stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinetnavnet '{2}' er ikke et enkelt filnavn"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': komprimert fil '{2}' (sekvens {3}) har ingen cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': katalogen '{2}' har en overordnet '{3}' som ikke finnes"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': katalogen '{2}' er sin egen forgjenger eller nestet for dypt"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': filen '{2}' samsvarer ikke med sin MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': filen '{2}' har ingen komponent eller katalog"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': filen '{2}' er {3} byte, File-tabellen sier {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': filen '{2}' er ikke i cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': de eksterne cabinet-filene dekkes ikke av signaturen (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': mappen fører ikke til en kjent plassering"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': mer enn {2} byte å skrive (--limit-bytes); ingenting ble pakket ut"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': ingen --timestamp: signaturen slutter å være gyldig når sertifikatet utløper"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': pakken '{2}' samsvarer ikke med sin SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet-strømmen '{2}' finnes ikke"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': manifestet har ingen {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': manifestet nevner '{2}', som ikke er i pakken"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': tidsstempel fra {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': transformeringen '{2}' kan ikke leses mot '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' er pakkens eget språk ({2}); oppgi den teksten uten suffikset"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' får Windows Installer til å skrive en multistreng; bruk type = \"multi\" og en matrise"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' i tall støttes ikke"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' tar høyst ett kommandonavn"
+
+msgid "'version' takes no arguments"
+msgstr "'version' tar ingen argumenter"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs gjelder .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch for en samling: en liste med x64, x86 og arm64, hver én gang (fikk '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch tar én arkitektur, eller en liste for en .msixbundle-utdata"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp og --allow-unsigned-cabs hører til --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress gjelder .msi; en MSIX tar --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist navngir en ny mappe ved siden av kilden (ingen bane)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs tar et tall fra 1 til 64 (fikk '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store er et sertifikatlager i Windows; bruk ellers en nøkkelfil eller --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store tar sertifikatets SHA-1-avtrykk (40 heksadesimale sifre)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: ikke noe slikt språk (innebygde: {2}; et annet trenger sin språkpakke, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang trenger et språk, som en eller ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages trenger dialogbokser: oppgi også --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress tar deflate eller store (fikk '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: variabelen er ikke satt"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code tar en GUID med store bokstaver og klammeparenteser: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: variabelen er ikke satt"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous sammenligner to .msi-pakker"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: operativsystemets rotsertifikater kan ikke leses"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} samsvarer ikke med utdataene '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} er ikke implementert (msi eller msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target tar msi eller msix (fikk '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots og --proxy hører til --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test og --msix-compress gjelder .msix-utdata"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test gjelder pakker uten signatur; utelat det med --key"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate tar none, eller noen av product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} er oppgitt to ganger"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' er et Windows-navn; gi variabelen et annet navn"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D trenger NAVN=VERDI (fikk '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i spør om hvert svar; oppgi enten -i eller alternativene"
+
+msgid "; its range is "
+msgstr "; området er "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' er ikke i SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty må være en offentlig egenskap (store bokstaver)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Alle koder: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x begynner ikke med PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x er ikke den siste oppføringen"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Arkitektur (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Velg"
+
+msgid "Command line"
+msgstr "Kommandolinje"
+
+msgid "Command line (lint)"
+msgstr "Kommandolinje (lint)"
+
+msgid "Common AppData"
+msgstr "Felles AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId er ikke en GUID i registerformat"
+
+msgid "Desktop shortcut?"
+msgstr "Snarvei på skrivebordet?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialogbokser (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "File-, Component- eller Directory-tabellen mangler en standardkolonne"
+
+msgid "Folder name under Program Files"
+msgstr "Mappenavn under Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Mappe med filene som skal installeres"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' er allerede brukt (linje {2}); ID-er må være forskjellige i alle tabeller"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Installasjonsmappe (banen til [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Installer for (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Nøkkel som tabell.nøkkel (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' tilhører en annen komponent"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' er ikke i File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' er ikke i Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Koreanske dialogbokser i tillegg til engelske?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} er lavere enn for en lavere DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Avslutte uten å lagre endringene?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Lisens som skal godtas (.txt, .md, .rtf; - for ingen)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX har ingen virtuell mappe for brukerens AppData; appen oppretter det den trenger der når den kjører"
+
+msgid "MSIX packages"
+msgstr "MSIX-pakker"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: hva en MSIX-pakke trenger, og hva den ikke kan inneholde"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Hovedprogram, for snarveier (- for ingen)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Håndbok: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Produsent"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Produsent (vises i Installerte apper)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt returnerte en ECDSA-signatur med feil lengde"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Valgfrie deler brukeren kan krysse av (undermapper, komma; - for ingen)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11-token: tokenet har ikke noe sertifikat med nøkkelens CKA_ID (oppgi det med --cert)"
+
+msgid "Paths"
+msgstr "Baner"
+
+msgid "Product name"
+msgstr "Produktnavn"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode og UpgradeCode er samme GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} er ikke høyere enn den forrige {2} i de tre første feltene: Windows Installer oppgraderer ikke"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Program snarveiene åpner (- for ingen snarveier)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: ikke noe slikt språk (innebygde: {2}; et annet trenger sin språkpakke, {3}.po)"
+
+msgid "Reference, "
+msgstr "Referanse, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Sekvens {1} dekkes ikke av noen Media-rad (siste {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Sekvens {1} brukes av en annen fil"
+
+msgid "Source file to write"
+msgstr "Kildefil som skal skrives"
+
+msgid "Source format"
+msgstr "Kildeformat"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source må navngi en File-rad for type {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Snarvei på Start-menyen?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Oppføringer i Start-menyen, Programmer, skrivebordet og Oppstart kommer fra [shortcut.*] og [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML utenfor delmengden rubrapack leser, eller `format` mangler eller er for ny"
+
+msgid "Tables"
+msgstr "Tabeller"
+
+msgid "The TOML subset"
+msgstr "TOML-delmengden"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian-filer støttes ikke; lagre som UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} er forskjellig fra forrige versjons {2}: denne pakken erstatter den ikke"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode er ikke en GUID i registerformat"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Verdi (tekst, et tall, true/false, [\"a\", \"b\"]; - fjerner nøkkelen)"
+
+msgid "Variables"
+msgstr "Variabler"
+
+msgid "Version"
+msgstr "Versjon"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versjon ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versjoner og oppgraderinger"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer tillater høyst 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] trenger '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] kan ikke inngå i en flettemodul; pakken som fletter den, har det"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] støttes ikke ennå (planlagt for {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] kan ikke inngå i en MSIX; legg til msi-only = true for å bygge MSIX-en uten den"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: en ID i en flettemodul har høyst 35 tegn (modulens GUID legges til)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] trenger en ID: skriv [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] tar ingen ID: skriv [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml har ingen </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml er ikke den siste oppføringen (ikke en pakke rubrapack eller Windows' pakke-API skrev)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "[[...]]-matriser av tabeller støttes ikke; gi hvert element sin egen [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check har ingen virkning: ingenting kjører den ennå; fjern den"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] trenger både do og undo (undo ruller også tilbake en mislykket do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: args for en MSIX må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: i en MSIX åpner en filtype et program: target må være en kjørbar fil i en [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] finnes to ganger"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] trenger en ID: skriv [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id og typelib skrives bare for MSI-en; MSIX-en registrerer klassen uten dem"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args hører til et program; en DLL lastes inn, den startes ikke"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate kjører en DLL i dllhost; '{2}' er et program"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading gjelder en DLL; et program velger sin egen apartment"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version og typelib-file trenger typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] havner i {2}; eller msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: kilden må være en fil som inngår i pakken"
+
+msgid "[define] values must be strings"
+msgstr "[define]-verdier må være strenger"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] trenger '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] trenger 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] trenger 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] trenger 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] har {2} kontroller; høyst 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] har ingen [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] plasseres etter seg selv via andre dialogbokser"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] trenger ui = \"minimal\", \"installdir\" eller \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' er et Windows-navn; gi dir-en en annen ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard trenger rubrapacks hjelpe-DLL, som en flettemodul ikke inneholder"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] trenger en funksjon"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: en MSIX setter alle variablene sine (when); bruk msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: verdien navngir et sted en MSIX ikke kan gi (en mappe utenfor pakken som ikke er en Windows-mappe, eller en del fra installasjonstiden); bruk msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Filutforsker laster inn en {2}-behandler fra en DLL; [com.{3}] er et program"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows leser egenskapsbehandlere bare per datamaskin; pakken trenger scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: en forhåndsvisningsbehandler kjører i Windows' prevhost; utelat app-id og surrogate i [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: en MSIX inneholder bare miniatyr- og forhåndsvisningsbehandlere (en pakket egenskapsbehandler ga Filutforsker ingen verdier); msi-only = true beholder den for MSI-en"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: en MSIX-filtype tilhører et program; legg til en [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: klassen {2} er ikke en [com.*] i denne pakken (behandlerens DLL betjener den)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: i en MSIX deler behandlere alle typene sine eller ingen (en type er i én filtypetilknytning)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: i en MSIX kjører klassen i en surrogate; threading = \"sta\" i [com.{2}] gir vinduet en meldingsløkke (med threading = {3} kan forhåndsvisningen forbli tom)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: i en MSIX er alle typene i én [assoc]-filtype, eller i ingen"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: klassen er msi-only ([com.{2}]); MSIX-en ville ikke ha noen server for den"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types er en liste med filtyper, som [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] havner i {2}; eller msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] trenger 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] trenger en funksjon: angi 'feature' her eller på dir-en"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: en MSIX skriver alle INI-oppføringene sine (when); bruk msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: verdien har en del Windows Installer fyller inn ved installasjonen ([...]); en MSIX skriver filen når den bygges"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] trenger 'on': hvor elementet vises, som [\".txt\"] eller \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] trenger 'target' (programmet det starter), eller elementer med parent = \"{2}\" (en undermeny)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] trenger 'target': programmet elementet starter"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: en undermeny starter ingenting: utelat 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: et element i en undermeny vises der undermenyen vises: utelat 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args har en del Windows Installer fyller inn ved installasjonen ([...]); en MSIX inneholder bare fast tekst"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: programmet er ikke i MSIX-en (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: verdiene kan ikke inngå i pakkens register"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": det finnes ingen [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on er en filtype eller en liste med dem, som [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' er ikke en [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' må være en undermeny: en [menu.*] uten target og uten egen parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] havner i {2}; eller msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] trenger en funksjon: angi 'feature' her eller på dir-en"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; eller msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file må være {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file må navngi en fil som inngår i pakken"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file må navngi et program som inngår i pakken"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types er en liste med filtyper, som [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] trenger at dir-en har en funksjon"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: args for en MSIX må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: i en MSIX åpner et skjema et program: target må være en kjørbar fil i en [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] trenger 'value' (eller remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR når ikke utenfor en MSIX; bruk [assoc.*], [protocol.*], [com.*] eller [handler.*], eller msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: en qword-verdi trenger rubrapacks hjelpe-DLL, som en flettemodul ikke inneholder"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: en MSIX inneholder bare verdier under {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: en MSIX verken fjerner verdier eller etterlater dem (remove, keep); bruk msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: en MSIX skriver alle verdiene sine (when); bruk msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: verdien har en del Windows Installer fyller inn ved installasjonen ([...]); en MSIX inneholder bare faste verdier"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" trenger rubrapacks hjelpe-DLL, som en flettemodul ikke inneholder"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: nøkkel- eller verdinavnet kan ikke inngå i en registerhive"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] trenger en funksjon: angi 'feature' her eller på dir-en"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true gjelder ikke en mappe under {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true trenger rubrapacks hjelpe-DLL, som en flettemodul ikke inneholder"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: args for en MSIX må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file må navngi et program som inngår i pakken"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: en MSIX har bare snarveier på skrivebordet og på Start-menyen{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: en MSIX-snarvei har ingen working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: en MSIX-snarvei er alltid der (when gjelder en MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: en MSIX-snarvei viser programmets logo; icon gjelder en MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: args for en MSIX må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: i en MSIX starter en snarvei et program: target må være en kjørbar fil i en [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: Start-menyoppføringen i en MSIX er programmet, som ikke tar args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: ingen dialogtekst har denne ID-en"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] trenger ui = \"basic\" eller et annet dialogsett i [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "escapesekvensen \\{1} er ikke en Unicode-skalarverdi"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: denne pakken ville ikke oppgradert den forrige rent"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` av en pakke: dialogbokser, tegntabell, tekstnormalisering"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` av en MSIX-pakke eller -samling"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "en {1}-kontroll har ingen tekst; plasser en tekstkontroll ved siden av"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "en {1}-kontroll trenger [property.{2}] med en av verdiene som standard (en stille installasjon bruker den)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "en {1}-pakke kan ikke skrive til HKLM; bruk HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "en .msix-utdata trenger en [msix-app.ID]-tabell som navngir den kjørbare filen"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "en .msix-utdata trenger en [msix]-tabell (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "en .msm-utdata er en flettemodul, bygget fra en kilde med [module] i stedet for [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "en .txt-, .md- eller .rtf-fil, eller - for ingen"
+
+msgid "a PE file without a certificate table entry"
+msgstr "en PE-fil uten oppføring for sertifikattabellen"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "en PIN-kode tas aldri imot på kommandolinjen (andre kan se den); bruk --pin-env eller --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "en Package i samlingsmanifestet med ukjent Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "en Package i samlingsmanifestet uten FileName, Offset eller Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "en ZIP-oppføring pakkes ikke ut til sin størrelse"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "en ZIP-oppføring større enn tillatt"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "CRC-32 for en ZIP-oppføring samsvarer ikke"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "dataene til en ZIP-oppføring ligger utenfor filen"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "en [module]-kilde bygger en flettemodul: -o <navn>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "en binærverdi er et partall heksadesimale sifre, som \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "en samling uten pakker"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "et sertifikat i banen har en kritisk utvidelse som rubrapack ikke forstår"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "et sertifikat i banen er signert av et sertifikat som ikke er en CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "en kjede inneholder bare [chain], [chain-package.ID] og [define], ikke [{1}]; pakkene bygges fra sine egne kilder"
+
+msgid "a chain holds at most %d packages"
+msgstr "en kjede inneholder høyst {1} pakker"
+
+msgid "a chain needs [chain]"
+msgstr "en kjede trenger [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "en kjede trenger minst én [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "et tegn Windows ikke tillater i et navn (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "et kontrolltegn"
+
+msgid "a damaged PE optional header"
+msgstr "et skadet valgfritt PE-hode"
+
+msgid "a damaged PE section table"
+msgstr "en skadet PE-seksjonstabell"
+
+msgid "a damaged ZIP64 end record"
+msgstr "en skadet ZIP64-sluttpost"
+
+msgid "a damaged hive bin"
+msgstr "en skadet hive-bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "en diagnose fra rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "en deaktivert tjeneste kan ikke startes"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "en dual-pakke kan ikke velge mellom en bruker- og en systemvariabel"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "en dual-pakke skriver HKMU (HKLM eller HKCU slik den er installert), ikke HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "en dword-verdi er et heltall 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "en funksjon denne rubrapack ikke tilbyr (eller ble bygget uten)"
+
+msgid "a file larger than allowed"
+msgstr "en fil større enn tillatt"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "et filnavn under '{1}' er ikke gyldig Unicode og kan ikke pakkes"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "et filnavn uten / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "komponent- eller katalogkjeden til en fil er brutt"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "en skrift inngår i en MSIX gjennom en [font.*] som navngir den"
+
+msgid "a hash the token signing does not know"
+msgstr "en hash tokensigneringen ikke kjenner"
+
+msgid "a hive cell crosses its bin"
+msgstr "en hive-celle krysser sin bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "en hive-versjon eller -type rubrapack ikke leser"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "en kjent mappe selv ('{1}') kan ikke få tillatelser"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "en lisens trenger ui = \"minimal\", \"installdir\" eller \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "et lokalt hode med ekstra felt (ikke en pakke rubrapack eller Windows' pakke-API skrev)"
+
+msgid "a malformed central directory"
+msgstr "en feilformet sentral katalog"
+
+msgid "a modification package has no applications of its own"
+msgstr "en endringspakke har ingen egne programmer"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "en endringspakke krever Windows-bygg 18362 eller nyere: angi [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "compress for en modul er \"none\", \"mszip\" eller \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "navnet på en modul er ID-en i ModuleID: bokstaver, sifre og _, høyst 35 tegn"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "en multiverdi er en ikke-tom matrise av strenger"
+
+msgid "a multi value is an array of strings"
+msgstr "en multiverdi er en matrise av strenger"
+
+msgid "a name ending with a space or a dot"
+msgstr "et navn som slutter med et mellomrom eller et punktum"
+
+msgid "a name longer than 255 bytes"
+msgstr "et navn lengre enn 255 byte"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "en pakke som nevnes i samlingsmanifestet, er ikke i samlingen"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "en pakke uten Identity Name, Publisher, Version og ProcessorArchitecture (eller ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "Offset eller Size for en pakke i samlingsmanifestet samsvarer ikke med hvor den ligger (eller den er komprimert)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "identiteten til en pakke avviker fra det samlingsmanifestet sier om den"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "navnet på en pakke i samlingen må være et filnavn som slutter på .msix eller .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "et passord tas aldri imot på kommandolinjen (andre kan se det); bruk --pass-env eller --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "en pakke per datamaskin skriver ikke til HKCU (det ville vært den installerende brukerens); bruk scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "en proxy med brukernavn eller passord støttes ikke"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "en qword-verdi er et heltall eller \"0x\" og 1 til 16 heksadesimale sifre"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "en alternativknappkontroll stabler knappene: høyden må være minst 12 per verdi ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "en post har flere kolonner enn tabellen sin"
+
+msgid "a record is cut short"
+msgstr "en post er avkortet"
+
+msgid "a record names a string the pool does not have"
+msgstr "en post navngir en streng som bassenget ikke har"
+
+msgid "a reserved device name"
+msgstr "et reservert enhetsnavn"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "en tilbakerullingshandling kan ikke være asynkron"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "et skjema er en liten bokstav, fulgt av små bokstaver, sifre, '+', '-' eller '.' (fikk '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "en skripthandling mellom InstallInitialize og RemoveExistingProducts (feil 2613)"
+
+msgid "a section lies outside the file"
+msgstr "en seksjon ligger utenfor filen"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "et tjenestenavn kan ikke inneholde '/' eller '\\' (høyst 256 tegn)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "en setup-.exe bygges fra en kilde med [chain]; '{1}' bygger en pakke (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "en kilde inneholder én [package] eller én [module], ikke begge"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "en kilde som består RP1xxx-kontrollene, burde aldri møte disse: rapporter det sammen med kilden"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "en lagret ZIP-oppføring der størrelsene er ulike"
+
+msgid "a stream of the package cannot be read"
+msgstr "en strøm i pakken kan ikke leses"
+
+msgid "a table has more than 32 columns"
+msgstr "en tabell har flere enn 32 kolonner"
+
+msgid "a text control has no property"
+msgstr "en tekstkontroll har ingen egenskap"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "en verdi `with` en fil deler komponenten: sett `when` på filen"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "en verdi er 1 til 64 byte"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "en verdi som går 'with' en fil, tar filens funksjon"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "en versjon er 3 eller 4 tall med punktum, som 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account må være LocalSystem, LocalService eller NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "handlingen '{1}' er allerede definert"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "handlingen er verken en standardhandling eller i CustomAction"
+
+msgid "adds too many tables"
+msgstr "legger til for mange tabeller"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' er verken en side i dette dialogsettet (RpWelcomeDlg{2}{3}{4}) eller en [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias hører til kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias må være et filnavn som slutter på .exe: bokstaver, sifre, '.', '_', '-' (fikk '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "en INI-seksjon kan ikke inneholde ']', og en nøkkel kan ikke inneholde '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "en MSIX kan ikke plassere filer i den midlertidige mappen"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "et program har ett alias ([msix-extension.{1}] er allerede ett)"
+
+msgid "an empty name"
+msgstr "et tomt navn"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "en https-server trenger --tls-trust <sertifikater> eller --system-roots å kontrolleres mot"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "en https://-proxy støttes ikke; oppgi en http://-proxy (https-servere nås via CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "et Authenticode-tidsstempel av gammel type (PKCS#9 counterSignature), som rubrapack ikke kontrollerer"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "en valgfri pakke eller endringspakke deklarerer ingen funksjoner og ingen virtualiseringsinnstillinger: hovedpakkens gjelder"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "en x86-pakke skriver bare 32-biters registervisningen"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "appen '{1}' er ikke en [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri og package-uri hører sammen: hvor .appinstaller-filen og pakken vil ligge"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch må være \"x64\", \"arm64\" eller \"x86\" (fikk '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch må være \"x64\", \"x86\" eller \"arm64\" (installasjonsprogrammets egen)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "argument {1} er ikke gyldig UTF-8 (byte {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "argument {1} er ikke gyldig Unicode (UTF-16-enhet {2})"
+
+msgid "array is not closed"
+msgstr "matrisen er ikke lukket"
+
+msgid "arrays inside arrays are not supported"
+msgstr "matriser i matriser støttes ikke"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "matriser kan bare inneholde strenger eller bare heltall"
+
+msgid "at most %d languages besides English"
+msgstr "høyst {1} språk i tillegg til engelsk"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "høyst 100 [msix-app.*]-tabeller"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "høyst 50 [action.*]-tabeller (denne filen har {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color er \"transparent\" eller \"#RRGGBB\", som \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "ugyldig variabelnavn i '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner må være en .bmp-fil (Windows Installer viser bare BMP)"
+
+msgid "build a package from a source file"
+msgstr "bygg en pakke fra en kildefil"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "å bygge {1} fra en {2}-kilde krever sin egen oppgraderingsfamilie: legg til {3} = \"{...}\" i [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab må være \"embed\" eller \"external\""
+
+msgid "cannot be read"
+msgstr "kan ikke leses"
+
+msgid "cannot build the ClientHello"
+msgstr "kan ikke bygge ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "kan ikke samle pakkene: {1}"
+
+msgid "cannot create '%s'"
+msgstr "kan ikke opprette '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "kan ikke opprette '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "finner ikke '{1}'; lag en med `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "kan ikke lage en standardlogo"
+
+msgid "cannot make a key share"
+msgstr "kan ikke lage en nøkkeldeling"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "kan ikke lage en oppdatering fra '{1}' til '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "kan ikke lage en transformering fra '{1}' til '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "kan ikke åpne sertifikatlageret"
+
+msgid "cannot read '%s'"
+msgstr "kan ikke lese '{1}'"
+
+msgid "cannot read '%s' (%s)"
+msgstr "kan ikke lese '{1}' ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "kan ikke lese pakken '{1}'"
+
+msgid "cannot read source file '%s'"
+msgstr "kan ikke lese kildefilen '{1}'"
+
+msgid "cannot read that folder"
+msgstr "kan ikke lese den mappen"
+
+msgid "cannot read the %s file '%s'"
+msgstr "kan ikke lese {1}-filen '{2}'"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "kan ikke lese PIN-filen '{1}'"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "kan ikke lese cabinet '{1}' ved siden av '{2}'"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "kan ikke lese sertifikatfilen '{1}'"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "kan ikke lese sertifikatene i '{1}'"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "kan ikke lese sertifikatene i '{1}': {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "kan ikke lese nøkkelfilen '{1}'"
+
+msgid "cannot read the password file '%s'"
+msgstr "kan ikke lese passordfilen '{1}'"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "kan ikke lese den ukomprimerte filen '{1}' ved siden av '{2}'"
+
+msgid "cannot write %s"
+msgstr "kan ikke skrive {1}"
+
+msgid "cannot write '%s'"
+msgstr "kan ikke skrive '{1}'"
+
+msgid "cannot write '%s' to check it"
+msgstr "kan ikke skrive '{1}' for å kontrollere den"
+
+msgid "cannot write resources.pri"
+msgstr "kan ikke skrive resources.pri"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "kan ikke skrive menyfilene ved siden av '{1}'"
+
+msgid "cannot write the resource package of %s"
+msgstr "kan ikke skrive ressurspakken for {1}"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities er en matrise av navn, som [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "funksjonen '{1}' er ikke en rubrapack kjenner (håndboken lister dem)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "funksjonen '{1}' krever Windows-bygg 17763 eller nyere"
+
+msgid "carriage return without a line feed"
+msgstr "vognretur uten linjeskift"
+
+msgid "certificate file '%s': %s"
+msgstr "sertifikatfilen '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "endre en kilde på stedet: gjennom en meny med spørsmål, eller med alternativene"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "kontroller en signatur: struktur, digest, signatur og banen til et klarert sertifikat"
+
+msgid "check a source or package without writing anything"
+msgstr "kontroller en kilde eller pakke uten å skrive noe"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "kontroller kildebanene (relative til kildefilen); angi any-arch = true for en annen arkitektur med vilje"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "kontroller stavemåten (meldingen foreslår nærmeste navn) og tabellens nøkler"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "klassen {1} betjenes allerede av [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "klassen {1} er også i [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class må være en GUID som {12345678-...} (fikk '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs har ingen virkning med preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs må være \"ask\", \"always\" eller \"never\" (fikk '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "kolonnen {1} inneholder feil slags verdi"
+
+msgid "column %s is not valid UTF-8"
+msgstr "kolonnen {1} er ikke gyldig UTF-8"
+
+msgid "column %s may not be null"
+msgstr "kolonnen {1} kan ikke være null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "kolonnen {1}: {2} er utenfor kolonnens område"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "kolonnen {1}: {2} UTF-16-enheter, kolonnen rommer {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "kolonnen {1}: {2} tegn, kolonnen rommer {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "kommandoen '{1}' er ikke implementert ennå"
+
+msgid "command-line"
+msgstr "kommandolinje"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "komponenten {1} {2} har byttet mellom 32 og 64 biter: komponentreglene krever en ny GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "komponenten {1} {2} finnes ikke lenger (ressursene fjernes med forrige versjon)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "komponenten {1} {2} har nå nøkkelbanen {3} i stedet for {4}: komponentreglene krever en ny GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid må være en GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress må være \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" eller \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "condition har et ulukket anførselstegn eller ubalanserte parenteser"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "condition er lengre enn 240 tegn (rubrapack legger til \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config inneholder \"Navn=verdi\"-strenger (fikk '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config er en matrise av \"Navn=verdi\"-strenger"
+
+msgid "contains a control character"
+msgstr "inneholder et kontrolltegn"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "inneholder ett av < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type er en medietype, som \"image/png\" (fikk '{1}')"
+
+msgid "control character"
+msgstr "kontrolltegn"
+
+msgid "control character in a comment"
+msgstr "kontrolltegn i en kommentar"
+
+msgid "control character in a string"
+msgstr "kontrolltegn i en streng"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "datoer og klokkeslett støttes ikke; skriv dem som strenger"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when trenger level over 1 (en funksjon på level 1 installeres uansett som standard)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "definer variabelen ([define] eller -D NAVN=verdi), eller skriv $$ for en bokstavelig $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialogboksen '{1}' er ikke en [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "dialog-ID-er som begynner med 'Rp' (og FilesInUse), er rubrapacks egne"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' ligger i seg selv (baneløkke)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' er verken en dir-ID eller Programs, Desktop, StartMenu eller Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' er ikke en dir-ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' er ikke definert"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction må være \"in\" eller \"out\" (fikk '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo-argumentene er lengre enn 255 tegn"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "nøkler med punktum støttes ikke; legg nøkkelen i en egen tabell"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "dump en pakke (MSI-tabeller som IDT)"
+
+msgid "duplicate primary key"
+msgstr "duplisert primærnøkkel"
+
+msgid "empty arrays are not supported"
+msgstr "tomme matriser støttes ikke"
+
+msgid "ends with a space or a dot"
+msgstr "slutter med et mellomrom eller et punktum"
+
+msgid "error"
+msgstr "feil"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" må navngi en [file.*] som inngår i pakken"
+
+msgid "expected ',' or ']' in the array"
+msgstr "',' eller ']' forventet i matrisen"
+
+msgid "expected '=' after the key"
+msgstr "'=' forventet etter nøkkelen"
+
+msgid "expected ']' to close the table name"
+msgstr "']' forventet for å lukke tabellnavnet"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "en nøkkel, en [tabell] eller en kommentar forventet"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "filtypen '{1}' har allerede et program ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension må være '.' og små bokstaver, sifre, '_' eller '-' (fikk '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files har ingen virkning med preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files må være \"ask\", \"keep\" eller \"delete\" (fikk '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "funksjonen {1} finnes ikke lenger: installasjoner som hadde den, mister det den inneholdt"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "funksjonen '{1}' er sin egen forgjenger"
+
+msgid "feature '%s' is not defined"
+msgstr "funksjonen '{1}' er ikke definert"
+
+msgid "feature parent '%s' is not defined"
+msgstr "den overordnede funksjonen '{1}' er ikke definert"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "filen '{1}' kjører allerede tjenesten '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "filen '{1}' er allerede registrert som skrift"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "filen '{1}' må installeres i selve Fonts-mappen (en [dir.*] med path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "filen '{1}' trenger en funksjon: angi 'feature' her eller på dir-en"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file må være \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "filnavnet er {1} UTF-16-enheter; med det korte 8.3-navnet rommer MSI høyst {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization og registry-virtualization = false krever Windows-bygg 18362 eller nyere: angi [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' betjener COM-klasser bare som .exe eller .dll"
+
+msgid "files but no Media row"
+msgstr "filer, men ingen Media-rad"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "rett verdien meldingen nevner; ID-er er bokstaver, sifre og '_' og er forskjellige i alle tabeller"
+
+msgid "floating-point numbers are not supported"
+msgstr "flyttall støttes ikke"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "mappen '{1}' trenger en funksjon: angi 'feature' her eller på dir-en"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "mappenavnet er {1} UTF-16-enheter; med det korte 8.3-navnet rommer MSI høyst {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent trenger en parent"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "skrifter trenger scope = \"machine\" (denne er {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} trenger en nyere rubrapack (denne leser format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format er et heltall: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "oppgi --pass-env eller --pass-file, ikke begge"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "oppgi --pin-env eller --pin-file, ikke begge"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "gi [msix] og [msix-app.*] det de trenger, eller behold elementet for MSI-en med msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "oppgi en fil under denne mappen"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "oppgi en fil direkte i programmappen, eller - for ingen"
+
+msgid "give a folder below this one, such as dist"
+msgstr "oppgi en mappe under denne, som dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "oppgi et navn på 1 til 128 byte"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "oppgi alle tre logoene (logo-150, logo-44, store-logo) eller ingen"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "oppgi én av --key, --pkcs11 og --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "oppgi undermapper av programmappen, atskilt med komma, eller - for ingen"
+
+msgid "glob '%s' matches no file"
+msgstr "glob '{1}' samsvarer ikke med noen fil"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "glob '{1}' samsvarer med utdatafilen '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "har en MergeModule.CABinet-strøm som ikke kan leses"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "har en MergeModule.CABinet som ikke kan leses"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "har en Module*Sequence-tabell uten standardkolonnene"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "har en ModuleConfiguration-oppføring uten navn eller med ukjent format"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "har en ModuleConfiguration-tabell uten standardkolonnene"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "har en ModuleSubstitution-tabell uten standardkolonnene"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "har en ModuleSubstitution-mal som navngir en oppføring ModuleConfiguration ikke har"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "har en komponent med en betingelse; en MSIX installerer alt"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "har en fil der komponenten eller cabinet-oppføringen mangler"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "har en mappe utenfor TARGETDIR som en MSIX ikke har plass til"
+
+msgid "has a table that cannot be read"
+msgstr "har en tabell som ikke kan leses"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "har en tabell der kolonnene avviker fra pakkens"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "har handlinger for en sekvenstabell pakken ikke har"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "har komponenter, men pakken har ingen FeatureComponents-tabell"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "har filer, men ingen MergeModule.CABinet eller Directory-tabell"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "har filer, men ingen MergeModule.CABinet-strøm"
+
+msgid "has files, but the package has no Media table"
+msgstr "har filer, men pakken har ingen Media-tabell"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "har ingen ModuleSignature: ikke en flettemodul"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "har ingen ProductCode eller ProductVersion"
+
+msgid "has no Property table"
+msgstr "har ingen Property-tabell"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "har poster for en tabell som verken basen eller transformeringen definerer"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "har tekst utenfor ASCII i en annen tegntabell enn 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon må være en .ico-fil"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id må være en GUID som {12345678-1234-1234-1234-123456789ABC}: modulens egen, beholdt i hver versjon"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name må være 3 til 50 tegn av A-Z, a-z, 0-9, '.' og '-' (fikk '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "innebygde tabeller støttes ikke; bruk en [kind.ID]-tabell"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "installeres til samme bane som linje {1} (Windows skiller ikke mellom store og små bokstaver i navn{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "intern feil: en innebygd dialogboks har en ødelagt tabulatorrekkefølge; rapporter det"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "internt: en modultabell har ingen _Validation-regel"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "internt: ingen _Validation-regel for en kolonne i {1}"
+
+msgid "invalid"
+msgstr "ugyldig"
+
+msgid "invalid - %s"
+msgstr "ugyldig - {1}"
+
+msgid "is '.' or '..'"
+msgstr "er '.' eller '..'"
+
+msgid "is a reserved device name"
+msgstr "er et reservert enhetsnavn"
+
+msgid "is empty"
+msgstr "er tom"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "er lengre enn 255 UTF-16-enheter"
+
+msgid "is not a Windows Installer database"
+msgstr "er ikke en Windows Installer-database"
+
+msgid "is not a compound file"
+msgstr "er ikke en sammensatt fil"
+
+msgid "is not valid UTF-8"
+msgstr "er ikke gyldig UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "behold oppgraderingskoden, øk versjonen, behold komponentkodene for filer som blir"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "nøkkelen '{1}' er satt to ganger i denne tabellen (først på linje {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "nøkkelen '{1}' kan ikke begynne eller slutte med '\\' eller inneholde en tom del"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "nøkkelen '{1}' utenfor en tabell; bare 'format' kommer før den første tabellen"
+
+msgid "key file '%s': %s"
+msgstr "nøkkelfilen '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind må være \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" eller \"context-menu\" (fikk '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind må være \"preview\", \"thumbnail\" eller \"property\" (fikk '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind må være registry, file, dir eller component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels er en matrise av strenger, én per verdi"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "språket '{1}' har ingen språkpakke (lang/{2}.po ved siden av kilden, eller RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "språket '{1}' står to ganger i listen"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "språket '{1}' er ikke i [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "språket '{1}' mangler {2} tekst(er), den første er {3}: legg dem til i språkpakken (lang/{4}.po) eller oppgi [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "språket '{1}' trenger [ui] langid-{2} (LANGID-ene, for det automatiske valget)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "språket '{1}' trenger [ui] name-{2} (navnet på språksiden)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" gjør ikke lenger dialogboksene koreanske: de er engelske med mindre [ui] languages = [\"ko\"] legger til koreansk"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language må være \"ko-KR\" eller \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language må være \"neutral\", \"en-US\" eller \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages inneholder koder som \"ko\" eller \"zh_TW\" (2 eller 3 små bokstaver, og _ og en regions to store bokstaver) (fikk '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages er en matrise av språkkoder, som [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages trenger et dialogsett (ui = \"basic\" eller et annet)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
+
+msgid "launch-args needs launch"
+msgstr "launch-args trenger launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license må være en .txt-, .md- (vist som ren tekst) eller .rtf-fil"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} rad {2}: kolonnen {3} er ikke i NFC ({4} rad(er){-5}); build --nfc setter mappe-, fil- og snarveinavn i NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: tegntabell {1}, ikke 65001: tekst kontrolleres ikke som UTF-8, bredder bare for ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: ingen problemer\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: se problemene ovenfor\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "list nøklene et token eller Windows-sertifikatlageret kan signere med"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logoen '{1}' og .scale-100-varianten finnes begge: behold én"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logoen '{1}' i skala {2} er {3}x{4} piksler; den må være {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logoen '{1}' i skala {2} er ikke en PNG-fil"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logoen '{1}' er {2}x{3} piksler; den må være {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logoen '{1}' er ikke en PNG-fil"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logoen '{1}' ble ikke funnet (heller ikke som .scale-100 ... .scale-400-varianter)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logoen '{1}': en logo med skalavarianter trenger et ASCII-filnavn med filtype"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package er hovedpakkens identitetsnavn (fikk '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher og modification = true hører til main-package (pakken denne tilhører)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher er hovedpakkens utgiver, som \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "kan ikke inneholde kontrolltegn eller / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "kan ikke begynne med et mellomrom eller slutte med et mellomrom eller et punktum"
+
+msgid "merge module '%s' not found"
+msgstr "flettemodulen '{1}' ble ikke funnet"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version må være en versjon som 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version må ha fire deler, som 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version må ha fire deler, som 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "samsvarer ikke"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" fjerner nøkkelen; den tar ingen 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode må være \"set\", \"add\" eller \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode må være \"set\", \"append\" eller \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "flere ZIP-oppføringer enn tillatt eller enn katalogen rommer"
+
+msgid "more keys and values than allowed"
+msgstr "flere nøkler og verdier enn tillatt"
+
+msgid "more than 3 redirects"
+msgstr "flere enn 3 omdirigeringer"
+
+msgid "more than 96 sections"
+msgstr "flere enn 96 seksjoner"
+
+msgid "more than one source file ('%s')"
+msgstr "mer enn én kildefil ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "mer enn ett token finnes: navngi ett med --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi må være \"each\", \"one\" eller \"single\" (fikk '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "strenger over flere linjer støttes ikke"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "strenger over flere linjer støttes ikke; bruk én linje med \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "må være 1 til 64 byte"
+
+msgid "name contains a control character"
+msgstr "navnet inneholder et kontrolltegn"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name er en pakkes identitetsnavn (fikk '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "name er ikke ASCII, og summary-name mangler; sammendragets emne blir 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "navngir en mappe Directory-tabellen ikke har"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix er ikke implementert ennå: lag en MSI-kilde og legg til [msix] (se håndboken)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "ingen linje 'format = {1}': en kilde i formatet fra rubrapack 0.18 eller tidligere, som denne versjonen ikke leser (baner begynner nå med $(ProgramFiles) eller $(INSTALLDIR)); se Source format i håndboken"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "ingen --trust oppgitt: signaturen verifiseres, men ingenting sier hvem som skal klareres"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "ingen sertifikater i nøkkelfilen (eller --cert-filen) hører til nøkkelen"
+
+msgid "no control characters"
+msgstr "ingen kontrolltegn"
+
+msgid "no keys\n"
+msgstr "ingen nøkler\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "ikke noe hovedprogram, altså ingen snarveier: ingen"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "ikke noe servernavn, eller et lengre enn 255 byte"
+
+msgid "no string pool: not a transform"
+msgstr "ingen strengbasseng: ikke en transformering"
+
+msgid "no table '%s' in '%s'"
+msgstr "ingen tabell '{1}' i '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove etterlater Endre (dens Fjern) som eneste måte å fjerne produktet på: den kan ikke brukes med no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "ikke en PE-fil (ikke noe MZ-hode)"
+
+msgid "not a PE file (no PE header)"
+msgstr "ikke en PE-fil (ikke noe PE-hode)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "ikke en PEM-, PKCS#8- eller PKCS#12-fil"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ikke et ZIP-arkiv (ingen sluttpost)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ikke et ZIP-arkiv (for kort)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "ikke en proxy-URL rubrapack godtar (http://vert:port)"
+
+msgid "not a registry hive"
+msgstr "ikke en registerhive"
+
+msgid "not a valid number"
+msgstr "ikke et gyldig tall"
+
+msgid "not a value"
+msgstr "ikke en verdi"
+
+msgid "not a value (strings need quotes)"
+msgstr "ikke en verdi (strenger trenger anførselstegn)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "ikke en http://- eller https://-URL rubrapack godtar"
+
+msgid "not valid UTF-8"
+msgstr "ikke gyldig UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "ikke kontrollert (oppgi --trust eller --system-roots)"
+
+msgid "not-present"
+msgstr "ikke til stede"
+
+msgid "nothing changed\n"
+msgstr "ingenting endret\n"
+
+msgid "number out of range"
+msgstr "tall utenfor område"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "oktale og binære tall støttes ikke; bruk desimal eller 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" gjelder HKLM, HKCU og HKMU (klasser hører til [assoc.*], [com.*] og lignende)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" fjerner en nøkkel med alt under den: '{1}' er ikke et produkts egen nøkkel under Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" fjerner hele nøkkelen ved fjerningen; den tar ingen '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "i Windows viser `keys list` sertifikatlageret"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "i Windows brukes et token gjennom sertifikatlageret (--key-store <avtrykk>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on gjelder remove = true (når nøkkelen fjernes)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on må være \"install\" eller \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on må være \"install\", \"uninstall\" eller \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: hver er en filtype ('.' og små bokstaver, sifre, '_' eller '-'), \"*\" (hver fil), \"folder\", \"background\" (den tomme delen av en mappe), \"drive\" eller \"assoc:<ID>\" (fikk '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "bare alternativknapp- og kombinasjonsbokskontroller tar labels"
+
+msgid "only radio and combo controls take values"
+msgstr "bare alternativknapp- og kombinasjonsbokskontroller tar values"
+
+msgid "out of memory"
+msgstr "tomt for minne"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "utdata '{1}': rubrapack skriver .msi, .msm, .msix, .msixbundle og en kjedes setup-.exe"
+
+msgid "package '%s' %s"
+msgstr "pakken '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "pakken '{1}' ble ikke funnet"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent må være et annet produkts upgrade-code, ikke denne pakkens egen"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent må være hovedproduktets upgrade-code, en GUID som {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path må være \"$(Base)/relativ/bane\" med '/' (Base er en mappe som ProgramFiles, eller en dir-ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path må begynne med en Windows-mappe (som $(ProgramFiles) eller $(System))"
+
+msgid "paths"
+msgstr "baner"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type må være \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" eller \"application\" (fikk '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "tillatelser trenger scope = \"machine\" (denne er {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports må være en port eller et område som \"8000-8100\" innenfor 1-65535 (fikk '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "skriv ut en tilfeldig GUID, eller den rubrapack utleder fra en tekst"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "skriv ut JSON Schema for kilder (for et redigeringsprogram som fullfører og kontrollerer nøkler)"
+
+msgid "print the version"
+msgstr "skriv ut versjonen"
+
+msgid "print this help, or one command's usage"
+msgstr "skriv ut denne hjelpen, eller bruken av én kommando"
+
+msgid "product-code must be a GUID"
+msgstr "product-code må være en GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile må være \"all\", \"domain\", \"private\" eller \"public\" (fikk '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' tilhører allerede [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' tilhører også [assoc.{2}]: en filtype og en COM-klasse trenger to navn"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' er også i [assoc.{2}] med en annen description, target, icon eller args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id må være bokstaver, sifre, '.', '_' eller '-', ikke begynne med et siffer, høyst 39 (fikk '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "egenskapen '{1}' tilhører allerede kontrollen '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "egenskapen '{1}' har navnet på en dir eller funksjon"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "egenskapen '{1}' er allerede definert (linje {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "egenskapen '{1}' søkes allerede (linje {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "egenskapen '{1}' settes av rubrapack eller installasjonsprogrammet og kan ikke defineres her"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "egenskapen '{1}' må være et eget offentlig navn (store bokstaver)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "egenskapen '{1}' må være et offentlig navn: store bokstaver, sifre og '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol må være \"tcp\" eller \"udp\" (fikk '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher er pakkens utgiver, som \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher må være emnet til signeringssertifikatet, som \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher kan ikke inneholde unsigned-test-OID-en; --unsigned-test legger den til"
+
+msgid "quoted keys are not supported"
+msgstr "nøkler i anførselstegn støttes ikke"
+
+msgid "quoted table names are not supported"
+msgstr "tabellnavn i anførselstegn støttes ikke"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot må være \"suppress\" eller \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true gjelder on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true kjører aldri når en oppgradering fjerner denne versjonen; den tar ingen 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true fjerner mappen med alt i den; den tar ingen 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} er høyere enn denne pakkens versjon {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' må være en versjon som 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message trenger refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "registeret '{1}' fjerner en verdi; det har ingenting å beskytte"
+
+msgid "registry value '%s' needs a feature"
+msgstr "registerverdien '{1}' trenger en funksjon"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true fjerner verdien ved installasjonen; den tar ingen 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons trenger oppryddingsoppgaven: fjern cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces inneholder høyst 16 oppgraderingskoder"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces inneholder oppgraderingskoder, GUID-er som {12345678-1234-1234-1234-123456789ABC} (fikk '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces er en matrise av oppgraderingskoder, som [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces oppgir {1} to ganger"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces navngir {1}, som er denne pakkens egen upgrade-code eller dens parent"
+
+msgid "required property %s is missing"
+msgstr "den påkrevde egenskapen {1} mangler"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "tilbakerullingstvillingen må komme før {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root må være HKLM, HKCR eller HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root må være HKLM, HKCU, HKCR eller HKMU (fikk '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: hva en diagnosekode betyr. Kodene etter område:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: noen få spørsmål lager kilden (Enter tar verdien i [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "kjør `rubrapack help <kommando>`; kontroller banene og at utdatamappen finnes"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (maskin 0x{2}) kan ikke kjøre på denne pakkens maskiner"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' er ikke et program (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "lagre kilden som UTF-8 (eller UTF-16 med BOM), med LF- eller CRLF-linjeskift"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "skjemaet '{1}' har allerede et program ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope må være \"machine\", \"user\" eller \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl må være en SDDL-streng som \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "søkeegenskapen '{1}' må være et eget offentlig navn (store bokstaver)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "se meldingen; å bygge på nytt med rubrapack retter de fleste"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "sekvens {1} er ikke etter {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "plasserer en handling ved siden av en som verken pakken eller modulen kjører"
+
+msgid "service name '%s' is already used"
+msgstr "tjenestenavnet '{1}' er allerede brukt"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "tjenester trenger scope = \"machine\" (denne er {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "snarveinavnet er {1} UTF-16-enheter; med det korte 8.3-navnet rommer MSI høyst {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "signer en PE-fil, en MSI-pakke, en MSIX-pakke eller -samling"
+
+msgid "signed %s\n"
+msgstr "signerte {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "kilden '{1}' er en katalog; bruk [files.ID] for mange filer"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "kilden '{1}' er en symbolsk lenke; lenker følges ikke"
+
+msgid "source '%s' is not a regular file"
+msgstr "kilden '{1}' er ikke en vanlig fil"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "kildefilen '{1}' ble endret mens pakken ble bygget"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "kildefilen '{1}' er større enn 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "kildefilen '{1}' ble ikke funnet"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source må være \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source må være en .msi-pakke"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "kildebanen '{1}' må være relativ til kildefilen"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "kildebaner bruker '/', ikke '\\\\' (fikk '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start må være auto, demand eller disabled"
+
+msgid "string is not closed on this line"
+msgstr "strengen er ikke lukket på denne linjen"
+
+msgid "string lengths exceed the string data"
+msgstr "strenglengdene overskrider strengdataene"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "sammendragsinformasjon kan ikke vises som IDT ennå"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name må være ASCII (sammendragsinformasjon inneholder bare ASCII)"
+
+msgid "table %s %s"
+msgstr "tabellen {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "tabellen '{1}' er uleselig"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "tabellen [{1}{2}{3}] er definert to ganger (først på linje {4})"
+
+msgid "table name expected"
+msgstr "tabellnavn forventet"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "tabellnavn har høyst to deler: [kind] eller [kind.ID]"
+
+msgid "tables"
+msgstr "tabeller"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "tabeller og nøkler: en ukjent tabell eller nøkkel, en påkrevd som mangler, et element uten funksjon når funksjoner finnes"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "tar ingen konfigurasjon (den har ingen ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "målet '{1}' finnes ikke"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target må være \"dir:<ID>\", \"file:<ID>\" eller \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
+
+msgid "target name '%s' %s"
+msgstr "målnavnet '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' brukes allerede av [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name og enabled hører til kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "den filen finnes allerede; oppgi et annet navn"
+
+msgid "that folder holds no files"
+msgstr "den mappen inneholder ingen filer"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "FilesInUse-dialogboksen trenger en ListBox-tabell, også en tom (feil 2205; dialogboksen hoppes over)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN-koden har tegn eller en lengde tokenet ikke godtar"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN-koden er utløpt: endre den på tokenet først"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN-koden er låst (for mange feil forsøk)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode er forrige versjons: det er en mindre oppgradering (REINSTALLMODE), ikke den større oppgraderingen rubrapack bygger"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16-filen er ikke gyldig UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP-filens sentrale katalog ligger utenfor filen"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "program-ID-en '{1}' blir Application Id: bare bokstaver og sifre, begynner ikke med et siffer"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "arkivet slutter ikke med ZIP64-sluttposter slik MSIX-pakker gjør"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "arkivet har ingen ZIP64-sluttpost"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "samlingsmanifestet har ingen Identity Name, Publisher og Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "den sentrale katalogen ligger utenfor arkivet"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "sertifikatet har en kritisk utvidelse som rubrapack ikke forstår"
+
+msgid "the certificate has expired"
+msgstr "sertifikatet er utløpt"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "sertifikatet er et CA-sertifikat, ikke et signeringssertifikat"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "sertifikatet er ikke for kodesignering (ingen utvidet nøkkelbruk for kodesignering)"
+
+msgid "the certificate is not valid yet"
+msgstr "sertifikatet er ikke gyldig ennå"
+
+msgid "the certificate path is longer than 8"
+msgstr "sertifikatbanen er lengre enn 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "sertifikattabellen inneholder ingen Authenticode-signatur"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "sertifikattabellen er ikke på slutten av filen"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "sertifikatets nøkkelbruk tillater ikke digitale signaturer"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "sertifikatets emne kan ikke skrives som MSIX-utgiver"
+
+msgid "the chunked response is malformed"
+msgstr "det chunkede svaret er feilformet"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "kommandolinjen: en ukjent kommando eller et ukjent alternativ, en fil som ikke kan leses eller skrives, en signatur, en forskjell en transformering ikke kan bære"
+
+msgid "the connection has failed"
+msgstr "tilkoblingen mislyktes"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "de innebygde cabinet-filene gjør pakken 2 GiB eller større, som Windows Installer ikke kan åpne; bruk cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "oppføringen er ikke i den sentrale katalogen"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "feildialogboksen '{1}' trenger en {2}-kontroll med navnet {3} (feil 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "den kjørbare filen '{1}' må være en .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "mappen til den kjørbare filen fører ikke til en kjent plassering"
+
+msgid "the file is not signed"
+msgstr "filen er ikke signert"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "filen er allerede signert; rubrapack signerer ikke to ganger eller erstatter en signatur"
+
+msgid "the file is too large to sign"
+msgstr "filen er for stor til å signeres"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "filen trenger en [package]-tabell (eller [module] for en flettemodul)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "filen ble endret etter at den ble signert (digesten samsvarer ikke)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "filene som skal installeres: ikke funnet, en mappe, en lenke, en glob uten treff, et program for en annen arkitektur, for lange navn"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "de ferdige tabellene bryter en Windows Installer-regel"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "registerhiven ble ikke lukket riktig (loggen ville vært nødvendig)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "kontrollsummen for hivens basisblokk samsvarer ikke"
+
+msgid "the hive's bins lie outside the file"
+msgstr "hivens bins ligger utenfor filen"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "ikonet i listen over installerte apper er [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "inndataene sluttet før hvert spørsmål var besvart; ingenting ble skrevet"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "nøkkelfilen er større enn 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "nøkkelen er verken RSA eller EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "biblioteket er ikke en PKCS#11-modul (ingen C_GetFunctionList, eller versjon 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "manifestet har ingen Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "manifestets Identity kan ikke leses for pakkens fulle navn"
+
+msgid "the merge module %s"
+msgstr "flettemodulen {1}"
+
+msgid "the name %s"
+msgstr "navnet {1}"
+
+msgid "the package is not signed"
+msgstr "pakken er ikke signert"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "pakken er ikke signert (ingen AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "pakken er allerede signert; rubrapack signerer ikke to ganger eller erstatter en signatur"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "pakken er allerede signert; rubrapack signerer usignerte pakker (og aldri to ganger)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakken bruker cabinet-filer utenfor seg selv, som en signatur av .msi-en ikke dekker; bygg den med innebygde cabinet-filer, eller signer likevel med --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "pakkens innhold samsvarer ikke med signaturen (den ble endret etter signering)"
+
+msgid "the package's directory cannot be read"
+msgstr "pakkens katalog kan ikke leses"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "pakkene i en samling trenger samme Name, Publisher og Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "proxyen ber om et passord (407), som rubrapack ikke støtter"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "proxyen svarte ikke på tunnelforespørselen"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "proxyen sendte data etter svaret på CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "omdirigeringsplasseringen er for lang"
+
+msgid "the request could not be sent"
+msgstr "forespørselen kunne ikke sendes"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "svaret har en feilformet eller motstridende Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "svaret har både Content-Length og chunked (avvist: en smuglingsrisiko)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "svaret er større enn 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "svaret bruker en annen overføringskoding enn chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "den samme betingelsen kreves allerede (linje {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "det samme uten spørsmål:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "serveren svarte ikke med HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "serveren omdirigerte fra https til http (avvist)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "serverens CertificateVerify-signatur verifiseres ikke"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "serverens sertifikat er ikke for TLS-servere (den utvidede nøkkelbruken)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "serverens signaturskjema passer ikke til nøkkelen i sertifikatet"
+
+msgid "the signature does not verify"
+msgstr "signaturen verifiseres ikke"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "signaturen verifiseres ikke med signatarens sertifikat"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "signaturoppføringen er beskrevet på ZIP64-måten; Windows leser plasseringen fra ZIP32-feltene"
+
+msgid "the signature is not DER"
+msgstr "signaturen er ikke DER"
+
+msgid "the signature streams cannot be read"
+msgstr "signaturstrømmene kan ikke leses"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "de signerte attributtene samsvarer ikke med det signerte innholdet"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "signatarens sertifikat er ikke for kodesignering"
+
+msgid "the source file's encoding"
+msgstr "kildefilens koding"
+
+msgid "the system random source failed"
+msgstr "systemets tilfeldighetskilde mislyktes"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "tabulatorrekkefølgen (Control_Next) er ikke én syklus gjennom de {1} kontrollene fra Control_First (Windows Installer stopper med feil 2809 eller 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "tidsstempelserveren svarte med en HTTP-feil"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "tidsstempelserverens sertifikat er ikke for tidsstempling"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "tidsstempelserverens tid ligger utenfor signeringssertifikatets gyldighet"
+
+msgid "the token does not say what kind of key it is"
+msgstr "tokenet sier ikke hva slags nøkkel det er"
+
+msgid "the token is not present"
+msgstr "tokenet er ikke til stede"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "tokenet returnerte en ECDSA-signatur med feil lengde"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "tokenets EC-nøkkel har et sertifikat som ikke er et EC-sertifikat"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "tokenets signatur verifiseres ikke med sertifikatet (nøkkelen og sertifikatet hører ikke sammen)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "det klarerte sertifikatet er utløpt eller ikke gyldig ennå"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "de usignerte attributtene er feilformet eller inneholder mer enn ett tidsstempel"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "det finnes ingen slik fil her"
+
+msgid "there is no such folder here"
+msgstr "det finnes ingen slik mappe her"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "denne rubrapack ble bygget uten menydelen: [menu.*]-elementer når ikke Windows 11-menyen"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "denne rubrapack ble bygget uten installasjonsprogrammet (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading må være \"sta\", \"mta\", \"both\" eller \"neutral\" (fikk '{1}')"
+
+msgid "timestamp: "
+msgstr "tidsstempel: "
+
+msgid "too many languages for one bundle"
+msgstr "for mange språk for én samling"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "for mange lokaliserte tekster og logoskalaer for resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "for mange pakker i samlingen"
+
+msgid "trusted"
+msgstr "klarert"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "to pakker med samme arkitektur i en samling"
+
+msgid "two packages of one name in a bundle"
+msgstr "to pakker med samme navn i en samling"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "to ressurspakker med samme ResourceId i en samling"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type må være string, expand, dword, qword, binary eller multi (fikk '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type må være text, checkbox, edit, radio eller combo (fikk '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version er major.minor i heksadesimale sifre, som \"1.0\" (fikk '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types og verb hører til kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: hver er \".ext\" eller \"*\" (hver fil)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: hver er '.' og små bokstaver, sifre, '_' eller '-' (fikk '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" lar brukeren velge mappen for dir '{2}', som ikke finnes (angi [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" trenger [feature.*]-tabeller å velge fra"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui må være none, basic, minimal, installdir eller features (fikk '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "uventet tekst etter verdien"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "ukjent kommando '{1}' (se 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "ukjent escapesekvens \\{1} (bruk '...' for tekst med omvendte skråstreker)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "ukjent inspect-alternativ (bruk et tabellnavn, --summary, --files eller --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "ukjent nøkkel '{1}' i [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "ukjent eller ufullstendig {1}-alternativ '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "ukjent tabell [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "pakk ut en pakke i en ny katalog, ordnet slik den installeres"
+
+msgid "unsupported - %s"
+msgstr "støttes ikke - {1}"
+
+msgid "untrusted"
+msgstr "ikke klarert"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-*-nøkler trenger appinstaller-uri og package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false gjelder on = \"uninstall\" eller \"both\" (en installasjon er aldri en oppgraderings fjerning)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code må være en GUID som {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "bruk: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "bruk: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (en liste for en samling)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "bruk: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "bruk: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "bruk: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "bruk: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "bruk: rubrapack inspect <file.cab> (ingen tabell eller alternativ)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "bruk: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "bruk: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "bruk: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "bruk: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "bruk: rubrapack inspect <setup.exe> (ingen tabell eller alternativ)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "bruk: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "bruk: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "bruk: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "bruk: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "bruk: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (en fast startfil <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk-navn godtas også"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "bruk: rubrapack schema (JSON Schema for kilder, på stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "bruk: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "bruk: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "bruk '/' i banen"
+
+msgid "use a full rubrapack build or another way"
+msgstr "bruk et fullstendig rubrapack-bygg eller en annen måte"
+
+msgid "used by more than one component"
+msgstr "brukes av mer enn én komponent"
+
+msgid "value '%s' is listed twice"
+msgstr "verdien '{1}' står to ganger i listen"
+
+msgid "value missing"
+msgstr "verdi mangler"
+
+msgid "values and labels are strings"
+msgstr "values og labels er strenger"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values er en matrise av 1 til 32 strenger"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "verdier: ID-er, GUID-er, versjoner, tall utenfor område, referanser til ting som ikke finnes"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "variabelen '{1}' er ikke definert ([define] eller -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "variabelnavnet '{1}' kan ikke inneholde '=' eller begynne med = + - ! *"
+
+msgid "variables"
+msgstr "variabler"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "variabler: $(NAVN) uten verdi, $( ikke lukket, et Windows-navn eller en dir-ID der det ikke kan stå"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "versjonen '{1}' må være a.b.c eller a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "versjonen '{1}' må være a.b.c eller a.b.c.d med a, b <= 255 og c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" kan ikke gå 'with' en fil i en 64-biters pakke"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view må være \"32\" eller \"64\""
+
+msgid "warning"
+msgstr "advarsel"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "hva en diagnosekode betyr, meldingene som bærer den, hva du skal gjøre og hvor håndboken sier mer"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with må være \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: filen '{1}' er ikke en [file.*] i denne pakken"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "uten --pkcs11 viser `keys list` Windows-sertifikatlageret"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' er ikke en dir-ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "skriv en oppdatering (.msp): filene og radene som oppdaterer en installert base til målet"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "skriv en kildefil (.toml; også .rpk-navn): laget av svar, spurt eller gitt som alternativer, en fast startfil, eller en eksisterende MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "skriv en transformering (.mst): det som gjør den ene pakken til den andre"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "skriv tabellen eller verdien på den enkle måten håndboken viser"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "skriv verdien uten '[~]'; mode = \"append\" eller \"prepend\" legger den til"
+
+msgid "wrote %s\n"
+msgstr "skrev {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width kan være høyst 370 (sidebredden)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height kan være høyst 234 (linjen over knappene)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Tilbake"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Neste >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Installer"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Fullfør"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Ja"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Nei"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Prøv igjen"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Ignorer"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "&Avbryt"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "A&vslutt"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&Bla gjennom..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Velkommen til installasjonen av [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "[ProductName] installeres på datamaskinen. Klikk på Neste for å fortsette."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Lisensavtale"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Les følgende lisensavtale."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "Jeg &godtar vilkårene i lisensavtalen"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Installasjonsmappe"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Velg mappen [ProductName] skal installeres i."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Installer &i:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Endre mappen"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Bla til mappen det skal installeres i."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Søk i:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&Mappenavn:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Opp"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Ny mappe"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Velg funksjoner"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Velg funksjonene som skal installeres."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "Til&bakestill"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Diskbruk"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Diskplass"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Plassen de valgte funksjonene trenger, og ledig plass."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Klar til installasjon"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Klikk på Installer for å installere [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "[ProductName] installeres"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Vent litt."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Status:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Installasjonen er fullført"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] er installert."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "[ProductName] fjernes"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Fjerningen er fullført"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] er fjernet."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Fjerningen ble avbrutt"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Fjerningen ble avbrutt. Ingenting er endret på datamaskinen."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Fjerningen mislyktes"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "En feil avbrøt fjerningen, som er rullet tilbake. Produktet er fortsatt installert."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Installasjonen ble avbrutt"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Installasjonen ble avbrutt. Ingenting er endret på datamaskinen."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Installasjonen mislyktes"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "En feil avbrøt installasjonen, som er rullet tilbake. Ingenting er endret på datamaskinen."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Vil du avbryte installasjonen av [ProductName]?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Filer i bruk"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Disse programmene bruker filer som skal erstattes. Klikk på Fortsett for å erstatte dem nå: programmer som allerede er åpne, beholder de gamle filene til de åpnes på nytt, og programmer som åpnes senere, får de nye. Omstart er ikke nødvendig."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Disse programmene bruker filer som skal erstattes. Klikk på Fortsett for å erstatte dem nå: programmer som allerede er åpne, beholder de gamle filene til de åpnes på nytt, og programmer som åpnes senere, får de nye. Windows kan be om omstart til slutt."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Fortsett"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Ikke nok diskplass"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Det er ikke nok plass til denne installasjonen. Frigjør plass eller velg en annen plassering."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "Vedlikehold av [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Velg hva som skal gjøres."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Reparer"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Gjenoppretter manglende eller skadde filer og innstillinger."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "&Fjern"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Fjerner [ProductName] fra datamaskinen."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "Fjern [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Klikk på Fjern for å fjerne [ProductName] fra datamaskinen. Klikk på Tilbake eller Avbryt for å beholde det."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Klikk på Fjern for å fjerne [ProductName] fra datamaskinen. Innstillingene og dataene slettes samtidig og kan ikke gjenopprettes. Klikk på Tilbake eller Avbryt for å beholde det."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Vil du fjerne [ProductName] fra datamaskinen?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Vil du fjerne [ProductName] fra datamaskinen? Innstillingene og dataene slettes samtidig og kan ikke gjenopprettes."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] kan ikke installeres trygt: [1] er ikke en mappe, eller installasjonsprogrammet kan ikke slette filer i den. Fjern først [3] ([2]), og installer deretter på nytt."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] kan ikke oppgraderes trygt: den installerte versjonen [1] har mistet den hurtigbufrede pakken og kan ikke fjernes her. Fjern først den versjonen med den opprinnelige pakken ([2]), og installer deretter på nytt."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Installasjonen stoppet: mappen [1] finnes allerede og eies ikke av administratorer, eller den fører et annet sted via en kobling. Velg en annen mappe, eller la en administrator fjerne den først."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Start [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Lagre logg..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Vis hele l&oggen"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Installasjonsloggen kunne ikke lagres i [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Endre"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Velg hvilke funksjoner som installeres."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Installasjonsomfang"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Velg hvem som kan bruke [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Bare for &meg"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "For &alle brukere på denne datamaskinen - krever administratorrettigheter"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Språk"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Velg språk for installasjonen."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Søker etter installerte programmer"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Beregner plassbehov"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Beregner plassbehov"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Oppretter mapper"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Oppretter snarveier"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Sletter tjenester"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Oppretter kopier av filer"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Beregner plassbehov"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Søker etter relaterte programmer"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Forbereder operasjoner for:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Kopierer nye filer"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Installerer nye tjenester"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Validerer installasjonen"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Kontrollerer startbetingelser"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Overfører funksjonsvalg fra den forrige versjonen"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Flytter filer"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Oppdaterer filer"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Oppdaterer komponentregistrering"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Publiserer produktfunksjoner"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Publiserer produktinformasjon"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Registrerer klasseservere"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Registrerer filtyper"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Registrerer skrifter"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "Registrerer MIME-informasjon"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Registrerer produktet"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Registrerer program-ID-er"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Registrerer brukeren"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Oppdaterer miljøvariabler"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Fjerner den forrige versjonen"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Fjerner filer"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Fjerner mapper"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "Fjerner INI-oppføringer"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Fjerner registerverdier"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Fjerner snarveier"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Ruller tilbake operasjon:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Fjerner sikkerhetskopier"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Starter tjenester"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Stopper tjenester"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Avpubliserer produktfunksjoner"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Avregistrerer klasseservere"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Avregistrerer filtyper"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Avregistrerer skrifter"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Avregistrerer MIME-informasjon"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Avregistrerer program-ID-er"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Oppdaterer miljøvariabler"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "Skriver INI-verdier"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Skriver registerverdier"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] installeres bare for gjeldende bruker (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Samme eller en nyere versjon av [ProductName] er allerede installert."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Den installerte eldre versjonen av [ProductName] kan ikke oppgraderes med denne pakken. Fjern den først, og kjør deretter installasjonen på nytt:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Kopier fil"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Fjern fil"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Oppdater fil"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Opprett mappe"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Fjern mappe"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Skriv registerverdi"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Fjern registerverdi"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Fjern registernøkkel"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Opprett snarvei"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Fjern snarvei"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Installer tjeneste"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Styr tjeneste"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Skriv INI-verdi"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Angi miljøvariabel"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Registrer skrift"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Avregistrer skrift"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Kjør handling"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Dette installasjonsprogrammet er skadet: last det ned på nytt."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Disse programmene er allerede installert. Velg hva som skal gjøres."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Reparer"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "&Fjern"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Avbryt"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Vil du fjerne disse programmene fra datamaskinen?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Programmene er fjernet."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Et program kunne ikke fjernes."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Installasjonsprogrammet kunne ikke opprette en midlertidig mappe."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} kunne ikke repareres (feil {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} kunne ikke installeres (feil {2}). Ingenting etter det er installert."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Programmene er reparert."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Installasjonen er fullført."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Denne mappen inneholder allerede filer eller mapper. Når [ProductName] fjernes, slettes alt i mappen - også det som er der nå. En tom eller ny mappe er det trygge valget."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Velg en annen"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "Br&uk denne mappen"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] program bruker filer fra [3]:\r\n[2]\r\nVil du lukke alle?\r\n\r\nJa: lukk alle og fortsett (arbeid som ikke er lagret, kan gå tapt).\r\nNei: fortsett uten å lukke (programmer som allerede er åpne, beholder de gamle filene til de åpnes på nytt).\r\nAvbryt: stopp."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: stoppet fordi [1] program bruker filene:\r\n[2]Lukk dem og prøv igjen, eller angi RPCLOSE=yes (lukk alle og fortsett) eller RPCLOSE=no (fortsett uten å lukke)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] element i mappene til [3] ble ikke installert med det:\r\n[2]\r\nVil du slette også disse?\r\n\r\nJa: slett dem sammen med [3] (de kan ikke gjenopprettes).\r\nNei: fjern [3] og behold dem.\r\nAvbryt: stopp."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: stoppet fordi [1] element i mappene ikke ble installert med det:\r\n[2]Angi RPEXTRA=delete (slett også disse) eller RPEXTRA=keep (behold dem), og fjern det på nytt."

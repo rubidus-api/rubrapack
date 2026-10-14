@@ -26,8 +26,14 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, ダイアログ {6}{7}\n  1 名前、製�
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\nこのコードを使うメッセージ (* は名前または値):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\n結果は stdout に、診断は stderr に出力します。\n--lang (または RUBRAPACK_LANG) でこれらの表示の言語を選びます: en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it、または言語パックのある言語。\n終了コード: 0 正常、1 ソースのエラー、2 使い方、3 入出力、4 署名または検証、\n5 lint、6 ネットワーク。\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\n結果は stdout に、診断は stderr に出力します。\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (または RUBRAPACK_LANG) でこれらの表示の言語を選びます: {1}、または言語パックのある言語。\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "終了コード: 0 正常、1 ソースのエラー、2 使い方、3 入出力、4 署名または検証、\n5 lint、6 ネットワーク。\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n対処: {1}。\n"
@@ -512,8 +518,8 @@ msgstr "--key-store は Windows の証明書ストアです。ほかの環境で
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store は証明書の SHA-1 拇印 (16 進 40 桁) を取ります"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: その言語はありません (en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it は組み込み。ほかの言語には言語パック {2}.po が必要です)"
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: その言語はありません (組み込み: {2}。ほかの言語には言語パック {3}.po が必要です)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang には en や ko のような言語が必要です"
@@ -701,8 +707,8 @@ msgstr "ProductVersion {1} は最初の 3 つのフィールドで前の {2} よ
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "ショートカットが開くプログラム (ショートカットなしは -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: その言語はありません (en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it は組み込み。ほかの言語には言語パック {2}.po が必要です)"
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: その言語はありません (組み込み: {2}。ほかの言語には言語パック {3}.po が必要です)"
 
 msgid "Reference, "
 msgstr "リファレンス、"

@@ -1,0 +1,3816 @@
+# rubrapack language pack: Dutch.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: nl\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Nederlands\n"
+"X-Rubrapack-LangIDs: 1043, 2067\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialoogvensters {6}{7}\n  1 naam, fabrikant, versie, architectuur       2 installatiemap, voor wie het installeert\n  3 dialoogvensters, licentie, talen            4 optionele onderdelen\n  5 snelkoppelingen                             6 bestanden: afstemmen op de programmamap\n  7 willekeurige sleutel                        v bekijken   l lint   s opslaan   q afsluiten\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nMeldingen met deze code (* staat voor een naam of een waarde):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nResultaten gaan naar stdout, diagnoses naar stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (of RUBRAPACK_LANG) kiest de taal van deze teksten: {1}, of een taal met een taalpakket.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Afsluitcodes: 0 ok, 1 bronfout, 2 gebruik, 3 invoer/uitvoer, 4 ondertekening of verificatie,\n5 lint, 6 netwerk.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nWat te doen: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} is weg, maar een snelkoppeling opent het: wijzig eerst de snelkoppelingen (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  daar staan {1} bestanden en {2} mappen\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s of q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  [dir.{1}] en [files.{2}] toegevoegd\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  [file.{1}] toegevoegd\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  geef het op als tabel.sleutel, zoals package.version of dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: geen problemen\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: zie de problemen hierboven (het daar genoemde bestand is een controlekopie)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  andere talen in [ui] languages blijven behouden; wijzig die lijst met 7 (willekeurige sleutel)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  [file.{1}] verwijderd\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  [files.{1}]{2} verwijderd\n"
+
+msgid "  sub folders:"
+msgstr "  submappen:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  dat past niet in de TOML-subset; er is niets gewijzigd\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  dat was geen leesbare tekst; nogmaals, alstublieft\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  de programmamap '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  de bron heeft geen [file]-tabellen waar een snelkoppeling naar kan wijzen\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  de bron heeft geen submappen zoals `new` ze schrijft ([files] \"<folder>/<name>/**\"); voeg ze toe met 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  te lang; nogmaals, alstublieft\n"
+
+msgid "  y or n\n"
+msgstr "  y of n\n"
+
+msgid " (changed)"
+msgstr " (gewijzigd)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - bouwt Windows Installer- (.msi) en MSIX-pakketten (.msix)\n\ngebruik: rubrapack [--lang <code>] <command> [arguments]\n\nopdrachten:\n"
+
+msgid " and its dir"
+msgstr " en zijn dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) heeft geen omgevingsvariabele, dus een uitbreidbare waarde kan het niet bevatten; gebruik een tekenreekswaarde (ingevuld bij de installatie)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) is een {2}: het kan een pad beginnen of staan voor een waarde die Windows Installer invult (register, omgeving, INI, argumenten, meldingen), maar niet hier"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) is geen map waarmee een pad kan beginnen (een dir-ID, of ProgramFiles, LOCALAPPDATA, ProgramData ... - zie Paths in de handleiding){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  structuur:    {2}\n  digest:       {3}\n  handtekening: {4}\n  keten:        {5}{6}{7}\n  intrekking:   niet gecontroleerd\n  tijdstempel:  {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: de variabele is niet ingesteld"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' is geen besturingselement van dit dialoogvenster"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' staat niet in {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': de licentietekst heeft de Engelse naam van het lettertype nodig en verschijnt dus in het eigen lettertype van de taal; schrijf de Engelse naam (zoals \"Malgun Gothic\") om ook daar dit lettertype te gebruiken"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "{1}-onderdeel, maar het platform van het pakket is {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} hoort niet bij kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} hoort niet bij kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} bevat LANGID's (1..65535), zoals 1041"
+
+msgid "%s holds strings"
+msgstr "{1} bevat tekenreeksen"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} is een lettertypenaam van 1 tot 31 tekens, zoals \"Segoe UI\" (gekregen: {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} is een MSI-voorwaarde met gesloten aanhalingstekens en gebalanceerde haakjes"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} is een array van tekenreeksen, één per waarde"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} is voor MSI-pakketten: een MSIX wordt niet door msiexec verwijderd"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} is weg. [file.{2}] verwijderen?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} is langer dan 240 tekens"
+
+msgid "%s is new. Add it?"
+msgstr "{1} is nieuw. Toevoegen?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} is geen GUID in registerindeling"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} is geen code die deze rubrapack gebruikt{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} moet \"file:<ID>\" zijn en een [file.*] van dit pakket noemen"
+
+msgid "%s must be a GUID"
+msgstr "{1} moet een GUID zijn"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} moet een GUID zijn zoals {12345678-...} (gekregen: '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} moet een https://-, http://- of file://-adres zijn, of een \\\\server\\share-pad (gekregen: '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} moet verschillen van upgrade-code (één upgradefamilie per architectuur)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} heeft Windows-build {2} of later nodig: stel [msix] min-version = \"10.0.{3}.0\" in"
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} heeft resources/bin/rubrapack_ca-{2}.dll nodig, waarzonder deze rubrapack is gebouwd"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA niet gecontroleerd (geef --tsa-trust op)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA vertrouwd"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA niet vertrouwd - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} is weg of leeg. [files.{3}] en [dir.{4}] verwijderen?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ is een nieuwe map. Toevoegen?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: {2} fout(en){-3}, {4} waarschuwing(en){-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: {2} fout(en){-3}, {4} waarschuwing(en){-5} (ten opzichte van {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} bestanden, {3} bytes\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} bestanden, {3} fouten, 0 waarschuwingen\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: nog {2} diagnoses niet getoond\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: bestand '{2}' is geen [file.*] van dit pakket"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: bestand '{2}' is geen programma (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' is niet gesloten (schrijf '$$(' voor de tekst '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' bestaat al; het blijft zoals het is"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' bestaat al; verwijder het of bouw in een andere map"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' heeft al een {2}-handler ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' heeft al machtigingen"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' en '{2}' zijn hetzelfde pad in het pakket"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' hoort bij Windows of de browsers"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' kan niet worden gelezen ten opzichte van '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' past niet in de TOML-subset; er is niets opgeslagen"
+
+msgid "'%s' exists already"
+msgstr "'{1}' bestaat al"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' bestaat al; wijzig het met `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' bestaat en is geen lege map; pak uit naar een nieuwe"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' gaat naar {2}; of msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' heeft een onleesbare stroom met samenvattingsinformatie"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' heeft geen Directory-, Component-, File- en Media-tabellen om uit te pakken"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' heeft geen leesbare samenvattingsinformatie"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' heeft geen transformatie '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' is UTF-16: edit wijzigt alleen UTF-8-bronnen (sla het eerst op als UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' is een Windows-naam; geef de variabele een andere naam"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' is een [chain]: het bouwt een setupprogramma, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' is een besturingselement van het ingebouwde frame; kies een andere ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' is een computermap; een {2}-pakket kan daar niet schrijven"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' is een samenvoegmodule: voeg het samen met [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' is een naam die het MSIX-formaat voor zichzelf houdt"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' is een symbolische koppeling; koppelingen worden niet gevolgd"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' is ook een [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' is ook een dir-ID; geef de variabele een andere naam"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' is gebouwd voor machine 0x{2}, niet voor de arch van dit pakket; stel any-arch = true in als dat de bedoeling is"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' is geen PE-bestand (.exe, .dll), geen MSI-pakket en geen MSIX-pakket of -bundel"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' is geen PE-bestand, geen MSI-pakket en geen MSIX-pakket of -bundel"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' is geen bekende map en geen dir-ID (bekende mappen: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' is geen cabinet dat rubrapack kan lezen (stored of MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' is geen diagnosecode (RP en vier cijfers, zoals RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' is geen programma (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' is geen gewoon bestand"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' is geen setupprogramma van rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' is geen geldige ID (letters, cijfers en '_', niet beginnend met een cijfer, hoogstens {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' is geen geldige MSI-database: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' is geen geldig MSIX-pakket: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' is geen geldig pakket: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' is geen geldige bron (de TOML-subset); herstel het eerst met de hand"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' is geen geldige transformatie: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' is geen geldige variabelenaam"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' is gereserveerd en kan niet als ID worden gebruikt"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' is de naam van een dir: alleen een register- of dir-zoekopdracht kan een dir vullen"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' lijkt een programmabestand (PE), maar de headers of resources zijn beschadigd"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' moet een tekenreeks zijn"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' moet een geheel getal zijn"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' moet tussen {2} en {3} liggen"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' moet true of false zijn"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' mag niet leeg zijn"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' noemt geen transformaties (samenvattingseigenschap 8): geen patch"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' begint met een map: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' heeft {4}; er is niets uitgepakt"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} items, meer dan de limiet {3} (--limit-entries); er is niets uitgepakt"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' en '{3}' zouden onder Windows hetzelfde pad zijn; er is niets uitgepakt"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' staat niet in [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': een tabel kan niet worden gelezen"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': een tabel is onleesbaar"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': een MSIX installeert al zijn bestanden (when); gebruik msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': een MSIX verwijdert al zijn bestanden (keep); gebruik msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' is beschadigd of niet stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinetnaam '{2}' is geen gewone bestandsnaam"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': gecomprimeerd bestand '{2}' (volgorde {3}) heeft geen cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': map '{2}' heeft een bovenliggende map '{3}' die er niet is"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': map '{2}' is zijn eigen voorouder of te diep genest"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': bestand '{2}' komt niet overeen met zijn MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': bestand '{2}' heeft geen onderdeel of map"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': bestand '{2}' is {3} bytes, de File-tabel zegt {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': bestand '{2}' staat niet in cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': de externe cabinets vallen niet onder de handtekening (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': de map leidt niet naar een bekende locatie"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': meer dan {2} bytes te schrijven (--limit-bytes); er is niets uitgepakt"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': geen --timestamp: de handtekening is niet meer geldig als het certificaat verloopt"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': pakket '{2}' komt niet overeen met zijn SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': de cabinetstroom '{2}' is er niet"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': het manifest heeft geen {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': het manifest noemt '{2}', dat niet in het pakket staat"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': tijdstempel van {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': transformatie '{2}' kan niet worden gelezen ten opzichte van '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' is de eigen taal van het pakket ({2}); geef die tekst zonder het achtervoegsel"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' laat Windows Installer een multi-string schrijven; gebruik type = \"multi\" en een array"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' in getallen wordt niet ondersteund"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' neemt hoogstens één opdrachtnaam"
+
+msgid "'version' takes no arguments"
+msgstr "'version' neemt geen argumenten"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs is voor .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch voor een bundel: een lijst van x64, x86 en arm64, elk één keer (gekregen: '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch neemt één architectuur, of een lijst voor een .msixbundle-uitvoer"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp en --allow-unsigned-cabs horen bij --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress is voor .msi; een MSIX neemt --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist noemt een nieuwe map naast de bron (geen pad)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs neemt een getal van 1 tot 64 (gekregen: '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store is een Windows-certificaatarchief; gebruik elders een sleutelbestand of --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store neemt de SHA-1-vingerafdruk van het certificaat (40 hexadecimale cijfers)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: deze taal bestaat niet (ingebouwd: {2}; een andere heeft zijn taalpakket nodig, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang heeft een taal nodig, zoals en of ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages heeft dialoogvensters nodig: geef ook --ui op"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress neemt deflate of store (gekregen: '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: de variabele is niet ingesteld"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code neemt een GUID in hoofdletters met accolades: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: de variabele is niet ingesteld"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous vergelijkt twee .msi-pakketten"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: de basiscertificaten van het besturingssysteem kunnen niet worden gelezen"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} past niet bij de uitvoer '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} is niet geïmplementeerd (msi of msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target neemt msi of msix (gekregen: '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots en --proxy horen bij --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test en --msix-compress zijn voor .msix-uitvoer"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test is voor pakketten zonder handtekening; laat het weg bij --key"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate neemt none, of enkele van product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} is twee keer opgegeven"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' is een Windows-naam; geef de variabele een andere naam"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D heeft NAAM=WAARDE nodig (gekregen: '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i vraagt om elk antwoord; geef -i of de opties"
+
+msgid "; its range is "
+msgstr "; het bereik is "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' staat niet in SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty moet een openbare eigenschap (hoofdletters) zijn"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Alle codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x begint niet met PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x is niet het laatste item"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Architectuur (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Kies"
+
+msgid "Command line"
+msgstr "Opdrachtregel"
+
+msgid "Command line (lint)"
+msgstr "Opdrachtregel (lint)"
+
+msgid "Common AppData"
+msgstr "Gemeenschappelijke AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId is geen GUID in registerindeling"
+
+msgid "Desktop shortcut?"
+msgstr "Snelkoppeling op het bureaublad?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialoogvensters (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "De File-, Component- of Directory-tabel mist een standaardkolom"
+
+msgid "Folder name under Program Files"
+msgstr "Mapnaam onder Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Map met de te installeren bestanden"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' is al gebruikt (regel {2}); ID's moeten in alle tabellen verschillen"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Installatiemap (pad van [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Installeren voor (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Sleutel als tabel.sleutel (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' hoort bij een ander onderdeel"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' staat niet in File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' staat niet in Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Koreaanse dialoogvensters naast Engelse?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} ligt onder die van een lagere DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Afsluiten zonder de wijzigingen op te slaan?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Te accepteren licentie (.txt, .md, .rtf; - voor geen)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX heeft geen virtuele map voor de AppData van de gebruiker; de app maakt daar bij het uitvoeren aan wat hij nodig heeft"
+
+msgid "MSIX packages"
+msgstr "MSIX-pakketten"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: wat een MSIX-pakket nodig heeft en wat het niet kan bevatten"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Hoofdprogramma, voor snelkoppelingen (- voor geen)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Handleiding: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Fabrikant"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Fabrikant (getoond in Geïnstalleerde apps)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt gaf een ECDSA-handtekening van de verkeerde lengte terug"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Optionele onderdelen die de gebruiker kan aanvinken (submappen, komma's; - voor geen)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11-token: de token bevat geen certificaat met de CKA_ID van de sleutel (geef het op met --cert)"
+
+msgid "Paths"
+msgstr "Paden"
+
+msgid "Product name"
+msgstr "Productnaam"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode en UpgradeCode zijn dezelfde GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} is in de eerste drie velden niet hoger dan de vorige {2}: Windows Installer voert geen upgrade uit"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Programma dat de snelkoppelingen openen (- voor geen snelkoppelingen)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: deze taal bestaat niet (ingebouwd: {2}; een andere heeft zijn taalpakket nodig, {3}.po)"
+
+msgid "Reference, "
+msgstr "Referentie, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Volgorde {1} valt onder geen enkele Media-rij (laatste {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Volgorde {1} wordt door een ander bestand gebruikt"
+
+msgid "Source file to write"
+msgstr "Te schrijven bronbestand"
+
+msgid "Source format"
+msgstr "Bronindeling"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source moet een File-rij noemen voor type {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Snelkoppeling in het startmenu?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Items in Start-menu, Programma's, bureaublad en Opstarten komen uit [shortcut.*] en [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML buiten de subset die rubrapack leest, of `format` ontbreekt of is te nieuw"
+
+msgid "Tables"
+msgstr "Tabellen"
+
+msgid "The TOML subset"
+msgstr "De TOML-subset"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian-bestanden worden niet ondersteund; sla op als UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} verschilt van die van de vorige versie {2}: dit pakket vervangt die niet"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode is geen GUID in registerindeling"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Waarde (tekst, een getal, true/false, [\"a\", \"b\"]; - verwijdert de sleutel)"
+
+msgid "Variables"
+msgstr "Variabelen"
+
+msgid "Version"
+msgstr "Versie"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versie ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versies en upgrades"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer staat hoogstens 255.255.65535(.65535) toe"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] heeft '{4}' nodig"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] kan niet in een samenvoegmodule; het pakket dat hem samenvoegt heeft het"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] wordt nog niet ondersteund (gepland voor {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] kan niet in een MSIX; voeg msi-only = true toe om de MSIX zonder te bouwen"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: een ID in een samenvoegmodule heeft hoogstens 35 tekens (de GUID van de module wordt toegevoegd)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] heeft een ID nodig: schrijf [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] neemt geen ID: schrijf [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml heeft geen </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml is niet het laatste item (geen pakket dat rubrapack of de verpakkings-API van Windows schreef)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "[[...]]-arrays van tabellen worden niet ondersteund; geef elk item een eigen [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check heeft geen effect: niets voert het nog uit; verwijder het"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] heeft zowel do als undo nodig (de undo draait ook een mislukte do terug)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: in een MSIX opent een bestandstype een applicatie: target moet een uitvoerbaar bestand van een [msix-app.*] zijn"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] staat er twee keer"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] heeft een ID nodig: schrijf [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id en typelib worden alleen voor de MSI geschreven; de MSIX registreert de klasse zonder"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args zijn van een programma; een DLL wordt geladen, niet gestart"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate voert een DLL uit in dllhost; '{2}' is een programma"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading is voor een DLL; een programma stelt zijn eigen apartment in"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version en typelib-file hebben typelib nodig"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] gaat naar {2}; of msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: de bron moet een bestand zijn dat in het pakket gaat"
+
+msgid "[define] values must be strings"
+msgstr "[define]-waarden moeten tekenreeksen zijn"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] heeft '{2}' nodig"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] heeft 'property' nodig"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] heeft 'text' nodig"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] heeft 'values' nodig"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] heeft {2} besturingselementen; hoogstens 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] heeft geen [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] komt via andere dialoogvensters na zichzelf"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] heeft ui = \"minimal\", \"installdir\" of \"features\" nodig"
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' is een Windows-naam; geef de dir een andere ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard heeft de helper-DLL van rubrapack nodig, die een samenvoegmodule niet bevat"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] heeft een feature nodig"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: een MSIX stelt al zijn variabelen in (when); gebruik msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: de waarde noemt een plek die een MSIX niet kan geven (een map buiten het pakket die geen Windows-map is, of een deel van de installatietijd); gebruik msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Verkenner laadt een {2}-handler uit een DLL; [com.{3}] is een programma"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows leest eigenschapshandlers alleen per computer; het pakket heeft scope = \"machine\" nodig"
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: een voorbeeldhandler draait in prevhost van Windows; laat app-id en surrogate weg uit [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: een MSIX bevat alleen miniatuur- en voorbeeldhandlers (een verpakte eigenschapshandler gaf Verkenner geen waarden); msi-only = true houdt hem voor de MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: een MSIX-bestandstype hoort bij een applicatie; voeg een [msix-app.*] toe"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: klasse {2} is geen [com.*] van dit pakket (de DLL van de handler bedient hem)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: in een MSIX delen handlers al hun typen of geen (een type zit in één bestandstypekoppeling)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: in een MSIX draait zijn klasse in een surrogate; threading = \"sta\" in [com.{2}] geeft zijn venster een berichtenlus (met threading = {3} kan het voorbeeld leeg blijven)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: in een MSIX staan zijn typen allemaal in één [assoc]-bestandstype, of in geen"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: zijn klasse is msi-only ([com.{2}]); de MSIX zou er geen server voor hebben"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types is een lijst van bestandstypen, zoals [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] gaat naar {2}; of msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] heeft 'value' nodig"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] heeft een feature nodig: stel 'feature' hier of op zijn dir in"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: een MSIX schrijft al zijn INI-items (when); gebruik msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: de waarde heeft een deel dat Windows Installer bij de installatie invult ([...]); een MSIX schrijft het bestand als het wordt gebouwd"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] heeft 'on' nodig: waar het item verschijnt, zoals [\".txt\"] of \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] heeft 'target' (het programma dat het start) nodig, of items met parent = \"{2}\" (een submenu)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] heeft 'target' nodig: het programma dat het item start"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: een submenu start niets: laat 'args' weg"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: een item van een submenu verschijnt waar zijn submenu verschijnt: laat 'on' weg"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args heeft een deel dat Windows Installer bij de installatie invult ([...]); een MSIX bevat alleen vaste tekst"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: zijn programma zit niet in de MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: zijn waarden kunnen niet in het register van het pakket"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": er is geen [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on is een bestandstype of een lijst ervan, zoals [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' is geen [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' moet een submenu zijn: een [menu.*] zonder target en zonder eigen parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] gaat naar {2}; of msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] heeft een feature nodig: stel 'feature' hier of op zijn dir in"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; of msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file moet {2} zijn"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file moet een bestand noemen dat in het pakket gaat"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file moet een programma noemen dat in het pakket gaat"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types is een lijst van bestandstypen, zoals [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] heeft een dir met een feature nodig"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: in een MSIX opent een schema een applicatie: target moet een uitvoerbaar bestand van een [msix-app.*] zijn"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] heeft 'value' nodig (of remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR reikt niet buiten een MSIX; gebruik [assoc.*], [protocol.*], [com.*] of [handler.*], of msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: een qword-waarde heeft de helper-DLL van rubrapack nodig, die een samenvoegmodule niet bevat"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: een MSIX bevat alleen waarden onder {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: een MSIX verwijdert geen waarden en laat ze ook niet achter (remove, keep); gebruik msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: een MSIX schrijft al zijn waarden (when); gebruik msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: de waarde heeft een deel dat Windows Installer bij de installatie invult ([...]); een MSIX bevat alleen vaste waarden"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" heeft de helper-DLL van rubrapack nodig, die een samenvoegmodule niet bevat"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: de sleutel- of waardenaam kan niet in een registeronderdeel"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] heeft een feature nodig: stel 'feature' hier of op zijn dir in"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true is niet voor een map onder {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true heeft de helper-DLL van rubrapack nodig, die een samenvoegmodule niet bevat"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file moet een programma noemen dat in het pakket gaat"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: een MSIX heeft alleen snelkoppelingen op het bureaublad en in het startmenu{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: een MSIX-snelkoppeling heeft geen working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: een MSIX-snelkoppeling is er altijd (when is voor een MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: een MSIX-snelkoppeling toont het logo van zijn applicatie; icon is voor een MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: in een MSIX start een snelkoppeling een applicatie: target moet een uitvoerbaar bestand van een [msix-app.*] zijn"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: het startmenu-item van een MSIX is zijn applicatie, die geen args neemt"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: geen dialoogtekst heeft deze ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] heeft ui = \"basic\" of een andere dialoogset in [package] nodig"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "de escape \\{1} is geen Unicode-scalairwaarde"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: dit pakket zou het vorige niet netjes upgraden"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` van een pakket: dialoogvensters, codetabel, tekstnormalisatie"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` van een MSIX-pakket of -bundel"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "een {1}-besturingselement heeft geen tekst; zet er een tekstbesturingselement naast"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "een {1}-besturingselement heeft [property.{2}] nodig met een van zijn waarden als standaard (een stille installatie gebruikt die)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "een {1}-pakket kan niet naar HKLM schrijven; gebruik HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "een .msix-uitvoer heeft een [msix-app.ID]-tabel nodig die het uitvoerbare bestand noemt"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "een .msix-uitvoer heeft een [msix]-tabel nodig (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "een .msm-uitvoer is een samenvoegmodule, gebouwd uit een bron met [module] in plaats van [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "een .txt-, .md- of .rtf-bestand, of - voor geen"
+
+msgid "a PE file without a certificate table entry"
+msgstr "een PE-bestand zonder item voor de certificaattabel"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "een pincode wordt nooit op de opdrachtregel aangenomen (anderen kunnen hem zien); gebruik --pin-env of --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "een Package van het bundelmanifest met een onbekend Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "een Package van het bundelmanifest zonder FileName, Offset of Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "een ZIP-item pakt niet uit tot zijn grootte"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "een ZIP-item groter dan toegestaan"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "de CRC-32 van een ZIP-item komt niet overeen"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "de gegevens van een ZIP-item liggen buiten het bestand"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "een [module]-bron bouwt een samenvoegmodule: -o <naam>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "een binaire waarde is een even aantal hexadecimale cijfers, zoals \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "een bundel zonder pakketten"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "een certificaat in het pad heeft een kritieke extensie die rubrapack niet begrijpt"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "een certificaat in het pad is ondertekend door een certificaat dat geen CA is"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "een keten bevat alleen [chain], [chain-package.ID] en [define], niet [{1}]; de pakketten worden uit hun eigen bronnen gebouwd"
+
+msgid "a chain holds at most %d packages"
+msgstr "een keten bevat hoogstens {1} pakketten"
+
+msgid "a chain needs [chain]"
+msgstr "een keten heeft [chain] nodig"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "een keten heeft minstens één [chain-package.ID] nodig"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "een teken dat Windows niet toestaat in een naam (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "een besturingsteken"
+
+msgid "a damaged PE optional header"
+msgstr "een beschadigde optionele PE-header"
+
+msgid "a damaged PE section table"
+msgstr "een beschadigde PE-sectietabel"
+
+msgid "a damaged ZIP64 end record"
+msgstr "een beschadigd ZIP64-eindrecord"
+
+msgid "a damaged hive bin"
+msgstr "een beschadigde hive-bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "een diagnose van rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "een uitgeschakelde service kan niet worden gestart"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "een dual-pakket kan niet kiezen tussen een gebruikers- en een systeemvariabele"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "een dual-pakket schrijft HKMU (HKLM of HKCU zoals geïnstalleerd), niet HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "een dword-waarde is een geheel getal 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "een functie die deze rubrapack niet biedt (of waarzonder hij is gebouwd)"
+
+msgid "a file larger than allowed"
+msgstr "een bestand groter dan toegestaan"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "een bestandsnaam onder '{1}' is geen geldige Unicode en kan niet worden verpakt"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "een bestandsnaam zonder / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "de onderdeel- of mappenketen van een bestand is verbroken"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "een lettertype gaat in een MSIX via een [font.*] die het noemt"
+
+msgid "a hash the token signing does not know"
+msgstr "een hash die de tokenondertekening niet kent"
+
+msgid "a hive cell crosses its bin"
+msgstr "een hive-cel overschrijdt zijn bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "een hive-versie of -type die rubrapack niet leest"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "een bekende map zelf ('{1}') kan geen machtigingen krijgen"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "een licentie heeft ui = \"minimal\", \"installdir\" of \"features\" nodig"
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "een lokale header met extra velden (geen pakket dat rubrapack of de verpakkings-API van Windows schreef)"
+
+msgid "a malformed central directory"
+msgstr "een misvormde centrale map"
+
+msgid "a modification package has no applications of its own"
+msgstr "een wijzigingspakket heeft geen eigen applicaties"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "een wijzigingspakket heeft Windows-build 18362 of later nodig: stel [msix] min-version = \"10.0.18362.0\" in"
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "de compress van een module is \"none\", \"mszip\" of \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "de naam van een module is zijn ID in de ModuleID: letters, cijfers en _, hoogstens 35 tekens"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "een multi-waarde is een niet-lege array van tekenreeksen"
+
+msgid "a multi value is an array of strings"
+msgstr "een multi-waarde is een array van tekenreeksen"
+
+msgid "a name ending with a space or a dot"
+msgstr "een naam die eindigt op een spatie of een punt"
+
+msgid "a name longer than 255 bytes"
+msgstr "een naam langer dan 255 bytes"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "een pakket dat in het bundelmanifest wordt genoemd staat niet in de bundel"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "een pakket zonder Identity Name, Publisher, Version en ProcessorArchitecture (of ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "de Offset of Size van een pakket in het bundelmanifest komt niet overeen met waar het ligt (of het is gecomprimeerd)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "de identiteit van een pakket verschilt van wat het bundelmanifest erover zegt"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "de naam van een pakket in de bundel moet een bestandsnaam zijn die eindigt op .msix of .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "een wachtwoord wordt nooit op de opdrachtregel aangenomen (anderen kunnen het zien); gebruik --pass-env of --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "een pakket per computer schrijft niet naar HKCU (dat zou van de installerende gebruiker zijn); gebruik scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "een proxy met een gebruikersnaam of wachtwoord wordt niet ondersteund"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "een qword-waarde is een geheel getal of \"0x\" en 1 tot 16 hexadecimale cijfers"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "een keuzerondjesbesturingselement stapelt zijn knoppen: de hoogte moet minstens 12 per waarde zijn ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "een record heeft meer kolommen dan zijn tabel"
+
+msgid "a record is cut short"
+msgstr "een record is afgekapt"
+
+msgid "a record names a string the pool does not have"
+msgstr "een record noemt een tekenreeks die de pool niet heeft"
+
+msgid "a reserved device name"
+msgstr "een gereserveerde apparaatnaam"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "een terugdraaiactie kan niet asynchroon zijn"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "een schema is een kleine letter, gevolgd door kleine letters, cijfers, '+', '-' of '.' (gekregen: '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "een scriptactie tussen InstallInitialize en RemoveExistingProducts (fout 2613)"
+
+msgid "a section lies outside the file"
+msgstr "een sectie ligt buiten het bestand"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "een servicenaam mag geen '/' of '\\' bevatten (hoogstens 256 tekens)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "een setup-.exe wordt gebouwd uit een bron met [chain]; '{1}' bouwt een pakket (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "een bron bevat één [package] of één [module], niet beide"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "een bron die de RP1xxx-controles doorstaat, zou deze nooit moeten tegenkomen: meld het met de bron"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "een opgeslagen ZIP-item waarvan de groottes verschillen"
+
+msgid "a stream of the package cannot be read"
+msgstr "een stroom van het pakket kan niet worden gelezen"
+
+msgid "a table has more than 32 columns"
+msgstr "een tabel heeft meer dan 32 kolommen"
+
+msgid "a text control has no property"
+msgstr "een tekstbesturingselement heeft geen eigenschap"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "een waarde `with` een bestand deelt zijn onderdeel: zet `when` op het bestand"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "een waarde is 1 tot 64 bytes"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "een waarde die 'with' een bestand gaat, neemt de feature van dat bestand"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "een versie bestaat uit 3 of 4 getallen met punten, zoals 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account moet LocalSystem, LocalService of NetworkService zijn"
+
+msgid "action '%s' is already defined"
+msgstr "actie '{1}' is al gedefinieerd"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "actie is geen standaardactie en staat niet in CustomAction"
+
+msgid "adds too many tables"
+msgstr "voegt te veel tabellen toe"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' is geen pagina van deze dialoogset (RpWelcomeDlg{2}{3}{4}) en geen [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias hoort bij kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias moet een bestandsnaam zijn die eindigt op .exe: letters, cijfers, '.', '_', '-' (gekregen: '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "een INI-sectie mag geen ']' bevatten en een sleutel geen '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "een MSIX kan geen bestanden in de tijdelijke map plaatsen"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "een applicatie heeft één alias ([msix-extension.{1}] is er al een)"
+
+msgid "an empty name"
+msgstr "een lege naam"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "een https-server heeft --tls-trust <certificaten> of --system-roots nodig om hem tegen te controleren"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "een https://-proxy wordt niet ondersteund; geef een http://-proxy (https-servers worden via CONNECT bereikt)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "een Authenticode-tijdstempel in oude stijl (PKCS#9 counterSignature), die rubrapack niet controleert"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "een optioneel of wijzigingspakket declareert geen capabilities en geen virtualisatie-instellingen: die van zijn hoofdpakket gelden"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "een x86-pakket schrijft alleen de 32-bits registerweergave"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "app '{1}' is geen [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri en package-uri horen bij elkaar: waar het .appinstaller-bestand en het pakket zullen staan"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch moet \"x64\", \"arm64\" of \"x86\" zijn (gekregen: '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch moet \"x64\", \"x86\" of \"arm64\" zijn (die van het setupprogramma zelf)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "argument {1} is geen geldige UTF-8 (byte {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "argument {1} is geen geldige Unicode (UTF-16-eenheid {2})"
+
+msgid "array is not closed"
+msgstr "array is niet gesloten"
+
+msgid "arrays inside arrays are not supported"
+msgstr "arrays binnen arrays worden niet ondersteund"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "arrays mogen alleen tekenreeksen of alleen gehele getallen bevatten"
+
+msgid "at most %d languages besides English"
+msgstr "hoogstens {1} talen naast Engels"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "hoogstens 100 [msix-app.*]-tabellen"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "hoogstens 50 [action.*]-tabellen (dit bestand heeft er {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color is \"transparent\" of \"#RRGGBB\", zoals \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "ongeldige variabelenaam in '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner moet een .bmp-bestand zijn (Windows Installer toont alleen BMP)"
+
+msgid "build a package from a source file"
+msgstr "een pakket bouwen uit een bronbestand"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{1} bouwen uit een {2}-bron heeft een eigen upgradefamilie nodig: voeg {3} = \"{...}\" toe aan [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab moet \"embed\" of \"external\" zijn"
+
+msgid "cannot be read"
+msgstr "kan niet worden gelezen"
+
+msgid "cannot build the ClientHello"
+msgstr "kan de ClientHello niet opbouwen"
+
+msgid "cannot bundle the packages: %s"
+msgstr "kan de pakketten niet bundelen: {1}"
+
+msgid "cannot create '%s'"
+msgstr "kan '{1}' niet maken"
+
+msgid "cannot create '%s'%s"
+msgstr "kan '{1}' niet maken{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "kan '{1}' niet vinden; maak er een met `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "kan geen standaardlogo maken"
+
+msgid "cannot make a key share"
+msgstr "kan geen sleuteldeling maken"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "kan geen patch maken van '{1}' naar '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "kan geen transformatie maken van '{1}' naar '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "kan het certificaatarchief niet openen"
+
+msgid "cannot read '%s'"
+msgstr "kan '{1}' niet lezen"
+
+msgid "cannot read '%s' (%s)"
+msgstr "kan '{1}' niet lezen ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "kan pakket '{1}' niet lezen"
+
+msgid "cannot read source file '%s'"
+msgstr "kan bronbestand '{1}' niet lezen"
+
+msgid "cannot read that folder"
+msgstr "kan die map niet lezen"
+
+msgid "cannot read the %s file '%s'"
+msgstr "kan het {1}-bestand '{2}' niet lezen"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "kan het pincodebestand '{1}' niet lezen"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "kan het cabinet '{1}' naast '{2}' niet lezen"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "kan het certificaatbestand '{1}' niet lezen"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "kan de certificaten in '{1}' niet lezen"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "kan de certificaten in '{1}' niet lezen: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "kan het sleutelbestand '{1}' niet lezen"
+
+msgid "cannot read the password file '%s'"
+msgstr "kan het wachtwoordbestand '{1}' niet lezen"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "kan het niet-gecomprimeerde bestand '{1}' naast '{2}' niet lezen"
+
+msgid "cannot write %s"
+msgstr "kan {1} niet schrijven"
+
+msgid "cannot write '%s'"
+msgstr "kan '{1}' niet schrijven"
+
+msgid "cannot write '%s' to check it"
+msgstr "kan '{1}' niet schrijven om het te controleren"
+
+msgid "cannot write resources.pri"
+msgstr "kan resources.pri niet schrijven"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "kan de menubestanden naast '{1}' niet schrijven"
+
+msgid "cannot write the resource package of %s"
+msgstr "kan het resourcepakket van {1} niet schrijven"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities is een array van namen, zoals [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "capability '{1}' is er geen die rubrapack kent (de handleiding noemt ze)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "capability '{1}' heeft Windows-build 17763 of later nodig"
+
+msgid "carriage return without a line feed"
+msgstr "regelterugloop zonder regelinvoer"
+
+msgid "certificate file '%s': %s"
+msgstr "certificaatbestand '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "een bron ter plekke wijzigen: via een menu met vragen, of met de opties"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "een handtekening controleren: structuur, digest, handtekening en het pad naar een vertrouwd certificaat"
+
+msgid "check a source or package without writing anything"
+msgstr "een bron of pakket controleren zonder iets te schrijven"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "controleer de bronpaden (relatief ten opzichte van het bronbestand); stel any-arch = true in voor bewust een andere architectuur"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "controleer de spelling (de melding stelt de dichtstbijzijnde naam voor) en de sleutels van de tabel"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "klasse {1} wordt al bediend door [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "klasse {1} staat ook in [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class moet een GUID zijn zoals {12345678-...} (gekregen: '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs heeft geen effect met preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs moet \"ask\", \"always\" of \"never\" zijn (gekregen: '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "kolom {1} bevat het verkeerde soort waarde"
+
+msgid "column %s is not valid UTF-8"
+msgstr "kolom {1} is geen geldige UTF-8"
+
+msgid "column %s may not be null"
+msgstr "kolom {1} mag niet null zijn"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "kolom {1}: {2} ligt buiten het bereik van de kolom"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "kolom {1}: {2} UTF-16-eenheden, de kolom bevat er {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "kolom {1}: {2} tekens, de kolom bevat er {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "opdracht '{1}' is nog niet geïmplementeerd"
+
+msgid "command-line"
+msgstr "opdrachtregel"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "onderdeel {1} {2} is gewisseld tussen 32 en 64 bits: de onderdeelregels willen een nieuwe GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "onderdeel {1} {2} is weg (zijn resources worden met de vorige versie verwijderd)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "onderdeel {1} {2} heeft nu sleutelpad {3} in plaats van {4}: de onderdeelregels willen een nieuwe GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid moet een GUID zijn"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress moet \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" of \"lzx:15\" ... \"lzx:21\" zijn"
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "condition heeft een niet-gesloten aanhalingsteken of ongebalanceerde haakjes"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "condition is langer dan 240 tekens (rubrapack voegt \"Installed OR ( )\" toe)"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config bevat \"Naam=waarde\"-tekenreeksen (gekregen: '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config is een array van \"Naam=waarde\"-tekenreeksen"
+
+msgid "contains a control character"
+msgstr "bevat een besturingsteken"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "bevat een van < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type is een mediatype, zoals \"image/png\" (gekregen: '{1}')"
+
+msgid "control character"
+msgstr "besturingsteken"
+
+msgid "control character in a comment"
+msgstr "besturingsteken in een opmerking"
+
+msgid "control character in a string"
+msgstr "besturingsteken in een tekenreeks"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "datums en tijden worden niet ondersteund; schrijf ze als tekenreeksen"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when heeft een level boven 1 nodig (een feature van level 1 wordt toch al standaard geïnstalleerd)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "definieer de variabele ([define] of -D NAAM=waarde), of schrijf $$ voor een letterlijke $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialoogvenster '{1}' is geen [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "dialoogvenster-ID's die met 'Rp' beginnen (en FilesInUse) zijn van rubrapack zelf"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' ligt in zichzelf (padlus)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' is geen dir-ID en ook niet Programs, Desktop, StartMenu of Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' is geen dir-ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' is niet gedefinieerd"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction moet \"in\" of \"out\" zijn (gekregen: '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo-argumenten zijn langer dan 255 tekens"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "sleutels met punten worden niet ondersteund; zet de sleutel in een eigen tabel"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "een pakket dumpen (MSI-tabellen als IDT)"
+
+msgid "duplicate primary key"
+msgstr "dubbele primaire sleutel"
+
+msgid "empty arrays are not supported"
+msgstr "lege arrays worden niet ondersteund"
+
+msgid "ends with a space or a dot"
+msgstr "eindigt op een spatie of een punt"
+
+msgid "error"
+msgstr "fout"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" moet een [file.*] noemen dat in het pakket gaat"
+
+msgid "expected ',' or ']' in the array"
+msgstr "',' of ']' verwacht in de array"
+
+msgid "expected '=' after the key"
+msgstr "'=' verwacht na de sleutel"
+
+msgid "expected ']' to close the table name"
+msgstr "']' verwacht om de tabelnaam te sluiten"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "een sleutel, een [tabel] of een opmerking verwacht"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "extensie '{1}' heeft al een programma ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension moet '.' zijn gevolgd door kleine letters, cijfers, '_' of '-' (gekregen: '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files heeft geen effect met preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files moet \"ask\", \"keep\" of \"delete\" zijn (gekregen: '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "feature {1} is weg: installaties die hem hadden, verliezen wat hij bevatte"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "feature '{1}' is zijn eigen voorouder"
+
+msgid "feature '%s' is not defined"
+msgstr "feature '{1}' is niet gedefinieerd"
+
+msgid "feature parent '%s' is not defined"
+msgstr "bovenliggende feature '{1}' is niet gedefinieerd"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "bestand '{1}' voert service '{2}' al uit"
+
+msgid "file '%s' is already registered as a font"
+msgstr "bestand '{1}' is al als lettertype geregistreerd"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "bestand '{1}' moet in de map Fonts zelf worden geïnstalleerd (een [dir.*] met path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "bestand '{1}' heeft een feature nodig: stel 'feature' hier of op zijn dir in"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file moet \"file:<ID>\" zijn"
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "de bestandsnaam is {1} UTF-16-eenheden; met zijn 8.3-korte naam bevat MSI er hoogstens {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization en registry-virtualization = false hebben Windows-build 18362 of later nodig: stel [msix] min-version = \"10.0.18362.0\" in"
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' is geen [file.*] van dit pakket"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' bedient COM-klassen alleen als .exe of .dll"
+
+msgid "files but no Media row"
+msgstr "bestanden maar geen Media-rij"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "herstel de waarde die de melding noemt; ID's bestaan uit letters, cijfers en '_' en verschillen in alle tabellen"
+
+msgid "floating-point numbers are not supported"
+msgstr "drijvendekommagetallen worden niet ondersteund"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "map '{1}' heeft een feature nodig: stel 'feature' hier of op zijn dir in"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "de mapnaam is {1} UTF-16-eenheden; met zijn 8.3-korte naam bevat MSI er hoogstens {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent heeft een parent nodig"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "lettertypen hebben scope = \"machine\" nodig (dit is {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} heeft een nieuwere rubrapack nodig (deze leest format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format is een geheel getal: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "geef --pass-env of --pass-file op, niet beide"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "geef --pin-env of --pin-file op, niet beide"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "geef [msix] en [msix-app.*] wat ze nodig hebben, of houd het item voor de MSI met msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "geef een bestand onder deze map"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "geef een bestand direct in de programmamap, of - voor geen"
+
+msgid "give a folder below this one, such as dist"
+msgstr "geef een map onder deze, zoals dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "geef een naam van 1 tot 128 bytes"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "geef alle drie logo's (logo-150, logo-44, store-logo) of geen"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "geef één van --key, --pkcs11 en --key-store op"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "geef submappen van de programmamap, gescheiden door komma's, of - voor geen"
+
+msgid "glob '%s' matches no file"
+msgstr "glob '{1}' komt met geen enkel bestand overeen"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "glob '{1}' komt overeen met het uitvoerbestand '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "heeft een MergeModule.CABinet-stroom die niet kan worden gelezen"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "heeft een MergeModule.CABinet die niet kan worden gelezen"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "heeft een Module*Sequence-tabel zonder de standaardkolommen"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "heeft een ModuleConfiguration-item zonder naam of met een onbekende indeling"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "heeft een ModuleConfiguration-tabel zonder de standaardkolommen"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "heeft een ModuleSubstitution-tabel zonder de standaardkolommen"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "heeft een ModuleSubstitution-sjabloon dat een item noemt dat ModuleConfiguration niet heeft"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "heeft een onderdeel met een voorwaarde; een MSIX installeert alles"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "heeft een bestand waarvan het onderdeel of cabinet-item ontbreekt"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "heeft een map buiten zijn TARGETDIR waarvoor een MSIX geen plaats heeft"
+
+msgid "has a table that cannot be read"
+msgstr "heeft een tabel die niet kan worden gelezen"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "heeft een tabel waarvan de kolommen verschillen van die van het pakket"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "heeft acties voor een volgordetabel die het pakket niet heeft"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "heeft onderdelen, maar het pakket heeft geen FeatureComponents-tabel"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "heeft bestanden maar geen MergeModule.CABinet of Directory-tabel"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "heeft bestanden maar geen MergeModule.CABinet-stroom"
+
+msgid "has files, but the package has no Media table"
+msgstr "heeft bestanden, maar het pakket heeft geen Media-tabel"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "heeft geen ModuleSignature: geen samenvoegmodule"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "heeft geen ProductCode of ProductVersion"
+
+msgid "has no Property table"
+msgstr "heeft geen Property-tabel"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "heeft records voor een tabel die noch de basis noch de transformatie definieert"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "heeft tekst buiten ASCII in een andere codetabel dan 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon moet een .ico-bestand zijn"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id moet een GUID zijn zoals {12345678-1234-1234-1234-123456789ABC}: die van de module zelf, in elke versie behouden"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name moet 3 tot 50 tekens zijn uit A-Z, a-z, 0-9, '.' en '-' (gekregen: '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "inline-tabellen worden niet ondersteund; gebruik een [kind.ID]-tabel"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "installeert naar hetzelfde pad als regel {1} (Windows negeert hoofdletters in namen{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "interne fout: een ingebouwd dialoogvenster heeft een defecte tabvolgorde; meld het"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "intern: een moduletabel heeft geen _Validation-regel"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "intern: geen _Validation-regel voor een kolom van {1}"
+
+msgid "invalid"
+msgstr "ongeldig"
+
+msgid "invalid - %s"
+msgstr "ongeldig - {1}"
+
+msgid "is '.' or '..'"
+msgstr "is '.' of '..'"
+
+msgid "is a reserved device name"
+msgstr "is een gereserveerde apparaatnaam"
+
+msgid "is empty"
+msgstr "is leeg"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "is langer dan 255 UTF-16-eenheden"
+
+msgid "is not a Windows Installer database"
+msgstr "is geen Windows Installer-database"
+
+msgid "is not a compound file"
+msgstr "is geen samengesteld bestand"
+
+msgid "is not valid UTF-8"
+msgstr "is geen geldige UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "behoud de upgradecode, verhoog de versie, behoud de onderdeelcodes van bestanden die blijven"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "sleutel '{1}' is twee keer ingesteld in deze tabel (eerst op regel {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "sleutel '{1}' mag niet beginnen of eindigen met '\\' of een leeg deel bevatten"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "sleutel '{1}' buiten een tabel; alleen 'format' komt voor de eerste tabel"
+
+msgid "key file '%s': %s"
+msgstr "sleutelbestand '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind moet \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" of \"context-menu\" zijn (gekregen: '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind moet \"preview\", \"thumbnail\" of \"property\" zijn (gekregen: '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind moet registry, file, dir of component zijn"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels is een array van tekenreeksen, één per waarde"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "taal '{1}' heeft geen taalpakket (lang/{2}.po naast de bron, of RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "taal '{1}' staat twee keer in de lijst"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "taal '{1}' staat niet in [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "taal '{1}' mist {2} tekst(en), de eerste is {3}: voeg ze toe aan zijn taalpakket (lang/{4}.po) of geef [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "taal '{1}' heeft [ui] langid-{2} nodig (zijn LANGID's, voor de automatische keuze)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "taal '{1}' heeft [ui] name-{2} nodig (zijn naam op de taalpagina)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" maakt de dialoogvensters niet meer Koreaans: ze zijn Engels, tenzij [ui] languages = [\"ko\"] Koreaans toevoegt"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language moet \"ko-KR\" of \"en-US\" zijn"
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language moet \"neutral\", \"en-US\" of \"ko-KR\" zijn"
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages bevat codes zoals \"ko\" of \"zh_TW\" (2 of 3 kleine letters, en _ en twee hoofdletters van een regio) (gekregen: '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages is een array van taalcodes, zoals [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages heeft een dialoogset nodig (ui = \"basic\" of een andere)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch moet \"file:<ID>\" zijn en een [file.*] van dit pakket noemen"
+
+msgid "launch-args needs launch"
+msgstr "launch-args heeft launch nodig"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license moet een .txt-, .md- (getoond als platte tekst) of .rtf-bestand zijn"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} rij {2}: kolom {3} is niet in NFC ({4} rij(en){-5}); build --nfc zet map-, bestands- en snelkoppelingsnamen in NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: codetabel {1}, niet 65001: tekst wordt niet als UTF-8 gecontroleerd, breedtes alleen voor ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: geen problemen\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: zie de problemen hierboven\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "de sleutels tonen waarmee een token of het Windows-certificaatarchief kan ondertekenen"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logo '{1}' en zijn .scale-100-variant zijn er allebei: houd er één"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' op schaal {2} is {3}x{4} pixels; het moet {5}x{6} zijn"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logo '{1}' op schaal {2} is geen PNG-bestand"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' is {2}x{3} pixels; het moet {4}x{5} zijn"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logo '{1}' is geen PNG-bestand"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logo '{1}' niet gevonden (ook niet als .scale-100 ... .scale-400-varianten)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logo '{1}': een logo met schaalvarianten heeft een ASCII-bestandsnaam met extensie nodig"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package is de identiteitsnaam van het hoofdpakket (gekregen: '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher en modification = true horen bij main-package (het pakket waar dit pakket bij hoort)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher is de uitgever van het hoofdpakket, zoals \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "mag geen besturingstekens of / \\ : * ? \" < > | $ bevatten"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "mag niet beginnen met een spatie of eindigen op een spatie of een punt"
+
+msgid "merge module '%s' not found"
+msgstr "samenvoegmodule '{1}' niet gevonden"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version moet een versie zijn zoals 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version moet vier delen hebben, zoals 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version moet vier delen hebben, zoals 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "komt niet overeen"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" verwijdert de sleutel; het neemt geen 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode moet \"set\", \"add\" of \"remove\" zijn"
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode moet \"set\", \"append\" of \"prepend\" zijn"
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "meer ZIP-items dan toegestaan of dan de map bevat"
+
+msgid "more keys and values than allowed"
+msgstr "meer sleutels en waarden dan toegestaan"
+
+msgid "more than 3 redirects"
+msgstr "meer dan 3 omleidingen"
+
+msgid "more than 96 sections"
+msgstr "meer dan 96 secties"
+
+msgid "more than one source file ('%s')"
+msgstr "meer dan één bronbestand ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "er is meer dan één token aanwezig: noem er een met --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi moet \"each\", \"one\" of \"single\" zijn (gekregen: '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "tekenreeksen over meerdere regels worden niet ondersteund"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "tekenreeksen over meerdere regels worden niet ondersteund; gebruik één regel met \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "moet 1 tot 64 bytes zijn"
+
+msgid "name contains a control character"
+msgstr "naam bevat een besturingsteken"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name is de identiteitsnaam van een pakket (gekregen: '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "name is geen ASCII en summary-name ontbreekt; het samenvattingsonderwerp wordt 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "noemt een map die zijn Directory-tabel niet heeft"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix is nog niet geïmplementeerd: maak een MSI-bron en voeg [msix] toe (zie de handleiding)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "geen regel 'format = {1}': een bron in het formaat van rubrapack 0.18 of eerder, die deze versie niet leest (paden beginnen nu met $(ProgramFiles) of $(INSTALLDIR)); zie Source format in de handleiding"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "geen --trust opgegeven: de handtekening klopt, maar niets zegt wie te vertrouwen"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "geen certificaat in het sleutelbestand (of het --cert-bestand) hoort bij de sleutel"
+
+msgid "no control characters"
+msgstr "geen besturingstekens"
+
+msgid "no keys\n"
+msgstr "geen sleutels\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "geen hoofdprogramma, dus geen snelkoppelingen: geen"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "geen servernaam, of een die langer is dan 255 bytes"
+
+msgid "no string pool: not a transform"
+msgstr "geen tekenreekspool: geen transformatie"
+
+msgid "no table '%s' in '%s'"
+msgstr "geen tabel '{1}' in '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove laat Wijzigen (zijn Verwijderen) over als enige manier om het product te verwijderen: het kan niet samen met no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "geen PE-bestand (geen MZ-header)"
+
+msgid "not a PE file (no PE header)"
+msgstr "geen PE-bestand (geen PE-header)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "geen PEM-, PKCS#8- of PKCS#12-bestand"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "geen ZIP-archief (geen eindrecord)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "geen ZIP-archief (te kort)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "geen proxy-URL die rubrapack aanneemt (http://host:poort)"
+
+msgid "not a registry hive"
+msgstr "geen registeronderdeel"
+
+msgid "not a valid number"
+msgstr "geen geldig getal"
+
+msgid "not a value"
+msgstr "geen waarde"
+
+msgid "not a value (strings need quotes)"
+msgstr "geen waarde (tekenreeksen hebben aanhalingstekens nodig)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "geen http://- of https://-URL die rubrapack aanneemt"
+
+msgid "not valid UTF-8"
+msgstr "geen geldige UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "niet gecontroleerd (geef --trust of --system-roots op)"
+
+msgid "not-present"
+msgstr "niet aanwezig"
+
+msgid "nothing changed\n"
+msgstr "niets gewijzigd\n"
+
+msgid "number out of range"
+msgstr "getal buiten bereik"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "octale en binaire getallen worden niet ondersteund; gebruik decimaal of 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" is voor HKLM, HKCU en HKMU (klassen gaan met [assoc.*], [com.*] en dergelijke)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" verwijdert een sleutel met alles eronder: '{1}' is niet de eigen sleutel van een product onder Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" verwijdert bij verwijdering de hele sleutel; het neemt geen '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "onder Windows toont `keys list` het certificaatarchief"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "onder Windows wordt een token gebruikt via het certificaatarchief (--key-store <vingerafdruk>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on is voor remove = true (wanneer de sleutel wordt verwijderd)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on moet \"install\" of \"uninstall\" zijn"
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on moet \"install\", \"uninstall\" of \"both\" zijn"
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: elk is een bestandstype ('.' en kleine letters, cijfers, '_' of '-'), \"*\" (elk bestand), \"folder\", \"background\" (het lege deel van een map), \"drive\" of \"assoc:<ID>\" (gekregen: '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "alleen keuzerondjes- en keuzelijstbesturingselementen nemen labels"
+
+msgid "only radio and combo controls take values"
+msgstr "alleen keuzerondjes- en keuzelijstbesturingselementen nemen values"
+
+msgid "out of memory"
+msgstr "onvoldoende geheugen"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "uitvoer '{1}': rubrapack schrijft .msi, .msm, .msix, .msixbundle en de setup-.exe van een keten"
+
+msgid "package '%s' %s"
+msgstr "pakket '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "pakket '{1}' niet gevonden"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent moet de upgrade-code van een ander product zijn, niet die van dit pakket"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent moet de upgrade-code van het hoofdproduct zijn, een GUID zoals {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path moet \"$(Base)/relatief/pad\" zijn met '/' (Base is een map zoals ProgramFiles, of een dir-ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path moet beginnen met een Windows-map (zoals $(ProgramFiles) of $(System))"
+
+msgid "paths"
+msgstr "paden"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type moet \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" of \"application\" zijn (gekregen: '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "machtigingen hebben scope = \"machine\" nodig (dit is {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports moet een poort of een bereik zijn zoals \"8000-8100\" binnen 1-65535 (gekregen: '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "een willekeurige GUID tonen, of de GUID die rubrapack uit een tekst afleidt"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "het JSON Schema van bronnen tonen (voor een editor die sleutels aanvult en controleert)"
+
+msgid "print the version"
+msgstr "de versie tonen"
+
+msgid "print this help, or one command's usage"
+msgstr "deze help tonen, of het gebruik van één opdracht"
+
+msgid "product-code must be a GUID"
+msgstr "product-code moet een GUID zijn"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile moet \"all\", \"domain\", \"private\" of \"public\" zijn (gekregen: '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' is al van [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' is ook van [assoc.{2}]: een bestandstype en een COM-klasse hebben twee namen nodig"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' staat ook in [assoc.{2}] met een andere description, target, icon of args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id moet bestaan uit letters, cijfers, '.', '_' of '-', niet beginnend met een cijfer, hoogstens 39 (gekregen: '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "eigenschap '{1}' hoort al bij besturingselement '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "eigenschap '{1}' heeft de naam van een dir of feature"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "eigenschap '{1}' is al gedefinieerd (regel {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "eigenschap '{1}' wordt al gezocht (regel {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "eigenschap '{1}' wordt door rubrapack of het installatieprogramma ingesteld en kan hier niet worden gedefinieerd"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "eigenschap '{1}' moet een eigen openbare naam zijn (hoofdletters)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "eigenschap '{1}' moet een openbare naam zijn: hoofdletters, cijfers en '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol moet \"tcp\" of \"udp\" zijn (gekregen: '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher is de uitgever van het pakket, zoals \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher moet het onderwerp van het ondertekeningscertificaat zijn, zoals \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher mag de unsigned-test-OID niet bevatten; --unsigned-test voegt die toe"
+
+msgid "quoted keys are not supported"
+msgstr "sleutels tussen aanhalingstekens worden niet ondersteund"
+
+msgid "quoted table names are not supported"
+msgstr "tabelnamen tussen aanhalingstekens worden niet ondersteund"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot moet \"suppress\" of \"allow\" zijn"
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true is voor on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true draait nooit wanneer een upgrade deze versie verwijdert; het neemt geen 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true verwijdert de map met alles erin; het neemt geen 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} ligt boven de versie {2} van dit pakket"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' moet een versie zijn zoals 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message heeft refuse-upgrade-below nodig"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "register '{1}' verwijdert een waarde; er is niets te beschermen"
+
+msgid "registry value '%s' needs a feature"
+msgstr "registerwaarde '{1}' heeft een feature nodig"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true verwijdert de waarde bij de installatie; het neemt geen 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons heeft de opruimtaak nodig: verwijder cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces bevat hoogstens 16 upgradecodes"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces bevat upgradecodes, GUID's zoals {12345678-1234-1234-1234-123456789ABC} (gekregen: '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces is een array van upgradecodes, zoals [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces noemt {1} twee keer"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces noemt {1}, de eigen upgrade-code van dit pakket of zijn parent"
+
+msgid "required property %s is missing"
+msgstr "vereiste eigenschap {1} ontbreekt"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "de terugdraai-tweeling moet voor {1} komen ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root moet HKLM, HKCR of HKCU zijn"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root moet HKLM, HKCU, HKCR of HKMU zijn (gekregen: '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: wat een diagnosecode betekent. De codes per bereik:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: een paar vragen maken de bron (Enter neemt de waarde tussen [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "voer `rubrapack help <opdracht>` uit; controleer de paden en of de uitvoermap bestaat"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run moet \"file:<ID>\" zijn en een [file.*] van dit pakket noemen"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (machine 0x{2}) kan niet draaien op de machines van dit pakket"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' is geen programma (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "sla de bron op als UTF-8 (of UTF-16 met een BOM), met LF- of CRLF-regeleinden"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "schema '{1}' heeft al een programma ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope moet \"machine\", \"user\" of \"dual\" zijn"
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl moet een SDDL-tekenreeks zijn zoals \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "zoekeigenschap '{1}' moet een eigen openbare naam zijn (hoofdletters)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "zie de melding; opnieuw bouwen met rubrapack lost de meeste hiervan op"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "volgorde {1} komt niet na {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "plaatst een actie naast een actie die noch het pakket noch de module uitvoert"
+
+msgid "service name '%s' is already used"
+msgstr "servicenaam '{1}' is al in gebruik"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "services hebben scope = \"machine\" nodig (dit is {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "de snelkoppelingsnaam is {1} UTF-16-eenheden; met zijn 8.3-korte naam bevat MSI er hoogstens {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "een PE-bestand, een MSI-pakket, een MSIX-pakket of -bundel ondertekenen"
+
+msgid "signed %s\n"
+msgstr "{1} ondertekend\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "bron '{1}' is een map; gebruik [files.ID] voor veel bestanden"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "bron '{1}' is een symbolische koppeling; koppelingen worden niet gevolgd"
+
+msgid "source '%s' is not a regular file"
+msgstr "bron '{1}' is geen gewoon bestand"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "bronbestand '{1}' is gewijzigd terwijl het pakket werd gebouwd"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "bronbestand '{1}' is groter dan 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "bronbestand '{1}' niet gevonden"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source moet \"file:<ID>\" zijn"
+
+msgid "source must be an .msi package"
+msgstr "source moet een .msi-pakket zijn"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "bronpad '{1}' moet relatief zijn ten opzichte van het bronbestand"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "bronpaden gebruiken '/', niet '\\\\' (gekregen: '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start moet auto, demand of disabled zijn"
+
+msgid "string is not closed on this line"
+msgstr "tekenreeks is niet gesloten op deze regel"
+
+msgid "string lengths exceed the string data"
+msgstr "tekenreekslengtes overschrijden de tekenreeksgegevens"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "samenvattingsinformatie kan nog niet als IDT worden getoond"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name moet ASCII zijn (samenvattingsinformatie bevat alleen ASCII)"
+
+msgid "table %s %s"
+msgstr "tabel {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "tabel '{1}' is onleesbaar"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "tabel [{1}{2}{3}] is twee keer gedefinieerd (eerst op regel {4})"
+
+msgid "table name expected"
+msgstr "tabelnaam verwacht"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "tabelnamen hebben hoogstens twee delen: [kind] of [kind.ID]"
+
+msgid "tables"
+msgstr "tabellen"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "tabellen en sleutels: een onbekende tabel of sleutel, een vereiste die ontbreekt, een item zonder feature zodra er features zijn"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "neemt geen configuratie (het heeft geen ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "doel '{1}' bestaat niet"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target moet \"dir:<ID>\", \"file:<ID>\" of \"registry:<ID>\" zijn"
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target moet \"file:<ID>\" zijn en een [file.*] van dit pakket noemen"
+
+msgid "target name '%s' %s"
+msgstr "doelnaam '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' wordt al gebruikt door [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name en enabled horen bij kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "dat bestand bestaat al; geef een andere naam"
+
+msgid "that folder holds no files"
+msgstr "die map bevat geen bestanden"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "het FilesInUse-dialoogvenster heeft een ListBox-tabel nodig, ook een lege (fout 2205; het dialoogvenster wordt overgeslagen)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "de pincode heeft tekens of een lengte die de token niet aanneemt"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "de pincode is verlopen: wijzig hem eerst op de token"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "de pincode is geblokkeerd (te veel verkeerde pogingen)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "de ProductCode is die van de vorige versie: dat is een kleine upgrade (REINSTALLMODE), niet de grote upgrade die rubrapack bouwt"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "het UTF-16-bestand is geen geldige UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "de centrale ZIP-map ligt buiten het bestand"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "de applicatie-ID '{1}' wordt Application Id: alleen letters en cijfers, niet beginnend met een cijfer"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "het archief eindigt niet op ZIP64-eindrecords zoals MSIX-pakketten"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "het archief heeft geen ZIP64-eindrecord"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "het bundelmanifest heeft geen Identity Name, Publisher en Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "de centrale map ligt buiten het archief"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "het certificaat heeft een kritieke extensie die rubrapack niet begrijpt"
+
+msgid "the certificate has expired"
+msgstr "het certificaat is verlopen"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "het certificaat is een CA-certificaat, geen ondertekeningscertificaat"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "het certificaat is niet voor codeondertekening (geen uitgebreid sleutelgebruik voor codeondertekening)"
+
+msgid "the certificate is not valid yet"
+msgstr "het certificaat is nog niet geldig"
+
+msgid "the certificate path is longer than 8"
+msgstr "het certificaatpad is langer dan 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "de certificaattabel bevat geen Authenticode-handtekening"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "de certificaattabel staat niet aan het einde van het bestand"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "het sleutelgebruik van het certificaat staat geen digitale handtekeningen toe"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "het onderwerp van het certificaat kan niet als MSIX-uitgever worden geschreven"
+
+msgid "the chunked response is malformed"
+msgstr "het chunked antwoord is misvormd"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "de opdrachtregel: een onbekende opdracht of optie, een bestand dat niet kan worden gelezen of geschreven, een handtekening, een verschil dat een transformatie niet kan dragen"
+
+msgid "the connection has failed"
+msgstr "de verbinding is mislukt"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "de ingesloten cabinets maken het pakket 2 GiB of groter, wat Windows Installer niet kan openen; gebruik cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "het item staat niet in de centrale map"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "het foutdialoogvenster '{1}' heeft een {2}-besturingselement met de naam {3} nodig (fout 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "het uitvoerbare bestand '{1}' moet een .exe zijn"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "de map van het uitvoerbare bestand leidt niet naar een bekende locatie"
+
+msgid "the file is not signed"
+msgstr "het bestand is niet ondertekend"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "het bestand is al ondertekend; rubrapack ondertekent niet twee keer en vervangt geen handtekening"
+
+msgid "the file is too large to sign"
+msgstr "het bestand is te groot om te ondertekenen"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "het bestand heeft een [package]-tabel nodig (of [module] voor een samenvoegmodule)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "het bestand is gewijzigd nadat het is ondertekend (de digest komt niet overeen)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "de te installeren bestanden: niet gevonden, een map, een koppeling, een glob zonder overeenkomst, een programma van een andere architectuur, te lange namen"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "de voltooide tabellen breken een Windows Installer-regel"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "het registeronderdeel is niet netjes gesloten (zijn logboek zou nodig zijn)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "de controlesom van het basisblok van het registeronderdeel klopt niet"
+
+msgid "the hive's bins lie outside the file"
+msgstr "de bins van het registeronderdeel liggen buiten het bestand"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "het pictogram van de lijst met geïnstalleerde apps is [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "de invoer eindigde voordat elke vraag was beantwoord; er is niets geschreven"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "het sleutelbestand is groter dan 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "de sleutel is RSA noch EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "de bibliotheek is geen PKCS#11-module (geen C_GetFunctionList, of versie 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "het manifest heeft geen Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "de Identity van het manifest kan niet worden gelezen voor de volledige pakketnaam"
+
+msgid "the merge module %s"
+msgstr "de samenvoegmodule {1}"
+
+msgid "the name %s"
+msgstr "de naam {1}"
+
+msgid "the package is not signed"
+msgstr "het pakket is niet ondertekend"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "het pakket is niet ondertekend (geen AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "het pakket is al ondertekend; rubrapack ondertekent niet twee keer en vervangt geen handtekening"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "het pakket is al ondertekend; rubrapack ondertekent niet-ondertekende pakketten (en nooit twee keer)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "het pakket gebruikt cabinets buiten zichzelf, die een handtekening van de .msi niet dekt; bouw het met ingesloten cabinets, of onderteken toch met --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "de inhoud van het pakket komt niet overeen met zijn handtekening (het is na ondertekening gewijzigd)"
+
+msgid "the package's directory cannot be read"
+msgstr "de map van het pakket kan niet worden gelezen"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "de pakketten van een bundel hebben dezelfde Name, Publisher en Version nodig"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "de proxy vraagt om een wachtwoord (407), wat rubrapack niet ondersteunt"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "de proxy antwoordde niet op het tunnelverzoek"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "de proxy stuurde gegevens na zijn antwoord op CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "de omleidingslocatie is te lang"
+
+msgid "the request could not be sent"
+msgstr "het verzoek kon niet worden verzonden"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "het antwoord heeft een misvormde of tegenstrijdige Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "het antwoord heeft zowel Content-Length als chunked (geweigerd: een smokkelrisico)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "het antwoord is groter dan 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "het antwoord gebruikt een andere overdrachtscodering dan chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "dezelfde voorwaarde wordt al vereist (regel {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "hetzelfde zonder vragen:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "de server antwoordde niet met HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "de server leidde om van https naar http (geweigerd)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "de CertificateVerify-handtekening van de server klopt niet"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "het certificaat van de server is niet voor TLS-servers (zijn uitgebreid sleutelgebruik)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "het handtekeningschema van de server past niet bij de sleutel van zijn certificaat"
+
+msgid "the signature does not verify"
+msgstr "de handtekening klopt niet"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "de handtekening klopt niet met het certificaat van de ondertekenaar"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "het handtekeningitem is op de ZIP64-manier beschreven; Windows leest zijn plaats uit de ZIP32-velden"
+
+msgid "the signature is not DER"
+msgstr "de handtekening is geen DER"
+
+msgid "the signature streams cannot be read"
+msgstr "de handtekeningstromen kunnen niet worden gelezen"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "de ondertekende kenmerken komen niet overeen met de ondertekende inhoud"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "het certificaat van de ondertekenaar is niet voor codeondertekening"
+
+msgid "the source file's encoding"
+msgstr "de codering van het bronbestand"
+
+msgid "the system random source failed"
+msgstr "de willekeurigheidsbron van het systeem faalde"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "de tabvolgorde (Control_Next) is geen enkele cyclus door zijn {1} besturingselementen vanaf Control_First (Windows Installer stopt met fout 2809 of 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "de tijdstempelserver antwoordde met een HTTP-fout"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "het certificaat van de tijdstempelserver is niet voor tijdstempels"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "de tijd van de tijdstempelserver ligt buiten de geldigheid van het ondertekeningscertificaat"
+
+msgid "the token does not say what kind of key it is"
+msgstr "de token zegt niet wat voor sleutel het is"
+
+msgid "the token is not present"
+msgstr "de token is niet aanwezig"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "de token gaf een ECDSA-handtekening van de verkeerde lengte terug"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "de EC-sleutel van de token heeft een certificaat dat geen EC-certificaat is"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "de handtekening van de token klopt niet met het certificaat (de sleutel en het certificaat horen niet bij elkaar)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "het vertrouwde certificaat is verlopen of nog niet geldig"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "de niet-ondertekende kenmerken zijn misvormd of bevatten meer dan één tijdstempel"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "zo'n bestand is hier niet"
+
+msgid "there is no such folder here"
+msgstr "zo'n map is hier niet"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "deze rubrapack is gebouwd zonder zijn menudeel: [menu.*]-items bereiken het menu van Windows 11 niet"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "deze rubrapack is gebouwd zonder het setupprogramma (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading moet \"sta\", \"mta\", \"both\" of \"neutral\" zijn (gekregen: '{1}')"
+
+msgid "timestamp: "
+msgstr "tijdstempel: "
+
+msgid "too many languages for one bundle"
+msgstr "te veel talen voor één bundel"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "te veel gelokaliseerde teksten en logoschalen voor resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "te veel pakketten in de bundel"
+
+msgid "trusted"
+msgstr "vertrouwd"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "twee pakketten van één architectuur in een bundel"
+
+msgid "two packages of one name in a bundle"
+msgstr "twee pakketten met één naam in een bundel"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "twee resourcepakketten met één ResourceId in een bundel"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type moet string, expand, dword, qword, binary of multi zijn (gekregen: '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type moet text, checkbox, edit, radio of combo zijn (gekregen: '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' is geen [file.*] van dit pakket"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version is major.minor in hexadecimale cijfers, zoals \"1.0\" (gekregen: '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types en verb horen bij kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: elk is \".ext\" of \"*\" (elk bestand)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: elk is '.' en kleine letters, cijfers, '_' of '-' (gekregen: '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" laat de gebruiker de map van dir '{2}' kiezen, die niet bestaat (stel [ui] install-dir in)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" heeft [feature.*]-tabellen nodig om uit te kiezen"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui moet none, basic, minimal, installdir of features zijn (gekregen: '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "onverwachte tekst na de waarde"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "onbekende opdracht '{1}' (zie 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "onbekende escape \\{1} (gebruik '...' voor tekst met backslashes)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "onbekende inspect-optie (gebruik een tabelnaam, --summary, --files of --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "onbekende sleutel '{1}' in [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "onbekende of onvolledige {1}-optie '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "onbekende tabel [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "een pakket uitpakken in een nieuwe map, ingedeeld zoals het installeert"
+
+msgid "unsupported - %s"
+msgstr "niet ondersteund - {1}"
+
+msgid "untrusted"
+msgstr "niet vertrouwd"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-*-sleutels hebben appinstaller-uri en package-uri nodig"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false is voor on = \"uninstall\" of \"both\" (een installatie is nooit de verwijdering van een upgrade)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code moet een GUID zijn zoals {12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "gebruik: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "gebruik: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (een lijst voor een bundel)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "gebruik: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "gebruik: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "gebruik: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "gebruik: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "gebruik: rubrapack inspect <file.cab> (geen tabel of optie)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "gebruik: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "gebruik: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "gebruik: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "gebruik: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "gebruik: rubrapack inspect <setup.exe> (geen tabel of optie)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "gebruik: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "gebruik: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "gebruik: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "gebruik: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "gebruik: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (een vast startbestand <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk-namen worden ook aangenomen"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "gebruik: rubrapack schema (het JSON Schema van bronnen, op stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "gebruik: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "gebruik: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "gebruik '/' in het pad"
+
+msgid "use a full rubrapack build or another way"
+msgstr "gebruik een volledige rubrapack-build of een andere manier"
+
+msgid "used by more than one component"
+msgstr "gebruikt door meer dan één onderdeel"
+
+msgid "value '%s' is listed twice"
+msgstr "waarde '{1}' staat twee keer in de lijst"
+
+msgid "value missing"
+msgstr "waarde ontbreekt"
+
+msgid "values and labels are strings"
+msgstr "values en labels zijn tekenreeksen"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values is een array van 1 tot 32 tekenreeksen"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "waarden: ID's, GUID's, versies, getallen buiten bereik, verwijzingen naar dingen die niet bestaan"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "variabele '{1}' is niet gedefinieerd ([define] of -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "variabelenaam '{1}' mag geen '=' bevatten of beginnen met = + - ! *"
+
+msgid "variables"
+msgstr "variabelen"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "variabelen: $(NAAM) zonder waarde, $( niet gesloten, een Windows-naam of dir-ID waar die niet kan staan"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "versie '{1}' moet a.b.c of a.b.c.d zijn"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "versie '{1}' moet a.b.c of a.b.c.d zijn met a, b <= 255 en c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" kan niet 'with' een bestand van een 64-bits pakket gaan"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view moet \"32\" of \"64\" zijn"
+
+msgid "warning"
+msgstr "waarschuwing"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "wat een diagnosecode betekent, de meldingen die hem dragen, wat te doen en waar de handleiding meer zegt"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with moet \"file:<ID>\" zijn"
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: bestand '{1}' is geen [file.*] van dit pakket"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "zonder --pkcs11 toont `keys list` het Windows-certificaatarchief"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' is geen dir-ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "een patch (.msp) schrijven: de bestanden en rijen die een geïnstalleerde basis bijwerken naar het doel"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "een bronbestand schrijven (.toml; ook .rpk-namen): gemaakt uit antwoorden, gevraagd of als opties gegeven, een vast startbestand, of een bestaande MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "een transformatie (.mst) schrijven: wat het ene pakket in het andere verandert"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "schrijf de tabel of waarde op de eenvoudige manier die de handleiding toont"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "schrijf de waarde zonder '[~]'; mode = \"append\" of \"prepend\" voegt hem toe"
+
+msgid "wrote %s\n"
+msgstr "{1} geschreven\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width mag hoogstens 370 zijn (de paginabreedte)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height mag hoogstens 234 zijn (de lijn boven de knoppen)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< V&orige"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Volgende >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Installeren"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "Vol&tooien"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Ja"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Nee"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Opnieuw"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "N&egeren"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "&Afbreken"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Afsluiten"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&Bladeren..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Welkom bij de installatie van [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "Hiermee wordt [ProductName] op uw computer geïnstalleerd. Klik op Volgende om door te gaan."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Licentieovereenkomst"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Lees de volgende licentieovereenkomst."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "Ik &accepteer de voorwaarden van de licentieovereenkomst"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Installatiemap"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Kies de map waarin [ProductName] wordt geïnstalleerd."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Installeren &in:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "De map wijzigen"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Blader naar de map waarin u wilt installeren."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Zoeken in:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&Mapnaam:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Omhoog"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Nieuwe map"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Onderdelen kiezen"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Kies de onderdelen die u wilt installeren."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&Beginwaarden"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Schijfgebruik"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Schijfruimte"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Benodigde ruimte voor de gekozen onderdelen en beschikbare ruimte."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Klaar om te installeren"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Klik op Installeren om [ProductName] te installeren."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "[ProductName] wordt geïnstalleerd"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Een ogenblik geduld."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Status:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Installatie voltooid"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] is geïnstalleerd."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "[ProductName] wordt verwijderd"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Verwijderen voltooid"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] is verwijderd."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Verwijderen geannuleerd"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Het verwijderen is geannuleerd. Er is niets op uw computer gewijzigd."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Verwijderen mislukt"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Een fout heeft het verwijderen beëindigd; het is teruggedraaid. Het product is nog geïnstalleerd."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Installatie geannuleerd"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "De installatie is geannuleerd. Er is niets op uw computer gewijzigd."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Installatie mislukt"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Een fout heeft de installatie beëindigd; ze is teruggedraaid. Er is niets op uw computer gewijzigd."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "De installatie van [ProductName] annuleren?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Bestanden in gebruik"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Deze programma's gebruiken bestanden die worden vervangen. Klik op Doorgaan om ze nu te vervangen: programma's die al open zijn houden de oude bestanden tot ze opnieuw worden geopend, programma's die later worden geopend krijgen de nieuwe. Opnieuw opstarten is niet nodig."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Deze programma's gebruiken bestanden die worden vervangen. Klik op Doorgaan om ze nu te vervangen: programma's die al open zijn houden de oude bestanden tot ze opnieuw worden geopend, programma's die later worden geopend krijgen de nieuwe. Windows kan aan het einde vragen om opnieuw op te starten."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Doorgaan"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Onvoldoende schijfruimte"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Er is onvoldoende ruimte voor deze installatie. Maak ruimte vrij of kies een andere locatie."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "[ProductName] onderhouden"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Kies wat u wilt doen."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Herstellen"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Ontbrekende of beschadigde bestanden en instellingen herstellen."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Ve&rwijderen"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "[ProductName] van deze computer verwijderen."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "[ProductName] verwijderen"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Klik op Verwijderen om [ProductName] van deze computer te verwijderen. Klik op Vorige of Annuleren om het te behouden."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Klik op Verwijderen om [ProductName] van deze computer te verwijderen. De instellingen en gegevens worden mee verwijderd en kunnen niet worden teruggehaald. Klik op Vorige of Annuleren om het te behouden."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "[ProductName] van deze computer verwijderen?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "[ProductName] van deze computer verwijderen? De instellingen en gegevens worden mee verwijderd en kunnen niet worden teruggehaald."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] kan niet veilig worden geïnstalleerd: [1] is geen map, of het installatieprogramma mag er geen bestanden in verwijderen. Verwijder eerst [3] ([2]) en installeer daarna opnieuw."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] kan niet veilig worden bijgewerkt: de geïnstalleerde versie [1] is haar pakket in de cache kwijt en kan hier niet worden verwijderd. Verwijder die versie eerst met haar oorspronkelijke pakket ([2]) en installeer daarna opnieuw."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "De installatie is gestopt: de map [1] bestaat al en is niet van de beheerders, of verwijst via een koppeling naar een andere plek. Kies een andere map, of laat een beheerder die eerst verwijderen."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "[ProductName] &starten"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Logboek opslaan..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Volledig &logboek weergeven"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Het installatielogboek kon niet worden opgeslagen in [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Wijzigen"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Kiezen welke onderdelen zijn geïnstalleerd."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Installatiebereik"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Kies wie [ProductName] mag gebruiken."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Alleen voor &mij"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "Voor &alle gebruikers van deze computer - vereist beheerdersrechten"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Taal"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Kies de taal van de installatie."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Geïnstalleerde toepassingen zoeken"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Benodigde ruimte berekenen"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Benodigde ruimte berekenen"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Mappen maken"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Snelkoppelingen maken"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Services verwijderen"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Kopieën van bestanden maken"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Benodigde ruimte berekenen"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Verwante toepassingen zoeken"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Bewerkingen voorbereiden voor actie:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Nieuwe bestanden kopiëren"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Nieuwe services installeren"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Installatie valideren"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Startvoorwaarden controleren"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Onderdeelkeuzes van de vorige versie overnemen"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Bestanden verplaatsen"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Bestanden patchen"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Onderdeelregistratie bijwerken"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Productonderdelen publiceren"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Productgegevens publiceren"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Klasseservers registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Extensies registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Lettertypen registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "MIME-gegevens registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Product registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Programma-id's registreren"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Gebruiker registreren"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Omgevingsvariabelen bijwerken"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Vorige versie verwijderen"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Bestanden verwijderen"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Mappen verwijderen"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "INI-vermeldingen verwijderen"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Registerwaarden verwijderen"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Snelkoppelingen verwijderen"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Actie terugdraaien:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Back-upbestanden verwijderen"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Services starten"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Services stoppen"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Publicatie van productonderdelen ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Registratie van klasseservers ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Registratie van extensies ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Registratie van lettertypen ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Registratie van MIME-gegevens ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Registratie van programma-id's ongedaan maken"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Omgevingsvariabelen bijwerken"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "INI-waarden schrijven"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Registerwaarden schrijven"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] wordt alleen voor de huidige gebruiker geïnstalleerd (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Dezelfde of een nieuwere versie van [ProductName] is al geïnstalleerd."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "De geïnstalleerde oudere versie van [ProductName] kan niet met dit pakket worden bijgewerkt. Verwijder die eerst en voer deze installatie daarna opnieuw uit:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Bestand kopiëren"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Bestand verwijderen"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Bestand patchen"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Map maken"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Map verwijderen"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Registerwaarde schrijven"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Registerwaarde verwijderen"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Registersleutel verwijderen"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Snelkoppeling maken"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Snelkoppeling verwijderen"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Service installeren"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Service besturen"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "INI-waarde schrijven"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Omgevingsvariabele instellen"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Lettertype registreren"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Registratie van lettertype ongedaan maken"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Actie uitvoeren"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Dit installatieprogramma is beschadigd: download het opnieuw."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Deze programma's zijn al geïnstalleerd. Kies wat u wilt doen."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Herstellen"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Ve&rwijderen"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Annuleren"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Deze programma's van deze computer verwijderen?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "De programma's zijn verwijderd."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Een programma kon niet worden verwijderd."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Het installatieprogramma kon geen tijdelijke map maken."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} kon niet worden hersteld (fout {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} kon niet worden geïnstalleerd (fout {2}). Niets daarna is geïnstalleerd."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "De programma's zijn hersteld."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "De installatie is voltooid."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Deze map bevat al bestanden of mappen. Als [ProductName] wordt verwijderd, wordt alles in de map verwijderd - ook wat er nu in staat. Een lege of nieuwe map is de veilige keuze."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Andere map kiezen"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "&Deze map gebruiken"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] programma('s) gebruiken bestanden van [3]:\r\n[2]\r\nAlle sluiten?\r\n\r\nJa: alle sluiten en doorgaan (niet-opgeslagen werk kan verloren gaan).\r\nNee: doorgaan zonder te sluiten (al geopende programma's houden de oude bestanden tot ze opnieuw worden geopend).\r\nAnnuleren: stoppen."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: gestopt, omdat [1] programma('s) de bestanden gebruiken:\r\n[2]Sluit ze en probeer het opnieuw, of geef RPCLOSE=yes (alle sluiten en doorgaan) of RPCLOSE=no (doorgaan zonder te sluiten)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] item(s) in de mappen van [3] zijn er niet mee geïnstalleerd:\r\n[2]\r\nOok deze verwijderen?\r\n\r\nJa: samen met [3] verwijderen (ze kunnen niet worden teruggehaald).\r\nNee: [3] verwijderen en deze behouden.\r\nAnnuleren: stoppen."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: gestopt, omdat [1] item(s) in de mappen er niet mee zijn geïnstalleerd:\r\n[2]Geef RPEXTRA=delete (ook verwijderen) of RPEXTRA=keep (behouden) en verwijder het opnieuw."

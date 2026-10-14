@@ -2386,19 +2386,32 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // dialog's and, on a Korean Windows, with the backslash drawn as a currency sign (x59). Text and
 // RTF sent across processes do not change it (WM_SETTEXT and EM_REPLACESEL insert RTF literally,
 // observed); EM_SETCHARFORMAT takes a pointer, so the format is written into the dialog's process
-// first. Only when both processes have the same width, so the pointer arrives whole.
+// first (below 2 GiB when the helper is 32-bit and the dialog 64-bit). The face is the dialog
+// language's (RpDetFont_<code>), else Segoe UI, with that language's character set: with the
+// default set RichEdit's font binding gives the Chinese or Japanese characters of a line the
+// system's own CJK face (Malgun Gothic on a Korean Windows), and the path after them stays in it,
+// with won signs for backslashes (x59, zh_TW).
 typedef struct {
     HANDLE proc;
     void  *remote;
 } det_fmt_t;
 
-static void det_font_open(det_fmt_t *fm, HWND edit) {
+static BYTE det_charset(const wchar_t *lang) {
+    if (lang == NULL) return DEFAULT_CHARSET;
+    if (wcscmp(lang, L"ja") == 0) return SHIFTJIS_CHARSET;
+    if (wcscmp(lang, L"ko") == 0) return HANGEUL_CHARSET;
+    if (wcscmp(lang, L"zh") == 0) return GB2312_CHARSET;
+    if (wcscmp(lang, L"zh_TW") == 0) return CHINESEBIG5_CHARSET;
+    return DEFAULT_CHARSET;
+}
+
+static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, const wchar_t *lang) {
     DWORD pid = 0;
     GetWindowThreadProcessId(edit, &pid);
     fm->proc = pid ? OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid) : NULL;
     if (fm->proc == NULL) return;
     BOOL mine = FALSE, theirs = FALSE;
-    if (!IsWow64Process(GetCurrentProcess(), &mine) || !IsWow64Process(fm->proc, &theirs) || mine != theirs) {
+    if (!IsWow64Process(GetCurrentProcess(), &mine) || !IsWow64Process(fm->proc, &theirs)) {
         CloseHandle(fm->proc);
         fm->proc = NULL;
         return;
@@ -2408,10 +2421,20 @@ static void det_font_open(det_fmt_t *fm, HWND edit) {
     cf.cbSize = sizeof cf;
     cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
     cf.yHeight = 8 * 20;                                    // twips
-    cf.bCharSet = DEFAULT_CHARSET;
+    cf.bCharSet = det_charset(lang);
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
-    memcpy(cf.szFaceName, L"Segoe UI", sizeof L"Segoe UI");
-    fm->remote = VirtualAllocEx(fm->proc, NULL, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    size_t fl = face && face[0] ? wcslen(face) : 0;
+    if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
+    memcpy(cf.szFaceName, face, (fl + 1) * sizeof *face);
+    if (mine == theirs) {
+        fm->remote = VirtualAllocEx(fm->proc, NULL, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    } else {
+        // A 32-bit helper (an x86 package) and the 64-bit dialog: the pointer it sends has 32 bits,
+        // so the format goes to an address below 2 GiB (the same whether the value is widened with
+        // or without its sign), the first of these places that is free.
+        for (uintptr_t at = 0x10000000; at < 0x70000000 && fm->remote == NULL; at += 0x01000000)
+            fm->remote = VirtualAllocEx(fm->proc, (void *)at, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    }
     if (fm->remote && !WriteProcessMemory(fm->proc, fm->remote, &cf, sizeof cf, NULL)) {
         VirtualFreeEx(fm->proc, fm->remote, 0, MEM_RELEASE);
         fm->remote = NULL;
@@ -2625,7 +2648,13 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         goto out;
     }
     det_send(win.edit, WM_USER + 53, 0, 16 * 1024 * 1024);      // EM_EXLIMITTEXT: the box takes more than 64 KB
-    det_font_open(&fmt, win.edit);
+    {   // the dialog language's face (RpDetFont_<code>): a CJK face draws its own script and the paths
+        wchar_t name[48];
+        wchar_t *face = NULL;
+        if (wfmt(name, 48, L"RpDetFont_%.15ls", lang && lang[0] ? lang : L"en") > 0) face = get_property(h, name);
+        det_font_open(&fmt, win.edit, face, lang && lang[0] ? lang : NULL);
+        if (face) HeapFree(GetProcessHeap(), 0, face);
+    }
     det_font_apply(&fmt, win.edit);
     while (!ended) {
         // What the log has gained, as text.
