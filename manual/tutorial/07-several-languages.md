@@ -78,9 +78,11 @@ both languages say the same thing.
 
 ## More languages
 
-rubrapack's pages are written in English, and six more languages come with it as *language packs*,
-one file each: Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`), Spanish (`es`), French
-(`fr`) and German (`de`). Each is one more code in the list - nothing else changes:
+rubrapack's pages are written in English, and ten more languages come with it as *language packs*,
+one file each: Korean (`ko`), Japanese (`ja`), Chinese - Simplified (`zh`) and Traditional
+(`zh_TW`) -, Spanish (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`), Russian
+(`ru`) and Italian (`it`). Each is one more code in the list (up to seven besides English) -
+nothing else changes:
 
 ```toml
 [ui]
@@ -91,21 +93,21 @@ The language page then lists English, 한국어, 日本語 and Deutsch, and Wind
 chooses one in advance. A pack holds every text of the pages, the progress page's status line and
 details, and the language's name and font.
 
-Another language - `it`, `pt`, `ru`, ... - is one more such file: put `it.po` in a folder `lang`
-beside `hello.toml` and write `languages = ["it"]`. The reference's
+Another language - `nl`, `pl`, `tr`, ... - is one more such file: put `nl.po` in a folder `lang`
+beside `hello.toml` and write `languages = ["nl"]`. The reference's
 [Language packs](../rpk.md#language-packs) shows the format, and copying one of the packs that
 come with rubrapack is the quickest start; a file beside the source also replaces a pack of the
 same code. Without a pack (or for a text you want different) the source gives the text itself as
 `text-xx`; the build lists what neither has:
 
 ```text
-hello.toml:18:1: error[RP1202]: language 'it' lacks 68 text(s), the first is Back: add them to its language pack (lang/it.po) or give [ui-text.ID] text-it
+hello.toml:18:1: error[RP1202]: language 'nl' lacks 68 text(s), the first is Back: add them to its language pack (lang/nl.po) or give [ui-text.ID] text-nl
 ```
 
-For such a language, three more keys in `[ui]` may help: `name-it` (its name on the language
-page), `font-it` (the typeface of its pages) and `langid-it` (the Windows language numbers that
-select it in advance - one number or a list). For common languages (`it`, `pt`, `nl`, `pl`, `ru`,
-`uk`, `tr`, `vi`, `th`) these three are built in.
+For such a language, three more keys in `[ui]` may help: `name-nl` (its name on the language
+page), `font-nl` (the typeface of its pages) and `langid-nl` (the Windows language numbers that
+select it in advance - one number or a list). For common languages (`nl`, `pl`, `pt`, `uk`, `tr`,
+`vi`, `th`) these three are built in.
 
 ## Typefaces
 

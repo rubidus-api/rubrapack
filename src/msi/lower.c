@@ -489,7 +489,7 @@ void rp_build_files_free(proven_allocator_t alloc, rp_build_file_t *files, size_
 static const char *rtf_face(const char *face, const char *code) {
     const char *a = rp_ui_face_ascii(face);
     if (a) return a;
-    static const char *const builtin[][2] = { { "ko", "Malgun Gothic" }, { "ja", "Yu Gothic UI" }, { "zh", "Microsoft YaHei UI" },
+    static const char *const builtin[][2] = { { "ko", "Malgun Gothic" }, { "ja", "Yu Gothic UI" }, { "zh", "Microsoft YaHei UI" }, { "zh_TW", "Microsoft JhengHei UI" },
                                               { "th", "Leelawadee UI" } };
     for (size_t k = 0; k < sizeof builtin / sizeof builtin[0]; ++k) {
         if (strcmp(code, builtin[k][0]) == 0) return builtin[k][1];
@@ -553,6 +553,7 @@ typedef struct {
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
     bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain, details;
+    bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     const char      *pplan;            // RP_PURGE ([remove] recursive, [registry] on = "uninstall")
@@ -1104,11 +1105,11 @@ static void lower_services(pkg_t *pk) {
 // RFC-0012 V6: the dirs with guard = true, as Directory keys.
 // The languages a package carries its helper texts in: English, the built-in packs, and the
 // dialogs' own. Each once, English first.
-static size_t text_langs(const rp_ir_t *ir, const char *codes[RP_UI_LANG_MAX + 8]) {
+static size_t text_langs(const rp_ir_t *ir, const char *codes[RP_UI_LANG_MAX + 16]) {
     size_t n = 0;
     codes[n++] = "en";
-    for (size_t i = 0; i < rp_lang_embedded_count && n < RP_UI_LANG_MAX + 8; ++i) codes[n++] = rp_lang_embedded[i].code;
-    for (size_t u = 0; u < ir->ui_lang_count && n < RP_UI_LANG_MAX + 8; ++u) {
+    for (size_t i = 0; i < rp_lang_embedded_count && n < RP_UI_LANG_MAX + 16; ++i) codes[n++] = rp_lang_embedded[i].code;
+    for (size_t u = 0; u < ir->ui_lang_count && n < RP_UI_LANG_MAX + 16; ++u) {
         bool have = false;
         for (size_t j = 0; j < n; ++j) have |= strcmp(codes[j], ir->ui_langs[u].code) == 0;
         if (!have) codes[n++] = ir->ui_langs[u].code;
@@ -1134,7 +1135,7 @@ static const char *package_lang(const rp_ir_t *ir) {
 }
 
 static void lower_helper_actions(pkg_t *pk) {
-    const char *langs[RP_UI_LANG_MAX + 8];
+    const char *langs[RP_UI_LANG_MAX + 16];
     size_t nlangs = text_langs(pk->ir, langs);
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -1379,7 +1380,13 @@ static void lower_helper_actions(pkg_t *pk) {
         if (*dirs) { s_(&pk->property, "RP_PREFLIGHT_DIRS"); s_(&pk->property, dirs); }
         static const char *const modes[] = { "ask", "always", "never" };
         s_(&pk->property, "RP_PREFLIGHT_CLOSE"); s_(&pk->property, modes[ir->close_programs]);
-        static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache" };
+        // DECISIONS 2026-10-14: at a real removal, what is in these folders but was not installed
+        // with the product - asked about, or RPEXTRA; "delete" goes the purge's way (RP_PURGE).
+        if (*dirs && ir->extra_files != 1) {
+            s_(&pk->property, "RP_PREFLIGHT_EXTRA"); s_(&pk->property, ir->extra_files == 2 ? "delete" : "ask");
+            pk->extra = true;
+        }
+        static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache", "Extra", "ExtraSilent" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
             const char *id = kprintf(k, "Preflight%s", ids[t], NULL);
             for (size_t b = 0; b < nlangs; ++b) {       // English, the built-in packs, the dialogs' languages
@@ -1456,8 +1463,9 @@ static void lower_helper_actions(pkg_t *pk) {
     }
     // [remove] recursive, [registry] on = "uninstall": prepare (immediate; nothing when
     // UPGRADINGPRODUCTCODE is set) -> two commit actions, so a removal that fails has touched
-    // nothing: one as the user (the user's profile and HKCU), one - per machine - as SYSTEM.
-    if (pk->any_purge) {
+    // nothing: one as the user (the user's profile and HKCU), one - per machine - as SYSTEM. The
+    // preflight adds the folders whose extra files the user chose to delete (extra-files).
+    if (pk->any_purge || pk->extra) {
         s_(&pk->property, "RP_PURGE"); s_(&pk->property, kprintf(k, "%s%s", pk->pplan, NULL));
         if (ir->scope == 0) { s_(&pk->property, "RP_PURGE_SPLIT"); s_(&pk->property, "1"); }
         s_(&pk->customaction, "RP_PurgePrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPurgePrepare");
@@ -1789,7 +1797,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RP_RemoveApply"); null_(&pk->iexec); i_(&pk->iexec, 3492);
         s_(&pk->iexec, "RP_RemoveCommit"); null_(&pk->iexec); i_(&pk->iexec, 3493);
     }
-    if (pk->any_purge) {                // with them; the commits run at InstallFinalize, after RemoveFolders
+    if (pk->any_purge || pk->extra) {   // with them; the commits run at InstallFinalize, after RemoveFolders
         s_(&pk->iexec, "RP_PurgePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3494);
         s_(&pk->iexec, "RP_PurgeUser"); null_(&pk->iexec); i_(&pk->iexec, 3495);
         if (ir->scope == 0) { s_(&pk->iexec, "RP_PurgeMachine"); null_(&pk->iexec); i_(&pk->iexec, 3496); }

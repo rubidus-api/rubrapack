@@ -358,10 +358,9 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             const rp_tval_t *v = &lk->val.items[k];
             char *code = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
             size_t n = code ? strlen(code) : 0;
-            bool ok = n >= 2 && n <= 3;
-            for (size_t i = 0; ok && i < n; ++i) ok = code[i] >= 'a' && code[i] <= 'z';
+            bool ok = code && ir_lang_code_ok(code);
             if (!ok) {
-                ERR(c, lk->pos, "RP1316", "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')", code ? code : "?");
+                ERR(c, lk->pos, "RP1316", "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')", code ? code : "?");
             } else if (strcmp(code, "en") == 0) {
                 // English is always there
             } else if (ui_lang_index(ir, code) >= 0) {

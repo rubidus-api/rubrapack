@@ -31,6 +31,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     if (ir->no_cleanup) kv(&b, "cleanup", "false");
     if (ir->no_preflight) kv(&b, "preflight", "false");
     if (ir->close_programs) kv(&b, "close-programs", ir->close_programs == 1 ? "always" : "never");
+    if (ir->extra_files) kv(&b, "extra-files", ir->extra_files == 1 ? "keep" : "delete");
     if (ir->parent) kv(&b, "parent", ir->parent);
     if (ir->remove_addons) kv(&b, "remove-addons", "true");
     for (size_t i = 0; i < ir->replace_count; ++i) kv(&b, "replaces", ir->replaces[i]);

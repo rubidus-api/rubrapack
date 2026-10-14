@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 172032 bytes: the
-header sector and 41 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 192512 bytes: the
+header sector and 46 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -149,10 +149,10 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 4 | `0x5000` | `FFFFFFFE` | mini stream |
 | 5 | `0x6000` | 6 | `_StringData` |
 | 6 | `0x7000` | 7 | `_StringData` |
-| 7 | `0x8000` | `FFFFFFFE` | `_StringData` |
-| 8 | `0x9000` | 9 | `Binary.RpCa` |
-| 9 | `0xA000` | 10 | `Binary.RpCa` |
-| 10 | `0xB000` | 11 | `Binary.RpCa` |
+| 7 | `0x8000` | 8 | `_StringData` |
+| 8 | `0x9000` | 9 | `_StringData` |
+| 9 | `0xA000` | 10 | `_StringData` |
+| 10 | `0xB000` | `FFFFFFFE` | `_StringData` |
 | 11 | `0xC000` | 12 | `Binary.RpCa` |
 | 12 | `0xD000` | 13 | `Binary.RpCa` |
 | 13 | `0xE000` | 14 | `Binary.RpCa` |
@@ -180,9 +180,14 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 35 | `0x24000` | 36 | `Binary.RpCa` |
 | 36 | `0x25000` | 37 | `Binary.RpCa` |
 | 37 | `0x26000` | 38 | `Binary.RpCa` |
-| 38 | `0x27000` | `FFFFFFFE` | `Binary.RpCa` |
-| 39 | `0x28000` | 40 | `cab1.cab` |
-| 40 | `0x29000` | `FFFFFFFE` | `cab1.cab` |
+| 38 | `0x27000` | 39 | `Binary.RpCa` |
+| 39 | `0x28000` | 40 | `Binary.RpCa` |
+| 40 | `0x29000` | 41 | `Binary.RpCa` |
+| 41 | `0x2A000` | 42 | `Binary.RpCa` |
+| 42 | `0x2B000` | 43 | `Binary.RpCa` |
+| 43 | `0x2C000` | `FFFFFFFE` | `Binary.RpCa` |
+| 44 | `0x2D000` | 45 | `cab1.cab` |
+| 45 | `0x2E000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 
@@ -195,8 +200,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `07 00 00 00` | child | entry 7 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `80 16 00 00 00 00 00 00` | size | 5760 |
+| 120 | `c0 19 00 00 00 00 00 00` | size | 6592 |
 
-The root's size is the mini stream's: 5760 bytes, holding 20 of the 23 streams in 64-byte mini
+The root's size is the mini stream's: 6592 bytes, holding 20 of the 23 streams in 64-byte mini
 sectors; 3 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
 continues with the streams' names and contents.

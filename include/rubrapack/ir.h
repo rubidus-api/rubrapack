@@ -358,7 +358,7 @@ typedef struct {
 // adds the others.
 enum { RP_UI_LANG_MAX = 8, RP_UI_LANGID_MAX = 16 };
 typedef struct {
-    char     code[4];           // "en", "ko", ...
+    char     code[8];           // "en", "ko", "zh_TW", ...
     char    *name;              // [ui] name-xx: the language page's label, or NULL (built in)
     char    *font;              // [ui] font-xx, else the language's built-in face, else Segoe UI
     uint16_t langids[RP_UI_LANGID_MAX];     // chosen when UserLanguageID or SystemLanguageID is one of them
@@ -463,6 +463,7 @@ typedef struct {
     bool      no_cleanup;       // [package] cleanup = false: no cleanup task (RFC-0026)
     bool      no_preflight;     // [package] preflight = false: no checks before the installation goes on
     int       close_programs;   // 0 ask (fail without UI), 1 always, 2 never
+    int       extra_files;      // at a removal, files not installed in the product's folders: 0 ask (fail without UI), 1 keep, 2 delete
     char     *parent;           // [package] parent: the main product's UpgradeCode (an add-on, x46), or NULL
     bool      remove_addons;    // [package] remove-addons = true: a real removal removes the add-ons too (x46)
     char      replaces[16][39]; // [package] replaces: other products' UpgradeCodes this package removes (x47)

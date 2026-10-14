@@ -1,0 +1,3810 @@
+# rubrapack language pack: Chinese (Traditional, Taiwan).
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: zh_TW\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: 中文(繁體)\n"
+"X-Rubrapack-LangIDs: 1028, 3076, 5124\n"
+"X-Rubrapack-Font: Microsoft JhengHei UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 對話方塊 {6}{7}\n  1 名稱、製造商、版本、架構                 2 安裝資料夾、為誰安裝\n  3 對話方塊、許可協議、語言                       4 可選部分\n  5 捷徑                                     6 檔案: 與程式資料夾保持一致\n  7 任意鍵                                       v 查看   l lint   s 儲存   q 退出\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\n使用此代碼的消息(* 表示名稱或值):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "\n結果輸出到 stdout，診斷輸出到 stderr。\n--lang(或 RUBRAPACK_LANG)選擇這些文字的語言: en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it，或有語言包的語言。\n退出代碼: 0 正常，1 源檔案錯誤，2 用法，3 輸入/輸出，4 簽章或驗證，\n5 lint，6 網路。\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\n處理方法: {1}。\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} 已不存在，但有捷徑開啟它: 請先更改捷徑(5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  其中有 {1} 個檔案和 {2} 個資料夾\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7、v、l、s 或 q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  已添加 [dir.{1}] 和 [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  已添加 [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  請以 table.key 的形式給出，例如 package.version 或 dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: 沒有問題\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: 請查看上面的問題(其中列出的檔案是檢查用的副本)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  [ui] languages 中的其他語言保持不變；請用 7(任意鍵)更改該列表\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  已移除 [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  已移除 [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  子資料夾:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  這不符合 TOML 子集；沒有做任何更改\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  這不是可讀的文字；請再輸入一次\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  程式資料夾 '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  源檔案中沒有可供捷徑指向的 [file] 表\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  源檔案中沒有 `new` 所寫形式的子資料夾([files] \"<folder>/<name>/**\")；請用 6 添加\n"
+
+msgid "  too long; again, please\n"
+msgstr "  太長；請再輸入一次\n"
+
+msgid "  y or n\n"
+msgstr "  y 或 n\n"
+
+msgid " (changed)"
+msgstr " (已更改)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - 構建 Windows Installer (.msi) 和 MSIX (.msix) 安裝套件\n\n用法: rubrapack [--lang <code>] <command> [arguments]\n\n命令:\n"
+
+msgid " and its dir"
+msgstr " 及其 dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) 沒有對應的環境變數，因此可展開的值不能包含它；請使用字串值(安裝時填入)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) 是 {2}: 它可以作為路徑開頭，或代替 Windows Installer 填入的值(登錄、環境變數、INI、參數、消息)，但不能用在這裡"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) 不是可作為路徑起點的資料夾(dir ID，或 ProgramFiles、LOCALAPPDATA、ProgramData ... - 參見手冊的 Paths){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  結構:     {2}\n  摘要:     {3}\n  簽章:     {4}\n  憑證鏈:   {5}{6}{7}\n  撤銷檢查: 未檢查\n  時間戳記:   {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: 未設定該變數"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' 不是此對話方塊的控制項"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' 不在 {3} 中"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': 許可協議文字需要字型的英文名稱，因此會以該語言的預設字型顯示；若要在此也使用此字型，請寫英文名稱(如 \"Malgun Gothic\")"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "{1} 元件，但安裝套件的平台是 {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} 不屬於 kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} 不屬於 kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} 應為 LANGID(1..65535)，如 1041"
+
+msgid "%s holds strings"
+msgstr "{1} 應為字串"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} 是 1 到 31 個字元的字型名稱，如 \"Segoe UI\"(實際為 {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} 是引號閉合、括號配對的 MSI 條件"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} 是字串數組，每個值一個"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} 用於 MSI 安裝套件: MSIX 不會由 msiexec 移除"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} 已不存在。移除 [file.{2}] 嗎?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} 超過 240 個字元"
+
+msgid "%s is new. Add it?"
+msgstr "{1} 是新的。添加嗎?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} 不是登錄格式的 GUID"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} 不是此 rubrapack 使用的代碼{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} 必須是指向此安裝套件中 [file.*] 的 \"file:<ID>\""
+
+msgid "%s must be a GUID"
+msgstr "{1} 必須是 GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} 必須是形如 {12345678-...} 的 GUID(實際為 '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} 必須是 https://、http:// 或 file:// 地址，或 \\\\server\\share 路徑(實際為 '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} 必須與 upgrade-code 不同(每種架構一個升級系列)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} 需要 Windows 內部版本 {2} 或更高版本: 請設定 [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} 需要 resources/bin/rubrapack_ca-{2}.dll，但此 rubrapack 構建時未包含它"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}，TSA 未檢查(請指定 --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}，TSA 受信任"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}，TSA 不受信任 - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} 已不存在或為空。移除 [files.{3}] 和 [dir.{4}] 嗎?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ 是新資料夾。添加嗎?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: {2} 個錯誤{-3}，{4} 個警告{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: {2} 個錯誤{-3}，{4} 個警告{-5}(對照 {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} 個檔案，{3} 字節\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} 個檔案，{3} 個錯誤，0 個警告\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: 另有 {2} 條診斷未顯示\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: 檔案 '{2}' 不是此安裝套件的 [file.*]"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: 檔案 '{2}' 不是程式(.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' 未閉合(文字 '$(' 請寫作 '$$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' 已存在；保持不變"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' 已存在；請移除它或構建到其他資料夾"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' 已有 {2} 處理常式([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' 已有權限"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' 和 '{2}' 在安裝套件中是同一路徑"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' 屬於 Windows 或瀏覽器"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "無法對照 '{2}' 讀取 '{1}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' 不符合 TOML 子集；沒有儲存任何內容"
+
+msgid "'%s' exists already"
+msgstr "'{1}' 已存在"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' 已存在；請用 `rubrapack edit {2}` 修改"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' 已存在且不是空目錄；請解壓縮到新目錄"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' 應放在 {2}；或設定 msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' 的摘要資訊流無法讀取"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' 沒有可供解壓縮的 Directory、Component、File 和 Media 表"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' 沒有可讀的摘要資訊"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' 沒有轉換 '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' 是 UTF-16: edit 只修改 UTF-8 源檔案(請先另存為 UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' 是 Windows 的名稱；請給變數另取名稱"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' 是 [chain]: 它構建安裝程式，-o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' 是內置框架的控制項；請選擇其他 ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' 是電腦級資料夾；{2} 安裝套件不能寫入該位置"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' 是合並模組: 請改用 [merge.ID] 合並"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' 是 MSIX 格式保留的名稱"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' 是符號連結；不跟隨連結"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' 也是 [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' 也是 dir ID；請給變數另取名稱"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' 是為機器 0x{2} 構建的，不是為此安裝套件的 arch；如果確是有意，請設定 any-arch = true"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' 既不是 PE 檔案(.exe、.dll)，也不是 MSI 安裝套件、MSIX 套件或套件組合"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' 既不是 PE 檔案，也不是 MSI 安裝套件、MSIX 套件或套件組合"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' 既不是已知資料夾，也不是 dir ID(已知資料夾: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' 不是 rubrapack 能讀取的 cabinet(stored 或 MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' 不是診斷代碼(RP 加四位數字，如 RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' 不是程式(.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' 不是普通檔案"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' 不是 rubrapack 安裝程式{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' 不是有效的 ID(字母、數字和 '_'，不以數字開頭，最多 {2} 個)"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' 不是有效的 MSI 資料庫: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' 不是有效的 MSIX 套件: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' 不是有效的安裝套件: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' 不是有效的源檔案(TOML 子集)；請先手動修正"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' 不是有效的轉換: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' 不是有效的變數名"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' 是保留字，不能用作 ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' 是 dir 的名稱: 只有登錄搜索或 dir 搜索才能填充 dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' 看起來是程式檔案(PE)，但其頭或資源已損壞"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' 必須是字串"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' 必須是整數"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' 必須在 {2} 到 {3} 之間"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' 必須是 true 或 false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' 不能為空"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' 未指定任何轉換(摘要屬性 8): 不是修補程式"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' 應以資料夾開頭: \"$(ProgramFiles)/Example\"、\"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' 含有 {4}；沒有解壓縮任何內容"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': 有 {2} 個條目，超過上限 {3}(--limit-entries)；沒有解壓縮任何內容"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' 和 '{3}' 在 Windows 上是同一路徑；沒有解壓縮任何內容"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' 不在 [ui] languages 中"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': 無法讀取某個表"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': 某個表不可讀"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX 會安裝其所有檔案(when)；請使用 msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX 會移除其所有檔案(keep)；請使用 msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' 已損壞，或不是 stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinet 名稱 '{2}' 不是普通檔案名"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': 壓縮檔案 '{2}'(序號 {3})沒有 cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': 目錄 '{2}' 的父目錄 '{3}' 不存在"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': 目錄 '{2}' 是它自己的祖先，或嵌套太深"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': 檔案 '{2}' 與其 MsiFileHash 不符"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': 檔案 '{2}' 沒有元件或目錄"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': 檔案 '{2}' 為 {3} 字節，File 表中為 {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': 檔案 '{2}' 不在 cabinet '{3}' 中"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': 其外部 cabinet 不在簽章範圍內(--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': 其資料夾沒有通向已知位置"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': 需寫入超過 {2} 字節(--limit-bytes)；沒有解壓縮任何內容"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': 沒有 --timestamp: 憑證過期後簽章即失效"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': 安裝套件 '{2}' 與其 SHA-256 不符"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet 流 '{2}' 不存在"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': 清單中沒有 {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': 清單指定了 '{2}'，但它不在安裝套件中"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': 來自 {2} 的時間戳記: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': 無法對照 '{3}' 讀取轉換 '{2}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' 是安裝套件自己的語言({2})；請不帶後綴給出該文字"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' 會使 Windows Installer 寫入多字串；請使用 type = \"multi\" 和數組"
+
+msgid "'_' in numbers is not supported"
+msgstr "不支援數字中的 '_'"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' 最多接受一個命令名"
+
+msgid "'version' takes no arguments"
+msgstr "'version' 不接受參數"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs 用於 .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "套件組合的 --arch: x64、x86 和 arm64 的列表，每個一次(實際為 '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch 接受一個架構；輸出 .msixbundle 時接受一個列表"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert、--pass-env、--pass-file、--timestamp 和 --allow-unsigned-cabs 須與 --key 一起使用"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress 用於 .msi；MSIX 使用 --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist 指定源檔案旁邊的新資料夾(不帶路徑)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs 接受 1 到 64 的數字(實際為 '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store 是 Windows 憑證存儲；其他系統請使用密鑰檔案或 --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store 接受憑證的 SHA-1 指紋(40 位十六進制數字)"
+
+msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "--lang {1}: 沒有該語言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是內置的；其他語言需要語言包 {2}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang 需要一種語言，如 en 或 ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages 需要對話方塊: 請同時指定 --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress 接受 deflate 或 store(實際為 '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: 未設定該變數"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code 接受帶花括號的大寫 GUID: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: 未設定該變數"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous 比較兩個 .msi 安裝套件"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: 無法讀取操作系統的根憑證"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} 與輸出 '{2}' 不符"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} 尚未實現(msi 或 msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target 接受 msi 或 msix(實際為 '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust、--tls-trust、--system-roots 和 --proxy 須與 --timestamp 一起使用"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test 和 --msix-compress 用於 .msix 輸出"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test 用於無簽章的安裝套件；使用 --key 時請去掉它"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate 接受 none，或 product-code,upgrade-code,language,platform 中的若干項"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} 給出了兩次"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' 是 Windows 的名稱；請給變數另取名稱"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D 需要 NAME=VALUE(實際為 '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i 會詢問每個答案；請只給出 -i 或選項之一"
+
+msgid "; its range is "
+msgstr "；其範圍是 "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' 不在 SecureCustomProperties 中"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty 必須是公共(大寫)屬性"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "所有代碼: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x 不以 PKCX 開頭"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x 不是最後一個條目"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "架構(x64、x86、arm64)"
+
+msgid "Choose"
+msgstr "請選擇"
+
+msgid "Command line"
+msgstr "命令行"
+
+msgid "Command line (lint)"
+msgstr "命令行(lint)"
+
+msgid "Common AppData"
+msgstr "公共 AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId 不是登錄格式的 GUID"
+
+msgid "Desktop shortcut?"
+msgstr "要建立桌面捷徑嗎?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "對話方塊(none、basic、minimal、installdir、features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "File、Component 或 Directory 表缺少標準列"
+
+msgid "Folder name under Program Files"
+msgstr "Program Files 下的資料夾名稱"
+
+msgid "Folder with the files to install"
+msgstr "要安裝的檔案所在的資料夾"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' 已被使用(第 {2} 行)；所有表中的 ID 必須互不相同"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "安裝資料夾([dir.INSTALLDIR] path)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "安裝對象(machine、user、dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "table.key 形式的鍵(package.version、dir.INSTALLDIR.path、...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' 屬於另一個元件"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' 不在 File 中"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' 不在 Registry 中"
+
+msgid "Korean dialogs as well as English?"
+msgstr "除英語外還要韓語對話方塊嗎?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} 低於較小 DiskId 的值"
+
+msgid "Leave without saving the changes?"
+msgstr "不儲存更改就退出嗎?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "需要接受的許可協議(.txt、.md、.rtf；無則為 -)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX 沒有使用者 AppData 的虛擬資料夾；應用執行時會在那裡建立所需內容"
+
+msgid "MSIX packages"
+msgstr "MSIX 套件"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: MSIX 套件需要什麼，以及不能包含什麼"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "捷徑的主程式(無則為 -)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "手冊: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "製造商"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "製造商(顯示在「已安裝的應用」中)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt 返回的 ECDSA 簽章長度錯誤"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "使用者可勾選的可選部分(子資料夾，用逗號分隔；無則為 -)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 權杖: 權杖中沒有帶該密鑰 CKA_ID 的憑證(請用 --cert 指定)"
+
+msgid "Paths"
+msgstr "路徑"
+
+msgid "Product name"
+msgstr "產品名稱"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode 和 UpgradeCode 是同一個 GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} 的前三個字段不高於之前的 {2}: Windows Installer 不會升級"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "捷徑開啟的程式(不建捷徑則為 -)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: 沒有該語言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是內置的；其他語言需要語言包 {2}.po)"
+
+msgid "Reference, "
+msgstr "參考，"
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "序號 {1} 不在任何 Media 行的範圍內(最後為 {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "序號 {1} 已被另一個檔案使用"
+
+msgid "Source file to write"
+msgstr "要寫入的源檔案"
+
+msgid "Source format"
+msgstr "源檔案格式"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source 必須指向類型 {1} 的 File 行"
+
+msgid "Start menu shortcut?"
+msgstr "要建立「開始」功能表捷徑嗎?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "「開始」功能表、程式、桌面和啟動項來自 [shortcut.*] 和 [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML 超出 rubrapack 讀取的子集，或缺少 `format`，或版本太新"
+
+msgid "Tables"
+msgstr "表"
+
+msgid "The TOML subset"
+msgstr "TOML 子集"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "不支援 UTF-16 大端檔案；請另存為 UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} 與舊版本的 {2} 不同: 此安裝套件不會替換它"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode 不是登錄格式的 GUID"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "值(文字、數字、true/false、[\"a\", \"b\"]；- 移除該鍵)"
+
+msgid "Variables"
+msgstr "變數"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Version ([define] VERSION)"
+msgstr "版本([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "版本與升級"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer 最多允許 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] 需要 '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] 不能放入合並模組；由合並它的安裝套件持有"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] 尚不支援(計劃在 {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] 不能放入 MSIX；添加 msi-only = true 可在不含它的情況下構建 MSIX"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: 合並模組中的 ID 最多 35 個字元(會附加模組的 GUID)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] 需要 ID: 請寫 [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] 不接受 ID: 請寫 [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml 中沒有 </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml 不是最後一個條目(不是 rubrapack 或 Windows 打包 API 寫出的安裝套件)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "不支援 [[...]] 表數組；請為每一項單獨寫 [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] 的 check 沒有作用: 目前不會執行它；請移除"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] 需要 do 和 undo(undo 也會復原失敗的 do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX 的 args 必須是純文字(不能有安裝時填入的 [...])"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: 在 MSIX 中由應用程式開啟檔案類型: target 必須是 [msix-app.*] 的可執行檔"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] 出現了兩次"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] 需要 ID: 請寫 [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id 和 typelib 只寫入 MSI；MSIX 不帶它們注冊類"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args 是程式用的；DLL 是被載入而不是被啟動"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate 在 dllhost 中執行 DLL；'{2}' 是程式"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading 用於 DLL；程式自行設定其單元"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version 和 typelib-file 需要 typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] 應放在 {2}；或設定 msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: 其來源必須是會放入安裝套件的檔案"
+
+msgid "[define] values must be strings"
+msgstr "[define] 的值必須是字串"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] 需要 '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] 需要 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] 需要 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] 需要 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] 有 {2} 個控制項；最多 64 個"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] 沒有 [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] 通過其他對話方塊被放在了它自己之後"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] 需要 ui = \"minimal\"、\"installdir\" 或 \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' 是 Windows 的名稱；請給 dir 另取 ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard 需要 rubrapack 的輔助 DLL，而合並模組不包含它"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] 需要一個功能"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX 會設定其所有變數(when)；請使用 msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: 其值指向 MSIX 無法提供的位置(不是 Windows 資料夾的包外資料夾，或安裝時才確定的部分)；請使用 msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: 資源管理器從 DLL 載入 {2} 處理常式；[com.{3}] 是程式"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows 只按電腦讀取屬性處理常式；安裝套件需要 scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: 預覽處理常式在 Windows 的 prevhost 中執行；請從 [com.{2}] 中去掉 app-id 和 surrogate"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX 只包含縮略圖和預覽處理常式(打包的屬性處理常式未向資源管理器提供任何值)；msi-only = true 可將其保留給 MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: MSIX 檔案類型屬於某個應用程式；請添加 [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: 類 {2} 不是此安裝套件的 [com.*](由處理常式的 DLL 提供)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: 在 MSIX 中，處理常式要麼共享全部類型，要麼都不共享(一個類型只屬於一個檔案類型關聯)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: 在 MSIX 中其類在代理中執行；[com.{2}] 中的 threading = \"sta\" 讓其視窗有消息循環(threading = {3} 時預覽可能保持空白)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: 在 MSIX 中其類型要麼全部在同一個 [assoc] 檔案類型中，要麼都不在"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: 其類是 msi-only([com.{2}])；MSIX 將沒有它的伺服器"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types 是檔案類型列表，如 [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] 應放在 {2}；或設定 msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] 需要 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] 需要一個功能: 請在此處或其 dir 上設定 'feature'"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX 會寫入其所有 INI 項(when)；請使用 msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: 其值含有 Windows Installer 在安裝時填入的部分([...])；MSIX 在構建時寫入該檔案"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] 需要 'on': 顯示該項的位置，如 [\".txt\"] 或 \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] 需要 'target'(它啟動的程式)，或帶 parent = \"{2}\" 的項(子功能表)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] 需要 'target': 該項啟動的程式"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: 子功能表不啟動任何程式: 請去掉 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: 子功能表的項顯示在其子功能表顯示的位置: 請去掉 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args 含有 Windows Installer 在安裝時填入的部分([...])；MSIX 只能包含固定文字"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: 其程式不在 MSIX 中(msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: 其值不能放入安裝套件的登錄"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": 沒有 [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on 是一個檔案類型或其列表，如 [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' 不是 [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' 必須是子功能表: 沒有 target 也沒有自己的 parent 的 [menu.*]"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] 應放在 {2}；或設定 msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] 需要一個功能: 請在此處或其 dir 上設定 'feature'"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}；或設定 msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args 必須是純文字(不能有安裝時填入的 [...])"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file 必須是 {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file 必須指向會放入安裝套件的檔案"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file 必須指向會放入安裝套件的程式"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types 是檔案類型列表，如 [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] 需要其 dir 有一個功能"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX 的 args 必須是純文字(不能有安裝時填入的 [...])"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: 在 MSIX 中協議開啟應用程式: target 必須是 [msix-app.*] 的可執行檔"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] 需要 'value'(或 remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR 不會到達 MSIX 之外；請使用 [assoc.*]、[protocol.*]、[com.*] 或 [handler.*]，或 msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: qword 值需要 rubrapack 的輔助 DLL，而合並模組不包含它"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX 只能包含 {2}\\Software 下的值"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX 既不移除值也不保留值(remove、keep)；請使用 msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX 會寫入其所有值(when)；請使用 msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: 其值含有 Windows Installer 在安裝時填入的部分([...])；MSIX 只能包含固定值"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" 需要 rubrapack 的輔助 DLL，而合並模組不包含它"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: 該鍵名或值名不能放入登錄配置單元"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] 需要一個功能: 請在此處或其 dir 上設定 'feature'"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true 不適用於 {2} 下的資料夾"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true 需要 rubrapack 的輔助 DLL，而合並模組不包含它"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX 的 args 必須是純文字(不能有安裝時填入的 [...])"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file 必須指向會放入安裝套件的程式"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX 只在桌面和「開始」功能表中有捷徑{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX 捷徑沒有 working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX 捷徑始終存在(when 用於 MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX 捷徑顯示其應用程式的標誌；icon 用於 MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX 的 args 必須是純文字(不能有安裝時填入的 [...])"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: 在 MSIX 中捷徑啟動應用程式: target 必須是 [msix-app.*] 的可執行檔"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX 的「開始」功能表項就是其應用程式，不接受 args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: 沒有此 ID 的對話方塊文字"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] 需要 [package] 中的 ui = \"basic\" 或其他對話方塊集"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "\\{1} 轉義不是 Unicode 標量值"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: 此安裝套件不能順利升級前一個"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "安裝套件的 `lint`: 對話方塊、代碼頁、文字規範化"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "MSIX 套件或套件組合的 `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "{1} 控制項沒有文字；請在旁邊放一個文字控制項"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "{1} 控制項需要 [property.{2}]，以其某個值作為預設值(靜默安裝會使用它)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "{1} 安裝套件不能寫入 HKLM；請使用 HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr ".msix 輸出需要一個指定可執行檔的 [msix-app.ID] 表"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr ".msix 輸出需要 [msix] 表(identity-name、publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr ".msm 輸出是合並模組，由帶 [module] 而非 [package] 的源檔案構建"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr ".txt、.md 或 .rtf 檔案；無則為 -"
+
+msgid "a PE file without a certificate table entry"
+msgstr "沒有憑證表條目的 PE 檔案"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN 從不通過命令行接收(他人可以看到)；請使用 --pin-env 或 --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "套件組合清單中有未知 Type 的 Package"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "套件組合清單中有缺少 FileName、Offset 或 Size 的 Package"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP 條目解壓縮後與其大小不符"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "ZIP 條目超過允許的大小"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ZIP 條目的 CRC-32 不匹配"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ZIP 條目的資料位於檔案之外"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "[module] 源檔案構建合並模組: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "二進制值是偶數位的十六進制數字，如 \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "沒有包的套件組合"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "路徑中的某個憑證含有 rubrapack 無法理解的關鍵擴展"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "路徑中的某個憑證由非 CA 憑證簽章"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "鏈只包含 [chain]、[chain-package.ID] 和 [define]，不能有 [{1}]；各安裝套件由其自己的源檔案構建"
+
+msgid "a chain holds at most %d packages"
+msgstr "鏈最多包含 {1} 個安裝套件"
+
+msgid "a chain needs [chain]"
+msgstr "鏈需要 [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "鏈至少需要一個 [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "Windows 不允許在名稱中使用的字元(/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "控制字元"
+
+msgid "a damaged PE optional header"
+msgstr "損壞的 PE 可選頭"
+
+msgid "a damaged PE section table"
+msgstr "損壞的 PE 節表"
+
+msgid "a damaged ZIP64 end record"
+msgstr "損壞的 ZIP64 結束記錄"
+
+msgid "a damaged hive bin"
+msgstr "損壞的配置單元 bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapack 的診斷"
+
+msgid "a disabled service cannot be started"
+msgstr "已禁用的服務無法啟動"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "dual 安裝套件無法在使用者變數和系統變數之間選擇"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "dual 安裝套件寫入 HKMU(按安裝方式為 HKLM 或 HKCU)，而不是 HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "dword 值是 0..4294967295(0x0..0xFFFFFFFF)的整數"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "此 rubrapack 不提供(或構建時未包含)的功能"
+
+msgid "a file larger than allowed"
+msgstr "超過允許大小的檔案"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "'{1}' 下的某個檔案名不是有效的 Unicode，無法打包"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "不含 / \\ : * ? \" < > | $ 的檔案名"
+
+msgid "a file's component or directory chain is broken"
+msgstr "檔案的元件或目錄鏈已損壞"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "字型通過指定它的 [font.*] 放入 MSIX"
+
+msgid "a hash the token signing does not know"
+msgstr "權杖簽章不認識的雜湊"
+
+msgid "a hive cell crosses its bin"
+msgstr "配置單元的單元格跨越了其 bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "rubrapack 無法讀取的配置單元版本或類型"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "已知資料夾本身('{1}')不能設定權限"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "許可協議需要 ui = \"minimal\"、\"installdir\" 或 \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "帶額外字段的本地頭(不是 rubrapack 或 Windows 打包 API 寫出的安裝套件)"
+
+msgid "a malformed central directory"
+msgstr "格式錯誤的中央目錄"
+
+msgid "a modification package has no applications of its own"
+msgstr "修改套件沒有自己的應用程式"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "修改套件需要 Windows 內部版本 18362 或更高版本: 請設定 [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "模組的 compress 為 \"none\"、\"mszip\" 或 \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "模組名稱是其在 ModuleID 中的 ID: 字母、數字和 _，最多 35 個字元"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "multi 值是非空的字串數組"
+
+msgid "a multi value is an array of strings"
+msgstr "multi 值是字串數組"
+
+msgid "a name ending with a space or a dot"
+msgstr "以空格或點結尾的名稱"
+
+msgid "a name longer than 255 bytes"
+msgstr "超過 255 字節的名稱"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "套件組合清單中指定的包不在套件組合中"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "缺少 Identity Name、Publisher、Version 和 ProcessorArchitecture(或 ResourceId)的包"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "套件組合清單中某個包的 Offset 或 Size 與其實際位置不符(或已被壓縮)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "包的標識與套件組合清單中的描述不同"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "套件組合中包的名稱必須是以 .msix 或 .appx 結尾的檔案名"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "密碼從不通過命令行接收(他人可以看到)；請使用 --pass-env 或 --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "按電腦安裝的安裝套件不寫入 HKCU(那會是安裝者的)；請使用 scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "不支援帶使用者名或密碼的代理"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "qword 值是整數，或 \"0x\" 加 1 到 16 位十六進制數字"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "單選控制項將按鈕縱向排列: height 每個值至少 12({1})"
+
+msgid "a record has more columns than its table"
+msgstr "某條記錄的列多於其表"
+
+msgid "a record is cut short"
+msgstr "某條記錄被截斷"
+
+msgid "a record names a string the pool does not have"
+msgstr "某條記錄引用了字串池中不存在的字串"
+
+msgid "a reserved device name"
+msgstr "保留的設備名"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "復原操作不能是異步的"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "協議名以小寫字母開頭，後跟小寫字母、數字、'+'、'-' 或 '.'(實際為 '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "InstallInitialize 和 RemoveExistingProducts 之間的腳本操作(錯誤 2613)"
+
+msgid "a section lies outside the file"
+msgstr "某個節位於檔案之外"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "服務名不能包含 '/' 或 '\\'(最多 256 個字元)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "安裝 .exe 由帶 [chain] 的源檔案構建；'{1}' 構建的是安裝套件(.msi、.msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "源檔案只能包含一個 [package] 或一個 [module]，不能兩者都有"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "通過 RP1xxx 檢查的源檔案不應遇到這些: 請附上源檔案報告"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "大小不一致的 stored ZIP 條目"
+
+msgid "a stream of the package cannot be read"
+msgstr "無法讀取安裝套件的某個流"
+
+msgid "a table has more than 32 columns"
+msgstr "某個表超過 32 列"
+
+msgid "a text control has no property"
+msgstr "文字控制項沒有屬性"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "與檔案 `with` 的值共用其元件: 請把 `when` 放在檔案上"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "值為 1 到 64 字節"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "與檔案 'with' 的值採用該檔案的功能"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "版本是用點分隔的 3 或 4 個數字，如 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account 必須是 LocalSystem、LocalService 或 NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "操作 '{1}' 已定義"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "該操作既不是標準操作，也不在 CustomAction 中"
+
+msgid "adds too many tables"
+msgstr "添加的表過多"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' 既不是此對話方塊集的頁面(RpWelcomeDlg{2}{3}{4})，也不是 [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias 屬於 kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias 必須是以 .exe 結尾的檔案名: 字母、數字、'.'、'_'、'-'(實際為 '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI 節不能包含 ']'，鍵不能包含 '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX 不能在臨時資料夾中放置檔案"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "一個應用程式只有一個 alias([msix-extension.{1}] 已是)"
+
+msgid "an empty name"
+msgstr "空名稱"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https 伺服器需要 --tls-trust <certificates> 或 --system-roots 來驗證"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "不支援 https:// 代理；請給出 http:// 代理(通過 CONNECT 存取 https 伺服器)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "舊式的 Authenticode 時間戳記(PKCS#9 counterSignature)，rubrapack 不檢查"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "選用套件或修改套件不聲明功能和虛擬化設定: 適用其主要套件的設定"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "x86 安裝套件只寫入 32 位登錄檢視"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "應用 '{1}' 不是 [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri 和 package-uri 須一起使用: .appinstaller 檔案和安裝套件將放在何處"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch 必須是 \"x64\"、\"arm64\" 或 \"x86\"(實際為 '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch 必須是 \"x64\"、\"x86\" 或 \"arm64\"(安裝程式自身的)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "參數 {1} 不是有效的 UTF-8(字節 {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "參數 {1} 不是有效的 Unicode(UTF-16 單元 {2})"
+
+msgid "array is not closed"
+msgstr "數組未閉合"
+
+msgid "arrays inside arrays are not supported"
+msgstr "不支援數組嵌套數組"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "數組只能包含字串或只能包含整數"
+
+msgid "at most %d languages besides English"
+msgstr "除英語外最多 {1} 種語言"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "最多 100 個 [msix-app.*] 表"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "最多 50 個 [action.*] 表(此檔案有 {1} 個)"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color 為 \"transparent\" 或 \"#RRGGBB\"，如 \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "'$(...)' 中的變數名錯誤"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner 必須是 .bmp 檔案(Windows Installer 只顯示 BMP)"
+
+msgid "build a package from a source file"
+msgstr "從源檔案構建安裝套件"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "從 {2} 源檔案構建 {1} 需要其自己的升級系列: 請在 [package] 中添加 {3} = \"{...}\""
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab 必須是 \"embed\" 或 \"external\""
+
+msgid "cannot be read"
+msgstr "無法讀取"
+
+msgid "cannot build the ClientHello"
+msgstr "無法構建 ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "無法將安裝套件打成套件組合: {1}"
+
+msgid "cannot create '%s'"
+msgstr "無法建立 '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "無法建立 '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "找不到 '{1}'；請用 `rubrapack new {2}` 建立"
+
+msgid "cannot make a default logo"
+msgstr "無法生成預設標誌"
+
+msgid "cannot make a key share"
+msgstr "無法生成密鑰共享"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "無法從 '{1}' 到 '{2}' 生成修補程式"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "無法從 '{1}' 到 '{2}' 生成轉換"
+
+msgid "cannot open the certificate store"
+msgstr "無法開啟憑證存儲"
+
+msgid "cannot read '%s'"
+msgstr "無法讀取 '{1}'"
+
+msgid "cannot read '%s' (%s)"
+msgstr "無法讀取 '{1}'({2})"
+
+msgid "cannot read package '%s'"
+msgstr "無法讀取安裝套件 '{1}'"
+
+msgid "cannot read source file '%s'"
+msgstr "無法讀取源檔案 '{1}'"
+
+msgid "cannot read that folder"
+msgstr "無法讀取該資料夾"
+
+msgid "cannot read the %s file '%s'"
+msgstr "無法讀取 {1} 檔案 '{2}'"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "無法讀取 PIN 檔案 '{1}'"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "無法讀取 '{2}' 旁邊的 cabinet '{1}'"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "無法讀取憑證檔案 '{1}'"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "無法讀取 '{1}' 中的憑證"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "無法讀取 '{1}' 中的憑證: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "無法讀取密鑰檔案 '{1}'"
+
+msgid "cannot read the password file '%s'"
+msgstr "無法讀取密碼檔案 '{1}'"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "無法讀取 '{2}' 旁邊的未壓縮檔案 '{1}'"
+
+msgid "cannot write %s"
+msgstr "無法寫入 {1}"
+
+msgid "cannot write '%s'"
+msgstr "無法寫入 '{1}'"
+
+msgid "cannot write '%s' to check it"
+msgstr "無法寫入 '{1}' 以進行檢查"
+
+msgid "cannot write resources.pri"
+msgstr "無法寫入 resources.pri"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "無法在 '{1}' 旁邊寫入功能表檔案"
+
+msgid "cannot write the resource package of %s"
+msgstr "無法寫入 {1} 的資源套件"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities 是名稱數組，如 [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "功能 '{1}' 不是 rubrapack 知道的(手冊中有列表)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "功能 '{1}' 需要 Windows 內部版本 17763 或更高版本"
+
+msgid "carriage return without a line feed"
+msgstr "沒有換行符的回車符"
+
+msgid "certificate file '%s': %s"
+msgstr "憑證檔案 '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "就地修改源檔案: 通過問題功能表或選項"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "檢查簽章: 結構、摘要、簽章，以及到受信任憑證的路徑"
+
+msgid "check a source or package without writing anything"
+msgstr "檢查源檔案或安裝套件而不寫入任何內容"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "請檢查源路徑(相對於源檔案)；若有意使用其他架構，請設定 any-arch = true"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "請檢查拼寫(消息會提示最接近的名稱)和表的鍵"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "類 {1} 已由 [com.{2}] 提供"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "類 {1} 也在 [msix-extension.{2}] 中"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class 必須是形如 {12345678-...} 的 GUID(實際為 '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "preflight = false 時 close-programs 不起作用"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs 必須是 \"ask\"、\"always\" 或 \"never\"(實際為 '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "列 {1} 的值類型錯誤"
+
+msgid "column %s is not valid UTF-8"
+msgstr "列 {1} 不是有效的 UTF-8"
+
+msgid "column %s may not be null"
+msgstr "列 {1} 不能為 null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "列 {1}: {2} 超出該列的範圍"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "列 {1}: {2} 個 UTF-16 單元，該列最多容納 {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "列 {1}: {2} 個字元，該列最多容納 {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "命令 '{1}' 尚未實現"
+
+msgid "command-line"
+msgstr "命令行"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "元件 {1} {2} 在 32 位和 64 位之間發生了變化: 按元件規則需要新 GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "元件 {1} {2} 已不存在(其資源隨舊版本一起移除)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "元件 {1} {2} 的鍵路徑現在是 {3} 而不是 {4}: 按元件規則需要新 GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid 必須是 GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress 必須是 \"none\"、\"mszip\"、\"mszip:0\" ... \"mszip:9\"、\"lzx\" 或 \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "條件中有未閉合的引號或不配對的括號"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "條件超過 240 個字元(rubrapack 會添加 \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config 包含 \"Name=value\" 字串(實際為 '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config 是 \"Name=value\" 字串的數組"
+
+msgid "contains a control character"
+msgstr "包含控制字元"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "包含 < > : \" / \\ | ? * 之一"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type 是媒體類型，如 \"image/png\"(實際為 '{1}')"
+
+msgid "control character"
+msgstr "控制字元"
+
+msgid "control character in a comment"
+msgstr "注釋中的控制字元"
+
+msgid "control character in a string"
+msgstr "字串中的控制字元"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "不支援日期和時間；請寫成字串"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when 需要大於 1 的 level(level 1 的功能本來就預設安裝)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "請定義該變數([define] 或 -D NAME=value)，或寫 $$ 表示字面的 $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "對話方塊 '{1}' 不是 [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "以 'Rp' 開頭的對話方塊 ID(以及 FilesInUse)屬於 rubrapack 自身"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' 位於其自身之內(路徑循環)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' 既不是 dir ID，也不是 Programs、Desktop、StartMenu 或 Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' 不是 dir ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' 未定義"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction 必須是 \"in\" 或 \"out\"(實際為 '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo 參數超過 255 個字元"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "不支援帶點的鍵；請將該鍵放到它自己的表中"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "轉儲安裝套件(MSI 表為 IDT)"
+
+msgid "duplicate primary key"
+msgstr "主鍵重複"
+
+msgid "empty arrays are not supported"
+msgstr "不支援空數組"
+
+msgid "ends with a space or a dot"
+msgstr "以空格或點結尾"
+
+msgid "error"
+msgstr "錯誤"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" 必須指向會放入安裝套件的 [file.*]"
+
+msgid "expected ',' or ']' in the array"
+msgstr "數組中應為 ',' 或 ']'"
+
+msgid "expected '=' after the key"
+msgstr "鍵後應為 '='"
+
+msgid "expected ']' to close the table name"
+msgstr "需要 ']' 來閉合表名"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "應為鍵、[table] 或注釋"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "副檔名 '{1}' 已有程式([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension 必須是 '.' 加小寫字母、數字、'_' 或 '-'(實際為 '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "preflight = false 時 extra-files 不起作用"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files 必須是 \"ask\"、\"keep\" 或 \"delete\"(實際為 '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "功能 {1} 已不存在: 裝有它的安裝會失去其中的內容"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "功能 '{1}' 是其自身的祖先"
+
+msgid "feature '%s' is not defined"
+msgstr "功能 '{1}' 未定義"
+
+msgid "feature parent '%s' is not defined"
+msgstr "功能的父項 '{1}' 未定義"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "檔案 '{1}' 已執行服務 '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "檔案 '{1}' 已注冊為字型"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "檔案 '{1}' 必須安裝在 Fonts 資料夾本身中(path = \"Fonts\" 的 [dir.*])"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "檔案 '{1}' 需要一個功能: 請在此處或其 dir 上設定 'feature'"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file 必須是 \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "檔案名為 {1} 個 UTF-16 單元；加上其 8.3 短名稱，MSI 最多容納 {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization 和 registry-virtualization = false 需要 Windows 內部版本 18362 或更高版本: 請設定 [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' 只有作為 .exe 或 .dll 才能提供 COM 類"
+
+msgid "files but no Media row"
+msgstr "有檔案但沒有 Media 行"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "請修正消息指出的值；ID 由字母、數字和 '_' 組成，在所有表中互不相同"
+
+msgid "floating-point numbers are not supported"
+msgstr "不支援浮點數"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "資料夾 '{1}' 需要一個功能: 請在此處或其 dir 上設定 'feature'"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "資料夾名為 {1} 個 UTF-16 單元；加上其 8.3 短名稱，MSI 最多容納 {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent 需要 parent"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "字型需要 scope = \"machine\"(當前為 {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} 需要更新的 rubrapack(此版本讀取 format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format 是整數: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "請給出 --pass-env 或 --pass-file，不能同時給出"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "請給出 --pin-env 或 --pin-file，不能同時給出"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "請為 [msix] 和 [msix-app.*] 提供所需內容，或用 msi-only = true 將該項保留給 MSI"
+
+msgid "give a file below this folder"
+msgstr "請給出此資料夾下的檔案"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "請給出直接位於程式資料夾中的檔案；無則為 -"
+
+msgid "give a folder below this one, such as dist"
+msgstr "請給出此資料夾下的資料夾，如 dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "請給出 1 到 128 字節的名稱"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "請給出全部三個標誌(logo-150、logo-44、store-logo)，或都不給"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "請給出 --key、--pkcs11 和 --key-store 之一"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "請給出程式資料夾的子資料夾，用逗號分隔；無則為 -"
+
+msgid "glob '%s' matches no file"
+msgstr "glob '{1}' 不匹配任何檔案"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "glob '{1}' 匹配了輸出檔案 '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "含有無法讀取的 MergeModule.CABinet 流"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "含有無法讀取的 MergeModule.CABinet"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "含有缺少標準列的 Module*Sequence 表"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "含有沒有名稱或格式未知的 ModuleConfiguration 項"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "含有缺少標準列的 ModuleConfiguration 表"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "含有缺少標準列的 ModuleSubstitution 表"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "含有指向 ModuleConfiguration 中不存在之項的 ModuleSubstitution 模板"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "含有帶條件的元件；MSIX 會安裝所有內容"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "含有缺少元件或 cabinet 條目的檔案"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "含有位於 TARGETDIR 之外、MSIX 無處安放的資料夾"
+
+msgid "has a table that cannot be read"
+msgstr "含有無法讀取的表"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "含有列與安裝套件不同的表"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "含有針對安裝套件中不存在的序列表的操作"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "含有元件，但安裝套件沒有 FeatureComponents 表"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "含有檔案，但沒有 MergeModule.CABinet 或 Directory 表"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "含有檔案，但沒有 MergeModule.CABinet 流"
+
+msgid "has files, but the package has no Media table"
+msgstr "含有檔案，但安裝套件沒有 Media 表"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "沒有 ModuleSignature: 不是合並模組"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "沒有 ProductCode 或 ProductVersion"
+
+msgid "has no Property table"
+msgstr "沒有 Property 表"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "含有基礎包和轉換都未定義的表的記錄"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "在 65001(UTF-8)以外的代碼頁中含有非 ASCII 文字"
+
+msgid "icon must be an .ico file"
+msgstr "icon 必須是 .ico 檔案"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: 檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id 必須是形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID: 模組自己的，在每個版本中保持不變"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name 必須是由 A-Z、a-z、0-9、'.' 和 '-' 組成的 3 到 50 個字元(實際為 '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "不支援內聯表；請使用 [kind.ID] 表"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "安裝到與第 {1} 行相同的路徑(Windows 名稱不區分大小寫{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "內部錯誤: 某個內置對話方塊的 Tab 順序已損壞；請報告"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "內部: 某個模組表沒有 _Validation 規則"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "內部: {1} 的某列沒有 _Validation 規則"
+
+msgid "invalid"
+msgstr "無效"
+
+msgid "invalid - %s"
+msgstr "無效 - {1}"
+
+msgid "is '.' or '..'"
+msgstr "是 '.' 或 '..'"
+
+msgid "is a reserved device name"
+msgstr "是保留的設備名"
+
+msgid "is empty"
+msgstr "為空"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "超過 255 個 UTF-16 單元"
+
+msgid "is not a Windows Installer database"
+msgstr "不是 Windows Installer 資料庫"
+
+msgid "is not a compound file"
+msgstr "不是複合檔案"
+
+msgid "is not valid UTF-8"
+msgstr "不是有效的 UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "保持升級代碼不變，提高版本號，保留仍存在檔案的元件代碼"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "鍵 '{1}' 在此表中設定了兩次(第一次在第 {2} 行)"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "鍵 '{1}' 不能以 '\\' 開頭或結尾，也不能含有空的部分"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "鍵 '{1}' 位於表之外；只有 'format' 能在第一個表之前"
+
+msgid "key file '%s': %s"
+msgstr "密鑰檔案 '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind 必須是 \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\" 或 \"context-menu\"(實際為 '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind 必須是 \"preview\"、\"thumbnail\" 或 \"property\"(實際為 '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind 必須是 registry、file、dir 或 component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels 是字串數組，每個值一個"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "語言 '{1}' 沒有語言包(源檔案旁的 lang/{2}.po，或 RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "語言 '{1}' 列出了兩次"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "語言 '{1}' 不在 [ui] languages 中"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "語言 '{1}' 缺少 {2} 條文字，第一條是 {3}: 請添加到其語言包(lang/{4}.po)，或給出 [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "語言 '{1}' 需要 [ui] langid-{2}(其 LANGID，用於自動選擇)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "語言 '{1}' 需要 [ui] name-{2}(在語言頁面上顯示的名稱)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" 不再使對話方塊變為韓語: 除非用 [ui] languages = [\"ko\"] 添加韓語，否則為英語"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language 必須是 \"ko-KR\" 或 \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language 必須是 \"neutral\"、\"en-US\" 或 \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages 包含形如 \"ko\" 或 \"zh_TW\" 的代碼(2 或 3 個小寫字母，可再加 _ 和地區的兩個大寫字母)(實際為 '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages 是語言代碼數組，如 [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages 需要對話方塊集(ui = \"basic\" 或其他)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch 必須是指向此安裝套件中 [file.*] 的 \"file:<ID>\""
+
+msgid "launch-args needs launch"
+msgstr "launch-args 需要 launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license 必須是 .txt、.md(以純文字顯示)或 .rtf 檔案"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} 行 {2}: 列 {3} 不是 NFC({4} 行{-5})；build --nfc 會將資料夾、檔案和捷徑名稱轉為 NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: 代碼頁 {1} 不是 65001: 不按 UTF-8 檢查文字，寬度只檢查 ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: 沒有問題\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: 請查看上面的問題\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "列出權杖或 Windows 憑證存儲可用於簽章的密鑰"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "標誌 '{1}' 和其 .scale-100 變體同時存在: 請保留一個"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "標誌 '{1}' 在縮放 {2} 下為 {3}x{4} 像素；必須是 {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "標誌 '{1}' 在縮放 {2} 下不是 PNG 檔案"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "標誌 '{1}' 為 {2}x{3} 像素；必須是 {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "標誌 '{1}' 不是 PNG 檔案"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "找不到標誌 '{1}'(也沒有 .scale-100 ... .scale-400 變體)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "標誌 '{1}': 帶縮放變體的標誌需要帶副檔名的 ASCII 檔案名"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package 是主要套件的標識名稱(實際為 '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher 和 modification = true 須與 main-package(此包所屬的包)一起使用"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher 是主要套件的發行者，如 \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "不能包含控制字元或 / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "不能以空格開頭，也不能以空格或點結尾"
+
+msgid "merge module '%s' not found"
+msgstr "找不到合並模組 '{1}'"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version 必須是形如 1.2.3 的版本"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version 必須有四個部分，如 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version 必須有四個部分，如 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "不匹配"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" 移除該鍵；不接受 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode 必須是 \"set\"、\"add\" 或 \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode 必須是 \"set\"、\"append\" 或 \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "ZIP 條目多於允許的數量或目錄所記錄的數量"
+
+msgid "more keys and values than allowed"
+msgstr "鍵和值多於允許的數量"
+
+msgid "more than 3 redirects"
+msgstr "重定向超過 3 次"
+
+msgid "more than 96 sections"
+msgstr "節超過 96 個"
+
+msgid "more than one source file ('%s')"
+msgstr "源檔案不止一個('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "存在多個權杖: 請用 --token-label 指定一個"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi 必須是 \"each\"、\"one\" 或 \"single\"(實際為 '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "不支援多行字串"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "不支援多行字串；請用 \\n 寫成一行"
+
+msgid "must be 1 to 64 bytes"
+msgstr "必須是 1 到 64 字節"
+
+msgid "name contains a control character"
+msgstr "名稱包含控制字元"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name 是包的標識名稱(實際為 '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "name 不是 ASCII，且缺少 summary-name；摘要的 Subject 將為 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "指向其 Directory 表中沒有的資料夾"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix 尚未實現: 請建立 MSI 源檔案並添加 [msix](參見手冊)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "沒有 'format = {1}' 行: 這是 rubrapack 0.18 或更早格式的源檔案，此版本無法讀取(現在路徑以 $(ProgramFiles) 或 $(INSTALLDIR) 開頭)；參見手冊的 Source format"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "未給出 --trust: 簽章驗證通過，但沒有說明信任誰"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "密鑰檔案(或 --cert 檔案)中沒有屬於該密鑰的憑證"
+
+msgid "no control characters"
+msgstr "不含控制字元"
+
+msgid "no keys\n"
+msgstr "沒有密鑰\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "沒有主程式，因此沒有捷徑: 無"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "沒有伺服器名稱，或超過 255 字節"
+
+msgid "no string pool: not a transform"
+msgstr "沒有字串池: 不是轉換"
+
+msgid "no table '%s' in '%s'"
+msgstr "'{2}' 中沒有表 '{1}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove 使「修改」(其中的移除)成為移除產品的唯一方式: 不能與 no-modify 同時使用"
+
+msgid "not a PE file (no MZ header)"
+msgstr "不是 PE 檔案(沒有 MZ 頭)"
+
+msgid "not a PE file (no PE header)"
+msgstr "不是 PE 檔案(沒有 PE 頭)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "不是 PEM、PKCS#8 或 PKCS#12 檔案"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "不是 ZIP 壓縮檔(沒有結束記錄)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "不是 ZIP 壓縮檔(太短)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "不是 rubrapack 接受的代理 URL(http://host:port)"
+
+msgid "not a registry hive"
+msgstr "不是登錄配置單元"
+
+msgid "not a valid number"
+msgstr "不是有效的數字"
+
+msgid "not a value"
+msgstr "不是值"
+
+msgid "not a value (strings need quotes)"
+msgstr "不是值(字串需要引號)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "不是 rubrapack 接受的 http:// 或 https:// URL"
+
+msgid "not valid UTF-8"
+msgstr "不是有效的 UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "未檢查(請指定 --trust 或 --system-roots)"
+
+msgid "not-present"
+msgstr "不存在"
+
+msgid "nothing changed\n"
+msgstr "沒有更改\n"
+
+msgid "number out of range"
+msgstr "數字超出範圍"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "不支援八進制和二進制數；請使用十進制或 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" 用於 HKLM、HKCU 和 HKMU(類由 [assoc.*]、[com.*] 等處理)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" 會移除鍵及其下所有內容: '{1}' 不是 Software 下產品自己的鍵"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" 在移除時移除整個鍵；不接受 '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "在 Windows 上 `keys list` 顯示憑證存儲"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "在 Windows 上通過憑證存儲使用權杖(--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on 用於 remove = true(何時移除該鍵)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on 必須是 \"install\" 或 \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on 必須是 \"install\"、\"uninstall\" 或 \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: 每項是檔案類型('.' 加小寫字母、數字、'_' 或 '-')、\"*\"(所有檔案)、\"folder\"、\"background\"(資料夾的空白處)、\"drive\" 或 \"assoc:<ID>\"(實際為 '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "只有單選和組合框控制項接受 labels"
+
+msgid "only radio and combo controls take values"
+msgstr "只有單選和組合框控制項接受 values"
+
+msgid "out of memory"
+msgstr "記憶體不足"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "輸出 '{1}': rubrapack 寫出 .msi、.msm、.msix、.msixbundle 以及鏈的安裝 .exe"
+
+msgid "package '%s' %s"
+msgstr "安裝套件 '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "找不到安裝套件 '{1}'"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent 必須是另一個產品的 upgrade-code，而不是此安裝套件自己的"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent 必須是主產品的 upgrade-code，即形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path 必須是用 '/' 的 \"$(Base)/relative/path\"(Base 是 ProgramFiles 等資料夾或 dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path 必須以 Windows 資料夾開頭(如 $(ProgramFiles) 或 $(System))"
+
+msgid "paths"
+msgstr "路徑"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type 必須是 \"image\"、\"text\"、\"audio\"、\"video\"、\"compressed\"、\"document\"、\"system\" 或 \"application\"(實際為 '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "權限需要 scope = \"machine\"(當前為 {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports 必須是 1-65535 內的端口或範圍，如 \"8000-8100\"(實際為 '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "輸出隨機 GUID，或 rubrapack 由文字推導出的 GUID"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "輸出源檔案的 JSON Schema(供能補全和檢查鍵的編輯器使用)"
+
+msgid "print the version"
+msgstr "輸出版本"
+
+msgid "print this help, or one command's usage"
+msgstr "輸出此幫助，或某個命令的用法"
+
+msgid "product-code must be a GUID"
+msgstr "product-code 必須是 GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile 必須是 \"all\"、\"domain\"、\"private\" 或 \"public\"(實際為 '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' 已屬於 [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' 也屬於 [assoc.{2}]: 檔案類型和 COM 類需要兩個名稱"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 description、target、icon 或 args 不同"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id 必須由字母、數字、'.'、'_' 或 '-' 組成，不以數字開頭，最多 39 個(實際為 '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "屬性 '{1}' 已屬於控制項 '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "屬性 '{1}' 與某個 dir 或功能同名"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "屬性 '{1}' 已定義(第 {2} 行)"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "屬性 '{1}' 已被搜索(第 {2} 行)"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "屬性 '{1}' 由 rubrapack 或安裝程式設定，不能在此定義"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "屬性 '{1}' 必須是您自己的公共名稱(大寫)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "屬性 '{1}' 必須是公共名稱: 大寫字母、數字和 '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol 必須是 \"tcp\" 或 \"udp\"(實際為 '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher 是安裝套件的發行者，如 \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher 必須是簽章憑證的使用者，如 \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher 不能帶 unsigned-test OID；--unsigned-test 會添加它"
+
+msgid "quoted keys are not supported"
+msgstr "不支援帶引號的鍵"
+
+msgid "quoted table names are not supported"
+msgstr "不支援帶引號的表名"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot 必須是 \"suppress\" 或 \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true 用於 on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "升級移除此版本時 recursive = true 從不執行；不接受 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true 會移除資料夾及其全部內容；不接受 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} 高於此安裝套件的版本 {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' 必須是形如 1.2.3 的版本"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message 需要 refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "registry '{1}' 移除一個值；沒有需要保護的內容"
+
+msgid "registry value '%s' needs a feature"
+msgstr "登錄值 '{1}' 需要一個功能"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true 在安裝時移除該值；不接受 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons 需要清理任務: 請去掉 cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces 最多包含 16 個升級代碼"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces 包含升級代碼，即形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID(實際為 '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces 是升級代碼數組，如 [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces 中 {1} 列出了兩次"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces 指定了 {1}，它是此安裝套件自己的 upgrade-code 或其 parent"
+
+msgid "required property %s is missing"
+msgstr "缺少必需屬性 {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "復原孿生操作必須位於 {1} 之前({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root 必須是 HKLM、HKCR 或 HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root 必須是 HKLM、HKCU、HKCR 或 HKMU(實際為 '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: 診斷代碼的含義。按範圍列出的代碼:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: 回答幾個問題即可生成源檔案(按 Enter 採用 [ ] 中的值)。\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "請執行 `rubrapack help <command>`；檢查路徑以及輸出資料夾是否存在"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run 必須是指向此安裝套件中 [file.*] 的 \"file:<ID>\""
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}'(機器 0x{2})無法在此安裝套件的機器上執行"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' 不是程式(.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: 檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "請將源檔案儲存為 UTF-8(或帶 BOM 的 UTF-16)，行尾為 LF 或 CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "協議 '{1}' 已有程式([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope 必須是 \"machine\"、\"user\" 或 \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl 必須是 SDDL 字串，如 \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "搜索屬性 '{1}' 必須是您自己的公共名稱(大寫)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "請查看消息；用 rubrapack 重新構建可修復其中大多數"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "序號 {1} 不在 {2}({3})之後"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "將某個操作排在包和模組都不執行的操作旁邊"
+
+msgid "service name '%s' is already used"
+msgstr "服務名 '{1}' 已被使用"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "服務需要 scope = \"machine\"(當前為 {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "捷徑名稱為 {1} 個 UTF-16 單元；加上其 8.3 短名稱，MSI 最多容納 {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "為 PE 檔案、MSI 安裝套件、MSIX 套件或套件組合簽章"
+
+msgid "signed %s\n"
+msgstr "已簽章 {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "源 '{1}' 是目錄；多個檔案請使用 [files.ID]"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "源 '{1}' 是符號連結；不跟隨連結"
+
+msgid "source '%s' is not a regular file"
+msgstr "源 '{1}' 不是普通檔案"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "構建安裝套件期間源檔案 '{1}' 發生了變化"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "源檔案 '{1}' 大於 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "找不到源檔案 '{1}'"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source 必須是 \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source 必須是 .msi 安裝套件"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "源路徑 '{1}' 必須相對於源檔案"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "源路徑使用 '/'，而不是 '\\\\'(實際為 '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: 檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start 必須是 auto、demand 或 disabled"
+
+msgid "string is not closed on this line"
+msgstr "字串在此行未閉合"
+
+msgid "string lengths exceed the string data"
+msgstr "字串長度超出字串資料"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "摘要資訊目前還不能以 IDT 顯示"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name 必須是 ASCII(摘要資訊只能包含 ASCII)"
+
+msgid "table %s %s"
+msgstr "表 {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "表 '{1}' 不可讀"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "表 [{1}{2}{3}] 定義了兩次(第一次在第 {4} 行)"
+
+msgid "table name expected"
+msgstr "應為表名"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "表名最多兩部分: [kind] 或 [kind.ID]"
+
+msgid "tables"
+msgstr "表"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "表和鍵: 未知的表或鍵、缺少必需項、存在功能時沒有功能的項"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "不接受配置(沒有 ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "目標 '{1}' 不存在"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target 必須是 \"dir:<ID>\"、\"file:<ID>\" 或 \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target 必須是指向此安裝套件中 [file.*] 的 \"file:<ID>\""
+
+msgid "target name '%s' %s"
+msgstr "目標名稱 '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: 檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' 已被 [msix-extension.{2}] 使用"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id、display-name 和 enabled 屬於 kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "該檔案已存在；請另取名稱"
+
+msgid "that folder holds no files"
+msgstr "該資料夾中沒有檔案"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "FilesInUse 對話方塊需要 ListBox 表，哪怕是空的(錯誤 2205；該對話方塊會被跳過)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN 含有權杖不接受的字元或長度"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN 已過期: 請先在權杖上更改"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN 已鎖定(錯誤次數過多)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode 是舊版本的: 這是次要升級(REINSTALLMODE)，而不是 rubrapack 構建的主要升級"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "該 UTF-16 檔案不是有效的 UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP 中央目錄位於檔案之外"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "應用程式 ID '{1}' 會成為 Application Id: 只能有字母和數字，不以數字開頭"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "該壓縮檔不像 MSIX 套件那樣以 ZIP64 結束記錄結尾"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "該壓縮檔沒有 ZIP64 結束記錄"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "套件組合清單中沒有 Identity Name、Publisher 和 Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "中央目錄位於壓縮檔之外"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "憑證含有 rubrapack 無法理解的關鍵擴展"
+
+msgid "the certificate has expired"
+msgstr "憑證已過期"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "該憑證是 CA 憑證，而不是簽章憑證"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "該憑證不用於代碼簽章(沒有代碼簽章擴展密鑰用法)"
+
+msgid "the certificate is not valid yet"
+msgstr "憑證尚未生效"
+
+msgid "the certificate path is longer than 8"
+msgstr "憑證路徑長度超過 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "憑證表中沒有 Authenticode 簽章"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "憑證表不在檔案末尾"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "憑證的密鑰用法不允許數字簽章"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "憑證的使用者無法寫成 MSIX 發行者"
+
+msgid "the chunked response is malformed"
+msgstr "分塊響應格式錯誤"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "命令行: 未知的命令或選項、無法讀寫的檔案、簽章、轉換無法承載的差異"
+
+msgid "the connection has failed"
+msgstr "連接失敗"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "嵌入的 cabinet 使安裝套件達到 2 GiB 或以上，Windows Installer 無法開啟；請使用 cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "該條目不在中央目錄中"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "錯誤對話方塊 '{1}' 需要名為 {3} 的 {2} 控制項(錯誤 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "可執行檔 '{1}' 必須是 .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "可執行檔的資料夾沒有通向已知位置"
+
+msgid "the file is not signed"
+msgstr "該檔案未簽章"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "該檔案已簽章；rubrapack 不會重複簽章或替換簽章"
+
+msgid "the file is too large to sign"
+msgstr "檔案太大，無法簽章"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "該檔案需要 [package] 表(合並模組則為 [module])"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "該檔案在簽章後被更改(摘要不匹配)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "要安裝的檔案: 找不到、是資料夾、是連結、glob 無匹配、其他架構的程式、名稱太長"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "生成的表違反了 Windows Installer 的規則"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "配置單元未正常關閉(需要其記錄)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "配置單元基本塊的校驗和不匹配"
+
+msgid "the hive's bins lie outside the file"
+msgstr "配置單元的 bin 位於檔案之外"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "已安裝應用列表中的圖示是 [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "在回答所有問題之前輸入已結束；沒有寫入任何內容"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "密鑰檔案大於 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "該密鑰既不是 RSA 也不是 EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "該庫不是 PKCS#11 模組(沒有 C_GetFunctionList，或為版本 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "清單中沒有 Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "無法讀取清單的 Identity 以得到包全名"
+
+msgid "the merge module %s"
+msgstr "合並模組 {1}"
+
+msgid "the name %s"
+msgstr "名稱 {1}"
+
+msgid "the package is not signed"
+msgstr "安裝套件未簽章"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "安裝套件未簽章(沒有 AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "安裝套件已簽章；rubrapack 不會重複簽章或替換簽章"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "安裝套件已簽章；rubrapack 只為未簽章的安裝套件簽章(且從不重複簽章)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "安裝套件使用了其外部的 cabinet，.msi 的簽章不涵蓋它們；請用嵌入的 cabinet 構建，或用 --allow-unsigned-cabs 仍然簽章"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "安裝套件的內容與其簽章不符(簽章後被更改)"
+
+msgid "the package's directory cannot be read"
+msgstr "無法讀取安裝套件的目錄"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "套件組合中的包須有相同的 Name、Publisher 和 Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "代理要求密碼(407)，rubrapack 不支援"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "代理未響應隧道請求"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "代理在答複 CONNECT 後又發送了資料"
+
+msgid "the redirect location is too long"
+msgstr "重定向位置太長"
+
+msgid "the request could not be sent"
+msgstr "無法發送請求"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "響應的 Content-Length 格式錯誤或相互矛盾"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "響應同時有 Content-Length 和 chunked(拒絕: 存在請求走私風險)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "響應大於 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "響應使用了 chunked 以外的傳輸編碼"
+
+msgid "the same condition is already required (line %u)"
+msgstr "已要求相同的條件(第 {1} 行)"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "不提問的等效命令:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "伺服器沒有以 HTTP/1.x 響應"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "伺服器從 https 重定向到 http(已拒絕)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "伺服器的 CertificateVerify 簽章驗證失敗"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "伺服器的憑證不用於 TLS 伺服器(其擴展密鑰用法)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "伺服器的簽章方案與其憑證的密鑰不符"
+
+msgid "the signature does not verify"
+msgstr "簽章驗證失敗"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "無法用簽章者的憑證驗證簽章"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "簽章條目按 ZIP64 方式描述；Windows 從 ZIP32 字段讀取其位置"
+
+msgid "the signature is not DER"
+msgstr "簽章不是 DER"
+
+msgid "the signature streams cannot be read"
+msgstr "無法讀取簽章流"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "簽章屬性與簽章內容不符"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "簽章者的憑證不用於代碼簽章"
+
+msgid "the source file's encoding"
+msgstr "源檔案的編碼"
+
+msgid "the system random source failed"
+msgstr "系統隨機數源失敗"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "Tab 順序(Control_Next)不是從 Control_First 開始遍歷其 {1} 個控制項的一個循環(Windows Installer 會以錯誤 2809 或 2810 停止)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "時間戳記伺服器返回了 HTTP 錯誤"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "時間戳記伺服器的憑證不用於時間戳記"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "時間戳記伺服器的時間不在簽章憑證的有效期內"
+
+msgid "the token does not say what kind of key it is"
+msgstr "權杖沒有說明密鑰的類型"
+
+msgid "the token is not present"
+msgstr "權杖不存在"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "權杖返回的 ECDSA 簽章長度錯誤"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "權杖的 EC 密鑰對應的憑證不是 EC 憑證"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "權杖的簽章無法用該憑證驗證(密鑰與憑證不配對)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "受信任的憑證已過期或尚未生效"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "未簽章屬性格式錯誤，或含有多個時間戳記"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "這裡沒有這個檔案"
+
+msgid "there is no such folder here"
+msgstr "這裡沒有這個資料夾"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "此 rubrapack 構建時未包含功能表部件: [menu.*] 項不會出現在 Windows 11 功能表中"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "此 rubrapack 構建時未包含安裝程式(nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading 必須是 \"sta\"、\"mta\"、\"both\" 或 \"neutral\"(實際為 '{1}')"
+
+msgid "timestamp: "
+msgstr "時間戳記: "
+
+msgid "too many languages for one bundle"
+msgstr "一個套件組合中的語言過多"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "resources.pri 中的本地化文字和標誌縮放過多"
+
+msgid "too many packages in the bundle"
+msgstr "套件組合中的包過多"
+
+msgid "trusted"
+msgstr "受信任"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "套件組合中有兩個同一架構的包"
+
+msgid "two packages of one name in a bundle"
+msgstr "套件組合中有兩個同名的包"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "套件組合中有兩個 ResourceId 相同的資源套件"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type 必須是 string、expand、dword、qword、binary 或 multi(實際為 '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type 必須是 text、checkbox、edit、radio 或 combo(實際為 '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version 是十六進制的 major.minor，如 \"1.0\"(實際為 '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types 和 verb 屬於 kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: 每項是 \".ext\" 或 \"*\"(所有檔案)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: 每項是 '.' 加小寫字母、數字、'_' 或 '-'(實際為 '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" 讓使用者選擇 dir '{2}' 的資料夾，但該 dir 不存在(請設定 [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" 需要可供選擇的 [feature.*] 表"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui 必須是 none、basic、minimal、installdir 或 features(實際為 '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "值後面有意外的文字"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "未知命令 '{1}'(參見 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "未知的轉義 \\{1}(含反斜槓的文字請用 '...')"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "未知的 inspect 選項(請使用表名、--summary、--files 或 --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "[{2}{3}{4}] 中的未知鍵 '{1}'{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "未知或不完整的 {1} 選項 '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "未知的表 [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "將安裝套件解壓縮到新目錄，按安裝後的布局排列"
+
+msgid "unsupported - %s"
+msgstr "不支援 - {1}"
+
+msgid "untrusted"
+msgstr "不受信任"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* 鍵需要 appinstaller-uri 和 package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false 用於 on = \"uninstall\" 或 \"both\"(安裝永遠不是升級所做的移除)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code 必須是形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "用法: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "用法: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (套件組合則為列表)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "用法: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "用法: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "用法: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "用法: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "用法: rubrapack inspect <file.cab> (不帶表或選項)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "用法: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "用法: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "用法: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "用法: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "用法: rubrapack inspect <setup.exe> (不帶表或選項)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "用法: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "用法: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "用法: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "用法: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "用法: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (固定模板 <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]；也接受 .rpk 名稱"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "用法: rubrapack schema (源檔案的 JSON Schema，輸出到 stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "用法: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "用法: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "path 中請使用 '/'"
+
+msgid "use a full rubrapack build or another way"
+msgstr "請使用完整的 rubrapack 構建或其他方式"
+
+msgid "used by more than one component"
+msgstr "被多個元件使用"
+
+msgid "value '%s' is listed twice"
+msgstr "值 '{1}' 列出了兩次"
+
+msgid "value missing"
+msgstr "缺少值"
+
+msgid "values and labels are strings"
+msgstr "values 和 labels 是字串"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values 是 1 到 32 個字串的數組"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "值: ID、GUID、版本、超出範圍的數字、對不存在之物的引用"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "變數 '{1}' 未定義([define] 或 -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "變數名 '{1}' 不能包含 '='，也不能以 = + - ! * 開頭"
+
+msgid "variables"
+msgstr "變數"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "變數: 沒有值的 $(NAME)、未閉合的 $(、在不能出現的位置使用 Windows 名稱或 dir ID"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "版本 '{1}' 必須是 a.b.c 或 a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "版本 '{1}' 必須是 a.b.c 或 a.b.c.d，且 a、b <= 255，c、d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" 不能與 64 位安裝套件的檔案 'with'"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view 必須是 \"32\" 或 \"64\""
+
+msgid "warning"
+msgstr "警告"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "診斷代碼的含義、使用它的消息、處理方法，以及手冊中詳細說明的位置"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with 必須是 \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: 檔案 '{1}' 不是此安裝套件的 [file.*]"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "沒有 --pkcs11 時，`keys list` 顯示 Windows 憑證存儲"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' 不是 dir ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "寫出修補程式(.msp): 將已安裝的基礎版本更新到目標的檔案和行"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "寫出源檔案(.toml；也可用 .rpk 名稱): 由問答或選項給出的答案、固定模板或現有 MSI 生成"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "寫出轉換(.mst): 將一個安裝套件變為另一個的內容"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "請按手冊所示的普通方式寫出表或值"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "請不帶 '[~]' 寫出值；mode = \"append\" 或 \"prepend\" 會添加它"
+
+msgid "wrote %s\n"
+msgstr "已寫入 {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width 最多為 370(頁面寬度)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height 最多為 234(按鈕上方的線)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< 上一步(&B)"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "下一步(&N) >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "安裝(&I)"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "完成(&F)"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "確定"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "是(&Y)"
+
+msgctxt "installer"
+msgid "No"
+msgstr "否(&N)"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "重試(&R)"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "忽略(&I)"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "中止(&A)"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "退出(&X)"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "瀏覽(&R)..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "歡迎使用 [ProductName] 安裝程式"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "此程式將在您的電腦上安裝 [ProductName]。按一下「下一步」繼續。"
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "許可協議"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "請閱讀以下許可協議。"
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "我接受許可協議中的條款(&A)"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "安裝資料夾"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "請選擇安裝 [ProductName] 的資料夾。"
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "安裝到(&T):"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "更改資料夾"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "請瀏覽到要安裝的資料夾。"
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "查找範圍(&L):"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "資料夾名稱(&F):"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "向上"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "新建資料夾"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "選擇功能"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "請選擇要安裝的功能。"
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "重置(&S)"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "磁碟使用情況(&D)"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "磁碟空間"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "所選功能需要的空間，以及可用的空間。"
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "準備安裝"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "按一下「安裝」開始安裝 [ProductName]。"
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "正在安裝 [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "請稍候。"
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "狀態:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "安裝完成"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "已安裝 [ProductName]。"
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "正在移除 [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "移除完成"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "已移除 [ProductName]。"
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "已取消移除"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "已取消移除。您的電腦沒有任何更改。"
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "移除失敗"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "移除因錯誤而終止，並已復原。該產品仍然已安裝。"
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "已取消安裝"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "已取消安裝。您的電腦沒有任何更改。"
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "安裝失敗"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "安裝因錯誤而終止，並已復原。您的電腦沒有任何更改。"
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "要取消 [ProductName] 的安裝嗎?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "檔案正在使用"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "以下程式正在使用要替換的檔案。按一下「繼續」立即替換：已開啟的程式在重新開啟之前繼續使用舊檔案，之後開啟的程式使用新檔案。無需重新啟動。"
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "以下程式正在使用要替換的檔案。按一下「繼續」立即替換：已開啟的程式在重新開啟之前繼續使用舊檔案，之後開啟的程式使用新檔案。最後 Windows 可能會要求重新啟動。"
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "繼續(&C)"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "磁碟空間不足"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "沒有足夠的空間進行此安裝。請釋放一些空間，或選擇其他位置。"
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "維護 [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "請選擇要執行的操作。"
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "修復(&P)"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "恢復丟失或損壞的檔案和設定。"
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "移除(&R)"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "從此電腦中移除 [ProductName]。"
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "移除 [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "按一下「移除」將從此電腦中移除 [ProductName]。若要保留，請按一下「上一步」或「取消」。"
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "按一下「移除」將從此電腦中移除 [ProductName]。它的設定和資料也會一並移除，且無法恢復。若要保留，請按一下「上一步」或「取消」。"
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "要從此電腦中移除 [ProductName] 嗎?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "要從此電腦中移除 [ProductName] 嗎? 它的設定和資料也會一並移除，且無法恢復。"
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "無法安全地安裝 [3]: [1] 不是資料夾，或者安裝程式無法移除其中的檔案。請先移除 [3]([2])，然後重新安裝。"
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "無法安全地升級 [3]: 已安裝的版本 [1] 丟失了快取的安裝套件，因此無法在此移除。請先用原來的安裝套件移除該版本([2])，然後重新安裝。"
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "安裝已停止: 資料夾 [1] 已存在，但不歸管理員所有，或者通過連結指向了其他位置。請選擇其他資料夾，或請管理員先將其移除。"
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "啟動 [ProductName](&L)"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "儲存記錄(&S)..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "顯示完整記錄(&L)"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "無法將安裝記錄儲存到 [1]。"
+
+msgctxt "installer"
+msgid "Change"
+msgstr "更改(&C)"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "選擇要安裝的功能。"
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "安裝範圍"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "請選擇誰可以使用 [ProductName]。"
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "僅限我(&M)"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "此電腦上的所有使用者(&E) - 需要管理員權限"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "語言"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "請選擇安裝程式的語言。"
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "正在搜索已安裝的應用程式"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "正在計算所需空間"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "正在計算所需空間"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "正在建立資料夾"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "正在建立捷徑"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "正在移除服務"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "正在建立檔案副本"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "正在計算所需空間"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "正在搜索相關的應用程式"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "正在準備操作:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "正在複製新檔案"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "正在安裝新服務"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "正在驗證安裝"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "正在檢查啟動條件"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "正在從舊版本遷移功能選擇"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "正在移動檔案"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "正在修補檔案"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "正在更新元件注冊"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "正在發行產品功能"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "正在發行產品資訊"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "正在注冊類伺服器"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "正在注冊副檔名"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "正在注冊字型"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "正在注冊 MIME 資訊"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "正在注冊產品"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "正在注冊程式標識符"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "正在注冊使用者"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "正在更新環境變數"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "正在移除舊版本"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "正在移除檔案"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "正在移除資料夾"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "正在移除 INI 檔案項"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "正在移除登錄值"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "正在移除捷徑"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "正在復原操作:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "正在移除備份檔案"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "正在啟動服務"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "正在停止服務"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "正在取消發行產品功能"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "正在取消注冊類伺服器"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "正在取消注冊副檔名"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "正在取消注冊字型"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "正在取消注冊 MIME 資訊"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "正在取消注冊程式標識符"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "正在更新環境變數"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "正在寫入 INI 檔案值"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "正在寫入登錄值"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] 僅為當前使用者安裝(MSIINSTALLPERUSER=1)。"
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "已安裝相同或更新版本的 [ProductName]。"
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "此安裝套件無法升級已安裝的舊版本 [ProductName]。請先將其移除，然後重新執行此安裝:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "複製檔案"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "移除檔案"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "修補檔案"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "建立資料夾"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "移除資料夾"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "寫入登錄值"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "移除登錄值"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "移除登錄項"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "建立捷徑"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "移除捷徑"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "安裝服務"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "控制服務"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "寫入 INI 值"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "設定環境變數"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "注冊字型"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "取消注冊字型"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "執行操作"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "此安裝程式已損壞，請重新下載。"
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "這些程式已經安裝。請選擇要執行的操作。"
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "修復(&P)"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "移除(&R)"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "取消"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "要從此電腦中移除這些程式嗎?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "已移除這些程式。"
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "有程式無法移除。"
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "安裝程式無法建立臨時資料夾。"
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "無法修復 {1}(錯誤 {2})。"
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "無法安裝 {1}(錯誤 {2})。其後的程式均未安裝。"
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "已修復這些程式。"
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "安裝完成。"
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "此資料夾中已有檔案或資料夾。移除 [ProductName] 時，此資料夾中的所有內容都會被移除 - 包括現在已有的內容。選擇空資料夾或新資料夾更安全。"
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "選擇其他資料夾(&C)"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "使用此資料夾(&U)"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] 個程式正在使用 [3] 的檔案:\r\n[2]\r\n要全部關閉嗎?\r\n\r\n是: 全部關閉並繼續(未儲存的工作可能會丟失)。\r\n否: 不關閉並繼續(已開啟的程式在重新開啟之前繼續使用舊檔案)。\r\n取消: 停止。"
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: 已停止，因為有 [1] 個程式正在使用其檔案:\r\n[2]請關閉這些程式後重試，或者指定 RPCLOSE=yes(全部關閉並繼續)或 RPCLOSE=no(不關閉並繼續)。"
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[3] 的資料夾中有 [1] 個項目不是隨它安裝的:\r\n[2]\r\n也要移除它們嗎?\r\n\r\n是: 與 [3] 一起移除(無法復原)。\r\n否: 移除 [3]，保留它們。\r\n取消: 停止。"
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: 已停止，因為其資料夾中有 [1] 個項目不是隨它安裝的:\r\n[2]請指定 RPEXTRA=delete(一併移除)或 RPEXTRA=keep(保留)，然後重新移除。"

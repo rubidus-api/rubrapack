@@ -95,17 +95,23 @@ bool ir_check_id(ctx_t *c, const rp_ttable_t *t, size_t max) {
 
 // ---- keys ------------------------------------------------------------------------------------
 
-// "text-ko" -> "ko" when `key` is `base` + "-" + a language code (2 or 3 lower-case letters), RFC-0012.
+// A language code: 2 or 3 lower-case letters, and for a region's own variant an underscore and the
+// region's two capitals, as gettext names its files ("ko", "zh_TW", "pt_BR"). It goes into
+// property names, so nothing else.
+bool ir_lang_code_ok(const char *code) {
+    size_t m = strlen(code), l = 0;
+    while (l < m && code[l] >= 'a' && code[l] <= 'z') ++l;
+    if (l < 2 || l > 3) return false;
+    if (l == m) return true;
+    return m == l + 3 && code[l] == '_' && code[l + 1] >= 'A' && code[l + 1] <= 'Z' && code[l + 2] >= 'A' && code[l + 2] <= 'Z';
+}
+
+// "text-ko" -> "ko" when `key` is `base` + "-" + a language code (ir_lang_code_ok), RFC-0012.
 const char *ir_lang_of_key(const char *key, const char *base) {
     size_t n = strlen(base);
     if (strncmp(key, base, n) != 0 || key[n] != '-') return NULL;
     const char *code = key + n + 1;
-    size_t m = strlen(code);
-    if (m < 2 || m > 3) return NULL;
-    for (size_t i = 0; i < m; ++i) {
-        if (code[i] < 'a' || code[i] > 'z') return NULL;
-    }
-    return code;
+    return ir_lang_code_ok(code) ? code : NULL;
 }
 
 // Like ir_check_keys, and also takes `base-xx` for every base in `lang_bases` (NULL-terminated).

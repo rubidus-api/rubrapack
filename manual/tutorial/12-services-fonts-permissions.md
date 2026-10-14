@@ -124,6 +124,18 @@ C:\work\hello> msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes
 method or a shell extension, which nearly every open program has loaded - and `preflight = false`
 leaves the step out (the reference, "Before it goes on", has the other checks).
 
+At a removal the preflight also looks into the product's folders for what was not installed with
+it - a file the user saved there, a log the program wrote - and lists it: Yes deletes it too, No
+removes Hello and keeps it, Cancel stops. A silent removal stops instead, unless the command line
+says what to do:
+
+```text
+C:\work\hello> msiexec /x hello-2.0.0.msi /qn RPEXTRA=keep
+```
+
+`extra-files = "keep"` in `[package]` keeps such files without asking, `"delete"` deletes them
+without asking.
+
 ## Restarting: `reboot`
 
 Sometimes a file cannot be replaced until Windows restarts. `reboot = "suppress"` (the default)

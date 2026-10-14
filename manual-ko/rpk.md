@@ -208,7 +208,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 
 | 표 | 키(굵은 것은 반드시) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), preflight(`false`: 진행 전 점검 없음), close-programs(`ask`, `always`, `never`), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), preflight(`false`: 진행 전 점검 없음), close-programs(`ask`, `always`, `never`), extra-files(`ask`, `keep`, `delete`), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
@@ -999,7 +999,7 @@ text = "This will install [ProductName]. Close other programs first."
 `RepairText`, `Remove`, `RemoveText`, `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`,
 `RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
 쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
-`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`(사전 점검의 메시지), 그리고
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
 주지 않는 다른 언어는 설치 문구를 쓴다).
@@ -1034,8 +1034,9 @@ labels = ["&Typical", "&Portable"]
 labels-ko = ["표준(&T)", "휴대용(&P)"]
 ```
 
-- 내장 문구는 영어와, rubrapack 에 언어팩이 함께 오는 언어로 있다: 한국어(`ko`), 일본어(`ja`), 중국어 간체(`zh`),
-  스페인어(`es`), 프랑스어(`fr`), 독일어(`de`)([언어팩](#언어팩)). 다른 언어(`it`, `ru`, ...)는 자기 언어팩을 가져오거나,
+- 내장 문구는 영어와, rubrapack 에 언어팩이 함께 오는 언어로 있다: 한국어(`ko`), 일본어(`ja`), 중국어 간체(`zh`)와
+  번체(`zh_TW`), 스페인어(`es`), 프랑스어(`fr`), 독일어(`de`), 브라질 포르투갈어(`pt_BR`), 러시아어(`ru`), 이탈리아어(`it`)
+  ([언어팩](#언어팩)). 다른 언어(`nl`, `pl`, ...)는 자기 언어팩을 가져오거나,
   내장 문구를 모두 `text-xx` 로 주고 (빠진 것은 lint 가 이름을 댄다), `name-xx`(언어 페이지에 보일 이름), `font-xx`(그 언어 대화창의 글꼴),
   `langid-xx`(그 언어를 고르게 하는 LANGID: 숫자 하나나 배열)를 줄 수 있다. 흔한 언어는 이것들이 내장되어
   있다: `ja`, `zh`, `de`, `fr`, `es`, `it`, `pt`, `nl`, `pl`, `ru`, `uk`, `tr`, `vi`, `th`.
@@ -1060,10 +1061,11 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### 언어팩
 
-언어 하나는 파일 하나다. 영어는 rubrapack 에 들어 있고, 한국어·일본어·중국어(간체)·스페인어·프랑스어·독일어는
-`resources/lang/<코드>.po`(`ko`, `ja`, `zh`, `es`, `fr`, `de`)로 함께 오며, 다른 언어는 그 언어의 파일 - 번역 도구들이
-읽는 PO 형식의 `<코드>.po` - 을 더하기만 하면 지원된다. rubrapack 도 원본의 문구도 바꿀 필요가 없다. `zh` 는 중국어
-간체이고, 번체 Windows(대만, 홍콩, 마카오)에서도 미리 골라진다. 번체 언어팩은 아직 없다.
+언어 하나는 파일 하나다. 영어는 rubrapack 에 들어 있고, 열 언어가 `resources/lang/<코드>.po` 로 함께 온다: `ko`, `ja`,
+`zh`(중국어 간체), `zh_TW`(중국어 번체 - 대만, 홍콩, 마카오), `es`, `fr`, `de`, `pt_BR`(포르투갈 Windows 에서도 미리
+골라진다), `ru`, `it`. 다른 언어는 그 언어의 파일 - 번역 도구들이 읽는 PO 형식의 `<코드>.po` - 을 더하기만 하면 지원된다.
+rubrapack 도 원본의 문구도 바꿀 필요가 없다. 코드는 소문자 2~3자이고, 지역 변형이면 `_` 와 지역의 대문자 2자를 붙인다
+(gettext 가 파일 이름을 짓는 방식). 패키지 하나에는 영어와 그 밖의 언어 일곱 개까지 들어간다.
 
 ```po
 msgid ""
@@ -1204,14 +1206,25 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 - 설치와 업그레이드에서: **이미 있는 패키지 폴더**가 설치 프로그램이 그 안의 파일을 지울 수 있는 폴더이고, **옛 판의 캐시된
   패키지**가 남아 있는지(없으면 업그레이드가 그 판을 지울 수 없다). 아니면 무엇이 잘못됐는지와 제품을 먼저 제거하라는 말을
   띄우고 아무것도 설치하지 않는다. 제거는 이 때문에 거절되지 않는다.
+- 제거에서: **제품의 폴더에 있지만 함께 설치되지 않은 것** - 사용자가 넣은 파일, 프로그램이 만든 폴더, 로그. 패키지 자신의
+  폴더(그 `[dir]` 들. Program Files 같은 Windows 의 폴더는 아니다)를 하나씩 본다. 패키지가 설치한 파일, 바로 가기, 패키지가
+  쓰는 INI 파일, 그 폴더의 `[remove]` 가 가리키는 이름, 패키지의 다른 폴더는 제품의 것이고, 나머지는 모두 목록으로 보인다
+  (처음 15개, 그다음은 개수). 대답은 셋이다: **예**는 그것들도 지운다 - 성공한 제거의 끝에, `[remove] recursive` 가 싹
+  지우는 방식대로 폴더를 안의 것까지 지운다. **아니요**는 제품만 제거하고 그것들은 남긴다(그것들이 든 폴더도 남는다).
+  **취소**는 아무것도 제거하지 않고 그만둔다. 패키지가 어차피 싹 지우는 폴더(`[remove] recursive = true`)는 보지 않고,
+  업그레이드가 옛 판을 제거할 때는 아무것도 보지 않는다.
+- **물어볼 창이 없으면**(`/qn`) 그런 제거는 아무것도 지우기 전에 1603 으로 멈춘다(로그에 항목마다 이름) - 명령줄이
+  `RPEXTRA=delete` 나 `RPEXTRA=keep` 으로 말해 주지 않는 한.
 
 `close-programs = "always"` 는 묻지 않고 종료하고, `"never"` 는 종료하지도 묻지도 않는다(`/qn` 에서도). 기본은 `"ask"`
 다. 제거도 다르지 않다: `"always"`(또는 `RPCLOSE=yes`)면 제품의 실행 중인 프로그램에 닫으라고 하고 몇 초 뒤 남은 것을
 끝낸 다음 제품을 제거한다. 아무 말도 없는 패키지의 조용한 제거(`/qn`)는 그 프로그램이 하나라도 열려 있으면 1603 으로
 멈춘다 - 아무에게도 묻지 않은 프로그램을 끝내지 않기 위해서다. 입력기나 셸 확장에는 보통 `"never"` 를 쓴다: 열려 있는 거의 모든 프로그램이 그 DLL 을 싣고 있어 `"ask"` 면 업그레이드와
 제거 때마다 질문이 나오고 조용한 실행은 매번 멈추는데, 파일은 아무것도 종료하지 않고도 안전하게 바뀐다(옛 사본은 정리 작업이
-치운다). 명령줄의 `RPCLOSE=yes` 나 `RPCLOSE=no` 는 패키지의 설정보다 앞선다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
-`PreflightCache` 다(`[ui-text.*]`; 영어와 언어팩이 있는 언어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
+치운다). 명령줄의 `RPCLOSE=yes` 나 `RPCLOSE=no` 는 패키지의 설정보다 앞선다. `extra-files = "keep"` 은 함께 설치되지 않은
+것을 묻지 않고 남기고(Windows Installer 자체의 동작), `"delete"` 는 묻지 않고 지운다. 기본은 `"ask"` 이고 `RPEXTRA` 가 그보다
+앞선다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
+`PreflightCache`, `PreflightExtra`, `PreflightExtraSilent` 다(`[ui-text.*]`; 영어와 언어팩이 있는 언어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
 
 Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 도는 동안 두 번째 설치는 곧바로 1618 로 끝나고, 중간에 끊긴
 설치(충돌, 정전) 뒤의 다음 설치는 끝나지 않은 것을 먼저 되돌린다. 끊긴 제거 뒤에는 그 되돌리기가 제품을 도로 놓고 제거는
@@ -1624,7 +1637,7 @@ rubrapack version | help [command]
   시각으로 맞춘 시계가 허용하지 않을 것은 아무것도 넓히지 않는다.)
 - 종료 코드: 0 성공, 1 원본 오류, 2 사용법, 3 입출력, 4 서명, 5 lint, 6 네트워크.
 - `--lang <코드>` 는 도구가 사람에게 보이는 글의 언어를 고른다: 오류와 경고, `help`, 결과 줄, `explain`, `new -i` 와
-  `edit` 의 질문. 코드는 `en`(기본), `ko`, `ja`, `zh`, `es`, `fr`, `de`, 그리고 언어팩이 있는 언어다([언어팩](#언어팩)). 명령줄 어디에나 둘 수 있고(`rubrapack --lang ko build ...`,
+  `edit` 의 질문. 코드는 `en`(기본), `ko`, `ja`, `zh`, `zh_TW`, `es`, `fr`, `de`, `pt_BR`, `ru`, `it`, 그리고 언어팩이 있는 언어다([언어팩](#언어팩)). 명령줄 어디에나 둘 수 있고(`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`), 환경 변수 `RUBRAPACK_LANG` 은 모든 실행에 같은 것을 말하며 옵션이 그것보다
   앞선다. 프로그램이 읽는 것은 그대로다: 진단 코드, 종료 코드, `inspect` 의 표 덤프, `schema`, `--json` 의 구조(그
   안의 `message` 글은 언어를 따른다). 만들어지는 것은 절대 바꾸지 않는다 - 패키지 대화창의 언어는 원본이

@@ -443,7 +443,7 @@ static int gen_parts(const char *gen_dir, const char *gen_c) {
         }
     }
     // The built-in language packs (resources/lang/<code>.po), as the bytes of the files.
-    static const char *const langs[] = { "ko", "ja", "zh", "es", "fr", "de" };
+    static const char *const langs[] = { "ko", "ja", "zh", "zh_TW", "es", "fr", "de", "pt_BR", "ru", "it" };
     for (size_t i = 0; i < COUNT(langs); ++i) {
         char path[128];
         snprintf(path, sizeof path, "resources/lang/%s.po", langs[i]);

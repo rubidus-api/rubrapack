@@ -9,7 +9,13 @@
 msgid ""
 msgstr ""
 "Language: ko\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Rubrapack-Name: 한국어\n"
 "X-Rubrapack-LangIDs: 1042\n"
 "X-Rubrapack-Font: 맑은 고딕\n"
@@ -20,8 +26,8 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 대화창 {6}{7}\n  1 이름, 제조사, �
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\n이 코드를 쓰는 메시지(* 는 이름이나 값의 자리):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, es, fr, de, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\n결과는 stdout 으로, 진단은 stderr 로 나갑니다.\n--lang(또는 RUBRAPACK_LANG)이 이 글들의 언어를 고릅니다: en, ko, ja, zh, es, fr, de, 또는 언어팩이 있는 언어.\n종료 코드: 0 정상, 1 소스 오류, 2 사용법, 3 입출력, 4 서명 또는 검증,\n5 lint, 6 네트워크.\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "\n결과는 stdout 으로, 진단은 stderr 로 나갑니다.\n--lang(또는 RUBRAPACK_LANG)이 이 글들의 언어를 고릅니다: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, 또는 언어팩이 있는 언어.\n종료 코드: 0 정상, 1 소스 오류, 2 사용법, 3 입출력, 4 서명 또는 검증,\n5 lint, 6 네트워크.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n할 일: {1}.\n"
@@ -154,6 +160,9 @@ msgstr "{1} 이(가) 240자보다 깁니다"
 
 msgid "%s is new. Add it?"
 msgstr "{1} 이(가) 새로 생겼습니다. 더할까요?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} 이(가) 레지스트리 형식의 GUID 가 아닙니다"
 
 msgid "%s is not a code this rubrapack uses%s%s"
 msgstr "{1} 은(는) 이 rubrapack 이 쓰는 코드가 아닙니다{2}{3}"
@@ -503,8 +512,8 @@ msgstr "--key-store 는 Windows 인증서 저장소입니다. 다른 곳에서�
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store 는 인증서의 SHA-1 지문(16진수 40자리)을 받습니다"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: 그런 언어가 없습니다(en, ko, ja, zh, es, fr, de 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
+msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "--lang {1}: 그런 언어가 없습니다(en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang 에는 en 이나 ko 같은 언어가 필요합니다"
@@ -683,14 +692,17 @@ msgstr "경로"
 msgid "Product name"
 msgstr "제품 이름"
 
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode 와 UpgradeCode 가 같은 GUID 입니다"
+
 msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} 이(가) 앞 세 자리에서 이전의 {2} 보다 높지 않습니다: Windows Installer 가 업그레이드하지 않습니다"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "바로 가기가 여는 프로그램(바로 가기가 없으면 -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: 그런 언어가 없습니다(en, ko, ja, zh, es, fr, de 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
+msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: 그런 언어가 없습니다(en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it 는 내장이고, 다른 언어는 언어팩 {2}.po 가 필요합니다)"
 
 msgid "Reference, "
 msgstr "레퍼런스, "
@@ -1703,6 +1715,12 @@ msgstr "확장명 '{1}'에는 이미 프로그램이 있습니다([assoc.{2}])"
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension 은 '.' 뒤에 소문자, 숫자, '_', '-' 가 와야 합니다('{1}'을(를) 받음)"
 
+msgid "extra-files has no effect with preflight = false"
+msgstr "preflight = false 이면 extra-files 는 효과가 없습니다"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files 는 \"ask\", \"keep\", \"delete\" 가운데 하나입니다('{1}' 을(를) 받음)"
+
 msgid "feature %s is gone: installations that had it lose what it held"
 msgstr "기능 {1} 이(가) 없어졌습니다: 그것을 설치했던 곳은 거기 든 것을 잃습니다"
 
@@ -1744,6 +1762,9 @@ msgstr "file: '{1}'은(는) 이 패키지의 [file.*] 이 아닙니다"
 
 msgid "file: '%s' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}'은(는) .exe 나 .dll 일 때만 COM 클래스를 제공합니다"
+
+msgid "files but no Media row"
+msgstr "파일은 있는데 Media 행이 없습니다"
 
 msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
 msgstr "메시지가 가리키는 값을 고치십시오. ID 는 글자, 숫자, '_' 이고 모든 표에 걸쳐 서로 다릅니다"
@@ -1979,8 +2000,8 @@ msgstr "language 는 \"ko-KR\" 또는 \"en-US\" 여야 합니다"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language 는 \"neutral\", \"en-US\", \"ko-KR\" 중 하나여야 합니다"
 
-msgid "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')"
-msgstr "languages 에는 \"ko\" 같은 소문자 2~3자의 코드가 들어갑니다('{1}'을(를) 받음)"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages 에는 \"ko\" 나 \"zh_TW\" 같은 코드를 씁니다(소문자 2~3자, 그리고 _ 와 지역의 대문자 2자)('{1}' 을(를) 받음)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages 는 [\"ko\"] 같은 언어 코드의 배열입니다"
@@ -2389,6 +2410,9 @@ msgstr "replaces 에 {1} 이(가) 두 번 있습니다"
 
 msgid "replaces names %s, which is this package's own upgrade-code or its parent"
 msgstr "replaces 가 {1} 을(를) 가리키는데, 이것은 이 패키지 자신의 upgrade-code 이거나 그 parent 입니다"
+
+msgid "required property %s is missing"
+msgstr "필수 속성 {1} 이(가) 없습니다"
 
 msgid "rollback twin must come before %.*s (%ld <= %ld)"
 msgstr "롤백 짝은 {1} 앞에 와야 합니다({2} <= {3})"
@@ -3378,14 +3402,6 @@ msgid "RemoveAskAll"
 msgstr "[ProductName]을(를) 이 컴퓨터에서 제거할까요? 이 프로그램의 설정과 데이터도 함께 지워지며 되돌릴 수 없습니다."
 
 msgctxt "installer"
-msgid "PreflightAsk"
-msgstr "[1]개 프로그램이 [3]의 파일을 쓰고 있습니다:\r\n[2]\r\n모두 종료할까요?\r\n\r\n예(Yes): 모두 종료하고 계속합니다(저장하지 않은 작업은 잃을 수 있습니다).\r\n아니요(No): 종료하지 않고 계속합니다(열린 프로그램은 다시 열 때까지 이전 파일을 씁니다).\r\n취소(Cancel): 그만둡니다."
-
-msgctxt "installer"
-msgid "PreflightSilent"
-msgstr "[3]: [1]개 프로그램이 파일을 쓰고 있어 멈췄습니다:\r\n[2]프로그램을 닫고 다시 하거나, RPCLOSE=yes(모두 종료하고 계속) 또는 RPCLOSE=no(종료하지 않고 계속)를 주십시오."
-
-msgctxt "installer"
 msgid "PreflightFolder"
 msgstr "[3]을(를) 안전하게 설치할 수 없습니다: [1] 이(가) 폴더가 아니거나 설치 프로그램이 그 안의 파일을 지울 수 없습니다. 먼저 [3]을(를) 제거한 뒤([2]) 다시 설치하십시오."
 
@@ -3776,3 +3792,19 @@ msgstr "다른 폴더 고르기(&C)"
 msgctxt "installer"
 msgid "DirContinue"
 msgstr "이 폴더 사용(&U)"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1]개 프로그램이 [3]의 파일을 쓰고 있습니다:\r\n[2]\r\n모두 종료할까요?\r\n\r\n예(Yes): 모두 종료하고 계속합니다(저장하지 않은 작업은 잃을 수 있습니다).\r\n아니요(No): 종료하지 않고 계속합니다(열린 프로그램은 다시 열 때까지 이전 파일을 씁니다).\r\n취소(Cancel): 그만둡니다."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: [1]개 프로그램이 파일을 쓰고 있어 멈췄습니다:\r\n[2]프로그램을 닫고 다시 하거나, RPCLOSE=yes(모두 종료하고 계속) 또는 RPCLOSE=no(종료하지 않고 계속)를 주십시오."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[3]의 폴더에 함께 설치되지 않은 항목이 [1]개 있습니다:\r\n[2]\r\n이것들도 지울까요?\r\n\r\n예(Yes): [3]과(와) 함께 지웁니다(되돌릴 수 없습니다).\r\n아니요(No): [3]만 제거하고 이것들은 남깁니다.\r\n취소(Cancel): 그만둡니다."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: 폴더에 함께 설치되지 않은 항목이 [1]개 있어 멈췄습니다:\r\n[2]RPEXTRA=delete(함께 지우기) 또는 RPEXTRA=keep(남기기)를 주고 다시 제거하십시오."

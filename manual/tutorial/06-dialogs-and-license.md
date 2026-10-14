@@ -128,7 +128,7 @@ A removal and a repair show theirs the same way, and a failed installation shows
 back. Tick **Show the full log** under the box and it holds the log file's own lines instead -
 everything Windows Installer writes about the run. `details = false` in `[ui]` leaves the box out.
 
-![The progress page with its details box (on a Korean Windows, which draws the backslash as ₩)](../images/ch06-details.png)
+![The progress page with its details box](../images/ch06-details.png)
 
 ## Saving the log: `save-log`
 

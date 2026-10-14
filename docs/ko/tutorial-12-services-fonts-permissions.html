@@ -79,6 +79,9 @@ sddl = "D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1301bf;;;BU)"</code></pre
 <p>패키지는 무엇이든 바꾸기 전에 어떤 프로그램이 제품의 파일을 쓰고 있는지 - 제품 자신의 프로그램과, 제품의 DLL 을 싣고 있는 프로그램 - 살피고 모두 종료할지 묻는다(예는 종료, 아니요는 종료하지 않고 계속, 취소는 중단). 창이 없으면(<code>/qn</code>) 대신 오류로 멈춘다. 명령줄이 <code>RPCLOSE=yes</code> 나 <code>RPCLOSE=no</code> 를 주면 그대로 한다:</p>
 <pre><code class="lang-text">C:\work\hello&gt; msiexec /i hello-2.0.0.msi /qn RPCLOSE=yes</code></pre>
 <p><code>[package]</code> 의 <code>close-programs = "always"</code> 나 <code>"never"</code> 는 답을 정해 두고 - 열려 있는 거의 모든 프로그램에 실리는 입력기나 셸 확장은 <code>"never"</code> - <code>preflight = false</code> 는 이 단계를 뺀다(나머지 점검은 참조의 "진행하기 전에").</p>
+<p>제거할 때 사전 점검은 제품의 폴더에서 함께 설치되지 않은 것 - 사용자가 거기 저장한 파일, 프로그램이 쓴 로그 - 도 찾아 목록으로 보인다: 예는 그것도 지우고, 아니요는 Hello 만 제거하고 그것은 남기고, 취소는 그만둔다. 조용한 제거는 명령줄이 할 일을 말해 주지 않으면 대신 멈춘다:</p>
+<pre><code class="lang-text">C:\work\hello&gt; msiexec /x hello-2.0.0.msi /qn RPEXTRA=keep</code></pre>
+<p><code>[package]</code> 의 <code>extra-files = "keep"</code> 은 그런 파일을 묻지 않고 남기고, <code>"delete"</code> 는 묻지 않고 지운다.</p>
 <h3 id="다시-시작하기-reboot">12.6 다시 시작하기: <code>reboot</code><a class="plink" href="#다시-시작하기-reboot" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>어떤 파일은 Windows 를 다시 시작해야 바꿀 수 있다. <code>reboot = "suppress"</code>(기본)는 스스로 다시 시작하지 않는다: 설치가 종료 코드 3010("다시 시작 필요")으로 끝나고 사용자가 나중에 다시 시작한다. <code>reboot = "allow"</code> 는 필요할 때 Windows Installer 가 다시 시작을 묻게(<code>/qn</code> 에서는 다시 시작하게) 한다.</p>
 <p>재시작을 기다리는 것은 대개 실행 중인 프로그램이 아직 쥐고 있는 파일이다. 패키지의 정리 작업이 그보다 먼저 - 그 프로그램이 닫히는 대로 - 지우고 스스로 사라진다. <code>[package]</code> 의 <code>cleanup = false</code> 는 정리 작업을 뺀다(참조의 "나중에 정리하기").</p>

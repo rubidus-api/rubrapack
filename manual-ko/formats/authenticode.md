@@ -139,21 +139,21 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 | # | 이름(UTF-16LE) | 이름 | 크기 |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 125440 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 134144 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
-| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 64 |
+| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 88 |
 | 6 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
 | 7 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
 | 8 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 10637 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 1200 |
-| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 156 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 20985 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 1720 |
+| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 174 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 48 |
-| 16 | `40 48 59 45 f2 44` ... | `Property` | 340 |
+| 16 | `40 48 59 45 f2 44` ... | `Property` | 600 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
 | 18 | `40 48 8c 44 f0 44` ... | `Component` | 12 |
 | 19 | `40 48 ca 41 30 43` ... | `AdminExecuteSequence` | 48 |
@@ -166,12 +166,12 @@ ECDSA P-256 서명자는 PE 파일, MSI 패키지, MSIX 패키지 모두에 통�
 `\005MsiDigitalSignatureEx` 의 값이다:
 
 ```text
-27 3d 00 e9 7d a5 16 27 a9 bd a7 d6 19 04 4d 49 f0 75 8a 82 5b 1b 11 58 f3 63 b5 71 0a 41 d9 d3
+45 f0 62 83 60 fd 4a ae 55 29 a4 01 47 40 46 55 51 98 5b 33 7e 9b 34 f9 27 a5 d7 bb 7d 7d e0 f9
 ```
 
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-c9 33 cc ad f1 67 c4 69 4b 51 49 d8 36 a3 1b 5b b2 8c 9b b9 24 21 eb f5 b7 0b 8d 12 43 cf f1 ce
+65 71 20 59 34 40 71 3f 53 11 27 77 e0 fe 21 18 16 db c5 bf d5 f0 98 3e 9d 2e 6a 52 88 d6 a2 14
 ```
 

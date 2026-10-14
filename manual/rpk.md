@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), extra-files (`ask`, `keep`, `delete`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -1090,7 +1090,7 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `RemoveAsk`, `RemoveAskAll` (the second question before a removal; another language that does not
 give these five gets English), `DetailsFull` (the details box's check box),
 `LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), `PreflightAsk`,
-`PreflightSilent`, `PreflightFolder`, `PreflightCache` (the preflight's messages), and for a removal -
+`PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
 `RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).
@@ -1126,8 +1126,9 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 ```
 
 - The built-in texts exist in English and in the languages whose packs come with rubrapack:
-  Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`), Spanish (`es`), French (`fr`) and
-  German (`de`) ([Language packs](#language-packs)). Another language (`it`, `ru`, ...) brings a
+  Korean (`ko`), Japanese (`ja`), Chinese, Simplified (`zh`) and Traditional (`zh_TW`), Spanish
+  (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`), Russian (`ru`) and Italian
+  (`it`) ([Language packs](#language-packs)). Another language (`nl`, `pl`, ...) brings a
   pack of its own, or gives every built-in text as `text-xx` (lint names the ones missing), and
   may give `name-xx` (its name
   on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
@@ -1158,12 +1159,13 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### Language packs
 
-A language is one file. English is built into rubrapack; Korean, Japanese, Chinese (Simplified),
-Spanish, French and German come with it as `resources/lang/<code>.po` (`ko`, `ja`, `zh`, `es`,
-`fr`, `de`); any other language is supported by adding its file - `<code>.po`, in the PO format
-translators' tools read - without changing rubrapack or the source's texts. `zh` is Simplified
-Chinese; it is also chosen in advance on a Traditional Chinese Windows (Taiwan, Hong Kong, Macao),
-for which no pack of its own exists yet.
+A language is one file. English is built into rubrapack; ten languages come with it as
+`resources/lang/<code>.po`: `ko`, `ja`, `zh` (Simplified Chinese), `zh_TW` (Traditional Chinese, for
+Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (also chosen in advance on a Portuguese
+Windows), `ru` and `it`. Any other language is supported by adding its file - `<code>.po`, in the
+PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
+or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
+gettext names its files. One package holds English and at most seven more languages.
 
 ```po
 msgid ""
@@ -1323,6 +1325,19 @@ Before an installation, an upgrade or a removal changes anything, the package lo
   may delete files in, and **the older version still has its cached package** (without it the
   upgrade could not remove that version). If not, the message says what is wrong and to remove the
   product first, and nothing is installed. A removal is never refused for these.
+- For a removal: **what is in the product's folders but was not installed with it** - a file the
+  user put there, a folder the program made, a log. Each of the package's own folders (its
+  `[dir]`s, not Windows' own like Program Files) is looked at; a file the package installed, a
+  shortcut, an INI file it writes, a name a `[remove]` of that folder matches and the package's
+  other folders are its own, everything else is listed (the first 15, then how many more), with
+  three answers: **Yes** deletes them too - the folders go with everything in them, at the end of
+  a removal that succeeded, the way `[remove] recursive` wipes; **No** removes the product and
+  keeps them (the folders holding them stay); **Cancel** stops, with nothing removed. A folder the
+  package wipes anyway (`[remove] recursive = true`) is not looked at, and neither is anything when
+  an upgrade removes the older version.
+- **Without a window to ask in** (`/qn`) such a removal stops with 1603 before anything is
+  removed (the log names each item), unless the command line says: `RPEXTRA=delete` or
+  `RPEXTRA=keep`.
 
 `close-programs = "always"` closes without asking, `"never"` never closes and never asks (also at
 `/qn`); `"ask"` is the default. A removal is no different: with `"always"` (or `RPCLOSE=yes`) the
@@ -1332,8 +1347,11 @@ them is open, rather than end a program nobody was asked about. For an input met
 choice: nearly every open program has its DLL loaded, so `"ask"` would put the question at every
 upgrade and removal and stop every silent one, while the files are replaced safely without closing
 anything (the old copies go through the cleanup task). `RPCLOSE=yes` or `RPCLOSE=no` on the command
-line still wins over the package's setting. `preflight = false` leaves the whole step out. The texts are
-`PreflightAsk`, `PreflightSilent`, `PreflightFolder` and `PreflightCache` (`[ui-text.*]`; English and
+line still wins over the package's setting. `extra-files = "keep"` keeps what was not installed
+without asking (what Windows Installer itself does), `"delete"` deletes it without asking; `"ask"`
+is the default, and `RPEXTRA` wins over it. `preflight = false` leaves the whole step out. The texts are
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra` and
+`PreflightExtraSilent` (`[ui-text.*]`; English and
 the packs' languages are built in, another language without them gets English).
 
 Windows Installer looks after two things itself: while another installation is running, a second
@@ -1816,7 +1834,7 @@ rubrapack version | help [command]
   6 network.
 - `--lang <code>` chooses the language of what the tool prints for a person: errors and warnings,
   `help`, the result lines, `explain`, the questions of `new -i` and `edit`. The codes are `en`
-  (the default), `ko`, `ja`, `zh`, `es`, `fr`, `de`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
+  (the default), `ko`, `ja`, `zh`, `zh_TW`, `es`, `fr`, `de`, `pt_BR`, `ru`, `it`, and any language whose pack is found ([Language packs](#language-packs)). It may stand anywhere on the line (`rubrapack --lang ko build ...`,
   `rubrapack lint app.toml --lang=ko`); the environment variable `RUBRAPACK_LANG` says the same
   for every run, and the option wins over it. What a program reads stays as it is: the diagnostic
   codes, exit codes, table dumps of `inspect`, `schema`, and the structure of `--json` (whose

@@ -1,4 +1,4 @@
-# rubrapack language pack: Chinese (Simplified).
+# rubrapack language pack: Chinese (Simplified). Traditional is zh_TW.
 #
 # One file is one language (the manual: "Language packs"). The header names the language; an entry
 # without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
@@ -9,9 +9,15 @@
 msgid ""
 msgstr ""
 "Language: zh\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Rubrapack-Name: 中文(简体)\n"
-"X-Rubrapack-LangIDs: 2052, 4100, 1028, 3076, 5124\n"
+"X-Rubrapack-LangIDs: 2052, 4100\n"
 "X-Rubrapack-Font: Microsoft YaHei UI\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
@@ -20,8 +26,8 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 对话框 {6}{7}\n  1 名称、制造商�
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\n使用此代码的消息(* 表示名称或值):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, es, fr, de, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\n结果输出到 stdout，诊断输出到 stderr。\n--lang(或 RUBRAPACK_LANG)选择这些文字的语言: en、ko、ja、zh、es、fr、de，或有语言包的语言。\n退出代码: 0 正常，1 源文件错误，2 用法，3 输入/输出，4 签名或验证，\n5 lint，6 网络。\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "\n结果输出到 stdout，诊断输出到 stderr。\n--lang(或 RUBRAPACK_LANG)选择这些文字的语言: en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru、it，或有语言包的语言。\n退出代码: 0 正常，1 源文件错误，2 用法，3 输入/输出，4 签名或验证，\n5 lint，6 网络。\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n处理方法: {1}。\n"
@@ -154,6 +160,9 @@ msgstr "{1} 超过 240 个字符"
 
 msgid "%s is new. Add it?"
 msgstr "{1} 是新的。添加吗?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} 不是注册表格式的 GUID"
 
 msgid "%s is not a code this rubrapack uses%s%s"
 msgstr "{1} 不是此 rubrapack 使用的代码{2}{3}"
@@ -503,8 +512,8 @@ msgstr "--key-store 是 Windows 证书存储；其他系统请使用密钥文件
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store 接受证书的 SHA-1 指纹(40 位十六进制数字)"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: 没有该语言(en、ko、ja、zh、es、fr 和 de 是内置的；其他语言需要语言包 {2}.po)"
+msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "--lang {1}: 没有该语言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是内置的；其他语言需要语言包 {2}.po)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang 需要一种语言，如 en 或 ko"
@@ -683,14 +692,17 @@ msgstr "路径"
 msgid "Product name"
 msgstr "产品名称"
 
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode 和 UpgradeCode 是同一个 GUID"
+
 msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} 的前三个字段不高于之前的 {2}: Windows Installer 不会升级"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "快捷方式打开的程序(不建快捷方式则为 -)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: 没有该语言(en、ko、ja、zh、es、fr 和 de 是内置的；其他语言需要语言包 {2}.po)"
+msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: 没有该语言(en、ko、ja、zh、zh_TW、es、fr、de、pt_BR、ru 和 it 是内置的；其他语言需要语言包 {2}.po)"
 
 msgid "Reference, "
 msgstr "参考，"
@@ -1703,6 +1715,12 @@ msgstr "扩展名 '{1}' 已有程序([assoc.{2}])"
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension 必须是 '.' 加小写字母、数字、'_' 或 '-'(实际为 '{1}')"
 
+msgid "extra-files has no effect with preflight = false"
+msgstr "preflight = false 时 extra-files 不起作用"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files 必须是 \"ask\"、\"keep\" 或 \"delete\"(实际为 '{1}')"
+
 msgid "feature %s is gone: installations that had it lose what it held"
 msgstr "功能 {1} 已不存在: 装有它的安装会失去其中的内容"
 
@@ -1744,6 +1762,9 @@ msgstr "file: '{1}' 不是此安装包的 [file.*]"
 
 msgid "file: '%s' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' 只有作为 .exe 或 .dll 才能提供 COM 类"
+
+msgid "files but no Media row"
+msgstr "有文件但没有 Media 行"
 
 msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
 msgstr "请修正消息指出的值；ID 由字母、数字和 '_' 组成，在所有表中互不相同"
@@ -1979,8 +2000,8 @@ msgstr "language 必须是 \"ko-KR\" 或 \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language 必须是 \"neutral\"、\"en-US\" 或 \"ko-KR\""
 
-msgid "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')"
-msgstr "languages 包含 2 或 3 个小写字母的代码，如 \"ko\"(实际为 '{1}')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages 包含形如 \"ko\" 或 \"zh_TW\" 的代码(2 或 3 个小写字母，可再加 _ 和地区的两个大写字母)(实际为 '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages 是语言代码数组，如 [\"ko\"]"
@@ -2389,6 +2410,9 @@ msgstr "replaces 中 {1} 列出了两次"
 
 msgid "replaces names %s, which is this package's own upgrade-code or its parent"
 msgstr "replaces 指定了 {1}，它是此安装包自己的 upgrade-code 或其 parent"
+
+msgid "required property %s is missing"
+msgstr "缺少必需属性 {1}"
 
 msgid "rollback twin must come before %.*s (%ld <= %ld)"
 msgstr "回滚孪生操作必须位于 {1} 之前({2} <= {3})"
@@ -3378,14 +3402,6 @@ msgid "RemoveAskAll"
 msgstr "要从此计算机中删除 [ProductName] 吗? 它的设置和数据也会一并删除，且无法恢复。"
 
 msgctxt "installer"
-msgid "PreflightAsk"
-msgstr "[1] 个程序正在使用 [3] 的文件:\r\n[2]\r\n要全部关闭吗?\r\n\r\n是: 全部关闭并继续(未保存的工作可能会丢失)。\r\n否: 不关闭并继续(已打开的程序在重新打开之前继续使用旧文件)。\r\n取消: 停止。"
-
-msgctxt "installer"
-msgid "PreflightSilent"
-msgstr "[3]: 已停止，因为有 [1] 个程序正在使用其文件:\r\n[2]请关闭这些程序后重试，或者指定 RPCLOSE=yes(全部关闭并继续)或 RPCLOSE=no(不关闭并继续)。"
-
-msgctxt "installer"
 msgid "PreflightFolder"
 msgstr "无法安全地安装 [3]: [1] 不是文件夹，或者安装程序无法删除其中的文件。请先删除 [3]([2])，然后重新安装。"
 
@@ -3776,3 +3792,19 @@ msgstr "选择其他文件夹(&C)"
 msgctxt "installer"
 msgid "DirContinue"
 msgstr "使用此文件夹(&U)"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] 个程序正在使用 [3] 的文件:\r\n[2]\r\n要全部关闭吗?\r\n\r\n是: 全部关闭并继续(未保存的工作可能会丢失)。\r\n否: 不关闭并继续(已打开的程序在重新打开之前继续使用旧文件)。\r\n取消: 停止。"
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: 已停止，因为有 [1] 个程序正在使用其文件:\r\n[2]请关闭这些程序后重试，或者指定 RPCLOSE=yes(全部关闭并继续)或 RPCLOSE=no(不关闭并继续)。"
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[3] 的文件夹中有 [1] 个项目不是随它安装的:\r\n[2]\r\n也删除它们吗?\r\n\r\n是: 与 [3] 一起删除(无法恢复)。\r\n否: 删除 [3]，保留它们。\r\n取消: 停止。"
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: 已停止，因为其文件夹中有 [1] 个项目不是随它安装的:\r\n[2]请指定 RPEXTRA=delete(一并删除)或 RPEXTRA=keep(保留)，然后重新删除。"

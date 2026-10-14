@@ -69,6 +69,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+#include <wctype.h>
 #include <windows.h>
 #include <msi.h>
 #include <msiquery.h>
@@ -76,6 +77,7 @@
 #include <sddl.h>
 #include <shlobj.h>
 #include <commdlg.h>
+#include <richedit.h>
 
 #include "../clean/pfro.h"
 #include "rp_appx.h"
@@ -1679,10 +1681,13 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
             bool ok = true;
             for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
             if (!ok) break;
+            // "x": a folder the preflight was told to empty at this removal (extra-files), no component.
             INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
-            MsiGetComponentStateW(h, f[4], &installed, &action);
-            if (action != INSTALLSTATE_ABSENT) continue;
-            if (f[0][0] == L'd') {
+            if (f[0][0] != L'x') {
+                MsiGetComponentStateW(h, f[4], &installed, &action);
+                if (action != INSTALLSTATE_ABSENT) continue;
+            }
+            if (f[0][0] == L'd' || f[0][0] == L'x') {
                 DWORD dn = MAX_PATH * 4;
                 if (MsiGetTargetPathW(h, f[1], dir, &dn) != ERROR_SUCCESS) continue;
                 wchar_t other[39];
@@ -1938,6 +1943,176 @@ __declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
     return ERROR_SUCCESS;
 }
 
+// ---- before a removal: what was not installed in the product's folders (DECISIONS 2026-10-14) ----------
+//
+// The product's own folders (RP_PREFLIGHT_DIRS: the Directory keys of the source's [dir]s) are
+// looked at, one level each: an entry is the product's when it is a file of the File table in that
+// folder (its long or short name), a shortcut there (name.lnk), an INI file written there, a name a
+// RemoveFile row of that folder matches, or another of the product's folders. Anything else is
+// extra. Folders the package wipes anyway ([remove] recursive: RP_PURGE's "d" rows) are skipped.
+// The choice: RPEXTRA=delete|keep, else the package's (RP_PREFLIGHT_EXTRA: ask|delete), else the
+// question (Yes: delete them too, No: keep them, Cancel: stop); without a window, ask means stop.
+// Delete adds "x" rows to RP_PURGE: the folders go the purge's way, at the commit of the removal.
+
+typedef struct {
+    wchar_t dir[80];
+    wchar_t name[260];
+    bool    pattern;
+} ex_known_t;
+
+static bool ex_match(const wchar_t *pat, const wchar_t *s) {     // * and ?, case-insensitive
+    if (*pat == 0) return *s == 0;
+    if (*pat == L'*') return ex_match(pat + 1, s) || (*s && ex_match(pat, s + 1));
+    if (*s == 0) return false;
+    if (*pat != L'?' && towlower(*pat) != towlower(*s)) return false;
+    return ex_match(pat + 1, s + 1);
+}
+
+// Adds the rows of `sql` (two columns: the folder key, a name "short|long" or one name).
+static void ex_query(MSIHANDLE db, const wchar_t *sql, ex_known_t *k, size_t *n, size_t cap, const wchar_t *suffix, bool pattern) {
+    MSIHANDLE view = 0, rec = 0;
+    if (MsiDatabaseOpenViewW(db, sql, &view) != ERROR_SUCCESS) return;
+    if (MsiViewExecute(view, 0) == ERROR_SUCCESS) {
+        while (*n + 2 < cap && MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            wchar_t dir[80], name[260];
+            DWORD dn = 80, nn = 260;
+            if (MsiRecordGetStringW(rec, 1, dir, &dn) == ERROR_SUCCESS && MsiRecordGetStringW(rec, 2, name, &nn) == ERROR_SUCCESS && name[0]) {
+                wchar_t *bar = wcschr(name, L'|');
+                const wchar_t *parts[2] = { name, bar ? bar + 1 : NULL };
+                if (bar) *bar = 0;
+                for (int i = 0; i < 2; ++i) {
+                    if (parts[i] == NULL || wcslen(parts[i]) + wcslen(suffix) >= 260) continue;
+                    ex_known_t *e = &k[(*n)++];
+                    wcscpy(e->dir, dir);
+                    wcscpy(e->name, parts[i]);
+                    wcscat(e->name, suffix);
+                    e->pattern = pattern;
+                }
+            }
+            MsiCloseHandle(rec);
+        }
+    }
+    MsiCloseHandle(view);
+}
+
+static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wchar_t *answer, bool silent, const wchar_t *product) {
+    enum { MAX_KNOWN = 8192, MAX_DIRS = 256 };
+    static ex_known_t known[MAX_KNOWN];
+    static wchar_t keys[MAX_DIRS][80], paths[MAX_DIRS][MAX_PATH * 2], wiped[MAX_DIRS][MAX_PATH * 2];
+    static bool has_extra[MAX_DIRS];
+    size_t nknown = 0, ndirs = 0, nwiped = 0;
+    MSIHANDLE db = MsiGetActiveDatabase(h);
+    if (db) {
+        ex_query(db, L"SELECT `Component`.`Directory_`, `File`.`FileName` FROM `File`, `Component` WHERE `File`.`Component_` = `Component`.`Component`",
+                 known, &nknown, MAX_KNOWN, L"", false);
+        ex_query(db, L"SELECT `Directory_`, `Name` FROM `Shortcut`", known, &nknown, MAX_KNOWN, L".lnk", false);
+        ex_query(db, L"SELECT `DirProperty`, `FileName` FROM `IniFile`", known, &nknown, MAX_KNOWN, L"", false);
+        ex_query(db, L"SELECT `DirProperty`, `FileName` FROM `RemoveFile`", known, &nknown, MAX_KNOWN, L"", true);
+        MsiCloseHandle(db);
+    }
+    wchar_t *ctx = NULL;
+    for (wchar_t *d = wcstok(dirs, L";", &ctx); d && ndirs < MAX_DIRS; d = wcstok(NULL, L";", &ctx)) {
+        DWORD n = MAX_PATH * 2;
+        if (wcslen(d) >= 80 || MsiGetTargetPathW(h, d, paths[ndirs], &n) != ERROR_SUCCESS || paths[ndirs][0] == 0) continue;
+        wcscpy(keys[ndirs], d);
+        has_extra[ndirs] = false;
+        ++ndirs;
+    }
+    // The folders the package wipes anyway.
+    wchar_t *plan = get_property(h, L"RP_PURGE");
+    if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
+        reader_t r = { plan + 4, plan + wcslen(plan) };
+        static wchar_t f[5][MAX_TEXT / 8];
+        while (r.p < r.end && nwiped < MAX_DIRS) {
+            bool ok = true;
+            for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
+            if (!ok) break;
+            DWORD n = MAX_PATH * 2;
+            if (f[0][0] == L'd' && MsiGetTargetPathW(h, f[1], wiped[nwiped], &n) == ERROR_SUCCESS) ++nwiped;
+        }
+    }
+    writer_t list = { 0 };
+    unsigned count = 0;
+    static wchar_t full[MAX_PATH * 4];
+    for (size_t i = 0; i < ndirs; ++i) {
+        bool skip = false;
+        for (size_t w = 0; w < nwiped && !skip; ++w) skip = starts_with_i(paths[i], wiped[w]);
+        if (skip) continue;
+        size_t len = wcslen(paths[i]);
+        if (len + 2 >= MAX_PATH * 4) continue;
+        wcscpy(full, paths[i]);
+        wcscat(full, L"*");
+        WIN32_FIND_DATAW fd;
+        HANDLE fh = FindFirstFileExW(full, FindExInfoBasic, &fd, FindExSearchNameMatch, NULL, 0);
+        if (fh == INVALID_HANDLE_VALUE) continue;
+        do {
+            if (wcscmp(fd.cFileName, L".") == 0 || wcscmp(fd.cFileName, L"..") == 0) continue;
+            bool mine = false;
+            if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                if (len + wcslen(fd.cFileName) + 2 < MAX_PATH * 4) {
+                    wcscpy(full + len, fd.cFileName);
+                    wcscat(full, L"\\");
+                    for (size_t j = 0; j < ndirs && !mine; ++j) mine = lstrcmpiW(paths[j], full) == 0;
+                }
+            } else {
+                for (size_t j = 0; j < nknown && !mine; ++j) {
+                    if (lstrcmpiW(known[j].dir, keys[i]) != 0) continue;
+                    mine = known[j].pattern ? ex_match(known[j].name, fd.cFileName) : lstrcmpiW(known[j].name, fd.cFileName) == 0;
+                }
+            }
+            if (mine) continue;
+            has_extra[i] = true;
+            ++count;
+            log_line(h, L"rubrapack: preflight: not installed with the product: %ls%ls%ls", paths[i], fd.cFileName,
+                     (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? L"\\" : L"");
+            if (count <= 15) {
+                wchar_t line[MAX_PATH * 2 + 16];
+                wfmt(line, MAX_PATH * 2 + 16, L"  - %ls%ls%ls\r\n", paths[i], fd.cFileName, (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? L"\\" : L"");
+                w_raw(&list, line, wcslen(line));
+            }
+        } while (FindNextFileW(fh, &fd));
+        FindClose(fh);
+    }
+    if (count > 15) {
+        wchar_t more[64];
+        wfmt(more, 64, L"  ... +%u\r\n", count - 15);
+        w_raw(&list, more, wcslen(more));
+    }
+    UINT rc = ERROR_SUCCESS;
+    if (count) {
+        wchar_t num[16];
+        wfmt(num, 16, L"%u", count);
+        int choice = 0;     // IDYES delete, IDNO keep
+        if (answer && _wcsicmp(answer, L"delete") == 0) choice = IDYES;
+        else if (answer && _wcsicmp(answer, L"keep") == 0) choice = IDNO;
+        else if (mode && wcscmp(mode, L"delete") == 0) choice = IDYES;
+        else if (silent) {
+            log_line(h, L"rubrapack: preflight: stopped: %u item(s) in the product's folders were not installed with it and there is no window to ask in (RPEXTRA=delete or keep)", count);
+            pre_message(h, L"ExtraSilent", INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, num, list.buf ? list.buf : L"", product);
+            rc = ERROR_INSTALL_FAILURE;
+        } else {
+            choice = pre_message(h, L"Extra", INSTALLMESSAGE_USER | MB_YESNOCANCEL | MB_ICONQUESTION | MB_DEFBUTTON2, num, list.buf ? list.buf : L"", product);
+            if (choice != IDYES && choice != IDNO) rc = ERROR_INSTALL_USEREXIT;
+        }
+        if (rc == ERROR_SUCCESS && choice == IDYES) {
+            writer_t w = { 0 };
+            w_raw(&w, plan && wcsncmp(plan, L"RPP1", 4) == 0 ? plan : L"RPP1", plan && wcsncmp(plan, L"RPP1", 4) == 0 ? wcslen(plan) : 4);
+            for (size_t i = 0; i < ndirs; ++i) {
+                if (!has_extra[i]) continue;
+                w_field(&w, L"x"); w_field(&w, keys[i]); w_field(&w, L""); w_field(&w, L""); w_field(&w, L"");
+            }
+            if (w.buf && !w.bad) MsiSetPropertyW(h, L"RP_PURGE", w.buf);
+            log_line(h, L"rubrapack: preflight: what was not installed with the product is deleted with it");
+            if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
+        } else if (rc == ERROR_SUCCESS) {
+            log_line(h, L"rubrapack: preflight: what was not installed with the product is kept");
+        }
+    }
+    if (plan) HeapFree(GetProcessHeap(), 0, plan);
+    if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+    return rc;
+}
+
 __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     wchar_t *product = get_property(h, L"ProductName"), *uilevel = get_property(h, L"UILevel");
     wchar_t *answer = get_property(h, L"RPCLOSE"), *dflt = get_property(h, L"RP_PREFLIGHT_CLOSE");
@@ -2107,7 +2282,15 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         }
     }
 
-    // 2. Folders and the older versions' cached packages - not for a removal, which must stay possible.
+    // 2. At a real removal: what is in the product's folders but was not installed with it.
+    if (rc == ERROR_SUCCESS && removal && dirs) {
+        wchar_t *mode = get_property(h, L"RP_PREFLIGHT_EXTRA"), *extra = get_property(h, L"RPEXTRA");
+        if (mode && mode[0]) rc = pre_extra(h, dirs, mode, extra, silent, product);
+        if (mode) HeapFree(GetProcessHeap(), 0, mode);
+        if (extra) HeapFree(GetProcessHeap(), 0, extra);
+    }
+
+    // 3. Folders and the older versions' cached packages - not for a removal, which must stay possible.
     if (rc == ERROR_SUCCESS && !removal) {
         wchar_t path[MAX_PATH * 4], cmd[160];
         // The first older version's code (the list is "{..};{..}").
@@ -2196,6 +2379,57 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     DWORD_PTR r = 0;
     SendMessageTimeoutW(w, m, wp, lp, SMTO_ABORTIFHUNG, 2000, &r);
     return (LRESULT)r;
+}
+
+// The box's character format: Segoe UI at 8 points, the dialogs' own (CJK text is drawn by
+// RichEdit's font binding). Without it the lines come in RichEdit's default font, larger than the
+// dialog's and, on a Korean Windows, with the backslash drawn as a currency sign (x59). Text and
+// RTF sent across processes do not change it (WM_SETTEXT and EM_REPLACESEL insert RTF literally,
+// observed); EM_SETCHARFORMAT takes a pointer, so the format is written into the dialog's process
+// first. Only when both processes have the same width, so the pointer arrives whole.
+typedef struct {
+    HANDLE proc;
+    void  *remote;
+} det_fmt_t;
+
+static void det_font_open(det_fmt_t *fm, HWND edit) {
+    DWORD pid = 0;
+    GetWindowThreadProcessId(edit, &pid);
+    fm->proc = pid ? OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid) : NULL;
+    if (fm->proc == NULL) return;
+    BOOL mine = FALSE, theirs = FALSE;
+    if (!IsWow64Process(GetCurrentProcess(), &mine) || !IsWow64Process(fm->proc, &theirs) || mine != theirs) {
+        CloseHandle(fm->proc);
+        fm->proc = NULL;
+        return;
+    }
+    CHARFORMAT2W cf;
+    memset(&cf, 0, sizeof cf);
+    cf.cbSize = sizeof cf;
+    cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
+    cf.yHeight = 8 * 20;                                    // twips
+    cf.bCharSet = DEFAULT_CHARSET;
+    cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
+    memcpy(cf.szFaceName, L"Segoe UI", sizeof L"Segoe UI");
+    fm->remote = VirtualAllocEx(fm->proc, NULL, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (fm->remote && !WriteProcessMemory(fm->proc, fm->remote, &cf, sizeof cf, NULL)) {
+        VirtualFreeEx(fm->proc, fm->remote, 0, MEM_RELEASE);
+        fm->remote = NULL;
+    }
+}
+
+// The format for what is in the box and what comes next.
+static void det_font_apply(const det_fmt_t *fm, HWND edit) {
+    if (fm->remote == NULL) return;
+    det_send(edit, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)fm->remote);
+    det_send(edit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)fm->remote);
+}
+
+static void det_font_close(det_fmt_t *fm) {
+    if (fm->remote) VirtualFreeEx(fm->proc, fm->remote, 0, MEM_RELEASE);
+    if (fm->proc) CloseHandle(fm->proc);
+    fm->remote = NULL;
+    fm->proc = NULL;
 }
 
 // The value of `key` in an operation's arguments ("A=1,B=two,C=3"): up to the next ",Name=" or the end.
@@ -2365,6 +2599,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
     HANDLE done = CreateEventW(NULL, TRUE, FALSE, evname);
     HANDLE f = INVALID_HANDLE_VALUE;
     det_win_t win = { .title = product };
+    det_fmt_t fmt = { 0 };
     static det_state_t st;
     memset(&st, 0, sizeof st);
     for (size_t i = 0; i < DET_OPS; ++i) {
@@ -2390,6 +2625,8 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         goto out;
     }
     det_send(win.edit, WM_USER + 53, 0, 16 * 1024 * 1024);      // EM_EXLIMITTEXT: the box takes more than 64 KB
+    det_font_open(&fmt, win.edit);
+    det_font_apply(&fmt, win.edit);
     while (!ended) {
         // What the log has gained, as text.
         DWORD got = 0;
@@ -2429,6 +2666,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
             shown = 0;
             memset(st.folder, 0, sizeof st.folder);
             det_send(win.edit, WM_SETTEXT, 0, (LPARAM)L"");
+            det_font_apply(&fmt, win.edit);
             grew = true;
         }
         if (grew) {
@@ -2470,6 +2708,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
                 det_send(win.edit, EM_SETREADONLY, FALSE, 0);
                 det_send(win.edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
                 det_send(win.edit, EM_REPLACESEL, FALSE, (LPARAM)add);
+                if (shown == 0) det_font_apply(&fmt, win.edit);     // the first lines: in case the empty box kept its own
                 det_send(win.edit, EM_SETREADONLY, TRUE, 0);
                 det_send(win.edit, WM_VSCROLL, SB_BOTTOM, 0);
             }
@@ -2491,6 +2730,7 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
         if (now - quiet_since > 600000 || now - born > 6u * 3600 * 1000) break;
     }
 out:
+    det_font_close(&fmt);
     if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
     if (done) CloseHandle(done);
     if (raw) HeapFree(GetProcessHeap(), 0, raw);

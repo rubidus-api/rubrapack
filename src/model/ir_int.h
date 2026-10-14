@@ -38,6 +38,7 @@ char *ir_dup(ctx_t *c, const char *s);
 const char *ir_suggest(const char *word, const char *const *choices);
 bool ir_valid_id(const char *s, size_t max);
 bool ir_check_id(ctx_t *c, const rp_ttable_t *t, size_t max);
+bool ir_lang_code_ok(const char *code);
 const char *ir_lang_of_key(const char *key, const char *base);
 void ir_check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allowed, const char *const *lang_bases);
 void ir_check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowed);

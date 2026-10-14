@@ -9,7 +9,13 @@
 msgid ""
 msgstr ""
 "Language: es\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-14 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Rubrapack-Name: Español\n"
 "X-Rubrapack-LangIDs: 1034, 3082, 2058, 11274, 9226, 13322, 10250, 22538\n"
 "X-Rubrapack-Font: Segoe UI\n"
@@ -20,8 +26,8 @@ msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, diálogos {6}{7}\n  1 nombre, fabricante, 
 msgid "\nMessages with this code (* stands for a name or a value):\n"
 msgstr "\nMensajes con este código (* representa un nombre o un valor):\n"
 
-msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, es, fr, de, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "\nLos resultados van a stdout y los diagnósticos a stderr.\n--lang (o RUBRAPACK_LANG) elige el idioma de estos textos: en, ko, ja, zh, es, fr, de o uno con paquete de idioma.\nCódigos de salida: 0 correcto, 1 error en el origen, 2 uso, 3 entrada/salida, 4 firma o verificación,\n5 lint, 6 red.\n"
+msgid "\nResults go to stdout, diagnostics to stderr.\n--lang (or RUBRAPACK_LANG) chooses the language of these texts: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it, or one with a language pack.\nExit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "\nLos resultados van a stdout y los diagnósticos a stderr.\n--lang (o RUBRAPACK_LANG) elige el idioma de estos textos: en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru, it o uno con paquete de idioma.\nCódigos de salida: 0 correcto, 1 error en el origen, 2 uso, 3 entrada/salida, 4 firma o verificación,\n5 lint, 6 red.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nQué hacer: {1}.\n"
@@ -154,6 +160,9 @@ msgstr "{1} supera los 240 caracteres"
 
 msgid "%s is new. Add it?"
 msgstr "{1} es nuevo. ¿Añadirlo?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} no es un GUID en formato de registro"
 
 msgid "%s is not a code this rubrapack uses%s%s"
 msgstr "{1} no es un código que use este rubrapack{2}{3}"
@@ -503,8 +512,8 @@ msgstr "--key-store es un almacén de certificados de Windows; en otros sistemas
 msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
 msgstr "--key-store admite la huella digital SHA-1 del certificado (40 dígitos hexadecimales)"
 
-msgid "--lang %s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "--lang {1}: no existe ese idioma (en, ko, ja, zh, es, fr y de están integrados; otro necesita su paquete de idioma, {2}.po)"
+msgid "--lang %s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "--lang {1}: no existe ese idioma (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru y it están integrados; otro necesita su paquete de idioma, {2}.po)"
 
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang necesita un idioma, como en o ko"
@@ -683,14 +692,17 @@ msgstr "Rutas"
 msgid "Product name"
 msgstr "Nombre del producto"
 
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode y UpgradeCode son el mismo GUID"
+
 msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
 msgstr "ProductVersion {1} no es mayor que la anterior {2} en sus tres primeros campos: Windows Installer no actualiza"
 
 msgid "Program the shortcuts open (- for no shortcuts)"
 msgstr "Programa que abren los accesos directos (- para ninguno)"
 
-msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, es, fr and de are built in; another needs its language pack, %s.po)"
-msgstr "RUBRAPACK_LANG={1}: no existe ese idioma (en, ko, ja, zh, es, fr y de están integrados; otro necesita su paquete de idioma, {2}.po)"
+msgid "RUBRAPACK_LANG=%s: no such language (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru and it are built in; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: no existe ese idioma (en, ko, ja, zh, zh_TW, es, fr, de, pt_BR, ru y it están integrados; otro necesita su paquete de idioma, {2}.po)"
 
 msgid "Reference, "
 msgstr "Referencia, "
@@ -1703,6 +1715,12 @@ msgstr "la extensión '{1}' ya tiene un programa ([assoc.{2}])"
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension debe ser '.' y minúsculas, dígitos, '_' o '-' (se recibió '{1}')"
 
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files no tiene efecto con preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files debe ser \"ask\", \"keep\" o \"delete\" (se recibió '{1}')"
+
 msgid "feature %s is gone: installations that had it lose what it held"
 msgstr "la característica {1} ya no existe: las instalaciones que la tenían pierden lo que contenía"
 
@@ -1744,6 +1762,9 @@ msgstr "file: '{1}' no es un [file.*] de este paquete"
 
 msgid "file: '%s' serves COM classes only as an .exe or a .dll"
 msgstr "file: '{1}' solo sirve clases COM como .exe o .dll"
+
+msgid "files but no Media row"
+msgstr "hay archivos pero ninguna fila de Media"
 
 msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
 msgstr "corrija el valor que indica el mensaje; los ID son letras, dígitos y '_' y difieren en todas las tablas"
@@ -1979,8 +2000,8 @@ msgstr "language debe ser \"ko-KR\" o \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language debe ser \"neutral\", \"en-US\" o \"ko-KR\""
 
-msgid "languages holds codes of 2 or 3 lower-case letters, like \"ko\" (got '%s')"
-msgstr "languages contiene códigos de 2 o 3 letras minúsculas, como \"ko\" (se recibió '{1}')"
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages contiene códigos como \"ko\" o \"zh_TW\" (2 o 3 letras minúsculas, y _ y las dos mayúsculas de una región) (se recibió '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages es una matriz de códigos de idioma, como [\"ko\"]"
@@ -2389,6 +2410,9 @@ msgstr "replaces enumera {1} dos veces"
 
 msgid "replaces names %s, which is this package's own upgrade-code or its parent"
 msgstr "replaces nombra {1}, que es el upgrade-code de este paquete o su parent"
+
+msgid "required property %s is missing"
+msgstr "falta la propiedad obligatoria {1}"
 
 msgid "rollback twin must come before %.*s (%ld <= %ld)"
 msgstr "la acción gemela de reversión debe ir antes de {1} ({2} <= {3})"
@@ -3143,7 +3167,7 @@ msgstr "&Omitir"
 
 msgctxt "installer"
 msgid "Abort"
-msgstr "A&nular"
+msgstr "&Anular"
 
 msgctxt "installer"
 msgid "Exit"
@@ -3376,14 +3400,6 @@ msgstr "¿Desea quitar [ProductName] de este equipo?"
 msgctxt "installer"
 msgid "RemoveAskAll"
 msgstr "¿Desea quitar [ProductName] de este equipo? Su configuración y sus datos se eliminan con él y no se pueden recuperar."
-
-msgctxt "installer"
-msgid "PreflightAsk"
-msgstr "[1] programa(s) usan archivos de [3]:\r\n[2]\r\n¿Desea cerrarlos todos?\r\n\r\nSí: cerrarlos todos y continuar (el trabajo no guardado puede perderse).\r\nNo: continuar sin cerrarlos (los programas ya abiertos conservan los archivos anteriores hasta que se vuelvan a abrir).\r\nCancelar: detener."
-
-msgctxt "installer"
-msgid "PreflightSilent"
-msgstr "[3]: detenido, porque [1] programa(s) usan sus archivos:\r\n[2]Ciérrelos y vuelva a intentarlo, o indique RPCLOSE=yes (cerrarlos todos y continuar) o RPCLOSE=no (continuar sin cerrarlos)."
 
 msgctxt "installer"
 msgid "PreflightFolder"
@@ -3776,3 +3792,19 @@ msgstr "&Elegir otra"
 msgctxt "installer"
 msgid "DirContinue"
 msgstr "&Usar esta carpeta"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] programa(s) usan archivos de [3]:\r\n[2]\r\n¿Desea cerrarlos todos?\r\n\r\nSí: cerrarlos todos y continuar (el trabajo no guardado puede perderse).\r\nNo: continuar sin cerrarlos (los programas ya abiertos conservan los archivos anteriores hasta que se vuelvan a abrir).\r\nCancelar: detener."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: detenido, porque [1] programa(s) usan sus archivos:\r\n[2]Ciérrelos y vuelva a intentarlo, o indique RPCLOSE=yes (cerrarlos todos y continuar) o RPCLOSE=no (continuar sin cerrarlos)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] elemento(s) de las carpetas de [3] no se instalaron con él:\r\n[2]\r\n¿Desea eliminarlos también?\r\n\r\nSí: eliminarlos junto con [3] (no se pueden recuperar).\r\nNo: quitar [3] y conservarlos.\r\nCancelar: detener."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: detenido, porque [1] elemento(s) de sus carpetas no se instalaron con él:\r\n[2]Indique RPEXTRA=delete (eliminarlos también) o RPEXTRA=keep (conservarlos) y vuelva a quitarlo."

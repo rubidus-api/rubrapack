@@ -105,6 +105,10 @@ static const text_t texts[] = {
     { "PreflightSilent", "[3]: stopped, because [1] program(s) are using its files:\r\n[2]Close them and try again, or give RPCLOSE=yes (close them all and go on) or RPCLOSE=no (go on without closing)." },
     { "PreflightFolder", "[3] cannot be installed safely: [1] is not a folder, or the installer may not delete files in it. Remove [3] first ([2]), then install again." },
     { "PreflightCache", "[3] cannot be upgraded safely: the installed version [1] has lost its cached package, so it cannot be removed here. Remove that version with its original package first ([2]), then install again." },
+    // Before a removal (DECISIONS 2026-10-14): what is in the product's folders but was not installed
+    // with it - [1] how many, [2] the list, [3] the product. A language that does not give them gets English.
+    { "PreflightExtra", "[1] item(s) in the folders of [3] were not installed with it:\r\n[2]\r\nDelete them too?\r\n\r\nYes: delete them with [3] (they cannot be brought back).\r\nNo: remove [3] and keep them.\r\nCancel: stop." },
+    { "PreflightExtraSilent", "[3]: stopped, because [1] item(s) in its folders were not installed with it:\r\n[2]Give RPEXTRA=delete (delete them too) or RPEXTRA=keep (keep them), then remove it again." },
     { "DirGuardText", "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "&Launch [ProductName]" },
     { "SaveLog", "&Save log..." },
@@ -426,11 +430,13 @@ static void prop(ctx_t *c, const char *name, const char *value) {
     if (grow(c, (void **)&c->props, &c->capprops, c->nprops, sizeof *c->props)) c->props[c->nprops++] = (rp_ui_prop_t){ name, value };
 }
 
-// Language actions (type 51, one per text) get numbers of their own between LaunchConditions (100)
-// and CostInitialize (800), which ICE82 wants; past 799 they share the last one.
+// Language actions (type 51, one per text) get numbers of their own, which ICE82 wants: between
+// LaunchConditions (100) and CostFinalize (1000), around CostInitialize (800) and FileCost (900) -
+// 897 numbers, about 96 a language, so seven languages besides English fit; past 999 they share it.
 static int lang_seq(ctx_t *c) {
     if (c->lseq < 101) c->lseq = 101;
-    return c->lseq < 799 ? c->lseq++ : 799;
+    if (c->lseq == 800 || c->lseq == 900) ++c->lseq;
+    return c->lseq < 999 ? c->lseq++ : 999;
 }
 
 static void seq(ctx_t *c, const char *action, const char *cond, int n) {
@@ -1184,11 +1190,14 @@ static void language_rows(ctx_t *c) {
         }
         snprintf(name, sizeof name, "RpLangU_%s", L->code);
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
-        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, u, ")")), 17);
+        // Each its own number (ICE82), in the order of [ui] languages, user languages before system
+        // ones, ending at 17 and 18 as with one language: the first that matches sets RPLANGUAGE.
+        int nl = (int)c->nlang - 1;
+        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, u, ")")), 18 - 2 * nl + (int)li);
         if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
         snprintf(name, sizeof name, "RpLangS_%s", L->code);
         ca(c, keep(c, name, NULL), "RPLANGUAGE", L->code);
-        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, sy, ")")), 18);
+        seq(c, keep(c, name, NULL), keep(c, "NOT RPLANGUAGE AND (", keep(c, sy, ")")), 18 - nl + (int)li);
         if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
     }
     ca(c, "RpLangEn", "RPLANGUAGE", "en");
