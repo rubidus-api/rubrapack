@@ -1,0 +1,3816 @@
+# rubrapack language pack: Catalan.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: ca\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Català\n"
+"X-Rubrapack-LangIDs: 1027\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, diàlegs {6}{7}\n  1 nom, fabricant, versió, arquitectura         2 carpeta d'instal·lació, per a qui\n  3 diàlegs, llicència, idiomes                  4 parts opcionals\n  5 dreceres                                     6 fitxers: igualar la carpeta del programa\n  7 qualsevol clau                               v veure   l lint   s desar   q sortir\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nMissatges amb aquest codi (* representa un nom o un valor):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nEls resultats van a stdout, els diagnòstics a stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (o RUBRAPACK_LANG) tria l'idioma d'aquests textos: {1}, o un que tingui paquet d'idioma.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Codis de sortida: 0 correcte, 1 error a la font, 2 ús, 3 entrada/sortida, 4 signatura o verificació,\n5 lint, 6 xarxa.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nQuè cal fer: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} ja no hi és, però una drecera l'obre: canvieu primer les dreceres (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  hi ha {1} fitxers i {2} carpetes\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s o q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  s'han afegit [dir.{1}] i [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  s'ha afegit [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  indiqueu-ho com a taula.clau, com ara package.version o dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: cap problema\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: vegeu els problemes de més amunt (el fitxer que s'hi indica és una còpia de comprovació)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  es conserven els altres idiomes de [ui] languages; canvieu aquesta llista amb 7 (qualsevol clau)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  s'ha suprimit [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  s'ha suprimit [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  subcarpetes:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  això no encaixa en el subconjunt de TOML; no s'ha canviat res\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  això no era text llegible; torneu-ho a provar\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  la carpeta del programa '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  la font no té taules [file] a les quals pugui apuntar una drecera\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  la font no té subcarpetes tal com les escriu `new` ([files] \"<folder>/<name>/**\"); afegiu-les amb 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  massa llarg; torneu-ho a provar\n"
+
+msgid "  y or n\n"
+msgstr "  y o n\n"
+
+msgid " (changed)"
+msgstr " (canviat)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - crea paquets de Windows Installer (.msi) i MSIX (.msix)\n\nús: rubrapack [--lang <code>] <command> [arguments]\n\nordres:\n"
+
+msgid " and its dir"
+msgstr " i la seva carpeta"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) no té variable d'entorn, de manera que un valor expandible no el pot contenir; feu servir un valor de cadena (s'omple en instal·lar)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) és un {2}: pot començar un camí, o substituir un valor que omple el Windows Installer (registre, entorn, INI, arguments, missatges), però no aquí"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) no és una carpeta des de la qual pugui començar un camí (un ID de dir, o ProgramFiles, LOCALAPPDATA, ProgramData ... - vegeu Camins al manual){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  estructura:  {2}\n  resum:       {3}\n  signatura:   {4}\n  cadena:      {5}{6}{7}\n  revocació:   no comprovada\n  segell de temps: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: la variable no està definida"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' no és un control d'aquest diàleg"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' no és a {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': el text de la llicència necessita el nom anglès del tipus de lletra, de manera que es mostra amb el tipus de lletra propi de l'idioma; escriviu el nom anglès (com ara \"Malgun Gothic\") per fer servir aquest tipus de lletra també allà"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "component {1}, però la plataforma del paquet és {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} no pertany a kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} no pertany a kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} conté LANGID (1..65535), com ara 1041"
+
+msgid "%s holds strings"
+msgstr "{1} conté cadenes"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} és un nom de tipus de lletra d'1 a 31 caràcters, com ara \"Segoe UI\" (s'ha obtingut {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} és una condició MSI amb cometes tancades i parèntesis equilibrats"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} és una matriu de cadenes, una per valor"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} és per a paquets MSI: msiexec no suprimeix un MSIX"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} ja no hi és. Voleu suprimir [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} té més de 240 caràcters"
+
+msgid "%s is new. Add it?"
+msgstr "{1} és nou. Voleu afegir-lo?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} no és un GUID en format de registre"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} no és un codi que faci servir aquest rubrapack{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} ha de ser \"file:<ID>\" i indicar un [file.*] d'aquest paquet"
+
+msgid "%s must be a GUID"
+msgstr "{1} ha de ser un GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} ha de ser un GUID com ara {{12345678-...} (s'ha obtingut '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} ha de ser una adreça https://, http:// o file://, o un camí \\\\server\\share (s'ha obtingut '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} ha de ser diferent d'upgrade-code (una família d'actualització per arquitectura)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} necessita la compilació del Windows {2} o posterior: definiu [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} necessita resources/bin/rubrapack_ca-{2}.dll, que aquest rubrapack no inclou"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA no comprovada (indiqueu --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA de confiança"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA no de confiança - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} ja no hi és o és buit. Voleu suprimir [files.{3}] i [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ és una carpeta nova. Voleu afegir-la?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: errors: {2}{-3}, avisos: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: errors: {2}{-3}, avisos: {4}{-5} (respecte de {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} fitxers, {3} bytes\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} fitxers, {3} errors, 0 avisos\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: {2} diagnòstics més que no es mostren\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: el fitxer '{2}' no és un [file.*] d'aquest paquet"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: el fitxer '{2}' no és un programa (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' no està tancat (escriviu '$$(' per al text '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' ja existeix; es deixa tal com és"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' ja existeix; suprimiu-lo o compileu en una altra carpeta"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' ja té un controlador {2} ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' ja té permisos"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' i '{2}' són el mateix camí dins el paquet"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' pertany al Windows o als navegadors"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' no es pot llegir respecte de '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' no encaixa en el subconjunt de TOML; no s'ha desat res"
+
+msgid "'%s' exists already"
+msgstr "'{1}' ja existeix"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' ja existeix; canvieu-lo amb `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' existeix i no és un directori buit; extraieu-ho en un de nou"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' va a {2}; o msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' té un flux d'informació de resum il·legible"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' no té taules Directory, Component, File i Media d'on extreure"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' no té informació de resum llegible"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' no té cap transformació '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' és UTF-16: edit només canvia fonts UTF-8 (deseu-lo primer com a UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' és un nom del Windows; doneu un altre nom a la variable"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' és un [chain]: crea un programa d'instal·lació, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' és un control del marc integrat; trieu un altre ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' és una carpeta de la màquina; un paquet {2} no hi pot escriure"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' és un mòdul de combinació: combineu-lo amb [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' és un nom que el format MSIX es reserva"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' és un enllaç simbòlic; els enllaços no se segueixen"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' també és un [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' també és un ID de dir; doneu un altre nom a la variable"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' està compilat per a la màquina 0x{2}, no per a l'arquitectura d'aquest paquet; definiu any-arch = true si és intencionat"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' no és ni un fitxer PE (.exe, .dll), ni un paquet MSI, ni un paquet o conjunt MSIX"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' no és ni un fitxer PE, ni un paquet MSI, ni un paquet o conjunt MSIX"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' no és ni una carpeta coneguda ni un ID de dir (carpetes conegudes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' no és un fitxer cabinet que rubrapack pugui llegir (stored o MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' no és un codi de diagnòstic (RP i quatre xifres, com ara RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' no és un programa (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' no és un fitxer normal"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' no és un programa d'instal·lació de rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' no és un ID vàlid (lletres, xifres i '_', no comença per una xifra, com a màxim {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' no és una base de dades MSI vàlida: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' no és un paquet MSIX vàlid: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' no és un paquet vàlid: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' no és una font vàlida (el subconjunt de TOML); corregiu-la primer a mà"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' no és una transformació vàlida: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' no és un nom de variable vàlid"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' està reservat i no es pot fer servir com a ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' és el nom d'un dir: només una cerca de registre o de dir pot omplir un dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' sembla un fitxer de programa (PE), però les capçaleres o els recursos estan malmesos"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' ha de ser una cadena"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' ha de ser un enter"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' ha d'estar entre {2} i {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' ha de ser true o false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' no pot estar buit"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' no indica cap transformació (propietat de resum 8): no és un pedaç"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' comença per una carpeta: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' té {4}; no s'ha extret res"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} entrades, més que el límit {3} (--limit-entries); no s'ha extret res"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' i '{3}' serien el mateix camí al Windows; no s'ha extret res"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' no és a [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': no es pot llegir una taula"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': una taula és il·legible"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': un MSIX instal·la tots els seus fitxers (when); feu servir msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': un MSIX suprimeix tots els seus fitxers (keep); feu servir msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': el fitxer cabinet '{2}' està malmès o no és stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': el nom de cabinet '{2}' no és un nom de fitxer simple"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': el fitxer comprimit '{2}' (seqüència {3}) no té cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': el directori '{2}' té un pare '{3}' que no hi és"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': el directori '{2}' és el seu propi avantpassat o està massa niat"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': el fitxer '{2}' no coincideix amb el seu MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': el fitxer '{2}' no té component ni directori"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': el fitxer '{2}' fa {3} bytes, la taula File diu {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': el fitxer '{2}' no és al cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': la signatura no cobreix els seus cabinets externs (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': la seva carpeta no porta a cap ubicació coneguda"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': més de {2} bytes per escriure (--limit-bytes); no s'ha extret res"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': sense --timestamp: la signatura deixa de ser vàlida quan caduca el certificat"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': el paquet '{2}' no coincideix amb el seu SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': el flux de cabinet '{2}' no hi és"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': el manifest no té {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': el manifest indica '{2}', que no és al paquet"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': segell de temps de {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': la transformació '{2}' no es pot llegir respecte de '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' és l'idioma propi del paquet ({2}); doneu aquest text sense el sufix"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' fa que el Windows Installer escrigui una cadena múltiple; feu servir type = \"multi\" i una matriu"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' als nombres no és compatible"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' admet com a màxim un nom d'ordre"
+
+msgid "'version' takes no arguments"
+msgstr "'version' no admet arguments"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs és per a .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch per a un conjunt: una llista de x64, x86 i arm64, cadascun un cop (s'ha obtingut '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch admet una arquitectura, o una llista per a una sortida .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp i --allow-unsigned-cabs van amb --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress és per a .msi; un MSIX admet --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist indica una carpeta nova al costat de la font (sense camí)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs admet un nombre de l'1 al 64 (s'ha obtingut '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store és un magatzem de certificats del Windows; en altres llocs feu servir un fitxer de clau o --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store admet l'empremta SHA-1 del certificat (40 xifres hexadecimals)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: no existeix aquest idioma (integrats: {2}; un altre necessita el seu paquet d'idioma, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang necessita un idioma, com ara en o ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages necessita diàlegs: indiqueu també --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress admet deflate o store (s'ha obtingut '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: la variable no està definida"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code admet un GUID en majúscules i amb claus: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: la variable no està definida"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous compara dos paquets .msi"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: no es poden llegir els certificats arrel del sistema operatiu"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} no coincideix amb la sortida '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} no està implementat (msi o msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target admet msi o msix (s'ha obtingut '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots i --proxy van amb --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test i --msix-compress són per a sortides .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test és per a paquets sense signatura; amb --key ometeu-lo"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate admet none, o alguns de product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} s'ha indicat dues vegades"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' és un nom del Windows; doneu un altre nom a la variable"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D necessita NOM=VALOR (s'ha obtingut '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i demana totes les respostes; indiqueu -i o les opcions"
+
+msgid "; its range is "
+msgstr "; el seu interval és "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' no és a SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty ha de ser una propietat pública (en majúscules)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Tots els codis: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x no comença per PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x no és l'última entrada"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Arquitectura (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Trieu"
+
+msgid "Command line"
+msgstr "Línia d'ordres"
+
+msgid "Command line (lint)"
+msgstr "Línia d'ordres (lint)"
+
+msgid "Common AppData"
+msgstr "AppData comú"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId no és un GUID en format de registre"
+
+msgid "Desktop shortcut?"
+msgstr "Drecera a l'escriptori?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Diàlegs (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "A la taula File, Component o Directory hi falta una columna estàndard"
+
+msgid "Folder name under Program Files"
+msgstr "Nom de la carpeta a Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Carpeta amb els fitxers per instal·lar"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "L'ID '{1}' ja s'utilitza (línia {2}); els ID han de ser diferents en totes les taules"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Carpeta d'instal·lació (camí de [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Instal·lar per a (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Clau com a taula.clau (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' pertany a un altre component"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' no és a File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' no és a Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Diàlegs en coreà a més d'en anglès?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} és inferior al d'un DiskId més baix"
+
+msgid "Leave without saving the changes?"
+msgstr "Voleu sortir sense desar els canvis?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Llicència per acceptar (.txt, .md, .rtf; - per a cap)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX no té carpeta virtual per a l'AppData de l'usuari; l'aplicació hi crea el que necessita quan s'executa"
+
+msgid "MSIX packages"
+msgstr "Paquets MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: què necessita un paquet MSIX i què no pot contenir"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Programa principal, per a les dreceres (- per a cap)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Manual: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Fabricant"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Fabricant (es mostra a Aplicacions instal·lades)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt ha retornat una signatura ECDSA de longitud incorrecta"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Parts opcionals que l'usuari pot marcar (subcarpetes, comes; - per a cap)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "Testimoni PKCS#11: el testimoni no conté cap certificat amb el CKA_ID de la clau (indiqueu-lo amb --cert)"
+
+msgid "Paths"
+msgstr "Camins"
+
+msgid "Product name"
+msgstr "Nom del producte"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode i UpgradeCode són el mateix GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} no és superior a l'anterior {2} en els tres primers camps: el Windows Installer no actualitza"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Programa que obren les dreceres (- sense dreceres)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: no existeix aquest idioma (integrats: {2}; un altre necessita el seu paquet d'idioma, {3}.po)"
+
+msgid "Reference, "
+msgstr "Referència, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Cap fila de Media no cobreix la seqüència {1} (última {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "La seqüència {1} la fa servir un altre fitxer"
+
+msgid "Source file to write"
+msgstr "Fitxer font per escriure"
+
+msgid "Source format"
+msgstr "Format de la font"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source ha d'indicar una fila de File per al tipus {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Drecera al menú Inici?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Les entrades d'Inici, Programes, Escriptori i Inici automàtic provenen de [shortcut.*] i [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML fora del subconjunt que llegeix rubrapack, o `format` absent o massa nou"
+
+msgid "Tables"
+msgstr "Taules"
+
+msgid "The TOML subset"
+msgstr "El subconjunt de TOML"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "Els fitxers UTF-16 big-endian no són compatibles; deseu-los com a UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "L'UpgradeCode {1} és diferent del de la versió anterior, {2}: aquest paquet no la substitueix"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode no és un GUID en format de registre"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Valor (text, un nombre, true/false, [\"a\", \"b\"]; - suprimeix la clau)"
+
+msgid "Variables"
+msgstr "Variables"
+
+msgid "Version"
+msgstr "Versió"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versió ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versions i actualitzacions"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "El Windows Installer admet com a màxim 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] necessita '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] no pot anar en un mòdul de combinació; el té el paquet que el combina"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] encara no és compatible (previst per a {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] no pot anar en un MSIX; afegiu msi-only = true per crear l'MSIX sense ell"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: un ID en un mòdul de combinació té com a màxim 35 caràcters (s'hi afegeix el GUID del mòdul)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] necessita un ID: escriviu [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] no admet ID: escriviu [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml no té </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml no és l'última entrada (no és un paquet escrit per rubrapack o per l'API d'empaquetament del Windows)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "les matrius de taules [[...]] no són compatibles; doneu a cada element el seu [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check no té cap efecte: encara no l'executa res; suprimiu-lo"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] necessita do i undo (undo també desfà un do fallit)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: en un MSIX un tipus de fitxer obre una aplicació: target ha de ser un executable [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] hi és dues vegades"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] necessita un ID: escriviu [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id i typelib només s'escriuen per a l'MSI; l'MSIX registra la classe sense ells"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: els args són d'un programa; una DLL es carrega, no s'inicia"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate executa una DLL a dllhost; '{2}' és un programa"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading és per a una DLL; un programa defineix el seu propi apartament"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version i typelib-file necessiten typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] va a {2}; o msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: la seva font ha de ser un fitxer que entri al paquet"
+
+msgid "[define] values must be strings"
+msgstr "els valors de [define] han de ser cadenes"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] necessita '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] necessita 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] necessita 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] necessita 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] té {2} controls; com a màxim 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] no té cap [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] queda situat després de si mateix a través d'altres diàlegs"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] necessita ui = \"minimal\", \"installdir\" o \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' és un nom del Windows; doneu un altre ID al dir"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard necessita la DLL auxiliar de rubrapack, que un mòdul de combinació no porta"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] necessita una funció"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: un MSIX defineix totes les seves variables (when); feu servir msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: el seu valor indica un lloc que un MSIX no pot donar (una carpeta fora del paquet que no és del Windows, o una part de temps d'instal·lació); feu servir msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: l'Explorador carrega un controlador {2} des d'una DLL; [com.{3}] és un programa"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: el Windows només llegeix els controladors de propietats per màquina; el paquet necessita scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: un controlador de visualització prèvia s'executa al prevhost del Windows; deixeu app-id i surrogate fora de [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: un MSIX només porta controladors de miniatures i de visualització prèvia (un controlador de propietats empaquetat no va donar valors a l'Explorador); msi-only = true el manté per a l'MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: un tipus de fitxer MSIX pertany a una aplicació; afegiu un [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: la classe {2} no és un [com.*] d'aquest paquet (la DLL del controlador la serveix)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: en un MSIX els controladors comparteixen tots els seus tipus o cap (un tipus és en una sola associació de tipus de fitxer)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: en un MSIX la seva classe s'executa en un substitut; threading = \"sta\" a [com.{2}] dona un bucle de missatges a la finestra (amb threading = {3} la visualització prèvia pot quedar en blanc)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: en un MSIX tots els seus tipus són en un sol tipus de fitxer [assoc], o cap"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: la seva classe és només MSI ([com.{2}]); l'MSIX no tindria servidor per a ella"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types és una llista de tipus de fitxer, com ara [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] va a {2}; o msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] necessita 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] necessita una funció: definiu 'feature' aquí o al seu dir"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: un MSIX escriu totes les seves entrades INI (when); feu servir msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: el seu valor té una part que el Windows Installer omple en instal·lar ([...]); un MSIX escriu el fitxer quan es crea"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] necessita 'on': on es mostra l'element, com ara [\".txt\"] o \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] necessita 'target' (el programa que inicia), o elements amb parent = \"{2}\" (un submenú)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] necessita 'target': el programa que inicia l'element"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: un submenú no inicia res: ometeu 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: un element d'un submenú es mostra on es mostra el submenú: ometeu 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args té una part que el Windows Installer omple en instal·lar ([...]); un MSIX només conté text fix"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: el seu programa no és a l'MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: els seus valors no poden anar al registre del paquet"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": no hi ha cap [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on és un tipus de fitxer o una llista, com ara [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: el pare '{2}' no és un [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: el pare '{2}' ha de ser un submenú: un [menu.*] sense target i sense pare propi"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] va a {2}; o msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] necessita una funció: definiu 'feature' aquí o al seu dir"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; o msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args ha de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file ha de ser {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file ha d'indicar un fitxer que entri al paquet"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file ha d'indicar un programa que entri al paquet"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types és una llista de tipus de fitxer, com ara [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] necessita que el seu dir tingui una funció"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: en un MSIX un esquema obre una aplicació: target ha de ser un executable [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] necessita 'value' (o remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR no arriba fora d'un MSIX; feu servir [assoc.*], [protocol.*], [com.*] o [handler.*], o msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: un valor qword necessita la DLL auxiliar de rubrapack, que un mòdul de combinació no porta"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: un MSIX només porta valors sota {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: un MSIX ni suprimeix valors ni els deixa enrere (remove, keep); feu servir msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: un MSIX escriu tots els seus valors (when); feu servir msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: el seu valor té una part que el Windows Installer omple en instal·lar ([...]); un MSIX només conté valors fixos"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" necessita la DLL auxiliar de rubrapack, que un mòdul de combinació no porta"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: el nom de la clau o del valor no pot anar en un rusc de registre"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] necessita una funció: definiu 'feature' aquí o al seu dir"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true no és per a una carpeta sota {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true necessita la DLL auxiliar de rubrapack, que un mòdul de combinació no porta"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file ha d'indicar un programa que entri al paquet"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: un MSIX només té dreceres a l'escriptori i al menú Inici{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: una drecera MSIX no té working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: una drecera MSIX hi és sempre (when és per a un MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: una drecera MSIX mostra el logotip de la seva aplicació; icon és per a un MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: en un MSIX una drecera inicia una aplicació: target ha de ser un executable [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: l'entrada del menú Inici d'un MSIX és la seva aplicació, que no admet args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: cap text de diàleg no té aquest ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] necessita ui = \"basic\" o un altre conjunt de diàlegs a [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "la seqüència d'escapada \\{1} no és un valor escalar Unicode"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: aquest paquet no actualitzaria netament l'anterior"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` d'un paquet: diàlegs, pàgina de codis, normalització del text"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` d'un paquet o conjunt MSIX"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "un control {1} no té text; poseu-hi un control de text al costat"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "un control {1} necessita [property.{2}] amb un dels seus valors per defecte (una instal·lació silenciosa el fa servir)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "un paquet {1} no pot escriure a HKLM; feu servir HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "una sortida .msix necessita una taula [msix-app.ID] que indiqui l'executable"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "una sortida .msix necessita una taula [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "una sortida .msm és un mòdul de combinació, creat des d'una font amb [module] en lloc de [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "un fitxer .txt, .md o .rtf, o - per a cap"
+
+msgid "a PE file without a certificate table entry"
+msgstr "un fitxer PE sense entrada de taula de certificats"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "un PIN no s'agafa mai de la línia d'ordres (altres el poden veure); feu servir --pin-env o --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "un Package del manifest del conjunt amb un Type desconegut"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "un Package del manifest del conjunt sense FileName, Offset o Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "una entrada ZIP no es descomprimeix a la seva mida"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "una entrada ZIP més gran del permès"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "el CRC-32 d'una entrada ZIP no coincideix"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "les dades d'una entrada ZIP són fora del fitxer"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "una font [module] crea un mòdul de combinació: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "un valor binari és un nombre parell de xifres hexadecimals, com ara \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "un conjunt sense paquets"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "un certificat del camí té una extensió crítica que rubrapack no entén"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "un certificat del camí està signat per un certificat que no és d'una CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "una cadena només conté [chain], [chain-package.ID] i [define], no [{1}]; els paquets es creen des de les seves pròpies fonts"
+
+msgid "a chain holds at most %d packages"
+msgstr "una cadena conté com a màxim {1} paquets"
+
+msgid "a chain needs [chain]"
+msgstr "una cadena necessita [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "una cadena necessita com a mínim un [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "un caràcter que el Windows no permet en un nom (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "un caràcter de control"
+
+msgid "a damaged PE optional header"
+msgstr "una capçalera opcional PE malmesa"
+
+msgid "a damaged PE section table"
+msgstr "una taula de seccions PE malmesa"
+
+msgid "a damaged ZIP64 end record"
+msgstr "un registre final ZIP64 malmès"
+
+msgid "a damaged hive bin"
+msgstr "un bin de rusc malmès"
+
+msgid "a diagnostic of rubrapack"
+msgstr "un diagnòstic de rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "un servei desactivat no es pot iniciar"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "un paquet dual no pot triar entre una variable d'usuari i una del sistema"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "un paquet dual escriu a HKMU (HKLM o HKCU segons com s'instal·li), no a HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "un valor dword és un enter 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "una característica que aquest rubrapack no ofereix (o amb la qual no s'ha compilat)"
+
+msgid "a file larger than allowed"
+msgstr "un fitxer més gran del permès"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "un nom de fitxer sota '{1}' no és Unicode vàlid i no es pot empaquetar"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "un nom de fitxer sense / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "la cadena de components o directoris d'un fitxer està trencada"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "un tipus de lletra entra en un MSIX mitjançant un [font.*] que l'indica"
+
+msgid "a hash the token signing does not know"
+msgstr "un resum que la signatura del testimoni no coneix"
+
+msgid "a hive cell crosses its bin"
+msgstr "una cel·la de rusc travessa el seu bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "una versió o un tipus de rusc que rubrapack no llegeix"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "una carpeta coneguda en si ('{1}') no pot rebre permisos"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "una llicència necessita ui = \"minimal\", \"installdir\" o \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "una capçalera local amb camps addicionals (no és un paquet escrit per rubrapack o per l'API d'empaquetament del Windows)"
+
+msgid "a malformed central directory"
+msgstr "un directori central mal format"
+
+msgid "a modification package has no applications of its own"
+msgstr "un paquet de modificació no té aplicacions pròpies"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "un paquet de modificació necessita la compilació del Windows 18362 o posterior: definiu [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "el compress d'un mòdul és \"none\", \"mszip\" o \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "el nom d'un mòdul és el seu ID a ModuleID: lletres, xifres i _, com a màxim 35 caràcters"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "un valor multi és una matriu no buida de cadenes"
+
+msgid "a multi value is an array of strings"
+msgstr "un valor multi és una matriu de cadenes"
+
+msgid "a name ending with a space or a dot"
+msgstr "un nom que acaba amb un espai o un punt"
+
+msgid "a name longer than 255 bytes"
+msgstr "un nom de més de 255 bytes"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "un paquet indicat al manifest del conjunt no és al conjunt"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "un paquet sense Identity Name, Publisher, Version i ProcessorArchitecture (o ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "l'Offset o la Size d'un paquet al manifest del conjunt no coincideixen amb on és (o està comprimit)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "la identitat d'un paquet és diferent del que en diu el manifest del conjunt"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "el nom d'un paquet al conjunt ha de ser un nom de fitxer acabat en .msix o .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "una contrasenya no s'agafa mai de la línia d'ordres (altres la poden veure); feu servir --pass-env o --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "un paquet per màquina no escriu a HKCU (seria el de l'usuari que instal·la); feu servir scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "un servidor intermediari amb nom d'usuari o contrasenya no és compatible"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "un valor qword és un enter o \"0x\" i d'1 a 16 xifres hexadecimals"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "un control de botons d'opció apila els botons: l'alçada ha de ser com a mínim 12 per valor ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "un registre té més columnes que la seva taula"
+
+msgid "a record is cut short"
+msgstr "un registre està tallat"
+
+msgid "a record names a string the pool does not have"
+msgstr "un registre indica una cadena que el conjunt no té"
+
+msgid "a reserved device name"
+msgstr "un nom de dispositiu reservat"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "una acció de desfer no pot ser asíncrona"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "un esquema és una lletra minúscula seguida de lletres minúscules, xifres, '+', '-' o '.' (s'ha obtingut '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "una acció de script entre InstallInitialize i RemoveExistingProducts (error 2613)"
+
+msgid "a section lies outside the file"
+msgstr "una secció és fora del fitxer"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "un nom de servei no pot contenir '/' ni '\\' (com a màxim 256 caràcters)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "un .exe d'instal·lació es crea des d'una font amb [chain]; '{1}' crea un paquet (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "una font conté un [package] o un [module], no tots dos"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "una font que passa les comprovacions RP1xxx no hauria de trobar mai aquests: informeu-ne amb la font"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "una entrada ZIP emmagatzemada amb mides diferents"
+
+msgid "a stream of the package cannot be read"
+msgstr "no es pot llegir un flux del paquet"
+
+msgid "a table has more than 32 columns"
+msgstr "una taula té més de 32 columnes"
+
+msgid "a text control has no property"
+msgstr "un control de text no té propietat"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "un valor `with` un fitxer comparteix el seu component: poseu `when` al fitxer"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "un valor té d'1 a 64 bytes"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "un valor que va 'with' un fitxer pren la funció d'aquest fitxer"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "una versió són 3 o 4 nombres amb punts, com ara 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account ha de ser LocalSystem, LocalService o NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "l'acció '{1}' ja està definida"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "l'acció no és ni una acció estàndard ni és a CustomAction"
+
+msgid "adds too many tables"
+msgstr "afegeix massa taules"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' no és una pàgina d'aquest conjunt de diàlegs (RpWelcomeDlg{2}{3}{4}) ni un [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias pertany a kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias ha de ser un nom de fitxer acabat en .exe: lletres, xifres, '.', '_', '-' (s'ha obtingut '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "una secció INI no pot contenir ']' i una clau no pot contenir '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "un MSIX no pot posar fitxers a la carpeta temporal"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "una aplicació té un àlies ([msix-extension.{1}] ja n'és un)"
+
+msgid "an empty name"
+msgstr "un nom buit"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "un servidor https necessita --tls-trust <certificats> o --system-roots per comprovar-lo"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "un servidor intermediari https:// no és compatible; indiqueu-ne un d'http:// (als servidors https s'hi arriba mitjançant CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "un segell de temps Authenticode d'estil antic (counterSignature PKCS#9), que rubrapack no comprova"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "un paquet opcional o de modificació no declara capacitats ni configuració de virtualització: s'apliquen les del paquet principal"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "un paquet x86 només escriu a la vista de registre de 32 bits"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "l'aplicació '{1}' no és un [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri i package-uri van junts: on seran el fitxer .appinstaller i el paquet"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch ha de ser \"x64\", \"arm64\" o \"x86\" (s'ha obtingut '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch ha de ser \"x64\", \"x86\" o \"arm64\" (la del programa d'instal·lació)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "l'argument {1} no és UTF-8 vàlid (byte {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "l'argument {1} no és Unicode vàlid (unitat UTF-16 {2})"
+
+msgid "array is not closed"
+msgstr "la matriu no està tancada"
+
+msgid "arrays inside arrays are not supported"
+msgstr "les matrius dins de matrius no són compatibles"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "les matrius han de contenir només cadenes o només enters"
+
+msgid "at most %d languages besides English"
+msgstr "com a màxim {1} idiomes a més de l'anglès"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "com a màxim 100 taules [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "com a màxim 50 taules [action.*] (aquest fitxer en té {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color és \"transparent\" o \"#RRGGBB\", com ara \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "nom de variable incorrecte a '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner ha de ser un fitxer .bmp (el Windows Installer només mostra BMP)"
+
+msgid "build a package from a source file"
+msgstr "crea un paquet des d'un fitxer font"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "crear {1} des d'una font {2} necessita la seva pròpia família d'actualització: afegiu {3} = \"{{...}\" a [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab ha de ser \"embed\" o \"external\""
+
+msgid "cannot be read"
+msgstr "no es pot llegir"
+
+msgid "cannot build the ClientHello"
+msgstr "no es pot crear el ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "no es poden agrupar els paquets: {1}"
+
+msgid "cannot create '%s'"
+msgstr "no es pot crear '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "no es pot crear '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "no es troba '{1}'; creeu-ne un amb `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "no es pot crear un logotip per defecte"
+
+msgid "cannot make a key share"
+msgstr "no es pot crear una part de clau"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "no es pot crear un pedaç de '{1}' a '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "no es pot crear una transformació de '{1}' a '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "no es pot obrir el magatzem de certificats"
+
+msgid "cannot read '%s'"
+msgstr "no es pot llegir '{1}'"
+
+msgid "cannot read '%s' (%s)"
+msgstr "no es pot llegir '{1}' ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "no es pot llegir el paquet '{1}'"
+
+msgid "cannot read source file '%s'"
+msgstr "no es pot llegir el fitxer font '{1}'"
+
+msgid "cannot read that folder"
+msgstr "no es pot llegir aquesta carpeta"
+
+msgid "cannot read the %s file '%s'"
+msgstr "no es pot llegir el fitxer {1} '{2}'"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "no es pot llegir el fitxer del PIN '{1}'"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "no es pot llegir el cabinet '{1}' al costat de '{2}'"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "no es pot llegir el fitxer de certificat '{1}'"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "no es poden llegir els certificats de '{1}'"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "no es poden llegir els certificats de '{1}': {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "no es pot llegir el fitxer de clau '{1}'"
+
+msgid "cannot read the password file '%s'"
+msgstr "no es pot llegir el fitxer de contrasenya '{1}'"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "no es pot llegir el fitxer sense comprimir '{1}' al costat de '{2}'"
+
+msgid "cannot write %s"
+msgstr "no es pot escriure {1}"
+
+msgid "cannot write '%s'"
+msgstr "no es pot escriure '{1}'"
+
+msgid "cannot write '%s' to check it"
+msgstr "no es pot escriure '{1}' per comprovar-lo"
+
+msgid "cannot write resources.pri"
+msgstr "no es pot escriure resources.pri"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "no es poden escriure els fitxers del menú al costat de '{1}'"
+
+msgid "cannot write the resource package of %s"
+msgstr "no es pot escriure el paquet de recursos de {1}"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities és una matriu de noms, com ara [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "la capacitat '{1}' no és una que rubrapack conegui (el manual les enumera)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "la capacitat '{1}' necessita la compilació del Windows 17763 o posterior"
+
+msgid "carriage return without a line feed"
+msgstr "retorn de carro sense salt de línia"
+
+msgid "certificate file '%s': %s"
+msgstr "fitxer de certificat '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "canvia una font al seu lloc: amb un menú de preguntes o amb les opcions"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "comprova una signatura: estructura, resum, signatura i el camí fins a un certificat de confiança"
+
+msgid "check a source or package without writing anything"
+msgstr "comprova una font o un paquet sense escriure res"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "comproveu els camins de la font (relatius al fitxer font); definiu any-arch = true per a una altra arquitectura a propòsit"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "comproveu l'ortografia (el missatge suggereix el nom més proper) i les claus de la taula"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "la classe {1} ja la serveix [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "la classe {1} també és a [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class ha de ser un GUID com ara {{12345678-...} (s'ha obtingut '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs no té cap efecte amb preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs ha de ser \"ask\", \"always\" o \"never\" (s'ha obtingut '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "la columna {1} conté un tipus de valor incorrecte"
+
+msgid "column %s is not valid UTF-8"
+msgstr "la columna {1} no és UTF-8 vàlid"
+
+msgid "column %s may not be null"
+msgstr "la columna {1} no pot ser nul·la"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "columna {1}: {2} és fora de l'interval de la columna"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "columna {1}: {2} unitats UTF-16, la columna en conté {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "columna {1}: {2} caràcters, la columna en conté {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "l'ordre '{1}' encara no està implementada"
+
+msgid "command-line"
+msgstr "línia d'ordres"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "el component {1} {2} ha canviat entre 32 i 64 bits: les regles de components demanen un GUID nou"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "el component {1} {2} ja no hi és (els seus recursos se suprimeixen amb la versió anterior)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "el component {1} {2} ara té el camí de clau {3} en lloc de {4}: les regles de components demanen un GUID nou"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid ha de ser un GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress ha de ser \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" o \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "la condició té cometes sense tancar o parèntesis desequilibrats"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "la condició té més de 240 caràcters (rubrapack hi afegeix \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config conté cadenes \"Nom=valor\" (s'ha obtingut '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config és una matriu de cadenes \"Nom=valor\""
+
+msgid "contains a control character"
+msgstr "conté un caràcter de control"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "conté un de < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type és un tipus de mitjà, com ara \"image/png\" (s'ha obtingut '{1}')"
+
+msgid "control character"
+msgstr "caràcter de control"
+
+msgid "control character in a comment"
+msgstr "caràcter de control en un comentari"
+
+msgid "control character in a string"
+msgstr "caràcter de control en una cadena"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "les dates i hores no són compatibles; escriviu-les com a cadenes"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when necessita un nivell superior a 1 (una funció de nivell 1 ja s'instal·la per defecte)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "definiu la variable ([define] o -D NOM=valor), o escriviu $$ per a un $ literal"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "el diàleg '{1}' no és un [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "els ID de diàleg que comencen per 'Rp' (i FilesInUse) són propis de rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "el dir '{1}' és dins de si mateix (bucle de camí)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "el dir '{1}' no és ni un ID de dir ni Programs, Desktop, StartMenu o Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "el dir '{1}' no és un ID de dir"
+
+msgid "dir '%s' is not defined"
+msgstr "el dir '{1}' no està definit"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction ha de ser \"in\" o \"out\" (s'ha obtingut '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "els arguments de do/undo tenen més de 255 caràcters"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "les claus amb punts no són compatibles; poseu la clau a la seva pròpia taula"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "bolca un paquet (taules MSI com a IDT)"
+
+msgid "duplicate primary key"
+msgstr "clau primària duplicada"
+
+msgid "empty arrays are not supported"
+msgstr "les matrius buides no són compatibles"
+
+msgid "ends with a space or a dot"
+msgstr "acaba amb un espai o un punt"
+
+msgid "error"
+msgstr "error"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" ha d'indicar un [file.*] que entri al paquet"
+
+msgid "expected ',' or ']' in the array"
+msgstr "s'esperava ',' o ']' a la matriu"
+
+msgid "expected '=' after the key"
+msgstr "s'esperava '=' després de la clau"
+
+msgid "expected ']' to close the table name"
+msgstr "s'esperava ']' per tancar el nom de la taula"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "s'esperava una clau, una [taula] o un comentari"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "l'extensió '{1}' ja té un programa ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "l'extensió ha de ser '.' i lletres minúscules, xifres, '_' o '-' (s'ha obtingut '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files no té cap efecte amb preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files ha de ser \"ask\", \"keep\" o \"delete\" (s'ha obtingut '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "la funció {1} ja no hi és: les instal·lacions que la tenien perden el que contenia"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "la funció '{1}' és el seu propi avantpassat"
+
+msgid "feature '%s' is not defined"
+msgstr "la funció '{1}' no està definida"
+
+msgid "feature parent '%s' is not defined"
+msgstr "el pare de funció '{1}' no està definit"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "el fitxer '{1}' ja executa el servei '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "el fitxer '{1}' ja està registrat com a tipus de lletra"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "el fitxer '{1}' s'ha d'instal·lar a la mateixa carpeta Fonts (un [dir.*] amb path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "el fitxer '{1}' necessita una funció: definiu 'feature' aquí o al seu dir"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file ha de ser \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "el nom del fitxer té {1} unitats UTF-16; amb el nom curt 8.3, l'MSI en conté com a màxim {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization i registry-virtualization = false necessiten la compilació del Windows 18362 o posterior: definiu [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' només serveix classes COM com a .exe o .dll"
+
+msgid "files but no Media row"
+msgstr "fitxers però cap fila de Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "corregiu el valor que indica el missatge; els ID són lletres, xifres i '_' i són diferents en totes les taules"
+
+msgid "floating-point numbers are not supported"
+msgstr "els nombres de coma flotant no són compatibles"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "la carpeta '{1}' necessita una funció: definiu 'feature' aquí o al seu dir"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "el nom de la carpeta té {1} unitats UTF-16; amb el nom curt 8.3, l'MSI en conté com a màxim {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent necessita un pare"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "els tipus de lletra necessiten scope = \"machine\" (aquest és {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "el format {1} necessita un rubrapack més nou (aquest llegeix el format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format és un nombre enter: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "indiqueu --pass-env o --pass-file, no tots dos"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "indiqueu --pin-env o --pin-file, no tots dos"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "doneu a [msix] i [msix-app.*] el que necessiten, o conserveu l'element per a l'MSI amb msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "indiqueu un fitxer sota aquesta carpeta"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "indiqueu un fitxer directament a la carpeta del programa, o - per a cap"
+
+msgid "give a folder below this one, such as dist"
+msgstr "indiqueu una carpeta sota aquesta, com ara dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "indiqueu un nom d'1 a 128 bytes"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "indiqueu els tres logotips (logo-150, logo-44, store-logo) o cap"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "indiqueu un de --key, --pkcs11 i --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "indiqueu subcarpetes de la carpeta del programa, separades per comes, o - per a cap"
+
+msgid "glob '%s' matches no file"
+msgstr "el patró '{1}' no coincideix amb cap fitxer"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "el patró '{1}' coincideix amb el fitxer de sortida '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "té un flux MergeModule.CABinet que no es pot llegir"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "té un MergeModule.CABinet que no es pot llegir"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "té una taula Module*Sequence sense les columnes estàndard"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "té un element de ModuleConfiguration sense nom o amb un format desconegut"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "té una taula ModuleConfiguration sense les columnes estàndard"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "té una taula ModuleSubstitution sense les columnes estàndard"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "té una plantilla ModuleSubstitution que indica un element que ModuleConfiguration no té"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "té un component amb una condició; un MSIX ho instal·la tot"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "té un fitxer al qual falta el component o l'entrada de cabinet"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "té una carpeta fora del seu TARGETDIR per a la qual un MSIX no té lloc"
+
+msgid "has a table that cannot be read"
+msgstr "té una taula que no es pot llegir"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "té una taula amb columnes diferents de les del paquet"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "té accions per a una taula de seqüència que el paquet no té"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "té components, però el paquet no té taula FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "té fitxers però cap taula MergeModule.CABinet ni Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "té fitxers però cap flux MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "té fitxers, però el paquet no té taula Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "no té ModuleSignature: no és un mòdul de combinació"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "no té ProductCode ni ProductVersion"
+
+msgid "has no Property table"
+msgstr "no té taula Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "té registres per a una taula que no defineixen ni la base ni la transformació"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "té text fora d'ASCII en una pàgina de codis diferent de 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon ha de ser un fitxer .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id ha de ser un GUID com ara {{12345678-1234-1234-1234-123456789ABC}: el propi del mòdul, mantingut en totes les versions"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name ha de tenir de 3 a 50 caràcters d'A-Z, a-z, 0-9, '.' i '-' (s'ha obtingut '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "les taules en línia no són compatibles; feu servir una taula [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "s'instal·la al mateix camí que la línia {1} (el Windows no distingeix majúscules als noms{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "error intern: un diàleg integrat té un ordre de tabulació trencat; informeu-ne"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "intern: una taula de mòdul no té regla _Validation"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "intern: no hi ha regla _Validation per a una columna de {1}"
+
+msgid "invalid"
+msgstr "no vàlid"
+
+msgid "invalid - %s"
+msgstr "no vàlid - {1}"
+
+msgid "is '.' or '..'"
+msgstr "és '.' o '..'"
+
+msgid "is a reserved device name"
+msgstr "és un nom de dispositiu reservat"
+
+msgid "is empty"
+msgstr "és buit"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "té més de 255 unitats UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "no és una base de dades del Windows Installer"
+
+msgid "is not a compound file"
+msgstr "no és un fitxer compost"
+
+msgid "is not valid UTF-8"
+msgstr "no és UTF-8 vàlid"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "manteniu el codi d'actualització, augmenteu la versió, manteniu els codis de component dels fitxers que es queden"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "la clau '{1}' es defineix dues vegades en aquesta taula (primer a la línia {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "la clau '{1}' no pot començar ni acabar amb '\\' ni contenir una part buida"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "la clau '{1}' és fora d'una taula; només 'format' va abans de la primera taula"
+
+msgid "key file '%s': %s"
+msgstr "fitxer de clau '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind ha de ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" o \"context-menu\" (s'ha obtingut '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind ha de ser \"preview\", \"thumbnail\" o \"property\" (s'ha obtingut '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind ha de ser registry, file, dir o component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels és una matriu de cadenes, una per valor"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "l'idioma '{1}' no té paquet d'idioma (lang/{2}.po al costat de la font, o RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "l'idioma '{1}' apareix dues vegades"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "l'idioma '{1}' no és a [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "a l'idioma '{1}' li falten {2} textos, el primer és {3}: afegiu-los al seu paquet d'idioma (lang/{4}.po) o indiqueu [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "l'idioma '{1}' necessita [ui] langid-{2} (els seus LANGID, per a la tria automàtica)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "l'idioma '{1}' necessita [ui] name-{2} (el seu nom a la pàgina d'idioma)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" ja no fa que els diàlegs siguin en coreà: són en anglès tret que [ui] languages = [\"ko\"] hi afegeixi el coreà"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language ha de ser \"ko-KR\" o \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language ha de ser \"neutral\", \"en-US\" o \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages conté codis com \"ko\" o \"zh_TW\" (2 o 3 lletres minúscules, i _ i les dues majúscules d'una regió) (s'ha obtingut '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages és una matriu de codis d'idioma, com ara [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages necessita un conjunt de diàlegs (ui = \"basic\" o un altre)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch ha de ser \"file:<ID>\" i indicar un [file.*] d'aquest paquet"
+
+msgid "launch-args needs launch"
+msgstr "launch-args necessita launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license ha de ser un fitxer .txt, .md (es mostra com a text simple) o .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} fila {2}: la columna {3} no és en NFC ({4} fila{-5}); build --nfc posa els noms de carpetes, fitxers i dreceres en NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: pàgina de codis {1}, no 65001: el text no es comprova com a UTF-8, les amplades només per a ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: cap problema\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: vegeu els problemes de més amunt\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "llista les claus amb què pot signar un testimoni o el magatzem de certificats del Windows"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "el logotip '{1}' i la seva variant .scale-100 hi són tots dos: conserveu-ne un"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "el logotip '{1}' a l'escala {2} fa {3}x{4} píxels; ha de fer {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "el logotip '{1}' a l'escala {2} no és un fitxer PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "el logotip '{1}' fa {2}x{3} píxels; ha de fer {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "el logotip '{1}' no és un fitxer PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "no es troba el logotip '{1}' (ni com a variants .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logotip '{1}': un logotip amb variants d'escala necessita un nom de fitxer ASCII amb extensió"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package és el nom d'identitat del paquet principal (s'ha obtingut '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher i modification = true van amb main-package (el paquet al qual pertany aquest)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher és l'editor del paquet principal, com ara \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "no pot contenir caràcters de control ni / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "no pot començar amb un espai ni acabar amb un espai o un punt"
+
+msgid "merge module '%s' not found"
+msgstr "no es troba el mòdul de combinació '{1}'"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version ha de ser una versió com ara 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version ha de tenir quatre parts, com ara 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version ha de tenir quatre parts, com ara 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "no coincideix"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" suprimeix la clau; no admet 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode ha de ser \"set\", \"add\" o \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode ha de ser \"set\", \"append\" o \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "més entrades ZIP de les permeses o de les que conté el directori"
+
+msgid "more keys and values than allowed"
+msgstr "més claus i valors dels permesos"
+
+msgid "more than 3 redirects"
+msgstr "més de 3 redireccions"
+
+msgid "more than 96 sections"
+msgstr "més de 96 seccions"
+
+msgid "more than one source file ('%s')"
+msgstr "més d'un fitxer font ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "hi ha més d'un testimoni: indiqueu-ne un amb --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi ha de ser \"each\", \"one\" o \"single\" (s'ha obtingut '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "les cadenes de diverses línies no són compatibles"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "les cadenes de diverses línies no són compatibles; feu servir una línia amb \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "ha de tenir d'1 a 64 bytes"
+
+msgid "name contains a control character"
+msgstr "el nom conté un caràcter de control"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name és el nom d'identitat d'un paquet (s'ha obtingut '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "el nom no és ASCII i falta summary-name; el Subject del resum dirà 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "indica una carpeta que la seva taula Directory no té"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix encara no està implementat: creeu una font MSI i afegiu-hi [msix] (vegeu el manual)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "no hi ha la línia 'format = {1}': una font en el format de rubrapack 0.18 o anterior, que aquesta versió no llegeix (ara els camins comencen per $(ProgramFiles) o $(INSTALLDIR)); vegeu Format de la font al manual"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "no s'ha indicat --trust: la signatura es verifica, però res no diu de qui cal fiar-se"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "cap certificat del fitxer de clau (o del fitxer --cert) no correspon a la clau"
+
+msgid "no control characters"
+msgstr "sense caràcters de control"
+
+msgid "no keys\n"
+msgstr "cap clau\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "no hi ha programa principal, per tant no hi ha dreceres: cap"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "no hi ha nom de servidor, o en té més de 255 bytes"
+
+msgid "no string pool: not a transform"
+msgstr "no hi ha conjunt de cadenes: no és una transformació"
+
+msgid "no table '%s' in '%s'"
+msgstr "no hi ha cap taula '{1}' a '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove deixa Modifica (el seu Suprimeix) com l'única manera de suprimir el producte: no pot anar amb no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "no és un fitxer PE (no hi ha capçalera MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "no és un fitxer PE (no hi ha capçalera PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "no és un fitxer PEM, PKCS#8 ni PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "no és un arxiu ZIP (no hi ha registre final)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "no és un arxiu ZIP (massa curt)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "no és un URL de servidor intermediari que accepti rubrapack (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "no és un rusc de registre"
+
+msgid "not a valid number"
+msgstr "no és un nombre vàlid"
+
+msgid "not a value"
+msgstr "no és un valor"
+
+msgid "not a value (strings need quotes)"
+msgstr "no és un valor (les cadenes necessiten cometes)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "no és un URL http:// o https:// que accepti rubrapack"
+
+msgid "not valid UTF-8"
+msgstr "no és UTF-8 vàlid"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "no comprovat (indiqueu --trust o --system-roots)"
+
+msgid "not-present"
+msgstr "absent"
+
+msgid "nothing changed\n"
+msgstr "no ha canviat res\n"
+
+msgid "number out of range"
+msgstr "nombre fora d'interval"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "els nombres octals i binaris no són compatibles; feu servir decimal o 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" és per a HKLM, HKCU i HKMU (les classes van amb [assoc.*], [com.*] i similars)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" suprimeix una clau amb tot el que hi ha a sota: '{1}' no és una clau pròpia d'un producte sota Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" suprimeix tota la clau en desinstal·lar; no admet '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "al Windows, `keys list` mostra el magatzem de certificats"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "al Windows, un testimoni es fa servir mitjançant el magatzem de certificats (--key-store <empremta>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on és per a remove = true (quan se suprimeix la clau)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on ha de ser \"install\" o \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on ha de ser \"install\", \"uninstall\" o \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: cadascun és un tipus de fitxer ('.' i lletres minúscules, xifres, '_' o '-'), \"*\" (tots els fitxers), \"folder\", \"background\" (la part buida d'una carpeta), \"drive\" o \"assoc:<ID>\" (s'ha obtingut '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "només els controls radio i combo admeten labels"
+
+msgid "only radio and combo controls take values"
+msgstr "només els controls radio i combo admeten values"
+
+msgid "out of memory"
+msgstr "memòria insuficient"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "sortida '{1}': rubrapack escriu .msi, .msm, .msix, .msixbundle i el .exe d'instal·lació d'una cadena"
+
+msgid "package '%s' %s"
+msgstr "paquet '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "no es troba el paquet '{1}'"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent ha de ser l'upgrade-code d'un altre producte, no el d'aquest paquet"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent ha de ser l'upgrade-code del producte principal, un GUID com ara {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path ha de ser \"$(Base)/camí/relatiu\" amb '/' (Base és una carpeta com ara ProgramFiles, o un ID de dir)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path ha de començar per una carpeta del Windows (com ara $(ProgramFiles) o $(System))"
+
+msgid "paths"
+msgstr "camins"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type ha de ser \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" o \"application\" (s'ha obtingut '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "els permisos necessiten scope = \"machine\" (aquest és {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports ha de ser un port o un interval com ara \"8000-8100\" dins d'1-65535 (s'ha obtingut '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "mostra un GUID aleatori, o el que rubrapack deriva d'un text"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "mostra l'esquema JSON de les fonts (per a un editor que completi i comprovi claus)"
+
+msgid "print the version"
+msgstr "mostra la versió"
+
+msgid "print this help, or one command's usage"
+msgstr "mostra aquesta ajuda, o l'ús d'una ordre"
+
+msgid "product-code must be a GUID"
+msgstr "product-code ha de ser un GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile ha de ser \"all\", \"domain\", \"private\" o \"public\" (s'ha obtingut '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' ja és de [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' també és de [assoc.{2}]: un tipus de fitxer i una classe COM necessiten dos noms"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' també és a [assoc.{2}] amb una altra descripció, target, icon o args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id han de ser lletres, xifres, '.', '_' o '-', sense començar per una xifra, com a màxim 39 (s'ha obtingut '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "la propietat '{1}' ja pertany al control '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "la propietat '{1}' té el nom d'un dir o d'una funció"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "la propietat '{1}' ja està definida (línia {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "la propietat '{1}' ja es cerca (línia {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "la propietat '{1}' la defineix rubrapack o l'instal·lador i no es pot definir aquí"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "la propietat '{1}' ha de ser un nom públic propi (en majúscules)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "la propietat '{1}' ha de ser un nom públic: lletres majúscules, xifres i '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol ha de ser \"tcp\" o \"udp\" (s'ha obtingut '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher és l'editor del paquet, com ara \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher ha de ser el subject del certificat de signatura, com ara \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher no pot portar l'OID d'unsigned-test; --unsigned-test l'hi afegeix"
+
+msgid "quoted keys are not supported"
+msgstr "les claus entre cometes no són compatibles"
+
+msgid "quoted table names are not supported"
+msgstr "els noms de taula entre cometes no són compatibles"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot ha de ser \"suppress\" o \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true és per a on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true no s'executa mai quan una actualització suprimeix aquesta versió; no admet 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true suprimeix la carpeta amb tot el que conté; no admet 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} és superior a la versió d'aquest paquet, {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' ha de ser una versió com ara 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message necessita refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "el registre '{1}' suprimeix un valor; no té res a protegir"
+
+msgid "registry value '%s' needs a feature"
+msgstr "el valor de registre '{1}' necessita una funció"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true suprimeix el valor en instal·lar; no admet 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons necessita la tasca de neteja: suprimiu cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces conté com a màxim 16 codis d'actualització"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces conté codis d'actualització, GUID com ara {{12345678-1234-1234-1234-123456789ABC} (s'ha obtingut '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces és una matriu de codis d'actualització, com ara [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces indica {1} dues vegades"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces indica {1}, que és l'upgrade-code d'aquest paquet o del seu pare"
+
+msgid "required property %s is missing"
+msgstr "falta la propietat obligatòria {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "el bessó de desfer ha d'anar abans de {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root ha de ser HKLM, HKCR o HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root ha de ser HKLM, HKCU, HKCR o HKMU (s'ha obtingut '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: què vol dir un codi de diagnòstic. Els codis per intervals:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: unes quantes preguntes creen la font (Retorn agafa el valor entre [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "executeu `rubrapack help <command>`; comproveu els camins i que existeixi la carpeta de sortida"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run ha de ser \"file:<ID>\" i indicar un [file.*] d'aquest paquet"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (màquina 0x{2}) no es pot executar a les màquines d'aquest paquet"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' no és un programa (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "deseu la font com a UTF-8 (o UTF-16 amb BOM), amb finals de línia LF o CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "l'esquema '{1}' ja té un programa ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope ha de ser \"machine\", \"user\" o \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl ha de ser una cadena SDDL com ara \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "la propietat de cerca '{1}' ha de ser un nom públic propi (en majúscules)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "vegeu el missatge; tornar a crear-lo amb rubrapack en corregeix la majoria"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "la seqüència {1} no és posterior a {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "situa una acció al costat d'una que no executen ni el paquet ni el mòdul"
+
+msgid "service name '%s' is already used"
+msgstr "el nom de servei '{1}' ja s'utilitza"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "els serveis necessiten scope = \"machine\" (aquest és {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "el nom de la drecera té {1} unitats UTF-16; amb el nom curt 8.3, l'MSI en conté com a màxim {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "signa un fitxer PE, un paquet MSI, un paquet MSIX o un conjunt"
+
+msgid "signed %s\n"
+msgstr "signat {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "la font '{1}' és un directori; feu servir [files.ID] per a molts fitxers"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "la font '{1}' és un enllaç simbòlic; els enllaços no se segueixen"
+
+msgid "source '%s' is not a regular file"
+msgstr "la font '{1}' no és un fitxer normal"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "el fitxer font '{1}' ha canviat mentre es creava el paquet"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "el fitxer font '{1}' fa més de 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "no es troba el fitxer font '{1}'"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source ha de ser \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source ha de ser un paquet .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "el camí de font '{1}' ha de ser relatiu al fitxer font"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "els camins de font fan servir '/', no '\\\\' (s'ha obtingut '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start ha de ser auto, demand o disabled"
+
+msgid "string is not closed on this line"
+msgstr "la cadena no es tanca en aquesta línia"
+
+msgid "string lengths exceed the string data"
+msgstr "les longituds de les cadenes superen les dades de cadena"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "la informació de resum encara no es pot mostrar com a IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name ha de ser ASCII (la informació de resum només conté ASCII)"
+
+msgid "table %s %s"
+msgstr "taula {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "la taula '{1}' és il·legible"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "la taula [{1}{2}{3}] està definida dues vegades (primer a la línia {4})"
+
+msgid "table name expected"
+msgstr "s'esperava un nom de taula"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "els noms de taula tenen com a màxim dues parts: [kind] o [kind.ID]"
+
+msgid "tables"
+msgstr "taules"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "taules i claus: una taula o clau desconeguda, una d'obligatòria que falta, un element sense funció quan n'hi ha"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "no admet configuració (no té ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "l'objectiu '{1}' no existeix"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target ha de ser \"dir:<ID>\", \"file:<ID>\" o \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target ha de ser \"file:<ID>\" i indicar un [file.*] d'aquest paquet"
+
+msgid "target name '%s' %s"
+msgstr "el nom d'objectiu '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' ja l'utilitza [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name i enabled pertanyen a kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "aquest fitxer ja existeix; doneu-ne un altre nom"
+
+msgid "that folder holds no files"
+msgstr "aquesta carpeta no conté fitxers"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "el diàleg FilesInUse necessita una taula ListBox, encara que sigui buida (error 2205; el diàleg s'omet)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "el PIN té caràcters o una longitud que el testimoni no admet"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "el PIN ha caducat: canvieu-lo primer al testimoni"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "el PIN està bloquejat (massa intents incorrectes)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "el ProductCode és el de la versió anterior: això és una actualització menor (REINSTALLMODE), no l'actualització major que crea rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "el fitxer UTF-16 no és UTF-16 vàlid"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "el directori central del ZIP és fora del fitxer"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "l'ID d'aplicació '{1}' es converteix en Application Id: només lletres i xifres, sense començar per una xifra"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "l'arxiu no acaba amb registres finals ZIP64 com fan els paquets MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "l'arxiu no té registre final ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "el manifest del conjunt no té Identity Name, Publisher ni Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "el directori central és fora de l'arxiu"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "el certificat té una extensió crítica que rubrapack no entén"
+
+msgid "the certificate has expired"
+msgstr "el certificat ha caducat"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "el certificat és un certificat de CA, no un certificat de signatura"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "el certificat no és per signar codi (no té l'ús de clau ampliat de signatura de codi)"
+
+msgid "the certificate is not valid yet"
+msgstr "el certificat encara no és vàlid"
+
+msgid "the certificate path is longer than 8"
+msgstr "el camí de certificats té més de 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "la taula de certificats no conté cap signatura Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "la taula de certificats no és al final del fitxer"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "l'ús de clau del certificat no permet signatures digitals"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "el subject del certificat no es pot escriure com a editor MSIX"
+
+msgid "the chunked response is malformed"
+msgstr "la resposta fragmentada està mal formada"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "la línia d'ordres: una ordre o opció desconeguda, un fitxer que no es pot llegir o escriure, una signatura, una diferència que una transformació no pot portar"
+
+msgid "the connection has failed"
+msgstr "la connexió ha fallat"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "els cabinets incrustats fan que el paquet faci 2 GiB o més, cosa que el Windows Installer no pot obrir; feu servir cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "l'entrada no és al directori central"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "el diàleg d'error '{1}' necessita un control {2} anomenat {3} (error 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "l'executable '{1}' ha de ser un .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "la carpeta de l'executable no porta a cap ubicació coneguda"
+
+msgid "the file is not signed"
+msgstr "el fitxer no està signat"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "el fitxer ja està signat; rubrapack no signa dues vegades ni substitueix una signatura"
+
+msgid "the file is too large to sign"
+msgstr "el fitxer és massa gran per signar-lo"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "el fitxer necessita una taula [package] (o [module] per a un mòdul de combinació)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "el fitxer s'ha canviat després de signar-lo (el resum no coincideix)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "els fitxers per instal·lar: no trobats, una carpeta, un enllaç, un patró sense coincidències, un programa d'una altra arquitectura, noms massa llargs"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "les taules acabades infringeixen una regla del Windows Installer"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "el rusc no es va tancar correctament (en caldria el registre)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "la suma de verificació del bloc base del rusc no coincideix"
+
+msgid "the hive's bins lie outside the file"
+msgstr "els bins del rusc són fora del fitxer"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "la icona de la llista d'aplicacions instal·lades és [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "l'entrada s'ha acabat abans de respondre totes les preguntes; no s'ha escrit res"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "el fitxer de clau fa més de 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "la clau no és ni RSA ni EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "la biblioteca no és un mòdul PKCS#11 (no té C_GetFunctionList, o és la versió 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "el manifest no té Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "la Identity del manifest no es pot llegir per al nom complet del paquet"
+
+msgid "the merge module %s"
+msgstr "el mòdul de combinació {1}"
+
+msgid "the name %s"
+msgstr "el nom {1}"
+
+msgid "the package is not signed"
+msgstr "el paquet no està signat"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "el paquet no està signat (no hi ha AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "el paquet ja està signat; rubrapack no signa dues vegades ni substitueix una signatura"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "el paquet ja està signat; rubrapack signa paquets sense signar (i mai dues vegades)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "el paquet fa servir cabinets fora d'ell mateix, que la signatura del .msi no cobreix; creeu-lo amb cabinets incrustats, o signeu igualment amb --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "el contingut del paquet no coincideix amb la seva signatura (s'ha canviat després de signar-lo)"
+
+msgid "the package's directory cannot be read"
+msgstr "no es pot llegir el directori del paquet"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "els paquets d'un conjunt necessiten el mateix Name, Publisher i Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "el servidor intermediari demana una contrasenya (407), cosa que rubrapack no admet"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "el servidor intermediari no ha respost a la sol·licitud de túnel"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "el servidor intermediari ha enviat dades després de respondre a CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "la ubicació de redirecció és massa llarga"
+
+msgid "the request could not be sent"
+msgstr "no s'ha pogut enviar la sol·licitud"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "la resposta té un Content-Length mal format o contradictori"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "la resposta té tant Content-Length com chunked (rebutjat: risc de smuggling)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "la resposta fa més de 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "la resposta fa servir una codificació de transferència diferent de chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "la mateixa condició ja s'exigeix (línia {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "el mateix sense preguntes:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "el servidor no ha respost amb HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "el servidor ha redirigit d'https a http (rebutjat)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "la signatura CertificateVerify del servidor no es verifica"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "el certificat del servidor no és per a servidors TLS (el seu ús de clau ampliat)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "l'esquema de signatura del servidor no s'adiu amb la clau del seu certificat"
+
+msgid "the signature does not verify"
+msgstr "la signatura no es verifica"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "la signatura no es verifica amb el certificat del signant"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "l'entrada de signatura es descriu a la manera ZIP64; el Windows llegeix el seu lloc dels camps ZIP32"
+
+msgid "the signature is not DER"
+msgstr "la signatura no és DER"
+
+msgid "the signature streams cannot be read"
+msgstr "no es poden llegir els fluxos de signatura"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "els atributs signats no coincideixen amb el contingut signat"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "el certificat del signant no és per signar codi"
+
+msgid "the source file's encoding"
+msgstr "la codificació del fitxer font"
+
+msgid "the system random source failed"
+msgstr "ha fallat la font aleatòria del sistema"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "l'ordre de tabulació (Control_Next) no és un sol cicle pels seus {1} controls des de Control_First (el Windows Installer s'atura amb l'error 2809 o 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "el servidor de segells de temps ha respost amb un error HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "el certificat del servidor de segells de temps no és per a segells de temps"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "l'hora del servidor de segells de temps és fora de la validesa del certificat de signatura"
+
+msgid "the token does not say what kind of key it is"
+msgstr "el testimoni no diu quin tipus de clau és"
+
+msgid "the token is not present"
+msgstr "el testimoni no hi és"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "el testimoni ha retornat una signatura ECDSA de longitud incorrecta"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "la clau EC del testimoni té un certificat que no és EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "la signatura del testimoni no es verifica amb el certificat (la clau i el certificat no van junts)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "el certificat de confiança ha caducat o encara no és vàlid"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "els atributs no signats estan mal formats o contenen més d'un segell de temps"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "aquí no hi ha cap fitxer així"
+
+msgid "there is no such folder here"
+msgstr "aquí no hi ha cap carpeta així"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "aquest rubrapack s'ha creat sense la part del menú: els elements [menu.*] no arriben al menú del Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "aquest rubrapack s'ha creat sense el programa d'instal·lació (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading ha de ser \"sta\", \"mta\", \"both\" o \"neutral\" (s'ha obtingut '{1}')"
+
+msgid "timestamp: "
+msgstr "segell de temps: "
+
+msgid "too many languages for one bundle"
+msgstr "massa idiomes per a un conjunt"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "massa textos localitzats i escales de logotip per a resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "massa paquets al conjunt"
+
+msgid "trusted"
+msgstr "de confiança"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "dos paquets d'una mateixa arquitectura en un conjunt"
+
+msgid "two packages of one name in a bundle"
+msgstr "dos paquets d'un mateix nom en un conjunt"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "dos paquets de recursos d'un mateix ResourceId en un conjunt"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type ha de ser string, expand, dword, qword, binary o multi (s'ha obtingut '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type ha de ser text, checkbox, edit, radio o combo (s'ha obtingut '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version és major.minor en xifres hexadecimals, com ara \"1.0\" (s'ha obtingut '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types i verb pertanyen a kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: cadascun és \".ext\" o \"*\" (tots els fitxers)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: cadascun és '.' i lletres minúscules, xifres, '_' o '-' (s'ha obtingut '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" permet a l'usuari triar la carpeta del dir '{2}', que no existeix (definiu [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" necessita taules [feature.*] per triar"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui ha de ser none, basic, minimal, installdir o features (s'ha obtingut '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "text inesperat després del valor"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "ordre desconeguda '{1}' (vegeu 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "seqüència d'escapada desconeguda \\{1} (feu servir '...' per a text amb barres inverses)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "opció d'inspect desconeguda (feu servir un nom de taula, --summary, --files o --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "clau desconeguda '{1}' a [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "opció de {1} desconeguda o incompleta '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "taula desconeguda [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "desempaqueta un paquet en un directori nou, disposat com s'instal·la"
+
+msgid "unsupported - %s"
+msgstr "no compatible - {1}"
+
+msgid "untrusted"
+msgstr "no de confiança"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "les claus update-* necessiten appinstaller-uri i package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false és per a on = \"uninstall\" o \"both\" (una instal·lació no és mai la supressió d'una actualització)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code ha de ser un GUID com ara {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "ús: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "ús: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (una llista per a un conjunt)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "ús: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "ús: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "ús: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "ús: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "ús: rubrapack inspect <file.cab> (sense taula ni opció)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "ús: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "ús: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "ús: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "ús: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "ús: rubrapack inspect <setup.exe> (sense taula ni opció)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "ús: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "ús: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "ús: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "ús: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "ús: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (un <name>.toml inicial fix) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; també s'accepten noms .rpk"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "ús: rubrapack schema (l'esquema JSON de les fonts, a stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "ús: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "ús: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "feu servir '/' al camí"
+
+msgid "use a full rubrapack build or another way"
+msgstr "feu servir una compilació completa de rubrapack o una altra manera"
+
+msgid "used by more than one component"
+msgstr "l'utilitza més d'un component"
+
+msgid "value '%s' is listed twice"
+msgstr "el valor '{1}' apareix dues vegades"
+
+msgid "value missing"
+msgstr "falta el valor"
+
+msgid "values and labels are strings"
+msgstr "values i labels són cadenes"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values és una matriu d'1 a 32 cadenes"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "valors: ID, GUID, versions, nombres fora d'interval, referències a coses que no existeixen"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "la variable '{1}' no està definida ([define] o -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "el nom de variable '{1}' no pot contenir '=' ni començar per = + - ! *"
+
+msgid "variables"
+msgstr "variables"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "variables: $(NOM) sense valor, $( sense tancar, un nom del Windows o un ID de dir on no pot anar"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "la versió '{1}' ha de ser a.b.c o a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "la versió '{1}' ha de ser a.b.c o a.b.c.d amb a, b <= 255 i c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" no pot anar 'with' un fitxer d'un paquet de 64 bits"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view ha de ser \"32\" o \"64\""
+
+msgid "warning"
+msgstr "avís"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "què vol dir un codi de diagnòstic, els missatges que el porten, què cal fer i on en diu més el manual"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with ha de ser \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: el fitxer '{1}' no és un [file.*] d'aquest paquet"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "sense --pkcs11, `keys list` mostra el magatzem de certificats del Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' no és un ID de dir"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "escriu un pedaç (.msp): els fitxers i les files que actualitzen una base instal·lada a l'objectiu"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "escriu un fitxer font (.toml; també noms .rpk): fet a partir de respostes, preguntades o donades com a opcions, d'un inicial fix o d'un MSI existent"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "escriu una transformació (.mst): el que converteix un paquet en l'altre"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "escriviu la taula o el valor de la manera simple que mostra el manual"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "escriviu el valor sense '[~]'; mode = \"append\" o \"prepend\" l'afegeix"
+
+msgid "wrote %s\n"
+msgstr "escrit {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width ha de ser com a màxim 370 (l'amplada de la pàgina)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height ha de ser com a màxim 234 (la línia de sobre els botons)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Enrere"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Següent >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Instal·la"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Finalitza"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "D'acord"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Sí"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&No"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Torna-ho a provar"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Ignora"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "Inte&rromp"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Surt"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "E&xamina..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Us donem la benvinguda a la instal·lació de [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "S'instal·larà [ProductName] a l'ordinador. Feu clic a Següent per continuar."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Contracte de llicència"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Llegiu el contracte de llicència següent."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Accepto els termes del contracte de llicència"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Carpeta d'instal·lació"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Trieu la carpeta on s'instal·larà [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Instal·la a la &carpeta:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Canvi de carpeta"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Navegueu fins a la carpeta on voleu instal·lar."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Cerca a:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&Nom de la carpeta:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Amunt"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Carpeta nova"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Tria de funcions"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Trieu les funcions que s'han d'instal·lar."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&Restableix"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "Ús del &disc"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Espai al disc"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Espai necessari per a les funcions triades i espai disponible."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "A punt per instal·lar"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Feu clic a Instal·la per instal·lar [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "S'està instal·lant [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Espereu."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Estat:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "S'ha completat la instal·lació"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "S'ha instal·lat [ProductName]."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "S'està suprimint [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "S'ha completat la supressió"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "S'ha suprimit [ProductName]."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "S'ha cancel·lat la supressió"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "S'ha cancel·lat la supressió. No s'ha canviat res a l'ordinador."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "La supressió ha fallat"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Un error ha aturat la supressió, que s'ha desfet. El producte continua instal·lat."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "S'ha cancel·lat la instal·lació"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "S'ha cancel·lat la instal·lació. No s'ha canviat res a l'ordinador."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "La instal·lació ha fallat"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Un error ha aturat la instal·lació, que s'ha desfet. No s'ha canviat res a l'ordinador."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Voleu cancel·lar la instal·lació de [ProductName]?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Fitxers en ús"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Aquests programes fan servir fitxers que s'estan substituint. Feu clic a Continua per substituir-los ara: els programes que ja estan oberts conserven els fitxers antics fins que es tornen a obrir, i els que s'obrin després reben els nous. No cal reiniciar."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Aquests programes fan servir fitxers que s'estan substituint. Feu clic a Continua per substituir-los ara: els programes que ja estan oberts conserven els fitxers antics fins que es tornen a obrir, i els que s'obrin després reben els nous. És possible que el Windows demani reiniciar al final."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Continua"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "No hi ha prou espai al disc"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "No hi ha prou espai per a aquesta instal·lació. Allibereu espai o trieu una altra ubicació."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "Manteniment de [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Trieu què voleu fer."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Repara"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Restaura els fitxers i la configuració que falten o estan malmesos."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Su&primeix"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Suprimeix [ProductName] d'aquest ordinador."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "Supressió de [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Feu clic a Suprimeix per suprimir [ProductName] d'aquest ordinador. Feu clic a Enrere o Cancel·la per conservar-lo."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Feu clic a Suprimeix per suprimir [ProductName] d'aquest ordinador. La seva configuració i les seves dades s'eliminen amb ell i no es poden recuperar. Feu clic a Enrere o Cancel·la per conservar-lo."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Voleu suprimir [ProductName] d'aquest ordinador?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Voleu suprimir [ProductName] d'aquest ordinador? La seva configuració i les seves dades s'eliminen amb ell i no es poden recuperar."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "No es pot instal·lar [3] de manera segura: [1] no és una carpeta, o és possible que l'instal·lador no hi pugui eliminar fitxers. Primer suprimiu [3] ([2]) i després torneu a instal·lar."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "No es pot actualitzar [3] de manera segura: la versió instal·lada [1] ha perdut el paquet desat, de manera que no es pot suprimir aquí. Primer suprimiu aquesta versió amb el paquet original ([2]) i després torneu a instal·lar."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "S'ha aturat la instal·lació: la carpeta [1] ja existeix i no és propietat dels administradors, o porta a un altre lloc mitjançant un enllaç. Trieu una altra carpeta o demaneu a un administrador que la suprimeixi primer."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Inicia [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Desa el registre..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Mostra el &registre complet"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "No s'ha pogut desar el registre de la instal·lació a [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Canvia"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Trieu quines funcions estan instal·lades."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Abast de la instal·lació"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Trieu qui pot fer servir [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Només &jo"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&Tothom en aquest ordinador - cal tenir drets d'administrador"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Idioma"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Trieu l'idioma de la instal·lació."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "S'estan cercant aplicacions instal·lades"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "S'està calculant l'espai necessari"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "S'està calculant l'espai necessari"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "S'estan creant carpetes"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "S'estan creant dreceres"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "S'estan eliminant serveis"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "S'estan creant fitxers duplicats"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "S'està calculant l'espai necessari"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "S'estan cercant aplicacions relacionades"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "S'estan generant les operacions de l'script per a l'acció:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "S'estan copiant fitxers nous"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "S'estan instal·lant serveis nous"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "S'està validant la instal·lació"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "S'estan avaluant les condicions d'inici"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "S'estan migrant els estats de les funcions des d'aplicacions relacionades"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "S'estan movent fitxers"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "S'estan aplicant pedaços als fitxers"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "S'està actualitzant el registre de components"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "S'estan publicant les funcions del producte"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "S'està publicant la informació del producte"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "S'estan registrant servidors de classes"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "S'estan registrant servidors d'extensions"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "S'estan registrant tipus de lletra"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "S'està registrant la informació MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "S'està registrant el producte"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "S'estan registrant identificadors de programa"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "S'està registrant l'usuari"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "S'estan actualitzant les cadenes d'entorn"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "S'està suprimint la versió anterior"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "S'estan suprimint fitxers"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "S'estan suprimint carpetes"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "S'estan suprimint entrades de fitxers INI"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "S'estan suprimint valors del registre del sistema"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "S'estan suprimint dreceres"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "S'està desfent l'acció:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "S'estan suprimint els fitxers de còpia de seguretat"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "S'estan iniciant serveis"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "S'estan aturant serveis"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "S'està anul·lant la publicació de les funcions del producte"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "S'està anul·lant el registre de servidors de classes"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "S'està anul·lant el registre de servidors d'extensions"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "S'està anul·lant el registre de tipus de lletra"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "S'està anul·lant el registre de la informació MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "S'està anul·lant el registre d'identificadors de programa"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "S'estan actualitzant les cadenes d'entorn"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "S'estan escrivint valors de fitxers INI"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "S'estan escrivint valors del registre del sistema"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] s'instal·la només per a l'usuari actual (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Ja hi ha instal·lada la mateixa versió de [ProductName] o una de més nova."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Aquest paquet no pot actualitzar la versió més antiga de [ProductName] que hi ha instal·lada. Primer suprimiu-la i després torneu a executar aquesta instal·lació:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Copia el fitxer"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Suprimeix el fitxer"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Aplica un pedaç al fitxer"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Crea la carpeta"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Suprimeix la carpeta"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Escriu el valor del registre"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Suprimeix el valor del registre"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Suprimeix la clau del registre"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Crea la drecera"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Suprimeix la drecera"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Instal·la el servei"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Controla el servei"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Escriu el valor INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Defineix la variable d'entorn"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Registra el tipus de lletra"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Anul·la el registre del tipus de lletra"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Executa l'acció"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Aquest programa d'instal·lació està malmès: torneu-lo a baixar."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Aquests programes ja estan instal·lats. Trieu què voleu fer."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Repara"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Su&primeix"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Cancel·la"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Voleu suprimir aquests programes d'aquest ordinador?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "S'han suprimit els programes."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "No s'ha pogut suprimir un dels programes."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "El programa d'instal·lació no ha pogut crear una carpeta temporal."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "No s'ha pogut reparar {1} (error {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "No s'ha pogut instal·lar {1} (error {2}). No s'ha instal·lat res del que venia després."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "S'han reparat els programes."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "S'ha completat la instal·lació."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Aquesta carpeta ja conté fitxers o carpetes. Quan se suprimeixi [ProductName], s'eliminarà tot el que hi hagi a la carpeta, també el que ara hi ha. Una carpeta buida o nova és una opció més segura."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Tria'n una altra"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "&Fes servir aquesta carpeta"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] programa(es) fan servir fitxers de [3]:\r\n[2]\r\nVoleu tancar-los tots?\r\n\r\nSí: tanca'ls tots i continua (es pot perdre la feina no desada).\r\nNo: continua sense tancar-los (els programes que ja estan oberts conserven els fitxers antics fins que es tornen a obrir).\r\nCancel·la: atura."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: aturat, perquè [1] programa(es) en fan servir els fitxers:\r\n[2]Tanqueu-los i torneu-ho a provar, o indiqueu RPCLOSE=yes (tanca'ls tots i continua) o RPCLOSE=no (continua sense tancar-los)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] elements de les carpetes de [3] no s'hi van instal·lar:\r\n[2]\r\nVoleu eliminar-los també?\r\n\r\nSí: elimina'ls amb [3] (no es poden recuperar).\r\nNo: suprimeix [3] i conserva'ls.\r\nCancel·la: atura."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: aturat, perquè [1] elements de les seves carpetes no s'hi van instal·lar:\r\n[2]Indiqueu RPEXTRA=delete (elimina'ls també) o RPEXTRA=keep (conserva'ls) i torneu a suprimir."
