@@ -239,7 +239,7 @@ Compression takes most of a build's time. While you try things out, leave it out
 C:\work\hello> rubrapack build hello.toml -o fast.msi --compress none
 ```
 
-The package is bigger (here 266240 bytes instead of 253952) and works the same.
+The package is bigger (here 286720 bytes instead of 274432) and works the same.
 
 ## GUIDs: `guid`
 

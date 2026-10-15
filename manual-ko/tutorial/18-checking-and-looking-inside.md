@@ -227,7 +227,7 @@ C:\work\hello> rubrapack inspect hello.msix --manifest
 C:\work\hello> rubrapack build hello.toml -o fast.msi --compress none
 ```
 
-패키지는 커지지만(여기서는 253952 바이트 대신 266240 바이트) 똑같이 동작한다.
+패키지는 커지지만(여기서는 274432 바이트 대신 286720 바이트) 똑같이 동작한다.
 
 ## GUID: `guid`
 
