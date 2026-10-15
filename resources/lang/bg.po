@@ -1,0 +1,3816 @@
+# rubrapack language pack: Bulgarian.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: bg\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Български\n"
+"X-Rubrapack-LangIDs: 1026\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, диалогови прозорци {6}{7}\n  1 име, производител, версия, архитектура      2 папка за инсталиране, за кого се инсталира\n  3 диалогови прозорци, лиценз, езици            4 незадължителни части\n  5 преки пътища                                 6 файлове: съгласуване с папката на програмата\n  7 произволен ключ                              v преглед   l lint   s запис   q изход\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nСъобщения с този код (* означава име или стойност):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nРезултатите отиват в stdout, диагностиките в stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (или RUBRAPACK_LANG) избира езика на тези текстове: {1}, или език с езиков пакет.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Кодове за изход: 0 успех, 1 грешка в източника, 2 употреба, 3 вход/изход, 4 подписване или проверка,\n5 lint, 6 мрежа.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nКакво да направите: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} вече го няма, но пряк път го отваря: първо променете преките пътища (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} файла и {2} папки там\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s или q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  добавени [dir.{1}] и [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  добавен [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  дайте го като table.key, например package.version или dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: няма проблеми\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: вижте проблемите по-горе (посоченият там файл е копие за проверка)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  другите езици в [ui] languages се запазват; променете този списък с 7 (произволен ключ)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  премахнат [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  премахнат [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  подпапки:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  това не се побира в подмножеството на TOML; нищо не е променено\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  това не беше четим текст; отново, моля\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  папката на програмата '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  източникът няма таблици [file], към които да сочи пряк път\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  източникът няма подпапки във вида, в който ги пише `new` ([files] \"<folder>/<name>/**\"); добавете ги с 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  твърде дълго; отново, моля\n"
+
+msgid "  y or n\n"
+msgstr "  y или n\n"
+
+msgid " (changed)"
+msgstr " (променено)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - създава пакети Windows Installer (.msi) и MSIX (.msix)\n\nупотреба: rubrapack [--lang <code>] <command> [arguments]\n\nкоманди:\n"
+
+msgid " and its dir"
+msgstr " и неговата dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) няма променлива на средата, затова разширяема стойност не може да го съдържа; използвайте низова стойност (попълва се при инсталиране)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) е {2}: може да започва път или да замества стойност, която Windows Installer попълва (регистър, среда, INI, аргументи, съобщения), но не тук"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) не е папка, от която може да започва път (dir ID, или ProgramFiles, LOCALAPPDATA, ProgramData ... - вижте Paths в ръководството){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  структура:    {2}\n  отпечатък:    {3}\n  подпис:       {4}\n  верига:       {5}{6}{7}\n  отмяна:       не е проверено\n  времеви печат: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: променливата не е зададена"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' не е контрола в този диалогов прозорец"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' не е в {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': текстът на лиценза изисква английското име на шрифта, затова се показва с шрифта на езика; напишете английското име (например \"Malgun Gothic\"), за да се ползва този шрифт и там"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "компонент {1}, но платформата на пакета е {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} не принадлежи на kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} не принадлежи на kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} съдържа LANGID (1..65535), например 1041"
+
+msgid "%s holds strings"
+msgstr "{1} съдържа низове"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} е име на шрифт от 1 до 31 знака, например \"Segoe UI\" (получено {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} е условие на MSI със затворени кавички и балансирани скоби"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} е масив от низове, по един за всяка стойност"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} е за пакети MSI: MSIX не се премахва от msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} вече го няма. Да се премахне ли [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} е по-дълго от 240 знака"
+
+msgid "%s is new. Add it?"
+msgstr "{1} е ново. Да се добави ли?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} не е GUID във формата на регистъра"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} не е код, който този rubrapack използва{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} трябва да е \"file:<ID>\", посочващ [file.*] от този пакет"
+
+msgid "%s must be a GUID"
+msgstr "{1} трябва да е GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} трябва да е GUID като {{12345678-...} (получено '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} трябва да е адрес https://, http:// или file://, или път \\\\server\\share (получено '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} трябва да се различава от upgrade-code (едно семейство за надстройка на архитектура)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} изисква Windows build {2} или по-нова: задайте [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} изисква resources/bin/rubrapack_ca-{2}.dll, без който е компилиран този rubrapack"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA не е проверен (дайте --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA е доверен"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA не е доверен - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} го няма или е празна. Да се премахнат ли [files.{3}] и [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ е нова папка. Да се добави ли?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: грешки: {2}{-3}, предупреждения: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: грешки: {2}{-3}, предупреждения: {4}{-5} (спрямо {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} файла, {3} байта\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} файла, {3} грешки, 0 предупреждения\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: още {2} диагностики не са показани\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: файлът '{2}' не е [file.*] от този пакет"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: файлът '{2}' не е програма (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' не е затворено (напишете '$$(' за текста '$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' вече съществува; остава както е"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' вече съществува; премахнете го или компилирайте в друга папка"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' вече има манипулатор {2} ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' вече има разрешения"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' и '{2}' са един и същ път в пакета"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' принадлежи на Windows или на браузърите"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' не може да се прочете спрямо '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' не се побира в подмножеството на TOML; нищо не е записано"
+
+msgid "'%s' exists already"
+msgstr "'{1}' вече съществува"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' вече съществува; променете го с `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' съществува и не е празна директория; извлечете в нова"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' отива в {2}; или msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' има нечетим поток с обобщена информация"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' няма таблици Directory, Component, File и Media, от които да се извлича"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' няма четима обобщена информация"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' няма трансформация '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' е UTF-16: edit променя само източници в UTF-8 (първо го запишете като UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' е име на Windows; дайте друго име на променливата"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' е [chain]: създава програма за инсталиране, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' е контрола от вградената рамка; изберете друг ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' е папка на компютъра; пакет {2} не може да пише там"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' е модул за сливане: слейте го с [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' е име, което форматът MSIX пази за себе си"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' е символна връзка; връзките не се следват"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' е също [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' е също dir ID; дайте друго име на променливата"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' е компилиран за машина 0x{2}, а не за архитектурата на този пакет; задайте any-arch = true, ако това е умишлено"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' не е нито PE файл (.exe, .dll), нито пакет MSI, нито пакет или сбор MSIX"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' не е нито PE файл, нито пакет MSI, нито пакет или сбор MSIX"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' не е нито известна папка, нито dir ID (известни папки: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' не е cabinet, който rubrapack може да чете (stored или MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' не е диагностичен код (RP и четири цифри, например RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' не е програма (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' не е обикновен файл"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' не е инсталационна програма на rubrapack{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' не е валиден ID (букви, цифри и '_', не започва с цифра, най-много {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' не е валидна база данни MSI: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' не е валиден пакет MSIX: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' не е валиден пакет: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' не е валиден източник (подмножеството на TOML); първо го поправете ръчно"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' не е валидна трансформация: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' не е валидно име на променлива"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' е запазено и не може да се ползва като ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' е име на dir: само търсене в регистъра или dir може да попълни dir"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' прилича на програмен файл (PE), но заглавията или ресурсите му са повредени"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' трябва да е низ"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' трябва да е цяло число"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' трябва да е между {2} и {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' трябва да е true или false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' не трябва да е празно"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' не назовава трансформации (свойство на обобщението 8): не е корекция"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' започва с папка: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' има {4}; нищо не е извлечено"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} записа, повече от лимита {3} (--limit-entries); нищо не е извлечено"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' и '{3}' биха били един и същ път в Windows; нищо не е извлечено"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' не е в [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': таблица не може да се прочете"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': таблица е нечетима"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX инсталира всичките си файлове (when); използвайте msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX премахва всичките си файлове (keep); използвайте msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' е повреден или не е stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': името на cabinet '{2}' не е просто име на файл"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': компресираният файл '{2}' (последователност {3}) няма cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': директорията '{2}' има родител '{3}', който го няма"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': директорията '{2}' е свой собствен предшественик или е вложена твърде дълбоко"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': файлът '{2}' не съвпада с неговия MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': файлът '{2}' няма компонент или директория"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': файлът '{2}' е {3} байта, а таблицата File казва {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': файлът '{2}' не е в cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': външните му cabinet файлове не са обхванати от подписа (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': папката му не води до известно място"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': повече от {2} байта за запис (--limit-bytes); нищо не е извлечено"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': няма --timestamp: подписът престава да е валиден, когато сертификатът изтече"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': пакетът '{2}' не съвпада със своя SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': потокът на cabinet '{2}' го няма"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': манифестът няма {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': манифестът посочва '{2}', което не е в пакета"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': времеви печат от {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': трансформацията '{2}' не може да се прочете спрямо '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' е собственият език на пакета ({2}); дайте този текст без суфикса"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' кара Windows Installer да запише многонизова стойност; използвайте type = \"multi\" и масив"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' в числата не се поддържа"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' приема най-много едно име на команда"
+
+msgid "'version' takes no arguments"
+msgstr "'version' не приема аргументи"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs е за .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch за сбор: списък от x64, x86 и arm64, всяко по веднъж (получено '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch приема една архитектура или списък за изход .msixbundle"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp и --allow-unsigned-cabs вървят с --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress е за .msi; MSIX приема --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist посочва нова папка до източника (без път)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs приема число от 1 до 64 (получено '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store е хранилище за сертификати на Windows; другаде използвайте файл с ключ или --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store приема SHA-1 отпечатъка на сертификата (40 шестнадесетични цифри)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: няма такъв език (вградени: {2}; друг изисква езиковия си пакет, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang изисква език, например en или ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages изисква диалогови прозорци: дайте и --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress приема deflate или store (получено '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: променливата не е зададена"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code приема GUID с главни букви и скоби: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: променливата не е зададена"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous сравнява два пакета .msi"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: основните сертификати на операционната система не могат да се прочетат"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} не съвпада с изхода '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} не е реализиран (msi или msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target приема msi или msix (получено '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots и --proxy вървят с --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test и --msix-compress са за изходи .msix"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test е за пакети без подпис; с --key го пропуснете"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate приема none или някои от product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} е дадено два пъти"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' е име на Windows; дайте друго име на променливата"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D изисква NAME=VALUE (получено '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i пита за всеки отговор; дайте или -i, или опциите"
+
+msgid "; its range is "
+msgstr "; обхватът му е "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' не е в SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty трябва да е публично свойство (с главни букви)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Всички кодове: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x не започва с PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x не е последният запис"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Архитектура (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Изберете"
+
+msgid "Command line"
+msgstr "Команден ред"
+
+msgid "Command line (lint)"
+msgstr "Команден ред (lint)"
+
+msgid "Common AppData"
+msgstr "Общи AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId не е GUID във формата на регистъра"
+
+msgid "Desktop shortcut?"
+msgstr "Пряк път на работния плот?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Диалогови прозорци (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "В таблицата File, Component или Directory липсва стандартна колона"
+
+msgid "Folder name under Program Files"
+msgstr "Име на папката в Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Папка с файловете за инсталиране"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' вече се използва (ред {2}); ID трябва да се различават във всички таблици"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Папка за инсталиране (път на [dir.INSTALLDIR])"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Инсталиране за (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Ключ като table.key (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' принадлежи на друг компонент"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' не е във File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' не е в Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Диалогови прозорци на корейски освен на английски?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} е под това на по-малък DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Изход без записване на промените?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Лиценз за приемане (.txt, .md, .rtf; - за никакъв)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX няма виртуална папка за AppData на потребителя; приложението създава там каквото му трябва, когато работи"
+
+msgid "MSIX packages"
+msgstr "Пакети MSIX"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: какво изисква пакет MSIX и какво не може да носи"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Основна програма, за преките пътища (- за никаква)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Ръководство: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Производител"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Производител (показва се в Инсталирани приложения)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt върна подпис ECDSA с грешна дължина"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Незадължителни части, които потребителят може да отметне (подпапки, със запетаи; - за никакви)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 токен: токенът няма сертификат с CKA_ID на ключа (дайте го с --cert)"
+
+msgid "Paths"
+msgstr "Пътища"
+
+msgid "Product name"
+msgstr "Име на продукта"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode и UpgradeCode са един и същ GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} не е по-висока от предишната {2} в първите си три полета: Windows Installer не надстройва"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Програма, която преките пътища отварят (- за без преки пътища)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: няма такъв език (вградени: {2}; друг изисква езиковия си пакет, {3}.po)"
+
+msgid "Reference, "
+msgstr "Справочник, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Последователността {1} не е обхваната от нито един ред на Media (последен {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Последователността {1} се използва от друг файл"
+
+msgid "Source file to write"
+msgstr "Файл източник за записване"
+
+msgid "Source format"
+msgstr "Формат на източника"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source трябва да посочва ред от File за тип {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Пряк път в менюто \"Старт\"?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Записите в \"Старт\", Programs, работния плот и Startup идват от [shortcut.*] и [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML извън подмножеството, което rubrapack чете, или `format` липсва или е твърде нов"
+
+msgid "Tables"
+msgstr "Таблици"
+
+msgid "The TOML subset"
+msgstr "Подмножеството на TOML"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "Файлове UTF-16 big-endian не се поддържат; запишете като UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} се различава от {2} на предишната версия: този пакет не я заменя"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode не е GUID във формата на регистъра"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Стойност (текст, число, true/false, [\"a\", \"b\"]; - премахва ключа)"
+
+msgid "Variables"
+msgstr "Променливи"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Version ([define] VERSION)"
+msgstr "Версия ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Версии и надстройки"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer позволява най-много 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] изисква '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] не може да влезе в модул за сливане; има го пакетът, който го слива"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] още не се поддържа (планирано за {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] не може да влезе в MSIX; добавете msi-only = true, за да се създаде MSIX без него"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ID в модул за сливане има най-много 35 знака (добавя се GUID на модула)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] изисква ID: напишете [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] не приема ID: напишете [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml няма </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml не е последният запис (не е пакет, записан от rubrapack или API за пакети на Windows)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "Масиви от таблици [[...]] не се поддържат; дайте на всеки елемент собствен [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "check на [action.{1}] няма ефект: още нищо не го изпълнява; премахнете го"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] изисква и do, и undo (undo също отменя неуспешно do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: args за MSIX трябва да е обикновен текст (без [...], попълвани при инсталиране)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: в MSIX файловият тип отваря приложение: target трябва да е изпълним файл на [msix-app.*]"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] е два пъти"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] изисква ID: напишете [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id и typelib се записват само за MSI; MSIX регистрира класа без тях"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args са на програма; DLL се зарежда, не се стартира"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate изпълнява DLL в dllhost; '{2}' е програма"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading е за DLL; програмата задава своя apartment"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version и typelib-file изискват typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] отива в {2}; или msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: източникът му трябва да е файл, който влиза в пакета"
+
+msgid "[define] values must be strings"
+msgstr "Стойностите на [define] трябва да са низове"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] изисква '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] изисква 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] изисква 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] изисква 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] има {2} контроли; най-много 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] няма [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] е поставен след себе си чрез други диалогови прозорци"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] изисква ui = \"minimal\", \"installdir\" или \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' е име на Windows; дайте друг ID на dir"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard изисква помощния DLL на rubrapack, който модулът за сливане не носи"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] изисква функция"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX задава всички свои променливи (when); използвайте msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: стойността му посочва място, което MSIX не може да даде (папка извън пакета, която не е папка на Windows, или част от времето на инсталиране); използвайте msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer зарежда манипулатор {2} от DLL; [com.{3}] е програма"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows чете манипулаторите на свойства само за компютъра; пакетът изисква scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: манипулаторът за визуализация работи в prevhost на Windows; оставете app-id и surrogate извън [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX носи само манипулатори за миниатюри и визуализация (пакетиран манипулатор на свойства не даде стойности на Explorer); msi-only = true го запазва за MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: файлов тип на MSIX принадлежи на приложение; добавете [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: класът {2} не е [com.*] от този пакет (DLL на манипулатора го обслужва)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: в MSIX манипулаторите споделят всичките си типове или никои (типът е в една асоциация на файлов тип)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: в MSIX класът му работи в surrogate; threading = \"sta\" в [com.{2}] дава на прозореца цикъл за съобщения (с threading = {3} визуализацията може да остане празна)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: в MSIX всичките му типове са в един файлов тип [assoc], или в никой"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: класът му е msi-only ([com.{2}]); MSIX няма да има сървър за него"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types е списък от файлови типове, например [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] отива в {2}; или msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] изисква 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] изисква функция: задайте 'feature' тук или в неговата dir"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX записва всичките си записи в INI (when); използвайте msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: стойността му има част, която Windows Installer попълва при инсталиране ([...]); MSIX записва файла при създаването си"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] изисква 'on': къде се показва елементът, например [\".txt\"] или \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] изисква 'target' (програмата, която стартира) или елементи с parent = \"{2}\" (подменю)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] изисква 'target': програмата, която елементът стартира"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: подменюто не стартира нищо: пропуснете 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: елемент от подменю се показва там, където се показва подменюто му: пропуснете 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args има част, която Windows Installer попълва при инсталиране ([...]); MSIX съдържа само постоянен текст"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: програмата му не е в MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: стойностите му не могат да влязат в регистъра на пакета"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": няма [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on е файлов тип или списък от тях, например [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' не е [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' трябва да е подменю: [menu.*] без target и без свой parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] отива в {2}; или msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] изисква функция: задайте 'feature' тук или в неговата dir"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; или msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args трябва да е обикновен текст (без [...], попълвани при инсталиране)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file трябва да е {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file трябва да посочва файл, който влиза в пакета"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file трябва да посочва програма, която влиза в пакета"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types е списък от файлови типове, например [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] изисква неговата dir да има функция"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: args за MSIX трябва да е обикновен текст (без [...], попълвани при инсталиране)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: в MSIX схемата отваря приложение: target трябва да е изпълним файл на [msix-app.*]"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] изисква 'value' (или remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR не достига извън MSIX; използвайте [assoc.*], [protocol.*], [com.*] или [handler.*], или msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: стойност qword изисква помощния DLL на rubrapack, който модулът за сливане не носи"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX носи стойности само под {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX нито премахва стойности, нито ги оставя (remove, keep); използвайте msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX записва всички свои стойности (when); използвайте msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: стойността му има част, която Windows Installer попълва при инсталиране ([...]); MSIX съдържа само постоянни стойности"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" изисква помощния DLL на rubrapack, който модулът за сливане не носи"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: името на ключа или стойността не може да влезе в hive на регистъра"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] изисква функция: задайте 'feature' тук или в неговата dir"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true не е за папка под {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true изисква помощния DLL на rubrapack, който модулът за сливане не носи"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: args за MSIX трябва да е обикновен текст (без [...], попълвани при инсталиране)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file трябва да посочва програма, която влиза в пакета"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX има преки пътища само на работния плот и в менюто \"Старт\"{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: пряк път на MSIX няма working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: пряк път на MSIX съществува винаги (when е за MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: пряк път на MSIX показва логото на приложението си; icon е за MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: args за MSIX трябва да е обикновен текст (без [...], попълвани при инсталиране)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: в MSIX прекият път стартира приложение: target трябва да е изпълним файл на [msix-app.*]"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: записът в \"Старт\" на MSIX е неговото приложение, което не приема args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: няма текст на диалогов прозорец с този ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] изисква ui = \"basic\" или друг набор диалогови прозорци в [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "екранирането \\{1} не е скаларна стойност на Unicode"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: този пакет не би надстроил чисто предишния"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "`lint` на пакет: диалогови прозорци, кодова страница, нормализация на текста"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "`lint` на пакет или сбор MSIX"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "контролата {1} няма текст; поставете текстова контрола до нея"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "контролата {1} изисква [property.{2}] с една от стойностите ѝ по подразбиране (тихото инсталиране я използва)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "пакет {1} не може да пише в HKLM; използвайте HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "изход .msix изисква таблица [msix-app.ID], посочваща изпълнимия файл"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "изход .msix изисква таблица [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "изход .msm е модул за сливане, създаден от източник с [module] вместо [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "файл .txt, .md или .rtf, или - за никакъв"
+
+msgid "a PE file without a certificate table entry"
+msgstr "PE файл без запис в таблицата на сертификатите"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN никога не се приема от командния ред (другите могат да го видят); използвайте --pin-env или --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "Package в манифеста на сбора с неизвестен Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "Package в манифеста на сбора без FileName, Offset или Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP запис не се разархивира до своя размер"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "ZIP запис, по-голям от позволеното"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "CRC-32 на ZIP запис не съвпада"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "данните на ZIP запис са извън файла"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "източник [module] създава модул за сливане: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "двоичната стойност е четен брой шестнадесетични цифри, например \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "сбор без пакети"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "сертификат в пътя има критично разширение, което rubrapack не разбира"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "сертификат в пътя е подписан от сертификат, който не е CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "веригата съдържа само [chain], [chain-package.ID] и [define], не [{1}]; пакетите се създават от собствените си източници"
+
+msgid "a chain holds at most %d packages"
+msgstr "веригата съдържа най-много {1} пакета"
+
+msgid "a chain needs [chain]"
+msgstr "веригата изисква [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "веригата изисква поне един [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "знак, който Windows не позволява в име (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "управляващ знак"
+
+msgid "a damaged PE optional header"
+msgstr "повредено незадължително заглавие на PE"
+
+msgid "a damaged PE section table"
+msgstr "повредена таблица на секциите на PE"
+
+msgid "a damaged ZIP64 end record"
+msgstr "повреден краен запис на ZIP64"
+
+msgid "a damaged hive bin"
+msgstr "повреден hive bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "диагностика на rubrapack"
+
+msgid "a disabled service cannot be started"
+msgstr "забранена услуга не може да се стартира"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "двоен пакет не може да избира между потребителска и системна променлива"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "двоен пакет пише в HKMU (HKLM или HKCU според инсталирането), не в HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "стойност dword е цяло число 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "функция, която този rubrapack не предоставя (или е компилиран без нея)"
+
+msgid "a file larger than allowed"
+msgstr "файл, по-голям от позволеното"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "име на файл под '{1}' не е валиден Unicode и не може да се пакетира"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "име на файл без / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "веригата от компонент или директория на файл е прекъсната"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "шрифт влиза в MSIX чрез [font.*], който го посочва"
+
+msgid "a hash the token signing does not know"
+msgstr "хеш, който подписването с токен не познава"
+
+msgid "a hive cell crosses its bin"
+msgstr "клетка на hive пресича своя bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "версия или тип hive, които rubrapack не чете"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "самата известна папка ('{1}') не може да получи разрешения"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "лицензът изисква ui = \"minimal\", \"installdir\" или \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "локално заглавие с допълнителни полета (не е пакет, записан от rubrapack или API за пакети на Windows)"
+
+msgid "a malformed central directory"
+msgstr "неправилна централна директория"
+
+msgid "a modification package has no applications of its own"
+msgstr "пакетът за модификация няма собствени приложения"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "пакетът за модификация изисква Windows build 18362 или по-нова: задайте [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "compress на модул е \"none\", \"mszip\" или \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "името на модул е неговият ID в ModuleID: букви, цифри и _, най-много 35 знака"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "стойност multi е непразен масив от низове"
+
+msgid "a multi value is an array of strings"
+msgstr "стойност multi е масив от низове"
+
+msgid "a name ending with a space or a dot"
+msgstr "име, завършващо с интервал или точка"
+
+msgid "a name longer than 255 bytes"
+msgstr "име, по-дълго от 255 байта"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "пакет, посочен в манифеста на сбора, не е в сбора"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "пакет без Identity Name, Publisher, Version и ProcessorArchitecture (или ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "Offset или Size на пакет в манифеста на сбора не съвпада с мястото му (или е компресиран)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "идентичността на пакет се различава от това, което манифестът на сбора казва за него"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "името на пакет в сбора трябва да е име на файл, завършващо на .msix или .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "парола никога не се приема от командния ред (другите могат да я видят); използвайте --pass-env или --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "пакет за компютъра не пише в HKCU (би било на инсталиращия потребител); използвайте scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "прокси с потребителско име или парола не се поддържа"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "стойност qword е цяло число или \"0x\" и от 1 до 16 шестнадесетични цифри"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "контролата radio подрежда бутоните си един над друг: височината трябва да е поне 12 на стойност ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "запис има повече колони от таблицата си"
+
+msgid "a record is cut short"
+msgstr "запис е отрязан"
+
+msgid "a record names a string the pool does not have"
+msgstr "запис посочва низ, който хранилището няма"
+
+msgid "a reserved device name"
+msgstr "запазено име на устройство"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "действие за връщане назад не може да е асинхронно"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "схемата е малка буква, после малки букви, цифри, '+', '-' или '.' (получено '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "действие със скрипт между InstallInitialize и RemoveExistingProducts (грешка 2613)"
+
+msgid "a section lies outside the file"
+msgstr "секция е извън файла"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "името на услуга не може да съдържа '/' или '\\' (най-много 256 знака)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "setup .exe се създава от източник с [chain]; '{1}' създава пакет (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "източникът съдържа един [package] или един [module], не и двата"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "източник, минал проверките RP1xxx, никога не би трябвало да срещне тези: моля, докладвайте заедно с източника"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "запис stored в ZIP с различни размери"
+
+msgid "a stream of the package cannot be read"
+msgstr "поток от пакета не може да се прочете"
+
+msgid "a table has more than 32 columns"
+msgstr "таблица има повече от 32 колони"
+
+msgid "a text control has no property"
+msgstr "текстова контрола няма свойство"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "стойност `with` файл споделя компонента му: поставете `when` на файла"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "стойността е от 1 до 64 байта"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "стойност, която върви 'with' файл, взема функцията на този файл"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "версията е 3 или 4 числа с точки, например 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account трябва да е LocalSystem, LocalService или NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "действието '{1}' вече е дефинирано"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "действието не е нито стандартно действие, нито в CustomAction"
+
+msgid "adds too many tables"
+msgstr "добавя твърде много таблици"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' не е страница от този набор диалогови прозорци (RpWelcomeDlg{2}{3}{4}) или [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias принадлежи на kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias трябва да е име на файл, завършващо на .exe: букви, цифри, '.', '_', '-' (получено '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "секция в INI не може да съдържа ']', а ключ не може да съдържа '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX не може да поставя файлове във временната папка"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "приложението има един псевдоним ([msix-extension.{1}] вече е такъв)"
+
+msgid "an empty name"
+msgstr "празно име"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https сървър изисква --tls-trust <certificates> или --system-roots, спрямо които да се провери"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "прокси https:// не се поддържа; дайте прокси http:// (https сървърите се достигат чрез CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "времеви печат Authenticode в стар стил (PKCS#9 counterSignature), който rubrapack не проверява"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "незадължителен пакет или пакет за модификация не декларира възможности и настройки за виртуализация: важат тези на основния му пакет"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "пакет x86 пише само в 32-битовия изглед на регистъра"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "приложението '{1}' не е [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri и package-uri вървят заедно: къде ще бъдат файлът .appinstaller и пакетът"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch трябва да е \"x64\", \"arm64\" или \"x86\" (получено '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch трябва да е \"x64\", \"x86\" или \"arm64\" (на самата инсталационна програма)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "аргумент {1} не е валиден UTF-8 (байт {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "аргумент {1} не е валиден Unicode (единица UTF-16 {2})"
+
+msgid "array is not closed"
+msgstr "масивът не е затворен"
+
+msgid "arrays inside arrays are not supported"
+msgstr "масиви в масиви не се поддържат"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "масивите трябва да съдържат само низове или само цели числа"
+
+msgid "at most %d languages besides English"
+msgstr "най-много {1} езика освен английския"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "най-много 100 таблици [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "най-много 50 таблици [action.*] (този файл има {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color е \"transparent\" или \"#RRGGBB\", например \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "грешно име на променлива в '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner трябва да е файл .bmp (Windows Installer показва само BMP)"
+
+msgid "build a package from a source file"
+msgstr "създаване на пакет от изходен файл"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "създаването на {1} от източник {2} изисква собствено семейство за надстройка: добавете {3} = \"{{...}\" в [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab трябва да е \"embed\" или \"external\""
+
+msgid "cannot be read"
+msgstr "не може да се прочете"
+
+msgid "cannot build the ClientHello"
+msgstr "не може да се създаде ClientHello"
+
+msgid "cannot bundle the packages: %s"
+msgstr "пакетите не могат да се съберат в сбор: {1}"
+
+msgid "cannot create '%s'"
+msgstr "не може да се създаде '{1}'"
+
+msgid "cannot create '%s'%s"
+msgstr "не може да се създаде '{1}'{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' не е намерен; създайте с `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "не може да се създаде лого по подразбиране"
+
+msgid "cannot make a key share"
+msgstr "не може да се създаде key share"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "не може да се създаде корекция от '{1}' към '{2}'"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "не може да се създаде трансформация от '{1}' към '{2}'"
+
+msgid "cannot open the certificate store"
+msgstr "хранилището за сертификати не може да се отвори"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' не може да се прочете"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' не може да се прочете ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "пакетът '{1}' не може да се прочете"
+
+msgid "cannot read source file '%s'"
+msgstr "изходният файл '{1}' не може да се прочете"
+
+msgid "cannot read that folder"
+msgstr "тази папка не може да се прочете"
+
+msgid "cannot read the %s file '%s'"
+msgstr "файлът {1} '{2}' не може да се прочете"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "файлът с PIN '{1}' не може да се прочете"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "cabinet '{1}' до '{2}' не може да се прочете"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "файлът със сертификат '{1}' не може да се прочете"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "сертификатите в '{1}' не могат да се прочетат"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "сертификатите в '{1}' не могат да се прочетат: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "файлът с ключ '{1}' не може да се прочете"
+
+msgid "cannot read the password file '%s'"
+msgstr "файлът с парола '{1}' не може да се прочете"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "некомпресираният файл '{1}' до '{2}' не може да се прочете"
+
+msgid "cannot write %s"
+msgstr "{1} не може да се запише"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' не може да се запише"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' не може да се запише за проверка"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri не може да се запише"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "файловете на менюто до '{1}' не могат да се запишат"
+
+msgid "cannot write the resource package of %s"
+msgstr "ресурсният пакет на {1} не може да се запише"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities е масив от имена, например [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "възможността '{1}' не е от познатите на rubrapack (ръководството ги изброява)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "възможността '{1}' изисква Windows build 17763 или по-нова"
+
+msgid "carriage return without a line feed"
+msgstr "връщане на каретката без нов ред"
+
+msgid "certificate file '%s': %s"
+msgstr "файл със сертификат '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "промяна на източник на място: чрез меню с въпроси или с опциите"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "проверка на подпис: структура, отпечатък, подпис и пътят до доверен сертификат"
+
+msgid "check a source or package without writing anything"
+msgstr "проверка на източник или пакет, без да се записва нищо"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "проверете пътищата на източника (спрямо изходния файл); задайте any-arch = true за друга архитектура умишлено"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "проверете правописа (съобщението предлага най-близкото име) и ключовете на таблицата"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "класът {1} вече се обслужва от [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "класът {1} е също в [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class трябва да е GUID като {{12345678-...} (получено '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs няма ефект с preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs трябва да е \"ask\", \"always\" или \"never\" (получено '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "колоната {1} съдържа грешен вид стойност"
+
+msgid "column %s is not valid UTF-8"
+msgstr "колоната {1} не е валиден UTF-8"
+
+msgid "column %s may not be null"
+msgstr "колоната {1} не може да е null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "колона {1}: {2} е извън обхвата на колоната"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "колона {1}: {2} единици UTF-16, колоната побира {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "колона {1}: {2} знака, колоната побира {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "командата '{1}' още не е реализирана"
+
+msgid "command-line"
+msgstr "команден ред"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "компонентът {1} {2} се смени между 32 и 64 бита: правилата за компоненти искат нов GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "компонентът {1} {2} го няма (ресурсите му се премахват с предишната версия)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "компонентът {1} {2} сега има ключов път {3} вместо {4}: правилата за компоненти искат нов GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid трябва да е GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress трябва да е \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" или \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "условието има незатворени кавички или небалансирани скоби"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "условието е по-дълго от 240 знака (rubrapack добавя \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config съдържа низове \"Name=value\" (получено '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config е масив от низове \"Name=value\""
+
+msgid "contains a control character"
+msgstr "съдържа управляващ знак"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "съдържа един от < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type е медиен тип, например \"image/png\" (получено '{1}')"
+
+msgid "control character"
+msgstr "управляващ знак"
+
+msgid "control character in a comment"
+msgstr "управляващ знак в коментар"
+
+msgid "control character in a string"
+msgstr "управляващ знак в низ"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "дати и часове не се поддържат; запишете ги като низове"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when изисква level над 1 (функция с level 1 се инсталира по подразбиране така или иначе)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "дефинирайте променливата ([define] или -D NAME=value) или напишете $$ за буквален $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "диалоговият прозорец '{1}' не е [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "ID на диалогови прозорци, започващи с 'Rp' (и FilesInUse), са собственост на rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' е вътре в себе си (цикъл на пътя)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' не е нито dir ID, нито Programs, Desktop, StartMenu или Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' не е dir ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' не е дефинирана"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction трябва да е \"in\" или \"out\" (получено '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "аргументите на do/undo са по-дълги от 255 знака"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "ключове с точки не се поддържат; поставете ключа в собствена таблица"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "извеждане на пакет (таблици на MSI като IDT)"
+
+msgid "duplicate primary key"
+msgstr "дублиран първичен ключ"
+
+msgid "empty arrays are not supported"
+msgstr "празни масиви не се поддържат"
+
+msgid "ends with a space or a dot"
+msgstr "завършва с интервал или точка"
+
+msgid "error"
+msgstr "грешка"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" трябва да посочва [file.*], който влиза в пакета"
+
+msgid "expected ',' or ']' in the array"
+msgstr "очаква се ',' или ']' в масива"
+
+msgid "expected '=' after the key"
+msgstr "очаква се '=' след ключа"
+
+msgid "expected ']' to close the table name"
+msgstr "очаква се ']', за да се затвори името на таблицата"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "очаква се ключ, [table] или коментар"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "разширението '{1}' вече има програма ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension трябва да е '.' и малки букви, цифри, '_' или '-' (получено '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files няма ефект с preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files трябва да е \"ask\", \"keep\" или \"delete\" (получено '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "функцията {1} я няма: инсталациите, които я имаха, губят каквото съдържаше"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "функцията '{1}' е свой собствен предшественик"
+
+msgid "feature '%s' is not defined"
+msgstr "функцията '{1}' не е дефинирана"
+
+msgid "feature parent '%s' is not defined"
+msgstr "родителската функция '{1}' не е дефинирана"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "файлът '{1}' вече изпълнява услугата '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "файлът '{1}' вече е регистриран като шрифт"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "файлът '{1}' не е [file.*] от този пакет"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "файлът '{1}' трябва да се инсталира в самата папка Fonts ([dir.*] с path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "файлът '{1}' изисква функция: задайте 'feature' тук или в неговата dir"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file трябва да е \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "името на файла е {1} единици UTF-16; с краткото си име 8.3 MSI побира най-много {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization и registry-virtualization = false изискват Windows build 18362 или по-нова: задайте [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' не е [file.*] от този пакет"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' обслужва COM класове само като .exe или .dll"
+
+msgid "files but no Media row"
+msgstr "файлове, но без ред в Media"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "поправете стойността, посочена в съобщението; ID са букви, цифри и '_' и се различават във всички таблици"
+
+msgid "floating-point numbers are not supported"
+msgstr "числа с плаваща запетая не се поддържат"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "папката '{1}' изисква функция: задайте 'feature' тук или в нейната dir"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "името на папката е {1} единици UTF-16; с краткото си име 8.3 MSI побира най-много {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent изисква родител"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "шрифтовете изискват scope = \"machine\" (това е {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} изисква по-нов rubrapack (този чете format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format е цяло число: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "дайте --pass-env или --pass-file, не и двете"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "дайте --pin-env или --pin-file, не и двете"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "дайте на [msix] и [msix-app.*] каквото им трябва или запазете елемента за MSI с msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "дайте файл под тази папка"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "дайте файл директно в папката на програмата или - за никакъв"
+
+msgid "give a folder below this one, such as dist"
+msgstr "дайте папка под тази, например dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "дайте име от 1 до 128 байта"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "дайте и трите логота (logo-150, logo-44, store-logo) или никое"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "дайте едно от --key, --pkcs11 и --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "дайте подпапки на папката на програмата, разделени със запетаи, или - за никакви"
+
+msgid "glob '%s' matches no file"
+msgstr "шаблонът '{1}' не съвпада с нито един файл"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "шаблонът '{1}' съвпада с изходния файл '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "има поток MergeModule.CABinet, който не може да се прочете"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "има MergeModule.CABinet, който не може да се прочете"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "има таблица Module*Sequence без стандартните колони"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "има елемент ModuleConfiguration без име или с неизвестен формат"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "има таблица ModuleConfiguration без стандартните колони"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "има таблица ModuleSubstitution без стандартните колони"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "има шаблон ModuleSubstitution, посочващ елемент, който ModuleConfiguration няма"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "има компонент с условие; MSIX инсталира всичко"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "има файл, на който липсва компонентът или записът в cabinet"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "има папка извън своята TARGETDIR, за която MSIX няма място"
+
+msgid "has a table that cannot be read"
+msgstr "има таблица, която не може да се прочете"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "има таблица, чиито колони се различават от тези на пакета"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "има действия за таблица на последователност, която пакетът няма"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "има компоненти, но пакетът няма таблица FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "има файлове, но няма MergeModule.CABinet или таблица Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "има файлове, но няма поток MergeModule.CABinet"
+
+msgid "has files, but the package has no Media table"
+msgstr "има файлове, но пакетът няма таблица Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "няма ModuleSignature: не е модул за сливане"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "няма ProductCode или ProductVersion"
+
+msgid "has no Property table"
+msgstr "няма таблица Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "има записи за таблица, която нито основата, нито трансформацията дефинира"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "има текст извън ASCII в кодова страница, различна от 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon трябва да е файл .ico"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: файлът '{1}' не е [file.*] от този пакет"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id трябва да е GUID като {{12345678-1234-1234-1234-123456789ABC}: собственият на модула, запазен във всяка версия"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name трябва да е от 3 до 50 знака от A-Z, a-z, 0-9, '.' и '-' (получено '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "вградени (inline) таблици не се поддържат; използвайте таблица [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "инсталира се в същия път като ред {1} (Windows не различава главни и малки букви в имената{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "вътрешна грешка: вграден диалогов прозорец има нарушен ред на табулация; моля, докладвайте"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "вътрешно: таблица на модул няма правило в _Validation"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "вътрешно: няма правило в _Validation за колона на {1}"
+
+msgid "invalid"
+msgstr "невалиден"
+
+msgid "invalid - %s"
+msgstr "невалиден - {1}"
+
+msgid "is '.' or '..'"
+msgstr "е '.' или '..'"
+
+msgid "is a reserved device name"
+msgstr "е запазено име на устройство"
+
+msgid "is empty"
+msgstr "е празно"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "е по-дълго от 255 единици UTF-16"
+
+msgid "is not a Windows Installer database"
+msgstr "не е база данни на Windows Installer"
+
+msgid "is not a compound file"
+msgstr "не е съставен файл"
+
+msgid "is not valid UTF-8"
+msgstr "не е валиден UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "запазете кода за надстройка, вдигнете версията, запазете кодовете на компонентите на файловете, които остават"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "ключът '{1}' е зададен два пъти в тази таблица (първо на ред {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "ключът '{1}' не трябва да започва или завършва с '\\' или да съдържа празна част"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "ключът '{1}' е извън таблица; само 'format' идва преди първата таблица"
+
+msgid "key file '%s': %s"
+msgstr "файл с ключ '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind трябва да е \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" или \"context-menu\" (получено '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind трябва да е \"preview\", \"thumbnail\" или \"property\" (получено '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind трябва да е registry, file, dir или component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels е масив от низове, по един за всяка стойност"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "езикът '{1}' няма езиков пакет (lang/{2}.po до източника или RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "езикът '{1}' е изброен два пъти"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "езикът '{1}' не е в [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "на езика '{1}' липсват {2} текста, първият е {3}: добавете ги в езиковия му пакет (lang/{4}.po) или дайте [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "езикът '{1}' изисква [ui] langid-{2} (неговите LANGID, за автоматичния избор)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "езикът '{1}' изисква [ui] name-{2} (името му на страницата за език)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" вече не прави диалоговите прозорци корейски: те са на английски, освен ако [ui] languages = [\"ko\"] не добави корейски"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language трябва да е \"ko-KR\" или \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language трябва да е \"neutral\", \"en-US\" или \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages съдържа кодове като \"ko\" или \"zh_TW\" (2 или 3 малки букви, и _ и две главни букви на регион) (получено '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages е масив от езикови кодове, например [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages изисква набор диалогови прозорци (ui = \"basic\" или друг)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch трябва да е \"file:<ID>\", посочващ [file.*] от този пакет"
+
+msgid "launch-args needs launch"
+msgstr "launch-args изисква launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license трябва да е файл .txt, .md (показва се като обикновен текст) или .rtf"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} ред {2}: колоната {3} не е в NFC ({4} ред{-5}); build --nfc привежда имената на папки, файлове и преки пътища в NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: кодова страница {1}, не 65001: текстът не се проверява като UTF-8, ширините само за ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: няма проблеми\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: вижте проблемите по-горе\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "изброяване на ключовете, с които токен или хранилището за сертификати на Windows може да подписва"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "логото '{1}' и вариантът му .scale-100 са и двете налице: запазете едното"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "логото '{1}' в мащаб {2} е {3}x{4} пиксела; трябва да е {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "логото '{1}' в мащаб {2} не е файл PNG"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "логото '{1}' е {2}x{3} пиксела; трябва да е {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "логото '{1}' не е файл PNG"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "логото '{1}' не е намерено (нито като варианти .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "лого '{1}': лого с варианти на мащаба изисква име на файл в ASCII с разширение"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package е името на идентичността на основния пакет (получено '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher и modification = true вървят с main-package (пакетът, на който този принадлежи)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher е издателят на основния пакет, например \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "не може да съдържа управляващи знаци или / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "не може да започва с интервал или да завършва с интервал или точка"
+
+msgid "merge module '%s' not found"
+msgstr "модулът за сливане '{1}' не е намерен"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version трябва да е версия като 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version трябва да има четири части, например 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version трябва да има четири части, например 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "несъответствие"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" премахва ключа; не приема 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode трябва да е \"set\", \"add\" или \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode трябва да е \"set\", \"append\" или \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "повече ZIP записи от позволеното или отколкото съдържа директорията"
+
+msgid "more keys and values than allowed"
+msgstr "повече ключове и стойности от позволеното"
+
+msgid "more than 3 redirects"
+msgstr "повече от 3 пренасочвания"
+
+msgid "more than 96 sections"
+msgstr "повече от 96 секции"
+
+msgid "more than one source file ('%s')"
+msgstr "повече от един изходен файл ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "налице е повече от един токен: посочете един с --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi трябва да е \"each\", \"one\" или \"single\" (получено '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "многоредови низове не се поддържат"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "многоредови низове не се поддържат; използвайте един ред с \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "трябва да е от 1 до 64 байта"
+
+msgid "name contains a control character"
+msgstr "името съдържа управляващ знак"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name е името на идентичността на пакет (получено '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "името не е ASCII и summary-name липсва; Subject в обобщението ще бъде 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "посочва папка, която таблицата му Directory няма"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix още не е реализиран: направете източник за MSI и добавете [msix] (вижте ръководството)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "няма ред 'format = {1}': източник във формата на rubrapack 0.18 или по-стар, който тази версия не чете (пътищата вече започват с $(ProgramFiles) или $(INSTALLDIR)); вижте Source format в ръководството"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "не е дадено --trust: подписът се потвърждава, но нищо не казва на кого да се има доверие"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "нито един сертификат във файла с ключ (или във файла --cert) не принадлежи на ключа"
+
+msgid "no control characters"
+msgstr "без управляващи знаци"
+
+msgid "no keys\n"
+msgstr "няма ключове\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "няма основна програма, затова няма преки пътища: никакви"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "няма име на сървъра или е по-дълго от 255 байта"
+
+msgid "no string pool: not a transform"
+msgstr "няма хранилище на низове: не е трансформация"
+
+msgid "no table '%s' in '%s'"
+msgstr "няма таблица '{1}' в '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove оставя Modify (неговото Remove) като единствен начин за премахване на продукта: не може да върви с no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "не е PE файл (няма заглавие MZ)"
+
+msgid "not a PE file (no PE header)"
+msgstr "не е PE файл (няма заглавие PE)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "не е файл PEM, PKCS#8 или PKCS#12"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "не е ZIP архив (няма краен запис)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "не е ZIP архив (твърде кратък)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "не е URL на прокси, който rubrapack приема (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "не е hive на регистъра"
+
+msgid "not a valid number"
+msgstr "не е валидно число"
+
+msgid "not a value"
+msgstr "не е стойност"
+
+msgid "not a value (strings need quotes)"
+msgstr "не е стойност (низовете трябват кавички)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "не е URL http:// или https://, който rubrapack приема"
+
+msgid "not valid UTF-8"
+msgstr "не е валиден UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "не е проверено (дайте --trust или --system-roots)"
+
+msgid "not-present"
+msgstr "липсва"
+
+msgid "nothing changed\n"
+msgstr "нищо не е променено\n"
+
+msgid "number out of range"
+msgstr "число извън обхвата"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "осмични и двоични числа не се поддържат; използвайте десетични или 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" е за HKLM, HKCU и HKMU (класовете вървят с [assoc.*], [com.*] и подобни)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" премахва ключ с всичко под него: '{1}' не е собствен ключ на продукт под Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" премахва целия ключ при премахване; не приема '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "в Windows `keys list` показва хранилището за сертификати"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "в Windows токен се използва чрез хранилището за сертификати (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on е за remove = true (кога се премахва ключът)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on трябва да е \"install\" или \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on трябва да е \"install\", \"uninstall\" или \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: всяко е файлов тип ('.' и малки букви, цифри, '_' или '-'), \"*\" (всеки файл), \"folder\", \"background\" (празната част на папка), \"drive\" или \"assoc:<ID>\" (получено '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "само контролите radio и combo приемат labels"
+
+msgid "only radio and combo controls take values"
+msgstr "само контролите radio и combo приемат values"
+
+msgid "out of memory"
+msgstr "няма достатъчно памет"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "изход '{1}': rubrapack записва .msi, .msm, .msix, .msixbundle и setup .exe на верига"
+
+msgid "package '%s' %s"
+msgstr "пакет '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "пакетът '{1}' не е намерен"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent трябва да е upgrade-code на друг продукт, не собственият на този пакет"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent трябва да е upgrade-code на основния продукт, GUID като {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path трябва да е \"$(Base)/relative/path\" с '/' (Base е папка като ProgramFiles или dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path трябва да започва с папка на Windows (като $(ProgramFiles) или $(System))"
+
+msgid "paths"
+msgstr "пътища"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type трябва да е \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" или \"application\" (получено '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "разрешенията изискват scope = \"machine\" (това е {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports трябва да е порт или диапазон като \"8000-8100\" в рамките на 1-65535 (получено '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "отпечатване на случаен GUID или този, който rubrapack извежда от текст"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "отпечатване на JSON Schema на източниците (за редактор, който допълва и проверява ключове)"
+
+msgid "print the version"
+msgstr "отпечатване на версията"
+
+msgid "print this help, or one command's usage"
+msgstr "отпечатване на тази помощ или употребата на една команда"
+
+msgid "product-code must be a GUID"
+msgstr "product-code трябва да е GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile трябва да е \"all\", \"domain\", \"private\" или \"public\" (получено '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' вече е на [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' е също на [assoc.{2}]: файлов тип и COM клас изискват две имена"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' е също в [assoc.{2}] с друго описание, target, icon или args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id трябва да е букви, цифри, '.', '_' или '-', да не започва с цифра, най-много 39 (получено '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "свойството '{1}' вече принадлежи на контролата '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "свойството '{1}' има името на dir или функция"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "свойството '{1}' вече е дефинирано (ред {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "свойството '{1}' вече се търси (ред {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "свойството '{1}' се задава от rubrapack или инсталатора и не може да се дефинира тук"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "свойството '{1}' трябва да е ваше собствено публично име (с главни букви)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "свойството '{1}' трябва да е публично име: главни букви, цифри и '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol трябва да е \"tcp\" или \"udp\" (получено '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher е издателят на пакета, например \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher трябва да е subject на сертификата за подписване, например \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher не трябва да съдържа OID на unsigned-test; --unsigned-test го добавя"
+
+msgid "quoted keys are not supported"
+msgstr "ключове в кавички не се поддържат"
+
+msgid "quoted table names are not supported"
+msgstr "имена на таблици в кавички не се поддържат"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot трябва да е \"suppress\" или \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true е за on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true никога не се изпълнява, когато надстройка премахва тази версия; не приема 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true премахва папката с всичко в нея; не приема 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} е над версията на този пакет {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' трябва да е версия като 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message изисква refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "регистърът '{1}' премахва стойност; няма какво да защитава"
+
+msgid "registry value '%s' needs a feature"
+msgstr "стойността в регистъра '{1}' изисква функция"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true премахва стойността при инсталиране; не приема 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons изисква задачата за почистване: премахнете cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces съдържа най-много 16 кода за надстройка"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces съдържа кодове за надстройка, GUID като {{12345678-1234-1234-1234-123456789ABC} (получено '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces е масив от кодове за надстройка, например [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces изброява {1} два пъти"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces посочва {1}, който е upgrade-code на този пакет или на родителя му"
+
+msgid "required property %s is missing"
+msgstr "липсва задължителното свойство {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "близнакът за връщане трябва да е преди {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root трябва да е HKLM, HKCR или HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root трябва да е HKLM, HKCU, HKCR или HKMU (получено '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: какво означава диагностичен код. Кодовете по диапазон:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: няколко въпроса създават източника (Enter взема стойността в [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "изпълнете `rubrapack help <command>`; проверете пътищата и че изходната папка съществува"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run трябва да е \"file:<ID>\", посочващ [file.*] от този пакет"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (машина 0x{2}) не може да работи на машините на този пакет"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' не е програма (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: файлът '{1}' не е [file.*] от този пакет"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "запишете източника като UTF-8 (или UTF-16 с BOM), с край на ред LF или CRLF"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "схемата '{1}' вече има програма ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope трябва да е \"machine\", \"user\" или \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl трябва да е низ SDDL като \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "свойството за търсене '{1}' трябва да е ваше собствено публично име (с главни букви)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "вижте съобщението; повторното създаване с rubrapack поправя повечето от тях"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "последователността {1} не е след {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "подрежда действие до такова, което нито пакетът, нито модулът изпълнява"
+
+msgid "service name '%s' is already used"
+msgstr "името на услугата '{1}' вече се използва"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "услугите изискват scope = \"machine\" (това е {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "името на прекия път е {1} единици UTF-16; с краткото си име 8.3 MSI побира най-много {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "подписване на PE файл, пакет MSI, пакет или сбор MSIX"
+
+msgid "signed %s\n"
+msgstr "подписан {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "източникът '{1}' е директория; използвайте [files.ID] за много файлове"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "източникът '{1}' е символна връзка; връзките не се следват"
+
+msgid "source '%s' is not a regular file"
+msgstr "източникът '{1}' не е обикновен файл"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "изходният файл '{1}' се промени, докато пакетът се създаваше"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "изходният файл '{1}' е по-голям от 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "изходният файл '{1}' не е намерен"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source трябва да е \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source трябва да е пакет .msi"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "пътят на източника '{1}' трябва да е относителен спрямо изходния файл"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "пътищата на източника използват '/', не '\\\\' (получено '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: файлът '{1}' не е [file.*] от този пакет"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start трябва да е auto, demand или disabled"
+
+msgid "string is not closed on this line"
+msgstr "низът не е затворен на този ред"
+
+msgid "string lengths exceed the string data"
+msgstr "дължините на низовете надвишават данните на низовете"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "обобщената информация още не може да се покаже като IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name трябва да е ASCII (обобщената информация съдържа само ASCII)"
+
+msgid "table %s %s"
+msgstr "таблица {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "таблицата '{1}' е нечетима"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "таблицата [{1}{2}{3}] е дефинирана два пъти (първо на ред {4})"
+
+msgid "table name expected"
+msgstr "очаква се име на таблица"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "имената на таблици имат най-много две части: [kind] или [kind.ID]"
+
+msgid "tables"
+msgstr "таблици"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "таблици и ключове: непозната таблица или ключ, липсващ задължителен, елемент без функция, когато има функции"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "не приема конфигурация (няма ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "целта '{1}' не съществува"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target трябва да е \"dir:<ID>\", \"file:<ID>\" или \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target трябва да е \"file:<ID>\", посочващ [file.*] от този пакет"
+
+msgid "target name '%s' %s"
+msgstr "име на целта '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: файлът '{1}' не е [file.*] от този пакет"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' вече се използва от [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name и enabled принадлежат на kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "този файл вече съществува; дайте друго име"
+
+msgid "that folder holds no files"
+msgstr "тази папка не съдържа файлове"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "диалоговият прозорец FilesInUse изисква таблица ListBox, дори празна (грешка 2205; прозорецът се пропуска)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN има знаци или дължина, които токенът не приема"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN е изтекъл: първо го сменете на токена"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN е заключен (твърде много грешни опити)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode е на предишната версия: това е малка надстройка (REINSTALLMODE), а не голямата надстройка, която създава rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "файлът UTF-16 не е валиден UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "централната директория на ZIP е извън файла"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "ID на приложението '{1}' става Application Id: само букви и цифри, да не започва с цифра"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "архивът не завършва със записи за край ZIP64, както правят пакетите MSIX"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "архивът няма запис за край ZIP64"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "манифестът на сбора няма Identity Name, Publisher и Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "централната директория е извън архива"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "сертификатът има критично разширение, което rubrapack не разбира"
+
+msgid "the certificate has expired"
+msgstr "сертификатът е изтекъл"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "сертификатът е на CA, а не сертификат за подписване"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "сертификатът не е за подписване на код (няма разширено използване на ключа за подписване на код)"
+
+msgid "the certificate is not valid yet"
+msgstr "сертификатът още не е валиден"
+
+msgid "the certificate path is longer than 8"
+msgstr "пътят на сертификатите е по-дълъг от 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "таблицата на сертификатите не съдържа подпис Authenticode"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "таблицата на сертификатите не е в края на файла"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "използването на ключа на сертификата не позволява цифрови подписи"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "subject на сертификата не може да се запише като издател на MSIX"
+
+msgid "the chunked response is malformed"
+msgstr "отговорът на части е неправилен"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "командният ред: непозната команда или опция, файл, който не може да се чете или записва, подпис, разлика, която трансформацията не може да носи"
+
+msgid "the connection has failed"
+msgstr "връзката е неуспешна"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "вградените cabinet правят пакета 2 GiB или повече, което Windows Installer не може да отвори; използвайте cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "записът не е в централната директория"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "диалоговият прозорец за грешки '{1}' изисква контрола {2} с име {3} (грешка 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "изпълнимият файл '{1}' трябва да е .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "папката на изпълнимия файл не води до известно място"
+
+msgid "the file is not signed"
+msgstr "файлът не е подписан"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "файлът вече е подписан; rubrapack не подписва два пъти и не заменя подпис"
+
+msgid "the file is too large to sign"
+msgstr "файлът е твърде голям за подписване"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "файлът изисква таблица [package] (или [module] за модул за сливане)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "файлът е променен след подписването (отпечатъкът му не съвпада)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "файловете за инсталиране: не са намерени, папка, връзка, шаблон без съвпадение, програма за друга архитектура, твърде дълги имена"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "готовите таблици нарушават правило на Windows Installer"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "hive не е затворен чисто (ще е нужен неговият журнал)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "контролната сума на основния блок на hive не съвпада"
+
+msgid "the hive's bins lie outside the file"
+msgstr "bin-овете на hive са извън файла"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "иконата в списъка с инсталирани приложения е [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "входът свърши, преди да се отговори на всички въпроси; нищо не е записано"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "файлът с ключ е по-голям от 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "ключът не е нито RSA, нито EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "библиотеката не е модул PKCS#11 (няма C_GetFunctionList или е версия 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "манифестът няма Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "Identity в манифеста не може да се прочете за пълното име на пакета"
+
+msgid "the merge module %s"
+msgstr "модулът за сливане {1}"
+
+msgid "the name %s"
+msgstr "името {1}"
+
+msgid "the package is not signed"
+msgstr "пакетът не е подписан"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "пакетът не е подписан (няма AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "пакетът вече е подписан; rubrapack не подписва два пъти и не заменя подпис"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "пакетът вече е подписан; rubrapack подписва неподписани пакети (и никога два пъти)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "пакетът използва cabinet файлове извън себе си, които подписът на .msi не обхваща; създайте го с вградени cabinet или подпишете въпреки това с --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "съдържанието на пакета не съвпада с подписа му (променен е след подписването)"
+
+msgid "the package's directory cannot be read"
+msgstr "директорията на пакета не може да се прочете"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "пакетите на сбор изискват еднакви Name, Publisher и Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "проксито иска парола (407), което rubrapack не поддържа"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "проксито не отговори на заявката за тунел"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "проксито изпрати данни след отговора си на CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "местоположението за пренасочване е твърде дълго"
+
+msgid "the request could not be sent"
+msgstr "заявката не можа да бъде изпратена"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "отговорът има неправилен или противоречив Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "отговорът има и Content-Length, и chunked (отказан: риск от smuggling)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "отговорът е по-голям от 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "отговорът използва кодиране на прехвърлянето, различно от chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "същото условие вече се изисква (ред {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "същото без въпроси:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "сървърът не отговори с HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "сървърът пренасочи от https към http (отказано)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "подписът CertificateVerify на сървъра не се потвърждава"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "сертификатът на сървъра не е за TLS сървъри (разширеното използване на ключа му)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "схемата на подпис на сървъра не пасва на ключа на сертификата му"
+
+msgid "the signature does not verify"
+msgstr "подписът не се потвърждава"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "подписът не се потвърждава със сертификата на подписващия"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "записът на подписа е описан по начина ZIP64; Windows чете мястото му от полетата ZIP32"
+
+msgid "the signature is not DER"
+msgstr "подписът не е DER"
+
+msgid "the signature streams cannot be read"
+msgstr "потоците на подписа не могат да се прочетат"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "подписаните атрибути не съвпадат с подписаното съдържание"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "сертификатът на подписващия не е за подписване на код"
+
+msgid "the source file's encoding"
+msgstr "кодировката на изходния файл"
+
+msgid "the system random source failed"
+msgstr "системният източник на случайност се провали"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "редът на табулация (Control_Next) не е един цикъл през неговите {1} контроли от Control_First (Windows Installer спира с грешка 2809 или 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "сървърът за времеви печат отговори с грешка HTTP"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "сертификатът на сървъра за времеви печат не е за поставяне на времеви печат"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "времето на сървъра за времеви печат е извън валидността на сертификата за подписване"
+
+msgid "the token does not say what kind of key it is"
+msgstr "токенът не казва какъв вид ключ е"
+
+msgid "the token is not present"
+msgstr "токенът не е налице"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "токенът върна подпис ECDSA с грешна дължина"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "EC ключът на токена има сертификат, който не е EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "подписът на токена не се потвърждава със сертификата (ключът и сертификатът не си принадлежат)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "довереният сертификат е изтекъл или още не е валиден"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "неподписаните атрибути са неправилни или съдържат повече от един времеви печат"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "тук няма такъв файл"
+
+msgid "there is no such folder here"
+msgstr "тук няма такава папка"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "този rubrapack е компилиран без частта за менюто: елементите [menu.*] не достигат до менюто на Windows 11"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "този rubrapack е компилиран без инсталационната програма (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading трябва да е \"sta\", \"mta\", \"both\" или \"neutral\" (получено '{1}')"
+
+msgid "timestamp: "
+msgstr "времеви печат: "
+
+msgid "too many languages for one bundle"
+msgstr "твърде много езици за един сбор"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "твърде много локализирани текстове и мащаби на лого за resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "твърде много пакети в сбора"
+
+msgid "trusted"
+msgstr "доверен"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "два пакета с една архитектура в сбор"
+
+msgid "two packages of one name in a bundle"
+msgstr "два пакета с едно име в сбор"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "два ресурсни пакета с един ResourceId в сбор"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type трябва да е string, expand, dword, qword, binary или multi (получено '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type трябва да е text, checkbox, edit, radio или combo (получено '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' не е [file.*] от този пакет"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version е major.minor в шестнадесетични цифри, например \"1.0\" (получено '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types и verb принадлежат на kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: всяко е \".ext\" или \"*\" (всеки файл)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: всяко е '.' и малки букви, цифри, '_' или '-' (получено '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" позволява на потребителя да избере папката на dir '{2}', която не съществува (задайте [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" изисква таблици [feature.*] за избор"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui трябва да е none, basic, minimal, installdir или features (получено '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "неочакван текст след стойността"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "непозната команда '{1}' (вижте 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "непознато екраниране \\{1} (използвайте '...' за текст с обратни наклонени черти)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "непозната опция на inspect (използвайте име на таблица, --summary, --files или --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "непознат ключ '{1}' в [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "непозната или непълна опция на {1} '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "непозната таблица [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "разархивиране на пакет в нова директория, подредена както при инсталиране"
+
+msgid "unsupported - %s"
+msgstr "не се поддържа - {1}"
+
+msgid "untrusted"
+msgstr "недоверен"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "ключовете update-* изискват appinstaller-uri и package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false е за on = \"uninstall\" или \"both\" (инсталирането никога не е премахване при надстройка)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code трябва да е GUID като {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "употреба: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "употреба: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (списък за пакет-сбор)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "употреба: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "употреба: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "употреба: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "употреба: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "употреба: rubrapack inspect <file.cab> (без таблица или опция)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "употреба: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "употреба: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "употреба: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "употреба: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "употреба: rubrapack inspect <setup.exe> (без таблица или опция)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "употреба: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "употреба: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "употреба: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "употреба: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "употреба: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (фиксиран начален <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; приемат се и имена .rpk"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "употреба: rubrapack schema (JSON Schema на изходните файлове, в stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "употреба: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "употреба: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "използвайте '/' в пътя"
+
+msgid "use a full rubrapack build or another way"
+msgstr "използвайте пълна компилация на rubrapack или друг начин"
+
+msgid "used by more than one component"
+msgstr "използва се от повече от един компонент"
+
+msgid "value '%s' is listed twice"
+msgstr "стойността '{1}' е изброена два пъти"
+
+msgid "value missing"
+msgstr "липсва стойност"
+
+msgid "values and labels are strings"
+msgstr "values и labels са низове"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values е масив от 1 до 32 низа"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "стойности: ID, GUID, версии, числа извън обхвата, препратки към несъществуващи неща"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "променливата '{1}' не е дефинирана ([define] или -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "името на променливата '{1}' не може да съдържа '=' или да започва с = + - ! *"
+
+msgid "variables"
+msgstr "променливи"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "променливи: $(NAME) без стойност, незатворено $(, име на Windows или dir ID там, където не може да стои"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "версията '{1}' трябва да е a.b.c или a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "версията '{1}' трябва да е a.b.c или a.b.c.d с a, b <= 255 и c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" не може да върви 'with' файл от 64-битов пакет"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view трябва да е \"32\" или \"64\""
+
+msgid "warning"
+msgstr "предупреждение"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "какво означава диагностичен код, съобщенията, които го носят, какво да направите и къде ръководството казва повече"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with трябва да е \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: файлът '{1}' не е [file.*] от този пакет"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "без --pkcs11 `keys list` показва хранилището за сертификати на Windows"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' не е dir ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "записване на корекция (.msp): файловете и редовете, които обновяват инсталирана основа до целта"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "записване на изходен файл (.toml; и имена .rpk): от отговори, зададени като въпроси или опции, фиксиран начален файл или съществуващ MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "записване на трансформация (.mst): това, което превръща един пакет в друг"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "напишете таблицата или стойността по простия начин, който показва ръководството"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "напишете стойността без '[~]'; mode = \"append\" или \"prepend\" я добавя"
+
+msgid "wrote %s\n"
+msgstr "записан {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width трябва да е най-много 370 (ширината на страницата)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height трябва да е най-много 234 (линията над бутоните)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Назад"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "Напре&д >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Отказ"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Инсталиране"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Готово"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Да"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Не"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Повторен опит"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Игнориране"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "Пре&кратяване"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Изход"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "Пре&глед..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Добре дошли в инсталирането на [ProductName]"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "[ProductName] ще бъде инсталиран на вашия компютър. Щракнете върху \"Напред\", за да продължите."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Лицензионно споразумение"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Прочетете следното лицензионно споразумение."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Приемам условията на лицензионното споразумение"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Папка за инсталиране"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Изберете папката, в която да се инсталира [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Инсталиране &в:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Промяна на папката"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Отидете до папката, в която да се инсталира."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Търсене в:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "Име на &папката:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Нагоре"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Нова папка"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Избор на функции"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Изберете функциите за инсталиране."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "Ну&лиране"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "Използване на ди&ска"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Място на диска"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Мястото, необходимо за избраните функции, и наличното място."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Готово за инсталиране"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Щракнете върху \"Инсталиране\", за да инсталирате [ProductName]."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "Инсталиране на [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Моля, изчакайте."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Състояние:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Инсталирането завърши"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] е инсталиран."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "Премахване на [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Премахването завърши"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] е премахнат."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Премахването е отменено"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Премахването беше отменено. Нищо на компютъра ви не е променено."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Премахването е неуспешно"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Грешка прекрати премахването, което беше върнато обратно. Продуктът все още е инсталиран."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Инсталирането е отменено"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Инсталирането беше отменено. Нищо на компютъра ви не е променено."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Инсталирането е неуспешно"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Грешка прекрати инсталирането, което беше върнато обратно. Нищо на компютъра ви не е променено."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Да се отмени ли инсталирането на [ProductName]?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Използвани файлове"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Тези програми използват файлове, които се заменят. Щракнете върху \"Продължи\", за да ги замените сега: вече отворените програми запазват старите файлове, докато бъдат отворени отново, а отворените след това получават новите. Не е нужно рестартиране."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Тези програми използват файлове, които се заменят. Щракнете върху \"Продължи\", за да ги замените сега: вече отворените програми запазват старите файлове, докато бъдат отворени отново, а отворените след това получават новите. Windows може да поиска рестартиране накрая."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "Пр&одължи"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Недостатъчно място на диска"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Няма достатъчно място за тази инсталация. Освободете място или изберете друго местоположение."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "Поддръжка на [ProductName]"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Изберете какво да се направи."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "По&правка"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Възстановяване на липсващи или повредени файлове и настройки."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Пре&махване"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Премахване на [ProductName] от този компютър."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "Премахване на [ProductName]"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Щракнете върху \"Премахване\", за да премахнете [ProductName] от този компютър. Щракнете върху \"Назад\" или \"Отказ\", за да го запазите."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Щракнете върху \"Премахване\", за да премахнете [ProductName] от този компютър. Настройките и данните му се изтриват заедно с него и не могат да бъдат върнати. Щракнете върху \"Назад\" или \"Отказ\", за да го запазите."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Да се премахне ли [ProductName] от този компютър?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Да се премахне ли [ProductName] от този компютър? Настройките и данните му се изтриват заедно с него и не могат да бъдат върнати."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] не може да се инсталира безопасно: [1] не е папка или инсталаторът може да няма право да изтрива файлове в нея. Първо премахнете [3] ([2]), след това инсталирайте отново."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] не може да се надстрои безопасно: инсталираната версия [1] е загубила кеширания си пакет и затова не може да се премахне оттук. Първо премахнете тази версия с оригиналния ѝ пакет ([2]), след това инсталирайте отново."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Инсталирането спря: папката [1] вече съществува и не е собственост на администраторите или води другаде чрез връзка. Изберете друга папка или помолете администратор първо да я премахне."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Стартиране на [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "З&апис на журнала..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Показване на целия &журнал"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Журналът на инсталирането не можа да се запише в [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "Пр&омяна"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Изберете кои функции да са инсталирани."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Обхват на инсталирането"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Изберете кой може да използва [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Само за &мен"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&Всички на този компютър - изискват се администраторски права"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Език"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Изберете езика на инсталирането."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Търсене на инсталирани приложения"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Изчисляване на необходимото място"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Изчисляване на необходимото място"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Създаване на папки"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Създаване на преки пътища"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Изтриване на услуги"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Създаване на дублирани файлове"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Изчисляване на необходимото място"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Търсене на свързани приложения"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Генериране на операции в скрипт за действието:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Копиране на нови файлове"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Инсталиране на нови услуги"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Проверка на инсталирането"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Оценка на условията за стартиране"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Пренасяне на състоянията на функциите от свързани приложения"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Преместване на файлове"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Коригиране на файлове"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Актуализиране на регистрацията на компоненти"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Публикуване на функциите на продукта"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Публикуване на информацията за продукта"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Регистриране на сървъри на класове"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Регистриране на сървъри на разширения"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Регистриране на шрифтове"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "Регистриране на информация за MIME"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Регистриране на продукта"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Регистриране на идентификатори на програми"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Регистриране на потребителя"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Актуализиране на низовете на средата"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Премахване на по-старата версия"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Премахване на файлове"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Премахване на папки"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "Премахване на записи от INI файлове"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Премахване на стойности от системния регистър"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Премахване на преки пътища"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Връщане на действието:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Премахване на резервни файлове"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Стартиране на услуги"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Спиране на услуги"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Отмяна на публикуването на функциите на продукта"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Отмяна на регистрацията на сървъри на класове"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Отмяна на регистрацията на сървъри на разширения"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Отмяна на регистрацията на шрифтове"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Отмяна на регистрацията на информация за MIME"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Отмяна на регистрацията на идентификатори на програми"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Актуализиране на низовете на средата"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "Записване на стойности в INI файлове"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Записване на стойности в системния регистър"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] се инсталира само за текущия потребител (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Същата или по-нова версия на [ProductName] вече е инсталирана."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Инсталираната по-стара версия на [ProductName] не може да се надстрои с този пакет. Първо я премахнете, след това изпълнете тази инсталация отново:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Копиране на файл"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Премахване на файл"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Коригиране на файл"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Създаване на папка"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Премахване на папка"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Записване на стойност в регистъра"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Премахване на стойност от регистъра"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Премахване на ключ от регистъра"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Създаване на пряк път"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Премахване на пряк път"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Инсталиране на услуга"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Управление на услуга"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Записване на стойност в INI"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Задаване на променлива на средата"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Регистриране на шрифт"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Отмяна на регистрацията на шрифт"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Изпълнение на действие"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Тази инсталационна програма е повредена: изтеглете я отново."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Тези програми вече са инсталирани. Изберете какво да се направи."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "По&правка"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Пре&махване"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Отказ"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Да се премахнат ли тези програми от този компютър?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Програмите са премахнати."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Една програма не можа да бъде премахната."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Инсталационната програма не можа да създаде временна папка."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} не можа да бъде поправен (грешка {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} не можа да бъде инсталиран (грешка {2}). Нищо след него не е инсталирано."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Програмите са поправени."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Инсталирането завърши."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "В тази папка вече има файлове или папки. Когато [ProductName] бъде премахнат, всичко в папката се изтрива - и това, което е там сега. Празна или нова папка е безопасният избор."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "Избор на &друга"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "&Използване на тази папка"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] програма(и) използват файлове на [3]:\r\n[2]\r\nДа се затворят ли всички?\r\n\r\nДа: затваряне на всички и продължаване (незаписаната работа може да се загуби).\r\nНе: продължаване без затваряне (вече отворените програми запазват старите файлове, докато бъдат отворени отново).\r\nОтказ: спиране."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: спряно, защото [1] програма(и) използват файловете му:\r\n[2]Затворете ги и опитайте отново или дайте RPCLOSE=yes (затваряне на всички и продължаване) или RPCLOSE=no (продължаване без затваряне)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] елемент(а) в папките на [3] не са инсталирани с него:\r\n[2]\r\nДа се изтрият ли и те?\r\n\r\nДа: изтриване заедно с [3] (не могат да бъдат върнати).\r\nНе: премахване на [3] и запазване на тях.\r\nОтказ: спиране."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: спряно, защото [1] елемент(а) в папките му не са инсталирани с него:\r\n[2]Дайте RPEXTRA=delete (изтриване и на тях) или RPEXTRA=keep (запазване), след това премахнете отново."
