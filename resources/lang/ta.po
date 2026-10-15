@@ -1,0 +1,3816 @@
+# rubrapack language pack: Tamil.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: ta\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: தமிழ்\n"
+"X-Rubrapack-LangIDs: 1097, 2121\n"
+"X-Rubrapack-Font: Nirmala UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, உரையாடல்கள் {6}{7}\n  1 பெயர், உற்பத்தியாளர், பதிப்பு, கட்டமைப்பு  2 நிறுவல் கோப்புறை, யாருக்காக\n  3 உரையாடல்கள், உரிமம், மொழிகள்                4 விருப்பப் பகுதிகள்\n  5 குறுக்குவழிகள்                               6 கோப்புகள்: நிரல் கோப்புறையுடன் பொருத்து\n  7 ஏதேனும் விசை                                v காண்   l lint   s சேமி   q வெளியேறு\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nஇந்தக் குறியீடு உள்ள செய்திகள் (* ஒரு பெயர் அல்லது மதிப்புக்குப் பதிலாக):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nமுடிவுகள் stdout க்கும், கண்டறிதல்கள் stderr க்கும் செல்கின்றன.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (அல்லது RUBRAPACK_LANG) இந்த உரைகளின் மொழியைத் தேர்வுசெய்கிறது: {1}, அல்லது மொழித் தொகுப்பு உள்ள ஒரு மொழி.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "வெளியேறும் குறியீடுகள்: 0 சரி, 1 மூலப் பிழை, 2 பயன்பாடு, 3 உள்ளீடு/வெளியீடு, 4 கையொப்பம் அல்லது சரிபார்ப்பு,\n5 lint, 6 பிணையம்.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nசெய்ய வேண்டியது: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} இப்போது இல்லை, ஆனால் ஒரு குறுக்குவழி அதைத் திறக்கிறது: முதலில் குறுக்குவழிகளை மாற்றவும் (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  அங்கே {1} கோப்புகளும் {2} கோப்புறைகளும் உள்ளன\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s அல்லது q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  [dir.{1}] மற்றும் [files.{2}] சேர்க்கப்பட்டன\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  [file.{1}] சேர்க்கப்பட்டது\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  அதை அட்டவணை.விசை என்று கொடுக்கவும், எ.கா. package.version அல்லது dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: சிக்கல்கள் இல்லை\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: மேலே உள்ள சிக்கல்களைப் பார்க்கவும் (அங்கே குறிப்பிட்ட கோப்பு ஒரு சோதனை நகல்)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  [ui] languages இல் உள்ள மற்ற மொழிகள் வைக்கப்படும்; அந்தப் பட்டியலை 7 மூலம் மாற்றவும் (ஏதேனும் விசை)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  [file.{1}] அகற்றப்பட்டது\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  [files.{1}] அகற்றப்பட்டது{2}\n"
+
+msgid "  sub folders:"
+msgstr "  துணைக் கோப்புறைகள்:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  இது TOML துணைத்தொகுப்புக்குப் பொருந்தவில்லை; எதுவும் மாற்றப்படவில்லை\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  இது படிக்கக்கூடிய உரை அல்ல; மீண்டும் கொடுக்கவும்\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  நிரல் கோப்புறை '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  குறுக்குவழி சுட்டக்கூடிய [file] அட்டவணைகள் மூலத்தில் இல்லை\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  `new` எழுதுவது போன்ற துணைக் கோப்புறைகள் மூலத்தில் இல்லை ([files] \"<folder>/<name>/**\"); அவற்றை 6 மூலம் சேர்க்கவும்\n"
+
+msgid "  too long; again, please\n"
+msgstr "  மிக நீளம்; மீண்டும் கொடுக்கவும்\n"
+
+msgid "  y or n\n"
+msgstr "  y அல்லது n\n"
+
+msgid " (changed)"
+msgstr " (மாற்றப்பட்டது)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - Windows Installer (.msi) மற்றும் MSIX (.msix) தொகுப்புகளை உருவாக்கும்\n\nபயன்பாடு: rubrapack [--lang <code>] <command> [arguments]\n\nகட்டளைகள்:\n"
+
+msgid " and its dir"
+msgstr " மற்றும் அதன் கோப்புறை"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) க்குச் சூழல் மாறி இல்லை, எனவே விரிவாக்கக்கூடிய மதிப்பு அதை வைத்திருக்க முடியாது; சர மதிப்பைப் பயன்படுத்தவும் (நிறுவும்போது நிரப்பப்படும்)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) ஒரு {2}: அது ஒரு பாதையைத் தொடங்கலாம், அல்லது Windows Installer நிரப்பும் மதிப்புக்குப் பதிலாக இருக்கலாம் (பதிவேடு, சூழல், INI, அளவுருக்கள், செய்திகள்), இங்கே அல்ல"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) ஒரு பாதை தொடங்கக்கூடிய கோப்புறை அல்ல (ஒரு dir ID, அல்லது ProgramFiles, LOCALAPPDATA, ProgramData ... - கையேட்டின் பாதைகள் பகுதியைப் பார்க்கவும்){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  கட்டமைப்பு:  {2}\n  செரிமானம்:  {3}\n  கையொப்பம்:  {4}\n  சங்கிலி:     {5}{6}{7}\n  திரும்பப்பெறல்: சரிபார்க்கப்படவில்லை\n  நேர முத்திரை: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: மாறி அமைக்கப்படவில்லை"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' இந்த உரையாடலின் கட்டுப்பாடு அல்ல"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' {3} இல் இல்லை"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': உரிம உரைக்கு எழுத்துருவின் ஆங்கிலப் பெயர் தேவை, எனவே அது மொழியின் சொந்த எழுத்துருவில் காட்டப்படுகிறது; அங்கும் இந்த எழுத்துருவைப் பயன்படுத்த ஆங்கிலப் பெயரை எழுதவும் (எ.கா. \"Malgun Gothic\")"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "{1} கூறு, ஆனால் தொகுப்பின் இயங்குதளம் {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} kind = \"{2}\" க்கு உரியது அல்ல"
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} kind = \"firewall\" க்கு உரியது அல்ல"
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} LANGID களைக் கொண்டுள்ளது (1..65535), எ.கா. 1041"
+
+msgid "%s holds strings"
+msgstr "{1} சரங்களைக் கொண்டுள்ளது"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} என்பது 1 முதல் 31 எழுத்துகள் கொண்ட எழுத்துருப் பெயர், எ.கா. \"Segoe UI\" ({2} கிடைத்தது)"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} மூடிய மேற்கோள்களும் சமநிலை அடைப்புக்குறிகளும் கொண்ட MSI நிபந்தனை"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} என்பது சரங்களின் அணி, ஒவ்வொரு மதிப்புக்கும் ஒன்று"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} MSI தொகுப்புகளுக்கானது: msiexec ஒரு MSIX ஐ அகற்றாது"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} இப்போது இல்லை. [file.{2}] ஐ அகற்றவா?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} 240 எழுத்துகளை விட நீளமானது"
+
+msgid "%s is new. Add it?"
+msgstr "{1} புதியது. சேர்க்கவா?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} பதிவேட்டு வடிவில் GUID அல்ல"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} இந்த rubrapack பயன்படுத்தும் குறியீடு அல்ல{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "%s must be a GUID"
+msgstr "{1} ஒரு GUID ஆக இருக்க வேண்டும்"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} {{12345678-...} போன்ற GUID ஆக இருக்க வேண்டும் ('{2}' கிடைத்தது)"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} https://, http:// அல்லது file:// முகவரி, அல்லது \\\\server\\share பாதையாக இருக்க வேண்டும் ('{2}' கிடைத்தது)"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} upgrade-code இலிருந்து வேறுபட வேண்டும் (ஒவ்வொரு கட்டமைப்புக்கும் ஒரு மேம்படுத்தல் குடும்பம்)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} க்கு Windows கட்டமைப்பு {2} அல்லது அதற்குப் பிந்தையது தேவை: [msix] min-version = \"10.0.{3}.0\" என அமைக்கவும்"
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} க்கு resources/bin/rubrapack_ca-{2}.dll தேவை, இந்த rubrapack அது இல்லாமல் உருவாக்கப்பட்டது"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA சரிபார்க்கப்படவில்லை (--tsa-trust கொடுக்கவும்)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA நம்பகமானது"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA நம்பகமற்றது - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} இல்லை அல்லது காலியாக உள்ளது. [files.{3}] மற்றும் [dir.{4}] ஐ அகற்றவா?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ ஒரு புதிய கோப்புறை. சேர்க்கவா?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: பிழைகள்: {2}{-3}, எச்சரிக்கைகள்: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: பிழைகள்: {2}{-3}, எச்சரிக்கைகள்: {4}{-5} ({6} உடன் ஒப்பிடுகையில்)\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} கோப்புகள், {3} பைட்டுகள்\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} கோப்புகள், {3} பிழைகள், 0 எச்சரிக்கைகள்\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: மேலும் {2} கண்டறிதல்கள் காட்டப்படவில்லை\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: '{2}' கோப்பு இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' கோப்பு ஒரு நிரல் அல்ல (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' மூடப்படவில்லை ('$(' உரைக்கு '$$(' என எழுதவும்)"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' ஏற்கெனவே உள்ளது; அது அப்படியே விடப்படும்"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' ஏற்கெனவே உள்ளது; அதை அகற்றவும் அல்லது வேறு கோப்புறையில் உருவாக்கவும்"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' க்கு ஏற்கெனவே {2} கையாளி உள்ளது ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' க்கு ஏற்கெனவே அனுமதிகள் உள்ளன"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' மற்றும் '{2}' தொகுப்பில் ஒரே பாதை"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' Windows அல்லது உலாவிகளுக்கு உரியது"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' ஐ '{2}' உடன் ஒப்பிட்டுப் படிக்க முடியாது: {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' TOML துணைத்தொகுப்புக்குப் பொருந்தவில்லை; எதுவும் சேமிக்கப்படவில்லை"
+
+msgid "'%s' exists already"
+msgstr "'{1}' ஏற்கெனவே உள்ளது"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' ஏற்கெனவே உள்ளது; அதை `rubrapack edit {2}` மூலம் மாற்றவும்"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' உள்ளது, அது காலியான கோப்பகம் அல்ல; புதிய ஒன்றில் பிரித்தெடுக்கவும்"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' {2} க்குச் செல்கிறது; அல்லது msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' இல் படிக்க முடியாத சுருக்கத் தகவல் ஓட்டம் உள்ளது"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' இல் பிரித்தெடுக்க Directory, Component, File மற்றும் Media அட்டவணைகள் இல்லை"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' இல் படிக்கக்கூடிய சுருக்கத் தகவல் இல்லை"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' இல் '{2}' உருமாற்றம் இல்லை"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' UTF-16: edit UTF-8 மூலங்களை மட்டுமே மாற்றும் (முதலில் அதை UTF-8 ஆகச் சேமிக்கவும்)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' ஒரு Windows பெயர்; மாறிக்கு வேறு பெயர் கொடுக்கவும்"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' ஒரு [chain]: அது ஓர் அமைவு நிரலை உருவாக்கும், -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' உள்ளமைந்த சட்டகத்தின் கட்டுப்பாடு; வேறு ID ஐத் தேர்வுசெய்யவும்"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' ஒரு கணினிக் கோப்புறை; {2} தொகுப்பு அங்கே எழுத முடியாது"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' ஒரு இணைப்பு தொகுதி: அதை [merge.ID] மூலம் இணைக்கவும்"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' MSIX வடிவம் தனக்காக வைத்திருக்கும் பெயர்"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' ஒரு குறியீட்டு இணைப்பு; இணைப்புகள் பின்தொடரப்படாது"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' ஒரு [property.*] ஆகவும் உள்ளது"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' ஒரு dir ID ஆகவும் உள்ளது; மாறிக்கு வேறு பெயர் கொடுக்கவும்"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' இந்தத் தொகுப்பின் கட்டமைப்புக்கு அல்ல, 0x{2} கணினிக்காக உருவாக்கப்பட்டது; வேண்டுமென்றே என்றால் any-arch = true என அமைக்கவும்"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' PE கோப்பு (.exe, .dll), MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி எதுவும் அல்ல"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' PE கோப்பு, MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி எதுவும் அல்ல"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' அறியப்பட்ட கோப்புறையும் அல்ல, dir ID யும் அல்ல (அறியப்பட்ட கோப்புறைகள்: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' rubrapack படிக்கக்கூடிய cabinet அல்ல (stored அல்லது MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' ஒரு கண்டறிதல் குறியீடு அல்ல (RP மற்றும் நான்கு இலக்கங்கள், எ.கா. RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' ஒரு நிரல் அல்ல (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' ஒரு வழக்கமான கோப்பு அல்ல"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' ஒரு rubrapack அமைவு நிரல் அல்ல{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' சரியான ID அல்ல (எழுத்துகள், இலக்கங்கள் மற்றும் '_', இலக்கத்தில் தொடங்காது, அதிகபட்சம் {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' சரியான MSI தரவுத்தளம் அல்ல: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' சரியான MSIX தொகுப்பு அல்ல: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' சரியான தொகுப்பு அல்ல: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' சரியான மூலம் அல்ல (TOML துணைத்தொகுப்பு); முதலில் அதைக் கையால் சரிசெய்யவும்"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' சரியான உருமாற்றம் அல்ல: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' சரியான மாறிப் பெயர் அல்ல"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' ஒதுக்கப்பட்டது, ID ஆகப் பயன்படுத்த முடியாது"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' ஒரு dir இன் பெயர்: பதிவேடு அல்லது dir தேடல் மட்டுமே dir ஐ நிரப்ப முடியும்"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' ஒரு நிரல் கோப்பு (PE) போலத் தெரிகிறது, ஆனால் அதன் தலைப்புகள் அல்லது வளங்கள் சேதமடைந்துள்ளன"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' ஒரு சரமாக இருக்க வேண்டும்"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' ஒரு முழு எண்ணாக இருக்க வேண்டும்"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' {2} மற்றும் {3} க்கு இடையில் இருக்க வேண்டும்"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' true அல்லது false ஆக இருக்க வேண்டும்"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' காலியாக இருக்கக்கூடாது"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' எந்த உருமாற்றத்தையும் குறிப்பிடவில்லை (சுருக்கப் பண்பு 8): இணைப்பு அல்ல"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' ஒரு கோப்புறையுடன் தொடங்குகிறது: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' இல் {4} உள்ளது; எதுவும் பிரித்தெடுக்கப்படவில்லை"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} உள்ளீடுகள், வரம்பு {3} ஐ விட அதிகம் (--limit-entries); எதுவும் பிரித்தெடுக்கப்படவில்லை"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' மற்றும் '{3}' Windows இல் ஒரே பாதையாக இருக்கும்; எதுவும் பிரித்தெடுக்கப்படவில்லை"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' [ui] languages இல் இல்லை"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': ஓர் அட்டவணையைப் படிக்க முடியாது"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': ஓர் அட்டவணை படிக்க முடியாதது"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': ஒரு MSIX தன் எல்லாக் கோப்புகளையும் நிறுவும் (when); msi-only = true பயன்படுத்தவும்"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': ஒரு MSIX தன் எல்லாக் கோப்புகளையும் அகற்றும் (keep); msi-only = true பயன்படுத்தவும்"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' சேதமடைந்துள்ளது அல்லது stored/MSZIP அல்ல"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinet பெயர் '{2}' ஒரு எளிய கோப்புப் பெயர் அல்ல"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': சுருக்கப்பட்ட கோப்பு '{2}' (வரிசை {3}) க்கு cabinet இல்லை"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': கோப்பகம் '{2}' க்கு இல்லாத '{3}' என்ற பெற்றோர் உள்ளது"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': கோப்பகம் '{2}' தனக்குத் தானே மூதாதை அல்லது மிக ஆழமாக உள்ளது"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': கோப்பு '{2}' அதன் MsiFileHash உடன் பொருந்தவில்லை"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': கோப்பு '{2}' க்குக் கூறு அல்லது கோப்பகம் இல்லை"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': கோப்பு '{2}' {3} பைட்டுகள், File அட்டவணை {4} என்கிறது"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': கோப்பு '{2}' cabinet '{3}' இல் இல்லை"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': அதன் வெளிப்புற cabinet களைக் கையொப்பம் உள்ளடக்கவில்லை (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': அதன் கோப்புறை அறியப்பட்ட இடத்துக்கு வழிவகுக்கவில்லை"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': எழுத {2} பைட்டுகளுக்கு மேல் (--limit-bytes); எதுவும் பிரித்தெடுக்கப்படவில்லை"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': --timestamp இல்லை: சான்றிதழ் காலாவதியாகும்போது கையொப்பம் செல்லாததாகிவிடும்"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': தொகுப்பு '{2}' அதன் SHA-256 உடன் பொருந்தவில்லை"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet ஓட்டம் '{2}' இல்லை"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': மேனிஃபெஸ்டில் {2} {3} இல்லை"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': மேனிஃபெஸ்ட் தொகுப்பில் இல்லாத '{2}' ஐக் குறிப்பிடுகிறது"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': {2} இலிருந்து நேர முத்திரை: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': உருமாற்றம் '{2}' ஐ '{3}' உடன் ஒப்பிட்டுப் படிக்க முடியாது: {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' தொகுப்பின் சொந்த மொழி ({2}); அந்த உரையைப் பின்னொட்டு இல்லாமல் கொடுக்கவும்"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' Windows Installer ஐ ஒரு பல்-சரம் எழுத வைக்கிறது; type = \"multi\" மற்றும் ஓர் அணியைப் பயன்படுத்தவும்"
+
+msgid "'_' in numbers is not supported"
+msgstr "எண்களில் '_' ஆதரிக்கப்படவில்லை"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' அதிகபட்சம் ஒரு கட்டளைப் பெயரை ஏற்கும்"
+
+msgid "'version' takes no arguments"
+msgstr "'version' அளவுருக்களை ஏற்காது"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs .msi க்கானது"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "தொகுதிக்கான --arch: x64, x86 மற்றும் arm64 பட்டியல், ஒவ்வொன்றும் ஒருமுறை ('{1}' கிடைத்தது)"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch ஒரு கட்டமைப்பை, அல்லது .msixbundle வெளியீட்டுக்கு ஒரு பட்டியலை ஏற்கும்"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp மற்றும் --allow-unsigned-cabs ஆகியவை --key உடன் வரும்"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress .msi க்கானது; MSIX --msix-compress deflate|store ஐ ஏற்கும்"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist மூலத்துக்கு அருகில் ஒரு புதிய கோப்புறையைக் குறிப்பிடுகிறது (பாதை இல்லாமல்)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs 1 முதல் 64 வரையிலான எண்ணை ஏற்கும் ('{1}' கிடைத்தது)"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store ஒரு Windows சான்றிதழ் சேமிப்பகம்; வேறிடத்தில் விசைக் கோப்பு அல்லது --pkcs11 பயன்படுத்தவும்"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store சான்றிதழின் SHA-1 கைரேகையை ஏற்கும் (40 பதினறும இலக்கங்கள்)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: அத்தகைய மொழி இல்லை (உள்ளமைந்தவை: {2}; வேறொன்றுக்கு அதன் மொழித் தொகுப்பு தேவை, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang க்கு ஒரு மொழி தேவை, எ.கா. en அல்லது ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages க்கு உரையாடல்கள் தேவை: --ui ஐயும் கொடுக்கவும்"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress deflate அல்லது store ஐ ஏற்கும் ('{1}' கிடைத்தது)"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: மாறி அமைக்கப்படவில்லை"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code பெரிய எழுத்துகளும் அடைப்புகளும் கொண்ட GUID ஐ ஏற்கும்: {{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: மாறி அமைக்கப்படவில்லை"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous இரண்டு .msi தொகுப்புகளை ஒப்பிடுகிறது"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: இயக்க முறைமையின் ரூட் சான்றிதழ்களைப் படிக்க முடியாது"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} வெளியீடு '{2}' உடன் பொருந்தவில்லை"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} செயல்படுத்தப்படவில்லை (msi அல்லது msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target msi அல்லது msix ஐ ஏற்கும் ('{1}' கிடைத்தது)"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots மற்றும் --proxy ஆகியவை --timestamp உடன் வரும்"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test மற்றும் --msix-compress .msix வெளியீடுகளுக்கானவை"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test கையொப்பம் இல்லாத தொகுப்புகளுக்கானது; --key உடன் அதை விடவும்"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate none அல்லது product-code,upgrade-code,language,platform இல் சிலவற்றை ஏற்கும்"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} இருமுறை கொடுக்கப்பட்டுள்ளது"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' ஒரு Windows பெயர்; மாறிக்கு வேறு பெயர் கொடுக்கவும்"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D க்கு NAME=VALUE தேவை ('{1}' கிடைத்தது)"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i ஒவ்வொரு பதிலையும் கேட்கும்; -i அல்லது விருப்பங்களில் ஒன்றைக் கொடுக்கவும்"
+
+msgid "; its range is "
+msgstr "; அதன் வரம்பு "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' SecureCustomProperties இல் இல்லை"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty ஒரு பொதுப் (பெரிய எழுத்து) பண்பாக இருக்க வேண்டும்"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "எல்லாக் குறியீடுகளும்: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x PKCX உடன் தொடங்கவில்லை"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x கடைசி உள்ளீடு அல்ல"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "கட்டமைப்பு (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "தேர்வுசெய்யவும்"
+
+msgid "Command line"
+msgstr "கட்டளை வரி"
+
+msgid "Command line (lint)"
+msgstr "கட்டளை வரி (lint)"
+
+msgid "Common AppData"
+msgstr "பொது AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId பதிவேட்டு வடிவில் GUID அல்ல"
+
+msgid "Desktop shortcut?"
+msgstr "டெஸ்க்டாப் குறுக்குவழி?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "உரையாடல்கள் (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "File, Component அல்லது Directory அட்டவணையில் ஒரு நிலையான நெடுவரிசை இல்லை"
+
+msgid "Folder name under Program Files"
+msgstr "Program Files இன் கீழ் கோப்புறைப் பெயர்"
+
+msgid "Folder with the files to install"
+msgstr "நிறுவ வேண்டிய கோப்புகளின் கோப்புறை"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' ஏற்கெனவே பயன்படுத்தப்பட்டுள்ளது (வரி {2}); எல்லா அட்டவணைகளிலும் ID கள் வேறுபட வேண்டும்"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "நிறுவல் கோப்புறை ([dir.INSTALLDIR] பாதை)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "யாருக்காக நிறுவுவது (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "அட்டவணை.விசை என்ற வடிவில் விசை (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' வேறொரு கூறுக்கு உரியது"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' File இல் இல்லை"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' Registry இல் இல்லை"
+
+msgid "Korean dialogs as well as English?"
+msgstr "ஆங்கிலத்துடன் கொரிய உரையாடல்களும்?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} குறைந்த DiskId இன் மதிப்பை விடக் குறைவு"
+
+msgid "Leave without saving the changes?"
+msgstr "மாற்றங்களைச் சேமிக்காமல் வெளியேறவா?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "ஏற்க வேண்டிய உரிமம் (.txt, .md, .rtf; எதுவும் இல்லையெனில் -)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX இல் பயனரின் AppData க்கு மெய்நிகர் கோப்புறை இல்லை; பயன்பாடு இயங்கும்போது தேவையானதை அங்கே உருவாக்கும்"
+
+msgid "MSIX packages"
+msgstr "MSIX தொகுப்புகள்"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: ஒரு MSIX தொகுப்புக்கு என்ன தேவை, எதைக் கொண்டு செல்ல முடியாது"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "முதன்மை நிரல், குறுக்குவழிகளுக்கு (எதுவும் இல்லையெனில் -)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "கையேடு: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "உற்பத்தியாளர்"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "உற்பத்தியாளர் (நிறுவிய பயன்பாடுகளில் காட்டப்படும்)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt தவறான நீளமுள்ள ECDSA கையொப்பத்தைத் திருப்பியது"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "பயனர் தேர்வுசெய்யக்கூடிய விருப்பப் பகுதிகள் (துணைக் கோப்புறைகள், காற்புள்ளிகளுடன்; எதுவும் இல்லையெனில் -)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 டோக்கன்: விசையின் CKA_ID உள்ள சான்றிதழ் டோக்கனில் இல்லை (அதை --cert மூலம் கொடுக்கவும்)"
+
+msgid "Paths"
+msgstr "பாதைகள்"
+
+msgid "Product name"
+msgstr "தயாரிப்புப் பெயர்"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode மற்றும் UpgradeCode ஒரே GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} முதல் மூன்று புலங்களில் முந்தைய {2} ஐ விட அதிகமில்லை: Windows Installer மேம்படுத்தாது"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "குறுக்குவழிகள் திறக்கும் நிரல் (குறுக்குவழிகள் இல்லையெனில் -)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: அத்தகைய மொழி இல்லை (உள்ளமைந்தவை: {2}; வேறொன்றுக்கு அதன் மொழித் தொகுப்பு தேவை, {3}.po)"
+
+msgid "Reference, "
+msgstr "குறிப்பு, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "வரிசை {1} எந்த Media வரிசையாலும் உள்ளடக்கப்படவில்லை (கடைசி {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "வரிசை {1} ஐ வேறொரு கோப்பு பயன்படுத்துகிறது"
+
+msgid "Source file to write"
+msgstr "எழுத வேண்டிய மூலக் கோப்பு"
+
+msgid "Source format"
+msgstr "மூல வடிவம்"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source வகை {1} க்கு ஒரு File வரிசையைக் குறிப்பிட வேண்டும்"
+
+msgid "Start menu shortcut?"
+msgstr "தொடக்க மெனு குறுக்குவழி?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "தொடக்க மெனு, நிரல்கள், டெஸ்க்டாப் மற்றும் தொடக்க உள்ளீடுகள் [shortcut.*] மற்றும் [msix-extension.*] இலிருந்து வருகின்றன"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "rubrapack படிக்கும் துணைத்தொகுப்புக்கு வெளியே உள்ள TOML, அல்லது `format` இல்லை அல்லது மிகப் புதியது"
+
+msgid "Tables"
+msgstr "அட்டவணைகள்"
+
+msgid "The TOML subset"
+msgstr "TOML துணைத்தொகுப்பு"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian கோப்புகள் ஆதரிக்கப்படவில்லை; UTF-8 ஆகச் சேமிக்கவும்"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} முந்தைய பதிப்பின் {2} இலிருந்து வேறுபடுகிறது: இந்தத் தொகுப்பு அதை மாற்றாது"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode பதிவேட்டு வடிவில் GUID அல்ல"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "மதிப்பு (உரை, எண், true/false, [\"a\", \"b\"]; - விசையை அகற்றும்)"
+
+msgid "Variables"
+msgstr "மாறிகள்"
+
+msgid "Version"
+msgstr "பதிப்பு"
+
+msgid "Version ([define] VERSION)"
+msgstr "பதிப்பு ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "பதிப்புகள் மற்றும் மேம்படுத்தல்கள்"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer அதிகபட்சம் 255.255.65535(.65535) ஐ அனுமதிக்கும்"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] க்கு '{4}' தேவை"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] இணைப்பு தொகுதியில் செல்ல முடியாது; அதை இணைக்கும் தொகுப்பில் இருக்கும்"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] இன்னும் ஆதரிக்கப்படவில்லை ({3} க்குத் திட்டமிடப்பட்டுள்ளது)"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] MSIX இல் செல்ல முடியாது; அது இல்லாமல் MSIX ஐ உருவாக்க msi-only = true சேர்க்கவும்"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: இணைப்பு தொகுதியில் ID அதிகபட்சம் 35 எழுத்துகள் (அதனுடன் தொகுதியின் GUID சேர்க்கப்படும்)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] க்கு ஓர் ID தேவை: [{2}.ID] என எழுதவும்"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] ID ஐ ஏற்காது: [{2}] என எழுதவும்"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml இல் </Types> இல்லை"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml கடைசி உள்ளீடு அல்ல (rubrapack அல்லது Windows தொகுப்பு API எழுதிய தொகுப்பு அல்ல)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "[[...]] அட்டவணை அணிகள் ஆதரிக்கப்படவில்லை; ஒவ்வொரு உருப்படிக்கும் அதன் சொந்த [kind.ID] ஐக் கொடுக்கவும்"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check க்கு விளைவு இல்லை: இன்னும் எதுவும் அதை இயக்குவதில்லை; அதை அகற்றவும்"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] க்கு do மற்றும் undo இரண்டும் தேவை (undo தோல்வியடைந்த do ஐயும் திரும்பப்பெறும்)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: MSIX இல் ஒரு கோப்பு வகை ஒரு பயன்பாட்டைத் திறக்கும்: target ஒரு [msix-app.*] இயக்கக்கூடியதாக இருக்க வேண்டும்"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] இருமுறை உள்ளது"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] க்கு ஓர் ID தேவை: [chain-package.ID] என எழுதவும்"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id மற்றும் typelib MSI க்கு மட்டுமே எழுதப்படும்; MSIX அவை இல்லாமல் வகுப்பைப் பதிவுசெய்யும்"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args ஒரு நிரலுக்குரியவை; DLL ஏற்றப்படும், தொடங்கப்படாது"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate ஒரு DLL ஐ dllhost இல் இயக்கும்; '{2}' ஒரு நிரல்"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading ஒரு DLL க்கானது; நிரல் தன் அபார்ட்மென்டைத் தானே அமைக்கும்"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version மற்றும் typelib-file க்கு typelib தேவை"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] {2} க்குச் செல்கிறது; அல்லது msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: அதன் மூலம் தொகுப்பில் செல்லும் ஒரு கோப்பாக இருக்க வேண்டும்"
+
+msgid "[define] values must be strings"
+msgstr "[define] மதிப்புகள் சரங்களாக இருக்க வேண்டும்"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] க்கு '{2}' தேவை"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] க்கு 'property' தேவை"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] க்கு 'text' தேவை"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] க்கு 'values' தேவை"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] இல் {2} கட்டுப்பாடுகள் உள்ளன; அதிகபட்சம் 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] இல் [dialog-control.*] இல்லை"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] பிற உரையாடல்கள் வழியாகத் தனக்குப் பின் வைக்கப்பட்டுள்ளது"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] க்கு ui = \"minimal\", \"installdir\" அல்லது \"features\" தேவை"
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' ஒரு Windows பெயர்; dir க்கு வேறு ID கொடுக்கவும்"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard க்கு rubrapack இன் உதவி DLL தேவை, இணைப்பு தொகுதி அதைக் கொண்டு செல்லாது"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] க்கு ஓர் அம்சம் தேவை"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: ஒரு MSIX தன் எல்லா மாறிகளையும் அமைக்கும் (when); msi-only = true பயன்படுத்தவும்"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: அதன் மதிப்பு MSIX கொடுக்க முடியாத இடத்தைக் குறிப்பிடுகிறது (தொகுப்புக்கு வெளியே Windows கோப்புறை அல்லாத கோப்புறை, அல்லது நிறுவல் நேரப் பகுதி); msi-only = true பயன்படுத்தவும்"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer ஒரு {2} கையாளியை DLL இலிருந்து ஏற்றும்; [com.{3}] ஒரு நிரல்"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows பண்புக் கையாளிகளைக் கணினி மட்டத்தில் மட்டுமே படிக்கும்; தொகுப்புக்கு scope = \"machine\" தேவை"
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: முன்னோட்டக் கையாளி Windows இன் prevhost இல் இயங்கும்; [com.{2}] இலிருந்து app-id மற்றும் surrogate ஐ விடவும்"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX சிறுபடம் மற்றும் முன்னோட்டக் கையாளிகளை மட்டுமே கொண்டு செல்லும் (தொகுக்கப்பட்ட பண்புக் கையாளி Explorer க்கு மதிப்புகளைத் தரவில்லை); msi-only = true அதை MSI க்கு வைத்திருக்கும்"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: ஒரு MSIX கோப்பு வகை ஒரு பயன்பாட்டுக்கு உரியது; ஒரு [msix-app.*] சேர்க்கவும்"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: வகுப்பு {2} இந்தத் தொகுப்பின் [com.*] அல்ல (கையாளியின் DLL அதை வழங்குகிறது)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: MSIX இல் கையாளிகள் தங்கள் எல்லா வகைகளையும் பகிரும் அல்லது எதையும் பகிராது (ஒரு வகை ஒரு கோப்பு வகை இணைப்பில் இருக்கும்)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: MSIX இல் அதன் வகுப்பு ஒரு பதிலியில் இயங்கும்; [com.{2}] இல் threading = \"sta\" அதன் சாளரத்துக்குச் செய்தி வளையத்தைத் தரும் (threading = {3} எனில் முன்னோட்டம் வெறுமையாக இருக்கலாம்)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: MSIX இல் அதன் எல்லா வகைகளும் ஒரு [assoc] கோப்பு வகையில் இருக்கும், அல்லது எதுவும் இல்லை"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: அதன் வகுப்பு MSI க்கு மட்டும் ([com.{2}]); MSIX இல் அதற்குச் சேவையகம் இருக்காது"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types என்பது கோப்பு வகைகளின் பட்டியல், எ.கா. [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] {2} க்குச் செல்கிறது; அல்லது msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] க்கு 'value' தேவை"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: ஒரு MSIX தன் எல்லா INI உள்ளீடுகளையும் எழுதும் (when); msi-only = true பயன்படுத்தவும்"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: அதன் மதிப்பில் Windows Installer நிறுவும்போது நிரப்பும் பகுதி உள்ளது ([...]); ஒரு MSIX உருவாக்கப்படும்போதே கோப்பை எழுதும்"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] க்கு 'on' தேவை: உருப்படி எங்கே காட்டப்படும், எ.கா. [\".txt\"] அல்லது \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] க்கு 'target' (அது தொடங்கும் நிரல்) அல்லது parent = \"{2}\" கொண்ட உருப்படிகள் (ஒரு துணைமெனு) தேவை"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] க்கு 'target' தேவை: உருப்படி தொடங்கும் நிரல்"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: ஒரு துணைமெனு எதையும் தொடங்காது: 'args' ஐ விடவும்"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: துணைமெனுவின் உருப்படி அதன் துணைமெனு காட்டப்படும் இடத்தில் காட்டப்படும்: 'on' ஐ விடவும்"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args இல் Windows Installer நிறுவும்போது நிரப்பும் பகுதி உள்ளது ([...]); ஒரு MSIX நிலையான உரையை மட்டுமே வைத்திருக்கும்"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: அதன் நிரல் MSIX இல் இல்லை (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: அதன் மதிப்புகள் தொகுப்பின் பதிவேட்டில் செல்ல முடியாது"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] இல்லை"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on என்பது ஒரு கோப்பு வகை அல்லது அவற்றின் பட்டியல், எ.கா. [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: பெற்றோர் '{2}' ஒரு [menu.*] அல்ல"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: பெற்றோர் '{2}' ஒரு துணைமெனுவாக இருக்க வேண்டும்: target இல்லாத, சொந்தப் பெற்றோர் இல்லாத ஒரு [menu.*]"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] {2} க்குச் செல்கிறது; அல்லது msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; அல்லது msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file {2} ஆக இருக்க வேண்டும்"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file தொகுப்பில் செல்லும் ஒரு கோப்பைக் குறிப்பிட வேண்டும்"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file தொகுப்பில் செல்லும் ஒரு நிரலைக் குறிப்பிட வேண்டும்"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types என்பது கோப்பு வகைகளின் பட்டியல், எ.கா. [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] க்கு அதன் dir இல் ஓர் அம்சம் இருக்க வேண்டும்"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: MSIX இல் ஒரு திட்டம் ஒரு பயன்பாட்டைத் திறக்கும்: target ஒரு [msix-app.*] இயக்கக்கூடியதாக இருக்க வேண்டும்"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] க்கு 'value' தேவை (அல்லது remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR MSIX க்கு வெளியே எட்டாது; [assoc.*], [protocol.*], [com.*] அல்லது [handler.*], அல்லது msi-only = true பயன்படுத்தவும்"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: ஒரு qword மதிப்புக்கு rubrapack இன் உதவி DLL தேவை, இணைப்பு தொகுதி அதைக் கொண்டு செல்லாது"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: ஒரு MSIX {2}\\Software இன் கீழ் உள்ள மதிப்புகளை மட்டுமே கொண்டு செல்லும்"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: ஒரு MSIX மதிப்புகளை அகற்றவும் செய்யாது, விட்டுச் செல்லவும் செய்யாது (remove, keep); msi-only = true பயன்படுத்தவும்"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: ஒரு MSIX தன் எல்லா மதிப்புகளையும் எழுதும் (when); msi-only = true பயன்படுத்தவும்"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: அதன் மதிப்பில் Windows Installer நிறுவும்போது நிரப்பும் பகுதி உள்ளது ([...]); ஒரு MSIX நிலையான மதிப்புகளை மட்டுமே வைத்திருக்கும்"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" க்கு rubrapack இன் உதவி DLL தேவை, இணைப்பு தொகுதி அதைக் கொண்டு செல்லாது"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: விசை அல்லது மதிப்புப் பெயர் பதிவேட்டு hive இல் செல்ல முடியாது"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true {2} இன் கீழ் உள்ள கோப்புறைக்கு அல்ல"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true க்கு rubrapack இன் உதவி DLL தேவை, இணைப்பு தொகுதி அதைக் கொண்டு செல்லாது"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file தொகுப்பில் செல்லும் ஒரு நிரலைக் குறிப்பிட வேண்டும்"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: ஒரு MSIX க்கு டெஸ்க்டாப்பிலும் தொடக்க மெனுவிலும் மட்டுமே குறுக்குவழிகள் உண்டு{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX குறுக்குவழிக்கு working-dir இல்லை"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX குறுக்குவழி எப்போதும் இருக்கும் (when MSI க்கானது)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX குறுக்குவழி அதன் பயன்பாட்டின் சின்னத்தைக் காட்டும்; icon MSI க்கானது"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: MSIX இல் ஒரு குறுக்குவழி ஒரு பயன்பாட்டைத் தொடங்கும்: target ஒரு [msix-app.*] இயக்கக்கூடியதாக இருக்க வேண்டும்"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX இன் தொடக்க மெனு உள்ளீடு அதன் பயன்பாடு, அது args ஐ ஏற்காது"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: எந்த உரையாடல் உரைக்கும் இந்த ID இல்லை"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] க்கு [package] இல் ui = \"basic\" அல்லது வேறு உரையாடல் தொகுப்பு தேவை"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "\\{1} விடுபடு வரிசை ஒரு யூனிகோட் அளவிடல் மதிப்பு அல்ல"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: இந்தத் தொகுப்பு முந்தையதைச் சுத்தமாக மேம்படுத்தாது"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "ஒரு தொகுப்பின் `lint`: உரையாடல்கள், குறியீட்டுப் பக்கம், உரை இயல்பாக்கம்"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "ஒரு MSIX தொகுப்பு அல்லது தொகுதியின் `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "ஒரு {1} கட்டுப்பாட்டுக்கு உரை இல்லை; அதன் அருகில் ஓர் உரைக் கட்டுப்பாட்டை வைக்கவும்"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "ஒரு {1} கட்டுப்பாட்டுக்கு அதன் மதிப்புகளில் ஒன்றை இயல்பிருப்பாகக் கொண்ட [property.{2}] தேவை (அமைதியான நிறுவல் அதைப் பயன்படுத்தும்)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "ஒரு {1} தொகுப்பு HKLM இல் எழுத முடியாது; HKMU பயன்படுத்தவும்"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr "ஒரு .msix வெளியீட்டுக்கு இயக்கக்கூடியதைக் குறிப்பிடும் [msix-app.ID] அட்டவணை தேவை"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr "ஒரு .msix வெளியீட்டுக்கு [msix] அட்டவணை தேவை (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr "ஒரு .msm வெளியீடு ஓர் இணைப்பு தொகுதி, [package] க்குப் பதிலாக [module] உள்ள மூலத்திலிருந்து உருவாக்கப்படும்"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr "ஒரு .txt, .md அல்லது .rtf கோப்பு, அல்லது எதுவும் இல்லையெனில் -"
+
+msgid "a PE file without a certificate table entry"
+msgstr "சான்றிதழ் அட்டவணை உள்ளீடு இல்லாத PE கோப்பு"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN ஒருபோதும் கட்டளை வரியிலிருந்து எடுக்கப்படாது (பிறர் அதைப் பார்க்கலாம்); --pin-env அல்லது --pin-file பயன்படுத்தவும்"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "தொகுதி மேனிஃபெஸ்டில் அறியப்படாத Type கொண்ட ஒரு Package"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "தொகுதி மேனிஃபெஸ்டில் FileName, Offset அல்லது Size இல்லாத ஒரு Package"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ஒரு ZIP உள்ளீடு அதன் அளவுக்கு விரியவில்லை"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "அனுமதிக்கப்பட்டதை விடப் பெரிய ZIP உள்ளீடு"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ஒரு ZIP உள்ளீட்டின் CRC-32 பொருந்தவில்லை"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ஒரு ZIP உள்ளீட்டின் தரவு கோப்புக்கு வெளியே உள்ளது"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "ஒரு [module] மூலம் ஓர் இணைப்பு தொகுதியை உருவாக்கும்: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "இருமை மதிப்பு என்பது இரட்டை எண்ணிக்கையிலான பதினறும இலக்கங்கள், எ.கா. \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "தொகுப்புகள் இல்லாத ஒரு தொகுதி"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "பாதையிலுள்ள ஒரு சான்றிதழில் rubrapack புரிந்துகொள்ளாத முக்கிய நீட்டிப்பு உள்ளது"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "பாதையிலுள்ள ஒரு சான்றிதழ் CA அல்லாத சான்றிதழால் கையொப்பமிடப்பட்டுள்ளது"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "ஒரு சங்கிலி [chain], [chain-package.ID] மற்றும் [define] ஐ மட்டுமே கொண்டிருக்கும், [{1}] ஐ அல்ல; தொகுப்புகள் அவற்றின் சொந்த மூலங்களிலிருந்து உருவாக்கப்படும்"
+
+msgid "a chain holds at most %d packages"
+msgstr "ஒரு சங்கிலியில் அதிகபட்சம் {1} தொகுப்புகள் இருக்கும்"
+
+msgid "a chain needs [chain]"
+msgstr "ஒரு சங்கிலிக்கு [chain] தேவை"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "ஒரு சங்கிலிக்குக் குறைந்தது ஒரு [chain-package.ID] தேவை"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "Windows பெயரில் அனுமதிக்காத எழுத்து (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "ஒரு கட்டுப்பாட்டு எழுத்து"
+
+msgid "a damaged PE optional header"
+msgstr "சேதமடைந்த PE விருப்பத் தலைப்பு"
+
+msgid "a damaged PE section table"
+msgstr "சேதமடைந்த PE பிரிவு அட்டவணை"
+
+msgid "a damaged ZIP64 end record"
+msgstr "சேதமடைந்த ZIP64 இறுதிப் பதிவு"
+
+msgid "a damaged hive bin"
+msgstr "சேதமடைந்த hive bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapack இன் ஒரு கண்டறிதல்"
+
+msgid "a disabled service cannot be started"
+msgstr "முடக்கப்பட்ட சேவையைத் தொடங்க முடியாது"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "ஒரு dual தொகுப்பு பயனர் மற்றும் கணினி மாறிக்கு இடையில் தேர்வுசெய்ய முடியாது"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "ஒரு dual தொகுப்பு HKMU இல் எழுதும் (நிறுவலைப் பொறுத்து HKLM அல்லது HKCU), HKCU இல் அல்ல"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "ஒரு dword மதிப்பு 0..4294967295 முழு எண் (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "இந்த rubrapack வழங்காத (அல்லது அது இல்லாமல் உருவாக்கப்பட்ட) வசதி"
+
+msgid "a file larger than allowed"
+msgstr "அனுமதிக்கப்பட்டதை விடப் பெரிய கோப்பு"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "'{1}' இன் கீழ் உள்ள ஒரு கோப்புப் பெயர் சரியான யூனிகோட் அல்ல, அதைத் தொகுக்க முடியாது"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "/ \\ : * ? \" < > | $ இல்லாத கோப்புப் பெயர்"
+
+msgid "a file's component or directory chain is broken"
+msgstr "ஒரு கோப்பின் கூறு அல்லது கோப்பகச் சங்கிலி உடைந்துள்ளது"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "ஓர் எழுத்துரு அதைக் குறிப்பிடும் [font.*] மூலம் MSIX இல் செல்லும்"
+
+msgid "a hash the token signing does not know"
+msgstr "டோக்கன் கையொப்பமிடல் அறியாத ஹாஷ்"
+
+msgid "a hive cell crosses its bin"
+msgstr "ஒரு hive கலம் அதன் bin ஐக் கடக்கிறது"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "rubrapack படிக்காத hive பதிப்பு அல்லது வகை"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "அறியப்பட்ட கோப்புறைக்கே ('{1}') அனுமதிகள் கொடுக்க முடியாது"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "ஓர் உரிமத்துக்கு ui = \"minimal\", \"installdir\" அல்லது \"features\" தேவை"
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "கூடுதல் புலங்கள் கொண்ட உள்ளூர்த் தலைப்பு (rubrapack அல்லது Windows தொகுப்பு API எழுதிய தொகுப்பு அல்ல)"
+
+msgid "a malformed central directory"
+msgstr "தவறான வடிவிலான மையக் கோப்பகம்"
+
+msgid "a modification package has no applications of its own"
+msgstr "ஒரு மாற்றத் தொகுப்புக்குச் சொந்தப் பயன்பாடுகள் இல்லை"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "ஒரு மாற்றத் தொகுப்புக்கு Windows கட்டமைப்பு 18362 அல்லது அதற்குப் பிந்தையது தேவை: [msix] min-version = \"10.0.18362.0\" என அமைக்கவும்"
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "ஒரு தொகுதியின் compress \"none\", \"mszip\" அல்லது \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "ஒரு தொகுதியின் பெயர் ModuleID இல் அதன் ID: எழுத்துகள், இலக்கங்கள் மற்றும் _, அதிகபட்சம் 35 எழுத்துகள்"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "ஒரு multi மதிப்பு காலியில்லாத சரங்களின் அணி"
+
+msgid "a multi value is an array of strings"
+msgstr "ஒரு multi மதிப்பு சரங்களின் அணி"
+
+msgid "a name ending with a space or a dot"
+msgstr "இடைவெளி அல்லது புள்ளியுடன் முடியும் பெயர்"
+
+msgid "a name longer than 255 bytes"
+msgstr "255 பைட்டுகளை விட நீளமான பெயர்"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "தொகுதி மேனிஃபெஸ்டில் குறிப்பிட்ட தொகுப்பு தொகுதியில் இல்லை"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "Identity Name, Publisher, Version மற்றும் ProcessorArchitecture (அல்லது ResourceId) இல்லாத தொகுப்பு"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "தொகுதி மேனிஃபெஸ்டில் ஒரு தொகுப்பின் Offset அல்லது Size அது இருக்கும் இடத்துடன் பொருந்தவில்லை (அல்லது அது சுருக்கப்பட்டுள்ளது)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "ஒரு தொகுப்பின் அடையாளம் தொகுதி மேனிஃபெஸ்ட் அதைப் பற்றிச் சொல்வதிலிருந்து வேறுபடுகிறது"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "தொகுதியில் உள்ள தொகுப்பின் பெயர் .msix அல்லது .appx இல் முடியும் கோப்புப் பெயராக இருக்க வேண்டும்"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "கடவுச்சொல் ஒருபோதும் கட்டளை வரியிலிருந்து எடுக்கப்படாது (பிறர் அதைப் பார்க்கலாம்); --pass-env அல்லது --pass-file பயன்படுத்தவும்"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "கணினி அளவிலான தொகுப்பு HKCU இல் எழுதாது (அது நிறுவும் பயனருடையதாக இருக்கும்); scope = \"user\" பயன்படுத்தவும்"
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "பயனர் பெயர் அல்லது கடவுச்சொல் உள்ள பதிலாள் ஆதரிக்கப்படவில்லை"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "ஒரு qword மதிப்பு முழு எண் அல்லது \"0x\" மற்றும் 1 முதல் 16 பதினறும இலக்கங்கள்"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "ஒரு radio கட்டுப்பாடு அதன் பொத்தான்களை அடுக்கும்: உயரம் ஒவ்வொரு மதிப்புக்கும் குறைந்தது 12 ஆக இருக்க வேண்டும் ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "ஒரு பதிவில் அதன் அட்டவணையை விட அதிக நெடுவரிசைகள் உள்ளன"
+
+msgid "a record is cut short"
+msgstr "ஒரு பதிவு பாதியில் துண்டிக்கப்பட்டுள்ளது"
+
+msgid "a record names a string the pool does not have"
+msgstr "ஒரு பதிவு தொகுப்பில் இல்லாத சரத்தைக் குறிப்பிடுகிறது"
+
+msgid "a reserved device name"
+msgstr "ஒதுக்கப்பட்ட சாதனப் பெயர்"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "ஒரு திரும்பப்பெறல் செயல் ஒத்திசைவற்றதாக இருக்க முடியாது"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "ஒரு திட்டம் ஒரு சிற்றெழுத்து, பின்னர் சிற்றெழுத்துகள், இலக்கங்கள், '+', '-' அல்லது '.' ('{1}' கிடைத்தது)"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "InstallInitialize மற்றும் RemoveExistingProducts க்கு இடையில் ஒரு ஸ்கிரிப்ட் செயல் (பிழை 2613)"
+
+msgid "a section lies outside the file"
+msgstr "ஒரு பிரிவு கோப்புக்கு வெளியே உள்ளது"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "சேவைப் பெயரில் '/' அல்லது '\\' இருக்கக்கூடாது (அதிகபட்சம் 256 எழுத்துகள்)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "ஓர் அமைவு .exe [chain] உள்ள மூலத்திலிருந்து உருவாக்கப்படும்; '{1}' ஒரு தொகுப்பை உருவாக்கும் (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "ஒரு மூலம் ஒரு [package] அல்லது ஒரு [module] ஐக் கொண்டிருக்கும், இரண்டையும் அல்ல"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "RP1xxx சோதனைகளைக் கடக்கும் மூலம் இவற்றை ஒருபோதும் சந்திக்கக் கூடாது: மூலத்துடன் தெரிவிக்கவும்"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "அளவுகள் வேறுபடும் சேமிக்கப்பட்ட ZIP உள்ளீடு"
+
+msgid "a stream of the package cannot be read"
+msgstr "தொகுப்பின் ஓர் ஓட்டத்தைப் படிக்க முடியாது"
+
+msgid "a table has more than 32 columns"
+msgstr "ஓர் அட்டவணையில் 32 க்கும் மேற்பட்ட நெடுவரிசைகள் உள்ளன"
+
+msgid "a text control has no property"
+msgstr "ஓர் உரைக் கட்டுப்பாட்டுக்குப் பண்பு இல்லை"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "ஒரு கோப்புடன் `with` ஆக உள்ள மதிப்பு அதன் கூறைப் பகிரும்: `when` ஐக் கோப்பில் வைக்கவும்"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "ஒரு மதிப்பு 1 முதல் 64 பைட்டுகள்"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "ஒரு கோப்புடன் 'with' செல்லும் மதிப்பு அந்தக் கோப்பின் அம்சத்தை எடுக்கும்"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "ஒரு பதிப்பு புள்ளிகளுடன் 3 அல்லது 4 எண்கள், எ.கா. 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account LocalSystem, LocalService அல்லது NetworkService ஆக இருக்க வேண்டும்"
+
+msgid "action '%s' is already defined"
+msgstr "செயல் '{1}' ஏற்கெனவே வரையறுக்கப்பட்டுள்ளது"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "செயல் நிலையான செயலும் அல்ல, CustomAction இலும் இல்லை"
+
+msgid "adds too many tables"
+msgstr "மிக அதிக அட்டவணைகளைச் சேர்க்கிறது"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' இந்த உரையாடல் தொகுப்பின் பக்கம் (RpWelcomeDlg{2}{3}{4}) அல்லது [dialog.*] அல்ல"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias kind = \"alias\" க்கு உரியது"
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias .exe இல் முடியும் கோப்புப் பெயராக இருக்க வேண்டும்: எழுத்துகள், இலக்கங்கள், '.', '_', '-' ('{1}' கிடைத்தது)"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI பிரிவில் ']' உம், விசையில் '=' உம் இருக்கக்கூடாது"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "ஒரு MSIX தற்காலிகக் கோப்புறையில் கோப்புகளை வைக்க முடியாது"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "ஒரு பயன்பாட்டுக்கு ஒரு மாற்றுப்பெயர் உண்டு ([msix-extension.{1}] ஏற்கெனவே ஒன்று)"
+
+msgid "an empty name"
+msgstr "காலியான பெயர்"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "ஒரு https சேவையகத்தைச் சரிபார்க்க --tls-trust <சான்றிதழ்கள்> அல்லது --system-roots தேவை"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "https:// பதிலாள் ஆதரிக்கப்படவில்லை; ஒரு http:// பதிலாளைக் கொடுக்கவும் (https சேவையகங்கள் CONNECT மூலம் அடையப்படும்)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "பழைய பாணி Authenticode நேர முத்திரை (PKCS#9 counterSignature), அதை rubrapack சரிபார்க்காது"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "விருப்ப அல்லது மாற்றத் தொகுப்பு திறன்களையும் மெய்நிகராக்க அமைப்புகளையும் அறிவிப்பதில்லை: முதன்மைத் தொகுப்பினுடையவை பொருந்தும்"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "ஒரு x86 தொகுப்பு 32-பிட் பதிவேட்டுப் பார்வையில் மட்டுமே எழுதும்"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "பயன்பாடு '{1}' ஒரு [msix-app.*] அல்ல"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri மற்றும் package-uri சேர்ந்தே வரும்: .appinstaller கோப்பும் தொகுப்பும் இருக்கும் இடம்"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch \"x64\", \"arm64\" அல்லது \"x86\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch \"x64\", \"x86\" அல்லது \"arm64\" ஆக இருக்க வேண்டும் (அமைவு நிரலின் சொந்தம்)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "அளவுரு {1} சரியான UTF-8 அல்ல (பைட் {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "அளவுரு {1} சரியான யூனிகோட் அல்ல (UTF-16 அலகு {2})"
+
+msgid "array is not closed"
+msgstr "அணி மூடப்படவில்லை"
+
+msgid "arrays inside arrays are not supported"
+msgstr "அணிகளுக்குள் அணிகள் ஆதரிக்கப்படவில்லை"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "அணிகளில் சரங்கள் மட்டும் அல்லது முழு எண்கள் மட்டும் இருக்க வேண்டும்"
+
+msgid "at most %d languages besides English"
+msgstr "ஆங்கிலம் தவிர அதிகபட்சம் {1} மொழிகள்"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "அதிகபட்சம் 100 [msix-app.*] அட்டவணைகள்"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "அதிகபட்சம் 50 [action.*] அட்டவணைகள் (இந்தக் கோப்பில் {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color \"transparent\" அல்லது \"#RRGGBB\", எ.கா. \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "'$(...)' இல் தவறான மாறிப் பெயர்"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner ஒரு .bmp கோப்பாக இருக்க வேண்டும் (Windows Installer BMP ஐ மட்டுமே காட்டும்)"
+
+msgid "build a package from a source file"
+msgstr "மூலக் கோப்பிலிருந்து ஒரு தொகுப்பை உருவாக்கு"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{2} மூலத்திலிருந்து {1} ஐ உருவாக்க அதற்கென ஒரு மேம்படுத்தல் குடும்பம் தேவை: [package] இல் {3} = \"{{...}\" சேர்க்கவும்"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab \"embed\" அல்லது \"external\" ஆக இருக்க வேண்டும்"
+
+msgid "cannot be read"
+msgstr "படிக்க முடியாது"
+
+msgid "cannot build the ClientHello"
+msgstr "ClientHello ஐ உருவாக்க முடியாது"
+
+msgid "cannot bundle the packages: %s"
+msgstr "தொகுப்புகளைத் தொகுதியாக்க முடியாது: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' ஐ உருவாக்க முடியாது"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' ஐ உருவாக்க முடியாது{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' கிடைக்கவில்லை; அதை `rubrapack new {2}` மூலம் உருவாக்கவும்"
+
+msgid "cannot make a default logo"
+msgstr "இயல்புச் சின்னத்தை உருவாக்க முடியாது"
+
+msgid "cannot make a key share"
+msgstr "விசைப் பங்கை உருவாக்க முடியாது"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "'{1}' இலிருந்து '{2}' க்கு இணைப்பை உருவாக்க முடியாது"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "'{1}' இலிருந்து '{2}' க்கு உருமாற்றத்தை உருவாக்க முடியாது"
+
+msgid "cannot open the certificate store"
+msgstr "சான்றிதழ் சேமிப்பகத்தைத் திறக்க முடியாது"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' ஐப் படிக்க முடியாது ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "தொகுப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read source file '%s'"
+msgstr "மூலக் கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read that folder"
+msgstr "அந்தக் கோப்புறையைப் படிக்க முடியாது"
+
+msgid "cannot read the %s file '%s'"
+msgstr "{1} கோப்பு '{2}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "PIN கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "'{2}' அருகிலுள்ள cabinet '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "சான்றிதழ் கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "'{1}' இல் உள்ள சான்றிதழ்களைப் படிக்க முடியாது"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "'{1}' இல் உள்ள சான்றிதழ்களைப் படிக்க முடியாது: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "விசைக் கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the password file '%s'"
+msgstr "கடவுச்சொல் கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "'{2}' அருகிலுள்ள சுருக்கப்படாத கோப்பு '{1}' ஐப் படிக்க முடியாது"
+
+msgid "cannot write %s"
+msgstr "{1} ஐ எழுத முடியாது"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' ஐ எழுத முடியாது"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' ஐச் சரிபார்க்க எழுத முடியாது"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri ஐ எழுத முடியாது"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "'{1}' அருகில் மெனு கோப்புகளை எழுத முடியாது"
+
+msgid "cannot write the resource package of %s"
+msgstr "{1} இன் வளத் தொகுப்பை எழுத முடியாது"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities என்பது பெயர்களின் அணி, எ.கா. [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "திறன் '{1}' rubrapack அறிந்தது அல்ல (கையேடு அவற்றைப் பட்டியலிடுகிறது)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "திறன் '{1}' க்கு Windows கட்டமைப்பு 17763 அல்லது அதற்குப் பிந்தையது தேவை"
+
+msgid "carriage return without a line feed"
+msgstr "வரி ஊட்டம் இல்லாத வண்டி திருப்பம்"
+
+msgid "certificate file '%s': %s"
+msgstr "சான்றிதழ் கோப்பு '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "ஒரு மூலத்தை இடத்திலேயே மாற்று: கேள்வி மெனு மூலம், அல்லது விருப்பங்களுடன்"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "ஒரு கையொப்பத்தைச் சரிபார்: கட்டமைப்பு, செரிமானம், கையொப்பம் மற்றும் நம்பகமான சான்றிதழ் வரையிலான பாதை"
+
+msgid "check a source or package without writing anything"
+msgstr "எதையும் எழுதாமல் ஒரு மூலம் அல்லது தொகுப்பைச் சரிபார்"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "மூலப் பாதைகளைச் சரிபார்க்கவும் (மூலக் கோப்பைப் பொறுத்து); வேண்டுமென்றே வேறு கட்டமைப்புக்கு any-arch = true என அமைக்கவும்"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "எழுத்துக்கூட்டலைச் சரிபார்க்கவும் (செய்தி அருகிலுள்ள பெயரைப் பரிந்துரைக்கும்) மற்றும் அட்டவணையின் விசைகளை"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "வகுப்பு {1} ஏற்கெனவே [com.{2}] ஆல் வழங்கப்படுகிறது"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "வகுப்பு {1} [msix-extension.{2}] இலும் உள்ளது"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class {{12345678-...} போன்ற GUID ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "preflight = false உடன் close-programs க்கு விளைவு இல்லை"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs \"ask\", \"always\" அல்லது \"never\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "நெடுவரிசை {1} இல் தவறான வகை மதிப்பு உள்ளது"
+
+msgid "column %s is not valid UTF-8"
+msgstr "நெடுவரிசை {1} சரியான UTF-8 அல்ல"
+
+msgid "column %s may not be null"
+msgstr "நெடுவரிசை {1} null ஆக இருக்க முடியாது"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "நெடுவரிசை {1}: {2} நெடுவரிசையின் வரம்புக்கு வெளியே உள்ளது"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "நெடுவரிசை {1}: {2} UTF-16 அலகுகள், நெடுவரிசை {3} ஐக் கொள்ளும்"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "நெடுவரிசை {1}: {2} எழுத்துகள், நெடுவரிசை {3} ஐக் கொள்ளும்"
+
+msgid "command '%s' is not implemented yet"
+msgstr "கட்டளை '{1}' இன்னும் செயல்படுத்தப்படவில்லை"
+
+msgid "command-line"
+msgstr "கட்டளை வரி"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "கூறு {1} {2} 32 மற்றும் 64 பிட்டுகளுக்கு இடையில் மாறியது: கூறு விதிகள் புதிய GUID ஐக் கோருகின்றன"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "கூறு {1} {2} இப்போது இல்லை (அதன் வளங்கள் முந்தைய பதிப்புடன் அகற்றப்படும்)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "கூறு {1} {2} இன் விசைப் பாதை இப்போது {4} க்குப் பதிலாக {3}: கூறு விதிகள் புதிய GUID ஐக் கோருகின்றன"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid ஒரு GUID ஆக இருக்க வேண்டும்"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" அல்லது \"lzx:15\" ... \"lzx:21\" ஆக இருக்க வேண்டும்"
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "நிபந்தனையில் மூடப்படாத மேற்கோள் அல்லது சமநிலையற்ற அடைப்புக்குறிகள் உள்ளன"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "நிபந்தனை 240 எழுத்துகளை விட நீளமானது (rubrapack \"Installed OR ( )\" ஐச் சேர்க்கும்)"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config \"Name=value\" சரங்களைக் கொண்டுள்ளது ('{1}' கிடைத்தது)"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config என்பது \"Name=value\" சரங்களின் அணி"
+
+msgid "contains a control character"
+msgstr "ஒரு கட்டுப்பாட்டு எழுத்தைக் கொண்டுள்ளது"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "< > : \" / \\ | ? * இல் ஒன்றைக் கொண்டுள்ளது"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type ஒரு ஊடக வகை, எ.கா. \"image/png\" ('{1}' கிடைத்தது)"
+
+msgid "control character"
+msgstr "கட்டுப்பாட்டு எழுத்து"
+
+msgid "control character in a comment"
+msgstr "குறிப்புரையில் கட்டுப்பாட்டு எழுத்து"
+
+msgid "control character in a string"
+msgstr "சரத்தில் கட்டுப்பாட்டு எழுத்து"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "தேதிகளும் நேரங்களும் ஆதரிக்கப்படவில்லை; அவற்றைச் சரங்களாக எழுதவும்"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when க்கு 1 ஐ விட உயர் நிலை தேவை (நிலை-1 அம்சம் எப்படியும் இயல்பாக நிறுவப்படும்)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "மாறியை வரையறுக்கவும் ([define] அல்லது -D NAME=value), அல்லது எழுத்துப்படியான $ க்கு $$ என எழுதவும்"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "உரையாடல் '{1}' ஒரு [dialog.*] அல்ல"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "'Rp' இல் தொடங்கும் உரையாடல் ID கள் (மற்றும் FilesInUse) rubrapack இன் சொந்தம்"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' தனக்குள்ளேயே உள்ளது (பாதை வளையம்)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' dir ID யும் அல்ல, Programs, Desktop, StartMenu அல்லது Startup உம் அல்ல"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' ஒரு dir ID அல்ல"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' வரையறுக்கப்படவில்லை"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction \"in\" அல்லது \"out\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo அளவுருக்கள் 255 எழுத்துகளை விட நீளமானவை"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "புள்ளியிட்ட விசைகள் ஆதரிக்கப்படவில்லை; விசையை அதன் சொந்த அட்டவணையில் வைக்கவும்"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "ஒரு தொகுப்பை வெளியிடு (MSI அட்டவணைகள் IDT ஆக)"
+
+msgid "duplicate primary key"
+msgstr "நகல் முதன்மை விசை"
+
+msgid "empty arrays are not supported"
+msgstr "காலியான அணிகள் ஆதரிக்கப்படவில்லை"
+
+msgid "ends with a space or a dot"
+msgstr "இடைவெளி அல்லது புள்ளியுடன் முடிகிறது"
+
+msgid "error"
+msgstr "பிழை"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" தொகுப்பில் செல்லும் ஒரு [file.*] ஐக் குறிப்பிட வேண்டும்"
+
+msgid "expected ',' or ']' in the array"
+msgstr "அணியில் ',' அல்லது ']' எதிர்பார்க்கப்பட்டது"
+
+msgid "expected '=' after the key"
+msgstr "விசைக்குப் பின் '=' எதிர்பார்க்கப்பட்டது"
+
+msgid "expected ']' to close the table name"
+msgstr "அட்டவணைப் பெயரை மூட ']' எதிர்பார்க்கப்பட்டது"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "ஒரு விசை, ஒரு [அட்டவணை] அல்லது ஒரு குறிப்புரை எதிர்பார்க்கப்பட்டது"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "நீட்டிப்பு '{1}' க்கு ஏற்கெனவே ஒரு நிரல் உள்ளது ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "நீட்டிப்பு '.' மற்றும் சிற்றெழுத்துகள், இலக்கங்கள், '_' அல்லது '-' ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "preflight = false உடன் extra-files க்கு விளைவு இல்லை"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files \"ask\", \"keep\" அல்லது \"delete\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "அம்சம் {1} இப்போது இல்லை: அதைக் கொண்டிருந்த நிறுவல்கள் அது வைத்திருந்ததை இழக்கும்"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "அம்சம் '{1}' தனக்குத் தானே மூதாதை"
+
+msgid "feature '%s' is not defined"
+msgstr "அம்சம் '{1}' வரையறுக்கப்படவில்லை"
+
+msgid "feature parent '%s' is not defined"
+msgstr "அம்சப் பெற்றோர் '{1}' வரையறுக்கப்படவில்லை"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "கோப்பு '{1}' ஏற்கெனவே சேவை '{2}' ஐ இயக்குகிறது"
+
+msgid "file '%s' is already registered as a font"
+msgstr "கோப்பு '{1}' ஏற்கெனவே எழுத்துருவாகப் பதிவுசெய்யப்பட்டுள்ளது"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "கோப்பு '{1}' Fonts கோப்புறையிலேயே நிறுவப்பட வேண்டும் (path = \"Fonts\" கொண்ட ஒரு [dir.*])"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "கோப்பு '{1}' க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "கோப்புப் பெயர் {1} UTF-16 அலகுகள்; 8.3 குறும்பெயருடன் MSI அதிகபட்சம் {2} ஐக் கொள்ளும்"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization மற்றும் registry-virtualization = false க்கு Windows கட்டமைப்பு 18362 அல்லது அதற்குப் பிந்தையது தேவை: [msix] min-version = \"10.0.18362.0\" என அமைக்கவும்"
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' COM வகுப்புகளை .exe அல்லது .dll ஆக மட்டுமே வழங்கும்"
+
+msgid "files but no Media row"
+msgstr "கோப்புகள் உள்ளன, ஆனால் Media வரிசை இல்லை"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "செய்தி குறிப்பிடும் மதிப்பைச் சரிசெய்யவும்; ID கள் எழுத்துகள், இலக்கங்கள் மற்றும் '_', எல்லா அட்டவணைகளிலும் வேறுபட்டவை"
+
+msgid "floating-point numbers are not supported"
+msgstr "மிதவைப் புள்ளி எண்கள் ஆதரிக்கப்படவில்லை"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "கோப்புறை '{1}' க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "கோப்புறைப் பெயர் {1} UTF-16 அலகுகள்; 8.3 குறும்பெயருடன் MSI அதிகபட்சம் {2} ஐக் கொள்ளும்"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent க்கு ஒரு பெற்றோர் தேவை"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "எழுத்துருக்களுக்கு scope = \"machine\" தேவை (இது {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "வடிவம் {1} க்குப் புதிய rubrapack தேவை (இது வடிவம் {2} ஐப் படிக்கும்)"
+
+msgid "format is a whole number: format = %d"
+msgstr "format ஒரு முழு எண்: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "--pass-env அல்லது --pass-file கொடுக்கவும், இரண்டையும் அல்ல"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "--pin-env அல்லது --pin-file கொடுக்கவும், இரண்டையும் அல்ல"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "[msix] மற்றும் [msix-app.*] க்குத் தேவையானதைக் கொடுக்கவும், அல்லது msi-only = true மூலம் உருப்படியை MSI க்கு வைத்திருக்கவும்"
+
+msgid "give a file below this folder"
+msgstr "இந்தக் கோப்புறையின் கீழ் ஒரு கோப்பைக் கொடுக்கவும்"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "நிரல் கோப்புறையில் நேரடியாக ஒரு கோப்பைக் கொடுக்கவும், அல்லது எதுவும் இல்லையெனில் -"
+
+msgid "give a folder below this one, such as dist"
+msgstr "இதன் கீழ் ஒரு கோப்புறையைக் கொடுக்கவும், எ.கா. dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "1 முதல் 128 பைட்டுகள் கொண்ட பெயரைக் கொடுக்கவும்"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "மூன்று சின்னங்களையும் (logo-150, logo-44, store-logo) கொடுக்கவும் அல்லது எதையும் வேண்டாம்"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "--key, --pkcs11 மற்றும் --key-store இல் ஒன்றைக் கொடுக்கவும்"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "நிரல் கோப்புறையின் துணைக் கோப்புறைகளைக் காற்புள்ளிகளால் பிரித்துக் கொடுக்கவும், அல்லது எதுவும் இல்லையெனில் -"
+
+msgid "glob '%s' matches no file"
+msgstr "வடிவம் '{1}' எந்தக் கோப்புடனும் பொருந்தவில்லை"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "வடிவம் '{1}' வெளியீட்டுக் கோப்பு '{2}' உடன் பொருந்துகிறது"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "படிக்க முடியாத MergeModule.CABinet ஓட்டம் உள்ளது"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "படிக்க முடியாத MergeModule.CABinet உள்ளது"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "நிலையான நெடுவரிசைகள் இல்லாத Module*Sequence அட்டவணை உள்ளது"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "பெயர் இல்லாத அல்லது அறியப்படாத வடிவத்திலான ModuleConfiguration உருப்படி உள்ளது"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "நிலையான நெடுவரிசைகள் இல்லாத ModuleConfiguration அட்டவணை உள்ளது"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "நிலையான நெடுவரிசைகள் இல்லாத ModuleSubstitution அட்டவணை உள்ளது"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "ModuleConfiguration இல் இல்லாத உருப்படியைக் குறிப்பிடும் ModuleSubstitution வார்ப்புரு உள்ளது"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "நிபந்தனை கொண்ட ஒரு கூறு உள்ளது; ஒரு MSIX எல்லாவற்றையும் நிறுவும்"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "கூறு அல்லது cabinet உள்ளீடு இல்லாத கோப்பு உள்ளது"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "TARGETDIR க்கு வெளியே MSIX இல் இடம் இல்லாத கோப்புறை உள்ளது"
+
+msgid "has a table that cannot be read"
+msgstr "படிக்க முடியாத அட்டவணை உள்ளது"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "நெடுவரிசைகள் தொகுப்பினுடையவற்றிலிருந்து வேறுபடும் அட்டவணை உள்ளது"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "தொகுப்பில் இல்லாத வரிசை அட்டவணைக்கான செயல்கள் உள்ளன"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "கூறுகள் உள்ளன, ஆனால் தொகுப்பில் FeatureComponents அட்டவணை இல்லை"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "கோப்புகள் உள்ளன, ஆனால் MergeModule.CABinet அல்லது Directory அட்டவணை இல்லை"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "கோப்புகள் உள்ளன, ஆனால் MergeModule.CABinet ஓட்டம் இல்லை"
+
+msgid "has files, but the package has no Media table"
+msgstr "கோப்புகள் உள்ளன, ஆனால் தொகுப்பில் Media அட்டவணை இல்லை"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "ModuleSignature இல்லை: இணைப்பு தொகுதி அல்ல"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "ProductCode அல்லது ProductVersion இல்லை"
+
+msgid "has no Property table"
+msgstr "Property அட்டவணை இல்லை"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "அடிப்படையோ உருமாற்றமோ வரையறுக்காத அட்டவணைக்கான பதிவுகள் உள்ளன"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "65001 (UTF-8) அல்லாத குறியீட்டுப் பக்கத்தில் ASCII க்கு வெளியே உரை உள்ளது"
+
+msgid "icon must be an .ico file"
+msgstr "icon ஒரு .ico கோப்பாக இருக்க வேண்டும்"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID ஆக இருக்க வேண்டும்: தொகுதியின் சொந்தம், ஒவ்வொரு பதிப்பிலும் வைக்கப்படும்"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name A-Z, a-z, 0-9, '.' மற்றும் '-' இலிருந்து 3 முதல் 50 எழுத்துகளாக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "வரிக்குள் அட்டவணைகள் ஆதரிக்கப்படவில்லை; ஒரு [kind.ID] அட்டவணையைப் பயன்படுத்தவும்"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "வரி {1} இன் அதே பாதையில் நிறுவப்படும் (Windows பெயர்களில் எழுத்து அளவைப் புறக்கணிக்கும்{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "உள் பிழை: உள்ளமைந்த உரையாடலின் தாவல் வரிசை உடைந்துள்ளது; தெரிவிக்கவும்"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "உள்: ஒரு தொகுதி அட்டவணைக்கு _Validation விதி இல்லை"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "உள்: {1} இன் ஒரு நெடுவரிசைக்கு _Validation விதி இல்லை"
+
+msgid "invalid"
+msgstr "செல்லாதது"
+
+msgid "invalid - %s"
+msgstr "செல்லாதது - {1}"
+
+msgid "is '.' or '..'"
+msgstr "'.' அல்லது '..'"
+
+msgid "is a reserved device name"
+msgstr "ஒதுக்கப்பட்ட சாதனப் பெயர்"
+
+msgid "is empty"
+msgstr "காலியாக உள்ளது"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "255 UTF-16 அலகுகளை விட நீளமானது"
+
+msgid "is not a Windows Installer database"
+msgstr "Windows Installer தரவுத்தளம் அல்ல"
+
+msgid "is not a compound file"
+msgstr "கூட்டுக் கோப்பு அல்ல"
+
+msgid "is not valid UTF-8"
+msgstr "சரியான UTF-8 அல்ல"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "மேம்படுத்தல் குறியீட்டை வைத்திருக்கவும், பதிப்பை உயர்த்தவும், தங்கும் கோப்புகளின் கூறு குறியீடுகளை வைத்திருக்கவும்"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "விசை '{1}' இந்த அட்டவணையில் இருமுறை அமைக்கப்பட்டுள்ளது (முதலில் வரி {2} இல்)"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "விசை '{1}' '\\' உடன் தொடங்கவோ முடியவோ கூடாது, காலியான பகுதி இருக்கக்கூடாது"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "விசை '{1}' அட்டவணைக்கு வெளியே உள்ளது; முதல் அட்டவணைக்கு முன் 'format' மட்டுமே வரும்"
+
+msgid "key file '%s': %s"
+msgstr "விசைக் கோப்பு '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" அல்லது \"context-menu\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind \"preview\", \"thumbnail\" அல்லது \"property\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind registry, file, dir அல்லது component ஆக இருக்க வேண்டும்"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels என்பது சரங்களின் அணி, ஒவ்வொரு மதிப்புக்கும் ஒன்று"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "மொழி '{1}' க்கு மொழித் தொகுப்பு இல்லை (மூலத்துக்கு அருகில் lang/{2}.po, அல்லது RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "மொழி '{1}' இருமுறை பட்டியலிடப்பட்டுள்ளது"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "மொழி '{1}' [ui] languages இல் இல்லை"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "மொழி '{1}' இல் {2} உரைகள் இல்லை, முதலாவது {3}: அவற்றை அதன் மொழித் தொகுப்பில் சேர்க்கவும் (lang/{4}.po) அல்லது [ui-text.ID] text-{5} கொடுக்கவும்"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "மொழி '{1}' க்கு [ui] langid-{2} தேவை (தானியங்கித் தேர்வுக்கு அதன் LANGID கள்)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "மொழி '{1}' க்கு [ui] name-{2} தேவை (மொழிப் பக்கத்தில் அதன் பெயர்)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" இனி உரையாடல்களைக் கொரிய மொழியாக்காது: [ui] languages = [\"ko\"] கொரியனைச் சேர்க்காவிட்டால் அவை ஆங்கிலத்தில் இருக்கும்"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language \"ko-KR\" அல்லது \"en-US\" ஆக இருக்க வேண்டும்"
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language \"neutral\", \"en-US\" அல்லது \"ko-KR\" ஆக இருக்க வேண்டும்"
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages \"ko\" அல்லது \"zh_TW\" போன்ற குறியீடுகளைக் கொண்டுள்ளது (2 அல்லது 3 சிற்றெழுத்துகள், மற்றும் _ உம் ஒரு பகுதியின் இரண்டு பேரெழுத்துகளும்) ('{1}' கிடைத்தது)"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages என்பது மொழிக் குறியீடுகளின் அணி, எ.கா. [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages க்கு ஓர் உரையாடல் தொகுப்பு தேவை (ui = \"basic\" அல்லது வேறொன்று)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "launch-args needs launch"
+msgstr "launch-args க்கு launch தேவை"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license ஒரு .txt, .md (எளிய உரையாகக் காட்டப்படும்) அல்லது .rtf கோப்பாக இருக்க வேண்டும்"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} வரிசை {2}: நெடுவரிசை {3} NFC இல் இல்லை ({4} வரிசை{-5}); build --nfc கோப்புறை, கோப்பு மற்றும் குறுக்குவழிப் பெயர்களை NFC இல் வைக்கும்"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: குறியீட்டுப் பக்கம் {1}, 65001 அல்ல: உரை UTF-8 ஆகச் சரிபார்க்கப்படாது, அகலங்கள் ASCII க்கு மட்டும்"
+
+msgid "lint: no problems\n"
+msgstr "lint: சிக்கல்கள் இல்லை\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: மேலே உள்ள சிக்கல்களைப் பார்க்கவும்\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "ஒரு டோக்கன் அல்லது Windows சான்றிதழ் சேமிப்பகம் கையொப்பமிடக்கூடிய விசைகளைப் பட்டியலிடு"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "சின்னம் '{1}' மற்றும் அதன் .scale-100 மாறுபாடு இரண்டும் உள்ளன: ஒன்றை வைத்திருக்கவும்"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "அளவு {2} இல் சின்னம் '{1}' {3}x{4} படப்புள்ளிகள்; அது {5}x{6} ஆக இருக்க வேண்டும்"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "அளவு {2} இல் சின்னம் '{1}' PNG கோப்பு அல்ல"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "சின்னம் '{1}' {2}x{3} படப்புள்ளிகள்; அது {4}x{5} ஆக இருக்க வேண்டும்"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "சின்னம் '{1}' PNG கோப்பு அல்ல"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "சின்னம் '{1}' கிடைக்கவில்லை (.scale-100 ... .scale-400 மாறுபாடுகளாகவும் இல்லை)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "சின்னம் '{1}': அளவு மாறுபாடுகள் கொண்ட சின்னத்துக்கு நீட்டிப்புடன் ASCII கோப்புப் பெயர் தேவை"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package என்பது முதன்மைத் தொகுப்பின் அடையாளப் பெயர் ('{1}' கிடைத்தது)"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher மற்றும் modification = true ஆகியவை main-package உடன் வரும் (இது உரிய தொகுப்பு)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher என்பது முதன்மைத் தொகுப்பின் வெளியீட்டாளர், எ.கா. \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "கட்டுப்பாட்டு எழுத்துகள் அல்லது / \\ : * ? \" < > | $ இருக்கக்கூடாது"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "இடைவெளியுடன் தொடங்கவோ, இடைவெளி அல்லது புள்ளியுடன் முடியவோ கூடாது"
+
+msgid "merge module '%s' not found"
+msgstr "இணைப்பு தொகுதி '{1}' கிடைக்கவில்லை"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version 1.2.3 போன்ற பதிப்பாக இருக்க வேண்டும்"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version நான்கு பகுதிகளைக் கொண்டிருக்க வேண்டும், எ.கா. 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version நான்கு பகுதிகளைக் கொண்டிருக்க வேண்டும், எ.கா. 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "பொருந்தவில்லை"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" விசையை அகற்றும்; அது 'value' ஐ ஏற்காது"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode \"set\", \"add\" அல்லது \"remove\" ஆக இருக்க வேண்டும்"
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode \"set\", \"append\" அல்லது \"prepend\" ஆக இருக்க வேண்டும்"
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "அனுமதிக்கப்பட்டதை அல்லது கோப்பகம் கொண்டிருப்பதை விட அதிக ZIP உள்ளீடுகள்"
+
+msgid "more keys and values than allowed"
+msgstr "அனுமதிக்கப்பட்டதை விட அதிக விசைகளும் மதிப்புகளும்"
+
+msgid "more than 3 redirects"
+msgstr "3 க்கும் மேற்பட்ட திசைதிருப்பல்கள்"
+
+msgid "more than 96 sections"
+msgstr "96 க்கும் மேற்பட்ட பிரிவுகள்"
+
+msgid "more than one source file ('%s')"
+msgstr "ஒன்றுக்கு மேற்பட்ட மூலக் கோப்புகள் ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "ஒன்றுக்கு மேற்பட்ட டோக்கன்கள் உள்ளன: --token-label மூலம் ஒன்றைக் குறிப்பிடவும்"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi \"each\", \"one\" அல்லது \"single\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "multi-line strings are not supported"
+msgstr "பல-வரிச் சரங்கள் ஆதரிக்கப்படவில்லை"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "பல-வரிச் சரங்கள் ஆதரிக்கப்படவில்லை; \\n உடன் ஒரு வரியைப் பயன்படுத்தவும்"
+
+msgid "must be 1 to 64 bytes"
+msgstr "1 முதல் 64 பைட்டுகளாக இருக்க வேண்டும்"
+
+msgid "name contains a control character"
+msgstr "பெயரில் கட்டுப்பாட்டு எழுத்து உள்ளது"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name என்பது ஒரு தொகுப்பின் அடையாளப் பெயர் ('{1}' கிடைத்தது)"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "பெயர் ASCII அல்ல, summary-name இல்லை; சுருக்கத்தின் Subject 'rubrapack package' எனக் காட்டும்"
+
+msgid "names a folder its Directory table does not have"
+msgstr "அதன் Directory அட்டவணையில் இல்லாத கோப்புறையைக் குறிப்பிடுகிறது"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix இன்னும் செயல்படுத்தப்படவில்லை: ஒரு MSI மூலத்தை உருவாக்கி [msix] சேர்க்கவும் (கையேட்டைப் பார்க்கவும்)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "'format = {1}' வரி இல்லை: இந்தப் பதிப்பு படிக்காத rubrapack 0.18 அல்லது முந்தைய வடிவிலான மூலம் (இப்போது பாதைகள் $(ProgramFiles) அல்லது $(INSTALLDIR) உடன் தொடங்கும்); கையேட்டின் மூல வடிவம் பகுதியைப் பார்க்கவும்"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "--trust கொடுக்கப்படவில்லை: கையொப்பம் சரிபார்க்கப்படுகிறது, ஆனால் யாரை நம்புவது என்று எதுவும் சொல்லவில்லை"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "விசைக் கோப்பிலுள்ள (அல்லது --cert கோப்பிலுள்ள) எந்தச் சான்றிதழும் விசைக்கு உரியதல்ல"
+
+msgid "no control characters"
+msgstr "கட்டுப்பாட்டு எழுத்துகள் இல்லாமல்"
+
+msgid "no keys\n"
+msgstr "விசைகள் இல்லை\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "முதன்மை நிரல் இல்லை, எனவே குறுக்குவழிகளும் இல்லை: எதுவும் இல்லை"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "சேவையகப் பெயர் இல்லை, அல்லது 255 பைட்டுகளை விட நீளமானது"
+
+msgid "no string pool: not a transform"
+msgstr "சரத் தொகுப்பு இல்லை: உருமாற்றம் அல்ல"
+
+msgid "no table '%s' in '%s'"
+msgstr "'{2}' இல் '{1}' அட்டவணை இல்லை"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove தயாரிப்பை அகற்ற ஒரே வழியாக மாற்று (அதன் அகற்று) ஐ விடுகிறது: அது no-modify உடன் செல்ல முடியாது"
+
+msgid "not a PE file (no MZ header)"
+msgstr "PE கோப்பு அல்ல (MZ தலைப்பு இல்லை)"
+
+msgid "not a PE file (no PE header)"
+msgstr "PE கோப்பு அல்ல (PE தலைப்பு இல்லை)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "PEM, PKCS#8 அல்லது PKCS#12 கோப்பு அல்ல"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ZIP காப்பகம் அல்ல (இறுதிப் பதிவு இல்லை)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ZIP காப்பகம் அல்ல (மிகக் குறுகியது)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "rubrapack ஏற்கும் பதிலாள் URL அல்ல (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "பதிவேட்டு hive அல்ல"
+
+msgid "not a valid number"
+msgstr "சரியான எண் அல்ல"
+
+msgid "not a value"
+msgstr "மதிப்பு அல்ல"
+
+msgid "not a value (strings need quotes)"
+msgstr "மதிப்பு அல்ல (சரங்களுக்கு மேற்கோள்கள் தேவை)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "rubrapack ஏற்கும் http:// அல்லது https:// URL அல்ல"
+
+msgid "not valid UTF-8"
+msgstr "சரியான UTF-8 அல்ல"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "சரிபார்க்கப்படவில்லை (--trust அல்லது --system-roots கொடுக்கவும்)"
+
+msgid "not-present"
+msgstr "இல்லை"
+
+msgid "nothing changed\n"
+msgstr "எதுவும் மாறவில்லை\n"
+
+msgid "number out of range"
+msgstr "எண் வரம்புக்கு வெளியே உள்ளது"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "எண்ம மற்றும் இருமை எண்கள் ஆதரிக்கப்படவில்லை; பதின்மம் அல்லது 0x பயன்படுத்தவும்"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" HKLM, HKCU மற்றும் HKMU க்கானது (வகுப்புகள் [assoc.*], [com.*] போன்றவற்றுடன் செல்லும்)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" ஒரு விசையை அதன் கீழுள்ள எல்லாவற்றுடனும் அகற்றும்: '{1}' Software இன் கீழ் ஒரு தயாரிப்பின் சொந்த விசை அல்ல"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" அகற்றும்போது முழு விசையையும் அகற்றும்; அது '{1}' ஐ ஏற்காது"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "Windows இல் `keys list` சான்றிதழ் சேமிப்பகத்தைக் காட்டும்"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "Windows இல் டோக்கன் சான்றிதழ் சேமிப்பகம் மூலம் பயன்படுத்தப்படும் (--key-store <கைரேகை>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on என்பது remove = true க்கானது (விசை எப்போது அகற்றப்படும்)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on \"install\" அல்லது \"uninstall\" ஆக இருக்க வேண்டும்"
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on \"install\", \"uninstall\" அல்லது \"both\" ஆக இருக்க வேண்டும்"
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: ஒவ்வொன்றும் ஒரு கோப்பு வகை ('.' மற்றும் சிற்றெழுத்துகள், இலக்கங்கள், '_' அல்லது '-'), \"*\" (ஒவ்வொரு கோப்பும்), \"folder\", \"background\" (கோப்புறையின் காலிப் பகுதி), \"drive\" அல்லது \"assoc:<ID>\" ('{1}' கிடைத்தது)"
+
+msgid "only radio and combo controls take labels"
+msgstr "radio மற்றும் combo கட்டுப்பாடுகள் மட்டுமே labels ஐ ஏற்கும்"
+
+msgid "only radio and combo controls take values"
+msgstr "radio மற்றும் combo கட்டுப்பாடுகள் மட்டுமே values ஐ ஏற்கும்"
+
+msgid "out of memory"
+msgstr "நினைவகம் போதவில்லை"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "வெளியீடு '{1}': rubrapack .msi, .msm, .msix, .msixbundle மற்றும் ஒரு சங்கிலியின் அமைவு .exe ஐ எழுதும்"
+
+msgid "package '%s' %s"
+msgstr "தொகுப்பு '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "தொகுப்பு '{1}' கிடைக்கவில்லை"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent வேறொரு தயாரிப்பின் upgrade-code ஆக இருக்க வேண்டும், இந்தத் தொகுப்பினுடையது அல்ல"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent முதன்மைத் தயாரிப்பின் upgrade-code ஆக இருக்க வேண்டும், {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path '/' உடன் \"$(Base)/சார்பு/பாதை\" ஆக இருக்க வேண்டும் (Base என்பது ProgramFiles போன்ற கோப்புறை, அல்லது ஒரு dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path ஒரு Windows கோப்புறையுடன் தொடங்க வேண்டும் (எ.கா. $(ProgramFiles) அல்லது $(System))"
+
+msgid "paths"
+msgstr "பாதைகள்"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" அல்லது \"application\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "அனுமதிகளுக்கு scope = \"machine\" தேவை (இது {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports ஒரு துறை அல்லது 1-65535 க்குள் \"8000-8100\" போன்ற வரம்பாக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "ஒரு சீரற்ற GUID ஐ, அல்லது rubrapack ஓர் உரையிலிருந்து பெறுவதை அச்சிடு"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "மூலங்களின் JSON Schema ஐ அச்சிடு (விசைகளை நிறைவுசெய்து சரிபார்க்கும் திருத்திக்கு)"
+
+msgid "print the version"
+msgstr "பதிப்பை அச்சிடு"
+
+msgid "print this help, or one command's usage"
+msgstr "இந்த உதவியை, அல்லது ஒரு கட்டளையின் பயன்பாட்டை அச்சிடு"
+
+msgid "product-code must be a GUID"
+msgstr "product-code ஒரு GUID ஆக இருக்க வேண்டும்"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile \"all\", \"domain\", \"private\" அல்லது \"public\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' ஏற்கெனவே [com.{2}] க்கு உரியது"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' [assoc.{2}] க்கும் உரியது: ஒரு கோப்பு வகைக்கும் ஒரு COM வகுப்புக்கும் இரண்டு பெயர்கள் தேவை"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' [assoc.{2}] இல் வேறு விளக்கம், target, icon அல்லது args உடனும் உள்ளது"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id எழுத்துகள், இலக்கங்கள், '.', '_' அல்லது '-' ஆக இருக்க வேண்டும், இலக்கத்தில் தொடங்கக்கூடாது, அதிகபட்சம் 39 ('{1}' கிடைத்தது)"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "பண்பு '{1}' ஏற்கெனவே கட்டுப்பாடு '{2}' க்கு உரியது"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "பண்பு '{1}' ஒரு dir அல்லது அம்சத்தின் பெயரைக் கொண்டுள்ளது"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "பண்பு '{1}' ஏற்கெனவே வரையறுக்கப்பட்டுள்ளது (வரி {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "பண்பு '{1}' ஏற்கெனவே தேடப்படுகிறது (வரி {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "பண்பு '{1}' ஐ rubrapack அல்லது நிறுவி அமைக்கும், அதை இங்கே வரையறுக்க முடியாது"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "பண்பு '{1}' உங்கள் சொந்தப் பொதுப் பெயராக இருக்க வேண்டும் (பெரிய எழுத்துகள்)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "பண்பு '{1}' ஒரு பொதுப் பெயராக இருக்க வேண்டும்: பெரிய எழுத்துகள், இலக்கங்கள் மற்றும் '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol \"tcp\" அல்லது \"udp\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher என்பது தொகுப்பின் வெளியீட்டாளர், எ.கா. \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher கையொப்பச் சான்றிதழின் subject ஆக இருக்க வேண்டும், எ.கா. \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher இல் unsigned-test OID இருக்கக்கூடாது; அதை --unsigned-test சேர்க்கும்"
+
+msgid "quoted keys are not supported"
+msgstr "மேற்கோளிட்ட விசைகள் ஆதரிக்கப்படவில்லை"
+
+msgid "quoted table names are not supported"
+msgstr "மேற்கோளிட்ட அட்டவணைப் பெயர்கள் ஆதரிக்கப்படவில்லை"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot \"suppress\" அல்லது \"allow\" ஆக இருக்க வேண்டும்"
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true என்பது on = \"uninstall\" க்கானது"
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "மேம்படுத்தல் இந்தப் பதிப்பை அகற்றும்போது recursive = true ஒருபோதும் இயங்காது; அது 'upgrade' ஐ ஏற்காது"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true கோப்புறையை அதிலுள்ள எல்லாவற்றுடனும் அகற்றும்; அது 'name' ஐ ஏற்காது"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} இந்தத் தொகுப்பின் பதிப்பு {2} ஐ விட உயர்ந்தது"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' 1.2.3 போன்ற பதிப்பாக இருக்க வேண்டும்"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message க்கு refuse-upgrade-below தேவை"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "பதிவேடு '{1}' ஒரு மதிப்பை அகற்றும்; அதற்குப் பாதுகாக்க எதுவும் இல்லை"
+
+msgid "registry value '%s' needs a feature"
+msgstr "பதிவேட்டு மதிப்பு '{1}' க்கு ஓர் அம்சம் தேவை"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true நிறுவும்போது மதிப்பை அகற்றும்; அது 'value' ஐ ஏற்காது"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons க்குச் சுத்தப்படுத்தும் பணி தேவை: cleanup = false ஐ அகற்றவும்"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces அதிகபட்சம் 16 மேம்படுத்தல் குறியீடுகளைக் கொண்டிருக்கும்"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces மேம்படுத்தல் குறியீடுகளைக் கொண்டுள்ளது, {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID கள் ('{1}' கிடைத்தது)"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces என்பது மேம்படுத்தல் குறியீடுகளின் அணி, எ.கா. [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces {1} ஐ இருமுறை பட்டியலிடுகிறது"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces {1} ஐக் குறிப்பிடுகிறது, இது இந்தத் தொகுப்பின் அல்லது அதன் பெற்றோரின் upgrade-code"
+
+msgid "required property %s is missing"
+msgstr "தேவையான பண்பு {1} இல்லை"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "திரும்பப்பெறல் இரட்டை {1} க்கு முன் வர வேண்டும் ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root HKLM, HKCR அல்லது HKCU ஆக இருக்க வேண்டும்"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root HKLM, HKCU, HKCR அல்லது HKMU ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: ஒரு கண்டறிதல் குறியீட்டின் பொருள். வரம்பு வாரியாகக் குறியீடுகள்:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: சில கேள்விகள் மூலத்தை உருவாக்கும் (Enter [ ] இல் உள்ள மதிப்பை எடுக்கும்).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "`rubrapack help <command>` ஐ இயக்கவும்; பாதைகளையும் வெளியீட்டுக் கோப்புறை உள்ளதா என்பதையும் சரிபார்க்கவும்"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (கணினி 0x{2}) இந்தத் தொகுப்பின் கணினிகளில் இயங்க முடியாது"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' ஒரு நிரல் அல்ல (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "மூலத்தை LF அல்லது CRLF வரி முடிவுகளுடன் UTF-8 (அல்லது BOM உடன் UTF-16) ஆகச் சேமிக்கவும்"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "திட்டம் '{1}' க்கு ஏற்கெனவே ஒரு நிரல் உள்ளது ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope \"machine\", \"user\" அல்லது \"dual\" ஆக இருக்க வேண்டும்"
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl \"D:PAI(A;OICI;FA;;;BA)\" போன்ற SDDL சரமாக இருக்க வேண்டும்"
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "தேடல் பண்பு '{1}' உங்கள் சொந்தப் பொதுப் பெயராக இருக்க வேண்டும் (பெரிய எழுத்துகள்)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "செய்தியைப் பார்க்கவும்; rubrapack மூலம் மீண்டும் உருவாக்குவது இவற்றில் பெரும்பாலானவற்றைச் சரிசெய்யும்"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "வரிசை {1} {2} க்குப் பின் இல்லை ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "தொகுப்போ தொகுதியோ இயக்காத ஒரு செயலுக்கு அருகில் ஒரு செயலை வைக்கிறது"
+
+msgid "service name '%s' is already used"
+msgstr "சேவைப் பெயர் '{1}' ஏற்கெனவே பயன்படுத்தப்பட்டுள்ளது"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "சேவைகளுக்கு scope = \"machine\" தேவை (இது {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "குறுக்குவழிப் பெயர் {1} UTF-16 அலகுகள்; 8.3 குறும்பெயருடன் MSI அதிகபட்சம் {2} ஐக் கொள்ளும்"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "ஒரு PE கோப்பு, MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதியைக் கையொப்பமிடு"
+
+msgid "signed %s\n"
+msgstr "கையொப்பமிடப்பட்டது: {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "மூலம் '{1}' ஒரு கோப்பகம்; பல கோப்புகளுக்கு [files.ID] பயன்படுத்தவும்"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "மூலம் '{1}' ஒரு குறியீட்டு இணைப்பு; இணைப்புகள் பின்தொடரப்படாது"
+
+msgid "source '%s' is not a regular file"
+msgstr "மூலம் '{1}' ஒரு வழக்கமான கோப்பு அல்ல"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "தொகுப்பு உருவாக்கப்படும்போது மூலக் கோப்பு '{1}' மாறியது"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "மூலக் கோப்பு '{1}' 2 GiB ஐ விடப் பெரியது"
+
+msgid "source file '%s' not found"
+msgstr "மூலக் கோப்பு '{1}' கிடைக்கவில்லை"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "source must be an .msi package"
+msgstr "source ஒரு .msi தொகுப்பாக இருக்க வேண்டும்"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "மூலப் பாதை '{1}' மூலக் கோப்பைப் பொறுத்ததாக இருக்க வேண்டும்"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "மூலப் பாதைகள் '/' ஐப் பயன்படுத்தும், '\\\\' ஐ அல்ல ('{1}' கிடைத்தது)"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start auto, demand அல்லது disabled ஆக இருக்க வேண்டும்"
+
+msgid "string is not closed on this line"
+msgstr "சரம் இந்த வரியில் மூடப்படவில்லை"
+
+msgid "string lengths exceed the string data"
+msgstr "சர நீளங்கள் சரத் தரவை மீறுகின்றன"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "சுருக்கத் தகவலை இன்னும் IDT ஆகக் காட்ட முடியாது"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name ASCII ஆக இருக்க வேண்டும் (சுருக்கத் தகவல் ASCII ஐ மட்டுமே கொண்டிருக்கும்)"
+
+msgid "table %s %s"
+msgstr "அட்டவணை {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "அட்டவணை '{1}' படிக்க முடியாதது"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "அட்டவணை [{1}{2}{3}] இருமுறை வரையறுக்கப்பட்டுள்ளது (முதலில் வரி {4} இல்)"
+
+msgid "table name expected"
+msgstr "அட்டவணைப் பெயர் எதிர்பார்க்கப்பட்டது"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "அட்டவணைப் பெயர்களுக்கு அதிகபட்சம் இரண்டு பகுதிகள்: [kind] அல்லது [kind.ID]"
+
+msgid "tables"
+msgstr "அட்டவணைகள்"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "அட்டவணைகளும் விசைகளும்: அறியப்படாத அட்டவணை அல்லது விசை, இல்லாத தேவையான விசை, அம்சங்கள் இருக்கும்போது அம்சம் இல்லாத உருப்படி"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "உள்ளமைவை ஏற்காது (ModuleConfiguration இல்லை)"
+
+msgid "target '%s' does not exist"
+msgstr "இலக்கு '{1}' இல்லை"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target \"dir:<ID>\", \"file:<ID>\" அல்லது \"registry:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "target name '%s' %s"
+msgstr "இலக்குப் பெயர் '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' ஏற்கெனவே [msix-extension.{2}] ஆல் பயன்படுத்தப்படுகிறது"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name மற்றும் enabled ஆகியவை kind = \"startup-task\" க்கு உரியவை"
+
+msgid "that file exists already; give another name"
+msgstr "அந்தக் கோப்பு ஏற்கெனவே உள்ளது; வேறு பெயர் கொடுக்கவும்"
+
+msgid "that folder holds no files"
+msgstr "அந்தக் கோப்புறையில் கோப்புகள் இல்லை"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "FilesInUse உரையாடலுக்கு ஒரு ListBox அட்டவணை தேவை, காலியாக இருந்தாலும் (பிழை 2205; உரையாடல் தவிர்க்கப்படும்)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN இல் டோக்கன் ஏற்காத எழுத்துகள் அல்லது நீளம் உள்ளது"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN காலாவதியாகிவிட்டது: முதலில் அதை டோக்கனில் மாற்றவும்"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN பூட்டப்பட்டுள்ளது (அதிகத் தவறான முயற்சிகள்)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode முந்தைய பதிப்பினுடையது: இது சிறிய மேம்படுத்தல் (REINSTALLMODE), rubrapack உருவாக்கும் பெரிய மேம்படுத்தல் அல்ல"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16 கோப்பு சரியான UTF-16 அல்ல"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP மையக் கோப்பகம் கோப்புக்கு வெளியே உள்ளது"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "பயன்பாட்டு ID '{1}' Application Id ஆக மாறும்: எழுத்துகளும் இலக்கங்களும் மட்டும், இலக்கத்தில் தொடங்காது"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "காப்பகம் MSIX தொகுப்புகளைப் போல ZIP64 இறுதிப் பதிவுகளுடன் முடிவதில்லை"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "காப்பகத்தில் ZIP64 இறுதிப் பதிவு இல்லை"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "தொகுதி மேனிஃபெஸ்டில் Identity Name, Publisher மற்றும் Version இல்லை"
+
+msgid "the central directory lies outside the archive"
+msgstr "மையக் கோப்பகம் காப்பகத்துக்கு வெளியே உள்ளது"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "சான்றிதழில் rubrapack புரிந்துகொள்ளாத முக்கிய நீட்டிப்பு உள்ளது"
+
+msgid "the certificate has expired"
+msgstr "சான்றிதழ் காலாவதியாகிவிட்டது"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "சான்றிதழ் ஒரு CA சான்றிதழ், கையொப்பச் சான்றிதழ் அல்ல"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "சான்றிதழ் குறியீட்டுக் கையொப்பத்துக்கானது அல்ல (குறியீட்டுக் கையொப்ப விரிவான விசைப் பயன்பாடு இல்லை)"
+
+msgid "the certificate is not valid yet"
+msgstr "சான்றிதழ் இன்னும் செல்லுபடியாகவில்லை"
+
+msgid "the certificate path is longer than 8"
+msgstr "சான்றிதழ் பாதை 8 ஐ விட நீளமானது"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "சான்றிதழ் அட்டவணையில் Authenticode கையொப்பம் இல்லை"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "சான்றிதழ் அட்டவணை கோப்பின் முடிவில் இல்லை"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "சான்றிதழின் விசைப் பயன்பாடு எண்ணிமக் கையொப்பங்களை அனுமதிக்கவில்லை"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "சான்றிதழின் subject ஐ MSIX வெளியீட்டாளராக எழுத முடியாது"
+
+msgid "the chunked response is malformed"
+msgstr "துண்டுகளாக வந்த பதில் தவறான வடிவில் உள்ளது"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "கட்டளை வரி: அறியப்படாத கட்டளை அல்லது விருப்பம், படிக்கவோ எழுதவோ முடியாத கோப்பு, ஒரு கையொப்பம், உருமாற்றம் கொண்டு செல்ல முடியாத வேறுபாடு"
+
+msgid "the connection has failed"
+msgstr "இணைப்பு தோல்வியடைந்தது"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "உட்பொதிந்த cabinet கள் தொகுப்பை 2 GiB அல்லது அதற்கு மேல் ஆக்குகின்றன, அதை Windows Installer திறக்க முடியாது; cab = \"external\" பயன்படுத்தவும்"
+
+msgid "the entry is not in the central directory"
+msgstr "உள்ளீடு மையக் கோப்பகத்தில் இல்லை"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "பிழை உரையாடல் '{1}' க்கு {3} என்ற பெயருள்ள {2} கட்டுப்பாடு தேவை (பிழை 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "இயக்கக்கூடியது '{1}' .exe ஆக இருக்க வேண்டும்"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "இயக்கக்கூடியதின் கோப்புறை அறியப்பட்ட இடத்துக்கு வழிவகுக்கவில்லை"
+
+msgid "the file is not signed"
+msgstr "கோப்பு கையொப்பமிடப்படவில்லை"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "கோப்பு ஏற்கெனவே கையொப்பமிடப்பட்டுள்ளது; rubrapack இருமுறை கையொப்பமிடாது, கையொப்பத்தையும் மாற்றாது"
+
+msgid "the file is too large to sign"
+msgstr "கோப்பு கையொப்பமிட மிகப் பெரியது"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "கோப்புக்கு [package] அட்டவணை தேவை (அல்லது இணைப்பு தொகுதிக்கு [module])"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "கையொப்பமிட்ட பின் கோப்பு மாற்றப்பட்டது (அதன் செரிமானம் பொருந்தவில்லை)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "நிறுவ வேண்டிய கோப்புகள்: கிடைக்கவில்லை, ஒரு கோப்புறை, ஓர் இணைப்பு, பொருத்தம் இல்லாத வடிவம், வேறு கட்டமைப்பின் நிரல், மிக நீளமான பெயர்கள்"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "முடிந்த அட்டவணைகள் ஒரு Windows Installer விதியை மீறுகின்றன"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "hive சுத்தமாக மூடப்படவில்லை (அதன் பதிவு தேவைப்படும்)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "hive இன் அடிப்படைத் தொகுதியின் சரிபார்ப்புத் தொகை பொருந்தவில்லை"
+
+msgid "the hive's bins lie outside the file"
+msgstr "hive இன் bin கள் கோப்புக்கு வெளியே உள்ளன"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "நிறுவிய பயன்பாடுகள் பட்டியலின் படவுரு [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "எல்லாக் கேள்விகளுக்கும் பதிலளிக்கும் முன் உள்ளீடு முடிந்தது; எதுவும் எழுதப்படவில்லை"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "விசைக் கோப்பு 4 MiB ஐ விடப் பெரியது"
+
+msgid "the key is neither RSA nor EC"
+msgstr "விசை RSA வும் அல்ல, EC யும் அல்ல"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "நூலகம் PKCS#11 தொகுதி அல்ல (C_GetFunctionList இல்லை, அல்லது பதிப்பு 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "மேனிஃபெஸ்டில் Identity Publisher இல்லை"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "தொகுப்பின் முழுப் பெயருக்கு மேனிஃபெஸ்டின் Identity ஐப் படிக்க முடியாது"
+
+msgid "the merge module %s"
+msgstr "இணைப்பு தொகுதி {1}"
+
+msgid "the name %s"
+msgstr "பெயர் {1}"
+
+msgid "the package is not signed"
+msgstr "தொகுப்பு கையொப்பமிடப்படவில்லை"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "தொகுப்பு கையொப்பமிடப்படவில்லை (AppxSignature.p7x இல்லை)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "தொகுப்பு ஏற்கெனவே கையொப்பமிடப்பட்டுள்ளது; rubrapack இருமுறை கையொப்பமிடாது, கையொப்பத்தையும் மாற்றாது"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "தொகுப்பு ஏற்கெனவே கையொப்பமிடப்பட்டுள்ளது; rubrapack கையொப்பமில்லாத தொகுப்புகளைக் கையொப்பமிடும் (ஒருபோதும் இருமுறை அல்ல)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "தொகுப்பு தனக்கு வெளியே உள்ள cabinet களைப் பயன்படுத்துகிறது, அவற்றை .msi இன் கையொப்பம் உள்ளடக்காது; உட்பொதிந்த cabinet களுடன் உருவாக்கவும், அல்லது --allow-unsigned-cabs உடன் எப்படியும் கையொப்பமிடவும்"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "தொகுப்பின் உள்ளடக்கம் அதன் கையொப்பத்துடன் பொருந்தவில்லை (கையொப்பமிட்ட பின் மாற்றப்பட்டது)"
+
+msgid "the package's directory cannot be read"
+msgstr "தொகுப்பின் கோப்பகத்தைப் படிக்க முடியாது"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "ஒரு தொகுதியின் தொகுப்புகளுக்கு ஒரே Name, Publisher மற்றும் Version தேவை"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "பதிலாள் கடவுச்சொல் கேட்கிறது (407), அதை rubrapack ஆதரிக்கவில்லை"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "பதிலாள் சுரங்கக் கோரிக்கைக்குப் பதிலளிக்கவில்லை"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "பதிலாள் CONNECT க்கான பதிலுக்குப் பிறகு தரவை அனுப்பியது"
+
+msgid "the redirect location is too long"
+msgstr "திசைதிருப்பல் இடம் மிக நீளமானது"
+
+msgid "the request could not be sent"
+msgstr "கோரிக்கையை அனுப்ப முடியவில்லை"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "பதிலில் தவறான வடிவ அல்லது முரண்படும் Content-Length உள்ளது"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "பதிலில் Content-Length உம் chunked உம் உள்ளன (மறுக்கப்பட்டது: கடத்தல் அபாயம்)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "பதில் 4 MiB ஐ விடப் பெரியது"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "பதில் chunked அல்லாத பரிமாற்றக் குறியாக்கத்தைப் பயன்படுத்துகிறது"
+
+msgid "the same condition is already required (line %u)"
+msgstr "அதே நிபந்தனை ஏற்கெனவே தேவைப்படுகிறது (வரி {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "இதையே கேள்விகள் இல்லாமல்:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "சேவையகம் HTTP/1.x இல் பதிலளிக்கவில்லை"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "சேவையகம் https இலிருந்து http க்குத் திசைதிருப்பியது (மறுக்கப்பட்டது)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "சேவையகத்தின் CertificateVerify கையொப்பம் சரிபார்க்கப்படவில்லை"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "சேவையகத்தின் சான்றிதழ் TLS சேவையகங்களுக்கானது அல்ல (அதன் விரிவான விசைப் பயன்பாடு)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "சேவையகத்தின் கையொப்ப முறை அதன் சான்றிதழின் விசைக்குப் பொருந்தவில்லை"
+
+msgid "the signature does not verify"
+msgstr "கையொப்பம் சரிபார்க்கப்படவில்லை"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "கையொப்பமிட்டவரின் சான்றிதழுடன் கையொப்பம் சரிபார்க்கப்படவில்லை"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "கையொப்ப உள்ளீடு ZIP64 முறையில் விவரிக்கப்பட்டுள்ளது; Windows அதன் இடத்தை ZIP32 புலங்களிலிருந்து படிக்கிறது"
+
+msgid "the signature is not DER"
+msgstr "கையொப்பம் DER அல்ல"
+
+msgid "the signature streams cannot be read"
+msgstr "கையொப்ப ஓடைகளைப் படிக்க முடியாது"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "கையொப்பமிட்ட பண்புகள் கையொப்பமிட்ட உள்ளடக்கத்துடன் பொருந்தவில்லை"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "கையொப்பமிட்டவரின் சான்றிதழ் குறியீட்டுக் கையொப்பத்துக்கானது அல்ல"
+
+msgid "the source file's encoding"
+msgstr "மூலக் கோப்பின் குறியாக்கம்"
+
+msgid "the system random source failed"
+msgstr "கணினியின் சீரற்ற மூலம் தோல்வியடைந்தது"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "தாவல் வரிசை (Control_Next) Control_First இலிருந்து அதன் {1} கட்டுப்பாடுகள் வழியே ஒரே சுற்று அல்ல (Windows Installer பிழை 2809 அல்லது 2810 உடன் நிற்கும்)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "நேர முத்திரைச் சேவையகம் HTTP பிழையுடன் பதிலளித்தது"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "நேர முத்திரைச் சேவையகத்தின் சான்றிதழ் நேர முத்திரைக்கானது அல்ல"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "நேர முத்திரைச் சேவையகத்தின் நேரம் கையொப்பச் சான்றிதழின் செல்லுபடிக்கு வெளியே உள்ளது"
+
+msgid "the token does not say what kind of key it is"
+msgstr "டோக்கன் விசை எந்த வகை என்று சொல்லவில்லை"
+
+msgid "the token is not present"
+msgstr "டோக்கன் இல்லை"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "டோக்கன் தவறான நீளமுள்ள ECDSA கையொப்பத்தைத் திருப்பியது"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "டோக்கனின் EC விசைக்கு EC அல்லாத சான்றிதழ் உள்ளது"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "டோக்கனின் கையொப்பம் சான்றிதழுடன் சரிபார்க்கப்படவில்லை (விசையும் சான்றிதழும் ஒன்றுக்கொன்று உரியவை அல்ல)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "நம்பகமான சான்றிதழ் காலாவதியானது அல்லது இன்னும் செல்லுபடியாகவில்லை"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "கையொப்பமிடாத பண்புகள் தவறான வடிவில் உள்ளன அல்லது ஒன்றுக்கு மேற்பட்ட நேர முத்திரைகளைக் கொண்டுள்ளன"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "இங்கே அப்படி ஒரு கோப்பு இல்லை"
+
+msgid "there is no such folder here"
+msgstr "இங்கே அப்படி ஒரு கோப்புறை இல்லை"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "இந்த rubrapack அதன் பட்டிப் பகுதி இல்லாமல் உருவாக்கப்பட்டது: [menu.*] உருப்படிகள் Windows 11 பட்டியை அடையாது"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "இந்த rubrapack அமைவு நிரல் இல்லாமல் உருவாக்கப்பட்டது (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading \"sta\", \"mta\", \"both\" அல்லது \"neutral\" ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
+
+msgid "timestamp: "
+msgstr "நேர முத்திரை: "
+
+msgid "too many languages for one bundle"
+msgstr "ஒரு தொகுதிக்கு மிக அதிக மொழிகள்"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "resources.pri க்கு மிக அதிக உள்ளூர்மயமாக்கிய உரைகளும் இலச்சினை அளவுகளும்"
+
+msgid "too many packages in the bundle"
+msgstr "தொகுதியில் மிக அதிகத் தொகுப்புகள்"
+
+msgid "trusted"
+msgstr "நம்பகமானது"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "தொகுதியில் ஒரே கட்டமைப்பின் இரண்டு தொகுப்புகள்"
+
+msgid "two packages of one name in a bundle"
+msgstr "தொகுதியில் ஒரே பெயருள்ள இரண்டு தொகுப்புகள்"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "தொகுதியில் ஒரே ResourceId உள்ள இரண்டு வளத் தொகுப்புகள்"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type string, expand, dword, qword, binary அல்லது multi ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type text, checkbox, edit, radio அல்லது combo ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version பதினறும இலக்கங்களில் major.minor, எ.கா. \"1.0\" (கிடைத்தது '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types மற்றும் verb ஆகியவை kind = \"context-menu\" க்கு உரியவை"
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: ஒவ்வொன்றும் \".ext\" அல்லது \"*\" (ஒவ்வொரு கோப்பும்)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: ஒவ்வொன்றும் '.' உடன் சிற்றெழுத்துகள், இலக்கங்கள், '_' அல்லது '-' (கிடைத்தது '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" பயனர் dir '{2}' இன் கோப்புறையைத் தேர்வுசெய்ய விடுகிறது, அது இல்லை ([ui] install-dir அமைக்கவும்)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" க்குத் தேர்வுசெய்ய [feature.*] அட்டவணைகள் தேவை"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui none, basic, minimal, installdir அல்லது features ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "மதிப்புக்குப் பின் எதிர்பாராத உரை"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "அறியப்படாத கட்டளை '{1}' ('rubrapack help' பார்க்கவும்)"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "அறியப்படாத விடுபடு வரிசை \\{1} (பின்சாய்வுகள் உள்ள உரைக்கு '...' பயன்படுத்தவும்)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "அறியப்படாத inspect விருப்பம் (அட்டவணைப் பெயர், --summary, --files அல்லது --streams பயன்படுத்தவும்)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "[{2}{3}{4}]{5}{6}{7} இல் அறியப்படாத விசை '{1}'"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "அறியப்படாத அல்லது முழுமையற்ற {1} விருப்பம் '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "அறியப்படாத அட்டவணை [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "ஒரு தொகுப்பைப் புதிய கோப்பகத்தில் விரிக்கவும், நிறுவப்படுவது போலவே அமைக்கப்பட்டு"
+
+msgid "unsupported - %s"
+msgstr "ஆதரிக்கப்படவில்லை - {1}"
+
+msgid "untrusted"
+msgstr "நம்பகமற்றது"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* விசைகளுக்கு appinstaller-uri மற்றும் package-uri தேவை"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false என்பது on = \"uninstall\" அல்லது \"both\" க்கானது (நிறுவல் ஒருபோதும் மேம்படுத்தலின் அகற்றல் அல்ல)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID ஆக இருக்க வேண்டும்"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "பயன்பாடு: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "பயன்பாடு: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (தொகுப்புக்கான பட்டியல்)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "பயன்பாடு: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "பயன்பாடு: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "பயன்பாடு: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "பயன்பாடு: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "பயன்பாடு: rubrapack inspect <file.cab> (அட்டவணை அல்லது விருப்பம் இல்லாமல்)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "பயன்பாடு: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "பயன்பாடு: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "பயன்பாடு: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "பயன்பாடு: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "பயன்பாடு: rubrapack inspect <setup.exe> (அட்டவணை அல்லது விருப்பம் இல்லாமல்)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "பயன்பாடு: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "பயன்பாடு: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "பயன்பாடு: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "பயன்பாடு: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "பயன்பாடு: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (நிலையான தொடக்க <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk பெயர்களும் ஏற்கப்படும்"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "பயன்பாடு: rubrapack schema (மூலங்களின் JSON Schema, stdout இல்)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "பயன்பாடு: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "பயன்பாடு: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "பாதையில் '/' பயன்படுத்தவும்"
+
+msgid "use a full rubrapack build or another way"
+msgstr "முழு rubrapack உருவாக்கம் அல்லது வேறு வழியைப் பயன்படுத்தவும்"
+
+msgid "used by more than one component"
+msgstr "ஒன்றுக்கு மேற்பட்ட கூறுகளால் பயன்படுத்தப்படுகிறது"
+
+msgid "value '%s' is listed twice"
+msgstr "மதிப்பு '{1}' இருமுறை பட்டியலிடப்பட்டுள்ளது"
+
+msgid "value missing"
+msgstr "மதிப்பு இல்லை"
+
+msgid "values and labels are strings"
+msgstr "values மற்றும் labels சரங்கள்"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values என்பது 1 முதல் 32 சரங்களின் அணி"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "மதிப்புகள்: ID கள், GUID கள், பதிப்புகள், வரம்புக்கு வெளியே உள்ள எண்கள், இல்லாதவற்றுக்கான குறிப்புகள்"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "மாறி '{1}' வரையறுக்கப்படவில்லை ([define] அல்லது -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "மாறிப் பெயர் '{1}' இல் '=' இருக்கக் கூடாது, = + - ! * இல் தொடங்கவும் கூடாது"
+
+msgid "variables"
+msgstr "மாறிகள்"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "மாறிகள்: மதிப்பில்லாத $(NAME), மூடப்படாத $(, வர முடியாத இடத்தில் Windows பெயர் அல்லது dir ID"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "பதிப்பு '{1}' a.b.c அல்லது a.b.c.d ஆக இருக்க வேண்டும்"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "பதிப்பு '{1}' a.b.c அல்லது a.b.c.d ஆக இருக்க வேண்டும், a, b <= 255 மற்றும் c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" 64-பிட் தொகுப்பின் கோப்புடன் 'with' ஆகச் செல்ல முடியாது"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view \"32\" அல்லது \"64\" ஆக இருக்க வேண்டும்"
+
+msgid "warning"
+msgstr "எச்சரிக்கை"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "ஒரு கண்டறிதல் குறியீட்டின் பொருள், அதைக் கொண்ட செய்திகள், என்ன செய்வது, கையேடு எங்கே மேலும் சொல்கிறது"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: கோப்பு '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "--pkcs11 இல்லாமல் `keys list` Windows சான்றிதழ் சேமிப்பைக் காட்டுகிறது"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' ஒரு dir ID அல்ல"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "ஒரு திருத்தம் (.msp) எழுதவும்: நிறுவிய அடிப்படையை இலக்குக்குப் புதுப்பிக்கும் கோப்புகளும் வரிசைகளும்"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "ஒரு மூலக் கோப்பை எழுதவும் (.toml; .rpk பெயர்களும்): பதில்களிலிருந்து, கேட்கப்பட்டோ விருப்பங்களாகக் கொடுக்கப்பட்டோ, ஒரு நிலையான தொடக்கம், அல்லது இருக்கும் MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "ஓர் உருமாற்றம் (.mst) எழுதவும்: ஒரு தொகுப்பை மற்றொன்றாக மாற்றுவது"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "அட்டவணை அல்லது மதிப்பைக் கையேடு காட்டும் எளிய முறையில் எழுதவும்"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "மதிப்பை '[~]' இல்லாமல் எழுதவும்; mode = \"append\" அல்லது \"prepend\" அதைச் சேர்க்கும்"
+
+msgid "wrote %s\n"
+msgstr "எழுதப்பட்டது {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width அதிகபட்சம் 370 ஆக இருக்க வேண்டும் (பக்க அகலம்)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height அதிகபட்சம் 234 ஆக இருக்க வேண்டும் (பொத்தான்களுக்கு மேலே உள்ள கோடு)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< பின்செல்(&B)"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "அடுத்து(&N) >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "ரத்துசெய்"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "நிறுவு(&I)"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "முடி(&F)"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "சரி"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "ஆம்(&Y)"
+
+msgctxt "installer"
+msgid "No"
+msgstr "இல்லை(&N)"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "மீண்டும் முயல்(&R)"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "புறக்கணி(&I)"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "நிறுத்து(&A)"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "வெளியேறு(&X)"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "உலாவு(&R)..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "[ProductName] அமைவுக்கு வரவேற்கிறோம்"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "இது உங்கள் கணினியில் [ProductName] ஐ நிறுவும். தொடர அடுத்து என்பதைக் கிளிக் செய்யவும்."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "உரிம ஒப்பந்தம்"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "பின்வரும் உரிம ஒப்பந்தத்தைப் படிக்கவும்."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "உரிம ஒப்பந்தத்தின் விதிமுறைகளை ஏற்கிறேன்(&A)"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "நிறுவல் கோப்புறை"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "[ProductName] ஐ நிறுவ வேண்டிய கோப்புறையைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "இங்கே நிறுவு(&T):"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "கோப்புறையை மாற்று"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "நிறுவ வேண்டிய கோப்புறைக்குச் செல்லவும்."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "இதில் தேடு(&L):"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "கோப்புறையின் பெயர்(&F):"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "மேலே"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "புதிய கோப்புறை"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "அம்சங்களைத் தேர்வுசெய்"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "நிறுவ வேண்டிய அம்சங்களைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "மீட்டமை(&S)"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "வட்டுப் பயன்பாடு(&D)"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "வட்டு இடம்"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "தேர்ந்தெடுத்த அம்சங்களுக்குத் தேவையான இடம் மற்றும் கிடைக்கும் இடம்."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "நிறுவத் தயார்"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "[ProductName] ஐ நிறுவ நிறுவு என்பதைக் கிளிக் செய்யவும்."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "[ProductName] நிறுவப்படுகிறது"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "காத்திருக்கவும்."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "நிலை:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "அமைவு முடிந்தது"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] நிறுவப்பட்டது."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "[ProductName] அகற்றப்படுகிறது"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "அகற்றுதல் முடிந்தது"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] அகற்றப்பட்டது."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "அகற்றுதல் ரத்துசெய்யப்பட்டது"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "அகற்றுதல் ரத்துசெய்யப்பட்டது. உங்கள் கணினியில் எதுவும் மாற்றப்படவில்லை."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "அகற்றுதல் தோல்வியடைந்தது"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "ஒரு பிழை அகற்றுதலை நிறுத்தியது, அது திரும்பப்பெறப்பட்டது. தயாரிப்பு இன்னும் நிறுவப்பட்டுள்ளது."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "அமைவு ரத்துசெய்யப்பட்டது"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "அமைவு ரத்துசெய்யப்பட்டது. உங்கள் கணினியில் எதுவும் மாற்றப்படவில்லை."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "அமைவு தோல்வியடைந்தது"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "ஒரு பிழை நிறுவலை நிறுத்தியது, அது திரும்பப்பெறப்பட்டது. உங்கள் கணினியில் எதுவும் மாற்றப்படவில்லை."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "[ProductName] நிறுவலை ரத்துசெய்யவா?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "பயன்பாட்டில் உள்ள கோப்புகள்"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "இந்த நிரல்கள் மாற்றப்படும் கோப்புகளைப் பயன்படுத்துகின்றன. அவற்றை இப்போதே மாற்ற தொடர் என்பதைக் கிளிக் செய்யவும்: ஏற்கெனவே திறந்திருக்கும் நிரல்கள் மீண்டும் திறக்கப்படும் வரை பழைய கோப்புகளை வைத்திருக்கும், பின்னர் திறக்கப்படும் நிரல்கள் புதியவற்றைப் பெறும். மறுதொடக்கம் தேவையில்லை."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "இந்த நிரல்கள் மாற்றப்படும் கோப்புகளைப் பயன்படுத்துகின்றன. அவற்றை இப்போதே மாற்ற தொடர் என்பதைக் கிளிக் செய்யவும்: ஏற்கெனவே திறந்திருக்கும் நிரல்கள் மீண்டும் திறக்கப்படும் வரை பழைய கோப்புகளை வைத்திருக்கும், பின்னர் திறக்கப்படும் நிரல்கள் புதியவற்றைப் பெறும். இறுதியில் Windows மறுதொடக்கம் செய்யக் கேட்கலாம்."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "தொடர்(&C)"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "போதுமான வட்டு இடம் இல்லை"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "இந்த நிறுவலுக்குப் போதுமான இடம் இல்லை. சிறிது இடத்தைக் காலியாக்கவும் அல்லது வேறு இடத்தைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "[ProductName] பராமரிப்பு"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "என்ன செய்வது என்பதைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "சரிசெய்(&P)"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "விடுபட்ட அல்லது சேதமடைந்த கோப்புகளையும் அமைப்புகளையும் மீட்டமைக்கும்."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "அகற்று(&R)"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "இந்தக் கணினியிலிருந்து [ProductName] ஐ அகற்றும்."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "[ProductName] ஐ அகற்று"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "இந்தக் கணினியிலிருந்து [ProductName] ஐ அகற்ற அகற்று என்பதைக் கிளிக் செய்யவும். வைத்திருக்க பின்செல் அல்லது ரத்துசெய் என்பதைக் கிளிக் செய்யவும்."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "இந்தக் கணினியிலிருந்து [ProductName] ஐ அகற்ற அகற்று என்பதைக் கிளிக் செய்யவும். அதன் அமைப்புகளும் தரவும் அதனுடன் நீக்கப்படும், அவற்றைத் திரும்பப் பெற முடியாது. வைத்திருக்க பின்செல் அல்லது ரத்துசெய் என்பதைக் கிளிக் செய்யவும்."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "இந்தக் கணினியிலிருந்து [ProductName] ஐ அகற்றவா?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "இந்தக் கணினியிலிருந்து [ProductName] ஐ அகற்றவா? அதன் அமைப்புகளும் தரவும் அதனுடன் நீக்கப்படும், அவற்றைத் திரும்பப் பெற முடியாது."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] ஐப் பாதுகாப்பாக நிறுவ முடியாது: [1] ஒரு கோப்புறை அல்ல, அல்லது அதிலுள்ள கோப்புகளை நிறுவி நீக்க முடியாமல் போகலாம். முதலில் [3] ஐ அகற்றவும் ([2]), பிறகு மீண்டும் நிறுவவும்."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] ஐப் பாதுகாப்பாக மேம்படுத்த முடியாது: நிறுவப்பட்ட பதிப்பு [1] சேமித்த தொகுப்பை இழந்துவிட்டது, எனவே அதை இங்கே அகற்ற முடியாது. முதலில் அந்தப் பதிப்பை அதன் அசல் தொகுப்பால் அகற்றவும் ([2]), பிறகு மீண்டும் நிறுவவும்."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "அமைவு நிறுத்தப்பட்டது: [1] கோப்புறை ஏற்கெனவே உள்ளது, அது நிர்வாகிகளுக்குச் சொந்தமானதல்ல, அல்லது ஓர் இணைப்பின் வழியாக வேறிடத்துக்குச் செல்கிறது. வேறு கோப்புறையைத் தேர்வுசெய்யவும், அல்லது முதலில் அதை அகற்றுமாறு ஒரு நிர்வாகியிடம் கேட்கவும்."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "[ProductName] ஐத் தொடங்கு(&L)"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "பதிவைச் சேமி(&S)..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "முழுப் பதிவைக் காட்டு(&L)"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "அமைவுப் பதிவை [1] இல் சேமிக்க முடியவில்லை."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "மாற்று(&C)"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "எந்த அம்சங்கள் நிறுவப்பட வேண்டும் என்பதைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "நிறுவல் வரம்பு"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "[ProductName] ஐ யார் பயன்படுத்தலாம் என்பதைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "நான் மட்டும்(&M)"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "இந்தக் கணினியில் உள்ள அனைவரும்(&E) - நிர்வாகி உரிமைகள் தேவை"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "மொழி"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "அமைவுக்கான மொழியைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "நிறுவப்பட்ட பயன்பாடுகள் தேடப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "தேவையான இடம் கணக்கிடப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "தேவையான இடம் கணக்கிடப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "கோப்புறைகள் உருவாக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "குறுக்குவழிகள் உருவாக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "சேவைகள் நீக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "நகல் கோப்புகள் உருவாக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "தேவையான இடம் கணக்கிடப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "தொடர்புடைய பயன்பாடுகள் தேடப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "செயலுக்கான ஸ்கிரிப்ட் செயல்பாடுகள் உருவாக்கப்படுகின்றன:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "புதிய கோப்புகள் நகலெடுக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "புதிய சேவைகள் நிறுவப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "நிறுவல் சரிபார்க்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "தொடக்க நிபந்தனைகள் மதிப்பிடப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "தொடர்புடைய பயன்பாடுகளிலிருந்து அம்ச நிலைகள் மாற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "கோப்புகள் நகர்த்தப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "கோப்புகளுக்கு இணைப்பு பயன்படுத்தப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "கூறுகளின் பதிவு புதுப்பிக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "தயாரிப்பு அம்சங்கள் வெளியிடப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "தயாரிப்புத் தகவல் வெளியிடப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "வகுப்புச் சேவையகங்கள் பதிவுசெய்யப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "நீட்டிப்புச் சேவையகங்கள் பதிவுசெய்யப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "எழுத்துருக்கள் பதிவுசெய்யப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "MIME தகவல் பதிவுசெய்யப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "தயாரிப்பு பதிவுசெய்யப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "நிரல் அடையாளங்காட்டிகள் பதிவுசெய்யப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "பயனர் பதிவுசெய்யப்படுகிறார்"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "சூழல் சரங்கள் புதுப்பிக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "பழைய பதிப்பு அகற்றப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "கோப்புகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "கோப்புறைகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "INI கோப்பு உள்ளீடுகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "கணினிப் பதிவேட்டு மதிப்புகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "குறுக்குவழிகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "செயல் திரும்பப்பெறப்படுகிறது:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "காப்புக் கோப்புகள் அகற்றப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "சேவைகள் தொடங்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "சேவைகள் நிறுத்தப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "தயாரிப்பு அம்சங்களின் வெளியீடு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "வகுப்புச் சேவையகங்களின் பதிவு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "நீட்டிப்புச் சேவையகங்களின் பதிவு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "எழுத்துருக்களின் பதிவு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "MIME தகவலின் பதிவு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "நிரல் அடையாளங்காட்டிகளின் பதிவு நீக்கப்படுகிறது"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "சூழல் சரங்கள் புதுப்பிக்கப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "INI கோப்பு மதிப்புகள் எழுதப்படுகின்றன"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "கணினிப் பதிவேட்டு மதிப்புகள் எழுதப்படுகின்றன"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] தற்போதைய பயனருக்கு மட்டுமே நிறுவப்படும் (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "[ProductName] இன் இதே அல்லது புதிய பதிப்பு ஏற்கெனவே நிறுவப்பட்டுள்ளது."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "இந்தத் தொகுப்பால் நிறுவப்பட்ட பழைய [ProductName] பதிப்பை மேம்படுத்த முடியாது. முதலில் அதை அகற்றவும், பிறகு இந்த அமைவை மீண்டும் இயக்கவும்:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "கோப்பை நகலெடு"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "கோப்பை அகற்று"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "கோப்புக்கு இணைப்பு"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "கோப்புறையை உருவாக்கு"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "கோப்புறையை அகற்று"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "பதிவேட்டு மதிப்பை எழுது"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "பதிவேட்டு மதிப்பை அகற்று"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "பதிவேட்டு விசையை அகற்று"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "குறுக்குவழியை உருவாக்கு"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "குறுக்குவழியை அகற்று"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "சேவையை நிறுவு"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "சேவையைக் கட்டுப்படுத்து"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "INI மதிப்பை எழுது"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "சூழல் மாறியை அமை"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "எழுத்துருவைப் பதிவுசெய்"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "எழுத்துருவின் பதிவை நீக்கு"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "செயலை இயக்கு"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "இந்த அமைவு நிரல் சேதமடைந்துள்ளது: அதை மீண்டும் பதிவிறக்கவும்."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "இந்த நிரல்கள் ஏற்கெனவே நிறுவப்பட்டுள்ளன. என்ன செய்வது என்பதைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "சரிசெய்(&P)"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "அகற்று(&R)"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "ரத்துசெய்"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "இந்தக் கணினியிலிருந்து இந்த நிரல்களை அகற்றவா?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "நிரல்கள் அகற்றப்பட்டன."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "ஒரு நிரலை அகற்ற முடியவில்லை."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "அமைவு நிரலால் தற்காலிகக் கோப்புறையை உருவாக்க முடியவில்லை."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} ஐச் சரிசெய்ய முடியவில்லை (பிழை {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} ஐ நிறுவ முடியவில்லை (பிழை {2}). அதற்குப் பிறகு எதுவும் நிறுவப்படவில்லை."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "நிரல்கள் சரிசெய்யப்பட்டன."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "அமைவு முடிந்தது."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "இந்தக் கோப்புறையில் ஏற்கெனவே கோப்புகள் அல்லது கோப்புறைகள் உள்ளன. [ProductName] அகற்றப்படும்போது கோப்புறையில் உள்ள அனைத்தும் நீக்கப்படும் - இப்போது உள்ளவையும் கூட. காலியான அல்லது புதிய கோப்புறை பாதுகாப்பான தேர்வு."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "வேறொன்றைத் தேர்வுசெய்(&C)"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "இந்தக் கோப்புறையைப் பயன்படுத்து(&U)"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] நிரல்(கள்) [3] இன் கோப்புகளைப் பயன்படுத்துகின்றன:\r\n[2]\r\nஅனைத்தையும் மூடவா?\r\n\r\nஆம்: அனைத்தையும் மூடித் தொடர் (சேமிக்காத வேலை இழக்கப்படலாம்).\r\nஇல்லை: மூடாமல் தொடர் (ஏற்கெனவே திறந்திருக்கும் நிரல்கள் மீண்டும் திறக்கப்படும் வரை பழைய கோப்புகளை வைத்திருக்கும்).\r\nரத்துசெய்: நிறுத்து."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: நிறுத்தப்பட்டது, ஏனெனில் [1] நிரல்(கள்) அதன் கோப்புகளைப் பயன்படுத்துகின்றன:\r\n[2]அவற்றை மூடி மீண்டும் முயலவும், அல்லது RPCLOSE=yes (அனைத்தையும் மூடித் தொடர்) அல்லது RPCLOSE=no (மூடாமல் தொடர்) கொடுக்கவும்."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[3] இன் கோப்புறைகளில் உள்ள [1] உருப்படிகள் அதனுடன் நிறுவப்படவில்லை:\r\n[2]\r\nஅவற்றையும் நீக்கவா?\r\n\r\nஆம்: [3] உடன் அவற்றையும் நீக்கு (திரும்பப் பெற முடியாது).\r\nஇல்லை: [3] ஐ அகற்றி அவற்றை வைத்திரு.\r\nரத்துசெய்: நிறுத்து."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: நிறுத்தப்பட்டது, ஏனெனில் அதன் கோப்புறைகளில் உள்ள [1] உருப்படிகள் அதனுடன் நிறுவப்படவில்லை:\r\n[2]RPEXTRA=delete (அவற்றையும் நீக்கு) அல்லது RPEXTRA=keep (அவற்றை வைத்திரு) கொடுத்து மீண்டும் அகற்றவும்."
