@@ -28,9 +28,11 @@ typedef struct {
 
 typedef struct rp_ui rp_ui_t;
 
-// A property-setting custom action (type 51) of the dialogs (RFC-0012: the chosen language's texts).
+// A custom action of the dialogs: type 51 sets a property (RFC-0012: the chosen language's texts),
+// type 1 calls the helper DLL (source "RpCa"; RFC-0028: RpLangApply).
 typedef struct {
     const char *action, *source, *target;
+    int         type;
 } rp_ui_ca_t;
 
 struct rp_ui {
@@ -40,7 +42,8 @@ struct rp_ui {
     size_t           prop_count;
     rp_ui_seq_t     *seqs;          // InstallUISequence rows
     size_t           seq_count;
-    rp_ui_ca_t      *cas;           // CustomAction rows (type 51), sequenced in seqs
+    rp_ui_ca_t      *cas;           // CustomAction rows, sequenced in seqs
+    bool             lang_table;    // RFC-0028: the texts are in RpText, set by the helper's RpLangApply
     size_t           ca_count;
     void            *priv;
 };

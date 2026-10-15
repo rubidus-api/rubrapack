@@ -158,6 +158,9 @@ static const rule_t rules[] = {
     R("ListBox", "Text", "Text"),
     R("ComboBox", "Property", "Identifier"), RN("ComboBox", "Order", 1, 32767), R("ComboBox", "Value", "Formatted"),
     R("ComboBox", "Text", "Text"),
+    // rubrapack's own (RFC-0028): a dialog language's value of a property, set by RpLangApply.
+    R("RpText", "Lang", "Identifier"), R("RpText", "Key", "Identifier"), R("RpText", "Text", "Text"),
+    RN("RpText", "Format", 0, 1),
 };
 
 static const rp_msi_wcolumn_t validation_cols[] = {

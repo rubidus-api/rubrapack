@@ -1187,11 +1187,14 @@ static void lower_helper_actions(pkg_t *pk) {
     // [ui] details: the progress page's box, filled by the helper DLL from the log as it grows.
     bool details = ir->ui_details && ir->ui != RP_UI_NONE && !ir->module && part_len > 0;
     pk->details = details;
-    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details) {
+    // RFC-0028: past RP_UI_LANG_ACTIONS the dialogs' texts are put in place by RpLangApply (ui.c).
+    bool lang_table = ir->ui != RP_UI_NONE && ir->ui_lang_count > RP_UI_LANG_ACTIONS;
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || lang_table) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
-                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : pk->any_purge ? "recursive = true" : guard ? "guard = true" : "[ui] save-log",
+                           pk->any_qword ? "type = \"qword\"" : pk->any_rplan ? "upgrade = false" : pk->any_purge ? "recursive = true" : guard ? "guard = true"
+                           : lang_table ? "[ui] languages past seven" : "[ui] save-log",
                            arch_text(ir->arch));
             pk->reg_bad = true;
         }
@@ -1985,8 +1988,8 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
             s_(&pk->aui, pk->ui->seqs[i].action); s_(&pk->aui, pk->ui->seqs[i].condition); i_(&pk->aui, pk->ui->seqs[i].sequence);
         }
     }
-    for (size_t i = 0; pk->ui && i < pk->ui->ca_count; ++i) {       // RFC-0012: set-property actions
-        s_(&pk->customaction, pk->ui->cas[i].action); i_(&pk->customaction, 51); s_(&pk->customaction, pk->ui->cas[i].source);
+    for (size_t i = 0; pk->ui && i < pk->ui->ca_count; ++i) {       // RFC-0012: set-property actions; RFC-0028: RpLangApply
+        s_(&pk->customaction, pk->ui->cas[i].action); i_(&pk->customaction, pk->ui->cas[i].type); s_(&pk->customaction, pk->ui->cas[i].source);
         s_(&pk->customaction, pk->ui->cas[i].target);
     }
     for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {      // ui's Binary rows into ours

@@ -292,6 +292,7 @@ typedef struct {
     proven_allocator_t alloc;
     const rp_ir_t     *ir;
     bool               multi;           // more than one language
+    bool               table;           // ... past RP_UI_LANG_ACTIONS: the texts are RpText rows (RFC-0028)
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
     bool               details;         // the progress page has its details box (the helper DLL is there)
@@ -311,7 +312,7 @@ typedef struct {
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext, rptext;
     rp_ui_prop_t      *props;
     size_t             nprops, capprops;
     rp_ui_seq_t       *seqs;
@@ -359,6 +360,8 @@ static const rp_msi_wcolumn_t listbox_cols[] = { { "Property", KEY_S(72) }, { "O
     { "Text", L_N(64) } };
 static const rp_msi_wcolumn_t combo_cols[] = { { "Property", KEY_S(72) }, { "Order", KEY_I2 }, { "Value", S(64) },
     { "Text", L_N(64) } };
+// RFC-0028: a language's value of a property (Key) - Format 1: the installer formats it first.
+static const rp_msi_wcolumn_t rptext_cols[] = { { "Lang", KEY_S(16) }, { "Key", KEY_S(72) }, { "Text", L_N(0) }, { "Format", I2 } };
 
 static void rows_init(rows_t *r, const char *name, const rp_msi_wcolumn_t *cols, size_t n) {
     *r = (rows_t){ .cols = cols, .ncols = n, .name = name };
@@ -453,7 +456,12 @@ static void seq(ctx_t *c, const char *action, const char *cond, int n) {
 }
 
 static void ca(ctx_t *c, const char *action, const char *source, const char *target) {
-    if (grow(c, (void **)&c->cas, &c->capcas, c->ncas, sizeof *c->cas)) c->cas[c->ncas++] = (rp_ui_ca_t){ action, source, target };
+    if (grow(c, (void **)&c->cas, &c->capcas, c->ncas, sizeof *c->cas)) c->cas[c->ncas++] = (rp_ui_ca_t){ action, source, target, 51 };
+}
+
+// An immediate action of the helper DLL (Binary RpCa, which lower.c puts in).
+static void ca_dll(ctx_t *c, const char *action, const char *entry) {
+    if (grow(c, (void **)&c->cas, &c->capcas, c->ncas, sizeof *c->cas)) c->cas[c->ncas++] = (rp_ui_ca_t){ action, "RpCa", entry, 1 };
 }
 
 static const char *lang_code(const ctx_t *c, size_t li) { return c->ir->ui_lang_count ? c->ir->ui_langs[li].code : "en"; }
@@ -1228,8 +1236,10 @@ static void language_dlg(ctx_t *c) {
     // Four languages or more do not fit the two lines under the heading: the line is then the
     // language chosen in advance (the user's), whose texts are already in place.
     if (c->nlang > 3) text = T(c, "LanguageText");
+    // Past RP_UI_LANG_ACTIONS the heading does not fit either: it too is the language's (RFC-0028).
+    title = c->table ? TT(c, "LanguageTitle") : keep(c, "{\\RpTitle_en}", title);
     dialog(c, d, 370, 270, 3, "Lang", "Next", "Cancel");
-    frame_text(c, d, keep(c, "{\\RpTitle_en}", title), text);
+    frame_text(c, d, title, text);
     int h = 14 * (int)c->nlang;
     // The buttons set RPLANGUAGEUI, which has a Property row (ICE34); RPLANGUAGE itself has none, so
     // that a missing one means "not given on the command line". Next copies it back first.
@@ -1308,6 +1318,28 @@ static void page_event(ctx_t *c, const char *ev, const char *arg, const char *cn
     c->rtl = false;
 }
 
+// The set of dialogs: RpRtl while a right-to-left language is chosen, and the error dialog of
+// that set (the engine shows the one ErrorDialog names).
+static void rtl_rows(ctx_t *c) {
+    if (c->rtl_any) {
+        const char *rtl = "";
+        for (size_t li = 1; li < c->nlang; ++li) {
+            if (c->ir->ui_langs[li].rtl) rtl = keep(c, rtl, keep(c, *rtl ? " OR " : "", lang_cond(c, li)));
+        }
+        ca(c, "RpRtlSet", "RpRtl", "1");
+        seq(c, "RpRtlSet", rtl, 21);
+        ca(c, "RpRtlErr", "ErrorDialog", "RpErrorDlg_RTL");
+        seq(c, "RpRtlErr", "RpRtl", 22);
+        if (c->page) {
+            const char *ltr = keep(c, "NOT (", keep(c, rtl, ")"));
+            page_event(c, "[RpRtl]", "1", rtl);
+            page_event(c, "[RpRtl]", "{}", ltr);
+            page_event(c, "[ErrorDialog]", "RpErrorDlg_RTL", rtl);
+            page_event(c, "[ErrorDialog]", "RpErrorDlg", ltr);
+        }
+    }
+}
+
 static void language_rows(ctx_t *c) {
     int n = 0;
     char name[40];
@@ -1342,25 +1374,7 @@ static void language_rows(ctx_t *c) {
         ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
         seq(c, "RpLangUi", NULL, 20);
     }
-    // The set of dialogs: RpRtl while a right-to-left language is chosen, and the error dialog of
-    // that set (the engine shows the one ErrorDialog names).
-    if (c->rtl_any) {
-        const char *rtl = "";
-        for (size_t li = 1; li < c->nlang; ++li) {
-            if (c->ir->ui_langs[li].rtl) rtl = keep(c, rtl, keep(c, *rtl ? " OR " : "", lang_cond(c, li)));
-        }
-        ca(c, "RpRtlSet", "RpRtl", "1");
-        seq(c, "RpRtlSet", rtl, 21);
-        ca(c, "RpRtlErr", "ErrorDialog", "RpErrorDlg_RTL");
-        seq(c, "RpRtlErr", "RpRtl", 22);
-        if (c->page) {
-            const char *ltr = keep(c, "NOT (", keep(c, rtl, ")"));
-            page_event(c, "[RpRtl]", "1", rtl);
-            page_event(c, "[RpRtl]", "{}", ltr);
-            page_event(c, "[ErrorDialog]", "RpErrorDlg_RTL", rtl);
-            page_event(c, "[ErrorDialog]", "RpErrorDlg", ltr);
-        }
-    }
+    rtl_rows(c);
     for (size_t li = 0; li < c->nlang; ++li) {
         const char *code = lang_code(c, li), *cnd = lang_cond(c, li);
         const char *font = keep(c, "RpNormal_", code);
@@ -1395,6 +1409,50 @@ static void language_rows(ctx_t *c) {
                 // property has to be set there too, in the execute sequence.
                 if (strncmp(r->key, "Act_", 4) == 0 && c->nseqs) c->seqs[c->nseqs - 1].exec = true;
             }
+        }
+    }
+}
+
+// RFC-0028: past RP_UI_LANG_ACTIONS the texts are rows of RpText (Lang, Key, Text, Format) and the
+// helper DLL's RpLangApply puts the chosen language's in place: at 19 in both sequences, where it
+// first settles RPLANGUAGE by RP_UILANGS ("1042=ko;..." in the order of [ui] languages: the user's
+// LANGID, then the system's, else English - as RpLangU_*, RpLangS_* and RpLangEn do), and on the
+// language page's Next. Format 1: a text the installer formats first, as a type-51 action's target.
+// DefaultUIFont is a row too. English's settled texts are also the properties' defaults.
+static void language_table(ctx_t *c) {
+    const char *map = "";
+    for (size_t li = 1; li < c->nlang; ++li) {
+        const rp_ir_ui_lang_t *L = &c->ir->ui_langs[li];
+        for (size_t j = 0; j < L->langid_count; ++j) {
+            char id[16];
+            snprintf(id, sizeof id, "%u=", (unsigned)L->langids[j]);
+            map = keep(c, map, keep(c, id, keep(c, L->code, ";")));
+        }
+    }
+    prop(c, "RP_UILANGS", map);
+    ca_dll(c, "RpLangApply", "RpLangApply");
+    seq(c, "RpLangApply", NULL, 19);
+    if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
+    if (c->page) {
+        prop(c, "RPLANGUAGEUI", "en");
+        ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
+        seq(c, "RpLangUi", NULL, 20);
+        page_event(c, "DoAction", "RpLangApply", NULL);
+    }
+    rtl_rows(c);
+    rows_t *t = &c->rptext;
+    for (size_t li = 0; li < c->nlang; ++li) {
+        const char *code = lang_code(c, li);
+        s_(c, t, code); s_(c, t, "DefaultUIFont"); s_(c, t, keep(c, "RpNormal_", code)); i_(c, t, 0);
+        for (size_t k = 0; k < c->nreg; ++k) {
+            const regtext_t *r = &c->reg[k];
+            const char *src = r->src[li] ? r->src[li] : "";
+            const char *pre = r->title ? keep(c, "{\\RpTitle_", keep(c, code, "}")) : "";
+            const char *v = settle(c, src);
+            const char *target = keep(c, "RpT_", r->key);
+            const char *val = keep(c, pre, v ? v : src);
+            if (li == 0 && v && val[0]) prop(c, target, val);
+            s_(c, t, code); s_(c, t, target); s_(c, t, val); i_(c, t, v ? 0 : 1);
         }
     }
 }
@@ -1503,7 +1561,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     *out = NULL;
     ctx_t *c = rp_mem_alloc(alloc, 1, sizeof *c);
     rp_ui_t *ui = rp_mem_alloc(alloc, 1, sizeof *ui);
-    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 12, sizeof *tables);
+    rp_msi_wtable_t *tables = rp_mem_alloc(alloc, 13, sizeof *tables);
     if (c == NULL || ui == NULL || tables == NULL) {
         rp_mem_free(alloc, c);
         rp_mem_free(alloc, ui);
@@ -1515,6 +1573,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->ir = ir;
     c->nlang = ir->ui_lang_count ? ir->ui_lang_count : 1;
     c->multi = c->nlang > 1;
+    c->table = c->nlang > RP_UI_LANG_ACTIONS;
     c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
     c->details = in->details;
     c->details_dll = in->helper;
@@ -1530,6 +1589,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->combo, "ComboBox", combo_cols, 4);
     rows_init(&c->listbox, "ListBox", listbox_cols, 4);
     rows_init(&c->acttext, "ActionText", acttext_cols, 3);
+    rows_init(&c->rptext, "RpText", rptext_cols, 4);
 
     // Fonts: each language's face (P1a: Hangul shows in the Korean face), Segoe UI for English.
     // With several languages the styles carry the language's code, and the chosen language picks
@@ -1654,11 +1714,12 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     }
     c->rtl = false;
     merge_rows(c);
-    if (c->multi) language_rows(c);
+    if (c->table) language_table(c);
+    else if (c->multi) language_rows(c);
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext };
+    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext };
     size_t nt = 0;
-    for (size_t i = 0; i < 12; ++i) {
+    for (size_t i = 0; i < 13; ++i) {
         rows_t *r = all[i];
         // FilesInUse fills its ListBox from the ListBox table, which must exist even when empty
         // (error 2205 otherwise, and the dialog is skipped: observed). ControlCondition is kept
@@ -1674,6 +1735,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     ui->seq_count = c->nseqs;
     ui->cas = c->cas;
     ui->ca_count = c->ncas;
+    ui->lang_table = c->table;
     ui->priv = c;
     if (c->nomem) {
         rp_ui_free(alloc, ui);
@@ -1691,8 +1753,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext };
-        for (size_t i = 0; i < 12; ++i) rp_mem_free(alloc, all[i]->cells);
+        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext };
+        for (size_t i = 0; i < 13; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
         rp_mem_free(alloc, c->props);

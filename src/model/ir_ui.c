@@ -365,8 +365,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 // English is always there
             } else if (ui_lang_index(ir, code) >= 0) {
                 ERR(c, lk->pos, "RP1301", "language '%s' is listed twice", code);
-            } else if (ir->ui_lang_count == RP_UI_LANG_MAX) {
-                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_MAX - 1);
+            } else if (ir->ui_lang_count == RP_UI_LANG_LIST) {        // the page's one column (RFC-0028)
+                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_LIST - 1);
             } else {
                 memcpy(ir->ui_langs[ir->ui_lang_count++].code, code, n + 1);
             }

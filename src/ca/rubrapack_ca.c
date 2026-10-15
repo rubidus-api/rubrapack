@@ -41,6 +41,8 @@
 //
 // Wiping at removal (DECISIONS 2026-10-11): RpPurgePrepare, RpPurge - described where they are.
 //
+// The dialogs' languages past seven (RFC-0028): RpLangApply - described where it is.
+//
 // Cleaning up later (RFC-0026):
 //   RpCleanupPrepare immediate: the package's folders (RP_CLEANUP_DIRS, Directory keys), its scope
 //                   and ProductCode, and where its cleanup folder is, for the commit action.
@@ -2898,5 +2900,104 @@ __declspec(dllexport) UINT __stdcall RpDirCheck(MSIHANDLE h) {
     MsiSetPropertyW(h, L"RP_DIR_NOTEMPTY", holds ? L"1" : L"");
     if (prop) HeapFree(GetProcessHeap(), 0, prop);
     if (dir) HeapFree(GetProcessHeap(), 0, dir);
+    return ERROR_SUCCESS;
+}
+
+// ---- the dialogs' languages past seven (RFC-0028) -------------------------------------------------
+//
+// RpLangApply, immediate: in both sequences (19) and as a DoAction of the language page's Next.
+// RPLANGUAGE, when no command line or page gave it: the first language of RP_UILANGS
+// ("1042=ko;1041=ja;...", the order of [ui] languages) whose LANGID is UserLanguageID, then
+// SystemLanguageID, else "en". Then each row of RpText (Lang, Key, Text, Format) for that language
+// (an unknown code: English's) becomes the property Key - formatted first when Format is 1, as a
+// set-property action's target is. It never fails the installation.
+
+// The code RP_UILANGS gives the LANGID in `id`, copied to out (16 units), or false.
+static bool uilang_for(const wchar_t *map, const wchar_t *id, wchar_t out[16]) {
+    size_t n = id ? wcslen(id) : 0;
+    for (const wchar_t *p = map; n && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
+        if (wcsncmp(p, id, n) != 0 || p[n] != L'=') continue;
+        const wchar_t *code = p + n + 1, *end = wcschr(code, L';');
+        size_t len = end ? (size_t)(end - code) : wcslen(code);
+        if (len == 0 || len >= 16) return false;
+        wmemcpy(out, code, len);
+        out[len] = 0;
+        return true;
+    }
+    return false;
+}
+
+// Field `f` of a record as a heap string (any length), or NULL.
+static wchar_t *rec_string(MSIHANDLE rec, UINT f) {
+    DWORD n = 0;
+    wchar_t probe[1] = L"";
+    if (MsiRecordGetStringW(rec, f, probe, &n) != ERROR_MORE_DATA && n == 0) {
+        wchar_t *empty = HeapAlloc(GetProcessHeap(), 0, sizeof(wchar_t));
+        if (empty) *empty = 0;
+        return empty;
+    }
+    ++n;
+    wchar_t *s = HeapAlloc(GetProcessHeap(), 0, n * sizeof *s);
+    if (s && MsiRecordGetStringW(rec, f, s, &n) != ERROR_SUCCESS) {
+        HeapFree(GetProcessHeap(), 0, s);
+        s = NULL;
+    }
+    return s;
+}
+
+// Sets the rows of language `code`; how many there were.
+static size_t lang_rows(MSIHANDLE h, MSIHANDLE db, const wchar_t *code) {
+    MSIHANDLE view = 0, rec = 0, arg = MsiCreateRecord(1);
+    size_t n = 0;
+    if (arg == 0) return 0;
+    MsiRecordSetStringW(arg, 1, code);
+    if (MsiDatabaseOpenViewW(db, L"SELECT `Key`, `Text`, `Format` FROM `RpText` WHERE `Lang` = ?", &view) == ERROR_SUCCESS &&
+        MsiViewExecute(view, arg) == ERROR_SUCCESS) {
+        while (MsiViewFetch(view, &rec) == ERROR_SUCCESS) {
+            wchar_t *key = rec_string(rec, 1), *text = rec_string(rec, 2), *out = NULL;
+            if (key && text && MsiRecordGetInteger(rec, 3) == 1) {
+                MSIHANDLE fr = MsiCreateRecord(1);
+                DWORD m = 0;
+                if (fr && MsiRecordSetStringW(fr, 0, text) == ERROR_SUCCESS && MsiFormatRecordW(h, fr, L"", &m) == ERROR_MORE_DATA &&
+                    (out = HeapAlloc(GetProcessHeap(), 0, ((size_t)m + 1) * sizeof *out)) != NULL) {
+                    ++m;
+                    if (MsiFormatRecordW(h, fr, out, &m) != ERROR_SUCCESS) out[0] = 0;
+                }
+                if (fr) MsiCloseHandle(fr);
+            }
+            if (key && text) MsiSetPropertyW(h, key, out ? out : text);
+            ++n;
+            if (out) HeapFree(GetProcessHeap(), 0, out);
+            if (key) HeapFree(GetProcessHeap(), 0, key);
+            if (text) HeapFree(GetProcessHeap(), 0, text);
+            MsiCloseHandle(rec);
+        }
+    }
+    if (view) MsiCloseHandle(view);
+    MsiCloseHandle(arg);
+    return n;
+}
+
+__declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {
+    wchar_t *lang = get_property(h, L"RPLANGUAGE");
+    wchar_t code[16] = L"en";
+    if (lang && lang[0] && wcslen(lang) < 16) {
+        wcscpy(code, lang);
+    } else {
+        wchar_t *map = get_property(h, L"RP_UILANGS"), *ul = get_property(h, L"UserLanguageID"), *sl = get_property(h, L"SystemLanguageID");
+        if (!uilang_for(map, ul, code) && !uilang_for(map, sl, code)) wcscpy(code, L"en");
+        MsiSetPropertyW(h, L"RPLANGUAGE", code);
+        if (map) HeapFree(GetProcessHeap(), 0, map);
+        if (ul) HeapFree(GetProcessHeap(), 0, ul);
+        if (sl) HeapFree(GetProcessHeap(), 0, sl);
+    }
+    MSIHANDLE db = MsiGetActiveDatabase(h);
+    if (db) {
+        size_t n = lang_rows(h, db, code);
+        if (n == 0 && wcscmp(code, L"en") != 0) n = lang_rows(h, db, L"en");
+        log_line(h, L"rubrapack: language %ls: %lu texts", code, (unsigned long)n);
+        MsiCloseHandle(db);
+    }
+    if (lang) HeapFree(GetProcessHeap(), 0, lang);
     return ERROR_SUCCESS;
 }

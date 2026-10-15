@@ -355,8 +355,11 @@ typedef struct {
 } rp_ir_llabels_t;
 
 // The languages of the dialogs (RFC-0012): English always, first and the default; [ui] languages
-// adds the others.
-enum { RP_UI_LANG_MAX = 8, RP_UI_LANGID_MAX = 16 };
+// adds the others. Up to RP_UI_LANG_ACTIONS (English with seven) each text of each language is a
+// set-property action; past it the texts are rows of the RpText table that the helper DLL puts in
+// place (RFC-0028).
+// The language page lists them in one column of RP_UI_LANG_LIST radio buttons.
+enum { RP_UI_LANG_MAX = 64, RP_UI_LANG_ACTIONS = 8, RP_UI_LANG_LIST = 12, RP_UI_LANGID_MAX = 16 };
 typedef struct {
     char     code[8];           // "en", "ko", "zh_TW", ...
     char    *name;              // [ui] name-xx: the language page's label, or NULL (built in)

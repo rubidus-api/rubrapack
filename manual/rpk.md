@@ -1174,7 +1174,9 @@ Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (Brazil), `pt_PT` (Portu
 (Azerbaijani in Latin script). Any other language is supported by adding its file - `<code>.po`, in the
 PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
 or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
-gettext names its files. One package holds English and at most seven more languages.
+gettext names its files. One package holds English and at most eleven more languages. With up to
+seven, each text of each language is an action of its own; with eight or more, the texts are rows
+of a table (`RpText`) that rubrapack's helper DLL puts in place when the language is chosen.
 
 ```po
 msgid ""
