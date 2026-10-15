@@ -1896,6 +1896,7 @@ __declspec(dllexport) UINT __stdcall RpPurge(MSIHANDLE h) {
 // Texts: the RpPreMaint* properties, as the preflight's.
 
 #include "rp_ask.h"
+#include "rp_script.h"
 
 static wchar_t *maint_text(MSIHANDLE h, const wchar_t *id) {
     wchar_t *text = pre_text(h, id);
@@ -2406,12 +2407,40 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // apart (x62, ca, uz, bn, 0.46.0). So for every language that is not Chinese, Japanese or Korean
 // the binding is off: its own face (Segoe UI, Leelawadee UI, Nirmala UI) has its letters, and the
 // system's font linking still draws a Korean or Chinese name - except in a right-to-left box, where
-// such a name is empty squares (x62, ar, fa, ur; the character set makes no difference).
+// such a name was empty squares (x62, ar, fa, ur; the character set made no difference), and in a
+// left-to-right box a Korean name after a Chinese one came apart (x62, ca). So (RFC-0027) in every
+// box with the binding off each run of Korean, Chinese, Japanese, Indic or Thai letters gets its
+// script's face itself: the run is selected (EM_SETSEL takes numbers) and given one more
+// CHARFORMAT2W written into the dialog's process beside the box's own.
+enum { DET_FMTS = 1 + RP_FACE_COUNT - 1 };                  // the box's own, then one per RP_FACE_* but NONE
+
 typedef struct {
     HANDLE proc;
-    void  *remote;
+    void  *remote;                                          // DET_FMTS formats, then a CHARRANGE
     bool   noauto;                                          // IMF_AUTOFONT off
+    bool   runs;                                            // a face per script run (binding off)
 } det_fmt_t;
+
+// The face of a script run (RP_FACE_*): Han alone by the system's UI language.
+static void det_run_face(int face, const wchar_t **name, BYTE *cs) {
+    LANGID ui = GetUserDefaultUILanguage();
+    WORD pri = PRIMARYLANGID(ui), sub = SUBLANGID(ui);
+    if (face == RP_FACE_HAN) {
+        face = pri == LANG_JAPANESE ? RP_FACE_KANA : pri == LANG_CHINESE ? -1 : RP_FACE_HANGUL;
+        if (face == -1) {
+            bool trad = sub == SUBLANG_CHINESE_TRADITIONAL || sub == SUBLANG_CHINESE_HONGKONG || sub == SUBLANG_CHINESE_MACAU;
+            *name = trad ? L"Microsoft JhengHei UI" : L"Microsoft YaHei UI";
+            *cs = trad ? CHINESEBIG5_CHARSET : GB2312_CHARSET;
+            return;
+        }
+    }
+    switch (face) {
+    case RP_FACE_KANA:  *name = L"Yu Gothic UI";  *cs = SHIFTJIS_CHARSET; return;
+    case RP_FACE_INDIC: *name = L"Nirmala UI";    *cs = DEFAULT_CHARSET; return;
+    case RP_FACE_THAI:  *name = L"Leelawadee UI"; *cs = THAI_CHARSET; return;
+    default:            *name = L"Malgun Gothic"; *cs = HANGEUL_CHARSET; return;
+    }
+}
 
 static BYTE det_charset(LCID lcid) {
     static const struct { WORD cp; BYTE cs; } map[] = {
@@ -2431,7 +2460,7 @@ static BYTE det_charset(LCID lcid) {
 static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lcid) {
     DWORD pid = 0;
     GetWindowThreadProcessId(edit, &pid);
-    fm->proc = pid ? OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid) : NULL;
+    fm->proc = pid ? OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid) : NULL;
     if (fm->proc == NULL) return;
     BOOL mine = FALSE, theirs = FALSE;
     if (!IsWow64Process(GetCurrentProcess(), &mine) || !IsWow64Process(fm->proc, &theirs)) {
@@ -2447,20 +2476,33 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     cf.bCharSet = det_charset(lcid);
     fm->noauto = cf.bCharSet != SHIFTJIS_CHARSET && cf.bCharSet != GB2312_CHARSET && cf.bCharSet != HANGEUL_CHARSET &&
                  cf.bCharSet != CHINESEBIG5_CHARSET;
+    fm->runs = fm->noauto;
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
     size_t fl = face && face[0] ? wcslen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
     memcpy(cf.szFaceName, face, (fl + 1) * sizeof *face);
+    // The box's format, then each script run's (face and character set only), then a CHARRANGE.
+    CHARFORMAT2W all[DET_FMTS];
+    all[0] = cf;
+    for (int i = 1; i < DET_FMTS; ++i) {
+        const wchar_t *name;
+        memset(&all[i], 0, sizeof all[i]);
+        all[i].cbSize = sizeof all[i];
+        all[i].dwMask = CFM_FACE | CFM_CHARSET;
+        det_run_face(i, &name, &all[i].bCharSet);
+        wcscpy(all[i].szFaceName, name);
+    }
+    size_t size = sizeof all + sizeof(CHARRANGE);
     if (mine == theirs) {
-        fm->remote = VirtualAllocEx(fm->proc, NULL, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        fm->remote = VirtualAllocEx(fm->proc, NULL, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     } else {
         // A 32-bit helper (an x86 package) and the 64-bit dialog: the pointer it sends has 32 bits,
         // so the format goes to an address below 2 GiB (the same whether the value is widened with
         // or without its sign), the first of these places that is free.
         for (uintptr_t at = 0x10000000; at < 0x70000000 && fm->remote == NULL; at += 0x01000000)
-            fm->remote = VirtualAllocEx(fm->proc, (void *)at, sizeof cf, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+            fm->remote = VirtualAllocEx(fm->proc, (void *)at, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     }
-    if (fm->remote && !WriteProcessMemory(fm->proc, fm->remote, &cf, sizeof cf, NULL)) {
+    if (fm->remote && !WriteProcessMemory(fm->proc, fm->remote, all, sizeof all, NULL)) {
         VirtualFreeEx(fm->proc, fm->remote, 0, MEM_RELEASE);
         fm->remote = NULL;
     }
@@ -2475,6 +2517,33 @@ static void det_font_apply(const det_fmt_t *fm, HWND edit) {
         LRESULT o = det_send(edit, WM_USER + 121, 0, 0);    // EM_GETLANGOPTIONS
         det_send(edit, WM_USER + 120, 0, o & ~(LRESULT)0x0002);  // EM_SETLANGOPTIONS without IMF_AUTOFONT
     }
+}
+
+// Where the box's text ends (its next insertion point), or -1.
+static LONG det_text_end(const det_fmt_t *fm, HWND edit) {
+    if (fm->remote == NULL) return -1;
+    CHARRANGE *at = (CHARRANGE *)((CHARFORMAT2W *)fm->remote + DET_FMTS), cr = { -1, -1 };
+    det_send(edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+    det_send(edit, EM_EXGETSEL, 0, (LPARAM)at);
+    if (!ReadProcessMemory(fm->proc, at, &cr, sizeof cr, NULL)) return -1;
+    return cr.cpMin;
+}
+
+// The script runs of `text` (just inserted at `base`) in their faces; then the insertion point
+// back in the box's own format, so the next lines start in it.
+static void det_font_runs(const det_fmt_t *fm, HWND edit, LONG base, const wchar_t *text, size_t n) {
+    if (!fm->runs || fm->remote == NULL || base < 0) return;
+    size_t i = 0, pos = 0;
+    rp_script_run_t r;
+    bool any = false;
+    while (rp_script_next((const uint16_t *)text, n, &i, &pos, &r)) {
+        det_send(edit, EM_SETSEL, (WPARAM)(base + (LONG)r.from), (LPARAM)(base + (LONG)r.to));
+        det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)((CHARFORMAT2W *)fm->remote + r.face));
+        any = true;
+    }
+    if (!any) return;
+    det_send(edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+    det_send(edit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)fm->remote);
 }
 
 static void det_font_close(det_fmt_t *fm) {
@@ -2766,9 +2835,11 @@ __declspec(dllexport) UINT __stdcall RpDetails(MSIHANDLE h) {
             if (add && o) {
                 add[o] = 0;
                 det_send(win.edit, EM_SETREADONLY, FALSE, 0);
+                LONG base = fmt.runs ? det_text_end(&fmt, win.edit) : -1;
                 det_send(win.edit, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
                 det_send(win.edit, EM_REPLACESEL, FALSE, (LPARAM)add);
                 if (shown == 0) det_font_apply(&fmt, win.edit);     // the first lines: in case the empty box kept its own
+                det_font_runs(&fmt, win.edit, base, add, o);
                 det_send(win.edit, EM_SETREADONLY, TRUE, 0);
                 det_send(win.edit, WM_VSCROLL, SB_BOTTOM, 0);
             }

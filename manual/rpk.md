@@ -1221,9 +1221,11 @@ msgstr "[ProductName] セットアップ"
   console has no right-to-left layout.
 - **Character sets**: the details box draws each language in its own character set, taken from the
   language's LANGID, whatever language Windows is in (a Korean page shows a path's backslash as
-  `₩`, as Korean Windows does). A Korean, Chinese or Japanese file name in another language's box
-  keeps that box's face and backslashes; in a right-to-left box (`ar`, `he`, `fa`, `ur`) such a name
-  shows as empty squares.
+  `₩`, as Korean Windows does). In any other language's box a Korean, Chinese, Japanese, Indic or
+  Thai file name is drawn in its own script's face - Malgun Gothic, Yu Gothic UI, Microsoft YaHei UI
+  or JhengHei UI (a name in Chinese characters alone: by Windows' display language), Nirmala UI,
+  Leelawadee UI - while the rest of the line keeps the box's face and backslashes, right-to-left
+  boxes (`ar`, `he`, `fa`, `ur`) included.
 - **Starting one**: copy one of `resources/lang/*.po`, change the header, translate the `msgstr`
   lines.
   `RUBRAPACK_LANG_MISSING=<file>` makes a run append every text the chosen pack lacks to that file.
