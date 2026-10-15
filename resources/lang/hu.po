@@ -2715,7 +2715,7 @@ msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
 msgstr "a telepített alkalmazások listájának ikonja: [arp] icon = \"app.ico\""
 
 msgid "the input ended before every question was answered; nothing was written"
-msgstr "a bemenet véget ért, mielőtt minden kérdésre válasz érkezett volna; semmi sem lett megírva"
+msgstr "a bemenet véget ért, mielőtt minden kérdésre válasz érkezett volna; semmi sem íródott ki"
 
 msgid "the key file is larger than 4 MiB"
 msgstr "a kulcsfájl nagyobb 4 MiB-nál"
