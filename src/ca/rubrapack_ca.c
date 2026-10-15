@@ -2400,9 +2400,13 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // ANSI code page, RpDetLcid_<code>; none for a Unicode-only language such as Hindi): with the
 // default set RichEdit's font binding gives the Chinese or Japanese characters of a line the
 // system's own CJK face (Malgun Gothic on a Korean Windows), and the path after them stays in it,
-// with won signs for backslashes (x59, zh_TW). Vietnamese letters with two marks (ộ) are not in
-// code page 1258's precomposed set, so the binding moved them, and the path after them, to that
-// CJK face too (x62, vi): there the binding is turned off - Segoe UI has every Vietnamese letter.
+// with won signs for backslashes (x59, zh_TW). A letter outside the language's code page (Vietnamese
+// ộ) was moved by the binding, with the path after it, to that CJK face too (x62, vi), and so was
+// a Korean file name in any other language's box - the paths after it got won signs, Bengali fell
+// apart (x62, ca, uz, bn, 0.46.0). So for every language that is not Chinese, Japanese or Korean
+// the binding is off: its own face (Segoe UI, Leelawadee UI, Nirmala UI) has its letters, and the
+// system's font linking still draws a Korean or Chinese name - except in a right-to-left box, where
+// such a name is empty squares (x62, ar, fa, ur; the character set makes no difference).
 typedef struct {
     HANDLE proc;
     void  *remote;
@@ -2441,7 +2445,8 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
     cf.yHeight = 8 * 20;                                    // twips
     cf.bCharSet = det_charset(lcid);
-    fm->noauto = cf.bCharSet == VIETNAMESE_CHARSET;
+    fm->noauto = cf.bCharSet != SHIFTJIS_CHARSET && cf.bCharSet != GB2312_CHARSET && cf.bCharSet != HANGEUL_CHARSET &&
+                 cf.bCharSet != CHINESEBIG5_CHARSET;
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
     size_t fl = face && face[0] ? wcslen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;

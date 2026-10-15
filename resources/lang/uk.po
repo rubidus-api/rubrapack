@@ -3253,7 +3253,7 @@ msgstr "&Скинути"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "&Використання диска"
+msgstr "&Місце на диску"
 
 msgctxt "installer"
 msgid "DiskCostTitle"
@@ -3797,7 +3797,7 @@ msgstr "&Вибрати іншу"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "Використати &цю папку"
+msgstr "&Цю папку"
 
 msgctxt "installer"
 msgid "PreflightAsk"

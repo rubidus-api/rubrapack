@@ -3165,7 +3165,7 @@ msgstr "&Ne"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Bandyti dar kartą"
+msgstr "&Kartoti"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3253,7 +3253,7 @@ msgstr "&Atkurti"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "&Disko naudojimas"
+msgstr "Vieta &diske"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

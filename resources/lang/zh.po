@@ -3253,7 +3253,7 @@ msgstr "重置(&S)"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "磁盘使用情况(&D)"
+msgstr "磁盘空间(&D)"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

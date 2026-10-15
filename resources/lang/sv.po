@@ -3133,7 +3133,7 @@ msgstr "y + height får vara högst 234 (linjen ovanför knapparna)"
 
 msgctxt "installer"
 msgid "Back"
-msgstr "< &Föregående"
+msgstr "< Ba&kåt"
 
 msgctxt "installer"
 msgid "Next"
@@ -3797,7 +3797,7 @@ msgstr "&Välj en annan"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Använd den här mappen"
+msgstr "&Den här mappen"
 
 msgctxt "installer"
 msgid "PreflightAsk"

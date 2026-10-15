@@ -3793,11 +3793,11 @@ msgstr "Dieser Ordner enthält bereits Dateien oder Ordner. Wenn [ProductName] e
 
 msgctxt "installer"
 msgid "DirChoose"
-msgstr "&Anderen Ordner wählen"
+msgstr "&Anderer Ordner"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Diesen Ordner verwenden"
+msgstr "&Diesen Ordner"
 
 msgctxt "installer"
 msgid "PreflightAsk"

@@ -3249,11 +3249,11 @@ msgstr "Орнатылатын мүмкіндіктерді таңдаңыз."
 
 msgctxt "installer"
 msgid "Reset"
-msgstr "&Қалпына келтіру"
+msgstr "&Қайтару"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "&Дискіні пайдалану"
+msgstr "&Диск орны"
 
 msgctxt "installer"
 msgid "DiskCostTitle"
@@ -3797,7 +3797,7 @@ msgstr "&Басқасын таңдау"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "Осы қалтаны &пайдалану"
+msgstr "Осы &қалтаны"
 
 msgctxt "installer"
 msgid "PreflightAsk"

@@ -3353,7 +3353,7 @@ msgstr "โปรแกรมเหล่านี้ใช้ไฟล์ที
 
 msgctxt "installer"
 msgid "Continue"
-msgstr "ดำเนินการต่อ(&C)"
+msgstr "ต่อไป(&C)"
 
 msgctxt "installer"
 msgid "OutOfDiskTitle"

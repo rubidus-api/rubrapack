@@ -3253,7 +3253,7 @@ msgstr "Atu&r ulang"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "Penggunaan &disk"
+msgstr "Ruang &disk"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

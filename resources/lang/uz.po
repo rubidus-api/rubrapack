@@ -3169,7 +3169,7 @@ msgstr "&Qayta urinish"
 
 msgctxt "installer"
 msgid "Ignore"
-msgstr "&E’tiborsiz qoldirish"
+msgstr "&O‘tkazish"
 
 msgctxt "installer"
 msgid "Abort"
@@ -3797,7 +3797,7 @@ msgstr "&Boshqasini tanlash"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Shu jilddan foydalanish"
+msgstr "&Shu jildni"
 
 msgctxt "installer"
 msgid "PreflightAsk"

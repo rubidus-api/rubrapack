@@ -3165,7 +3165,7 @@ msgstr "&Ne"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "Pokušaj &ponovo"
+msgstr "&Ponovi"
 
 msgctxt "installer"
 msgid "Ignore"

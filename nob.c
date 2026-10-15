@@ -446,7 +446,8 @@ static int gen_parts(const char *gen_dir, const char *gen_c) {
     static const char *const langs[] = { "ko", "ja", "zh", "zh_TW", "es", "fr", "de", "pt_BR", "ru", "it", "pt_PT", "nl",
                                            "sv", "da", "nb", "fi", "pl", "cs", "uk", "hu", "ro", "tr", "el", "vi",
                                            "th", "id", "ms", "bg", "hr", "sk", "sl", "sr", "et", "lv", "lt",
-                                           "ar", "he", "hi" };
+                                           "ar", "he", "hi", "fa", "ur", "ca", "eu", "gl", "bn", "ta", "kk",
+                                           "uz", "az" };
     for (size_t i = 0; i < COUNT(langs); ++i) {
         char path[128];
         snprintf(path, sizeof path, "resources/lang/%s.po", langs[i]);

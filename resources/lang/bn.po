@@ -3145,7 +3145,7 @@ msgstr "বাতিল করুন"
 
 msgctxt "installer"
 msgid "Install"
-msgstr "ইনস্টল করুন(&I)"
+msgstr "ইনস্টল(&I)"
 
 msgctxt "installer"
 msgid "Finish"
@@ -3165,11 +3165,11 @@ msgstr "না(&N)"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "পুনরায় চেষ্টা করুন(&R)"
+msgstr "আবার(&R)"
 
 msgctxt "installer"
 msgid "Ignore"
-msgstr "উপেক্ষা করুন(&I)"
+msgstr "উপেক্ষা(&I)"
 
 msgctxt "installer"
 msgid "Abort"
@@ -3177,7 +3177,7 @@ msgstr "থামান(&A)"
 
 msgctxt "installer"
 msgid "Exit"
-msgstr "প্রস্থান করুন(&X)"
+msgstr "প্রস্থান(&X)"
 
 msgctxt "installer"
 msgid "Browse"
@@ -3353,7 +3353,7 @@ msgstr "এই প্রোগ্রামগুলি এমন ফাইল �
 
 msgctxt "installer"
 msgid "Continue"
-msgstr "চালিয়ে যান(&C)"
+msgstr "এগোন(&C)"
 
 msgctxt "installer"
 msgid "OutOfDiskTitle"
@@ -3425,7 +3425,7 @@ msgstr "[ProductName] চালু করুন(&L)"
 
 msgctxt "installer"
 msgid "SaveLog"
-msgstr "লগ সংরক্ষণ করুন(&S)..."
+msgstr "লগ সংরক্ষণ(&S)..."
 
 msgctxt "installer"
 msgid "DetailsFull"
@@ -3797,7 +3797,7 @@ msgstr "অন্যটি বেছে নিন(&C)"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "এই ফোল্ডার ব্যবহার করুন(&U)"
+msgstr "এই ফোল্ডারই(&U)"
 
 msgctxt "installer"
 msgid "PreflightAsk"

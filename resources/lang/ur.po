@@ -3167,7 +3167,7 @@ msgstr "&نہیں"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&دوبارہ کوشش کریں"
+msgstr "&دوبارہ"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3799,7 +3799,7 @@ msgstr "&دوسرا منتخب کریں"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "یہ &فولڈر استعمال کریں"
+msgstr "یہی &فولڈر"
 
 msgctxt "installer"
 msgid "PreflightAsk"

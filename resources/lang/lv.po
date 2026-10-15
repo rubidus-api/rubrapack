@@ -3165,7 +3165,7 @@ msgstr "&Nē"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Mēģināt vēlreiz"
+msgstr "&Atkārtot"
 
 msgctxt "installer"
 msgid "Ignore"

@@ -1164,12 +1164,14 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### Language packs
 
-A language is one file. English is built into rubrapack; thirty-eight languages come with it as
+A language is one file. English is built into rubrapack; forty-eight languages come with it as
 `resources/lang/<code>.po`: `ko`, `ja`, `zh` (Simplified Chinese), `zh_TW` (Traditional Chinese, for
 Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (Brazil), `pt_PT` (Portugal), `ru`, `it`,
 `nl`, `sv`, `da`, `nb` (Norwegian Bokmål), `fi`, `pl`, `cs`, `uk`, `hu`, `ro`, `tr`, `el`, `vi`,
 `th`, `id`, `ms`, `bg`, `hr`, `sk`, `sl`, `sr` (Serbian in Latin script), `et`, `lv`, `lt`, `ar`
-(Arabic), `he` (Hebrew) and `hi` (Hindi). Any other language is supported by adding its file - `<code>.po`, in the
+(Arabic), `he` (Hebrew), `hi` (Hindi), `fa` (Persian), `ur` (Urdu), `ca` (Catalan), `eu` (Basque),
+`gl` (Galician), `bn` (Bengali), `ta` (Tamil), `kk` (Kazakh), `uz` (Uzbek in Latin script) and `az`
+(Azerbaijani in Latin script). Any other language is supported by adding its file - `<code>.po`, in the
 PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
 or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
 gettext names its files. One package holds English and at most seven more languages.
@@ -1181,7 +1183,7 @@ msgstr ""
 "X-Rubrapack-Name: 日本語\n"        # the language's name on the language page
 "X-Rubrapack-LangIDs: 1041\n"      # the Windows LANGIDs it is chosen for
 "X-Rubrapack-Font: Yu Gothic UI\n"
-"X-Rubrapack-Direction: ltr\n"     # rtl for a language read right to left (ar, he)
+"X-Rubrapack-Direction: ltr\n"     # rtl for a language read right to left (ar, he, fa, ur)
 
 # The command line: msgid is the English text as rubrapack writes it.
 msgid "cannot read '%s' (%s)"
@@ -1219,7 +1221,9 @@ msgstr "[ProductName] セットアップ"
   console has no right-to-left layout.
 - **Character sets**: the details box draws each language in its own character set, taken from the
   language's LANGID, whatever language Windows is in (a Korean page shows a path's backslash as
-  `₩`, as Korean Windows does).
+  `₩`, as Korean Windows does). A Korean, Chinese or Japanese file name in another language's box
+  keeps that box's face and backslashes; in a right-to-left box (`ar`, `he`, `fa`, `ur`) such a name
+  shows as empty squares.
 - **Starting one**: copy one of `resources/lang/*.po`, change the header, translate the `msgstr`
   lines.
   `RUBRAPACK_LANG_MISSING=<file>` makes a run append every text the chosen pack lacks to that file.

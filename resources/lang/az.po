@@ -3165,7 +3165,7 @@ msgstr "&Xeyr"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Yenidən cəhd et"
+msgstr "&Təkrarla"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3797,7 +3797,7 @@ msgstr "&Başqasını seç"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "Bu &qovluğu istifadə et"
+msgstr "Bu &qovluğu"
 
 msgctxt "installer"
 msgid "PreflightAsk"

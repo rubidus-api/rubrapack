@@ -3165,7 +3165,7 @@ msgstr "नहीं(&N)"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "पुनः प्रयास करें(&R)"
+msgstr "पुनः प्रयास(&R)"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3797,7 +3797,7 @@ msgstr "दूसरा चुनें(&C)"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "यह फ़ोल्डर उपयोग करें(&U)"
+msgstr "यही फ़ोल्डर(&U)"
 
 msgctxt "installer"
 msgid "PreflightAsk"

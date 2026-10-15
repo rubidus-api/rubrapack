@@ -3165,7 +3165,7 @@ msgstr "&No"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Torna-ho a provar"
+msgstr "Reinten&ta"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3797,7 +3797,7 @@ msgstr "&Tria'n una altra"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Fes servir aquesta carpeta"
+msgstr "&Aquesta carpeta"
 
 msgctxt "installer"
 msgid "PreflightAsk"

@@ -3253,7 +3253,7 @@ msgstr "&Redefinir"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "Utilização do &disco"
+msgstr "Uso do &disco"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

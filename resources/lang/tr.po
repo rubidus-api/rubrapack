@@ -3165,7 +3165,7 @@ msgstr "&Hayır"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Yeniden Dene"
+msgstr "&Yinele"
 
 msgctxt "installer"
 msgid "Ignore"

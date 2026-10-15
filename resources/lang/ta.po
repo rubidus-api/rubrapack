@@ -3133,11 +3133,11 @@ msgstr "y + height அதிகபட்சம் 234 ஆக இருக்க 
 
 msgctxt "installer"
 msgid "Back"
-msgstr "< பின்செல்(&B)"
+msgstr "< பின்(&B)"
 
 msgctxt "installer"
 msgid "Next"
-msgstr "அடுத்து(&N) >"
+msgstr "அடுத்து(&N)"
 
 msgctxt "installer"
 msgid "Cancel"
@@ -3165,11 +3165,11 @@ msgstr "இல்லை(&N)"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "மீண்டும் முயல்(&R)"
+msgstr "மீண்டும்(&R)"
 
 msgctxt "installer"
 msgid "Ignore"
-msgstr "புறக்கணி(&I)"
+msgstr "தவிர்(&I)"
 
 msgctxt "installer"
 msgid "Abort"
@@ -3177,7 +3177,7 @@ msgstr "நிறுத்து(&A)"
 
 msgctxt "installer"
 msgid "Exit"
-msgstr "வெளியேறு(&X)"
+msgstr "மூடு(&X)"
 
 msgctxt "installer"
 msgid "Browse"
@@ -3253,7 +3253,7 @@ msgstr "மீட்டமை(&S)"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "வட்டுப் பயன்பாடு(&D)"
+msgstr "வட்டு(&D)"
 
 msgctxt "installer"
 msgid "DiskCostTitle"
@@ -3425,7 +3425,7 @@ msgstr "[ProductName] ஐத் தொடங்கு(&L)"
 
 msgctxt "installer"
 msgid "SaveLog"
-msgstr "பதிவைச் சேமி(&S)..."
+msgstr "பதிவு(&S)..."
 
 msgctxt "installer"
 msgid "DetailsFull"
@@ -3793,11 +3793,11 @@ msgstr "இந்தக் கோப்புறையில் ஏற்கெ�
 
 msgctxt "installer"
 msgid "DirChoose"
-msgstr "வேறொன்றைத் தேர்வுசெய்(&C)"
+msgstr "வேறு(&C)"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "இந்தக் கோப்புறையைப் பயன்படுத்து(&U)"
+msgstr "இதையே(&U)"
 
 msgctxt "installer"
 msgid "PreflightAsk"

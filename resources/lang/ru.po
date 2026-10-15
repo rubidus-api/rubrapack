@@ -3169,7 +3169,7 @@ msgstr "По&вторить"
 
 msgctxt "installer"
 msgid "Ignore"
-msgstr "&Игнорировать"
+msgstr "Пр&опустить"
 
 msgctxt "installer"
 msgid "Abort"
@@ -3797,7 +3797,7 @@ msgstr "&Выбрать другую"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Использовать эту папку"
+msgstr "&Эту папку"
 
 msgctxt "installer"
 msgid "PreflightAsk"

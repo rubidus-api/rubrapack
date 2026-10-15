@@ -3253,7 +3253,7 @@ msgstr "&Berrezarri"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "&Diskoaren erabilera"
+msgstr "&Disko-lekua"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

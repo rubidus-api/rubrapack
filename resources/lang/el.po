@@ -3425,7 +3425,7 @@ msgstr "Εκκί&νηση του [ProductName]"
 
 msgctxt "installer"
 msgid "SaveLog"
-msgstr "Αποθήκευση αρ&χείου καταγραφής..."
+msgstr "&Αποθήκευση..."
 
 msgctxt "installer"
 msgid "DetailsFull"
@@ -3797,7 +3797,7 @@ msgstr "Επιλογή ά&λλου"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Χρήση αυτού του φακέλου"
+msgstr "&Αυτός ο φάκελος"
 
 msgctxt "installer"
 msgid "PreflightAsk"

@@ -3253,7 +3253,7 @@ msgstr "Set se&mula"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "Penggunaan &cakera"
+msgstr "Ruang &cakera"
 
 msgctxt "installer"
 msgid "DiskCostTitle"

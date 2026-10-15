@@ -3797,7 +3797,7 @@ msgstr "&Vybrať iný"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Použiť tento priečinok"
+msgstr "&Tento priečinok"
 
 msgctxt "installer"
 msgid "PreflightAsk"

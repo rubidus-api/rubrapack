@@ -215,12 +215,12 @@ references). Then two u16 per string id; the first ids:
 |---|---|---|---|---|
 | 1 | `09 00 01 00` | 9 | 1 | `#cab1.cab` |
 | 2 | `06 00 01 00` | 6 | 1 | `&Baiki` |
-| 3 | `0e 00 01 80` | 14 | 1 | `&Désinstaller` |
-| 4 | `0a 00 01 00` | 10 | 1 | `&Eliminare` |
-| 5 | `0f 00 01 80` | 15 | 1 | `&Eltávolítás` |
-| 6 | `0a 00 01 00` | 10 | 1 | `&Entfernen` |
+| 3 | `0a 00 01 80` | 10 | 1 | `&Bərpa et` |
+| 4 | `0e 00 01 80` | 14 | 1 | `&Désinstaller` |
+| 5 | `0a 00 01 00` | 10 | 1 | `&Eliminare` |
+| 6 | `0f 00 01 80` | 15 | 1 | `&Eltávolítás` |
 
-1086 strings in all; their bytes, back to back, are the 70929 bytes of `_StringData`.
+1323 strings in all; their bytes, back to back, are the 92743 bytes of `_StringData`.
 
 `_Columns` describes the table - its rows for `File`, the type decoded with the bit table above:
 
@@ -238,17 +238,17 @@ references). Then two u16 per string id; the first ids:
 The `File` stream itself is 20 bytes: one row, stored column by column:
 
 ```text
-84 00 4b 00 e2 03 00 46 00 80 2e 00 2f 00 00 82 01 00 00 80
+94 00 57 00 bd 04 00 46 00 80 38 00 39 00 00 82 01 00 00 80
 ```
 
 | Column | Stored |
 |---|---|
-| `File` | `84 00` -> id 132 `Hello` |
-| `Component_` | `4b 00` -> id 75 `C_185f8db32271fe25f561` |
-| `FileName` | `e2 03` -> id 994 `hello.exe` |
+| `File` | `94 00` -> id 148 `Hello` |
+| `Component_` | `57 00` -> id 87 `C_185f8db32271fe25f561` |
+| `FileName` | `bd 04` -> id 1213 `hello.exe` |
 | `FileSize` | `00 46 00 80` -> 0x80004600 ^ 0x80000000 = 17920 |
-| `Version` | `2e 00` -> id 46 `1.2.3.4` |
-| `Language` | `2f 00` -> id 47 `1033` |
+| `Version` | `38 00` -> id 56 `1.2.3.4` |
+| `Language` | `39 00` -> id 57 `1033` |
 | `Attributes` | `00 82` -> 0x8200 ^ 0x8000 = 512 |
 | `Sequence` | `01 00 00 80` -> 0x80000001 ^ 0x80000000 = 1 |
 

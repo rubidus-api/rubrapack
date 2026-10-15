@@ -78,7 +78,7 @@ both languages say the same thing.
 
 ## More languages
 
-rubrapack's pages are written in English, and thirty-eight more languages come with it as *language
+rubrapack's pages are written in English, and forty-eight more languages come with it as *language
 packs*, one file each: Korean (`ko`), Japanese (`ja`), Chinese - Simplified (`zh`) and Traditional
 (`zh_TW`) -, Spanish (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`) and of
 Portugal (`pt_PT`), Russian (`ru`), Italian (`it`), Dutch (`nl`), Swedish (`sv`), Danish (`da`),
@@ -86,7 +86,9 @@ Norwegian Bokmål (`nb`), Finnish (`fi`), Polish (`pl`), Czech (`cs`), Ukrainian
 (`hu`), Romanian (`ro`), Turkish (`tr`), Greek (`el`), Vietnamese (`vi`), Thai (`th`), Indonesian
 (`id`), Malay (`ms`), Bulgarian (`bg`), Croatian (`hr`), Slovak (`sk`), Slovenian (`sl`), Serbian
 (`sr`, Latin script), Estonian (`et`), Latvian (`lv`), Lithuanian (`lt`), Arabic (`ar`), Hebrew
-(`he`) and Hindi (`hi`). Arabic and Hebrew pages are mirrored, right to left. Each is one more code
+(`he`), Hindi (`hi`), Persian (`fa`), Urdu (`ur`), Catalan (`ca`), Basque (`eu`), Galician (`gl`),
+Bengali (`bn`), Tamil (`ta`), Kazakh (`kk`), Uzbek (`uz`, Latin script) and Azerbaijani (`az`, Latin
+script). Arabic, Hebrew, Persian and Urdu pages are mirrored, right to left. Each is one more code
 in the list (up to seven besides English) - nothing else changes:
 
 ```toml

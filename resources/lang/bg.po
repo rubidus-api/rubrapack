@@ -3145,7 +3145,7 @@ msgstr "Отказ"
 
 msgctxt "installer"
 msgid "Install"
-msgstr "&Инсталиране"
+msgstr "&Инсталирай"
 
 msgctxt "installer"
 msgid "Finish"
@@ -3165,7 +3165,7 @@ msgstr "&Не"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "&Повторен опит"
+msgstr "&Повтори"
 
 msgctxt "installer"
 msgid "Ignore"
@@ -3173,7 +3173,7 @@ msgstr "&Игнориране"
 
 msgctxt "installer"
 msgid "Abort"
-msgstr "Пре&кратяване"
+msgstr "Пре&късни"
 
 msgctxt "installer"
 msgid "Exit"
@@ -3253,7 +3253,7 @@ msgstr "Ну&лиране"
 
 msgctxt "installer"
 msgid "DiskCost"
-msgstr "Използване на ди&ска"
+msgstr "Дисково &място"
 
 msgctxt "installer"
 msgid "DiskCostTitle"
@@ -3797,7 +3797,7 @@ msgstr "Избор на &друга"
 
 msgctxt "installer"
 msgid "DirContinue"
-msgstr "&Използване на тази папка"
+msgstr "&Тази папка"
 
 msgctxt "installer"
 msgid "PreflightAsk"
