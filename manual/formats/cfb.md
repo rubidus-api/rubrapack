@@ -118,8 +118,8 @@ crashes the reader.
 
 ## Worked example: the tutorial's hello.msi
 
-The first package of the tutorial (chapter 2), built with `--reproducible`, is 212992 bytes: the
-header sector and 51 sectors of 4096 bytes. Its header:
+The first package of the tutorial (chapter 2), built with `--reproducible`, is 249856 bytes: the
+header sector and 60 sectors of 4096 bytes. Its header:
 
 | Offset | Bytes | Field | Value |
 |---|---|---|---|
@@ -146,9 +146,9 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 1 | `0x2000` | `FFFFFFFE` | directory |
 | 2 | `0x3000` | `FFFFFFFE` | mini FAT |
 | 3 | `0x4000` | 4 | mini stream |
-| 4 | `0x5000` | 5 | mini stream |
-| 5 | `0x6000` | `FFFFFFFE` | mini stream |
-| 6 | `0x7000` | 7 | `_StringData` |
+| 4 | `0x5000` | `FFFFFFFE` | mini stream |
+| 5 | `0x6000` | 6 | `_StringPool` |
+| 6 | `0x7000` | `FFFFFFFE` | `_StringPool` |
 | 7 | `0x8000` | 8 | `_StringData` |
 | 8 | `0x9000` | 9 | `_StringData` |
 | 9 | `0xA000` | 10 | `_StringData` |
@@ -157,16 +157,16 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 12 | `0xD000` | 13 | `_StringData` |
 | 13 | `0xE000` | 14 | `_StringData` |
 | 14 | `0xF000` | 15 | `_StringData` |
-| 15 | `0x10000` | `FFFFFFFE` | `_StringData` |
-| 16 | `0x11000` | 17 | `Binary.RpCa` |
-| 17 | `0x12000` | 18 | `Binary.RpCa` |
-| 18 | `0x13000` | 19 | `Binary.RpCa` |
-| 19 | `0x14000` | 20 | `Binary.RpCa` |
-| 20 | `0x15000` | 21 | `Binary.RpCa` |
-| 21 | `0x16000` | 22 | `Binary.RpCa` |
-| 22 | `0x17000` | 23 | `Binary.RpCa` |
-| 23 | `0x18000` | 24 | `Binary.RpCa` |
-| 24 | `0x19000` | 25 | `Binary.RpCa` |
+| 15 | `0x10000` | 16 | `_StringData` |
+| 16 | `0x11000` | 17 | `_StringData` |
+| 17 | `0x12000` | 18 | `_StringData` |
+| 18 | `0x13000` | 19 | `_StringData` |
+| 19 | `0x14000` | 20 | `_StringData` |
+| 20 | `0x15000` | 21 | `_StringData` |
+| 21 | `0x16000` | 22 | `_StringData` |
+| 22 | `0x17000` | 23 | `_StringData` |
+| 23 | `0x18000` | 24 | `_StringData` |
+| 24 | `0x19000` | `FFFFFFFE` | `_StringData` |
 | 25 | `0x1A000` | 26 | `Binary.RpCa` |
 | 26 | `0x1B000` | 27 | `Binary.RpCa` |
 | 27 | `0x1C000` | 28 | `Binary.RpCa` |
@@ -190,9 +190,18 @@ The sectors, and the FAT entry of each (the next sector of its chain):
 | 45 | `0x2E000` | 46 | `Binary.RpCa` |
 | 46 | `0x2F000` | 47 | `Binary.RpCa` |
 | 47 | `0x30000` | 48 | `Binary.RpCa` |
-| 48 | `0x31000` | `FFFFFFFE` | `Binary.RpCa` |
-| 49 | `0x32000` | 50 | `cab1.cab` |
-| 50 | `0x33000` | `FFFFFFFE` | `cab1.cab` |
+| 48 | `0x31000` | 49 | `Binary.RpCa` |
+| 49 | `0x32000` | 50 | `Binary.RpCa` |
+| 50 | `0x33000` | 51 | `Binary.RpCa` |
+| 51 | `0x34000` | 52 | `Binary.RpCa` |
+| 52 | `0x35000` | 53 | `Binary.RpCa` |
+| 53 | `0x36000` | 54 | `Binary.RpCa` |
+| 54 | `0x37000` | 55 | `Binary.RpCa` |
+| 55 | `0x38000` | 56 | `Binary.RpCa` |
+| 56 | `0x39000` | 57 | `Binary.RpCa` |
+| 57 | `0x3A000` | `FFFFFFFE` | `Binary.RpCa` |
+| 58 | `0x3B000` | 59 | `cab1.cab` |
+| 59 | `0x3C000` | `FFFFFFFE` | `cab1.cab` |
 
 The root directory entry, the first 128 bytes of sector 1:
 
@@ -205,8 +214,8 @@ The root directory entry, the first 128 bytes of sector 1:
 | 76 | `07 00 00 00` | child | entry 7 |
 | 80 | `84 10 0c 00 00 00 00 00 c0 00 00 00 00 00 00 46` | CLSID | `{000C1084-0000-0000-C000-000000000046}` |
 | 116 | `03 00 00 00` | start | sector 3 |
-| 120 | `80 20 00 00 00 00 00 00` | size | 8320 |
+| 120 | `40 18 00 00 00 00 00 00` | size | 6208 |
 
-The root's size is the mini stream's: 8320 bytes, holding 20 of the 23 streams in 64-byte mini
-sectors; 3 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
+The root's size is the mini stream's: 6208 bytes, holding 19 of the 23 streams in 64-byte mini
+sectors; 4 streams are large enough for regular sectors. [msi-database.md](msi-database.md)
 continues with the streams' names and contents.

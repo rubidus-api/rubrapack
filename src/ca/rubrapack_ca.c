@@ -2400,10 +2400,13 @@ static LRESULT det_send(HWND w, UINT m, WPARAM wp, LPARAM lp) {
 // ANSI code page, RpDetLcid_<code>; none for a Unicode-only language such as Hindi): with the
 // default set RichEdit's font binding gives the Chinese or Japanese characters of a line the
 // system's own CJK face (Malgun Gothic on a Korean Windows), and the path after them stays in it,
-// with won signs for backslashes (x59, zh_TW).
+// with won signs for backslashes (x59, zh_TW). Vietnamese letters with two marks (ộ) are not in
+// code page 1258's precomposed set, so the binding moved them, and the path after them, to that
+// CJK face too (x62, vi): there the binding is turned off - Segoe UI has every Vietnamese letter.
 typedef struct {
     HANDLE proc;
     void  *remote;
+    bool   noauto;                                          // IMF_AUTOFONT off
 } det_fmt_t;
 
 static BYTE det_charset(LCID lcid) {
@@ -2438,6 +2441,7 @@ static void det_font_open(det_fmt_t *fm, HWND edit, const wchar_t *face, LCID lc
     cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_ITALIC;
     cf.yHeight = 8 * 20;                                    // twips
     cf.bCharSet = det_charset(lcid);
+    fm->noauto = cf.bCharSet == VIETNAMESE_CHARSET;
     cf.bPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
     size_t fl = face && face[0] ? wcslen(face) : 0;
     if (fl == 0 || fl >= LF_FACESIZE) face = L"Segoe UI", fl = 8, cf.bCharSet = DEFAULT_CHARSET;
@@ -2462,6 +2466,10 @@ static void det_font_apply(const det_fmt_t *fm, HWND edit) {
     if (fm->remote == NULL) return;
     det_send(edit, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)fm->remote);
     det_send(edit, EM_SETCHARFORMAT, SCF_ALL, (LPARAM)fm->remote);
+    if (fm->noauto) {
+        LRESULT o = det_send(edit, WM_USER + 121, 0, 0);    // EM_GETLANGOPTIONS
+        det_send(edit, WM_USER + 120, 0, o & ~(LRESULT)0x0002);  // EM_SETLANGOPTIONS without IMF_AUTOFONT
+    }
 }
 
 static void det_font_close(det_fmt_t *fm) {

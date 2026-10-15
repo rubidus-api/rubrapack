@@ -1130,7 +1130,10 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
   (`es`), French (`fr`), German (`de`), Portuguese of Brazil (`pt_BR`) and of Portugal (`pt_PT`),
   Russian (`ru`), Italian (`it`), Dutch (`nl`), Swedish (`sv`), Danish (`da`), Norwegian Bokmål
   (`nb`), Finnish (`fi`), Polish (`pl`), Czech (`cs`), Ukrainian (`uk`), Hungarian (`hu`), Romanian
-  (`ro`) and Turkish (`tr`) ([Language packs](#language-packs)). Another language (`el`, `vi`, ...) brings a
+  (`ro`), Turkish (`tr`), Greek (`el`), Vietnamese (`vi`), Thai (`th`), Indonesian (`id`), Malay
+  (`ms`), Bulgarian (`bg`), Croatian (`hr`), Slovak (`sk`), Slovenian (`sl`), Serbian in Latin script
+  (`sr`), Estonian (`et`), Latvian (`lv`), Lithuanian (`lt`), Arabic (`ar`), Hebrew (`he`) and Hindi
+  (`hi`) ([Language packs](#language-packs)). Another language (`ko_KP`, `fa`, ...) brings a
   pack of its own, or gives every built-in text as `text-xx` (lint names the ones missing), and
   may give `name-xx` (its name
   on the language page), `font-xx` (the face of its dialogs) and `langid-xx` (the LANGIDs that
@@ -1161,10 +1164,12 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 
 ### Language packs
 
-A language is one file. English is built into rubrapack; twenty-two languages come with it as
+A language is one file. English is built into rubrapack; thirty-eight languages come with it as
 `resources/lang/<code>.po`: `ko`, `ja`, `zh` (Simplified Chinese), `zh_TW` (Traditional Chinese, for
 Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (Brazil), `pt_PT` (Portugal), `ru`, `it`,
-`nl`, `sv`, `da`, `nb` (Norwegian Bokmål), `fi`, `pl`, `cs`, `uk`, `hu`, `ro` and `tr`. Any other language is supported by adding its file - `<code>.po`, in the
+`nl`, `sv`, `da`, `nb` (Norwegian Bokmål), `fi`, `pl`, `cs`, `uk`, `hu`, `ro`, `tr`, `el`, `vi`,
+`th`, `id`, `ms`, `bg`, `hr`, `sk`, `sl`, `sr` (Serbian in Latin script), `et`, `lv`, `lt`, `ar`
+(Arabic), `he` (Hebrew) and `hi` (Hindi). Any other language is supported by adding its file - `<code>.po`, in the
 PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
 or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
 gettext names its files. One package holds English and at most seven more languages.
@@ -1176,6 +1181,7 @@ msgstr ""
 "X-Rubrapack-Name: 日本語\n"        # the language's name on the language page
 "X-Rubrapack-LangIDs: 1041\n"      # the Windows LANGIDs it is chosen for
 "X-Rubrapack-Font: Yu Gothic UI\n"
+"X-Rubrapack-Direction: ltr\n"     # rtl for a language read right to left (ar, he)
 
 # The command line: msgid is the English text as rubrapack writes it.
 msgid "cannot read '%s' (%s)"
@@ -1203,6 +1209,17 @@ msgstr "[ProductName] セットアップ"
   `[ui-text.ID] text-ja` in the source still win. A text neither gives is an error (`RP1202` names
   the first), except the few that fall back to English. A chain's setup program takes `Setup.*`
   for the languages `[chain] languages` names.
+- **Right to left**: a pack with `X-Rubrapack-Direction: rtl` makes its pages mirrored. A package
+  with such a language among `[ui] languages` holds every dialog twice - as written, and mirrored
+  (`<name>_RTL`: controls placed from the right, texts read right to left, path fields still left to
+  right) - and shows the mirrored set while that language is chosen; a package without one is as
+  before. The helper's questions and details box and the chain's setup program read right to left
+  when the language they show does. Limits: the files-in-use dialog stays left to right (Windows
+  Installer finds it by its name), and the command line prints such text in its stored order, as a
+  console has no right-to-left layout.
+- **Character sets**: the details box draws each language in its own character set, taken from the
+  language's LANGID, whatever language Windows is in (a Korean page shows a path's backslash as
+  `₩`, as Korean Windows does).
 - **Starting one**: copy one of `resources/lang/*.po`, change the header, translate the `msgstr`
   lines.
   `RUBRAPACK_LANG_MISSING=<file>` makes a run append every text the chosen pack lacks to that file.
