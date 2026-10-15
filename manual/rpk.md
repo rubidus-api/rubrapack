@@ -1089,7 +1089,8 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`, `RemoveConfirmTextAll`,
 `RemoveAsk`, `RemoveAskAll` (the second question before a removal; another language that does not
 give these five gets English), `DetailsFull` (the details box's check box),
-`LanguageTitle`, `LanguageText`, `DirGuardText` (the guard's message below), `PreflightAsk`,
+`LanguageTitle`, `LanguageText`, `LangGroup1` to `LangGroup9` (the regions of a grouped language
+page; a language without them gets English), `DirGuardText` (the guard's message below), `PreflightAsk`,
 `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
@@ -1174,9 +1175,15 @@ Taiwan, Hong Kong and Macao), `es`, `fr`, `de`, `pt_BR` (Brazil), `pt_PT` (Portu
 (Azerbaijani in Latin script). Any other language is supported by adding its file - `<code>.po`, in the
 PO format translators' tools read - without changing rubrapack or the source's texts. A code is 2
 or 3 lower-case letters, and for a region's own variant `_` and the region's two capitals, as
-gettext names its files. One package holds English and at most eleven more languages. With up to
-seven, each text of each language is an action of its own; with eight or more, the texts are rows
-of a table (`RpText`) that rubrapack's helper DLL puts in place when the language is chosen.
+gettext names its files. One package holds English and up to 63 more languages - all 48 built-in
+packs fit. With up to seven, each text of each language is an action of its own; with eight or
+more, the texts are rows of a table (`RpText`) that rubrapack's helper DLL puts in place when the
+language is chosen. Up to twelve languages with English, the language page lists them in one
+column; with more it groups them by region: the regions on the left, the chosen region's languages
+on the right. A pack names its region with `X-Rubrapack-Group` (1 East Asia, 2 Southeast Asia,
+3 South Asia, 4 Central Asia and the Caucasus, 5 Middle East, 6 Western and Southern Europe - with
+English -, 7 Northern Europe and the Baltics, 8 Central and Eastern Europe); a pack that names none
+is under "Other". A region holds at most twelve languages (`RP1308`).
 
 ```po
 msgid ""
@@ -1186,6 +1193,7 @@ msgstr ""
 "X-Rubrapack-LangIDs: 1041\n"      # the Windows LANGIDs it is chosen for
 "X-Rubrapack-Font: Yu Gothic UI\n"
 "X-Rubrapack-Direction: ltr\n"     # rtl for a language read right to left (ar, he, fa, ur)
+"X-Rubrapack-Group: 1\n"           # its region on a grouped language page
 
 # The command line: msgid is the English text as rubrapack writes it.
 msgid "cannot read '%s' (%s)"

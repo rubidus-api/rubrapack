@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: 日本語\n"
 "X-Rubrapack-LangIDs: 1041\n"
 "X-Rubrapack-Font: Yu Gothic UI\n"
+"X-Rubrapack-Group: 1\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, ダイアログ {6}{7}\n  1 名前、製造元、バージョン、アーキテクチャ       2 インストール先、対象ユーザー\n  3 ダイアログ、使用許諾、言語                    4 選択可能な部分\n  5 ショートカット                                6 ファイル: プログラム フォルダーに合わせる\n  7 任意のキー                                    v 表示   l lint   s 保存   q 終了\n"
@@ -28,12 +29,6 @@ msgstr "\nこのコードを使うメッセージ (* は名前または値):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\n結果は stdout に、診断は stderr に出力します。\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (または RUBRAPACK_LANG) でこれらの表示の言語を選びます: {1}、または言語パックのある言語。\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "終了コード: 0 正常、1 ソースのエラー、2 使い方、3 入出力、4 署名または検証、\n5 lint、6 ネットワーク。\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n対処: {1}。\n"
@@ -521,6 +516,9 @@ msgstr "--key-store は証明書の SHA-1 拇印 (16 進 40 桁) を取ります
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: その言語はありません (組み込み: {2}。ほかの言語には言語パック {3}.po が必要です)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (または RUBRAPACK_LANG) でこれらの表示の言語を選びます: {1}、または言語パックのある言語。\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang には en や ko のような言語が必要です"
 
@@ -619,6 +617,9 @@ msgstr "デスクトップのショートカットを作りますか?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "ダイアログ (none、basic、minimal、installdir、features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "終了コード: 0 正常、1 ソースのエラー、2 使い方、3 入出力、4 署名または検証、\n5 lint、6 ネットワーク。\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File、Component、Directory テーブルに標準の列が欠けています"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' は 1.2.3 のようなバージョンでな�
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message には refuse-upgrade-below が必要です"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "言語ページの地域 {1} に言語が {2} 個あります。{3} 個までです(パックの X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' は値を削除します。保護するものはありません"
 
@@ -3466,6 +3470,42 @@ msgstr "言語"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "セットアップの言語を選んでください。"
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "東アジア"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "東南アジア"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "南アジア"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "中央アジア・コーカサス"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "中東"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "西ヨーロッパ・南ヨーロッパ"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "北ヨーロッパ・バルト"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "中欧・東欧"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "その他"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

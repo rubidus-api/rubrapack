@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Bahasa Indonesia\n"
 "X-Rubrapack-LangIDs: 1057\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 2\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialog {6}{7}\n  1 nama, produsen, versi, arsitektur            2 folder instalasi, untuk siapa diinstal\n  3 dialog, lisensi, bahasa                      4 bagian opsional\n  5 pintasan                                     6 file: samakan dengan folder program\n  7 kunci apa pun                                v lihat   l lint   s simpan   q keluar\n"
@@ -28,12 +29,6 @@ msgstr "\nPesan dengan kode ini (* mewakili nama atau nilai):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nHasil dikirim ke stdout, diagnostik ke stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (atau RUBRAPACK_LANG) memilih bahasa teks-teks ini: {1}, atau bahasa yang memiliki paket bahasa.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Kode keluar: 0 ok, 1 kesalahan sumber, 2 penggunaan, 3 input/output, 4 penandatanganan atau verifikasi,\n5 lint, 6 jaringan.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nYang harus dilakukan: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store menerima thumbprint SHA-1 sertifikat (40 digit heksadesimal)
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: bahasa itu tidak ada (bawaan: {2}; bahasa lain memerlukan paket bahasanya, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (atau RUBRAPACK_LANG) memilih bahasa teks-teks ini: {1}, atau bahasa yang memiliki paket bahasa.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang memerlukan bahasa, seperti en atau ko"
 
@@ -619,6 +617,9 @@ msgstr "Pintasan di desktop?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialog (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Kode keluar: 0 ok, 1 kesalahan sumber, 2 penggunaan, 3 input/output, 4 penandatanganan atau verifikasi,\n5 lint, 6 jaringan.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tabel File, Component atau Directory tidak memiliki kolom standar"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' harus versi seperti 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message memerlukan refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "wilayah {1} pada halaman bahasa berisi {2} bahasa, paling banyak {3} (X-Rubrapack-Group paketnya)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' menghapus nilai; tidak ada yang perlu dilindungi"
 
@@ -3466,6 +3470,42 @@ msgstr "Bahasa"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Pilih bahasa untuk penyiapan."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Asia Timur"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Asia Tenggara"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Asia Selatan"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Asia Tengah dan Kaukasus"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Timur Tengah"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Eropa Barat dan Selatan"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Eropa Utara dan Baltik"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Eropa Tengah dan Timur"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Lainnya"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

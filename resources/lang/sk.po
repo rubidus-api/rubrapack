@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Slovenčina\n"
 "X-Rubrapack-LangIDs: 1051\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 8\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialógy {6}{7}\n  1 názov, výrobca, verzia, architektúra         2 priečinok inštalácie, pre koho sa inštaluje\n  3 dialógy, licencia, jazyky                    4 voliteľné časti\n  5 odkazy                                       6 súbory: zosúladiť s priečinkom programu\n  7 ľubovoľný kľúč                               v zobraziť   l lint   s uložiť   q koniec\n"
@@ -28,12 +29,6 @@ msgstr "\nSprávy s týmto kódom (* zastupuje názov alebo hodnotu):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nVýsledky idú na stdout, diagnostika na stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (alebo RUBRAPACK_LANG) vyberá jazyk týchto textov: {1}, alebo jazyk s jazykovým balíkom.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Návratové kódy: 0 v poriadku, 1 chyba zdroja, 2 použitie, 3 vstup/výstup, 4 podpisovanie alebo overenie,\n5 lint, 6 sieť.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nČo robiť: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store prijíma odtlačok SHA-1 certifikátu (40 šestnástkových 
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: taký jazyk neexistuje (vstavané: {2}; iný potrebuje svoj jazykový balík, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (alebo RUBRAPACK_LANG) vyberá jazyk týchto textov: {1}, alebo jazyk s jazykovým balíkom.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang potrebuje jazyk, napr. en alebo ko"
 
@@ -619,6 +617,9 @@ msgstr "Odkaz na pracovnej ploche?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialógy (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Návratové kódy: 0 v poriadku, 1 chyba zdroja, 2 použitie, 3 vstup/výstup, 4 podpisovanie alebo overenie,\n5 lint, 6 sieť.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tabuľke File, Component alebo Directory chýba štandardný stĺpec"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' musí byť verzia ako 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message potrebuje refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "oblasť {1} stránky jazykov má {2} jazykov, najviac {3} (X-Rubrapack-Group ich balíkov)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "register '{1}' odstraňuje hodnotu; nemá čo chrániť"
 
@@ -3466,6 +3470,42 @@ msgstr "Jazyk"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Vyberte jazyk inštalácie."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Východná Ázia"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Juhovýchodná Ázia"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Južná Ázia"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Stredná Ázia a Kaukaz"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Blízky východ"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Západná a južná Európa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Severná Európa a Pobaltie"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Stredná a východná Európa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Ostatné"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

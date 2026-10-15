@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Lietuvių\n"
 "X-Rubrapack-LangIDs: 1063\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 7\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogai {6}{7}\n  1 pavadinimas, gamintojas, versija, architektūra  2 diegimo aplankas, kam diegiama\n  3 dialogai, licencija, kalbos                  4 pasirenkamos dalys\n  5 nuorodos                                     6 failai: suderinti su programos aplanku\n  7 bet kuris raktas                             v rodyti   l lint   s įrašyti   q išeiti\n"
@@ -28,12 +29,6 @@ msgstr "\nPranešimai su šiuo kodu (* reiškia pavadinimą arba reikšmę):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nRezultatai siunčiami į stdout, diagnostika į stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (arba RUBRAPACK_LANG) parenka šių tekstų kalbą: {1} arba kalbą, turinčią kalbos paketą.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Išėjimo kodai: 0 gerai, 1 šaltinio klaida, 2 naudojimas, 3 įvestis/išvestis, 4 pasirašymas arba tikrinimas,\n5 lint, 6 tinklas.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nKą daryti: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store priima sertifikato SHA-1 kontrolinį kodą (40 šešioliktai
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: tokios kalbos nėra (įtaisytosios: {2}; kitai reikia savo kalbos paketo, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (arba RUBRAPACK_LANG) parenka šių tekstų kalbą: {1} arba kalbą, turinčią kalbos paketą.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang reikia kalbos, pvz., en arba ko"
 
@@ -619,6 +617,9 @@ msgstr "Nuoroda darbalaukyje?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialogai (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Išėjimo kodai: 0 gerai, 1 šaltinio klaida, 2 naudojimas, 3 įvestis/išvestis, 4 pasirašymas arba tikrinimas,\n5 lint, 6 tinklas.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Lentelėje File, Component arba Directory trūksta standartinio stulpelio"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' turi būti versija kaip 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message reikia refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "kalbų puslapio regione {1} yra {2} kalbų, daugiausia {3} (paketų X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registras '{1}' pašalina reikšmę; jam nėra ką saugoti"
 
@@ -3466,6 +3470,42 @@ msgstr "Kalba"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Pasirinkite diegimo kalbą."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Rytų Azija"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Pietryčių Azija"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Pietų Azija"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Centrinė Azija ir Kaukazas"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Artimieji Rytai"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Vakarų ir Pietų Europa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Šiaurės Europa ir Baltija"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Vidurio ir Rytų Europa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Kitos"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

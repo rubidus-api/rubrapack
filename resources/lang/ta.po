@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: தமிழ்\n"
 "X-Rubrapack-LangIDs: 1097, 2121\n"
 "X-Rubrapack-Font: Nirmala UI\n"
+"X-Rubrapack-Group: 3\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, உரையாடல்கள் {6}{7}\n  1 பெயர், உற்பத்தியாளர், பதிப்பு, கட்டமைப்பு  2 நிறுவல் கோப்புறை, யாருக்காக\n  3 உரையாடல்கள், உரிமம், மொழிகள்                4 விருப்பப் பகுதிகள்\n  5 குறுக்குவழிகள்                               6 கோப்புகள்: நிரல் கோப்புறையுடன் பொருத்து\n  7 ஏதேனும் விசை                                v காண்   l lint   s சேமி   q வெளியேறு\n"
@@ -28,12 +29,6 @@ msgstr "\nஇந்தக் குறியீடு உள்ள செய்�
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nமுடிவுகள் stdout க்கும், கண்டறிதல்கள் stderr க்கும் செல்கின்றன.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (அல்லது RUBRAPACK_LANG) இந்த உரைகளின் மொழியைத் தேர்வுசெய்கிறது: {1}, அல்லது மொழித் தொகுப்பு உள்ள ஒரு மொழி.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "வெளியேறும் குறியீடுகள்: 0 சரி, 1 மூலப் பிழை, 2 பயன்பாடு, 3 உள்ளீடு/வெளியீடு, 4 கையொப்பம் அல்லது சரிபார்ப்பு,\n5 lint, 6 பிணையம்.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nசெய்ய வேண்டியது: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store சான்றிதழின் SHA-1 கைரேகை�
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: அத்தகைய மொழி இல்லை (உள்ளமைந்தவை: {2}; வேறொன்றுக்கு அதன் மொழித் தொகுப்பு தேவை, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (அல்லது RUBRAPACK_LANG) இந்த உரைகளின் மொழியைத் தேர்வுசெய்கிறது: {1}, அல்லது மொழித் தொகுப்பு உள்ள ஒரு மொழி.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang க்கு ஒரு மொழி தேவை, எ.கா. en அல்லது ko"
 
@@ -619,6 +617,9 @@ msgstr "டெஸ்க்டாப் குறுக்குவழி?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "உரையாடல்கள் (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "வெளியேறும் குறியீடுகள்: 0 சரி, 1 மூலப் பிழை, 2 பயன்பாடு, 3 உள்ளீடு/வெளியீடு, 4 கையொப்பம் அல்லது சரிபார்ப்பு,\n5 lint, 6 பிணையம்.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component அல்லது Directory அட்டவணையில் ஒரு நிலையான நெடுவரிசை இல்லை"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' 1.2.3 போன்ற பதிப்பா�
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message க்கு refuse-upgrade-below தேவை"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "மொழிப் பக்கத்தின் பகுதி {1} இல் {2} மொழிகள் உள்ளன, அதிகபட்சம் {3} (தொகுப்புகளின் X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "பதிவேடு '{1}' ஒரு மதிப்பை அகற்றும்; அதற்குப் பாதுகாக்க எதுவும் இல்லை"
 
@@ -3466,6 +3470,42 @@ msgstr "மொழி"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "அமைவுக்கான மொழியைத் தேர்வுசெய்யவும்."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "கிழக்கு ஆசியா"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "தென்கிழக்கு ஆசியா"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "தெற்கு ஆசியா"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "மத்திய ஆசியா, காகசஸ்"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "மத்திய கிழக்கு"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "மேற்கு, தெற்கு ஐரோப்பா"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "வடக்கு ஐரோப்பா, பால்டிக்"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "மத்திய, கிழக்கு ஐரோப்பா"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "பிற"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

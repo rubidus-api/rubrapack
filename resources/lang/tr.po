@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Türkçe\n"
 "X-Rubrapack-LangIDs: 1055\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 5\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, iletişim kutuları {6}{7}\n  1 ad, üretici, sürüm, mimari                  2 kurulum klasörü, kimin için kurulur\n  3 iletişim kutuları, lisans, diller           4 isteğe bağlı parçalar\n  5 kısayollar                                  6 dosyalar: program klasörüne uydur\n  7 herhangi bir anahtar                        v görüntüle   l lint   s kaydet   q çık\n"
@@ -28,12 +29,6 @@ msgstr "\nBu koda sahip iletiler (* bir adın veya değerin yerini tutar):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nSonuçlar stdout'a, tanılamalar stderr'e gider.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (veya RUBRAPACK_LANG) bu metinlerin dilini seçer: {1} ya da dil paketi olan bir dil.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Çıkış kodları: 0 tamam, 1 kaynak hatası, 2 kullanım, 3 giriş/çıkış, 4 imzalama veya doğrulama,\n5 lint, 6 ağ.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nYapılacak: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store sertifikanın SHA-1 parmak izini alır (40 onaltılık rakam
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: böyle bir dil yok (yerleşik: {2}; başka bir dil kendi dil paketini gerektirir, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (veya RUBRAPACK_LANG) bu metinlerin dilini seçer: {1} ya da dil paketi olan bir dil.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang bir dil gerektirir, örneğin en veya ko"
 
@@ -619,6 +617,9 @@ msgstr "Masaüstü kısayolu?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "İletişim kutuları (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Çıkış kodları: 0 tamam, 1 kaynak hatası, 2 kullanım, 3 giriş/çıkış, 4 imzalama veya doğrulama,\n5 lint, 6 ağ.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component veya Directory tablosunda standart bir sütun eksik"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}', 1.2.3 gibi bir sürüm olmalıdır"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message, refuse-upgrade-below gerektirir"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "dil sayfasının {1}. bölgesinde {2} dil var, en çok {3} olabilir (paketlerin X-Rubrapack-Group değeri)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "kayıt defteri '{1}' bir değeri kaldırır; koruyacak bir şeyi yok"
 
@@ -3466,6 +3470,42 @@ msgstr "Dil"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Kurulum dilini seçin."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Doğu Asya"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Güneydoğu Asya"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Güney Asya"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Orta Asya ve Kafkasya"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Orta Doğu"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Batı ve Güney Avrupa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Kuzey Avrupa ve Baltık"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Orta ve Doğu Avrupa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Diğer"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

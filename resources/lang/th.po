@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: ไทย\n"
 "X-Rubrapack-LangIDs: 1054\n"
 "X-Rubrapack-Font: Leelawadee UI\n"
+"X-Rubrapack-Group: 2\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, กล่องโต้ตอบ {6}{7}\n  1 ชื่อ, ผู้ผลิต, เวอร์ชัน, สถาปัตยกรรม              2 โฟลเดอร์ที่ติดตั้ง, ติดตั้งให้ใคร\n  3 กล่องโต้ตอบ, สิทธิ์การใช้งาน, ภาษา             4 ส่วนที่เลือกได้\n  5 ทางลัด                                        6 ไฟล์: ให้ตรงกับโฟลเดอร์โปรแกรม\n  7 คีย์ใดก็ได้                                     v ดู   l lint   s บันทึก   q ออก\n"
@@ -28,12 +29,6 @@ msgstr "\nข้อความที่มีรหัสนี้ (* แทน
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nผลลัพธ์ไปที่ stdout ส่วนข้อความวินิจฉัยไปที่ stderr\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (หรือ RUBRAPACK_LANG) เลือกภาษาของข้อความเหล่านี้: {1} หรือภาษาที่มีชุดภาษา\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "รหัสการออก: 0 สำเร็จ, 1 ข้อผิดพลาดในต้นฉบับ, 2 วิธีใช้, 3 อินพุต/เอาต์พุต, 4 การลงนามหรือการตรวจสอบ,\n5 lint, 6 เครือข่าย\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nสิ่งที่ต้องทำ: {1}\n"
@@ -521,6 +516,9 @@ msgstr "--key-store รับ thumbprint SHA-1 ของใบรับรอง
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: ไม่มีภาษานี้ (ที่มีในตัว: {2} ภาษาอื่นต้องมีชุดภาษาของมัน {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (หรือ RUBRAPACK_LANG) เลือกภาษาของข้อความเหล่านี้: {1} หรือภาษาที่มีชุดภาษา\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang ต้องระบุภาษา เช่น en หรือ ko"
 
@@ -619,6 +617,9 @@ msgstr "ทางลัดบนเดสก์ท็อปหรือไม่
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "กล่องโต้ตอบ (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "รหัสการออก: 0 สำเร็จ, 1 ข้อผิดพลาดในต้นฉบับ, 2 วิธีใช้, 3 อินพุต/เอาต์พุต, 4 การลงนามหรือการตรวจสอบ,\n5 lint, 6 เครือข่าย\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "ตาราง File, Component หรือ Directory ขาดคอลัมน์มาตรฐาน"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' ต้องเป็นเวอร์ชั
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message ต้องมี refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "ภูมิภาค {1} ของหน้าภาษามี {2} ภาษา ได้ไม่เกิน {3} (X-Rubrapack-Group ของแพ็ก)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "รีจิสทรี '{1}' ลบค่า จึงไม่มีอะไรต้องปกป้อง"
 
@@ -3466,6 +3470,42 @@ msgstr "ภาษา"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "เลือกภาษาสำหรับการติดตั้ง"
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "เอเชียตะวันออก"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "เอเชียตะวันออกเฉียงใต้"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "เอเชียใต้"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "เอเชียกลางและคอเคซัส"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "ตะวันออกกลาง"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "ยุโรปตะวันตกและใต้"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "ยุโรปเหนือและบอลติก"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "ยุโรปกลางและตะวันออก"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "อื่น ๆ"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

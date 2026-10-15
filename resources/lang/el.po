@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Ελληνικά\n"
 "X-Rubrapack-LangIDs: 1032\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 6\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, παράθυρα διαλόγου {6}{7}\n  1 όνομα, κατασκευαστής, έκδοση, αρχιτεκτονική  2 φάκελος εγκατάστασης, για ποιον\n  3 παράθυρα διαλόγου, άδεια, γλώσσες           4 προαιρετικά μέρη\n  5 συντομεύσεις                                6 αρχεία: ταίριασμα με τον φάκελο του προγράμματος\n  7 οποιοδήποτε κλειδί                          v προβολή   l lint   s αποθήκευση   q έξοδος\n"
@@ -28,12 +29,6 @@ msgstr "\nΜηνύματα με αυτόν τον κωδικό (το * αντι�
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nΤα αποτελέσματα πηγαίνουν στο stdout, τα διαγνωστικά στο stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "Το --lang (ή το RUBRAPACK_LANG) επιλέγει τη γλώσσα αυτών των κειμένων: {1}, ή μια γλώσσα με πακέτο γλώσσας.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Κωδικοί εξόδου: 0 εντάξει, 1 σφάλμα πηγής, 2 χρήση, 3 είσοδος/έξοδος, 4 υπογραφή ή επαλήθευση,\n5 lint, 6 δίκτυο.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nΤι να κάνετε: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "Το --key-store δέχεται το αποτύπωμα SHA-1 του π�
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: δεν υπάρχει τέτοια γλώσσα (ενσωματωμένες: {2}· άλλη χρειάζεται το πακέτο γλώσσας της, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "Το --lang (ή το RUBRAPACK_LANG) επιλέγει τη γλώσσα αυτών των κειμένων: {1}, ή μια γλώσσα με πακέτο γλώσσας.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "Το --lang χρειάζεται γλώσσα, π.χ. en ή ko"
 
@@ -619,6 +617,9 @@ msgstr "Συντόμευση στην επιφάνεια εργασίας;"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Παράθυρα διαλόγου (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Κωδικοί εξόδου: 0 εντάξει, 1 σφάλμα πηγής, 2 χρήση, 3 είσοδος/έξοδος, 4 υπογραφή ή επαλήθευση,\n5 lint, 6 δίκτυο.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Λείπει τυπική στήλη από τον πίνακα File, Component ή Directory"
@@ -2390,6 +2391,9 @@ msgstr "το refuse-upgrade-below '{1}' πρέπει να είναι έκδοσ�
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "το refuse-upgrade-message χρειάζεται refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "η περιοχή {1} της σελίδας γλωσσών έχει {2} γλώσσες, το πολύ {3} (X-Rubrapack-Group των πακέτων τους)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "το registry '{1}' αφαιρεί μια τιμή· δεν έχει τίποτα να προστατεύσει"
 
@@ -3466,6 +3470,42 @@ msgstr "Γλώσσα"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Επιλέξτε τη γλώσσα της εγκατάστασης."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Ανατολική Ασία"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Νοτιοανατολική Ασία"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Νότια Ασία"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Κεντρική Ασία και Καύκασος"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Μέση Ανατολή"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Δυτική και Νότια Ευρώπη"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Βόρεια Ευρώπη και Βαλτική"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Κεντρική και Ανατολική Ευρώπη"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Άλλες"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: বাংলা\n"
 "X-Rubrapack-LangIDs: 1093, 2117\n"
 "X-Rubrapack-Font: Nirmala UI\n"
+"X-Rubrapack-Group: 3\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, ডায়ালগ {6}{7}\n  1 নাম, প্রস্তুতকারক, সংস্করণ, আর্কিটেকচার      2 ইনস্টল ফোল্ডার, কার জন্য\n  3 ডায়ালগ, লাইসেন্স, ভাষা                       4 ঐচ্ছিক অংশ\n  5 শর্টকাট                                      6 ফাইল: প্রোগ্রাম ফোল্ডারের সাথে মেলান\n  7 যেকোনো কী                                    v দেখুন   l lint   s সংরক্ষণ   q প্রস্থান\n"
@@ -28,12 +29,6 @@ msgstr "\nএই কোডসহ বার্তা (* একটি নাম �
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nফলাফল stdout-এ, ডায়াগনস্টিক stderr-এ যায়।\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (বা RUBRAPACK_LANG) এই লেখাগুলির ভাষা বেছে নেয়: {1}, অথবা ভাষা প্যাক আছে এমন কোনো ভাষা।\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "প্রস্থান কোড: 0 ঠিক আছে, 1 উৎস ত্রুটি, 2 ব্যবহার, 3 ইনপুট/আউটপুট, 4 স্বাক্ষর বা যাচাই,\n5 lint, 6 নেটওয়ার্ক।\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nকী করবেন: {1}।\n"
@@ -521,6 +516,9 @@ msgstr "--key-store সার্টিফিকেটের SHA-1 থাম্�
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: এমন কোনো ভাষা নেই (অন্তর্নির্মিত: {2}; অন্যটির জন্য তার ভাষা প্যাক লাগবে, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (বা RUBRAPACK_LANG) এই লেখাগুলির ভাষা বেছে নেয়: {1}, অথবা ভাষা প্যাক আছে এমন কোনো ভাষা।\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang-এর জন্য একটি ভাষা দরকার, যেমন en বা ko"
 
@@ -619,6 +617,9 @@ msgstr "ডেস্কটপ শর্টকাট?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "ডায়ালগ (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "প্রস্থান কোড: 0 ঠিক আছে, 1 উৎস ত্রুটি, 2 ব্যবহার, 3 ইনপুট/আউটপুট, 4 স্বাক্ষর বা যাচাই,\n5 lint, 6 নেটওয়ার্ক।\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component বা Directory টেবিলে একটি মানক কলাম নেই"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}'-কে 1.2.3-এর মতো সংস্ক
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message-এর জন্য refuse-upgrade-below দরকার"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "ভাষা পৃষ্ঠার অঞ্চল {1}-এ {2}টি ভাষা আছে, সর্বোচ্চ {3} (প্যাকগুলোর X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "রেজিস্ট্রি '{1}' একটি মান সরায়; এর রক্ষা করার কিছু নেই"
 
@@ -3466,6 +3470,42 @@ msgstr "ভাষা"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "সেটআপের ভাষা বেছে নিন।"
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "পূর্ব এশিয়া"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "দক্ষিণ-পূর্ব এশিয়া"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "দক্ষিণ এশিয়া"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "মধ্য এশিয়া ও ককেশাস"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "মধ্যপ্রাচ্য"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "পশ্চিম ও দক্ষিণ ইউরোপ"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "উত্তর ইউরোপ ও বাল্টিক"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "মধ্য ও পূর্ব ইউরোপ"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "অন্যান্য"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

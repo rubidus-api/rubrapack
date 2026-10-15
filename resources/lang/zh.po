@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: 中文(简体)\n"
 "X-Rubrapack-LangIDs: 2052, 4100\n"
 "X-Rubrapack-Font: Microsoft YaHei UI\n"
+"X-Rubrapack-Group: 1\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, 对话框 {6}{7}\n  1 名称、制造商、版本、体系结构                 2 安装文件夹、为谁安装\n  3 对话框、许可协议、语言                       4 可选部分\n  5 快捷方式                                     6 文件: 与程序文件夹保持一致\n  7 任意键                                       v 查看   l lint   s 保存   q 退出\n"
@@ -28,12 +29,6 @@ msgstr "\n使用此代码的消息(* 表示名称或值):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\n结果输出到 stdout，诊断输出到 stderr。\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang(或 RUBRAPACK_LANG)选择这些文字的语言: {1}，或有语言包的语言。\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "退出代码: 0 正常，1 源文件错误，2 用法，3 输入/输出，4 签名或验证，\n5 lint，6 网络。\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\n处理方法: {1}。\n"
@@ -521,6 +516,9 @@ msgstr "--key-store 接受证书的 SHA-1 指纹(40 位十六进制数字)"
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: 没有该语言(内置：{2}；其他语言需要语言包 {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang(或 RUBRAPACK_LANG)选择这些文字的语言: {1}，或有语言包的语言。\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang 需要一种语言，如 en 或 ko"
 
@@ -619,6 +617,9 @@ msgstr "要创建桌面快捷方式吗?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "对话框(none、basic、minimal、installdir、features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "退出代码: 0 正常，1 源文件错误，2 用法，3 输入/输出，4 签名或验证，\n5 lint，6 网络。\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File、Component 或 Directory 表缺少标准列"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' 必须是形如 1.2.3 的版本"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message 需要 refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "语言页面的区域 {1} 有 {2} 种语言，最多 {3} 种（语言包的 X-Rubrapack-Group）"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' 删除一个值；没有需要保护的内容"
 
@@ -3466,6 +3470,42 @@ msgstr "语言"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "请选择安装程序的语言。"
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "东亚"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "东南亚"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "南亚"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "中亚和高加索"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "中东"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "西欧和南欧"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "北欧和波罗的海"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "中欧和东欧"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "其他"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

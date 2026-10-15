@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Hrvatski\n"
 "X-Rubrapack-LangIDs: 1050, 4122\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 8\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dijalozi {6}{7}\n  1 naziv, proizvođač, verzija, arhitektura      2 mapa za instalaciju, za koga se instalira\n  3 dijalozi, licenca, jezici                    4 neobavezni dijelovi\n  5 prečaci                                      6 datoteke: uskladi s mapom programa\n  7 bilo koji ključ                              v prikaz   l lint   s spremi   q izlaz\n"
@@ -28,12 +29,6 @@ msgstr "\nPoruke s ovim kodom (* označava naziv ili vrijednost):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nRezultati idu na stdout, dijagnostika na stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (ili RUBRAPACK_LANG) bira jezik ovih tekstova: {1}, ili jezik s jezičnim paketom.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Izlazni kodovi: 0 u redu, 1 pogreška izvora, 2 upotreba, 3 ulaz/izlaz, 4 potpisivanje ili provjera,\n5 lint, 6 mreža.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nŠto učiniti: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store prima SHA-1 otisak certifikata (40 heksadecimalnih znamenki)
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: nema takvog jezika (ugrađeni: {2}; drugi treba svoj jezični paket, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (ili RUBRAPACK_LANG) bira jezik ovih tekstova: {1}, ili jezik s jezičnim paketom.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang treba jezik, npr. en ili ko"
 
@@ -619,6 +617,9 @@ msgstr "Prečac na radnoj površini?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dijalozi (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Izlazni kodovi: 0 u redu, 1 pogreška izvora, 2 upotreba, 3 ulaz/izlaz, 4 potpisivanje ili provjera,\n5 lint, 6 mreža.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tablici File, Component ili Directory nedostaje standardni stupac"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' mora biti verzija kao 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message treba refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "regija {1} stranice jezika ima {2} jezika, najviše {3} (X-Rubrapack-Group njihovih paketa)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registar '{1}' uklanja vrijednost; nema što štititi"
 
@@ -3466,6 +3470,42 @@ msgstr "Jezik"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Odaberite jezik instalacije."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Istočna Azija"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Jugoistočna Azija"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Južna Azija"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Središnja Azija i Kavkaz"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Bliski istok"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Zapadna i južna Europa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Sjeverna Europa i Baltik"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Srednja i istočna Europa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Ostalo"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

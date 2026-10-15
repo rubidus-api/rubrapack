@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Euskara\n"
 "X-Rubrapack-LangIDs: 1069\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 6\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, elkarrizketak {6}{7}\n  1 izena, fabrikatzailea, bertsioa, arkitektura 2 instalazio-karpeta, norentzat\n  3 elkarrizketak, lizentzia, hizkuntzak         4 aukerako zatiak\n  5 lasterbideak                                 6 fitxategiak: programaren karpetarekin bat\n  7 edozein gako                                 v ikusi   l lint   s gorde   q irten\n"
@@ -28,12 +29,6 @@ msgstr "\nKode hau duten mezuak (* izen edo balio baten ordez dago):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nEmaitzak stdout-era doaz, diagnostikoak stderr-era.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (edo RUBRAPACK_LANG) testu hauen hizkuntza aukeratzen du: {1}, edo hizkuntza-paketea duen bat.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Irteera-kodeak: 0 ondo, 1 iturburuko errorea, 2 erabilera, 3 sarrera/irteera, 4 sinadura edo egiaztapena,\n5 lint, 6 sarea.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nZer egin: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store-k ziurtagiriaren SHA-1 hatz-marka onartzen du (40 digitu ham
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: ez dago hizkuntza hori (barnean: {2}; beste batek bere hizkuntza-paketea behar du, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (edo RUBRAPACK_LANG) testu hauen hizkuntza aukeratzen du: {1}, edo hizkuntza-paketea duen bat.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang-ek hizkuntza bat behar du, adibidez en edo ko"
 
@@ -619,6 +617,9 @@ msgstr "Mahaigaineko lasterbidea?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Elkarrizketak (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Irteera-kodeak: 0 ondo, 1 iturburuko errorea, 2 erabilera, 3 sarrera/irteera, 4 sinadura edo egiaztapena,\n5 lint, 6 sarea.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component edo Directory taulari zutabe estandar bat falta zaio"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' 1.2.3 bezalako bertsio bat izan behar da"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message-k refuse-upgrade-below behar du"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "hizkuntzen orriko {1}. eskualdeak {2} hizkuntza ditu, gehienez {3} (paketeen X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "'{1}' erregistroak balio bat kentzen du; ez du ezer babesteko"
 
@@ -3466,6 +3470,42 @@ msgstr "Hizkuntza"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Aukeratu instalazioaren hizkuntza."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Ekialdeko Asia"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Asiako hego-ekialdea"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Hegoaldeko Asia"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Erdialdeko Asia eta Kaukaso"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Ekialde Ertaina"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Mendebaldeko eta hegoaldeko Europa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Iparraldeko Europa eta Baltikoa"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Erdialdeko eta ekialdeko Europa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Besteak"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

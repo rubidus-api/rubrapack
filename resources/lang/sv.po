@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Svenska\n"
 "X-Rubrapack-LangIDs: 1053, 2077\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 7\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogrutor {6}{7}\n  1 namn, tillverkare, version, arkitektur      2 installationsmapp, vem den installeras för\n  3 dialogrutor, licens, språk                  4 valfria delar\n  5 genvägar                                    6 filer: matcha programmappen\n  7 valfri nyckel                               v visa   l lint   s spara   q avsluta\n"
@@ -28,12 +29,6 @@ msgstr "\nMeddelanden med den här koden (* står för ett namn eller ett värde
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nResultat går till stdout, diagnostik till stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (eller RUBRAPACK_LANG) väljer språket för de här texterna: {1}, eller ett språk med ett språkpaket.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Slutkoder: 0 ok, 1 källfel, 2 användning, 3 in-/utdata, 4 signering eller verifiering,\n5 lint, 6 nätverk.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nVad du ska göra: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store tar certifikatets SHA-1-tumavtryck (40 hexadecimala siffror)
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: inget sådant språk (inbyggda: {2}; ett annat behöver sitt språkpaket, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (eller RUBRAPACK_LANG) väljer språket för de här texterna: {1}, eller ett språk med ett språkpaket.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang behöver ett språk, som en eller ko"
 
@@ -619,6 +617,9 @@ msgstr "Genväg på skrivbordet?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialogrutor (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Slutkoder: 0 ok, 1 källfel, 2 användning, 3 in-/utdata, 4 signering eller verifiering,\n5 lint, 6 nätverk.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File-, Component- eller Directory-tabellen saknar en standardkolumn"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' måste vara en version som 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message behöver refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "region {1} på språksidan har {2} språk, högst {3} (X-Rubrapack-Group i deras paket)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registret '{1}' tar bort ett värde; det har inget att skydda"
 
@@ -3466,6 +3470,42 @@ msgstr "Språk"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Välj språk för installationen."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Östasien"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Sydostasien"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Sydasien"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Centralasien och Kaukasus"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Mellanöstern"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Väst- och Sydeuropa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Nordeuropa och Baltikum"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Central- och Östeuropa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Övriga"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

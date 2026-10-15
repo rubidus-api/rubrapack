@@ -365,8 +365,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 // English is always there
             } else if (ui_lang_index(ir, code) >= 0) {
                 ERR(c, lk->pos, "RP1301", "language '%s' is listed twice", code);
-            } else if (ir->ui_lang_count == RP_UI_LANG_LIST) {        // the page's one column (RFC-0028)
-                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_LIST - 1);
+            } else if (ir->ui_lang_count == RP_UI_LANG_MAX) {
+                ERR(c, lk->pos, "RP1308", "at most %d languages besides English", RP_UI_LANG_MAX - 1);
             } else {
                 memcpy(ir->ui_langs[ir->ui_lang_count++].code, code, n + 1);
             }
@@ -441,6 +441,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         if (pack && L->name == NULL && pack->name) L->name = ir_dup(c, pack->name);
         if (pack && L->font == NULL && pack->font) L->font = ir_dup(c, pack->font);
         if (pack) L->rtl = pack->rtl;
+        // RFC-0028: English is in Western and Southern Europe; a language whose pack names no region, in Other.
+        L->group = strcmp(L->code, "en") == 0 ? 6 : pack && pack->group ? pack->group : 9;
         if (L->langid_count == 0 && kl >= 0) {
             for (size_t j = 0; j < 6 && known_langs[kl].ids[j]; ++j) L->langids[L->langid_count++] = known_langs[kl].ids[j];
         }
@@ -465,7 +467,8 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 const char *id = rp_ui_text_id(t);
                 if (!ir->ui_save_log && strncmp(id, "SaveLog", 7) == 0) continue;    // no button, no texts
                 if (strncmp(id, "DirNotEmpty", 11) == 0 || strcmp(id, "DirChoose") == 0 || strcmp(id, "DirContinue") == 0) continue;
-                if (strcmp(id, "DetailsFull") == 0 || strcmp(id, "PerUserOnly") == 0 || strcmp(id, "NewerInstalled") == 0 || strcmp(id, "OlderRefused") == 0)
+                if (strcmp(id, "DetailsFull") == 0 || strcmp(id, "PerUserOnly") == 0 || strcmp(id, "NewerInstalled") == 0 || strcmp(id, "OlderRefused") == 0 ||
+                    strncmp(id, "LangGroup", 9) == 0)
                     continue;                                                        // fall back to English
                 if (pack && rp_langpack_text(pack, "installer", id)) continue;      // the pack has it
                 if (strncmp(id, "Removal", 7) == 0) continue;        // falls back to the install text
@@ -482,6 +485,16 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
             }
             if (missing) ERR(c, pos, "RP1202", "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s",
                              L->code, missing, first, L->code, L->code);
+        }
+    }
+    // RFC-0028: past one column the page shows a region's languages in one column of its own.
+    if (ir->ui_lang_count > RP_UI_LANG_LIST) {
+        for (int g = 1; g <= 9; ++g) {
+            size_t n = 0;
+            for (size_t i = 0; i < ir->ui_lang_count; ++i) n += ir->ui_langs[i].group == g;
+            if (n > RP_UI_LANG_LIST)
+                ERR(c, lk ? lk->pos : (rp_pos_t){ 0 }, "RP1308", "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)",
+                    g, n, RP_UI_LANG_LIST);
         }
     }
     // text-xx / title-xx / labels-xx name languages of the dialogs.

@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Čeština\n"
 "X-Rubrapack-LangIDs: 1029\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 8\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogy {6}{7}\n  1 název, výrobce, verze, architektura         2 instalační složka, pro koho\n  3 dialogy, licence, jazyky                    4 volitelné části\n  5 zástupci                                    6 soubory: podle složky programu\n  7 libovolný klíč                              v zobrazit   l lint   s uložit   q konec\n"
@@ -28,12 +29,6 @@ msgstr "\nZprávy s tímto kódem (* zastupuje název nebo hodnotu):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nVýsledky jdou na stdout, diagnostika na stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (nebo RUBRAPACK_LANG) volí jazyk těchto textů: {1}, nebo jazyk s jazykovým balíčkem.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Návratové kódy: 0 ok, 1 chyba zdroje, 2 použití, 3 vstup/výstup, 4 podepisování nebo ověření,\n5 lint, 6 síť.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nCo udělat: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store přijímá kryptografický otisk SHA-1 certifikátu (40 šes
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: takový jazyk neexistuje (vestavěné: {2}; jiný potřebuje svůj jazykový balíček, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (nebo RUBRAPACK_LANG) volí jazyk těchto textů: {1}, nebo jazyk s jazykovým balíčkem.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang potřebuje jazyk, například en nebo ko"
 
@@ -619,6 +617,9 @@ msgstr "Zástupce na ploše?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialogy (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Návratové kódy: 0 ok, 1 chyba zdroje, 2 použití, 3 vstup/výstup, 4 podepisování nebo ověření,\n5 lint, 6 síť.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tabulce File, Component nebo Directory chybí standardní sloupec"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' musí být verze jako 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message potřebuje refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "oblast {1} stránky jazyků má {2} jazyků, nejvýše {3} (X-Rubrapack-Group jejich balíčků)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registr '{1}' odebírá hodnotu; nemá co chránit"
 
@@ -3466,6 +3470,42 @@ msgstr "Jazyk"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Vyberte jazyk instalace."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Východní Asie"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Jihovýchodní Asie"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Jižní Asie"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Střední Asie a Kavkaz"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Blízký východ"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Západní a jižní Evropa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Severní Evropa a Pobaltí"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Střední a východní Evropa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Ostatní"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Suomi\n"
 "X-Rubrapack-LangIDs: 1035\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 7\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, valintaikkunat {6}{7}\n  1 nimi, valmistaja, versio, arkkitehtuuri     2 asennuskansio, kenelle asennetaan\n  3 valintaikkunat, lisenssi, kielet            4 valinnaiset osat\n  5 pikakuvakkeet                               6 tiedostot: vastaa ohjelmakansiota\n  7 mikä tahansa avain                          v näytä   l lint   s tallenna   q lopeta\n"
@@ -28,12 +29,6 @@ msgstr "\nTämän koodin viestit (* tarkoittaa nimeä tai arvoa):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nTulokset menevät stdoutiin, diagnostiikka stderriin.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (tai RUBRAPACK_LANG) valitsee näiden tekstien kielen: {1} tai kieli, jolle on kielipaketti.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Paluukoodit: 0 ok, 1 lähdevirhe, 2 käyttö, 3 syöttö/tulostus, 4 allekirjoitus tai tarkistus,\n5 lint, 6 verkko.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nMitä tehdä: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store ottaa varmenteen SHA-1-allekirjoituksen (40 heksadesimaalinu
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: kieltä ei ole (sisäänrakennetut: {2}; muu tarvitsee kielipakettinsa, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (tai RUBRAPACK_LANG) valitsee näiden tekstien kielen: {1} tai kieli, jolle on kielipaketti.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang tarvitsee kielen, kuten en tai ko"
 
@@ -619,6 +617,9 @@ msgstr "Pikakuvake työpöydälle?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Valintaikkunat (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Paluukoodit: 0 ok, 1 lähdevirhe, 2 käyttö, 3 syöttö/tulostus, 4 allekirjoitus tai tarkistus,\n5 lint, 6 verkko.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File-, Component- tai Directory-taulukosta puuttuu vakiosarake"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' on oltava versio, kuten 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message tarvitsee refuse-upgrade-below-arvon"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "kielisivun alueella {1} on {2} kieltä, enintään {3} (pakettien X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "rekisteri '{1}' poistaa arvon; sillä ei ole mitään suojattavaa"
 
@@ -3466,6 +3470,42 @@ msgstr "Kieli"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Valitse asennuksen kieli."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Itä-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Kaakkois-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Etelä-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Keski-Aasia ja Kaukasia"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Lähi-itä"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Länsi- ja Etelä-Eurooppa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Pohjois-Eurooppa ja Baltia"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Keski- ja Itä-Eurooppa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Muut"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

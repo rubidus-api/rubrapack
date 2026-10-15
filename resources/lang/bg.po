@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Български\n"
 "X-Rubrapack-LangIDs: 1026\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 8\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, диалогови прозорци {6}{7}\n  1 име, производител, версия, архитектура      2 папка за инсталиране, за кого се инсталира\n  3 диалогови прозорци, лиценз, езици            4 незадължителни части\n  5 преки пътища                                 6 файлове: съгласуване с папката на програмата\n  7 произволен ключ                              v преглед   l lint   s запис   q изход\n"
@@ -28,12 +29,6 @@ msgstr "\nСъобщения с този код (* означава име ил�
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nРезултатите отиват в stdout, диагностиките в stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (или RUBRAPACK_LANG) избира езика на тези текстове: {1}, или език с езиков пакет.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Кодове за изход: 0 успех, 1 грешка в източника, 2 употреба, 3 вход/изход, 4 подписване или проверка,\n5 lint, 6 мрежа.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nКакво да направите: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store приема SHA-1 отпечатъка на сертифи�
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: няма такъв език (вградени: {2}; друг изисква езиковия си пакет, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (или RUBRAPACK_LANG) избира езика на тези текстове: {1}, или език с езиков пакет.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang изисква език, например en или ko"
 
@@ -619,6 +617,9 @@ msgstr "Пряк път на работния плот?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Диалогови прозорци (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Кодове за изход: 0 успех, 1 грешка в източника, 2 употреба, 3 вход/изход, 4 подписване или проверка,\n5 lint, 6 мрежа.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "В таблицата File, Component или Directory липсва стандартна колона"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' трябва да е версия като 1.
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message изисква refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "регион {1} на страницата с езици има {2} езика, най-много {3} (X-Rubrapack-Group на пакетите им)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "регистърът '{1}' премахва стойност; няма какво да защитава"
 
@@ -3466,6 +3470,42 @@ msgstr "Език"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Изберете езика на инсталирането."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Източна Азия"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Югоизточна Азия"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Южна Азия"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Централна Азия и Кавказ"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Близкият изток"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Западна и Южна Европа"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Северна Европа и Балтика"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Централна и Източна Европа"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Други"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

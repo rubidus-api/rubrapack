@@ -367,6 +367,7 @@ typedef struct {
     uint16_t langids[RP_UI_LANGID_MAX];     // chosen when UserLanguageID or SystemLanguageID is one of them
     size_t   langid_count;
     bool     rtl;               // the language reads right to left (its pack's X-Rubrapack-Direction)
+    int      group;             // its region on a grouped language page (RFC-0028): 1-8, 9 other
     char    *license_source;    // [ui] license-xx: path to open, or NULL
     char    *license_shown;     // as written
     rp_pos_t pos;

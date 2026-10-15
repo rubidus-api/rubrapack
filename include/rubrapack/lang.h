@@ -34,6 +34,7 @@ typedef struct {
     const char    *name;        // X-Rubrapack-Name: the language's own name, or NULL
     const char    *font;        // X-Rubrapack-Font, or NULL
     bool           rtl;         // X-Rubrapack-Direction: rtl (the language reads right to left)
+    int            group;       // X-Rubrapack-Group: its region on a grouped language page (1-8), or 0
     unsigned       langids[RP_LANGPACK_LANGIDS];    // X-Rubrapack-LangIDs
     size_t         langid_count;
     rp_lang_row_t *rows;

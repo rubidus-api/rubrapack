@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Latviešu\n"
 "X-Rubrapack-LangIDs: 1062\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 7\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogi {6}{7}\n  1 nosaukums, ražotājs, versija, arhitektūra    2 instalēšanas mape, kam instalē\n  3 dialogi, licence, valodas                    4 neobligātās daļas\n  5 saīsnes                                      6 faili: saskaņot ar programmas mapi\n  7 jebkura atslēga                              v skatīt   l lint   s saglabāt   q iziet\n"
@@ -28,12 +29,6 @@ msgstr "\nZiņojumi ar šo kodu (* apzīmē nosaukumu vai vērtību):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nRezultāti tiek izvadīti stdout, diagnostika stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (vai RUBRAPACK_LANG) izvēlas šo tekstu valodu: {1} vai valodu, kurai ir valodas pakotne.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Izejas kodi: 0 kārtībā, 1 avota kļūda, 2 lietojums, 3 ievade/izvade, 4 parakstīšana vai pārbaude,\n5 lint, 6 tīkls.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nKo darīt: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store pieņem sertifikāta SHA-1 nospiedumu (40 heksadecimālie ci
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: šādas valodas nav (iebūvētās: {2}; citai nepieciešama sava valodas pakotne, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (vai RUBRAPACK_LANG) izvēlas šo tekstu valodu: {1} vai valodu, kurai ir valodas pakotne.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang nepieciešama valoda, piem., en vai ko"
 
@@ -619,6 +617,9 @@ msgstr "Saīsne darbvirsmā?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialogi (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Izejas kodi: 0 kārtībā, 1 avota kļūda, 2 lietojums, 3 ievade/izvade, 4 parakstīšana vai pārbaude,\n5 lint, 6 tīkls.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tabulai File, Component vai Directory trūkst standarta kolonnas"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' jābūt versijai kā 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message nepieciešams refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "valodu lapas reģionā {1} ir {2} valodas, ne vairāk kā {3} (pakotņu X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "reģistrs '{1}' noņem vērtību; tam nav ko aizsargāt"
 
@@ -3466,6 +3470,42 @@ msgstr "Valoda"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Izvēlieties instalēšanas valodu."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Austrumāzija"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Dienvidaustrumāzija"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Dienvidāzija"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Centrālāzija un Kaukāzs"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Tuvie Austrumi"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Rietumeiropa un Dienvideiropa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Ziemeļeiropa un Baltija"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Centrāleiropa un Austrumeiropa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Citas"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Tiếng Việt\n"
 "X-Rubrapack-LangIDs: 1066\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 2\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, hộp thoại {6}{7}\n  1 tên, nhà sản xuất, phiên bản, kiến trúc      2 thư mục cài đặt, cài cho ai\n  3 hộp thoại, giấy phép, ngôn ngữ               4 phần tùy chọn\n  5 lối tắt                                      6 tệp: khớp với thư mục chương trình\n  7 khóa bất kỳ                                  v xem   l lint   s lưu   q thoát\n"
@@ -28,12 +29,6 @@ msgstr "\nCác thông báo có mã này (* thay cho một tên hoặc một giá
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nKết quả ra stdout, chẩn đoán ra stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (hoặc RUBRAPACK_LANG) chọn ngôn ngữ của các văn bản này: {1}, hoặc một ngôn ngữ có gói ngôn ngữ.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Mã thoát: 0 ổn, 1 lỗi nguồn, 2 cách dùng, 3 nhập/xuất, 4 ký hoặc xác minh,\n5 lint, 6 mạng.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nCần làm gì: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store nhận dấu vân tay SHA-1 của chứng chỉ (40 chữ s�
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: không có ngôn ngữ này (có sẵn: {2}; ngôn ngữ khác cần gói ngôn ngữ của nó, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (hoặc RUBRAPACK_LANG) chọn ngôn ngữ của các văn bản này: {1}, hoặc một ngôn ngữ có gói ngôn ngữ.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang cần một ngôn ngữ, như en hoặc ko"
 
@@ -619,6 +617,9 @@ msgstr "Lối tắt trên màn hình nền?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Hộp thoại (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Mã thoát: 0 ổn, 1 lỗi nguồn, 2 cách dùng, 3 nhập/xuất, 4 ký hoặc xác minh,\n5 lint, 6 mạng.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Bảng File, Component hoặc Directory thiếu một cột chuẩn"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' phải là phiên bản như 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message cần refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "vùng {1} của trang ngôn ngữ có {2} ngôn ngữ, tối đa {3} (X-Rubrapack-Group của các gói)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' xóa một giá trị; nó không có gì để bảo vệ"
 
@@ -3466,6 +3470,42 @@ msgstr "Ngôn ngữ"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Chọn ngôn ngữ cho trình cài đặt."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Đông Á"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Đông Nam Á"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Nam Á"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Trung Á và Kavkaz"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Trung Đông"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Tây Âu và Nam Âu"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Bắc Âu và Baltic"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Trung Âu và Đông Âu"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Khác"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

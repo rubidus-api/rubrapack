@@ -132,6 +132,16 @@ static const text_t texts[] = {
     { "ScopeMachine", "&Everyone on this computer - needs administrator rights" },
     { "LanguageTitle", "Language" },
     { "LanguageText", "Choose the language for setup." },
+    // RFC-0028: the regions of a grouped language page (a pack's X-Rubrapack-Group; 9: none named).
+    { "LangGroup1", "East Asia" },
+    { "LangGroup2", "Southeast Asia" },
+    { "LangGroup3", "South Asia" },
+    { "LangGroup4", "Central Asia and the Caucasus" },
+    { "LangGroup5", "Middle East" },
+    { "LangGroup6", "Western and Southern Europe" },
+    { "LangGroup7", "Northern Europe and the Baltics" },
+    { "LangGroup8", "Central and Eastern Europe" },
+    { "LangGroup9", "Other" },
 };
 
 bool rp_ui_text_known(const char *id) {
@@ -293,6 +303,7 @@ typedef struct {
     const rp_ir_t     *ir;
     bool               multi;           // more than one language
     bool               table;           // ... past RP_UI_LANG_ACTIONS: the texts are RpText rows (RFC-0028)
+    bool               grouped;         // ... past RP_UI_LANG_LIST: the language page groups them by region
     bool               page;            // ... and the language page leads the flow
     bool               act;             // the status line's texts are the package's (ActionText)
     bool               details;         // the progress page has its details box (the helper DLL is there)
@@ -1223,6 +1234,79 @@ static const char *lang_cond(ctx_t *c, size_t li) {
     return keep(c, s, ")");
 }
 
+// The region of language li on a grouped page: 1-8 from its pack, 9 for the rest.
+static int lang_group(const ctx_t *c, size_t li) {
+    int g = c->ir->ui_langs[li].group;
+    return g >= 1 && g <= 8 ? g : 9;
+}
+
+// RFC-0028: past one column the regions are on the left (RpLangGroup, only those with a language)
+// and each region's languages on the right, a radio group of its own (RpLangG_<n>: its own property,
+// so that two groups never share buttons) on the same rectangle, shown while its region is chosen.
+// RpLangApply sets both for the language it settles (RpText rows), so the page opens on it; Next
+// copies the shown region's language into RPLANGUAGE.
+static void grouped_page(ctx_t *c, const char *title, const char *text) {
+    const char *d = "RpLanguageDlg";
+    int count[10] = { 0 }, ng = 0, first = 0, last = 0;
+    for (size_t li = 0; li < c->nlang; ++li) ++count[lang_group(c, li)];
+    for (int g = 1; g <= 9; ++g) {
+        if (count[g] == 0) continue;
+        ++ng;
+        if (first == 0) first = g;
+        last = g;
+    }
+    char name[24], val[16], cnd[48];
+    dialog(c, d, 370, 270, 3, "RpLangGroup", "Next", "Cancel");
+    frame_text(c, d, title, text);
+    snprintf(name, sizeof name, "RpLangG_%d", first);
+    control(c, d, "RpLangGroup", "RadioButtonGroup", 25, 60, 145, 14 * ng, VIS | EN, "RpLangGroup", NULL, keep(c, name, NULL));
+    prop(c, "RpLangGroup", "6");                    // English's, until RpLangApply settles the language
+    for (int g = 1, k = 0; g <= 9; ++g) {
+        if (count[g] == 0) continue;
+        snprintf(val, sizeof val, "%d", g);
+        snprintf(name, sizeof name, "LangGroup%d", g);
+        if (!c->rtl) {
+            rows_t *r = &c->radio;
+            s_(c, r, "RpLangGroup"); i_(c, r, k + 1); s_(c, r, keep(c, val, NULL)); i_(c, r, 0);
+            i_(c, r, k * 14); i_(c, r, 145); i_(c, r, 14); s_(c, r, T(c, keep(c, name, NULL))); n_(c, r);
+        }
+        ++k;
+    }
+    for (int g = 1; g <= 9; ++g) {
+        if (count[g] == 0) continue;
+        int next = 0;
+        for (int h = g + 1; h <= 9 && next == 0; ++h) next = count[h] ? h : 0;
+        char nname[24];
+        snprintf(name, sizeof name, "RpLangG_%d", g);
+        snprintf(nname, sizeof nname, "RpLangG_%d", next);
+        const char *ctl = keep(c, name, NULL);
+        control(c, d, ctl, "RadioButtonGroup", 180, 60, 165, 14 * count[g], VIS | EN, ctl, NULL, g == last ? "Back" : keep(c, nname, NULL));
+        for (size_t li = 0, k = 0; li < c->nlang; ++li) {
+            if (lang_group(c, li) != g) continue;
+            if (k == 0) prop(c, ctl, lang_code(c, li));
+            if (!c->rtl) {
+                rows_t *r = &c->radio;
+                const char *lname = c->ir->ui_langs[li].name ? c->ir->ui_langs[li].name : lang_code(c, li);
+                s_(c, r, ctl); i_(c, r, (int32_t)k + 1); s_(c, r, lang_code(c, li)); i_(c, r, 0);
+                i_(c, r, (int32_t)k * 14); i_(c, r, 165); i_(c, r, 14); s_(c, r, lname); n_(c, r);
+            }
+            ++k;
+        }
+        snprintf(cnd, sizeof cnd, "RpLangGroup = \"%d\"", g);
+        cond(c, d, ctl, "Show", keep(c, cnd, NULL));
+        event(c, d, "Next", "[RPLANGUAGE]", keep(c, "[", keep(c, ctl, "]")), keep(c, cnd, NULL), 0);
+        snprintf(cnd, sizeof cnd, "RpLangGroup <> \"%d\"", g);
+        cond(c, d, ctl, "Hide", keep(c, cnd, NULL));
+    }
+    control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
+    control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
+    control(c, d, "Cancel", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Cancel"), "RpLangGroup");
+    event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
+    event(c, d, "Next", "NewDialog", "RpWelcomeDlg", "NOT Installed", 2);
+    event(c, d, "Next", "NewDialog", "RpMaintenanceDlg", "Installed", 2);
+    dseq(c, d, "NOT Installed OR (NOT RESUME AND NOT Preselected)", 1225);
+}
+
 // The first page when the dialogs speak several languages: the heading and the line under it in
 // every language (the line: up to three), a radio button per language (the automatic choice already selected), then the
 // welcome page or, when installed, the maintenance page.
@@ -1238,6 +1322,10 @@ static void language_dlg(ctx_t *c) {
     if (c->nlang > 3) text = T(c, "LanguageText");
     // Past RP_UI_LANG_ACTIONS the heading does not fit either: it too is the language's (RFC-0028).
     title = c->table ? TT(c, "LanguageTitle") : keep(c, "{\\RpTitle_en}", title);
+    if (c->grouped) {
+        grouped_page(c, title, text);
+        return;
+    }
     dialog(c, d, 370, 270, 3, "Lang", "Next", "Cancel");
     frame_text(c, d, title, text);
     int h = 14 * (int)c->nlang;
@@ -1433,17 +1521,24 @@ static void language_table(ctx_t *c) {
     ca_dll(c, "RpLangApply", "RpLangApply");
     seq(c, "RpLangApply", NULL, 19);
     if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
-    if (c->page) {
+    if (c->page && !c->grouped) {
         prop(c, "RPLANGUAGEUI", "en");
         ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
         seq(c, "RpLangUi", NULL, 20);
-        page_event(c, "DoAction", "RpLangApply", NULL);
     }
+    if (c->page) page_event(c, "DoAction", "RpLangApply", NULL);
     rtl_rows(c);
     rows_t *t = &c->rptext;
     for (size_t li = 0; li < c->nlang; ++li) {
         const char *code = lang_code(c, li);
         s_(c, t, code); s_(c, t, "DefaultUIFont"); s_(c, t, keep(c, "RpNormal_", code)); i_(c, t, 0);
+        if (c->grouped && c->page) {        // the grouped page opens on the language's region and on it
+            char g[16], ctl[24];
+            snprintf(g, sizeof g, "%d", lang_group(c, li));
+            snprintf(ctl, sizeof ctl, "RpLangG_%d", lang_group(c, li));
+            s_(c, t, code); s_(c, t, "RpLangGroup"); s_(c, t, keep(c, g, NULL)); i_(c, t, 0);
+            s_(c, t, code); s_(c, t, keep(c, ctl, NULL)); s_(c, t, code); i_(c, t, 0);
+        }
         for (size_t k = 0; k < c->nreg; ++k) {
             const regtext_t *r = &c->reg[k];
             const char *src = r->src[li] ? r->src[li] : "";
@@ -1574,6 +1669,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->nlang = ir->ui_lang_count ? ir->ui_lang_count : 1;
     c->multi = c->nlang > 1;
     c->table = c->nlang > RP_UI_LANG_ACTIONS;
+    c->grouped = c->nlang > RP_UI_LANG_LIST;
     c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
     c->details = in->details;
     c->details_dll = in->helper;

@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: O‘zbekcha\n"
 "X-Rubrapack-LangIDs: 1091\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 4\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialoglar {6}{7}\n  1 nomi, ishlab chiqaruvchi, versiya, arxitektura 2 o‘rnatish jildi, kim uchun\n  3 dialoglar, litsenziya, tillar                4 ixtiyoriy qismlar\n  5 yorliqlar                                    6 fayllar: dastur jildiga moslash\n  7 istalgan kalit                               v ko‘rish   l lint   s saqlash   q chiqish\n"
@@ -28,12 +29,6 @@ msgstr "\nShu kodli xabarlar (* nom yoki qiymat o‘rnida turadi):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nNatijalar stdout ga, diagnostika stderr ga chiqadi.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (yoki RUBRAPACK_LANG) bu matnlar tilini tanlaydi: {1} yoki til paketi bor til.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Chiqish kodlari: 0 muvaffaqiyat, 1 manba xatosi, 2 foydalanish, 3 kiritish/chiqarish, 4 imzo yoki tekshiruv,\n5 lint, 6 tarmoq.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nNima qilish kerak: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store sertifikatning SHA-1 izini oladi (40 ta o‘n oltilik raqam)
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: bunday til yo‘q (ichki: {2}; boshqasiga o‘z til paketi kerak, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (yoki RUBRAPACK_LANG) bu matnlar tilini tanlaydi: {1} yoki til paketi bor til.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang ga til kerak, masalan en yoki ko"
 
@@ -619,6 +617,9 @@ msgstr "Ish stolida yorliq?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialoglar (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Chiqish kodlari: 0 muvaffaqiyat, 1 manba xatosi, 2 foydalanish, 3 kiritish/chiqarish, 4 imzo yoki tekshiruv,\n5 lint, 6 tarmoq.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component yoki Directory jadvalida standart ustun yo‘q"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' 1.2.3 kabi versiya bo‘lishi kerak"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message ga refuse-upgrade-below kerak"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "til sahifasining {1}-hududida {2} ta til bor, ko‘pi bilan {3} (paketlarning X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "'{1}' reyestri qiymatni o‘chiradi; unda himoya qiladigan narsa yo‘q"
 
@@ -3466,6 +3470,42 @@ msgstr "Til"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "O‘rnatish tilini tanlang."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Sharqiy Osiyo"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Janubi-Sharqiy Osiyo"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Janubiy Osiyo"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Markaziy Osiyo va Kavkaz"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Yaqin Sharq"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "G‘arbiy va Janubiy Yevropa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Shimoliy Yevropa va Boltiqbo‘yi"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Markaziy va Sharqiy Yevropa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Boshqa"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

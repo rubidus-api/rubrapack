@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Қазақ тілі\n"
 "X-Rubrapack-LangIDs: 1087\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 4\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, диалогтар {6}{7}\n  1 атауы, өндіруші, нұсқа, архитектура          2 орнату қалтасы, кім үшін\n  3 диалогтар, лицензия, тілдер                  4 қосымша бөліктер\n  5 төте жолдар                                  6 файлдар: бағдарлама қалтасымен сәйкестендіру\n  7 кез келген кілт                              v қарау   l lint   s сақтау   q шығу\n"
@@ -28,12 +29,6 @@ msgstr "\nОсы коды бар хабарлар (* атау немесе мә�
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nНәтижелер stdout-қа, диагностика stderr-ге шығады.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (немесе RUBRAPACK_LANG) осы мәтіндердің тілін таңдайды: {1} немесе тіл бумасы бар тіл.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Шығу кодтары: 0 сәтті, 1 бастапқы файл қатесі, 2 пайдалану, 3 енгізу/шығару, 4 қолтаңба не тексеру,\n5 lint, 6 желі.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nНе істеу керек: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store сертификаттың SHA-1 таңбасын алады
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: мұндай тіл жоқ (кірістірілгендер: {2}; басқасына өз тіл бумасы керек, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (немесе RUBRAPACK_LANG) осы мәтіндердің тілін таңдайды: {1} немесе тіл бумасы бар тіл.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang үшін тіл керек, мысалы en немесе ko"
 
@@ -619,6 +617,9 @@ msgstr "Жұмыс үстеліндегі төте жол?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Диалогтар (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Шығу кодтары: 0 сәтті, 1 бастапқы файл қатесі, 2 пайдалану, 3 енгізу/шығару, 4 қолтаңба не тексеру,\n5 lint, 6 желі.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File, Component немесе Directory кестесінде стандартты баған жоқ"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' 1.2.3 сияқты нұсқа болуы ке
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message үшін refuse-upgrade-below керек"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "тілдер бетінің {1}-аймағында {2} тіл бар, ең көбі {3} (бумалардың X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "'{1}' тізілімі мәнді жояды; оған қорғайтын ештеңе жоқ"
 
@@ -3466,6 +3470,42 @@ msgstr "Тіл"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Орнату тілін таңдаңыз."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Шығыс Азия"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Оңтүстік-Шығыс Азия"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Оңтүстік Азия"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Орталық Азия және Кавказ"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Таяу Шығыс"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Батыс және Оңтүстік Еуропа"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Солтүстік Еуропа және Балтық"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Орталық және Шығыс Еуропа"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Басқа"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

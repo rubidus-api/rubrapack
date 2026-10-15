@@ -998,7 +998,8 @@ text = "This will install [ProductName]. Close other programs first."
 `FilesInUseText`, `FilesInUseTextRestart`, `Continue`, `OutOfDiskTitle`, `OutOfDiskText`, `MaintTitle`, `MaintText`, `Repair`,
 `RepairText`, `Remove`, `RemoveText`, `Change`, `ChangeText`, `RemoveConfirmTitle`, `RemoveConfirmText`,
 `RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
-쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `DirGuardText`(아래 가드의 메시지),
+쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `LangGroup1`~`LangGroup9`(묶은 언어 페이지의
+지역; 주지 않는 언어는 영어를 쓴다), `DirGuardText`(아래 가드의 메시지),
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
@@ -1072,9 +1073,12 @@ labels-ko = ["표준(&T)", "휴대용(&P)"]
 `ur`(우르두어), `ca`(카탈루냐어), `eu`(바스크어), `gl`(갈리시아어), `bn`(벵골어), `ta`(타밀어), `kk`(카자흐어),
 `uz`(라틴 문자 우즈베크어), `az`(라틴 문자 아제르바이잔어). 다른 언어는 그 언어의 파일 - 번역 도구들이 읽는 PO 형식의 `<코드>.po` - 을 더하기만 하면 지원된다.
 rubrapack 도 원본의 문구도 바꿀 필요가 없다. 코드는 소문자 2~3자이고, 지역 변형이면 `_` 와 지역의 대문자 2자를 붙인다
-(gettext 가 파일 이름을 짓는 방식). 패키지 하나에는 영어와 그 밖의 언어 열한 개까지 들어간다. 일곱 개까지는 언어마다
-문구마다 동작이 하나씩이고, 여덟 개부터는 문구가 표(`RpText`)의 행이 되어 언어를 고를 때 rubrapack 의 도우미 DLL 이
-제자리에 넣는다.
+(gettext 가 파일 이름을 짓는 방식). 패키지 하나에는 영어와 그 밖의 언어 63개까지 들어간다 - 내장 팩 48개가 모두 들어간다.
+일곱 개까지는 언어마다 문구마다 동작이 하나씩이고, 여덟 개부터는 문구가 표(`RpText`)의 행이 되어 언어를 고를 때
+rubrapack 의 도우미 DLL 이 제자리에 넣는다. 영어를 포함해 열두 개까지는 언어 페이지가 한 열로 늘어놓고, 그보다 많으면
+지역별로 묶는다: 왼쪽에 지역, 오른쪽에 고른 지역의 언어. 팩은 `X-Rubrapack-Group` 으로 지역을 적는다(1 동아시아,
+2 동남아시아, 3 남아시아, 4 중앙아시아·캅카스, 5 중동, 6 서유럽·남유럽 - 영어도 여기 -, 7 북유럽·발트, 8 중부·동유럽).
+적지 않은 팩은 "기타"에 들어간다. 한 지역에는 열두 개까지다(`RP1308`).
 
 ```po
 msgid ""
@@ -1084,6 +1088,7 @@ msgstr ""
 "X-Rubrapack-LangIDs: 1041\n"      # 이 언어가 골라지는 Windows LANGID
 "X-Rubrapack-Font: Yu Gothic UI\n"
 "X-Rubrapack-Direction: ltr\n"     # 오른쪽에서 왼쪽으로 읽는 언어(ar, he, fa, ur)는 rtl
+"X-Rubrapack-Group: 1\n"           # 묶은 언어 페이지에서 이 언어의 지역
 
 # 명령줄: msgid 는 rubrapack 이 쓰는 영어 문구 그대로다.
 msgid "cannot read '%s' (%s)"

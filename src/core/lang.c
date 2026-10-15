@@ -69,6 +69,7 @@ static void header(rp_langpack_t *pk, char *h) {
             if (strcmp(line, "X-Rubrapack-Name") == 0 && *v) pk->name = v;
             else if (strcmp(line, "X-Rubrapack-Font") == 0 && *v) pk->font = v;
             else if (strcmp(line, "X-Rubrapack-Direction") == 0) pk->rtl = strncmp(v, "rtl", 3) == 0;
+            else if (strcmp(line, "X-Rubrapack-Group") == 0) pk->group = *v >= '1' && *v <= '8' && (v[1] == 0 || v[1] == ' ') ? *v - '0' : 0;
             else if (strcmp(line, "X-Rubrapack-LangIDs") == 0) {
                 for (char *q = v; *q && pk->langid_count < RP_LANGPACK_LANGIDS;) {
                     unsigned long id = strtoul(q, &q, 10);

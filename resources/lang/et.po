@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Eesti\n"
 "X-Rubrapack-LangIDs: 1061\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 7\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialoogid {6}{7}\n  1 nimi, tootja, versioon, arhitektuur          2 installikaust, kellele installitakse\n  3 dialoogid, litsents, keeled                  4 valikulised osad\n  5 otseteed                                     6 failid: sobita programmikaustaga\n  7 mis tahes võti                               v vaata   l lint   s salvesta   q välju\n"
@@ -28,12 +29,6 @@ msgstr "\nSelle koodiga teated (* tähistab nime või väärtust):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nTulemused lähevad stdout-i, diagnostika stderr-i.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (või RUBRAPACK_LANG) valib nende tekstide keele: {1} või keele, millel on keelepakett.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Väljumiskoodid: 0 korras, 1 lähteviga, 2 kasutus, 3 sisend/väljund, 4 allkirjastamine või kontroll,\n5 lint, 6 võrk.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nMida teha: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "--key-store võtab sertifikaadi SHA-1 sõrmejälje (40 kuueteistkümnend
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: sellist keelt pole (sisseehitatud: {2}; muu vajab oma keelepaketti, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (või RUBRAPACK_LANG) valib nende tekstide keele: {1} või keele, millel on keelepakett.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang vajab keelt, nt en või ko"
 
@@ -619,6 +617,9 @@ msgstr "Otsetee töölaual?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Dialoogid (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Väljumiskoodid: 0 korras, 1 lähteviga, 2 kasutus, 3 sisend/väljund, 4 allkirjastamine või kontroll,\n5 lint, 6 võrk.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "Tabelist File, Component või Directory puudub standardveerg"
@@ -2390,6 +2391,9 @@ msgstr "refuse-upgrade-below '{1}' peab olema versioon nagu 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message vajab refuse-upgrade-below'd"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "keelelehe piirkonnas {1} on {2} keelt, kõige rohkem {3} (pakettide X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "register '{1}' eemaldab väärtuse; sel pole midagi kaitsta"
 
@@ -3466,6 +3470,42 @@ msgstr "Keel"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Valige installimise keel."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Ida-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Kagu-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Lõuna-Aasia"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Kesk-Aasia ja Kaukaasia"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Lähis-Ida"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Lääne- ja Lõuna-Euroopa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Põhja-Euroopa ja Baltikum"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Kesk- ja Ida-Euroopa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Muu"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

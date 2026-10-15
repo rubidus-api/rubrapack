@@ -20,6 +20,7 @@ msgstr ""
 "X-Rubrapack-Name: فارسی\n"
 "X-Rubrapack-LangIDs: 1065\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 5\n"
 "X-Rubrapack-Direction: rtl\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
@@ -30,12 +31,6 @@ msgstr "\nپیام‌های دارای این کد (* به جای یک نام ی
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nنتیجه‌ها به stdout و تشخیص‌ها به stderr می‌روند.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (یا RUBRAPACK_LANG) زبان این متن‌ها را انتخاب می‌کند: {1}، یا زبانی که بسته زبان دارد.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "کدهای خروج: 0 موفق، 1 خطای منبع، 2 کاربرد، 3 ورودی/خروجی، 4 امضا یا بررسی،\n5 lint، 6 شبکه.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nچه باید کرد: {1}.\n"
@@ -523,6 +518,9 @@ msgstr "--key-store اثر انگشت SHA-1 گواهی را می‌پذیرد (4
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: چنین زبانی نیست (داخلی: {2}؛ زبان دیگر به بسته زبان خود نیاز دارد، {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (یا RUBRAPACK_LANG) زبان این متن‌ها را انتخاب می‌کند: {1}، یا زبانی که بسته زبان دارد.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang به یک زبان نیاز دارد، مانند en یا ko"
 
@@ -621,6 +619,9 @@ msgstr "میان‌بر روی میزکار؟"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "گفتگوها (none، basic، minimal، installdir، features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "کدهای خروج: 0 موفق، 1 خطای منبع، 2 کاربرد، 3 ورودی/خروجی، 4 امضا یا بررسی،\n5 lint، 6 شبکه.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "جدول File، Component یا Directory یک ستون استاندارد کم دارد"
@@ -2392,6 +2393,9 @@ msgstr "refuse-upgrade-below '{1}' باید نسخه‌ای مانند 1.2.3 ب�
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message به refuse-upgrade-below نیاز دارد"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "منطقهٔ {1} صفحهٔ زبان‌ها {2} زبان دارد، حداکثر {3} (X-Rubrapack-Group بسته‌ها)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "رجیستری '{1}' یک مقدار را حذف می‌کند؛ چیزی برای محافظت ندارد"
 
@@ -3468,6 +3472,42 @@ msgstr "زبان"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "زبان برنامه نصب را انتخاب کنید."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "آسیای شرقی"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "آسیای جنوب شرقی"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "آسیای جنوبی"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "آسیای مرکزی و قفقاز"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "خاورمیانه"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "اروپای غربی و جنوبی"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "اروپای شمالی و بالتیک"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "اروپای مرکزی و شرقی"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "سایر"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

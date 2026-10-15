@@ -19,6 +19,7 @@ msgstr ""
 "X-Rubrapack-Name: Magyar\n"
 "X-Rubrapack-LangIDs: 1038\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 8\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
 msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, párbeszédpanelek {6}{7}\n  1 név, gyártó, verzió, architektúra           2 telepítési mappa, kinek települ\n  3 párbeszédpanelek, licenc, nyelvek           4 választható részek\n  5 parancsikonok                               6 fájlok: a programmappához igazítás\n  7 bármely kulcs                               v nézet   l lint   s mentés   q kilépés\n"
@@ -28,12 +29,6 @@ msgstr "\nAz ilyen kódú üzenetek (a * egy nevet vagy értéket jelöl):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nAz eredmények az stdout-ra, a diagnosztika az stderr-re kerül.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "A --lang (vagy RUBRAPACK_LANG) választja ki e szövegek nyelvét: {1}, vagy egy nyelvi csomaggal rendelkező nyelv.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "Kilépési kódok: 0 rendben, 1 forráshiba, 2 használat, 3 bemenet/kimenet, 4 aláírás vagy ellenőrzés,\n5 lint, 6 hálózat.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nTeendő: {1}.\n"
@@ -521,6 +516,9 @@ msgstr "a --key-store a tanúsítvány SHA-1 ujjlenyomatát fogadja (40 hexadeci
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: nincs ilyen nyelv (beépítettek: {2}; másikhoz a nyelvi csomagja kell, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "A --lang (vagy RUBRAPACK_LANG) választja ki e szövegek nyelvét: {1}, vagy egy nyelvi csomaggal rendelkező nyelv.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "a --lang nyelvet igényel, például en vagy ko"
 
@@ -619,6 +617,9 @@ msgstr "Parancsikon az asztalon?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "Párbeszédpanelek (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Kilépési kódok: 0 rendben, 1 forráshiba, 2 használat, 3 bemenet/kimenet, 4 aláírás vagy ellenőrzés,\n5 lint, 6 hálózat.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "a File, Component vagy Directory táblából hiányzik egy szabványos oszlop"
@@ -2390,6 +2391,9 @@ msgstr "a refuse-upgrade-below '{1}' csak verzió lehet, például 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "a refuse-upgrade-message a refuse-upgrade-below értéket igényli"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "a nyelvoldal {1}. régiójában {2} nyelv van, legfeljebb {3} lehet (a csomagok X-Rubrapack-Group fejléce)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "a(z) '{1}' beállításjegyzék-elem értéket töröl; nincs mit védenie"
 
@@ -3466,6 +3470,42 @@ msgstr "Nyelv"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "Válassza ki a telepítés nyelvét."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "Kelet-Ázsia"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "Délkelet-Ázsia"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "Dél-Ázsia"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "Közép-Ázsia és Kaukázus"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "Közel-Kelet"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "Nyugat- és Dél-Európa"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "Észak-Európa és Baltikum"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "Közép- és Kelet-Európa"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "Egyéb"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

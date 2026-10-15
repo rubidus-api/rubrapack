@@ -20,6 +20,7 @@ msgstr ""
 "X-Rubrapack-Name: עברית\n"
 "X-Rubrapack-LangIDs: 1037\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 5\n"
 "X-Rubrapack-Direction: rtl\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
@@ -30,12 +31,6 @@ msgstr "\nהודעות עם קוד זה (* מייצג שם או ערך):\n"
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nהתוצאות נשלחות ל-stdout, האבחונים ל-stderr.\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (או RUBRAPACK_LANG) בוחר את שפת הטקסטים האלה: {1}, או שפה שיש לה חבילת שפה.\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "קודי יציאה: 0 תקין, 1 שגיאה במקור, 2 שימוש, 3 קלט/פלט, 4 חתימה או אימות,\n5 lint, 6 רשת.\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nמה לעשות: {1}.\n"
@@ -523,6 +518,9 @@ msgstr "--key-store מקבל את טביעת ה-SHA-1 של האישור (40 ספ
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: אין שפה כזו (מובנות: {2}; שפה אחרת צריכה את חבילת השפה שלה, {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (או RUBRAPACK_LANG) בוחר את שפת הטקסטים האלה: {1}, או שפה שיש לה חבילת שפה.\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang דורש שפה, כמו en או ko"
 
@@ -621,6 +619,9 @@ msgstr "קיצור דרך בשולחן העבודה?"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "תיבות דו-שיח (none, basic, minimal, installdir, features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "קודי יציאה: 0 תקין, 1 שגיאה במקור, 2 שימוש, 3 קלט/פלט, 4 חתימה או אימות,\n5 lint, 6 רשת.\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "בטבלת File, Component או Directory חסרה עמודה סטנדרטית"
@@ -2392,6 +2393,9 @@ msgstr "refuse-upgrade-below ‏'{1}' חייב להיות גרסה כמו 1.2.3"
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message דורש refuse-upgrade-below"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "באזור {1} בדף השפות יש {2} שפות, לכל היותר {3} (X-Rubrapack-Group של החבילות)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "הרישום '{1}' מסיר ערך; אין לו מה להגן"
 
@@ -3468,6 +3472,42 @@ msgstr "שפה"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "בחר את שפת ההתקנה."
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "מזרח אסיה"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "דרום-מזרח אסיה"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "דרום אסיה"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "מרכז אסיה והקווקז"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "המזרח התיכון"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "מערב אירופה ודרומה"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "צפון אירופה והמדינות הבלטיות"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "מרכז אירופה ומזרחה"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "אחרות"
 
 msgctxt "installer"
 msgid "Action.AppSearch"

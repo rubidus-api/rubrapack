@@ -20,6 +20,7 @@ msgstr ""
 "X-Rubrapack-Name: اردو\n"
 "X-Rubrapack-LangIDs: 1056, 2080\n"
 "X-Rubrapack-Font: Segoe UI\n"
+"X-Rubrapack-Group: 3\n"
 "X-Rubrapack-Direction: rtl\n"
 
 msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
@@ -30,12 +31,6 @@ msgstr "\nاس کوڈ والے پیغامات (* کسی نام یا قدر کی 
 
 msgid "\nResults go to stdout, diagnostics to stderr.\n"
 msgstr "\nنتائج stdout پر اور تشخیصات stderr پر جاتی ہیں۔\n"
-
-msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
-msgstr "--lang (یا RUBRAPACK_LANG) ان متنوں کی زبان منتخب کرتا ہے: {1}، یا کوئی ایسی زبان جس کا زبان پیک ہو۔\n"
-
-msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
-msgstr "اخراج کوڈز: 0 ٹھیک، 1 سورس کی خرابی، 2 استعمال، 3 ان پٹ/آؤٹ پٹ، 4 دستخط یا تصدیق،\n5 lint، 6 نیٹ ورک۔\n"
 
 msgid "\nWhat to do: %s.\n"
 msgstr "\nکیا کرنا ہے: {1}۔\n"
@@ -523,6 +518,9 @@ msgstr "--key-store سرٹیفکیٹ کا SHA-1 تھمب پرنٹ لیتا ہے 
 msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
 msgstr "--lang {1}: ایسی کوئی زبان نہیں (بلٹ اِن: {2}؛ کسی اور کو اپنا زبان پیک چاہیے، {3}.po)"
 
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (یا RUBRAPACK_LANG) ان متنوں کی زبان منتخب کرتا ہے: {1}، یا کوئی ایسی زبان جس کا زبان پیک ہو۔\n"
+
 msgid "--lang needs a language, such as en or ko"
 msgstr "--lang کو زبان چاہیے، جیسے en یا ko"
 
@@ -621,6 +619,9 @@ msgstr "ڈیسک ٹاپ شارٹ کٹ؟"
 
 msgid "Dialogs (none, basic, minimal, installdir, features)"
 msgstr "ڈائیلاگز (none، basic، minimal، installdir، features)"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "اخراج کوڈز: 0 ٹھیک، 1 سورس کی خرابی، 2 استعمال، 3 ان پٹ/آؤٹ پٹ، 4 دستخط یا تصدیق،\n5 lint، 6 نیٹ ورک۔\n"
 
 msgid "File, Component or Directory table lacks a standard column"
 msgstr "File، Component یا Directory جدول میں ایک معیاری کالم نہیں"
@@ -2392,6 +2393,9 @@ msgstr "refuse-upgrade-below '{1}' کو 1.2.3 جیسا ورژن ہونا چاہ�
 msgid "refuse-upgrade-message needs refuse-upgrade-below"
 msgstr "refuse-upgrade-message کو refuse-upgrade-below چاہیے"
 
+msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
+msgstr "زبان کے صفحے کے علاقے {1} میں {2} زبانیں ہیں، زیادہ سے زیادہ {3} (ان کے پیک کا X-Rubrapack-Group)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "رجسٹری '{1}' ایک قدر ہٹاتی ہے؛ اس کے پاس بچانے کو کچھ نہیں"
 
@@ -3468,6 +3472,42 @@ msgstr "زبان"
 msgctxt "installer"
 msgid "LanguageText"
 msgstr "سیٹ اپ کی زبان منتخب کریں۔"
+
+msgctxt "installer"
+msgid "LangGroup1"
+msgstr "مشرقی ایشیا"
+
+msgctxt "installer"
+msgid "LangGroup2"
+msgstr "جنوب مشرقی ایشیا"
+
+msgctxt "installer"
+msgid "LangGroup3"
+msgstr "جنوبی ایشیا"
+
+msgctxt "installer"
+msgid "LangGroup4"
+msgstr "وسطی ایشیا اور قفقاز"
+
+msgctxt "installer"
+msgid "LangGroup5"
+msgstr "مشرق وسطیٰ"
+
+msgctxt "installer"
+msgid "LangGroup6"
+msgstr "مغربی اور جنوبی یورپ"
+
+msgctxt "installer"
+msgid "LangGroup7"
+msgstr "شمالی یورپ اور بالٹک"
+
+msgctxt "installer"
+msgid "LangGroup8"
+msgstr "وسطی اور مشرقی یورپ"
+
+msgctxt "installer"
+msgid "LangGroup9"
+msgstr "دیگر"
 
 msgctxt "installer"
 msgid "Action.AppSearch"
