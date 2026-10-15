@@ -1,0 +1,3816 @@
+# rubrapack language pack: Estonian.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: et\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Eesti\n"
+"X-Rubrapack-LangIDs: 1061\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialoogid {6}{7}\n  1 nimi, tootja, versioon, arhitektuur          2 installikaust, kellele installitakse\n  3 dialoogid, litsents, keeled                  4 valikulised osad\n  5 otseteed                                     6 failid: sobita programmikaustaga\n  7 mis tahes võti                               v vaata   l lint   s salvesta   q välju\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nSelle koodiga teated (* tähistab nime või väärtust):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nTulemused lähevad stdout-i, diagnostika stderr-i.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (või RUBRAPACK_LANG) valib nende tekstide keele: {1} või keele, millel on keelepakett.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Väljumiskoodid: 0 korras, 1 lähteviga, 2 kasutus, 3 sisend/väljund, 4 allkirjastamine või kontroll,\n5 lint, 6 võrk.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nMida teha: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} on kadunud, kuid otsetee avab selle: muutke esmalt otseteid (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} faili ja {2} kausta seal\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s või q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  lisati [dir.{1}] ja [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  lisati [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  andke see kujul table.key, nt package.version või dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: probleeme pole\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: vaadake ülaltoodud probleeme (seal nimetatud fail on kontrollkoopia)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  muud keeled jaotises [ui] languages jäetakse alles; muutke seda loendit valikuga 7 (mis tahes võti)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  eemaldati [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  eemaldati [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  alamkaustad:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  see ei sobi TOML-i alamhulka; midagi ei muudetud\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  see polnud loetav tekst; uuesti, palun\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  programmikaust '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  lähtes pole [file] tabeleid, millele otsetee saaks osutada\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  lähtes pole alamkaustu kujul, nagu `new` need kirjutab ([files] \"<folder>/<name>/**\"); lisage need valikuga 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  liiga pikk; uuesti, palun\n"
+
+msgid "  y or n\n"
+msgstr "  y või n\n"
+
+msgid " (changed)"
+msgstr " (muudetud)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - koostab Windows Installeri (.msi) ja MSIX-i (.msix) pakette\n\nkasutus: rubrapack [--lang <code>] <command> [arguments]\n\nkäsud:\n"
+
+msgid " and its dir"
+msgstr " ja selle dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) ei ole keskkonnamuutuja, seega laiendatav väärtus ei saa seda sisaldada; kasutage stringiväärtust (täidetakse installimisel)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) on {2}: sellega võib algada tee või see võib asendada väärtust, mille täidab Windows Installer (register, keskkond, INI, argumendid, teated), kuid mitte siin"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) ei ole kaust, millest saab tee alata (dir ID või ProgramFiles, LOCALAPPDATA, ProgramData ... - vt juhendi jaotist Paths){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  struktuur:    {2}\n  räsi:         {3}\n  allkiri:      {4}\n  ahel:         {5}{6}{7}\n  tühistamine:  kontrollimata\n  ajatempel:    {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: muutuja pole määratud"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' ei ole selle dialoogi juhtelement"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' ei ole jaotises {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': litsentsitekst vajab fondi ingliskeelset nime, seega kuvatakse see keele enda fondiga; kirjutage ingliskeelne nimi (nt \"Malgun Gothic\"), et seda fonti kasutataks ka seal"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "komponent {1}, kuid paketi platvorm on {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} ei kuulu kind = \"{2}\" juurde"
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} ei kuulu kind = \"firewall\" juurde"
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} sisaldab LANGID-e (1..65535), nt 1041"
+
+msgid "%s holds strings"
+msgstr "{1} sisaldab stringe"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} on 1 kuni 31 märgi pikkune fondinimi, nt \"Segoe UI\" (saadi {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} on MSI tingimus suletud jutumärkide ja tasakaalus sulgudega"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} on stringide massiiv, üks iga väärtuse kohta"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} on MSI-pakettide jaoks: MSIX-i ei eemalda msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} on kadunud. Kas eemaldada [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} on pikem kui 240 märki"
+
+msgid "%s is new. Add it?"
+msgstr "{1} on uus. Kas lisada?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} ei ole registrivormingus GUID"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} ei ole kood, mida see rubrapack kasutab{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
+
+msgid "%s must be a GUID"
+msgstr "{1} peab olema GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} peab olema GUID nagu {{12345678-...} (saadi '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} peab olema aadress https://, http:// või file:// või tee \\\\server\\share (saadi '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} peab erinema upgrade-code'ist (üks täienduspere arhitektuuri kohta)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} vajab Windowsi järku {2} või uuemat: määrake [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} vajab faili resources/bin/rubrapack_ca-{2}.dll, ilma milleta see rubrapack koostati"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA kontrollimata (andke --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA usaldusväärne"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA ebausaldusväärne - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} on kadunud või tühi. Kas eemaldada [files.{3}] ja [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ on uus kaust. Kas lisada?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: vead: {2}{-3}, hoiatused: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: vead: {2}{-3}, hoiatused: {4}{-5} (võrreldes {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} faili, {3} baiti\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} faili, {3} viga, 0 hoiatust\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: veel {2} diagnostikat jäi näitamata\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: fail '{2}' ei ole selle paketi [file.*]"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: fail '{2}' ei ole programm (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' pole suletud (teksti '$(' jaoks kirjutage '$$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' on juba olemas; jäetakse nii, nagu on"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' on juba olemas; eemaldage see või koostage teise kausta"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' on juba {2}-töötlejaga ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' on juba õigused"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' ja '{2}' on paketis sama tee"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' kuulub Windowsile või brauseritele"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' ei saa lugeda '{2}' suhtes: {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' ei sobi TOML-i alamhulka; midagi ei salvestatud"
+
+msgid "'%s' exists already"
+msgstr "'{1}' on juba olemas"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' on juba olemas; muutke seda käsuga `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' on olemas ega ole tühi kataloog; ekstraktige uude"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' läheb asukohta {2}; või msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' kokkuvõtteteabe voog on loetamatu"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' ei sisalda ekstraktimiseks tabeleid Directory, Component, File ja Media"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' ei sisalda loetavat kokkuvõtteteavet"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' ei sisalda teisendust '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' on UTF-16: edit muudab ainult UTF-8 lähteid (salvestage see esmalt UTF-8-na)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' on Windowsi nimi; andke muutujale teine nimi"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' on [chain]: see koostab installiprogrammi, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' on sisseehitatud raami juhtelement; valige muu ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' on arvuti kaust; {2}-pakett ei saa sinna kirjutada"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' on ühendusmoodul: ühendage see [merge.ID] abil"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' on nimi, mille MSIX-vorming jätab endale"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' on sümbolink; linke ei järgita"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' on ka [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' on ka dir ID; andke muutujale teine nimi"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' on koostatud masinale 0x{2}, mitte selle paketi arhitektuurile; määrake any-arch = true, kui see on tahtlik"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ei ole PE-fail (.exe, .dll), MSI-pakett ega MSIX-pakett või -kogum"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' ei ole PE-fail, MSI-pakett ega MSIX-pakett või -kogum"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' ei ole tuntud kaust ega dir ID (tuntud kaustad: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' ei ole cabinet, mida rubrapack suudab lugeda (stored või MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' ei ole diagnostikakood (RP ja neli numbrit, nt RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' ei ole programm (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' ei ole tavaline fail"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' ei ole rubrapacki installiprogramm{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' ei ole sobiv ID (tähed, numbrid ja '_', ei alga numbriga, kuni {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' ei ole sobiv MSI-andmebaas: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' ei ole sobiv MSIX-pakett: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' ei ole sobiv pakett: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' ei ole sobiv lähe (TOML-i alamhulk); parandage see esmalt käsitsi"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' ei ole sobiv teisendus: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' ei ole sobiv muutujanimi"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' on reserveeritud ja seda ei saa kasutada ID-na"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' on dir'i nimi: dir'i saab täita ainult registri- või dir-otsing"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' näeb välja nagu programmifail (PE), kuid selle päised või ressursid on kahjustatud"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' peab olema string"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' peab olema täisarv"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' peab olema vahemikus {2} kuni {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' peab olema true või false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' ei tohi olla tühi"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' ei nimeta teisendusi (kokkuvõtte atribuut 8): ei ole paik"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' algab kaustaga: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' sisaldab {4}; midagi ei ekstraktitud"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} kirjet, rohkem kui piir {3} (--limit-entries); midagi ei ekstraktitud"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' ja '{3}' oleksid Windowsis sama tee; midagi ei ekstraktitud"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' ei ole jaotises [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': tabelit ei saa lugeda"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': tabel on loetamatu"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX installib kõik oma failid (when); kasutage msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX eemaldab kõik oma failid (keep); kasutage msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' on kahjustatud või pole stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabineti nimi '{2}' ei ole lihtne failinimi"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': tihendatud failil '{2}' (järjestus {3}) pole cabinet'i"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': kataloogil '{2}' on vanem '{3}', mida pole olemas"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': kataloog '{2}' on iseenda eellane või liiga sügaval"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': fail '{2}' ei vasta oma MsiFileHash'ile"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': failil '{2}' pole komponenti ega kataloogi"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': fail '{2}' on {3} baiti, tabel File ütleb {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': faili '{2}' pole cabinet'is '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': selle välised cabinet'id pole allkirjaga kaetud (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': selle kaust ei vii tuntud asukohta"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': kirjutada üle {2} baidi (--limit-bytes); midagi ei ekstraktitud"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': --timestamp puudub: allkiri kaotab kehtivuse, kui sertifikaat aegub"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': pakett '{2}' ei vasta oma SHA-256-le"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet'i voogu '{2}' pole"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': manifestis pole {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': manifest nimetab '{2}', mida paketis pole"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': ajatempel serverist {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': teisendust '{2}' ei saa lugeda '{3}' suhtes: {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' on paketi enda keel ({2}); andke see tekst ilma järelliiteta"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' paneb Windows Installeri kirjutama mitmikstringi; kasutage type = \"multi\" ja massiivi"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' arvudes pole toetatud"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' võtab kuni ühe käsunime"
+
+msgid "'version' takes no arguments"
+msgstr "'version' ei võta argumente"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs on .msi jaoks"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch kogumi jaoks: loend x64, x86 ja arm64, igaüks korra (saadi '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch võtab ühe arhitektuuri või loendi .msixbundle-väljundi jaoks"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp ja --allow-unsigned-cabs käivad koos --key'ga"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress on .msi jaoks; MSIX võtab --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist nimetab uue kausta lähte kõrval (ilma teeta)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs võtab arvu 1 kuni 64 (saadi '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store on Windowsi sertifikaadisalv; mujal kasutage võtmefaili või --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store võtab sertifikaadi SHA-1 sõrmejälje (40 kuueteistkümnendnumbrit)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: sellist keelt pole (sisseehitatud: {2}; muu vajab oma keelepaketti, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang vajab keelt, nt en või ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages vajab dialooge: andke ka --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress võtab deflate või store (saadi '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: muutuja pole määratud"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code võtab suurtähtedes ja looksulgudega GUID-i: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: muutuja pole määratud"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous võrdleb kahte .msi-paketti"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: operatsioonisüsteemi juursertifikaate ei saa lugeda"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} ei vasta väljundile '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} pole teostatud (msi või msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target võtab msi või msix (saadi '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots ja --proxy käivad koos --timestamp'iga"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test ja --msix-compress on .msix-väljundite jaoks"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test on allkirjata pakettide jaoks; koos --key'ga jätke see ära"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate võtab none või mõned järgmistest: product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} on antud kaks korda"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' on Windowsi nimi; andke muutujale teine nimi"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D vajab NAME=VALUE (saadi '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i küsib iga vastust; andke kas -i või valikud"
+
+msgid "; its range is "
+msgstr "; selle vahemik on "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' pole SecureCustomProperties'is"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty peab olema avalik atribuut (suurtähtedes)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Kõik koodid: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x ei alga PKCX-iga"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x ei ole viimane kirje"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Arhitektuur (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Valige"
+
+msgid "Command line"
+msgstr "Käsurida"
+
+msgid "Command line (lint)"
+msgstr "Käsurida (lint)"
+
+msgid "Common AppData"
+msgstr "Ühine AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId ei ole registrivormingus GUID"
+
+msgid "Desktop shortcut?"
+msgstr "Otsetee töölaual?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialoogid (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "Tabelist File, Component või Directory puudub standardveerg"
+
+msgid "Folder name under Program Files"
+msgstr "Kausta nimi kaustas Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Installitavate failidega kaust"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' on juba kasutusel (rida {2}); ID-d peavad kõigis tabelites erinema"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Installikaust ([dir.INSTALLDIR] tee)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Installi kellele (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Võti kujul table.key (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' kuulub teisele komponendile"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' pole tabelis File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' pole tabelis Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Korea keele dialoogid lisaks inglise keelele?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} on madalam kui väiksema DiskId oma"
+
+msgid "Leave without saving the changes?"
+msgstr "Kas väljuda muudatusi salvestamata?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Nõustumist vajav litsents (.txt, .md, .rtf; - kui puudub)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX-il pole kasutaja AppData jaoks virtuaalset kausta; rakendus loob seal käivitumisel vajaliku"
+
+msgid "MSIX packages"
+msgstr "MSIX-paketid"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: mida MSIX-pakett vajab ja mida see kanda ei saa"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Põhiprogramm otseteede jaoks (- kui puudub)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Juhend: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Tootja"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Tootja (kuvatakse jaotises Installitud rakendused)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt tagastas vale pikkusega ECDSA allkirja"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Valikulised osad, mida kasutaja saab märkida (alamkaustad, komadega; - kui puudub)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 tõend: tõendil pole võtme CKA_ID-ga sertifikaati (andke see --cert abil)"
+
+msgid "Paths"
+msgstr "Teed"
+
+msgid "Product name"
+msgstr "Toote nimi"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode ja UpgradeCode on sama GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} ei ole esimese kolme välja poolest suurem kui eelmine {2}: Windows Installer ei täienda"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Programm, mille otseteed avavad (- otseteedeta)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: sellist keelt pole (sisseehitatud: {2}; muu vajab oma keelepaketti, {3}.po)"
+
+msgid "Reference, "
+msgstr "Viide, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Järjestust {1} ei kata ükski Media rida (viimane {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Järjestust {1} kasutab teine fail"
+
+msgid "Source file to write"
+msgstr "Kirjutatav lähtefail"
+
+msgid "Source format"
+msgstr "Lähtevorming"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source peab nimetama tüübi {1} jaoks File'i rea"
+
+msgid "Start menu shortcut?"
+msgstr "Otsetee menüüs Start?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Menüü Start, Programs, töölaua ja Startup'i kirjed tulevad [shortcut.*] ja [msix-extension.*] tabelitest"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML väljaspool alamhulka, mida rubrapack loeb, või `format` puudub või on liiga uus"
+
+msgid "Tables"
+msgstr "Tabelid"
+
+msgid "The TOML subset"
+msgstr "TOML-i alamhulk"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian faile ei toetata; salvestage UTF-8-na"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} erineb eelmise versiooni omast {2}: see pakett ei asenda seda"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode ei ole registrivormingus GUID"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Väärtus (tekst, arv, true/false, [\"a\", \"b\"]; - eemaldab võtme)"
+
+msgid "Variables"
+msgstr "Muutujad"
+
+msgid "Version"
+msgstr "Versioon"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versioon ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versioonid ja täiendused"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer lubab kuni 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] vajab '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] ei saa minna ühendusmoodulisse; see on paketil, mis mooduli ühendab"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] pole veel toetatud (kavas versioonis {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] ei saa minna MSIX-i; lisage msi-only = true, et koostada MSIX ilma selleta"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ühendusmooduli ID on kuni 35 märki (sellele lisatakse mooduli GUID)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] vajab ID-d: kirjutage [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] ei võta ID-d: kirjutage [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml-is pole </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml ei ole viimane kirje (pole pakett, mille kirjutas rubrapack või Windowsi pakendamise API)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "Tabelimassiive [[...]] ei toetata; andke igale üksusele oma [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check ei mõju: miski ei käivita seda veel; eemaldage see"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] vajab nii do kui ka undo (undo tühistab ka nurjunud do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX-i args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: MSIX-is avab failitüüp rakenduse: target peab olema [msix-app.*] käivitatav fail"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] on kaks korda"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] vajab ID-d: kirjutage [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id ja typelib kirjutatakse ainult MSI jaoks; MSIX registreerib klassi ilma nendeta"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args kuuluvad programmile; DLL laaditakse, mitte ei käivitata"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate käivitab DLL-i dllhostis; '{2}' on programm"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading on DLL-i jaoks; programm määrab oma apartment'i ise"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version ja typelib-file vajavad typelib'i"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] läheb asukohta {2}; või msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: selle lähe peab olema paketti minev fail"
+
+msgid "[define] values must be strings"
+msgstr "[define] väärtused peavad olema stringid"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] vajab '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] vajab 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] vajab 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] vajab 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}]-l on {2} juhtelementi; kuni 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}]-l pole [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] on teiste dialoogide kaudu paigutatud iseenda järele"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] vajab ui = \"minimal\", \"installdir\" või \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' on Windowsi nimi; andke dir'ile teine ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard vajab rubrapacki abi-DLL-i, mida ühendusmoodul ei kanna"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] vajab funktsiooni"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX määrab kõik oma muutujad (when); kasutage msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: selle väärtus nimetab koha, mida MSIX anda ei saa (paketivälist kausta, mis pole Windowsi kaust, või installiaegset osa); kasutage msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer laadib {2}-töötleja DLL-ist; [com.{3}] on programm"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows loeb atribuuditöötlejaid ainult arvuti kaupa; pakett vajab scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: eelvaatetöötleja töötab Windowsi prevhostis; jätke app-id ja surrogate [com.{2}]-st välja"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX kannab ainult pisipildi- ja eelvaatetöötlejaid (pakendatud atribuuditöötleja ei andnud Explorerile väärtusi); msi-only = true jätab selle MSI jaoks"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: MSIX-i failitüüp kuulub rakendusele; lisage [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: klass {2} ei ole selle paketi [com.*] (seda teenindab töötleja DLL)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: MSIX-is jagavad töötlejad kõiki oma tüüpe või mitte ühtegi (tüüp on ühes failitüübi seoses)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: MSIX-is töötab selle klass surrogate'is; threading = \"sta\" [com.{2}]-s annab selle aknale sõnumitsükli (threading = {3} korral võib eelvaade jääda tühjaks)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: MSIX-is on kõik selle tüübid ühes [assoc] failitüübis või mitte ühessegi"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: selle klass on msi-only ([com.{2}]); MSIX-il poleks selle jaoks serverit"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types on failitüüpide loend, nt [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] läheb asukohta {2}; või msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] vajab 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] vajab funktsiooni: määrake 'feature' siin või selle dir'il"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX kirjutab kõik oma INI-kirjed (when); kasutage msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: selle väärtuses on osa, mille Windows Installer installimisel täidab ([...]); MSIX kirjutab faili koostamisel"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] vajab 'on': kus üksus kuvatakse, nt [\".txt\"] või \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] vajab 'target' (programm, mille see käivitab) või üksusi parent = \"{2}\" (alammenüü)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] vajab 'target': programm, mille üksus käivitab"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: alammenüü ei käivita midagi: jätke 'args' ära"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: alammenüü üksus kuvatakse seal, kus selle alammenüü: jätke 'on' ära"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args'is on osa, mille Windows Installer installimisel täidab ([...]); MSIX sisaldab ainult fikseeritud teksti"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: selle programm pole MSIX-is (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: selle väärtused ei saa minna paketi registrisse"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] puudub"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on on failitüüp või nende loend, nt [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' ei ole [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' peab olema alammenüü: [menu.*] ilma target'i ja oma parent'ita"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] läheb asukohta {2}; või msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] vajab funktsiooni: määrake 'feature' siin või selle dir'il"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; või msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file peab olema {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file peab nimetama paketti mineva faili"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file peab nimetama paketti mineva programmi"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types on failitüüpide loend, nt [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] vajab, et selle dir'il oleks funktsioon"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX-i args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: MSIX-is avab skeem rakenduse: target peab olema [msix-app.*] käivitatav fail"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] vajab 'value' (või remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR ei ulatu MSIX-ist välja; kasutage [assoc.*], [protocol.*], [com.*] või [handler.*] või msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: qword-väärtus vajab rubrapacki abi-DLL-i, mida ühendusmoodul ei kanna"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX kannab väärtusi ainult asukohas {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX ei eemalda väärtusi ega jäta neid maha (remove, keep); kasutage msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX kirjutab kõik oma väärtused (when); kasutage msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: selle väärtuses on osa, mille Windows Installer installimisel täidab ([...]); MSIX sisaldab ainult fikseeritud väärtusi"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" vajab rubrapacki abi-DLL-i, mida ühendusmoodul ei kanna"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: võtme- või väärtusenimi ei saa minna registri hive'i"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] vajab funktsiooni: määrake 'feature' siin või selle dir'il"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true ei ole kausta jaoks asukoha {2} all"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true vajab rubrapacki abi-DLL-i, mida ühendusmoodul ei kanna"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX-i args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file peab nimetama paketti mineva programmi"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX-il on otseteed ainult töölaual ja menüüs Start{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX-i otseteel pole working-dir'i"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX-i otsetee on alati olemas (when on MSI jaoks)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX-i otsetee kuvab oma rakenduse logo; icon on MSI jaoks"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX-i args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: MSIX-is käivitab otsetee rakenduse: target peab olema [msix-app.*] käivitatav fail"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX-i menüü Start kirje on selle rakendus, mis ei võta args'e"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: ühelgi dialoogitekstil pole seda ID-d"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] vajab [package]-s ui = \"basic\" või muud dialoogikomplekti"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "paojada \\{1} ei ole Unicode'i skalaarväärtus"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: see pakett ei täiendaks eelmist puhtalt"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "paketi `lint`: dialoogid, koodileht, teksti normaliseerimine"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "MSIX-paketi või -kogumi `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "juhtelemendil {1} pole teksti; pange selle kõrvale tekstijuhtelement"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "juhtelement {1} vajab [property.{2}] mõne oma väärtusega vaikimisi (vaikne installimine kasutab seda)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "{1}-pakett ei saa kirjutada HKLM-i; kasutage HKMU-d"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr ".msix-väljund vajab tabelit [msix-app.ID], mis nimetab käivitatava faili"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr ".msix-väljund vajab tabelit [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr ".msm-väljund on ühendusmoodul, mis koostatakse lähtest, kus on [module], mitte [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr ".txt-, .md- või .rtf-fail või - kui puudub"
+
+msgid "a PE file without a certificate table entry"
+msgstr "sertifikaaditabeli kirjeta PE-fail"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN-i ei võeta kunagi käsurealt (teised võivad seda näha); kasutage --pin-env või --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "kogumi manifesti Package tundmatu Type'iga"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "kogumi manifesti Package ilma FileName, Offset või Size'ita"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP-kirje ei paki lahti oma suuruseni"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "lubatust suurem ZIP-kirje"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ZIP-kirje CRC-32 ei klapi"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ZIP-kirje andmed asuvad failist väljas"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "[module]-lähe koostab ühendusmooduli: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "binaarväärtus on paarisarv kuueteistkümnendnumbreid, nt \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "pakettideta kogum"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "teekonna sertifikaadil on kriitiline laiendus, mida rubrapack ei mõista"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "teekonna sertifikaat on allkirjastatud sertifikaadiga, mis pole CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "ahel sisaldab ainult [chain], [chain-package.ID] ja [define], mitte [{1}]; paketid koostatakse nende endi lähtest"
+
+msgid "a chain holds at most %d packages"
+msgstr "ahel sisaldab kuni {1} paketti"
+
+msgid "a chain needs [chain]"
+msgstr "ahel vajab [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "ahel vajab vähemalt ühte [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "märk, mida Windows nimes ei luba (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "juhtmärk"
+
+msgid "a damaged PE optional header"
+msgstr "kahjustatud PE valikuline päis"
+
+msgid "a damaged PE section table"
+msgstr "kahjustatud PE jaotiste tabel"
+
+msgid "a damaged ZIP64 end record"
+msgstr "kahjustatud ZIP64 lõpukirje"
+
+msgid "a damaged hive bin"
+msgstr "kahjustatud hive bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapacki diagnostika"
+
+msgid "a disabled service cannot be started"
+msgstr "keelatud teenust ei saa käivitada"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "dual-pakett ei saa valida kasutaja- ja süsteemimuutuja vahel"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "dual-pakett kirjutab HKMU-sse (HKLM või HKCU vastavalt installimisele), mitte HKCU-sse"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "dword-väärtus on täisarv 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "funktsioon, mida see rubrapack ei paku (või koostati ilma selleta)"
+
+msgid "a file larger than allowed"
+msgstr "lubatust suurem fail"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "failinimi asukohas '{1}' pole sobiv Unicode ja seda ei saa pakendada"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "failinimi ilma / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "faili komponendi- või kataloogiahel on katki"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "font läheb MSIX-i seda nimetava [font.*] kaudu"
+
+msgid "a hash the token signing does not know"
+msgstr "räsi, mida tõendiga allkirjastamine ei tunne"
+
+msgid "a hive cell crosses its bin"
+msgstr "hive'i lahter ületab oma bin'i"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "hive'i versioon või tüüp, mida rubrapack ei loe"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "tuntud kaust ise ('{1}') ei saa õigusi"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "litsents vajab ui = \"minimal\", \"installdir\" või \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "lisaväljadega kohalik päis (pole pakett, mille kirjutas rubrapack või Windowsi pakendamise API)"
+
+msgid "a malformed central directory"
+msgstr "vigane keskkataloog"
+
+msgid "a modification package has no applications of its own"
+msgstr "muudatuspaketil pole oma rakendusi"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "muudatuspakett vajab Windowsi järku 18362 või uuemat: määrake [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "mooduli compress on \"none\", \"mszip\" või \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "mooduli nimi on selle ID ModuleID-s: tähed, numbrid ja _, kuni 35 märki"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "multi-väärtus on mittetühi stringimassiiv"
+
+msgid "a multi value is an array of strings"
+msgstr "multi-väärtus on stringimassiiv"
+
+msgid "a name ending with a space or a dot"
+msgstr "tühiku või punktiga lõppev nimi"
+
+msgid "a name longer than 255 bytes"
+msgstr "üle 255 baidi pikk nimi"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "kogumi manifestis nimetatud pakett pole kogumis"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "pakett ilma Identity Name, Publisher, Version ja ProcessorArchitecture'ita (või ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "paketi Offset või Size kogumi manifestis ei vasta selle asukohale (või on see tihendatud)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "paketi identiteet erineb sellest, mida kogumi manifest selle kohta ütleb"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "paketi nimi kogumis peab olema .msix või .appx-ga lõppev failinimi"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "parooli ei võeta kunagi käsurealt (teised võivad seda näha); kasutage --pass-env või --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "arvutipõhine pakett ei kirjuta HKCU-sse (see kuuluks installivale kasutajale); kasutage scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "kasutajanime või parooliga puhverserverit ei toetata"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "qword-väärtus on täisarv või \"0x\" ja 1 kuni 16 kuueteistkümnendnumbrit"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "raadio-juhtelement laob oma nupud üksteise alla: kõrgus peab olema vähemalt 12 väärtuse kohta ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "kirjel on rohkem veerge kui selle tabelil"
+
+msgid "a record is cut short"
+msgstr "kirje on kärbitud"
+
+msgid "a record names a string the pool does not have"
+msgstr "kirje nimetab stringi, mida kogumis pole"
+
+msgid "a reserved device name"
+msgstr "reserveeritud seadmenimi"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "tagasivõtutoiming ei saa olla asünkroonne"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "skeem on väiketäht, seejärel väiketähed, numbrid, '+', '-' või '.' (saadi '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "skriptitoiming InstallInitialize ja RemoveExistingProducts vahel (viga 2613)"
+
+msgid "a section lies outside the file"
+msgstr "jaotis asub failist väljas"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "teenuse nimi ei tohi sisaldada '/' ega '\\' (kuni 256 märki)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "setup .exe koostatakse [chain]-iga lähtest; '{1}' koostab paketi (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "lähe sisaldab ühte [package]-it või ühte [module]-it, mitte mõlemat"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "RP1xxx kontrollid läbinud lähe ei tohiks neid kunagi kohata: teatage sellest koos lähtega"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "stored ZIP-kirje erinevate suurustega"
+
+msgid "a stream of the package cannot be read"
+msgstr "paketi voogu ei saa lugeda"
+
+msgid "a table has more than 32 columns"
+msgstr "tabelis on üle 32 veeru"
+
+msgid "a text control has no property"
+msgstr "tekstijuhtelemendil pole atribuuti"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "`with` failiga väärtus jagab selle komponenti: pange `when` failile"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "väärtus on 1 kuni 64 baiti"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "'with' failiga kaasas käiv väärtus võtab selle faili funktsiooni"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "versioon on 3 või 4 punktidega arvu, nt 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account peab olema LocalSystem, LocalService või NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "toiming '{1}' on juba määratletud"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "toiming pole standardtoiming ega CustomAction'is"
+
+msgid "adds too many tables"
+msgstr "lisab liiga palju tabeleid"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' ei ole selle dialoogikomplekti leht (RpWelcomeDlg{2}{3}{4}) ega [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias kuulub kind = \"alias\" juurde"
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias peab olema .exe-ga lõppev failinimi: tähed, numbrid, '.', '_', '-' (saadi '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI-jaotis ei tohi sisaldada ']' ja võti ei tohi sisaldada '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX ei saa paigutada faile ajutisse kausta"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "rakendusel on üks alias ([msix-extension.{1}] juba on üks)"
+
+msgid "an empty name"
+msgstr "tühi nimi"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https-server vajab kontrollimiseks --tls-trust <certificates> või --system-roots"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "https:// puhverserverit ei toetata; andke http:// puhverserver (https-serverid saavutatakse CONNECT-i kaudu)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "vanas stiilis Authenticode'i ajatempel (PKCS#9 counterSignature), mida rubrapack ei kontrolli"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "valikuline või muudatuspakett ei deklareeri võimalusi ega virtualiseerimissätteid: kehtivad selle põhipaketi omad"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "x86-pakett kirjutab ainult registri 32-bitisesse vaatesse"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "rakendus '{1}' ei ole [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri ja package-uri käivad koos: kus asuvad .appinstaller-fail ja pakett"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch peab olema \"x64\", \"arm64\" või \"x86\" (saadi '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch peab olema \"x64\", \"x86\" või \"arm64\" (installiprogrammi enda oma)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "argument {1} ei ole sobiv UTF-8 (bait {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "argument {1} ei ole sobiv Unicode (UTF-16 ühik {2})"
+
+msgid "array is not closed"
+msgstr "massiiv pole suletud"
+
+msgid "arrays inside arrays are not supported"
+msgstr "massiive massiivides ei toetata"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "massiivid peavad sisaldama ainult stringe või ainult täisarve"
+
+msgid "at most %d languages besides English"
+msgstr "kuni {1} keelt lisaks inglise keelele"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "kuni 100 tabelit [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "kuni 50 tabelit [action.*] (selles failis on {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color on \"transparent\" või \"#RRGGBB\", nt \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "vale muutujanimi kohas '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner peab olema .bmp-fail (Windows Installer kuvab ainult BMP-d)"
+
+msgid "build a package from a source file"
+msgstr "paketi koostamine lähtefailist"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{1} koostamine {2}-lähtest vajab oma täiendusperet: lisage [package]-sse {3} = \"{{...}\""
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab peab olema \"embed\" või \"external\""
+
+msgid "cannot be read"
+msgstr "ei saa lugeda"
+
+msgid "cannot build the ClientHello"
+msgstr "ClientHello'd ei saa koostada"
+
+msgid "cannot bundle the packages: %s"
+msgstr "pakette ei saa kogumiks liita: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' ei saa luua"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' ei saa luua{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' ei leitud; looge see käsuga `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "vaikelogo ei saa luua"
+
+msgid "cannot make a key share"
+msgstr "key share'i ei saa luua"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "paika '{1}' -> '{2}' ei saa luua"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "teisendust '{1}' -> '{2}' ei saa luua"
+
+msgid "cannot open the certificate store"
+msgstr "sertifikaadisalve ei saa avada"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' ei saa lugeda"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' ei saa lugeda ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "paketti '{1}' ei saa lugeda"
+
+msgid "cannot read source file '%s'"
+msgstr "lähtefaili '{1}' ei saa lugeda"
+
+msgid "cannot read that folder"
+msgstr "seda kausta ei saa lugeda"
+
+msgid "cannot read the %s file '%s'"
+msgstr "{1}-faili '{2}' ei saa lugeda"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "PIN-faili '{1}' ei saa lugeda"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "cabinet'i '{1}' faili '{2}' kõrval ei saa lugeda"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "sertifikaadifaili '{1}' ei saa lugeda"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "sertifikaate failis '{1}' ei saa lugeda"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "sertifikaate failis '{1}' ei saa lugeda: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "võtmefaili '{1}' ei saa lugeda"
+
+msgid "cannot read the password file '%s'"
+msgstr "paroolifaili '{1}' ei saa lugeda"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "tihendamata faili '{1}' faili '{2}' kõrval ei saa lugeda"
+
+msgid "cannot write %s"
+msgstr "{1} ei saa kirjutada"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' ei saa kirjutada"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' ei saa kontrollimiseks kirjutada"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri ei saa kirjutada"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "menüüfaile '{1}' kõrvale ei saa kirjutada"
+
+msgid "cannot write the resource package of %s"
+msgstr "{1} ressursipaketti ei saa kirjutada"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities on nimede massiiv, nt [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "võimalus '{1}' pole rubrapackile tuntud (juhend loetleb need)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "võimalus '{1}' vajab Windowsi järku 17763 või uuemat"
+
+msgid "carriage return without a line feed"
+msgstr "reavahetuseta reapöördumine"
+
+msgid "certificate file '%s': %s"
+msgstr "sertifikaadifail '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "lähte muutmine kohapeal: küsimuste menüü kaudu või valikutega"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "allkirja kontroll: struktuur, räsi, allkiri ja tee usaldusväärse sertifikaadini"
+
+msgid "check a source or package without writing anything"
+msgstr "lähte või paketi kontroll midagi kirjutamata"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "kontrollige lähteteid (lähtefaili suhtes); määrake any-arch = true, kui teine arhitektuur on tahtlik"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "kontrollige õigekirja (teade pakub lähima nime) ja tabeli võtmeid"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "klassi {1} teenindab juba [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "klass {1} on ka [msix-extension.{2}]-s"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class peab olema GUID nagu {{12345678-...} (saadi '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs ei mõju, kui preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs peab olema \"ask\", \"always\" või \"never\" (saadi '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "veerus {1} on vale tüüpi väärtus"
+
+msgid "column %s is not valid UTF-8"
+msgstr "veerg {1} ei ole sobiv UTF-8"
+
+msgid "column %s may not be null"
+msgstr "veerg {1} ei tohi olla null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "veerg {1}: {2} on veeru vahemikust väljas"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "veerg {1}: {2} UTF-16 ühikut, veerg mahutab {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "veerg {1}: {2} märki, veerg mahutab {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "käsk '{1}' pole veel teostatud"
+
+msgid "command-line"
+msgstr "käsurida"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "komponent {1} {2} muutus 32 ja 64 biti vahel: komponendireeglid nõuavad uut GUID-i"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "komponent {1} {2} on kadunud (selle ressursid eemaldatakse koos eelmise versiooniga)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "komponendil {1} {2} on nüüd võtmetee {3} asemel {4}: komponendireeglid nõuavad uut GUID-i"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid peab olema GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress peab olema \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" või \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "tingimuses on sulgemata jutumärk või tasakaalustamata sulud"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "tingimus on pikem kui 240 märki (rubrapack lisab \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config sisaldab stringe \"Name=value\" (saadi '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config on stringide \"Name=value\" massiiv"
+
+msgid "contains a control character"
+msgstr "sisaldab juhtmärki"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "sisaldab ühte märkidest < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type on meediumitüüp, nt \"image/png\" (saadi '{1}')"
+
+msgid "control character"
+msgstr "juhtmärk"
+
+msgid "control character in a comment"
+msgstr "juhtmärk kommentaaris"
+
+msgid "control character in a string"
+msgstr "juhtmärk stringis"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "kuupäevi ja kellaaegu ei toetata; kirjutage need stringidena"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when vajab level'it üle 1 (1. taseme funktsioon installitakse niikuinii vaikimisi)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "määratlege muutuja ([define] või -D NAME=value) või kirjutage $$ sõnasõnalise $ jaoks"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialoog '{1}' ei ole [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "'Rp'-ga algavad dialoogi-ID-d (ja FilesInUse) kuuluvad rubrapackile"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' on iseenda sees (teesilmus)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' ei ole dir ID ega Programs, Desktop, StartMenu või Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' ei ole dir ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' pole määratletud"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction peab olema \"in\" või \"out\" (saadi '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo argumendid on pikemad kui 255 märki"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "punktidega võtmeid ei toetata; pange võti oma tabelisse"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "paketi väljastus (MSI-tabelid IDT-na)"
+
+msgid "duplicate primary key"
+msgstr "korduv primaarvõti"
+
+msgid "empty arrays are not supported"
+msgstr "tühje massiive ei toetata"
+
+msgid "ends with a space or a dot"
+msgstr "lõpeb tühiku või punktiga"
+
+msgid "error"
+msgstr "viga"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" peab nimetama paketti mineva [file.*]"
+
+msgid "expected ',' or ']' in the array"
+msgstr "massiivis oodati ',' või ']'"
+
+msgid "expected '=' after the key"
+msgstr "võtme järel oodati '='"
+
+msgid "expected ']' to close the table name"
+msgstr "tabeli nime sulgemiseks oodati ']'"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "oodati võtit, [table] või kommentaari"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "laiendil '{1}' on juba programm ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension peab olema '.' ja väiketähed, numbrid, '_' või '-' (saadi '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files ei mõju, kui preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files peab olema \"ask\", \"keep\" või \"delete\" (saadi '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "funktsioon {1} on kadunud: installid, millel see oli, kaotavad selle sisu"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "funktsioon '{1}' on iseenda eellane"
+
+msgid "feature '%s' is not defined"
+msgstr "funktsioon '{1}' pole määratletud"
+
+msgid "feature parent '%s' is not defined"
+msgstr "vanemfunktsioon '{1}' pole määratletud"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "fail '{1}' käitab juba teenust '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "fail '{1}' on juba fondina registreeritud"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "fail '{1}' tuleb installida otse kausta Fonts ([dir.*], kus path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "fail '{1}' vajab funktsiooni: määrake 'feature' siin või selle dir'il"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file peab olema \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "failinimi on {1} UTF-16 ühikut; koos 8.3 lühinimega mahutab MSI kuni {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization ja registry-virtualization = false vajavad Windowsi järku 18362 või uuemat: määrake [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' ei ole selle paketi [file.*]"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' teenindab COM-klasse ainult .exe või .dll-ina"
+
+msgid "files but no Media row"
+msgstr "failid, kuid Media rida pole"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "parandage teates nimetatud väärtus; ID-d on tähed, numbrid ja '_' ning erinevad kõigis tabelites"
+
+msgid "floating-point numbers are not supported"
+msgstr "ujukomaarve ei toetata"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "kaust '{1}' vajab funktsiooni: määrake 'feature' siin või selle dir'il"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "kausta nimi on {1} UTF-16 ühikut; koos 8.3 lühinimega mahutab MSI kuni {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent vajab vanemat"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "fondid vajavad scope = \"machine\" (see on {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} vajab uuemat rubrapacki (see loeb format'i {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format on täisarv: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "andke --pass-env või --pass-file, mitte mõlemat"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "andke --pin-env või --pin-file, mitte mõlemat"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "andke [msix]-le ja [msix-app.*]-le vajalik või jätke üksus msi-only = true abil MSI jaoks"
+
+msgid "give a file below this folder"
+msgstr "andke fail selle kausta all"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "andke fail otse programmikaustas või - kui puudub"
+
+msgid "give a folder below this one, such as dist"
+msgstr "andke selle all olev kaust, nt dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "andke 1 kuni 128 baidi pikkune nimi"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "andke kõik kolm logo (logo-150, logo-44, store-logo) või mitte ühtegi"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "andke üks valikutest --key, --pkcs11 ja --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "andke programmikausta alamkaustad komadega eraldatult või - kui puudub"
+
+msgid "glob '%s' matches no file"
+msgstr "muster '{1}' ei vasta ühelegi failile"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "muster '{1}' vastab väljundfailile '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "sisaldab MergeModule.CABinet voogu, mida ei saa lugeda"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "sisaldab MergeModule.CABinet'i, mida ei saa lugeda"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "sisaldab standardveergudeta tabelit Module*Sequence"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "sisaldab nimeta või tundmatu vorminguga ModuleConfiguration'i üksust"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "sisaldab standardveergudeta tabelit ModuleConfiguration"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "sisaldab standardveergudeta tabelit ModuleSubstitution"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "sisaldab ModuleSubstitution'i malli, mis nimetab üksust, mida ModuleConfiguration'is pole"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "sisaldab tingimusega komponenti; MSIX installib kõik"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "sisaldab faili, millel puudub komponent või cabinet'i kirje"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "sisaldab TARGETDIR-ist väljas olevat kausta, millele MSIX-is kohta pole"
+
+msgid "has a table that cannot be read"
+msgstr "sisaldab tabelit, mida ei saa lugeda"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "sisaldab tabelit, mille veerud erinevad paketi omadest"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "sisaldab toiminguid järjestustabelile, mida paketis pole"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "sisaldab komponente, kuid paketis pole tabelit FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "sisaldab faile, kuid pole MergeModule.CABinet'i ega tabelit Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "sisaldab faile, kuid pole MergeModule.CABinet'i voogu"
+
+msgid "has files, but the package has no Media table"
+msgstr "sisaldab faile, kuid paketis pole tabelit Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "ModuleSignature puudub: pole ühendusmoodul"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "ProductCode või ProductVersion puudub"
+
+msgid "has no Property table"
+msgstr "tabel Property puudub"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "sisaldab kirjeid tabelile, mida ei määratle ei alus ega teisendus"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "sisaldab ASCII-välist teksti koodilehes, mis pole 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon peab olema .ico-fail"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id peab olema GUID nagu {{12345678-1234-1234-1234-123456789ABC}: mooduli enda oma, igas versioonis sama"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name peab olema 3 kuni 50 märki hulgast A-Z, a-z, 0-9, '.' ja '-' (saadi '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "inline-tabeleid ei toetata; kasutage tabelit [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "installitakse samale teele kui rida {1} (Windows ei erista nimedes suur- ja väiketähti{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "sisemine viga: sisseehitatud dialoogi tabeldusjärjestus on katki; teatage sellest"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "sisemine: mooduli tabelil pole _Validation-reeglit"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "sisemine: {1} veeru jaoks pole _Validation-reeglit"
+
+msgid "invalid"
+msgstr "kehtetu"
+
+msgid "invalid - %s"
+msgstr "kehtetu - {1}"
+
+msgid "is '.' or '..'"
+msgstr "on '.' või '..'"
+
+msgid "is a reserved device name"
+msgstr "on reserveeritud seadmenimi"
+
+msgid "is empty"
+msgstr "on tühi"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "on pikem kui 255 UTF-16 ühikut"
+
+msgid "is not a Windows Installer database"
+msgstr "ei ole Windows Installeri andmebaas"
+
+msgid "is not a compound file"
+msgstr "ei ole liitfail"
+
+msgid "is not valid UTF-8"
+msgstr "ei ole sobiv UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "säilitage täienduskood, tõstke versiooni, säilitage allesjäävate failide komponendikoodid"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "võti '{1}' on selles tabelis määratud kaks korda (esmalt real {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "võti '{1}' ei tohi alata ega lõppeda märgiga '\\' ega sisaldada tühja osa"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "võti '{1}' on tabelist väljas; enne esimest tabelit tuleb ainult 'format'"
+
+msgid "key file '%s': %s"
+msgstr "võtmefail '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind peab olema \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" või \"context-menu\" (saadi '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind peab olema \"preview\", \"thumbnail\" või \"property\" (saadi '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind peab olema registry, file, dir või component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels on stringide massiiv, üks iga väärtuse kohta"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "keelel '{1}' pole keelepaketti (lang/{2}.po lähte kõrval või RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "keel '{1}' on loetletud kaks korda"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "keel '{1}' pole jaotises [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "keelel '{1}' puudub {2} teksti, esimene on {3}: lisage need selle keelepaketti (lang/{4}.po) või andke [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "keel '{1}' vajab [ui] langid-{2} (selle LANGID-d automaatseks valikuks)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "keel '{1}' vajab [ui] name-{2} (selle nimi keelelehel)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" ei muuda enam dialooge korea keelseks: need on inglise keeles, kui [ui] languages = [\"ko\"] ei lisa korea keelt"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language peab olema \"ko-KR\" või \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language peab olema \"neutral\", \"en-US\" või \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages sisaldab koode nagu \"ko\" või \"zh_TW\" (2 või 3 väiketähte ning _ ja piirkonna kaks suurtähte) (saadi '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages on keelekoodide massiiv, nt [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages vajab dialoogikomplekti (ui = \"basic\" või muu)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
+
+msgid "launch-args needs launch"
+msgstr "launch-args vajab launch'i"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license peab olema .txt-, .md- (kuvatakse lihttekstina) või .rtf-fail"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} rida {2}: veerg {3} pole NFC-s ({4} rida{-5}); build --nfc viib kausta-, faili- ja otseteenimed NFC-sse"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: koodileht {1}, mitte 65001: teksti ei kontrollita UTF-8-na, laiused ainult ASCII jaoks"
+
+msgid "lint: no problems\n"
+msgstr "lint: probleeme pole\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: vaadake ülaltoodud probleeme\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "võtmete loend, millega tõend või Windowsi sertifikaadisalv saab allkirjastada"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logo '{1}' ja selle .scale-100 variant on mõlemad olemas: jätke üks"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' skaalal {2} on {3}x{4} pikslit; peab olema {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logo '{1}' skaalal {2} ei ole PNG-fail"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logo '{1}' on {2}x{3} pikslit; peab olema {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logo '{1}' ei ole PNG-fail"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logo '{1}' ei leitud (ka mitte variantidena .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logo '{1}': skaalavariantidega logo vajab laiendiga ASCII-failinime"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package on põhipaketi identiteedinimi (saadi '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher ja modification = true käivad koos main-package'iga (paketiga, millele see kuulub)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher on põhipaketi väljaandja, nt \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "ei tohi sisaldada juhtmärke ega / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "ei tohi alata tühikuga ega lõppeda tühiku või punktiga"
+
+msgid "merge module '%s' not found"
+msgstr "ühendusmoodulit '{1}' ei leitud"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version peab olema versioon nagu 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version peab olema neljaosaline, nt 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version peab olema neljaosaline, nt 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "mittevastavus"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" eemaldab võtme; see ei võta 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode peab olema \"set\", \"add\" või \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode peab olema \"set\", \"append\" või \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "rohkem ZIP-kirjeid, kui on lubatud või kui kataloog sisaldab"
+
+msgid "more keys and values than allowed"
+msgstr "rohkem võtmeid ja väärtusi, kui on lubatud"
+
+msgid "more than 3 redirects"
+msgstr "üle 3 ümbersuunamise"
+
+msgid "more than 96 sections"
+msgstr "üle 96 jaotise"
+
+msgid "more than one source file ('%s')"
+msgstr "rohkem kui üks lähtefail ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "olemas on rohkem kui üks tõend: nimetage üks --token-label abil"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi peab olema \"each\", \"one\" või \"single\" (saadi '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "mitmerealisi stringe ei toetata"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "mitmerealisi stringe ei toetata; kasutage ühte rida koos \\n-ga"
+
+msgid "must be 1 to 64 bytes"
+msgstr "peab olema 1 kuni 64 baiti"
+
+msgid "name contains a control character"
+msgstr "nimi sisaldab juhtmärki"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name on paketi identiteedinimi (saadi '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "nimi pole ASCII ja summary-name puudub; kokkuvõtte Subject on 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "nimetab kausta, mida selle tabelis Directory pole"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix pole veel teostatud: looge MSI-lähe ja lisage [msix] (vt juhendit)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "rida 'format = {1}' puudub: lähe rubrapack 0.18 või vanema vormingus, mida see versioon ei loe (teed algavad nüüd $(ProgramFiles) või $(INSTALLDIR)-ga); vt juhendi jaotist Source format"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "--trust puudub: allkiri kinnitub, kuid miski ei ütle, keda usaldada"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "ükski võtmefaili (või --cert-faili) sertifikaat ei kuulu võtmele"
+
+msgid "no control characters"
+msgstr "ilma juhtmärkideta"
+
+msgid "no keys\n"
+msgstr "võtmeid pole\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "põhiprogrammi pole, seega otseteid pole: puudub"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "serveri nimi puudub või on pikem kui 255 baiti"
+
+msgid "no string pool: not a transform"
+msgstr "stringikogum puudub: pole teisendus"
+
+msgid "no table '%s' in '%s'"
+msgstr "tabelit '{1}' pole failis '{2}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove jätab toote eemaldamiseks ainsaks võimaluseks Modify (selle Remove): see ei saa käia koos no-modify'ga"
+
+msgid "not a PE file (no MZ header)"
+msgstr "ei ole PE-fail (MZ-päis puudub)"
+
+msgid "not a PE file (no PE header)"
+msgstr "ei ole PE-fail (PE-päis puudub)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "ei ole PEM-, PKCS#8- ega PKCS#12-fail"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "ei ole ZIP-arhiiv (lõpukirje puudub)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "ei ole ZIP-arhiiv (liiga lühike)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "pole puhverserveri URL, mida rubrapack aktsepteerib (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "ei ole registri hive"
+
+msgid "not a valid number"
+msgstr "ei ole sobiv arv"
+
+msgid "not a value"
+msgstr "ei ole väärtus"
+
+msgid "not a value (strings need quotes)"
+msgstr "ei ole väärtus (stringid vajavad jutumärke)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "pole http:// ega https:// URL, mida rubrapack aktsepteerib"
+
+msgid "not valid UTF-8"
+msgstr "ei ole sobiv UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "kontrollimata (andke --trust või --system-roots)"
+
+msgid "not-present"
+msgstr "puudub"
+
+msgid "nothing changed\n"
+msgstr "midagi ei muudetud\n"
+
+msgid "number out of range"
+msgstr "arv väljaspool vahemikku"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "kaheksand- ja kahendarve ei toetata; kasutage kümnendarve või 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" on HKLM, HKCU ja HKMU jaoks (klassid käivad [assoc.*], [com.*] jms abil)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" eemaldab võtme koos kõigega selle all: '{1}' ei ole toote enda võti Software all"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" eemaldab eemaldamisel kogu võtme; see ei võta '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "Windowsis näitab `keys list` sertifikaadisalve"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "Windowsis kasutatakse tõendit sertifikaadisalve kaudu (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on on remove = true jaoks (millal võti eemaldatakse)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on peab olema \"install\" või \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on peab olema \"install\", \"uninstall\" või \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: igaüks on failitüüp ('.' ja väiketähed, numbrid, '_' või '-'), \"*\" (iga fail), \"folder\", \"background\" (kausta tühi osa), \"drive\" või \"assoc:<ID>\" (saadi '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "ainult radio- ja combo-juhtelemendid võtavad labels'i"
+
+msgid "only radio and combo controls take values"
+msgstr "ainult radio- ja combo-juhtelemendid võtavad values'i"
+
+msgid "out of memory"
+msgstr "mälu on otsas"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "väljund '{1}': rubrapack kirjutab .msi, .msm, .msix, .msixbundle ja ahela setup .exe"
+
+msgid "package '%s' %s"
+msgstr "pakett '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "paketti '{1}' ei leitud"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent peab olema teise toote upgrade-code, mitte selle paketi oma"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent peab olema põhitoote upgrade-code, GUID nagu {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path peab olema \"$(Base)/relative/path\" märgiga '/' (Base on kaust nagu ProgramFiles või dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path peab algama Windowsi kaustaga (nagu $(ProgramFiles) või $(System))"
+
+msgid "paths"
+msgstr "teed"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type peab olema \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" või \"application\" (saadi '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "õigused vajavad scope = \"machine\" (see on {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports peab olema port või vahemik nagu \"8000-8100\" piires 1-65535 (saadi '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "prindi juhuslik GUID või see, mille rubrapack tekstist tuletab"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "prindi lähtefailide JSON Schema (redaktorile, mis võtmeid lõpetab ja kontrollib)"
+
+msgid "print the version"
+msgstr "prindi versioon"
+
+msgid "print this help, or one command's usage"
+msgstr "prindi see abi või ühe käsu kasutus"
+
+msgid "product-code must be a GUID"
+msgstr "product-code peab olema GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile peab olema \"all\", \"domain\", \"private\" või \"public\" (saadi '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' kuulub juba [com.{2}]-le"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' kuulub ka [assoc.{2}]-le: failitüüp ja COM-klass vajavad kahte nime"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' on ka [assoc.{2}]-s teise kirjelduse, target'i, icon'i või args'iga"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id peab koosnema tähtedest, numbritest, '.', '_' või '-', mitte algama numbriga, kuni 39 (saadi '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "atribuut '{1}' kuulub juba juhtelemendile '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "atribuudil '{1}' on dir'i või funktsiooni nimi"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "atribuut '{1}' on juba määratletud (rida {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "atribuuti '{1}' juba otsitakse (rida {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "atribuudi '{1}' määrab rubrapack või installer ja seda ei saa siin määratleda"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "atribuut '{1}' peab olema teie oma avalik nimi (suurtähtedes)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "atribuut '{1}' peab olema avalik nimi: suurtähed, numbrid ja '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol peab olema \"tcp\" või \"udp\" (saadi '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher on paketi väljaandja, nt \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher peab olema allkirjastamissertifikaadi subject, nt \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher ei tohi kanda unsigned-test'i OID-d; --unsigned-test lisab selle"
+
+msgid "quoted keys are not supported"
+msgstr "jutumärkides võtmeid ei toetata"
+
+msgid "quoted table names are not supported"
+msgstr "jutumärkides tabelinimesid ei toetata"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot peab olema \"suppress\" või \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true on on = \"uninstall\" jaoks"
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true ei käivitu kunagi, kui täiendus eemaldab selle versiooni; see ei võta 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true eemaldab kausta koos kogu sisuga; see ei võta 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} on selle paketi versioonist {2} kõrgem"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' peab olema versioon nagu 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message vajab refuse-upgrade-below'd"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "register '{1}' eemaldab väärtuse; sel pole midagi kaitsta"
+
+msgid "registry value '%s' needs a feature"
+msgstr "registriväärtus '{1}' vajab funktsiooni"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true eemaldab väärtuse installimisel; see ei võta 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons vajab puhastusülesannet: eemaldage cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces sisaldab kuni 16 täienduskoodi"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces sisaldab täienduskoode, GUID-e nagu {{12345678-1234-1234-1234-123456789ABC} (saadi '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces on täienduskoodide massiiv, nt [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces loetleb {1} kaks korda"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces nimetab {1}, mis on selle paketi või selle vanema upgrade-code"
+
+msgid "required property %s is missing"
+msgstr "kohustuslik atribuut {1} puudub"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "tagasivõtu kaksik peab tulema enne {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root peab olema HKLM, HKCR või HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root peab olema HKLM, HKCU, HKCR või HKMU (saadi '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: mida diagnostikakood tähendab. Koodid vahemike kaupa:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: mõni küsimus loob lähte (Enter võtab väärtuse [ ] seest).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "käivitage `rubrapack help <command>`; kontrollige teid ja et väljundkaust on olemas"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (masin 0x{2}) ei saa töötada selle paketi masinatel"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' ei ole programm (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "salvestage lähe UTF-8-na (või BOM-iga UTF-16-na) LF- või CRLF-reavahetustega"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "skeemil '{1}' on juba programm ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope peab olema \"machine\", \"user\" või \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl peab olema SDDL-string nagu \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "otsinguatribuut '{1}' peab olema teie oma avalik nimi (suurtähtedes)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "vaadake teadet; uuesti koostamine rubrapackiga parandab enamiku neist"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "järjestus {1} ei ole pärast {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "järjestab toimingu sellise kõrvale, mida ei käita pakett ega moodul"
+
+msgid "service name '%s' is already used"
+msgstr "teenusenimi '{1}' on juba kasutusel"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "teenused vajavad scope = \"machine\" (see on {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "otsetee nimi on {1} UTF-16 ühikut; koos 8.3 lühinimega mahutab MSI kuni {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "allkirjasta PE-fail, MSI-pakett, MSIX-pakett või -kogum"
+
+msgid "signed %s\n"
+msgstr "allkirjastatud {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "lähe '{1}' on kataloog; paljude failide jaoks kasutage [files.ID]"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "lähe '{1}' on sümbolink; linke ei järgita"
+
+msgid "source '%s' is not a regular file"
+msgstr "lähe '{1}' ei ole tavaline fail"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "lähtefail '{1}' muutus paketi koostamise ajal"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "lähtefail '{1}' on suurem kui 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "lähtefaili '{1}' ei leitud"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source peab olema \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source peab olema .msi-pakett"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "lähtetee '{1}' peab olema lähtefaili suhtes suhteline"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "lähteteed kasutavad '/', mitte '\\\\' (saadi '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start peab olema auto, demand või disabled"
+
+msgid "string is not closed on this line"
+msgstr "string pole sellel real suletud"
+
+msgid "string lengths exceed the string data"
+msgstr "stringide pikkused ületavad stringiandmeid"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "kokkuvõtteteavet ei saa veel IDT-na kuvada"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name peab olema ASCII (kokkuvõtteteave sisaldab ainult ASCII-d)"
+
+msgid "table %s %s"
+msgstr "tabel {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "tabel '{1}' on loetamatu"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "tabel [{1}{2}{3}] on määratletud kaks korda (esmalt real {4})"
+
+msgid "table name expected"
+msgstr "oodati tabelinime"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "tabelinimedel on kuni kaks osa: [kind] või [kind.ID]"
+
+msgid "tables"
+msgstr "tabelid"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "tabelid ja võtmed: tundmatu tabel või võti, puuduv kohustuslik, funktsioonita üksus, kui funktsioonid on olemas"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "ei võta konfiguratsiooni (sel pole ModuleConfiguration'it)"
+
+msgid "target '%s' does not exist"
+msgstr "sihtmärki '{1}' pole olemas"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target peab olema \"dir:<ID>\", \"file:<ID>\" või \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
+
+msgid "target name '%s' %s"
+msgstr "sihtmärgi nimi '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' on juba kasutusel: [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name ja enabled kuuluvad kind = \"startup-task\" juurde"
+
+msgid "that file exists already; give another name"
+msgstr "see fail on juba olemas; andke teine nimi"
+
+msgid "that folder holds no files"
+msgstr "selles kaustas pole faile"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "dialoog FilesInUse vajab tabelit ListBox, kasvõi tühja (viga 2205; dialoog jäetakse vahele)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN-is on märke või pikkus, mida token ei võta"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN on aegunud: muutke see esmalt tokenis"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN on lukustatud (liiga palju valesid katseid)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode on eelmise versiooni oma: see on väike täiendus (REINSTALLMODE), mitte suur täiendus, mida rubrapack koostab"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16-fail ei ole kehtiv UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP-i keskkataloog on failist väljas"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "rakenduse ID '{1}' muutub Application Id-ks: ainult tähed ja numbrid, ei alga numbriga"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "arhiiv ei lõpe ZIP64 lõpukirjetega nagu MSIX-paketid"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "arhiivil pole ZIP64 lõpukirjet"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "kogumi manifestil pole Identity Name'i, Publisherit ja Versionit"
+
+msgid "the central directory lies outside the archive"
+msgstr "keskkataloog on arhiivist väljas"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "sertifikaadil on kriitiline laiend, mida rubrapack ei mõista"
+
+msgid "the certificate has expired"
+msgstr "sertifikaat on aegunud"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "sertifikaat on CA-sertifikaat, mitte allkirjastamissertifikaat"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "sertifikaat ei ole koodi allkirjastamiseks (koodi allkirjastamise laiendatud võtmekasutus puudub)"
+
+msgid "the certificate is not valid yet"
+msgstr "sertifikaat ei kehti veel"
+
+msgid "the certificate path is longer than 8"
+msgstr "sertifikaaditee on pikem kui 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "sertifikaaditabel ei sisalda Authenticode'i allkirja"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "sertifikaaditabel ei ole faili lõpus"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "sertifikaadi võtmekasutus ei luba digiallkirju"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "sertifikaadi subjecti ei saa kirjutada MSIX-i väljaandjana"
+
+msgid "the chunked response is malformed"
+msgstr "tükeldatud vastus on vigane"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "käsurida: tundmatu käsk või suvand, fail, mida ei saa lugeda ega kirjutada, allkiri, erinevus, mida teisendus ei suuda kanda"
+
+msgid "the connection has failed"
+msgstr "ühendus ebaõnnestus"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "manustatud cabinetid teevad paketi 2 GiB või suuremaks, mida Windows Installer ei suuda avada; kasutage cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "kirje ei ole keskkataloogis"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "veadialoog '{1}' vajab juhtelementi {2} nimega {3} (viga 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "käivitatav fail '{1}' peab olema .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "käivitatava faili kaust ei vii tuntud asukohta"
+
+msgid "the file is not signed"
+msgstr "fail ei ole allkirjastatud"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "fail on juba allkirjastatud; rubrapack ei allkirjasta kaks korda ega asenda allkirja"
+
+msgid "the file is too large to sign"
+msgstr "fail on allkirjastamiseks liiga suur"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "fail vajab tabelit [package] (või [module] ühendusmooduli jaoks)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "faili muudeti pärast allkirjastamist (selle räsi ei klapi)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "installitavad failid: ei leitud, kaust, link, mustrit ei vasta miski, teise arhitektuuri programm, liiga pikad nimed"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "valmis tabelid rikuvad Windows Installeri reeglit"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "hive'i ei suletud puhtalt (vaja oleks selle logi)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "hive'i baasploki kontrollsumma ei klapi"
+
+msgid "the hive's bins lie outside the file"
+msgstr "hive'i bin'id on failist väljas"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "installitud rakenduste loendi ikoon on [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "sisend lõppes enne, kui kõigile küsimustele vastati; midagi ei kirjutatud"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "võtmefail on suurem kui 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "võti ei ole RSA ega EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "teek ei ole PKCS#11 moodul (pole C_GetFunctionList'i või versioon 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "manifestil pole Identity Publisherit"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "manifesti Identity't ei saa paketi täisnime jaoks lugeda"
+
+msgid "the merge module %s"
+msgstr "ühendusmoodul {1}"
+
+msgid "the name %s"
+msgstr "nimi {1}"
+
+msgid "the package is not signed"
+msgstr "pakett ei ole allkirjastatud"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "pakett ei ole allkirjastatud (AppxSignature.p7x puudub)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "pakett on juba allkirjastatud; rubrapack ei allkirjasta kaks korda ega asenda allkirja"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "pakett on juba allkirjastatud; rubrapack allkirjastab allkirjastamata pakette (ja mitte kunagi kaks korda)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakett kasutab väljaspool end olevaid cabineteid, mida .msi allkiri ei kata; koostage see manustatud cabinetidega või allkirjastage siiski suvandiga --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "paketi sisu ei vasta selle allkirjale (seda muudeti pärast allkirjastamist)"
+
+msgid "the package's directory cannot be read"
+msgstr "paketi kataloogi ei saa lugeda"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "kogumi paketid vajavad sama Name'i, Publisherit ja Versionit"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "puhverserver küsib parooli (407), mida rubrapack ei toeta"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "puhverserver ei vastanud tunnelipäringule"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "puhverserver saatis andmeid pärast vastust CONNECT-ile"
+
+msgid "the redirect location is too long"
+msgstr "ümbersuunamise asukoht on liiga pikk"
+
+msgid "the request could not be sent"
+msgstr "päringut ei saanud saata"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "vastusel on vigane või vastuoluline Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "vastusel on nii Content-Length kui chunked (keeldutud: smugglingu oht)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "vastus on suurem kui 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "vastus kasutab muud edastuskodeeringut kui chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "sama tingimus on juba nõutud (rida {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "sama ilma küsimusteta:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "server ei vastanud HTTP/1.x-ga"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "server suunas https-lt http-le (keeldutud)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "serveri CertificateVerify allkiri ei kinnitu"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "serveri sertifikaat ei ole TLS-serveritele (selle laiendatud võtmekasutus)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "serveri allkirjaskeem ei sobi selle sertifikaadi võtmega"
+
+msgid "the signature does not verify"
+msgstr "allkiri ei kinnitu"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "allkiri ei kinnitu allkirjastaja sertifikaadiga"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "allkirjakirje on kirjeldatud ZIP64 viisil; Windows loeb selle asukoha ZIP32 väljadest"
+
+msgid "the signature is not DER"
+msgstr "allkiri ei ole DER"
+
+msgid "the signature streams cannot be read"
+msgstr "allkirja vooge ei saa lugeda"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "allkirjastatud atribuudid ei vasta allkirjastatud sisule"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "allkirjastaja sertifikaat ei ole koodi allkirjastamiseks"
+
+msgid "the source file's encoding"
+msgstr "lähtefaili kodeering"
+
+msgid "the system random source failed"
+msgstr "süsteemi juhuslikkuse allikas ebaõnnestus"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "tabeldusjärjestus (Control_Next) ei ole üks ring läbi selle {1} juhtelemendi alates Control_First'ist (Windows Installer peatub veaga 2809 või 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "ajatempliserver vastas HTTP-veaga"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "ajatempliserveri sertifikaat ei ole ajatemplite jaoks"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "ajatempliserveri aeg on väljaspool allkirjastamissertifikaadi kehtivust"
+
+msgid "the token does not say what kind of key it is"
+msgstr "token ei ütle, mis tüüpi võti see on"
+
+msgid "the token is not present"
+msgstr "token puudub"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "token tagastas vale pikkusega ECDSA allkirja"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "tokeni EC-võtmel on sertifikaat, mis ei ole EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "tokeni allkiri ei kinnitu sertifikaadiga (võti ja sertifikaat ei kuulu kokku)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "usaldusväärne sertifikaat on aegunud või ei kehti veel"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "allkirjastamata atribuudid on vigased või sisaldavad rohkem kui ühte ajatemplit"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "siin pole sellist faili"
+
+msgid "there is no such folder here"
+msgstr "siin pole sellist kausta"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "see rubrapack on koostatud ilma menüüosata: [menu.*] üksused ei jõua Windows 11 menüüsse"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "see rubrapack on koostatud ilma installiprogrammita (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading peab olema \"sta\", \"mta\", \"both\" või \"neutral\" (saadi '{1}')"
+
+msgid "timestamp: "
+msgstr "ajatempel: "
+
+msgid "too many languages for one bundle"
+msgstr "liiga palju keeli ühe kogumi jaoks"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "liiga palju lokaliseeritud tekste ja logo mõõtkavu resources.pri jaoks"
+
+msgid "too many packages in the bundle"
+msgstr "kogumis on liiga palju pakette"
+
+msgid "trusted"
+msgstr "usaldusväärne"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "kogumis on kaks sama arhitektuuriga paketti"
+
+msgid "two packages of one name in a bundle"
+msgstr "kogumis on kaks sama nimega paketti"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "kogumis on kaks sama ResourceId-ga ressursipaketti"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type peab olema string, expand, dword, qword, binary või multi (saadi '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type peab olema text, checkbox, edit, radio või combo (saadi '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' ei ole selle paketi [file.*]"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version on major.minor kuueteistkümnendnumbritega, nt \"1.0\" (saadi '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types ja verb kuuluvad kind = \"context-menu\" juurde"
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: igaüks on \".ext\" või \"*\" (iga fail)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: igaüks on '.' ja väiketähed, numbrid, '_' või '-' (saadi '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" laseb kasutajal valida dir'i '{2}' kausta, mida pole olemas (määrake [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" vajab valimiseks [feature.*] tabeleid"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui peab olema none, basic, minimal, installdir või features (saadi '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "ootamatu tekst pärast väärtust"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "tundmatu käsk '{1}' (vt 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "tundmatu paojada \\{1} (kasutage '...' kurakaldkriipsudega teksti jaoks)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "tundmatu inspect'i suvand (kasutage tabelinime, --summary, --files või --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "tundmatu võti '{1}' tabelis [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "tundmatu või puudulik {1} suvand '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "tundmatu tabel [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "paki paketi lahti uude kataloogi, paigutusega nagu installimisel"
+
+msgid "unsupported - %s"
+msgstr "ei toetata - {1}"
+
+msgid "untrusted"
+msgstr "usaldamatu"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* võtmed vajavad appinstaller-uri ja package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false on on = \"uninstall\" või \"both\" jaoks (installimine pole kunagi täienduse eemaldamine)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code peab olema GUID nagu {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "kasutus: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "kasutus: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (kogumi jaoks loend)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "kasutus: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "kasutus: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "kasutus: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "kasutus: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "kasutus: rubrapack inspect <file.cab> (ilma tabeli või suvandita)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "kasutus: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "kasutus: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "kasutus: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "kasutus: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "kasutus: rubrapack inspect <setup.exe> (ilma tabeli või suvandita)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "kasutus: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "kasutus: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "kasutus: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "kasutus: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "kasutus: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (fikseeritud algne <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; aktsepteeritakse ka .rpk nimesid"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "kasutus: rubrapack schema (lähtefailide JSON Schema, stdout-i)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "kasutus: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "kasutus: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "kasutage teel '/'"
+
+msgid "use a full rubrapack build or another way"
+msgstr "kasutage rubrapacki täisversiooni või muud viisi"
+
+msgid "used by more than one component"
+msgstr "kasutab rohkem kui üks komponent"
+
+msgid "value '%s' is listed twice"
+msgstr "väärtus '{1}' on loetletud kaks korda"
+
+msgid "value missing"
+msgstr "väärtus puudub"
+
+msgid "values and labels are strings"
+msgstr "values ja labels on stringid"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values on 1 kuni 32 stringi massiiv"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "väärtused: ID-d, GUID-id, versioonid, vahemikust väljas arvud, viited asjadele, mida pole olemas"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "muutuja '{1}' pole määratletud ([define] või -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "muutuja nimi '{1}' ei tohi sisaldada '=' ega alata märgiga = + - ! *"
+
+msgid "variables"
+msgstr "muutujad"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "muutujad: $(NAME) ilma väärtuseta, sulgemata $(, Windowsi nimi või dir ID kohas, kus see ei saa olla"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "versioon '{1}' peab olema a.b.c või a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "versioon '{1}' peab olema a.b.c või a.b.c.d, kus a, b <= 255 ja c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" ei saa minna 'with' 64-bitise paketi failiga"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view peab olema \"32\" või \"64\""
+
+msgid "warning"
+msgstr "hoiatus"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "mida diagnostikakood tähendab, seda kandvad teated, mida teha ja kus juhend räägib rohkem"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with peab olema \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: fail '{1}' ei ole selle paketi [file.*]"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "ilma --pkcs11-ta näitab `keys list` Windowsi sertifikaadihoidlat"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' ei ole dir ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "kirjuta paik (.msp): failid ja read, mis uuendavad installitud aluse sihtversiooniks"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "kirjuta lähtefail (.toml; ka .rpk nimed): vastustest, küsitud või suvanditena antud, fikseeritud algfailist või olemasolevast MSI-st"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "kirjuta teisendus (.mst): see, mis muudab ühe paketi teiseks"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "kirjutage tabel või väärtus lihtsal viisil, mida juhend näitab"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "kirjutage väärtus ilma '[~]'-ta; mode = \"append\" või \"prepend\" lisab selle"
+
+msgid "wrote %s\n"
+msgstr "kirjutatud {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width peab olema kuni 370 (lehe laius)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height peab olema kuni 234 (nuppude kohal olev joon)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Tagasi"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Edasi >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Loobu"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Installi"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Valmis"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Jah"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Ei"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Proovi uuesti"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Ignoreeri"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "&Katkesta"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Välju"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&Sirvi..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Tere tulemast toote [ProductName] installimisse"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "See installib toote [ProductName] teie arvutisse. Jätkamiseks klõpsake nuppu Edasi."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Litsentsileping"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Lugege järgmist litsentsilepingut."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Nõustun litsentsilepingu tingimustega"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Installikaust"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Valige kaust, kuhu [ProductName] installitakse."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Installi &kausta:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Kausta muutmine"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Liikuge kausta, kuhu soovite installida."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Otsi asukohast:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "&Kausta nimi:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Üles"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Uus kaust"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Funktsioonide valimine"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Valige installitavad funktsioonid."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&Lähtesta"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Kettakasutus"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Kettaruum"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Valitud funktsioonide jaoks vajalik ruum ja vaba ruum."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Valmis installimiseks"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Toote [ProductName] installimiseks klõpsake nuppu Installi."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "Toote [ProductName] installimine"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Palun oodake."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Olek:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Installimine on lõpetatud"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] on installitud."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "Toote [ProductName] eemaldamine"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Eemaldamine on lõpetatud"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] on eemaldatud."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Eemaldamine on tühistatud"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Eemaldamine tühistati. Teie arvutis ei muudetud midagi."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Eemaldamine nurjus"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Viga katkestas eemaldamise ja see võeti tagasi. Toode on endiselt installitud."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Installimine on tühistatud"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Installimine tühistati. Teie arvutis ei muudetud midagi."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Installimine nurjus"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Viga katkestas installimise ja see võeti tagasi. Teie arvutis ei muudetud midagi."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Kas tühistada toote [ProductName] installimine?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Kasutusel olevad failid"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Need programmid kasutavad asendatavaid faile. Klõpsake nuppu Jätka, et need kohe asendada: juba avatud programmid jätavad vanad failid alles, kuni need uuesti avatakse, ja hiljem avatud programmid saavad uued. Taaskäivitust pole vaja."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Need programmid kasutavad asendatavaid faile. Klõpsake nuppu Jätka, et need kohe asendada: juba avatud programmid jätavad vanad failid alles, kuni need uuesti avatakse, ja hiljem avatud programmid saavad uued. Windows võib lõpus küsida taaskäivitust."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Jätka"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Kettaruumi pole piisavalt"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Selle installimise jaoks pole piisavalt ruumi. Vabastage ruumi või valige muu asukoht."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "Toote [ProductName] hooldus"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Valige, mida teha."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Paranda"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Taastab puuduvad või rikutud failid ja sätted."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Eemal&da"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Eemaldab toote [ProductName] sellest arvutist."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "Toote [ProductName] eemaldamine"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Toote [ProductName] eemaldamiseks sellest arvutist klõpsake nuppu Eemalda. Selle alleshoidmiseks klõpsake nuppu Tagasi või Loobu."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Toote [ProductName] eemaldamiseks sellest arvutist klõpsake nuppu Eemalda. Selle sätted ja andmed kustutatakse koos sellega ja neid ei saa taastada. Selle alleshoidmiseks klõpsake nuppu Tagasi või Loobu."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Kas eemaldada toode [ProductName] sellest arvutist?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Kas eemaldada toode [ProductName] sellest arvutist? Selle sätted ja andmed kustutatakse koos sellega ja neid ei saa taastada."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "Toodet [3] ei saa turvaliselt installida: [1] ei ole kaust või installer ei pruugi tohtida selles faile kustutada. Eemaldage esmalt [3] ([2]) ja installige siis uuesti."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "Toodet [3] ei saa turvaliselt täiendada: installitud versioon [1] on kaotanud oma salvestatud paketi, seega ei saa seda siin eemaldada. Eemaldage esmalt see versioon selle algse paketiga ([2]) ja installige siis uuesti."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Installimine peatati: kaust [1] on juba olemas ja see ei kuulu administraatoritele või viib lingi kaudu mujale. Valige teine kaust või paluge administraatoril see esmalt eemaldada."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Käivita [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Salvesta logi..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "&Näita kogu logi"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Installilogi ei saanud salvestada asukohta [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Muuda"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Valige, millised funktsioonid on installitud."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Installimise ulatus"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Valige, kes saavad toodet [ProductName] kasutada."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Ainult &mina"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&Kõik selles arvutis - vaja on administraatori õigusi"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Keel"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Valige installimise keel."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Installitud rakenduste otsimine"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Vajaliku ruumi arvutamine"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Vajaliku ruumi arvutamine"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Kaustade loomine"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Otseteede loomine"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Teenuste kustutamine"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Failide duplikaatide loomine"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Vajaliku ruumi arvutamine"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Seotud rakenduste otsimine"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Toimingu skriptitoimingute genereerimine:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Uute failide kopeerimine"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Uute teenuste installimine"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Installimise kontrollimine"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Käivitustingimuste hindamine"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Funktsioonide olekute ülekandmine seotud rakendustest"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Failide teisaldamine"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Failide paikamine"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Komponentide registreeringu värskendamine"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Toote funktsioonide avaldamine"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Tooteteabe avaldamine"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Klassiserverite registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Laiendiserverite registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Fontide registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "MIME-teabe registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Toote registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Programmi-identifikaatorite registreerimine"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Kasutaja registreerimine"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Keskkonnastringide värskendamine"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Vanema versiooni eemaldamine"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Failide eemaldamine"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Kaustade eemaldamine"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "INI-failide kirjete eemaldamine"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Süsteemiregistri väärtuste eemaldamine"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Otseteede eemaldamine"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Toimingu tagasivõtmine:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Varundusfailide eemaldamine"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Teenuste käivitamine"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Teenuste peatamine"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Toote funktsioonide avaldamise tühistamine"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Klassiserverite registreeringu tühistamine"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Laiendiserverite registreeringu tühistamine"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Fontide registreeringu tühistamine"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "MIME-teabe registreeringu tühistamine"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Programmi-identifikaatorite registreeringu tühistamine"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Keskkonnastringide värskendamine"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "INI-failide väärtuste kirjutamine"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Süsteemiregistri väärtuste kirjutamine"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] installitakse ainult praegusele kasutajale (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Toote [ProductName] sama või uuem versioon on juba installitud."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "See pakett ei saa täiendada toote [ProductName] installitud vanemat versiooni. Eemaldage see esmalt ja käivitage siis see installimine uuesti:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Kopeeri fail"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Eemalda fail"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Paika fail"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Loo kaust"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Eemalda kaust"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Kirjuta registriväärtus"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Eemalda registriväärtus"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Eemalda registrivõti"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Loo otsetee"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Eemalda otsetee"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Installi teenus"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Halda teenust"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Kirjuta INI väärtus"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Määra keskkonnamuutuja"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Registreeri font"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Tühista fondi registreering"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Käivita toiming"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "See installiprogramm on rikutud: laadige see uuesti alla."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Need programmid on juba installitud. Valige, mida teha."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Paranda"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Eemal&da"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Loobu"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Kas eemaldada need programmid sellest arvutist?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Programmid on eemaldatud."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Üht programmi ei saanud eemaldada."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Installiprogramm ei saanud luua ajutist kausta."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} parandamine nurjus (viga {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} installimine nurjus (viga {2}). Midagi pärast seda ei installitud."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Programmid on parandatud."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Installimine on lõpetatud."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Selles kaustas on juba faile või kaustu. Kui [ProductName] eemaldatakse, kustutatakse kõik kaustas olev - ka see, mis seal praegu on. Tühi või uus kaust on turvalisem valik."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Vali teine"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "&Kasuta seda kausta"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] programm(i) kasutab toote [3] faile:\r\n[2]\r\nKas sulgeda kõik?\r\n\r\nJah: sulge kõik ja jätka (salvestamata töö võib kaduda).\r\nEi: jätka sulgemata (juba avatud programmid jätavad vanad failid alles, kuni need uuesti avatakse).\r\nLoobu: peata."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: peatatud, sest [1] programm(i) kasutab selle faile:\r\n[2]Sulgege need ja proovige uuesti või andke RPCLOSE=yes (sulge kõik ja jätka) või RPCLOSE=no (jätka sulgemata)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] üksust toote [3] kaustades ei installitud koos sellega:\r\n[2]\r\nKas kustutada ka need?\r\n\r\nJah: kustuta need koos tootega [3] (neid ei saa taastada).\r\nEi: eemalda [3] ja jäta need alles.\r\nLoobu: peata."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: peatatud, sest [1] üksust selle kaustades ei installitud koos sellega:\r\n[2]Andke RPEXTRA=delete (kustuta ka need) või RPEXTRA=keep (jäta alles) ja eemaldage siis uuesti."

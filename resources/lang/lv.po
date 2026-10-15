@@ -1,0 +1,3816 @@
+# rubrapack language pack: Latvian.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: lv\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Latviešu\n"
+"X-Rubrapack-LangIDs: 1062\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogi {6}{7}\n  1 nosaukums, ražotājs, versija, arhitektūra    2 instalēšanas mape, kam instalē\n  3 dialogi, licence, valodas                    4 neobligātās daļas\n  5 saīsnes                                      6 faili: saskaņot ar programmas mapi\n  7 jebkura atslēga                              v skatīt   l lint   s saglabāt   q iziet\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nZiņojumi ar šo kodu (* apzīmē nosaukumu vai vērtību):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nRezultāti tiek izvadīti stdout, diagnostika stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (vai RUBRAPACK_LANG) izvēlas šo tekstu valodu: {1} vai valodu, kurai ir valodas pakotne.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Izejas kodi: 0 kārtībā, 1 avota kļūda, 2 lietojums, 3 ievade/izvade, 4 parakstīšana vai pārbaude,\n5 lint, 6 tīkls.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nKo darīt: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} vairs nav, bet saīsne to atver: vispirms mainiet saīsnes (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} faili un {2} mapes tur\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s vai q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  pievienots [dir.{1}] un [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  pievienots [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  norādiet to kā table.key, piem., package.version vai dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: problēmu nav\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: skatiet iepriekš minētās problēmas (tur norādītais fails ir pārbaudes kopija)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  pārējās valodas [ui] languages tiek saglabātas; mainiet šo sarakstu ar 7 (jebkura atslēga)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  noņemts [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  noņemts [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  apakšmapes:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  tas neatbilst TOML apakškopai; nekas netika mainīts\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  tas nebija lasāms teksts; lūdzu, vēlreiz\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  programmas mape '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  avotā nav [file] tabulu, uz kurām saīsne varētu norādīt\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  avotā nav apakšmapju tādā formā, kā tās raksta `new` ([files] \"<folder>/<name>/**\"); pievienojiet tās ar 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  pārāk garš; lūdzu, vēlreiz\n"
+
+msgid "  y or n\n"
+msgstr "  y vai n\n"
+
+msgid " (changed)"
+msgstr " (mainīts)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - veido Windows Installer (.msi) un MSIX (.msix) pakotnes\n\nlietojums: rubrapack [--lang <code>] <command> [arguments]\n\nkomandas:\n"
+
+msgid " and its dir"
+msgstr " un tā dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) nav vides mainīgā, tāpēc paplašināma vērtība to nevar saturēt; izmantojiet virknes vērtību (aizpilda instalēšanas laikā)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) ir {2}: ar to var sākties ceļš, vai tas var aizstāt vērtību, ko aizpilda Windows Installer (reģistrs, vide, INI, argumenti, ziņojumi), bet ne šeit"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) nav mape, no kuras var sākties ceļš (dir ID vai ProgramFiles, LOCALAPPDATA, ProgramData ... - skatiet rokasgrāmatas sadaļu Paths){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  struktūra:    {2}\n  īssavilkums:  {3}\n  paraksts:     {4}\n  ķēde:         {5}{6}{7}\n  atsaukšana:   nav pārbaudīta\n  laikspiedols: {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: mainīgais nav iestatīts"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' nav šī dialoga vadīkla"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' nav {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': licences tekstam vajadzīgs fonta nosaukums angliski, tāpēc tas tiek rādīts ar valodas paša fontu; ierakstiet angļu nosaukumu (piem., \"Malgun Gothic\"), lai šo fontu izmantotu arī tur"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "komponents {1}, bet pakotnes platforma ir {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} nepieder kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} nepieder kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} satur LANGID (1..65535), piem., 1041"
+
+msgid "%s holds strings"
+msgstr "{1} satur virknes"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} ir fonta nosaukums no 1 līdz 31 rakstzīmei, piem., \"Segoe UI\" (saņemts {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} ir MSI nosacījums ar aizvērtām pēdiņām un līdzsvarotām iekavām"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} ir virkņu masīvs, pa vienai katrai vērtībai"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} ir paredzēts MSI pakotnēm: MSIX netiek noņemts ar msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} vairs nav. Noņemt [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} ir garāks par 240 rakstzīmēm"
+
+msgid "%s is new. Add it?"
+msgstr "{1} ir jauns. Pievienot?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} nav GUID reģistra formātā"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} nav kods, ko izmanto šis rubrapack{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} jābūt \"file:<ID>\", kas norāda šīs pakotnes [file.*]"
+
+msgid "%s must be a GUID"
+msgstr "{1} jābūt GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} jābūt GUID kā {{12345678-...} (saņemts '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} jābūt adresei https://, http:// vai file://, vai ceļam \\\\server\\share (saņemts '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} jāatšķiras no upgrade-code (viena jaunināšanas saime katrai arhitektūrai)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} nepieciešams Windows būvējums {2} vai jaunāks: iestatiet [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} nepieciešams resources/bin/rubrapack_ca-{2}.dll, bez kura šis rubrapack tika būvēts"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA nav pārbaudīts (norādiet --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA uzticams"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA neuzticams - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} nav vai ir tukša. Noņemt [files.{3}] un [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ ir jauna mape. Pievienot?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: kļūdas: {2}{-3}, brīdinājumi: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: kļūdas: {2}{-3}, brīdinājumi: {4}{-5} (salīdzinot ar {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} faili, {3} baiti\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} faili, {3} kļūdas, 0 brīdinājumu\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: vēl {2} diagnostikas netika parādītas\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: fails '{2}' nav šīs pakotnes [file.*]"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: fails '{2}' nav programma (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' nav aizvērts (tekstam '$(' rakstiet '$$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' jau pastāv; tas paliek, kā ir"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' jau pastāv; noņemiet to vai būvējiet citā mapē"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' jau ir {2} apdarinātājs ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' jau ir atļaujas"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' un '{2}' ir viens un tas pats ceļš pakotnē"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' pieder Windows vai pārlūkprogrammām"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' nevar nolasīt attiecībā pret '{2}': {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' neatbilst TOML apakškopai; nekas netika saglabāts"
+
+msgid "'%s' exists already"
+msgstr "'{1}' jau pastāv"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' jau pastāv; mainiet to ar `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' pastāv un nav tukša direktorija; izvelciet jaunā"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' nonāk {2}; vai msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' ir nelasāma kopsavilkuma informācijas plūsma"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' nav tabulu Directory, Component, File un Media, no kurām izvilkt"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' nav lasāmas kopsavilkuma informācijas"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' nav transformācijas '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' ir UTF-16: edit maina tikai UTF-8 avotus (vispirms saglabājiet to kā UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' ir Windows nosaukums; piešķiriet mainīgajam citu nosaukumu"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' ir [chain]: tas veido iestatīšanas programmu, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' ir iebūvētā rāmja vadīkla; izvēlieties citu ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' ir datora mape; {2} pakotne tur nevar rakstīt"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' ir sapludināšanas modulis: sapludiniet to ar [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' ir nosaukums, ko MSIX formāts patur sev"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' ir simboliskā saite; saitēm neseko"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' ir arī [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' ir arī dir ID; piešķiriet mainīgajam citu nosaukumu"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' ir būvēts mašīnai 0x{2}, nevis šīs pakotnes arhitektūrai; iestatiet any-arch = true, ja tas ir apzināti"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' nav ne PE fails (.exe, .dll), ne MSI pakotne, ne MSIX pakotne vai komplekts"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' nav ne PE fails, ne MSI pakotne, ne MSIX pakotne vai komplekts"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' nav ne zināma mape, ne dir ID (zināmās mapes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' nav cabinet, ko rubrapack spēj nolasīt (stored vai MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' nav diagnostikas kods (RP un četri cipari, piem., RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' nav programma (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' nav parasts fails"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' nav rubrapack iestatīšanas programma{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' nav derīgs ID (burti, cipari un '_', nesākas ar ciparu, ne vairāk kā {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' nav derīga MSI datubāze: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' nav derīga MSIX pakotne: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' nav derīga pakotne: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' nav derīgs avots (TOML apakškopa); vispirms izlabojiet to manuāli"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' nav derīga transformācija: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' nav derīgs mainīgā nosaukums"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' ir rezervēts un to nevar izmantot kā ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' ir dir nosaukums: dir var aizpildīt tikai reģistra vai dir meklēšana"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' izskatās pēc programmas faila (PE), bet tā galvenes vai resursi ir bojāti"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' jābūt virknei"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' jābūt veselam skaitlim"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' jābūt starp {2} un {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' jābūt true vai false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' nedrīkst būt tukšs"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' nenorāda transformācijas (kopsavilkuma rekvizīts 8): nav ielāps"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' sākas ar mapi: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' ir {4}; nekas netika izvilkts"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} ieraksti, vairāk par ierobežojumu {3} (--limit-entries); nekas netika izvilkts"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' un '{3}' sistēmā Windows būtu viens ceļš; nekas netika izvilkts"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' nav [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': tabulu nevar nolasīt"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': tabula ir nelasāma"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX instalē visus savus failus (when); izmantojiet msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX noņem visus savus failus (keep); izmantojiet msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' ir bojāts vai nav stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinet nosaukums '{2}' nav vienkāršs faila nosaukums"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': saspiestajam failam '{2}' (secība {3}) nav cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': direktorijai '{2}' ir vecākā direktorija '{3}', kuras nav"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': direktorija '{2}' ir pati sev priekštece vai ir pārāk dziļi ligzdota"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': fails '{2}' neatbilst savam MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': failam '{2}' nav komponenta vai direktorijas"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': fails '{2}' ir {3} baiti, tabula File norāda {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': faila '{2}' nav cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': tā ārējos cabinet neaptver paraksts (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': tā mape neved uz zināmu atrašanās vietu"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': rakstāmi vairāk nekā {2} baiti (--limit-bytes); nekas netika izvilkts"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': nav --timestamp: paraksts vairs nav derīgs, kad sertifikāts beidzas"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': pakotne '{2}' neatbilst savam SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet plūsmas '{2}' nav"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': manifestā nav {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': manifests norāda '{2}', kas nav pakotnē"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': laikspiedols no {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': transformāciju '{2}' nevar nolasīt attiecībā pret '{3}': {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' ir pakotnes paša valoda ({2}); norādiet šo tekstu bez sufiksa"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' liek Windows Installer ierakstīt vairākvirkni; izmantojiet type = \"multi\" un masīvu"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' skaitļos netiek atbalstīts"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' pieņem ne vairāk kā vienu komandas nosaukumu"
+
+msgid "'version' takes no arguments"
+msgstr "'version' nepieņem argumentus"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs ir paredzēts .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch komplektam: saraksts ar x64, x86 un arm64, katrs vienreiz (saņemts '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch pieņem vienu arhitektūru vai sarakstu .msixbundle izvadei"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp un --allow-unsigned-cabs tiek lietoti ar --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress ir paredzēts .msi; MSIX pieņem --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist norāda jaunu mapi blakus avotam (bez ceļa)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs pieņem skaitli no 1 līdz 64 (saņemts '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store ir Windows sertifikātu krātuve; citur izmantojiet atslēgas failu vai --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store pieņem sertifikāta SHA-1 nospiedumu (40 heksadecimālie cipari)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: šādas valodas nav (iebūvētās: {2}; citai nepieciešama sava valodas pakotne, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang nepieciešama valoda, piem., en vai ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages nepieciešami dialogi: norādiet arī --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress pieņem deflate vai store (saņemts '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: mainīgais nav iestatīts"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code pieņem GUID ar lielajiem burtiem un figūriekavām: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: mainīgais nav iestatīts"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous salīdzina divas .msi pakotnes"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: operētājsistēmas saknes sertifikātus nevar nolasīt"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} neatbilst izvadei '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} nav realizēts (msi vai msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target pieņem msi vai msix (saņemts '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots un --proxy tiek lietoti ar --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test un --msix-compress ir paredzēti .msix izvadēm"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test ir paredzēts pakotnēm bez paraksta; ar --key to izlaidiet"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate pieņem none vai dažus no product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} ir norādīts divreiz"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' ir Windows nosaukums; piešķiriet mainīgajam citu nosaukumu"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D nepieciešams NAME=VALUE (saņemts '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i jautā katru atbildi; norādiet vai nu -i, vai opcijas"
+
+msgid "; its range is "
+msgstr "; tā diapazons ir "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' nav SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty jābūt publiskam rekvizītam (lielajiem burtiem)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Visi kodi: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x nesākas ar PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x nav pēdējais ieraksts"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Arhitektūra (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Izvēlieties"
+
+msgid "Command line"
+msgstr "Komandrinda"
+
+msgid "Command line (lint)"
+msgstr "Komandrinda (lint)"
+
+msgid "Common AppData"
+msgstr "Koplietojamais AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId nav GUID reģistra formātā"
+
+msgid "Desktop shortcut?"
+msgstr "Saīsne darbvirsmā?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialogi (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "Tabulai File, Component vai Directory trūkst standarta kolonnas"
+
+msgid "Folder name under Program Files"
+msgstr "Mapes nosaukums mapē Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Mape ar instalējamajiem failiem"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' jau tiek izmantots (rinda {2}); ID jāatšķiras visās tabulās"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Instalēšanas mape ([dir.INSTALLDIR] ceļš)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Instalēt kam (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Atslēga kā table.key (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' pieder citam komponentam"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' nav File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' nav Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Dialogi korejiešu valodā papildus angļu valodai?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} ir zemāks nekā mazākam DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Iziet, nesaglabājot izmaiņas?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Pieņemamā licence (.txt, .md, .rtf; - ja nav)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX nav virtuālas mapes lietotāja AppData; lietotne pati izveido tur nepieciešamo, kad tiek palaista"
+
+msgid "MSIX packages"
+msgstr "MSIX pakotnes"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: kas vajadzīgs MSIX pakotnei un ko tā nevar saturēt"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Galvenā programma saīsnēm (- ja nav)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Rokasgrāmata: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Ražotājs"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Ražotājs (redzams sadaļā Instalētās lietotnes)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt atgrieza nepareiza garuma ECDSA parakstu"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Neobligātās daļas, ko lietotājs var atzīmēt (apakšmapes, ar komatiem; - ja nav)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 marķieris: marķierī nav sertifikāta ar atslēgas CKA_ID (norādiet to ar --cert)"
+
+msgid "Paths"
+msgstr "Ceļi"
+
+msgid "Product name"
+msgstr "Produkta nosaukums"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode un UpgradeCode ir viens un tas pats GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} pirmajos trīs laukos nav augstāka par iepriekšējo {2}: Windows Installer nejaunina"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Programma, ko atver saīsnes (- bez saīsnēm)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: šādas valodas nav (iebūvētās: {2}; citai nepieciešama sava valodas pakotne, {3}.po)"
+
+msgid "Reference, "
+msgstr "Uzziņas, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Secību {1} neaptver neviena Media rinda (pēdējā {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Secību {1} izmanto cits fails"
+
+msgid "Source file to write"
+msgstr "Rakstāmais avota fails"
+
+msgid "Source format"
+msgstr "Avota formāts"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source jānorāda File rinda tipam {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Saīsne izvēlnē Sākt?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Izvēlnes Sākt, Programs, darbvirsmas un Startup ieraksti nāk no [shortcut.*] un [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML ārpus apakškopas, ko lasa rubrapack, vai `format` trūkst vai ir pārāk jauns"
+
+msgid "Tables"
+msgstr "Tabulas"
+
+msgid "The TOML subset"
+msgstr "TOML apakškopa"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian faili netiek atbalstīti; saglabājiet kā UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} atšķiras no iepriekšējās versijas {2}: šī pakotne to neaizstāj"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode nav GUID reģistra formātā"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Vērtība (teksts, skaitlis, true/false, [\"a\", \"b\"]; - noņem atslēgu)"
+
+msgid "Variables"
+msgstr "Mainīgie"
+
+msgid "Version"
+msgstr "Versija"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versija ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versijas un jauninājumi"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer pieļauj ne vairāk kā 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] nepieciešams '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] nevar iekļaut sapludināšanas modulī; tas ir pakotnei, kas to sapludina"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] vēl netiek atbalstīts (plānots {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] nevar iekļaut MSIX; pievienojiet msi-only = true, lai būvētu MSIX bez tā"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ID sapludināšanas modulī ir ne vairāk kā 35 rakstzīmes (tam pievieno moduļa GUID)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] nepieciešams ID: rakstiet [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] nepieņem ID: rakstiet [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml nav </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml nav pēdējais ieraksts (nav pakotne, ko rakstījis rubrapack vai Windows pakošanas API)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "Tabulu masīvi [[...]] netiek atbalstīti; piešķiriet katram vienumam savu [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check nav ietekmes: to vēl nekas nepalaiž; noņemiet to"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] nepieciešams gan do, gan undo (undo atsauc arī neveiksmīgu do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: MSIX faila tips atver lietotni: target jābūt [msix-app.*] izpildāmajam failam"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] ir divreiz"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] nepieciešams ID: rakstiet [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id un typelib tiek rakstīti tikai MSI; MSIX reģistrē klasi bez tiem"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args pieder programmai; DLL tiek ielādēts, nevis palaists"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate palaiž DLL dllhost; '{2}' ir programma"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading ir paredzēts DLL; programma pati iestata savu apartment"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version un typelib-file nepieciešams typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] nonāk {2}; vai msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: tā avotam jābūt failam, kas tiek iekļauts pakotnē"
+
+msgid "[define] values must be strings"
+msgstr "[define] vērtībām jābūt virknēm"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] nepieciešams '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] nepieciešams 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] nepieciešams 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] nepieciešams 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] ir {2} vadīklas; ne vairāk kā 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] nav [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] caur citiem dialogiem ir novietots aiz sevis paša"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] nepieciešams ui = \"minimal\", \"installdir\" vai \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' ir Windows nosaukums; piešķiriet dir citu ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard nepieciešams rubrapack palīg-DLL, ko sapludināšanas modulis nesatur"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] nepieciešams līdzeklis"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX iestata visus savus mainīgos (when); izmantojiet msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: tā vērtība norāda vietu, ko MSIX nevar nodrošināt (mapi ārpus pakotnes, kas nav Windows mape, vai instalēšanas laika daļu); izmantojiet msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer ielādē {2} apdarinātāju no DLL; [com.{3}] ir programma"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows nolasa rekvizītu apdarinātājus tikai datora līmenī; pakotnei nepieciešams scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: priekšskatījuma apdarinātājs darbojas Windows prevhost; izlaidiet app-id un surrogate no [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX satur tikai sīktēlu un priekšskatījuma apdarinātājus (iepakots rekvizītu apdarinātājs Explorer nedeva vērtības); msi-only = true to saglabā MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: MSIX faila tips pieder lietotnei; pievienojiet [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: klase {2} nav šīs pakotnes [com.*] (to apkalpo apdarinātāja DLL)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: MSIX apdarinātāji koplieto visus savus tipus vai nevienu (tips ir vienā faila tipa saistījumā)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: MSIX tā klase darbojas surrogate; threading = \"sta\" [com.{2}] dod tās logam ziņojumu cilpu (ar threading = {3} priekšskatījums var palikt tukšs)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: MSIX visi tā tipi ir vienā [assoc] faila tipā vai nevienā"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: tā klase ir msi-only ([com.{2}]); MSIX nebūtu tai servera"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types ir failu tipu saraksts, piem., [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] nonāk {2}; vai msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] nepieciešams 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] nepieciešams līdzeklis: iestatiet 'feature' šeit vai tā dir"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX ieraksta visus savus INI ierakstus (when); izmantojiet msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: tā vērtībā ir daļa, ko Windows Installer aizpilda instalēšanas laikā ([...]); MSIX ieraksta failu būvēšanas laikā"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] nepieciešams 'on': kur vienums tiek rādīts, piem., [\".txt\"] vai \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] nepieciešams 'target' (programma, ko tas palaiž) vai vienumi ar parent = \"{2}\" (apakšizvēlne)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] nepieciešams 'target': programma, ko vienums palaiž"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: apakšizvēlne neko nepalaiž: izlaidiet 'args'"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: apakšizvēlnes vienums tiek rādīts tur, kur tā apakšizvēlne: izlaidiet 'on'"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args ir daļa, ko Windows Installer aizpilda instalēšanas laikā ([...]); MSIX satur tikai fiksētu tekstu"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: tā programmas nav MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: tā vērtības nevar iekļaut pakotnes reģistrā"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": nav [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on ir faila tips vai to saraksts, piem., [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' nav [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' jābūt apakšizvēlnei: [menu.*] bez target un bez sava parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] nonāk {2}; vai msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] nepieciešams līdzeklis: iestatiet 'feature' šeit vai tā dir"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; vai msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file jābūt {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file jānorāda fails, kas tiek iekļauts pakotnē"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file jānorāda programma, kas tiek iekļauta pakotnē"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types ir failu tipu saraksts, piem., [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] nepieciešams, lai tā dir būtu līdzeklis"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: MSIX shēma atver lietotni: target jābūt [msix-app.*] izpildāmajam failam"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] nepieciešams 'value' (vai remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR nesniedzas ārpus MSIX; izmantojiet [assoc.*], [protocol.*], [com.*] vai [handler.*], vai msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: qword vērtībai nepieciešams rubrapack palīg-DLL, ko sapludināšanas modulis nesatur"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX satur vērtības tikai zem {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX ne noņem vērtības, ne atstāj tās (remove, keep); izmantojiet msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX ieraksta visas savas vērtības (when); izmantojiet msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: tā vērtībā ir daļa, ko Windows Installer aizpilda instalēšanas laikā ([...]); MSIX satur tikai fiksētas vērtības"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" nepieciešams rubrapack palīg-DLL, ko sapludināšanas modulis nesatur"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: atslēgas vai vērtības nosaukumu nevar iekļaut reģistra hive"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] nepieciešams līdzeklis: iestatiet 'feature' šeit vai tā dir"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true nav paredzēts mapei zem {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true nepieciešams rubrapack palīg-DLL, ko sapludināšanas modulis nesatur"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file jānorāda programma, kas tiek iekļauta pakotnē"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX ir saīsnes tikai darbvirsmā un izvēlnē Sākt{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX saīsnei nav working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX saīsne vienmēr ir (when ir paredzēts MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX saīsne rāda savas lietotnes logotipu; icon ir paredzēts MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: MSIX saīsne palaiž lietotni: target jābūt [msix-app.*] izpildāmajam failam"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX izvēlnes Sākt ieraksts ir tā lietotne, kas nepieņem args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: nevienam dialoga tekstam nav šī ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] nepieciešams ui = \"basic\" vai cits dialogu komplekts [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "atsoļa secība \\{1} nav Unicode skalārā vērtība"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: šī pakotne nejauninātu iepriekšējo tīri"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "pakotnes `lint`: dialogi, kodu lapa, teksta normalizēšana"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "MSIX pakotnes vai komplekta `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "vadīklai {1} nav teksta; novietojiet blakus teksta vadīklu"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "vadīklai {1} nepieciešams [property.{2}] ar vienu no tās vērtībām kā noklusējumu (klusā instalēšana to izmanto)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "{1} pakotne nevar rakstīt HKLM; izmantojiet HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr ".msix izvadei nepieciešama tabula [msix-app.ID], kas norāda izpildāmo failu"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr ".msix izvadei nepieciešama tabula [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr ".msm izvade ir sapludināšanas modulis, kas būvēts no avota ar [module], nevis [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr ".txt, .md vai .rtf fails, vai - ja nav"
+
+msgid "a PE file without a certificate table entry"
+msgstr "PE fails bez sertifikātu tabulas ieraksta"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN nekad netiek ņemts no komandrindas (citi to var redzēt); izmantojiet --pin-env vai --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "komplekta manifesta Package ar nezināmu Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "komplekta manifesta Package bez FileName, Offset vai Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP ieraksts neizpakojas līdz savam izmēram"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "ZIP ieraksts, lielāks par atļauto"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ZIP ieraksta CRC-32 nesakrīt"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ZIP ieraksta dati atrodas ārpus faila"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "[module] avots būvē sapludināšanas moduli: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "binārā vērtība ir pāra skaits heksadecimālo ciparu, piem., \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "komplekts bez pakotnēm"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "ceļa sertifikātam ir kritisks paplašinājums, ko rubrapack nesaprot"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "ceļa sertifikātu ir parakstījis sertifikāts, kas nav CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "ķēde satur tikai [chain], [chain-package.ID] un [define], nevis [{1}]; pakotnes tiek būvētas no saviem avotiem"
+
+msgid "a chain holds at most %d packages"
+msgstr "ķēde satur ne vairāk kā {1} pakotnes"
+
+msgid "a chain needs [chain]"
+msgstr "ķēdei nepieciešams [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "ķēdei nepieciešams vismaz viens [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "rakstzīme, ko Windows neatļauj nosaukumā (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "vadības rakstzīme"
+
+msgid "a damaged PE optional header"
+msgstr "bojāta PE neobligātā galvene"
+
+msgid "a damaged PE section table"
+msgstr "bojāta PE sekciju tabula"
+
+msgid "a damaged ZIP64 end record"
+msgstr "bojāts ZIP64 beigu ieraksts"
+
+msgid "a damaged hive bin"
+msgstr "bojāts hive bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapack diagnostika"
+
+msgid "a disabled service cannot be started"
+msgstr "atspējotu pakalpojumu nevar startēt"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "dual pakotne nevar izvēlēties starp lietotāja un sistēmas mainīgo"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "dual pakotne raksta HKMU (HKLM vai HKCU atkarībā no instalēšanas), nevis HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "dword vērtība ir vesels skaitlis 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "līdzeklis, ko šis rubrapack nenodrošina (vai būvēts bez tā)"
+
+msgid "a file larger than allowed"
+msgstr "fails, lielāks par atļauto"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "faila nosaukums zem '{1}' nav derīgs Unicode un to nevar iepakot"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "faila nosaukums bez / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "faila komponenta vai direktorijas ķēde ir pārrauta"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "fonts nonāk MSIX caur [font.*], kas to norāda"
+
+msgid "a hash the token signing does not know"
+msgstr "jaukšana, ko marķiera parakstīšana nepazīst"
+
+msgid "a hive cell crosses its bin"
+msgstr "hive šūna šķērso savu bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "hive versija vai tips, ko rubrapack nelasa"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "pati zināmā mape ('{1}') nevar saņemt atļaujas"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "licencei nepieciešams ui = \"minimal\", \"installdir\" vai \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "lokālā galvene ar papildu laukiem (nav pakotne, ko rakstījis rubrapack vai Windows pakošanas API)"
+
+msgid "a malformed central directory"
+msgstr "nepareizi veidots centrālais direktorijs"
+
+msgid "a modification package has no applications of its own"
+msgstr "modifikācijas pakotnei nav savu lietotņu"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "modifikācijas pakotnei nepieciešams Windows būvējums 18362 vai jaunāks: iestatiet [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "moduļa compress ir \"none\", \"mszip\" vai \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "moduļa nosaukums ir tā ID ModuleID: burti, cipari un _, ne vairāk kā 35 rakstzīmes"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "multi vērtība ir netukšs virkņu masīvs"
+
+msgid "a multi value is an array of strings"
+msgstr "multi vērtība ir virkņu masīvs"
+
+msgid "a name ending with a space or a dot"
+msgstr "nosaukums, kas beidzas ar atstarpi vai punktu"
+
+msgid "a name longer than 255 bytes"
+msgstr "nosaukums, garāks par 255 baitiem"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "komplekta manifestā norādītā pakotne nav komplektā"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "pakotne bez Identity Name, Publisher, Version un ProcessorArchitecture (vai ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "pakotnes Offset vai Size komplekta manifestā neatbilst tās atrašanās vietai (vai tā ir saspiesta)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "pakotnes identitāte atšķiras no tā, ko par to saka komplekta manifests"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "pakotnes nosaukumam komplektā jābūt faila nosaukumam, kas beidzas ar .msix vai .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "parole nekad netiek ņemta no komandrindas (citi to var redzēt); izmantojiet --pass-env vai --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "datora pakotne neraksta HKCU (tas piederētu instalētājam lietotājam); izmantojiet scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "starpniekserveris ar lietotājvārdu vai paroli netiek atbalstīts"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "qword vērtība ir vesels skaitlis vai \"0x\" un 1 līdz 16 heksadecimālie cipari"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "radio vadīkla izvieto pogas vienu zem otras: augstumam jābūt vismaz 12 katrai vērtībai ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "ierakstam ir vairāk kolonnu nekā tā tabulai"
+
+msgid "a record is cut short"
+msgstr "ieraksts ir saīsināts"
+
+msgid "a record names a string the pool does not have"
+msgstr "ieraksts norāda virkni, kuras krātuvē nav"
+
+msgid "a reserved device name"
+msgstr "rezervēts ierīces nosaukums"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "atritināšanas darbība nevar būt asinhrona"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "shēma ir mazais burts, tad mazie burti, cipari, '+', '-' vai '.' (saņemts '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "skripta darbība starp InstallInitialize un RemoveExistingProducts (kļūda 2613)"
+
+msgid "a section lies outside the file"
+msgstr "sekcija atrodas ārpus faila"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "pakalpojuma nosaukums nedrīkst saturēt '/' vai '\\' (ne vairāk kā 256 rakstzīmes)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "setup .exe tiek būvēts no avota ar [chain]; '{1}' būvē pakotni (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "avots satur vienu [package] vai vienu [module], ne abus"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "avotam, kas izturējis RP1xxx pārbaudes, ar šo nekad nevajadzētu saskarties: lūdzu, ziņojiet par to kopā ar avotu"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "stored ZIP ieraksts ar atšķirīgiem izmēriem"
+
+msgid "a stream of the package cannot be read"
+msgstr "pakotnes plūsmu nevar nolasīt"
+
+msgid "a table has more than 32 columns"
+msgstr "tabulā ir vairāk nekā 32 kolonnas"
+
+msgid "a text control has no property"
+msgstr "teksta vadīklai nav rekvizīta"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "vērtība `with` failu koplieto tā komponentu: novietojiet `when` uz faila"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "vērtība ir 1 līdz 64 baiti"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "vērtība, kas iet 'with' failu, pārņem šī faila līdzekli"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "versija ir 3 vai 4 skaitļi ar punktiem, piem., 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account jābūt LocalSystem, LocalService vai NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "darbība '{1}' jau ir definēta"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "darbība nav ne standarta darbība, ne CustomAction"
+
+msgid "adds too many tables"
+msgstr "pievieno pārāk daudz tabulu"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' nav šī dialogu komplekta lapa (RpWelcomeDlg{2}{3}{4}) vai [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias pieder kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias jābūt faila nosaukumam, kas beidzas ar .exe: burti, cipari, '.', '_', '-' (saņemts '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI sadaļa nedrīkst saturēt ']' un atslēga nedrīkst saturēt '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX nevar novietot failus pagaidu mapē"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "lietotnei ir viens aizstājvārds ([msix-extension.{1}] jau ir viens)"
+
+msgid "an empty name"
+msgstr "tukšs nosaukums"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https serverim nepieciešams --tls-trust <certificates> vai --system-roots pārbaudei"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "https:// starpniekserveris netiek atbalstīts; norādiet http:// starpniekserveri (https serveri tiek sasniegti caur CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "vecā stila Authenticode laikspiedols (PKCS#9 counterSignature), ko rubrapack nepārbauda"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "neobligāta vai modifikācijas pakotne nedeklarē iespējas vai virtualizācijas iestatījumus: spēkā ir tās galvenās pakotnes"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "x86 pakotne raksta tikai 32 bitu reģistra skatā"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "lietotne '{1}' nav [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri un package-uri tiek lietoti kopā: kur būs .appinstaller fails un pakotne"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch jābūt \"x64\", \"arm64\" vai \"x86\" (saņemts '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch jābūt \"x64\", \"x86\" vai \"arm64\" (pašas iestatīšanas programmas)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "arguments {1} nav derīgs UTF-8 (baits {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "arguments {1} nav derīgs Unicode (UTF-16 vienība {2})"
+
+msgid "array is not closed"
+msgstr "masīvs nav aizvērts"
+
+msgid "arrays inside arrays are not supported"
+msgstr "masīvi masīvos netiek atbalstīti"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "masīviem jāsatur tikai virknes vai tikai veseli skaitļi"
+
+msgid "at most %d languages besides English"
+msgstr "ne vairāk kā {1} valodas papildus angļu"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "ne vairāk kā 100 tabulas [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "ne vairāk kā 50 tabulas [action.*] (šajā failā ir {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color ir \"transparent\" vai \"#RRGGBB\", piem., \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "nepareizs mainīgā nosaukums '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner jābūt .bmp failam (Windows Installer rāda tikai BMP)"
+
+msgid "build a package from a source file"
+msgstr "pakotnes būvēšana no avota faila"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{1} būvēšanai no {2} avota nepieciešama sava jaunināšanas saime: pievienojiet {3} = \"{{...}\" sadaļai [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab jābūt \"embed\" vai \"external\""
+
+msgid "cannot be read"
+msgstr "nevar nolasīt"
+
+msgid "cannot build the ClientHello"
+msgstr "ClientHello nevar izveidot"
+
+msgid "cannot bundle the packages: %s"
+msgstr "pakotnes nevar apvienot komplektā: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' nevar izveidot"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' nevar izveidot{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' nav atrasts; izveidojiet to ar `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "noklusējuma logotipu nevar izveidot"
+
+msgid "cannot make a key share"
+msgstr "key share nevar izveidot"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "ielāpu no '{1}' uz '{2}' nevar izveidot"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "transformāciju no '{1}' uz '{2}' nevar izveidot"
+
+msgid "cannot open the certificate store"
+msgstr "sertifikātu krātuvi nevar atvērt"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' nevar nolasīt"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' nevar nolasīt ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "pakotni '{1}' nevar nolasīt"
+
+msgid "cannot read source file '%s'"
+msgstr "avota failu '{1}' nevar nolasīt"
+
+msgid "cannot read that folder"
+msgstr "šo mapi nevar nolasīt"
+
+msgid "cannot read the %s file '%s'"
+msgstr "{1} failu '{2}' nevar nolasīt"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "PIN failu '{1}' nevar nolasīt"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "cabinet '{1}' blakus '{2}' nevar nolasīt"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "sertifikāta failu '{1}' nevar nolasīt"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "sertifikātus '{1}' nevar nolasīt"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "sertifikātus '{1}' nevar nolasīt: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "atslēgas failu '{1}' nevar nolasīt"
+
+msgid "cannot read the password file '%s'"
+msgstr "paroles failu '{1}' nevar nolasīt"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "nesaspiesto failu '{1}' blakus '{2}' nevar nolasīt"
+
+msgid "cannot write %s"
+msgstr "{1} nevar ierakstīt"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' nevar ierakstīt"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' nevar ierakstīt pārbaudei"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri nevar ierakstīt"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "izvēlnes failus blakus '{1}' nevar ierakstīt"
+
+msgid "cannot write the resource package of %s"
+msgstr "{1} resursu pakotni nevar ierakstīt"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities ir nosaukumu masīvs, piem., [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "iespēju '{1}' rubrapack nepazīst (rokasgrāmatā tās uzskaitītas)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "iespējai '{1}' nepieciešams Windows būvējums 17763 vai jaunāks"
+
+msgid "carriage return without a line feed"
+msgstr "rakstatgrieze bez rindpadeves"
+
+msgid "certificate file '%s': %s"
+msgstr "sertifikāta fails '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "avota maiņa uz vietas: ar jautājumu izvēlni vai opcijām"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "paraksta pārbaude: struktūra, īssavilkums, paraksts un ceļš līdz uzticamam sertifikātam"
+
+msgid "check a source or package without writing anything"
+msgstr "avota vai pakotnes pārbaude, neko neierakstot"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "pārbaudiet avota ceļus (attiecībā pret avota failu); iestatiet any-arch = true apzināti citai arhitektūrai"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "pārbaudiet pareizrakstību (ziņojums iesaka tuvāko nosaukumu) un tabulas atslēgas"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "klasi {1} jau apkalpo [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "klase {1} ir arī [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class jābūt GUID kā {{12345678-...} (saņemts '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs nav ietekmes ar preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs jābūt \"ask\", \"always\" vai \"never\" (saņemts '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "kolonnā {1} ir nepareiza veida vērtība"
+
+msgid "column %s is not valid UTF-8"
+msgstr "kolonna {1} nav derīgs UTF-8"
+
+msgid "column %s may not be null"
+msgstr "kolonna {1} nedrīkst būt null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "kolonna {1}: {2} ir ārpus kolonnas diapazona"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "kolonna {1}: {2} UTF-16 vienības, kolonnā ietilpst {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "kolonna {1}: {2} rakstzīmes, kolonnā ietilpst {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "komanda '{1}' vēl nav realizēta"
+
+msgid "command-line"
+msgstr "komandrinda"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "komponents {1} {2} mainījās starp 32 un 64 bitiem: komponentu noteikumi prasa jaunu GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "komponenta {1} {2} vairs nav (tā resursi tiek noņemti kopā ar iepriekšējo versiju)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "komponentam {1} {2} tagad ir atslēgas ceļš {3}, nevis {4}: komponentu noteikumi prasa jaunu GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid jābūt GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress jābūt \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" vai \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "nosacījumā ir neaizvērta pēdiņa vai nelīdzsvarotas iekavas"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "nosacījums ir garāks par 240 rakstzīmēm (rubrapack pievieno \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config satur virknes \"Name=value\" (saņemts '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config ir virkņu \"Name=value\" masīvs"
+
+msgid "contains a control character"
+msgstr "satur vadības rakstzīmi"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "satur vienu no < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type ir multivides tips, piem., \"image/png\" (saņemts '{1}')"
+
+msgid "control character"
+msgstr "vadības rakstzīme"
+
+msgid "control character in a comment"
+msgstr "vadības rakstzīme komentārā"
+
+msgid "control character in a string"
+msgstr "vadības rakstzīme virknē"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "datumi un laiki netiek atbalstīti; rakstiet tos kā virknes"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when nepieciešams level virs 1 (1. līmeņa līdzeklis tiek instalēts pēc noklusējuma jebkurā gadījumā)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "definējiet mainīgo ([define] vai -D NAME=value) vai rakstiet $$ burtiskai $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialogs '{1}' nav [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "dialogu ID, kas sākas ar 'Rp' (un FilesInUse), pieder rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' atrodas pats sevī (ceļa cilpa)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' nav ne dir ID, ne Programs, Desktop, StartMenu vai Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' nav dir ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' nav definēts"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction jābūt \"in\" vai \"out\" (saņemts '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo argumenti ir garāki par 255 rakstzīmēm"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "atslēgas ar punktiem netiek atbalstītas; ievietojiet atslēgu savā tabulā"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "pakotnes izdruka (MSI tabulas kā IDT)"
+
+msgid "duplicate primary key"
+msgstr "dublēta primārā atslēga"
+
+msgid "empty arrays are not supported"
+msgstr "tukši masīvi netiek atbalstīti"
+
+msgid "ends with a space or a dot"
+msgstr "beidzas ar atstarpi vai punktu"
+
+msgid "error"
+msgstr "kļūda"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" jānorāda [file.*], kas tiek iekļauts pakotnē"
+
+msgid "expected ',' or ']' in the array"
+msgstr "masīvā gaidīts ',' vai ']'"
+
+msgid "expected '=' after the key"
+msgstr "pēc atslēgas gaidīts '='"
+
+msgid "expected ']' to close the table name"
+msgstr "tabulas nosaukuma aizvēršanai gaidīts ']'"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "gaidīta atslēga, [table] vai komentārs"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "paplašinājumam '{1}' jau ir programma ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension jābūt '.' un mazajiem burtiem, cipariem, '_' vai '-' (saņemts '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files nav ietekmes ar preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files jābūt \"ask\", \"keep\" vai \"delete\" (saņemts '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "līdzekļa {1} vairs nav: instalācijas, kurām tas bija, zaudē tā saturu"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "līdzeklis '{1}' ir pats sev priekštecis"
+
+msgid "feature '%s' is not defined"
+msgstr "līdzeklis '{1}' nav definēts"
+
+msgid "feature parent '%s' is not defined"
+msgstr "vecākais līdzeklis '{1}' nav definēts"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "fails '{1}' jau palaiž pakalpojumu '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "fails '{1}' jau ir reģistrēts kā fonts"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "fails '{1}' jāinstalē pašā mapē Fonts ([dir.*] ar path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "failam '{1}' nepieciešams līdzeklis: iestatiet 'feature' šeit vai tā dir"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file jābūt \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "faila nosaukumā ir {1} UTF-16 vienības; ar 8.3 īso nosaukumu MSI ietilpst ne vairāk kā {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization un registry-virtualization = false nepieciešams Windows būvējums 18362 vai jaunāks: iestatiet [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' nav šīs pakotnes [file.*]"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' apkalpo COM klases tikai kā .exe vai .dll"
+
+msgid "files but no Media row"
+msgstr "faili, bet nav Media rindas"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "izlabojiet ziņojumā norādīto vērtību; ID ir burti, cipari un '_' un atšķiras visās tabulās"
+
+msgid "floating-point numbers are not supported"
+msgstr "peldošā komata skaitļi netiek atbalstīti"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "mapei '{1}' nepieciešams līdzeklis: iestatiet 'feature' šeit vai tās dir"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "mapes nosaukumā ir {1} UTF-16 vienības; ar 8.3 īso nosaukumu MSI ietilpst ne vairāk kā {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent nepieciešams vecākais"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "fontiem nepieciešams scope = \"machine\" (šis ir {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} nepieciešams jaunāks rubrapack (šis lasa format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format ir vesels skaitlis: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "norādiet --pass-env vai --pass-file, ne abus"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "norādiet --pin-env vai --pin-file, ne abus"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "nodrošiniet [msix] un [msix-app.*] nepieciešamo vai paturiet vienumu MSI ar msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "norādiet failu zem šīs mapes"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "norādiet failu tieši programmas mapē vai - ja nav"
+
+msgid "give a folder below this one, such as dist"
+msgstr "norādiet mapi zem šīs, piem., dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "norādiet nosaukumu no 1 līdz 128 baitiem"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "norādiet visus trīs logotipus (logo-150, logo-44, store-logo) vai nevienu"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "norādiet vienu no --key, --pkcs11 un --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "norādiet programmas mapes apakšmapes, atdalot ar komatiem, vai - ja nav"
+
+msgid "glob '%s' matches no file"
+msgstr "šablons '{1}' neatbilst nevienam failam"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "šablons '{1}' atbilst izvades failam '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "satur MergeModule.CABinet plūsmu, ko nevar nolasīt"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "satur MergeModule.CABinet, ko nevar nolasīt"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "satur tabulu Module*Sequence bez standarta kolonnām"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "satur ModuleConfiguration vienumu bez nosaukuma vai ar nezināmu formātu"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "satur tabulu ModuleConfiguration bez standarta kolonnām"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "satur tabulu ModuleSubstitution bez standarta kolonnām"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "satur ModuleSubstitution veidni, kas norāda vienumu, kura ModuleConfiguration nav"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "satur komponentu ar nosacījumu; MSIX instalē visu"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "satur failu, kuram trūkst komponenta vai cabinet ieraksta"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "satur mapi ārpus sava TARGETDIR, kurai MSIX nav vietas"
+
+msgid "has a table that cannot be read"
+msgstr "satur tabulu, ko nevar nolasīt"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "satur tabulu, kuras kolonnas atšķiras no pakotnes kolonnām"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "satur darbības secības tabulai, kuras pakotnē nav"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "satur komponentus, bet pakotnē nav tabulas FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "satur failus, bet nav MergeModule.CABinet vai tabulas Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "satur failus, bet nav MergeModule.CABinet plūsmas"
+
+msgid "has files, but the package has no Media table"
+msgstr "satur failus, bet pakotnē nav tabulas Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "nav ModuleSignature: nav sapludināšanas modulis"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "nav ProductCode vai ProductVersion"
+
+msgid "has no Property table"
+msgstr "nav tabulas Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "satur ierakstus tabulai, ko nedefinē ne bāze, ne transformācija"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "satur tekstu ārpus ASCII kodu lapā, kas nav 65001 (UTF-8)"
+
+msgid "icon must be an .ico file"
+msgstr "icon jābūt .ico failam"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id jābūt GUID kā {{12345678-1234-1234-1234-123456789ABC}: paša moduļa, vienāds katrā versijā"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name jābūt 3 līdz 50 rakstzīmēm no A-Z, a-z, 0-9, '.' un '-' (saņemts '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "inline tabulas netiek atbalstītas; izmantojiet tabulu [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "tiek instalēts tajā pašā ceļā kā rinda {1} (Windows nosaukumos neatšķir lielos un mazos burtus{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "iekšēja kļūda: iebūvētam dialogam ir bojāta tabulēšanas secība; lūdzu, ziņojiet"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "iekšēji: moduļa tabulai nav _Validation noteikuma"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "iekšēji: nav _Validation noteikuma {1} kolonnai"
+
+msgid "invalid"
+msgstr "nederīgs"
+
+msgid "invalid - %s"
+msgstr "nederīgs - {1}"
+
+msgid "is '.' or '..'"
+msgstr "ir '.' vai '..'"
+
+msgid "is a reserved device name"
+msgstr "ir rezervēts ierīces nosaukums"
+
+msgid "is empty"
+msgstr "ir tukšs"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "ir garāks par 255 UTF-16 vienībām"
+
+msgid "is not a Windows Installer database"
+msgstr "nav Windows Installer datubāze"
+
+msgid "is not a compound file"
+msgstr "nav saliktais fails"
+
+msgid "is not valid UTF-8"
+msgstr "nav derīgs UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "paturiet jaunināšanas kodu, palieliniet versiju, paturiet palikušo failu komponentu kodus"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "atslēga '{1}' šajā tabulā iestatīta divreiz (pirmo reizi rindā {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "atslēga '{1}' nedrīkst sākties vai beigties ar '\\' vai saturēt tukšu daļu"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "atslēga '{1}' ir ārpus tabulas; pirms pirmās tabulas ir tikai 'format'"
+
+msgid "key file '%s': %s"
+msgstr "atslēgas fails '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind jābūt \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" vai \"context-menu\" (saņemts '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind jābūt \"preview\", \"thumbnail\" vai \"property\" (saņemts '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind jābūt registry, file, dir vai component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels ir virkņu masīvs, pa vienai katrai vērtībai"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "valodai '{1}' nav valodas pakotnes (lang/{2}.po blakus avotam vai RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "valoda '{1}' norādīta divreiz"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "valoda '{1}' nav [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "valodai '{1}' trūkst {2} tekstu, pirmais ir {3}: pievienojiet tos tās valodas pakotnei (lang/{4}.po) vai norādiet [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "valodai '{1}' nepieciešams [ui] langid-{2} (tās LANGID automātiskai izvēlei)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "valodai '{1}' nepieciešams [ui] name-{2} (tās nosaukums valodas lapā)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" vairs nepadara dialogus korejiešu valodā: tie ir angļu valodā, ja vien [ui] languages = [\"ko\"] nepievieno korejiešu"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language jābūt \"ko-KR\" vai \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language jābūt \"neutral\", \"en-US\" vai \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages satur kodus kā \"ko\" vai \"zh_TW\" (2 vai 3 mazie burti, un _ un divi reģiona lielie burti) (saņemts '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages ir valodu kodu masīvs, piem., [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages nepieciešams dialogu komplekts (ui = \"basic\" vai cits)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch jābūt \"file:<ID>\", kas norāda šīs pakotnes [file.*]"
+
+msgid "launch-args needs launch"
+msgstr "launch-args nepieciešams launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license jābūt .txt, .md (tiek rādīts kā vienkāršs teksts) vai .rtf failam"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} rinda {2}: kolonna {3} nav NFC ({4} rinda{-5}); build --nfc pārvērš mapju, failu un saīsņu nosaukumus NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: kodu lapa {1}, nevis 65001: teksts netiek pārbaudīts kā UTF-8, platumi tikai ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: problēmu nav\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: skatiet iepriekš minētās problēmas\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "saraksts ar atslēgām, ar kurām var parakstīt marķieris vai Windows sertifikātu krātuve"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logotips '{1}' un tā .scale-100 variants abi ir: paturiet vienu"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logotips '{1}' mērogā {2} ir {3}x{4} pikseļi; jābūt {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logotips '{1}' mērogā {2} nav PNG fails"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logotips '{1}' ir {2}x{3} pikseļi; jābūt {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logotips '{1}' nav PNG fails"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logotips '{1}' nav atrasts (arī ne kā varianti .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logotips '{1}': logotipam ar mērogu variantiem nepieciešams ASCII faila nosaukums ar paplašinājumu"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package ir galvenās pakotnes identitātes nosaukums (saņemts '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher un modification = true tiek lietoti ar main-package (pakotni, kurai šī pieder)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher ir galvenās pakotnes izdevējs, piem., \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "nedrīkst saturēt vadības rakstzīmes vai / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "nedrīkst sākties ar atstarpi vai beigties ar atstarpi vai punktu"
+
+msgid "merge module '%s' not found"
+msgstr "sapludināšanas modulis '{1}' nav atrasts"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version jābūt versijai kā 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version jābūt četrām daļām, piem., 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version jābūt četrām daļām, piem., 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "neatbilstība"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" noņem atslēgu; tas nepieņem 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode jābūt \"set\", \"add\" vai \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode jābūt \"set\", \"append\" vai \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "vairāk ZIP ierakstu, nekā atļauts vai nekā satur direktorijs"
+
+msgid "more keys and values than allowed"
+msgstr "vairāk atslēgu un vērtību, nekā atļauts"
+
+msgid "more than 3 redirects"
+msgstr "vairāk nekā 3 novirzīšanas"
+
+msgid "more than 96 sections"
+msgstr "vairāk nekā 96 sekcijas"
+
+msgid "more than one source file ('%s')"
+msgstr "vairāk nekā viens avota fails ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "ir vairāk nekā viens marķieris: norādiet vienu ar --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi jābūt \"each\", \"one\" vai \"single\" (saņemts '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "vairākrindu virknes netiek atbalstītas"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "vairākrindu virknes netiek atbalstītas; izmantojiet vienu rindu ar \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "jābūt no 1 līdz 64 baitiem"
+
+msgid "name contains a control character"
+msgstr "nosaukums satur vadības rakstzīmi"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name ir pakotnes identitātes nosaukums (saņemts '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "nosaukums nav ASCII un trūkst summary-name; kopsavilkuma Subject būs 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "norāda mapi, kuras tā tabulā Directory nav"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix vēl nav realizēts: izveidojiet MSI avotu un pievienojiet [msix] (skatiet rokasgrāmatu)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "nav rindas 'format = {1}': avots rubrapack 0.18 vai vecākā formātā, ko šī versija nelasa (ceļi tagad sākas ar $(ProgramFiles) vai $(INSTALLDIR)); skatiet rokasgrāmatas sadaļu Source format"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "nav norādīts --trust: paraksts tiek pārbaudīts, bet nekas nenosaka, kam uzticēties"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "neviens atslēgas faila (vai --cert faila) sertifikāts nepieder atslēgai"
+
+msgid "no control characters"
+msgstr "bez vadības rakstzīmēm"
+
+msgid "no keys\n"
+msgstr "atslēgu nav\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "nav galvenās programmas, tāpēc nav saīsņu: nav"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "nav servera nosaukuma vai tas ir garāks par 255 baitiem"
+
+msgid "no string pool: not a transform"
+msgstr "nav virkņu krātuves: nav transformācija"
+
+msgid "no table '%s' in '%s'"
+msgstr "'{2}' nav tabulas '{1}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove atstāj Modify (tā Remove) kā vienīgo veidu, kā noņemt produktu: to nevar lietot ar no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "nav PE fails (nav MZ galvenes)"
+
+msgid "not a PE file (no PE header)"
+msgstr "nav PE fails (nav PE galvenes)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "nav PEM, PKCS#8 vai PKCS#12 fails"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "nav ZIP arhīvs (nav beigu ieraksta)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "nav ZIP arhīvs (pārāk īss)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "nav starpniekservera URL, ko rubrapack pieņem (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "nav reģistra hive"
+
+msgid "not a valid number"
+msgstr "nav derīgs skaitlis"
+
+msgid "not a value"
+msgstr "nav vērtība"
+
+msgid "not a value (strings need quotes)"
+msgstr "nav vērtība (virknēm vajadzīgas pēdiņas)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "nav http:// vai https:// URL, ko rubrapack pieņem"
+
+msgid "not valid UTF-8"
+msgstr "nav derīgs UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "nav pārbaudīts (norādiet --trust vai --system-roots)"
+
+msgid "not-present"
+msgstr "nav"
+
+msgid "nothing changed\n"
+msgstr "nekas netika mainīts\n"
+
+msgid "number out of range"
+msgstr "skaitlis ārpus diapazona"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "astotnieku un bināros skaitļus neatbalsta; izmantojiet decimālos vai 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" ir paredzēts HKLM, HKCU un HKMU (klases tiek lietotas ar [assoc.*], [com.*] u. tml.)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" noņem atslēgu ar visu zem tās: '{1}' nav produkta paša atslēga zem Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" noņemšanas laikā noņem visu atslēgu; tas nepieņem '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "sistēmā Windows `keys list` rāda sertifikātu krātuvi"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "sistēmā Windows marķieris tiek izmantots caur sertifikātu krātuvi (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on ir paredzēts remove = true (kad atslēga tiek noņemta)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on jābūt \"install\" vai \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on jābūt \"install\", \"uninstall\" vai \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: katrs ir faila tips ('.' un mazie burti, cipari, '_' vai '-'), \"*\" (katrs fails), \"folder\", \"background\" (mapes tukšā daļa), \"drive\" vai \"assoc:<ID>\" (saņemts '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "tikai radio un combo vadīklas pieņem labels"
+
+msgid "only radio and combo controls take values"
+msgstr "tikai radio un combo vadīklas pieņem values"
+
+msgid "out of memory"
+msgstr "nepietiek atmiņas"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "izvade '{1}': rubrapack raksta .msi, .msm, .msix, .msixbundle un ķēdes setup .exe"
+
+msgid "package '%s' %s"
+msgstr "pakotne '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "pakotne '{1}' nav atrasta"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent jābūt cita produkta upgrade-code, nevis šīs pakotnes"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent jābūt galvenā produkta upgrade-code, GUID kā {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path jābūt \"$(Base)/relative/path\" ar '/' (Base ir mape kā ProgramFiles vai dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path jāsākas ar Windows mapi (kā $(ProgramFiles) vai $(System))"
+
+msgid "paths"
+msgstr "ceļi"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type jābūt \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" vai \"application\" (saņemts '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "atļaujām nepieciešams scope = \"machine\" (šis ir {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports jābūt portam vai diapazonam kā \"8000-8100\" robežās 1-65535 (saņemts '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "izdrukāt nejaušu GUID vai to, ko rubrapack atvasina no teksta"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "izdrukāt avotu JSON Schema (redaktoram, kas papildina un pārbauda atslēgas)"
+
+msgid "print the version"
+msgstr "izdrukāt versiju"
+
+msgid "print this help, or one command's usage"
+msgstr "izdrukāt šo palīdzību vai vienas komandas lietojumu"
+
+msgid "product-code must be a GUID"
+msgstr "product-code jābūt GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile jābūt \"all\", \"domain\", \"private\" vai \"public\" (saņemts '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' jau pieder [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' pieder arī [assoc.{2}]: faila tipam un COM klasei vajag divus nosaukumus"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' ir arī [assoc.{2}] ar citu aprakstu, target, icon vai args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id jābūt burtiem, cipariem, '.', '_' vai '-', nesākoties ar ciparu, ne vairāk kā 39 (saņemts '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "rekvizīts '{1}' jau pieder vadīklai '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "rekvizītam '{1}' ir dir vai līdzekļa nosaukums"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "rekvizīts '{1}' jau ir definēts (rinda {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "rekvizīts '{1}' jau tiek meklēts (rinda {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "rekvizītu '{1}' iestata rubrapack vai instalētājs, un to nevar definēt šeit"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "rekvizītam '{1}' jābūt jūsu pašu publiskam nosaukumam (lielajiem burtiem)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "rekvizītam '{1}' jābūt publiskam nosaukumam: lielie burti, cipari un '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol jābūt \"tcp\" vai \"udp\" (saņemts '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher ir pakotnes izdevējs, piem., \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher jābūt parakstīšanas sertifikāta subject, piem., \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher nedrīkst saturēt unsigned-test OID; to pievieno --unsigned-test"
+
+msgid "quoted keys are not supported"
+msgstr "atslēgas pēdiņās netiek atbalstītas"
+
+msgid "quoted table names are not supported"
+msgstr "tabulu nosaukumi pēdiņās netiek atbalstīti"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot jābūt \"suppress\" vai \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true ir paredzēts on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true nekad nedarbojas, kad jauninājums noņem šo versiju; tas nepieņem 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true noņem mapi ar visu tās saturu; tas nepieņem 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} ir virs šīs pakotnes versijas {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' jābūt versijai kā 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message nepieciešams refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "reģistrs '{1}' noņem vērtību; tam nav ko aizsargāt"
+
+msgid "registry value '%s' needs a feature"
+msgstr "reģistra vērtībai '{1}' nepieciešams līdzeklis"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true noņem vērtību instalēšanas laikā; tas nepieņem 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons nepieciešams tīrīšanas uzdevums: noņemiet cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces satur ne vairāk kā 16 jaunināšanas kodus"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces satur jaunināšanas kodus, GUID kā {{12345678-1234-1234-1234-123456789ABC} (saņemts '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces ir jaunināšanas kodu masīvs, piem., [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces norāda {1} divreiz"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces norāda {1}, kas ir šīs pakotnes vai tās vecākās pakotnes upgrade-code"
+
+msgid "required property %s is missing"
+msgstr "trūkst obligātā rekvizīta {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "atritināšanas dvīnim jābūt pirms {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root jābūt HKLM, HKCR vai HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root jābūt HKLM, HKCU, HKCR vai HKMU (saņemts '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: ko nozīmē diagnostikas kods. Kodi pa diapazoniem:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: daži jautājumi izveido avotu (Enter ņem vērtību no [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "palaidiet `rubrapack help <command>`; pārbaudiet ceļus un vai izvades mape pastāv"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run jābūt \"file:<ID>\", kas norāda šīs pakotnes [file.*]"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (mašīna 0x{2}) nevar darboties šīs pakotnes mašīnās"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' nav programma (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "saglabājiet avotu kā UTF-8 (vai UTF-16 ar BOM) ar LF vai CRLF rindu beigām"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "shēmai '{1}' jau ir programma ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope jābūt \"machine\", \"user\" vai \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl jābūt SDDL virknei kā \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "meklēšanas rekvizītam '{1}' jābūt jūsu pašu publiskam nosaukumam (lielajiem burtiem)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "skatiet ziņojumu; atkārtota būvēšana ar rubrapack izlabo lielāko daļu"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "secība {1} nav pēc {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "novieto darbību blakus tādai, ko nepalaiž ne pakotne, ne modulis"
+
+msgid "service name '%s' is already used"
+msgstr "pakalpojuma nosaukums '{1}' jau tiek izmantots"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "pakalpojumiem nepieciešams scope = \"machine\" (šis ir {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "saīsnes nosaukumā ir {1} UTF-16 vienības; ar 8.3 īso nosaukumu MSI ietilpst ne vairāk kā {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "parakstīt PE failu, MSI pakotni, MSIX pakotni vai komplektu"
+
+msgid "signed %s\n"
+msgstr "parakstīts {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "avots '{1}' ir direktorija; daudziem failiem izmantojiet [files.ID]"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "avots '{1}' ir simboliskā saite; saitēm neseko"
+
+msgid "source '%s' is not a regular file"
+msgstr "avots '{1}' nav parasts fails"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "avota fails '{1}' mainījās pakotnes būvēšanas laikā"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "avota fails '{1}' ir lielāks par 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "avota fails '{1}' nav atrasts"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source jābūt \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source jābūt .msi pakotnei"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "avota ceļam '{1}' jābūt relatīvam pret avota failu"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "avota ceļi izmanto '/', nevis '\\\\' (saņemts '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start jābūt auto, demand vai disabled"
+
+msgid "string is not closed on this line"
+msgstr "virkne šajā rindā nav aizvērta"
+
+msgid "string lengths exceed the string data"
+msgstr "virkņu garumi pārsniedz virkņu datus"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "kopsavilkuma informāciju vēl nevar parādīt kā IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name jābūt ASCII (kopsavilkuma informācija satur tikai ASCII)"
+
+msgid "table %s %s"
+msgstr "tabula {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "tabula '{1}' nav nolasāma"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "tabula [{1}{2}{3}] ir definēta divreiz (pirmoreiz rindā {4})"
+
+msgid "table name expected"
+msgstr "gaidīts tabulas nosaukums"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "tabulu nosaukumiem ir ne vairāk kā divas daļas: [kind] vai [kind.ID]"
+
+msgid "tables"
+msgstr "tabulas"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "tabulas un atslēgas: nezināma tabula vai atslēga, trūkst obligātās, vienums bez līdzekļa, kad līdzekļi pastāv"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "nepieņem konfigurāciju (tam nav ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "mērķis '{1}' nepastāv"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target jābūt \"dir:<ID>\", \"file:<ID>\" vai \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target jābūt \"file:<ID>\", kas norāda šīs pakotnes [file.*]"
+
+msgid "target name '%s' %s"
+msgstr "mērķa nosaukums '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' jau izmanto [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name un enabled pieder kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "šis fails jau pastāv; norādiet citu nosaukumu"
+
+msgid "that folder holds no files"
+msgstr "šajā mapē nav failu"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "dialogam FilesInUse nepieciešama tabula ListBox, kaut vai tukša (kļūda 2205; dialogs tiek izlaists)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN satur rakstzīmes vai garumu, ko marķieris nepieņem"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN ir beidzies: vispirms nomainiet to marķierī"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN ir bloķēts (pārāk daudz nepareizu mēģinājumu)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode ir iepriekšējās versijas: tas ir mazais jauninājums (REINSTALLMODE), nevis lielais jauninājums, ko būvē rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16 fails nav derīgs UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP centrālā direktorija atrodas ārpus faila"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "lietojumprogrammas ID '{1}' kļūst par Application Id: tikai burti un cipari, nesākas ar ciparu"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "arhīvs nebeidzas ar ZIP64 beigu ierakstiem kā MSIX pakotnes"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "arhīvam nav ZIP64 beigu ieraksta"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "komplekta manifestam nav Identity Name, Publisher un Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "centrālā direktorija atrodas ārpus arhīva"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "sertifikātam ir kritisks paplašinājums, ko rubrapack nesaprot"
+
+msgid "the certificate has expired"
+msgstr "sertifikāta derīgums ir beidzies"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "sertifikāts ir CA sertifikāts, nevis parakstīšanas sertifikāts"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "sertifikāts nav paredzēts koda parakstīšanai (nav koda parakstīšanas paplašinātā atslēgas lietojuma)"
+
+msgid "the certificate is not valid yet"
+msgstr "sertifikāts vēl nav derīgs"
+
+msgid "the certificate path is longer than 8"
+msgstr "sertifikātu ceļš ir garāks par 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "sertifikātu tabula nesatur Authenticode parakstu"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "sertifikātu tabula nav faila beigās"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "sertifikāta atslēgas lietojums neatļauj digitālos parakstus"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "sertifikāta subject nevar ierakstīt kā MSIX izdevēju"
+
+msgid "the chunked response is malformed"
+msgstr "sadalītā atbilde ir nepareiza"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "komandrinda: nezināma komanda vai opcija, fails, ko nevar nolasīt vai ierakstīt, paraksts, atšķirība, ko transformācija nevar pārnest"
+
+msgid "the connection has failed"
+msgstr "savienojums neizdevās"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "iegultie cabinet faili padara pakotni 2 GiB vai lielāku, ko Windows Installer nevar atvērt; izmantojiet cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "ieraksts nav centrālajā direktorijā"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "kļūdas dialogam '{1}' nepieciešama vadīkla {2} ar nosaukumu {3} (kļūda 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "izpildāmajam failam '{1}' jābūt .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "izpildāmā faila mape neved uz zināmu atrašanās vietu"
+
+msgid "the file is not signed"
+msgstr "fails nav parakstīts"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "fails jau ir parakstīts; rubrapack neparaksta divreiz un neaizstāj parakstu"
+
+msgid "the file is too large to sign"
+msgstr "fails ir pārāk liels parakstīšanai"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "failam nepieciešama tabula [package] (vai [module] sapludināšanas modulim)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "fails tika mainīts pēc parakstīšanas (tā kontrolsumma nesakrīt)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "instalējamie faili: nav atrasts, mape, saite, paraugs bez atbilsmes, citas arhitektūras programma, pārāk gari nosaukumi"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "gatavās tabulas pārkāpj Windows Installer kārtulu"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "hive netika aizvērts tīri (būtu nepieciešams tā žurnāls)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "hive bāzes bloka kontrolsumma nesakrīt"
+
+msgid "the hive's bins lie outside the file"
+msgstr "hive bin bloki atrodas ārpus faila"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "instalēto lietojumprogrammu saraksta ikona ir [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "ievade beidzās, pirms tika atbildēti visi jautājumi; nekas netika ierakstīts"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "atslēgas fails ir lielāks par 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "atslēga nav ne RSA, ne EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "bibliotēka nav PKCS#11 modulis (nav C_GetFunctionList vai versija 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "manifestam nav Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "manifesta Identity nevar nolasīt pakotnes pilnajam nosaukumam"
+
+msgid "the merge module %s"
+msgstr "sapludināšanas modulis {1}"
+
+msgid "the name %s"
+msgstr "nosaukums {1}"
+
+msgid "the package is not signed"
+msgstr "pakotne nav parakstīta"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "pakotne nav parakstīta (nav AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "pakotne jau ir parakstīta; rubrapack neparaksta divreiz un neaizstāj parakstu"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "pakotne jau ir parakstīta; rubrapack paraksta neparakstītas pakotnes (un nekad divreiz)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakotne izmanto cabinet failus ārpus sevis, ko .msi paraksts neaptver; būvējiet to ar iegultiem cabinet failiem vai tomēr parakstiet ar --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "pakotnes saturs neatbilst tās parakstam (tas tika mainīts pēc parakstīšanas)"
+
+msgid "the package's directory cannot be read"
+msgstr "pakotnes direktoriju nevar nolasīt"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "komplekta pakotnēm nepieciešams vienāds Name, Publisher un Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "starpniekserveris pieprasa paroli (407), ko rubrapack neatbalsta"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "starpniekserveris neatbildēja uz tuneļa pieprasījumu"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "starpniekserveris nosūtīja datus pēc atbildes uz CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "pāradresācijas vieta ir pārāk gara"
+
+msgid "the request could not be sent"
+msgstr "pieprasījumu nevarēja nosūtīt"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "atbildei ir nepareizs vai pretrunīgs Content-Length"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "atbildei ir gan Content-Length, gan chunked (noraidīts: smuggling risks)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "atbilde ir lielāka par 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "atbilde izmanto pārsūtīšanas kodējumu, kas nav chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "tas pats nosacījums jau tiek pieprasīts (rinda {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "tas pats bez jautājumiem:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "serveris neatbildēja ar HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "serveris pāradresēja no https uz http (noraidīts)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "servera CertificateVerify paraksts netiek apstiprināts"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "servera sertifikāts nav paredzēts TLS serveriem (tā paplašinātais atslēgas lietojums)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "servera paraksta shēma neatbilst tā sertifikāta atslēgai"
+
+msgid "the signature does not verify"
+msgstr "paraksts netiek apstiprināts"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "paraksts netiek apstiprināts ar parakstītāja sertifikātu"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "paraksta ieraksts ir aprakstīts ZIP64 veidā; Windows nolasa tā vietu no ZIP32 laukiem"
+
+msgid "the signature is not DER"
+msgstr "paraksts nav DER"
+
+msgid "the signature streams cannot be read"
+msgstr "paraksta straumes nevar nolasīt"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "parakstītie atribūti neatbilst parakstītajam saturam"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "parakstītāja sertifikāts nav paredzēts koda parakstīšanai"
+
+msgid "the source file's encoding"
+msgstr "avota faila kodējums"
+
+msgid "the system random source failed"
+msgstr "sistēmas nejaušības avots neizdevās"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "tabulēšanas secība (Control_Next) nav viens aplis caur tās {1} vadīklām no Control_First (Windows Installer apstājas ar kļūdu 2809 vai 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "laikspiedola serveris atbildēja ar HTTP kļūdu"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "laikspiedola servera sertifikāts nav paredzēts laikspiedoliem"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "laikspiedola servera laiks ir ārpus parakstīšanas sertifikāta derīguma"
+
+msgid "the token does not say what kind of key it is"
+msgstr "marķieris nenorāda, kāda veida atslēga tā ir"
+
+msgid "the token is not present"
+msgstr "marķieris nav pievienots"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "marķieris atgrieza nepareiza garuma ECDSA parakstu"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "marķiera EC atslēgai ir sertifikāts, kas nav EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "marķiera paraksts netiek apstiprināts ar sertifikātu (atslēga un sertifikāts nav saistīti)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "uzticamā sertifikāta derīgums ir beidzies vai vēl nav sācies"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "neparakstītie atribūti ir nepareizi vai satur vairāk nekā vienu laikspiedolu"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "šeit nav tāda faila"
+
+msgid "there is no such folder here"
+msgstr "šeit nav tādas mapes"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "šis rubrapack ir būvēts bez izvēlnes daļas: [menu.*] vienumi nenonāk Windows 11 izvēlnē"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "šis rubrapack ir būvēts bez instalēšanas programmas (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading jābūt \"sta\", \"mta\", \"both\" vai \"neutral\" (saņemts '{1}')"
+
+msgid "timestamp: "
+msgstr "laikspiedols: "
+
+msgid "too many languages for one bundle"
+msgstr "pārāk daudz valodu vienam komplektam"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "pārāk daudz lokalizētu tekstu un logotipa mērogu resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "komplektā ir pārāk daudz pakotņu"
+
+msgid "trusted"
+msgstr "uzticams"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "komplektā ir divas vienas arhitektūras pakotnes"
+
+msgid "two packages of one name in a bundle"
+msgstr "komplektā ir divas viena nosaukuma pakotnes"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "komplektā ir divas resursu pakotnes ar vienu ResourceId"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type jābūt string, expand, dword, qword, binary vai multi (saņemts '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type jābūt text, checkbox, edit, radio vai combo (saņemts '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' nav šīs pakotnes [file.*]"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version ir major.minor heksadecimālos ciparos, piem., \"1.0\" (saņemts '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types un verb pieder kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: katrs ir \".ext\" vai \"*\" (katrs fails)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: katrs ir '.' un mazie burti, cipari, '_' vai '-' (saņemts '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" ļauj lietotājam izvēlēties dir '{2}' mapi, kas nepastāv (iestatiet [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" nepieciešamas [feature.*] tabulas izvēlei"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui jābūt none, basic, minimal, installdir vai features (saņemts '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "negaidīts teksts pēc vērtības"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "nezināma komanda '{1}' (skatiet 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "nezināma atsoļa secība \\{1} (izmantojiet '...' tekstam ar apgrieztajām slīpsvītrām)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "nezināma inspect opcija (izmantojiet tabulas nosaukumu, --summary, --files vai --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "nezināma atslēga '{1}' tabulā [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "nezināma vai nepilnīga {1} opcija '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "nezināma tabula [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "izpakot pakotni jaunā direktorijā, izkārtotu kā instalējot"
+
+msgid "unsupported - %s"
+msgstr "netiek atbalstīts - {1}"
+
+msgid "untrusted"
+msgstr "neuzticams"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* atslēgām nepieciešams appinstaller-uri un package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false ir paredzēts on = \"uninstall\" vai \"both\" (instalēšana nekad nav jauninājuma noņemšana)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code jābūt GUID kā {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "lietojums: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "lietojums: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (saraksts komplektam)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "lietojums: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "lietojums: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "lietojums: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "lietojums: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "lietojums: rubrapack inspect <file.cab> (bez tabulas vai opcijas)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "lietojums: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "lietojums: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "lietojums: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "lietojums: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "lietojums: rubrapack inspect <setup.exe> (bez tabulas vai opcijas)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "lietojums: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "lietojums: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "lietojums: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "lietojums: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "lietojums: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (fiksēts sākuma <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; tiek pieņemti arī .rpk nosaukumi"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "lietojums: rubrapack schema (avotu JSON Schema, uz stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "lietojums: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "lietojums: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "izmantojiet '/' ceļā"
+
+msgid "use a full rubrapack build or another way"
+msgstr "izmantojiet pilnu rubrapack būvējumu vai citu veidu"
+
+msgid "used by more than one component"
+msgstr "to izmanto vairāk nekā viens komponents"
+
+msgid "value '%s' is listed twice"
+msgstr "vērtība '{1}' ir norādīta divreiz"
+
+msgid "value missing"
+msgstr "trūkst vērtības"
+
+msgid "values and labels are strings"
+msgstr "values un labels ir virknes"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values ir masīvs ar 1 līdz 32 virknēm"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "vērtības: ID, GUID, versijas, skaitļi ārpus diapazona, atsauces uz lietām, kas nepastāv"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "mainīgais '{1}' nav definēts ([define] vai -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "mainīgā nosaukums '{1}' nedrīkst saturēt '=' vai sākties ar = + - ! *"
+
+msgid "variables"
+msgstr "mainīgie"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "mainīgie: $(NAME) bez vērtības, neaizvērts $(, Windows nosaukums vai dir ID vietā, kur tas nevar būt"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "versijai '{1}' jābūt a.b.c vai a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "versijai '{1}' jābūt a.b.c vai a.b.c.d ar a, b <= 255 un c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" nevar iet 'with' ar 64 bitu pakotnes failu"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view jābūt \"32\" vai \"64\""
+
+msgid "warning"
+msgstr "brīdinājums"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "ko nozīmē diagnostikas kods, ziņojumi, kas to satur, ko darīt un kur rokasgrāmatā ir vairāk"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with jābūt \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: fails '{1}' nav šīs pakotnes [file.*]"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "bez --pkcs11 `keys list` parāda Windows sertifikātu krātuvi"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' nav dir ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "rakstīt ielāpu (.msp): faili un rindas, kas atjaunina instalēto bāzi līdz mērķim"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "rakstīt avota failu (.toml; arī .rpk nosaukumi): no atbildēm, jautātām vai dotām kā opcijas, fiksēta sākuma faila vai esoša MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "rakstīt transformāciju (.mst): to, kas vienu pakotni pārvērš otrā"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "rakstiet tabulu vai vērtību vienkāršajā veidā, ko rāda rokasgrāmata"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "rakstiet vērtību bez '[~]'; mode = \"append\" vai \"prepend\" to pievieno"
+
+msgid "wrote %s\n"
+msgstr "ierakstīts {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width jābūt ne vairāk kā 370 (lapas platums)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height jābūt ne vairāk kā 234 (līnija virs pogām)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< &Atpakaļ"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Tālāk >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Atcelt"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "&Instalēt"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Pabeigt"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "Labi"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Jā"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Nē"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Mēģināt vēlreiz"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "&Ignorēt"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "Pā&rtraukt"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Iziet"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "Pā&rlūkot..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Laipni lūdzam [ProductName] instalēšanā"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "Tiks instalēts [ProductName] jūsu datorā. Lai turpinātu, noklikšķiniet uz Tālāk."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Licences līgums"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Izlasiet šo licences līgumu."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Piekrītu licences līguma noteikumiem"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Instalācijas mape"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Izvēlieties mapi, kurā instalēt [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Instalēt &mapē:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Mapes maiņa"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Pārejiet uz mapi, kurā vēlaties instalēt."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Meklēt:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "Mapes &nosaukums:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Uz augšu"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Jauna mape"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Līdzekļu izvēle"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Izvēlieties instalējamos līdzekļus."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "Atie&statīt"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Diska lietojums"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Vieta diskā"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Izvēlētajiem līdzekļiem nepieciešamā vieta un pieejamā vieta."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Gatavs instalēšanai"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Lai instalētu [ProductName], noklikšķiniet uz Instalēt."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "Notiek [ProductName] instalēšana"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Lūdzu, uzgaidiet."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Statuss:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Instalēšana ir pabeigta"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] ir instalēts."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "Notiek [ProductName] noņemšana"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Noņemšana ir pabeigta"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] ir noņemts."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Noņemšana ir atcelta"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Noņemšana tika atcelta. Jūsu datorā nekas netika mainīts."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Noņemšana neizdevās"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Kļūda pārtrauca noņemšanu, un tā tika atritināta. Produkts joprojām ir instalēts."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Instalēšana ir atcelta"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Instalēšana tika atcelta. Jūsu datorā nekas netika mainīts."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Instalēšana neizdevās"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Kļūda pārtrauca instalēšanu, un tā tika atritināta. Jūsu datorā nekas netika mainīts."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Vai atcelt [ProductName] instalēšanu?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Izmantotie faili"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Šīs programmas izmanto failus, kas tiek aizstāti. Noklikšķiniet uz Turpināt, lai tos aizstātu tagad: jau atvērtās programmas patur vecos failus, līdz tās tiek atvērtas no jauna, un vēlāk atvērtās programmas saņem jaunos. Restartēšana nav nepieciešama."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Šīs programmas izmanto failus, kas tiek aizstāti. Noklikšķiniet uz Turpināt, lai tos aizstātu tagad: jau atvērtās programmas patur vecos failus, līdz tās tiek atvērtas no jauna, un vēlāk atvērtās programmas saņem jaunos. Beigās Windows var lūgt restartēšanu."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Turpināt"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Diskā nepietiek vietas"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Šai instalēšanai nepietiek vietas. Atbrīvojiet vietu vai izvēlieties citu atrašanās vietu."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "[ProductName] uzturēšana"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Izvēlieties, ko darīt."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "&Labot"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Atjauno trūkstošos vai bojātos failus un iestatījumus."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "&Noņemt"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Noņem [ProductName] no šī datora."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "[ProductName] noņemšana"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Lai noņemtu [ProductName] no šī datora, noklikšķiniet uz Noņemt. Lai to paturētu, noklikšķiniet uz Atpakaļ vai Atcelt."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Lai noņemtu [ProductName] no šī datora, noklikšķiniet uz Noņemt. Tā iestatījumi un dati tiek dzēsti kopā ar to, un tos nevar atgūt. Lai to paturētu, noklikšķiniet uz Atpakaļ vai Atcelt."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Vai noņemt [ProductName] no šī datora?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Vai noņemt [ProductName] no šī datora? Tā iestatījumi un dati tiek dzēsti kopā ar to, un tos nevar atgūt."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] nevar droši instalēt: [1] nav mape, vai instalētājam var nebūt atļauts tajā dzēst failus. Vispirms noņemiet [3] ([2]), pēc tam instalējiet vēlreiz."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] nevar droši jaunināt: instalētā versija [1] ir zaudējusi saglabāto pakotni, tāpēc to šeit nevar noņemt. Vispirms noņemiet šo versiju ar tās sākotnējo pakotni ([2]), pēc tam instalējiet vēlreiz."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Instalēšana apturēta: mape [1] jau pastāv, un tā nepieder administratoriem vai caur saiti ved citur. Izvēlieties citu mapi vai lūdziet administratoram to vispirms noņemt."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "Pa&laist [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "&Saglabāt žurnālu..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Rādīt visu &žurnālu"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Instalēšanas žurnālu nevarēja saglabāt [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Mainīt"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Izvēlieties, kuri līdzekļi ir instalēti."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Instalēšanas apjoms"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Izvēlieties, kas var izmantot [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Tikai &es"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&Visi šajā datorā - nepieciešamas administratora tiesības"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Valoda"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Izvēlieties instalēšanas valodu."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Notiek instalēto lietojumprogrammu meklēšana"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Notiek nepieciešamās vietas aprēķināšana"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Notiek nepieciešamās vietas aprēķināšana"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Notiek mapju izveide"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Notiek saīšņu izveide"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Notiek pakalpojumu dzēšana"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Notiek failu dublikātu izveide"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Notiek nepieciešamās vietas aprēķināšana"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Notiek saistīto lietojumprogrammu meklēšana"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Notiek skripta darbību ģenerēšana darbībai:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Notiek jauno failu kopēšana"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Notiek jauno pakalpojumu instalēšana"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Notiek instalēšanas pārbaude"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Notiek palaišanas nosacījumu novērtēšana"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Notiek līdzekļu stāvokļu pārnešana no saistītajām lietojumprogrammām"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Notiek failu pārvietošana"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Notiek failu ielāpošana"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Notiek komponentu reģistrācijas atjaunināšana"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Notiek produkta līdzekļu publicēšana"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Notiek produkta informācijas publicēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Notiek klašu serveru reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Notiek paplašinājumu serveru reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Notiek fontu reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "Notiek MIME informācijas reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Notiek produkta reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Notiek programmu identifikatoru reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Notiek lietotāja reģistrēšana"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Notiek vides virkņu atjaunināšana"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Notiek vecākās versijas noņemšana"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Notiek failu noņemšana"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Notiek mapju noņemšana"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "Notiek INI failu ierakstu noņemšana"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Notiek sistēmas reģistra vērtību noņemšana"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Notiek saīšņu noņemšana"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Notiek darbības atritināšana:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Notiek rezerves kopiju failu noņemšana"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Notiek pakalpojumu startēšana"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Notiek pakalpojumu apturēšana"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Notiek produkta līdzekļu publicēšanas atsaukšana"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Notiek klašu serveru reģistrācijas atcelšana"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Notiek paplašinājumu serveru reģistrācijas atcelšana"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Notiek fontu reģistrācijas atcelšana"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Notiek MIME informācijas reģistrācijas atcelšana"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Notiek programmu identifikatoru reģistrācijas atcelšana"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Notiek vides virkņu atjaunināšana"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "Notiek INI failu vērtību rakstīšana"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Notiek sistēmas reģistra vērtību rakstīšana"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] tiek instalēts tikai pašreizējam lietotājam (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Jau ir instalēta tā pati vai jaunāka [ProductName] versija."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Šī pakotne nevar jaunināt instalēto vecāko [ProductName] versiju. Vispirms to noņemiet, pēc tam palaidiet šo instalēšanu vēlreiz:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Kopēt failu"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Noņemt failu"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Lāpīt failu"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Izveidot mapi"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Noņemt mapi"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Rakstīt reģistra vērtību"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Noņemt reģistra vērtību"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Noņemt reģistra atslēgu"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Izveidot saīsni"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Noņemt saīsni"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Instalēt pakalpojumu"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Pārvaldīt pakalpojumu"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Rakstīt INI vērtību"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Iestatīt vides mainīgo"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Reģistrēt fontu"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Atcelt fonta reģistrāciju"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Palaist darbību"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Šī instalēšanas programma ir bojāta: lejupielādējiet to vēlreiz."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Šīs programmas jau ir instalētas. Izvēlieties, ko darīt."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "&Labot"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "&Noņemt"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Atcelt"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Vai noņemt šīs programmas no šī datora?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Programmas ir noņemtas."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Vienu programmu nevarēja noņemt."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Instalēšanas programma nevarēja izveidot pagaidu mapi."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} nevarēja salabot (kļūda {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} nevarēja instalēt (kļūda {2}). Nekas pēc tā netika instalēts."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Programmas ir salabotas."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Instalēšana ir pabeigta."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Šajā mapē jau ir faili vai mapes. Kad [ProductName] tiek noņemts, tiek dzēsts viss mapē - arī tas, kas tajā ir tagad. Tukša vai jauna mape ir drošāka izvēle."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Izvēlēties citu"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "Iz&mantot šo mapi"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] programma(-s) izmanto [3] failus:\r\n[2]\r\nVai aizvērt visas?\r\n\r\nJā: aizvērt visas un turpināt (nesaglabātais darbs var tikt zaudēts).\r\nNē: turpināt neaizverot (jau atvērtās programmas patur vecos failus, līdz tās tiek atvērtas no jauna).\r\nAtcelt: apturēt."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: apturēts, jo [1] programma(-s) izmanto tā failus:\r\n[2]Aizveriet tās un mēģiniet vēlreiz vai norādiet RPCLOSE=yes (aizvērt visas un turpināt) vai RPCLOSE=no (turpināt neaizverot)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] vienumi [3] mapēs netika instalēti kopā ar to:\r\n[2]\r\nVai dzēst arī tos?\r\n\r\nJā: dzēst tos kopā ar [3] (tos nevar atgūt).\r\nNē: noņemt [3] un paturēt tos.\r\nAtcelt: apturēt."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: apturēts, jo [1] vienumi tā mapēs netika instalēti kopā ar to:\r\n[2]Norādiet RPEXTRA=delete (dzēst arī tos) vai RPEXTRA=keep (paturēt tos), pēc tam noņemiet vēlreiz."

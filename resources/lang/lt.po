@@ -1,0 +1,3816 @@
+# rubrapack language pack: Lithuanian.
+#
+# One file is one language (the manual: "Language packs"). The header names the language; an entry
+# without msgctxt is a text of the command line - msgid is the English text as rubrapack writes
+# it, msgstr its translation, with {1}, {2} ... for the English text's conversions (%s, %zu) in
+# the English order, {-2} for one that has no place in this language, {{ for a brace. An entry with
+# msgctxt "installer" is a text of the installers rubrapack builds: msgid is its ID.
+
+msgid ""
+msgstr ""
+"Language: lt\n"
+"Project-Id-Version: rubrapack\n"
+"PO-Revision-Date: 2026-10-15 00:00+0000\n"
+"Last-Translator: rubrapack\n"
+"Language-Team: rubrapack\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Rubrapack-Name: Lietuvių\n"
+"X-Rubrapack-LangIDs: 1063\n"
+"X-Rubrapack-Font: Segoe UI\n"
+
+msgid "\n%s: \"%s\" %s, %s, %s, dialogs %s%s\n  1 name, manufacturer, version, architecture   2 install folder, who it installs for\n  3 dialogs, license, languages                  4 optional parts\n  5 shortcuts                                    6 files: match the program folder\n  7 any key                                      v view   l lint   s save   q quit\n"
+msgstr "\n{1}: \"{2}\" {3}, {4}, {5}, dialogai {6}{7}\n  1 pavadinimas, gamintojas, versija, architektūra  2 diegimo aplankas, kam diegiama\n  3 dialogai, licencija, kalbos                  4 pasirenkamos dalys\n  5 nuorodos                                     6 failai: suderinti su programos aplanku\n  7 bet kuris raktas                             v rodyti   l lint   s įrašyti   q išeiti\n"
+
+msgid "\nMessages with this code (* stands for a name or a value):\n"
+msgstr "\nPranešimai su šiuo kodu (* reiškia pavadinimą arba reikšmę):\n"
+
+msgid "\nResults go to stdout, diagnostics to stderr.\n"
+msgstr "\nRezultatai siunčiami į stdout, diagnostika į stderr.\n"
+
+msgid "--lang (or RUBRAPACK_LANG) chooses the language of these texts: %s, or one with a language pack.\n"
+msgstr "--lang (arba RUBRAPACK_LANG) parenka šių tekstų kalbą: {1} arba kalbą, turinčią kalbos paketą.\n"
+
+msgid "Exit codes: 0 ok, 1 source error, 2 usage, 3 input/output, 4 signing or verification,\n5 lint, 6 network.\n"
+msgstr "Išėjimo kodai: 0 gerai, 1 šaltinio klaida, 2 naudojimas, 3 įvestis/išvestis, 4 pasirašymas arba tikrinimas,\n5 lint, 6 tinklas.\n"
+
+msgid "\nWhat to do: %s.\n"
+msgstr "\nKą daryti: {1}.\n"
+
+msgid "  %s is gone, but a shortcut opens it: change the shortcuts (5) first\n"
+msgstr "  {1} nebėra, bet nuoroda jį atveria: pirmiausia pakeiskite nuorodas (5)\n"
+
+msgid "  %zu files and %zu folders there\n"
+msgstr "  {1} failai ir {2} aplankai ten\n"
+
+msgid "  1-7, v, l, s or q\n"
+msgstr "  1-7, v, l, s arba q\n"
+
+msgid "  added [dir.%s] and [files.%s]\n"
+msgstr "  pridėta [dir.{1}] ir [files.{2}]\n"
+
+msgid "  added [file.%s]\n"
+msgstr "  pridėta [file.{1}]\n"
+
+msgid "  give it as table.key, such as package.version or dir.INSTALLDIR.path\n"
+msgstr "  nurodykite kaip table.key, pvz., package.version arba dir.INSTALLDIR.path\n"
+
+msgid "  lint: no problems\n"
+msgstr "  lint: problemų nėra\n"
+
+msgid "  lint: see the problems above (the file named there is a check copy)\n"
+msgstr "  lint: žr. problemas aukščiau (ten nurodytas failas yra tikrinimo kopija)\n"
+
+msgid "  other languages in [ui] languages are kept; change that list with 7 (any key)\n"
+msgstr "  kitos kalbos [ui] languages išlaikomos; tą sąrašą keiskite per 7 (bet kuris raktas)\n"
+
+msgid "  removed [file.%s]\n"
+msgstr "  pašalinta [file.{1}]\n"
+
+msgid "  removed [files.%s]%s\n"
+msgstr "  pašalinta [files.{1}]{2}\n"
+
+msgid "  sub folders:"
+msgstr "  poaplankiai:"
+
+msgid "  that does not fit the TOML subset; nothing was changed\n"
+msgstr "  tai netinka TOML poaibiui; niekas nepakeista\n"
+
+msgid "  that was not readable text; again, please\n"
+msgstr "  tai nebuvo skaitomas tekstas; prašom dar kartą\n"
+
+msgid "  the program folder '%s': %s\n"
+msgstr "  programos aplankas '{1}': {2}\n"
+
+msgid "  the source has no [file] tables for a shortcut to point at\n"
+msgstr "  šaltinyje nėra [file] lentelių, į kurias galėtų rodyti nuoroda\n"
+
+msgid "  the source has no sub folders as `new` writes them ([files] \"<folder>/<name>/**\"); add them with 6\n"
+msgstr "  šaltinyje nėra poaplankių tokia forma, kokia juos rašo `new` ([files] \"<folder>/<name>/**\"); pridėkite juos per 6\n"
+
+msgid "  too long; again, please\n"
+msgstr "  per ilgas; prašom dar kartą\n"
+
+msgid "  y or n\n"
+msgstr "  y arba n\n"
+
+msgid " (changed)"
+msgstr " (pakeista)"
+
+msgid " - build Windows Installer (.msi) and MSIX (.msix) packages\n\nusage: rubrapack [--lang <code>] <command> [arguments]\n\ncommands:\n"
+msgstr " - kuria Windows Installer (.msi) ir MSIX (.msix) paketus\n\nnaudojimas: rubrapack [--lang <code>] <command> [arguments]\n\nkomandos:\n"
+
+msgid " and its dir"
+msgstr " ir jo dir"
+
+msgid "$(%s) has no environment variable, so an expandable value cannot hold it; use a string value (filled in at install time)"
+msgstr "$({1}) neturi aplinkos kintamojo, todėl išplečiama reikšmė jo negali turėti; naudokite eilutės reikšmę (užpildoma diegiant)"
+
+msgid "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in (registry, environment, INI, arguments, messages), not here"
+msgstr "$({1}) yra {2}: juo gali prasidėti kelias arba jis gali pakeisti reikšmę, kurią užpildo Windows Installer (registras, aplinka, INI, argumentai, pranešimai), bet ne čia"
+
+msgid "$(%s) is not a folder a path can start from (a dir ID, or ProgramFiles, LOCALAPPDATA, ProgramData ... - see the manual's Paths)%s"
+msgstr "$({1}) nėra aplankas, nuo kurio gali prasidėti kelias (dir ID arba ProgramFiles, LOCALAPPDATA, ProgramData ... - žr. vadovo skyrių Paths){2}"
+
+msgid "%s\n  structure:  %s\n  digest:     %s\n  signature:  %s\n  chain:      %s%s%s\n  revocation: not-checked\n  timestamp:  %s\n"
+msgstr "{1}\n  struktūra:    {2}\n  santrauka:    {3}\n  parašas:      {4}\n  grandinė:     {5}{6}{7}\n  atšaukimas:   netikrinta\n  laiko žyma:   {8}\n"
+
+msgid "%s %s: the variable is not set"
+msgstr "{1} {2}: kintamasis nenustatytas"
+
+msgid "%s '%.*s' is not a control of this dialog"
+msgstr "{1} '{2}' nėra šio dialogo valdiklis"
+
+msgid "%s '%.*s' is not in %s"
+msgstr "{1} '{2}' nėra {3}"
+
+msgid "%s '%s': %s"
+msgstr "{1} '{2}': {3}"
+
+msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
+msgstr "{1} '{2}': licencijos tekstui reikia šrifto pavadinimo anglų kalba, todėl jis rodomas pačios kalbos šriftu; parašykite angliškąjį pavadinimą (pvz., \"Malgun Gothic\"), kad šis šriftas būtų naudojamas ir ten"
+
+msgid "%s component, but the package platform is %.*s"
+msgstr "komponentas {1}, bet paketo platforma yra {2}"
+
+msgid "%s does not belong to kind = \"%s\""
+msgstr "{1} nepriklauso kind = \"{2}\""
+
+msgid "%s does not belong to kind = \"firewall\""
+msgstr "{1} nepriklauso kind = \"firewall\""
+
+msgid "%s holds LANGIDs (1..65535), like 1041"
+msgstr "{1} turi LANGID (1..65535), pvz., 1041"
+
+msgid "%s holds strings"
+msgstr "{1} turi eilutes"
+
+msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
+msgstr "{1} yra šrifto pavadinimas iš 1-31 simbolio, pvz., \"Segoe UI\" (gauta {2})"
+
+msgid "%s is an MSI condition with closed quotes and balanced parentheses"
+msgstr "{1} yra MSI sąlyga su uždarytomis kabutėmis ir subalansuotais skliaustais"
+
+msgid "%s is an array of strings, one per value"
+msgstr "{1} yra eilučių masyvas, po vieną kiekvienai reikšmei"
+
+msgid "%s is for MSI packages: an MSIX is not removed by msiexec"
+msgstr "{1} skirtas MSI paketams: MSIX nepašalinamas su msiexec"
+
+msgid "%s is gone. Remove [file.%s]?"
+msgstr "{1} nebėra. Pašalinti [file.{2}]?"
+
+msgid "%s is longer than 240 characters"
+msgstr "{1} yra ilgesnis nei 240 simbolių"
+
+msgid "%s is new. Add it?"
+msgstr "{1} yra naujas. Pridėti?"
+
+msgid "%s is not a GUID in registry format"
+msgstr "{1} nėra GUID registro formatu"
+
+msgid "%s is not a code this rubrapack uses%s%s"
+msgstr "{1} nėra kodas, kurį naudoja šis rubrapack{2}{3}"
+
+msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "{1} turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
+
+msgid "%s must be a GUID"
+msgstr "{1} turi būti GUID"
+
+msgid "%s must be a GUID like {12345678-...} (got '%s')"
+msgstr "{1} turi būti GUID kaip {{12345678-...} (gauta '{2}')"
+
+msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
+msgstr "{1} turi būti adresas https://, http:// arba file:// arba kelias \\\\server\\share (gauta '{2}')"
+
+msgid "%s must differ from upgrade-code (one upgrade family per architecture)"
+msgstr "{1} turi skirtis nuo upgrade-code (viena naujinimo šeima kiekvienai architektūrai)"
+
+msgid "%s needs Windows build %u or later: set [msix] min-version = \"10.0.%u.0\""
+msgstr "{1} reikia Windows versijos {2} arba naujesnės: nustatykite [msix] min-version = \"10.0.{3}.0\""
+
+msgid "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without"
+msgstr "{1} reikia resources/bin/rubrapack_ca-{2}.dll, be kurio šis rubrapack buvo sukurtas"
+
+msgid "%s, TSA not-checked (give --tsa-trust)"
+msgstr "{1}, TSA netikrinta (nurodykite --tsa-trust)"
+
+msgid "%s, TSA trusted"
+msgstr "{1}, TSA patikima"
+
+msgid "%s, TSA untrusted - %s"
+msgstr "{1}, TSA nepatikima - {2}"
+
+msgid "%s/%s is gone or empty. Remove [files.%s] and [dir.%s]?"
+msgstr "{1}/{2} nėra arba tuščias. Pašalinti [files.{3}] ir [dir.{4}]?"
+
+msgid "%s/%s/ is a new folder. Add it?"
+msgstr "{1}/{2}/ yra naujas aplankas. Pridėti?"
+
+msgid "%s: %zu error%s, %zu warning%s\n"
+msgstr "{1}: klaidos: {2}{-3}, įspėjimai: {4}{-5}\n"
+
+msgid "%s: %zu error%s, %zu warning%s (against %s)\n"
+msgstr "{1}: klaidos: {2}{-3}, įspėjimai: {4}{-5} (palyginti su {6})\n"
+
+msgid "%s: %zu files, %llu bytes\n"
+msgstr "{1}: {2} failai, {3} baitai\n"
+
+msgid "%s: %zu files, %zu errors, 0 warnings\n"
+msgstr "{1}: {2} failai, {3} klaidos, 0 įspėjimų\n"
+
+msgid "%s: %zu more diagnostics not shown\n"
+msgstr "{1}: dar {2} diagnostikos neparodyta\n"
+
+msgid "%s: file '%s' is not a [file.*] of this package"
+msgstr "{1}: failas '{2}' nėra šio paketo [file.*]"
+
+msgid "%s: file '%s' is not a program (.exe)"
+msgstr "{1}: failas '{2}' nėra programa (.exe)"
+
+msgid "'$(' is not closed (write '$$(' for the text '$(')"
+msgstr "'$(' neuždarytas (tekstui '$(' rašykite '$$(')"
+
+msgid "'%s' already exists; it is left as it is"
+msgstr "'{1}' jau yra; paliekamas toks, koks yra"
+
+msgid "'%s' already exists; remove it or build into another folder"
+msgstr "'{1}' jau yra; pašalinkite jį arba kurkite kitame aplanke"
+
+msgid "'%s' already has a %s handler ([handler.%s])"
+msgstr "'{1}' jau turi {2} doroklį ([handler.{3}])"
+
+msgid "'%s' already has permissions"
+msgstr "'{1}' jau turi teises"
+
+msgid "'%s' and '%s' are the same path in the package"
+msgstr "'{1}' ir '{2}' yra tas pats kelias pakete"
+
+msgid "'%s' belongs to Windows or the browsers"
+msgstr "'{1}' priklauso Windows arba naršyklėms"
+
+msgid "'%s' cannot be read against '%s': %s"
+msgstr "'{1}' negalima perskaityti '{2}' atžvilgiu: {3}"
+
+msgid "'%s' does not fit the TOML subset; nothing was saved"
+msgstr "'{1}' netinka TOML poaibiui; niekas neįrašyta"
+
+msgid "'%s' exists already"
+msgstr "'{1}' jau yra"
+
+msgid "'%s' exists already; change it with `rubrapack edit %s`"
+msgstr "'{1}' jau yra; pakeiskite jį su `rubrapack edit {2}`"
+
+msgid "'%s' exists and is not an empty directory; extract into a new one"
+msgstr "'{1}' yra ir nėra tuščias katalogas; išskleiskite į naują"
+
+msgid "'%s' goes to %s; or msi-only = true"
+msgstr "'{1}' patenka į {2}; arba msi-only = true"
+
+msgid "'%s' has an unreadable summary information stream"
+msgstr "'{1}' turi neperskaitomą suvestinės informacijos srautą"
+
+msgid "'%s' has no Directory, Component, File and Media tables to extract from"
+msgstr "'{1}' neturi lentelių Directory, Component, File ir Media, iš kurių išskleisti"
+
+msgid "'%s' has no readable summary information"
+msgstr "'{1}' neturi perskaitomos suvestinės informacijos"
+
+msgid "'%s' has no transform '%.*s'"
+msgstr "'{1}' neturi transformacijos '{2}'"
+
+msgid "'%s' is UTF-16: edit changes UTF-8 sources only (save it as UTF-8 first)"
+msgstr "'{1}' yra UTF-16: edit keičia tik UTF-8 šaltinius (pirmiausia įrašykite jį kaip UTF-8)"
+
+msgid "'%s' is a Windows name; give the variable another name"
+msgstr "'{1}' yra Windows pavadinimas; kintamajam duokite kitą pavadinimą"
+
+msgid "'%s' is a [chain]: it builds a setup program, -o setup.exe"
+msgstr "'{1}' yra [chain]: kuria diegimo programą, -o setup.exe"
+
+msgid "'%s' is a control of the built-in frame; choose another ID"
+msgstr "'{1}' yra įtaisyto rėmelio valdiklis; pasirinkite kitą ID"
+
+msgid "'%s' is a machine folder; a %s package cannot write there"
+msgstr "'{1}' yra kompiuterio aplankas; {2} paketas ten rašyti negali"
+
+msgid "'%s' is a merge module: merge it with [merge.ID] instead"
+msgstr "'{1}' yra suliejimo modulis: suliekite jį su [merge.ID]"
+
+msgid "'%s' is a name the MSIX format keeps for itself"
+msgstr "'{1}' yra pavadinimas, kurį MSIX formatas pasilieka sau"
+
+msgid "'%s' is a symbolic link; links are not followed"
+msgstr "'{1}' yra simbolinė nuoroda; nuorodomis neinama"
+
+msgid "'%s' is also a [property.*]"
+msgstr "'{1}' taip pat yra [property.*]"
+
+msgid "'%s' is also a dir ID; give the variable another name"
+msgstr "'{1}' taip pat yra dir ID; kintamajam duokite kitą pavadinimą"
+
+msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
+msgstr "'{1}' sukurtas mašinai 0x{2}, o ne šio paketo architektūrai; nustatykite any-arch = true, jei taip ir norėta"
+
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' nėra nei PE failas (.exe, .dll), nei MSI paketas, nei MSIX paketas ar rinkinys"
+
+msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
+msgstr "'{1}' nėra nei PE failas, nei MSI paketas, nei MSIX paketas ar rinkinys"
+
+msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+msgstr "'{1}' nėra nei žinomas aplankas, nei dir ID (žinomi aplankai: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
+
+msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
+msgstr "'{1}' nėra cabinet, kurį rubrapack gali perskaityti (stored arba MSZIP)"
+
+msgid "'%s' is not a diagnostic code (RP and four digits, like RP1612)"
+msgstr "'{1}' nėra diagnostikos kodas (RP ir keturi skaitmenys, pvz., RP1612)"
+
+msgid "'%s' is not a program (.exe)"
+msgstr "'{1}' nėra programa (.exe)"
+
+msgid "'%s' is not a regular file"
+msgstr "'{1}' nėra paprastas failas"
+
+msgid "'%s' is not a rubrapack setup program%s"
+msgstr "'{1}' nėra rubrapack diegimo programa{2}"
+
+msgid "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)"
+msgstr "'{1}' nėra tinkamas ID (raidės, skaitmenys ir '_', neprasideda skaitmeniu, ne daugiau kaip {2})"
+
+msgid "'%s' is not a valid MSI database: %s"
+msgstr "'{1}' nėra tinkama MSI duomenų bazė: {2}"
+
+msgid "'%s' is not a valid MSIX package: %s"
+msgstr "'{1}' nėra tinkamas MSIX paketas: {2}"
+
+msgid "'%s' is not a valid package: %s"
+msgstr "'{1}' nėra tinkamas paketas: {2}"
+
+msgid "'%s' is not a valid source (the TOML subset); fix it by hand first"
+msgstr "'{1}' nėra tinkamas šaltinis (TOML poaibis); pirmiausia pataisykite jį rankiniu būdu"
+
+msgid "'%s' is not a valid transform: %s"
+msgstr "'{1}' nėra tinkama transformacija: {2}"
+
+msgid "'%s' is not a valid variable name"
+msgstr "'{1}' nėra tinkamas kintamojo pavadinimas"
+
+msgid "'%s' is reserved and cannot be used as an ID"
+msgstr "'{1}' yra rezervuotas ir negali būti naudojamas kaip ID"
+
+msgid "'%s' is the name of a dir: only a registry or dir search can fill a dir"
+msgstr "'{1}' yra dir pavadinimas: dir gali užpildyti tik registro arba dir paieška"
+
+msgid "'%s' looks like a program file (PE) but its headers or resources are damaged"
+msgstr "'{1}' atrodo kaip programos failas (PE), bet jo antraštės ar ištekliai sugadinti"
+
+msgid "'%s' must be a string"
+msgstr "'{1}' turi būti eilutė"
+
+msgid "'%s' must be an integer"
+msgstr "'{1}' turi būti sveikasis skaičius"
+
+msgid "'%s' must be between %lld and %lld"
+msgstr "'{1}' turi būti tarp {2} ir {3}"
+
+msgid "'%s' must be true or false"
+msgstr "'{1}' turi būti true arba false"
+
+msgid "'%s' must not be empty"
+msgstr "'{1}' negali būti tuščias"
+
+msgid "'%s' names no transforms (summary property 8): not a patch"
+msgstr "'{1}' nenurodo transformacijų (suvestinės savybė 8): nėra pataisa"
+
+msgid "'%s' starts with a folder: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+msgstr "'{1}' prasideda aplanku: \"$(ProgramFiles)/Example\", \"$(INSTALLDIR)/docs\""
+
+msgid "'%s': %s"
+msgstr "'{1}': {2}"
+
+msgid "'%s': %s '%s' has %s; nothing was extracted"
+msgstr "'{1}': {2} '{3}' turi {4}; niekas neišskleista"
+
+msgid "'%s': %s%s"
+msgstr "'{1}': {2}{3}"
+
+msgid "'%s': %zu entries, more than the limit %llu (--limit-entries); nothing was extracted"
+msgstr "'{1}': {2} įrašai, daugiau nei riba {3} (--limit-entries); niekas neišskleista"
+
+msgid "'%s': '%s' and '%s' would be the same path on Windows; nothing was extracted"
+msgstr "'{1}': '{2}' ir '{3}' sistemoje Windows būtų tas pats kelias; niekas neišskleista"
+
+msgid "'%s': '%s' is not in [ui] languages"
+msgstr "'{1}': '{2}' nėra [ui] languages"
+
+msgid "'%s': a table cannot be read"
+msgstr "'{1}': lentelės negalima perskaityti"
+
+msgid "'%s': a table is unreadable"
+msgstr "'{1}': lentelė neperskaitoma"
+
+msgid "'%s': an MSIX installs all its files (when); use msi-only = true"
+msgstr "'{1}': MSIX įdiegia visus savo failus (when); naudokite msi-only = true"
+
+msgid "'%s': an MSIX removes all its files (keep); use msi-only = true"
+msgstr "'{1}': MSIX pašalina visus savo failus (keep); naudokite msi-only = true"
+
+msgid "'%s': cabinet '%s' is damaged or not stored/MSZIP"
+msgstr "'{1}': cabinet '{2}' sugadintas arba nėra stored/MSZIP"
+
+msgid "'%s': cabinet name '%s' is not a plain file name"
+msgstr "'{1}': cabinet pavadinimas '{2}' nėra paprastas failo pavadinimas"
+
+msgid "'%s': compressed file '%s' (sequence %ld) has no cabinet"
+msgstr "'{1}': suglaudintas failas '{2}' (seka {3}) neturi cabinet"
+
+msgid "'%s': directory '%s' has a parent '%s' that is not there"
+msgstr "'{1}': katalogas '{2}' turi tėvinį '{3}', kurio nėra"
+
+msgid "'%s': directory '%s' is its own ancestor or nested too deep"
+msgstr "'{1}': katalogas '{2}' yra pats sau protėvis arba įdėtas per giliai"
+
+msgid "'%s': file '%s' does not match its MsiFileHash"
+msgstr "'{1}': failas '{2}' neatitinka savo MsiFileHash"
+
+msgid "'%s': file '%s' has no component or directory"
+msgstr "'{1}': failas '{2}' neturi komponento arba katalogo"
+
+msgid "'%s': file '%s' is %zu bytes, the File table says %lu"
+msgstr "'{1}': failas '{2}' yra {3} baitų, lentelė File nurodo {4}"
+
+msgid "'%s': file '%s' is not in cabinet '%s'"
+msgstr "'{1}': failo '{2}' nėra cabinet '{3}'"
+
+msgid "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)"
+msgstr "'{1}': jo išoriniai cabinet nepadengti parašu (--allow-unsigned-cabs)"
+
+msgid "'%s': its folder does not lead to a known location"
+msgstr "'{1}': jo aplankas neveda į žinomą vietą"
+
+msgid "'%s': more than %llu bytes to write (--limit-bytes); nothing was extracted"
+msgstr "'{1}': rašyti daugiau nei {2} baitų (--limit-bytes); niekas neišskleista"
+
+msgid "'%s': no --timestamp: the signature stops being valid when the certificate expires"
+msgstr "'{1}': nėra --timestamp: parašas nebegalioja, kai sertifikatas nustoja galioti"
+
+msgid "'%s': package '%s' does not match its SHA-256"
+msgstr "'{1}': paketas '{2}' neatitinka savo SHA-256"
+
+msgid "'%s': the cabinet stream '%s' is not there"
+msgstr "'{1}': cabinet srauto '{2}' nėra"
+
+msgid "'%s': the manifest has no %s %s"
+msgstr "'{1}': manifeste nėra {2} {3}"
+
+msgid "'%s': the manifest names '%s', which is not in the package"
+msgstr "'{1}': manifestas nurodo '{2}', kurio pakete nėra"
+
+msgid "'%s': timestamp from %s: %s"
+msgstr "'{1}': laiko žyma iš {2}: {3}"
+
+msgid "'%s': transform '%.*s' cannot be read against '%s': %s"
+msgstr "'{1}': transformacijos '{2}' negalima perskaityti '{3}' atžvilgiu: {4}"
+
+msgid "'-%s' is the package's own language (%s); give that text without the suffix"
+msgstr "'-{1}' yra paties paketo kalba ({2}); šį tekstą pateikite be priesagos"
+
+msgid "'[~]' makes Windows Installer write a multi-string; use type = \"multi\" and an array"
+msgstr "'[~]' priverčia Windows Installer įrašyti kelių eilučių reikšmę; naudokite type = \"multi\" ir masyvą"
+
+msgid "'_' in numbers is not supported"
+msgstr "'_' skaičiuose nepalaikomas"
+
+msgid "'help' takes at most one command name"
+msgstr "'help' priima ne daugiau kaip vieną komandos pavadinimą"
+
+msgid "'version' takes no arguments"
+msgstr "'version' nepriima argumentų"
+
+msgid "--allow-unsigned-cabs is for .msi"
+msgstr "--allow-unsigned-cabs skirtas .msi"
+
+msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
+msgstr "--arch rinkiniui: x64, x86 ir arm64 sąrašas, kiekvienas po kartą (gauta '{1}')"
+
+msgid "--arch takes one architecture, or a list for a .msixbundle output"
+msgstr "--arch priima vieną architektūrą arba sąrašą .msixbundle išvesčiai"
+
+msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
+msgstr "--cert, --pass-env, --pass-file, --timestamp ir --allow-unsigned-cabs naudojami su --key"
+
+msgid "--compress is for .msi; an MSIX takes --msix-compress deflate|store"
+msgstr "--compress skirtas .msi; MSIX priima --msix-compress deflate|store"
+
+msgid "--dist names a new folder beside the source (no path)"
+msgstr "--dist nurodo naują aplanką šalia šaltinio (be kelio)"
+
+msgid "--jobs takes a number from 1 to 64 (got '%s')"
+msgstr "--jobs priima skaičių nuo 1 iki 64 (gauta '{1}')"
+
+msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
+msgstr "--key-store yra Windows sertifikatų saugykla; kitur naudokite rakto failą arba --pkcs11"
+
+msgid "--key-store takes the certificate's SHA-1 thumbprint (40 hex digits)"
+msgstr "--key-store priima sertifikato SHA-1 kontrolinį kodą (40 šešioliktainių skaitmenų)"
+
+msgid "--lang %s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "--lang {1}: tokios kalbos nėra (įtaisytosios: {2}; kitai reikia savo kalbos paketo, {3}.po)"
+
+msgid "--lang needs a language, such as en or ko"
+msgstr "--lang reikia kalbos, pvz., en arba ko"
+
+msgid "--languages needs dialogs: give --ui too"
+msgstr "--languages reikia dialogų: nurodykite ir --ui"
+
+msgid "--msix-compress takes deflate or store (got '%s')"
+msgstr "--msix-compress priima deflate arba store (gauta '{1}')"
+
+msgid "--pass-env %s: the variable is not set"
+msgstr "--pass-env {1}: kintamasis nenustatytas"
+
+msgid "--patch-code takes a GUID in upper case with braces: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+msgstr "--patch-code priima GUID didžiosiomis raidėmis su riestiniais skliaustais: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}"
+
+msgid "--pin-env %s: the variable is not set"
+msgstr "--pin-env {1}: kintamasis nenustatytas"
+
+msgid "--previous compares two .msi packages"
+msgstr "--previous palygina du .msi paketus"
+
+msgid "--system-roots: the operating system's root certificates cannot be read"
+msgstr "--system-roots: operacinės sistemos šakninių sertifikatų perskaityti negalima"
+
+msgid "--target %s does not match the output '%s'"
+msgstr "--target {1} neatitinka išvesties '{2}'"
+
+msgid "--target %s is not implemented (msi or msix)"
+msgstr "--target {1} neįgyvendintas (msi arba msix)"
+
+msgid "--target takes msi or msix (got '%s')"
+msgstr "--target priima msi arba msix (gauta '{1}')"
+
+msgid "--tsa-trust, --tls-trust, --system-roots and --proxy go with --timestamp"
+msgstr "--tsa-trust, --tls-trust, --system-roots ir --proxy naudojami su --timestamp"
+
+msgid "--unsigned-test and --msix-compress are for .msix outputs"
+msgstr "--unsigned-test ir --msix-compress skirti .msix išvestims"
+
+msgid "--unsigned-test is for packages without a signature; with --key leave it out"
+msgstr "--unsigned-test skirtas paketams be parašo; su --key jo nenurodykite"
+
+msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
+msgstr "--validate priima none arba kai kuriuos iš product-code,upgrade-code,language,platform"
+
+msgid "-D %.*s is given twice"
+msgstr "-D {1} nurodytas du kartus"
+
+msgid "-D %s: '%s' is a Windows name; give the variable another name"
+msgstr "-D {1}: '{2}' yra Windows pavadinimas; kintamajam duokite kitą pavadinimą"
+
+msgid "-D needs NAME=VALUE (got '%s')"
+msgstr "-D reikia NAME=VALUE (gauta '{1}')"
+
+msgid "-i asks for every answer; give either -i or the options"
+msgstr "-i klausia kiekvieno atsakymo; nurodykite arba -i, arba parinktis"
+
+msgid "; its range is "
+msgstr "; jo intervalas yra "
+
+msgid "ActionProperty '%.*s' is not in SecureCustomProperties"
+msgstr "ActionProperty '{1}' nėra SecureCustomProperties"
+
+msgid "ActionProperty must be a public (upper case) property"
+msgstr "ActionProperty turi būti vieša savybė (didžiosiomis raidėmis)"
+
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgstr "Visi kodai: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+
+msgid "AppxSignature.p7x does not start with PKCX"
+msgstr "AppxSignature.p7x neprasideda PKCX"
+
+msgid "AppxSignature.p7x is not the last entry"
+msgstr "AppxSignature.p7x nėra paskutinis įrašas"
+
+msgid "Architecture (x64, x86, arm64)"
+msgstr "Architektūra (x64, x86, arm64)"
+
+msgid "Choose"
+msgstr "Pasirinkite"
+
+msgid "Command line"
+msgstr "Komandinė eilutė"
+
+msgid "Command line (lint)"
+msgstr "Komandinė eilutė (lint)"
+
+msgid "Common AppData"
+msgstr "Bendrasis AppData"
+
+msgid "ComponentId is not a GUID in registry format"
+msgstr "ComponentId nėra GUID registro formatu"
+
+msgid "Desktop shortcut?"
+msgstr "Nuoroda darbalaukyje?"
+
+msgid "Dialogs (none, basic, minimal, installdir, features)"
+msgstr "Dialogai (none, basic, minimal, installdir, features)"
+
+msgid "File, Component or Directory table lacks a standard column"
+msgstr "Lentelėje File, Component arba Directory trūksta standartinio stulpelio"
+
+msgid "Folder name under Program Files"
+msgstr "Aplanko pavadinimas Program Files"
+
+msgid "Folder with the files to install"
+msgstr "Aplankas su diegiamais failais"
+
+msgid "ID '%s' is already used (line %u); IDs must differ across all tables"
+msgstr "ID '{1}' jau naudojamas (eilutė {2}); ID turi skirtis visose lentelėse"
+
+msgid "Install folder ([dir.INSTALLDIR] path)"
+msgstr "Diegimo aplankas ([dir.INSTALLDIR] kelias)"
+
+msgid "Install for (machine, user, dual)"
+msgstr "Diegti kam (machine, user, dual)"
+
+msgid "Key as table.key (package.version, dir.INSTALLDIR.path, ...)"
+msgstr "Raktas kaip table.key (package.version, dir.INSTALLDIR.path, ...)"
+
+msgid "KeyPath '%.*s' belongs to another component"
+msgstr "KeyPath '{1}' priklauso kitam komponentui"
+
+msgid "KeyPath '%.*s' is not in File"
+msgstr "KeyPath '{1}' nėra File"
+
+msgid "KeyPath '%.*s' is not in Registry"
+msgstr "KeyPath '{1}' nėra Registry"
+
+msgid "Korean dialogs as well as English?"
+msgstr "Dialogai korėjiečių kalba šalia anglų?"
+
+msgid "LastSequence %ld is below that of a lower DiskId"
+msgstr "LastSequence {1} yra mažesnis nei mažesnio DiskId"
+
+msgid "Leave without saving the changes?"
+msgstr "Išeiti neįrašius pakeitimų?"
+
+msgid "License to accept (.txt, .md, .rtf; - for none)"
+msgstr "Priimtina licencija (.txt, .md, .rtf; - jei nėra)"
+
+msgid "MSIX has no virtual folder for the user's AppData; the app creates what it needs there when it runs"
+msgstr "MSIX neturi virtualaus aplanko naudotojo AppData; programa ten susikuria, ko reikia, kai paleidžiama"
+
+msgid "MSIX packages"
+msgstr "MSIX paketai"
+
+msgid "MSIX: what an MSIX package needs, and what it cannot carry"
+msgstr "MSIX: ko reikia MSIX paketui ir ko jis negali turėti"
+
+msgid "Main program, for shortcuts (- for none)"
+msgstr "Pagrindinė programa nuorodoms (- jei nėra)"
+
+msgid "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n"
+msgstr "Vadovas: {1}\"{2}\" - https://rubidus-api.github.io/rubrapack/en/{3}{4}\n"
+
+msgid "Manufacturer"
+msgstr "Gamintojas"
+
+msgid "Manufacturer (shown in Installed apps)"
+msgstr "Gamintojas (rodomas skiltyje Įdiegtos programos)"
+
+msgid "NCrypt returned an ECDSA signature of the wrong length"
+msgstr "NCrypt grąžino netinkamo ilgio ECDSA parašą"
+
+msgid "Optional parts the user may tick (sub folders, commas; - for none)"
+msgstr "Pasirenkamos dalys, kurias naudotojas gali pažymėti (poaplankiai, kableliais; - jei nėra)"
+
+msgid "PKCS#11 token: the token holds no certificate with the key's CKA_ID (give it with --cert)"
+msgstr "PKCS#11 žetonas: žetone nėra sertifikato su rakto CKA_ID (nurodykite jį su --cert)"
+
+msgid "Paths"
+msgstr "Keliai"
+
+msgid "Product name"
+msgstr "Produkto pavadinimas"
+
+msgid "ProductCode and UpgradeCode are the same GUID"
+msgstr "ProductCode ir UpgradeCode yra tas pats GUID"
+
+msgid "ProductVersion %s is not higher than the previous %s in its first three fields: Windows Installer does not upgrade"
+msgstr "ProductVersion {1} pirmuose trijuose laukuose nėra didesnė už ankstesnę {2}: Windows Installer neatnaujina"
+
+msgid "Program the shortcuts open (- for no shortcuts)"
+msgstr "Programa, kurią atveria nuorodos (- be nuorodų)"
+
+msgid "RUBRAPACK_LANG=%s: no such language (built in: %s; another needs its language pack, %s.po)"
+msgstr "RUBRAPACK_LANG={1}: tokios kalbos nėra (įtaisytosios: {2}; kitai reikia savo kalbos paketo, {3}.po)"
+
+msgid "Reference, "
+msgstr "Žinynas, "
+
+msgid "Sequence %ld is not covered by any Media row (last %ld)"
+msgstr "Sekos {1} neapima jokia Media eilutė (paskutinė {2})"
+
+msgid "Sequence %ld is used by another file"
+msgstr "Seką {1} naudoja kitas failas"
+
+msgid "Source file to write"
+msgstr "Rašomas šaltinio failas"
+
+msgid "Source format"
+msgstr "Šaltinio formatas"
+
+msgid "Source must name a File row for type %ld"
+msgstr "Source turi nurodyti File eilutę tipui {1}"
+
+msgid "Start menu shortcut?"
+msgstr "Nuoroda meniu Pradžia?"
+
+msgid "Start menu, Programs, Desktop and Startup entries come from [shortcut.*] and [msix-extension.*]"
+msgstr "Meniu Pradžia, Programs, darbalaukio ir Startup įrašai gaunami iš [shortcut.*] ir [msix-extension.*]"
+
+msgid "TOML outside the subset rubrapack reads, or `format` missing or too new"
+msgstr "TOML už poaibio, kurį skaito rubrapack, ribų, arba `format` trūksta ar per naujas"
+
+msgid "Tables"
+msgstr "Lentelės"
+
+msgid "The TOML subset"
+msgstr "TOML poaibis"
+
+msgid "UTF-16 big-endian files are not supported; save as UTF-8"
+msgstr "UTF-16 big-endian failai nepalaikomi; įrašykite kaip UTF-8"
+
+msgid "UpgradeCode %s differs from the previous version's %s: this package does not replace it"
+msgstr "UpgradeCode {1} skiriasi nuo ankstesnės versijos {2}: šis paketas jos nepakeičia"
+
+msgid "UpgradeCode is not a GUID in registry format"
+msgstr "UpgradeCode nėra GUID registro formatu"
+
+msgid "Value (text, a number, true/false, [\"a\", \"b\"]; - removes the key)"
+msgstr "Reikšmė (tekstas, skaičius, true/false, [\"a\", \"b\"]; - pašalina raktą)"
+
+msgid "Variables"
+msgstr "Kintamieji"
+
+msgid "Version"
+msgstr "Versija"
+
+msgid "Version ([define] VERSION)"
+msgstr "Versija ([define] VERSION)"
+
+msgid "Versions and upgrades"
+msgstr "Versijos ir naujinimai"
+
+msgid "Windows Installer allows at most 255.255.65535(.65535)"
+msgstr "Windows Installer leidžia ne daugiau kaip 255.255.65535(.65535)"
+
+msgid "[%s%s%s] needs '%s'"
+msgstr "[{1}{2}{3}] reikia '{4}'"
+
+msgid "[%s%s] cannot go into a merge module; the package that merges it has it"
+msgstr "[{1}{2}] negali būti suliejimo modulyje; jį turi modulį suliejantis paketas"
+
+msgid "[%s%s] is not supported yet (planned for %s)"
+msgstr "[{1}{2}] dar nepalaikomas (planuojama {3})"
+
+msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
+msgstr "[{1}.{2}] negali būti MSIX; pridėkite msi-only = true, kad MSIX būtų sukurtas be jo"
+
+msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
+msgstr "[{1}.{2}]: ID suliejimo modulyje turi ne daugiau kaip 35 simbolius (prie jo pridedamas modulio GUID)"
+
+msgid "[%s] needs an ID: write [%s.ID]"
+msgstr "[{1}] reikia ID: rašykite [{2}.ID]"
+
+msgid "[%s] takes no ID: write [%s]"
+msgstr "[{1}] nepriima ID: rašykite [{2}]"
+
+msgid "[Content_Types].xml has no </Types>"
+msgstr "[Content_Types].xml neturi </Types>"
+
+msgid "[Content_Types].xml is not the last entry (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "[Content_Types].xml nėra paskutinis įrašas (tai ne paketas, kurį parašė rubrapack ar Windows paketų API)"
+
+msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
+msgstr "Lentelių masyvai [[...]] nepalaikomi; kiekvienam elementui duokite savo [kind.ID]"
+
+msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
+msgstr "[action.{1}] check neturi poveikio: jo dar niekas nepaleidžia; pašalinkite jį"
+
+msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
+msgstr "[action.{1}] reikia ir do, ir undo (undo atšaukia ir nepavykusį do)"
+
+msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[assoc.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[assoc.%s]: in an MSIX a file type opens an application: target must be an [msix-app.*] executable"
+msgstr "[assoc.{1}]: MSIX failo tipas atveria programą: target turi būti [msix-app.*] vykdomasis failas"
+
+msgid "[chain-package.%s] is there twice"
+msgstr "[chain-package.{1}] yra du kartus"
+
+msgid "[chain-package] needs an ID: write [chain-package.ID]"
+msgstr "[chain-package] reikia ID: rašykite [chain-package.ID]"
+
+msgid "[com.%s]: app-id and typelib are written for the MSI only; the MSIX registers the class without them"
+msgstr "[com.{1}]: app-id ir typelib rašomi tik MSI; MSIX užregistruoja klasę be jų"
+
+msgid "[com.%s]: args are a program's; a DLL is loaded, not started"
+msgstr "[com.{1}]: args priklauso programai; DLL įkeliamas, o ne paleidžiamas"
+
+msgid "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program"
+msgstr "[com.{1}]: surrogate paleidžia DLL dllhost; '{2}' yra programa"
+
+msgid "[com.%s]: threading is for a DLL; a program sets its own apartment"
+msgstr "[com.{1}]: threading skirtas DLL; programa pati nustato savo apartment"
+
+msgid "[com.%s]: typelib-version and typelib-file need typelib"
+msgstr "[com.{1}]: typelib-version ir typelib-file reikia typelib"
+
+msgid "[copy.%s] goes to %s; or msi-only = true"
+msgstr "[copy.{1}] patenka į {2}; arba msi-only = true"
+
+msgid "[copy.%s]: its source must be a file that goes into the package"
+msgstr "[copy.{1}]: jo šaltinis turi būti failas, patenkantis į paketą"
+
+msgid "[define] values must be strings"
+msgstr "[define] reikšmės turi būti eilutės"
+
+msgid "[dialog-control.%s] needs '%s'"
+msgstr "[dialog-control.{1}] reikia '{2}'"
+
+msgid "[dialog-control.%s] needs 'property'"
+msgstr "[dialog-control.{1}] reikia 'property'"
+
+msgid "[dialog-control.%s] needs 'text'"
+msgstr "[dialog-control.{1}] reikia 'text'"
+
+msgid "[dialog-control.%s] needs 'values'"
+msgstr "[dialog-control.{1}] reikia 'values'"
+
+msgid "[dialog.%s] has %zu controls; at most 64"
+msgstr "[dialog.{1}] turi {2} valdiklių; ne daugiau kaip 64"
+
+msgid "[dialog.%s] has no [dialog-control.*]"
+msgstr "[dialog.{1}] neturi [dialog-control.*]"
+
+msgid "[dialog.%s] is placed after itself through other dialogs"
+msgstr "[dialog.{1}] per kitus dialogus padėtas po savęs paties"
+
+msgid "[dialog.%s] needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "[dialog.{1}] reikia ui = \"minimal\", \"installdir\" arba \"features\""
+
+msgid "[dir.%s]: '%s' is a Windows name; give the dir another ID"
+msgstr "[dir.{1}]: '{2}' yra Windows pavadinimas; dir duokite kitą ID"
+
+msgid "[dir.%s]: guard needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[dir.{1}]: guard reikia rubrapack pagalbinio DLL, kurio suliejimo modulis neturi"
+
+msgid "[env.%s] needs a feature"
+msgstr "[env.{1}] reikia funkcijos"
+
+msgid "[env.%s]: an MSIX sets all its variables (when); use msi-only = true"
+msgstr "[env.{1}]: MSIX nustato visus savo kintamuosius (when); naudokite msi-only = true"
+
+msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
+msgstr "[env.{1}]: jo reikšmė nurodo vietą, kurios MSIX negali suteikti (aplanką už paketo, kuris nėra Windows aplankas, arba diegimo metu nustatomą dalį); naudokite msi-only = true"
+
+msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
+msgstr "[handler.{1}]: Explorer įkelia {2} doroklį iš DLL; [com.{3}] yra programa"
+
+msgid "[handler.%s]: Windows reads property handlers per machine only; the package needs scope = \"machine\""
+msgstr "[handler.{1}]: Windows savybių doroklius skaito tik kompiuterio lygiu; paketui reikia scope = \"machine\""
+
+msgid "[handler.%s]: a preview handler runs in Windows' prevhost; leave app-id and surrogate out of [com.%s]"
+msgstr "[handler.{1}]: peržiūros doroklis veikia Windows prevhost; app-id ir surrogate nenurodykite [com.{2}]"
+
+msgid "[handler.%s]: an MSIX carries thumbnail and preview handlers only (a packaged property handler gave Explorer no values); msi-only = true keeps it for the MSI"
+msgstr "[handler.{1}]: MSIX turi tik miniatiūrų ir peržiūros doroklius (supakuotas savybių doroklis Explorer nedavė reikšmių); msi-only = true palieka jį MSI"
+
+msgid "[handler.%s]: an MSIX file type belongs to an application; add an [msix-app.*]"
+msgstr "[handler.{1}]: MSIX failo tipas priklauso programai; pridėkite [msix-app.*]"
+
+msgid "[handler.%s]: class %s is not a [com.*] of this package (the handler's DLL serves it)"
+msgstr "[handler.{1}]: klasė {2} nėra šio paketo [com.*] (ją aptarnauja doroklio DLL)"
+
+msgid "[handler.%s]: in an MSIX handlers share all their types or none (a type is in one file type association)"
+msgstr "[handler.{1}]: MSIX dorokliai dalijasi visais savo tipais arba nė vienu (tipas yra viename failo tipo susiejime)"
+
+msgid "[handler.%s]: in an MSIX its class runs in a surrogate; threading = \"sta\" in [com.%s] gives its window a message loop (with threading = %s the preview may stay blank)"
+msgstr "[handler.{1}]: MSIX jo klasė veikia surrogate; threading = \"sta\" [com.{2}] suteikia jos langui pranešimų ciklą (su threading = {3} peržiūra gali likti tuščia)"
+
+msgid "[handler.%s]: in an MSIX its types are all in one [assoc] file type, or none"
+msgstr "[handler.{1}]: MSIX visi jo tipai yra viename [assoc] failo tipe arba nė viename"
+
+msgid "[handler.%s]: its class is msi-only ([com.%s]); the MSIX would have no server for it"
+msgstr "[handler.{1}]: jo klasė yra msi-only ([com.{2}]); MSIX neturėtų jai serverio"
+
+msgid "[handler.%s]: types is a list of file types, like [\".txt\"]"
+msgstr "[handler.{1}]: types yra failų tipų sąrašas, pvz., [\".txt\"]"
+
+msgid "[ini.%s] goes to %s; or msi-only = true"
+msgstr "[ini.{1}] patenka į {2}; arba msi-only = true"
+
+msgid "[ini.%s] needs 'value'"
+msgstr "[ini.{1}] reikia 'value'"
+
+msgid "[ini.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[ini.{1}] reikia funkcijos: nustatykite 'feature' čia arba jo dir"
+
+msgid "[ini.%s]: an MSIX writes all its INI entries (when); use msi-only = true"
+msgstr "[ini.{1}]: MSIX įrašo visus savo INI įrašus (when); naudokite msi-only = true"
+
+msgid "[ini.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX writes the file when it is built"
+msgstr "[ini.{1}]: jo reikšmėje yra dalis, kurią Windows Installer užpildo diegiant ([...]); MSIX failą įrašo kuriamas"
+
+msgid "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\""
+msgstr "[menu.{1}] reikia 'on': kur rodomas elementas, pvz., [\".txt\"] arba \"folder\""
+
+msgid "[menu.%s] needs 'target' (the program it starts), or items with parent = \"%s\" (a sub-menu)"
+msgstr "[menu.{1}] reikia 'target' (programos, kurią jis paleidžia) arba elementų su parent = \"{2}\" (submeniu)"
+
+msgid "[menu.%s] needs 'target': the program the item starts"
+msgstr "[menu.{1}] reikia 'target': programos, kurią elementas paleidžia"
+
+msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
+msgstr "[menu.{1}]: submeniu nieko nepaleidžia: 'args' nenurodykite"
+
+msgid "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out"
+msgstr "[menu.{1}]: submeniu elementas rodomas ten, kur jo submeniu: 'on' nenurodykite"
+
+msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: args yra dalis, kurią Windows Installer užpildo diegiant ([...]); MSIX turi tik fiksuotą tekstą"
+
+msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
+msgstr "[menu.{1}]: jo programos nėra MSIX (msi-only?)"
+
+msgid "[menu.%s]: its values cannot go into the package's registry"
+msgstr "[menu.{1}]: jo reikšmės negali patekti į paketo registrą"
+
+msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
+msgstr "[menu.{1}]: on = \"{2}\": nėra [assoc.{3}]"
+
+msgid "[menu.%s]: on is a file type or a list of them, like [\".txt\", \"folder\"]"
+msgstr "[menu.{1}]: on yra failo tipas arba jų sąrašas, pvz., [\".txt\", \"folder\"]"
+
+msgid "[menu.%s]: parent '%s' is not a [menu.*]"
+msgstr "[menu.{1}]: parent '{2}' nėra [menu.*]"
+
+msgid "[menu.%s]: parent '%s' must be a sub-menu: a [menu.*] without target and without a parent of its own"
+msgstr "[menu.{1}]: parent '{2}' turi būti submeniu: [menu.*] be target ir be savo parent"
+
+msgid "[merge.%s] goes to %s; or msi-only = true"
+msgstr "[merge.{1}] patenka į {2}; arba msi-only = true"
+
+msgid "[merge.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[merge.{1}] reikia funkcijos: nustatykite 'feature' čia arba jo dir"
+
+msgid "[merge.%s]: '%s' %s"
+msgstr "[merge.{1}]: '{2}' {3}"
+
+msgid "[merge.%s]: '%s' %s; or msi-only = true"
+msgstr "[merge.{1}]: '{2}' {3}; arba msi-only = true"
+
+msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
+msgstr "[msix-extension.{1}]: args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[msix-extension.%s]: file must be %s"
+msgstr "[msix-extension.{1}]: file turi būti {2}"
+
+msgid "[msix-extension.%s]: file must name a file that goes into the package"
+msgstr "[msix-extension.{1}]: file turi nurodyti failą, patenkantį į paketą"
+
+msgid "[msix-extension.%s]: file must name a program that goes into the package"
+msgstr "[msix-extension.{1}]: file turi nurodyti programą, patenkančią į paketą"
+
+msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
+msgstr "[msix-extension.{1}]: types yra failų tipų sąrašas, pvz., [\".txt\", \"*\"]"
+
+msgid "[permission.%s] needs its dir to have a feature"
+msgstr "[permission.{1}] reikia, kad jo dir turėtų funkciją"
+
+msgid "[protocol.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[protocol.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[protocol.%s]: in an MSIX a scheme opens an application: target must be an [msix-app.*] executable"
+msgstr "[protocol.{1}]: MSIX schema atveria programą: target turi būti [msix-app.*] vykdomasis failas"
+
+msgid "[registry.%s] needs 'value' (or remove = true)"
+msgstr "[registry.{1}] reikia 'value' (arba remove = true)"
+
+msgid "[registry.%s]: HKCR does not reach outside an MSIX; use [assoc.*], [protocol.*], [com.*] or [handler.*], or msi-only = true"
+msgstr "[registry.{1}]: HKCR nepasiekia už MSIX ribų; naudokite [assoc.*], [protocol.*], [com.*] arba [handler.*], arba msi-only = true"
+
+msgid "[registry.%s]: a qword value needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: qword reikšmei reikia rubrapack pagalbinio DLL, kurio suliejimo modulis neturi"
+
+msgid "[registry.%s]: an MSIX carries values under %s\\Software only"
+msgstr "[registry.{1}]: MSIX turi reikšmes tik po {2}\\Software"
+
+msgid "[registry.%s]: an MSIX neither removes values nor leaves them behind (remove, keep); use msi-only = true"
+msgstr "[registry.{1}]: MSIX nei šalina reikšmių, nei jų palieka (remove, keep); naudokite msi-only = true"
+
+msgid "[registry.%s]: an MSIX writes all its values (when); use msi-only = true"
+msgstr "[registry.{1}]: MSIX įrašo visas savo reikšmes (when); naudokite msi-only = true"
+
+msgid "[registry.%s]: its value has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed values only"
+msgstr "[registry.{1}]: jo reikšmėje yra dalis, kurią Windows Installer užpildo diegiant ([...]); MSIX turi tik fiksuotas reikšmes"
+
+msgid "[registry.%s]: on = \"uninstall\" needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[registry.{1}]: on = \"uninstall\" reikia rubrapack pagalbinio DLL, kurio suliejimo modulis neturi"
+
+msgid "[registry.%s]: the key or value name cannot go into a registry hive"
+msgstr "[registry.{1}]: rakto ar reikšmės pavadinimas negali patekti į registro hive"
+
+msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
+msgstr "[remove.{1}] reikia funkcijos: nustatykite 'feature' čia arba jo dir"
+
+msgid "[remove.%s]: recursive = true is not for a folder below %s"
+msgstr "[remove.{1}]: recursive = true netaikomas aplankui po {2}"
+
+msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
+msgstr "[remove.{1}]: recursive = true reikia rubrapack pagalbinio DLL, kurio suliejimo modulis neturi"
+
+msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[service.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[service.%s]: file must name a program that goes into the package"
+msgstr "[service.{1}]: file turi nurodyti programą, patenkančią į paketą"
+
+msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
+msgstr "[shortcut.{1}]: MSIX turi nuorodas tik darbalaukyje ir meniu Pradžia{2}"
+
+msgid "[shortcut.%s]: an MSIX shortcut has no working-dir"
+msgstr "[shortcut.{1}]: MSIX nuoroda neturi working-dir"
+
+msgid "[shortcut.%s]: an MSIX shortcut is always there (when is for an MSI)"
+msgstr "[shortcut.{1}]: MSIX nuoroda yra visada (when skirtas MSI)"
+
+msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
+msgstr "[shortcut.{1}]: MSIX nuoroda rodo savo programos logotipą; icon skirtas MSI"
+
+msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
+msgstr "[shortcut.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[shortcut.%s]: in an MSIX a shortcut starts an application: target must be an [msix-app.*] executable"
+msgstr "[shortcut.{1}]: MSIX nuoroda paleidžia programą: target turi būti [msix-app.*] vykdomasis failas"
+
+msgid "[shortcut.%s]: the Start menu entry of an MSIX is its application, which takes no args"
+msgstr "[shortcut.{1}]: MSIX meniu Pradžia įrašas yra jo programa, kuri nepriima args"
+
+msgid "[ui-text.%s]: no dialog text has this ID"
+msgstr "[ui-text.{1}]: joks dialogo tekstas neturi šio ID"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
+msgstr "[ui] reikia ui = \"basic\" arba kito dialogų rinkinio [package]"
+
+msgid "\\%c escape is not a Unicode scalar value"
+msgstr "valdymo seka \\{1} nėra Unicode skaliarinė reikšmė"
+
+msgid "`lint --previous`: this package would not upgrade the previous one cleanly"
+msgstr "`lint --previous`: šis paketas švariai neatnaujintų ankstesniojo"
+
+msgid "`lint` of a package: dialogs, code page, text normalisation"
+msgstr "paketo `lint`: dialogai, kodų lentelė, teksto normalizavimas"
+
+msgid "`lint` of an MSIX package or bundle"
+msgstr "MSIX paketo arba rinkinio `lint`"
+
+msgid "a %s control has no text; put a text control beside it"
+msgstr "valdiklis {1} neturi teksto; šalia padėkite teksto valdiklį"
+
+msgid "a %s control needs [property.%s] with one of its values as the default (a silent installation uses it)"
+msgstr "valdikliui {1} reikia [property.{2}] su viena iš jo reikšmių kaip numatytąja (tylusis diegimas ją naudoja)"
+
+msgid "a %s package cannot write HKLM; use HKMU"
+msgstr "{1} paketas negali rašyti į HKLM; naudokite HKMU"
+
+msgid "a .msix output needs an [msix-app.ID] table naming the executable"
+msgstr ".msix išvesčiai reikia lentelės [msix-app.ID], nurodančios vykdomąjį failą"
+
+msgid "a .msix output needs an [msix] table (identity-name, publisher)"
+msgstr ".msix išvesčiai reikia lentelės [msix] (identity-name, publisher)"
+
+msgid "a .msm output is a merge module, built from a source with [module] instead of [package]"
+msgstr ".msm išvestis yra suliejimo modulis, sukurtas iš šaltinio su [module] vietoj [package]"
+
+msgid "a .txt, .md or .rtf file, or - for none"
+msgstr ".txt, .md arba .rtf failas, arba - jei nėra"
+
+msgid "a PE file without a certificate table entry"
+msgstr "PE failas be sertifikatų lentelės įrašo"
+
+msgid "a PIN is never taken on the command line (others can see it); use --pin-env or --pin-file"
+msgstr "PIN niekada neimamas iš komandinės eilutės (kiti gali jį matyti); naudokite --pin-env arba --pin-file"
+
+msgid "a Package of the bundle manifest of an unknown Type"
+msgstr "rinkinio manifesto Package nežinomo Type"
+
+msgid "a Package of the bundle manifest without FileName, Offset or Size"
+msgstr "rinkinio manifesto Package be FileName, Offset arba Size"
+
+msgid "a ZIP entry does not inflate to its size"
+msgstr "ZIP įrašas neišsiskleidžia iki savo dydžio"
+
+msgid "a ZIP entry larger than allowed"
+msgstr "ZIP įrašas, didesnis nei leidžiama"
+
+msgid "a ZIP entry's CRC-32 does not match"
+msgstr "ZIP įrašo CRC-32 nesutampa"
+
+msgid "a ZIP entry's data lies outside the file"
+msgstr "ZIP įrašo duomenys yra už failo ribų"
+
+msgid "a [module] source builds a merge module: -o <name>.msm"
+msgstr "[module] šaltinis sukuria suliejimo modulį: -o <name>.msm"
+
+msgid "a binary value is an even number of hex digits, like \"01A0FF\""
+msgstr "dvejetainė reikšmė yra lyginis šešioliktainių skaitmenų skaičius, pvz., \"01A0FF\""
+
+msgid "a bundle without packages"
+msgstr "rinkinys be paketų"
+
+msgid "a certificate in the path has a critical extension rubrapack does not understand"
+msgstr "kelio sertifikatas turi kritinį plėtinį, kurio rubrapack nesupranta"
+
+msgid "a certificate in the path is signed by a certificate that is not a CA"
+msgstr "kelio sertifikatas pasirašytas sertifikatu, kuris nėra CA"
+
+msgid "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources"
+msgstr "grandinėje yra tik [chain], [chain-package.ID] ir [define], ne [{1}]; paketai kuriami iš savo šaltinių"
+
+msgid "a chain holds at most %d packages"
+msgstr "grandinėje yra ne daugiau kaip {1} paketų"
+
+msgid "a chain needs [chain]"
+msgstr "grandinei reikia [chain]"
+
+msgid "a chain needs at least one [chain-package.ID]"
+msgstr "grandinei reikia bent vieno [chain-package.ID]"
+
+msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
+msgstr "simbolis, kurio Windows neleidžia pavadinime (/ \\ : * ? \" < > |)"
+
+msgid "a control character"
+msgstr "valdymo simbolis"
+
+msgid "a damaged PE optional header"
+msgstr "sugadinta PE pasirenkamoji antraštė"
+
+msgid "a damaged PE section table"
+msgstr "sugadinta PE sekcijų lentelė"
+
+msgid "a damaged ZIP64 end record"
+msgstr "sugadintas ZIP64 pabaigos įrašas"
+
+msgid "a damaged hive bin"
+msgstr "sugadintas hive bin"
+
+msgid "a diagnostic of rubrapack"
+msgstr "rubrapack diagnostika"
+
+msgid "a disabled service cannot be started"
+msgstr "išjungtos paslaugos paleisti negalima"
+
+msgid "a dual package cannot choose between a user and a system variable"
+msgstr "dual paketas negali rinktis tarp naudotojo ir sistemos kintamojo"
+
+msgid "a dual package writes HKMU (HKLM or HKCU as installed), not HKCU"
+msgstr "dual paketas rašo į HKMU (HKLM arba HKCU pagal diegimą), ne į HKCU"
+
+msgid "a dword value is an integer 0..4294967295 (0x0..0xFFFFFFFF)"
+msgstr "dword reikšmė yra sveikasis skaičius 0..4294967295 (0x0..0xFFFFFFFF)"
+
+msgid "a feature this rubrapack does not provide (or was built without)"
+msgstr "funkcija, kurios šis rubrapack neteikia (arba sukurtas be jos)"
+
+msgid "a file larger than allowed"
+msgstr "failas, didesnis nei leidžiama"
+
+msgid "a file name under '%s' is not valid Unicode and cannot be packaged"
+msgstr "failo pavadinimas po '{1}' nėra tinkamas Unicode ir negali būti supakuotas"
+
+msgid "a file name without / \\ : * ? \" < > | $"
+msgstr "failo pavadinimas be / \\ : * ? \" < > | $"
+
+msgid "a file's component or directory chain is broken"
+msgstr "failo komponento arba katalogo grandinė nutrūkusi"
+
+msgid "a font goes into an MSIX through a [font.*] that names it"
+msgstr "šriftas patenka į MSIX per jį nurodantį [font.*]"
+
+msgid "a hash the token signing does not know"
+msgstr "maiša, kurios žetono pasirašymas nežino"
+
+msgid "a hive cell crosses its bin"
+msgstr "hive langelis kerta savo bin"
+
+msgid "a hive version or type rubrapack does not read"
+msgstr "hive versija ar tipas, kurio rubrapack neskaito"
+
+msgid "a known folder itself ('%s') cannot get permissions"
+msgstr "pats žinomas aplankas ('{1}') negali gauti teisių"
+
+msgid "a license needs ui = \"minimal\", \"installdir\" or \"features\""
+msgstr "licencijai reikia ui = \"minimal\", \"installdir\" arba \"features\""
+
+msgid "a local header with extra fields (not a package rubrapack or Windows' packaging API wrote)"
+msgstr "vietinė antraštė su papildomais laukais (tai ne paketas, kurį parašė rubrapack ar Windows paketų API)"
+
+msgid "a malformed central directory"
+msgstr "netinkamai suformuotas centrinis katalogas"
+
+msgid "a modification package has no applications of its own"
+msgstr "modifikavimo paketas neturi savų programų"
+
+msgid "a modification package needs Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "modifikavimo paketui reikia Windows versijos 18362 arba naujesnės: nustatykite [msix] min-version = \"10.0.18362.0\""
+
+msgid "a module's compress is \"none\", \"mszip\" or \"mszip:0\" ... \"mszip:9\""
+msgstr "modulio compress yra \"none\", \"mszip\" arba \"mszip:0\" ... \"mszip:9\""
+
+msgid "a module's name is its ID in the ModuleID: letters, digits and _, at most 35 characters"
+msgstr "modulio pavadinimas yra jo ID ModuleID: raidės, skaitmenys ir _, ne daugiau kaip 35 simboliai"
+
+msgid "a multi value is a non-empty array of strings"
+msgstr "multi reikšmė yra netuščias eilučių masyvas"
+
+msgid "a multi value is an array of strings"
+msgstr "multi reikšmė yra eilučių masyvas"
+
+msgid "a name ending with a space or a dot"
+msgstr "pavadinimas, besibaigiantis tarpu arba tašku"
+
+msgid "a name longer than 255 bytes"
+msgstr "pavadinimas, ilgesnis nei 255 baitai"
+
+msgid "a package named in the bundle manifest is not in the bundle"
+msgstr "rinkinio manifeste nurodyto paketo rinkinyje nėra"
+
+msgid "a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)"
+msgstr "paketas be Identity Name, Publisher, Version ir ProcessorArchitecture (arba ResourceId)"
+
+msgid "a package's Offset or Size in the bundle manifest does not match where it lies (or it is compressed)"
+msgstr "paketo Offset arba Size rinkinio manifeste neatitinka jo vietos (arba jis suglaudintas)"
+
+msgid "a package's identity differs from what the bundle manifest says of it"
+msgstr "paketo tapatybė skiriasi nuo to, ką apie jį sako rinkinio manifestas"
+
+msgid "a package's name in the bundle must be a file name ending in .msix or .appx"
+msgstr "paketo pavadinimas rinkinyje turi būti failo pavadinimas, besibaigiantis .msix arba .appx"
+
+msgid "a password is never taken on the command line (others can see it); use --pass-env or --pass-file"
+msgstr "slaptažodis niekada neimamas iš komandinės eilutės (kiti gali jį matyti); naudokite --pass-env arba --pass-file"
+
+msgid "a per-machine package does not write HKCU (it would be the installing user's); use scope = \"user\""
+msgstr "kompiuterio lygio paketas nerašo į HKCU (jis priklausytų diegiančiam naudotojui); naudokite scope = \"user\""
+
+msgid "a proxy with a user name or password is not supported"
+msgstr "tarpinis serveris su naudotojo vardu ar slaptažodžiu nepalaikomas"
+
+msgid "a qword value is an integer or \"0x\" and 1 to 16 hex digits"
+msgstr "qword reikšmė yra sveikasis skaičius arba \"0x\" ir 1-16 šešioliktainių skaitmenų"
+
+msgid "a radio control stacks its buttons: height must be at least 12 per value (%d)"
+msgstr "radio valdiklis išdėsto mygtukus vieną po kito: aukštis turi būti bent 12 kiekvienai reikšmei ({1})"
+
+msgid "a record has more columns than its table"
+msgstr "įrašas turi daugiau stulpelių nei jo lentelė"
+
+msgid "a record is cut short"
+msgstr "įrašas nukirstas"
+
+msgid "a record names a string the pool does not have"
+msgstr "įrašas nurodo eilutę, kurios saugykloje nėra"
+
+msgid "a reserved device name"
+msgstr "rezervuotas įrenginio pavadinimas"
+
+msgid "a rollback action cannot be asynchronous"
+msgstr "atšaukimo veiksmas negali būti asinchroninis"
+
+msgid "a scheme is a lower-case letter, then lower-case letters, digits, '+', '-' or '.' (got '%s')"
+msgstr "schema yra mažoji raidė, po to mažosios raidės, skaitmenys, '+', '-' arba '.' (gauta '{1}')"
+
+msgid "a script action between InstallInitialize and RemoveExistingProducts (error 2613)"
+msgstr "scenarijaus veiksmas tarp InstallInitialize ir RemoveExistingProducts (klaida 2613)"
+
+msgid "a section lies outside the file"
+msgstr "sekcija yra už failo ribų"
+
+msgid "a service name may not contain '/' or '\\' (at most 256 characters)"
+msgstr "paslaugos pavadinime negali būti '/' arba '\\' (ne daugiau kaip 256 simboliai)"
+
+msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
+msgstr "setup .exe kuriamas iš šaltinio su [chain]; '{1}' kuria paketą (.msi, .msix)"
+
+msgid "a source holds one [package] or one [module], not both"
+msgstr "šaltinyje yra vienas [package] arba vienas [module], ne abu"
+
+msgid "a source that passes the RP1xxx checks should never meet these: please report it with the source"
+msgstr "šaltinis, išlaikęs RP1xxx patikras, niekada neturėtų su tuo susidurti: praneškite apie tai kartu su šaltiniu"
+
+msgid "a stored ZIP entry whose sizes differ"
+msgstr "stored ZIP įrašas su skirtingais dydžiais"
+
+msgid "a stream of the package cannot be read"
+msgstr "paketo srauto negalima perskaityti"
+
+msgid "a table has more than 32 columns"
+msgstr "lentelėje yra daugiau nei 32 stulpeliai"
+
+msgid "a text control has no property"
+msgstr "teksto valdiklis neturi savybės"
+
+msgid "a value `with` a file shares its component: put `when` on the file"
+msgstr "reikšmė `with` failu dalijasi jo komponentu: `when` dėkite ant failo"
+
+msgid "a value is 1 to 64 bytes"
+msgstr "reikšmė yra 1-64 baitai"
+
+msgid "a value that goes 'with' a file takes that file's feature"
+msgstr "reikšmė, einanti 'with' failu, perima to failo funkciją"
+
+msgid "a version is 3 or 4 numbers with dots, such as 1.0.0"
+msgstr "versija yra 3 arba 4 skaičiai su taškais, pvz., 1.0.0"
+
+msgid "account must be LocalSystem, LocalService or NetworkService"
+msgstr "account turi būti LocalSystem, LocalService arba NetworkService"
+
+msgid "action '%s' is already defined"
+msgstr "veiksmas '{1}' jau apibrėžtas"
+
+msgid "action is neither a standard action nor in CustomAction"
+msgstr "veiksmas nėra nei standartinis veiksmas, nei CustomAction"
+
+msgid "adds too many tables"
+msgstr "prideda per daug lentelių"
+
+msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
+msgstr "after = '{1}' nėra šio dialogų rinkinio puslapis (RpWelcomeDlg{2}{3}{4}) ar [dialog.*]"
+
+msgid "alias belongs to kind = \"alias\""
+msgstr "alias priklauso kind = \"alias\""
+
+msgid "alias must be a file name ending in .exe: letters, digits, '.', '_', '-' (got '%s')"
+msgstr "alias turi būti failo pavadinimas, besibaigiantis .exe: raidės, skaitmenys, '.', '_', '-' (gauta '{1}')"
+
+msgid "an INI section may not contain ']' and a key may not contain '='"
+msgstr "INI skyriuje negali būti ']', o rakte negali būti '='"
+
+msgid "an MSIX cannot place files in the temporary folder"
+msgstr "MSIX negali dėti failų į laikinąjį aplanką"
+
+msgid "an application has one alias ([msix-extension.%s] is one already)"
+msgstr "programa turi vieną alias ([msix-extension.{1}] jau yra vienas)"
+
+msgid "an empty name"
+msgstr "tuščias pavadinimas"
+
+msgid "an https server needs --tls-trust <certificates> or --system-roots to check it against"
+msgstr "https serveriui reikia --tls-trust <certificates> arba --system-roots patikrai"
+
+msgid "an https:// proxy is not supported; give an http:// proxy (https servers are reached through CONNECT)"
+msgstr "https:// tarpinis serveris nepalaikomas; nurodykite http:// tarpinį serverį (https serveriai pasiekiami per CONNECT)"
+
+msgid "an old-style Authenticode timestamp (PKCS#9 counterSignature), which rubrapack does not check"
+msgstr "seno stiliaus Authenticode laiko žyma (PKCS#9 counterSignature), kurios rubrapack netikrina"
+
+msgid "an optional or modification package declares no capabilities and no virtualization settings: its main package's apply"
+msgstr "pasirenkamas arba modifikavimo paketas nedeklaruoja galimybių ar virtualizacijos parametrų: galioja jo pagrindinio paketo"
+
+msgid "an x86 package writes the 32-bit registry view only"
+msgstr "x86 paketas rašo tik į 32 bitų registro rodinį"
+
+msgid "app '%s' is not an [msix-app.*]"
+msgstr "programa '{1}' nėra [msix-app.*]"
+
+msgid "appinstaller-uri and package-uri go together: where the .appinstaller file and the package will be"
+msgstr "appinstaller-uri ir package-uri naudojami kartu: kur bus .appinstaller failas ir paketas"
+
+msgid "arch must be \"x64\", \"arm64\" or \"x86\" (got '%s')"
+msgstr "arch turi būti \"x64\", \"arm64\" arba \"x86\" (gauta '{1}')"
+
+msgid "arch must be \"x64\", \"x86\" or \"arm64\" (the setup program's own)"
+msgstr "arch turi būti \"x64\", \"x86\" arba \"arm64\" (pačios diegimo programos)"
+
+msgid "argument %d is not valid UTF-8 (byte %zu)"
+msgstr "argumentas {1} nėra tinkamas UTF-8 (baitas {2})"
+
+msgid "argument %d is not valid Unicode (UTF-16 unit %zu)"
+msgstr "argumentas {1} nėra tinkamas Unicode (UTF-16 vienetas {2})"
+
+msgid "array is not closed"
+msgstr "masyvas neuždarytas"
+
+msgid "arrays inside arrays are not supported"
+msgstr "masyvai masyvuose nepalaikomi"
+
+msgid "arrays must hold only strings or only integers"
+msgstr "masyvuose turi būti tik eilutės arba tik sveikieji skaičiai"
+
+msgid "at most %d languages besides English"
+msgstr "ne daugiau kaip {1} kalbų be anglų"
+
+msgid "at most 100 [msix-app.*] tables"
+msgstr "ne daugiau kaip 100 lentelių [msix-app.*]"
+
+msgid "at most 50 [action.*] tables (this file has %zu)"
+msgstr "ne daugiau kaip 50 lentelių [action.*] (šiame faile yra {1})"
+
+msgid "background-color is \"transparent\" or \"#RRGGBB\", like \"#1E3A5F\""
+msgstr "background-color yra \"transparent\" arba \"#RRGGBB\", pvz., \"#1E3A5F\""
+
+msgid "bad variable name in '$(...)'"
+msgstr "netinkamas kintamojo pavadinimas '$(...)'"
+
+msgid "banner must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "banner turi būti .bmp failas (Windows Installer rodo tik BMP)"
+
+msgid "build a package from a source file"
+msgstr "paketo kūrimas iš šaltinio failo"
+
+msgid "building %s from a %s source needs its own upgrade family: add %s = \"{...}\" to [package]"
+msgstr "{1} kūrimui iš {2} šaltinio reikia savos naujinimo šeimos: pridėkite {3} = \"{{...}\" į [package]"
+
+msgid "cab must be \"embed\" or \"external\""
+msgstr "cab turi būti \"embed\" arba \"external\""
+
+msgid "cannot be read"
+msgstr "negalima perskaityti"
+
+msgid "cannot build the ClientHello"
+msgstr "ClientHello negalima sukurti"
+
+msgid "cannot bundle the packages: %s"
+msgstr "paketų negalima sujungti į rinkinį: {1}"
+
+msgid "cannot create '%s'"
+msgstr "'{1}' negalima sukurti"
+
+msgid "cannot create '%s'%s"
+msgstr "'{1}' negalima sukurti{2}"
+
+msgid "cannot find '%s'; make one with `rubrapack new %s`"
+msgstr "'{1}' nerastas; sukurkite jį su `rubrapack new {2}`"
+
+msgid "cannot make a default logo"
+msgstr "numatytojo logotipo negalima sukurti"
+
+msgid "cannot make a key share"
+msgstr "key share negalima sukurti"
+
+msgid "cannot make a patch from '%s' to '%s'"
+msgstr "pataisos iš '{1}' į '{2}' negalima sukurti"
+
+msgid "cannot make a transform from '%s' to '%s'"
+msgstr "transformacijos iš '{1}' į '{2}' negalima sukurti"
+
+msgid "cannot open the certificate store"
+msgstr "sertifikatų saugyklos negalima atidaryti"
+
+msgid "cannot read '%s'"
+msgstr "'{1}' negalima perskaityti"
+
+msgid "cannot read '%s' (%s)"
+msgstr "'{1}' negalima perskaityti ({2})"
+
+msgid "cannot read package '%s'"
+msgstr "paketo '{1}' negalima perskaityti"
+
+msgid "cannot read source file '%s'"
+msgstr "šaltinio failo '{1}' negalima perskaityti"
+
+msgid "cannot read that folder"
+msgstr "to aplanko negalima perskaityti"
+
+msgid "cannot read the %s file '%s'"
+msgstr "{1} failo '{2}' negalima perskaityti"
+
+msgid "cannot read the PIN file '%s'"
+msgstr "PIN failo '{1}' negalima perskaityti"
+
+msgid "cannot read the cabinet '%s' next to '%s'"
+msgstr "cabinet '{1}' šalia '{2}' negalima perskaityti"
+
+msgid "cannot read the certificate file '%s'"
+msgstr "sertifikato failo '{1}' negalima perskaityti"
+
+msgid "cannot read the certificates in '%s'"
+msgstr "sertifikatų iš '{1}' negalima perskaityti"
+
+msgid "cannot read the certificates in '%s': %s"
+msgstr "sertifikatų iš '{1}' negalima perskaityti: {2}"
+
+msgid "cannot read the key file '%s'"
+msgstr "rakto failo '{1}' negalima perskaityti"
+
+msgid "cannot read the password file '%s'"
+msgstr "slaptažodžio failo '{1}' negalima perskaityti"
+
+msgid "cannot read the uncompressed file '%s' next to '%s'"
+msgstr "nesuglaudinto failo '{1}' šalia '{2}' negalima perskaityti"
+
+msgid "cannot write %s"
+msgstr "{1} negalima įrašyti"
+
+msgid "cannot write '%s'"
+msgstr "'{1}' negalima įrašyti"
+
+msgid "cannot write '%s' to check it"
+msgstr "'{1}' negalima įrašyti patikrai"
+
+msgid "cannot write resources.pri"
+msgstr "resources.pri negalima įrašyti"
+
+msgid "cannot write the menu files beside '%s'"
+msgstr "meniu failų šalia '{1}' negalima įrašyti"
+
+msgid "cannot write the resource package of %s"
+msgstr "{1} išteklių paketo negalima įrašyti"
+
+msgid "capabilities is an array of names, like [\"internetClient\", \"allowElevation\"]"
+msgstr "capabilities yra pavadinimų masyvas, pvz., [\"internetClient\", \"allowElevation\"]"
+
+msgid "capability '%s' is not one rubrapack knows (the manual lists them)"
+msgstr "galimybės '{1}' rubrapack nežino (vadove jos išvardytos)"
+
+msgid "capability '%s' needs Windows build 17763 or later"
+msgstr "galimybei '{1}' reikia Windows versijos 17763 arba naujesnės"
+
+msgid "carriage return without a line feed"
+msgstr "grąžinimo simbolis be eilutės perkėlimo"
+
+msgid "certificate file '%s': %s"
+msgstr "sertifikato failas '{1}': {2}"
+
+msgid "change a source in place: through a menu of questions, or with the options"
+msgstr "šaltinio keitimas vietoje: per klausimų meniu arba parinktimis"
+
+msgid "check a signature: structure, digest, signature, and the path to a trusted certificate"
+msgstr "parašo tikrinimas: struktūra, santrauka, parašas ir kelias iki patikimo sertifikato"
+
+msgid "check a source or package without writing anything"
+msgstr "šaltinio ar paketo tikrinimas nieko neįrašant"
+
+msgid "check the source paths (relative to the source file); set any-arch = true for another architecture on purpose"
+msgstr "patikrinkite šaltinio kelius (šaltinio failo atžvilgiu); sąmoningai kitai architektūrai nustatykite any-arch = true"
+
+msgid "check the spelling (the message suggests the nearest name) and the table's keys"
+msgstr "patikrinkite rašybą (pranešimas siūlo artimiausią pavadinimą) ir lentelės raktus"
+
+msgid "class %s is already served by [com.%s]"
+msgstr "klasę {1} jau aptarnauja [com.{2}]"
+
+msgid "class %s is also in [msix-extension.%s]"
+msgstr "klasė {1} taip pat yra [msix-extension.{2}]"
+
+msgid "class must be a GUID like {12345678-...} (got '%s')"
+msgstr "class turi būti GUID kaip {{12345678-...} (gauta '{1}')"
+
+msgid "close-programs has no effect with preflight = false"
+msgstr "close-programs neturi poveikio su preflight = false"
+
+msgid "close-programs must be \"ask\", \"always\" or \"never\" (got '%s')"
+msgstr "close-programs turi būti \"ask\", \"always\" arba \"never\" (gauta '{1}')"
+
+msgid "column %s holds the wrong kind of value"
+msgstr "stulpelyje {1} yra netinkamo tipo reikšmė"
+
+msgid "column %s is not valid UTF-8"
+msgstr "stulpelis {1} nėra tinkamas UTF-8"
+
+msgid "column %s may not be null"
+msgstr "stulpelis {1} negali būti null"
+
+msgid "column %s: %ld is outside the column's range"
+msgstr "stulpelis {1}: {2} yra už stulpelio intervalo ribų"
+
+msgid "column %s: %zu UTF-16 units, the column holds %u"
+msgstr "stulpelis {1}: {2} UTF-16 vienetai, stulpelyje telpa {3}"
+
+msgid "column %s: %zu characters, the column holds %u"
+msgstr "stulpelis {1}: {2} simboliai, stulpelyje telpa {3}"
+
+msgid "command '%s' is not implemented yet"
+msgstr "komanda '{1}' dar neįgyvendinta"
+
+msgid "command-line"
+msgstr "komandinė eilutė"
+
+msgid "component %s %s changed between 32 and 64 bits: the component rules want a new GUID"
+msgstr "komponentas {1} {2} pasikeitė tarp 32 ir 64 bitų: komponentų taisyklės reikalauja naujo GUID"
+
+msgid "component %s %s is gone (its resources are removed with the previous version)"
+msgstr "komponento {1} {2} nebėra (jo ištekliai pašalinami su ankstesne versija)"
+
+msgid "component %s %s now has the key path %s instead of %s: the component rules want a new GUID"
+msgstr "komponentas {1} {2} dabar turi rakto kelią {3} vietoj {4}: komponentų taisyklės reikalauja naujo GUID"
+
+msgid "component-guid must be a GUID"
+msgstr "component-guid turi būti GUID"
+
+msgid "compress must be \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" or \"lzx:15\" ... \"lzx:21\""
+msgstr "compress turi būti \"none\", \"mszip\", \"mszip:0\" ... \"mszip:9\", \"lzx\" arba \"lzx:15\" ... \"lzx:21\""
+
+msgid "condition has an unclosed quote or unbalanced parentheses"
+msgstr "sąlygoje yra neuždarytų kabučių arba nesubalansuotų skliaustų"
+
+msgid "condition is longer than 240 characters (rubrapack adds \"Installed OR ( )\")"
+msgstr "sąlyga ilgesnė nei 240 simbolių (rubrapack prideda \"Installed OR ( )\")"
+
+msgid "config holds \"Name=value\" strings (got '%s')"
+msgstr "config turi eilutes \"Name=value\" (gauta '{1}')"
+
+msgid "config is an array of \"Name=value\" strings"
+msgstr "config yra eilučių \"Name=value\" masyvas"
+
+msgid "contains a control character"
+msgstr "turi valdymo simbolį"
+
+msgid "contains one of < > : \" / \\ | ? *"
+msgstr "turi vieną iš < > : \" / \\ | ? *"
+
+msgid "content-type is a media type, like \"image/png\" (got '%s')"
+msgstr "content-type yra medijos tipas, pvz., \"image/png\" (gauta '{1}')"
+
+msgid "control character"
+msgstr "valdymo simbolis"
+
+msgid "control character in a comment"
+msgstr "valdymo simbolis komentare"
+
+msgid "control character in a string"
+msgstr "valdymo simbolis eilutėje"
+
+msgid "dates and times are not supported; write them as strings"
+msgstr "datos ir laikai nepalaikomi; rašykite juos kaip eilutes"
+
+msgid "default-when needs level above 1 (a level-1 feature is installed by default anyway)"
+msgstr "default-when reikia level daugiau nei 1 (1 lygio funkcija ir taip įdiegiama pagal numatytuosius)"
+
+msgid "define the variable ([define] or -D NAME=value), or write $$ for a literal $"
+msgstr "apibrėžkite kintamąjį ([define] arba -D NAME=value) arba rašykite $$ pažodiniam $"
+
+msgid "dialog '%s' is not a [dialog.*]"
+msgstr "dialogas '{1}' nėra [dialog.*]"
+
+msgid "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own"
+msgstr "dialogų ID, prasidedantys 'Rp' (ir FilesInUse), priklauso rubrapack"
+
+msgid "dir '%s' is inside itself (path loop)"
+msgstr "dir '{1}' yra savyje (kelio kilpa)"
+
+msgid "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup"
+msgstr "dir '{1}' nėra nei dir ID, nei Programs, Desktop, StartMenu ar Startup"
+
+msgid "dir '%s' is not a dir ID"
+msgstr "dir '{1}' nėra dir ID"
+
+msgid "dir '%s' is not defined"
+msgstr "dir '{1}' neapibrėžtas"
+
+msgid "direction must be \"in\" or \"out\" (got '%s')"
+msgstr "direction turi būti \"in\" arba \"out\" (gauta '{1}')"
+
+msgid "do/undo arguments are longer than 255 characters"
+msgstr "do/undo argumentai ilgesni nei 255 simboliai"
+
+msgid "dotted keys are not supported; put the key in its own table"
+msgstr "raktai su taškais nepalaikomi; raktą dėkite į atskirą lentelę"
+
+msgid "dump a package (MSI tables as IDT)"
+msgstr "paketo išvedimas (MSI lentelės kaip IDT)"
+
+msgid "duplicate primary key"
+msgstr "pasikartojantis pirminis raktas"
+
+msgid "empty arrays are not supported"
+msgstr "tušti masyvai nepalaikomi"
+
+msgid "ends with a space or a dot"
+msgstr "baigiasi tarpu arba tašku"
+
+msgid "error"
+msgstr "klaida"
+
+msgid "executable = \"%s\" must name a [file.*] that goes into the package"
+msgstr "executable = \"{1}\" turi nurodyti [file.*], patenkantį į paketą"
+
+msgid "expected ',' or ']' in the array"
+msgstr "masyve tikėtasi ',' arba ']'"
+
+msgid "expected '=' after the key"
+msgstr "po rakto tikėtasi '='"
+
+msgid "expected ']' to close the table name"
+msgstr "lentelės pavadinimui uždaryti tikėtasi ']'"
+
+msgid "expected a key, a [table] or a comment"
+msgstr "tikėtasi rakto, [table] arba komentaro"
+
+msgid "extension '%s' already has a program ([assoc.%s])"
+msgstr "plėtinys '{1}' jau turi programą ([assoc.{2}])"
+
+msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "extension turi būti '.' ir mažosios raidės, skaitmenys, '_' arba '-' (gauta '{1}')"
+
+msgid "extra-files has no effect with preflight = false"
+msgstr "extra-files neturi poveikio su preflight = false"
+
+msgid "extra-files must be \"ask\", \"keep\" or \"delete\" (got '%s')"
+msgstr "extra-files turi būti \"ask\", \"keep\" arba \"delete\" (gauta '{1}')"
+
+msgid "feature %s is gone: installations that had it lose what it held"
+msgstr "funkcijos {1} nebėra: diegimai, kurie ją turėjo, praranda jos turinį"
+
+msgid "feature '%s' is its own ancestor"
+msgstr "funkcija '{1}' yra pati sau protėvis"
+
+msgid "feature '%s' is not defined"
+msgstr "funkcija '{1}' neapibrėžta"
+
+msgid "feature parent '%s' is not defined"
+msgstr "tėvinė funkcija '{1}' neapibrėžta"
+
+msgid "file '%s' already runs service '%s'"
+msgstr "failas '{1}' jau paleidžia paslaugą '{2}'"
+
+msgid "file '%s' is already registered as a font"
+msgstr "failas '{1}' jau užregistruotas kaip šriftas"
+
+msgid "file '%s' is not a [file.*] of this package"
+msgstr "failas '{1}' nėra šio paketo [file.*]"
+
+msgid "file '%s' must be installed in the Fonts folder itself (a [dir.*] with path = \"Fonts\")"
+msgstr "failas '{1}' turi būti įdiegtas pačiame aplanke Fonts ([dir.*] su path = \"Fonts\")"
+
+msgid "file '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "failui '{1}' reikia funkcijos: nustatykite 'feature' čia arba jo dir"
+
+msgid "file must be \"file:<ID>\""
+msgstr "file turi būti \"file:<ID>\""
+
+msgid "file name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "failo pavadinime yra {1} UTF-16 vienetų; su 8.3 trumpuoju pavadinimu MSI telpa ne daugiau kaip {2}"
+
+msgid "file-system-virtualization and registry-virtualization = false need Windows build 18362 or later: set [msix] min-version = \"10.0.18362.0\""
+msgstr "file-system-virtualization ir registry-virtualization = false reikia Windows versijos 18362 arba naujesnės: nustatykite [msix] min-version = \"10.0.18362.0\""
+
+msgid "file: '%s' is not a [file.*] of this package"
+msgstr "file: '{1}' nėra šio paketo [file.*]"
+
+msgid "file: '%s' serves COM classes only as an .exe or a .dll"
+msgstr "file: '{1}' aptarnauja COM klases tik kaip .exe arba .dll"
+
+msgid "files but no Media row"
+msgstr "failai, bet nėra Media eilutės"
+
+msgid "fix the value the message names; IDs are letters, digits and '_' and differ across all tables"
+msgstr "pataisykite pranešime nurodytą reikšmę; ID yra raidės, skaitmenys ir '_' ir skiriasi visose lentelėse"
+
+msgid "floating-point numbers are not supported"
+msgstr "slankiojo kablelio skaičiai nepalaikomi"
+
+msgid "folder '%s' needs a feature: set 'feature' here or on its dir"
+msgstr "aplankui '{1}' reikia funkcijos: nustatykite 'feature' čia arba jo dir"
+
+msgid "folder name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "aplanko pavadinime yra {1} UTF-16 vienetų; su 8.3 trumpuoju pavadinimu MSI telpa ne daugiau kaip {2}"
+
+msgid "follow-parent needs a parent"
+msgstr "follow-parent reikia tėvinio"
+
+msgid "fonts need scope = \"machine\" (this is %s)"
+msgstr "šriftams reikia scope = \"machine\" (šis yra {1})"
+
+msgid "format %lld needs a newer rubrapack (this one reads format %d)"
+msgstr "format {1} reikia naujesnio rubrapack (šis skaito format {2})"
+
+msgid "format is a whole number: format = %d"
+msgstr "format yra sveikasis skaičius: format = {1}"
+
+msgid "give --pass-env or --pass-file, not both"
+msgstr "nurodykite --pass-env arba --pass-file, ne abu"
+
+msgid "give --pin-env or --pin-file, not both"
+msgstr "nurodykite --pin-env arba --pin-file, ne abu"
+
+msgid "give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true"
+msgstr "suteikite [msix] ir [msix-app.*] tai, ko reikia, arba palikite elementą MSI su msi-only = true"
+
+msgid "give a file below this folder"
+msgstr "nurodykite failą po šiuo aplanku"
+
+msgid "give a file directly in the program folder, or - for none"
+msgstr "nurodykite failą tiesiai programos aplanke arba - jei nėra"
+
+msgid "give a folder below this one, such as dist"
+msgstr "nurodykite aplanką po šiuo, pvz., dist"
+
+msgid "give a name of 1 to 128 bytes"
+msgstr "nurodykite 1-128 baitų pavadinimą"
+
+msgid "give all three logos (logo-150, logo-44, store-logo) or none"
+msgstr "nurodykite visus tris logotipus (logo-150, logo-44, store-logo) arba nė vieno"
+
+msgid "give one of --key, --pkcs11 and --key-store"
+msgstr "nurodykite vieną iš --key, --pkcs11 ir --key-store"
+
+msgid "give sub folders of the program folder, separated by commas, or - for none"
+msgstr "nurodykite programos aplanko poaplankius, atskirtus kableliais, arba - jei nėra"
+
+msgid "glob '%s' matches no file"
+msgstr "šablonas '{1}' neatitinka jokio failo"
+
+msgid "glob '%s' matches the output file '%s'"
+msgstr "šablonas '{1}' atitinka išvesties failą '{2}'"
+
+msgid "has a MergeModule.CABinet stream that cannot be read"
+msgstr "turi MergeModule.CABinet srautą, kurio negalima perskaityti"
+
+msgid "has a MergeModule.CABinet that cannot be read"
+msgstr "turi MergeModule.CABinet, kurio negalima perskaityti"
+
+msgid "has a Module*Sequence table without the standard columns"
+msgstr "turi lentelę Module*Sequence be standartinių stulpelių"
+
+msgid "has a ModuleConfiguration item without a name or with an unknown format"
+msgstr "turi ModuleConfiguration elementą be pavadinimo arba nežinomo formato"
+
+msgid "has a ModuleConfiguration table without the standard columns"
+msgstr "turi lentelę ModuleConfiguration be standartinių stulpelių"
+
+msgid "has a ModuleSubstitution table without the standard columns"
+msgstr "turi lentelę ModuleSubstitution be standartinių stulpelių"
+
+msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
+msgstr "turi ModuleSubstitution šabloną, nurodantį elementą, kurio ModuleConfiguration neturi"
+
+msgid "has a component with a condition; an MSIX installs everything"
+msgstr "turi komponentą su sąlyga; MSIX įdiegia viską"
+
+msgid "has a file whose component or cabinet entry is missing"
+msgstr "turi failą, kuriam trūksta komponento ar cabinet įrašo"
+
+msgid "has a folder outside its TARGETDIR that an MSIX has no place for"
+msgstr "turi aplanką už savo TARGETDIR, kuriam MSIX neturi vietos"
+
+msgid "has a table that cannot be read"
+msgstr "turi lentelę, kurios negalima perskaityti"
+
+msgid "has a table whose columns differ from the package's"
+msgstr "turi lentelę, kurios stulpeliai skiriasi nuo paketo stulpelių"
+
+msgid "has actions for a sequence table the package does not have"
+msgstr "turi veiksmų sekos lentelei, kurios paketas neturi"
+
+msgid "has components, but the package has no FeatureComponents table"
+msgstr "turi komponentų, bet paketas neturi lentelės FeatureComponents"
+
+msgid "has files but no MergeModule.CABinet or Directory table"
+msgstr "turi failų, bet neturi MergeModule.CABinet ar lentelės Directory"
+
+msgid "has files but no MergeModule.CABinet stream"
+msgstr "turi failų, bet neturi MergeModule.CABinet srauto"
+
+msgid "has files, but the package has no Media table"
+msgstr "turi failų, bet paketas neturi lentelės Media"
+
+msgid "has no ModuleSignature: not a merge module"
+msgstr "nėra ModuleSignature: ne suliejimo modulis"
+
+msgid "has no ProductCode or ProductVersion"
+msgstr "nėra ProductCode ar ProductVersion"
+
+msgid "has no Property table"
+msgstr "nėra lentelės Property"
+
+msgid "has records for a table neither the base nor the transform defines"
+msgstr "turi įrašų lentelei, kurios neapibrėžia nei bazė, nei transformacija"
+
+msgid "has text outside ASCII in another code page than 65001 (UTF-8)"
+msgstr "turi ne ASCII teksto kitoje nei 65001 (UTF-8) kodų lentelėje"
+
+msgid "icon must be an .ico file"
+msgstr "icon turi būti .ico failas"
+
+msgid "icon: file '%s' is not a [file.*] of this package"
+msgstr "icon: failas '{1}' nėra šio paketo [file.*]"
+
+msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
+msgstr "id turi būti GUID kaip {{12345678-1234-1234-1234-123456789ABC}: paties modulio, toks pat kiekvienoje versijoje"
+
+msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
+msgstr "identity-name turi būti 3-50 simbolių iš A-Z, a-z, 0-9, '.' ir '-' (gauta '{1}')"
+
+msgid "inline tables are not supported; use a [kind.ID] table"
+msgstr "inline lentelės nepalaikomos; naudokite lentelę [kind.ID]"
+
+msgid "installs to the same path as line %u (Windows ignores case in names%s)"
+msgstr "įdiegiama tuo pačiu keliu kaip eilutė {1} (Windows pavadinimuose neskiria didžiųjų ir mažųjų raidžių{2})"
+
+msgid "internal error: a built-in dialog has a broken tab order; please report it"
+msgstr "vidinė klaida: įtaisyto dialogo tabuliavimo tvarka sugadinta; praneškite apie tai"
+
+msgid "internal: a module table has no _Validation rule"
+msgstr "vidinė: modulio lentelė neturi _Validation taisyklės"
+
+msgid "internal: no _Validation rule for a column of %s"
+msgstr "vidinė: nėra _Validation taisyklės {1} stulpeliui"
+
+msgid "invalid"
+msgstr "netinkama"
+
+msgid "invalid - %s"
+msgstr "netinkama - {1}"
+
+msgid "is '.' or '..'"
+msgstr "yra '.' arba '..'"
+
+msgid "is a reserved device name"
+msgstr "yra rezervuotas įrenginio pavadinimas"
+
+msgid "is empty"
+msgstr "yra tuščias"
+
+msgid "is longer than 255 UTF-16 units"
+msgstr "ilgesnis nei 255 UTF-16 vienetai"
+
+msgid "is not a Windows Installer database"
+msgstr "nėra Windows Installer duomenų bazė"
+
+msgid "is not a compound file"
+msgstr "nėra sudėtinis failas"
+
+msgid "is not valid UTF-8"
+msgstr "nėra tinkamas UTF-8"
+
+msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
+msgstr "palikite naujinimo kodą, padidinkite versiją, palikite liekančių failų komponentų kodus"
+
+msgid "key '%.*s' is set twice in this table (first at line %u)"
+msgstr "raktas '{1}' šioje lentelėje nustatytas du kartus (pirmą kartą eilutėje {2})"
+
+msgid "key '%s' must not start or end with '\\' or contain an empty part"
+msgstr "raktas '{1}' negali prasidėti ar baigtis '\\' ar turėti tuščios dalies"
+
+msgid "key '%s' outside a table; only 'format' comes before the first table"
+msgstr "raktas '{1}' yra už lentelės; prieš pirmąją lentelę eina tik 'format'"
+
+msgid "key file '%s': %s"
+msgstr "rakto failas '{1}': {2}"
+
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
+msgstr "kind turi būti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" arba \"context-menu\" (gauta '{1}')"
+
+msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
+msgstr "kind turi būti \"preview\", \"thumbnail\" arba \"property\" (gauta '{1}')"
+
+msgid "kind must be registry, file, dir or component"
+msgstr "kind turi būti registry, file, dir arba component"
+
+msgid "labels is an array of strings, one per value"
+msgstr "labels yra eilučių masyvas, po vieną kiekvienai reikšmei"
+
+msgid "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)"
+msgstr "kalba '{1}' neturi kalbos paketo (lang/{2}.po šalia šaltinio arba RUBRAPACK_LANG_DIR)"
+
+msgid "language '%s' is listed twice"
+msgstr "kalba '{1}' nurodyta du kartus"
+
+msgid "language '%s' is not in [ui] languages"
+msgstr "kalbos '{1}' nėra [ui] languages"
+
+msgid "language '%s' lacks %zu text(s), the first is %s: add them to its language pack (lang/%s.po) or give [ui-text.ID] text-%s"
+msgstr "kalbai '{1}' trūksta {2} tekstų, pirmasis yra {3}: pridėkite juos į jos kalbos paketą (lang/{4}.po) arba nurodykite [ui-text.ID] text-{5}"
+
+msgid "language '%s' needs [ui] langid-%s (its LANGIDs, for the automatic choice)"
+msgstr "kalbai '{1}' reikia [ui] langid-{2} (jos LANGID automatiniam pasirinkimui)"
+
+msgid "language '%s' needs [ui] name-%s (its name on the language page)"
+msgstr "kalbai '{1}' reikia [ui] name-{2} (jos pavadinimo kalbos puslapyje)"
+
+msgid "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean"
+msgstr "language = \"ko-KR\" nebedaro dialogų korėjietiškų: jie anglų kalba, nebent [ui] languages = [\"ko\"] pridėtų korėjiečių kalbą"
+
+msgid "language must be \"ko-KR\" or \"en-US\""
+msgstr "language turi būti \"ko-KR\" arba \"en-US\""
+
+msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
+msgstr "language turi būti \"neutral\", \"en-US\" arba \"ko-KR\""
+
+msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
+msgstr "languages turi kodus kaip \"ko\" arba \"zh_TW\" (2 arba 3 mažosios raidės ir _ bei dvi regiono didžiosios raidės) (gauta '{1}')"
+
+msgid "languages is an array of language codes, like [\"ko\"]"
+msgstr "languages yra kalbų kodų masyvas, pvz., [\"ko\"]"
+
+msgid "languages needs a dialog set (ui = \"basic\" or another)"
+msgstr "languages reikia dialogų rinkinio (ui = \"basic\" ar kito)"
+
+msgid "launch must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "launch turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
+
+msgid "launch-args needs launch"
+msgstr "launch-args reikia launch"
+
+msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
+msgstr "license turi būti .txt, .md (rodomas kaip paprastas tekstas) arba .rtf failas"
+
+msgid "lint: %s row %s: column %s is not in NFC (%zu row%s); build --nfc puts folder, file and shortcut names in NFC"
+msgstr "lint: {1} eilutė {2}: stulpelis {3} nėra NFC ({4} eilutė{-5}); build --nfc paverčia aplankų, failų ir nuorodų pavadinimus NFC"
+
+msgid "lint: %s%s"
+msgstr "lint: {1}{2}"
+
+msgid "lint: code page %u, not 65001: text is not checked as UTF-8, widths only for ASCII"
+msgstr "lint: kodų lentelė {1}, ne 65001: tekstas netikrinamas kaip UTF-8, pločiai tik ASCII"
+
+msgid "lint: no problems\n"
+msgstr "lint: problemų nėra\n"
+
+msgid "lint: see the problems above\n"
+msgstr "lint: žr. problemas aukščiau\n"
+
+msgid "list the keys a token or the Windows certificate store can sign with"
+msgstr "raktų, kuriais gali pasirašyti žetonas arba Windows sertifikatų saugykla, sąrašas"
+
+msgid "logo '%s' and its .scale-100 variant are both there: keep one"
+msgstr "logotipas '{1}' ir jo .scale-100 variantas abu yra: palikite vieną"
+
+msgid "logo '%s' at scale %s is %ux%u pixels; it must be %ux%u"
+msgstr "logotipas '{1}' mastelyje {2} yra {3}x{4} pikselių; turi būti {5}x{6}"
+
+msgid "logo '%s' at scale %s is not a PNG file"
+msgstr "logotipas '{1}' mastelyje {2} nėra PNG failas"
+
+msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
+msgstr "logotipas '{1}' yra {2}x{3} pikselių; turi būti {4}x{5}"
+
+msgid "logo '%s' is not a PNG file"
+msgstr "logotipas '{1}' nėra PNG failas"
+
+msgid "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)"
+msgstr "logotipas '{1}' nerastas (net kaip variantai .scale-100 ... .scale-400)"
+
+msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
+msgstr "logotipas '{1}': logotipui su mastelio variantais reikia ASCII failo pavadinimo su plėtiniu"
+
+msgid "main-package is the main package's identity name (got '%s')"
+msgstr "main-package yra pagrindinio paketo tapatybės pavadinimas (gauta '{1}')"
+
+msgid "main-publisher and modification = true go with main-package (the package this one belongs to)"
+msgstr "main-publisher ir modification = true naudojami su main-package (paketu, kuriam šis priklauso)"
+
+msgid "main-publisher is the main package's publisher, such as \"CN=Example\""
+msgstr "main-publisher yra pagrindinio paketo leidėjas, pvz., \"CN=Example\""
+
+msgid "may not contain control characters or / \\ : * ? \" < > | $"
+msgstr "negali turėti valdymo simbolių ar / \\ : * ? \" < > | $"
+
+msgid "may not start with a space or end with a space or a dot"
+msgstr "negali prasidėti tarpu ar baigtis tarpu arba tašku"
+
+msgid "merge module '%s' not found"
+msgstr "suliejimo modulis '{1}' nerastas"
+
+msgid "min-version must be a version like 1.2.3"
+msgstr "min-version turi būti versija kaip 1.2.3"
+
+msgid "min-version must have four parts, such as 10.0.17763.0"
+msgstr "min-version turi turėti keturias dalis, pvz., 10.0.17763.0"
+
+msgid "min-version must have four parts, such as 14.0.24217.0"
+msgstr "min-version turi turėti keturias dalis, pvz., 14.0.24217.0"
+
+msgid "mismatch"
+msgstr "neatitikimas"
+
+msgid "mode = \"remove\" removes the key; it takes no 'value'"
+msgstr "mode = \"remove\" pašalina raktą; jis nepriima 'value'"
+
+msgid "mode must be \"set\", \"add\" or \"remove\""
+msgstr "mode turi būti \"set\", \"add\" arba \"remove\""
+
+msgid "mode must be \"set\", \"append\" or \"prepend\""
+msgstr "mode turi būti \"set\", \"append\" arba \"prepend\""
+
+msgid "more ZIP entries than allowed or than the directory holds"
+msgstr "daugiau ZIP įrašų nei leidžiama arba nei yra kataloge"
+
+msgid "more keys and values than allowed"
+msgstr "daugiau raktų ir reikšmių nei leidžiama"
+
+msgid "more than 3 redirects"
+msgstr "daugiau nei 3 peradresavimai"
+
+msgid "more than 96 sections"
+msgstr "daugiau nei 96 sekcijos"
+
+msgid "more than one source file ('%s')"
+msgstr "daugiau nei vienas šaltinio failas ('{1}')"
+
+msgid "more than one token is present: name one with --token-label"
+msgstr "yra daugiau nei vienas žetonas: nurodykite vieną su --token-label"
+
+msgid "msix-packages"
+msgstr "msix-packages"
+
+msgid "multi must be \"each\", \"one\" or \"single\" (got '%s')"
+msgstr "multi turi būti \"each\", \"one\" arba \"single\" (gauta '{1}')"
+
+msgid "multi-line strings are not supported"
+msgstr "kelių eilučių eilutės nepalaikomos"
+
+msgid "multi-line strings are not supported; use one line with \\n"
+msgstr "kelių eilučių eilutės nepalaikomos; naudokite vieną eilutę su \\n"
+
+msgid "must be 1 to 64 bytes"
+msgstr "turi būti 1-64 baitai"
+
+msgid "name contains a control character"
+msgstr "pavadinime yra valdymo simbolis"
+
+msgid "name is a package's identity name (got '%s')"
+msgstr "name yra paketo tapatybės pavadinimas (gauta '{1}')"
+
+msgid "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'"
+msgstr "pavadinimas nėra ASCII ir trūksta summary-name; suvestinės Subject bus 'rubrapack package'"
+
+msgid "names a folder its Directory table does not have"
+msgstr "nurodo aplanką, kurio jo lentelėje Directory nėra"
+
+msgid "new msix is not implemented yet: make an MSI source and add [msix] (see the manual)"
+msgstr "new msix dar neįgyvendintas: sukurkite MSI šaltinį ir pridėkite [msix] (žr. vadovą)"
+
+msgid "no 'format = %d' line: a source in the format of rubrapack 0.18 or earlier, which this version does not read (paths start with $(ProgramFiles) or $(INSTALLDIR) now); see the manual's Source format"
+msgstr "nėra eilutės 'format = {1}': šaltinis rubrapack 0.18 ar senesnės versijos formatu, kurio ši versija neskaito (keliai dabar prasideda $(ProgramFiles) arba $(INSTALLDIR)); žr. vadovo skyrių Source format"
+
+msgid "no --trust given: the signature verifies but nothing says whom to trust"
+msgstr "nenurodytas --trust: parašas patikrinamas, bet niekas nenurodo, kuo pasitikėti"
+
+msgid "no certificate in the key file (or the --cert file) belongs to the key"
+msgstr "joks rakto failo (ar --cert failo) sertifikatas nepriklauso raktui"
+
+msgid "no control characters"
+msgstr "be valdymo simbolių"
+
+msgid "no keys\n"
+msgstr "raktų nėra\n"
+
+msgid "no main program, so no shortcuts: none"
+msgstr "nėra pagrindinės programos, todėl nėra nuorodų: nėra"
+
+msgid "no server name, or one longer than 255 bytes"
+msgstr "nėra serverio pavadinimo arba jis ilgesnis nei 255 baitai"
+
+msgid "no string pool: not a transform"
+msgstr "nėra eilučių saugyklos: ne transformacija"
+
+msgid "no table '%s' in '%s'"
+msgstr "'{2}' nėra lentelės '{1}'"
+
+msgid "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify"
+msgstr "no-remove palieka Modify (jo Remove) vieninteliu būdu pašalinti produktą: negali būti kartu su no-modify"
+
+msgid "not a PE file (no MZ header)"
+msgstr "nėra PE failas (nėra MZ antraštės)"
+
+msgid "not a PE file (no PE header)"
+msgstr "nėra PE failas (nėra PE antraštės)"
+
+msgid "not a PEM, PKCS#8 or PKCS#12 file"
+msgstr "nėra PEM, PKCS#8 ar PKCS#12 failas"
+
+msgid "not a ZIP archive (no end record)"
+msgstr "nėra ZIP archyvas (nėra pabaigos įrašo)"
+
+msgid "not a ZIP archive (too short)"
+msgstr "nėra ZIP archyvas (per trumpas)"
+
+msgid "not a proxy URL rubrapack accepts (http://host:port)"
+msgstr "nėra tarpinio serverio URL, kurį priima rubrapack (http://host:port)"
+
+msgid "not a registry hive"
+msgstr "nėra registro hive"
+
+msgid "not a valid number"
+msgstr "nėra tinkamas skaičius"
+
+msgid "not a value"
+msgstr "nėra reikšmė"
+
+msgid "not a value (strings need quotes)"
+msgstr "nėra reikšmė (eilutėms reikia kabučių)"
+
+msgid "not an http:// or https:// URL rubrapack accepts"
+msgstr "nėra http:// ar https:// URL, kurį priima rubrapack"
+
+msgid "not valid UTF-8"
+msgstr "nėra tinkamas UTF-8"
+
+msgid "not-checked (give --trust or --system-roots)"
+msgstr "netikrinta (nurodykite --trust arba --system-roots)"
+
+msgid "not-present"
+msgstr "nėra"
+
+msgid "nothing changed\n"
+msgstr "niekas nepakeista\n"
+
+msgid "number out of range"
+msgstr "skaičius už intervalo ribų"
+
+msgid "octal and binary numbers are not supported; use decimal or 0x"
+msgstr "aštuntainiai ir dvejetainiai skaičiai nepalaikomi; naudokite dešimtainius arba 0x"
+
+msgid "on = \"uninstall\" is for HKLM, HKCU and HKMU (classes go with [assoc.*], [com.*] and the like)"
+msgstr "on = \"uninstall\" skirtas HKLM, HKCU ir HKMU (klasės naudojamos su [assoc.*], [com.*] ir panašiais)"
+
+msgid "on = \"uninstall\" removes a key with everything below it: '%s' is not a product's own key below Software"
+msgstr "on = \"uninstall\" pašalina raktą su viskuo po juo: '{1}' nėra paties produkto raktas po Software"
+
+msgid "on = \"uninstall\" removes the whole key at removal; it takes no '%s'"
+msgstr "on = \"uninstall\" šalinimo metu pašalina visą raktą; jis nepriima '{1}'"
+
+msgid "on Windows `keys list` shows the certificate store"
+msgstr "Windows sistemoje `keys list` rodo sertifikatų saugyklą"
+
+msgid "on Windows a token is used through the certificate store (--key-store <thumbprint>)"
+msgstr "Windows sistemoje žetonas naudojamas per sertifikatų saugyklą (--key-store <thumbprint>)"
+
+msgid "on is for remove = true (when the key is removed)"
+msgstr "on skirtas remove = true (kada raktas pašalinamas)"
+
+msgid "on must be \"install\" or \"uninstall\""
+msgstr "on turi būti \"install\" arba \"uninstall\""
+
+msgid "on must be \"install\", \"uninstall\" or \"both\""
+msgstr "on turi būti \"install\", \"uninstall\" arba \"both\""
+
+msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
+msgstr "on: kiekvienas yra failo tipas ('.' ir mažosios raidės, skaitmenys, '_' arba '-'), \"*\" (kiekvienas failas), \"folder\", \"background\" (tuščia aplanko dalis), \"drive\" arba \"assoc:<ID>\" (gauta '{1}')"
+
+msgid "only radio and combo controls take labels"
+msgstr "tik radio ir combo valdikliai priima labels"
+
+msgid "only radio and combo controls take values"
+msgstr "tik radio ir combo valdikliai priima values"
+
+msgid "out of memory"
+msgstr "trūksta atminties"
+
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
+msgstr "išvestis '{1}': rubrapack rašo .msi, .msm, .msix, .msixbundle ir grandinės setup .exe"
+
+msgid "package '%s' %s"
+msgstr "paketas '{1}' {2}"
+
+msgid "package '%s' not found"
+msgstr "paketas '{1}' nerastas"
+
+msgid "parent must be another product's upgrade-code, not this package's own"
+msgstr "parent turi būti kito produkto upgrade-code, ne paties šio paketo"
+
+msgid "parent must be the main product's upgrade-code, a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "parent turi būti pagrindinio produkto upgrade-code, GUID kaip {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "path must be \"$(Base)/relative/path\" with '/' (Base is a folder such as ProgramFiles, or a dir ID)"
+msgstr "path turi būti \"$(Base)/relative/path\" su '/' (Base yra aplankas, pvz., ProgramFiles, arba dir ID)"
+
+msgid "path must start with a Windows folder (like $(ProgramFiles) or $(System))"
+msgstr "path turi prasidėti Windows aplanku (pvz., $(ProgramFiles) arba $(System))"
+
+msgid "paths"
+msgstr "keliai"
+
+msgid "perceived-type must be \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" or \"application\" (got '%s')"
+msgstr "perceived-type turi būti \"image\", \"text\", \"audio\", \"video\", \"compressed\", \"document\", \"system\" arba \"application\" (gauta '{1}')"
+
+msgid "permissions need scope = \"machine\" (this is %s)"
+msgstr "teisėms reikia scope = \"machine\" (šis yra {1})"
+
+msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
+msgstr "ports turi būti prievadas arba intervalas kaip \"8000-8100\" ribose 1-65535 (gauta '{1}')"
+
+msgid "print a random GUID, or the one rubrapack derives from a text"
+msgstr "išspausdinti atsitiktinį GUID arba tą, kurį rubrapack išveda iš teksto"
+
+msgid "print the JSON Schema of sources (for an editor that completes and checks keys)"
+msgstr "išspausdinti šaltinių JSON Schema (redaktoriui, kuris papildo ir tikrina raktus)"
+
+msgid "print the version"
+msgstr "išspausdinti versiją"
+
+msgid "print this help, or one command's usage"
+msgstr "išspausdinti šią pagalbą arba vienos komandos naudojimą"
+
+msgid "product-code must be a GUID"
+msgstr "product-code turi būti GUID"
+
+msgid "profile must be \"all\", \"domain\", \"private\" or \"public\" (got '%s')"
+msgstr "profile turi būti \"all\", \"domain\", \"private\" arba \"public\" (gauta '{1}')"
+
+msgid "prog-id '%s' is already [com.%s]'s"
+msgstr "prog-id '{1}' jau priklauso [com.{2}]"
+
+msgid "prog-id '%s' is also [assoc.%s]'s: a file type and a COM class need two names"
+msgstr "prog-id '{1}' priklauso ir [assoc.{2}]: failo tipui ir COM klasei reikia dviejų pavadinimų"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
+msgstr "prog-id '{1}' taip pat yra [assoc.{2}] su kitu aprašu, target, icon arba args"
+
+msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
+msgstr "prog-id turi būti raidės, skaitmenys, '.', '_' arba '-', neprasidėti skaitmeniu, ne daugiau kaip 39 (gauta '{1}')"
+
+msgid "property '%s' already belongs to control '%s'"
+msgstr "savybė '{1}' jau priklauso valdikliui '{2}'"
+
+msgid "property '%s' has the name of a dir or feature"
+msgstr "savybė '{1}' turi dir arba funkcijos pavadinimą"
+
+msgid "property '%s' is already defined (line %u)"
+msgstr "savybė '{1}' jau apibrėžta (eilutė {2})"
+
+msgid "property '%s' is already searched (line %u)"
+msgstr "savybė '{1}' jau ieškoma (eilutė {2})"
+
+msgid "property '%s' is set by rubrapack or the installer and cannot be defined here"
+msgstr "savybę '{1}' nustato rubrapack arba diegimo programa, todėl jos negalima apibrėžti čia"
+
+msgid "property '%s' must be a public name of your own (upper case)"
+msgstr "savybė '{1}' turi būti jūsų pačių viešas pavadinimas (didžiosiomis raidėmis)"
+
+msgid "property '%s' must be a public name: upper-case letters, digits and '_'"
+msgstr "savybė '{1}' turi būti viešas pavadinimas: didžiosios raidės, skaitmenys ir '_'"
+
+msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
+msgstr "protocol turi būti \"tcp\" arba \"udp\" (gauta '{1}')"
+
+msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+msgstr "publisher yra paketo leidėjas, pvz., \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
+
+msgid "publisher must be the signing certificate's subject, such as \"CN=Example, O=Example, C=KR\""
+msgstr "publisher turi būti pasirašymo sertifikato subject, pvz., \"CN=Example, O=Example, C=KR\""
+
+msgid "publisher must not carry the unsigned-test OID; --unsigned-test adds it"
+msgstr "publisher negali turėti unsigned-test OID; jį prideda --unsigned-test"
+
+msgid "quoted keys are not supported"
+msgstr "raktai kabutėse nepalaikomi"
+
+msgid "quoted table names are not supported"
+msgstr "lentelių pavadinimai kabutėse nepalaikomi"
+
+msgid "reboot must be \"suppress\" or \"allow\""
+msgstr "reboot turi būti \"suppress\" arba \"allow\""
+
+msgid "recursive = true is for on = \"uninstall\""
+msgstr "recursive = true skirtas on = \"uninstall\""
+
+msgid "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'"
+msgstr "recursive = true niekada nevykdomas, kai naujinimas pašalina šią versiją; jis nepriima 'upgrade'"
+
+msgid "recursive = true removes the folder with everything in it; it takes no 'name'"
+msgstr "recursive = true pašalina aplanką su visu turiniu; jis nepriima 'name'"
+
+msgid "refuse-upgrade-below %s is above this package's version %s"
+msgstr "refuse-upgrade-below {1} yra aukštesnė už šio paketo versiją {2}"
+
+msgid "refuse-upgrade-below '%s' must be a version like 1.2.3"
+msgstr "refuse-upgrade-below '{1}' turi būti versija kaip 1.2.3"
+
+msgid "refuse-upgrade-message needs refuse-upgrade-below"
+msgstr "refuse-upgrade-message reikia refuse-upgrade-below"
+
+msgid "registry '%s' removes a value; it has nothing to protect"
+msgstr "registras '{1}' pašalina reikšmę; jam nėra ką saugoti"
+
+msgid "registry value '%s' needs a feature"
+msgstr "registro reikšmei '{1}' reikia funkcijos"
+
+msgid "remove = true removes the value at install; it takes no 'value'"
+msgstr "remove = true pašalina reikšmę diegiant; jis nepriima 'value'"
+
+msgid "remove-addons needs the cleanup task: remove cleanup = false"
+msgstr "remove-addons reikia valymo užduoties: pašalinkite cleanup = false"
+
+msgid "replaces holds at most 16 upgrade codes"
+msgstr "replaces turi ne daugiau kaip 16 naujinimo kodų"
+
+msgid "replaces holds upgrade codes, GUIDs like {12345678-1234-1234-1234-123456789ABC} (got '%s')"
+msgstr "replaces turi naujinimo kodus, GUID kaip {{12345678-1234-1234-1234-123456789ABC} (gauta '{1}')"
+
+msgid "replaces is an array of upgrade codes, like [\"{12345678-1234-1234-1234-123456789ABC}\"]"
+msgstr "replaces yra naujinimo kodų masyvas, pvz., [\"{{12345678-1234-1234-1234-123456789ABC}\"]"
+
+msgid "replaces lists %s twice"
+msgstr "replaces nurodo {1} du kartus"
+
+msgid "replaces names %s, which is this package's own upgrade-code or its parent"
+msgstr "replaces nurodo {1}, kuris yra šio paketo arba jo tėvinio upgrade-code"
+
+msgid "required property %s is missing"
+msgstr "trūksta privalomos savybės {1}"
+
+msgid "rollback twin must come before %.*s (%ld <= %ld)"
+msgstr "atšaukimo dvynys turi eiti prieš {1} ({2} <= {3})"
+
+msgid "root must be HKLM, HKCR or HKCU"
+msgstr "root turi būti HKLM, HKCR arba HKCU"
+
+msgid "root must be HKLM, HKCU, HKCR or HKMU (got '%s')"
+msgstr "root turi būti HKLM, HKCU, HKCR arba HKMU (gauta '{1}')"
+
+msgid "rubrapack explain <RPnnnn>: what a diagnostic code means. The codes by range:\n"
+msgstr "rubrapack explain <RPnnnn>: ką reiškia diagnostikos kodas. Kodai pagal intervalus:\n"
+
+msgid "rubrapack new: a few questions make the source (Enter takes the value in [ ]).\n"
+msgstr "rubrapack new: keli klausimai sukuria šaltinį (Enter paima reikšmę iš [ ]).\n"
+
+msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
+msgstr "paleiskite `rubrapack help <command>`; patikrinkite kelius ir ar išvesties aplankas yra"
+
+msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "run turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
+
+msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
+msgstr "run: '{1}' (mašina 0x{2}) negali veikti šio paketo mašinose"
+
+msgid "run: '%s' is not a program (.exe)"
+msgstr "run: '{1}' nėra programa (.exe)"
+
+msgid "run: file '%s' is not a [file.*] of this package"
+msgstr "run: failas '{1}' nėra šio paketo [file.*]"
+
+msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
+msgstr "įrašykite šaltinį kaip UTF-8 (arba UTF-16 su BOM) su LF arba CRLF eilučių pabaigomis"
+
+msgid "scheme '%s' already has a program ([protocol.%s])"
+msgstr "schema '{1}' jau turi programą ([protocol.{2}])"
+
+msgid "scope must be \"machine\", \"user\" or \"dual\""
+msgstr "scope turi būti \"machine\", \"user\" arba \"dual\""
+
+msgid "sddl must be an SDDL string like \"D:PAI(A;OICI;FA;;;BA)\""
+msgstr "sddl turi būti SDDL eilutė kaip \"D:PAI(A;OICI;FA;;;BA)\""
+
+msgid "search property '%s' must be a public name of your own (upper case)"
+msgstr "paieškos savybė '{1}' turi būti jūsų pačių viešas pavadinimas (didžiosiomis raidėmis)"
+
+msgid "see the message; rebuilding with rubrapack fixes most of these"
+msgstr "žr. pranešimą; perkūrimas su rubrapack ištaiso daugumą šių"
+
+msgid "sequence %ld is not after %s (%ld)"
+msgstr "seka {1} nėra po {2} ({3})"
+
+msgid "sequences an action next to one that neither the package nor the module runs"
+msgstr "išdėsto veiksmą šalia tokio, kurio nevykdo nei paketas, nei modulis"
+
+msgid "service name '%s' is already used"
+msgstr "paslaugos pavadinimas '{1}' jau naudojamas"
+
+msgid "services need scope = \"machine\" (this is %s)"
+msgstr "paslaugoms reikia scope = \"machine\" (šis yra {1})"
+
+msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
+msgstr "nuorodos pavadinime yra {1} UTF-16 vienetų; su 8.3 trumpuoju pavadinimu MSI telpa ne daugiau kaip {2}"
+
+msgid "sign a PE file, an MSI package, an MSIX package or bundle"
+msgstr "pasirašyti PE failą, MSI paketą, MSIX paketą ar rinkinį"
+
+msgid "signed %s\n"
+msgstr "pasirašyta {1}\n"
+
+msgid "source '%s' is a directory; use [files.ID] for many files"
+msgstr "šaltinis '{1}' yra katalogas; daugeliui failų naudokite [files.ID]"
+
+msgid "source '%s' is a symbolic link; links are not followed"
+msgstr "šaltinis '{1}' yra simbolinė nuoroda; nuorodomis neinama"
+
+msgid "source '%s' is not a regular file"
+msgstr "šaltinis '{1}' nėra paprastas failas"
+
+msgid "source file '%s' changed while the package was being built"
+msgstr "šaltinio failas '{1}' pasikeitė kuriant paketą"
+
+msgid "source file '%s' is larger than 2 GiB"
+msgstr "šaltinio failas '{1}' didesnis nei 2 GiB"
+
+msgid "source file '%s' not found"
+msgstr "šaltinio failas '{1}' nerastas"
+
+msgid "source must be \"file:<ID>\""
+msgstr "source turi būti \"file:<ID>\""
+
+msgid "source must be an .msi package"
+msgstr "source turi būti .msi paketas"
+
+msgid "source path '%s' must be relative to the source file"
+msgstr "šaltinio kelias '{1}' turi būti santykinis šaltinio failo atžvilgiu"
+
+msgid "source paths use '/', not '\\\\' (got '%s')"
+msgstr "šaltinio keliuose naudojamas '/', ne '\\\\' (gauta '{1}')"
+
+msgid "source-format"
+msgstr "source-format"
+
+msgid "source: file '%s' is not a [file.*] of this package"
+msgstr "source: failas '{1}' nėra šio paketo [file.*]"
+
+msgid "start must be auto, demand or disabled"
+msgstr "start turi būti auto, demand arba disabled"
+
+msgid "string is not closed on this line"
+msgstr "eilutė šioje eilutėje neuždaryta"
+
+msgid "string lengths exceed the string data"
+msgstr "eilučių ilgiai viršija eilučių duomenis"
+
+msgid "summary information cannot be shown as IDT yet"
+msgstr "suvestinės informacijos dar negalima parodyti kaip IDT"
+
+msgid "summary-name must be ASCII (summary information holds ASCII only)"
+msgstr "summary-name turi būti ASCII (suvestinės informacijoje yra tik ASCII)"
+
+msgid "table %s %s"
+msgstr "lentelė {1} {2}"
+
+msgid "table '%s' is unreadable"
+msgstr "lentelė '{1}' neperskaitoma"
+
+msgid "table [%s%s%s] is defined twice (first at line %u)"
+msgstr "lentelė [{1}{2}{3}] apibrėžta du kartus (pirmą kartą eilutėje {4})"
+
+msgid "table name expected"
+msgstr "tikimasi lentelės pavadinimo"
+
+msgid "table names have at most two parts: [kind] or [kind.ID]"
+msgstr "lentelių pavadinimai turi ne daugiau kaip dvi dalis: [kind] arba [kind.ID]"
+
+msgid "tables"
+msgstr "lentelės"
+
+msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
+msgstr "lentelės ir raktai: nežinoma lentelė ar raktas, trūksta privalomo, elementas be funkcijos, kai funkcijos yra"
+
+msgid "takes no configuration (it has no ModuleConfiguration)"
+msgstr "nepriima konfigūracijos (neturi ModuleConfiguration)"
+
+msgid "target '%s' does not exist"
+msgstr "tikslas '{1}' neegzistuoja"
+
+msgid "target must be \"dir:<ID>\", \"file:<ID>\" or \"registry:<ID>\""
+msgstr "target turi būti \"dir:<ID>\", \"file:<ID>\" arba \"registry:<ID>\""
+
+msgid "target must be \"file:<ID>\" naming a [file.*] of this package"
+msgstr "target turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
+
+msgid "target name '%s' %s"
+msgstr "tikslo pavadinimas '{1}' {2}"
+
+msgid "target: file '%s' is not a [file.*] of this package"
+msgstr "target: failas '{1}' nėra šio paketo [file.*]"
+
+msgid "task-id '%s' is already used by [msix-extension.%s]"
+msgstr "task-id '{1}' jau naudoja [msix-extension.{2}]"
+
+msgid "task-id, display-name and enabled belong to kind = \"startup-task\""
+msgstr "task-id, display-name ir enabled priklauso kind = \"startup-task\""
+
+msgid "that file exists already; give another name"
+msgstr "toks failas jau yra; nurodykite kitą vardą"
+
+msgid "that folder holds no files"
+msgstr "šiame aplanke nėra failų"
+
+msgid "the FilesInUse dialog needs a ListBox table, even an empty one (error 2205; the dialog is skipped)"
+msgstr "dialogui FilesInUse reikia lentelės ListBox, net jei tuščios (klaida 2205; dialogas praleidžiamas)"
+
+msgid "the PIN has characters or a length the token does not take"
+msgstr "PIN turi simbolių ar ilgį, kurių žetonas nepriima"
+
+msgid "the PIN has expired: change it on the token first"
+msgstr "PIN baigė galioti: pirmiausia pakeiskite jį žetone"
+
+msgid "the PIN is locked (too many wrong tries)"
+msgstr "PIN užblokuotas (per daug neteisingų bandymų)"
+
+msgid "the ProductCode is the previous version's: that is a minor upgrade (REINSTALLMODE), not the major upgrade rubrapack builds"
+msgstr "ProductCode yra ankstesnės versijos: tai mažasis naujinimas (REINSTALLMODE), o ne didysis naujinimas, kurį kuria rubrapack"
+
+msgid "the UTF-16 file is not valid UTF-16"
+msgstr "UTF-16 failas nėra tinkamas UTF-16"
+
+msgid "the ZIP central directory lies outside the file"
+msgstr "ZIP centrinis katalogas yra už failo ribų"
+
+msgid "the application ID '%s' becomes Application Id: letters and digits only, not starting with a digit"
+msgstr "programos ID '{1}' tampa Application Id: tik raidės ir skaitmenys, neprasideda skaitmeniu"
+
+msgid "the archive does not end in ZIP64 end records as MSIX packages do"
+msgstr "archyvas nesibaigia ZIP64 pabaigos įrašais, kaip MSIX paketai"
+
+msgid "the archive has no ZIP64 end record"
+msgstr "archyvas neturi ZIP64 pabaigos įrašo"
+
+msgid "the bundle manifest has no Identity Name, Publisher and Version"
+msgstr "rinkinio manifestas neturi Identity Name, Publisher ir Version"
+
+msgid "the central directory lies outside the archive"
+msgstr "centrinis katalogas yra už archyvo ribų"
+
+msgid "the certificate has a critical extension rubrapack does not understand"
+msgstr "sertifikatas turi kritinį plėtinį, kurio rubrapack nesupranta"
+
+msgid "the certificate has expired"
+msgstr "sertifikato galiojimas baigėsi"
+
+msgid "the certificate is a CA certificate, not a signing certificate"
+msgstr "sertifikatas yra CA sertifikatas, o ne pasirašymo sertifikatas"
+
+msgid "the certificate is not for code signing (no code-signing extended key usage)"
+msgstr "sertifikatas neskirtas kodui pasirašyti (nėra kodo pasirašymo išplėstinės rakto paskirties)"
+
+msgid "the certificate is not valid yet"
+msgstr "sertifikatas dar negalioja"
+
+msgid "the certificate path is longer than 8"
+msgstr "sertifikatų kelias ilgesnis nei 8"
+
+msgid "the certificate table does not hold an Authenticode signature"
+msgstr "sertifikatų lentelėje nėra Authenticode parašo"
+
+msgid "the certificate table is not at the end of the file"
+msgstr "sertifikatų lentelė nėra failo pabaigoje"
+
+msgid "the certificate's key usage does not allow digital signatures"
+msgstr "sertifikato rakto paskirtis neleidžia skaitmeninių parašų"
+
+msgid "the certificate's subject cannot be written as an MSIX publisher"
+msgstr "sertifikato subject negalima užrašyti kaip MSIX leidėjo"
+
+msgid "the chunked response is malformed"
+msgstr "dalimis siųstas atsakymas sugadintas"
+
+msgid "the command line: an unknown command or option, a file that cannot be read or written, a signature, a difference a transform cannot carry"
+msgstr "komandų eilutė: nežinoma komanda ar parinktis, failas, kurio negalima skaityti ar rašyti, parašas, skirtumas, kurio transformacija negali perkelti"
+
+msgid "the connection has failed"
+msgstr "ryšys nutrūko"
+
+msgid "the embedded cabinets make the package 2 GiB or more, which Windows Installer cannot open; use cab = \"external\""
+msgstr "įterpti cabinet failai padaro paketą 2 GiB ar didesnį, kurio Windows Installer negali atidaryti; naudokite cab = \"external\""
+
+msgid "the entry is not in the central directory"
+msgstr "įrašo nėra centriniame kataloge"
+
+msgid "the error dialog '%.*s' needs a %s control named %s (error 2835)"
+msgstr "klaidos dialogui '{1}' reikia valdiklio {2} pavadinimu {3} (klaida 2835)"
+
+msgid "the executable '%s' must be an .exe"
+msgstr "vykdomasis failas '{1}' turi būti .exe"
+
+msgid "the executable's folder does not lead to a known location"
+msgstr "vykdomojo failo aplankas neveda į žinomą vietą"
+
+msgid "the file is not signed"
+msgstr "failas nepasirašytas"
+
+msgid "the file is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "failas jau pasirašytas; rubrapack nepasirašo du kartus ir nekeičia parašo"
+
+msgid "the file is too large to sign"
+msgstr "failas per didelis pasirašyti"
+
+msgid "the file needs a [package] table (or [module] for a merge module)"
+msgstr "failui reikia lentelės [package] (arba [module] sujungimo moduliui)"
+
+msgid "the file was changed after it was signed (its digest does not match)"
+msgstr "failas pakeistas po pasirašymo (jo santrauka nesutampa)"
+
+msgid "the files to install: not found, a folder, a link, a glob without a match, another architecture's program, names too long"
+msgstr "diegiami failai: nerasta, aplankas, nuoroda, šablonas be atitikmens, kitos architektūros programa, per ilgi vardai"
+
+msgid "the finished tables break a Windows Installer rule"
+msgstr "galutinės lentelės pažeidžia Windows Installer taisyklę"
+
+msgid "the hive was not closed cleanly (its log would be needed)"
+msgstr "hive nebuvo uždarytas tvarkingai (reikėtų jo žurnalo)"
+
+msgid "the hive's base block checksum does not match"
+msgstr "hive bazinio bloko kontrolinė suma nesutampa"
+
+msgid "the hive's bins lie outside the file"
+msgstr "hive bin blokai yra už failo ribų"
+
+msgid "the icon of the installed apps list is [arp] icon = \"app.ico\""
+msgstr "įdiegtų programų sąrašo piktograma yra [arp] icon = \"app.ico\""
+
+msgid "the input ended before every question was answered; nothing was written"
+msgstr "įvestis baigėsi neatsakius į visus klausimus; nieko neįrašyta"
+
+msgid "the key file is larger than 4 MiB"
+msgstr "rakto failas didesnis nei 4 MiB"
+
+msgid "the key is neither RSA nor EC"
+msgstr "raktas nėra nei RSA, nei EC"
+
+msgid "the library is not a PKCS#11 module (no C_GetFunctionList, or version 1)"
+msgstr "biblioteka nėra PKCS#11 modulis (nėra C_GetFunctionList arba versija 1)"
+
+msgid "the manifest has no Identity Publisher"
+msgstr "manifestas neturi Identity Publisher"
+
+msgid "the manifest's Identity cannot be read for the package full name"
+msgstr "manifesto Identity negalima perskaityti visam paketo pavadinimui"
+
+msgid "the merge module %s"
+msgstr "sujungimo modulis {1}"
+
+msgid "the name %s"
+msgstr "pavadinimas {1}"
+
+msgid "the package is not signed"
+msgstr "paketas nepasirašytas"
+
+msgid "the package is not signed (no AppxSignature.p7x)"
+msgstr "paketas nepasirašytas (nėra AppxSignature.p7x)"
+
+msgid "the package is signed already; rubrapack does not sign twice or replace a signature"
+msgstr "paketas jau pasirašytas; rubrapack nepasirašo du kartus ir nekeičia parašo"
+
+msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
+msgstr "paketas jau pasirašytas; rubrapack pasirašo nepasirašytus paketus (ir niekada du kartus)"
+
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "paketas naudoja cabinet failus už savęs, kurių .msi parašas neapima; sukurkite jį su įterptais cabinet failais arba vis tiek pasirašykite su --allow-unsigned-cabs"
+
+msgid "the package's contents do not match its signature (it was changed after signing)"
+msgstr "paketo turinys neatitinka jo parašo (jis pakeistas po pasirašymo)"
+
+msgid "the package's directory cannot be read"
+msgstr "paketo katalogo negalima perskaityti"
+
+msgid "the packages of a bundle need the same Name, Publisher and Version"
+msgstr "rinkinio paketams reikia vienodų Name, Publisher ir Version"
+
+msgid "the proxy asks for a password (407), which rubrapack does not support"
+msgstr "tarpinis serveris prašo slaptažodžio (407), ko rubrapack nepalaiko"
+
+msgid "the proxy did not answer the tunnel request"
+msgstr "tarpinis serveris neatsakė į tunelio užklausą"
+
+msgid "the proxy sent data after its answer to CONNECT"
+msgstr "tarpinis serveris atsiuntė duomenų po atsakymo į CONNECT"
+
+msgid "the redirect location is too long"
+msgstr "peradresavimo vieta per ilga"
+
+msgid "the request could not be sent"
+msgstr "užklausos nepavyko išsiųsti"
+
+msgid "the response has a malformed or conflicting Content-Length"
+msgstr "atsakymo Content-Length sugadintas arba prieštaringas"
+
+msgid "the response has both Content-Length and chunked (refused: a smuggling risk)"
+msgstr "atsakymas turi ir Content-Length, ir chunked (atmesta: smuggling rizika)"
+
+msgid "the response is larger than 4 MiB"
+msgstr "atsakymas didesnis nei 4 MiB"
+
+msgid "the response uses a transfer coding other than chunked"
+msgstr "atsakymas naudoja kitą perdavimo kodavimą nei chunked"
+
+msgid "the same condition is already required (line %u)"
+msgstr "ta pati sąlyga jau reikalaujama (eilutė {1})"
+
+msgid "the same without questions:\n  rubrapack new "
+msgstr "tas pats be klausimų:\n  rubrapack new "
+
+msgid "the server did not answer with HTTP/1.x"
+msgstr "serveris neatsakė HTTP/1.x"
+
+msgid "the server redirected from https to http (refused)"
+msgstr "serveris peradresavo iš https į http (atmesta)"
+
+msgid "the server's CertificateVerify signature does not verify"
+msgstr "serverio CertificateVerify parašas nepatvirtinamas"
+
+msgid "the server's certificate is not for TLS servers (its extended key usage)"
+msgstr "serverio sertifikatas neskirtas TLS serveriams (jo išplėstinė rakto paskirtis)"
+
+msgid "the server's signature scheme does not fit its certificate's key"
+msgstr "serverio parašo schema netinka jo sertifikato raktui"
+
+msgid "the signature does not verify"
+msgstr "parašas nepatvirtinamas"
+
+msgid "the signature does not verify with the signer's certificate"
+msgstr "parašas nepatvirtinamas pasirašančiojo sertifikatu"
+
+msgid "the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields"
+msgstr "parašo įrašas aprašytas ZIP64 būdu; Windows jo vietą skaito iš ZIP32 laukų"
+
+msgid "the signature is not DER"
+msgstr "parašas nėra DER"
+
+msgid "the signature streams cannot be read"
+msgstr "parašo srautų negalima perskaityti"
+
+msgid "the signed attributes do not match the signed content"
+msgstr "pasirašyti atributai neatitinka pasirašyto turinio"
+
+msgid "the signer's certificate is not for code signing"
+msgstr "pasirašančiojo sertifikatas neskirtas kodui pasirašyti"
+
+msgid "the source file's encoding"
+msgstr "šaltinio failo koduotė"
+
+msgid "the system random source failed"
+msgstr "sistemos atsitiktinumo šaltinis sutriko"
+
+msgid "the tab order (Control_Next) is not one cycle through its %zu controls from Control_First (Windows Installer stops with error 2809 or 2810)"
+msgstr "tabuliavimo tvarka (Control_Next) nėra vienas ratas per jos {1} valdiklius nuo Control_First (Windows Installer sustoja su klaida 2809 arba 2810)"
+
+msgid "the timestamp server answered with an HTTP error"
+msgstr "laiko žymos serveris atsakė HTTP klaida"
+
+msgid "the timestamp server's certificate is not for time stamping"
+msgstr "laiko žymos serverio sertifikatas neskirtas laiko žymoms"
+
+msgid "the timestamp server's time lies outside the signing certificate's validity"
+msgstr "laiko žymos serverio laikas yra už pasirašymo sertifikato galiojimo ribų"
+
+msgid "the token does not say what kind of key it is"
+msgstr "žetonas nenurodo, kokios rūšies tai raktas"
+
+msgid "the token is not present"
+msgstr "žetono nėra"
+
+msgid "the token returned an ECDSA signature of the wrong length"
+msgstr "žetonas grąžino netinkamo ilgio ECDSA parašą"
+
+msgid "the token's EC key has a certificate that is not an EC one"
+msgstr "žetono EC raktas turi sertifikatą, kuris nėra EC"
+
+msgid "the token's signature does not verify with the certificate (the key and the certificate do not belong together)"
+msgstr "žetono parašas nepatvirtinamas sertifikatu (raktas ir sertifikatas nepriklauso vienas kitam)"
+
+msgid "the trusted certificate is expired or not valid yet"
+msgstr "patikimo sertifikato galiojimas baigėsi arba dar neprasidėjo"
+
+msgid "the unsigned attributes are malformed or hold more than one timestamp"
+msgstr "nepasirašyti atributai sugadinti arba turi daugiau nei vieną laiko žymą"
+
+msgid "the-toml-subset"
+msgstr "the-toml-subset"
+
+msgid "there is no such file here"
+msgstr "čia tokio failo nėra"
+
+msgid "there is no such folder here"
+msgstr "čia tokio aplanko nėra"
+
+msgid "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu"
+msgstr "šis rubrapack sukurtas be meniu dalies: [menu.*] elementai nepasiekia Windows 11 meniu"
+
+msgid "this rubrapack was built without the setup program (nob parts)"
+msgstr "šis rubrapack sukurtas be diegimo programos (nob parts)"
+
+msgid "threading must be \"sta\", \"mta\", \"both\" or \"neutral\" (got '%s')"
+msgstr "threading turi būti \"sta\", \"mta\", \"both\" arba \"neutral\" (gauta '{1}')"
+
+msgid "timestamp: "
+msgstr "laiko žyma: "
+
+msgid "too many languages for one bundle"
+msgstr "per daug kalbų vienam rinkiniui"
+
+msgid "too many localized texts and logo scales for resources.pri"
+msgstr "per daug lokalizuotų tekstų ir logotipo mastelių resources.pri"
+
+msgid "too many packages in the bundle"
+msgstr "rinkinyje per daug paketų"
+
+msgid "trusted"
+msgstr "patikimas"
+
+msgid "two packages of one architecture in a bundle"
+msgstr "rinkinyje du tos pačios architektūros paketai"
+
+msgid "two packages of one name in a bundle"
+msgstr "rinkinyje du to paties pavadinimo paketai"
+
+msgid "two resource packages of one ResourceId in a bundle"
+msgstr "rinkinyje du išteklių paketai su tuo pačiu ResourceId"
+
+msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
+msgstr "type turi būti string, expand, dword, qword, binary arba multi (gauta '{1}')"
+
+msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
+msgstr "type turi būti text, checkbox, edit, radio arba combo (gauta '{1}')"
+
+msgid "typelib-file: '%s' is not a [file.*] of this package"
+msgstr "typelib-file: '{1}' nėra šio paketo [file.*]"
+
+msgid "typelib-version is major.minor in hex digits, like \"1.0\" (got '%s')"
+msgstr "typelib-version yra major.minor šešioliktainiais skaitmenimis, pvz., \"1.0\" (gauta '{1}')"
+
+msgid "types and verb belong to kind = \"context-menu\""
+msgstr "types ir verb priklauso kind = \"context-menu\""
+
+msgid "types: each is \".ext\" or \"*\" (every file)"
+msgstr "types: kiekvienas yra \".ext\" arba \"*\" (kiekvienas failas)"
+
+msgid "types: each is '.' and lower-case letters, digits, '_' or '-' (got '%s')"
+msgstr "types: kiekvienas yra '.' ir mažosios raidės, skaitmenys, '_' arba '-' (gauta '{1}')"
+
+msgid "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)"
+msgstr "ui = \"{1}\" leidžia naudotojui pasirinkti dir '{2}' aplanką, kurio nėra (nustatykite [ui] install-dir)"
+
+msgid "ui = \"features\" needs [feature.*] tables to choose from"
+msgstr "ui = \"features\" reikia [feature.*] lentelių pasirinkimui"
+
+msgid "ui must be none, basic, minimal, installdir or features (got '%s')"
+msgstr "ui turi būti none, basic, minimal, installdir arba features (gauta '{1}')"
+
+msgid "unexpected text after the value"
+msgstr "netikėtas tekstas po reikšmės"
+
+msgid "unknown command '%s' (see 'rubrapack help')"
+msgstr "nežinoma komanda '{1}' (žr. 'rubrapack help')"
+
+msgid "unknown escape \\%c (use '...' for text with backslashes)"
+msgstr "nežinoma valdymo seka \\{1} (naudokite '...' tekstui su atvirkštiniais brūkšniais)"
+
+msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
+msgstr "nežinoma inspect parinktis (naudokite lentelės pavadinimą, --summary, --files arba --streams)"
+
+msgid "unknown key '%s' in [%s%s%s]%s%s%s"
+msgstr "nežinomas raktas '{1}' lentelėje [{2}{3}{4}]{5}{6}{7}"
+
+msgid "unknown or incomplete %s option '%s'"
+msgstr "nežinoma arba nepilna {1} parinktis '{2}'"
+
+msgid "unknown table [%s%s%s]%s%s%s"
+msgstr "nežinoma lentelė [{1}{2}{3}]{4}{5}{6}"
+
+msgid "unpack a package into a new directory, laid out as it installs"
+msgstr "išpakuoti paketą į naują katalogą, išdėstytą kaip diegiant"
+
+msgid "unsupported - %s"
+msgstr "nepalaikoma - {1}"
+
+msgid "untrusted"
+msgstr "nepatikimas"
+
+msgid "update-* keys need appinstaller-uri and package-uri"
+msgstr "update-* raktams reikia appinstaller-uri ir package-uri"
+
+msgid "upgrade = false is for on = \"uninstall\" or \"both\" (an installation is never an upgrade's removal)"
+msgstr "upgrade = false skirtas on = \"uninstall\" arba \"both\" (diegimas niekada nėra naujinimo šalinimas)"
+
+msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
+msgstr "upgrade-code turi būti GUID kaip {{12345678-1234-1234-1234-123456789ABC}"
+
+msgid "usage: rubrapack %s\n\n%s%s\n"
+msgstr "naudojimas: rubrapack {1}\n\n{2}{3}\n"
+
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "naudojimas: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (sąrašas rinkiniui)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+
+msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+msgstr "naudojimas: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
+
+msgid "usage: rubrapack explain [RPnnnn]"
+msgstr "naudojimas: rubrapack explain [RPnnnn]"
+
+msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+msgstr "naudojimas: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
+
+msgid "usage: rubrapack guid [--from <text>]"
+msgstr "naudojimas: rubrapack guid [--from <text>]"
+
+msgid "usage: rubrapack inspect <file.cab> (no table or option)"
+msgstr "naudojimas: rubrapack inspect <file.cab> (be lentelės ar parinkties)"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
+msgstr "naudojimas: rubrapack inspect <file.msi> [table|--summary] --json"
+
+msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+msgstr "naudojimas: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
+
+msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+msgstr "naudojimas: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
+
+msgid "usage: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+msgstr "naudojimas: rubrapack inspect <file.mst> --base <base.msi> | --summary | --streams"
+
+msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
+msgstr "naudojimas: rubrapack inspect <setup.exe> (be lentelės ar parinkties)"
+
+msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+msgstr "naudojimas: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
+
+msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+msgstr "naudojimas: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
+
+msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+msgstr "naudojimas: rubrapack lint <file.msix|file.msixbundle> [--strict]"
+
+msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+msgstr "naudojimas: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
+
+msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
+msgstr "naudojimas: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (fiksuotas pradinis <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; priimami ir .rpk vardai"
+
+msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "naudojimas: rubrapack schema (šaltinių JSON Schema, į stdout)"
+
+msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+msgstr "naudojimas: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
+
+msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+msgstr "naudojimas: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
+
+msgid "use '/' in path"
+msgstr "naudokite '/' kelyje"
+
+msgid "use a full rubrapack build or another way"
+msgstr "naudokite pilną rubrapack versiją arba kitą būdą"
+
+msgid "used by more than one component"
+msgstr "naudoja daugiau nei vienas komponentas"
+
+msgid "value '%s' is listed twice"
+msgstr "reikšmė '{1}' nurodyta du kartus"
+
+msgid "value missing"
+msgstr "trūksta reikšmės"
+
+msgid "values and labels are strings"
+msgstr "values ir labels yra eilutės"
+
+msgid "values is an array of 1 to 32 strings"
+msgstr "values yra masyvas iš 1–32 eilučių"
+
+msgid "values: IDs, GUIDs, versions, numbers out of range, references to things that do not exist"
+msgstr "reikšmės: ID, GUID, versijos, skaičiai už ribų, nuorodos į neegzistuojančius dalykus"
+
+msgid "variable '%s' is not defined ([define] or -D %s=...)%s"
+msgstr "kintamasis '{1}' neapibrėžtas ([define] arba -D {2}=...){3}"
+
+msgid "variable name '%s' may not contain '=' or start with = + - ! *"
+msgstr "kintamojo vardas '{1}' negali turėti '=' arba prasidėti = + - ! *"
+
+msgid "variables"
+msgstr "kintamieji"
+
+msgid "variables: $(NAME) without a value, $( not closed, a Windows name or dir ID where it cannot stand"
+msgstr "kintamieji: $(NAME) be reikšmės, neuždarytas $(, Windows vardas ar dir ID ten, kur jis negali būti"
+
+msgid "version '%s' must be a.b.c or a.b.c.d"
+msgstr "versija '{1}' turi būti a.b.c arba a.b.c.d"
+
+msgid "version '%s' must be a.b.c or a.b.c.d with a, b <= 255 and c, d <= 65535"
+msgstr "versija '{1}' turi būti a.b.c arba a.b.c.d, kai a, b <= 255 ir c, d <= 65535"
+
+msgid "view = \"32\" cannot go 'with' a file of a 64-bit package"
+msgstr "view = \"32\" negali eiti 'with' su 64 bitų paketo failu"
+
+msgid "view must be \"32\" or \"64\""
+msgstr "view turi būti \"32\" arba \"64\""
+
+msgid "warning"
+msgstr "įspėjimas"
+
+msgid "what a diagnostic code means, the messages that carry it, what to do and where the manual says more"
+msgstr "ką reiškia diagnostikos kodas, jį nešantys pranešimai, ką daryti ir kur vadove parašyta daugiau"
+
+msgid "with must be \"file:<ID>\""
+msgstr "with turi būti \"file:<ID>\""
+
+msgid "with: file '%s' is not a [file.*] of this package"
+msgstr "with: failas '{1}' nėra šio paketo [file.*]"
+
+msgid "without --pkcs11, `keys list` shows the Windows certificate store"
+msgstr "be --pkcs11 `keys list` rodo Windows sertifikatų saugyklą"
+
+msgid "working-dir '%s' is not a dir ID"
+msgstr "working-dir '{1}' nėra dir ID"
+
+msgid "write a patch (.msp): the files and rows that update an installed base to the target"
+msgstr "rašyti pataisą (.msp): failai ir eilutės, kurie atnaujina įdiegtą bazę iki tikslo"
+
+msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "rašyti šaltinio failą (.toml; ir .rpk vardai): iš atsakymų, paklaustų ar duotų kaip parinktys, fiksuoto pradinio failo ar esamo MSI"
+
+msgid "write a transform (.mst): what turns one package into the other"
+msgstr "rašyti transformaciją (.mst): tai, kas vieną paketą paverčia kitu"
+
+msgid "write the table or value the plain way the manual shows"
+msgstr "parašykite lentelę ar reikšmę paprastu būdu, kurį rodo vadovas"
+
+msgid "write the value without '[~]'; mode = \"append\" or \"prepend\" adds it"
+msgstr "parašykite reikšmę be '[~]'; mode = \"append\" arba \"prepend\" ją prideda"
+
+msgid "wrote %s\n"
+msgstr "įrašyta {1}\n"
+
+msgid "x + width must be at most 370 (the page width)"
+msgstr "x + width turi būti ne daugiau kaip 370 (puslapio plotis)"
+
+msgid "y + height must be at most 234 (the line above the buttons)"
+msgstr "y + height turi būti ne daugiau kaip 234 (linija virš mygtukų)"
+
+msgctxt "installer"
+msgid "Back"
+msgstr "< At&gal"
+
+msgctxt "installer"
+msgid "Next"
+msgstr "&Toliau >"
+
+msgctxt "installer"
+msgid "Cancel"
+msgstr "Atšaukti"
+
+msgctxt "installer"
+msgid "Install"
+msgstr "Į&diegti"
+
+msgctxt "installer"
+msgid "Finish"
+msgstr "&Baigti"
+
+msgctxt "installer"
+msgid "OK"
+msgstr "Gerai"
+
+msgctxt "installer"
+msgid "Yes"
+msgstr "&Taip"
+
+msgctxt "installer"
+msgid "No"
+msgstr "&Ne"
+
+msgctxt "installer"
+msgid "Retry"
+msgstr "&Bandyti dar kartą"
+
+msgctxt "installer"
+msgid "Ignore"
+msgstr "N&epaisyti"
+
+msgctxt "installer"
+msgid "Abort"
+msgstr "N&utraukti"
+
+msgctxt "installer"
+msgid "Exit"
+msgstr "&Išeiti"
+
+msgctxt "installer"
+msgid "Browse"
+msgstr "&Naršyti..."
+
+msgctxt "installer"
+msgid "WelcomeTitle"
+msgstr "Sveiki, tai [ProductName] diegimas"
+
+msgctxt "installer"
+msgid "WelcomeText"
+msgstr "Bus įdiegta [ProductName] jūsų kompiuteryje. Norėdami tęsti, spustelėkite Toliau."
+
+msgctxt "installer"
+msgid "LicenseTitle"
+msgstr "Licencijos sutartis"
+
+msgctxt "installer"
+msgid "LicenseText"
+msgstr "Perskaitykite šią licencijos sutartį."
+
+msgctxt "installer"
+msgid "LicenseAccept"
+msgstr "&Sutinku su licencijos sutarties sąlygomis"
+
+msgctxt "installer"
+msgid "DirTitle"
+msgstr "Diegimo aplankas"
+
+msgctxt "installer"
+msgid "DirText"
+msgstr "Pasirinkite aplanką, į kurį bus įdiegta [ProductName]."
+
+msgctxt "installer"
+msgid "DirLabel"
+msgstr "Diegti į &aplanką:"
+
+msgctxt "installer"
+msgid "BrowseTitle"
+msgstr "Aplanko keitimas"
+
+msgctxt "installer"
+msgid "BrowseText"
+msgstr "Pereikite į aplanką, į kurį norite diegti."
+
+msgctxt "installer"
+msgid "BrowseLookIn"
+msgstr "&Ieškoti:"
+
+msgctxt "installer"
+msgid "BrowseFolder"
+msgstr "Aplanko &pavadinimas:"
+
+msgctxt "installer"
+msgid "BrowseUp"
+msgstr "Aukštyn"
+
+msgctxt "installer"
+msgid "BrowseNew"
+msgstr "Naujas aplankas"
+
+msgctxt "installer"
+msgid "CustomizeTitle"
+msgstr "Funkcijų pasirinkimas"
+
+msgctxt "installer"
+msgid "CustomizeText"
+msgstr "Pasirinkite diegiamas funkcijas."
+
+msgctxt "installer"
+msgid "Reset"
+msgstr "&Atkurti"
+
+msgctxt "installer"
+msgid "DiskCost"
+msgstr "&Disko naudojimas"
+
+msgctxt "installer"
+msgid "DiskCostTitle"
+msgstr "Vieta diske"
+
+msgctxt "installer"
+msgid "DiskCostText"
+msgstr "Pasirinktoms funkcijoms reikalinga vieta ir laisva vieta."
+
+msgctxt "installer"
+msgid "ReadyTitle"
+msgstr "Paruošta diegti"
+
+msgctxt "installer"
+msgid "ReadyText"
+msgstr "Norėdami įdiegti [ProductName], spustelėkite Įdiegti."
+
+msgctxt "installer"
+msgid "ProgressTitle"
+msgstr "Diegiama [ProductName]"
+
+msgctxt "installer"
+msgid "ProgressText"
+msgstr "Palaukite."
+
+msgctxt "installer"
+msgid "ProgressStatus"
+msgstr "Būsena:"
+
+msgctxt "installer"
+msgid "ExitTitle"
+msgstr "Diegimas baigtas"
+
+msgctxt "installer"
+msgid "ExitText"
+msgstr "[ProductName] įdiegta."
+
+msgctxt "installer"
+msgid "RemovalProgressTitle"
+msgstr "Šalinama [ProductName]"
+
+msgctxt "installer"
+msgid "RemovalExitTitle"
+msgstr "Šalinimas baigtas"
+
+msgctxt "installer"
+msgid "RemovalExitText"
+msgstr "[ProductName] pašalinta."
+
+msgctxt "installer"
+msgid "RemovalUserExitTitle"
+msgstr "Šalinimas atšauktas"
+
+msgctxt "installer"
+msgid "RemovalUserExitText"
+msgstr "Šalinimas atšauktas. Jūsų kompiuteryje niekas nepakeista."
+
+msgctxt "installer"
+msgid "RemovalFatalTitle"
+msgstr "Šalinimas nepavyko"
+
+msgctxt "installer"
+msgid "RemovalFatalText"
+msgstr "Klaida nutraukė šalinimą, jis atšauktas. Produktas vis dar įdiegtas."
+
+msgctxt "installer"
+msgid "UserExitTitle"
+msgstr "Diegimas atšauktas"
+
+msgctxt "installer"
+msgid "UserExitText"
+msgstr "Diegimas atšauktas. Jūsų kompiuteryje niekas nepakeista."
+
+msgctxt "installer"
+msgid "FatalTitle"
+msgstr "Diegimas nepavyko"
+
+msgctxt "installer"
+msgid "FatalText"
+msgstr "Klaida nutraukė diegimą, jis atšauktas. Jūsų kompiuteryje niekas nepakeista."
+
+msgctxt "installer"
+msgid "CancelText"
+msgstr "Atšaukti [ProductName] diegimą?"
+
+msgctxt "installer"
+msgid "FilesInUseTitle"
+msgstr "Naudojami failai"
+
+msgctxt "installer"
+msgid "FilesInUseText"
+msgstr "Šios programos naudoja keičiamus failus. Spustelėkite Tęsti, kad juos pakeistumėte dabar: jau atidarytos programos išlaiko senus failus, kol bus atidarytos iš naujo, o vėliau atidarytos gauna naujus. Paleisti iš naujo nereikia."
+
+msgctxt "installer"
+msgid "FilesInUseTextRestart"
+msgstr "Šios programos naudoja keičiamus failus. Spustelėkite Tęsti, kad juos pakeistumėte dabar: jau atidarytos programos išlaiko senus failus, kol bus atidarytos iš naujo, o vėliau atidarytos gauna naujus. Pabaigoje Windows gali paprašyti paleisti iš naujo."
+
+msgctxt "installer"
+msgid "Continue"
+msgstr "&Tęsti"
+
+msgctxt "installer"
+msgid "OutOfDiskTitle"
+msgstr "Diske nepakanka vietos"
+
+msgctxt "installer"
+msgid "OutOfDiskText"
+msgstr "Šiam diegimui nepakanka vietos. Atlaisvinkite vietos arba pasirinkite kitą vietą."
+
+msgctxt "installer"
+msgid "MaintTitle"
+msgstr "[ProductName] priežiūra"
+
+msgctxt "installer"
+msgid "MaintText"
+msgstr "Pasirinkite, ką daryti."
+
+msgctxt "installer"
+msgid "Repair"
+msgstr "Ta&isyti"
+
+msgctxt "installer"
+msgid "RepairText"
+msgstr "Atkuria trūkstamus ar sugadintus failus ir parametrus."
+
+msgctxt "installer"
+msgid "Remove"
+msgstr "Ša&linti"
+
+msgctxt "installer"
+msgid "RemoveText"
+msgstr "Pašalina [ProductName] iš šio kompiuterio."
+
+msgctxt "installer"
+msgid "RemoveConfirmTitle"
+msgstr "[ProductName] šalinimas"
+
+msgctxt "installer"
+msgid "RemoveConfirmText"
+msgstr "Norėdami pašalinti [ProductName] iš šio kompiuterio, spustelėkite Šalinti. Norėdami palikti, spustelėkite Atgal arba Atšaukti."
+
+msgctxt "installer"
+msgid "RemoveConfirmTextAll"
+msgstr "Norėdami pašalinti [ProductName] iš šio kompiuterio, spustelėkite Šalinti. Jos parametrai ir duomenys ištrinami kartu ir jų negalima atkurti. Norėdami palikti, spustelėkite Atgal arba Atšaukti."
+
+msgctxt "installer"
+msgid "RemoveAsk"
+msgstr "Pašalinti [ProductName] iš šio kompiuterio?"
+
+msgctxt "installer"
+msgid "RemoveAskAll"
+msgstr "Pašalinti [ProductName] iš šio kompiuterio? Jos parametrai ir duomenys ištrinami kartu ir jų negalima atkurti."
+
+msgctxt "installer"
+msgid "PreflightFolder"
+msgstr "[3] negalima saugiai įdiegti: [1] nėra aplankas arba diegimo programai gali būti neleidžiama jame trinti failų. Pirmiausia pašalinkite [3] ([2]), tada įdiekite iš naujo."
+
+msgctxt "installer"
+msgid "PreflightCache"
+msgstr "[3] negalima saugiai naujinti: įdiegta versija [1] prarado išsaugotą paketą, todėl čia jos pašalinti negalima. Pirmiausia pašalinkite šią versiją jos originaliu paketu ([2]), tada įdiekite iš naujo."
+
+msgctxt "installer"
+msgid "DirGuardText"
+msgstr "Diegimas sustabdytas: aplankas [1] jau yra ir nepriklauso administratoriams arba per nuorodą veda kitur. Pasirinkite kitą aplanką arba paprašykite administratoriaus jį pirmiausia pašalinti."
+
+msgctxt "installer"
+msgid "LaunchText"
+msgstr "&Paleisti [ProductName]"
+
+msgctxt "installer"
+msgid "SaveLog"
+msgstr "Į&rašyti žurnalą..."
+
+msgctxt "installer"
+msgid "DetailsFull"
+msgstr "Rodyti visą žurnal&ą"
+
+msgctxt "installer"
+msgid "SaveLogFail"
+msgstr "Diegimo žurnalo nepavyko įrašyti į [1]."
+
+msgctxt "installer"
+msgid "Change"
+msgstr "&Keisti"
+
+msgctxt "installer"
+msgid "ChangeText"
+msgstr "Pasirinkite, kurios funkcijos įdiegtos."
+
+msgctxt "installer"
+msgid "ScopeTitle"
+msgstr "Diegimo apimtis"
+
+msgctxt "installer"
+msgid "ScopeText"
+msgstr "Pasirinkite, kas galės naudoti [ProductName]."
+
+msgctxt "installer"
+msgid "ScopeUser"
+msgstr "Tik &aš"
+
+msgctxt "installer"
+msgid "ScopeMachine"
+msgstr "&Visi šiame kompiuteryje - reikia administratoriaus teisių"
+
+msgctxt "installer"
+msgid "LanguageTitle"
+msgstr "Kalba"
+
+msgctxt "installer"
+msgid "LanguageText"
+msgstr "Pasirinkite diegimo kalbą."
+
+msgctxt "installer"
+msgid "Action.AppSearch"
+msgstr "Ieškoma įdiegtų programų"
+
+msgctxt "installer"
+msgid "Action.CostFinalize"
+msgstr "Skaičiuojama reikalinga vieta"
+
+msgctxt "installer"
+msgid "Action.CostInitialize"
+msgstr "Skaičiuojama reikalinga vieta"
+
+msgctxt "installer"
+msgid "Action.CreateFolders"
+msgstr "Kuriami aplankai"
+
+msgctxt "installer"
+msgid "Action.CreateShortcuts"
+msgstr "Kuriamos nuorodos"
+
+msgctxt "installer"
+msgid "Action.DeleteServices"
+msgstr "Naikinamos paslaugos"
+
+msgctxt "installer"
+msgid "Action.DuplicateFiles"
+msgstr "Kuriami failų dublikatai"
+
+msgctxt "installer"
+msgid "Action.FileCost"
+msgstr "Skaičiuojama reikalinga vieta"
+
+msgctxt "installer"
+msgid "Action.FindRelatedProducts"
+msgstr "Ieškoma susijusių programų"
+
+msgctxt "installer"
+msgid "Action.GenerateScript"
+msgstr "Generuojamos scenarijaus operacijos veiksmui:"
+
+msgctxt "installer"
+msgid "Action.InstallFiles"
+msgstr "Kopijuojami nauji failai"
+
+msgctxt "installer"
+msgid "Action.InstallServices"
+msgstr "Diegiamos naujos paslaugos"
+
+msgctxt "installer"
+msgid "Action.InstallValidate"
+msgstr "Tikrinamas diegimas"
+
+msgctxt "installer"
+msgid "Action.LaunchConditions"
+msgstr "Vertinamos paleidimo sąlygos"
+
+msgctxt "installer"
+msgid "Action.MigrateFeatureStates"
+msgstr "Perkeliamos funkcijų būsenos iš susijusių programų"
+
+msgctxt "installer"
+msgid "Action.MoveFiles"
+msgstr "Perkeliami failai"
+
+msgctxt "installer"
+msgid "Action.PatchFiles"
+msgstr "Taisomi failai"
+
+msgctxt "installer"
+msgid "Action.ProcessComponents"
+msgstr "Atnaujinama komponentų registracija"
+
+msgctxt "installer"
+msgid "Action.PublishFeatures"
+msgstr "Skelbiamos produkto funkcijos"
+
+msgctxt "installer"
+msgid "Action.PublishProduct"
+msgstr "Skelbiama produkto informacija"
+
+msgctxt "installer"
+msgid "Action.RegisterClassInfo"
+msgstr "Registruojami klasių serveriai"
+
+msgctxt "installer"
+msgid "Action.RegisterExtensionInfo"
+msgstr "Registruojami plėtinių serveriai"
+
+msgctxt "installer"
+msgid "Action.RegisterFonts"
+msgstr "Registruojami šriftai"
+
+msgctxt "installer"
+msgid "Action.RegisterMIMEInfo"
+msgstr "Registruojama MIME informacija"
+
+msgctxt "installer"
+msgid "Action.RegisterProduct"
+msgstr "Registruojamas produktas"
+
+msgctxt "installer"
+msgid "Action.RegisterProgIdInfo"
+msgstr "Registruojami programų identifikatoriai"
+
+msgctxt "installer"
+msgid "Action.RegisterUser"
+msgstr "Registruojamas naudotojas"
+
+msgctxt "installer"
+msgid "Action.RemoveEnvironmentStrings"
+msgstr "Atnaujinamos aplinkos eilutės"
+
+msgctxt "installer"
+msgid "Action.RemoveExistingProducts"
+msgstr "Šalinama senesnė versija"
+
+msgctxt "installer"
+msgid "Action.RemoveFiles"
+msgstr "Šalinami failai"
+
+msgctxt "installer"
+msgid "Action.RemoveFolders"
+msgstr "Šalinami aplankai"
+
+msgctxt "installer"
+msgid "Action.RemoveIniValues"
+msgstr "Šalinami INI failų įrašai"
+
+msgctxt "installer"
+msgid "Action.RemoveRegistryValues"
+msgstr "Šalinamos sistemos registro reikšmės"
+
+msgctxt "installer"
+msgid "Action.RemoveShortcuts"
+msgstr "Šalinamos nuorodos"
+
+msgctxt "installer"
+msgid "Action.Rollback"
+msgstr "Atšaukiamas veiksmas:"
+
+msgctxt "installer"
+msgid "Action.RollbackCleanup"
+msgstr "Šalinami atsarginių kopijų failai"
+
+msgctxt "installer"
+msgid "Action.StartServices"
+msgstr "Paleidžiamos paslaugos"
+
+msgctxt "installer"
+msgid "Action.StopServices"
+msgstr "Stabdomos paslaugos"
+
+msgctxt "installer"
+msgid "Action.UnpublishFeatures"
+msgstr "Atšaukiamas produkto funkcijų skelbimas"
+
+msgctxt "installer"
+msgid "Action.UnregisterClassInfo"
+msgstr "Išregistruojami klasių serveriai"
+
+msgctxt "installer"
+msgid "Action.UnregisterExtensionInfo"
+msgstr "Išregistruojami plėtinių serveriai"
+
+msgctxt "installer"
+msgid "Action.UnregisterFonts"
+msgstr "Išregistruojami šriftai"
+
+msgctxt "installer"
+msgid "Action.UnregisterMIMEInfo"
+msgstr "Išregistruojama MIME informacija"
+
+msgctxt "installer"
+msgid "Action.UnregisterProgIdInfo"
+msgstr "Išregistruojami programų identifikatoriai"
+
+msgctxt "installer"
+msgid "Action.WriteEnvironmentStrings"
+msgstr "Atnaujinamos aplinkos eilutės"
+
+msgctxt "installer"
+msgid "Action.WriteIniValues"
+msgstr "Rašomos INI failų reikšmės"
+
+msgctxt "installer"
+msgid "Action.WriteRegistryValues"
+msgstr "Rašomos sistemos registro reikšmės"
+
+msgctxt "installer"
+msgid "PerUserOnly"
+msgstr "[ProductName] diegiama tik dabartiniam naudotojui (MSIINSTALLPERUSER=1)."
+
+msgctxt "installer"
+msgid "NewerInstalled"
+msgstr "Jau įdiegta ta pati arba naujesnė [ProductName] versija."
+
+msgctxt "installer"
+msgid "OlderRefused"
+msgstr "Šis paketas negali naujinti įdiegtos senesnės [ProductName] versijos. Pirmiausia ją pašalinkite, tada vėl paleiskite šį diegimą:"
+
+msgctxt "installer"
+msgid "Details.FileCopy"
+msgstr "Kopijuoti failą"
+
+msgctxt "installer"
+msgid "Details.FileRemove"
+msgstr "Šalinti failą"
+
+msgctxt "installer"
+msgid "Details.FilePatch"
+msgstr "Taisyti failą"
+
+msgctxt "installer"
+msgid "Details.FolderCreate"
+msgstr "Kurti aplanką"
+
+msgctxt "installer"
+msgid "Details.FolderRemove"
+msgstr "Šalinti aplanką"
+
+msgctxt "installer"
+msgid "Details.RegAddValue"
+msgstr "Rašyti registro reikšmę"
+
+msgctxt "installer"
+msgid "Details.RegRemoveValue"
+msgstr "Šalinti registro reikšmę"
+
+msgctxt "installer"
+msgid "Details.RegRemoveKey"
+msgstr "Šalinti registro raktą"
+
+msgctxt "installer"
+msgid "Details.ShortcutCreate"
+msgstr "Kurti nuorodą"
+
+msgctxt "installer"
+msgid "Details.ShortcutRemove"
+msgstr "Šalinti nuorodą"
+
+msgctxt "installer"
+msgid "Details.ServiceInstall"
+msgstr "Diegti paslaugą"
+
+msgctxt "installer"
+msgid "Details.ServiceControl"
+msgstr "Valdyti paslaugą"
+
+msgctxt "installer"
+msgid "Details.IniWriteRemoveValue"
+msgstr "Rašyti INI reikšmę"
+
+msgctxt "installer"
+msgid "Details.UpdateEnvironmentStrings"
+msgstr "Nustatyti aplinkos kintamąjį"
+
+msgctxt "installer"
+msgid "Details.RegisterFont"
+msgstr "Registruoti šriftą"
+
+msgctxt "installer"
+msgid "Details.UnregisterFont"
+msgstr "Išregistruoti šriftą"
+
+msgctxt "installer"
+msgid "Details.CustomActionSchedule"
+msgstr "Vykdyti veiksmą"
+
+msgctxt "installer"
+msgid "Setup.Damaged"
+msgstr "Ši diegimo programa sugadinta: atsisiųskite ją dar kartą."
+
+msgctxt "installer"
+msgid "Setup.Ask"
+msgstr "Šios programos jau įdiegtos. Pasirinkite, ką daryti."
+
+msgctxt "installer"
+msgid "Setup.Repair"
+msgstr "Ta&isyti"
+
+msgctxt "installer"
+msgid "Setup.Remove"
+msgstr "Ša&linti"
+
+msgctxt "installer"
+msgid "Setup.Cancel"
+msgstr "Atšaukti"
+
+msgctxt "installer"
+msgid "Setup.RemoveAsk"
+msgstr "Pašalinti šias programas iš šio kompiuterio?"
+
+msgctxt "installer"
+msgid "Setup.Removed"
+msgstr "Programos pašalintos."
+
+msgctxt "installer"
+msgid "Setup.RemoveFailed"
+msgstr "Vienos programos nepavyko pašalinti."
+
+msgctxt "installer"
+msgid "Setup.TempFailed"
+msgstr "Diegimo programa negalėjo sukurti laikinojo aplanko."
+
+msgctxt "installer"
+msgid "Setup.RepairFailed"
+msgstr "{1} nepavyko pataisyti (klaida {2})."
+
+msgctxt "installer"
+msgid "Setup.InstallFailed"
+msgstr "{1} nepavyko įdiegti (klaida {2}). Niekas po jo neįdiegta."
+
+msgctxt "installer"
+msgid "Setup.Repaired"
+msgstr "Programos pataisytos."
+
+msgctxt "installer"
+msgid "Setup.Finished"
+msgstr "Diegimas baigtas."
+
+msgctxt "installer"
+msgid "DirNotEmptyText"
+msgstr "Šiame aplanke jau yra failų ar aplankų. Pašalinus [ProductName], ištrinama viskas, kas aplanke - ir tai, kas jame yra dabar. Tuščias ar naujas aplankas yra saugesnis pasirinkimas."
+
+msgctxt "installer"
+msgid "DirChoose"
+msgstr "&Rinktis kitą"
+
+msgctxt "installer"
+msgid "DirContinue"
+msgstr "&Naudoti šį aplanką"
+
+msgctxt "installer"
+msgid "PreflightAsk"
+msgstr "[1] program(-os) naudoja [3] failus:\r\n[2]\r\nUždaryti visas?\r\n\r\nTaip: uždaryti visas ir tęsti (neįrašytas darbas gali būti prarastas).\r\nNe: tęsti neuždarant (jau atidarytos programos išlaiko senus failus, kol bus atidarytos iš naujo).\r\nAtšaukti: sustabdyti."
+
+msgctxt "installer"
+msgid "PreflightSilent"
+msgstr "[3]: sustabdyta, nes [1] program(-os) naudoja jos failus:\r\n[2]Uždarykite jas ir bandykite dar kartą arba nurodykite RPCLOSE=yes (uždaryti visas ir tęsti) arba RPCLOSE=no (tęsti neuždarant)."
+
+msgctxt "installer"
+msgid "PreflightExtra"
+msgstr "[1] elementai(-ų) [3] aplankuose nebuvo įdiegti kartu su ja:\r\n[2]\r\nIštrinti ir juos?\r\n\r\nTaip: ištrinti juos kartu su [3] (jų negalima atkurti).\r\nNe: pašalinti [3] ir palikti juos.\r\nAtšaukti: sustabdyti."
+
+msgctxt "installer"
+msgid "PreflightExtraSilent"
+msgstr "[3]: sustabdyta, nes [1] elementai(-ų) jos aplankuose nebuvo įdiegti kartu su ja:\r\n[2]Nurodykite RPEXTRA=delete (ištrinti ir juos) arba RPEXTRA=keep (palikti juos), tada šalinkite dar kartą."
