@@ -1019,6 +1019,7 @@ text = "This will install [ProductName]. Close other programs first."
 ```toml
 [ui]
 languages = ["ko"]                # 영어는 늘 있고 기본이다
+# languages = "all"               # 또는: 내장 언어 모두, 지역 순서대로
 license-ko = "LICENSE-ko.txt"     # 언어별 사용권(기본: [package] license)
 
 [ui-text.WelcomeText]
@@ -1079,6 +1080,9 @@ rubrapack 의 도우미 DLL 이 제자리에 넣는다. 영어를 포함해 열�
 지역별로 묶는다: 왼쪽에 지역, 오른쪽에 고른 지역의 언어. 팩은 `X-Rubrapack-Group` 으로 지역을 적는다(1 동아시아,
 2 동남아시아, 3 남아시아, 4 중앙아시아·캅카스, 5 중동, 6 서유럽·남유럽 - 영어도 여기 -, 7 북유럽·발트, 8 중부·동유럽).
 적지 않은 팩은 "기타"에 들어간다. 한 지역에는 열두 개까지다(`RP1308`).
+`languages = "all"` 은 내장 팩을 모두 넣는다. 순서는 위의 지역 순서이고, 한 지역 안에서는 널리 쓰는 언어가 먼저다
+(`ko ja zh zh_TW`, 그다음 `en de fr es it ...`). 원본 옆의 팩은 여전히 내장 팩을 갈음한다. "all" 은 혼자 쓴다:
+배열 안에 넣으면 오류다(`RP1316`).
 
 ```po
 msgid ""

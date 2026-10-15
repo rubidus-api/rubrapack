@@ -2013,6 +2013,9 @@ msgstr "languages には \"ko\" や \"zh_TW\" のようなコードを書きま�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages は [\"ko\"] のような言語コードの配列です"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" は配列に入れず単独で書きます。組み込みの言語をすべて入れます"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages にはダイアログ セット (ui = \"basic\" など) が必要です"
 

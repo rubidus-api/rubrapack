@@ -2013,6 +2013,9 @@ msgstr "languages sis채lt채채 koodeja kuten \"ko\" tai \"zh_TW\" (2 tai 3 pient�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages on kielikoodien taulukko, kuten [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" kirjoitetaan yksin, ei taulukkoon: se ottaa mukaan kaikki sis채채nrakennetut kielet"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages tarvitsee valintaikkunasarjan (ui = \"basic\" tai muu)"
 

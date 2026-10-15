@@ -1110,6 +1110,7 @@ page.
 ```toml
 [ui]
 languages = ["ko"]                # English is always there, and the default
+# languages = "all"               # or: every built-in language, region by region
 license-ko = "LICENSE-ko.txt"     # a license per language (default: [package] license)
 
 [ui-text.WelcomeText]
@@ -1183,7 +1184,10 @@ column; with more it groups them by region: the regions on the left, the chosen 
 on the right. A pack names its region with `X-Rubrapack-Group` (1 East Asia, 2 Southeast Asia,
 3 South Asia, 4 Central Asia and the Caucasus, 5 Middle East, 6 Western and Southern Europe - with
 English -, 7 Northern Europe and the Baltics, 8 Central and Eastern Europe); a pack that names none
-is under "Other". A region holds at most twelve languages (`RP1308`).
+is under "Other". A region holds at most twelve languages (`RP1308`). `languages = "all"` takes
+every built-in pack, region by region in the order above and, within a region, the widely used first
+(`ko ja zh zh_TW`, then `en de fr es it ...`); a pack beside the source still replaces a built-in one.
+"all" stands alone: in an array it is an error (`RP1316`).
 
 ```po
 msgid ""

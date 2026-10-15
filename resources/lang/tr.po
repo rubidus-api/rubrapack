@@ -2013,6 +2013,9 @@ msgstr "languages \"ko\" veya \"zh_TW\" gibi kodlar tutar (2 veya 3 küçük har
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages bir dil kodları dizisidir, örneğin [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" tek başına yazılır, bir dizi içinde değil: tüm yerleşik dilleri ekler"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages bir iletişim kutusu takımı gerektirir (ui = \"basic\" ya da başka)"
 

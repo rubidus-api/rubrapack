@@ -2013,6 +2013,9 @@ msgstr "languages 包含形如 \"ko\" 或 \"zh_TW\" 的代码(2 或 3 个小写�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages 是语言代码数组，如 [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" 应单独写，不能放在数组中：它会加入所有内置语言"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages 需要对话框集(ui = \"basic\" 或其他)"
 

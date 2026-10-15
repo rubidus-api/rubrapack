@@ -339,6 +339,7 @@ static int dialogs(src_t *s, ans_t *a) {
     if (strcmp(a->ui, "none") != 0) {
         rp_tkey_t *langs = key(table(s, "ui", NULL), "languages");
         bool ko = false, others = false;
+        if (langs && langs->val.kind == RP_TV_STRING && strcmp(langs->val.str, "all") == 0) ko = others = true;     // every built-in one
         for (size_t i = 0; langs && langs->val.kind == RP_TV_ARRAY && i < langs->val.count; ++i) {
             if (langs->val.items[i].kind != RP_TV_STRING) continue;
             if (strcmp(langs->val.items[i].str, "ko") == 0) ko = true;

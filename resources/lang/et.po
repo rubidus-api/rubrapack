@@ -2013,6 +2013,9 @@ msgstr "languages sisaldab koode nagu \"ko\" või \"zh_TW\" (2 või 3 väiketäh
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages on keelekoodide massiiv, nt [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" on omaette, mitte massiivis: see võtab kõik sisseehitatud keeled"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages vajab dialoogikomplekti (ui = \"basic\" või muu)"
 

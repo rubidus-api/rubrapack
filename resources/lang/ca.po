@@ -2013,6 +2013,9 @@ msgstr "languages conté codis com \"ko\" o \"zh_TW\" (2 o 3 lletres minúscules
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages és una matriu de codis d'idioma, com ara [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" va sol, no dins d'una matriu: inclou totes les llengües integrades"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages necessita un conjunt de diàlegs (ui = \"basic\" o un altre)"
 

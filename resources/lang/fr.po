@@ -2013,6 +2013,9 @@ msgstr "languages contient des codes comme \"ko\" ou \"zh_TW\" (2 ou 3 lettres m
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages est un tableau de codes de langue, comme [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" s'écrit seul, pas dans un tableau : il prend toutes les langues intégrées"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages a besoin d'un jeu de dialogues (ui = \"basic\" ou un autre)"
 

@@ -2015,6 +2015,9 @@ msgstr "languages کدهایی مانند \"ko\" یا \"zh_TW\" دارد (2 یا
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages آرایه‌ای از کدهای زبان است، مانند [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" تنها نوشته می‌شود، نه درون آرایه: همهٔ زبان‌های داخلی را می‌گیرد"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages به یک مجموعه گفتگو نیاز دارد (ui = \"basic\" یا دیگری)"
 

@@ -2013,6 +2013,9 @@ msgstr "languages chứa các mã như \"ko\" hoặc \"zh_TW\" (2 hoặc 3 chữ
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages là mảng mã ngôn ngữ, như [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" đứng riêng, không nằm trong mảng: nó lấy mọi ngôn ngữ có sẵn"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages cần một bộ hộp thoại (ui = \"basic\" hoặc khác)"
 

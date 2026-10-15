@@ -2013,6 +2013,9 @@ msgstr "languages \"ko\" не \"zh_TW\" сияқты кодтарды ұстай
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages - тіл кодтарының массиві, мысалы [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" массив ішінде емес, жеке жазылады: ол барлық кірістірілген тілдерді алады"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages үшін диалогтар жиыны керек (ui = \"basic\" немесе басқасы)"
 

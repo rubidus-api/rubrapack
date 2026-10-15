@@ -2013,6 +2013,9 @@ msgstr "languages mengandungi kod seperti \"ko\" atau \"zh_TW\" (2 atau 3 huruf 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages ialah tatasusunan kod bahasa, seperti [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" berdiri sendiri, bukan dalam tatasusunan: ia mengambil semua bahasa terbina dalam"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages memerlukan set dialog (ui = \"basic\" atau yang lain)"
 

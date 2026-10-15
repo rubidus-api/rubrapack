@@ -2015,6 +2015,9 @@ msgstr "يحمل languages رموزاً مثل \"ko\" أو \"zh_TW\" (حرفان
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages مصفوفة رموز لغات، مثل [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "تُكتب languages = \"all\" وحدها وليس داخل مصفوفة: فهي تضم كل اللغات المضمّنة"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "يحتاج languages إلى مجموعة حوار (ui = \"basic\" أو غيرها)"
 

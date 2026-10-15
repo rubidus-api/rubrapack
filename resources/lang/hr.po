@@ -2013,6 +2013,9 @@ msgstr "languages sadrži kodove kao \"ko\" ili \"zh_TW\" (2 ili 3 mala slova, t
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages je polje jezičnih kodova, npr. [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" stoji samostalno, ne u polju: uzima sve ugrađene jezike"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages treba skup dijaloga (ui = \"basic\" ili drugi)"
 

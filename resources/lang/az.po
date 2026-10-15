@@ -2013,6 +2013,9 @@ msgstr "languages \"ko\" və ya \"zh_TW\" kimi kodlar saxlayır (2-3 kiçik hər
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages dil kodları massividir, məsələn [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" massiv içində deyil, tək yazılır: bütün daxili dilləri götürür"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages üçün dialoq dəsti lazımdır (ui = \"basic\" və ya başqası)"
 

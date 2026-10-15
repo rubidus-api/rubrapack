@@ -2013,6 +2013,9 @@ msgstr "languages 에는 \"ko\" 나 \"zh_TW\" 같은 코드를 씁니다(소문�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages 는 [\"ko\"] 같은 언어 코드의 배열입니다"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" 는 배열에 넣지 않고 혼자 씁니다. 내장 언어를 모두 넣습니다"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages 에는 대화창 세트(ui = \"basic\" 등)가 필요합니다"
 

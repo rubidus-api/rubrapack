@@ -345,6 +345,31 @@ static int ui_lang_index(const rp_ir_t *ir, const char *code) {
 // A license file of the dialogs: .txt/.md shown as text, .rtf as it is.
 static bool license_kind_ok(const char *s) { return ends_with_ci(s, ".txt") || ends_with_ci(s, ".rtf") || ends_with_ci(s, ".md"); }
 
+// languages = "all" (RFC-0028): every built-in pack, region by region in the order of the language
+// page's regions (RFC-0028 section 4), the widely used first; a built-in pack this list does not
+// name comes after them, in its built-in order. A pack beside the source still replaces a built-in one.
+static void ui_all_languages(rp_ir_t *ir) {
+    static const char *const order[] = { "ko", "ja", "zh", "zh_TW",                         // 1 East Asia
+                                         "vi", "th", "id", "ms",                            // 2
+                                         "hi", "bn", "ta", "ur",                            // 3
+                                         "kk", "uz", "az",                                  // 4
+                                         "ar", "he", "fa", "tr",                            // 5
+                                         "de", "fr", "es", "it", "nl", "pt_PT", "pt_BR",    // 6, after English
+                                         "ca", "eu", "gl", "el",
+                                         "sv", "da", "nb", "fi", "et", "lv", "lt",          // 7
+                                         "pl", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "sr", "ru", "uk" };    // 8
+    for (int pass = 0; pass < 2; ++pass) {
+        size_t n = pass == 0 ? sizeof order / sizeof order[0] : rp_lang_embedded_count;
+        for (size_t i = 0; i < n; ++i) {
+            const char *code = pass == 0 ? order[i] : rp_lang_embedded[i].code;
+            bool built_in = pass == 1;
+            for (size_t e = 0; !built_in && e < rp_lang_embedded_count; ++e) built_in = strcmp(rp_lang_embedded[e].code, code) == 0;
+            if (!built_in || ui_lang_index(ir, code) >= 0 || ir->ui_lang_count == RP_UI_LANG_MAX) continue;
+            snprintf(ir->ui_langs[ir->ui_lang_count++].code, sizeof ir->ui_langs[0].code, "%s", code);
+        }
+    }
+}
+
 // [ui] languages and its name-xx / font-xx / langid-xx / license-xx (RFC-0012). English is always
 // there, first: the dialogs' default.
 static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
@@ -353,9 +378,15 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
     memcpy(ir->ui_langs[0].code, "en", 3);
     const rp_tkey_t *lk = uit ? ir_find_key(uit, "languages") : NULL;
     if (lk) {
-        if (lk->val.kind != RP_TV_ARRAY) ERR(c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
+        bool all = lk->val.kind == RP_TV_STRING && lk->val.str && strcmp(lk->val.str, "all") == 0;
+        if (all) ui_all_languages(ir);
+        else if (lk->val.kind != RP_TV_ARRAY) ERR(c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
         for (size_t k = 0; lk->val.kind == RP_TV_ARRAY && k < lk->val.count; ++k) {
             const rp_tval_t *v = &lk->val.items[k];
+            if (v->kind == RP_TV_STRING && v->str && strcmp(v->str, "all") == 0) {
+                ERR(c, lk->pos, "RP1316", "languages = \"all\" stands alone, not in an array: it takes every built-in language");
+                continue;
+            }
             char *code = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
             size_t n = code ? strlen(code) : 0;
             bool ok = code && ir_lang_code_ok(code);

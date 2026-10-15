@@ -2013,6 +2013,9 @@ msgstr "languages conține coduri ca \"ko\" sau \"zh_TW\" (2 sau 3 litere mici, 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages este un tablou de coduri de limbă, de exemplu [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" stă singur, nu într-o matrice: include toate limbile integrate"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages are nevoie de un set de dialoguri (ui = \"basic\" sau altul)"
 

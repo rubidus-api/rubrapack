@@ -2013,6 +2013,9 @@ msgstr "languages obsahuje kódy jako \"ko\" nebo \"zh_TW\" (2 nebo 3 malá pís
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages je pole kódů jazyků, například [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" stojí samostatně, ne v poli: přidá všechny vestavěné jazyky"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages potřebuje sadu dialogů (ui = \"basic\" nebo jinou)"
 

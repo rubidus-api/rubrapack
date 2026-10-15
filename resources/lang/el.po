@@ -2013,6 +2013,9 @@ msgstr "το languages περιέχει κωδικούς όπως \"ko\" ή \"zh
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "το languages είναι πίνακας κωδικών γλώσσας, π.χ. [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "Το languages = \"all\" γράφεται μόνο του, όχι μέσα σε πίνακα: περιλαμβάνει όλες τις ενσωματωμένες γλώσσες"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "το languages χρειάζεται σύνολο παραθύρων διαλόγου (ui = \"basic\" ή άλλο)"
 

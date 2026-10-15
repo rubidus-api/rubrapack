@@ -2013,6 +2013,9 @@ msgstr "languages містить коди на зразок \"ko\" або \"zh_T
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages - масив кодів мов, наприклад [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" пишеться окремо, не в масиві: він додає всі вбудовані мови"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages потребує набору діалогових вікон (ui = \"basic\" або іншого)"
 

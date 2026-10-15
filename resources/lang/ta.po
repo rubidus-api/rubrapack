@@ -2013,6 +2013,9 @@ msgstr "languages \"ko\" அல்லது \"zh_TW\" போன்ற குற�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages என்பது மொழிக் குறியீடுகளின் அணி, எ.கா. [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" தனியாக எழுதப்படும், ஒரு அணியில் அல்ல: இது உள்ளமைந்த எல்லா மொழிகளையும் எடுக்கும்"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages க்கு ஓர் உரையாடல் தொகுப்பு தேவை (ui = \"basic\" அல்லது வேறொன்று)"
 

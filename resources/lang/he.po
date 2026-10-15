@@ -2015,6 +2015,9 @@ msgstr "languages מכיל קודים כמו \"ko\" או \"zh_TW\" (2 או 3 א�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages הוא מערך של קודי שפה, כמו [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" נכתב לבדו, לא בתוך מערך: הוא כולל את כל השפות המובנות"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages דורש ערכת תיבות דו-שיח (ui = \"basic\" או אחרת)"
 

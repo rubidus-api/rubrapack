@@ -2013,6 +2013,9 @@ msgstr "a languages olyan kódokat tartalmaz, mint \"ko\" vagy \"zh_TW\" (2 vagy
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "a languages nyelvkódok tömbje, például [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" önállóan áll, nem tömbben: az összes beépített nyelvet felveszi"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "a languages párbeszédkészletet igényel (ui = \"basic\" vagy más)"
 

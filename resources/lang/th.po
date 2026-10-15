@@ -2013,6 +2013,9 @@ msgstr "languages เก็บรหัสเช่น \"ko\" หรือ \"zh_
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages เป็นอาร์เรย์ของรหัสภาษา เช่น [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" ต้องเขียนเดี่ยว ๆ ไม่อยู่ในอาร์เรย์: จะใส่ทุกภาษาที่มีในตัว"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages ต้องมีชุดกล่องโต้ตอบ (ui = \"basic\" หรือชุดอื่น)"
 

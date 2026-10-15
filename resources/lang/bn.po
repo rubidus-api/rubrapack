@@ -2013,6 +2013,9 @@ msgstr "languages-এ \"ko\" বা \"zh_TW\"-এর মতো কোড থা�
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages হলো ভাষা কোডের একটি অ্যারে, যেমন [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" একা লেখা হয়, কোনো অ্যারের ভেতরে নয়: এটি সব অন্তর্নির্মিত ভাষা নেয়"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages-এর জন্য একটি ডায়ালগ সেট দরকার (ui = \"basic\" বা অন্য)"
 

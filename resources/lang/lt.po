@@ -2013,6 +2013,9 @@ msgstr "languages turi kodus kaip \"ko\" arba \"zh_TW\" (2 arba 3 mažosios raid
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages yra kalbų kodų masyvas, pvz., [\"ko\"]"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" rašomas atskirai, ne masyve: jis įtraukia visas įtaisytąsias kalbas"
+
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages reikia dialogų rinkinio (ui = \"basic\" ar kito)"
 
