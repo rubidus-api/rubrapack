@@ -771,6 +771,9 @@ msgstr "Versi dan naik taraf"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer membenarkan paling tinggi 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "nama Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] memerlukan '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' bukan ID dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' tidak ditakrifkan"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction mesti \"in\" atau \"out\" (diterima '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "escape tidak dikenali \\{1} (gunakan '...' untuk teks dengan garis condo
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "pilihan inspect tidak dikenali (gunakan nama jadual, --summary, --files atau --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "kunci tidak dikenali '{1}' dalam [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "kunci tidak dikenali '{1}' dalam [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "kunci tidak dikenali '{1}' dalam [{2}{3}{4}] (adakah maksud anda '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "pilihan {1} '{2}' tidak dikenali atau tidak lengkap"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "jadual tidak dikenali [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "jadual tidak dikenali [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "jadual tidak dikenali [{1}{2}{3}] (adakah maksud anda [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "membongkar pakej ke direktori baharu, disusun seperti semasa dipasang"

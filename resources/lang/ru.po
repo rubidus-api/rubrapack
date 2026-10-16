@@ -771,6 +771,9 @@ msgstr "Версии и обновления"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer допускает не более 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "имя Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] требует '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' не является ID dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' не определен"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction должен быть \"in\" или \"out\" (получено '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "неизвестное экранирование \\{1} (для текс
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "неизвестный параметр inspect (используйте имя таблицы, --summary, --files или --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "неизвестный ключ '{1}' в [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "неизвестный ключ '{1}' в [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "неизвестный ключ '{1}' в [{2}{3}{4}] (возможно, имелось в виду '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "неизвестный или неполный параметр {1} '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "неизвестная таблица [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "неизвестная таблица [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "неизвестная таблица [{1}{2}{3}] (возможно, имелось в виду [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "распаковать пакет в новый каталог в том виде, как он устанавливается"

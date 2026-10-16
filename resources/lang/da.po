@@ -771,6 +771,9 @@ msgstr "Versioner og opgraderinger"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer tillader højst 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windows-navn"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] kræver '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' er ikke et dir-ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' er ikke defineret"
+
+msgid "dir ID"
+msgstr "dir-id"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction skal være \"in\" eller \"out\" (fik '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "ukendt escapesekvens \\{1} (brug '...' til tekst med omvendte skråstreg
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "ukendt inspect-indstilling (brug et tabelnavn, --summary, --files eller --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "ukendt nøgle '{1}' i [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "ukendt nøgle '{1}' i [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "ukendt nøgle '{1}' i [{2}{3}{4}] (mente du '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "ukendt eller ufuldstændig {1}-indstilling '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "ukendt tabel [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "ukendt tabel [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "ukendt tabel [{1}{2}{3}] (mente du [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "udpak en pakke i en ny mappe, ordnet som den installeres"

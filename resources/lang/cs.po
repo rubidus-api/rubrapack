@@ -771,6 +771,9 @@ msgstr "Verze a upgrady"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Instalační služba systému Windows povoluje nejvýše 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "název Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] potřebuje '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' není ID dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' není definován"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction musí být \"in\" nebo \"out\" (zadáno '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "neznámá escape sekvence \\{1} (pro text se zpětnými lomítky použij
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "neznámá volba inspect (použijte název tabulky, --summary, --files nebo --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "neznámý klíč '{1}' v [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "neznámý klíč '{1}' v [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "neznámý klíč '{1}' v [{2}{3}{4}] (měli jste na mysli '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "neznámá nebo neúplná volba {1} '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "neznámá tabulka [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "neznámá tabulka [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "neznámá tabulka [{1}{2}{3}] (měli jste na mysli [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "rozbalí balíček do nového adresáře, uspořádaný tak, jak se instaluje"

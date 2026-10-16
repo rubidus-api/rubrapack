@@ -771,6 +771,9 @@ msgstr "Versiuni și actualizări"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer permite cel mult 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "nume Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] are nevoie de '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' nu este un ID dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' nu este definit"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction trebuie să fie \"in\" sau \"out\" (primit '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "secvență escape necunoscută \\{1} (folosiți '...' pentru text cu bar
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "opțiune inspect necunoscută (folosiți un nume de tabel, --summary, --files sau --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "cheie necunoscută '{1}' în [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "cheie necunoscută '{1}' în [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "cheie necunoscută '{1}' în [{2}{3}{4}] (ați vrut să scrieți '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "opțiune {1} necunoscută sau incompletă '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "tabel necunoscut [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "tabel necunoscut [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "tabel necunoscut [{1}{2}{3}] (ați vrut să scrieți [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "despachetează un pachet într-un director nou, așezat cum se instalează"

@@ -771,6 +771,9 @@ msgstr "Versijas un jauninājumi"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer pieļauj ne vairāk kā 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windows nosaukums"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] nepieciešams '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' nav dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' nav definēts"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction jābūt \"in\" vai \"out\" (saņemts '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "nezināma atsoļa secība \\{1} (izmantojiet '...' tekstam ar apgrieztaj
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "nezināma inspect opcija (izmantojiet tabulas nosaukumu, --summary, --files vai --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "nezināma atslēga '{1}' tabulā [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "nezināma atslēga '{1}' tabulā [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "nezināma atslēga '{1}' tabulā [{2}{3}{4}] (vai domājāt '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "nezināma vai nepilnīga {1} opcija '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "nezināma tabula [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "nezināma tabula [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "nezināma tabula [{1}{2}{3}] (vai domājāt [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "izpakot pakotni jaunā direktorijā, izkārtotu kā instalējot"

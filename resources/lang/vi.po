@@ -771,6 +771,9 @@ msgstr "Phiên bản và nâng cấp"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer cho phép tối đa 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "tên Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] cần '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' không phải dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' chưa được định nghĩa"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction phải là \"in\" hoặc \"out\" (nhận được '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "chuỗi thoát không xác định \\{1} (dùng '...' cho văn bản có
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "tùy chọn inspect không xác định (dùng tên bảng, --summary, --files hoặc --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "khóa không xác định '{1}' trong [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "khóa không xác định '{1}' trong [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "khóa không xác định '{1}' trong [{2}{3}{4}] (ý bạn là '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "tùy chọn {1} '{2}' không xác định hoặc chưa đầy đủ"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "bảng không xác định [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "bảng không xác định [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "bảng không xác định [{1}{2}{3}] (ý bạn là [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "giải nén gói vào một thư mục mới, sắp xếp như khi cài đặt"

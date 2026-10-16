@@ -771,6 +771,9 @@ msgstr "সংস্করণ ও আপগ্রেড"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer সর্বোচ্চ 255.255.65535(.65535) অনুমোদন করে"
 
+msgid "Windows name"
+msgstr "Windows নাম"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}]-এর জন্য '{4}' দরকার"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' একটি dir ID নয়"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' সংজ্ঞায়িত নয়"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction-কে \"in\" বা \"out\" হতে হবে ('{1}' পাওয়া গেছে)"
@@ -2967,14 +2973,20 @@ msgstr "অজানা এস্কেপ \\{1} (ব্যাকস্ল্য
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "অজানা inspect বিকল্প (টেবিলের নাম, --summary, --files বা --streams ব্যবহার করুন)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}]{5}{6}{7}-এ অজানা কী '{1}'"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}]-এ অজানা কী '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] (আপনি কি '{5}' বোঝাতে চেয়েছেন?)-এ অজানা কী '{1}'"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "অজানা বা অসম্পূর্ণ {1} বিকল্প '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "অজানা টেবিল [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "অজানা টেবিল [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "অজানা টেবিল [{1}{2}{3}] (আপনি কি [{4}] বোঝাতে চেয়েছেন?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "একটি প্যাকেজ নতুন ডিরেক্টরিতে খুলুন, ইনস্টলের মতো করে সাজানো"

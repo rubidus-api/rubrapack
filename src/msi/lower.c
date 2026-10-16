@@ -557,6 +557,7 @@ typedef struct {
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
     const char      *pplan;            // RP_PURGE ([remove] recursive, [registry] on = "uninstall")
+    const char      *newer_cond, *older_cond;   // RP_RefuseDowngrade's and RP_RefuseOld's conditions (refusal)
     size_t          *group_end, ngroups;   // cabinet g holds files [group_end[g - 1], group_end[g])
     rp_msi_wstream_t *streams;         // embedded cabinets
     rp_build_file_t *ext;              // or external ones
@@ -1765,6 +1766,38 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
     return err;
 }
 
+// A refusal's error action (type 19) in the dialogs' language - an older package over a newer one
+// spoke the package's language whatever the dialogs' was (x62). An author's text stays one action.
+// Past RP_UI_LANG_ACTIONS the text is RpT_<id>, which RpLangApply sets at 19 (ui.c, which registers it); with fewer
+// languages each whose text differs gets an action of its own on RPLANGUAGE (settled at 19 in both
+// sequences), numbered from `first`, and the package's own text takes the rest (*cond).
+static void refusal(pkg_t *pk, const char *name, const char *id, const char *custom, const char *suffix, const char *found, int first,
+                    const char **cond) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    *cond = found;
+    const char *base = custom ? escape_formatted(k, custom) : rp_ui_text_builtin(id, package_lang(ir));
+    bool multi = ir->ui && ir->ui_lang_count > 1, table = multi && ir->ui_lang_count > RP_UI_LANG_ACTIONS;    // as ui.c, built later
+    if (custom == NULL && table) base = kprintf(k, "[RpT_%s]", id, NULL);
+    s_(&pk->customaction, name); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, kprintf(k, "%s%s", base, suffix));
+    if (custom || !multi || table) return;
+    const char *others = "";
+    int seq = first;
+    for (size_t li = 0; li < ir->ui_lang_count && li < RP_UI_LANG_ACTIONS; ++li) {
+        const char *code = ir->ui_langs[li].code, *text = rp_ui_text_for(ir, id, li);
+        if (text == NULL || strcmp(text, base) == 0) continue;
+        const char *act = kprintf(k, "%s_%s", name, code);
+        const char *is = kprintf(k, "RPLANGUAGE = \"%s\"", code, NULL);
+        s_(&pk->customaction, act); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, kprintf(k, "%s%s", text, suffix));
+        const char *c = kprintf(k, "%s AND %s", found, is);
+        s_(&pk->iexec, act); s_(&pk->iexec, c); i_(&pk->iexec, seq);
+        s_(&pk->iui, act); s_(&pk->iui, c); i_(&pk->iui, seq);
+        ++seq;
+        others = *others ? kprintf(k, "%s OR %s", others, is) : is;
+    }
+    if (*others) *cond = kprintf(k, "%s AND NOT (%s)", found, others);
+}
+
 // Upgrade: detect same-or-newer (refused below), remove older (RFC-0001 9.5)
 static void lower_upgrade(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
@@ -1786,17 +1819,12 @@ static void lower_upgrade(pkg_t *pk) {
         i_(&pk->upgrade, 0x100); null_(&pk->upgrade); s_(&pk->upgrade, kdup(k, n));
     }
 
-    const char *message = ir->downgrade_message ? escape_formatted(k, ir->downgrade_message)
-                          : rp_ui_text_builtin("NewerInstalled", package_lang(ir));
-    s_(&pk->customaction, "RP_RefuseDowngrade"); i_(&pk->customaction, 19); null_(&pk->customaction); s_(&pk->customaction, message);
+    refusal(pk, "RP_RefuseDowngrade", "NewerInstalled", ir->downgrade_message, "", "RP_NEWER_FOUND", 32, &pk->newer_cond);
     // RFC-0003 section 9 (T1): an old version that must be removed by hand first. The removal command
     // names the found product ([RP_REFUSED_OLD]) and keeps Restart Manager off for that removal.
     if (ir->refuse_below) {
-        const char *cmd = "msiexec /x [RP_REFUSED_OLD] /qn MSIRESTARTMANAGERCONTROL=Disable";
-        const char *text = ir->refuse_message ? escape_formatted(k, ir->refuse_message)
-                           : rp_ui_text_builtin("OlderRefused", package_lang(ir));
-        s_(&pk->customaction, "RP_RefuseOld"); i_(&pk->customaction, 19); null_(&pk->customaction);
-        s_(&pk->customaction, kprintf(k, "%s %s", text, cmd));
+        refusal(pk, "RP_RefuseOld", "OlderRefused", ir->refuse_message, " msiexec /x [RP_REFUSED_OLD] /qn MSIRESTARTMANAGERCONTROL=Disable",
+                "RP_REFUSED_OLD", 40, &pk->older_cond);
     }
 }
 
@@ -1822,7 +1850,8 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     // InstallInitialize and RemoveExistingProducts (error 2613 on the VM, lint RP2019).
     size_t na = ir->action_count;
     for (size_t i = 0; i < sizeof exec / sizeof exec[0]; ++i) {
-        s_(&pk->iexec, exec[i].action); s_(&pk->iexec, exec[i].cond); i_(&pk->iexec, exec[i].seq);
+        const char *cond = exec[i].seq == 30 && pk->newer_cond ? pk->newer_cond : exec[i].cond;
+        s_(&pk->iexec, exec[i].action); s_(&pk->iexec, cond); i_(&pk->iexec, exec[i].seq);
     }
     if (ir->font_count) {           // MS Learn "Suggested InstallExecuteSequence"
         s_(&pk->iexec, "UnregisterFonts"); null_(&pk->iexec); i_(&pk->iexec, 2500);
@@ -1902,8 +1931,8 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "WriteRegistryValues"); null_(&pk->iexec); i_(&pk->iexec, 5000);
     }
     if (ir->refuse_below) {
-        s_(&pk->iexec, "RP_RefuseOld"); s_(&pk->iexec, "RP_REFUSED_OLD"); i_(&pk->iexec, 31);
-        s_(&pk->iui, "RP_RefuseOld"); s_(&pk->iui, "RP_REFUSED_OLD"); i_(&pk->iui, 31);
+        s_(&pk->iexec, "RP_RefuseOld"); s_(&pk->iexec, pk->older_cond); i_(&pk->iexec, 31);
+        s_(&pk->iui, "RP_RefuseOld"); s_(&pk->iui, pk->older_cond); i_(&pk->iui, 31);
     }
     for (size_t i = 0; i < na; ++i) {
         const rp_ir_action_t *a = &ir->actions[i];
@@ -1951,7 +1980,8 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         { "MigrateFeatureStates", NULL, 1200 }, { "ExecuteAction", NULL, 1300 },
     };
     for (size_t i = 0; i < sizeof ui_rows / sizeof ui_rows[0]; ++i) {
-        s_(&pk->iui, ui_rows[i].action); s_(&pk->iui, ui_rows[i].cond); i_(&pk->iui, ui_rows[i].seq);
+        const char *cond = ui_rows[i].seq == 30 && pk->newer_cond ? pk->newer_cond : ui_rows[i].cond;
+        s_(&pk->iui, ui_rows[i].action); s_(&pk->iui, cond); i_(&pk->iui, ui_rows[i].seq);
     }
     if (pk->details) {                  // with the progress page up (1280), around ExecuteAction (1300)
         s_(&pk->iui, "RP_Details"); null_(&pk->iui); i_(&pk->iui, 1290);

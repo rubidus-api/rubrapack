@@ -771,6 +771,9 @@ msgstr "Versies en upgrades"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer staat hoogstens 255.255.65535(.65535) toe"
 
+msgid "Windows name"
+msgstr "Windows-naam"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] heeft '{4}' nodig"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' is geen dir-ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' is niet gedefinieerd"
+
+msgid "dir ID"
+msgstr "dir-ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction moet \"in\" of \"out\" zijn (gekregen: '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "onbekende escape \\{1} (gebruik '...' voor tekst met backslashes)"
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "onbekende inspect-optie (gebruik een tabelnaam, --summary, --files of --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "onbekende sleutel '{1}' in [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "onbekende sleutel '{1}' in [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "onbekende sleutel '{1}' in [{2}{3}{4}] (bedoelde u '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "onbekende of onvolledige {1}-optie '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "onbekende tabel [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "onbekende tabel [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "onbekende tabel [{1}{2}{3}] (bedoelde u [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "een pakket uitpakken in een nieuwe map, ingedeeld zoals het installeert"

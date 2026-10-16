@@ -771,6 +771,9 @@ msgstr "Versões e atualizações"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "O Windows Installer permite no máximo 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "nome do Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] precisa de '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "o dir '{1}' não é um ID de dir"
 
 msgid "dir '%s' is not defined"
 msgstr "o dir '{1}' não está definido"
+
+msgid "dir ID"
+msgstr "ID de dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction deve ser \"in\" ou \"out\" (recebido '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "escape desconhecido \\{1} (use '...' para texto com barras invertidas)"
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "opção de inspect desconhecida (use um nome de tabela, --summary, --files ou --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "chave desconhecida '{1}' em [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "chave desconhecida '{1}' em [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "chave desconhecida '{1}' em [{2}{3}{4}] (você quis dizer '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "opção {1} desconhecida ou incompleta '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "tabela desconhecida [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "tabela desconhecida [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "tabela desconhecida [{1}{2}{3}] (você quis dizer [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "descompacta um pacote em um diretório novo, organizado como é instalado"

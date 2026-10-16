@@ -35,7 +35,7 @@ source = "dist/hello.exe"</code></pre>
 <ul><li><code>[define]</code> 에는 변수를 둔다. 문자열 안 어디서든 <code>$(VERSION)</code> 은 변수 값으로 바뀐다. 여기서 기본값은 <code>1.0.0</code> 이다.</li><li>명령줄의 <code>-D 이름=값</code> 은 그 빌드 한 번에서 변수를 덮어쓴다:</li></ul>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack build hello.toml -o hello-1.0.0.msi
 C:\work\hello&gt; rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0</code></pre>
-<ul><li><code>downgrade-message</code> 는 사용자가 더 새 판 위에 옛(또는 같은) 판을 설치하려 할 때 보는 안내문이다. 없으면 rubrapack 은 "The same or a newer version of [ProductName] is already installed." 를 쓴다(<code>[ProductName]</code> 은 이름으로 바뀐다).</li></ul>
+<ul><li><code>downgrade-message</code> 는 사용자가 더 새 판 위에 옛(또는 같은) 판을 설치하려 할 때 보는 안내문이다. 없으면 rubrapack 은 "The same or a newer version of [ProductName] is already installed." 를 쓴다(<code>[ProductName]</code> 은 이름으로 바뀐다). 대화창 언어가 여럿이면(7장) 이 문구는 고른 언어로 나온다. 직접 쓴 안내문은 쓴 그대로 나온다.</li></ul>
 <h3 id="windows-는-두-판을-어떻게-다루나">3.2 Windows 는 두 판을 어떻게 다루나<a class="plink" href="#windows-는-두-판을-어떻게-다루나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p><code>hello-1.0.0.msi</code> 를 설치하고 이어서 <code>hello-1.1.0.msi</code> 를 설치한다. Windows Installer 는 새 패키지가 같은 업그레이드 코드에 더 높은 판임을 보고, 1.0.0 을 지운 뒤 1.1.0 을 설치한다 - "설치된 앱"에는 항목 하나가 남고 이제 1.1.0 을 보인다. 이것을 <em>메이저 업그레이드</em>라고 하며, rubrapack 의 패키지는 이렇게 업그레이드한다. 새 판은 늘 완전한 패키지이고, 새 판을 설치하는 데 옛 판이 필요하지 않다. (설치된 판을 그 자리에서 고치는 것은 <a href="#작은-수정을-패치로-patch">아래</a>의 패치다.)</p>
 <p>이제 <code>hello-1.0.0.msi</code> 를 다시 설치해 본다: Windows 가 다운그레이드 안내문을 보이고 아무것도 바꾸지 않는다. <code>hello-1.1.0.msi</code> 를 한 번 더 실행하는 것도 오류가 아니다. 설치된 판과 제품 코드가 같으므로(아래 참고) Windows 는 제품이 이미 설치되어 있다고 알아보고 두 번 설치하지 않는다. 설치된 판을 고치려면 - 지워진 파일을 되살리는 등 - <code>msiexec /fa hello-1.1.0.msi</code> 를 쓴다.</p>

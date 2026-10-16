@@ -771,6 +771,9 @@ msgstr "Нұсқалар және жаңартулар"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer ең көбі 255.255.65535(.65535) рұқсат етеді"
 
+msgid "Windows name"
+msgstr "Windows атауы"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] үшін '{4}' керек"
 
@@ -1682,6 +1685,9 @@ msgstr "'{1}' dir - dir ID емес"
 
 msgid "dir '%s' is not defined"
 msgstr "'{1}' dir анықталмаған"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction \"in\" немесе \"out\" болуы керек ('{1}' алынды)"
@@ -2967,14 +2973,20 @@ msgstr "белгісіз басқару тізбегі \\{1} (кері қиға�
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "белгісіз inspect опциясы (кесте атауын, --summary, --files не --streams пайдаланыңыз)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}] ішіндегі белгісіз кілт '{1}'{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}] ішіндегі белгісіз кілт '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] ішіндегі белгісіз кілт '{1}' ('{5}' дегіңіз келді ме?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "белгісіз не толық емес {1} опциясы '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "белгісіз кесте [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "белгісіз кесте [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "белгісіз кесте [{1}{2}{3}] ([{4}] дегіңіз келді ме?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "буманы жаңа каталогқа орнатылатындай етіп ашу"

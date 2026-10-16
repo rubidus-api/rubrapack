@@ -771,6 +771,9 @@ msgstr "版本與升級"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer 最多允許 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windows 名稱"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] 需要 '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' 不是 dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' 未定義"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction 必須是 \"in\" 或 \"out\"(實際為 '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "未知的轉義 \\{1}(含反斜槓的文字請用 '...')"
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "未知的 inspect 選項(請使用表名、--summary、--files 或 --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}] 中的未知鍵 '{1}'{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}] 中的未知鍵 '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] 中的未知鍵 '{1}' (您是否想輸入 '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "未知或不完整的 {1} 選項 '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "未知的表 [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "未知的表 [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "未知的表 [{1}{2}{3}] (您是否想輸入 [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "將安裝套件解壓縮到新目錄，按安裝後的版面配置排列"

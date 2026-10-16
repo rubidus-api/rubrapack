@@ -773,6 +773,9 @@ msgstr "نسخه‌ها و ارتقاها"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer حداکثر 255.255.65535(.65535) را مجاز می‌داند"
 
+msgid "Windows name"
+msgstr "نام Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] به '{4}' نیاز دارد"
 
@@ -1684,6 +1687,9 @@ msgstr "dir '{1}' یک dir ID نیست"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' تعریف نشده است"
+
+msgid "dir ID"
+msgstr "شناسه dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction باید \"in\" یا \"out\" باشد ('{1}' دریافت شد)"
@@ -2969,14 +2975,20 @@ msgstr "دنباله گریز ناشناخته \\{1} (برای متن دارای
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "گزینه inspect ناشناخته (از نام جدول، --summary، --files یا --streams استفاده کنید)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "کلید ناشناخته '{1}' در [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "کلید ناشناخته '{1}' در [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "کلید ناشناخته '{1}' در [{2}{3}{4}] (منظورتان '{5}' بود؟)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "گزینه {1} ناشناخته یا ناقص '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "جدول ناشناخته [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "جدول ناشناخته [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "جدول ناشناخته [{1}{2}{3}] (منظورتان [{4}] بود؟)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "یک بسته را در یک پوشه تازه باز کنید، چیده‌شده همان‌طور که نصب می‌شود"

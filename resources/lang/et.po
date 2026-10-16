@@ -771,6 +771,9 @@ msgstr "Versioonid ja täiendused"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer lubab kuni 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windowsi nimi"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] vajab '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' ei ole dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' pole määratletud"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction peab olema \"in\" või \"out\" (saadi '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "tundmatu paojada \\{1} (kasutage '...' kurakaldkriipsudega teksti jaoks)
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "tundmatu inspect'i suvand (kasutage tabelinime, --summary, --files või --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "tundmatu võti '{1}' tabelis [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "tundmatu võti '{1}' tabelis [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "tundmatu võti '{1}' tabelis [{2}{3}{4}] (kas mõtlesite '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "tundmatu või puudulik {1} suvand '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "tundmatu tabel [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "tundmatu tabel [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "tundmatu tabel [{1}{2}{3}] (kas mõtlesite [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "paki paketi lahti uude kataloogi, paigutusega nagu installimisel"

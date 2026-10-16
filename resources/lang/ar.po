@@ -773,6 +773,9 @@ msgstr "الإصدارات والترقيات"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "يسمح Windows Installer بحد أقصى 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "اسم Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] يحتاج إلى '{4}'"
 
@@ -1684,6 +1687,9 @@ msgstr "dir ‏'{1}' ليس معرّف dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir ‏'{1}' غير معرّف"
+
+msgid "dir ID"
+msgstr "معرّف dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "يجب أن يكون direction هو \"in\" أو \"out\" (الموجود '{1}')"
@@ -2969,14 +2975,20 @@ msgstr "تسلسل هروب غير معروف \\{1} (استخدم '...' للنص
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "خيار inspect غير معروف (استخدم اسم جدول، أو --summary أو --files أو --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "مفتاح غير معروف '{1}' في [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "مفتاح غير معروف '{1}' في [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "مفتاح غير معروف '{1}' في [{2}{3}{4}] (هل تقصد '{5}'؟)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "خيار {1} غير معروف أو غير مكتمل '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "جدول غير معروف [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "جدول غير معروف [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "جدول غير معروف [{1}{2}{3}] (هل تقصد [{4}]؟)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "فك حزمة في دليل جديد، بالترتيب الذي تُثبَّت به"

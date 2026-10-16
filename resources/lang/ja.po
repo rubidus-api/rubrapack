@@ -771,6 +771,9 @@ msgstr "バージョンとアップグレード"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows インストーラーで使えるのは 255.255.65535(.65535) までです"
 
+msgid "Windows name"
+msgstr "Windows の名前"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] には '{4}' が必要です"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' は dir ID ではありません"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' は定義されていません"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction は \"in\" か \"out\" でなければなりません ('{1}' でした)"
@@ -2967,14 +2973,20 @@ msgstr "不明なエスケープ \\{1} (バックスラッシュを含む文字�
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "不明な inspect のオプション (テーブル名、--summary、--files、--streams を使ってください)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}] の不明なキー '{1}'{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}] の不明なキー '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] の不明なキー '{1}' ('{5}' のことですか?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "不明か不完全な {1} のオプション '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "不明なテーブル [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "不明なテーブル [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "不明なテーブル [{1}{2}{3}] ([{4}] のことですか?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "パッケージを新しいディレクトリに、インストールされる形で展開します"

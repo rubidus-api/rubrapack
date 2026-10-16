@@ -771,6 +771,9 @@ msgstr "Versiot ja päivitykset"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer sallii enintään 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windows-nimi"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] tarvitsee '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' ei ole dir-tunnus"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' ei ole määritetty"
+
+msgid "dir ID"
+msgstr "dir-tunnus"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "directionin on oltava \"in\" tai \"out\" (saatiin '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "tuntematon koodinvaihtojakso \\{1} (käytä '...' kenoviivoja sisältäv
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "tuntematon inspect-valitsin (käytä taulukon nimeä, --summary, --files tai --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "tuntematon avain '{1}' kohteessa [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "tuntematon avain '{1}' kohteessa [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "tuntematon avain '{1}' kohteessa [{2}{3}{4}] (tarkoititko '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "tuntematon tai keskeneräinen {1}-valitsin '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "tuntematon taulukko [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "tuntematon taulukko [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "tuntematon taulukko [{1}{2}{3}] (tarkoititko [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "pura paketti uuteen hakemistoon sellaisena kuin se asentuu"

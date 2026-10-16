@@ -771,6 +771,9 @@ msgstr "Verziók és frissítések"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "a Windows Installer legfeljebb 255.255.65535(.65535) értéket enged"
 
+msgid "Windows name"
+msgstr "Windows-név"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] igényli ezt: '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "a(z) '{1}' dir nem dir-azonosító"
 
 msgid "dir '%s' is not defined"
 msgstr "a(z) '{1}' dir nincs definiálva"
+
+msgid "dir ID"
+msgstr "dir-azonosító"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "a direction értéke \"in\" vagy \"out\" lehet (kapott: '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "ismeretlen escape-szekvencia: \\{1} (fordított perjeles szöveghez hasz
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "ismeretlen inspect kapcsoló (használjon táblanevet, --summary, --files vagy --streams kapcsolót)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "ismeretlen kulcs: '{1}' itt: [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "ismeretlen kulcs: '{1}' itt: [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "ismeretlen kulcs: '{1}' itt: [{2}{3}{4}] (erre gondolt: '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "ismeretlen vagy hiányos {1} kapcsoló: '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "ismeretlen tábla: [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "ismeretlen tábla: [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "ismeretlen tábla: [{1}{2}{3}] (erre gondolt: [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "csomag kibontása új könyvtárba, úgy elrendezve, ahogy települ"

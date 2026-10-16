@@ -570,18 +570,19 @@ enum { VIS = 1, EN = 2, SUNKEN = 4, INDIRECT = 8, TRANSPARENT = 0x10000, NOPREFI
 // dialog twice: as made, and mirrored as <name>_RTL - the controls at the other side, RTL reading
 // order, right-aligned text, scroll bars on the left. The private property RpRtl picks the set:
 // each dialog event and sequence row goes to both, with NOT RpRtl or RpRtl. FilesInUse, which the
-// engine finds by its name, has no twin.
+// engine finds by its name, has no twin: it holds both sets, as the exit pages (merged).
 enum { DLG_BIDI = 0x80 | 0x100 | 0x200, CTL_RTLRO = 0x20, CTL_RIGHT = 0x40, CTL_LEFTSCROLL = 0x80 };
 
 // The exit pages are shown by their InstallUISequence numbers (-1, -2, -3), where the engine takes
 // one row for each number (observed, x62): they hold both sets instead - the mirrored controls as
-// <name>_R in the same dialog, each set shown by RpRtl (merge_rows).
+// <name>_R in the same dialog, each set shown by RpRtl (merge_rows). So does FilesInUse.
 static bool merged(const ctx_t *c, const char *dlg) {
-    return c->rtl_any && dlg && (strcmp(dlg, "RpExitDlg") == 0 || strcmp(dlg, "RpUserExitDlg") == 0 || strcmp(dlg, "RpFatalDlg") == 0);
+    return c->rtl_any && dlg && (strcmp(dlg, "RpExitDlg") == 0 || strcmp(dlg, "RpUserExitDlg") == 0 || strcmp(dlg, "RpFatalDlg") == 0 ||
+                                 strcmp(dlg, "FilesInUse") == 0);
 }
 
 static const char *dn(ctx_t *c, const char *name) {
-    return c->rtl && name && strcmp(name, "FilesInUse") != 0 && !merged(c, name) ? keep(c, name, "_RTL") : name;
+    return c->rtl && name && !merged(c, name) ? keep(c, name, "_RTL") : name;
 }
 
 // A control's name in a merged page's mirrored set.
@@ -618,7 +619,7 @@ static void control(ctx_t *c, const char *dlg, const char *name, const char *typ
         name = mn(c, dlg, name);
         if (c->rtl) attrs &= ~VIS;          // shown by its conditions
     }
-    if (c->rtl && strcmp(dlg, "FilesInUse") != 0) {
+    if (c->rtl) {
         dlg = dn(c, dlg);
         x = c->dw - x - w;
         if (strcmp(type, "PathEdit") == 0 || strcmp(type, "Edit") == 0 || strcmp(type, "DirectoryCombo") == 0) attrs |= CTL_RIGHT | CTL_LEFTSCROLL;
@@ -1727,6 +1728,13 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
         s_(c, &c->acttext, c->multi ? reg_text(c, keep(c, "Act_", a->action), src, false) : src[0]);
         s_(c, &c->acttext, a->tmpl);
     }
+    // The refusals (lower.c's RP_RefuseDowngrade at 30, RP_RefuseOld at 31) in the chosen language:
+    // past RP_UI_LANG_ACTIONS RpLangApply at 19 puts them in place; with fewer, lower.c gives each
+    // language an error action of its own.
+    if (c->table && ir->ui) {
+        if (ir->downgrade_message == NULL) (void)T(c, "NewerInstalled");
+        if (ir->refuse_below && ir->refuse_message == NULL) (void)T(c, "OlderRefused");
+    }
     white_bmp(c->white);
     rp_msi_cell_t *bn = NULL;
     s_(c, &c->binary, "RpBanner");
@@ -1773,7 +1781,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->ncustom = 0;                         // the twins' own texts get the same keys
     cancel_dlg(c);
     error_dlg(c);
-    if (!c->rtl) files_in_use_dlg(c);
+    files_in_use_dlg(c);
     progress_and_exits(c);
     if (c->page) language_dlg(c);
     if (ir->ui >= RP_UI_MINIMAL) {

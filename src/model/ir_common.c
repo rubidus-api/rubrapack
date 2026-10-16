@@ -128,8 +128,10 @@ void ir_check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allow
         known |= t->id && strncmp(t->kind, "msix", 4) != 0 && strcmp(t->keys[k].key, "msi-only") == 0;
         if (!known) {
             const char *hint = ir_suggest(t->keys[k].key, allowed);
-            ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]%s%s%s", t->keys[k].key, t->kind, t->id ? "." : "",
-                t->id ? t->id : "", hint ? " (did you mean '" : "", hint ? hint : "", hint ? "'?)" : "");
+            // Two whole messages, not a hint glued on: a glued phrase stays English in a pack.
+            if (hint) ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s] (did you mean '%s'?)", t->keys[k].key, t->kind,
+                          t->id ? "." : "", t->id ? t->id : "", hint);
+            else ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]", t->keys[k].key, t->kind, t->id ? "." : "", t->id ? t->id : "");
         }
     }
 }
@@ -303,7 +305,7 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
             bool dir = w == NULL && is_dir_id(c, name);
             if ((w || dir) && c->fmt == IR_FMT_NONE) {
                 ERR(c, v->pos, "RP1404", "$(%s) is a %s: it may start a path, or stand in a value Windows Installer fills in "
-                    "(registry, environment, INI, arguments, messages), not here", name, dir ? "dir" : "Windows name");
+                    "(registry, environment, INI, arguments, messages), not here", name, dir ? TR_N("dir ID") : TR_N("Windows name"));
                 ok = false;
                 break;
             }

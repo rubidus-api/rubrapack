@@ -771,6 +771,9 @@ msgstr "Versijos ir naujinimai"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer leidžia ne daugiau kaip 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "Windows pavadinimas"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] reikia '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' nėra dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' neapibrėžtas"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction turi būti \"in\" arba \"out\" (gauta '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "nežinoma valdymo seka \\{1} (naudokite '...' tekstui su atvirkštiniais
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "nežinoma inspect parinktis (naudokite lentelės pavadinimą, --summary, --files arba --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "nežinomas raktas '{1}' lentelėje [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "nežinomas raktas '{1}' lentelėje [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "nežinomas raktas '{1}' lentelėje [{2}{3}{4}] (ar turėjote omenyje '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "nežinoma arba nepilna {1} parinktis '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "nežinoma lentelė [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "nežinoma lentelė [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "nežinoma lentelė [{1}{2}{3}] (ar turėjote omenyje [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "išpakuoti paketą į naują katalogą, išdėstytą kaip diegiant"

@@ -771,6 +771,9 @@ msgstr "Bertsioak eta eguneratzeak"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer-ek gehienez 255.255.65535(.65535) onartzen du"
 
+msgid "Windows name"
+msgstr "Windows izena"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] taulak '{4}' behar du"
 
@@ -1682,6 +1685,9 @@ msgstr "'{1}' dir-a ez da dir ID bat"
 
 msgid "dir '%s' is not defined"
 msgstr "'{1}' dir-a ez dago definituta"
+
+msgid "dir ID"
+msgstr "dir IDa"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction \"in\" edo \"out\" izan behar da ('{1}' jaso da)"
@@ -2967,14 +2973,20 @@ msgstr "\\{1} ihes-sekuentzia ezezaguna (erabili '...' alderantzizko barrak ditu
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "inspect aukera ezezaguna (erabili taula-izen bat, --summary, --files edo --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "'{1}' gako ezezaguna [{2}{3}{4}]-n{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "'{1}' gako ezezaguna [{2}{3}{4}]-n"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "'{1}' gako ezezaguna [{2}{3}{4}]-n ('{5}' esan nahi zenuen?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "{1} aukera ezezaguna edo osatugabea: '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "[{1}{2}{3}] taula ezezaguna{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "[{1}{2}{3}] taula ezezaguna"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "[{1}{2}{3}] taula ezezaguna ([{4}] esan nahi zenuen?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "pakete bat direktorio berri batean deskonprimitzen du, instalatzen den bezala antolatuta"

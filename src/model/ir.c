@@ -48,8 +48,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         const rp_ttable_t *t = &doc->tables[k];
         if (!ir_in_list(t->kind, all_kinds)) {
             const char *hint = ir_suggest(t->kind, all_kinds);
-            ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s]%s%s%s", t->kind, t->id ? "." : "", t->id ? t->id : "",
-                hint ? " (did you mean [" : "", hint ? hint : "", hint ? "]?)" : "");
+            if (hint) ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s] (did you mean [%s]?)", t->kind, t->id ? "." : "", t->id ? t->id : "", hint);
+            else ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s]", t->kind, t->id ? "." : "", t->id ? t->id : "");
             continue;
         }
         if (ir_in_list(t->kind, later_kinds)) {

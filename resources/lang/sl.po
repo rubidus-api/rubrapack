@@ -771,6 +771,9 @@ msgstr "Različice in nadgradnje"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer dovoli največ 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "ime Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] potrebuje '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' ni dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' ni določen"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction mora biti \"in\" ali \"out\" (dobljeno '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "neznano ubežno zaporedje \\{1} (za besedilo s poševnicami nazaj uporab
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "neznana možnost za inspect (uporabite ime tabele, --summary, --files ali --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "neznan ključ '{1}' v [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "neznan ključ '{1}' v [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "neznan ključ '{1}' v [{2}{3}{4}] (ste mislili '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "neznana ali nepopolna možnost {1} '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "neznana tabela [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "neznana tabela [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "neznana tabela [{1}{2}{3}] (ste mislili [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "razširitev paketa v novo mapo, razporejeno kot ob namestitvi"

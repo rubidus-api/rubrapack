@@ -773,6 +773,9 @@ msgstr "גרסאות ושדרוגים"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer מאפשר לכל היותר 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "שם של Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] דורש '{4}'"
 
@@ -1684,6 +1687,9 @@ msgstr "ה-dir '{1}' אינו מזהה dir"
 
 msgid "dir '%s' is not defined"
 msgstr "ה-dir '{1}' אינו מוגדר"
+
+msgid "dir ID"
+msgstr "מזהה dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction חייב להיות \"in\" או \"out\" (התקבל '{1}')"
@@ -2969,14 +2975,20 @@ msgstr "רצף בריחה לא ידוע \\{1} (השתמש ב-'...' עבור טק
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "אפשרות inspect לא ידועה (השתמש בשם טבלה, --summary, --files או --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "מפתח לא ידוע '{1}' ב-[{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "מפתח לא ידוע '{1}' ב-[{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "מפתח לא ידוע '{1}' ב-[{2}{3}{4}] (האם התכוונת ל-'{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "אפשרות {1} לא ידועה או לא שלמה '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "טבלה לא ידועה [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "טבלה לא ידועה [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "טבלה לא ידועה [{1}{2}{3}] (האם התכוונת ל-[{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "פריסת חבילה לתיקייה חדשה, בסידור שבו היא מותקנת"

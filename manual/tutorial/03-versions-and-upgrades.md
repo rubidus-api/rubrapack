@@ -42,7 +42,8 @@ C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
 
 - `downgrade-message` is the message a user sees when they try to install an older (or the same)
   version over a newer one. Without it, rubrapack uses "The same or a newer version of [ProductName]
-  is already installed." (`[ProductName]` is replaced by the name).
+  is already installed." (`[ProductName]` is replaced by the name) - in the dialogs' language when
+  the package has several (chapter 7); a message you write is shown as you wrote it.
 
 ## What Windows does with two versions
 

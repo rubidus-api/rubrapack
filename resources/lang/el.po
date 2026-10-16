@@ -771,6 +771,9 @@ msgstr "Εκδόσεις και αναβαθμίσεις"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Το Windows Installer επιτρέπει το πολύ 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "όνομα των Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "Το [{1}{2}{3}] χρειάζεται '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "το dir '{1}' δεν είναι dir ID"
 
 msgid "dir '%s' is not defined"
 msgstr "το dir '{1}' δεν έχει οριστεί"
+
+msgid "dir ID"
+msgstr "αναγνωριστικό dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "το direction πρέπει να είναι \"in\" ή \"out\" (δόθηκε '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "άγνωστη διαφυγή \\{1} (χρησιμοποιήστε '...' 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "άγνωστη επιλογή inspect (χρησιμοποιήστε όνομα πίνακα, --summary, --files ή --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "άγνωστο κλειδί '{1}' στο [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "άγνωστο κλειδί '{1}' στο [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "άγνωστο κλειδί '{1}' στο [{2}{3}{4}] (εννοούσατε '{5}';)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "άγνωστη ή ελλιπής επιλογή {1} '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "άγνωστος πίνακας [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "άγνωστος πίνακας [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "άγνωστος πίνακας [{1}{2}{3}] (εννοούσατε [{4}];)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "αποσυμπίεση πακέτου σε νέο κατάλογο, διαταγμένο όπως εγκαθίσταται"

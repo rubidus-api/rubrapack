@@ -771,6 +771,9 @@ msgstr "Sürümler ve yükseltmeler"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer en fazla 255.255.65535(.65535) izin verir"
 
+msgid "Windows name"
+msgstr "Windows adı"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] '{4}' gerektirir"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' bir dir kimliği değil"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' tanımlı değil"
+
+msgid "dir ID"
+msgstr "dir kimliği"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction \"in\" veya \"out\" olmalıdır (alınan: '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "bilinmeyen kaçış dizisi \\{1} (ters eğik çizgi içeren metin için 
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "bilinmeyen inspect seçeneği (bir tablo adı, --summary, --files veya --streams kullanın)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}] içinde bilinmeyen anahtar '{1}'{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}] içinde bilinmeyen anahtar '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] içinde bilinmeyen anahtar '{1}' ('{5}' mi demek istediniz?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "bilinmeyen veya eksik {1} seçeneği '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "bilinmeyen tablo [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "bilinmeyen tablo [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "bilinmeyen tablo [{1}{2}{3}] ([{4}] mi demek istediniz?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "bir paketi, kurulduğu düzende yeni bir dizine açar"

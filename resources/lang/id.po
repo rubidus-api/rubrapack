@@ -771,6 +771,9 @@ msgstr "Versi dan peningkatan"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer mengizinkan paling tinggi 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "nama Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] memerlukan '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' bukan ID dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' tidak didefinisikan"
+
+msgid "dir ID"
+msgstr "ID dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction harus \"in\" atau \"out\" (didapat '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "escape tidak dikenal \\{1} (gunakan '...' untuk teks dengan garis miring
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "opsi inspect tidak dikenal (gunakan nama tabel, --summary, --files atau --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "kunci tidak dikenal '{1}' di [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "kunci tidak dikenal '{1}' di [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "kunci tidak dikenal '{1}' di [{2}{3}{4}] (maksud Anda '{5}'?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "opsi {1} '{2}' tidak dikenal atau tidak lengkap"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "tabel tidak dikenal [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "tabel tidak dikenal [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "tabel tidak dikenal [{1}{2}{3}] (maksud Anda [{4}]?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "membongkar paket ke direktori baru, ditata seperti saat diinstal"

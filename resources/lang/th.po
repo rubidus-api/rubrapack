@@ -771,6 +771,9 @@ msgstr "เวอร์ชันและการอัปเกรด"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer อนุญาตได้สูงสุด 255.255.65535(.65535)"
 
+msgid "Windows name"
+msgstr "ชื่อของ Windows"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] ต้องมี '{4}'"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' ไม่ใช่ ID ของ dir"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' ไม่ได้ถูกกำหนด"
+
+msgid "dir ID"
+msgstr "ID ของ dir"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction ต้องเป็น \"in\" หรือ \"out\" (ได้ '{1}')"
@@ -2967,14 +2973,20 @@ msgstr "ไม่รู้จักเอสเคป \\{1} (ใช้ '...' ส
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "ไม่รู้จักตัวเลือกของ inspect (ใช้ชื่อตาราง, --summary, --files หรือ --streams)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "ไม่รู้จักคีย์ '{1}' ใน [{2}{3}{4}]{5}{6}{7}"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "ไม่รู้จักคีย์ '{1}' ใน [{2}{3}{4}]"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "ไม่รู้จักคีย์ '{1}' ใน [{2}{3}{4}] (หมายถึง '{5}' ใช่ไหม?)"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "ตัวเลือก {1} '{2}' ไม่รู้จักหรือไม่ครบ"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "ไม่รู้จักตาราง [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "ไม่รู้จักตาราง [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "ไม่รู้จักตาราง [{1}{2}{3}] (หมายถึง [{4}] ใช่ไหม?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "แตกแพ็กเกจลงไดเรกทอรีใหม่ จัดวางแบบเดียวกับตอนติดตั้ง"

@@ -771,6 +771,9 @@ msgstr "பதிப்புகள் மற்றும் மேம்பட�
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer அதிகபட்சம் 255.255.65535(.65535) ஐ அனுமதிக்கும்"
 
+msgid "Windows name"
+msgstr "Windows பெயர்"
+
 msgid "[%s%s%s] needs '%s'"
 msgstr "[{1}{2}{3}] க்கு '{4}' தேவை"
 
@@ -1682,6 +1685,9 @@ msgstr "dir '{1}' ஒரு dir ID அல்ல"
 
 msgid "dir '%s' is not defined"
 msgstr "dir '{1}' வரையறுக்கப்படவில்லை"
+
+msgid "dir ID"
+msgstr "dir ID"
 
 msgid "direction must be \"in\" or \"out\" (got '%s')"
 msgstr "direction \"in\" அல்லது \"out\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
@@ -2967,14 +2973,20 @@ msgstr "அறியப்படாத விடுபடு வரிசை \\{
 msgid "unknown inspect option (use a table name, --summary, --files or --streams)"
 msgstr "அறியப்படாத inspect விருப்பம் (அட்டவணைப் பெயர், --summary, --files அல்லது --streams பயன்படுத்தவும்)"
 
-msgid "unknown key '%s' in [%s%s%s]%s%s%s"
-msgstr "[{2}{3}{4}]{5}{6}{7} இல் அறியப்படாத விசை '{1}'"
+msgid "unknown key '%s' in [%s%s%s]"
+msgstr "[{2}{3}{4}] இல் அறியப்படாத விசை '{1}'"
+
+msgid "unknown key '%s' in [%s%s%s] (did you mean '%s'?)"
+msgstr "[{2}{3}{4}] ('{5}' என்று சொல்ல வந்தீர்களா?) இல் அறியப்படாத விசை '{1}'"
 
 msgid "unknown or incomplete %s option '%s'"
 msgstr "அறியப்படாத அல்லது முழுமையற்ற {1} விருப்பம் '{2}'"
 
-msgid "unknown table [%s%s%s]%s%s%s"
-msgstr "அறியப்படாத அட்டவணை [{1}{2}{3}]{4}{5}{6}"
+msgid "unknown table [%s%s%s]"
+msgstr "அறியப்படாத அட்டவணை [{1}{2}{3}]"
+
+msgid "unknown table [%s%s%s] (did you mean [%s]?)"
+msgstr "அறியப்படாத அட்டவணை [{1}{2}{3}] ([{4}] என்று சொல்ல வந்தீர்களா?)"
 
 msgid "unpack a package into a new directory, laid out as it installs"
 msgstr "ஒரு தொகுப்பைப் புதிய கோப்பகத்தில் விரிக்கவும், நிறுவப்படுவது போலவே அமைக்கப்பட்டு"

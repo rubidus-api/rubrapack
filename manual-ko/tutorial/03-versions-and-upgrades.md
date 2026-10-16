@@ -41,7 +41,7 @@ C:\work\hello> rubrapack build hello.toml -o hello-1.1.0.msi -D VERSION=1.1.0
 
 - `downgrade-message` 는 사용자가 더 새 판 위에 옛(또는 같은) 판을 설치하려 할 때 보는 안내문이다. 없으면
   rubrapack 은 "The same or a newer version of [ProductName] is already installed." 를 쓴다(`[ProductName]` 은
-  이름으로 바뀐다).
+  이름으로 바뀐다). 대화창 언어가 여럿이면(7장) 이 문구는 고른 언어로 나온다. 직접 쓴 안내문은 쓴 그대로 나온다.
 
 ## Windows 는 두 판을 어떻게 다루나
 
