@@ -783,6 +783,9 @@ msgstr "[{1}{2}] にはまだ対応していません ({3} で予定)"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] は MSIX に入れられません。msi-only = true を追加すると、それなしで MSIX をビルドします"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] はユーザーの AppData または LocalAppData にあります。dual パッケージをすべてのユーザー用にインストールすると、インストールするユーザーのプロファイルにだけ入ります"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: マージ モジュールの ID は 35 文字までです (モジュールの GUID が付け足されます)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX はすべての変数を設定します (when)。msi-onl
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 値が MSIX では与えられない場所 (Windows のフォルダーではないパッケージ外のフォルダー、またはインストール時に決まる部分) を指しています。msi-only = true を使ってください"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] はユーザー プロファイルにあり、component-guid が指定されています。キー パスはファイルのままですが、Windows の規則はそこに HKCU 値を求めます (ICE38)。HKCU 値にするには component-guid を外してください"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: エクスプローラーは {2} ハンドラーを DLL から読み込みます。[com.{3}] はプログラムです"
@@ -2007,14 +2013,14 @@ msgstr "language は \"ko-KR\" か \"en-US\" でなければなりません"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language は \"neutral\"、\"en-US\"、\"ko-KR\" のいずれかでなければなりません"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" は配列に入れず単独で書きます。組み込みの言語をすべて入れます"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages には \"ko\" や \"zh_TW\" のようなコードを書きます (小文字 2 か 3 文字、さらに _ と地域の大文字 2 文字。'{1}' でした)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages は [\"ko\"] のような言語コードの配列です"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" は配列に入れず単独で書きます。組み込みの言語をすべて入れます"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages にはダイアログ セット (ui = \"basic\" など) が必要です"

@@ -785,6 +785,9 @@ msgstr "[{1}{2}] ابھی معاون نہیں ({3} کے لیے منصوبہ ہے
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] MSIX میں نہیں جا سکتا؛ اس کے بغیر MSIX بنانے کے لیے msi-only = true شامل کریں"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] صارف کے AppData یا LocalAppData میں ہے: تمام صارفین کے لیے انسٹال کیا گیا dual پیکیج اسے صرف انسٹال کرنے والے صارف کی پروفائل میں رکھتا ہے"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: مرج ماڈیول میں ID زیادہ سے زیادہ 35 حروف کا ہوتا ہے (اس میں ماڈیول کا GUID شامل کیا جاتا ہے)"
 
@@ -883,6 +886,9 @@ msgstr "[env.{1}]: MSIX اپنے تمام متغیرات سیٹ کرتا ہے (w
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: اس کی قدر ایسی جگہ کا نام لیتی ہے جو MSIX نہیں دے سکتا (پیکیج سے باہر کا فولڈر جو Windows فولڈر نہیں، یا انسٹال کے وقت کا حصہ)؛ msi-only = true استعمال کریں"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] صارف کی پروفائل میں ہے اور اس میں component-guid ہے: اس کا کلیدی راستہ فائل ہی رہتا ہے، جبکہ Windows کے اصول وہاں HKCU قدر چاہتے ہیں (ICE38)؛ وہ پانے کے لیے component-guid ہٹا دیں"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer {2} ہینڈلر DLL سے لوڈ کرتا ہے؛ [com.{3}] ایک پروگرام ہے"
@@ -2009,14 +2015,14 @@ msgstr "language کو \"ko-KR\" یا \"en-US\" ہونا چاہیے"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language کو \"neutral\"، \"en-US\" یا \"ko-KR\" ہونا چاہیے"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" اکیلا لکھا جاتا ہے، کسی ارے میں نہیں: یہ تمام اندرونی زبانیں لیتا ہے"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages میں \"ko\" یا \"zh_TW\" جیسے کوڈز ہوتے ہیں (2 یا 3 چھوٹے حروف، اور _ اور علاقے کے دو بڑے حروف) ('{1}' ملا)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages زبان کوڈز کی ترتیب ہے، جیسے [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" اکیلا لکھا جاتا ہے، کسی ارے میں نہیں: یہ تمام اندرونی زبانیں لیتا ہے"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages کو ڈائیلاگ سیٹ چاہیے (ui = \"basic\" یا کوئی اور)"

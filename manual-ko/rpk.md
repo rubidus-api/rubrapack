@@ -884,6 +884,17 @@ name = "InstallDir"
 값은 설치된 방식에 따라 `HKLM` 이나 `HKCU` 가 되는 `HKMU` 를 쓴다. 서비스, 글꼴, 권한과 컴퓨터
 폴더(`SystemRoot`, `System`, `Fonts`, `ProgramData`)는 `scope = "machine"` 이 필요하다.
 
+사용자 프로필의 폴더(`AppData`, `LocalAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup` 과 그 아래,
+범위와 관계없이)에 두는 파일, `[folder]`, `[ini]`, `[remove]` 는 바로 가기처럼 `HKCU` 값을 키 경로로 하는
+구성 요소에 든다: `Software\<manufacturer>\<name>\Components` 에 구성 요소마다 값 하나를 두고, 구성
+요소와 함께 쓰고 지운다(Windows 규칙 ICE38). 그 프로필 폴더들은 알려진 폴더까지 제거 때 비어 있으면
+지운다(ICE64). 함께 쓰는 `%LOCALAPPDATA%\Programs` 도 다른 것이 없으면 지운다. rubrapack 0.46.0 까지는
+이 구성 요소를 파일로 키 삼았고 GUID 도 달랐다. 그런 판으로 만든 패키지에서 올릴 때는 메이저
+업그레이드여야 하고(rubrapack 이 만드는 업그레이드는 옛 판을 먼저 지운다), `lint --previous` 는 옛
+구성 요소를 사라졌다고 알리며(`RP2306`), 패치는 거절한다. `component-guid` 를 준 파일은 키 경로가 파일
+그대로이고 경고(`RP1320`)가 나온다. `dual` 패키지가 `AppData` 나 `LocalAppData` 에 파일을 두어도 경고가
+나온다: 모든 사용자용으로 설치하면 설치하는 사용자의 프로필에만 들어간다.
+
 ### 캐비닛
 
 파일은 패키지에 넣는 캐비닛 하나로 MSZIP(deflate)이나 LZX(`compress = "lzx"`: 대개 5~20% 더 작고,

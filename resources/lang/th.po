@@ -783,6 +783,9 @@ msgstr "[{1}{2}] ยังไม่รองรับ (วางแผนไว�
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] ใส่ใน MSIX ไม่ได้ เพิ่ม msi-only = true เพื่อสร้าง MSIX โดยไม่มีมัน"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] อยู่ใน AppData หรือ LocalAppData ของผู้ใช้: แพ็กเกจ dual ที่ติดตั้งสำหรับผู้ใช้ทุกคนจะวางไว้ในโปรไฟล์ของผู้ที่ติดตั้งเท่านั้น"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID ในโมดูลผสานยาวได้ไม่เกิน 35 อักขระ (GUID ของโมดูลจะต่อท้าย)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX ตั้งค่าตัวแปรทั้งห�
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: ค่าของมันระบุตำแหน่งที่ MSIX ให้ไม่ได้ (โฟลเดอร์นอกแพ็กเกจที่ไม่ใช่โฟลเดอร์ของ Windows หรือส่วนที่กำหนดตอนติดตั้ง) ใช้ msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] อยู่ในโปรไฟล์ผู้ใช้และมี component-guid: คีย์พาธยังคงเป็นไฟล์ ขณะที่กฎของ Windows ต้องการค่า HKCU ที่นั่น (ICE38) ให้เอา component-guid ออกเพื่อให้ได้ค่านั้น"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer โหลดตัวจัดการ {2} จาก DLL แต่ [com.{3}] เป็นโปรแกรม"
@@ -2007,14 +2013,14 @@ msgstr "language ต้องเป็น \"ko-KR\" หรือ \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language ต้องเป็น \"neutral\", \"en-US\" หรือ \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" ต้องเขียนเดี่ยว ๆ ไม่อยู่ในอาร์เรย์: จะใส่ทุกภาษาที่มีในตัว"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages เก็บรหัสเช่น \"ko\" หรือ \"zh_TW\" (ตัวพิมพ์เล็ก 2 หรือ 3 ตัว แล้ว _ กับตัวพิมพ์ใหญ่สองตัวของภูมิภาค) (ได้ '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages เป็นอาร์เรย์ของรหัสภาษา เช่น [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" ต้องเขียนเดี่ยว ๆ ไม่อยู่ในอาร์เรย์: จะใส่ทุกภาษาที่มีในตัว"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages ต้องมีชุดกล่องโต้ตอบ (ui = \"basic\" หรือชุดอื่น)"

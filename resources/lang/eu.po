@@ -783,6 +783,9 @@ msgstr "[{1}{2}] ez da oraindik onartzen ({3}-rako aurreikusia)"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] ezin da MSIX batean joan; gehitu msi-only = true MSIX-a hura gabe sortzeko"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] erabiltzailearen AppData edo LocalAppData karpetan dago: erabiltzaile guztientzat instalatutako dual pakete batek instalatzen duen erabiltzailearen profilean soilik jartzen du"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: bateratze-modulu bateko ID batek gehienez 35 karaktere ditu (moduluaren GUIDa gehitzen zaio)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX batek bere aldagai guztiak ezartzen ditu (when); erabili
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: bere balioak MSIX batek eman ezin duen leku bat izendatzen du (paketetik kanpoko karpeta bat, Windows-ena ez dena, edo instalazio-garaiko zati bat); erabili msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] erabiltzailearen profilean dago eta component-guid du: gako-bidea fitxategia izaten jarraitzen du, Windows-en arauek han HKCU balio bat nahi duten arren (ICE38); kendu component-guid hura lortzeko"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Arakatzaileak {2} kudeatzaile bat DLL batetik kargatzen du; [com.{3}] programa bat da"
@@ -2007,14 +2013,14 @@ msgstr "language \"ko-KR\" edo \"en-US\" izan behar da"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language \"neutral\", \"en-US\" edo \"ko-KR\" izan behar da"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" bakarrik idazten da, ez matrize batean: barneko hizkuntza guztiak hartzen ditu"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages-ek \"ko\" edo \"zh_TW\" bezalako kodeak ditu (2 edo 3 letra xehe, eta _ eta eskualde baten bi maiuskulak) ('{1}' jaso da)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages hizkuntza-kodeen matrize bat da, adibidez [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" bakarrik idazten da, ez matrize batean: barneko hizkuntza guztiak hartzen ditu"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages-ek elkarrizketa-multzo bat behar du (ui = \"basic\" edo beste bat)"

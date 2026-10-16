@@ -783,6 +783,9 @@ msgstr "[{1}{2}] understøttes ikke endnu (planlagt til {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] kan ikke indgå i en MSIX; tilføj msi-only = true for at bygge MSIX'en uden den"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] ligger i brugerens AppData eller LocalAppData: en dual-pakke, der installeres for alle brugere, lægger den kun i profilen hos den bruger, der installerer"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: et ID i et fletningsmodul har højst 35 tegn (modulets GUID føjes til)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: en MSIX sætter alle sine variabler (when); brug msi-only = t
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: værdien navngiver et sted, som en MSIX ikke kan give (en mappe uden for pakken, som ikke er en Windows-mappe, eller en del fra installationstidspunktet); brug msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] ligger i brugerprofilen og har component-guid: nøglestien forbliver filen, hvor Windows' regler vil have en HKCU-værdi (ICE38); udelad component-guid for at få en"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Stifinder indlæser en {2}-handler fra en DLL; [com.{3}] er et program"
@@ -2007,14 +2013,14 @@ msgstr "language skal være \"ko-KR\" eller \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language skal være \"neutral\", \"en-US\" eller \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" står alene, ikke i en matrix: det tager alle indbyggede sprog med"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages indeholder koder som \"ko\" eller \"zh_TW\" (2 eller 3 små bogstaver og _ og en regions to store bogstaver) (fik '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages er en matrix af sprogkoder, f.eks. [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" står alene, ikke i en matrix: det tager alle indbyggede sprog med"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages kræver et dialogsæt (ui = \"basic\" eller et andet)"

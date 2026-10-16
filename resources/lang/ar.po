@@ -785,6 +785,9 @@ msgstr "[{1}{2}] غير مدعوم بعد (مخطط له في {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "لا يمكن أن يدخل [{1}.{2}] في MSIX؛ أضف msi-only = true لبناء MSIX بدونه"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] موجود في AppData أو LocalAppData الخاص بالمستخدم: حزمة dual المثبتة لجميع المستخدمين تضعه في ملف تعريف المستخدم الذي يثبّتها فقط"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: للمعرّف في وحدة الدمج 35 حرفاً على الأكثر (يُضاف إليه GUID الوحدة)"
 
@@ -883,6 +886,9 @@ msgstr "[env.{1}]: تعيّن MSIX كل متغيراتها (when)؛ استخدم
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: قيمته تسمّي مكاناً لا تستطيع MSIX تقديمه (مجلد خارج الحزمة ليس من مجلدات Windows، أو جزء يُحدد وقت التثبيت)؛ استخدم msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] موجود في ملف تعريف المستخدم وله component-guid: يبقى مسار المفتاح هو الملف، بينما تريد قواعد Windows قيمة HKCU هناك (ICE38)؛ احذف component-guid للحصول عليها"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: يحمّل المستكشف معالج {2} من DLL؛ [com.{3}] برنامج"
@@ -2009,14 +2015,14 @@ msgstr "يجب أن يكون language هو \"ko-KR\" أو \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "يجب أن يكون language هو \"neutral\" أو \"en-US\" أو \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "تُكتب languages = \"all\" وحدها وليس داخل مصفوفة: فهي تضم كل اللغات المضمّنة"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "يحمل languages رموزاً مثل \"ko\" أو \"zh_TW\" (حرفان أو ثلاثة أحرف صغيرة، ثم _ وحرفان كبيران للمنطقة) (الموجود '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages مصفوفة رموز لغات، مثل [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "تُكتب languages = \"all\" وحدها وليس داخل مصفوفة: فهي تضم كل اللغات المضمّنة"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "يحتاج languages إلى مجموعة حوار (ui = \"basic\" أو غيرها)"

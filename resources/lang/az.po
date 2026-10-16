@@ -783,6 +783,9 @@ msgstr "[{1}{2}] hələ dəstəklənmir ({3} üçün planlaşdırılıb)"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] MSIX-ə daxil ola bilməz; MSIX-i onsuz qurmaq üçün msi-only = true əlavə edin"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] istifadəçinin AppData və ya LocalAppData qovluğundadır: bütün istifadəçilər üçün quraşdırılan dual paket onu yalnız quraşdıran istifadəçinin profilinə qoyur"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: birləşdirmə modulunda ID ən çoxu 35 simvoldur (ona modulun GUID-i əlavə olunur)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX bütün dəyişənlərini təyin edir (when); msi-only =
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: onun dəyəri MSIX-in verə bilmədiyi yeri göstərir (paketdən kənar, Windows-a aid olmayan qovluq və ya quraşdırma zamanı hissə); msi-only = true istifadə edin"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] istifadəçi profilindədir və component-guid var: onun açar yolu fayl olaraq qalır, Windows qaydaları isə orada HKCU dəyəri istəyir (ICE38); onu almaq üçün component-guid-i çıxarın"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer {2} işləyicisini DLL-dən yükləyir; [com.{3}] proqramdır"
@@ -2007,14 +2013,14 @@ msgstr "language \"ko-KR\" və ya \"en-US\" olmalıdır"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language \"neutral\", \"en-US\" və ya \"ko-KR\" olmalıdır"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" massiv içində deyil, tək yazılır: bütün daxili dilləri götürür"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages \"ko\" və ya \"zh_TW\" kimi kodlar saxlayır (2-3 kiçik hərf, və _ ilə regionun iki böyük hərfi) ('{1}' alındı)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages dil kodları massividir, məsələn [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" massiv içində deyil, tək yazılır: bütün daxili dilləri götürür"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages üçün dialoq dəsti lazımdır (ui = \"basic\" və ya başqası)"

@@ -783,6 +783,9 @@ msgstr "[{1}{2}] 尚不支持(计划在 {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] 不能放入 MSIX；添加 msi-only = true 可在不含它的情况下构建 MSIX"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] 位于用户的 AppData 或 LocalAppData 中：dual 包为所有用户安装时，只会放入执行安装的用户的配置文件"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: 合并模块中的 ID 最多 35 个字符(会附加模块的 GUID)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX 会设置其所有变量(when)；请使用 msi-only = tr
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 其值指向 MSIX 无法提供的位置(不是 Windows 文件夹的包外文件夹，或安装时才确定的部分)；请使用 msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] 位于用户配置文件中且指定了 component-guid：其键路径仍为该文件，而 Windows 规则要求此处使用 HKCU 值 (ICE38)；去掉 component-guid 即可获得"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: 资源管理器从 DLL 加载 {2} 处理程序；[com.{3}] 是程序"
@@ -2007,14 +2013,14 @@ msgstr "language 必须是 \"ko-KR\" 或 \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language 必须是 \"neutral\"、\"en-US\" 或 \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" 应单独写，不能放在数组中：它会加入所有内置语言"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages 包含形如 \"ko\" 或 \"zh_TW\" 的代码(2 或 3 个小写字母，可再加 _ 和地区的两个大写字母)(实际为 '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages 是语言代码数组，如 [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" 应单独写，不能放在数组中：它会加入所有内置语言"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages 需要对话框集(ui = \"basic\" 或其他)"

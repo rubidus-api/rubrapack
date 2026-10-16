@@ -53,6 +53,25 @@ static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, const char *id) {
 }
 
 // A program of this package that opens files or URIs: a [file.*] whose name ends in .exe.
+// The dir `id` is a folder of the user's profile or below one (lower.c's dir_in_profile, RFC-0029);
+// `data_only`: AppData and LocalAppData only, the folders that stay the user's in a per-machine
+// installation (the Start menu and the desktop become the all-users ones).
+static bool profile_base(const rp_ir_t *ir, const char *id, bool data_only) {
+    static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
+    for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
+        const rp_ir_dir_t *d = ir_find_dir(ir, id);
+        if (d == NULL || d->base) {
+            const char *base = d ? d->base : id;
+            for (size_t i = 0; i < (data_only ? 2u : sizeof profile / sizeof profile[0]); ++i) {
+                if (strcmp(base, profile[i]) == 0) return true;
+            }
+            return false;
+        }
+        id = d->parent;
+    }
+    return false;
+}
+
 static bool program_ok(ctx_t *c, const char *id, rp_pos_t pos, const char *what) {
     if (id == NULL) return false;
     const rp_ir_file_t *f = file_by_id(c->ir, id);
@@ -970,6 +989,33 @@ void ir_cross_checks(ctx_t *c) {
             if (d && d->feature) r->feature = ir_dup(c, d->feature);
             else if (!declared) r->feature = ir_dup(c, "Main");
             else ERR(c, r->pos, "RP1202", "[remove.%s] needs a feature: set 'feature' here or on its dir", r->id);
+        }
+    }
+    // The user's profile (RFC-0029): a component there is keyed by an HKCU value, which a GUID the
+    // source fixed does not get; a dual package installed for all users fills the installing user's
+    // AppData and LocalAppData only.
+    for (size_t k = 0; k < ir->file_count; ++k) {
+        const rp_ir_file_t *f = &ir->files[k];
+        if (f->component_guid && profile_base(ir, f->dir, false)) {
+            rp_srcdiag_add(c->d, f->pos, "RP1320", true, "[file.%s] is in the user's profile and has component-guid: its key path stays the file, "
+                           "where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one", f->id);
+        }
+    }
+    if (ir->scope == 2) {
+        const char *what = NULL, *id = NULL;
+        rp_pos_t pos = { 0 };
+        for (size_t k = 0; k < ir->file_count && !what; ++k) {
+            if (profile_base(ir, ir->files[k].dir, true)) { what = "file"; id = ir->files[k].id; pos = ir->files[k].pos; }
+        }
+        for (size_t k = 0; k < ir->folder_count && !what; ++k) {
+            if (profile_base(ir, ir->folders[k].dir, true)) { what = "folder"; id = ir->folders[k].id; pos = ir->folders[k].pos; }
+        }
+        for (size_t k = 0; k < ir->ini_count && !what; ++k) {
+            if (profile_base(ir, ir->inis[k].dir, true)) { what = "ini"; id = ir->inis[k].id; pos = ir->inis[k].pos; }
+        }
+        if (what) {
+            rp_srcdiag_add(c->d, pos, "RP1320", true, "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users "
+                           "puts it in the installing user's profile only", what, id);
         }
     }
     // Scope (RFC-0004 H3): what needs a per-machine installation.

@@ -783,6 +783,9 @@ msgstr "[{1}{2}] әзірге қолдау көрсетілмейді ({3} үш�
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] MSIX-ке кіре алмайды; MSIX-ті онсыз жасау үшін msi-only = true қосыңыз"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] пайдаланушының AppData немесе LocalAppData қалтасында: барлық пайдаланушыларға орнатылған dual бумасы оны тек орнатушы пайдаланушының профиліне қояды"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: біріктіру модуліндегі ID ең көбі 35 таңба (оған модульдің GUID-і қосылады)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX барлық айнымалыларын орнатады
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: оның мәні MSIX бере алмайтын орынды атайды (бумадан тыс, Windows-қа жатпайтын қалта немесе орнату кезіндегі бөлік); msi-only = true пайдаланыңыз"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] пайдаланушы профилінде және оның component-guid мәні бар: кілт жолы файл болып қалады, ал Windows ережелері онда HKCU мәнін талап етеді (ICE38); оны алу үшін component-guid алып тастаңыз"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer {2} өңдегішін DLL-ден жүктейді; [com.{3}] - бағдарлама"
@@ -2007,14 +2013,14 @@ msgstr "language \"ko-KR\" немесе \"en-US\" болуы керек"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language \"neutral\", \"en-US\" немесе \"ko-KR\" болуы керек"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" массив ішінде емес, жеке жазылады: ол барлық кірістірілген тілдерді алады"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages \"ko\" не \"zh_TW\" сияқты кодтарды ұстайды (2-3 кіші әріп, және _ мен аймақтың екі бас әрпі) ('{1}' алынды)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages - тіл кодтарының массиві, мысалы [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" массив ішінде емес, жеке жазылады: ол барлық кірістірілген тілдерді алады"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages үшін диалогтар жиыны керек (ui = \"basic\" немесе басқасы)"

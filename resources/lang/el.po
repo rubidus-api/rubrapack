@@ -783,6 +783,9 @@ msgstr "Το [{1}{2}] δεν υποστηρίζεται ακόμη (προγρα
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "Το [{1}.{2}] δεν μπορεί να μπει σε MSIX· προσθέστε msi-only = true για να δημιουργηθεί το MSIX χωρίς αυτό"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "Το [{1}.{2}] βρίσκεται στο AppData ή στο LocalAppData του χρήστη: ένα πακέτο dual που εγκαθίσταται για όλους τους χρήστες το βάζει μόνο στο προφίλ του χρήστη που το εγκαθιστά"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ένα ID σε λειτουργική μονάδα συγχώνευσης έχει το πολύ 35 χαρακτήρες (προστίθεται το GUID της μονάδας)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: ένα MSIX ορίζει όλες τις μεταβλητές
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: η τιμή του ονομάζει θέση που ένα MSIX δεν μπορεί να δώσει (φάκελο εκτός πακέτου που δεν είναι φάκελος των Windows, ή μέρος που ορίζεται στην εγκατάσταση)· χρησιμοποιήστε msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "Το [file.{1}] βρίσκεται στο προφίλ του χρήστη και έχει component-guid: η διαδρομή κλειδιού του μένει το αρχείο, ενώ οι κανόνες των Windows θέλουν εκεί μια τιμή HKCU (ICE38)· αφαιρέστε το component-guid για να την αποκτήσει"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: η Εξερεύνηση φορτώνει χειριστή {2} από DLL· το [com.{3}] είναι πρόγραμμα"
@@ -2007,14 +2013,14 @@ msgstr "το language πρέπει να είναι \"ko-KR\" ή \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "το language πρέπει να είναι \"neutral\", \"en-US\" ή \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "Το languages = \"all\" γράφεται μόνο του, όχι μέσα σε πίνακα: περιλαμβάνει όλες τις ενσωματωμένες γλώσσες"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "το languages περιέχει κωδικούς όπως \"ko\" ή \"zh_TW\" (2 ή 3 πεζά γράμματα, και _ και δύο κεφαλαία μιας περιοχής) (δόθηκε '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "το languages είναι πίνακας κωδικών γλώσσας, π.χ. [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "Το languages = \"all\" γράφεται μόνο του, όχι μέσα σε πίνακα: περιλαμβάνει όλες τις ενσωματωμένες γλώσσες"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "το languages χρειάζεται σύνολο παραθύρων διαλόγου (ui = \"basic\" ή άλλο)"

@@ -783,6 +783,9 @@ msgstr "[{1}{2}] dar nepalaikomas (planuojama {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] negali būti MSIX; pridėkite msi-only = true, kad MSIX būtų sukurtas be jo"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] yra naudotojo AppData arba LocalAppData aplanke: visiems naudotojams įdiegtas dual paketas jį padeda tik diegiančio naudotojo profilyje"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID suliejimo modulyje turi ne daugiau kaip 35 simbolius (prie jo pridedamas modulio GUID)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX nustato visus savo kintamuosius (when); naudokite msi-on
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jo reikšmė nurodo vietą, kurios MSIX negali suteikti (aplanką už paketo, kuris nėra Windows aplankas, arba diegimo metu nustatomą dalį); naudokite msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] yra naudotojo profilyje ir turi component-guid: rakto kelias lieka failas, nors Windows taisyklės ten nori HKCU reikšmės (ICE38); praleiskite component-guid, kad ją gautumėte"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer įkelia {2} doroklį iš DLL; [com.{3}] yra programa"
@@ -2007,14 +2013,14 @@ msgstr "language turi būti \"ko-KR\" arba \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language turi būti \"neutral\", \"en-US\" arba \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" rašomas atskirai, ne masyve: jis įtraukia visas įtaisytąsias kalbas"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages turi kodus kaip \"ko\" arba \"zh_TW\" (2 arba 3 mažosios raidės ir _ bei dvi regiono didžiosios raidės) (gauta '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages yra kalbų kodų masyvas, pvz., [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" rašomas atskirai, ne masyve: jis įtraukia visas įtaisytąsias kalbas"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages reikia dialogų rinkinio (ui = \"basic\" ar kito)"

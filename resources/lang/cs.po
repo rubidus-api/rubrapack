@@ -783,6 +783,9 @@ msgstr "[{1}{2}] zatím není podporováno (plánováno na {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] nemůže být v MSIX; přidejte msi-only = true a MSIX se sestaví bez něj"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] je v AppData nebo LocalAppData uživatele: balíček dual nainstalovaný pro všechny uživatele jej umístí jen do profilu instalujícího uživatele"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID ve slučovacím modulu má nejvýše 35 znaků (přidá se k němu GUID modulu)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX nastaví všechny své proměnné (when); použijte msi-
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jeho hodnota jmenuje místo, které MSIX nemůže poskytnout (složku mimo balíček, která není složkou Windows, nebo část z doby instalace); použijte msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] je v profilu uživatele a má component-guid: cestou klíče zůstává soubor, kde pravidla Windows chtějí hodnotu HKCU (ICE38); vynechte component-guid, abyste ji získali"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Průzkumník načítá obslužnou rutinu {2} z DLL; [com.{3}] je program"
@@ -2007,14 +2013,14 @@ msgstr "language musí být \"ko-KR\" nebo \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language musí být \"neutral\", \"en-US\" nebo \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" stojí samostatně, ne v poli: přidá všechny vestavěné jazyky"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages obsahuje kódy jako \"ko\" nebo \"zh_TW\" (2 nebo 3 malá písmena, a _ a dvě velká písmena regionu) (zadáno '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages je pole kódů jazyků, například [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" stojí samostatně, ne v poli: přidá všechny vestavěné jazyky"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages potřebuje sadu dialogů (ui = \"basic\" nebo jinou)"

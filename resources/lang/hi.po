@@ -783,6 +783,9 @@ msgstr "[{1}{2}] अभी समर्थित नहीं है ({3} के
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] MSIX में नहीं जा सकता; इसके बिना MSIX बनाने के लिए msi-only = true जोड़ें"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] उपयोगकर्ता के AppData या LocalAppData में है: सभी उपयोगकर्ताओं के लिए इंस्टॉल किया गया dual पैकेज इसे केवल इंस्टॉल करने वाले उपयोगकर्ता की प्रोफ़ाइल में रखता है"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: मर्ज मॉड्यूल में ID अधिकतम 35 वर्णों का होता है (मॉड्यूल का GUID उसमें जोड़ा जाता है)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX अपने सभी चर सेट करता ह
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: इसका मान ऐसी जगह बताता है जो MSIX नहीं दे सकता (पैकेज के बाहर का कोई फ़ोल्डर जो Windows फ़ोल्डर नहीं, या इंस्टॉल के समय का भाग); msi-only = true का उपयोग करें"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] उपयोगकर्ता प्रोफ़ाइल में है और इसमें component-guid है: इसका कुंजी पथ फ़ाइल ही रहता है, जबकि Windows के नियम वहाँ HKCU मान चाहते हैं (ICE38); वह पाने के लिए component-guid हटाएँ"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: एक्सप्लोरर {2} हैंडलर DLL से लोड करता है; [com.{3}] एक प्रोग्राम है"
@@ -2007,14 +2013,14 @@ msgstr "language \"ko-KR\" या \"en-US\" होना चाहिए"
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language \"neutral\", \"en-US\" या \"ko-KR\" होना चाहिए"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" अकेला लिखा जाता है, किसी ऐरे में नहीं: यह सभी अंतर्निहित भाषाएँ लेता है"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages में \"ko\" या \"zh_TW\" जैसे कोड होते हैं (2 या 3 छोटे अक्षर, फिर _ और क्षेत्र के दो बड़े अक्षर) (मिला '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages भाषा कोडों की सरणी है, जैसे [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" अकेला लिखा जाता है, किसी ऐरे में नहीं: यह सभी अंतर्निहित भाषाएँ लेता है"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages को संवाद सेट चाहिए (ui = \"basic\" या कोई और)"

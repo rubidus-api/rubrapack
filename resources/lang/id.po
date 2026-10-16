@@ -783,6 +783,9 @@ msgstr "[{1}{2}] belum didukung (direncanakan untuk {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] tidak dapat masuk ke MSIX; tambahkan msi-only = true untuk membangun MSIX tanpanya"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] berada di AppData atau LocalAppData pengguna: paket dual yang dipasang untuk semua pengguna hanya menaruhnya di profil pengguna yang memasang"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID dalam modul gabungan paling banyak 35 karakter (GUID modul ditambahkan)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX mengatur semua variabelnya (when); gunakan msi-only = tr
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: nilainya menyebut tempat yang tidak dapat diberikan MSIX (folder di luar paket yang bukan folder Windows, atau bagian waktu instalasi); gunakan msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] berada di profil pengguna dan memiliki component-guid: jalur kuncinya tetap berkas tersebut, sedangkan aturan Windows menghendaki nilai HKCU di sana (ICE38); hapus component-guid untuk mendapatkannya"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer memuat handler {2} dari DLL; [com.{3}] adalah program"
@@ -2007,14 +2013,14 @@ msgstr "language harus \"ko-KR\" atau \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language harus \"neutral\", \"en-US\" atau \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" berdiri sendiri, tidak di dalam larik: ia mengambil semua bahasa bawaan"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages memuat kode seperti \"ko\" atau \"zh_TW\" (2 atau 3 huruf kecil, lalu _ dan dua huruf besar wilayah) (didapat '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages adalah array kode bahasa, seperti [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" berdiri sendiri, tidak di dalam larik: ia mengambil semua bahasa bawaan"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages memerlukan set dialog (ui = \"basic\" atau lainnya)"

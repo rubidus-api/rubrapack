@@ -783,6 +783,9 @@ msgstr "[{1}{2}] ei ole vielä tuettu (suunniteltu: {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] ei voi olla MSIX:ssä; lisää msi-only = true rakentaaksesi MSIX:n ilman sitä"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] on käyttäjän AppData- tai LocalAppData-kansiossa: kaikille käyttäjille asennettu dual-paketti vie sen vain asentavan käyttäjän profiiliin"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: yhdistämismoduulin tunnuksessa on enintään 35 merkkiä (moduulin GUID lisätään siihen)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX asettaa kaikki muuttujansa (when); käytä msi-only = tr
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: sen arvo nimeää paikan, jota MSIX ei voi antaa (paketin ulkopuolinen kansio, joka ei ole Windowsin kansio, tai asennusaikainen osa); käytä msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] on käyttäjäprofiilissa ja sillä on component-guid: avainpolku pysyy tiedostona, vaikka Windowsin säännöt haluavat siihen HKCU-arvon (ICE38); jätä component-guid pois saadaksesi sen"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Resurssienhallinta lataa {2}-käsittelijän DLL:stä; [com.{3}] on ohjelma"
@@ -2007,14 +2013,14 @@ msgstr "languagen on oltava \"ko-KR\" tai \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "languagen on oltava \"neutral\", \"en-US\" tai \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" kirjoitetaan yksin, ei taulukkoon: se ottaa mukaan kaikki sisäänrakennetut kielet"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages sisältää koodeja kuten \"ko\" tai \"zh_TW\" (2 tai 3 pientä kirjainta sekä _ ja alueen kaksi isoa kirjainta) (saatiin '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages on kielikoodien taulukko, kuten [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" kirjoitetaan yksin, ei taulukkoon: se ottaa mukaan kaikki sisäänrakennetut kielet"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages tarvitsee valintaikkunasarjan (ui = \"basic\" tai muu)"

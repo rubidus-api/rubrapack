@@ -960,6 +960,19 @@ machine from an elevated prompt with `msiexec /i x.msi ALLUSERS=1 MSIINSTALLPERU
 registry values use `HKMU`, which is `HKLM` or `HKCU` as installed. Services, fonts, permissions
 and the machine folders (`SystemRoot`, `System`, `Fonts`, `ProgramData`) need `scope = "machine"`.
 
+A file, `[folder]`, `[ini]` or `[remove]` in a folder of the user's profile (`AppData`,
+`LocalAppData`, `StartMenu`, `Programs`, `Desktop`, `Startup` and below them, in any scope) gets a
+component keyed by an `HKCU` value, as shortcuts are: `Software\<manufacturer>\<name>\Components`,
+one value per component, written and removed with it (Windows' rule ICE38). Each of those profile
+folders, up to the known folder, is removed at removal when it is empty (ICE64), the shared
+`%LOCALAPPDATA%\Programs` too when nothing else is in it. rubrapack 0.46.0 and earlier keyed these
+components by their files, under other GUIDs: from a package built by one of those, the upgrade has
+to be a major upgrade (rubrapack builds one: the older version is removed first), `lint --previous`
+lists the old components as gone (`RP2306`), and a patch is refused. A `component-guid` keeps its
+file as the key path, with a warning (`RP1320`). A `dual` package with files in `AppData` or
+`LocalAppData` gets a warning too: installed for all users, they reach the installing user's profile
+only.
+
 ### Cabinets
 
 Files are compressed into one cabinet embedded in the package, with MSZIP (deflate) or LZX

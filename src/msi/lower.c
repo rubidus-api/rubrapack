@@ -674,6 +674,74 @@ static void lower_features(pkg_t *pk) {
     }
 }
 
+// The dir `id` lies in the user's profile: it is one of the profile's known folders, or its base is.
+static bool dir_in_profile(const rp_ir_t *ir, const char *id) {
+    static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
+    for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
+        const rp_ir_dir_t *d = NULL;
+        for (size_t i = 0; i < ir->dir_count; ++i) {
+            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
+        }
+        const char *base = d ? d->base : id;
+        if (d == NULL || d->base) {
+            for (size_t i = 0; i < sizeof profile / sizeof profile[0]; ++i) {
+                if (strcmp(base, profile[i]) == 0) return true;
+            }
+            return false;
+        }
+        id = d->parent;
+    }
+    return false;
+}
+
+// A component in the user's profile (RFC-0029): its key path is an HKCU value, as a shortcut's is
+// (ICE38) - Software\[Manufacturer]\[ProductName]\Components, named after the component, value 1.
+// Returns the Registry row's key; the caller puts it in KeyPath and 4 in Attributes.
+static const char *profile_keypath(pkg_t *pk, const char *ckey) {
+    keep_t *k = pk->k;
+    char rk[23];
+    rp_key_derive('R', kprintf(k, "component-keypath:%s", ckey, NULL), rk);
+    const char *rkey = kdup(k, rk);
+    s_(&pk->registry, rkey); i_(&pk->registry, 1); s_(&pk->registry, "Software\\[Manufacturer]\\[ProductName]\\Components");
+    s_(&pk->registry, ckey); s_(&pk->registry, "1"); s_(&pk->registry, ckey);
+    pk->any_write = true;
+    return rkey;
+}
+
+// Whether component `ckey` is removed with the product: not kept (Permanent) and without a condition.
+static bool comp_removed(const pkg_t *pk, const char *ckey) {
+    const rows_t *t = &pk->component;
+    for (size_t r = 0; r + 6 <= t->filled; r += 6) {
+        const rp_msi_cell_t *c = &t->cells[r];
+        if (c->len == strlen(ckey) && memcmp(c->bytes, ckey, c->len) == 0) return !(t->cells[r + 3].i & 16) && t->cells[r + 4].kind == RP_MSI_NULL;
+    }
+    return false;
+}
+
+// The folders of the user's profile a component of `ckey` lies in, from `dir_key` up to the known
+// folder, each get a RemoveFile row (no file name, at removal: the folder when it is empty), as
+// ICE64 wants (RFC-0029). A folder that already has such a row of a component removed with the
+// product gets none; one whose rows all belong to kept or conditional components gets another.
+static void profile_folders(pkg_t *pk, const char *dir_key, const char *ckey) {
+    keep_t *k = pk->k;
+    bool removed = comp_removed(pk, ckey);
+    for (const dnode_t *n = find_node(pk->dirs, dir_key); n && n->long_name && n->parent; n = find_node(pk->dirs, n->parent)) {
+        bool covered = false;
+        for (size_t r = 0; r + 5 <= pk->removefile.filled && !covered; r += 5) {
+            const rp_msi_cell_t *c = &pk->removefile.cells[r];
+            if (c[2].kind != RP_MSI_NULL || c[3].len != strlen(n->key) || memcmp(c[3].bytes, n->key, c[3].len) != 0) continue;
+            char owner[73];
+            snprintf(owner, sizeof owner, "%.*s", (int)c[1].len, (const char *)c[1].bytes);
+            covered = !removed || comp_removed(pk, owner);
+        }
+        if (covered) continue;
+        char rk[23];
+        rp_key_derive('R', kprintf(k, "profile-folder:%s|%s", n->key, ckey), rk);
+        s_(&pk->removefile, kdup(k, rk)); s_(&pk->removefile, ckey); null_(&pk->removefile);
+        s_(&pk->removefile, n->key); i_(&pk->removefile, 2);
+    }
+}
+
 // Files, components, hashes (in File key order = sequence order)
 static void lower_files(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
@@ -683,19 +751,23 @@ static void lower_files(pkg_t *pk) {
     for (size_t i = 0; i < nfiles; ++i) {
         lfile_t *lf = &files[i];
         char guid[39];
+        // In the user's profile: an HKCU key path, and so a GUID of its own (RFC-0029). A GUID the
+        // source fixed keeps the file as the key path (RP1320).
+        bool profile = lf->f->component_guid == NULL && dir_in_profile(ir, lf->f->dir);
         if (lf->f->component_guid) {
             snprintf(guid, sizeof guid, "%s", lf->f->component_guid);
         } else {
             const char *logical = kprintf(k, "%s/%s", lf->f->dir, lf->f->name);
-            const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "file", lf->key };
+            const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "file-hkcu" : "file", lf->key };
             rp_uuid_derive("rubrapack.component", fields, 6, guid);
         }
         s_(&pk->component, lf->comp);
         s_(&pk->component, kdup(k, guid));
         s_(&pk->component, lf->dir_key);
-        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
+        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
         s_(&pk->component, lf->f->when);                            // RFC-0013 A2
-        s_(&pk->component, lf->key);
+        s_(&pk->component, profile ? profile_keypath(pk, lf->comp) : lf->key);
+        if (profile || dir_in_profile(ir, lf->f->dir)) profile_folders(pk, lf->dir_key, lf->comp);      // ICE64, a fixed GUID too
 
         s_(&pk->featurecomp, lf->f->feature);
         s_(&pk->featurecomp, lf->comp);
@@ -947,26 +1019,6 @@ static const char *remove_name(keep_t *k, const char *name) {
     return kprintf(k, "%s|%s", kdup(k, sh[0] && sh[0] != '.' ? sh : "_"), name);
 }
 
-// The dir `id` lies in the user's profile (its base is one of the profile's folders).
-static bool dir_in_profile(const rp_ir_t *ir, const char *id) {
-    for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
-        const rp_ir_dir_t *d = NULL;
-        for (size_t i = 0; i < ir->dir_count; ++i) {
-            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
-        }
-        if (d == NULL) return false;
-        if (d->base) {
-            static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
-            for (size_t i = 0; i < sizeof profile / sizeof profile[0]; ++i) {
-                if (strcmp(d->base, profile[i]) == 0) return true;
-            }
-            return false;
-        }
-        id = d->parent;
-    }
-    return false;
-}
-
 static void lower_removes(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -975,17 +1027,21 @@ static void lower_removes(pkg_t *pk) {
         char comp[23], guid[39];
         rp_key_derive('C', kprintf(k, "remove:%s", r->id, NULL), comp);
         const char *logical = kprintf(k, "%s/%s", r->dir, r->name ? r->name : "");
-        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "remove", r->id };
-        rp_uuid_derive("rubrapack.component", fields, 6, guid);
-        const char *ckey = kdup(k, comp);
         // A recursive remove of a folder in the user's profile: its component sits at TARGETDIR, as
         // the registry ones, and creates no folder - a component in the profile wants an HKCU key
-        // path (ICE38). Elsewhere the folder is made at installation, by the installer, as before.
+        // path (ICE38). Elsewhere the folder is made at installation, by the installer, as before;
+        // in the profile with an HKCU key path (RFC-0029).
         bool aside = r->recursive && dir_in_profile(ir, r->dir);
+        bool profile = !aside && dir_in_profile(ir, r->dir);
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "remove-hkcu" : "remove", r->id };
+        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, aside ? "TARGETDIR" : dkey(ir, r->dir));
-        i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); null_(&pk->component); null_(&pk->component);
+        i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); null_(&pk->component);
+        if (profile) s_(&pk->component, profile_keypath(pk, ckey)); else null_(&pk->component);
         s_(&pk->featurecomp, r->feature); s_(&pk->featurecomp, ckey);
         if (!aside) { s_(&pk->createfolder, dkey(ir, r->dir)); s_(&pk->createfolder, ckey); }       // its key path is the folder (ICE18)
+        if (profile) profile_folders(pk, dkey(ir, r->dir), ckey);
         // upgrade = false: the removal part is the helper DLL's (RP_REMOVES: Directory key, pattern or
         // "" for the folder itself, component), which skips it when an upgrade removes this version;
         // the RemoveFile row keeps only the installation part.
@@ -1050,13 +1106,16 @@ static void lower_ini(pkg_t *pk) {
         const char *logical = kprintf(k, "%s/%s", x->dir, x->file);
         logical = kprintf(k, "%s[%s]", logical, x->section);
         logical = kprintf(k, "%s%s", logical, x->key);
-        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "ini", x->id };
+        bool profile = dir_in_profile(ir, x->dir);                 // RFC-0029: an HKCU key path
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "ini-hkcu" : "ini", x->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->dir));
-        i_(&pk->component, ir->arch != RP_ARCH_X86 ? 256 : 0); s_(&pk->component, x->when); null_(&pk->component);
+        i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); s_(&pk->component, x->when);
+        if (profile) s_(&pk->component, profile_keypath(pk, ckey)); else null_(&pk->component);
         s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, ckey);
         s_(&pk->createfolder, dkey(ir, x->dir)); s_(&pk->createfolder, ckey);     // its key path is the folder (ICE18)
+        if (profile) profile_folders(pk, dkey(ir, x->dir), ckey);
         const char *shortn = dirs->ini_short[i];
         const char *fname = shortn && strcmp(shortn, x->file) != 0 ? kprintf(k, "%s|%s", shortn, x->file) : x->file;
         rows_t *t = x->mode == 2 ? &pk->removeini : &pk->inifile;
@@ -1384,11 +1443,13 @@ static void lower_helper_actions(pkg_t *pk) {
     // in English, Korean and the dialogs' languages.
     if (preflight) {
         const char *dirs = "";
-        const char **keys = rp_mem_alloc(pk->alloc, ir->dir_count + 1, sizeof *keys);
+        const char **keys = rp_mem_alloc(pk->alloc, ir->dir_count + ir->folder_count + 1, sizeof *keys);
         size_t nkeys = 0;
         for (size_t i = 0; keys && i < ir->dir_count; ++i) {
             if (ir->dirs[i].part_count) keys[nkeys++] = dkey(ir, ir->dirs[i].id);
         }
+        // A [folder.*] is the product's own too, not "not installed with it" (x67).
+        for (size_t i = 0; keys && i < ir->folder_count; ++i) keys[nkeys++] = ir->folders[i].id;
         if (nkeys) rp_sort(keys, nkeys, sizeof *keys, cmp_cstr);
         for (size_t i = 0; i < nkeys; ++i) dirs = *dirs ? kprintf(k, "%s;%s", dirs, keys[i]) : keys[i];
         if (keys) rp_mem_free(pk->alloc, keys);
@@ -1601,6 +1662,7 @@ static void lower_copies(pkg_t *pk) {
         s_(&pk->duplicate, cp->id); s_(&pk->duplicate, src->comp); s_(&pk->duplicate, src->key);
         s_(&pk->duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
         s_(&pk->duplicate, dkey(ir, cp->dir));
+        if (dir_in_profile(ir, cp->dir)) profile_folders(pk, dkey(ir, cp->dir), src->comp);       // ICE64 (RFC-0029)
     }
 }
 
@@ -1613,19 +1675,21 @@ static void lower_folders(pkg_t *pk) {
         char comp[23], guid[39];
         rp_key_derive('C', f->id, comp);
         const char *logical = kprintf(k, "%s/%s", f->dir, f->name);
-        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, "folder", f->id };
+        bool profile = dir_in_profile(ir, f->dir);                 // RFC-0029: an HKCU key path
+        const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "folder-hkcu" : "folder", f->id };
         rp_uuid_derive("rubrapack.component", fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey);
         s_(&pk->component, kdup(k, guid));
         s_(&pk->component, f->id);
-        i_(&pk->component, pk->comp_attr | (f->keep ? 16 : 0));
+        i_(&pk->component, pk->comp_attr | (f->keep ? 16 : 0) | (profile ? 4 : 0));
         null_(&pk->component);
-        null_(&pk->component);
+        if (profile) s_(&pk->component, profile_keypath(pk, ckey)); else null_(&pk->component);
         s_(&pk->featurecomp, f->feature);
         s_(&pk->featurecomp, ckey);
         s_(&pk->createfolder, f->id);
         s_(&pk->createfolder, ckey);
+        if (profile) profile_folders(pk, f->id, ckey);
     }
 }
 

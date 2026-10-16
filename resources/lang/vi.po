@@ -783,6 +783,9 @@ msgstr "[{1}{2}] chưa được hỗ trợ (dự kiến cho {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] không thể đưa vào MSIX; thêm msi-only = true để tạo MSIX không có nó"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] nằm trong AppData hoặc LocalAppData của người dùng: gói dual cài cho mọi người dùng chỉ đặt nó vào hồ sơ của người cài đặt"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID trong mô-đun hợp nhất dài tối đa 35 ký tự (GUID của mô-đun được thêm vào)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX đặt mọi biến của nó (when); hãy dùng msi-onl
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: giá trị của nó nêu một nơi mà MSIX không thể cung cấp (thư mục ngoài gói không phải thư mục Windows, hoặc phần xác định lúc cài đặt); hãy dùng msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] nằm trong hồ sơ người dùng và có component-guid: đường dẫn khóa vẫn là tệp, trong khi quy tắc của Windows muốn một giá trị HKCU ở đó (ICE38); bỏ component-guid để có giá trị đó"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer nạp trình xử lý {2} từ DLL; [com.{3}] là chương trình"
@@ -2007,14 +2013,14 @@ msgstr "language phải là \"ko-KR\" hoặc \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language phải là \"neutral\", \"en-US\" hoặc \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" đứng riêng, không nằm trong mảng: nó lấy mọi ngôn ngữ có sẵn"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages chứa các mã như \"ko\" hoặc \"zh_TW\" (2 hoặc 3 chữ thường, rồi _ và hai chữ hoa của vùng) (nhận được '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages là mảng mã ngôn ngữ, như [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" đứng riêng, không nằm trong mảng: nó lấy mọi ngôn ngữ có sẵn"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages cần một bộ hộp thoại (ui = \"basic\" hoặc khác)"

@@ -50,6 +50,7 @@ const rp_explain_entry_t rp_explain_table[] = {
     { "RP1317", 2, { "this rubrapack was built without its menu part: [menu.*] items do not reach the Windows 11 menu", "language = \"ko-KR\" no longer makes the dialogs Korean: they are English unless [ui] languages = [\"ko\"] adds Korean" } },
     { "RP1318", 1, { "[action.*] check has no effect: nothing runs it yet; remove it" } },
     { "RP1319", 1, { "* '*': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too" } },
+    { "RP1320", 2, { "[file.*] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one", "[*.*] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only" } },
     { "RP1401", 1, { "'*' is not a valid variable name" } },
     { "RP1402", 1, { "-D * is given twice" } },
     { "RP1403", 1, { "variable '*' is not defined ([define] or -D *=...)*" } },

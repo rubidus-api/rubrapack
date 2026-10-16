@@ -783,6 +783,9 @@ msgstr "[{1}{2}] aún no está admitido (previsto para {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] no puede ir en un MSIX; añada msi-only = true para compilar el MSIX sin él"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] está en AppData o LocalAppData del usuario: un paquete dual instalado para todos los usuarios solo lo pone en el perfil del usuario que instala"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: un ID en un módulo de combinación tiene como máximo 35 caracteres (se le añade el GUID del módulo)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: un MSIX establece todas sus variables (when); use msi-only = 
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: su valor nombra un lugar que un MSIX no puede dar (una carpeta fuera del paquete que no es una carpeta de Windows, o una parte de tiempo de instalación); use msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] está en el perfil del usuario y tiene component-guid: su ruta de clave sigue siendo el archivo, donde las reglas de Windows quieren un valor HKCU (ICE38); quite component-guid para obtenerlo"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: el Explorador carga un controlador {2} desde un DLL; [com.{3}] es un programa"
@@ -2007,14 +2013,14 @@ msgstr "language debe ser \"ko-KR\" o \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language debe ser \"neutral\", \"en-US\" o \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" va solo, no dentro de una matriz: incluye todos los idiomas integrados"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages contiene códigos como \"ko\" o \"zh_TW\" (2 o 3 letras minúsculas, y _ y las dos mayúsculas de una región) (se recibió '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages es una matriz de códigos de idioma, como [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" va solo, no dentro de una matriz: incluye todos los idiomas integrados"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages necesita un conjunto de diálogos (ui = \"basic\" u otro)"

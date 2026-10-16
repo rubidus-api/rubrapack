@@ -783,6 +783,9 @@ msgstr "[{1}{2}] pole veel toetatud (kavas versioonis {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] ei saa minna MSIX-i; lisage msi-only = true, et koostada MSIX ilma selleta"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] on kasutaja AppData või LocalAppData kaustas: kõigile kasutajatele paigaldatud dual-pakett paneb selle ainult paigaldava kasutaja profiili"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ühendusmooduli ID on kuni 35 märki (sellele lisatakse mooduli GUID)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX määrab kõik oma muutujad (when); kasutage msi-only = 
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: selle väärtus nimetab koha, mida MSIX anda ei saa (paketivälist kausta, mis pole Windowsi kaust, või installiaegset osa); kasutage msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] on kasutajaprofiilis ja sellel on component-guid: võtmetee jääb failiks, kuigi Windowsi reeglid tahavad sinna HKCU väärtust (ICE38); selle saamiseks jätke component-guid ära"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer laadib {2}-töötleja DLL-ist; [com.{3}] on programm"
@@ -2007,14 +2013,14 @@ msgstr "language peab olema \"ko-KR\" või \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language peab olema \"neutral\", \"en-US\" või \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" on omaette, mitte massiivis: see võtab kõik sisseehitatud keeled"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages sisaldab koode nagu \"ko\" või \"zh_TW\" (2 või 3 väiketähte ning _ ja piirkonna kaks suurtähte) (saadi '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages on keelekoodide massiiv, nt [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" on omaette, mitte massiivis: see võtab kõik sisseehitatud keeled"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages vajab dialoogikomplekti (ui = \"basic\" või muu)"

@@ -783,6 +783,9 @@ msgstr "[{1}{2}] още не се поддържа (планирано за {3})
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] не може да влезе в MSIX; добавете msi-only = true, за да се създаде MSIX без него"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] е в AppData или LocalAppData на потребителя: пакет dual, инсталиран за всички потребители, го поставя само в профила на инсталиращия потребител"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID в модул за сливане има най-много 35 знака (добавя се GUID на модула)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX задава всички свои променливи 
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: стойността му посочва място, което MSIX не може да даде (папка извън пакета, която не е папка на Windows, или част от времето на инсталиране); използвайте msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] е в потребителския профил и има component-guid: ключовият път остава файлът, а правилата на Windows искат там стойност HKCU (ICE38); премахнете component-guid, за да получите такава"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer зарежда манипулатор {2} от DLL; [com.{3}] е програма"
@@ -2007,14 +2013,14 @@ msgstr "language трябва да е \"ko-KR\" или \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language трябва да е \"neutral\", \"en-US\" или \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" се пише самостоятелно, не в масив: включва всички вградени езици"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages съдържа кодове като \"ko\" или \"zh_TW\" (2 или 3 малки букви, и _ и две главни букви на регион) (получено '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages е масив от езикови кодове, например [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" се пише самостоятелно, не в масив: включва всички вградени езици"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages изисква набор диалогови прозорци (ui = \"basic\" или друг)"

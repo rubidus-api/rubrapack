@@ -783,6 +783,9 @@ msgstr "[{1}{2}] vēl netiek atbalstīts (plānots {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] nevar iekļaut MSIX; pievienojiet msi-only = true, lai būvētu MSIX bez tā"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] atrodas lietotāja AppData vai LocalAppData mapē: visiem lietotājiem instalēta dual pakete to ievieto tikai instalētāja profilā"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID sapludināšanas modulī ir ne vairāk kā 35 rakstzīmes (tam pievieno moduļa GUID)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX iestata visus savus mainīgos (when); izmantojiet msi-on
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: tā vērtība norāda vietu, ko MSIX nevar nodrošināt (mapi ārpus pakotnes, kas nav Windows mape, vai instalēšanas laika daļu); izmantojiet msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] atrodas lietotāja profilā, un tam ir component-guid: atslēgas ceļš paliek fails, lai gan Windows noteikumi tur prasa HKCU vērtību (ICE38); izlaidiet component-guid, lai to iegūtu"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer ielādē {2} apdarinātāju no DLL; [com.{3}] ir programma"
@@ -2007,14 +2013,14 @@ msgstr "language jābūt \"ko-KR\" vai \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language jābūt \"neutral\", \"en-US\" vai \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" tiek rakstīts atsevišķi, nevis masīvā: tas ņem visas iebūvētās valodas"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages satur kodus kā \"ko\" vai \"zh_TW\" (2 vai 3 mazie burti, un _ un divi reģiona lielie burti) (saņemts '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages ir valodu kodu masīvs, piem., [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" tiek rakstīts atsevišķi, nevis masīvā: tas ņem visas iebūvētās valodas"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages nepieciešams dialogu komplekts (ui = \"basic\" vai cits)"

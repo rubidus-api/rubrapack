@@ -783,6 +783,9 @@ msgstr "[{1}{2}] இன்னும் ஆதரிக்கப்படவி�
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] MSIX இல் செல்ல முடியாது; அது இல்லாமல் MSIX ஐ உருவாக்க msi-only = true சேர்க்கவும்"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] பயனரின் AppData அல்லது LocalAppData இல் உள்ளது: எல்லாப் பயனர்களுக்கும் நிறுவப்படும் dual தொகுப்பு அதை நிறுவும் பயனரின் சுயவிவரத்தில் மட்டுமே வைக்கும்"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: இணைப்பு தொகுதியில் ID அதிகபட்சம் 35 எழுத்துகள் (அதனுடன் தொகுதியின் GUID சேர்க்கப்படும்)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: ஒரு MSIX தன் எல்லா மாறிகள�
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: அதன் மதிப்பு MSIX கொடுக்க முடியாத இடத்தைக் குறிப்பிடுகிறது (தொகுப்புக்கு வெளியே Windows கோப்புறை அல்லாத கோப்புறை, அல்லது நிறுவல் நேரப் பகுதி); msi-only = true பயன்படுத்தவும்"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] பயனர் சுயவிவரத்தில் உள்ளது, அதற்கு component-guid உள்ளது: அதன் விசைப் பாதை கோப்பாகவே இருக்கும், ஆனால் Windows விதிகள் அங்கே HKCU மதிப்பை வேண்டுகின்றன (ICE38); அதைப் பெற component-guid ஐ நீக்கவும்"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer ஒரு {2} கையாளியை DLL இலிருந்து ஏற்றும்; [com.{3}] ஒரு நிரல்"
@@ -2007,14 +2013,14 @@ msgstr "language \"ko-KR\" அல்லது \"en-US\" ஆக இருக்�
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language \"neutral\", \"en-US\" அல்லது \"ko-KR\" ஆக இருக்க வேண்டும்"
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" தனியாக எழுதப்படும், ஒரு அணியில் அல்ல: இது உள்ளமைந்த எல்லா மொழிகளையும் எடுக்கும்"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages \"ko\" அல்லது \"zh_TW\" போன்ற குறியீடுகளைக் கொண்டுள்ளது (2 அல்லது 3 சிற்றெழுத்துகள், மற்றும் _ உம் ஒரு பகுதியின் இரண்டு பேரெழுத்துகளும்) ('{1}' கிடைத்தது)"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages என்பது மொழிக் குறியீடுகளின் அணி, எ.கா. [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" தனியாக எழுதப்படும், ஒரு அணியில் அல்ல: இது உள்ளமைந்த எல்லா மொழிகளையும் எடுக்கும்"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages க்கு ஓர் உரையாடல் தொகுப்பு தேவை (ui = \"basic\" அல்லது வேறொன்று)"

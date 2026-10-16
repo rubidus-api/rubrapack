@@ -785,6 +785,9 @@ msgstr "[{1}{2}] עדיין אינו נתמך (מתוכנן ל-{3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] לא יכול להיכנס ל-MSIX; הוסף msi-only = true כדי לבנות את ה-MSIX בלעדיו"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] נמצא ב-AppData או ב-LocalAppData של המשתמש: חבילת dual שמותקנת לכל המשתמשים מניחה אותו רק בפרופיל של המשתמש המתקין"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: למזהה במודול מיזוג יש לכל היותר 35 תווים (ה-GUID של המודול מתווסף אליו)"
 
@@ -883,6 +886,9 @@ msgstr "[env.{1}]: MSIX מגדירה את כל המשתנים שלה (when); ה�
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: הערך שלו מציין מקום ש-MSIX לא יכולה לתת (תיקייה מחוץ לחבילה שאינה תיקיית Windows, או חלק שנקבע בהתקנה); השתמש ב-msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] נמצא בפרופיל המשתמש ויש לו component-guid: נתיב המפתח נשאר הקובץ, בעוד שכללי Windows דורשים שם ערך HKCU (ICE38); השמט את component-guid כדי לקבל אותו"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: הסייר טוען מטפל {2} מ-DLL; [com.{3}] הוא תוכנית"
@@ -2009,14 +2015,14 @@ msgstr "language חייב להיות \"ko-KR\" או \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language חייב להיות \"neutral\", \"en-US\" או \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" נכתב לבדו, לא בתוך מערך: הוא כולל את כל השפות המובנות"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages מכיל קודים כמו \"ko\" או \"zh_TW\" (2 או 3 אותיות קטנות, ו-_ ושתי אותיות גדולות של אזור) (התקבל '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages הוא מערך של קודי שפה, כמו [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" נכתב לבדו, לא בתוך מערך: הוא כולל את כל השפות המובנות"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages דורש ערכת תיבות דו-שיח (ui = \"basic\" או אחרת)"

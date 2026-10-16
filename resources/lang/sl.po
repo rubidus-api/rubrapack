@@ -783,6 +783,9 @@ msgstr "[{1}{2}] še ni podprt (načrtovano za {3})"
 msgid "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it"
 msgstr "[{1}.{2}] ne more v MSIX; dodajte msi-only = true, da se MSIX zgradi brez njega"
 
+msgid "[%s.%s] is in the user's AppData or LocalAppData: a dual package installed for all users puts it in the installing user's profile only"
+msgstr "[{1}.{2}] je v uporabnikovi mapi AppData ali LocalAppData: paket dual, nameščen za vse uporabnike, ga postavi le v profil uporabnika, ki namešča"
+
 msgid "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)"
 msgstr "[{1}.{2}]: ID v spojitvenem modulu ima največ 35 znakov (doda se mu GUID modula)"
 
@@ -881,6 +884,9 @@ msgstr "[env.{1}]: MSIX nastavi vse svoje spremenljivke (when); uporabite msi-on
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: njegova vrednost navaja mesto, ki ga MSIX ne more dati (mapo zunaj paketa, ki ni mapa sistema Windows, ali del iz časa namestitve); uporabite msi-only = true"
+
+msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
+msgstr "[file.{1}] je v uporabniškem profilu in ima component-guid: pot ključa ostane datoteka, pravila sistema Windows pa tam zahtevajo vrednost HKCU (ICE38); izpustite component-guid, da jo dobite"
 
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Raziskovalec naloži rokovalnik {2} iz DLL; [com.{3}] je program"
@@ -2007,14 +2013,14 @@ msgstr "language mora biti \"ko-KR\" ali \"en-US\""
 msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language mora biti \"neutral\", \"en-US\" ali \"ko-KR\""
 
+msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
+msgstr "languages = \"all\" stoji samostojno, ne v polju: vzame vse vgrajene jezike"
+
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages vsebuje kode kot \"ko\" ali \"zh_TW\" (2 ali 3 male črke, ter _ in dve veliki črki regije) (dobljeno '{1}')"
 
 msgid "languages is an array of language codes, like [\"ko\"]"
 msgstr "languages je polje jezikovnih kod, npr. [\"ko\"]"
-
-msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" stoji samostojno, ne v polju: vzame vse vgrajene jezike"
 
 msgid "languages needs a dialog set (ui = \"basic\" or another)"
 msgstr "languages potrebuje nabor pogovornih oken (ui = \"basic\" ali drug)"
