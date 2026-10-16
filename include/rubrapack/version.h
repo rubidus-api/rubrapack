@@ -4,8 +4,8 @@
 // include/rubrapack/version.h - semantic version of the rubrapack tool.
 
 #define RUBRAPACK_VERSION_MAJOR  0
-#define RUBRAPACK_VERSION_MINOR  46
+#define RUBRAPACK_VERSION_MINOR  47
 #define RUBRAPACK_VERSION_PATCH  0
-#define RUBRAPACK_VERSION_STRING "0.46.0"
+#define RUBRAPACK_VERSION_STRING "0.47.0"
 
 #endif // RUBRAPACK_VERSION_H

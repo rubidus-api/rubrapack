@@ -1020,9 +1020,10 @@ static void installdir_dlg(ctx_t *c, const char *back, const char *next, const c
     dialog(c, b, 370, 270, 3, "PathEdit", "OK", "Cancel");
     frame(c, b, "BrowseTitle", "BrowseText", NULL);
     control(c, b, "LookIn", "Text", 20, 58, 50, 12, VIS, NULL, T(c, "BrowseLookIn"), NULL);
-    control(c, b, "Combo", "DirectoryCombo", 72, 55, 220, 80, VIS | EN | INDIRECT | 0x70000 | 0x100000, "_RpBrowseProperty", NULL, "Up");
-    control(c, b, "Up", "PushButton", 298, 55, 25, 17, VIS | EN, NULL, T(c, "BrowseUp"), "NewFolder");
-    control(c, b, "NewFolder", "PushButton", 325, 55, 30, 17, VIS | EN, NULL, T(c, "BrowseNew"), "List");
+    // Up and New folder as wide as their longest translation (T158: 82 and 120 px at 1.38 a unit).
+    control(c, b, "Combo", "DirectoryCombo", 72, 55, 125, 80, VIS | EN | INDIRECT | 0x70000 | 0x100000, "_RpBrowseProperty", NULL, "Up");
+    control(c, b, "Up", "PushButton", 201, 55, 62, 17, VIS | EN, NULL, T(c, "BrowseUp"), "NewFolder");
+    control(c, b, "NewFolder", "PushButton", 267, 55, 88, 17, VIS | EN, NULL, T(c, "BrowseNew"), "List");
     control(c, b, "List", "DirectoryList", 20, 78, 335, 110, VIS | EN | SUNKEN | INDIRECT, "_RpBrowseProperty", NULL, "PathEdit");
     control(c, b, "PathLabel", "Text", 20, 196, 60, 12, VIS, NULL, T(c, "BrowseFolder"), NULL);
     control(c, b, "PathEdit", "PathEdit", 82, 193, 273, 18, VIS | EN | SUNKEN | INDIRECT, "_RpBrowseProperty", NULL, "OK");
@@ -1521,6 +1522,13 @@ static void language_table(ctx_t *c) {
     ca_dll(c, "RpLangApply", "RpLangApply");
     seq(c, "RpLangApply", NULL, 19);
     if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
+    // A text may name a property AppSearch (50) fills: put in place again after it, as seven or
+    // fewer languages' actions are (101 on). Same entry; RPLANGUAGE is settled by then.
+    if (c->ir->search_count) {
+        ca_dll(c, "RpLangApplySearch", "RpLangApply");
+        seq(c, "RpLangApplySearch", NULL, 51);
+        if (c->nseqs) c->seqs[c->nseqs - 1].exec = c->act;
+    }
     if (c->page && !c->grouped) {
         prop(c, "RPLANGUAGEUI", "en");
         ca(c, "RpLangUi", "RPLANGUAGEUI", "[RPLANGUAGE]");
