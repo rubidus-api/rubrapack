@@ -218,8 +218,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
 | `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
-| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on(`remove` 와 함께: `install`, 또는 `uninstall` - 제거할 때 키 전체), keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), recursive(`true`: 제거할 때 폴더와 그 안 전부), feature |
+| `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on(`remove` 와 함께: `install`, 또는 `uninstall` - 제거할 때 키 전체), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), keep, view, with, feature, when |
+| `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), recursive(`true`: 제거할 때 폴더와 그 안 전부), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -708,12 +708,49 @@ on = "uninstall"            # 키와 그 값, 그 아래 모든 키
   제품의 모든 파일은 아니다).
 - 링크는 따라가지 않는다: 폴더 안의 정션이나 심볼릭 링크는 링크로서 지워지고, 가리키던 곳은 그대로다.
   프로그램이 아직 쥐고 있는 파일은 남고, 그 폴더도 남는다.
-- **AppData 와 `HKCU` 는 제품을 지우는 사용자의 것이다.** 같은 컴퓨터의 다른 사용자 설정은 한 번의 제거로
-  닿지 않아 남는다. 이 용도로는 컴퓨터 단위 패키지도 여기에 `HKCU` 를 적을 수 있다(다른 데서는 안 된다).
+- **AppData 와 `HKCU` 는 제품을 지우는 사용자의 것이다.** 그 자리에 `users = "all"` 을 적으면 다르다(아래).
+  이 용도로는 컴퓨터 단위 패키지도 여기에 `HKCU` 를 적을 수 있다(다른 데서는 안 된다).
   사용자 프로필과 `HKCU` 는 그 사용자 권한으로, 나머지는 컴퓨터 단위 패키지(`scope = "machine"`)에서 SYSTEM 이
   지운다. `dual` 패키지는 지우는 사람의 권한으로 전부 지운다.
 - 폴더의 `[dir.ID]` 는 이 패키지의 폴더여야 하므로, 없으면 설치할 때 (빈 채로) 만들어진다.
 - MSIX 에는 필요 없다: Windows 가 패키지의 폴더와 패키지 자신의 레지스트리·AppData 를 함께 지운다.
+
+#### 모든 사용자의 것: `users = "all"`
+
+여러 사람이 쓴 컴퓨터 단위 제품은 사람마다 설정을 남긴다. 싹 지우는 AppData·LocalAppData 의 폴더나 `HKCU` 키에
+`users = "all"` 을 적으면, 제거가 이 컴퓨터의 다른 사용자 모두의 같은 폴더·키도 지운다 - **제거하는 사람이 그러라고
+할 때만**:
+
+```toml
+[remove.Settings]
+dir = "Settings"            # $(APPDATA)/Example/Tip
+on = "uninstall"
+recursive = true
+users = "all"
+
+[registry.Settings]
+root = "HKCU"
+key = 'Software\Example\Tip'
+remove = true
+on = "uninstall"
+users = "all"
+```
+
+- 제거가 시작되기 전에, 그것을 가졌을 수 있는 사용자를 보여 주고 묻는다: **예**는 모든 사용자의 것을 지우고,
+  **아니요**(기본 단추)는 제거하는 사람의 것만 지우며, **취소**는 그만둔다. 그 사용자의 프로필에 폴더가 있거나 그
+  사용자의 레지스트리에 키가 있으면 - 또는 그 레지스트리가 적재되어 있지 않아 볼 수 없으면 - 목록에 든다. 아무도
+  없으면 묻지 않는다. 설치된 앱의 제거(`/qb`)도 묻는다.
+- 창이 없으면(`/qn`) 묻지 않고 제거하는 사람의 것만 지운다. 명령줄에 `RPPURGEUSERS=all` 이 있을 때만 모두 지운다
+  (`RPPURGEUSERS=mine` 은 없는 것과 같다). `preflight = false` 이면 명령줄이 유일한 길이다.
+- 컴퓨터 단위 제품의 제거는 이미 관리자 권한으로 돌므로 권한을 다시 요청하지 않는다: 나머지 싹 지우기처럼 맨 끝에
+  SYSTEM 이 한다. 로그오프한 사용자의 레지스트리는 그동안만 적재했다가 내린다.
+- 건너뛰고 로그에 남기는 것: 이 제품을 자기 것으로 설치한 사용자; AppData 나 LocalAppData 가 그 사용자의 프로필
+  밖을 가리키는 사용자(사용자마다 바꿀 수 있고, SYSTEM 이 거기서 지우기 때문이다); 적재할 수 없는 레지스트리.
+  링크는 위처럼 따라가지 않는다. 로그온한 사용자의 프로그램이 쥔 파일은 남는다.
+- 닿지 않는 것: 로밍 프로필이나 리디렉션된 폴더의 서버 쪽 사본 - 그 사용자가 다음에 로그인할 때 돌아온다; 이 컴퓨터에
+  로그인한 적이 없는 사용자.
+- 빌드할 때 거절(`RP1316`): 그 밖의 자리 - AppData·LocalAppData 밖의 폴더, `HKCU` 밖의 키, `recursive = true` 나
+  `on = "uninstall"` 이 없는 것 - 그리고 `user`·`dual` 패키지(사용자마다의 설치는 그 사람의 제품이다).
 
 ### 환경 변수: `[env.ID]`
 

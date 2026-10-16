@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" потребує допоміжної
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: ім'я ключа або значення не може потрапити у вулик реєстру"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" - для root = \"HKCU\" з on = \"uninstall\", у пакеті для комп'ютера"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] потребує компонента: задайте 'feature' тут або в його dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true - не для папки під {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true потребує допоміжної DLL rubrapack, якої модуль злиття не містить"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" - для recursive = true у папки в AppData або LocalAppData, у пакеті для комп'ютера"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args для MSIX мають бути простим текстом (без [...], що заповнюються під час інсталяції)"
@@ -3075,6 +3081,9 @@ msgstr "використайте повну збірку rubrapack або інш
 msgid "used by more than one component"
 msgstr "використовується більш ніж одним компонентом"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users має бути \"all\" (отримано '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "значення '{1}' вказано двічі"
 
@@ -3875,3 +3884,7 @@ msgstr "У папках [3] є елементи, установлені не р�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: зупинено, бо в його папках є елементи, установлені не разом із ним: [1]\r\n[2]Укажіть RPEXTRA=delete (видалити й їх) або RPEXTRA=keep (залишити їх) і видаліть його знову."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Інші користувачі цього комп'ютера ([1]) можуть мати параметри або дані [3]:\r\n[2]\r\nВидалити і їхні?\r\n\r\nТак: видалити для всіх користувачів (відновити буде неможливо).\r\nНі: видалити лише ваші.\r\nСкасувати: зупинити."

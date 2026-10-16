@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" 需要 rubrapack 的辅助 DLL，而�
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: 该键名或值名不能放入注册表配置单元"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" 用于按计算机安装的包中带 on = \"uninstall\" 的 root = \"HKCU\""
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] 需要一个功能: 请在此处或其 dir 上设置 'feature'"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true 不适用于 {2} 下的文件夹"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true 需要 rubrapack 的辅助 DLL，而合并模块不包含它"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" 用于按计算机安装的包中 AppData 或 LocalAppData 里文件夹的 recursive = true"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
@@ -3075,6 +3081,9 @@ msgstr "请使用完整的 rubrapack 构建或其他方式"
 msgid "used by more than one component"
 msgstr "被多个组件使用"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users 必须是 \"all\"(实际为 '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "值 '{1}' 列出了两次"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] 的文件夹中有 [1] 个项目不是随它安装的:\r\n[2]\r\n也
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: 已停止，因为其文件夹中有 [1] 个项目不是随它安装的:\r\n[2]请指定 RPEXTRA=delete(一并删除)或 RPEXTRA=keep(保留)，然后重新删除。"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "这台计算机的其他 [1] 个用户可能有 [3] 的设置或数据:\r\n[2]\r\n也删除他们的吗?\r\n\r\n是: 删除所有用户的 (无法恢复)。\r\n否: 只删除你自己的。\r\n取消: 停止。"

@@ -552,7 +552,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, menu, maintain, details;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details;
     bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
@@ -606,6 +606,10 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     if (ir->arp_about) { s_(&pk->property, "ARPURLINFOABOUT"); s_(&pk->property, ir->arp_about); }
     char *secure = kdup(k, ir->refuse_below ? "RP_NEWER_FOUND;RP_OLDER_FOUND;RP_REFUSED_OLD" : "RP_NEWER_FOUND;RP_OLDER_FOUND");
     if (!ir->no_preflight && !ir->module) secure = kprintf(k, "%s;%s", secure, "RPCLOSE");     // the answer for a run without UI
+    bool users_all = false;         // RFC-0030: the other users' too, for a removal without UI
+    for (size_t i = 0; i < ir->remove_count; ++i) users_all |= ir->removes[i].users_all;
+    for (size_t i = 0; i < ir->registry_count; ++i) users_all |= ir->registries[i].users_all;
+    if (users_all) secure = kprintf(k, "%s;%s", secure, "RPPURGEUSERS");
     for (size_t i = 0; i < ir->replace_count; ++i) {      // x47: the replaced products' action properties
         char n[40];
         snprintf(n, sizeof n, "RP_REPLACED_%u", (unsigned)(i & 15));
@@ -858,11 +862,13 @@ static void lower_registry(pkg_t *pk) {
         }
         const char *key = escape_formatted(k, r->key);
         const char *name = r->name ? escape_formatted(k, r->name) : NULL;
-        if (r->purge) {         // the helper DLL's, at a real removal (RP_PURGE: k, root, view, key, component)
+        if (r->purge) {         // the helper DLL's, at a real removal (RP_PURGE: k, root, view, key, component;
+                                // K: every user's too, when the removal is told so - RFC-0030)
             static const char *const proots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };
-            const char *fields[] = { "k", proots[r->root + 1], r->view32 || ir->arch == RP_ARCH_X86 ? "32" : "64", r->key, ckey };
+            const char *fields[] = { r->users_all ? "K" : "k", proots[r->root + 1], r->view32 || ir->arch == RP_ARCH_X86 ? "32" : "64", r->key, ckey };
             for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->pplan = plan_field(k, pk->pplan, fields[f]);
             pk->any_purge = true;
+            pk->any_others |= r->users_all;
             continue;
         }
         if (r->remove) {
@@ -1047,10 +1053,12 @@ static void lower_removes(pkg_t *pk) {
         // "" for the folder itself, component), which skips it when an upgrade removes this version;
         // the RemoveFile row keeps only the installation part.
         int mode = r->mode;
-        if (r->recursive) {     // the helper DLL's, at a real removal (RP_PURGE: d, Directory key, "", "", component)
-            const char *fields[] = { "d", dkey(ir, r->dir), "", "", ckey };
+        if (r->recursive) {     // the helper DLL's, at a real removal (RP_PURGE: d, Directory key, "", "", component;
+                                // D: every user's same folder too, when the removal is told so - RFC-0030)
+            const char *fields[] = { r->users_all ? "D" : "d", dkey(ir, r->dir), "", "", ckey };
             for (size_t f = 0; f < sizeof fields / sizeof fields[0]; ++f) pk->pplan = plan_field(k, pk->pplan, fields[f]);
             pk->any_purge = true;
+            pk->any_others |= r->users_all;
             // The folder itself, when it is left empty, also goes the installer's way: a folder of
             // the user's profile has to be in RemoveFile (ICE64). Nothing in it is touched by this.
             s_(&pk->removefile, r->id); s_(&pk->removefile, ckey); null_(&pk->removefile); s_(&pk->removefile, dkey(ir, r->dir));
@@ -1463,8 +1471,11 @@ static void lower_helper_actions(pkg_t *pk) {
             s_(&pk->property, "RP_PREFLIGHT_EXTRA"); s_(&pk->property, ir->extra_files == 2 ? "delete" : "ask");
             pk->extra = true;
         }
-        static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache", "Extra", "ExtraSilent" };
+        // RFC-0030: "Users" asks whether the other users' settings and data go too.
+        bool others = pk->any_others;
+        static const char *const ids[] = { "Ask", "Silent", "Folder", "Cache", "Extra", "ExtraSilent", "Users" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
+            if (strcmp(ids[t], "Users") == 0 && !others) continue;
             const char *id = kprintf(k, "Preflight%s", ids[t], NULL);
             for (size_t b = 0; b < nlangs; ++b) {       // English, the built-in packs, the dialogs' languages
                 s_(&pk->property, kprintf(k, "RpPre%s_%s", ids[t], langs[b]));
@@ -1551,6 +1562,12 @@ static void lower_helper_actions(pkg_t *pk) {
         if (ir->scope == 0) {
             s_(&pk->customaction, "RP_PurgeMachine"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, "RpCa");
             s_(&pk->customaction, "RpPurge");
+        }
+        // RFC-0030: the other users' profiles and HKCU, as SYSTEM, when the removal was told so
+        // (the preflight's question, or RPPURGEUSERS=all).
+        if (pk->any_others) {
+            s_(&pk->customaction, "RP_PurgeOthers"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, "RpCa");
+            s_(&pk->customaction, "RpPurgeOthers");
         }
     }
 }
@@ -1908,6 +1925,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RP_PurgePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3494);
         s_(&pk->iexec, "RP_PurgeUser"); null_(&pk->iexec); i_(&pk->iexec, 3495);
         if (ir->scope == 0) { s_(&pk->iexec, "RP_PurgeMachine"); null_(&pk->iexec); i_(&pk->iexec, 3496); }
+        if (pk->any_others) { s_(&pk->iexec, "RP_PurgeOthers"); null_(&pk->iexec); i_(&pk->iexec, 3497); }
     }
     if (pk->menu) {
         for (int i = 1; i <= 4; ++i) {

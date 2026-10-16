@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" necesita el DLL auxiliar de rubrapack
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: el nombre de la clave o del valor no puede ir en un subárbol del registro"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" es para root = \"HKCU\" con on = \"uninstall\", en un paquete para el equipo"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] necesita una característica: establezca 'feature' aquí o en su dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true no es para una carpeta bajo {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true necesita el DLL auxiliar de rubrapack, que un módulo de combinación no lleva"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" es para recursive = true en una carpeta de AppData o LocalAppData, en un paquete para el equipo"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: los args de un MSIX deben ser texto simple (sin [...] rellenado al instalar)"
@@ -3075,6 +3081,9 @@ msgstr "use una compilación completa de rubrapack u otra vía"
 msgid "used by more than one component"
 msgstr "lo usa más de un componente"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users debe ser \"all\" (se recibió '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "el valor '{1}' aparece dos veces"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] elemento(s) de las carpetas de [3] no se instalaron con él:\r\n[2]\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: detenido, porque [1] elemento(s) de sus carpetas no se instalaron con él:\r\n[2]Indique RPEXTRA=delete (eliminarlos también) o RPEXTRA=keep (conservarlos) y vuelva a quitarlo."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] usuarios más de este equipo pueden tener configuración o datos de [3]:\r\n[2]\r\n¿Eliminar también los suyos?\r\n\r\nSí: eliminarlos para todos los usuarios (no se pueden recuperar).\r\nNo: eliminar solo los suyos propios.\r\nCancelar: detener."

@@ -1040,6 +1040,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" به DLL کمکی rubrapack نیاز 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: نام کلید یا مقدار نمی‌تواند در یک hive رجیستری قرار گیرد"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" برای root = \"HKCU\" با on = \"uninstall\"، در بستهٔ رایانه است"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] به یک ویژگی نیاز دارد: 'feature' را اینجا یا روی dir آن تنظیم کنید"
 
@@ -1048,6 +1051,9 @@ msgstr "[remove.{1}]: recursive = true برای پوشه‌ای زیر {2} نی�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true به DLL کمکی rubrapack نیاز دارد که ماژول ادغام آن را حمل نمی‌کند"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" برای recursive = true روی پوشه‌ای در AppData یا LocalAppData، در بستهٔ رایانه است"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args برای MSIX باید متن ساده باشد (بدون [...] که هنگام نصب پر شود)"
@@ -3077,6 +3083,9 @@ msgstr "از یک ساخت کامل rubrapack یا راه دیگری استفا�
 msgid "used by more than one component"
 msgstr "توسط بیش از یک جزء استفاده می‌شود"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users باید \"all\" باشد ('{1}' دریافت شد)"
+
 msgid "value '%s' is listed twice"
 msgstr "مقدار '{1}' دو بار فهرست شده است"
 
@@ -3877,3 +3886,7 @@ msgstr "[1] مورد در پوشه‌های [3] همراه آن نصب نشده�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: متوقف شد، زیرا [1] مورد در پوشه‌های آن همراهش نصب نشده‌اند:\r\n[2]RPEXTRA=delete (آن‌ها را هم پاک کن) یا RPEXTRA=keep (آن‌ها را نگه دار) بدهید و دوباره حذف کنید."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] کاربر دیگر این رایانه ممکن است تنظیمات یا داده‌های [3] را داشته باشند:\r\n[2]\r\nمال آن‌ها هم حذف شود؟\r\n\r\nبله: برای همهٔ کاربران حذف شود (قابل بازگرداندن نیست).\r\nخیر: فقط مال شما حذف شود.\r\nلغو: توقف."

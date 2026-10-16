@@ -299,9 +299,19 @@ static bool ieq_n(const char *a, const char *b, size_t n) {
     return true;
 }
 
+// users = "all" (RFC-0030): what is wiped at removal, in every user's profile or HKCU - when the
+// removal is told so. Where it may stand is checked with the whole package (ir_check.c).
+static bool ir_users_all(ctx_t *c, const rp_ttable_t *t, char *users) {
+    if (users == NULL) return false;
+    bool all = strcmp(users, "all") == 0;
+    if (!all) ERR(c, ir_key_pos(t, "users"), "RP1316", "users must be \"all\" (got '%s')", users);
+    rp_mem_free(c->alloc, users);
+    return all;
+}
+
 void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
     static const char *const keys[] = { "root", "key", "name", "value", "type", "remove", "keep", "view", "with",
-                                        "feature", "when", "on", NULL };
+                                        "feature", "when", "on", "users", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     r->id = ir_dup(c, t->id);
@@ -351,6 +361,7 @@ void ir_parse_registry(ctx_t *c, const rp_ttable_t *t, rp_ir_registry_t *r) {
         if (!r->remove) ERR(c, ir_key_pos(t, "on"), "RP1316", "on is for remove = true (when the key is removed)");
         rp_mem_free(c->alloc, on);
     }
+    r->users_all = ir_users_all(c, t, ir_get_str(c, t, "users", false, NULL));
     if (r->purge && r->remove && r->key) {
         static const char *const keys2[] = { "name", "with", "when", "keep", NULL };
         for (size_t k = 0; keys2[k]; ++k) {
@@ -525,7 +536,7 @@ static bool pattern_ok(ctx_t *c, const char *name, rp_pos_t pos) {
 }
 
 void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
-    static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", "recursive", NULL };
+    static const char *const keys[] = { "dir", "name", "on", "feature", "upgrade", "recursive", "users", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     r->id = ir_dup(c, t->id);
@@ -555,6 +566,7 @@ void ir_parse_remove(ctx_t *c, const rp_ttable_t *t, rp_ir_remove_t *r) {
         if (ir_find_key(t, "upgrade")) ERR(c, ir_key_pos(t, "upgrade"), "RP1316", "recursive = true never runs when an upgrade removes this version; it takes no 'upgrade'");
         r->keep_on_upgrade = false;
     }
+    r->users_all = ir_users_all(c, t, ir_get_str(c, t, "users", false, NULL));
     r->feature = ir_get_str(c, t, "feature", false, NULL);
 }
 

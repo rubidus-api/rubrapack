@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" ต้องใช้ DLL ตัว�
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: ชื่อคีย์หรือค่าใส่ในไฮฟ์รีจิสทรีไม่ได้"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" ใช้กับ root = \"HKCU\" ที่มี on = \"uninstall\" ในแพ็กเกจระดับเครื่อง"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] ต้องมีฟีเจอร์ ตั้ง 'feature' ที่นี่หรือที่ dir ของมัน"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true ใช้กับโฟลเดอร�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true ต้องใช้ DLL ตัวช่วยของ rubrapack ซึ่งโมดูลผสานไม่มี"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" ใช้กับ recursive = true ของโฟลเดอร์ใน AppData หรือ LocalAppData ในแพ็กเกจระดับเครื่อง"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
@@ -3075,6 +3081,9 @@ msgstr "ใช้ rubrapack ที่สร้างแบบเต็มหร�
 msgid "used by more than one component"
 msgstr "ถูกใช้โดยคอมโพเนนต์มากกว่าหนึ่ง"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users ต้องเป็น \"all\" (ได้ '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "ค่า '{1}' อยู่ในรายการสองครั้ง"
 
@@ -3875,3 +3884,7 @@ msgstr "มี [1] รายการในโฟลเดอร์ของ [3]
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: หยุดแล้ว เพราะมี [1] รายการในโฟลเดอร์ของมันที่ไม่ได้ติดตั้งมาพร้อมกัน:\r\n[2]ระบุ RPEXTRA=delete (ลบด้วย) หรือ RPEXTRA=keep (เก็บไว้) แล้วถอนอีกครั้ง"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "ผู้ใช้อื่น [1] คนของคอมพิวเตอร์นี้อาจมีการตั้งค่าหรือข้อมูลของ [3]:\r\n[2]\r\nลบของพวกเขาด้วยหรือไม่\r\n\r\nใช่: ลบของผู้ใช้ทุกคน (กู้คืนไม่ได้)\r\nไม่: ลบเฉพาะของคุณ\r\nยกเลิก: หยุด"

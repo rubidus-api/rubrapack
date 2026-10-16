@@ -1040,6 +1040,9 @@ msgstr "[registry.{1}]: يحتاج on = \"uninstall\" إلى DLL المساعد 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: لا يمكن أن يدخل اسم المفتاح أو القيمة في خلية سجل"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" مخصص لـ root = \"HKCU\" مع on = \"uninstall\"، في حزمة لكل الكمبيوتر"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "يحتاج [remove.{1}] إلى ميزة: عيّن 'feature' هنا أو على dir الخاص به"
 
@@ -1048,6 +1051,9 @@ msgstr "[remove.{1}]: recursive = true ليس لمجلد تحت {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: يحتاج recursive = true إلى DLL المساعد الخاص بـ rubrapack، ولا تحمله وحدة الدمج"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" مخصص لـ recursive = true على مجلد في AppData أو LocalAppData، في حزمة لكل الكمبيوتر"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
@@ -3077,6 +3083,9 @@ msgstr "استخدم بناءً كاملاً لـ rubrapack أو طريقة أخ
 msgid "used by more than one component"
 msgstr "يستخدمه أكثر من مكوّن واحد"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "يجب أن يكون users هو \"all\" (الموجود '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "القيمة '{1}' مدرجة مرتين"
 
@@ -3877,3 +3886,7 @@ msgstr "[1] عنصر في مجلدات [3] لم يُثبَّت معه:\r\n[2]\r\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: توقف، لأن [1] عنصر في مجلداته لم يُثبَّت معه:\r\n[2]حدد RPEXTRA=delete (حذفها أيضاً) أو RPEXTRA=keep (الإبقاء عليها)، ثم قم بالإزالة مرة أخرى."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "قد تكون لدى [1] من المستخدمين الآخرين لهذا الكمبيوتر إعدادات أو بيانات لـ [3]:\r\n[2]\r\nهل تريد حذف ما لديهم أيضاً؟\r\n\r\nنعم: حذفها لكل المستخدمين (لا يمكن استعادتها).\r\nلا: حذف ما يخصك فقط.\r\nإلغاء الأمر: التوقف."

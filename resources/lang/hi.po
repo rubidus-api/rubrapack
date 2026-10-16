@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" को rubrapack का सहाय�
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: कुंजी या मान का नाम रजिस्ट्री हाइव में नहीं जा सकता"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" कंप्यूटर-स्तरीय पैकेज में on = \"uninstall\" के साथ root = \"HKCU\" के लिए है"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] को फ़ीचर चाहिए: 'feature' यहाँ या उसके dir पर सेट करें"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2} के नीचे के फ़ो�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true को rubrapack का सहायक DLL चाहिए, जिसे मर्ज मॉड्यूल नहीं रखता"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" कंप्यूटर-स्तरीय पैकेज में AppData या LocalAppData के फ़ोल्डर पर recursive = true के लिए है"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX के लिए args सादा पाठ होने चाहिए (इंस्टॉल के समय भरा जाने वाला [...] नहीं)"
@@ -3075,6 +3081,9 @@ msgstr "rubrapack का पूर्ण बिल्ड या कोई दू
 msgid "used by more than one component"
 msgstr "एक से अधिक घटक उपयोग करते हैं"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" होना चाहिए (मिला '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "मान '{1}' दो बार सूचीबद्ध है"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] के फ़ोल्डरों में [1] आइटम उस
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: रुक गया, क्योंकि इसके फ़ोल्डरों में [1] आइटम इसके साथ इंस्टॉल नहीं हुए थे:\r\n[2]RPEXTRA=delete (उन्हें भी हटाएँ) या RPEXTRA=keep (उन्हें रखें) दें, फिर दोबारा हटाएँ।"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "इस कंप्यूटर के [1] अन्य उपयोगकर्ताओं के पास [3] की सेटिंग्स या डेटा हो सकता है:\r\n[2]\r\nक्या उनका भी हटाएँ?\r\n\r\nहाँ: हर उपयोगकर्ता के लिए हटाएँ (वापस नहीं लाया जा सकता)।\r\nनहीं: केवल आपका हटाएँ।\r\nरद्द करें: रोकें।"

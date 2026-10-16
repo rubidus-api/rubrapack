@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" tarvitsee rubrapackin apu-DLL:n, jota
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: avaimen tai arvon nimi ei mahdu rekisteripesään"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" on asetukselle root = \"HKCU\" yhdessä asetuksen on = \"uninstall\" kanssa, koko tietokoneen paketissa"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] tarvitsee ominaisuuden: aseta 'feature' tähän tai sen dir-kohteeseen"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true ei ole kansiolle kohteen {2} alla"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true tarvitsee rubrapackin apu-DLL:n, jota yhdistämismoduuli ei sisällä"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" on asetukselle recursive = true AppData- tai LocalAppData-kansiossa, koko tietokoneen paketissa"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX:n argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
@@ -3075,6 +3081,9 @@ msgstr "käytä täyttä rubrapack-koontia tai muuta tapaa"
 msgid "used by more than one component"
 msgstr "useamman kuin yhden komponentin käytössä"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users-arvon on oltava \"all\" (saatiin '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "arvo '{1}' on luettelossa kahdesti"
 
@@ -3875,3 +3884,7 @@ msgstr "Kohteen [3] kansioissa on [1] kohdetta, joita ei asennettu sen mukana:\r
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: pysäytetty, koska sen kansioissa on [1] kohdetta, joita ei asennettu sen mukana:\r\n[2]Anna RPEXTRA=delete (poista nekin) tai RPEXTRA=keep (säilytä ne) ja poista se uudelleen."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Tämän tietokoneen [1] muulla käyttäjällä voi olla sovelluksen [3] asetuksia tai tietoja:\r\n[2]\r\nPoistetaanko myös heidän tietonsa?\r\n\r\nKyllä: poista ne kaikilta käyttäjiltä (niitä ei voi palauttaa).\r\nEi: poista vain omasi.\r\nPeruuta: pysäytä."

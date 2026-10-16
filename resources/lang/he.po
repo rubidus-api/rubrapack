@@ -1040,6 +1040,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" דורש את ה-DLL המסייע ש�
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: שם המפתח או הערך לא יכול להיכנס לכוורת רישום"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" מיועד ל-root = \"HKCU\" עם on = \"uninstall\", בחבילה למחשב"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] דורש תכונה: הגדר 'feature' כאן או ב-dir שלו"
 
@@ -1048,6 +1051,9 @@ msgstr "[remove.{1}]: recursive = true אינו מיועד לתיקייה מתח
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true דורש את ה-DLL המסייע של rubrapack, שמודול מיזוג אינו נושא"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" מיועד ל-recursive = true בתיקייה ב-AppData או ב-LocalAppData, בחבילה למחשב"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
@@ -3077,6 +3083,9 @@ msgstr "השתמש בבנייה מלאה של rubrapack או בדרך אחרת"
 msgid "used by more than one component"
 msgstr "בשימוש של יותר מרכיב אחד"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users חייב להיות \"all\" (התקבל '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "הערך '{1}' מופיע פעמיים"
 
@@ -3877,3 +3886,7 @@ msgstr "[1] פריטים בתיקיות של [3] לא הותקנו איתו:\r\n
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: נעצר, כי [1] פריטים בתיקיות שלו לא הותקנו איתו:\r\n[2]תן RPEXTRA=delete (למחוק גם אותם) או RPEXTRA=keep (להשאיר אותם), ואז הסר שוב."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "ייתכן של-[1] משתמשים אחרים במחשב זה יש הגדרות או נתונים של [3]:\r\n[2]\r\nלמחוק גם את שלהם?\r\n\r\nכן: למחוק אותם לכל משתמש (לא ניתן לשחזר אותם).\r\nלא: למחוק רק את שלך.\r\nביטול: לעצור."

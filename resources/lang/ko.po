@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" 에는 rubrapack 의 도우미 DLL �
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: 그 키나 값 이름은 레지스트리 하이브에 넣을 수 없습니다"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" 는 컴퓨터 단위 패키지에서 on = \"uninstall\" 인 root = \"HKCU\" 에 씁니다"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] 에 기능이 필요합니다: 여기나 그 dir 에 'feature' 를 주십시오"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true 는 {2} 아래의 폴더에는 쓸 수 �
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true 에는 rubrapack 의 도우미 DLL 이 필요한데, 병합 모듈은 그것을 싣지 않습니다"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" 는 컴퓨터 단위 패키지에서 AppData 나 LocalAppData 안 폴더의 recursive = true 에 씁니다"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX 의 args 는 고정된 글이어야 합니다(설치할 때 채우는 [...] 없이)"
@@ -3075,6 +3081,9 @@ msgstr "전체 기능으로 빌드한 rubrapack 이나 다른 방법을 쓰십�
 msgid "used by more than one component"
 msgstr "둘 이상의 구성 요소가 쓰고 있습니다"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users 는 \"all\" 이어야 합니다('{1}'을(를) 받음)"
+
 msgid "value '%s' is listed twice"
 msgstr "값 '{1}'이(가) 두 번 나옵니다"
 
@@ -3875,3 +3884,7 @@ msgstr "[3]의 폴더에 함께 설치되지 않은 항목이 [1]개 있습니�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: 폴더에 함께 설치되지 않은 항목이 [1]개 있어 멈췄습니다:\r\n[2]RPEXTRA=delete(함께 지우기) 또는 RPEXTRA=keep(남기기)를 주고 다시 제거하십시오."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "이 컴퓨터의 다른 사용자 [1]명에게 [3]의 설정이나 데이터가 있을 수 있습니다:\r\n[2]\r\n그 사용자들의 것도 지울까요?\r\n\r\n예(Yes): 모든 사용자의 것을 지웁니다(되돌릴 수 없습니다).\r\n아니요(No): 내 것만 지웁니다.\r\n취소(Cancel): 그만둡니다."

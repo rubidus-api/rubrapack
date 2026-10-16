@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" nepieciešams rubrapack palīg-DLL, k
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: atslēgas vai vērtības nosaukumu nevar iekļaut reģistra hive"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" ir paredzēts root = \"HKCU\" ar on = \"uninstall\", visa datora pakotnē"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] nepieciešams līdzeklis: iestatiet 'feature' šeit vai tā dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true nav paredzēts mapei zem {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true nepieciešams rubrapack palīg-DLL, ko sapludināšanas modulis nesatur"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" ir paredzēts recursive = true mapei AppData vai LocalAppData, visa datora pakotnē"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
@@ -3075,6 +3081,9 @@ msgstr "izmantojiet pilnu rubrapack būvējumu vai citu veidu"
 msgid "used by more than one component"
 msgstr "to izmanto vairāk nekā viens komponents"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users jābūt \"all\" (saņemts '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "vērtība '{1}' ir norādīta divreiz"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] vienumi [3] mapēs netika instalēti kopā ar to:\r\n[2]\r\nVai dzē
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: apturēts, jo [1] vienumi tā mapēs netika instalēti kopā ar to:\r\n[2]Norādiet RPEXTRA=delete (dzēst arī tos) vai RPEXTRA=keep (paturēt tos), pēc tam noņemiet vēlreiz."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] citiem šī datora lietotājiem var būt [3] iestatījumi vai dati:\r\n[2]\r\nVai dzēst arī viņu?\r\n\r\nJā: dzēst visiem lietotājiem (tos nevarēs atjaunot).\r\nNē: dzēst tikai jūsējos.\r\nAtcelt: apturēt."

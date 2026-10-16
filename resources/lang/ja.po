@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" には rubrapack のヘルパー DLL 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: そのキー名か値の名前はレジストリ ハイブに入れられません"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" はコンピューター単位のパッケージで on = \"uninstall\" の root = \"HKCU\" に使います"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] には機能が必要です: ここか dir に 'feature' を設定してください"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true は {2} の下のフォルダーには使
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true には rubrapack のヘルパー DLL が必要ですが、マージ モジュールはそれを持てません"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" はコンピューター単位のパッケージで AppData か LocalAppData のフォルダーの recursive = true に使います"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
@@ -3075,6 +3081,9 @@ msgstr "完全な rubrapack のビルドか別の方法を使ってください"
 msgid "used by more than one component"
 msgstr "複数のコンポーネントが使っています"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users は \"all\" でなければなりません ('{1}' でした)"
+
 msgid "value '%s' is listed twice"
 msgstr "値 '{1}' が 2 回並んでいます"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] のフォルダーに、一緒にインストールされていな�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: フォルダーに一緒にインストールされていない項目が [1] 個あるため中止しました:\r\n[2]RPEXTRA=delete (一緒に削除) または RPEXTRA=keep (残す) を指定して、もう一度削除してください。"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "このコンピューターの他の [1] 人のユーザーが [3] の設定やデータを持っている可能性があります:\r\n[2]\r\nその人たちの分も削除しますか?\r\n\r\nはい: すべてのユーザーの分を削除します (元に戻せません)。\r\nいいえ: 自分の分だけ削除します。\r\nキャンセル: 中止します。"

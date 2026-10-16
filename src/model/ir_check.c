@@ -947,6 +947,9 @@ void ir_cross_checks(ctx_t *c) {
     // Registry values: `with` names a file; otherwise the feature resolves like a file's (G2).
     for (size_t k = 0; k < ir->registry_count; ++k) {
         rp_ir_registry_t *r = &ir->registries[k];
+        if (r->users_all && (!r->purge || r->root != RP_ROOT_HKCU || ir->scope != 0)) {      // RFC-0030
+            ERR(c, r->pos, "RP1316", "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package", r->id);
+        }
         if (r->with_file) {
             bool found = false;
             for (size_t j = 0; j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, r->with_file) == 0;
@@ -982,6 +985,11 @@ void ir_cross_checks(ctx_t *c) {
             if (b && (strcmp(b, "Windows") == 0 || strcmp(b, "System") == 0 || strcmp(b, "Fonts") == 0 || strcmp(b, "Temp") == 0)) {
                 ERR(c, r->pos, "RP1316", "[remove.%s]: recursive = true is not for a folder below %s", r->id, b);
             }
+        }
+        // RFC-0030: every user's same folder - a folder of the profile's data, wiped as a whole, by a
+        // per-machine removal (it runs as an administrator; a per-user product is each user's own).
+        if (r->users_all && (!r->recursive || !d || !profile_base(ir, r->dir, true) || ir->scope != 0)) {
+            ERR(c, r->pos, "RP1316", "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package", r->id);
         }
         if (r->feature && !find_feature(ir, r->feature)) {
             ERR(c, r->pos, "RP1307", "feature '%s' is not defined", r->feature);

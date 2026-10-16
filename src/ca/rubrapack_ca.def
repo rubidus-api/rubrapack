@@ -20,6 +20,7 @@ EXPORTS
     RpMenuRemove
     RpPurgePrepare
     RpPurge
+    RpPurgeOthers
     RpDetails
     RpDetailsDone
     RpDirCheck

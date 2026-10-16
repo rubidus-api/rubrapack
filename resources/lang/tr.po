@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\", bir birleştirme modülünün taşı
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: anahtar veya değer adı bir kayıt defteri kovanına giremez"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\", bilgisayar paketinde on = \"uninstall\" ile root = \"HKCU\" içindir"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] bir özellik gerektirir: 'feature' değerini burada ya da dir'inde ayarlayın"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true, {2} altındaki bir klasör için değild
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true, bir birleştirme modülünün taşımadığı rubrapack yardımcı DLL'sini gerektirir"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\", bilgisayar paketinde AppData veya LocalAppData içindeki bir klasörde recursive = true içindir"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: bir MSIX için args düz metin olmalıdır (kurulumda doldurulan [...] olmadan)"
@@ -3075,6 +3081,9 @@ msgstr "tam bir rubrapack derlemesi ya da başka bir yol kullanın"
 msgid "used by more than one component"
 msgstr "birden fazla bileşen tarafından kullanılıyor"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" olmalıdır (alınan: '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "'{1}' değeri iki kez listelenmiş"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] klasörlerindeki [1] öğe onunla birlikte yüklenmedi:\r\n[2]\r\nBu
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: durduruldu, çünkü klasörlerindeki [1] öğe onunla birlikte yüklenmedi:\r\n[2]RPEXTRA=delete (bunları da sil) veya RPEXTRA=keep (tut) belirtip yeniden kaldırın."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Bu bilgisayarın diğer [1] kullanıcısında [3] ayarları veya verileri olabilir:\r\n[2]\r\nOnlarınki de silinsin mi?\r\n\r\nEvet: her kullanıcı için sil (geri getirilemez).\r\nHayır: yalnızca sizinkini sil.\r\nİptal: durdur."

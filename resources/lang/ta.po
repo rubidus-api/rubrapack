@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" க்கு rubrapack இன் உ�
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: விசை அல்லது மதிப்புப் பெயர் பதிவேட்டு hive இல் செல்ல முடியாது"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" கணினி முழுமைக்கான தொகுப்பில் on = \"uninstall\" உடன் root = \"HKCU\" க்கானது"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] க்கு ஓர் அம்சம் தேவை: 'feature' ஐ இங்கே அல்லது அதன் dir இல் அமைக்கவும்"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2} இன் கீழ் உள்ள �
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true க்கு rubrapack இன் உதவி DLL தேவை, இணைப்பு தொகுதி அதைக் கொண்டு செல்லாது"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" கணினி முழுமைக்கான தொகுப்பில் AppData அல்லது LocalAppData கோப்புறையின் recursive = true க்கானது"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
@@ -3075,6 +3081,9 @@ msgstr "முழு rubrapack உருவாக்கம் அல்லது
 msgid "used by more than one component"
 msgstr "ஒன்றுக்கு மேற்பட்ட கூறுகளால் பயன்படுத்தப்படுகிறது"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
 msgid "value '%s' is listed twice"
 msgstr "மதிப்பு '{1}' இருமுறை பட்டியலிடப்பட்டுள்ளது"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] இன் கோப்புறைகளில் உள்ள [1] �
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: நிறுத்தப்பட்டது, ஏனெனில் அதன் கோப்புறைகளில் உள்ள [1] உருப்படிகள் அதனுடன் நிறுவப்படவில்லை:\r\n[2]RPEXTRA=delete (அவற்றையும் நீக்கு) அல்லது RPEXTRA=keep (அவற்றை வைத்திரு) கொடுத்து மீண்டும் அகற்றவும்."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "இந்தக் கணினியின் மற்ற [1] பயனர்களிடம் [3] இன் அமைப்புகள் அல்லது தரவு இருக்கலாம்:\r\n[2]\r\nஅவர்களுடையதையும் நீக்கவா?\r\n\r\nஆம்: ஒவ்வொரு பயனருக்கும் நீக்கு (மீட்டெடுக்க முடியாது).\r\nஇல்லை: உங்களுடையதை மட்டும் நீக்கு.\r\nரத்துசெய்: நிறுத்து."

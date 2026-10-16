@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" memerlukan DLL pembantu rubrapack, ya
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: nama kunci atau nilai tidak dapat masuk ke hive registri"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" untuk root = \"HKCU\" dengan on = \"uninstall\", dalam paket per komputer"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] memerlukan fitur: atur 'feature' di sini atau di dir-nya"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true bukan untuk folder di bawah {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true memerlukan DLL pembantu rubrapack, yang tidak dibawa modul gabungan"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" untuk recursive = true pada folder di AppData atau LocalAppData, dalam paket per komputer"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args untuk MSIX harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
@@ -3075,6 +3081,9 @@ msgstr "gunakan build lengkap rubrapack atau cara lain"
 msgid "used by more than one component"
 msgstr "digunakan oleh lebih dari satu komponen"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users harus \"all\" (didapat '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "nilai '{1}' tercantum dua kali"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] item di folder [3] tidak diinstal bersamanya:\r\n[2]\r\nHapus juga?\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: berhenti, karena [1] item di foldernya tidak diinstal bersamanya:\r\n[2]Berikan RPEXTRA=delete (hapus juga) atau RPEXTRA=keep (pertahankan), lalu hapus lagi."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] pengguna lain komputer ini mungkin memiliki pengaturan atau data [3]:\r\n[2]\r\nHapus milik mereka juga?\r\n\r\nYa: hapus untuk setiap pengguna (tidak dapat dikembalikan).\r\nTidak: hapus milik Anda saja.\r\nBatal: berhenti."

@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\"-ek rubrapack-en DLL laguntzailea beha
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: gakoaren edo balioaren izena ezin da erregistro-hive batean sartu"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" on = \"uninstall\" duen root = \"HKCU\" baterako da, ordenagailu osorako pakete batean"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] taulak eginbide bat behar du: ezarri 'feature' hemen edo bere dir-ean"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true ez da {2} azpiko karpeta baterako"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true-k rubrapack-en DLL laguntzailea behar du, eta bateratze-modulu batek ez du eramaten"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" AppData edo LocalAppData karpeta bateko recursive = true baterako da, ordenagailu osorako pakete batean"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX baten args testu soila izan behar da (instalatzean betetzen den [...] gabe)"
@@ -3075,6 +3081,9 @@ msgstr "erabili rubrapack-en konpilazio oso bat edo beste modu bat"
 msgid "used by more than one component"
 msgstr "osagai batek baino gehiagok erabiltzen du"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" izan behar da ('{1}' jaso da)"
+
 msgid "value '%s' is listed twice"
 msgstr "'{1}' balioa bi aldiz agertzen da"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] produktuaren karpetetako [1] elementu ez ziren berarekin instalatu:\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: gelditu da, bere karpetetako [1] elementu ez zirelako berarekin instalatu:\r\n[2]Eman RPEXTRA=delete (ezabatu haiek ere) edo RPEXTRA=keep (gorde haiek), eta kendu berriro."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Ordenagailu honetako beste [1] erabiltzailek [3](r)en ezarpenak edo datuak izan ditzakete:\r\n[2]\r\nHaienak ere ezabatu?\r\n\r\nBai: ezabatu erabiltzaile guztientzat (ezin dira berreskuratu).\r\nEz: ezabatu zureak bakarrik.\r\nUtzi: gelditu."

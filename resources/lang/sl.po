@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" potrebuje pomožni DLL rubrapack, ki 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: ime ključa ali vrednosti ne more v hive registra"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" je za root = \"HKCU\" z on = \"uninstall\", v paketu za računalnik"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] potrebuje funkcijo: nastavite 'feature' tukaj ali na njegov dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true ni za mapo pod {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true potrebuje pomožni DLL rubrapack, ki ga spojitveni modul nima"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" je za recursive = true na mapi v AppData ali LocalAppData, v paketu za računalnik"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args za MSIX morajo biti navadno besedilo (brez [...], izpolnjenih ob namestitvi)"
@@ -3075,6 +3081,9 @@ msgstr "uporabite polno gradnjo rubrapack ali drug način"
 msgid "used by more than one component"
 msgstr "uporablja ga več kot ena komponenta"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users mora biti \"all\" (dobljeno '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "vrednost '{1}' je navedena dvakrat"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] elementov v mapah programa [3] ni bilo nameščenih z njim:\r\n[2]\r
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: ustavljeno, ker [1] elementov v njegovih mapah ni bilo nameščenih z njim:\r\n[2]Navedite RPEXTRA=delete (izbriši tudi njih) ali RPEXTRA=keep (obdrži jih), nato znova odstranite."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] drugih uporabnikov tega računalnika ima morda nastavitve ali podatke izdelka [3]:\r\n[2]\r\nŽelite izbrisati tudi njihove?\r\n\r\nDa: izbriši jih za vse uporabnike (ni jih mogoče obnoviti).\r\nNe: izbriši samo vaše.\r\nPrekliči: ustavi."

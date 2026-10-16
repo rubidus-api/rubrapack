@@ -84,6 +84,7 @@ typedef struct {
     size_t        item_count;
     bool          remove, keep, view32;
     bool          purge;        // remove = true, on = "uninstall": the key with everything below it, at a real removal (helper DLL)
+    bool          users_all;    // users = "all": every user's HKCU, when the removal is told so (RFC-0030)
     bool          msi_only;     // msi-only = true: left out of an MSIX (RFC-0009 M6)
     char         *with_file;    // file ID whose component carries it, or NULL (own component)
     char         *feature;      // resolved (G2) when with_file is NULL
@@ -115,6 +116,7 @@ typedef struct {
     int      mode;              // 1 install, 2 uninstall, 3 both (RemoveFile.InstallMode)
     bool     keep_on_upgrade;   // upgrade = false: the removal part skips upgrades (helper DLL)
     bool     recursive;         // recursive = true: the folder with everything in it, at a real removal (helper DLL)
+    bool     users_all;         // users = "all": every user's same folder, when the removal is told so (RFC-0030)
     char    *feature;           // resolved (G2)
     rp_pos_t pos;
 } rp_ir_remove_t;

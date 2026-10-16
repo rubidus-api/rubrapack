@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" cần DLL trợ giúp của rubrapack
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: tên khóa hoặc giá trị không thể đưa vào hive registry"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" dành cho root = \"HKCU\" với on = \"uninstall\", trong gói cho cả máy"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] cần một tính năng: đặt 'feature' ở đây hoặc trên dir của nó"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true không dành cho thư mục dưới {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true cần DLL trợ giúp của rubrapack, mà mô-đun hợp nhất không mang theo"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" dành cho recursive = true trên thư mục trong AppData hoặc LocalAppData, trong gói cho cả máy"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args cho MSIX phải là văn bản thuần (không có [...] điền lúc cài đặt)"
@@ -3075,6 +3081,9 @@ msgstr "dùng bản dựng đầy đủ của rubrapack hoặc cách khác"
 msgid "used by more than one component"
 msgstr "được nhiều hơn một thành phần sử dụng"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users phải là \"all\" (nhận được '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "giá trị '{1}' được liệt kê hai lần"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] mục trong các thư mục của [3] không được cài cùng nó
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: đã dừng, vì [1] mục trong các thư mục của nó không được cài cùng nó:\r\n[2]Hãy dùng RPEXTRA=delete (xóa cả chúng) hoặc RPEXTRA=keep (giữ chúng), rồi gỡ lại."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] người dùng khác của máy tính này có thể có cài đặt hoặc dữ liệu của [3]:\r\n[2]\r\nXóa cả của họ?\r\n\r\nCó: xóa cho mọi người dùng (không thể khôi phục).\r\nKhông: chỉ xóa của bạn.\r\nHủy bỏ: dừng."

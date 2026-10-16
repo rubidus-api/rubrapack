@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: το on = \"uninstall\" χρειάζεται το βοη
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: το όνομα κλειδιού ή τιμής δεν μπορεί να μπει σε hive μητρώου"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: το users = \"all\" είναι για root = \"HKCU\" με on = \"uninstall\", σε πακέτο για τον υπολογιστή"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "Το [remove.{1}] χρειάζεται δυνατότητα: ορίστε 'feature' εδώ ή στο dir του"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: το recursive = true δεν είναι για φάκελ�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: το recursive = true χρειάζεται το βοηθητικό DLL του rubrapack, που δεν περιέχει μια λειτουργική μονάδα συγχώνευσης"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: το users = \"all\" είναι για recursive = true σε φάκελο του AppData ή του LocalAppData, σε πακέτο για τον υπολογιστή"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: τα args για MSIX πρέπει να είναι απλό κείμενο (χωρίς [...] που συμπληρώνεται στην εγκατάσταση)"
@@ -3075,6 +3081,9 @@ msgstr "χρησιμοποιήστε πλήρη έκδοση του rubrapack ή
 msgid "used by more than one component"
 msgstr "χρησιμοποιείται από περισσότερα από ένα στοιχεία"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "το users πρέπει να είναι \"all\" (δόθηκε '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "η τιμή '{1}' αναφέρεται δύο φορές"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] στοιχείο(α) στους φακέλους του [3] δεν �
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: σταμάτησε, επειδή [1] στοιχείο(α) στους φακέλους του δεν εγκαταστάθηκαν μαζί του:\r\n[2]Δώστε RPEXTRA=delete (διαγραφή κι αυτών) ή RPEXTRA=keep (διατήρησή τους) και καταργήστε το ξανά."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] άλλοι χρήστες αυτού του υπολογιστή ίσως έχουν ρυθμίσεις ή δεδομένα του [3]:\r\n[2]\r\nΝα διαγραφούν και τα δικά τους;\r\n\r\nΝαι: διαγραφή για κάθε χρήστη (δεν μπορούν να ανακτηθούν).\r\nΌχι: διαγραφή μόνο των δικών σας.\r\nΆκυρο: διακοπή."

@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\"-এর জন্য rubrapack-এর 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: কী বা মানের নাম একটি রেজিস্ট্রি হাইভে যেতে পারে না"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" কম্পিউটার-ভিত্তিক প্যাকেজে on = \"uninstall\" সহ root = \"HKCU\"-এর জন্য"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}]-এর জন্য একটি বৈশিষ্ট্য দরকার: 'feature' এখানে বা এর dir-এ সেট করুন"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2}-এর অধীনের ফোল�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true-এর জন্য rubrapack-এর সহায়ক DLL দরকার, যা মার্জ মডিউল বহন করে না"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" কম্পিউটার-ভিত্তিক প্যাকেজে AppData বা LocalAppData-র ফোল্ডারে recursive = true-এর জন্য"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX-এর জন্য args সাধারণ লেখা হতে হবে (ইনস্টলের সময় পূরণ হওয়া [...] নয়)"
@@ -3075,6 +3081,9 @@ msgstr "সম্পূর্ণ rubrapack বিল্ড বা অন্য �
 msgid "used by more than one component"
 msgstr "একাধিক উপাদান ব্যবহার করে"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users-কে \"all\" হতে হবে ('{1}' পাওয়া গেছে)"
+
 msgid "value '%s' is listed twice"
 msgstr "মান '{1}' দুবার তালিকাভুক্ত"
 
@@ -3875,3 +3884,7 @@ msgstr "[3]-এর ফোল্ডারে [1]টি আইটেম এর স
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: থেমে গেছে, কারণ এর ফোল্ডারে [1]টি আইটেম এর সাথে ইনস্টল হয়নি:\r\n[2]RPEXTRA=delete (সেগুলিও মুছুন) বা RPEXTRA=keep (সেগুলি রাখুন) দিন, তারপর আবার সরান।"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "এই কম্পিউটারের অন্য [1] জন ব্যবহারকারীর কাছে [3]-এর সেটিংস বা ডেটা থাকতে পারে:\r\n[2]\r\nতাঁদেরগুলোও মুছবেন?\r\n\r\nহ্যাঁ: প্রত্যেক ব্যবহারকারীর জন্য মুছুন (ফেরত আনা যাবে না)।\r\nনা: শুধু আপনারগুলো মুছুন।\r\nবাতিল করুন: থামান।"

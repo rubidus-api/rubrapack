@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" үшін rubrapack көмекші DLL
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: кілт не мән атауы тізілім hive-ына кіре алмайды"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" компьютерге арналған бумада on = \"uninstall\" бар root = \"HKCU\" үшін"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] үшін мүмкіндік керек: 'feature' мұнда немесе оның dir-інде орнатыңыз"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2} астындағы қалта үші�
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true үшін rubrapack көмекші DLL-і керек, біріктіру модулі оны алып жүрмейді"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" компьютерге арналған бумада AppData не LocalAppData қалтасындағы recursive = true үшін"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX үшін args қарапайым мәтін болуы керек (орнату кезінде толтырылатын [...] жоқ)"
@@ -3075,6 +3081,9 @@ msgstr "rubrapack толық жинағын немесе басқа тәсілд
 msgid "used by more than one component"
 msgstr "оны бірнеше құрамдас бөлік пайдаланады"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" болуы керек ('{1}' алынды)"
+
 msgid "value '%s' is listed twice"
 msgstr "'{1}' мәні екі рет көрсетілген"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] қалталарындағы [1] элемент онымен бір�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: тоқтатылды, себебі оның қалталарындағы [1] элемент онымен бірге орнатылмаған:\r\n[2]RPEXTRA=delete (оларды да жою) не RPEXTRA=keep (оларды қалдыру) беріп, қайта жойыңыз."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Осы компьютердің басқа [1] пайдаланушысында [3] параметрлері не деректері болуы мүмкін:\r\n[2]\r\nОлардікі де жойылсын ба?\r\n\r\nИә: әр пайдаланушы үшін жою (қайтару мүмкін емес).\r\nЖоқ: тек өзіңіздікін жою.\r\nБас тарту: тоқтату."

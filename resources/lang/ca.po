@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" necessita la DLL auxiliar de rubrapac
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: el nom de la clau o del valor no pot anar en un rusc de registre"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" és per a root = \"HKCU\" amb on = \"uninstall\", en un paquet per a l'ordinador"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] necessita una funció: definiu 'feature' aquí o al seu dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true no és per a una carpeta sota {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true necessita la DLL auxiliar de rubrapack, que un mòdul de combinació no porta"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" és per a recursive = true en una carpeta d'AppData o LocalAppData, en un paquet per a l'ordinador"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
@@ -3075,6 +3081,9 @@ msgstr "feu servir una compilació completa de rubrapack o una altra manera"
 msgid "used by more than one component"
 msgstr "l'utilitza més d'un component"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users ha de ser \"all\" (s'ha obtingut '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "el valor '{1}' apareix dues vegades"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] elements de les carpetes de [3] no s'hi van instal·lar:\r\n[2]\r\nV
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: aturat, perquè [1] elements de les seves carpetes no s'hi van instal·lar:\r\n[2]Indiqueu RPEXTRA=delete (elimina'ls també) o RPEXTRA=keep (conserva'ls) i torneu a suprimir."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] altres usuaris d'aquest ordinador poden tenir configuració o dades de [3]:\r\n[2]\r\nVoleu suprimir també les seves?\r\n\r\nSí: suprimeix-les per a tots els usuaris (no es poden recuperar).\r\nNo: suprimeix només les vostres.\r\nCancel·la: atura."

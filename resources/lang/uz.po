@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" ga rubrapack yordamchi DLL i kerak, b
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: kalit yoki qiymat nomi reyestr hive iga kira olmaydi"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" kompyuter paketida on = \"uninstall\" bilan root = \"HKCU\" uchun"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] ga komponent kerak: 'feature' ni shu yerda yoki uning dir ida o‘rnating"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2} ostidagi jild uchun emas"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true ga rubrapack yordamchi DLL i kerak, birlashtirish moduli uni olib yurmaydi"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" kompyuter paketida AppData yoki LocalAppData ichidagi jilddagi recursive = true uchun"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX uchun args oddiy matn bo‘lishi kerak (o‘rnatishda to‘ldiriladigan [...] siz)"
@@ -3075,6 +3081,9 @@ msgstr "rubrapack ning to‘liq yig‘masidan yoki boshqa usuldan foydalaning"
 msgid "used by more than one component"
 msgstr "uni bittadan ortiq komponent ishlatadi"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" bo‘lishi kerak ('{1}' olindi)"
+
 msgid "value '%s' is listed twice"
 msgstr "'{1}' qiymati ikki marta ko‘rsatilgan"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] jildlaridagi [1] ta element u bilan birga o‘rnatilmagan:\r\n[2]\r\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: to‘xtatildi, chunki uning jildlaridagi [1] ta element u bilan birga o‘rnatilmagan:\r\n[2]RPEXTRA=delete (ularni ham o‘chirish) yoki RPEXTRA=keep (ularni saqlab qolish) bering va qayta o‘chiring."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Bu kompyuterning boshqa [1] foydalanuvchisida [3] sozlamalari yoki maʼlumotlari boʻlishi mumkin:\r\n[2]\r\nUlarniki ham oʻchirilsinmi?\r\n\r\nHa: har bir foydalanuvchi uchun oʻchirish (qaytarib boʻlmaydi).\r\nYo‘q: faqat sizniki oʻchiriladi.\r\nBekor qilish: to‘xtatish."

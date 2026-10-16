@@ -167,8 +167,10 @@ To have a removal leave nothing at all - the settings the program wrote, the fol
 install folder itself - add `recursive = true` (without `name`): the folder goes with everything in
 it, but only when the product is really removed, never in an upgrade. `[registry.ID]` with
 `remove = true` and `on = "uninstall"` does the same for a registry key. It deletes whatever is
-there, so name a folder that is the product's alone; the reference's "Wiping at removal" has what it
-refuses and what it cannot reach (other users' settings).
+there, so name a folder that is the product's alone. What goes is the remover's AppData and `HKCU`;
+in a per-machine package, `users = "all"` there also takes the other users' same folder or key, when
+the person removing it says so. The reference's "Wiping at removal" has what it refuses and what it
+cannot reach.
 
 ## A second copy: `[copy.ID]`
 

@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: az on = \"uninstall\" a rubrapack segéd-DLL-jét igény
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: a kulcs- vagy értéknév nem kerülhet beállításjegyzék-kaptárba"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: a users = \"all\" a számítógépre telepítő csomagban on = \"uninstall\" melletti root = \"HKCU\" beállításhoz való"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] egy szolgáltatást igényel: állítsa be a 'feature' értéket itt vagy a dir-jén"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: a recursive = true nem való a(z) {2} alatti mappához"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: a recursive = true a rubrapack segéd-DLL-jét igényli, amelyet egyesítési modul nem tartalmaz"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: a users = \"all\" a számítógépre telepítő csomagban AppData vagy LocalAppData alatti mappa recursive = true beállításához való"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX esetén az args csak egyszerű szöveg lehet (telepítéskor kitöltött [...] nélkül)"
@@ -3075,6 +3081,9 @@ msgstr "használjon teljes rubrapack buildet vagy más módot"
 msgid "used by more than one component"
 msgstr "egynél több összetevő használja"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "a users értéke \"all\" lehet (kapott: '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "a(z) '{1}' érték kétszer szerepel"
 
@@ -3875,3 +3884,7 @@ msgstr "A(z) [3] mappáiban [1] elem nem vele együtt települt:\r\n[2]\r\nEzeke
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: leállítva, mert a mappáiban [1] elem nem vele együtt települt:\r\n[2]Adja meg az RPEXTRA=delete (ezek törlése is) vagy az RPEXTRA=keep (megtartás) értéket, és távolítsa el újra."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "A számítógép [1] másik felhasználójának lehetnek [3] beállításai vagy adatai:\r\n[2]\r\nAz övéiket is törli?\r\n\r\nIgen: törlés minden felhasználónál (nem állíthatók vissza).\r\nNem: csak a sajátjait törli.\r\nMégse: leállítás."

@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" reikia rubrapack pagalbinio DLL, kuri
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: rakto ar reikšmės pavadinimas negali patekti į registro hive"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" skirtas root = \"HKCU\" su on = \"uninstall\", viso kompiuterio pakete"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] reikia funkcijos: nustatykite 'feature' čia arba jo dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true netaikomas aplankui po {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true reikia rubrapack pagalbinio DLL, kurio suliejimo modulis neturi"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" skirtas recursive = true aplankui AppData arba LocalAppData, viso kompiuterio pakete"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
@@ -3075,6 +3081,9 @@ msgstr "naudokite pilną rubrapack versiją arba kitą būdą"
 msgid "used by more than one component"
 msgstr "naudoja daugiau nei vienas komponentas"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users turi būti \"all\" (gauta '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "reikšmė '{1}' nurodyta du kartus"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] elementai(-ų) [3] aplankuose nebuvo įdiegti kartu su ja:\r\n[2]\r\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: sustabdyta, nes [1] elementai(-ų) jos aplankuose nebuvo įdiegti kartu su ja:\r\n[2]Nurodykite RPEXTRA=delete (ištrinti ir juos) arba RPEXTRA=keep (palikti juos), tada šalinkite dar kartą."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] kitų šio kompiuterio naudotojų gali turėti [3] parametrų ar duomenų:\r\n[2]\r\nIštrinti ir jų?\r\n\r\nTaip: ištrinti visiems naudotojams (jų nebus galima atkurti).\r\nNe: ištrinti tik jūsų.\r\nAtšaukti: sustabdyti."

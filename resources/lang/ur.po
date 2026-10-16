@@ -1040,6 +1040,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" کو rubrapack کی مددگار DLL 
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: کلید یا قدر کا نام رجسٹری ہائیو میں نہیں جا سکتا"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" کمپیوٹر کی سطح کے پیکج میں on = \"uninstall\" کے ساتھ root = \"HKCU\" کے لیے ہے"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] کو ایک خصوصیت چاہیے: 'feature' یہاں یا اس کے dir پر سیٹ کریں"
 
@@ -1048,6 +1051,9 @@ msgstr "[remove.{1}]: recursive = true {2} کے تحت فولڈر کے لیے ن
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true کو rubrapack کی مددگار DLL چاہیے، جو مرج ماڈیول ساتھ نہیں رکھتا"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" کمپیوٹر کی سطح کے پیکج میں AppData یا LocalAppData کے فولڈر پر recursive = true کے لیے ہے"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX کے لیے args سادہ متن ہونے چاہییں (انسٹال پر بھرا جانے والا [...] نہیں)"
@@ -3077,6 +3083,9 @@ msgstr "مکمل rubrapack بلڈ یا کوئی اور طریقہ استعمال
 msgid "used by more than one component"
 msgstr "ایک سے زیادہ اجزاء استعمال کرتے ہیں"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users کو \"all\" ہونا چاہیے ('{1}' ملا)"
+
 msgid "value '%s' is listed twice"
 msgstr "قدر '{1}' دو بار درج ہے"
 
@@ -3877,3 +3886,7 @@ msgstr "[3] کے فولڈرز میں [1] اشیاء اس کے ساتھ انسٹ�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: رک گیا، کیونکہ اس کے فولڈرز میں [1] اشیاء اس کے ساتھ انسٹال نہیں ہوئیں:\r\n[2]RPEXTRA=delete (انہیں بھی حذف کریں) یا RPEXTRA=keep (انہیں رکھیں) دیں، پھر دوبارہ ہٹائیں۔"
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "اس کمپیوٹر کے [1] دیگر صارفین کے پاس [3] کی ترتیبات یا ڈیٹا ہو سکتا ہے:\r\n[2]\r\nکیا ان کا بھی حذف کریں؟\r\n\r\nہاں: ہر صارف کے لیے حذف کریں (واپس نہیں لایا جا سکتا)۔\r\nنہیں: صرف آپ کا حذف کریں۔\r\nمنسوخ کریں: روکیں۔"

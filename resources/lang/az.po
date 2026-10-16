@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" üçün rubrapack-in köməkçi DLL-i
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: açar və ya dəyər adı reyestr hive-ına daxil ola bilməz"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" kompüter üzrə paketdə on = \"uninstall\" ilə root = \"HKCU\" üçündür"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] üçün xüsusiyyət lazımdır: 'feature'-ı burada və ya onun dir-ində təyin edin"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true {2} altındakı qovluq üçün deyil"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true üçün rubrapack-in köməkçi DLL-i lazımdır, birləşdirmə modulu onu daşımır"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" kompüter üzrə paketdə AppData və ya LocalAppData içindəki qovluqda recursive = true üçündür"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: MSIX üçün args sadə mətn olmalıdır (quraşdırmada doldurulan [...] yox)"
@@ -3075,6 +3081,9 @@ msgstr "tam rubrapack qurulumundan və ya başqa yoldan istifadə edin"
 msgid "used by more than one component"
 msgstr "birdən çox komponent tərəfindən istifadə olunur"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users \"all\" olmalıdır ('{1}' alındı)"
+
 msgid "value '%s' is listed twice"
 msgstr "'{1}' dəyəri iki dəfə sadalanıb"
 
@@ -3875,3 +3884,7 @@ msgstr "[3] qovluqlarındakı [1] element onunla birlikdə quraşdırılmayıb:\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: dayandırıldı, çünki onun qovluqlarındakı [1] element onunla birlikdə quraşdırılmayıb:\r\n[2]RPEXTRA=delete (onları da sil) və ya RPEXTRA=keep (onları saxla) verin və yenidən silin."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "Bu kompüterin digər [1] istifadəçisində [3] üçün ayarlar və ya məlumatlar ola bilər:\r\n[2]\r\nOnlarınkı da silinsin?\r\n\r\nBəli: hər istifadəçi üçün silin (geri qaytarıla bilməz).\r\nXeyr: yalnız sizinkini silin.\r\nLəğv et: dayan."

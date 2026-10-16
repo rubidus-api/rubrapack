@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" potrebuje pomocnú knižnicu DLL rubr
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: názov kľúča alebo hodnoty nemôže ísť do hive registra"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" je pre root = \"HKCU\" s on = \"uninstall\", v balíku pre počítač"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] potrebuje funkciu: nastavte 'feature' tu alebo na jeho dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true nie je pre priečinok pod {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true potrebuje pomocnú knižnicu DLL rubrapack, ktorú zlučovací modul nemá"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" je pre recursive = true na priečinku v AppData alebo LocalAppData, v balíku pre počítač"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args pre MSIX musia byť obyčajný text (bez [...] dopĺňaných pri inštalácii)"
@@ -3075,6 +3081,9 @@ msgstr "použite úplné zostavenie rubrapack alebo iný spôsob"
 msgid "used by more than one component"
 msgstr "používa ho viac ako jeden komponent"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users musí byť \"all\" (zadané '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "hodnota '{1}' je uvedená dvakrát"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] položiek v priečinkoch produktu [3] sa s ním nenainštalovalo:\r\
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: zastavené, pretože [1] položiek v jeho priečinkoch sa s ním nenainštalovalo:\r\n[2]Zadajte RPEXTRA=delete (odstrániť aj ich) alebo RPEXTRA=keep (ponechať ich) a potom ho znova odstráňte."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] ďalších používateľov tohto počítača môže mať nastavenia alebo údaje produktu [3]:\r\n[2]\r\nOdstrániť aj ich?\r\n\r\nÁno: odstrániť ich pre všetkých používateľov (nedajú sa obnoviť).\r\nNie: odstrániť len vaše.\r\nZrušiť: zastaviť."

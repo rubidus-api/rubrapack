@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" heeft de helper-DLL van rubrapack nod
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: de sleutel- of waardenaam kan niet in een registeronderdeel"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" is voor root = \"HKCU\" met on = \"uninstall\", in een pakket voor de computer"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] heeft een feature nodig: stel 'feature' hier of op zijn dir in"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true is niet voor een map onder {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true heeft de helper-DLL van rubrapack nodig, die een samenvoegmodule niet bevat"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" is voor recursive = true op een map in AppData of LocalAppData, in een pakket voor de computer"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
@@ -3075,6 +3081,9 @@ msgstr "gebruik een volledige rubrapack-build of een andere manier"
 msgid "used by more than one component"
 msgstr "gebruikt door meer dan één onderdeel"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users moet \"all\" zijn (gekregen: '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "waarde '{1}' staat twee keer in de lijst"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] item(s) in de mappen van [3] zijn er niet mee geïnstalleerd:\r\n[2]
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: gestopt, omdat [1] item(s) in de mappen er niet mee zijn geïnstalleerd:\r\n[2]Geef RPEXTRA=delete (ook verwijderen) of RPEXTRA=keep (behouden) en verwijder het opnieuw."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] andere gebruikers van deze computer hebben mogelijk instellingen of gegevens van [3]:\r\n[2]\r\nDie van hen ook verwijderen?\r\n\r\nJa: voor elke gebruiker verwijderen (ze kunnen niet worden hersteld).\r\nNee: alleen die van u verwijderen.\r\nAnnuleren: stoppen."

@@ -1600,6 +1600,19 @@ static bool system_may_delete(const wchar_t *dir) {
 //                   and deleted by that handle; a link is deleted as a link. What a program holds
 //                   stays. Registry keys likewise (REG_OPTION_OPEN_LINK, deleted by handle).
 //   Neither fails the installation.
+//
+// The other users' too (RFC-0030): a "D" or "K" record (users = "all") is also wiped in every other
+// user's profile and HKCU of the computer - when the removal was told so: RP_PURGE_USERS = "all"
+// (the preflight's question) or, when nothing asked, RPPURGEUSERS = "all". Per machine only.
+//   RpPurgePrepare  adds the records for RP_PurgeOthers: s (the removing user's SID, skipped),
+//                   p (the product code), a (a folder: its User Shell Folders name - AppData or
+//                   Local AppData - and its path below it), h (a key: view, key).
+//   RpPurgeOthers   commit, as SYSTEM: for each profile of ProfileList (S-1-5-21-*, S-1-12-1-*) but
+//                   the removing user's and those who have this product installed for themselves,
+//                   the user's registry - HKEY_USERS\<SID> when it is loaded, else NTUSER.DAT loaded
+//                   for the while and unloaded after - gives the folder (User Shell Folders; one that
+//                   is not inside the user's profile is skipped, as the user may set it), wiped the
+//                   purge's way (no link followed), and the keys.
 
 #define PURGE_PATH 32768
 
@@ -1659,6 +1672,60 @@ static bool other_product_in(const wchar_t *dir, const wchar_t *self, wchar_t fo
     return false;
 }
 
+// RFC-0030: whether this removal wipes the other users' too - the preflight's answer, else the
+// command line's RPPURGEUSERS (both "all" or not).
+static bool purge_users_all(MSIHANDLE h) {
+    wchar_t *asked = get_property(h, L"RP_PURGE_USERS");
+    wchar_t *given = asked && asked[0] ? NULL : get_property(h, L"RPPURGEUSERS");
+    const wchar_t *v = asked && asked[0] ? asked : given;
+    bool all = v && _wcsicmp(v, L"all") == 0;
+    if (asked) HeapFree(GetProcessHeap(), 0, asked);
+    if (given) HeapFree(GetProcessHeap(), 0, given);
+    return all;
+}
+
+// The SID of the user this action runs as ("S-1-5-21-..."), into out.
+static bool my_sid(wchar_t *out, size_t cap) {
+    HANDLE t = NULL;
+    if (!OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &t) && !OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &t)) return false;
+    BYTE buf[256];
+    DWORD n = 0;
+    bool ok = false;
+    wchar_t *s = NULL;
+    if (GetTokenInformation(t, TokenUser, buf, sizeof buf, &n) && ConvertSidToStringSidW(((TOKEN_USER *)buf)->User.Sid, &s)) {
+        ok = wcslen(s) < cap;
+        if (ok) wcscpy(out, s);
+        LocalFree(s);
+    }
+    CloseHandle(t);
+    return ok;
+}
+
+// A folder `dir` (ending in '\') below the removing user's AppData or LocalAppData: the User Shell
+// Folders name of that folder ("AppData", "Local AppData") and the path below it, without '\' at
+// either end. False for anything else, or a path below it that could step out of it.
+static bool purge_rel(MSIHANDLE h, const wchar_t *dir, wchar_t usf[16], wchar_t rel[MAX_PATH * 2]) {
+    static const wchar_t *const props[2] = { L"AppDataFolder", L"LocalAppDataFolder" };
+    static const wchar_t *const names[2] = { L"AppData", L"Local AppData" };
+    bool ok = false;
+    for (int i = 0; i < 2 && !ok; ++i) {
+        wchar_t *base = get_property(h, props[i]);
+        size_t bn = base ? wcslen(base) : 0;
+        if (bn > 3 && base[bn - 1] == L'\\' && wcslen(dir) > bn + 1 && starts_with_i(dir, base)) {
+            const wchar_t *r = dir + bn;
+            size_t rn = wcslen(r) - 1;          // without its last '\'
+            ok = rn > 0 && rn < MAX_PATH * 2 && r[0] != L'\\' && wcschr(r, L':') == NULL && wcsstr(r, L"..") == NULL;
+            if (ok) {
+                memcpy(rel, r, rn * sizeof *rel);
+                rel[rn] = 0;
+                wcscpy(usf, names[i]);
+            }
+        }
+        if (base) HeapFree(GetProcessHeap(), 0, base);
+    }
+    return ok;
+}
+
 __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
     wchar_t *plan = get_property(h, L"RP_PURGE");
     wchar_t *split = get_property(h, L"RP_PURGE_SPLIT");
@@ -1667,9 +1734,18 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
     wchar_t *self = get_property(h, L"ProductCode");
     bool machine = allusers && allusers[0] == L'1';
     bool two = machine && split && split[0] == L'1';
-    writer_t user = { 0 }, sys = { 0 };
+    writer_t user = { 0 }, sys = { 0 }, oth = { 0 };
     w_raw(&user, L"RPP1", 4);
     w_raw(&sys, L"RPP1", 4);
+    w_raw(&oth, L"RPO1", 4);
+    bool others = machine && purge_users_all(h);
+    size_t nothers = 0;
+    if (others) {
+        wchar_t sid[200];
+        if (!my_sid(sid, 200)) others = false;
+        else { w_field(&oth, L"s"); w_field(&oth, sid); w_field(&oth, L""); }
+        if (self) { w_field(&oth, L"p"); w_field(&oth, self); w_field(&oth, L""); }
+    }
     if (plan && upgrading && upgrading[0]) {
         log_line(h, L"rubrapack: purge: an upgrade (%ls) removes this version: nothing is wiped", upgrading);
     } else if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
@@ -1684,7 +1760,10 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
             for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
             if (!ok) break;
             // "x": a folder the preflight was told to empty at this removal (extra-files), no component.
+            // "D", "K": as "d", "k", and the other users' too (RFC-0030).
             INSTALLSTATE installed = INSTALLSTATE_UNKNOWN, action = INSTALLSTATE_UNKNOWN;
+            bool all = f[0][0] == L'D' || f[0][0] == L'K';
+            if (all) f[0][0] = (wchar_t)towlower(f[0][0]);
             if (f[0][0] != L'x') {
                 MsiGetComponentStateW(h, f[4], &installed, &action);
                 if (action != INSTALLSTATE_ABSENT) continue;
@@ -1702,6 +1781,14 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
                     log_line(h, L"rubrapack: purge: %ls is kept: the installed product %ls has files there", dir, other);
                     continue;
                 }
+                wchar_t usf[16], rel[MAX_PATH * 2];
+                if (all && others && purge_rel(h, dir, usf, rel)) {
+                    w_field(&oth, L"a"); w_field(&oth, usf); w_field(&oth, rel);
+                    log_line(h, L"rubrapack: purge: every other user's %ls\\%ls (as SYSTEM)", usf, rel);
+                    ++nothers;
+                } else if (all && others) {
+                    log_line(h, L"rubrapack: purge: %ls is not below AppData or LocalAppData: the other users' are kept", dir);
+                }
                 writer_t *w = two && !(profile[0] && starts_with_i(dir, profile)) ? &sys : &user;
                 dir[wcslen(dir) - 1] = 0;
                 w_field(w, L"t"); w_field(w, dir); w_field(w, L""); w_field(w, L"");
@@ -1712,12 +1799,23 @@ __declspec(dllexport) UINT __stdcall RpPurgePrepare(MSIHANDLE h) {
                 writer_t *w = two && wcscmp(root, L"HKLM") == 0 ? &sys : &user;
                 w_field(w, L"k"); w_field(w, root); w_field(w, f[2]); w_field(w, f[3]);
                 log_line(h, L"rubrapack: purge: key %ls\\%ls (%ls)", root, f[3], w == &sys ? L"as SYSTEM" : L"as the user");
+                if (all && others && wcscmp(root, L"HKCU") == 0) {
+                    w_field(&oth, L"h"); w_field(&oth, f[2]); w_field(&oth, f[3]);
+                    log_line(h, L"rubrapack: purge: every other user's key HKCU\\%ls (as SYSTEM)", f[3]);
+                    ++nothers;
+                }
             }
         }
     }
     set_data(h, L"RP_PurgeUser", &user);
     set_data(h, L"RP_PurgeMachine", &sys);
-    wchar_t *all[] = { plan, split, upgrading, allusers, self, user.buf, sys.buf };
+    if (nothers == 0) {         // nothing for them: an empty plan
+        if (oth.buf) HeapFree(GetProcessHeap(), 0, oth.buf);
+        oth = (writer_t){ 0 };
+        w_raw(&oth, L"RPO1", 4);
+    }
+    set_data(h, L"RP_PurgeOthers", &oth);
+    wchar_t *all[] = { plan, split, upgrading, allusers, self, user.buf, sys.buf, oth.buf };
     for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
         if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
     }
@@ -1888,6 +1986,175 @@ __declspec(dllexport) UINT __stdcall RpPurge(MSIHANDLE h) {
     return ERROR_SUCCESS;
 }
 
+// ---- the other users' profiles and HKCU (RFC-0030) --------------------------------------------------
+
+typedef struct {
+    wchar_t sid[200];
+    wchar_t profile[MAX_PATH];      // the profile folder (ProfileImagePath), without '\' at the end
+} other_user_t;
+
+// The next profile of ProfileList, from index *at, that is a person's (S-1-5-21-*, Entra ID
+// S-1-12-1-*), is not `self`, and has its folder.
+static bool next_user(DWORD *at, const wchar_t *self, other_user_t *u) {
+    HKEY list;
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList", 0, KEY_READ | KEY_WOW64_64KEY, &list) != ERROR_SUCCESS)
+        return false;
+    bool found = false;
+    while (!found) {
+        DWORD n = 200;
+        if (RegEnumKeyExW(list, (*at)++, u->sid, &n, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) break;
+        if (!starts_with_i(u->sid, L"S-1-5-21-") && !starts_with_i(u->sid, L"S-1-12-1-")) continue;
+        if (wcsspn(u->sid + 2, L"0123456789-") != wcslen(u->sid + 2)) continue;     // "...-1001.bak" and the like
+        if (self && _wcsicmp(u->sid, self) == 0) continue;
+        wchar_t raw[MAX_PATH];
+        DWORD rn = sizeof raw;
+        if (RegGetValueW(list, u->sid, L"ProfileImagePath", RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, raw, &rn) != ERROR_SUCCESS) continue;
+        DWORD en = ExpandEnvironmentStringsW(raw, u->profile, MAX_PATH);
+        if (en == 0 || en > MAX_PATH) continue;
+        size_t pn = wcslen(u->profile);
+        while (pn > 3 && u->profile[pn - 1] == L'\\') u->profile[--pn] = 0;
+        if (pn < 4 || u->profile[1] != L':' || u->profile[2] != L'\\') continue;
+        DWORD a = GetFileAttributesW(u->profile);
+        if (a == INVALID_FILE_ATTRIBUTES ? GetLastError() != ERROR_ACCESS_DENIED : !(a & FILE_ATTRIBUTE_DIRECTORY)) continue;
+        found = true;
+    }
+    RegCloseKey(list);
+    return found;
+}
+
+// The user's folder `usf` ("AppData", "Local AppData") as the user's registry `hive` names it (NULL,
+// or not named: the usual place), into out. False when it is not a folder inside the user's
+// profile: the user may set it to anything, and SYSTEM deletes there.
+static bool user_data_dir(HKEY hive, const other_user_t *u, const wchar_t *usf, wchar_t *out, size_t cap) {
+    wchar_t raw[MAX_PATH * 2] = L"";
+    DWORD n = sizeof raw;
+    if (hive == NULL || RegGetValueW(hive, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", usf,
+                                     RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, raw, &n) != ERROR_SUCCESS || raw[0] == 0) {
+        wcscpy(raw, wcscmp(usf, L"AppData") == 0 ? L"%USERPROFILE%\\AppData\\Roaming" : L"%USERPROFILE%\\AppData\\Local");
+    }
+    // %USERPROFILE% is the user's own; any other variable is not this process's to expand.
+    if (starts_with_i(raw, L"%USERPROFILE%")) {
+        if (wfmt(out, cap, L"%ls%ls", u->profile, raw + 13) < 0) return false;
+    } else if (wfmt(out, cap, L"%ls", raw) < 0) {
+        return false;
+    }
+    size_t on = wcslen(out), pn = wcslen(u->profile);
+    while (on > 3 && out[on - 1] == L'\\') out[--on] = 0;
+    return wcschr(out, L'%') == NULL && wcschr(out, L'/') == NULL && wcsstr(out, L"..") == NULL && on > pn + 1 && out[pn] == L'\\' &&
+           starts_with_i(out, u->profile);
+}
+
+// Whether the user `sid` has the product installed for themselves (then it is theirs to remove).
+static bool user_has_product(const wchar_t *product, const wchar_t *sid) {
+    static const MSIINSTALLCONTEXT ctx[2] = { MSIINSTALLCONTEXT_USERUNMANAGED, MSIINSTALLCONTEXT_USERMANAGED };
+    for (int i = 0; i < 2 && product && product[0]; ++i) {
+        wchar_t st[16];
+        DWORD n = 16;
+        if (MsiGetProductInfoExW(product, sid, ctx[i], L"State", st, &n) == ERROR_SUCCESS) return true;
+    }
+    return false;
+}
+
+static void enable_privilege(const wchar_t *name) {
+    HANDLE t;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &t)) return;
+    TOKEN_PRIVILEGES tp = { .PrivilegeCount = 1 };
+    if (LookupPrivilegeValueW(NULL, name, &tp.Privileges[0].Luid)) {
+        tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+        AdjustTokenPrivileges(t, FALSE, &tp, 0, NULL, NULL);
+    }
+    CloseHandle(t);
+}
+
+__declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL) return ERROR_SUCCESS;
+    enum { MAX_ITEMS = 64, CAP = MAX_PATH * 2 };
+    static wchar_t kind[MAX_ITEMS], one[MAX_ITEMS][CAP], two[MAX_ITEMS][CAP];
+    static wchar_t k[4], x[CAP], y[CAP], self[200], product[40], base[CAP], full[CAP];
+    self[0] = product[0] = 0;
+    size_t n = 0;
+    if (wcsncmp(data, L"RPO1", 4) == 0) {
+        reader_t r = { data + 4, data + wcslen(data) };
+        while (r_field(&r, k, 4) && r_field(&r, x, CAP) && r_field(&r, y, CAP)) {
+            if (k[0] == L's' && wcslen(x) < 200) wcscpy(self, x);
+            else if (k[0] == L'p' && is_guid(x)) wcscpy(product, x);
+            else if ((k[0] == L'a' || k[0] == L'h') && n < MAX_ITEMS) {
+                kind[n] = k[0];
+                wcscpy(one[n], x);
+                wcscpy(two[n], y);
+                ++n;
+            }
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, data);
+    if (n == 0 || self[0] == 0) return ERROR_SUCCESS;
+    enable_privilege(L"SeRestorePrivilege");      // RegLoadKey and RegUnLoadKey
+    enable_privilege(L"SeBackupPrivilege");
+    DWORD at = 0;
+    other_user_t u;
+    unsigned users = 0;
+    while (next_user(&at, self, &u)) {
+        if (user_has_product(product, u.sid)) {
+            log_line(h, L"rubrapack: purge: user %ls (%ls) is skipped: the product is installed for that user", u.sid, u.profile);
+            continue;
+        }
+        // The user's registry: loaded while the user is logged on (and often a while after), else
+        // NTUSER.DAT loaded for this and unloaded after - with no handle into it left open.
+        HKEY hive = NULL;
+        wchar_t mount[240] = L"";
+        const wchar_t *how = L"loaded";
+        if (RegOpenKeyExW(HKEY_USERS, u.sid, 0, KEY_READ, &hive) != ERROR_SUCCESS) {
+            hive = NULL;
+            wchar_t dat[MAX_PATH + 16];
+            LSTATUS ls = ERROR_FILE_NOT_FOUND;
+            if (wfmt(dat, MAX_PATH + 16, L"%ls\\NTUSER.DAT", u.profile) >= 0 && GetFileAttributesW(dat) != INVALID_FILE_ATTRIBUTES &&
+                wfmt(mount, 240, L"rubrapack-purge-%ls", u.sid) >= 0) {
+                ls = RegLoadKeyW(HKEY_USERS, mount, dat);
+                if (ls == ERROR_SUCCESS && RegOpenKeyExW(HKEY_USERS, mount, 0, KEY_READ, &hive) != ERROR_SUCCESS) hive = NULL;
+            }
+            if (ls != ERROR_SUCCESS) mount[0] = 0;
+            how = ls == ERROR_SUCCESS ? L"loaded for this" : L"cannot be loaded";
+            if (ls != ERROR_SUCCESS) log_line(h, L"rubrapack: purge: user %ls: the registry cannot be loaded (%ld)", u.sid, (long)ls);
+        }
+        log_line(h, L"rubrapack: purge: user %ls (%ls), registry %ls", u.sid, u.profile, how);
+        for (size_t i = 0; i < n; ++i) {
+            if (kind[i] == L'a') {
+                if (!user_data_dir(hive, &u, one[i], base, CAP)) {
+                    log_line(h, L"rubrapack: purge: user %ls: %ls is kept: the user's %ls folder is not inside the profile", u.sid, two[i], one[i]);
+                    continue;
+                }
+                if (wfmt(full, CAP, L"%ls\\%ls\\", base, two[i]) < 0) continue;
+                const wchar_t *why = purge_refused(h, full);
+                full[wcslen(full) - 1] = 0;
+                if (why) log_line(h, L"rubrapack: purge: %ls is kept: %ls", full, why);
+                else purge_tree(h, full);
+            } else if (hive == NULL) {
+                log_line(h, L"rubrapack: purge: user %ls: key HKCU\\%ls is kept: the registry cannot be opened", u.sid, two[i]);
+            } else {
+                LSTATUS ls = purge_subkey(hive, two[i], view_flag(one[i]), 0);
+                log_line(h, L"rubrapack: purge: user %ls: key HKCU\\%ls: %ls (%ld)", u.sid, two[i],
+                         ls == ERROR_SUCCESS ? L"removed" : ls == ERROR_FILE_NOT_FOUND ? L"not there" : L"stays", (long)ls);
+            }
+        }
+        if (hive) RegCloseKey(hive);
+        if (mount[0]) {
+            LSTATUS us = ERROR_SUCCESS;
+            for (int t = 0; t < 10; ++t) {
+                us = RegUnLoadKeyW(HKEY_USERS, mount);
+                if (us == ERROR_SUCCESS) break;
+                Sleep(300);
+            }
+            if (us != ERROR_SUCCESS)
+                log_line(h, L"rubrapack: purge: user %ls: WARNING: the registry could not be unloaded (%ld); it stays as HKEY_USERS\\%ls until the computer restarts",
+                         u.sid, (long)us, mount);
+        }
+        ++users;
+    }
+    log_line(h, L"rubrapack: purge: %u other user(s) looked at", users);
+    return ERROR_SUCCESS;
+}
+
 // ---- the question an installed product is met with ---------------------------------------------------
 //
 // RpMaintain, immediate, in the UI sequence of a package without dialogs (ui = "none"), when the
@@ -2040,7 +2307,7 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
             for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
             if (!ok) break;
             DWORD n = MAX_PATH * 2;
-            if (f[0][0] == L'd' && MsiGetTargetPathW(h, f[1], wiped[nwiped], &n) == ERROR_SUCCESS) ++nwiped;
+            if ((f[0][0] == L'd' || f[0][0] == L'D') && MsiGetTargetPathW(h, f[1], wiped[nwiped], &n) == ERROR_SUCCESS) ++nwiped;
         }
     }
     writer_t list = { 0 };
@@ -2122,6 +2389,113 @@ static UINT pre_extra(MSIHANDLE h, wchar_t *dirs, const wchar_t *mode, const wch
     }
     if (plan) HeapFree(GetProcessHeap(), 0, plan);
     if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+    return rc;
+}
+
+// RFC-0030: at a real removal of a package that wipes something for every user (RP_PURGE's "D" and
+// "K" records), the other users who may have it: the question (Yes: theirs too, No: only the
+// removing user's, Cancel: stop) - or RPPURGEUSERS (all: theirs too; anything else: not); without
+// a window to ask in, only the removing user's. The answer: RP_PURGE_USERS.
+static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
+    enum { MAX_ITEMS = 64, CAP = MAX_PATH * 2 };
+    static wchar_t usf[MAX_ITEMS][16], rel[MAX_ITEMS][CAP], f[5][MAX_TEXT / 8], dir[MAX_PATH * 4], base[CAP], full[CAP];
+    wchar_t *plan = get_property(h, L"RP_PURGE"), *given = get_property(h, L"RPPURGEUSERS");
+    size_t ndirs = 0;
+    bool keys = false;
+    if (plan && wcsncmp(plan, L"RPP1", 4) == 0) {
+        reader_t r = { plan + 4, plan + wcslen(plan) };
+        for (;;) {
+            bool ok = true;
+            for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
+            if (!ok) break;
+            if (f[0][0] == L'K' && wcscmp(f[1], L"HKCU") == 0 && wcslen(f[3]) < CAP) keys = true;
+            if (f[0][0] != L'D' || ndirs == MAX_ITEMS) continue;
+            DWORD dn = MAX_PATH * 4;
+            if (MsiGetTargetPathW(h, f[1], dir, &dn) == ERROR_SUCCESS && purge_rel(h, dir, usf[ndirs], rel[ndirs])) ++ndirs;
+        }
+    }
+    UINT rc = ERROR_SUCCESS;
+    const wchar_t *answer = NULL;
+    if (ndirs == 0 && !keys) {
+        answer = NULL;
+    } else if (given && given[0]) {
+        answer = _wcsicmp(given, L"all") == 0 ? L"all" : L"mine";
+        log_line(h, L"rubrapack: preflight: RPPURGEUSERS=%ls: the other users' settings and data are %ls", given, answer[0] == L'a' ? L"deleted too" : L"kept");
+    } else if (silent) {
+        answer = L"mine";
+        log_line(h, L"rubrapack: preflight: no window to ask in: the other users' settings and data are kept (RPPURGEUSERS=all deletes them too)");
+    } else {
+        wchar_t self[200] = L"";
+        my_sid(self, 200);
+        writer_t list = { 0 };
+        unsigned count = 0;
+        DWORD at = 0;
+        other_user_t u;
+        while (self[0] && next_user(&at, self, &u)) {
+            HKEY hive = NULL;
+            if (RegOpenKeyExW(HKEY_USERS, u.sid, 0, KEY_READ, &hive) != ERROR_SUCCESS) hive = NULL;
+            // A folder that is there, or that cannot be looked at (it is there: a missing one says so
+            // to anyone); a key likewise - and an unloaded registry may hold it.
+            bool has = keys && hive == NULL;
+            for (size_t i = 0; i < ndirs && !has; ++i) {
+                if (!user_data_dir(hive, &u, usf[i], base, CAP) || wfmt(full, CAP, L"%ls\\%ls", base, rel[i]) < 0) continue;
+                has = GetFileAttributesW(full) != INVALID_FILE_ATTRIBUTES || GetLastError() == ERROR_ACCESS_DENIED;
+            }
+            if (!has && keys && hive && plan) {
+                reader_t r = { plan + 4, plan + wcslen(plan) };
+                for (;;) {
+                    bool ok = true;
+                    for (int i = 0; i < 5; ++i) ok = ok && r_field(&r, f[i], MAX_TEXT / 8);
+                    if (!ok || has) break;
+                    if (f[0][0] != L'K' || wcscmp(f[1], L"HKCU") != 0) continue;
+                    HKEY key;
+                    LSTATUS ls = RegOpenKeyExW(hive, f[3], 0, KEY_READ | view_flag(f[2]), &key);
+                    if (ls == ERROR_SUCCESS) RegCloseKey(key);
+                    has = ls == ERROR_SUCCESS || ls == ERROR_ACCESS_DENIED;
+                }
+            }
+            if (hive) RegCloseKey(hive);
+            if (!has) continue;
+            ++count;
+            // The name the user signs in with, else the profile folder's.
+            wchar_t name[256] = L"", domain[256];
+            DWORD nn = 256, dn = 256;
+            SID_NAME_USE use;
+            PSID sid = NULL;
+            if (!ConvertStringSidToSidW(u.sid, &sid) || !LookupAccountSidW(NULL, sid, name, &nn, domain, &dn, &use)) {
+                const wchar_t *slash = wcsrchr(u.profile, L'\\');
+                wfmt(name, 256, L"%ls", slash ? slash + 1 : u.profile);
+            }
+            if (sid) LocalFree(sid);
+            log_line(h, L"rubrapack: preflight: user %ls (%ls) may have the product's settings or data", u.sid, name);
+            if (count <= 15) {
+                wchar_t line[300];
+                wfmt(line, 300, L"  - %ls\r\n", name);
+                w_raw(&list, line, wcslen(line));
+            }
+        }
+        if (count > 15) {
+            wchar_t more[64];
+            wfmt(more, 64, L"  ... +%u\r\n", count - 15);
+            w_raw(&list, more, wcslen(more));
+        }
+        if (count == 0) {
+            answer = L"mine";
+            log_line(h, L"rubrapack: preflight: no other user has the product's settings or data");
+        } else {
+            wchar_t num[16];
+            wfmt(num, 16, L"%u", count);
+            int choice = pre_message(h, L"Users", INSTALLMESSAGE_USER | MB_YESNOCANCEL | MB_ICONQUESTION | MB_DEFBUTTON2, num, list.buf ? list.buf : L"", product);
+            if (choice == IDYES) answer = L"all";
+            else if (choice == IDNO) answer = L"mine";
+            else rc = ERROR_INSTALL_USEREXIT;
+            if (answer) log_line(h, L"rubrapack: preflight: the other users' settings and data are %ls", answer[0] == L'a' ? L"deleted too" : L"kept");
+        }
+        if (list.buf) HeapFree(GetProcessHeap(), 0, list.buf);
+    }
+    if (answer) MsiSetPropertyW(h, L"RP_PURGE_USERS", answer);
+    if (plan) HeapFree(GetProcessHeap(), 0, plan);
+    if (given) HeapFree(GetProcessHeap(), 0, given);
     return rc;
 }
 
@@ -2301,6 +2675,9 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
         if (mode) HeapFree(GetProcessHeap(), 0, mode);
         if (extra) HeapFree(GetProcessHeap(), 0, extra);
     }
+
+    // 2b. At a real removal: the other users' settings and data (RFC-0030).
+    if (rc == ERROR_SUCCESS && removal) rc = pre_users(h, silent, product);
 
     // 3. Folders and the older versions' cached packages - not for a removal, which must stay possible.
     if (rc == ERROR_SUCCESS && !removal) {

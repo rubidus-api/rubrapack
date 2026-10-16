@@ -229,8 +229,8 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
 | `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
-| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on (with `remove`: `install`, or `uninstall` - the whole key at removal), keep, view, with, feature, when |
-| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), recursive (`true`: the folder with everything in it, at removal), feature |
+| `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on (with `remove`: `install`, or `uninstall` - the whole key at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), keep, view, with, feature, when |
+| `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), recursive (`true`: the folder with everything in it, at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
@@ -766,15 +766,58 @@ on = "uninstall"            # the key with its values and every key below it
   every file of it).
 - Links are not followed: a junction or symbolic link inside the folder is deleted as a link, and
   what it points at is left alone. A file a program still holds stays, and its folder with it.
-- **AppData and `HKCU` are those of the user who removes the product.** Other users' settings on the
-  same computer are out of reach of one removal and stay. For this purpose a per-machine package may
-  name `HKCU` here, which it otherwise may not. The user's profile and `HKCU` are deleted with the
+- **AppData and `HKCU` are those of the user who removes the product**, unless the place says
+  `users = "all"` (below). For this purpose a per-machine package may name `HKCU` here, which it
+  otherwise may not. The user's profile and `HKCU` are deleted with the
   user's own rights; the rest, in a per-machine package (`scope = "machine"`), by SYSTEM. A `dual`
   package deletes everything with the rights of whoever removes it.
 - The folder's `[dir.ID]` must be a folder of this package, so it is created (empty) at
   installation if it was not there.
 - An MSIX needs none of this: Windows removes the package's folder and the package's own registry
   and AppData with it.
+
+#### Every user's: `users = "all"`
+
+A per-machine product used by several people leaves each one's settings behind. `users = "all"` on a
+folder of AppData or LocalAppData that is wiped, or on an `HKCU` key that is, has the removal wipe
+the same folder or key of every other user of the computer too - **when the person removing it
+says so**:
+
+```toml
+[remove.Settings]
+dir = "Settings"            # $(APPDATA)/Example/Tip
+on = "uninstall"
+recursive = true
+users = "all"
+
+[registry.Settings]
+root = "HKCU"
+key = 'Software\Example\Tip'
+remove = true
+on = "uninstall"
+users = "all"
+```
+
+- Before the removal starts, the users who may have them are listed, and asked about: **Yes**
+  deletes them for every user, **No** (the default button) deletes only the remover's, **Cancel**
+  stops. A user is listed when the folder is there in that user's profile, or the key is in that
+  user's registry - or that registry is not loaded, so it cannot be looked at. Nobody listed: no
+  question. Installed apps' Uninstall (`/qb`) is asked too.
+- Without a window (`/qn`) nobody is asked and only the remover's go, unless the command line says
+  `RPPURGEUSERS=all` (`RPPURGEUSERS=mine` the same as nothing). With `preflight = false` the command
+  line is the only way.
+- The removal of a per-machine product already runs with administrator rights, so there is no
+  second request: SYSTEM does it, last, as the rest of the wiping. A logged-off user's registry is
+  loaded for the while and unloaded after.
+- Skipped, with a line in the log: a user who has this product installed for themselves; a user
+  whose AppData or LocalAppData is set to a place outside that user's profile (each user may set it,
+  and SYSTEM deletes there); a registry that cannot be loaded. Links are not followed, as above; a
+  file a logged-on user's program holds stays.
+- Not reached: the server's copy of a roaming profile or of a redirected folder - it comes back at
+  that user's next sign-in; users who have never signed in on this computer.
+- Refused when it is built (`RP1316`): anywhere else - a folder outside AppData and LocalAppData, a
+  key outside `HKCU`, without `recursive = true` or `on = "uninstall"` - and in a `user` or `dual`
+  package, where each user's installation is that user's own product.
 
 ### Environment variables: `[env.ID]`
 

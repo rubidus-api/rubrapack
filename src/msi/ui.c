@@ -109,6 +109,9 @@ static const text_t texts[] = {
     // with it - [1] how many, [2] the list, [3] the product. A language that does not give them gets English.
     { "PreflightExtra", "[1] item(s) in the folders of [3] were not installed with it:\r\n[2]\r\nDelete them too?\r\n\r\nYes: delete them with [3] (they cannot be brought back).\r\nNo: remove [3] and keep them.\r\nCancel: stop." },
     { "PreflightExtraSilent", "[3]: stopped, because [1] item(s) in its folders were not installed with it:\r\n[2]Give RPEXTRA=delete (delete them too) or RPEXTRA=keep (keep them), then remove it again." },
+    // Before a removal (RFC-0030): [1] how many other users of the computer may have settings or
+    // data of [3], [2] their names.
+    { "PreflightUsers", "[1] other user(s) of this computer may have settings or data of [3]:\r\n[2]\r\nDelete theirs too?\r\n\r\nYes: delete them for every user (they cannot be brought back).\r\nNo: delete only yours.\r\nCancel: stop." },
     { "DirGuardText", "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "&Launch [ProductName]" },
     { "SaveLog", "&Save log..." },

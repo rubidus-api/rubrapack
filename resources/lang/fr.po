@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}] : on = \"uninstall\" a besoin de la DLL d'aide de rubrapa
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}] : le nom de clé ou de valeur ne peut pas aller dans une ruche du registre"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}] : users = \"all\" est pour root = \"HKCU\" avec on = \"uninstall\", dans un paquet pour l'ordinateur"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] a besoin d'une fonctionnalité : définissez 'feature' ici ou sur son dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}] : recursive = true ne concerne pas un dossier sous {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}] : recursive = true a besoin de la DLL d'aide de rubrapack, qu'un module de fusion ne contient pas"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}] : users = \"all\" est pour recursive = true sur un dossier d'AppData ou de LocalAppData, dans un paquet pour l'ordinateur"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}] : les args d'un MSIX doivent être du texte simple (pas de [...] rempli à l'installation)"
@@ -3075,6 +3081,9 @@ msgstr "utilisez une génération complète de rubrapack ou un autre moyen"
 msgid "used by more than one component"
 msgstr "utilisé par plusieurs composants"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users doit être \"all\" (reçu : '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "la valeur '{1}' figure deux fois"
 
@@ -3875,3 +3884,7 @@ msgstr "[1] élément(s) des dossiers de [3] n'ont pas été installés avec lui
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3] : arrêté, car [1] élément(s) de ses dossiers n'ont pas été installés avec lui :\r\n[2]Indiquez RPEXTRA=delete (les supprimer aussi) ou RPEXTRA=keep (les conserver), puis relancez la désinstallation."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "[1] autre(s) utilisateur(s) de cet ordinateur peuvent avoir des paramètres ou des données de [3] :\r\n[2]\r\nSupprimer aussi les leurs ?\r\n\r\nOui : les supprimer pour chaque utilisateur (ils ne peuvent pas être récupérés).\r\nNon : supprimer seulement les vôtres.\r\nAnnuler : arrêter."

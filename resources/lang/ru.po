@@ -1038,6 +1038,9 @@ msgstr "[registry.{1}]: on = \"uninstall\" требует вспомогател
 msgid "[registry.%s]: the key or value name cannot go into a registry hive"
 msgstr "[registry.{1}]: имя раздела или параметра нельзя поместить в куст реестра"
 
+msgid "[registry.%s]: users = \"all\" is for root = \"HKCU\" with on = \"uninstall\", in a per-machine package"
+msgstr "[registry.{1}]: users = \"all\" — для root = \"HKCU\" с on = \"uninstall\", в пакете для компьютера"
+
 msgid "[remove.%s] needs a feature: set 'feature' here or on its dir"
 msgstr "[remove.{1}] требует компонент: задайте 'feature' здесь или у его dir"
 
@@ -1046,6 +1049,9 @@ msgstr "[remove.{1}]: recursive = true не для папки внутри {2}"
 
 msgid "[remove.%s]: recursive = true needs rubrapack's helper DLL, which a merge module does not carry"
 msgstr "[remove.{1}]: recursive = true требует вспомогательную DLL rubrapack, которой нет в модуле слияния"
+
+msgid "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package"
+msgstr "[remove.{1}]: users = \"all\" — для recursive = true у папки в AppData или LocalAppData, в пакете для компьютера"
 
 msgid "[service.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[service.{1}]: args для MSIX должны быть простым текстом (без [...], заполняемых при установке)"
@@ -3075,6 +3081,9 @@ msgstr "используйте полную сборку rubrapack или дру
 msgid "used by more than one component"
 msgstr "используется несколькими компонентами"
 
+msgid "users must be \"all\" (got '%s')"
+msgstr "users должен быть \"all\" (получено '{1}')"
+
 msgid "value '%s' is listed twice"
 msgstr "значение '{1}' указано дважды"
 
@@ -3875,3 +3884,7 @@ msgstr "В папках [3] есть элементы, установленны�
 msgctxt "installer"
 msgid "PreflightExtraSilent"
 msgstr "[3]: остановлено, так как в его папках есть элементы, установленные не вместе с ним: [1]\r\n[2]Укажите RPEXTRA=delete (удалить и их) или RPEXTRA=keep (оставить) и повторите удаление."
+
+msgctxt "installer"
+msgid "PreflightUsers"
+msgstr "У других пользователей этого компьютера ([1]) могут быть параметры или данные [3]:\r\n[2]\r\nУдалить и их?\r\n\r\nДа: удалить у всех пользователей (восстановить будет нельзя).\r\nНет: удалить только ваши.\r\nОтмена: остановить."
