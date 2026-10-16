@@ -3172,7 +3172,7 @@ msgstr "இல்லை(&N)"
 
 msgctxt "installer"
 msgid "Retry"
-msgstr "மீண்டும்(&R)"
+msgstr "மறுபடி(&R)"
 
 msgctxt "installer"
 msgid "Ignore"

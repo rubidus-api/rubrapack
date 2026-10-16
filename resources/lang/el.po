@@ -3152,7 +3152,7 @@ msgstr "Άκυρο"
 
 msgctxt "installer"
 msgid "Install"
-msgstr "Ε&γκατάσταση"
+msgstr "Ε&γκατάστ."
 
 msgctxt "installer"
 msgid "Finish"

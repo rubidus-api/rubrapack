@@ -220,7 +220,7 @@ references). Then two u16 per string id; the first ids:
 | 5 | `0a 00 01 00` | 10 | 1 | `&Eliminare` |
 | 6 | `0f 00 01 80` | 15 | 1 | `&Eltávolítás` |
 
-1323 strings in all; their bytes, back to back, are the 92743 bytes of `_StringData`.
+1323 strings in all; their bytes, back to back, are the 92722 bytes of `_StringData`.
 
 `_Columns` describes the table - its rows for `File`, the type decoded with the bit table above:
 

@@ -3388,7 +3388,7 @@ msgstr "กู้คืนไฟล์และการตั้งค่าท
 
 msgctxt "installer"
 msgid "Remove"
-msgstr "ถอนการติดตั้ง(&R)"
+msgstr "ถอนออก(&R)"
 
 msgctxt "installer"
 msgid "RemoveText"
