@@ -318,6 +318,8 @@ typedef struct {
     struct { const char *dlg, *ctl, *action, *expr; } *mcond;  // the exit pages' conditions, settled at the end (merge_rows)
     size_t             nmcond, capmcond;
     struct { const char *dlg, *ctl; bool vis; } *mctl;         // ... and their controls
+    struct { const char *dlg, *def; } mdef[8];                 // ... and their default buttons
+    size_t             nmdef;
     size_t             nmctl, capmctl;
     int                lseq;            // the next InstallUISequence number of a language action
     bool               nomem;
@@ -601,6 +603,7 @@ static void dialog(ctx_t *c, const char *name, int w, int h, int attrs, const ch
     c->dw = w;
     c->dfirst = first;
     if (c->rtl && merged(c, name)) return;  // the page has its row already
+    if (merged(c, name) && def && c->nmdef < sizeof c->mdef / sizeof c->mdef[0]) c->mdef[c->nmdef++] = (typeof(c->mdef[0])){ name, def };
     if (c->rtl) name = dn(c, name), attrs |= DLG_BIDI;
     s_(c, r, name); i_(c, r, 50); i_(c, r, 50); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
     s_(c, r, "[ProductName]"); s_(c, r, first); s_(c, r, def); s_(c, r, cancel);
@@ -700,6 +703,9 @@ static void merge_rows(ctx_t *c) {
         if (!hides) cond1(c, dlg, ctl, "Hide", "RpRtl");
         cond1(c, dlg, twin, "Show", show_r);
     }
+    // The Dialog row names the left-to-right default button, hidden with RpRtl: Enter did nothing on
+    // a mirrored FilesInUse (x69). The mirrored one is made the default there.
+    for (size_t k = 0; k < c->nmdef; ++k) cond1(c, c->mdef[k].dlg, keep(c, c->mdef[k].def, "_R"), "Default", "RpRtl");
 }
 
 static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *attr) {
@@ -815,7 +821,8 @@ static void files_in_use_dlg(ctx_t *c) {
     frame(c, d, "FilesInUseTitle", NULL, NULL);     // the text is too long for the banner (observed cut)
     control(c, d, "Text", "Text", 20, 52, 330, 40, VIS | NOPREFIX, NULL, T(c, text), NULL);
     control(c, d, "List", "ListBox", 20, 97, 330, 128, VIS | SUNKEN, "FileInUseProcess", NULL, NULL);
-    control(c, d, "Retry", "PushButton", 180, 243, 56, 17, VIS | EN, NULL, T(c, "Retry"), "Exit");
+    // Retry wider, with a gap before Continue: Arabic's 75 px ran into Continue when mirrored (x69).
+    control(c, d, "Retry", "PushButton", 166, 243, 66, 17, VIS | EN, NULL, T(c, "Retry"), "Exit");
     control(c, d, "Ignore", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Continue"), "Retry");
     control(c, d, "Exit", "PushButton", 304, 243, 56, 17, VIS | EN, NULL, T(c, "Exit"), "Ignore");
     event(c, d, "Retry", "EndDialog", "Retry", NULL, 1);

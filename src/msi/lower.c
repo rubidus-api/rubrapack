@@ -552,7 +552,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, reglocator_dir, menu, maintain, details;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, cleanup, preflight, reg_bad, menu, maintain, details;
     bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
@@ -1621,7 +1621,6 @@ static void lower_searches(pkg_t *pk) {
             s_(&pk->reglocator, x->id); i_(&pk->reglocator, (int32_t)x->root); s_(&pk->reglocator, escape_formatted(k, x->key));
             s_(&pk->reglocator, x->name ? escape_formatted(k, x->name) : NULL);
             i_(&pk->reglocator, (x->fills_dir ? 0 : 2) | (x->view32 ? 0 : 16));
-            pk->reglocator_dir |= x->fills_dir;
             break;
         case RP_SEARCH_FILE:
         case RP_SEARCH_DIR: {
@@ -2231,9 +2230,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
         rp_msi_wtable_t tables[sizeof all / sizeof all[0] + 9 + MERGED_TABLES];   // + ui tables + _Validation
         size_t nt = 0;
         for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
-            // AppSearch looks a folder-type RegLocator up in Signature, which must then exist even
-            // when empty (error 2228 otherwise: RFC-0012 V5 on the VM).
-            bool need = all[i] == &pk->signature && pk->reglocator_dir;
+            // AppSearch looks every locator up in Signature, which must then exist even when empty
+            // (error 2228 otherwise: RFC-0012 V5 on the VM for a folder; x69 for a registry value,
+            // whose package then failed to install).
+            bool need = all[i] == &pk->signature && pk->ir->search_count;
             if (i < always || all[i]->t.row_count > 0 || need) tables[nt++] = all[i]->t;
         }
         for (size_t t = 0; pk->ui && t < pk->ui->table_count; ++t) {
