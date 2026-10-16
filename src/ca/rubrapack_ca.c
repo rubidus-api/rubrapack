@@ -2119,7 +2119,10 @@ __declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
         }
         log_line(h, L"rubrapack: purge: user %ls (%ls), registry %ls", u.sid, u.profile, how);
         for (size_t i = 0; i < n; ++i) {
-            if (kind[i] == L'a') {
+            if (hive == NULL) {         // where the user's AppData is, and the keys, are in it
+                log_line(h, L"rubrapack: purge: user %ls: %ls%ls is kept: the registry cannot be opened", u.sid,
+                         kind[i] == L'a' ? L"" : L"key HKCU\\", two[i]);
+            } else if (kind[i] == L'a') {
                 if (!user_data_dir(hive, &u, one[i], base, CAP)) {
                     log_line(h, L"rubrapack: purge: user %ls: %ls is kept: the user's %ls folder is not inside the profile", u.sid, two[i], one[i]);
                     continue;
@@ -2129,8 +2132,6 @@ __declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
                 full[wcslen(full) - 1] = 0;
                 if (why) log_line(h, L"rubrapack: purge: %ls is kept: %ls", full, why);
                 else purge_tree(h, full);
-            } else if (hive == NULL) {
-                log_line(h, L"rubrapack: purge: user %ls: key HKCU\\%ls is kept: the registry cannot be opened", u.sid, two[i]);
             } else {
                 LSTATUS ls = purge_subkey(hive, two[i], view_flag(one[i]), 0);
                 log_line(h, L"rubrapack: purge: user %ls: key HKCU\\%ls: %ls (%ld)", u.sid, two[i],
