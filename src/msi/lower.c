@@ -1482,6 +1482,42 @@ static void lower_helper_actions(pkg_t *pk) {
                 s_(&pk->property, rp_ui_text_lang(ir, id, langs[b]));
             }
         }
+        // [other-copy.*]: "kind|action|ID|what" for each, kind m (an MSIX family for the installing
+        // user) or u (another MSI's upgrade code), action w(arn) or r(efuse); the texts it needs.
+        const char *other = "";
+        bool used[4] = { false };
+        for (size_t o = 0; o < ir->other_count; ++o) {
+            const rp_ir_other_t *x = &ir->others[o];
+            const char *what = x->upgrade_code;
+            if (x->msix) {
+                char id[14];
+                rp_msix_publisher_id(x->publisher, id);
+                what = kprintf(k, "%s_%s", x->msix, id);
+            }
+            const char *one = kprintf(k, "%s|%s", x->msix ? "m" : "u", kprintf(k, "%s|%s", x->refuse ? "r" : "w", kprintf(k, "%s|%s", x->id, what)));
+            other = *other ? kprintf(k, "%s;%s", other, one) : one;
+            if (x->message == NULL) used[(x->msix ? 0 : 2) + (x->refuse ? 1 : 0)] = true;     // else the author's (in English too)
+            if (x->message) {
+                s_(&pk->property, kprintf(k, "RpPreOther_%s_en", x->id, NULL)); s_(&pk->property, x->message);
+            }
+            for (size_t w = 0; w < x->message_by_lang_count; ++w) {
+                if (x->message && strcmp(x->message_by_lang[w].lang, "en") == 0) continue;
+                s_(&pk->property, kprintf(k, "RpPreOther_%s_%s", x->id, x->message_by_lang[w].lang));
+                s_(&pk->property, x->message_by_lang[w].text);
+            }
+        }
+        if (*other) {
+            s_(&pk->property, "RP_OTHER"); s_(&pk->property, other);
+            static const char *const oids[] = { "OtherStore", "OtherStoreRefuse", "OtherMsi", "OtherMsiRefuse" };
+            for (size_t t = 0; t < 4; ++t) {
+                if (!used[t]) continue;
+                const char *id = kprintf(k, "Preflight%s", oids[t], NULL);
+                for (size_t b = 0; b < nlangs; ++b) {
+                    s_(&pk->property, kprintf(k, "RpPre%s_%s", oids[t], langs[b]));
+                    s_(&pk->property, rp_ui_text_lang(ir, id, langs[b]));
+                }
+            }
+        }
         s_(&pk->customaction, "RP_Preflight"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPreflight");
         pk->preflight = true;
     }

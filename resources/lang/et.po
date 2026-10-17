@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: alammenüü üksus kuvatakse seal, kus selle alammenüü: j�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args'is on osa, mille Windows Installer installimisel täidab ([...]); MSIX sisaldab ainult fikseeritud teksti"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when on \"HKCU\\\\key\\\\value\" või \"HKLM\\\\...\", Windows 11 menüü üksusel, mis pole alammenüüs"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when nimetab väärtuse, mille see pakett ise kirjutab ([registry.{2}]): üksus ei ilmuks kunagi"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: selle programm pole MSIX-is (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: selle väärtused ei saa minna paketi registrisse"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list'is on osa, mille Windows Installer installimisel täidab ([...]); MSIX sisaldab ainult fikseeritud teksti"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list asendab {2}, kui teed ei mahu käsureale: vaja on multi = \"one\", {3} väärtuses args ja {4} (loendifail) väärtuses list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] puudub"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types on failitüüpide loend, nt [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows võtab vastu ainult tähti ja numbreid"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] nimetab ühe koopia: msix (koos publisher-iga) või upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix on paketi identiteedinimi (3–50 tähte, numbrit, '.' või '-') ja vajab publisher-it (\"CN=...\"), nagu need on manifestis"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: teist koopiat otsib eelkontroll: vaja on preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code on selle paketi oma (see on uuendus, mitte teine koopia)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] vajab, et selle dir'il oleks funktsioon"
@@ -1370,6 +1394,9 @@ msgstr "toiming '{1}' on juba määratletud"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "toiming pole standardtoiming ega CustomAction'is"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action peab olema \"warn\" või \"refuse\" (saadi '{1}')"
 
 msgid "adds too many tables"
 msgstr "lisab liiga palju tabeleid"
@@ -3894,3 +3921,19 @@ msgstr "[3]: peatatud, sest [1] üksust selle kaustades ei installitud koos sell
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Selle arvuti [1] muul kasutajal võib olla rakenduse [3] sätteid või andmeid:\r\n[2]\r\nKas kustutada ka nende omad?\r\n\r\nJah: kustuta need kõigi kasutajate jaoks (neid ei saa taastada).\r\nEi: kustuta ainult sinu omad.\r\nLoobu: peata."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] on selles arvutis juba installitud Microsoft Store'ist või rakenduspaketina ([2]). Ühe programmi kaks koopiat avavad mõlemad selle failid ja näitavad mõlemad selle menüüsid.\r\n\r\nKas installida ka see?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] on selles arvutis juba installitud Microsoft Store'ist või rakenduspaketina ([2]). Eemaldage esmalt see koopia (Sätted > Rakendused) ja installige siis see."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Selles arvutis on juba teine [1] installimine ([2]). Ühe programmi kaks koopiat avavad mõlemad selle failid ja näitavad mõlemad selle menüüsid.\r\n\r\nKas installida ka see?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Selles arvutis on juba teine [1] installimine ([2]). Eemaldage see esmalt (Sätted > Rakendused) ja installige siis see."

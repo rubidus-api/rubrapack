@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: položka podnabídky se zobrazuje tam, kde její podnabídka
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args má část, kterou Instalační služba systému Windows doplní při instalaci ([...]); MSIX nese jen pevný text"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when je \"HKCU\\\\key\\\\value\" nebo \"HKLM\\\\...\", u položky nabídky Windows 11, která není v podnabídce"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when ukazuje na hodnotu, kterou zapisuje sám tento balíček ([registry.{2}]): položka by se nikdy neukázala"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: jeho program není v MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: jeho hodnoty nemohou jít do registru balíčku"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list má část, kterou Instalační služba systému Windows doplní při instalaci ([...]); MSIX nese jen pevný text"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list zastupuje {2}, když se cesty nevejdou na příkazový řádek: je třeba multi = \"one\", {3} v args a {4} (soubor se seznamem) v list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": neexistuje [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types je seznam typů souborů, například [\".tx
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows přijímá jen písmena a číslice"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] určuje jednu kopii: msix (s publisher) nebo upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix je název identity balíčku (3 až 50 písmen, číslic, '.' nebo '-') a vyžaduje publisher (\"CN=...\"), jak je má jeho manifest"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: druhou kopii hledá předběžná kontrola: je třeba preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code patří tomuto balíčku (to je upgrade, ne jiná kopie)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] potřebuje, aby jeho dir měl funkci"
@@ -1370,6 +1394,9 @@ msgstr "akce '{1}' je již definována"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "akce není standardní akce ani není v CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action musí být \"warn\" nebo \"refuse\" (zadáno '{1}')"
 
 msgid "adds too many tables"
 msgstr "přidává příliš mnoho tabulek"
@@ -3894,3 +3921,19 @@ msgstr "[3]: zastaveno, protože v jeho složkách je [1] položek, které s ní
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] dalších uživatelů tohoto počítače může mít nastavení nebo data produktu [3]:\r\n[2]\r\nOdstranit i jejich?\r\n\r\nAno: odstranit je pro všechny uživatele (nelze je obnovit).\r\nNe: odstranit jen vaše.\r\nStorno: zastavit."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] je na tomto počítači už nainstalován z Microsoft Storu nebo jako balíček aplikace ([2]). Dvě kopie jednoho programu obě otevírají jeho soubory a obě ukazují jeho nabídky.\r\n\r\nNainstalovat i tuto?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] je na tomto počítači už nainstalován z Microsoft Storu nebo jako balíček aplikace ([2]). Nejdřív tu kopii odeberte (Nastavení > Aplikace), potom nainstalujte tuto."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Na tomto počítači už je jiná instalace [1] ([2]). Dvě kopie jednoho programu obě otevírají jeho soubory a obě ukazují jeho nabídky.\r\n\r\nNainstalovat i tuto?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Na tomto počítači už je jiná instalace [1] ([2]). Nejdřív ji odeberte (Nastavení > Aplikace), potom nainstalujte tuto."

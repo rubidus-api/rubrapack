@@ -17,6 +17,11 @@
 //                 here. Without either, the paths are appended, quoted.
 //     Multi       "each" (default: one run per selected item), "one" (one run with all of them),
 //                 "single" (the item shows only when one thing is selected)
+//     List        (optional, with "one") what stands for %* when the paths do not fit a command line:
+//                 %L in it is a file in the user's temporary folder with every path, UTF-8, one a
+//                 line, each ended by "\n". The program owns the file and deletes it.
+//     HideWhen    (optional) "HKCU\key\value" or "HKLM\...": while that value exists the item is
+//                 hidden (another copy of the program has its own menu there, say)
 //     Items       REG_MULTI_SZ: the names of sub keys, each a sub-item with the same values
 //                 (then this key has no Command: it is a sub-menu)
 //
@@ -34,7 +39,7 @@
 #include <shobjidl.h>
 #include <shlwapi.h>
 
-enum { TEXT_CAP = 1024, PATH_CAP = 32768, MAX_ITEMS = 64, MAX_RUNS = 64 };
+enum { TEXT_CAP = 1024, PATH_CAP = 32768, MAX_ITEMS = 64, MAX_RUNS = 64, MAX_PATHS = 65536 };
 
 static LONG live;                   // objects and locks: DllCanUnloadNow
 static HMODULE self;
@@ -222,6 +227,21 @@ static HRESULT STDMETHODCALLTYPE cmd_state(IExplorerCommand *p, IShellItemArray 
         *out = ECS_HIDDEN;
         return S_OK;
     }
+    // HideWhen: hidden while the value it names exists.
+    wchar_t *hide = HeapAlloc(GetProcessHeap(), 0, TEXT_CAP * sizeof *hide);
+    if (hide && value(k, L"HideWhen", hide, TEXT_CAP)) {
+        HKEY root = wcsncmp(hide, L"HKCU\\", 5) == 0 ? HKEY_CURRENT_USER : wcsncmp(hide, L"HKLM\\", 5) == 0 ? HKEY_LOCAL_MACHINE : NULL;
+        wchar_t *last = wcsrchr(hide, L'\\'), *key = hide + 5;
+        HKEY h;
+        if (root && last && last > key) {
+            *last = 0;
+            if (RegOpenKeyExW(root, key, 0, KEY_QUERY_VALUE, &h) == ERROR_SUCCESS) {
+                if (RegQueryValueExW(h, last + 1, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) *out = ECS_HIDDEN;
+                RegCloseKey(h);
+            }
+        }
+    }
+    if (hide) HeapFree(GetProcessHeap(), 0, hide);
     wchar_t multi[16];
     DWORD count = 0;
     if (value(k, L"Multi", multi, 16) && wcscmp(multi, L"single") == 0 && items && SUCCEEDED(IShellItemArray_GetCount(items, &count)) && count > 1)
@@ -247,31 +267,83 @@ static bool put_quoted(wchar_t *line, size_t *len, const wchar_t *path) {
            put(line, len, L"\"", 1);
 }
 
-// Starts the program once with paths[0..count): args with %1 (the first) and %* (all of them).
-static void run(const wchar_t *program, const wchar_t *args, wchar_t **paths, DWORD count) {
-    wchar_t *line = HeapAlloc(GetProcessHeap(), 0, PATH_CAP * sizeof *line);
-    if (line == NULL) return;
-    size_t len = 0;
-    bool ok = put_quoted(line, &len, program), used = false;
-    if (ok && args[0]) ok = put(line, &len, L" ", 1);
+// The command line: the program, then args with %1 (the first path) and %* (all of them) - or, with
+// `list`, %* stands for list, in which %L is `file` (quoted).
+static bool build(wchar_t *line, size_t *len, const wchar_t *program, const wchar_t *args, wchar_t **paths, DWORD count,
+                  const wchar_t *list, const wchar_t *file) {
+    *len = 0;
+    bool ok = put_quoted(line, len, program), used = false;
+    if (ok && args[0]) ok = put(line, len, L" ", 1);
     for (const wchar_t *a = args; ok && *a; ++a) {
         if (a[0] == L'%' && (a[1] == L'1' || a[1] == L'V' || a[1] == L'v')) {
             // As written; before a closing quote a path's last backslash is doubled ("C:\" would
             // otherwise take the quote with it).
             size_t pl = count ? wcslen(paths[0]) : 0;
-            ok = count == 0 || (!wcschr(paths[0], L'"') && put(line, &len, paths[0], pl) &&
-                                (pl == 0 || paths[0][pl - 1] != L'\\' || a[2] != L'"' || put(line, &len, L"\\", 1)));
+            ok = count == 0 || (!wcschr(paths[0], L'"') && put(line, len, paths[0], pl) &&
+                                (pl == 0 || paths[0][pl - 1] != L'\\' || a[2] != L'"' || put(line, len, L"\\", 1)));
             used = true;
             ++a;
         } else if (a[0] == L'%' && a[1] == L'*') {
-            for (DWORD i = 0; ok && i < count; ++i) ok = (i == 0 || put(line, &len, L" ", 1)) && put_quoted(line, &len, paths[i]);
+            if (list) {
+                for (const wchar_t *l = list; ok && *l; ++l) {
+                    if (l[0] == L'%' && l[1] == L'L') {
+                        ok = put_quoted(line, len, file);
+                        ++l;
+                    } else {
+                        ok = put(line, len, l, 1);
+                    }
+                }
+            } else {
+                for (DWORD i = 0; ok && i < count; ++i) ok = (i == 0 || put(line, len, L" ", 1)) && put_quoted(line, len, paths[i]);
+            }
             used = true;
             ++a;
         } else {
-            ok = put(line, &len, a, 1);
+            ok = put(line, len, a, 1);
         }
     }
-    for (DWORD i = 0; ok && !used && i < count; ++i) ok = put(line, &len, L" ", 1) && put_quoted(line, &len, paths[i]);
+    for (DWORD i = 0; ok && !used && i < count; ++i) ok = put(line, len, L" ", 1) && put_quoted(line, len, paths[i]);
+    return ok;
+}
+
+// The paths in a new file of the user's temporary folder: UTF-8, one a line, each ended by "\n".
+static bool write_list(wchar_t **paths, DWORD count, wchar_t *file) {
+    wchar_t dir[MAX_PATH + 1];
+    DWORD n = GetTempPathW(MAX_PATH + 1, dir);
+    if (n == 0 || n > MAX_PATH - 64) return false;
+    wsprintfW(file, L"%srubrapack-selection-%lu-%lu.txt", dir, (unsigned long)GetCurrentProcessId(), (unsigned long)GetTickCount());
+    HANDLE f = CreateFileW(file, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (f == INVALID_HANDLE_VALUE) return false;
+    char *utf8 = HeapAlloc(GetProcessHeap(), 0, 3 * PATH_CAP + 2);
+    bool ok = utf8 != NULL;
+    for (DWORD i = 0; ok && i < count; ++i) {
+        int m = WideCharToMultiByte(CP_UTF8, 0, paths[i], -1, utf8, 3 * PATH_CAP, NULL, NULL);
+        DWORD put = 0;
+        ok = m > 0;
+        if (ok) {
+            utf8[m - 1] = '\n';
+            ok = WriteFile(f, utf8, (DWORD)m, &put, NULL) && put == (DWORD)m;
+        }
+    }
+    if (utf8) HeapFree(GetProcessHeap(), 0, utf8);
+    CloseHandle(f);
+    if (!ok) DeleteFileW(file);
+    return ok;
+}
+
+// Starts the program once with paths[0..count); with `list` the paths go in a file when they do not
+// fit the command line.
+static void run(const wchar_t *program, const wchar_t *args, const wchar_t *list, wchar_t **paths, DWORD count) {
+    wchar_t *line = HeapAlloc(GetProcessHeap(), 0, PATH_CAP * sizeof *line);
+    if (line == NULL) return;
+    wchar_t file[MAX_PATH + 64];
+    file[0] = 0;
+    size_t len = 0;
+    bool ok = build(line, &len, program, args, paths, count, NULL, NULL);
+    if (!ok && list && list[0] && count > 1 && write_list(paths, count, file)) {
+        ok = build(line, &len, program, args, paths, count, list, file);
+        if (!ok) DeleteFileW(file);
+    }
     if (ok) {
         // In the selected item's folder, or the folder itself.
         wchar_t *dir = NULL;
@@ -295,8 +367,11 @@ static void run(const wchar_t *program, const wchar_t *args, wchar_t **paths, DW
             say(L"started: ", line, 0);
         } else {
             say(L"not started: ", line, GetLastError());
+            if (file[0]) DeleteFileW(file);
         }
         if (dir) HeapFree(GetProcessHeap(), 0, dir);
+    } else {
+        say(L"too long, not started: ", program, count);
     }
     HeapFree(GetProcessHeap(), 0, line);
 }
@@ -306,18 +381,21 @@ static HRESULT STDMETHODCALLTYPE cmd_invoke(IExplorerCommand *p, IShellItemArray
     HKEY k;
     say(L"chosen: ", from_cmd(p)->path, 0);
     if (!open_item(from_cmd(p)->path, &k)) return E_FAIL;
-    wchar_t *buf = HeapAlloc(GetProcessHeap(), 0, 3 * PATH_CAP * sizeof *buf);
+    wchar_t *buf = HeapAlloc(GetProcessHeap(), 0, 4 * PATH_CAP * sizeof *buf);
     wchar_t multi[16] = L"each";
     HRESULT hr = E_FAIL;
     if (buf && value(k, L"Command", buf, PATH_CAP) && buf[0] && resolve(buf, buf + PATH_CAP, PATH_CAP)) {
-        wchar_t *program = buf + PATH_CAP, *args = buf + 2 * PATH_CAP;
+        wchar_t *program = buf + PATH_CAP, *args = buf + 2 * PATH_CAP, *list = buf + 3 * PATH_CAP;
         if (!value(k, L"Args", args, PATH_CAP)) args[0] = 0;
+        if (!value(k, L"List", list, PATH_CAP)) list[0] = 0;
         (void)value(k, L"Multi", multi, 16);
-        // The selection as file system paths (what is not in the file system is left out).
-        wchar_t *paths[MAX_RUNS];
+        // The selection as file system paths (what is not in the file system is left out); "each"
+        // starts at most MAX_RUNS programs.
         DWORD count = 0, n = 0;
         if (items) (void)IShellItemArray_GetCount(items, &count);
-        for (DWORD i = 0; i < count && n < MAX_RUNS; ++i) {
+        DWORD most = wcscmp(multi, L"each") == 0 ? MAX_RUNS : MAX_PATHS;
+        wchar_t **paths = HeapAlloc(GetProcessHeap(), 0, (count < most ? count + 1 : most) * sizeof *paths);
+        for (DWORD i = 0; paths && i < count && n < most; ++i) {
             IShellItem *si = NULL;
             if (FAILED(IShellItemArray_GetItemAt(items, i, &si))) continue;
             wchar_t *path = NULL;
@@ -325,11 +403,12 @@ static HRESULT STDMETHODCALLTYPE cmd_invoke(IExplorerCommand *p, IShellItemArray
             IShellItem_Release(si);
         }
         if (wcscmp(multi, L"each") == 0 && n > 1) {
-            for (DWORD i = 0; i < n; ++i) run(program, args, &paths[i], 1);
-        } else {
-            run(program, args, paths, n);
+            for (DWORD i = 0; i < n; ++i) run(program, args, NULL, &paths[i], 1);
+        } else if (paths) {
+            run(program, args, list, paths, n);
         }
         for (DWORD i = 0; i < n; ++i) CoTaskMemFree(paths[i]);
+        if (paths) HeapFree(GetProcessHeap(), 0, paths);
         hr = S_OK;
     } else {
         say(L"no usable Command for ", from_cmd(p)->path, GetLastError());

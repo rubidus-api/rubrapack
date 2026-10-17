@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: ichki menyu elementi ichki menyu ko‘rinadigan joyda ko‘r
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args da Windows Installer o‘rnatishda to‘ldiradigan qism bor ([...]); MSIX faqat qat’iy matnni saqlaydi"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when — \"HKCU\\\\key\\\\value\" yoki \"HKLM\\\\...\", ichki menyuda bo'lmagan Windows 11 menyusi bandida"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when shu paketning o'zi yozadigan qiymatni ko'rsatadi ([registry.{2}]): band hech qachon ko'rinmaydi"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: uning dasturi MSIX da yo‘q (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: uning qiymatlari paket reyestriga kira olmaydi"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list da Windows Installer o‘rnatishda to‘ldiradigan qism bor ([...]); MSIX faqat qat’iy matnni saqlaydi"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: yo'llar buyruq satriga sig'maganda list {2} o'rnini egallaydi: multi = \"one\", args ichida {3} va list ichida {4} (ro'yxat fayli) kerak"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] yo‘q"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types fayl turlari ro‘yxati, masalan [\".txt\", 
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows faqat harf va raqamlarni qabul qiladi"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] bitta nusxani ko'rsatadi: msix (publisher bilan) yoki upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix — paketning identifikatsiya nomi (3 dan 50 gacha harf, raqam, '.' yoki '-'), unga publisher (\"CN=...\") kerak, manifestda qanday bo'lsa"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: boshqa nusxani oldindan tekshiruv qidiradi: preflight = true kerak"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code shu paketning o'ziniki (bu yangilash, boshqa nusxa emas)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] uchun uning dir ida komponent bo‘lishi kerak"
@@ -1370,6 +1394,9 @@ msgstr "'{1}' amali allaqachon aniqlangan"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "amal standart amal ham emas, CustomAction da ham yo‘q"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action \"warn\" yoki \"refuse\" bo'lishi kerak ('{1}' olindi)"
 
 msgid "adds too many tables"
 msgstr "juda ko‘p jadval qo‘shadi"
@@ -3894,3 +3921,19 @@ msgstr "[3]: to‘xtatildi, chunki uning jildlaridagi [1] ta element u bilan bir
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Bu kompyuterning boshqa [1] foydalanuvchisida [3] sozlamalari yoki maʼlumotlari boʻlishi mumkin:\r\n[2]\r\nUlarniki ham oʻchirilsinmi?\r\n\r\nHa: har bir foydalanuvchi uchun oʻchirish (qaytarib boʻlmaydi).\r\nYo‘q: faqat sizniki oʻchiriladi.\r\nBekor qilish: to‘xtatish."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] bu kompyuterga Microsoft Store'dan yoki ilova paketi sifatida allaqachon o'rnatilgan ([2]). Bitta dasturning ikki nusxasi ham uning fayllarini ochadi va ikkalasi ham menyularini ko'rsatadi.\r\n\r\nBuni ham o'rnatilsinmi?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] bu kompyuterga Microsoft Store'dan yoki ilova paketi sifatida allaqachon o'rnatilgan ([2]). Avval o'sha nusxani olib tashlang (Sozlamalar > Ilovalar), keyin buni o'rnating."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Bu kompyuterda [1] dasturining boshqa o'rnatmasi allaqachon bor ([2]). Bitta dasturning ikki nusxasi ham uning fayllarini ochadi va ikkalasi ham menyularini ko'rsatadi.\r\n\r\nBuni ham o'rnatilsinmi?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Bu kompyuterda [1] dasturining boshqa o'rnatmasi allaqachon bor ([2]). Avval uni olib tashlang (Sozlamalar > Ilovalar), keyin buni o'rnating."

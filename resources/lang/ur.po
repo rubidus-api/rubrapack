@@ -962,11 +962,23 @@ msgstr "[menu.{1}]: ذیلی مینو کا آئٹم وہیں دکھتا ہے ج�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args میں ایسا حصہ ہے جو Windows Installer انسٹال کے وقت بھرتا ہے ([...])؛ MSIX صرف مقررہ متن رکھتا ہے"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when، \"HKCU\\\\key\\\\value\" یا \"HKLM\\\\...\" ہوتا ہے، Windows 11 مینو کے ایسے آئٹم پر جو ذیلی مینو میں نہ ہو"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when ایسی قدر بتاتا ہے جو یہ پیکج خود لکھتا ہے ([registry.{2}]): آئٹم کبھی نہیں دکھے گا"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: اس کا پروگرام MSIX میں نہیں (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: اس کی قدریں پیکیج کی رجسٹری میں نہیں جا سکتیں"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list میں ایسا حصہ ہے جو Windows Installer انسٹال کے وقت بھرتا ہے ([...])؛ MSIX صرف مقررہ متن رکھتا ہے"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: جب راستے ایک کمانڈ لائن میں نہ سمائیں تو list، {2} کی جگہ لیتا ہے: multi = \"one\"، args میں {3} اور list میں {4} (فہرست فائل) چاہیے"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": کوئی [assoc.{3}] نہیں"
@@ -1009,6 +1021,18 @@ msgstr "[msix-extension.{1}]: types فائل اقسام کی فہرست ہے، �
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows صرف حروف اور ہندسے لیتا ہے"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] ایک کاپی بتاتا ہے: msix (publisher کے ساتھ) یا upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix پیکج کا شناختی نام ہے (3 سے 50 حروف، ہندسے، '.' یا '-') اور اسے publisher (\"CN=...\") چاہیے، جیسا اس کے مینی فیسٹ میں ہے"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: دوسری کاپی پیشگی جانچ ڈھونڈتی ہے: preflight = true چاہیے"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code اسی پیکج کا ہے (وہ اپ گریڈ ہے، دوسری کاپی نہیں)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] کے لیے اس کے dir کی خصوصیت ہونی چاہیے"
@@ -1372,6 +1396,9 @@ msgstr "عمل '{1}' پہلے سے بیان ہے"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "عمل نہ معیاری عمل ہے اور نہ CustomAction میں"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action کو \"warn\" یا \"refuse\" ہونا چاہیے ('{1}' ملا)"
 
 msgid "adds too many tables"
 msgstr "بہت زیادہ جدول شامل کرتا ہے"
@@ -3896,3 +3923,19 @@ msgstr "[3]: رک گیا، کیونکہ اس کے فولڈرز میں [1] اشی
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "اس کمپیوٹر کے [1] دیگر صارفین کے پاس [3] کی ترتیبات یا ڈیٹا ہو سکتا ہے:\r\n[2]\r\nکیا ان کا بھی حذف کریں؟\r\n\r\nہاں: ہر صارف کے لیے حذف کریں (واپس نہیں لایا جا سکتا)۔\r\nنہیں: صرف آپ کا حذف کریں۔\r\nمنسوخ کریں: روکیں۔"
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] اس کمپیوٹر پر پہلے سے Microsoft Store سے یا ایپ پیکج کے طور پر انسٹال ہے ([2])۔ ایک پروگرام کی دو کاپیاں دونوں اس کی فائلیں کھولتی ہیں اور دونوں اس کے مینو دکھاتی ہیں۔\r\n\r\nکیا یہ بھی انسٹال کریں؟"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] اس کمپیوٹر پر پہلے سے Microsoft Store سے یا ایپ پیکج کے طور پر انسٹال ہے ([2])۔ پہلے وہ کاپی ہٹائیں (ترتیبات > ایپس)، پھر یہ انسٹال کریں۔"
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "اس کمپیوٹر پر [1] کی ایک اور تنصیب پہلے سے ہے ([2])۔ ایک پروگرام کی دو کاپیاں دونوں اس کی فائلیں کھولتی ہیں اور دونوں اس کے مینو دکھاتی ہیں۔\r\n\r\nکیا یہ بھی انسٹال کریں؟"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "اس کمپیوٹر پر [1] کی ایک اور تنصیب پہلے سے ہے ([2])۔ پہلے اسے ہٹائیں (ترتیبات > ایپس)، پھر یہ انسٹال کریں۔"

@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: bir alt menü öğesi alt menüsünün gösterildiği yerde 
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args içinde Windows Installer'ın kurulumda doldurduğu bir parça var ([...]); bir MSIX yalnızca sabit metin tutar"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when, \"HKCU\\\\key\\\\value\" ya da \"HKLM\\\\...\" olur; bir alt menüde olmayan bir Windows 11 menü öğesinde kullanılır"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when bu paketin kendisinin yazdığı bir değeri gösteriyor ([registry.{2}]): öğe hiç görünmez"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: programı MSIX'te yok (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: değerleri paketin kayıt defterine giremez"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list içinde Windows Installer'ın kurulumda doldurduğu bir parça var ([...]); bir MSIX yalnızca sabit metin tutar"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: yollar bir komut satırına sığmadığında list, {2} yerine geçer: multi = \"one\", args içinde {3} ve list içinde {4} (liste dosyası) gerekir"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] yok"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types bir dosya türleri listesidir, örneğin [\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows yalnızca harf ve rakam kabul eder"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] bir kopya belirtir: msix (publisher ile) ya da upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix paketin kimlik adıdır (3 ile 50 arası harf, rakam, '.' ya da '-') ve publisher (\"CN=...\") gerekir; ikisi de bildirimindeki gibi"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: diğer kopyayı ön denetim arar: preflight = true gerekir"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code bu paketin kendisininki (bu bir yükseltmedir, başka bir kopya değil)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] dir'inin bir özelliği olmasını gerektirir"
@@ -1370,6 +1394,9 @@ msgstr "'{1}' eylemi zaten tanımlı"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "eylem ne standart bir eylem ne de CustomAction içinde"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action \"warn\" ya da \"refuse\" olmalıdır (alınan: '{1}')"
 
 msgid "adds too many tables"
 msgstr "çok fazla tablo ekliyor"
@@ -3894,3 +3921,19 @@ msgstr "[3]: durduruldu, çünkü klasörlerindeki [1] öğe onunla birlikte yü
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Bu bilgisayarın diğer [1] kullanıcısında [3] ayarları veya verileri olabilir:\r\n[2]\r\nOnlarınki de silinsin mi?\r\n\r\nEvet: her kullanıcı için sil (geri getirilemez).\r\nHayır: yalnızca sizinkini sil.\r\nİptal: durdur."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] bu bilgisayarda zaten Microsoft Store'dan ya da uygulama paketi olarak yüklü ([2]). Bir programın iki kopyası da dosyalarını açar ve ikisi de menülerini gösterir.\r\n\r\nBu da yüklensin mi?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] bu bilgisayarda zaten Microsoft Store'dan ya da uygulama paketi olarak yüklü ([2]). Önce o kopyayı kaldırın (Ayarlar > Uygulamalar), sonra bunu yükleyin."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Bu bilgisayarda [1] için başka bir yükleme zaten var ([2]). Bir programın iki kopyası da dosyalarını açar ve ikisi de menülerini gösterir.\r\n\r\nBu da yüklensin mi?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Bu bilgisayarda [1] için başka bir yükleme zaten var ([2]). Önce onu kaldırın (Ayarlar > Uygulamalar), sonra bunu yükleyin."

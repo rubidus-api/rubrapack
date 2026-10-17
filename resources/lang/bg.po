@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: елемент от подменю се показва та�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args има част, която Windows Installer попълва при инсталиране ([...]); MSIX съдържа само постоянен текст"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when е \"HKCU\\\\key\\\\value\" или \"HKLM\\\\...\", при елемент от менюто на Windows 11, който не е в подменю"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when сочи стойност, която самият пакет записва ([registry.{2}]): елементът никога не би се показал"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: програмата му не е в MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: стойностите му не могат да влязат в регистъра на пакета"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list има част, която Windows Installer попълва при инсталиране ([...]); MSIX съдържа само постоянен текст"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list замества {2}, когато пътищата не се побират в команден ред: нужни са multi = \"one\", {3} в args и {4} (файлът със списък) в list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": няма [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types е списък от файлови типо
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows приема само букви и цифри"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] посочва едно копие: msix (с publisher) или upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix е името на самоличността на пакета (от 3 до 50 букви, цифри, '.' или '-') и изисква publisher (\"CN=...\"), както ги има манифестът му"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: другото копие го търси предварителната проверка: нужно е preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code е на този пакет (това е надстройка, а не друго копие)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] изисква неговата dir да има функция"
@@ -1370,6 +1394,9 @@ msgstr "действието '{1}' вече е дефинирано"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "действието не е нито стандартно действие, нито в CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action трябва да е \"warn\" или \"refuse\" (получено '{1}')"
 
 msgid "adds too many tables"
 msgstr "добавя твърде много таблици"
@@ -3894,3 +3921,19 @@ msgstr "[3]: спряно, защото [1] елемент(а) в папките
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] други потребители на този компютър може да имат настройки или данни на [3]:\r\n[2]\r\nДа се изтрият ли и техните?\r\n\r\nДа: изтриване за всеки потребител (не могат да бъдат възстановени).\r\nНе: изтриване само на вашите.\r\nОтказ: спиране."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] вече е инсталиран на този компютър от Microsoft Store или като пакет на приложение ([2]). Две копия на една програма и двете отварят файловете ѝ и и двете показват менютата ѝ.\r\n\r\nДа се инсталира ли и това?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] вече е инсталиран на този компютър от Microsoft Store или като пакет на приложение ([2]). Първо премахнете онова копие (Настройки > Приложения), после инсталирайте това."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "На този компютър вече има друга инсталация на [1] ([2]). Две копия на една програма и двете отварят файловете ѝ и и двете показват менютата ѝ.\r\n\r\nДа се инсталира ли и това?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "На този компютър вече има друга инсталация на [1] ([2]). Първо я премахнете (Настройки > Приложения), после инсталирайте това."

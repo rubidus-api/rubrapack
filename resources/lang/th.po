@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: รายการของเมนูย่อยแสด
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args มีส่วนที่ Windows Installer เติมตอนติดตั้ง ([...]) แต่ MSIX เก็บได้เฉพาะข้อความคงที่"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when คือ \"HKCU\\\\key\\\\value\" หรือ \"HKLM\\\\...\" บนรายการเมนูของ Windows 11 ที่ไม่ได้อยู่ในเมนูย่อย"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when ชี้ไปที่ค่าที่แพ็กเกจนี้เขียนเอง ([registry.{2}]): รายการจะไม่แสดงเลย"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: โปรแกรมของมันไม่อยู่ใน MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: ค่าของมันใส่ในรีจิสทรีของแพ็กเกจไม่ได้"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list มีส่วนที่ Windows Installer เติมตอนติดตั้ง ([...]) แต่ MSIX เก็บได้เฉพาะข้อความคงที่"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list ใช้แทน {2} เมื่อเส้นทางยาวเกินบรรทัดคำสั่ง: ต้องมี multi = \"one\", {3} ใน args และ {4} (ไฟล์รายการ) ใน list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": ไม่มี [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types เป็นรายการชนิด�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows รับเฉพาะตัวอักษรและตัวเลข"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] ระบุสำเนาหนึ่งชุด: msix (พร้อม publisher) หรือ upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix คือชื่อข้อมูลประจำตัวของแพ็กเกจ (ตัวอักษร ตัวเลข '.' หรือ '-' 3 ถึง 50 ตัว) และต้องมี publisher (\"CN=...\") ตามที่อยู่ในแมนิเฟสต์"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: การตรวจสอบล่วงหน้าเป็นผู้หาสำเนาอื่น: ต้องมี preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code เป็นของแพ็กเกจนี้เอง (นั่นคือการอัปเกรด ไม่ใช่สำเนาอื่น)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] ต้องให้ dir ของมันมีฟีเจอร์"
@@ -1370,6 +1394,9 @@ msgstr "การกระทำ '{1}' ถูกกำหนดไว้แล�
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "การกระทำนี้ไม่ใช่การกระทำมาตรฐานและไม่อยู่ใน CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action ต้องเป็น \"warn\" หรือ \"refuse\" (ได้ '{1}')"
 
 msgid "adds too many tables"
 msgstr "เพิ่มตารางมากเกินไป"
@@ -3894,3 +3921,19 @@ msgstr "[3]: หยุดแล้ว เพราะมี [1] รายกา�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "ผู้ใช้อื่น [1] คนของคอมพิวเตอร์นี้อาจมีการตั้งค่าหรือข้อมูลของ [3]:\r\n[2]\r\nลบของพวกเขาด้วยหรือไม่\r\n\r\nใช่: ลบของผู้ใช้ทุกคน (กู้คืนไม่ได้)\r\nไม่: ลบเฉพาะของคุณ\r\nยกเลิก: หยุด"
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] ติดตั้งอยู่แล้วบนคอมพิวเตอร์นี้จาก Microsoft Store หรือเป็นแพ็กเกจแอป ([2]) โปรแกรมเดียวกันสองชุดจะเปิดไฟล์ของมันทั้งคู่และแสดงเมนูทั้งคู่\r\n\r\nติดตั้งชุดนี้ด้วยหรือไม่?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] ติดตั้งอยู่แล้วบนคอมพิวเตอร์นี้จาก Microsoft Store หรือเป็นแพ็กเกจแอป ([2]) โปรดเอาชุดนั้นออกก่อน (การตั้งค่า > แอป) แล้วจึงติดตั้งชุดนี้"
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "มีการติดตั้ง [1] อีกชุดหนึ่งอยู่บนคอมพิวเตอร์นี้แล้ว ([2]) โปรแกรมเดียวกันสองชุดจะเปิดไฟล์ของมันทั้งคู่และแสดงเมนูทั้งคู่\r\n\r\nติดตั้งชุดนี้ด้วยหรือไม่?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "มีการติดตั้ง [1] อีกชุดหนึ่งอยู่บนคอมพิวเตอร์นี้แล้ว ([2]) โปรดเอาออกก่อน (การตั้งค่า > แอป) แล้วจึงติดตั้งชุดนี้"

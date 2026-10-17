@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: 하위 메뉴의 항목은 그 하위 메뉴가 보이는 �
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args 에 Windows Installer 가 설치할 때 채우는 부분([...])이 있습니다. MSIX 는 고정된 글만 담습니다"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when 은 \"HKCU\\\\key\\\\value\" 또는 \"HKLM\\\\...\" 이고, 하위 메뉴에 들지 않은 Windows 11 메뉴 항목에 씁니다"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when 이 이 패키지가 직접 쓰는 값([registry.{2}])을 가리킵니다: 항목이 영영 나오지 않습니다"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: 그 프로그램이 MSIX 에 없습니다(msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: 그 값을 패키지의 레지스트리에 넣을 수 없습니다"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list 에 Windows Installer 가 설치할 때 채우는 부분([...])이 있습니다. MSIX 는 고정된 글만 담습니다"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list 는 경로가 명령줄에 다 들어가지 않을 때 {2} 대신 쓰입니다: multi = \"one\", args 안의 {3}, list 안의 {4}(목록 파일)가 있어야 합니다"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] 이(가) 없습니다"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types 는 [\".txt\", \"*\"] 같은 파일 형식�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 는 영문자와 숫자만 받습니다"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] 는 사본 하나를 가리킵니다: msix(publisher 와 함께) 또는 upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix 는 패키지의 식별 이름(영문자·숫자·'.'·'-' 3~50자)이고 publisher(\"CN=...\")가 함께 있어야 합니다. 둘 다 매니페스트에 적힌 그대로"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: 다른 사본은 사전 점검이 찾습니다: preflight = true 가 있어야 합니다"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code 가 이 패키지 자신의 것입니다(그것은 다른 사본이 아니라 업그레이드입니다)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] 은(는) 그 dir 에 기능이 있어야 합니다"
@@ -1370,6 +1394,9 @@ msgstr "action '{1}'은(는) 이미 정의되었습니다"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "action 이 표준 동작도 아니고 CustomAction 에도 없습니다"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action 은 \"warn\" 또는 \"refuse\" 여야 합니다('{1}'을(를) 받음)"
 
 msgid "adds too many tables"
 msgstr "표를 너무 많이 더합니다"
@@ -3894,3 +3921,19 @@ msgstr "[3]: 폴더에 함께 설치되지 않은 항목이 [1]개 있어 멈췄
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "이 컴퓨터의 다른 사용자 [1]명에게 [3]의 설정이나 데이터가 있을 수 있습니다:\r\n[2]\r\n그 사용자들의 것도 지울까요?\r\n\r\n예(Yes): 모든 사용자의 것을 지웁니다(되돌릴 수 없습니다).\r\n아니요(No): 내 것만 지웁니다.\r\n취소(Cancel): 그만둡니다."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1]이(가) 이 컴퓨터에 이미 Microsoft Store 나 앱 패키지로 설치되어 있습니다([2]). 같은 프로그램이 둘이면 둘 다 파일을 열고 메뉴도 둘씩 나옵니다.\r\n\r\n이것도 설치할까요?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1]이(가) 이 컴퓨터에 이미 Microsoft Store 나 앱 패키지로 설치되어 있습니다([2]). 그것을 먼저 제거하고(설정 > 앱) 이것을 설치하세요."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "[1]의 다른 설치본이 이 컴퓨터에 이미 있습니다([2]). 같은 프로그램이 둘이면 둘 다 파일을 열고 메뉴도 둘씩 나옵니다.\r\n\r\n이것도 설치할까요?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "[1]의 다른 설치본이 이 컴퓨터에 이미 있습니다([2]). 그것을 먼저 제거하고(설정 > 앱) 이것을 설치하세요."

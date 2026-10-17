@@ -1024,7 +1024,7 @@ void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x) {
 }
 
 void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
-    static const char *const keys[] = { "on", "text", "target", "args", "icon", "parent", "multi", "extended", "windows11", NULL };
+    static const char *const keys[] = { "on", "text", "target", "args", "icon", "parent", "multi", "extended", "windows11", "list", "hide-when", NULL };
     static const char *const lkeys[] = { "text", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_check_id(c, t, 40);
@@ -1035,6 +1035,8 @@ void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
     x->target_file = file_ref(c, t, "target", false);
     x->icon_file = file_ref(c, t, "icon", false);
     x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
+    x->list = ir_get_fmt(c, t, "list", false, NULL, IR_FMT_INSTALL);
+    x->hide_when = ir_get_str(c, t, "hide-when", false, NULL);
     x->parent = ir_get_str(c, t, "parent", false, NULL);
     x->extended = ir_get_bool(c, t, "extended", false);
     x->windows11 = ir_get_bool(c, t, "windows11", true);
@@ -1220,4 +1222,32 @@ void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e) {
     }
     e->keep = ir_get_bool(c, t, "keep", false);
     e->feature = ir_get_str(c, t, "feature", false, NULL);
+}
+
+// [other-copy.ID] (plan 2026-10-17-menu-list-and-hide): one of msix (with publisher) or upgrade-code.
+void ir_parse_other(ctx_t *c, const rp_ttable_t *t, rp_ir_other_t *x) {
+    static const char *const keys[] = { "msix", "publisher", "upgrade-code", "action", "message", NULL };
+    static const char *const lkeys[] = { "message", NULL };
+    ir_check_keys_lang(c, t, keys, lkeys);
+    ir_check_id(c, t, 40);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    x->msix = ir_get_str(c, t, "msix", false, NULL);
+    x->publisher = ir_get_str(c, t, "publisher", false, NULL);
+    x->upgrade_code = ir_get_str(c, t, "upgrade-code", false, NULL);
+    x->message = ir_get_str(c, t, "message", false, NULL);
+    ir_get_ltexts(c, t, "message", &x->message_by_lang, &x->message_by_lang_count);
+    char *action = ir_get_str(c, t, "action", false, NULL);
+    if (action && strcmp(action, "refuse") == 0) x->refuse = true;
+    else if (action && strcmp(action, "warn") != 0) ERR(c, ir_key_pos(t, "action"), "RP1316", "action must be \"warn\" or \"refuse\" (got '%s')", action);
+    rp_mem_free(c->alloc, action);
+    if ((x->msix == NULL) == (x->upgrade_code == NULL) || (x->publisher && x->msix == NULL)) {
+        ERR(c, t->pos, "RP1316", "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code", t->id);
+    } else if (x->msix) {
+        bool ok = strlen(x->msix) >= 3 && strlen(x->msix) <= 50 && x->publisher && strchr(x->publisher, '=');
+        for (const char *q = x->msix; ok && *q; ++q) ok = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9') || *q == '.' || *q == '-';
+        if (!ok) ERR(c, t->pos, "RP1316", "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them", t->id);
+    } else if (!ir_guid_ok(x->upgrade_code)) {
+        ERR(c, ir_key_pos(t, "upgrade-code"), "RP1308", "%s must be a GUID like {12345678-...} (got '%s')", "upgrade-code", x->upgrade_code);
+    }
 }

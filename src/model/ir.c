@@ -8,10 +8,10 @@
 static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "msix-extension", "msix-dependency", "merge", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "other-copy", "msix-extension", "msix-dependency", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
-                                         "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu",
+                                         "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu", "other-copy",
                                          "font", "permission", "require", "search", "remove", "copy", "action",
                                          "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
 
@@ -41,7 +41,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
 
     ir_check_format(&c);
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0, nother = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -102,6 +102,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             nmenu_on += tk && tk->val.kind == RP_TV_ARRAY ? tk->val.count : 1;
         }
         else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
+        else if (strcmp(t->kind, "other-copy") == 0) ++nother;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
         else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
@@ -114,7 +115,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
-                                               "assoc", "protocol", "com", "handler", "menu", "shortcut", "font", "service", "msix-dependency", "copy", "ini", "env", "merge", NULL };
+                                               "assoc", "protocol", "com", "handler", "menu", "other-copy", "shortcut", "font", "service", "msix-dependency", "copy", "ini", "env", "merge", NULL };
         if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -178,10 +179,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->actions = rp_mem_alloc(alloc, naction + 1, sizeof *ir->actions);
     // [assoc], [protocol] and [com] add their HKCR values for the MSI (add_class_values), and each
     // [com] an [msix-extension] of kind com-server for the MSIX.
-    ir->registries = rp_mem_alloc(alloc, nreg + 7 * nassoc + 4 * nproto + 16 * ncom + 4 * nhandler + 2 * nhandler_types + RP_MENU_VALUES * nmenu * (nmenu_on + 1) + nmenu * (8 + RP_UI_LANG_MAX) + 1,
+    ir->registries = rp_mem_alloc(alloc, nreg + 7 * nassoc + 4 * nproto + 16 * ncom + 4 * nhandler + 2 * nhandler_types + RP_MENU_VALUES * nmenu * (nmenu_on + 1) + nmenu * (10 + RP_UI_LANG_MAX) + 1,
                                     sizeof *ir->registries);
     ir->menus = rp_mem_alloc(alloc, nmenu + 1, sizeof *ir->menus);
-    if (ir->menus == NULL) c.nomem = true;
+    ir->others = rp_mem_alloc(alloc, nother + 1, sizeof *ir->others);
+    if (ir->menus == NULL || ir->others == NULL) c.nomem = true;
     ir->assocs = rp_mem_alloc(alloc, nassoc + 1, sizeof *ir->assocs);
     ir->protocols = rp_mem_alloc(alloc, nproto + 1, sizeof *ir->protocols);
     ir->coms = rp_mem_alloc(alloc, ncom + 1, sizeof *ir->coms);
@@ -295,6 +297,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_menu_t *x = &ir->menus[ir->menu_count++];
             memset(x, 0, sizeof *x);
             ir_parse_menu(&c, t, x);
+        } else if (strcmp(t->kind, "other-copy") == 0) {
+            rp_ir_other_t *x = &ir->others[ir->other_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_other(&c, t, x);
         } else if (strcmp(t->kind, "handler") == 0) {
             rp_ir_handler_t *x = &ir->handlers[ir->handler_count++];
             memset(x, 0, sizeof *x);
@@ -659,7 +665,7 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->handlers);
     for (size_t k = 0; k < ir->menu_count; ++k) {
         rp_ir_menu_t *x = &ir->menus[k];
-        char *xs[] = { x->id, x->text, x->target_file, x->icon_file, x->args, x->parent, x->clsid };
+        char *xs[] = { x->id, x->text, x->target_file, x->icon_file, x->args, x->list, x->hide_when, x->parent, x->clsid };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
         for (size_t j = 0; j < x->on_count; ++j) rp_mem_free(a, x->on[j]);
         rp_mem_free(a, x->on);
@@ -670,6 +676,17 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->text_by_lang);
     }
     rp_mem_free(a, ir->menus);
+    for (size_t k = 0; k < ir->other_count; ++k) {
+        rp_ir_other_t *x = &ir->others[k];
+        char *xs[] = { x->id, x->msix, x->publisher, x->upgrade_code, x->message };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+        for (size_t j = 0; j < x->message_by_lang_count; ++j) {
+            rp_mem_free(a, x->message_by_lang[j].lang);
+            rp_mem_free(a, x->message_by_lang[j].text);
+        }
+        rp_mem_free(a, x->message_by_lang);
+    }
+    rp_mem_free(a, ir->others);
     rp_mem_free(a, ir->menu_exe);
     rp_mem_free(a, ir->menu_publisher);
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {

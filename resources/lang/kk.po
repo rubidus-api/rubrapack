@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: ішкі мәзір элементі ішкі мәзір к�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args ішінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX тек тұрақты мәтінді ұстайды"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when — \"HKCU\\\\key\\\\value\" не \"HKLM\\\\...\", ішкі мәзірде емес Windows 11 мәзірі элементінде"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when осы буманың өзі жазатын мәнді атайды ([registry.{2}]): элемент ешқашан көрінбейді"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: оның бағдарламасы MSIX ішінде жоқ (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: оның мәндері буманың тізіліміне кіре алмайды"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list ішінде Windows Installer орнату кезінде толтыратын бөлік бар ([...]); MSIX тек тұрақты мәтінді ұстайды"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: жолдар пәрмен жолына сыймағанда list {2} орнына тұрады: multi = \"one\", args ішінде {3} және list ішінде {4} (тізім файлы) керек"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] жоқ"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types - файл түрлерінің тізімі
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows тек әріптер мен цифрларды қабылдайды"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] бір көшірмені атайды: msix (publisher-мен) не upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix — буманың сәйкестік атауы (3-тен 50-ге дейін әріп, цифр, '.' не '-'), оған publisher (\"CN=...\") керек, манифестте қалай болса солай"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: басқа көшірмені алдын ала тексеру іздейді: preflight = true керек"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code осы буманың өзінікі (бұл жаңарту, басқа көшірме емес)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] үшін оның dir-інде мүмкіндік болуы керек"
@@ -1370,6 +1394,9 @@ msgstr "'{1}' әрекеті анықталған"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "әрекет стандартты әрекет те емес, CustomAction ішінде де жоқ"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action \"warn\" не \"refuse\" болуы керек ('{1}' алынды)"
 
 msgid "adds too many tables"
 msgstr "тым көп кесте қосады"
@@ -3894,3 +3921,19 @@ msgstr "[3]: тоқтатылды, себебі оның қалталарынд�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Осы компьютердің басқа [1] пайдаланушысында [3] параметрлері не деректері болуы мүмкін:\r\n[2]\r\nОлардікі де жойылсын ба?\r\n\r\nИә: әр пайдаланушы үшін жою (қайтару мүмкін емес).\r\nЖоқ: тек өзіңіздікін жою.\r\nБас тарту: тоқтату."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] бұл компьютерге Microsoft Store-дан немесе қолданба бумасы ретінде бұрыннан орнатылған ([2]). Бір бағдарламаның екі көшірмесі де оның файлдарын ашады және екеуі де мәзірлерін көрсетеді.\r\n\r\nМұны да орнату керек пе?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] бұл компьютерге Microsoft Store-дан немесе қолданба бумасы ретінде бұрыннан орнатылған ([2]). Алдымен сол көшірмені жойыңыз (Параметрлер > Қолданбалар), содан кейін мұны орнатыңыз."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Бұл компьютерде [1] бағдарламасының басқа орнатылымы бар ([2]). Бір бағдарламаның екі көшірмесі де оның файлдарын ашады және екеуі де мәзірлерін көрсетеді.\r\n\r\nМұны да орнату керек пе?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Бұл компьютерде [1] бағдарламасының басқа орнатылымы бар ([2]). Алдымен оны жойыңыз (Параметрлер > Қолданбалар), содан кейін мұны орнатыңыз."

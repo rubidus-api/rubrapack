@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: submeniu elementas rodomas ten, kur jo submeniu: 'on' nenuro
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args yra dalis, kurią Windows Installer užpildo diegiant ([...]); MSIX turi tik fiksuotą tekstą"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when yra \"HKCU\\\\key\\\\value\" arba \"HKLM\\\\...\", Windows 11 meniu elemente, kuris nėra pomeniu"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when nurodo reikšmę, kurią rašo pats šis paketas ([registry.{2}]): elementas niekada nebūtų rodomas"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: jo programos nėra MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: jo reikšmės negali patekti į paketo registrą"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list yra dalis, kurią Windows Installer užpildo diegiant ([...]); MSIX turi tik fiksuotą tekstą"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list pakeičia {2}, kai keliai netelpa komandų eilutėje: reikia multi = \"one\", {3} reikšmėje args ir {4} (sąrašo failas) reikšmėje list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": nėra [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types yra failų tipų sąrašas, pvz., [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows priima tik raides ir skaitmenis"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] nurodo vieną kopiją: msix (su publisher) arba upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix yra paketo tapatybės vardas (3–50 raidžių, skaitmenų, '.' arba '-') ir reikalauja publisher (\"CN=...\"), kaip jie nurodyti jo manifeste"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: kitos kopijos ieško išankstinė patikra: reikia preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code yra šio paketo (tai naujinimas, o ne kita kopija)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] reikia, kad jo dir turėtų funkciją"
@@ -1370,6 +1394,9 @@ msgstr "veiksmas '{1}' jau apibrėžtas"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "veiksmas nėra nei standartinis veiksmas, nei CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action turi būti \"warn\" arba \"refuse\" (gauta '{1}')"
 
 msgid "adds too many tables"
 msgstr "prideda per daug lentelių"
@@ -3894,3 +3921,19 @@ msgstr "[3]: sustabdyta, nes [1] elementai(-ų) jos aplankuose nebuvo įdiegti k
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] kitų šio kompiuterio naudotojų gali turėti [3] parametrų ar duomenų:\r\n[2]\r\nIštrinti ir jų?\r\n\r\nTaip: ištrinti visiems naudotojams (jų nebus galima atkurti).\r\nNe: ištrinti tik jūsų.\r\nAtšaukti: sustabdyti."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] jau įdiegta šiame kompiuteryje iš „Microsoft Store“ arba kaip programos paketas ([2]). Dvi vienos programos kopijos abi atidaro jos failus ir abi rodo jos meniu.\r\n\r\nDiegti ir šią?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] jau įdiegta šiame kompiuteryje iš „Microsoft Store“ arba kaip programos paketas ([2]). Pirmiausia pašalinkite tą kopiją (Parametrai > Programos), tada įdiekite šią."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Šiame kompiuteryje jau yra kitas [1] įdiegimas ([2]). Dvi vienos programos kopijos abi atidaro jos failus ir abi rodo jos meniu.\r\n\r\nDiegti ir šią?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Šiame kompiuteryje jau yra kitas [1] įdiegimas ([2]). Pirmiausia jį pašalinkite (Parametrai > Programos), tada įdiekite šią."

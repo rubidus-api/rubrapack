@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: mục của menu con hiển thị ở nơi menu con của n�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args có phần Windows Installer điền lúc cài đặt ([...]); MSIX chỉ chứa văn bản cố định"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when là \"HKCU\\\\key\\\\value\" hoặc \"HKLM\\\\...\", trên một mục của menu Windows 11 không nằm trong menu con"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when chỉ một giá trị chính gói này ghi ([registry.{2}]): mục sẽ không bao giờ hiện"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: chương trình của nó không có trong MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: các giá trị của nó không thể đưa vào registry của gói"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list có phần Windows Installer điền lúc cài đặt ([...]); MSIX chỉ chứa văn bản cố định"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list thay cho {2} khi các đường dẫn không vừa một dòng lệnh: cần multi = \"one\", {3} trong args và {4} (tệp danh sách) trong list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": không có [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types là danh sách loại tệp, như [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows chỉ nhận chữ cái và chữ số"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] chỉ một bản: msix (kèm publisher) hoặc upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix là tên định danh của gói (3 đến 50 chữ cái, chữ số, '.' hoặc '-') và cần publisher (\"CN=...\"), đúng như trong tệp kê khai"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: bước kiểm tra trước tìm bản kia: cần preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code là của chính gói này (đó là nâng cấp, không phải bản khác)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] cần dir của nó có một tính năng"
@@ -1370,6 +1394,9 @@ msgstr "hành động '{1}' đã được định nghĩa"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "hành động không phải hành động chuẩn cũng không có trong CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action phải là \"warn\" hoặc \"refuse\" (nhận được '{1}')"
 
 msgid "adds too many tables"
 msgstr "thêm quá nhiều bảng"
@@ -3894,3 +3921,19 @@ msgstr "[3]: đã dừng, vì [1] mục trong các thư mục của nó không �
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] người dùng khác của máy tính này có thể có cài đặt hoặc dữ liệu của [3]:\r\n[2]\r\nXóa cả của họ?\r\n\r\nCó: xóa cho mọi người dùng (không thể khôi phục).\r\nKhông: chỉ xóa của bạn.\r\nHủy bỏ: dừng."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] đã được cài trên máy tính này từ Microsoft Store hoặc dưới dạng gói ứng dụng ([2]). Hai bản của một chương trình đều mở tệp của nó và đều hiện menu của nó.\r\n\r\nVẫn cài cả bản này?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] đã được cài trên máy tính này từ Microsoft Store hoặc dưới dạng gói ứng dụng ([2]). Hãy gỡ bản đó trước (Cài đặt > Ứng dụng), rồi cài bản này."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Máy tính này đã có một bản cài khác của [1] ([2]). Hai bản của một chương trình đều mở tệp của nó và đều hiện menu của nó.\r\n\r\nVẫn cài cả bản này?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Máy tính này đã có một bản cài khác của [1] ([2]). Hãy gỡ nó trước (Cài đặt > Ứng dụng), rồi cài bản này."

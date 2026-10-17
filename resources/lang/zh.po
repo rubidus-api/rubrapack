@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: 子菜单的项显示在其子菜单显示的位置: 请去�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args 含有 Windows Installer 在安装时填入的部分([...])；MSIX 只能包含固定文本"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when 为 \"HKCU\\\\key\\\\value\" 或 \"HKLM\\\\...\"，用于不在子菜单中的 Windows 11 菜单项"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when 指向本包自己写入的值（[registry.{2}]）：该项将永远不显示"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: 其程序不在 MSIX 中(msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: 其值不能放入安装包的注册表"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list 含有 Windows Installer 在安装时填入的部分([...])；MSIX 只能包含固定文本"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: 路径放不进命令行时，list 代替 {2}：需要 multi = \"one\"、args 中的 {3} 和 list 中的 {4}（列表文件）"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": 没有 [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types 是文件类型列表，如 [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 只接受字母和数字"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] 指明一份副本：msix（带 publisher）或 upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix 是包的标识名（3 到 50 个字母、数字、'.' 或 '-'），并需要 publisher（\"CN=...\"），均与其清单一致"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: 由预检查查找另一份副本：需要 preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code 是本包自己的（那是升级，不是另一份副本）"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] 需要其 dir 有一个功能"
@@ -1370,6 +1394,9 @@ msgstr "操作 '{1}' 已定义"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "该操作既不是标准操作，也不在 CustomAction 中"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action 必须是 \"warn\" 或 \"refuse\"（得到 '{1}'）"
 
 msgid "adds too many tables"
 msgstr "添加的表过多"
@@ -3894,3 +3921,19 @@ msgstr "[3]: 已停止，因为其文件夹中有 [1] 个项目不是随它安�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "这台计算机的其他 [1] 个用户可能有 [3] 的设置或数据:\r\n[2]\r\n也删除他们的吗?\r\n\r\n是: 删除所有用户的 (无法恢复)。\r\n否: 只删除你自己的。\r\n取消: 停止。"
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] 已从 Microsoft Store 或以应用包形式安装在这台计算机上（[2]）。同一程序的两份副本都会打开它的文件，菜单也会出现两次。\r\n\r\n仍要安装这一份吗?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] 已从 Microsoft Store 或以应用包形式安装在这台计算机上（[2]）。请先删除那一份（设置 > 应用），再安装这一份。"
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "这台计算机上已有 [1] 的另一个安装（[2]）。同一程序的两份副本都会打开它的文件，菜单也会出现两次。\r\n\r\n仍要安装这一份吗?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "这台计算机上已有 [1] 的另一个安装（[2]）。请先删除它（设置 > 应用），再安装这一份。"

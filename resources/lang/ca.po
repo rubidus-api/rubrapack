@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: un element d'un submenú es mostra on es mostra el submenú:
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args té una part que el Windows Installer omple en instal·lar ([...]); un MSIX només conté text fix"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when és \"HKCU\\\\key\\\\value\" o \"HKLM\\\\...\", en un element del menú del Windows 11 que no sigui en un submenú"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when indica un valor que escriu el mateix paquet ([registry.{2}]): l'element no es mostraria mai"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: el seu programa no és a l'MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: els seus valors no poden anar al registre del paquet"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list té una part que el Windows Installer omple en instal·lar ([...]); un MSIX només conté text fix"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list fa les vegades de {2} quan els camins no caben en una línia d'ordres: cal multi = \"one\", {3} a args i {4} (el fitxer de llista) a list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": no hi ha cap [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types és una llista de tipus de fitxer, com ara [
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': el Windows només admet lletres i xifres"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] indica una còpia: msix (amb publisher) o upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix és el nom d'identitat del paquet (de 3 a 50 lletres, xifres, '.' o '-') i necessita publisher (\"CN=...\"), tal com els té el manifest"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: la comprovació prèvia busca l'altra còpia: cal preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code és el d'aquest paquet (això és una actualització, no una altra còpia)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] necessita que el seu dir tingui una funció"
@@ -1370,6 +1394,9 @@ msgstr "l'acció '{1}' ja està definida"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "l'acció no és ni una acció estàndard ni és a CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action ha de ser \"warn\" o \"refuse\" (s'ha rebut '{1}')"
 
 msgid "adds too many tables"
 msgstr "afegeix massa taules"
@@ -3894,3 +3921,19 @@ msgstr "[3]: aturat, perquè [1] elements de les seves carpetes no s'hi van inst
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] altres usuaris d'aquest ordinador poden tenir configuració o dades de [3]:\r\n[2]\r\nVoleu suprimir també les seves?\r\n\r\nSí: suprimeix-les per a tots els usuaris (no es poden recuperar).\r\nNo: suprimeix només les vostres.\r\nCancel·la: atura."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "El [1] ja és instal·lat en aquest ordinador des de la Microsoft Store o com a paquet d'aplicació ([2]). Dues còpies d'un programa n'obren totes dues els fitxers i en mostren totes dues els menús.\r\n\r\nVoleu instal·lar també aquesta?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "El [1] ja és instal·lat en aquest ordinador des de la Microsoft Store o com a paquet d'aplicació ([2]). Elimineu primer aquella còpia (Configuració > Aplicacions) i després instal·leu aquesta."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Ja hi ha una altra instal·lació del [1] en aquest ordinador ([2]). Dues còpies d'un programa n'obren totes dues els fitxers i en mostren totes dues els menús.\r\n\r\nVoleu instal·lar també aquesta?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Ja hi ha una altra instal·lació del [1] en aquest ordinador ([2]). Elimineu-la primer (Configuració > Aplicacions) i després instal·leu aquesta."

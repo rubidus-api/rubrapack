@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: alivalikon kohde näkyy siellä, missä sen alivalikko näky
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: argsissa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX sisältää vain kiinteää tekstiä"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when on \"HKCU\\\\key\\\\value\" tai \"HKLM\\\\...\", Windows 11 -valikon kohteessa, joka ei ole alivalikossa"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when osoittaa arvoon, jonka tämä paketti itse kirjoittaa ([registry.{2}]): kohde ei näkyisi koskaan"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: sen ohjelma ei ole MSIX:ssä (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: sen arvot eivät mahdu paketin rekisteriin"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: listissa on osa, jonka Windows Installer täyttää asennuksessa ([...]); MSIX sisältää vain kiinteää tekstiä"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list korvaa {2}:n, kun polut eivät mahdu komentoriville: tarvitaan multi = \"one\", {3} args-arvossa ja {4} (luettelotiedosto) list-arvossa"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] ei ole"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types on luettelo tiedostotyypeistä, kuten [\".tx
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows hyväksyy vain kirjaimia ja numeroita"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] nimeää yhden kopion: msix (ja publisher) tai upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix on paketin tunnusnimi (3–50 kirjainta, numeroa, '.' tai '-') ja vaatii publisher-arvon (\"CN=...\"), kuten ne ovat sen luettelossa"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: toista kopiota etsii esitarkistus: tarvitaan preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code on tämän paketin oma (se on päivitys, ei toinen kopio)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] tarvitsee, että sen dir-kohteella on ominaisuus"
@@ -1370,6 +1394,9 @@ msgstr "toiminto '{1}' on jo määritetty"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "toiminto ei ole vakiotoiminto eikä CustomAction-taulukossa"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action on \"warn\" tai \"refuse\" (saatiin '{1}')"
 
 msgid "adds too many tables"
 msgstr "lisää liian monta taulukkoa"
@@ -3894,3 +3921,19 @@ msgstr "[3]: pysäytetty, koska sen kansioissa on [1] kohdetta, joita ei asennet
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Tämän tietokoneen [1] muulla käyttäjällä voi olla sovelluksen [3] asetuksia tai tietoja:\r\n[2]\r\nPoistetaanko myös heidän tietonsa?\r\n\r\nKyllä: poista ne kaikilta käyttäjiltä (niitä ei voi palauttaa).\r\nEi: poista vain omasi.\r\nPeruuta: pysäytä."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] on jo asennettu tähän tietokoneeseen Microsoft Storesta tai sovelluspakettina ([2]). Ohjelman kaksi kopiota avaavat kumpikin sen tiedostot ja näyttävät kumpikin sen valikot.\r\n\r\nAsennetaanko tämäkin?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] on jo asennettu tähän tietokoneeseen Microsoft Storesta tai sovelluspakettina ([2]). Poista ensin se kopio (Asetukset > Sovellukset) ja asenna sitten tämä."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Tässä tietokoneessa on jo toinen [1]-asennus ([2]). Ohjelman kaksi kopiota avaavat kumpikin sen tiedostot ja näyttävät kumpikin sen valikot.\r\n\r\nAsennetaanko tämäkin?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Tässä tietokoneessa on jo toinen [1]-asennus ([2]). Poista se ensin (Asetukset > Sovellukset) ja asenna sitten tämä."

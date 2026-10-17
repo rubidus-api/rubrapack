@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: azpimenu bateko elementua azpimenua erakusten den lekuan era
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args-ek Windows Installer-ek instalatzean betetzen duen zati bat du ([...]); MSIX batek testu finkoa bakarrik du"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when \"HKCU\\\\key\\\\value\" edo \"HKLM\\\\...\" da, azpimenu batean ez dagoen Windows 11-ren menuko elementu batean"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when-ek pakete honek berak idazten duen balio bat izendatzen du ([registry.{2}]): elementua ez litzateke inoiz agertuko"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: bere programa ez dago MSIX-ean (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: bere balioak ezin dira paketearen erregistroan sartu"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list-ek Windows Installer-ek instalatzean betetzen duen zati bat du ([...]); MSIX batek testu finkoa bakarrik du"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: bideak komando-lerro batean sartzen ez direnean, list {2}-ren ordez doa: multi = \"one\", args-en {3} eta list-en {4} (zerrenda-fitxategia) behar dira"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": ez dago [assoc.{3}]-rik"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types fitxategi-moten zerrenda bat da, adibidez [\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows-ek hizkiak eta zenbakiak baino ez ditu onartzen"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}]-ek kopia bat izendatzen du: msix (publisher-ekin) edo upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix paketearen identitate-izena da (3 eta 50 artean hizki, zenbaki, '.' edo '-') eta publisher (\"CN=...\") behar du, manifestuan dauden bezala"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: beste kopia aurretiazko egiaztapenak bilatzen du: preflight = true behar da"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code pakete honena da (hori bertsio-berritzea da, ez beste kopia bat)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] taulak bere dir-ak eginbide bat izatea behar du"
@@ -1370,6 +1394,9 @@ msgstr "'{1}' ekintza definituta dago dagoeneko"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "ekintza ez da ekintza estandarra eta ez dago CustomAction-en"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action-ek \"warn\" edo \"refuse\" izan behar du ('{1}' jaso da)"
 
 msgid "adds too many tables"
 msgstr "taula gehiegi gehitzen ditu"
@@ -3894,3 +3921,19 @@ msgstr "[3]: gelditu da, bere karpetetako [1] elementu ez zirelako berarekin ins
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Ordenagailu honetako beste [1] erabiltzailek [3](r)en ezarpenak edo datuak izan ditzakete:\r\n[2]\r\nHaienak ere ezabatu?\r\n\r\nBai: ezabatu erabiltzaile guztientzat (ezin dira berreskuratu).\r\nEz: ezabatu zureak bakarrik.\r\nUtzi: gelditu."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] ordenagailu honetan instalatuta dago dagoeneko Microsoft Store-tik edo aplikazio-pakete gisa ([2]). Programa baten bi kopiek biek irekitzen dituzte haren fitxategiak eta biek erakusten dituzte haren menuak.\r\n\r\nHau ere instalatu?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] ordenagailu honetan instalatuta dago dagoeneko Microsoft Store-tik edo aplikazio-pakete gisa ([2]). Kendu lehenik kopia hori (Ezarpenak > Aplikazioak), eta instalatu gero hau."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "[1]-ren beste instalazio bat dago dagoeneko ordenagailu honetan ([2]). Programa baten bi kopiek biek irekitzen dituzte haren fitxategiak eta biek erakusten dituzte haren menuak.\r\n\r\nHau ere instalatu?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "[1]-ren beste instalazio bat dago dagoeneko ordenagailu honetan ([2]). Kendu hori lehenik (Ezarpenak > Aplikazioak), eta instalatu gero hau."

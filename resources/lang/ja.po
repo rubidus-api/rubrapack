@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: サブメニューの項目はサブメニューと同じ場
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args に Windows インストーラーがインストール時に埋める部分 ([...]) があります。MSIX は固定の文字列しか持てません"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when は \"HKCU\\\\key\\\\value\" または \"HKLM\\\\...\" で、サブメニューに入っていない Windows 11 のメニュー項目に書きます"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when がこのパッケージ自身の書く値 ([registry.{2}]) を指しています: 項目がいつまでも表示されません"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: そのプログラムが MSIX にありません (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: その値はパッケージのレジストリに入れられません"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list に Windows インストーラーがインストール時に埋める部分 ([...]) があります。MSIX は固定の文字列しか持てません"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list はパスがコマンド ラインに収まらないときに {2} の代わりになります: multi = \"one\"、args の {3}、list の {4} (一覧ファイル) が必要です"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] がありません"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types は [\".txt\", \"*\"] のようなファイ�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows は英字と数字だけを受け付けます"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] はコピーを 1 つ指します: msix (publisher と一緒に) か upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix はパッケージの識別名 (英数字・'.'・'-' で 3～50 文字) で、publisher (\"CN=...\") が要ります。どちらもマニフェストのとおりに"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: 別のコピーは事前チェックが探します: preflight = true が必要です"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code がこのパッケージ自身のものです (それは別のコピーではなくアップグレードです)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] には、その dir に機能が必要です"
@@ -1370,6 +1394,9 @@ msgstr "アクション '{1}' は既に定義されています"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "アクションが標準アクションでも CustomAction のものでもありません"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action は \"warn\" か \"refuse\" です ('{1}' でした)"
 
 msgid "adds too many tables"
 msgstr "テーブルを追加しすぎます"
@@ -3894,3 +3921,19 @@ msgstr "[3]: フォルダーに一緒にインストールされていない項�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "このコンピューターの他の [1] 人のユーザーが [3] の設定やデータを持っている可能性があります:\r\n[2]\r\nその人たちの分も削除しますか?\r\n\r\nはい: すべてのユーザーの分を削除します (元に戻せません)。\r\nいいえ: 自分の分だけ削除します。\r\nキャンセル: 中止します。"
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] はこのコンピューターに Microsoft Store またはアプリ パッケージとしてすでにインストールされています ([2])。同じプログラムが 2 つあると、どちらもファイルを開き、メニューも 2 つずつ出ます。\r\n\r\nこちらもインストールしますか?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] はこのコンピューターに Microsoft Store またはアプリ パッケージとしてすでにインストールされています ([2])。先にそれを削除してから (設定 > アプリ)、こちらをインストールしてください。"
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "[1] の別のインストールがこのコンピューターにすでにあります ([2])。同じプログラムが 2 つあると、どちらもファイルを開き、メニューも 2 つずつ出ます。\r\n\r\nこちらもインストールしますか?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "[1] の別のインストールがこのコンピューターにすでにあります ([2])。先にそれを削除してから (設定 > アプリ)、こちらをインストールしてください。"

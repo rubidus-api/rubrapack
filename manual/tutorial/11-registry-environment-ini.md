@@ -240,6 +240,10 @@ args = "--greet \"%1\""           # "%1" is what was right-clicked
 - A `[menu.*]` without `target` is a sub-menu, and items name it with `parent`.
 - `multi = "single"` shows the item only when one thing is selected; `extended = true` only with
   Shift held; `windows11 = false` keeps it out of the Windows 11 menu.
+- With `multi = "one"` and `%*` in `args`, `list = "--paths-from=%L"` takes over when hundreds of
+  selected paths do not fit a command line: they go in a file, `%L`, which the program reads.
+- `hide-when = "HKCU\\Software\\Hello\\MenuRegistered"` hides the Windows 11 item while that value
+  exists - for when another copy of Hello, installed another way, has its own menu there.
 
 Windows has two such menus, and the table fills both. The classic one (Windows 10, and "Show more
 options" on Windows 11) reads the registry, which the package writes. The Windows 11 menu takes only
@@ -247,6 +251,18 @@ items of a package with identity, each served by a small COM class - rubrapack b
 with it (its menu part) and, for an MSI, installs and registers a tiny identity package beside the
 program. Nothing to write and no certificate to buy; the Reference tells the whole story under
 "Explorer's right-click menu".
+
+Two copies of one program - your installer and, say, the Microsoft Store's package - would each
+open files and each put a menu up. An `[other-copy.ID]` table makes the installer look first:
+
+```toml
+[other-copy.Store]
+msix = "Hello.Hello"              # the app package's identity name
+publisher = "CN=12345678-ABCD-..."
+action = "warn"                   # ask whether to install anyway; "refuse" stops
+```
+
+The Reference has it under "Another copy".
 
 ## COM classes: `[com.ID]`
 

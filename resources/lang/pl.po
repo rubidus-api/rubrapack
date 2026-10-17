@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: element podmenu pokazuje się tam, gdzie jego podmenu: pomi�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args ma część wypełnianą przez Instalator Windows przy instalacji ([...]); MSIX zawiera tylko stały tekst"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when to \"HKCU\\\\key\\\\value\" lub \"HKLM\\\\...\", przy elemencie menu Windows 11 spoza podmenu"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when wskazuje wartość zapisywaną przez ten pakiet ([registry.{2}]): element nigdy by się nie pokazał"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: jego programu nie ma w MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: jego wartości nie mogą trafić do rejestru pakietu"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list ma część wypełnianą przez Instalator Windows przy instalacji ([...]); MSIX zawiera tylko stały tekst"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list zastępuje {2}, gdy ścieżki nie mieszczą się w wierszu polecenia: potrzebne są multi = \"one\", {3} w args i {4} (plik listy) w list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": nie ma [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types to lista typów plików, np. [\".txt\", \"*\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows przyjmuje tylko litery i cyfry"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] wskazuje jedną kopię: msix (z publisher) lub upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix to nazwa tożsamości pakietu (od 3 do 50 liter, cyfr, '.' lub '-') i wymaga publisher (\"CN=...\"), tak jak w jego manifeście"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: drugiej kopii szuka kontrola wstępna: potrzebne jest preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code należy do tego pakietu (to uaktualnienie, a nie druga kopia)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] wymaga, aby jego dir miał funkcję"
@@ -1370,6 +1394,9 @@ msgstr "akcja '{1}' jest już zdefiniowana"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "akcja nie jest ani akcją standardową, ani nie występuje w CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action musi mieć wartość \"warn\" lub \"refuse\" (otrzymano '{1}')"
 
 msgid "adds too many tables"
 msgstr "dodaje zbyt wiele tabel"
@@ -3894,3 +3921,19 @@ msgstr "[3]: zatrzymano, ponieważ w jego folderach jest [1] element(ów), któr
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] innych użytkowników tego komputera może mieć ustawienia lub dane produktu [3]:\r\n[2]\r\nUsunąć także ich?\r\n\r\nTak: usuń je dla każdego użytkownika (nie można ich odzyskać).\r\nNie: usuń tylko Twoje.\r\nAnuluj: zatrzymaj."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "Program [1] jest już zainstalowany na tym komputerze ze sklepu Microsoft Store lub jako pakiet aplikacji ([2]). Dwie kopie programu obie otwierają jego pliki i obie pokazują jego menu.\r\n\r\nZainstalować również tę?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "Program [1] jest już zainstalowany na tym komputerze ze sklepu Microsoft Store lub jako pakiet aplikacji ([2]). Najpierw usuń tamtą kopię (Ustawienia > Aplikacje), a potem zainstaluj tę."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Na tym komputerze jest już inna instalacja programu [1] ([2]). Dwie kopie programu obie otwierają jego pliki i obie pokazują jego menu.\r\n\r\nZainstalować również tę?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Na tym komputerze jest już inna instalacja programu [1] ([2]). Najpierw ją usuń (Ustawienia > Aplikacje), a potem zainstaluj tę."

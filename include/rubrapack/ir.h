@@ -328,6 +328,21 @@ typedef struct {
     char    *text;              // formatted
 } rp_ir_ltext_t;
 
+// [other-copy.ID] (plan 2026-10-17-menu-list-and-hide): the same program installed another way - an
+// MSIX for the installing user, or another MSI - found by the preflight before a first install,
+// which warns (Yes / No) or refuses. MSI only; an MSIX build ignores it.
+typedef struct {
+    char          *id;
+    char          *msix;            // the package's identity name, with publisher; or NULL
+    char          *publisher;       // its publisher ("CN=..."), with msix
+    char          *upgrade_code;    // another MSI's upgrade code, upper case; or NULL
+    bool           refuse;          // action = "refuse" (default "warn")
+    char          *message;         // formatted ([1] this product, [2] the copy found); or NULL
+    rp_ir_ltext_t *message_by_lang; // message-xx
+    size_t         message_by_lang_count;
+    rp_pos_t       pos;
+} rp_ir_other_t;
+
 // [menu.ID] (plan 2026-10-09): an item of Explorer's right-click menu that starts a program.
 // The classic menu (Windows 10; "Show more options" on Windows 11) gets registry verbs; the
 // Windows 11 menu gets a class of rubrapack's menu DLL in a package with identity.
@@ -343,6 +358,8 @@ typedef struct {
     char          *target_file;     // file ID of the program; NULL = a sub-menu
     char          *icon_file;       // file ID, or NULL (the program's own icon)
     char          *args;            // formatted; default "\"%1\""
+    char          *list;            // formatted, or NULL: stands for %* with %L = a file of the paths, when they do not fit a command line
+    char          *hide_when;       // "HKCU\\key\\value" or "HKLM\\...": the Windows 11 item is hidden while that value exists; or NULL
     char          *parent;          // [menu.*] ID of the sub-menu this item is in, or NULL
     char          *clsid;           // "{GUID}" of its Windows 11 class (top-level items), made from the upgrade code and the ID
     int            multi;           // RP_MENU_*
@@ -527,6 +544,8 @@ typedef struct {
     size_t            msix_ext_count;
     rp_ir_menu_t     *menus;                // [menu.*], in ID order
     size_t            menu_count;
+    rp_ir_other_t    *others;               // [other-copy.*]
+    size_t            other_count;
     // An item for the Windows 11 menu: an MSI then carries rubrapack's menu DLL and an identity
     // package beside the program `menu_exe` (a file ID), whose folder is the package's location.
     bool              menu_package;

@@ -2500,6 +2500,76 @@ static UINT pre_users(MSIHANDLE h, bool silent, const wchar_t *product) {
     return rc;
 }
 
+// 0. Before a first install ([other-copy.*], plan 2026-10-17-menu-list-and-hide): the same program
+// installed another way. RP_OTHER is "kind|action|ID|what;...": kind m = an MSIX package family
+// registered for the installing user, u = another MSI's upgrade code; action w = ask Yes / No (No
+// stops; without a window it goes on), r = say so and stop. The text is the author's
+// RpPreOther_<ID>_<language> when there is one, else the default of its kind: [1] this product,
+// [2] the copy found.
+typedef LONG(WINAPI *packages_fn)(PCWSTR, UINT32 *, PWSTR *, UINT32 *, WCHAR *);
+
+static UINT pre_other(MSIHANDLE h, bool silent, const wchar_t *product) {
+    wchar_t *spec = get_property(h, L"RP_OTHER");
+    UINT rc = ERROR_SUCCESS;
+    wchar_t *ctx = NULL;
+    for (wchar_t *e = spec && spec[0] ? wcstok(spec, L";", &ctx) : NULL; e && rc == ERROR_SUCCESS; e = wcstok(NULL, L";", &ctx)) {
+        // kind|action|ID|what
+        wchar_t *f[4] = { e, NULL, NULL, NULL };
+        for (int i = 1; i < 4; ++i) {
+            wchar_t *bar = f[i - 1] ? wcschr(f[i - 1], L'|') : NULL;
+            if (bar) *bar = 0;
+            f[i] = bar ? bar + 1 : NULL;
+        }
+        if (f[3] == NULL) continue;
+        bool msix = f[0][0] == L'm', refuse = f[1][0] == L'r';
+        wchar_t found[512];
+        found[0] = 0;
+        if (msix) {
+            packages_fn fn = (packages_fn)(void *)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "GetPackagesByPackageFamily");
+            UINT32 count = 0, len = 0;
+            if (fn && fn(f[3], &count, NULL, &len, NULL) == ERROR_INSUFFICIENT_BUFFER && count > 0 && len > 0) {
+                PWSTR *names = HeapAlloc(GetProcessHeap(), 0, count * sizeof *names);
+                WCHAR *buf = HeapAlloc(GetProcessHeap(), 0, len * sizeof *buf);
+                if (names && buf && fn(f[3], &count, names, &len, buf) == ERROR_SUCCESS && count > 0) wcsncpy(found, names[0], 511);
+                else wcsncpy(found, f[3], 511);
+                found[511] = 0;
+                if (names) HeapFree(GetProcessHeap(), 0, names);
+                if (buf) HeapFree(GetProcessHeap(), 0, buf);
+            }
+        } else {
+            wchar_t pc[39], *mine = get_property(h, L"ProductCode");
+            for (DWORD i = 0; found[0] == 0 && MsiEnumRelatedProductsW(f[3], 0, i, pc) == ERROR_SUCCESS; ++i) {
+                if (mine && _wcsicmp(pc, mine) == 0) continue;
+                DWORD n = 511;
+                if (MsiGetProductInfoW(pc, L"ProductName", found, &n) != ERROR_SUCCESS || found[0] == 0) wcscpy(found, pc);
+            }
+            if (mine) HeapFree(GetProcessHeap(), 0, mine);
+        }
+        if (found[0] == 0) {
+            log_line(h, L"rubrapack: preflight: other copy %ls: none", f[2]);
+            continue;
+        }
+        wchar_t id[80];
+        wfmt(id, 80, L"Other_%ls", f[2]);
+        wchar_t *own = pre_text(h, id);
+        if (own == NULL || own[0] == 0) wfmt(id, 80, L"Other%ls%ls", msix ? L"Store" : L"Msi", refuse ? L"Refuse" : L"");
+        if (own) HeapFree(GetProcessHeap(), 0, own);
+        if (refuse) {
+            log_line(h, L"rubrapack: preflight: refused: other copy %ls is installed (%ls)", f[2], found);
+            pre_message(h, id, INSTALLMESSAGE_ERROR | MB_OK | MB_ICONWARNING, product, found, NULL);
+            rc = ERROR_INSTALL_FAILURE;
+        } else if (silent) {
+            log_line(h, L"rubrapack: preflight: other copy %ls is installed (%ls); going on without a window", f[2], found);
+        } else {
+            int choice = pre_message(h, id, INSTALLMESSAGE_USER | MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2, product, found, NULL);
+            log_line(h, L"rubrapack: preflight: other copy %ls is installed (%ls); %ls", f[2], found, choice == IDYES ? L"going on" : L"stopped");
+            if (choice != IDYES) rc = ERROR_INSTALL_USEREXIT;
+        }
+    }
+    if (spec) HeapFree(GetProcessHeap(), 0, spec);
+    return rc;
+}
+
 __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
     wchar_t *product = get_property(h, L"ProductName"), *uilevel = get_property(h, L"UILevel");
     wchar_t *answer = get_property(h, L"RPCLOSE"), *dflt = get_property(h, L"RP_PREFLIGHT_CLOSE");
@@ -2519,6 +2589,18 @@ __declspec(dllexport) UINT __stdcall RpPreflight(MSIHANDLE h) {
             if (early[i]) HeapFree(GetProcessHeap(), 0, early[i]);
         }
         return ERROR_SUCCESS;
+    }
+
+    // 0. A first install: the same program installed another way.
+    wchar_t *installed = get_property(h, L"Installed");
+    if (!removal && (installed == NULL || installed[0] == 0) && (older == NULL || older[0] == 0)) rc = pre_other(h, silent, product);
+    if (installed) HeapFree(GetProcessHeap(), 0, installed);
+    if (rc != ERROR_SUCCESS) {
+        wchar_t *early[] = { product, uilevel, answer, dflt, remove, older, dirs, code };
+        for (size_t i = 0; i < sizeof early / sizeof early[0]; ++i) {
+            if (early[i]) HeapFree(GetProcessHeap(), 0, early[i]);
+        }
+        return rc;
     }
 
     // 1. Who uses the product's files.

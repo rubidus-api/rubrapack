@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: az almenü eleme ott látszik, ahol az almenü: hagyja ki az
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: az args egy része telepítéskor töltődik ki a Windows Installer által ([...]); az MSIX csak rögzített szöveget tartalmaz"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: a hide-when értéke \"HKCU\\\\key\\\\value\" vagy \"HKLM\\\\...\", a Windows 11 menü egy almenün kívüli elemén"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: a hide-when olyan értéket nevez meg, amelyet ez a csomag maga ír ([registry.{2}]): az elem sosem jelenne meg"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: a programja nincs az MSIX-ben (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: az értékei nem kerülhetnek a csomag beállításjegyzékébe"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: az list egy része telepítéskor töltődik ki a Windows Installer által ([...]); az MSIX csak rögzített szöveget tartalmaz"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: a list a(z) {2} helyett áll, ha az elérési utak nem férnek el egy parancssorban: kell multi = \"one\", {3} az args-ban és {4} (a listafájl) a list-ben"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": nincs [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: a types fájltípusok listája, például [\".txt\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': a Windows csak betűket és számjegyeket fogad el"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] egy példányt nevez meg: msix (publisher-rel) vagy upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: az msix a csomag identitásneve (3–50 betű, számjegy, '.' vagy '-'), és kell hozzá publisher (\"CN=...\"), ahogy a jegyzéke tartalmazza"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: a másik példányt az előzetes ellenőrzés keresi: kell preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: az upgrade-code e csomag sajátja (az frissítés, nem másik példány)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] igényli, hogy a dir-jének legyen szolgáltatása"
@@ -1370,6 +1394,9 @@ msgstr "a(z) '{1}' művelet már definiálva van"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "a művelet nem szabványos, és nincs a CustomAction táblában"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "az action értéke \"warn\" vagy \"refuse\" lehet (kapott: '{1}')"
 
 msgid "adds too many tables"
 msgstr "túl sok táblát ad hozzá"
@@ -3894,3 +3921,19 @@ msgstr "[3]: leállítva, mert a mappáiban [1] elem nem vele együtt települt:
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "A számítógép [1] másik felhasználójának lehetnek [3] beállításai vagy adatai:\r\n[2]\r\nAz övéiket is törli?\r\n\r\nIgen: törlés minden felhasználónál (nem állíthatók vissza).\r\nNem: csak a sajátjait törli.\r\nMégse: leállítás."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "A(z) [1] már telepítve van erre a számítógépre a Microsoft Store-ból vagy alkalmazáscsomagként ([2]). Egy program két példánya egyaránt megnyitja a fájljait, és mindkettő megjeleníti a menüit.\r\n\r\nEzt is telepíti?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "A(z) [1] már telepítve van erre a számítógépre a Microsoft Store-ból vagy alkalmazáscsomagként ([2]). Először távolítsa el azt a példányt (Beállítások > Alkalmazások), majd telepítse ezt."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "A(z) [1] egy másik telepítése már megvan ezen a számítógépen ([2]). Egy program két példánya egyaránt megnyitja a fájljait, és mindkettő megjeleníti a menüit.\r\n\r\nEzt is telepíti?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "A(z) [1] egy másik telepítése már megvan ezen a számítógépen ([2]). Először távolítsa el (Beállítások > Alkalmazások), majd telepítse ezt."

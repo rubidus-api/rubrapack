@@ -405,11 +405,28 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "target", x->target_file);
         kv(&b, "icon", x->icon_file);
         kv(&b, "args", x->args);
+        if (x->list) kv(&b, "list", x->list);
+        if (x->hide_when) kv(&b, "hide-when", x->hide_when);
         kv(&b, "parent", x->parent);
         kv(&b, "class", x->clsid);
         kv(&b, "multi", multi[x->multi]);
         if (x->extended) kv(&b, "extended", "1");
         if (!x->windows11) kv(&b, "windows11", "0");
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->other_count; ++k) {
+        const rp_ir_other_t *x = &ir->others[k];
+        rp_buf_puts(&b, "other-copy ");
+        rp_buf_puts(&b, x->id);
+        if (x->msix) kv(&b, "msix", x->msix);
+        if (x->publisher) kv(&b, "publisher", x->publisher);
+        if (x->upgrade_code) kv(&b, "upgrade-code", x->upgrade_code);
+        kv(&b, "action", x->refuse ? "refuse" : "warn");
+        if (x->message) kv(&b, "message", x->message);
+        for (size_t j = 0; j < x->message_by_lang_count; ++j) {
+            kv(&b, "message-lang", x->message_by_lang[j].lang);
+            kv(&b, "message", x->message_by_lang[j].text);
+        }
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->assoc_count; ++k) {

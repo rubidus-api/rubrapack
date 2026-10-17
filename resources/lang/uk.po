@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: елемент підменю показується там,
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args має частину, яку Windows Installer заповнює під час інсталяції ([...]); MSIX містить лише незмінний текст"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when — це \"HKCU\\\\key\\\\value\" або \"HKLM\\\\...\", у пункту меню Windows 11, що не входить у підменю"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when вказує на значення, яке пише сам цей пакет ([registry.{2}]): пункт ніколи не з'явиться"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: його програми немає в MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: його значення не можуть потрапити в реєстр пакета"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list має частину, яку Windows Installer заповнює під час інсталяції ([...]); MSIX містить лише незмінний текст"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list заміняє {2}, коли шляхи не вміщуються в командний рядок: потрібні multi = \"one\", {3} в args і {4} (файл списку) в list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": немає [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types - список типів файлів, на
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows приймає лише літери й цифри"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] вказує одну копію: msix (з publisher) або upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix — ім'я посвідчення пакета (від 3 до 50 літер, цифр, '.' або '-'), і потрібен publisher (\"CN=...\"), як у його маніфесті"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: іншу копію шукає попередня перевірка: потрібно preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code належить цьому пакету (це оновлення, а не інша копія)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] потребує, щоб його dir мав компонент"
@@ -1370,6 +1394,9 @@ msgstr "дію '{1}' уже визначено"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "дія не є ні стандартною, ні в CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action має бути \"warn\" або \"refuse\" (отримано '{1}')"
 
 msgid "adds too many tables"
 msgstr "додає забагато таблиць"
@@ -3894,3 +3921,19 @@ msgstr "[3]: зупинено, бо в його папках є елементи
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "Інші користувачі цього комп'ютера ([1]) можуть мати параметри або дані [3]:\r\n[2]\r\nВидалити і їхні?\r\n\r\nТак: видалити для всіх користувачів (відновити буде неможливо).\r\nНі: видалити лише ваші.\r\nСкасувати: зупинити."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] уже встановлено на цьому комп'ютері з Microsoft Store або як пакет програми ([2]). Дві копії однієї програми обидві відкривають її файли й обидві показують її меню.\r\n\r\nУстановити й цю?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] уже встановлено на цьому комп'ютері з Microsoft Store або як пакет програми ([2]). Спершу видаліть ту копію (Настройки > Програми), потім установіть цю."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "На цьому комп'ютері вже є інша інсталяція [1] ([2]). Дві копії однієї програми обидві відкривають її файли й обидві показують її меню.\r\n\r\nУстановити й цю?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "На цьому комп'ютері вже є інша інсталяція [1] ([2]). Спершу видаліть її (Настройки > Програми), потім установіть цю."

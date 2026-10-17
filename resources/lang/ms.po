@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: item submenu dipaparkan di tempat submenunya dipaparkan: tin
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args mempunyai bahagian yang diisi oleh Windows Installer semasa pemasangan ([...]); MSIX hanya memuat teks tetap"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when ialah \"HKCU\\\\key\\\\value\" atau \"HKLM\\\\...\", pada item menu Windows 11 yang tiada dalam submenu"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when menamakan nilai yang ditulis oleh pakej ini sendiri ([registry.{2}]): item tidak akan muncul"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: programnya tiada dalam MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: nilainya tidak boleh masuk ke pendaftaran pakej"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list mempunyai bahagian yang diisi oleh Windows Installer semasa pemasangan ([...]); MSIX hanya memuat teks tetap"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list menggantikan {2} apabila laluan tidak muat dalam satu baris perintah: perlu multi = \"one\", {3} dalam args dan {4} (fail senarai) dalam list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": tiada [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types ialah senarai jenis fail, seperti [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows hanya menerima huruf dan digit"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] menamakan satu salinan: msix (bersama publisher) atau upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix ialah nama identiti pakej (3 hingga 50 huruf, digit, '.' atau '-') dan perlu publisher (\"CN=...\"), seperti dalam manifesnya"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: salinan lain dicari oleh semakan awal: perlu preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code ialah milik pakej ini (itu naik taraf, bukan salinan lain)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] memerlukan dir-nya mempunyai ciri"
@@ -1370,6 +1394,9 @@ msgstr "tindakan '{1}' sudah ditakrifkan"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "tindakan bukan tindakan piawai mahupun dalam CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action mesti \"warn\" atau \"refuse\" (diterima '{1}')"
 
 msgid "adds too many tables"
 msgstr "menambah terlalu banyak jadual"
@@ -3894,3 +3921,19 @@ msgstr "[3]: dihentikan, kerana [1] item dalam foldernya tidak dipasang bersaman
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] pengguna lain komputer ini mungkin mempunyai tetapan atau data [3]:\r\n[2]\r\nPadam milik mereka juga?\r\n\r\nYa: padam untuk setiap pengguna (tidak boleh dipulihkan).\r\nTidak: padam milik anda sahaja.\r\nBatal: berhenti."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] sudah dipasang pada komputer ini dari Microsoft Store atau sebagai pakej aplikasi ([2]). Dua salinan satu program kedua-duanya membuka failnya dan kedua-duanya menunjukkan menunya.\r\n\r\nPasang yang ini juga?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] sudah dipasang pada komputer ini dari Microsoft Store atau sebagai pakej aplikasi ([2]). Alih keluar salinan itu dahulu (Tetapan > Aplikasi), kemudian pasang yang ini."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Sudah ada pemasangan lain [1] pada komputer ini ([2]). Dua salinan satu program kedua-duanya membuka failnya dan kedua-duanya menunjukkan menunya.\r\n\r\nPasang yang ini juga?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Sudah ada pemasangan lain [1] pada komputer ini ([2]). Alih keluarnya dahulu (Tetapan > Aplikasi), kemudian pasang yang ini."

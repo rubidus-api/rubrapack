@@ -250,6 +250,12 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
         snprintf(rid, sizeof rid, "%sIcon", tag);
         add_menu_data(c, x->id, rid, key, "Icon", val, RP_REG_STRING, with, x->pos);
     }
+    if (x->hide_when) {
+        char *h = fmt_literal(c, x->hide_when);
+        snprintf(rid, sizeof rid, "%sHideWhen", tag);
+        if (h) add_menu_data(c, x->id, rid, key, "HideWhen", h, RP_REG_STRING, with, x->pos);
+        rp_mem_free(c->alloc, h);
+    }
     if (x->target_file == NULL) {           // a sub-menu: its items' IDs, in ID order
         size_t n = 0;
         for (size_t j = 0; j < ir->menu_count; ++j) n += ir->menus[j].parent && strcmp(ir->menus[j].parent, x->id) == 0;
@@ -274,6 +280,10 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
     add_menu_data(c, x->id, rid, key, "Args", x->args, RP_REG_STRING, with, x->pos);
     snprintf(rid, sizeof rid, "%sMulti", tag);
     add_menu_data(c, x->id, rid, key, "Multi", multi[x->multi], RP_REG_STRING, with, x->pos);
+    if (x->list) {
+        snprintf(rid, sizeof rid, "%sList", tag);
+        add_menu_data(c, x->id, rid, key, "List", x->list, RP_REG_STRING, with, x->pos);
+    }
 }
 
 static void menu_checks(ctx_t *c) {
@@ -293,6 +303,33 @@ static void menu_checks(ctx_t *c) {
         for (const char *q = x->id; *q; ++q) alnum &= (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
         if (!x->parent && x->windows11 && !alnum) {
             ERR(c, x->pos, "RP1316", "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false", x->id);
+        }
+        // list: the paths in a file when they do not fit a command line - for one run with %*.
+        if (x->list && (x->target_file == NULL || x->multi != RP_MENU_ONE || x->args == NULL || strstr(x->args, "%*") == NULL ||
+                        strstr(x->list, "%L") == NULL)) {
+            ERR(c, x->pos, "RP1316", "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list",
+                x->id, "%*", "%*", "%L");
+        }
+        // hide-when: a registry value whose presence hides the Windows 11 item.
+        if (x->hide_when) {
+            const char *h = x->hide_when, *last = strrchr(h, '\\');
+            bool root = strncmp(h, "HKCU\\", 5) == 0 || strncmp(h, "HKLM\\", 5) == 0;
+            if (!root || last == NULL || last <= h + 5 || last[1] == 0 || strstr(h, "\\\\") || x->parent || !x->windows11) {
+                ERR(c, x->pos, "RP1316", "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu", x->id);
+            } else {
+                // A value this package writes itself would hide the item for good.
+                for (size_t r = 0; r < ir->registry_count; ++r) {
+                    const rp_ir_registry_t *g = &ir->registries[r];
+                    bool cu = g->root == RP_ROOT_HKCU || g->root == RP_ROOT_HKMU, lm = g->root == RP_ROOT_HKLM || g->root == RP_ROOT_HKMU;
+                    if (!(h[2] == 'C' ? cu : lm) || g->key == NULL || g->name == NULL) continue;
+                    char *k = ir_dup(c, h + 5);
+                    if (k) k[last - (h + 5)] = 0;
+                    bool same = k && ir_ascii_casecmp(g->key, k) == 0 && ir_ascii_casecmp(g->name, last + 1) == 0;
+                    rp_mem_free(c->alloc, k);
+                    if (same)
+                        ERR(c, x->pos, "RP1316", "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show", x->id, g->id);
+                }
+            }
         }
         if (x->target_file) {
             program_ok(c, x->target_file, x->pos, "target");
@@ -503,6 +540,13 @@ static void menu_values(ctx_t *c) {
 void ir_class_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     menu_checks(c);
+    // [other-copy.*]: the preflight looks; this product's own upgrade code is its own upgrade.
+    for (size_t k = 0; k < ir->other_count; ++k) {
+        const rp_ir_other_t *x = &ir->others[k];
+        if (ir->no_preflight) ERR(c, x->pos, "RP1316", "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true", x->id);
+        if (x->upgrade_code && ir->upgrade_code && strcmp(x->upgrade_code, ir->upgrade_code) == 0)
+            ERR(c, x->pos, "RP1316", "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)", x->id);
+    }
     if (ir->ui_launch_file) program_ok(c, ir->ui_launch_file, (rp_pos_t){ 1, 1 }, "[ui] launch");
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];

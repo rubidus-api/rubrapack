@@ -236,7 +236,8 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`), content-type, perceived-type, default (`false`: only under "Open with") |
-| `[menu.ID]` | **on** (file types, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`; an item of a sub-menu has none), **text** or text-xx, target (`file:ID` of an `.exe`; none = a sub-menu), args (default `"%1"`), icon (`file:ID`), parent (a sub-menu's ID), multi (`each`, `one`, `single`), extended, windows11 (default `true`) - an item of Explorer's right-click menu: see [Explorer's right-click menu](#explorers-right-click-menu-menuid) |
+| `[menu.ID]` | **on** (file types, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`; an item of a sub-menu has none), **text** or text-xx, target (`file:ID` of an `.exe`; none = a sub-menu), args (default `"%1"`), icon (`file:ID`), parent (a sub-menu's ID), multi (`each`, `one`, `single`), extended, windows11 (default `true`), list (with `multi = "one"`: what stands for `%*` when the paths do not fit a command line; `%L` is a file of them), hide-when (`"HKCU\\key\\value"` or `"HKLM\\..."`: the Windows 11 item is hidden while that value exists) - an item of Explorer's right-click menu: see [Explorer's right-click menu](#explorers-right-click-menu-menuid) |
+| `[other-copy.ID]` | **msix** (an app package's identity name) with **publisher**, or **upgrade-code** (another MSI's), action (`warn` default, `refuse`), message or message-xx (`[1]` this product, `[2]` the copy found) - the same program installed another way, looked for before a first install: see [Another copy](#another-copy-other-copyid). MSI only |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
 | `[com.ID]` | **file** (`file:ID` of an `.exe` or `.dll`), **class** (`{GUID}`), description, threading (`sta` default, `mta`, `both`, `neutral`; a DLL), args (a program), prog-id, app-id (`{GUID}`), surrogate (a DLL in dllhost), typelib (`{LIBID}`), typelib-version (default `"1.0"`), typelib-file (default: the server), msi-only - a COM class, see [COM classes](#com-classes-comid) |
 | `[handler.ID]` | **kind** (`thumbnail`, `preview`, `property`), **class** (a `[com.*]` DLL class), **types** (`[".ext", ...]`), description (a preview handler's name), msi-only - an Explorer handler, see [Explorer handlers](#explorer-handlers-handlerid) |
@@ -559,9 +560,39 @@ The same table serves both menus of Windows:
 
 What to expect on Windows 11: an item appears some seconds after the installation ends; two or
 more items of one package for the same kind of thing are put by Windows under one entry named
-after the product; `"drive"` and `windows11 = false` items are in the classic menu only. To see
+after the product (it stays when `hide-when` hides all but one); in an MSIX, an item for a file type no program
+on the computer has registered (an extension Windows only calls "RPX file") was not shown, while
+the same item on `.txt` was; `"drive"` and `windows11 = false` items are in the classic menu only. To see
 what the menu part does, set the value `MenuLog` (a file's path) under
 `HKCU\Software\rubrapack`: each choice and the command it starts are appended there.
+
+Two keys concern the Windows 11 menu only:
+
+```toml
+[menu.Open]
+on = [".png", ".jpg"]
+text = "Open with Example"
+target = "file:MainExe"
+args = "--open %*"
+multi = "one"
+list = "--paths-from=%L"          # when the paths do not fit a command line
+hide-when = "HKCU\\Software\\Example\\MenuRegistered"
+```
+
+- **`list`**: a command line holds about 32,000 characters, a few hundred paths. When `args` with
+  every path does not fit, the paths go in a file of the user's temporary folder
+  (`rubrapack-selection-<numbers>.txt`: UTF-8, one path a line, each ended by a line feed), and
+  `list` stands where `%*` was, with `%L` the file's path (quoted). The program reads the file and
+  deletes it. A selection that fits goes on the command line as before. It needs `multi = "one"`,
+  `%*` in `args` and `%L` in `list`. Without `list` such a selection starts nothing (the menu part's
+  log says so).
+- **`hide-when`**: a registry value, `HKCU` or `HKLM`, then the key, then the value's name after the
+  last backslash. While that value exists the item, and a sub-menu with all its items, is hidden.
+  It serves two copies of one program on one computer - say an MSI of your own and the Microsoft
+  Store's package: the program installed one way writes the value when it puts its own menu in,
+  and the other copy's items step aside. A value the package itself writes is refused (the item
+  would never show). Not for an item inside a sub-menu, and not for the classic menu (Windows has
+  no such test there).
 
 ### COM classes: `[com.ID]`
 
@@ -1148,7 +1179,7 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 give these five gets English), `DetailsFull` (the details box's check box),
 `LanguageTitle`, `LanguageText`, `LangGroup1` to `LangGroup9` (the regions of a grouped language
 page; a language without them gets English), `DirGuardText` (the guard's message below), `PreflightAsk`,
-`PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent` (the preflight's messages), and for a removal -
+`PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse` (the preflight's messages), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
 `RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).
@@ -1417,6 +1448,8 @@ Before an installation, an upgrade or a removal changes anything, the package lo
 - **Without a window to ask in** (`/qn`), the run stops with an error (1603; the log names the
   programs) - unless the command line says what to do: `RPCLOSE=yes` closes them all and goes on,
   `RPCLOSE=no` goes on without closing.
+- For a first installation (not an upgrade, a repair or a removal): **the same program installed
+  another way**, when the package names it with `[other-copy.*]` (see below).
 - For an installation or an upgrade: **each package folder that exists** is a folder the installer
   may delete files in, and **the older version still has its cached package** (without it the
   upgrade could not remove that version). If not, the message says what is wrong and to remove the
@@ -1449,6 +1482,37 @@ is the default, and `RPEXTRA` wins over it. `preflight = false` leaves the whole
 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra` and
 `PreflightExtraSilent` (`[ui-text.*]`; English and
 the packs' languages are built in, another language without them gets English).
+
+#### Another copy: `[other-copy.ID]`
+
+```toml
+[other-copy.Store]                # the Microsoft Store's package of the same program
+msix = "Example.Example"          # its identity name and publisher, as Partner Center gives them
+publisher = "CN=12345678-ABCD-..."
+action = "warn"                   # the default; "refuse" stops instead
+
+[other-copy.Old]                  # an older installer of another make
+upgrade-code = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D40}"
+action = "refuse"
+message = "[1] cannot be installed beside [2]. Remove [2] first."
+message-ko = "[2] 이(가) 있으면 [1]을(를) 설치할 수 없습니다. 먼저 [2]을(를) 제거하세요."
+```
+
+Before a first installation the preflight looks for each copy named: an app package (MSIX) of that
+identity registered for the user who installs (Windows keeps app packages per user), or an installed
+product of that upgrade code. When one is there:
+
+- `action = "warn"`: a question - Yes installs anyway, No stops (1602). Without a window (`/qn`) the
+  installation goes on and the log says what was found (`rubrapack: preflight: other copy ...`).
+- `action = "refuse"`: the message, then the installation stops (1603), with or without a window.
+
+The message names this product (`[1]`) and the copy found (`[2]`: the app package's full name, or
+the other product's name). `message` and `message-xx` replace the default texts
+`PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi` and
+`PreflightOtherMsiRefuse`. It needs the preflight (`preflight = false` refuses it). An MSIX build
+leaves it out: an app package runs nothing when it is added. The other way round - an MSIX that
+should step aside for an installed MSI - is `hide-when` on its menu items, and the program's own
+look at run time.
 
 Windows Installer looks after two things itself: while another installation is running, a second
 one ends at once with 1618; and after an installation that was cut off (a crash, a power cut), the

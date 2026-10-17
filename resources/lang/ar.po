@@ -962,11 +962,23 @@ msgstr "[menu.{1}]: عنصر القائمة الفرعية يظهر حيث تظ�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args فيه جزء يملؤه Windows Installer وقت التثبيت ([...])؛ لا تحمل MSIX إلا نصاً ثابتاً"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: قيمة hide-when هي \"HKCU\\\\key\\\\value\" أو \"HKLM\\\\...\"، على عنصر في قائمة Windows 11 ليس داخل قائمة فرعية"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: يسمي hide-when قيمة تكتبها هذه الحزمة نفسها ([registry.{2}]): لن يظهر العنصر أبدًا"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: برنامجه ليس في MSIX ‏(msi-only؟)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: لا يمكن أن تدخل قيمه في سجل الحزمة"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list فيه جزء يملؤه Windows Installer وقت التثبيت ([...])؛ لا تحمل MSIX إلا نصاً ثابتاً"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: يحل list محل {2} حين لا تتسع المسارات في سطر أوامر: يلزم multi = \"one\" و{3} في args و{4} (ملف القائمة) في list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": لا يوجد [assoc.{3}]"
@@ -1009,6 +1021,18 @@ msgstr "[msix-extension.{1}]: types قائمة بأنواع الملفات، م�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': لا يقبل Windows إلا الحروف والأرقام"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] يسمي نسخة واحدة: msix (مع publisher) أو upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix هو اسم هوية الحزمة (من 3 إلى 50 حرفًا أو رقمًا أو '.' أو '-') ويلزمه publisher (\"CN=...\")، كما في بيانها"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: يبحث الفحص المسبق عن النسخة الأخرى: يلزم preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code هو رمز هذه الحزمة نفسها (هذا ترقية وليس نسخة أخرى)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "يحتاج [permission.{1}] إلى أن يكون لـ dir الخاص به ميزة"
@@ -1372,6 +1396,9 @@ msgstr "الإجراء '{1}' معرّف بالفعل"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "الإجراء ليس إجراءً قياسياً وليس في CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "يجب أن تكون action \"warn\" أو \"refuse\" (وردت '{1}')"
 
 msgid "adds too many tables"
 msgstr "يضيف جداول كثيرة جداً"
@@ -3896,3 +3923,19 @@ msgstr "[3]: توقف، لأن [1] عنصر في مجلداته لم يُثبَ�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "قد تكون لدى [1] من المستخدمين الآخرين لهذا الكمبيوتر إعدادات أو بيانات لـ [3]:\r\n[2]\r\nهل تريد حذف ما لديهم أيضاً؟\r\n\r\nنعم: حذفها لكل المستخدمين (لا يمكن استعادتها).\r\nلا: حذف ما يخصك فقط.\r\nإلغاء الأمر: التوقف."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] مثبت مسبقًا على هذا الكمبيوتر من Microsoft Store أو كحزمة تطبيق ([2]). نسختان من برنامج واحد تفتحان كلتاهما ملفاته وتعرضان كلتاهما قوائمه.\r\n\r\nهل تريد تثبيت هذه أيضًا؟"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] مثبت مسبقًا على هذا الكمبيوتر من Microsoft Store أو كحزمة تطبيق ([2]). أزل تلك النسخة أولًا (الإعدادات > التطبيقات) ثم ثبّت هذه."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "يوجد على هذا الكمبيوتر تثبيت آخر لـ [1] ([2]). نسختان من برنامج واحد تفتحان كلتاهما ملفاته وتعرضان كلتاهما قوائمه.\r\n\r\nهل تريد تثبيت هذه أيضًا؟"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "يوجد على هذا الكمبيوتر تثبيت آخر لـ [1] ([2]). أزله أولًا (الإعدادات > التطبيقات) ثم ثبّت هذه."

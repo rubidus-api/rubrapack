@@ -112,6 +112,12 @@ static const text_t texts[] = {
     // Before a removal (RFC-0030): [1] how many other users of the computer may have settings or
     // data of [3], [2] their names.
     { "PreflightUsers", "[1] other user(s) of this computer may have settings or data of [3]:\r\n[2]\r\nDelete theirs too?\r\n\r\nYes: delete them for every user (they cannot be brought back).\r\nNo: delete only yours.\r\nCancel: stop." },
+    // Before a first install ([other-copy.*]): [1] this product, [2] the copy found (an MSIX's full
+    // package name, or an MSI's product name).
+    { "PreflightOtherStore", "[1] is already installed on this computer from the Microsoft Store or as an app package ([2]). Two copies of one program both open its files and both show its menus.\r\n\r\nInstall this one too?" },
+    { "PreflightOtherStoreRefuse", "[1] is already installed on this computer from the Microsoft Store or as an app package ([2]). Remove that copy first (Settings > Apps), then install this one." },
+    { "PreflightOtherMsi", "Another installation of [1] is already on this computer ([2]). Two copies of one program both open its files and both show its menus.\r\n\r\nInstall this one too?" },
+    { "PreflightOtherMsiRefuse", "Another installation of [1] is already on this computer ([2]). Remove it first (Settings > Apps), then install this one." },
     { "DirGuardText", "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "&Launch [ProductName]" },
     { "SaveLog", "&Save log..." },

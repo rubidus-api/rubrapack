@@ -2334,7 +2334,15 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     MENU_SZ("Args", text);
                 }
                 MENU_SZ("Multi", multi[x->multi]);
+                if (x->list) {
+                    if (!literal(x->list, text, sizeof text)) {
+                        DERR(x->pos, "RP1612", "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only", x->id);
+                    } else {
+                        MENU_SZ("List", text);
+                    }
+                }
             }
+            if (x->hide_when) MENU_SZ("HideWhen", x->hide_when);
 #undef MENU_SZ
             rp_buf_free(&data);
         }

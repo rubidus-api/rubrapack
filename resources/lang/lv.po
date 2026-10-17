@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: apakšizvēlnes vienums tiek rādīts tur, kur tā apakšizv
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args ir daļa, ko Windows Installer aizpilda instalēšanas laikā ([...]); MSIX satur tikai fiksētu tekstu"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when ir \"HKCU\\\\key\\\\value\" vai \"HKLM\\\\...\", Windows 11 izvēlnes vienumam, kas nav apakšizvēlnē"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: hide-when norāda vērtību, ko raksta pati šī pakotne ([registry.{2}]): vienums nekad netiktu parādīts"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: tā programmas nav MSIX (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: tā vērtības nevar iekļaut pakotnes reģistrā"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list ir daļa, ko Windows Installer aizpilda instalēšanas laikā ([...]); MSIX satur tikai fiksētu tekstu"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: list aizstāj {2}, ja ceļi neietilpst komandrindā: vajag multi = \"one\", {3} vērtībā args un {4} (saraksta fails) vērtībā list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": nav [assoc.{3}]"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types ir failu tipu saraksts, piem., [\".txt\", \"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows pieņem tikai burtus un ciparus"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] norāda vienu kopiju: msix (ar publisher) vai upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix ir pakotnes identitātes nosaukums (3 līdz 50 burti, cipari, '.' vai '-') un prasa publisher (\"CN=...\"), kā tos norāda tās manifests"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: otru kopiju meklē iepriekšējā pārbaude: vajag preflight = true"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code ir šīs pakotnes paša (tā ir jaunināšana, nevis cita kopija)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] nepieciešams, lai tā dir būtu līdzeklis"
@@ -1370,6 +1394,9 @@ msgstr "darbība '{1}' jau ir definēta"
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "darbība nav ne standarta darbība, ne CustomAction"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action jābūt \"warn\" vai \"refuse\" (saņemts '{1}')"
 
 msgid "adds too many tables"
 msgstr "pievieno pārāk daudz tabulu"
@@ -3894,3 +3921,19 @@ msgstr "[3]: apturēts, jo [1] vienumi tā mapēs netika instalēti kopā ar to:
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "[1] citiem šī datora lietotājiem var būt [3] iestatījumi vai dati:\r\n[2]\r\nVai dzēst arī viņu?\r\n\r\nJā: dzēst visiem lietotājiem (tos nevarēs atjaunot).\r\nNē: dzēst tikai jūsējos.\r\nAtcelt: apturēt."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] jau ir instalēta šajā datorā no Microsoft Store vai kā lietotnes pakotne ([2]). Divas vienas programmas kopijas abas atver tās failus un abas rāda tās izvēlnes.\r\n\r\nVai instalēt arī šo?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] jau ir instalēta šajā datorā no Microsoft Store vai kā lietotnes pakotne ([2]). Vispirms noņemiet to kopiju (Iestatījumi > Programmas), pēc tam instalējiet šo."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "Šajā datorā jau ir cita [1] instalācija ([2]). Divas vienas programmas kopijas abas atver tās failus un abas rāda tās izvēlnes.\r\n\r\nVai instalēt arī šo?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "Šajā datorā jau ir cita [1] instalācija ([2]). Vispirms noņemiet to (Iestatījumi > Programmas), pēc tam instalējiet šo."

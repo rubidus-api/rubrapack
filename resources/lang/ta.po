@@ -960,11 +960,23 @@ msgstr "[menu.{1}]: துணைமெனுவின் உருப்பட�
 msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
 msgstr "[menu.{1}]: args இல் Windows Installer நிறுவும்போது நிரப்பும் பகுதி உள்ளது ([...]); ஒரு MSIX நிலையான உரையை மட்டுமே வைத்திருக்கும்"
 
+msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
+msgstr "[menu.{1}]: hide-when என்பது \"HKCU\\\\key\\\\value\" அல்லது \"HKLM\\\\...\"; துணை மெனுவில் இல்லாத Windows 11 மெனு உருப்படியில் எழுதப்படும்"
+
+msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
+msgstr "[menu.{1}]: இந்தத் தொகுப்பே எழுதும் மதிப்பை hide-when குறிக்கிறது ([registry.{2}]): உருப்படி ஒருபோதும் தெரியாது"
+
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: அதன் நிரல் MSIX இல் இல்லை (msi-only?)"
 
 msgid "[menu.%s]: its values cannot go into the package's registry"
 msgstr "[menu.{1}]: அதன் மதிப்புகள் தொகுப்பின் பதிவேட்டில் செல்ல முடியாது"
+
+msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([...]); an MSIX holds fixed text only"
+msgstr "[menu.{1}]: list இல் Windows Installer நிறுவும்போது நிரப்பும் பகுதி உள்ளது ([...]); ஒரு MSIX நிலையான உரையை மட்டுமே வைத்திருக்கும்"
+
+msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
+msgstr "[menu.{1}]: பாதைகள் ஒரு கட்டளை வரியில் அடங்காதபோது list, {2}-க்குப் பதிலாக வரும்: multi = \"one\", args-இல் {3}, list-இல் {4} (பட்டியல் கோப்பு) தேவை"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": [assoc.{3}] இல்லை"
@@ -1007,6 +1019,18 @@ msgstr "[msix-extension.{1}]: types என்பது கோப்பு வக
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows எழுத்துகளையும் எண்களையும் மட்டுமே ஏற்கும்"
+
+msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
+msgstr "[other-copy.{1}] ஒரு நகலைக் குறிக்கும்: msix (publisher உடன்) அல்லது upgrade-code"
+
+msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
+msgstr "[other-copy.{1}]: msix என்பது தொகுப்பின் அடையாளப் பெயர் (3 முதல் 50 எழுத்துகள், எண்கள், '.' அல்லது '-'); அதற்கு publisher (\"CN=...\") தேவை, அதன் மேனிஃபெஸ்டில் உள்ளபடி"
+
+msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
+msgstr "[other-copy.{1}]: மற்ற நகலை முன்சோதனை தேடும்: preflight = true தேவை"
+
+msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
+msgstr "[other-copy.{1}]: upgrade-code இந்தத் தொகுப்பினுடையதே (அது மேம்படுத்தல், வேறு நகல் அல்ல)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] க்கு அதன் dir இல் ஓர் அம்சம் இருக்க வேண்டும்"
@@ -1370,6 +1394,9 @@ msgstr "செயல் '{1}' ஏற்கெனவே வரையறுக்�
 
 msgid "action is neither a standard action nor in CustomAction"
 msgstr "செயல் நிலையான செயலும் அல்ல, CustomAction இலும் இல்லை"
+
+msgid "action must be \"warn\" or \"refuse\" (got '%s')"
+msgstr "action \"warn\" அல்லது \"refuse\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
 msgid "adds too many tables"
 msgstr "மிக அதிக அட்டவணைகளைச் சேர்க்கிறது"
@@ -3894,3 +3921,19 @@ msgstr "[3]: நிறுத்தப்பட்டது, ஏனெனில�
 msgctxt "installer"
 msgid "PreflightUsers"
 msgstr "இந்தக் கணினியின் மற்ற [1] பயனர்களிடம் [3] இன் அமைப்புகள் அல்லது தரவு இருக்கலாம்:\r\n[2]\r\nஅவர்களுடையதையும் நீக்கவா?\r\n\r\nஆம்: ஒவ்வொரு பயனருக்கும் நீக்கு (மீட்டெடுக்க முடியாது).\r\nஇல்லை: உங்களுடையதை மட்டும் நீக்கு.\r\nரத்துசெய்: நிறுத்து."
+
+msgctxt "installer"
+msgid "PreflightOtherStore"
+msgstr "[1] ஏற்கெனவே இந்தக் கணினியில் Microsoft Store-இலிருந்து அல்லது பயன்பாட்டுத் தொகுப்பாக நிறுவப்பட்டுள்ளது ([2]). ஒரு நிரலின் இரண்டு நகல்களும் அதன் கோப்புகளைத் திறக்கும், இரண்டும் அதன் மெனுக்களைக் காட்டும்.\r\n\r\nஇதையும் நிறுவவா?"
+
+msgctxt "installer"
+msgid "PreflightOtherStoreRefuse"
+msgstr "[1] ஏற்கெனவே இந்தக் கணினியில் Microsoft Store-இலிருந்து அல்லது பயன்பாட்டுத் தொகுப்பாக நிறுவப்பட்டுள்ளது ([2]). முதலில் அந்த நகலை அகற்றுங்கள் (அமைப்புகள் > பயன்பாடுகள்), பிறகு இதை நிறுவுங்கள்."
+
+msgctxt "installer"
+msgid "PreflightOtherMsi"
+msgstr "இந்தக் கணினியில் [1]-இன் வேறொரு நிறுவல் ஏற்கெனவே உள்ளது ([2]). ஒரு நிரலின் இரண்டு நகல்களும் அதன் கோப்புகளைத் திறக்கும், இரண்டும் அதன் மெனுக்களைக் காட்டும்.\r\n\r\nஇதையும் நிறுவவா?"
+
+msgctxt "installer"
+msgid "PreflightOtherMsiRefuse"
+msgstr "இந்தக் கணினியில் [1]-இன் வேறொரு நிறுவல் ஏற்கெனவே உள்ளது ([2]). முதலில் அதை அகற்றுங்கள் (அமைப்புகள் > பயன்பாடுகள்), பிறகு இதை நிறுவுங்கள்."

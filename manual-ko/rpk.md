@@ -225,7 +225,8 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
 | `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`), content-type, perceived-type, default(`false`: "연결 프로그램"에만) |
-| `[menu.ID]` | **on**(파일 형식, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`. 하위 메뉴의 항목에는 없다), **text** 또는 text-xx, target(`.exe` 를 가리키는 `file:ID`. 없으면 하위 메뉴), args(기본 `"%1"`), icon(`file:ID`), parent(하위 메뉴의 ID), multi(`each`, `one`, `single`), extended, windows11(기본 `true`) - 탐색기 우클릭 메뉴의 항목: [탐색기의 우클릭 메뉴](#탐색기의-우클릭-메뉴-menuid) 참조 |
+| `[menu.ID]` | **on**(파일 형식, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`. 하위 메뉴의 항목에는 없다), **text** 또는 text-xx, target(`.exe` 를 가리키는 `file:ID`. 없으면 하위 메뉴), args(기본 `"%1"`), icon(`file:ID`), parent(하위 메뉴의 ID), multi(`each`, `one`, `single`), extended, windows11(기본 `true`), list(`multi = "one"` 과 함께: 경로가 명령줄에 다 들어가지 않을 때 `%*` 대신 쓰는 것. `%L` 은 경로를 담은 파일), hide-when(`"HKCU\\key\\value"` 또는 `"HKLM\\..."`: 그 값이 있는 동안 Windows 11 항목을 숨김) - 탐색기 우클릭 메뉴의 항목: [탐색기의 우클릭 메뉴](#탐색기의-우클릭-메뉴-menuid) 참조 |
+| `[other-copy.ID]` | **msix**(앱 패키지의 식별 이름)와 **publisher**, 또는 **upgrade-code**(다른 MSI 의 것), action(`warn` 기본, `refuse`), message 또는 message-xx(`[1]` 이 제품, `[2]` 찾은 사본) - 다른 방식으로 설치된 같은 프로그램을 처음 설치하기 전에 찾는다: [다른 사본](#다른-사본-other-copyid) 참조. MSI 전용 |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
 | `[com.ID]` | **file**(`.exe` 나 `.dll` 의 `file:ID`), **class**(`{GUID}`), description, threading(`sta` 기본, `mta`, `both`, `neutral`; DLL), args(프로그램), prog-id, app-id(`{GUID}`), surrogate(dllhost 에서 도는 DLL), typelib(`{LIBID}`), typelib-version(기본 `"1.0"`), typelib-file(기본: 서버), msi-only - COM 클래스, [COM 클래스](#com-클래스-comid) 참고 |
 | `[handler.ID]` | **kind**(`thumbnail`, `preview`, `property`), **class**(`[com.*]` 의 DLL 클래스), **types**(`[".ext", ...]`), description(미리 보기 처리기의 이름), msi-only - 탐색기 처리기, [탐색기 처리기](#탐색기-처리기-handlerid) 참고 |
@@ -517,9 +518,34 @@ multi = "single"                  # 하나만 골랐을 때만
   끈다(`LegacyDisable`): 항목은 한 번씩만 나온다.
 
 Windows 11 에서 알아 둘 것: 항목은 설치가 끝나고 몇 초 뒤에 나타난다. 한 패키지의 항목이 같은 종류의
-대상에 둘 이상이면 Windows 가 제품 이름을 단 항목 하나 아래로 묶는다. `"drive"` 와 `windows11 = false` 인
+대상에 둘 이상이면 Windows 가 제품 이름을 단 항목 하나 아래로 묶는다(`hide-when` 이 하나만 남기고 숨겨도 묶음은 남는다). MSIX 에서는 컴퓨터의
+어떤 프로그램도 등록하지 않은 파일 형식(Windows 가 "RPX 파일" 처럼만 부르는 확장자)의 항목은 나오지 않았고, 같은 항목이
+`.txt` 에서는 나왔다. `"drive"` 와 `windows11 = false` 인
 항목은 옛 메뉴에만 나온다. 메뉴 부품이 무엇을 하는지 보려면 `HKCU\Software\rubrapack` 아래에 `MenuLog`
 값(파일 경로)을 둔다: 고른 항목과 시작한 명령이 그 파일에 덧붙는다.
+
+Windows 11 메뉴에만 해당하는 키가 둘 있다:
+
+```toml
+[menu.Open]
+on = [".png", ".jpg"]
+text = "Open with Example"
+target = "file:MainExe"
+args = "--open %*"
+multi = "one"
+list = "--paths-from=%L"          # 경로가 명령줄에 다 들어가지 않을 때
+hide-when = "HKCU\\Software\\Example\\MenuRegistered"
+```
+
+- **`list`**: 명령줄에는 3만 2천 자쯤, 경로 수백 개가 들어간다. 모든 경로를 넣은 `args` 가 넘치면 경로를 사용자의 임시
+  폴더의 파일(`rubrapack-selection-<숫자>.txt`: UTF-8, 한 줄에 경로 하나, 줄마다 줄바꿈으로 끝남)에 적고, `%*` 자리에
+  `list` 를 넣는다. `%L` 은 그 파일의 경로(따옴표로 묶음)다. 프로그램이 파일을 읽고 지운다. 들어가는 선택은 전처럼
+  명령줄로 간다. `multi = "one"`, `args` 의 `%*`, `list` 의 `%L` 이 있어야 한다. `list` 가 없으면 그런 선택은 아무것도
+  시작하지 않는다(메뉴 부품의 로그가 그렇다고 적는다).
+- **`hide-when`**: 레지스트리 값 하나. `HKCU` 나 `HKLM`, 그다음 키, 마지막 역슬래시 뒤가 값 이름이다. 그 값이 있는 동안
+  항목은(하위 메뉴면 그 항목들까지) 숨는다. 한 컴퓨터에 같은 프로그램이 둘 있을 때 - 이를테면 직접 만든 MSI 와 Microsoft
+  Store 의 패키지 - 한쪽 프로그램이 자기 메뉴를 넣을 때 그 값을 쓰면 다른 쪽의 항목이 비켜선다. 패키지가 스스로 쓰는 값은
+  거절된다(항목이 영영 안 나온다). 하위 메뉴 안의 항목과 옛 메뉴에는 안 된다(옛 메뉴에는 Windows 에 그런 검사가 없다).
 
 ### COM 클래스: `[com.ID]`
 
@@ -1049,7 +1075,7 @@ text = "This will install [ProductName]. Close other programs first."
 `RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
 쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `LangGroup1`~`LangGroup9`(묶은 언어 페이지의
 지역; 주지 않는 언어는 영어를 쓴다), `DirGuardText`(아래 가드의 메시지),
-`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`(사전 점검의 메시지), 그리고
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse`(사전 점검의 메시지), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
 주지 않는 다른 언어는 설치 문구를 쓴다).
@@ -1282,6 +1308,8 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
   어차피 바뀌고, 그 프로그램들은 다시 열 때까지 이전 것을 쓴다. **취소**는 아무것도 바꾸지 않고 그만둔다.
 - **물어볼 창이 없으면**(`/qn`) 오류(1603; 로그에 프로그램 이름)로 멈춘다 - 명령줄이 할 일을 말해 주지 않는 한:
   `RPCLOSE=yes` 는 모두 종료하고 계속하고, `RPCLOSE=no` 는 종료하지 않고 계속한다.
+- 처음 설치할 때(업그레이드·복구·제거가 아닐 때): 패키지가 `[other-copy.*]` 로 가리킨 **다른 방식으로 설치된 같은
+  프로그램**(아래 참조).
 - 설치와 업그레이드에서: **이미 있는 패키지 폴더**가 설치 프로그램이 그 안의 파일을 지울 수 있는 폴더이고, **옛 판의 캐시된
   패키지**가 남아 있는지(없으면 업그레이드가 그 판을 지울 수 없다). 아니면 무엇이 잘못됐는지와 제품을 먼저 제거하라는 말을
   띄우고 아무것도 설치하지 않는다. 제거는 이 때문에 거절되지 않는다.
@@ -1304,6 +1332,34 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
 것을 묻지 않고 남기고(Windows Installer 자체의 동작), `"delete"` 는 묻지 않고 지운다. 기본은 `"ask"` 이고 `RPEXTRA` 가 그보다
 앞선다. `preflight = false` 는 이 단계를 통째로 뺀다. 문구는 `PreflightAsk`, `PreflightSilent`, `PreflightFolder`,
 `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent` 다(`[ui-text.*]`; 영어와 언어팩이 있는 언어는 내장이고, 이것을 주지 않는 다른 언어는 영어를 쓴다).
+
+#### 다른 사본: `[other-copy.ID]`
+
+```toml
+[other-copy.Store]                # 같은 프로그램의 Microsoft Store 패키지
+msix = "Example.Example"          # Partner Center 가 준 식별 이름과 게시자
+publisher = "CN=12345678-ABCD-..."
+action = "warn"                   # 기본값. "refuse" 면 멈춘다
+
+[other-copy.Old]                  # 다른 방식으로 만든 예전 설치 프로그램
+upgrade-code = "{8D1E2F30-4A5B-4C6D-8E7F-901A2B3C4D40}"
+action = "refuse"
+message = "[1] cannot be installed beside [2]. Remove [2] first."
+message-ko = "[2] 이(가) 있으면 [1]을(를) 설치할 수 없습니다. 먼저 [2]을(를) 제거하세요."
+```
+
+처음 설치하기 전에 사전 점검이 가리킨 사본을 하나씩 찾는다: 설치하는 사용자에게 등록된 그 식별 이름의 앱 패키지(MSIX.
+Windows 는 앱 패키지를 사용자마다 둔다), 또는 그 업그레이드 코드로 설치된 제품. 있으면:
+
+- `action = "warn"`: 묻는다 - 예는 그래도 설치하고, 아니요는 멈춘다(1602). 창이 없으면(`/qn`) 설치를 계속하고 찾은 것을
+  로그에 적는다(`rubrapack: preflight: other copy ...`).
+- `action = "refuse"`: 메시지를 보이고 설치를 멈춘다(1603). 창이 있든 없든.
+
+메시지는 이 제품(`[1]`)과 찾은 사본(`[2]`: 앱 패키지의 전체 이름, 또는 다른 제품의 이름)을 말한다. `message` 와
+`message-xx` 가 기본 문구 `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`,
+`PreflightOtherMsiRefuse` 를 대신한다. 사전 점검이 있어야 한다(`preflight = false` 면 거절). MSIX 를 만들 때는 빠진다:
+앱 패키지는 추가될 때 아무것도 실행하지 않는다. 거꾸로 - 설치된 MSI 에 MSIX 가 비켜서야 할 때 - 는 메뉴 항목의
+`hide-when` 과 프로그램 자신이 실행 중에 살피는 것으로 한다.
 
 Windows Installer 가 스스로 돌보는 것이 둘 있다: 다른 설치가 도는 동안 두 번째 설치는 곧바로 1618 로 끝나고, 중간에 끊긴
 설치(충돌, 정전) 뒤의 다음 설치는 끝나지 않은 것을 먼저 되돌린다. 끊긴 제거 뒤에는 그 되돌리기가 제품을 도로 놓고 제거는

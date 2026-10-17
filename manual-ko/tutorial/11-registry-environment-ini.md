@@ -234,12 +234,28 @@ args = "--greet \"%1\""           # "%1" 은 우클릭한 것
 - `target` 이 없는 `[menu.*]` 는 하위 메뉴이고, 항목들은 `parent` 로 그것을 가리킨다.
 - `multi = "single"` 이면 하나를 골랐을 때만 나온다. `extended = true` 면 Shift 를 누른 채일 때만 나온다.
   `windows11 = false` 면 Windows 11 메뉴에는 넣지 않는다.
+- `multi = "one"` 이고 `args` 에 `%*` 가 있을 때 `list = "--paths-from=%L"` 를 주면, 고른 경로 수백 개가 명령줄에
+  다 들어가지 않을 때 그것들을 파일 `%L` 에 담아 넘긴다. 프로그램이 그 파일을 읽는다.
+- `hide-when = "HKCU\\Software\\Hello\\MenuRegistered"` 는 그 값이 있는 동안 Windows 11 항목을 숨긴다 - 다른
+  방식으로 설치된 Hello 가 자기 메뉴를 거기 넣었을 때를 위해서다.
 
 Windows 에는 이런 메뉴가 둘 있고, 이 표가 둘 다 채운다. 옛 메뉴(Windows 10, Windows 11 의 "추가 옵션 표시")는
 레지스트리를 읽고, 패키지가 그것을 적는다. Windows 11 메뉴는 신원이 있는 패키지의 항목만 받고 항목마다 작은
 COM 클래스가 맡아야 한다 - rubrapack 이 그 클래스(메뉴 부품)를 가져오고, MSI 라면 프로그램 옆에 아주 작은
 신원 패키지를 설치해 등록한다. 직접 쓸 코드도, 살 인증서도 없다. 자세한 이야기는 참조의 "탐색기의 우클릭
 메뉴"에 있다.
+
+한 프로그램이 둘 - 직접 만든 설치 프로그램과, 이를테면 Microsoft Store 의 패키지 - 이면 둘 다 파일을 열고 둘 다
+메뉴를 띄운다. `[other-copy.ID]` 표를 두면 설치 프로그램이 먼저 살핀다:
+
+```toml
+[other-copy.Store]
+msix = "Hello.Hello"              # 앱 패키지의 식별 이름
+publisher = "CN=12345678-ABCD-..."
+action = "warn"                   # 그래도 설치할지 묻는다. "refuse" 면 멈춘다
+```
+
+참조의 "다른 사본"에 자세히 있다.
 
 ## COM 클래스: `[com.ID]`
 
