@@ -948,6 +948,9 @@ msgstr "[menu.{1}] cần 'target' (chương trình nó khởi chạy), hoặc c�
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] cần 'target': chương trình mà mục khởi chạy"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: menu của Windows 11 chỉ nhận ID gồm chữ cái và chữ số (không có '_'): hãy đổi tên, hoặc đặt windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: menu con không khởi chạy gì: bỏ 'args' đi"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file phải nêu một chương trình có trong g
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types là danh sách loại tệp, như [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows chỉ nhận chữ cái và chữ số"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] cần dir của nó có một tính năng"

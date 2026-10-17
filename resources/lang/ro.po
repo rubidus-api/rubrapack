@@ -948,6 +948,9 @@ msgstr "[menu.{1}] are nevoie de 'target' (programul pe care îl pornește) sau 
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] are nevoie de 'target': programul pe care îl pornește elementul"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: meniul Windows 11 acceptă doar un ID din litere și cifre (fără '_'): redenumiți-l sau folosiți windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: un submeniu nu pornește nimic: omiteți 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file trebuie să numească un program care intră 
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types este o listă de tipuri de fișiere, de exemplu [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows acceptă doar litere și cifre"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] are nevoie ca dir-ul său să aibă o caracteristică"

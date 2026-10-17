@@ -948,6 +948,9 @@ msgstr "[menu.{1}] potřebuje 'target' (program, který spouští), nebo položk
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] potřebuje 'target': program, který položka spouští"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: nabídka Windows 11 přijímá ID jen z písmen a číslic (bez '_'): přejmenujte ji, nebo windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: podnabídka nic nespouští: vynechte 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file musí jmenovat program, který jde do balíč
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types je seznam typů souborů, například [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows přijímá jen písmena a číslice"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] potřebuje, aby jeho dir měl funkci"

@@ -948,6 +948,9 @@ msgstr "[menu.{1}] tarvitsee 'target' (ohjelma, jonka se käynnistää) tai koht
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] tarvitsee 'target': ohjelma, jonka kohde käynnistää"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11:n valikko hyväksyy vain kirjaimista ja numeroista koostuvan ID:n (ei '_'): nimeä se uudelleen tai käytä windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: alivalikko ei käynnistä mitään: jätä 'args' pois"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: filen on nimettävä pakettiin menevä ohjelma"
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types on luettelo tiedostotyypeistä, kuten [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows hyväksyy vain kirjaimia ja numeroita"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] tarvitsee, että sen dir-kohteella on ominaisuus"

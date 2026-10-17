@@ -948,6 +948,9 @@ msgstr "[menu.{1}] には 'target' (起動するプログラム) か、parent = 
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] には 'target' が必要です: 項目が起動するプログラム"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 のメニューの ID は英字と数字だけです ('_' は不可): 名前を変えるか windows11 = false にしてください"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: サブメニューは何も起動しません: 'args' を外してください"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file はパッケージに入るプログラムを
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types は [\".txt\", \"*\"] のようなファイルの種類の一覧です"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows は英字と数字だけを受け付けます"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] には、その dir に機能が必要です"

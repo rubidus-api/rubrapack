@@ -948,6 +948,9 @@ msgstr "[menu.{1}] үшін 'target' (ол іске қосатын бағдар�
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] үшін 'target' керек: элемент іске қосатын бағдарлама"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 мәзірі тек әріптер мен цифрлардан тұратын ID қабылдайды ('_' болмайды): атын өзгертіңіз немесе windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: ішкі мәзір ештеңені іске қоспайды: 'args' жазбаңыз"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file бумаға кіретін бағдарла�
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types - файл түрлерінің тізімі, мысалы [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows тек әріптер мен цифрларды қабылдайды"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] үшін оның dir-інде мүмкіндік болуы керек"

@@ -948,6 +948,9 @@ msgstr "[menu.{1}] को 'target' (जो प्रोग्राम यह �
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] को 'target' चाहिए: वह प्रोग्राम जिसे आइटम शुरू करता है"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 का मेन्यू केवल अक्षरों और अंकों वाला ID लेता है ('_' नहीं): नाम बदलें, या windows11 = false करें"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: उप-मेनू कुछ शुरू नहीं करता: 'args' छोड़ दें"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file को ऐसा प्रोग्राम 
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types फ़ाइल प्रकारों की सूची है, जैसे [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows केवल अक्षर और अंक लेता है"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] के dir में एक फ़ीचर होना चाहिए"

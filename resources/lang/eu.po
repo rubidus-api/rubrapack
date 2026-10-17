@@ -948,6 +948,9 @@ msgstr "[menu.{1}] taulak 'target' behar du (abiarazten duen programa), edo pare
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] taulak 'target' behar du: elementuak abiarazten duen programa"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11-ren menuak hizki eta zenbakiz osatutako ID bat baino ez du onartzen ('_' gabe): aldatu izena, edo windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: azpimenu batek ez du ezer abiarazten: utzi 'args' kanpoan"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file-k paketean sartzen den programa bat izendatu 
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types fitxategi-moten zerrenda bat da, adibidez [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows-ek hizkiak eta zenbakiak baino ez ditu onartzen"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] taulak bere dir-ak eginbide bat izatea behar du"

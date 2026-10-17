@@ -243,7 +243,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
-| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
+| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
 
@@ -492,7 +492,8 @@ multi = "single"                  # 하나만 골랐을 때만
 `"drive"`, `"assoc:ID"`(어느 `[assoc.*]` 의 파일 형식, 그 prog-id 아래). `multi` 는 여러 개를 골랐을 때의
 뜻이다: `"each"`(기본: 항목마다 한 번 실행), `"one"`(전부를 넘겨 한 번 실행: `args` 에 `%*` 를 쓰면 모든
 경로), `"single"`(하나를 골랐을 때만 항목이 나온다). `extended = true` 면 Shift 를 누른 채일 때만 나온다.
-하위 메뉴는 한 단계까지다.
+하위 메뉴는 한 단계까지다. 하위 메뉴에 들지 않은 항목의 ID 는 Windows 11 메뉴에서 그 항목의 이름이 되는데,
+거기서는 영문자와 숫자만 된다(`Open_2` 가 아니라 `Open2`). 항목은 ID 순서로 놓인다.
 
 같은 표가 Windows 의 두 메뉴에 다 쓰인다:
 

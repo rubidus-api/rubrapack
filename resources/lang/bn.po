@@ -948,6 +948,9 @@ msgstr "[menu.{1}]-এর জন্য 'target' (যে প্রোগ্রা
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}]-এর জন্য 'target' দরকার: আইটেমটি যে প্রোগ্রাম চালু করে"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11-এর মেনু শুধু অক্ষর ও অঙ্কের ID নেয় ('_' নয়): নাম বদলান, অথবা windows11 = false দিন"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: একটি সাবমেনু কিছুই চালু করে না: 'args' বাদ দিন"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file-কে প্যাকেজে যাওয�
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types হলো ফাইল টাইপের তালিকা, যেমন [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows শুধু অক্ষর ও অঙ্ক নেয়"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}]-এর জন্য এর dir-এর একটি বৈশিষ্ট্য থাকতে হবে"

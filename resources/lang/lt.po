@@ -948,6 +948,9 @@ msgstr "[menu.{1}] reikia 'target' (programos, kurią jis paleidžia) arba eleme
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] reikia 'target': programos, kurią elementas paleidžia"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 meniu priima tik raidžių ir skaitmenų ID (be '_'): pervadinkite arba nurodykite windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: submeniu nieko nepaleidžia: 'args' nenurodykite"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file turi nurodyti programą, patenkančią į pak
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types yra failų tipų sąrašas, pvz., [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows priima tik raides ir skaitmenis"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] reikia, kad jo dir turėtų funkciją"

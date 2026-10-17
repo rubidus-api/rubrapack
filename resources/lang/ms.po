@@ -948,6 +948,9 @@ msgstr "[menu.{1}] memerlukan 'target' (program yang dimulakannya), atau item de
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] memerlukan 'target': program yang dimulakan oleh item"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: menu Windows 11 hanya menerima ID huruf dan digit (tiada '_'): namakan semula, atau windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: submenu tidak memulakan apa-apa: tinggalkan 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file mesti menamakan program yang masuk ke dalam p
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types ialah senarai jenis fail, seperti [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows hanya menerima huruf dan digit"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] memerlukan dir-nya mempunyai ciri"

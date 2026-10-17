@@ -948,6 +948,9 @@ msgstr "[menu.{1}] 需要 'target'(它啟動的程式)，或帶 parent = \"{2}\"
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] 需要 'target': 該項啟動的程式"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 選單的 ID 只能是字母和數字（不能有 '_'）：請改名，或設 windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: 子功能表不啟動任何程式: 請去掉 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file 必須指向會放入安裝套件的程式"
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types 是檔案類型列表，如 [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows 只接受字母和數字"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] 需要其 dir 有一個功能"

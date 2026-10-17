@@ -254,7 +254,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
-| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
+| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
 
@@ -528,7 +528,8 @@ folder: `%1` is then that folder), `"drive"`, or `"assoc:ID"` (the file type of 
 its prog-id). `multi` says what several selected items mean: `"each"` (the default: one run per
 item), `"one"` (one run with all of them: write `%*` in `args` for all the paths) or `"single"` (the
 item shows only for one). `extended = true` shows the item only with Shift held. One level of
-sub-menus.
+sub-menus. The ID of an item that is not in a sub-menu names it in Windows 11's menu, which takes
+letters and digits only (`Open2`, not `Open_2`); the items are listed in the order of their IDs.
 
 The same table serves both menus of Windows:
 

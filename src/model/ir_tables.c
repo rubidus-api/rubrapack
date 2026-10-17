@@ -1164,6 +1164,9 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         if (x->kind == RP_MSIX_EXT_CONTEXT_MENU) {
             x->verb = ir_get_str(c, t, "verb", false, NULL);
             if (x->verb == NULL) x->verb = ir_dup(c, t->id);
+            bool alnum = x->verb != NULL;
+            for (const char *q = x->verb; alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
+            if (x->verb && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, x->verb);
             const rp_tkey_t *tk = ir_find_key(t, "types");
             if (tk == NULL || tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
                 ERR(c, tk ? tk->pos : t->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", t->id);

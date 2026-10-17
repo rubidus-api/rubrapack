@@ -948,6 +948,9 @@ msgstr "[menu.{1}] க்கு 'target' (அது தொடங்கும் 
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] க்கு 'target' தேவை: உருப்படி தொடங்கும் நிரல்"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 மெனு எழுத்துகளும் எண்களும் மட்டுமான ID-யை மட்டுமே ஏற்கும் ('_' கூடாது): பெயரை மாற்றுங்கள், அல்லது windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: ஒரு துணைமெனு எதையும் தொடங்காது: 'args' ஐ விடவும்"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file தொகுப்பில் செல்�
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types என்பது கோப்பு வகைகளின் பட்டியல், எ.கா. [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows எழுத்துகளையும் எண்களையும் மட்டுமே ஏற்கும்"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] க்கு அதன் dir இல் ஓர் அம்சம் இருக்க வேண்டும்"

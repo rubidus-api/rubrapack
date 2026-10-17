@@ -950,6 +950,9 @@ msgstr "[menu.{1}] דורש 'target' (התוכנית שהוא מפעיל), או 
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] דורש 'target': התוכנית שהפריט מפעיל"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: התפריט של Windows 11 מקבל ID של אותיות וספרות בלבד (בלי '_'): שנו את השם, או windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: תפריט משנה אינו מפעיל דבר: השמט את 'args'"
 
@@ -1003,6 +1006,9 @@ msgstr "[msix-extension.{1}]: file חייב לציין תוכנית שנכנסת
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types הוא רשימה של סוגי קבצים, כמו [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows מקבל אותיות וספרות בלבד"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] דורש שלתיקייה שלו תהיה תכונה"

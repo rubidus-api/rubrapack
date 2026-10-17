@@ -948,6 +948,9 @@ msgstr "[menu.{1}] wymaga 'target' (programu, który uruchamia) lub elementów z
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] wymaga 'target': programu uruchamianego przez element"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: menu Windows 11 przyjmuje ID tylko z liter i cyfr (bez '_'): zmień nazwę lub ustaw windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: podmenu niczego nie uruchamia: pomiń 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file musi wskazywać program trafiający do pakiet
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types to lista typów plików, np. [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows przyjmuje tylko litery i cyfry"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] wymaga, aby jego dir miał funkcję"

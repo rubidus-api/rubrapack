@@ -948,6 +948,9 @@ msgstr "[menu.{1}] ต้องมี 'target' (โปรแกรมที่�
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] ต้องมี 'target': โปรแกรมที่รายการเรียก"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: เมนูของ Windows 11 รับ ID ที่เป็นตัวอักษรและตัวเลขเท่านั้น (ห้ามมี '_'): เปลี่ยนชื่อ หรือตั้ง windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: เมนูย่อยไม่ได้เรียกอะไร ไม่ต้องใส่ 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file ต้องระบุโปรแกรม
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types เป็นรายการชนิดไฟล์ เช่น [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows รับเฉพาะตัวอักษรและตัวเลข"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] ต้องให้ dir ของมันมีฟีเจอร์"

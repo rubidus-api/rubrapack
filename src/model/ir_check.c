@@ -288,6 +288,12 @@ static void menu_checks(ctx_t *c) {
         }
         if (x->parent && x->on_count) ERR(c, x->pos, "RP1316", "[menu.%s]: an item of a sub-menu shows where its sub-menu shows: leave 'on' out", x->id);
         if (!x->parent && x->on_count == 0) ERR(c, x->pos, "RP1202", "[menu.%s] needs 'on': where the item shows, like [\".txt\"] or \"folder\"", x->id);
+        // The ID is the verb's Id in a package manifest, which Windows takes as letters and digits only.
+        bool alnum = true;
+        for (const char *q = x->id; *q; ++q) alnum &= (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
+        if (!x->parent && x->windows11 && !alnum) {
+            ERR(c, x->pos, "RP1316", "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false", x->id);
+        }
         if (x->target_file) {
             program_ok(c, x->target_file, x->pos, "target");
             if (x->icon_file && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", x->icon_file);

@@ -948,6 +948,9 @@ msgstr "[menu.{1}] 에는 'target'(시작할 프로그램)이나 parent = \"{2}\
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] 에는 'target' 이 필요합니다: 항목이 시작할 프로그램"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 메뉴의 ID 는 영문자와 숫자만 됩니다('_' 안 됨): 이름을 바꾸거나 windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: 하위 메뉴는 아무것도 시작하지 않습니다: 'args' 를 빼십시오"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file 은 패키지에 들어가는 프로그램을
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types 는 [\".txt\", \"*\"] 같은 파일 형식의 목록입니다"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows 는 영문자와 숫자만 받습니다"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] 은(는) 그 dir 에 기능이 있어야 합니다"

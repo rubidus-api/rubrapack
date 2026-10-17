@@ -948,6 +948,9 @@ msgstr "[menu.{1}] üçün 'target' (işə saldığı proqram) və ya parent = \
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] üçün 'target' lazımdır: elementin işə saldığı proqram"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: Windows 11 menyusu yalnız hərf və rəqəmlərdən ibarət ID qəbul edir ('_' olmaz): adını dəyişin və ya windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: alt menyu heç nə işə salmır: 'args'-ı çıxarın"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: file paketə daxil olan proqramı adlandırmalıd�
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: types fayl növləri siyahısıdır, məsələn [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows yalnız hərf və rəqəmləri qəbul edir"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] üçün onun dir-inin xüsusiyyəti olmalıdır"

@@ -948,6 +948,9 @@ msgstr "Το [menu.{1}] χρειάζεται 'target' (το πρόγραμμα �
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "Το [menu.{1}] χρειάζεται 'target': το πρόγραμμα που εκκινεί το στοιχείο"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: το μενού των Windows 11 δέχεται ID μόνο από γράμματα και ψηφία (όχι '_'): μετονομάστε το ή ορίστε windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: ένα υπομενού δεν εκκινεί τίποτα: αφήστε έξω το 'args'"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: το file πρέπει να ονομάζει πρ�
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: το types είναι λίστα τύπων αρχείων, π.χ. [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': τα Windows δέχονται μόνο γράμματα και ψηφία"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "Το [permission.{1}] χρειάζεται το dir του να έχει δυνατότητα"

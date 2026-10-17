@@ -948,6 +948,9 @@ msgstr "[menu.{1}] igényli a 'target' értéket (az indított programot), vagy 
 msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] igényli a 'target' értéket: az elem által indított programot"
 
+msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
+msgstr "[menu.{1}]: a Windows 11 menüje csak betűkből és számjegyekből álló ID-t fogad el ('_' nem lehet): nevezze át, vagy windows11 = false"
+
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: az almenü nem indít semmit: hagyja ki az 'args' értéket"
 
@@ -1001,6 +1004,9 @@ msgstr "[msix-extension.{1}]: a file csomagba kerülő programot kell megnevezze
 
 msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]"
 msgstr "[msix-extension.{1}]: a types fájltípusok listája, például [\".txt\", \"*\"]"
+
+msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
+msgstr "[msix-extension.{1}]: verb '{2}': a Windows csak betűket és számjegyeket fogad el"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] igényli, hogy a dir-jének legyen szolgáltatása"
