@@ -888,6 +888,9 @@ msgstr "Vrednosti [define] morajo biti nizi"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] potrebuje '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] potrebuje image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] potrebuje 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` paketa: pogovorna okna, kodna stran, normalizacija besedila"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` paketa ali svežnja MSIX"
 
+msgid "a %s control has no property"
+msgstr "kontrolnik {1} nima property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "kontrolnik {1} nima besedila; poleg njega postavite besedilni kontrolnik"
 
@@ -1442,9 +1448,6 @@ msgstr "toka paketa ni mogoče prebrati"
 
 msgid "a table has more than 32 columns"
 msgstr "tabela ima več kot 32 stolpcev"
-
-msgid "a text control has no property"
-msgstr "besedilni kontrolnik nima lastnosti"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "vrednost `with` datoteka si deli njeno komponento: `when` postavite na datoteko"
@@ -2043,6 +2046,9 @@ msgstr "id mora biti GUID kot {{12345678-1234-1234-1234-123456789ABC}: lastni GU
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name mora imeti 3 do 50 znakov iz A-Z, a-z, 0-9, '.' in '-' (dobljeno '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image mora biti datoteka .bmp (Windows Installer prikazuje samo BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "tabele inline niso podprte; uporabite tabelo [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on mora biti \"install\", \"uninstall\" ali \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: vsak je vrsta datoteke ('.' in male črke, števke, '_' ali '-'), \"*\" (vsaka datoteka), \"folder\", \"background\" (prazni del mape), \"drive\" ali \"assoc:<ID>\" (dobljeno '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "le kontrolnika radio in combo sprejmeta labels"
+msgid "only a bitmap control takes an image"
+msgstr "samo kontrolnik bitmap sprejme image"
 
-msgid "only radio and combo controls take values"
-msgstr "le kontrolnika radio in combo sprejmeta values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "samo kontrolniki radio, combo in listbox sprejmejo labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "samo kontrolniki radio, combo in listbox sprejmejo values"
 
 msgid "out of memory"
 msgstr "zmanjkalo je pomnilnika"
@@ -3066,8 +3075,8 @@ msgstr "dva paketa virov istega ResourceId v svežnju"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type mora biti string, expand, dword, qword, binary ali multi (dobljeno '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type mora biti text, checkbox, edit, radio ali combo (dobljeno '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type mora biti text, checkbox, edit, radio, combo, listbox ali bitmap (prejeto '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ni [file.*] tega paketa"

@@ -749,7 +749,7 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->dialogs);
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
         rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
-        char *xs[] = { x->id, x->dialog, x->text, x->property };
+        char *xs[] = { x->id, x->dialog, x->text, x->property, x->image_source, x->image_shown };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
         for (size_t j = 0; j < x->value_count; ++j) {
             rp_mem_free(a, x->values[j]);

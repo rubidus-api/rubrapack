@@ -888,6 +888,9 @@ msgstr "[define] 의 값은 문자열이어야 합니다"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] 에 '{2}'이(가) 필요합니다"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] 에는 image 가 필요합니다"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] 에 'property' 가 필요합니다"
 
@@ -1200,6 +1203,9 @@ msgstr "패키지의 `lint`: 대화창, 코드 페이지, 글 정규화"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX 패키지나 번들의 `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} 컨트롤에는 property 가 없습니다"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} 컨트롤에는 글이 없습니다. 옆에 text 컨트롤을 두십시오"
 
@@ -1442,9 +1448,6 @@ msgstr "패키지의 스트림 하나를 읽을 수 없습니다"
 
 msgid "a table has more than 32 columns"
 msgstr "표 하나에 열이 32개보다 많습니다"
-
-msgid "a text control has no property"
-msgstr "text 컨트롤에는 property 가 없습니다"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "파일과 `with` 로 묶인 값은 그 파일의 구성 요소를 같이 씁니다: `when` 은 파일에 두십시오"
@@ -2043,6 +2046,9 @@ msgstr "id 는 {{12345678-1234-1234-1234-123456789ABC} 같은 GUID 여야 합니
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name 은 A-Z, a-z, 0-9, '.', '-' 로 된 3~50자여야 합니다('{1}'을(를) 받음)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image 는 .bmp 파일이어야 합니다(Windows Installer 는 BMP 만 보여 줍니다)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "인라인 표는 지원하지 않습니다. [kind.ID] 표를 쓰십시오"
 
@@ -2400,11 +2406,14 @@ msgstr "on 은 \"install\", \"uninstall\", \"both\" 중 하나여야 합니다"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: 각각 파일 형식('.' 뒤에 소문자, 숫자, '_', '-'), \"*\"(모든 파일), \"folder\", \"background\"(폴더의 빈 곳), \"drive\", \"assoc:<ID>\" 중 하나입니다('{1}'을(를) 받음)"
 
-msgid "only radio and combo controls take labels"
-msgstr "labels 는 radio 와 combo 컨트롤만 받습니다"
+msgid "only a bitmap control takes an image"
+msgstr "image 는 bitmap 컨트롤만 받습니다"
 
-msgid "only radio and combo controls take values"
-msgstr "values 는 radio 와 combo 컨트롤만 받습니다"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels 는 radio, combo, listbox 컨트롤만 받습니다"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values 는 radio, combo, listbox 컨트롤만 받습니다"
 
 msgid "out of memory"
 msgstr "메모리가 모자랍니다"
@@ -3066,8 +3075,8 @@ msgstr "번들에 같은 ResourceId 의 리소스 패키지가 둘 있습니다"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type 은 string, expand, dword, qword, binary, multi 중 하나여야 합니다('{1}'을(를) 받음)"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type 은 text, checkbox, edit, radio, combo 중 하나여야 합니다('{1}'을(를) 받음)"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type 은 text, checkbox, edit, radio, combo, listbox, bitmap 중 하나여야 합니다('{1}'을(를) 받음)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}'은(는) 이 패키지의 [file.*] 이 아닙니다"

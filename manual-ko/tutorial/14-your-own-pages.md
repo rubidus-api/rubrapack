@@ -200,9 +200,13 @@ Tab 키는 내 컨트롤을 위에서 아래로, 그다음 왼쪽에서 오른�
 | `edit` | 입력하는 한 줄 칸 | 입력한 글 |
 | `radio` | 값마다 단추 하나, 그중 하나를 고름 | `values` 중 하나 |
 | `combo` | 펼쳐지는 목록 | `values` 중 하나 |
+| `listbox` | 목록, 그중 하나를 고름 | `values` 중 하나 |
+| `bitmap` | `image` 로 가리킨 `.bmp` 그림 | - |
 
 - `values`(문자열 1~32개)는 속성이 받는 값이고, `labels` 는 사용자가 보는 글로 같은 순서다(기본값: 값 그대로).
   `labels-xx` 와 `text-xx` 가 번역이다.
+- `bitmap` 컨트롤은 `image = "pic.bmp"` 를 보인다(Windows Installer 는 BMP 만 보인다). 컨트롤 사각형에 맞춰
+  늘리며, property 가 없고 Tab 은 건너뛴다.
 - 라디오 묶음은 값 하나에 높이 12단위쯤이 필요하다.
 - 글자 안의 `&` 는 Alt 키를 표시한다: `edit` 앞의 `text` 에 두면 Alt+Y 가 그 입력 칸으로 뛴다. 한국어 글에서는
   `이름(&Y):` 처럼 괄호 안에 쓰는 것이 Windows 의 관례다.

@@ -888,6 +888,9 @@ msgstr "a [define] értékei csak karakterláncok lehetnek"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] igényli ezt: '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "a(z) [dialog-control.{1}] image értéket igényel"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] igényli ezt: 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "csomag `lint` vizsgálata: párbeszédpanelek, kódlap, szövegnormaliz�
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX-csomag vagy -köteg `lint` vizsgálata"
 
+msgid "a %s control has no property"
+msgstr "egy {1} vezérlőnek nincs property értéke"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "egy {1} vezérlőnek nincs szövege; tegyen mellé szövegvezérlőt"
 
@@ -1442,9 +1448,6 @@ msgstr "a csomag egy adatfolyama nem olvasható"
 
 msgid "a table has more than 32 columns"
 msgstr "egy táblának 32-nél több oszlopa van"
-
-msgid "a text control has no property"
-msgstr "egy szövegvezérlőnek nincs tulajdonsága"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "egy fájllal `with` értéket kapó érték osztozik az összetevőjén: a `when` értéket a fájlra tegye"
@@ -2043,6 +2046,9 @@ msgstr "az id egy GUID kell legyen, például {12345678-1234-1234-1234-123456789
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "az identity-name 3-50 karakter lehet az A-Z, a-z, 0-9, '.' és '-' közül (kapott: '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "az image .bmp fájl kell legyen (a Windows Installer csak BMP-t jelenít meg)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "a beágyazott (inline) táblák nem támogatottak; használjon [kind.ID] táblát"
 
@@ -2400,11 +2406,14 @@ msgstr "az on értéke \"install\", \"uninstall\" vagy \"both\" lehet"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: mindegyik egy fájltípus ('.' és kisbetűk, számjegyek, '_' vagy '-'), \"*\" (minden fájl), \"folder\", \"background\" (a mappa üres része), \"drive\" vagy \"assoc:<ID>\" (kapott: '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "csak a választógomb- és kombinált vezérlők fogadnak labels értéket"
+msgid "only a bitmap control takes an image"
+msgstr "csak egy bitmap vezérlő fogad el image értéket"
 
-msgid "only radio and combo controls take values"
-msgstr "csak a választógomb- és kombinált vezérlők fogadnak values értéket"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "csak a radio, combo és listbox vezérlők fogadnak el labels értéket"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "csak a radio, combo és listbox vezérlők fogadnak el values értéket"
 
 msgid "out of memory"
 msgstr "elfogyott a memória"
@@ -3066,8 +3075,8 @@ msgstr "két azonos ResourceId értékű erőforráscsomag egy kötegben"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "a type értéke string, expand, dword, qword, binary vagy multi lehet (kapott: '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "a type értéke text, checkbox, edit, radio vagy combo lehet (kapott: '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "a type értéke text, checkbox, edit, radio, combo, listbox vagy bitmap lehet ('{1}' érkezett)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: a(z) '{1}' nem [file.*] ebben a csomagban"

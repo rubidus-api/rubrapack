@@ -888,6 +888,9 @@ msgstr "ค่าของ [define] ต้องเป็นสตริง"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] ต้องมี '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] ต้องมี image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] ต้องมี 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` ของแพ็กเกจ: กล่องโต้ตอบ
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` ของแพ็กเกจหรือบันเดิล MSIX"
 
+msgid "a %s control has no property"
+msgstr "ตัวควบคุม {1} ไม่มี property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "ตัวควบคุม {1} ไม่มีข้อความ ให้วางตัวควบคุมข้อความไว้ข้างๆ"
 
@@ -1442,9 +1448,6 @@ msgstr "อ่านสตรีมของแพ็กเกจไม่ได
 
 msgid "a table has more than 32 columns"
 msgstr "ตารางมีคอลัมน์มากกว่า 32"
-
-msgid "a text control has no property"
-msgstr "ตัวควบคุมข้อความไม่มีคุณสมบัติ"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "ค่าที่อยู่ `with` ไฟล์ใช้คอมโพเนนต์ร่วมกับไฟล์ ให้ใส่ `when` ที่ไฟล์"
@@ -2043,6 +2046,9 @@ msgstr "id ต้องเป็น GUID เช่น {{12345678-1234-1234-1234-
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name ต้องยาว 3 ถึง 50 อักขระจาก A-Z, a-z, 0-9, '.' และ '-' (ได้ '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image ต้องเป็นไฟล์ .bmp (Windows Installer แสดงเฉพาะ BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ไม่รองรับตารางแบบ inline ให้ใช้ตาราง [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on ต้องเป็น \"install\", \"uninstall\" หรือ \"bo
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: แต่ละค่าเป็นชนิดไฟล์ ('.' ตามด้วยตัวพิมพ์เล็ก ตัวเลข '_' หรือ '-'), \"*\" (ทุกไฟล์), \"folder\", \"background\" (พื้นที่ว่างของโฟลเดอร์), \"drive\" หรือ \"assoc:<ID>\" (ได้ '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "มีเพียงตัวควบคุม radio และ combo ที่รับ labels"
+msgid "only a bitmap control takes an image"
+msgstr "เฉพาะตัวควบคุม bitmap เท่านั้นที่รับ image"
 
-msgid "only radio and combo controls take values"
-msgstr "มีเพียงตัวควบคุม radio และ combo ที่รับ values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "เฉพาะตัวควบคุม radio, combo และ listbox เท่านั้นที่รับ labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "เฉพาะตัวควบคุม radio, combo และ listbox เท่านั้นที่รับ values"
 
 msgid "out of memory"
 msgstr "หน่วยความจำไม่พอ"
@@ -3066,8 +3075,8 @@ msgstr "มีแพ็กเกจทรัพยากร ResourceId เดี
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type ต้องเป็น string, expand, dword, qword, binary หรือ multi (ได้ '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type ต้องเป็น text, checkbox, edit, radio หรือ combo (ได้ '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type ต้องเป็น text, checkbox, edit, radio, combo, listbox หรือ bitmap (ได้รับ '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"

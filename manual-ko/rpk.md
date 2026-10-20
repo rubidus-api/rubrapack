@@ -243,7 +243,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), details(기본 `true`: 진행 페이지가 하는 일을 보인다), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
-| `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
+| `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image(`.bmp`, bitmap 전용), text-xx, labels-xx |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when, advertise(`true`: [바로가기](#바로가기-shortcutid) 참고, MSI 전용) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
@@ -1375,9 +1375,11 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
   키는 컨트롤을 위에서 아래로, 그다음 왼쪽에서 오른쪽으로 옮겨 다닌다.
 - `text` 는 글씨를 보인다(`&` 는 바로 가기 키를 표시하고, 글씨 컨트롤에서는 다음 컨트롤로 옮긴다).
   `checkbox` 는 체크하면 속성을 `1` 로, 풀면 속성을 없앤다. `edit` 는 사용자가 속성 값을 입력하게
-  한다. `radio` 와 `combo` 는 `values`(64바이트 이하 문자열 1~32개) 가운데 하나를 고르게 하고, 적은
-  순서대로 `labels`(기본: 값 자체)로 보인다.
-- `radio` 와 `combo` 에는 그 값 가운데 하나를 값으로 가진 `[property.*]` 가 있어야 한다: 대화창은 값을
+  한다. `radio`, `combo`, `listbox` 는 `values`(64바이트 이하 문자열 1~32개) 가운데 하나를 고르게 하고,
+  적은 순서대로 `labels`(기본: 값 자체)로 보인다 - `radio` 는 버튼들로, `combo` 는 드롭다운으로,
+  `listbox` 는 목록으로. `bitmap` 은 `image` 로 가리킨 `.bmp` 파일의 그림을 보이고(Windows Installer 는
+  banner 처럼 BMP 만 보인다) 컨트롤 사각형에 맞춰 늘린다. property 를 받지 않고 Tab 정지도 아니다.
+- `radio`, `combo`, `listbox` 에는 그 값 가운데 하나를 값으로 가진 `[property.*]` 가 있어야 한다: 대화창은 값을
   모을 뿐이고 창 없는 설치(`/qn`)는 기본값을 쓴다. 어떤 속성이든 명령줄에서 줄 수도 있다:
   `msiexec /i example.msi /qn APP_MODE=server`.
 - 속성은 직접 정한 공개 이름(대문자)이고 컨트롤 하나에 하나이며, 설치의 관리자 권한 부분까지 가므로

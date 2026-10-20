@@ -888,6 +888,9 @@ msgstr "[define] balioak kateak izan behar dira"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] taulak '{2}' behar du"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}]-k image behar du"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] taulak 'property' behar du"
 
@@ -1200,6 +1203,9 @@ msgstr "pakete baten `lint`: elkarrizketak, kode-orria, testuaren normalizazioa"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX pakete edo sorta baten `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} kontrolak ez du property-rik"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} kontrol batek ez du testurik; jarri testu-kontrol bat ondoan"
 
@@ -1442,9 +1448,6 @@ msgstr "ezin da paketearen korronte bat irakurri"
 
 msgid "a table has more than 32 columns"
 msgstr "taula batek 32 zutabe baino gehiago ditu"
-
-msgid "a text control has no property"
-msgstr "testu-kontrol batek ez du propietaterik"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "fitxategi batekin `with` doan balio batek bere osagaia partekatzen du: jarri `when` fitxategian"
@@ -2043,6 +2046,9 @@ msgstr "id GUID bat izan behar da, adibidez {{12345678-1234-1234-1234-123456789A
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' eta '-' karaktereetako 3tik 50era izan behar da ('{1}' jaso da)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image .bmp fitxategi bat izan behar da (Windows Installer-ek BMP soilik erakusten du)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "lerro barneko taulak ez dira onartzen; erabili [kind.ID] taula bat"
 
@@ -2400,11 +2406,14 @@ msgstr "on \"install\", \"uninstall\" edo \"both\" izan behar da"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: bakoitza fitxategi-mota bat da ('.' eta letra xeheak, digituak, '_' edo '-'), \"*\" (fitxategi guztiak), \"folder\", \"background\" (karpeta baten zati hutsa), \"drive\" edo \"assoc:<ID>\" ('{1}' jaso da)"
 
-msgid "only radio and combo controls take labels"
-msgstr "radio eta combo kontrolek bakarrik onartzen dute labels"
+msgid "only a bitmap control takes an image"
+msgstr "bitmap kontrolak soilik onartzen du image"
 
-msgid "only radio and combo controls take values"
-msgstr "radio eta combo kontrolek bakarrik onartzen dute values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "radio, combo eta listbox kontrolek soilik onartzen dute labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "radio, combo eta listbox kontrolek soilik onartzen dute values"
 
 msgid "out of memory"
 msgstr "ez dago behar adina memoria"
@@ -3066,8 +3075,8 @@ msgstr "ResourceId bereko bi baliabide-pakete sorta batean"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type string, expand, dword, qword, binary edo multi izan behar da ('{1}' jaso da)"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type text, checkbox, edit, radio edo combo izan behar da ('{1}' jaso da)"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type-k text, checkbox, edit, radio, combo, listbox edo bitmap izan behar du ('{1}' jaso da)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ez da pakete honetako [file.*] bat"

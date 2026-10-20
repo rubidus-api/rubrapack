@@ -199,9 +199,13 @@ Every control names its `dialog`, a `type`, and `x`, `y`, `width`, `height`:
 | `edit` | a line to type in | the text typed |
 | `radio` | one button per value, one chosen | one of `values` |
 | `combo` | a drop-down list | one of `values` |
+| `listbox` | a list, one chosen | one of `values` |
+| `bitmap` | a picture from a `.bmp` named by `image` | - |
 
 - `values` (1 to 32 strings) are what the property receives; `labels` what the user sees, in the
   same order (default: the values). `labels-xx` and `text-xx` translate them.
+- A `bitmap` control shows `image = "pic.bmp"` (Windows Installer shows BMP only), stretched to the
+  control's rectangle; it has no property and Tab skips it.
 - A radio group needs about 12 units of height per value.
 - In a label, `&` marks the Alt key: on a `text` in front of an `edit`, Alt+Y jumps to the edit.
 - Control IDs `Banner`, `Title`, `Description`, `BannerLine`, `BottomLine`, `Back`, `Next`,

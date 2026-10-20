@@ -888,6 +888,9 @@ msgstr "[define] vērtībām jābūt virknēm"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] nepieciešams '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] nepieciešams image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] nepieciešams 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "pakotnes `lint`: dialogi, kodu lapa, teksta normalizēšana"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX pakotnes vai komplekta `lint`"
 
+msgid "a %s control has no property"
+msgstr "vadīklai {1} nav property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "vadīklai {1} nav teksta; novietojiet blakus teksta vadīklu"
 
@@ -1442,9 +1448,6 @@ msgstr "pakotnes plūsmu nevar nolasīt"
 
 msgid "a table has more than 32 columns"
 msgstr "tabulā ir vairāk nekā 32 kolonnas"
-
-msgid "a text control has no property"
-msgstr "teksta vadīklai nav rekvizīta"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "vērtība `with` failu koplieto tā komponentu: novietojiet `when` uz faila"
@@ -2043,6 +2046,9 @@ msgstr "id jābūt GUID kā {{12345678-1234-1234-1234-123456789ABC}: paša modu�
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name jābūt 3 līdz 50 rakstzīmēm no A-Z, a-z, 0-9, '.' un '-' (saņemts '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image jābūt .bmp failam (Windows Installer rāda tikai BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline tabulas netiek atbalstītas; izmantojiet tabulu [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on jābūt \"install\", \"uninstall\" vai \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: katrs ir faila tips ('.' un mazie burti, cipari, '_' vai '-'), \"*\" (katrs fails), \"folder\", \"background\" (mapes tukšā daļa), \"drive\" vai \"assoc:<ID>\" (saņemts '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "tikai radio un combo vadīklas pieņem labels"
+msgid "only a bitmap control takes an image"
+msgstr "image pieņem tikai bitmap vadīkla"
 
-msgid "only radio and combo controls take values"
-msgstr "tikai radio un combo vadīklas pieņem values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels pieņem tikai radio, combo un listbox vadīklas"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values pieņem tikai radio, combo un listbox vadīklas"
 
 msgid "out of memory"
 msgstr "nepietiek atmiņas"
@@ -3066,8 +3075,8 @@ msgstr "komplektā ir divas resursu pakotnes ar vienu ResourceId"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type jābūt string, expand, dword, qword, binary vai multi (saņemts '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type jābūt text, checkbox, edit, radio vai combo (saņemts '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type jābūt text, checkbox, edit, radio, combo, listbox vai bitmap (saņemts '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nav šīs pakotnes [file.*]"

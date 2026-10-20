@@ -888,6 +888,9 @@ msgstr "Giá trị [define] phải là chuỗi"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] cần '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] cần image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] cần 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` của gói: hộp thoại, trang mã, chuẩn hóa văn bản"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` của gói hoặc bó MSIX"
 
+msgid "a %s control has no property"
+msgstr "điều khiển {1} không có property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "điều khiển {1} không có văn bản; hãy đặt một điều khiển văn bản cạnh nó"
 
@@ -1442,9 +1448,6 @@ msgstr "không đọc được một luồng của gói"
 
 msgid "a table has more than 32 columns"
 msgstr "một bảng có hơn 32 cột"
-
-msgid "a text control has no property"
-msgstr "điều khiển văn bản không có thuộc tính"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "giá trị `with` một tệp dùng chung thành phần của tệp: hãy đặt `when` trên tệp"
@@ -2043,6 +2046,9 @@ msgstr "id phải là GUID như {{12345678-1234-1234-1234-123456789ABC}: của c
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name phải dài 3 đến 50 ký tự gồm A-Z, a-z, 0-9, '.' và '-' (nhận được '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image phải là tệp .bmp (Windows Installer chỉ hiển thị BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "không hỗ trợ bảng inline; hãy dùng bảng [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on phải là \"install\", \"uninstall\" hoặc \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: mỗi mục là một loại tệp ('.' và chữ thường, chữ số, '_' hoặc '-'), \"*\" (mọi tệp), \"folder\", \"background\" (phần trống của thư mục), \"drive\" hoặc \"assoc:<ID>\" (nhận được '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "chỉ điều khiển radio và combo nhận labels"
+msgid "only a bitmap control takes an image"
+msgstr "chỉ điều khiển bitmap mới nhận image"
 
-msgid "only radio and combo controls take values"
-msgstr "chỉ điều khiển radio và combo nhận values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "chỉ các điều khiển radio, combo và listbox mới nhận labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "chỉ các điều khiển radio, combo và listbox mới nhận values"
 
 msgid "out of memory"
 msgstr "hết bộ nhớ"
@@ -3066,8 +3075,8 @@ msgstr "hai gói tài nguyên cùng ResourceId trong một bó"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type phải là string, expand, dword, qword, binary hoặc multi (nhận được '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type phải là text, checkbox, edit, radio hoặc combo (nhận được '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type phải là text, checkbox, edit, radio, combo, listbox hoặc bitmap (nhận được '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' không phải [file.*] của gói này"

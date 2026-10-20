@@ -888,6 +888,9 @@ msgstr "[define] dəyərləri sətir olmalıdır"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] üçün '{2}' lazımdır"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] image tələb edir"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] üçün 'property' lazımdır"
 
@@ -1200,6 +1203,9 @@ msgstr "paketin `lint`-i: dialoqlar, kod səhifəsi, mətnin normallaşdırılma
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX paketinin və ya dəstinin `lint`-i"
 
+msgid "a %s control has no property"
+msgstr "{1} idarəetməsinin property-si yoxdur"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} idarəetmə elementinin mətni yoxdur; yanına mətn elementi qoyun"
 
@@ -1442,9 +1448,6 @@ msgstr "paketin axını oxuna bilmir"
 
 msgid "a table has more than 32 columns"
 msgstr "cədvəlin 32-dən çox sütunu var"
-
-msgid "a text control has no property"
-msgstr "mətn idarəetmə elementinin xassəsi yoxdur"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "faylla `with` gedən dəyər onun komponentini paylaşır: `when`-i fayla qoyun"
@@ -2043,6 +2046,9 @@ msgstr "id {{12345678-1234-1234-1234-123456789ABC} kimi GUID olmalıdır: modulu
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' və '-' simvollarından 3-50 simvol olmalıdır ('{1}' alındı)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image bir .bmp faylı olmalıdır (Windows Installer yalnız BMP göstərir)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "sətirdaxili cədvəllər dəstəklənmir; [kind.ID] cədvəlindən istifadə edin"
 
@@ -2400,11 +2406,14 @@ msgstr "on \"install\", \"uninstall\" və ya \"both\" olmalıdır"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: hər biri fayl növüdür ('.' və kiçik hərflər, rəqəmlər, '_' və ya '-'), \"*\" (hər fayl), \"folder\", \"background\" (qovluğun boş hissəsi), \"drive\" və ya \"assoc:<ID>\" ('{1}' alındı)"
 
-msgid "only radio and combo controls take labels"
-msgstr "labels-i yalnız radio və combo idarəetmə elementləri qəbul edir"
+msgid "only a bitmap control takes an image"
+msgstr "image yalnız bitmap idarəetməsini qəbul edir"
 
-msgid "only radio and combo controls take values"
-msgstr "values-u yalnız radio və combo idarəetmə elementləri qəbul edir"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels yalnız radio, combo və listbox idarəetmələrini qəbul edir"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values yalnız radio, combo və listbox idarəetmələrini qəbul edir"
 
 msgid "out of memory"
 msgstr "yaddaş çatışmır"
@@ -3066,8 +3075,8 @@ msgstr "dəstdə eyni ResourceId-li iki resurs paketi"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type string, expand, dword, qword, binary və ya multi olmalıdır (alındı '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type text, checkbox, edit, radio və ya combo olmalıdır (alındı '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type text, checkbox, edit, radio, combo, listbox və ya bitmap olmalıdır ('{1}' alındı)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' bu paketin [file.*]-ı deyil"

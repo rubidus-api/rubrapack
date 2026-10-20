@@ -463,7 +463,7 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_dialog_t;
 
-enum { RP_DC_TEXT, RP_DC_CHECKBOX, RP_DC_EDIT, RP_DC_RADIO, RP_DC_COMBO };
+enum { RP_DC_TEXT, RP_DC_CHECKBOX, RP_DC_EDIT, RP_DC_RADIO, RP_DC_COMBO, RP_DC_LISTBOX, RP_DC_BITMAP };
 
 typedef struct {
     char    *id;                // the Control key (unique across all tables)
@@ -472,9 +472,11 @@ typedef struct {
     int      x, y, width, height;   // dialog units, inside the body (y 45..234)
     char    *text;              // label (text, checkbox), formatted
     char    *property;          // public property (checkbox, edit, radio, combo)
-    char   **values;            // radio, combo: the property values
+    char   **values;            // radio, combo, listbox: the property values
     char   **labels;            // their labels (the values when omitted)
     size_t   value_count;
+    char    *image_source;      // bitmap: the .bmp to open (joined with the .rpk dir), or NULL
+    char    *image_shown;       // bitmap: the path as written
     rp_ir_ltext_t *text_by_lang;        // text-xx
     size_t   text_by_lang_count;
     rp_ir_llabels_t *labels_by_lang;    // labels-xx

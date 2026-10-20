@@ -888,6 +888,9 @@ msgstr "Hodnoty [define] musí být řetězce"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] potřebuje '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] vyžaduje image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] potřebuje 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` balíčku: dialogy, znaková stránka, normalizace textu"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` balíčku nebo sady MSIX"
 
+msgid "a %s control has no property"
+msgstr "ovládací prvek {1} nemá property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "ovládací prvek {1} nemá text; dejte vedle něj textový prvek"
 
@@ -1442,9 +1448,6 @@ msgstr "datový proud balíčku nelze číst"
 
 msgid "a table has more than 32 columns"
 msgstr "tabulka má víc než 32 sloupců"
-
-msgid "a text control has no property"
-msgstr "textový prvek nemá vlastnost"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "hodnota `with` souborem sdílí jeho součást: dejte `when` na soubor"
@@ -2043,6 +2046,9 @@ msgstr "id musí být GUID jako {12345678-1234-1234-1234-123456789ABC}: vlastní
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name musí mít 3 až 50 znaků z A-Z, a-z, 0-9, '.' a '-' (zadáno '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image musí být soubor .bmp (Windows Installer zobrazuje pouze BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "vložené tabulky nejsou podporovány; použijte tabulku [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on musí být \"install\", \"uninstall\" nebo \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: každý je typ souboru ('.' a malá písmena, číslice, '_' nebo '-'), \"*\" (každý soubor), \"folder\", \"background\" (prázdná část složky), \"drive\" nebo \"assoc:<ID>\" (zadáno '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "labels přijímají jen přepínače a pole se seznamem"
+msgid "only a bitmap control takes an image"
+msgstr "image přijímá pouze ovládací prvek bitmap"
 
-msgid "only radio and combo controls take values"
-msgstr "values přijímají jen přepínače a pole se seznamem"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels přijímají pouze ovládací prvky radio, combo a listbox"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values přijímají pouze ovládací prvky radio, combo a listbox"
 
 msgid "out of memory"
 msgstr "nedostatek paměti"
@@ -3066,8 +3075,8 @@ msgstr "dva balíčky prostředků se stejným ResourceId v sadě"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type musí být string, expand, dword, qword, binary nebo multi (zadáno '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type musí být text, checkbox, edit, radio nebo combo (zadáno '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type musí být text, checkbox, edit, radio, combo, listbox nebo bitmap (získáno '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' není [file.*] tohoto balíčku"

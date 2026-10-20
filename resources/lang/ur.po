@@ -890,6 +890,9 @@ msgstr "[define] کی قدریں اسٹرنگز ہونی چاہییں"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] کو '{2}' چاہیے"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] کو image درکار ہے"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] کو 'property' چاہیے"
 
@@ -1202,6 +1205,9 @@ msgstr "پیکیج کا `lint`: ڈائیلاگز، کوڈ پیج، متن کی �
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX پیکیج یا بنڈل کا `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} کنٹرول میں property نہیں ہے"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} کنٹرول کا کوئی متن نہیں؛ اس کے ساتھ ایک متن کنٹرول رکھیں"
 
@@ -1444,9 +1450,6 @@ msgstr "پیکیج کی ایک اسٹریم نہیں پڑھی جا سکتی"
 
 msgid "a table has more than 32 columns"
 msgstr "ایک جدول میں 32 سے زیادہ کالم ہیں"
-
-msgid "a text control has no property"
-msgstr "متن کنٹرول کی کوئی خاصیت نہیں"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "فائل کے `with` قدر اس کا جزو بانٹتی ہے: `when` فائل پر رکھیں"
@@ -2045,6 +2048,9 @@ msgstr "id کو {{12345678-1234-1234-1234-123456789ABC} جیسا GUID ہونا �
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name کو A-Z، a-z، 0-9، '.' اور '-' کے 3 سے 50 حروف ہونا چاہیے ('{1}' ملا)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image ایک ‎.bmp فائل ہونی چاہیے (Windows Installer صرف BMP دکھاتا ہے)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ان لائن جدول معاون نہیں؛ [kind.ID] جدول استعمال کریں"
 
@@ -2402,11 +2408,14 @@ msgstr "on کو \"install\"، \"uninstall\" یا \"both\" ہونا چاہیے"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: ہر ایک فائل کی قسم ہے ('.' اور چھوٹے حروف، ہندسے، '_' یا '-')، \"*\" (ہر فائل)، \"folder\"، \"background\" (فولڈر کا خالی حصہ)، \"drive\" یا \"assoc:<ID>\" ('{1}' ملا)"
 
-msgid "only radio and combo controls take labels"
-msgstr "صرف radio اور combo کنٹرولز labels لیتے ہیں"
+msgid "only a bitmap control takes an image"
+msgstr "صرف ایک bitmap کنٹرول image لیتا ہے"
 
-msgid "only radio and combo controls take values"
-msgstr "صرف radio اور combo کنٹرولز values لیتے ہیں"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "صرف radio، combo اور listbox کنٹرول labels لیتے ہیں"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "صرف radio، combo اور listbox کنٹرول values لیتے ہیں"
 
 msgid "out of memory"
 msgstr "میموری ختم ہو گئی"
@@ -3068,8 +3077,8 @@ msgstr "بنڈل میں ایک ResourceId کے دو وسائل پیکیجز"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type کو string، expand، dword، qword، binary یا multi ہونا چاہیے (ملا '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type کو text، checkbox، edit، radio یا combo ہونا چاہیے (ملا '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type کو text، checkbox، edit، radio، combo، listbox یا bitmap ہونا چاہیے ('{1}' موصول ہوا)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' اس پیکیج کی [file.*] نہیں"

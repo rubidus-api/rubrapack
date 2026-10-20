@@ -888,6 +888,9 @@ msgstr "els valors de [define] han de ser cadenes"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] necessita '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] necessita image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] necessita 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` d'un paquet: diàlegs, pàgina de codis, normalització del text"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` d'un paquet o conjunt MSIX"
 
+msgid "a %s control has no property"
+msgstr "un control {1} no té property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "un control {1} no té text; poseu-hi un control de text al costat"
 
@@ -1442,9 +1448,6 @@ msgstr "no es pot llegir un flux del paquet"
 
 msgid "a table has more than 32 columns"
 msgstr "una taula té més de 32 columnes"
-
-msgid "a text control has no property"
-msgstr "un control de text no té propietat"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "un valor `with` un fitxer comparteix el seu component: poseu `when` al fitxer"
@@ -2043,6 +2046,9 @@ msgstr "id ha de ser un GUID com ara {{12345678-1234-1234-1234-123456789ABC}: el
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name ha de tenir de 3 a 50 caràcters d'A-Z, a-z, 0-9, '.' i '-' (s'ha obtingut '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image ha de ser un fitxer .bmp (Windows Installer només mostra BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "les taules en línia no són compatibles; feu servir una taula [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on ha de ser \"install\", \"uninstall\" o \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: cadascun és un tipus de fitxer ('.' i lletres minúscules, xifres, '_' o '-'), \"*\" (tots els fitxers), \"folder\", \"background\" (la part buida d'una carpeta), \"drive\" o \"assoc:<ID>\" (s'ha obtingut '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "només els controls radio i combo admeten labels"
+msgid "only a bitmap control takes an image"
+msgstr "només un control bitmap accepta image"
 
-msgid "only radio and combo controls take values"
-msgstr "només els controls radio i combo admeten values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "només els controls radio, combo i listbox accepten labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "només els controls radio, combo i listbox accepten values"
 
 msgid "out of memory"
 msgstr "memòria insuficient"
@@ -3066,8 +3075,8 @@ msgstr "dos paquets de recursos d'un mateix ResourceId en un conjunt"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type ha de ser string, expand, dword, qword, binary o multi (s'ha obtingut '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type ha de ser text, checkbox, edit, radio o combo (s'ha obtingut '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type ha de ser text, checkbox, edit, radio, combo, listbox o bitmap (s'ha rebut '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' no és un [file.*] d'aquest paquet"

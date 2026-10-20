@@ -888,6 +888,9 @@ msgstr "[define]-värden måste vara strängar"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] behöver '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] behöver image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] behöver 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` av ett paket: dialogrutor, teckentabell, textnormalisering"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` av ett MSIX-paket eller en -paketsamling"
 
+msgid "a %s control has no property"
+msgstr "en {1}-kontroll har ingen property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "en {1}-kontroll har ingen text; placera en textkontroll bredvid"
 
@@ -1442,9 +1448,6 @@ msgstr "en ström i paketet kan inte läsas"
 
 msgid "a table has more than 32 columns"
 msgstr "en tabell har fler än 32 kolumner"
-
-msgid "a text control has no property"
-msgstr "en textkontroll har ingen egenskap"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "ett värde `with` en fil delar dess komponent: sätt `when` på filen"
@@ -2043,6 +2046,9 @@ msgstr "id måste vara ett GUID som {12345678-1234-1234-1234-123456789ABC}: modu
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name måste vara 3 till 50 tecken av A-Z, a-z, 0-9, '.' och '-' (fick '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image måste vara en .bmp-fil (Windows Installer visar endast BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "infogade tabeller stöds inte; använd en [kind.ID]-tabell"
 
@@ -2400,11 +2406,14 @@ msgstr "on måste vara \"install\", \"uninstall\" eller \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: var och en är en filtyp ('.' och gemener, siffror, '_' eller '-'), \"*\" (varje fil), \"folder\", \"background\" (den tomma delen av en mapp), \"drive\" eller \"assoc:<ID>\" (fick '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "bara alternativknapps- och kombinationsrutekontroller tar labels"
+msgid "only a bitmap control takes an image"
+msgstr "endast en bitmap-kontroll tar image"
 
-msgid "only radio and combo controls take values"
-msgstr "bara alternativknapps- och kombinationsrutekontroller tar values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "endast radio-, combo- och listbox-kontroller tar labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "endast radio-, combo- och listbox-kontroller tar values"
 
 msgid "out of memory"
 msgstr "slut på minne"
@@ -3066,8 +3075,8 @@ msgstr "två resurspaket med samma ResourceId i en paketsamling"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type måste vara string, expand, dword, qword, binary eller multi (fick '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type måste vara text, checkbox, edit, radio eller combo (fick '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type måste vara text, checkbox, edit, radio, combo, listbox eller bitmap (fick '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' är ingen [file.*] i det här paketet"

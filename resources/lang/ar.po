@@ -890,6 +890,9 @@ msgstr "يجب أن تكون قيم [define] سلاسل نصية"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "يحتاج [dialog-control.{1}] إلى '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] يحتاج إلى image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "يحتاج [dialog-control.{1}] إلى 'property'"
 
@@ -1202,6 +1205,9 @@ msgstr "`lint` لحزمة: مربعات الحوار، صفحة الترميز،
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` لحزمة MSIX أو مجموعة حزم"
 
+msgid "a %s control has no property"
+msgstr "عنصر التحكم {1} ليس له property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "لا يحتوي عنصر التحكم {1} على نص؛ ضع عنصر تحكم نصياً بجانبه"
 
@@ -1444,9 +1450,6 @@ msgstr "لا يمكن قراءة دفق من الحزمة"
 
 msgid "a table has more than 32 columns"
 msgstr "جدول به أكثر من 32 عموداً"
-
-msgid "a text control has no property"
-msgstr "عنصر تحكم نصي بلا خاصية"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "القيمة التي تكون `with` ملف تشاركه مكوّنه: ضع `when` على الملف"
@@ -2045,6 +2048,9 @@ msgstr "يجب أن يكون id معرّف GUID مثل {{12345678-1234-1234-1234
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "يجب أن يكون identity-name من 3 إلى 50 حرفاً من A-Z وa-z و0-9 و'.' و'-' (الموجود '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "يجب أن يكون image ملف ‎.bmp (يعرض Windows Installer صيغة BMP فقط)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "الجداول المضمّنة inline غير مدعومة؛ استخدم جدول [kind.ID]"
 
@@ -2402,11 +2408,14 @@ msgstr "يجب أن يكون on هو \"install\" أو \"uninstall\" أو \"both\
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: كل منها نوع ملف ('.' ثم حروف صغيرة أو أرقام أو '_' أو '-')، أو \"*\" (كل ملف)، أو \"folder\"، أو \"background\" (الجزء الفارغ من مجلد)، أو \"drive\"، أو \"assoc:<ID>\" (الموجود '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "لا تأخذ labels إلا عناصر التحكم radio وcombo"
+msgid "only a bitmap control takes an image"
+msgstr "عنصر التحكم bitmap وحده يقبل image"
 
-msgid "only radio and combo controls take values"
-msgstr "لا تأخذ values إلا عناصر التحكم radio وcombo"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "عناصر التحكم radio وcombo وlistbox وحدها تقبل labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "عناصر التحكم radio وcombo وlistbox وحدها تقبل values"
 
 msgid "out of memory"
 msgstr "نفدت الذاكرة"
@@ -3068,8 +3077,8 @@ msgstr "حزمتا موارد بـ ResourceId نفسه في مجموعة حزم"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "يجب أن يكون type هو string أو expand أو dword أو qword أو binary أو multi (الموجود '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "يجب أن يكون type هو text أو checkbox أو edit أو radio أو combo (الموجود '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "يجب أن يكون type أحد text أو checkbox أو edit أو radio أو combo أو listbox أو bitmap (ورد '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: ‏'{1}' ليس [file.*] في هذه الحزمة"

@@ -888,6 +888,9 @@ msgstr "[define] の値は文字列でなければなりません"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] には '{2}' が必要です"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] には image が必要です"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] には 'property' が必要です"
 
@@ -1200,6 +1203,9 @@ msgstr "パッケージの `lint`: ダイアログ、コード ページ、文�
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX パッケージやバンドルの `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} コントロールに property はありません"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} コントロールに文字列がありません。隣にテキスト コントロールを置いてください"
 
@@ -1442,9 +1448,6 @@ msgstr "パッケージのストリームを読めません"
 
 msgid "a table has more than 32 columns"
 msgstr "テーブルの列が 32 を超えています"
-
-msgid "a text control has no property"
-msgstr "テキスト コントロールにプロパティがありません"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "ファイルと `with` の値はそのコンポーネントを共有します: `when` はファイルに付けてください"
@@ -2043,6 +2046,9 @@ msgstr "id は {12345678-1234-1234-1234-123456789ABC} のような GUID でな�
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name は A-Z、a-z、0-9、'.'、'-' の 3 から 50 文字でなければなりません ('{1}' でした)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image は .bmp ファイルです(Windows Installer は BMP のみ表示します)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "インライン テーブルには対応していません。[kind.ID] テーブルを使ってください"
 
@@ -2400,11 +2406,14 @@ msgstr "on は \"install\"、\"uninstall\"、\"both\" のいずれかでなけ�
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: それぞれファイルの種類 ('.' と小文字、数字、'_'、'-')、\"*\" (すべてのファイル)、\"folder\"、\"background\" (フォルダーの空いた部分)、\"drive\"、\"assoc:<ID>\" のいずれかです ('{1}' でした)"
 
-msgid "only radio and combo controls take labels"
-msgstr "labels を取るのはラジオとコンボのコントロールだけです"
+msgid "only a bitmap control takes an image"
+msgstr "image は bitmap コントロールのみが取ります"
 
-msgid "only radio and combo controls take values"
-msgstr "values を取るのはラジオとコンボのコントロールだけです"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels は radio, combo, listbox コントロールのみが取ります"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values は radio, combo, listbox コントロールのみが取ります"
 
 msgid "out of memory"
 msgstr "メモリ不足"
@@ -3066,8 +3075,8 @@ msgstr "バンドルに同じ ResourceId のリソース パッケージが 2 �
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type は string、expand、dword、qword、binary、multi のいずれかでなければなりません ('{1}' でした)"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type は text、checkbox、edit、radio、combo のいずれかでなければなりません ('{1}' でした)"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type は text, checkbox, edit, radio, combo, listbox, bitmap のいずれかです('{1}' でした)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' はこのパッケージの [file.*] ではありません"

@@ -888,6 +888,9 @@ msgstr "[define] väärtused peavad olema stringid"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] vajab '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] vajab image-d"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] vajab 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "paketi `lint`: dialoogid, koodileht, teksti normaliseerimine"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX-paketi või -kogumi `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1}-juhtelemendil pole property-t"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "juhtelemendil {1} pole teksti; pange selle kõrvale tekstijuhtelement"
 
@@ -1442,9 +1448,6 @@ msgstr "paketi voogu ei saa lugeda"
 
 msgid "a table has more than 32 columns"
 msgstr "tabelis on üle 32 veeru"
-
-msgid "a text control has no property"
-msgstr "tekstijuhtelemendil pole atribuuti"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "`with` failiga väärtus jagab selle komponenti: pange `when` failile"
@@ -2043,6 +2046,9 @@ msgstr "id peab olema GUID nagu {{12345678-1234-1234-1234-123456789ABC}: mooduli
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name peab olema 3 kuni 50 märki hulgast A-Z, a-z, 0-9, '.' ja '-' (saadi '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image peab olema .bmp-fail (Windows Installer kuvab ainult BMP-d)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline-tabeleid ei toetata; kasutage tabelit [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on peab olema \"install\", \"uninstall\" või \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: igaüks on failitüüp ('.' ja väiketähed, numbrid, '_' või '-'), \"*\" (iga fail), \"folder\", \"background\" (kausta tühi osa), \"drive\" või \"assoc:<ID>\" (saadi '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "ainult radio- ja combo-juhtelemendid võtavad labels'i"
+msgid "only a bitmap control takes an image"
+msgstr "image-t võtab vastu ainult bitmap-juhtelement"
 
-msgid "only radio and combo controls take values"
-msgstr "ainult radio- ja combo-juhtelemendid võtavad values'i"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels-t võtavad vastu ainult radio-, combo- ja listbox-juhtelemendid"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values-t võtavad vastu ainult radio-, combo- ja listbox-juhtelemendid"
 
 msgid "out of memory"
 msgstr "mälu on otsas"
@@ -3066,8 +3075,8 @@ msgstr "kogumis on kaks sama ResourceId-ga ressursipaketti"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type peab olema string, expand, dword, qword, binary või multi (saadi '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type peab olema text, checkbox, edit, radio või combo (saadi '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type peab olema text, checkbox, edit, radio, combo, listbox või bitmap (saadi '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ei ole selle paketi [file.*]"

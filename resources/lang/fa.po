@@ -890,6 +890,9 @@ msgstr "مقادیر [define] باید رشته باشند"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] به '{2}' نیاز دارد"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] به image نیاز دارد"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] به 'property' نیاز دارد"
 
@@ -1202,6 +1205,9 @@ msgstr "`lint` یک بسته: گفتگوها، صفحه کد، عادی‌ساز
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` یک بسته یا مجموعه MSIX"
 
+msgid "a %s control has no property"
+msgstr "کنترل {1} دارای property نیست"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "کنترل {1} متنی ندارد؛ یک کنترل متن کنار آن بگذارید"
 
@@ -1444,9 +1450,6 @@ msgstr "یک جریان بسته خوانده نمی‌شود"
 
 msgid "a table has more than 32 columns"
 msgstr "یک جدول بیش از 32 ستون دارد"
-
-msgid "a text control has no property"
-msgstr "یک کنترل متن ویژگی ندارد"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "مقداری که `with` یک فایل است مؤلفه آن را شریک است: `when` را روی فایل بگذارید"
@@ -2045,6 +2048,9 @@ msgstr "id باید GUID مانند {{12345678-1234-1234-1234-123456789ABC} با
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name باید 3 تا 50 نویسه از A-Z، a-z، 0-9، '.' و '-' باشد ('{1}' دریافت شد)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image باید یک پروندهٔ ‎.bmp باشد (Windows Installer فقط BMP را نشان می‌دهد)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "جدول‌های درون‌خطی پشتیبانی نمی‌شوند؛ از یک جدول [kind.ID] استفاده کنید"
 
@@ -2402,11 +2408,14 @@ msgstr "on باید \"install\"، \"uninstall\" یا \"both\" باشد"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: هر یک نوع فایل است ('.' و حروف کوچک، ارقام، '_' یا '-')، \"*\" (هر فایل)، \"folder\"، \"background\" (بخش خالی یک پوشه)، \"drive\" یا \"assoc:<ID>\" ('{1}' دریافت شد)"
 
-msgid "only radio and combo controls take labels"
-msgstr "فقط کنترل‌های radio و combo مقدار labels می‌پذیرند"
+msgid "only a bitmap control takes an image"
+msgstr "فقط کنترل bitmap مقدار image را می‌پذیرد"
 
-msgid "only radio and combo controls take values"
-msgstr "فقط کنترل‌های radio و combo مقدار values می‌پذیرند"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "فقط کنترل‌های radio، combo و listbox مقدار labels را می‌پذیرند"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "فقط کنترل‌های radio، combo و listbox مقدار values را می‌پذیرند"
 
 msgid "out of memory"
 msgstr "حافظه کافی نیست"
@@ -3068,8 +3077,8 @@ msgstr "دو بسته منبع با یک ResourceId در یک مجموعه"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type باید string، expand، dword، qword، binary یا multi باشد (دریافت شد '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type باید text، checkbox، edit، radio یا combo باشد (دریافت شد '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type باید یکی از text، checkbox، edit، radio، combo، listbox یا bitmap باشد ('{1}' دریافت شد)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' یک [file.*] از این بسته نیست"

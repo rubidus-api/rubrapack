@@ -888,6 +888,9 @@ msgstr "i valori di [define] devono essere stringhe"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] richiede '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] richiede image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] richiede 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` di un pacchetto: finestre, tabella codici, normalizzazione del te
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` di un pacchetto o bundle MSIX"
 
+msgid "a %s control has no property"
+msgstr "un controllo {1} non ha property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "un controllo {1} non ha testo; mettere un controllo di testo accanto"
 
@@ -1442,9 +1448,6 @@ msgstr "impossibile leggere un flusso del pacchetto"
 
 msgid "a table has more than 32 columns"
 msgstr "una tabella ha più di 32 colonne"
-
-msgid "a text control has no property"
-msgstr "un controllo di testo non ha proprietà"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "un valore `with` un file ne condivide il componente: mettere `when` sul file"
@@ -2043,6 +2046,9 @@ msgstr "id deve essere un GUID come {12345678-1234-1234-1234-123456789ABC}: quel
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name deve avere da 3 a 50 caratteri tra A-Z, a-z, 0-9, '.' e '-' (ricevuto '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image deve essere un file .bmp (Windows Installer mostra solo BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "le tabelle inline non sono supportate; usare una tabella [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on deve essere \"install\", \"uninstall\" o \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: ognuno è un tipo di file ('.' e lettere minuscole, cifre, '_' o '-'), \"*\" (ogni file), \"folder\", \"background\" (la parte vuota di una cartella), \"drive\" o \"assoc:<ID>\" (ricevuto '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "solo i controlli radio e combo accettano labels"
+msgid "only a bitmap control takes an image"
+msgstr "solo un controllo bitmap accetta image"
 
-msgid "only radio and combo controls take values"
-msgstr "solo i controlli radio e combo accettano values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "solo i controlli radio, combo e listbox accettano labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "solo i controlli radio, combo e listbox accettano values"
 
 msgid "out of memory"
 msgstr "memoria insufficiente"
@@ -3066,8 +3075,8 @@ msgstr "due pacchetti di risorse con lo stesso ResourceId in un bundle"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type deve essere string, expand, dword, qword, binary o multi (ricevuto '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type deve essere text, checkbox, edit, radio o combo (ricevuto '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type deve essere text, checkbox, edit, radio, combo, listbox o bitmap (ricevuto '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' non è un [file.*] di questo pacchetto"

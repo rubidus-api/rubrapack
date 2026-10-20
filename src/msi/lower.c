@@ -579,6 +579,8 @@ typedef struct {
     size_t           nstreams;
     rp_ui_t         *ui;
     uint8_t         *lic, *rtf, *banner, *lang_rtf[RP_UI_LANG_MAX];
+    rp_ui_control_image_t *ctl_imgs;    // B10: bitmap dialog-controls' bytes, alive until the package is written
+    size_t           nctl_img;
     uint8_t         *act_bin[64];      // RFC-0031 B6: Binary-table DLLs of single actions, freed at the end
     size_t           act_bin_count;
 } pkg_t;
@@ -2458,9 +2460,25 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
         }
     }
     if (err == PROVEN_OK && ir->banner_source) err = rp_pal_read_file(alloc, ir->banner_source, 1u << 22, &pk->banner, &banner_len);
+    // RFC-0031 B10: read each bitmap dialog-control's .bmp into memory for the Binary table. The
+    // bytes stay in pk->ctl_imgs (freed with the package), as the UI tables keep a pointer to them.
+    for (size_t k = 0; err == PROVEN_OK && k < ir->dialog_control_count; ++k)
+        pk->nctl_img += ir->dialog_controls[k].image_source != NULL;
+    if (err == PROVEN_OK && pk->nctl_img) {
+        pk->ctl_imgs = rp_mem_alloc(alloc, pk->nctl_img, sizeof *pk->ctl_imgs);
+        if (pk->ctl_imgs == NULL) err = PROVEN_ERR_NOMEM;
+        for (size_t k = 0, gi = 0; err == PROVEN_OK && k < ir->dialog_control_count; ++k) {
+            const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
+            if (x->image_source == NULL) continue;
+            uint8_t *data = NULL;
+            size_t dlen = 0;
+            err = rp_pal_read_file(alloc, x->image_source, 1u << 22, &data, &dlen);
+            pk->ctl_imgs[gi++] = (rp_ui_control_image_t){ x->id, data, dlen };
+        }
+    }
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 }, pk->details, pk->any_purge };
+                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];
@@ -2708,6 +2726,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_mem_free(alloc, pk->lic);
     rp_mem_free(alloc, pk->rtf);
     rp_mem_free(alloc, pk->banner);
+    for (size_t g = 0; g < pk->nctl_img; ++g) rp_mem_free(alloc, (uint8_t *)pk->ctl_imgs[g].bmp);
+    rp_mem_free(alloc, pk->ctl_imgs);
     for (size_t i = 0; i < pk->act_bin_count; ++i) rp_mem_free(alloc, pk->act_bin[i]);
     for (size_t i = 0; pk->icons && i < pk->nicons; ++i) rp_mem_free(alloc, pk->icons[i].data);
     rp_mem_free(alloc, pk->icons);

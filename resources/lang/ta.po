@@ -888,6 +888,9 @@ msgstr "[define] மதிப்புகள் சரங்களாக இர�
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] க்கு '{2}' தேவை"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] க்கு image தேவை"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] க்கு 'property' தேவை"
 
@@ -1200,6 +1203,9 @@ msgstr "ஒரு தொகுப்பின் `lint`: உரையாடல�
 msgid "`lint` of an MSIX package or bundle"
 msgstr "ஒரு MSIX தொகுப்பு அல்லது தொகுதியின் `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} கட்டுப்பாட்டுக்கு property இல்லை"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "ஒரு {1} கட்டுப்பாட்டுக்கு உரை இல்லை; அதன் அருகில் ஓர் உரைக் கட்டுப்பாட்டை வைக்கவும்"
 
@@ -1442,9 +1448,6 @@ msgstr "தொகுப்பின் ஓர் ஓட்டத்தைப் 
 
 msgid "a table has more than 32 columns"
 msgstr "ஓர் அட்டவணையில் 32 க்கும் மேற்பட்ட நெடுவரிசைகள் உள்ளன"
-
-msgid "a text control has no property"
-msgstr "ஓர் உரைக் கட்டுப்பாட்டுக்குப் பண்பு இல்லை"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "ஒரு கோப்புடன் `with` ஆக உள்ள மதிப்பு அதன் கூறைப் பகிரும்: `when` ஐக் கோப்பில் வைக்கவும்"
@@ -2043,6 +2046,9 @@ msgstr "id {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID ஆக �
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' மற்றும் '-' இலிருந்து 3 முதல் 50 எழுத்துகளாக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image ஒரு .bmp கோப்பாக இருக்க வேண்டும் (Windows Installer BMP ஐ மட்டுமே காட்டும்)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "வரிக்குள் அட்டவணைகள் ஆதரிக்கப்படவில்லை; ஒரு [kind.ID] அட்டவணையைப் பயன்படுத்தவும்"
 
@@ -2400,11 +2406,14 @@ msgstr "on \"install\", \"uninstall\" அல்லது \"both\" ஆக இர�
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: ஒவ்வொன்றும் ஒரு கோப்பு வகை ('.' மற்றும் சிற்றெழுத்துகள், இலக்கங்கள், '_' அல்லது '-'), \"*\" (ஒவ்வொரு கோப்பும்), \"folder\", \"background\" (கோப்புறையின் காலிப் பகுதி), \"drive\" அல்லது \"assoc:<ID>\" ('{1}' கிடைத்தது)"
 
-msgid "only radio and combo controls take labels"
-msgstr "radio மற்றும் combo கட்டுப்பாடுகள் மட்டுமே labels ஐ ஏற்கும்"
+msgid "only a bitmap control takes an image"
+msgstr "image ஐ bitmap கட்டுப்பாடு மட்டுமே ஏற்கும்"
 
-msgid "only radio and combo controls take values"
-msgstr "radio மற்றும் combo கட்டுப்பாடுகள் மட்டுமே values ஐ ஏற்கும்"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels ஐ radio, combo, listbox கட்டுப்பாடுகள் மட்டுமே ஏற்கும்"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values ஐ radio, combo, listbox கட்டுப்பாடுகள் மட்டுமே ஏற்கும்"
 
 msgid "out of memory"
 msgstr "நினைவகம் போதவில்லை"
@@ -3066,8 +3075,8 @@ msgstr "தொகுதியில் ஒரே ResourceId உள்ள இர�
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type string, expand, dword, qword, binary அல்லது multi ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type text, checkbox, edit, radio அல்லது combo ஆக இருக்க வேண்டும் (கிடைத்தது '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type என்பது text, checkbox, edit, radio, combo, listbox அல்லது bitmap ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' இந்தத் தொகுப்பின் [file.*] அல்ல"

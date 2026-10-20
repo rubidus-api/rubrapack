@@ -890,6 +890,9 @@ msgstr "ערכי [define] חייבים להיות מחרוזות"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] דורש '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] דורש image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] דורש 'property'"
 
@@ -1202,6 +1205,9 @@ msgstr "`lint` של חבילה: תיבות דו-שיח, דף קוד, נרמול 
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` של חבילת MSIX או צרור"
 
+msgid "a %s control has no property"
+msgstr "לפקד {1} אין property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "לפקד {1} אין טקסט; שים פקד טקסט לידו"
 
@@ -1444,9 +1450,6 @@ msgstr "לא ניתן לקרוא זרם של החבילה"
 
 msgid "a table has more than 32 columns"
 msgstr "לטבלה יש יותר מ-32 עמודות"
-
-msgid "a text control has no property"
-msgstr "לפקד טקסט אין מאפיין"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "ערך `with` קובץ חולק את הרכיב שלו: שים את `when` על הקובץ"
@@ -2045,6 +2048,9 @@ msgstr "id חייב להיות GUID כמו {{12345678-1234-1234-1234-123456789AB
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name חייב להיות 3 עד 50 תווים מתוך A-Z, a-z, 0-9, '.' ו-'-' (התקבל '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image חייב להיות קובץ ‎.bmp (‏Windows Installer מציג BMP בלבד)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "טבלאות inline אינן נתמכות; השתמש בטבלת [kind.ID]"
 
@@ -2402,11 +2408,14 @@ msgstr "on חייב להיות \"install\", \"uninstall\" או \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: כל אחד הוא סוג קובץ ('.' ואחריו אותיות קטנות, ספרות, '_' או '-'), \"*\" (כל קובץ), \"folder\", \"background\" (החלק הריק של תיקייה), \"drive\" או \"assoc:<ID>\" (התקבל '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "רק פקדי radio ו-combo מקבלים labels"
+msgid "only a bitmap control takes an image"
+msgstr "רק פקד bitmap מקבל image"
 
-msgid "only radio and combo controls take values"
-msgstr "רק פקדי radio ו-combo מקבלים values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "רק פקדי radio, combo ו-listbox מקבלים labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "רק פקדי radio, combo ו-listbox מקבלים values"
 
 msgid "out of memory"
 msgstr "אין די זיכרון"
@@ -3068,8 +3077,8 @@ msgstr "שתי חבילות משאבים עם אותו ResourceId בצרור"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type חייב להיות string, expand, dword, qword, binary או multi (התקבל '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type חייב להיות text, checkbox, edit, radio או combo (התקבל '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type חייב להיות text, checkbox, edit, radio, combo, listbox או bitmap (התקבל '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: ‏'{1}' אינו [file.*] של חבילה זו"

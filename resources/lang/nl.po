@@ -888,6 +888,9 @@ msgstr "[define]-waarden moeten tekenreeksen zijn"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] heeft '{2}' nodig"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] heeft image nodig"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] heeft 'property' nodig"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` van een pakket: dialoogvensters, codetabel, tekstnormalisatie"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` van een MSIX-pakket of -bundel"
 
+msgid "a %s control has no property"
+msgstr "een {1}-besturingselement heeft geen property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "een {1}-besturingselement heeft geen tekst; zet er een tekstbesturingselement naast"
 
@@ -1442,9 +1448,6 @@ msgstr "een stroom van het pakket kan niet worden gelezen"
 
 msgid "a table has more than 32 columns"
 msgstr "een tabel heeft meer dan 32 kolommen"
-
-msgid "a text control has no property"
-msgstr "een tekstbesturingselement heeft geen eigenschap"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "een waarde `with` een bestand deelt zijn onderdeel: zet `when` op het bestand"
@@ -2043,6 +2046,9 @@ msgstr "id moet een GUID zijn zoals {12345678-1234-1234-1234-123456789ABC}: die 
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name moet 3 tot 50 tekens zijn uit A-Z, a-z, 0-9, '.' en '-' (gekregen: '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image moet een .bmp-bestand zijn (Windows Installer toont alleen BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline-tabellen worden niet ondersteund; gebruik een [kind.ID]-tabel"
 
@@ -2400,11 +2406,14 @@ msgstr "on moet \"install\", \"uninstall\" of \"both\" zijn"
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: elk is een bestandstype ('.' en kleine letters, cijfers, '_' of '-'), \"*\" (elk bestand), \"folder\", \"background\" (het lege deel van een map), \"drive\" of \"assoc:<ID>\" (gekregen: '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "alleen keuzerondjes- en keuzelijstbesturingselementen nemen labels"
+msgid "only a bitmap control takes an image"
+msgstr "alleen een bitmap-besturingselement neemt image"
 
-msgid "only radio and combo controls take values"
-msgstr "alleen keuzerondjes- en keuzelijstbesturingselementen nemen values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "alleen radio-, combo- en listbox-besturingselementen nemen labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "alleen radio-, combo- en listbox-besturingselementen nemen values"
 
 msgid "out of memory"
 msgstr "onvoldoende geheugen"
@@ -3066,8 +3075,8 @@ msgstr "twee resourcepakketten met één ResourceId in een bundel"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type moet string, expand, dword, qword, binary of multi zijn (gekregen: '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type moet text, checkbox, edit, radio of combo zijn (gekregen: '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type moet text, checkbox, edit, radio, combo, listbox of bitmap zijn (kreeg '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' is geen [file.*] van dit pakket"

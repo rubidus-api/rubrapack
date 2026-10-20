@@ -337,6 +337,8 @@ typedef struct {
     size_t             nmdef;
     size_t             nmctl, capmctl;
     int                lseq;            // the next InstallUISequence number of a language action
+    const rp_ui_control_image_t *images;    // RFC-0031 B10: bitmap dialog-controls' pictures
+    size_t             image_count;
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
@@ -1162,6 +1164,9 @@ static const char *label(ctx_t *c, const rp_ir_dialog_control_t *x, size_t j) {
     return AT(c, x->labels[j], by, n, false);
 }
 
+// Text and bitmap controls are not tab stops (they take no focus), so the tab-order chain skips them.
+static bool dc_tabstop(int type) { return type != RP_DC_TEXT && type != RP_DC_BITMAP; }
+
 // An author's page (RFC-0005 K4): the built-in frame and buttons around the source's controls.
 // Tab order follows the position (top to bottom, then left to right), so it never depends on the
 // order of tables in the source.
@@ -1181,7 +1186,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
     }
     const char *first = NULL;
     for (size_t i = 0; i < n && first == NULL; ++i) {
-        if (mine[i]->type != RP_DC_TEXT) first = mine[i]->id;
+        if (dc_tabstop(mine[i]->type)) first = mine[i]->id;
     }
     dialog(c, d->id, 370, 270, 3, first ? first : "Next", "Next", "Cancel");
     frame_text(c, d->id, AT(c, d->title ? d->title : "[ProductName]", d->title_by_lang, d->title_by_lang_count, true),
@@ -1190,10 +1195,10 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
         const rp_ir_dialog_control_t *x = mine[i];
         const char *text = AT(c, x->text, x->text_by_lang, x->text_by_lang_count, false);
         const char *to = NULL;              // the next tab stop, or Back after the last
-        if (x->type != RP_DC_TEXT) {
+        if (dc_tabstop(x->type)) {
             to = "Back";
             for (size_t j = i + 1; j < n && strcmp(to, "Back") == 0; ++j) {
-                if (mine[j]->type != RP_DC_TEXT) to = mine[j]->id;
+                if (dc_tabstop(mine[j]->type)) to = mine[j]->id;
             }
         }
         switch (x->type) {
@@ -1225,6 +1230,27 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                 s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
             }
             break;
+        case RP_DC_LISTBOX:         // a list box: one of the values is picked (no typing); shown in Order
+            control(c, d->id, x->id, "ListBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, x->property, NULL, to);
+            for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
+                rows_t *r = &c->listbox;
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
+            }
+            break;
+        case RP_DC_BITMAP: {        // a picture from a Binary stream (the .bmp read by the caller)
+            const char *bn = NULL;
+            for (size_t g = 0; g < c->image_count; ++g) {
+                if (strcmp(c->images[g].control_id, x->id) != 0) continue;
+                bn = keep(c, "RpBmp", x->id);
+                rows_t *r = &c->binary;
+                s_(c, r, bn);
+                rp_msi_cell_t *bc = cell(c, r);
+                if (bc) { bc->bytes = (uint8_t *)c->images[g].bmp; bc->len = c->images[g].len; }
+                break;
+            }
+            control(c, d->id, x->id, "Bitmap", x->x, x->y, x->width, x->height, VIS, NULL, bn, NULL);   // stretched to the control rect, as the banner is
+            break;
+        }
         default:
             break;
         }
@@ -1704,6 +1730,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->page = c->multi && ir->ui >= RP_UI_MINIMAL;
     c->details = in->details;
     c->details_dll = in->helper;
+    c->images = in->control_images;
+    c->image_count = in->control_image_count;
     rows_init(&c->dialog, "Dialog", dialog_cols, 10);
     rows_init(&c->control, "Control", control_cols, 12);
     rows_init(&c->event, "ControlEvent", event_cols, 6);

@@ -888,6 +888,9 @@ msgstr "[define]-arvojen on oltava merkkijonoja"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] tarvitsee '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] tarvitsee image-arvon"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] tarvitsee 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "paketin `lint`: valintaikkunat, koodisivu, tekstin normalisointi"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX-paketin tai -nipun `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1}-ohjausobjektilla ei ole property-arvoa"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1}-ohjausobjektilla ei ole tekstiä; lisää sen viereen teksti-ohjausobjekti"
 
@@ -1442,9 +1448,6 @@ msgstr "paketin virtaa ei voi lukea"
 
 msgid "a table has more than 32 columns"
 msgstr "taulukossa on yli 32 saraketta"
-
-msgid "a text control has no property"
-msgstr "teksti-ohjausobjektilla ei ole ominaisuutta"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "`with`-arvo jakaa tiedoston komponentin: laita `when` tiedostoon"
@@ -2043,6 +2046,9 @@ msgstr "idn on oltava GUID, kuten {12345678-1234-1234-1234-123456789ABC}: moduul
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-namen on oltava 3-50 merkkiä joukosta A-Z, a-z, 0-9, '.' ja '-' (saatiin '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image on oltava .bmp-tiedosto (Windows Installer näyttää vain BMP:n)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "sisäkkäisiä taulukoita (inline) ei tueta; käytä [kind.ID]-taulukkoa"
 
@@ -2400,11 +2406,14 @@ msgstr "onin on oltava \"install\", \"uninstall\" tai \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: kukin on tiedostotyyppi ('.' ja pieniä kirjaimia, numeroita, '_' tai '-'), \"*\" (jokainen tiedosto), \"folder\", \"background\" (kansion tyhjä osa), \"drive\" tai \"assoc:<ID>\" (saatiin '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "vain valintanappi- ja yhdistelmäruutuohjausobjektit ottavat labels-arvon"
+msgid "only a bitmap control takes an image"
+msgstr "vain bitmap-ohjausobjekti ottaa image-arvon"
 
-msgid "only radio and combo controls take values"
-msgstr "vain valintanappi- ja yhdistelmäruutuohjausobjektit ottavat values-arvon"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "vain radio-, combo- ja listbox-ohjausobjektit ottavat labels-arvon"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "vain radio-, combo- ja listbox-ohjausobjektit ottavat values-arvon"
 
 msgid "out of memory"
 msgstr "muisti loppui"
@@ -3066,8 +3075,8 @@ msgstr "kaksi saman ResourceId:n resurssipakettia nipussa"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "typen on oltava string, expand, dword, qword, binary tai multi (saatiin '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "typen on oltava text, checkbox, edit, radio tai combo (saatiin '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type on oltava text, checkbox, edit, radio, combo, listbox tai bitmap (saatiin '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' ei ole tämän paketin [file.*]"

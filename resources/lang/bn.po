@@ -888,6 +888,9 @@ msgstr "[define]-এর মান স্ট্রিং হতে হবে"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}]-এর জন্য '{2}' দরকার"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}]-এর image প্রয়োজন"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}]-এর জন্য 'property' দরকার"
 
@@ -1200,6 +1203,9 @@ msgstr "একটি প্যাকেজের `lint`: ডায়ালগ, 
 msgid "`lint` of an MSIX package or bundle"
 msgstr "একটি MSIX প্যাকেজ বা বান্ডলের `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} নিয়ন্ত্রণের কোনো property নেই"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "একটি {1} কন্ট্রোলের কোনো লেখা নেই; পাশে একটি টেক্সট কন্ট্রোল রাখুন"
 
@@ -1442,9 +1448,6 @@ msgstr "প্যাকেজের একটি স্ট্রিম পড়
 
 msgid "a table has more than 32 columns"
 msgstr "একটি টেবিলে 32-এর বেশি কলাম আছে"
-
-msgid "a text control has no property"
-msgstr "একটি টেক্সট কন্ট্রোলের কোনো বৈশিষ্ট্য নেই"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "একটি ফাইলের `with` থাকা মান তার উপাদান ভাগ করে: `when` ফাইলে দিন"
@@ -2043,6 +2046,9 @@ msgstr "id-কে {{12345678-1234-1234-1234-123456789ABC} এর মতো GUID 
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name-কে A-Z, a-z, 0-9, '.' এবং '-' এর 3 থেকে 50টি অক্ষর হতে হবে ('{1}' পাওয়া গেছে)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image অবশ্যই একটি .bmp ফাইল হতে হবে (Windows Installer শুধু BMP দেখায়)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ইনলাইন টেবিল সমর্থিত নয়; একটি [kind.ID] টেবিল ব্যবহার করুন"
 
@@ -2400,11 +2406,14 @@ msgstr "on-কে \"install\", \"uninstall\" বা \"both\" হতে হবে
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: প্রতিটি একটি ফাইল টাইপ ('.' এবং ছোট হাতের অক্ষর, সংখ্যা, '_' বা '-'), \"*\" (প্রতিটি ফাইল), \"folder\", \"background\" (ফোল্ডারের খালি অংশ), \"drive\" বা \"assoc:<ID>\" ('{1}' পাওয়া গেছে)"
 
-msgid "only radio and combo controls take labels"
-msgstr "শুধু radio ও combo কন্ট্রোল labels নেয়"
+msgid "only a bitmap control takes an image"
+msgstr "শুধু একটি bitmap নিয়ন্ত্রণ image নেয়"
 
-msgid "only radio and combo controls take values"
-msgstr "শুধু radio ও combo কন্ট্রোল values নেয়"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "শুধু radio, combo ও listbox নিয়ন্ত্রণ labels নেয়"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "শুধু radio, combo ও listbox নিয়ন্ত্রণ values নেয়"
 
 msgid "out of memory"
 msgstr "মেমরি ফুরিয়ে গেছে"
@@ -3066,8 +3075,8 @@ msgstr "বান্ডলে একই ResourceId-এর দুটি রিস
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type-কে string, expand, dword, qword, binary বা multi হতে হবে (পাওয়া গেছে '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type-কে text, checkbox, edit, radio বা combo হতে হবে (পাওয়া গেছে '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type অবশ্যই text, checkbox, edit, radio, combo, listbox বা bitmap হতে হবে ('{1}' পাওয়া গেছে)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' এই প্যাকেজের [file.*] নয়"

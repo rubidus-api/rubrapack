@@ -888,6 +888,9 @@ msgstr "[define] 的值必须是字符串"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] 需要 '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] 需要 image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] 需要 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "安装包的 `lint`: 对话框、代码页、文本规范化"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX 包或捆绑包的 `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} 控件没有 property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} 控件没有文本；请在旁边放一个文本控件"
 
@@ -1442,9 +1448,6 @@ msgstr "无法读取安装包的某个流"
 
 msgid "a table has more than 32 columns"
 msgstr "某个表超过 32 列"
-
-msgid "a text control has no property"
-msgstr "文本控件没有属性"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "与文件 `with` 的值共用其组件: 请把 `when` 放在文件上"
@@ -2043,6 +2046,9 @@ msgstr "id 必须是形如 {12345678-1234-1234-1234-123456789ABC} 的 GUID: 模�
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name 必须是由 A-Z、a-z、0-9、'.' 和 '-' 组成的 3 到 50 个字符(实际为 '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image 必须是 .bmp 文件（Windows Installer 只显示 BMP）"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "不支持内联表；请使用 [kind.ID] 表"
 
@@ -2400,11 +2406,14 @@ msgstr "on 必须是 \"install\"、\"uninstall\" 或 \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: 每项是文件类型('.' 加小写字母、数字、'_' 或 '-')、\"*\"(所有文件)、\"folder\"、\"background\"(文件夹的空白处)、\"drive\" 或 \"assoc:<ID>\"(实际为 '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "只有单选和组合框控件接受 labels"
+msgid "only a bitmap control takes an image"
+msgstr "只有 bitmap 控件接受 image"
 
-msgid "only radio and combo controls take values"
-msgstr "只有单选和组合框控件接受 values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "只有 radio、combo 和 listbox 控件接受 labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "只有 radio、combo 和 listbox 控件接受 values"
 
 msgid "out of memory"
 msgstr "内存不足"
@@ -3066,8 +3075,8 @@ msgstr "捆绑包中有两个 ResourceId 相同的资源包"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type 必须是 string、expand、dword、qword、binary 或 multi(实际为 '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type 必须是 text、checkbox、edit、radio 或 combo(实际为 '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type 必须是 text、checkbox、edit、radio、combo、listbox 或 bitmap（得到 '{1}'）"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' 不是此安装包的 [file.*]"

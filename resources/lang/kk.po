@@ -888,6 +888,9 @@ msgstr "[define] мәндері жол болуы керек"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] үшін '{2}' керек"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] image қажет етеді"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] үшін 'property' керек"
 
@@ -1200,6 +1203,9 @@ msgstr "буманың `lint`: диалогтар, код беті, мәтінд
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX бумасының не жиынының `lint`"
 
+msgid "a %s control has no property"
+msgstr "{1} басқару элементінде property жоқ"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "{1} басқару элементінде мәтін жоқ; жанына мәтін элементін қойыңыз"
 
@@ -1442,9 +1448,6 @@ msgstr "буманың ағынын оқу мүмкін емес"
 
 msgid "a table has more than 32 columns"
 msgstr "кестеде 32-ден көп баған бар"
-
-msgid "a text control has no property"
-msgstr "мәтін басқару элементінде сипат жоқ"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "файлмен `with` болатын мән оның құрамдас бөлігін бөліседі: `when` файлға қойыңыз"
@@ -2043,6 +2046,9 @@ msgstr "id {{12345678-1234-1234-1234-123456789ABC} сияқты GUID болуы 
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' және '-' таңбаларынан тұратын 3-50 таңба болуы керек ('{1}' алынды)"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image .bmp файлы болуы керек (Windows Installer тек BMP көрсетеді)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "кірістірілген кестелерге қолдау жоқ; [kind.ID] кестесін пайдаланыңыз"
 
@@ -2400,11 +2406,14 @@ msgstr "on \"install\", \"uninstall\" немесе \"both\" болуы кере�
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: әрқайсысы - файл түрі ('.' және кіші әріптер, сандар, '_' не '-'), \"*\" (барлық файл), \"folder\", \"background\" (қалтаның бос бөлігі), \"drive\" немесе \"assoc:<ID>\" ('{1}' алынды)"
 
-msgid "only radio and combo controls take labels"
-msgstr "labels тек radio және combo элементтеріне беріледі"
+msgid "only a bitmap control takes an image"
+msgstr "image тек bitmap басқару элементін қабылдайды"
 
-msgid "only radio and combo controls take values"
-msgstr "values тек radio және combo элементтеріне беріледі"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels тек radio, combo және listbox басқару элементтерін қабылдайды"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values тек radio, combo және listbox басқару элементтерін қабылдайды"
 
 msgid "out of memory"
 msgstr "жад жеткіліксіз"
@@ -3066,8 +3075,8 @@ msgstr "жиындағы бір ResourceId бар екі ресурс бумас
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type string, expand, dword, qword, binary немесе multi болуы керек ('{1}' алынды)"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type text, checkbox, edit, radio немесе combo болуы керек ('{1}' алынды)"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type мәні text, checkbox, edit, radio, combo, listbox немесе bitmap болуы керек ('{1}' алынды)"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' осы буманың [file.*] емес"

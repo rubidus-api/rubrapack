@@ -888,6 +888,9 @@ msgstr "[define] reikšmės turi būti eilutės"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] reikia '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] reikia image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] reikia 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "paketo `lint`: dialogai, kodų lentelė, teksto normalizavimas"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "MSIX paketo arba rinkinio `lint`"
 
+msgid "a %s control has no property"
+msgstr "valdiklis {1} neturi property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "valdiklis {1} neturi teksto; šalia padėkite teksto valdiklį"
 
@@ -1442,9 +1448,6 @@ msgstr "paketo srauto negalima perskaityti"
 
 msgid "a table has more than 32 columns"
 msgstr "lentelėje yra daugiau nei 32 stulpeliai"
-
-msgid "a text control has no property"
-msgstr "teksto valdiklis neturi savybės"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "reikšmė `with` failu dalijasi jo komponentu: `when` dėkite ant failo"
@@ -2043,6 +2046,9 @@ msgstr "id turi būti GUID kaip {{12345678-1234-1234-1234-123456789ABC}: paties 
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name turi būti 3-50 simbolių iš A-Z, a-z, 0-9, '.' ir '-' (gauta '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image turi būti .bmp failas (Windows Installer rodo tik BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline lentelės nepalaikomos; naudokite lentelę [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on turi būti \"install\", \"uninstall\" arba \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: kiekvienas yra failo tipas ('.' ir mažosios raidės, skaitmenys, '_' arba '-'), \"*\" (kiekvienas failas), \"folder\", \"background\" (tuščia aplanko dalis), \"drive\" arba \"assoc:<ID>\" (gauta '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "tik radio ir combo valdikliai priima labels"
+msgid "only a bitmap control takes an image"
+msgstr "image priima tik bitmap valdiklis"
 
-msgid "only radio and combo controls take values"
-msgstr "tik radio ir combo valdikliai priima values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "labels priima tik radio, combo ir listbox valdikliai"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "values priima tik radio, combo ir listbox valdikliai"
 
 msgid "out of memory"
 msgstr "trūksta atminties"
@@ -3066,8 +3075,8 @@ msgstr "rinkinyje du išteklių paketai su tuo pačiu ResourceId"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type turi būti string, expand, dword, qword, binary arba multi (gauta '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type turi būti text, checkbox, edit, radio arba combo (gauta '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type turi būti text, checkbox, edit, radio, combo, listbox arba bitmap (gauta '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nėra šio paketo [file.*]"

@@ -102,7 +102,7 @@ void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
 
 void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_control_t *x) {
     static const char *const keys[] = { "dialog", "type", "x", "y", "width", "height", "text", "property", "values",
-                                        "labels", NULL }, *const lkeys[] = { "text", "labels", NULL };
+                                        "labels", "image", NULL }, *const lkeys[] = { "text", "labels", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
     x->id = ir_dup(c, t->id);
@@ -111,12 +111,12 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     if (frame_control(t->id)) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", t->id);
     x->dialog = ir_get_str(c, t, "dialog", true, NULL);
     char *type = ir_get_str(c, t, "type", true, NULL);
-    static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", NULL };
+    static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap", NULL };
     x->type = -1;
     for (int k = 0; type && types[k]; ++k) {
         if (strcmp(type, types[k]) == 0) x->type = k;
     }
-    if (type && x->type < 0) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be text, checkbox, edit, radio or combo (got '%s')", type);
+    if (type && x->type < 0) ERR(c, ir_key_pos(t, "type"), "RP1316", "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')", type);
     rp_mem_free(c->alloc, type);
     static const char *const req[] = { "x", "y", "width", "height" };
     for (int k = 0; k < 4; ++k) {
@@ -132,25 +132,42 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     bool has_text = false;
     x->text = ir_get_str(c, t, "text", false, &has_text);
     x->property = ir_get_str(c, t, "property", false, NULL);
+    // bitmap: a picture from a .bmp (Windows Installer shows BMP only, as the banner does), no text,
+    // no property, no values.
+    bool has_image = false;
+    char *image = ir_get_str(c, t, "image", false, &has_image);
+    if (x->type == RP_DC_BITMAP) {
+        if (image) {
+            if (!ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
+            else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
+            x->image_shown = ir_dup(c, image);
+        } else {
+            ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'image'", t->id);
+        }
+    } else if (has_image) {
+        ERR(c, ir_key_pos(t, "image"), "RP1316", "only a bitmap control takes an image");
+    }
+    rp_mem_free(c->alloc, image);
     if (x->type == RP_DC_TEXT || x->type == RP_DC_CHECKBOX) {
         if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", t->id);
     } else if (x->type >= 0 && (has_text || x->text_by_lang_count)) {
-        ERR(c, ir_key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", x->type == RP_DC_EDIT ? "edit" : x->type == RP_DC_RADIO ? "radio" : "combo");
+        static const char *const noname[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap" };
+        ERR(c, ir_key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", noname[x->type]);
     }
-    if (x->type == RP_DC_TEXT) {
-        if (x->property) ERR(c, ir_key_pos(t, "property"), "RP1316", "a text control has no property");
+    if (x->type == RP_DC_TEXT || x->type == RP_DC_BITMAP) {
+        if (x->property) ERR(c, ir_key_pos(t, "property"), "RP1316", "a %s control has no property", x->type == RP_DC_BITMAP ? "bitmap" : "text");
     } else if (x->type >= 0) {
         if (x->property == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", t->id);
         else if (!public_property(x->property))
             ERR(c, ir_key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", x->property);
     }
     const rp_tkey_t *vk = ir_find_key(t, "values"), *lk = ir_find_key(t, "labels");
-    bool list = x->type == RP_DC_RADIO || x->type == RP_DC_COMBO;
+    bool list = x->type == RP_DC_RADIO || x->type == RP_DC_COMBO || x->type == RP_DC_LISTBOX;
     if (!list) {
-        if (vk) ERR(c, vk->pos, "RP1316", "only radio and combo controls take values");
-        if (lk) ERR(c, lk->pos, "RP1316", "only radio and combo controls take labels");
+        if (vk) ERR(c, vk->pos, "RP1316", "only radio, combo and listbox controls take values");
+        if (lk) ERR(c, lk->pos, "RP1316", "only radio, combo and listbox controls take labels");
         for (size_t k = 0; k < t->count; ++k) {
-            if (ir_lang_of_key(t->keys[k].key, "labels")) ERR(c, t->keys[k].pos, "RP1316", "only radio and combo controls take labels");
+            if (ir_lang_of_key(t->keys[k].key, "labels")) ERR(c, t->keys[k].pos, "RP1316", "only radio, combo and listbox controls take labels");
         }
         return;
     }

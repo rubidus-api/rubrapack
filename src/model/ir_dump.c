@@ -294,17 +294,18 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
-        static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo" };
+        static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap" };
         const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
         char geo[64];
         rp_buf_puts(&b, "dialog-control ");
         rp_buf_puts(&b, x->id);
         kv(&b, "dialog", x->dialog);
-        kv(&b, "type", x->type >= 0 && x->type < 5 ? types[x->type] : "-");
+        kv(&b, "type", x->type >= 0 && x->type < (int)(sizeof types / sizeof *types) ? types[x->type] : "-");
         snprintf(geo, sizeof geo, "%d,%d,%d,%d", x->x, x->y, x->width, x->height);
         kv(&b, "at", geo);
         kv(&b, "text", x->text);
         kv(&b, "property", x->property);
+        if (x->image_shown) kv(&b, "image", x->image_shown);
         for (size_t j = 0; j < x->value_count; ++j) {
             kv(&b, "value", x->values[j]);
             kv(&b, "label", x->labels[j]);

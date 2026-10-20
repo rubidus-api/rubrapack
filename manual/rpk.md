@@ -254,7 +254,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), details (default `true`: the progress page shows what is being done), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
-| `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
+| `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image (`.bmp`, bitmap only), text-xx, labels-xx |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when, advertise (`true`: see [Shortcuts](#shortcuts-shortcutid), MSI only) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
@@ -1517,9 +1517,12 @@ value = "typical"                 # the default, also for a silent installation
   y = 234. The Tab key moves through the controls from top to bottom, then left to right.
 - `text` shows a label (`&` marks an access key; on a text control it moves to the next control).
   `checkbox` sets its property to `1` when ticked and removes it when clear. `edit` lets the user
-  type the property's value. `radio` and `combo` choose one of `values` (1 to 32 strings of at most
-  64 bytes), shown as `labels` (default: the values themselves), in the order written.
-- A `radio` or `combo` needs a `[property.*]` whose value is one of its values: the dialogs only
+  type the property's value. `radio`, `combo` and `listbox` choose one of `values` (1 to 32 strings
+  of at most 64 bytes), shown as `labels` (default: the values themselves), in the order written -
+  `radio` as a set of buttons, `combo` as a drop-down, `listbox` as a list. `bitmap` shows a picture
+  from a `.bmp` file named by `image` (Windows Installer shows BMP only, as the banner does),
+  stretched to the control's rectangle; it takes no property and is not a tab stop.
+- A `radio`, `combo` or `listbox` needs a `[property.*]` whose value is one of its values: the dialogs only
   collect values, and a silent installation (`/qn`) uses the defaults. Any property can also be
   set on the command line: `msiexec /i example.msi /qn APP_MODE=server`.
 - The properties are public names of your own (upper case), one control each, and reach the

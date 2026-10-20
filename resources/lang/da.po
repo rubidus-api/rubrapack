@@ -888,6 +888,9 @@ msgstr "[define]-værdier skal være strenge"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] kræver '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] kræver image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] kræver 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` af en pakke: dialogbokse, tegntabel, tekstnormalisering"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` af en MSIX-pakke eller -samling"
 
+msgid "a %s control has no property"
+msgstr "et {1}-kontrolelement har ingen property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "et {1}-kontrolelement har ingen tekst; sæt et tekstkontrolelement ved siden af"
 
@@ -1442,9 +1448,6 @@ msgstr "en strøm i pakken kan ikke læses"
 
 msgid "a table has more than 32 columns"
 msgstr "en tabel har flere end 32 kolonner"
-
-msgid "a text control has no property"
-msgstr "et tekstkontrolelement har ingen egenskab"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "en værdi `with` en fil deler dens komponent: sæt `when` på filen"
@@ -2043,6 +2046,9 @@ msgstr "id skal være et GUID som {12345678-1234-1234-1234-123456789ABC}: module
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name skal være 3 til 50 tegn af A-Z, a-z, 0-9, '.' og '-' (fik '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image skal være en .bmp-fil (Windows Installer viser kun BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "indlejrede tabeller understøttes ikke; brug en [kind.ID]-tabel"
 
@@ -2400,11 +2406,14 @@ msgstr "on skal være \"install\", \"uninstall\" eller \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: hver er en filtype ('.' og små bogstaver, cifre, '_' eller '-'), \"*\" (hver fil), \"folder\", \"background\" (den tomme del af en mappe), \"drive\" eller \"assoc:<ID>\" (fik '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "kun alternativknap- og kombinationsbokskontrolelementer tager labels"
+msgid "only a bitmap control takes an image"
+msgstr "kun et bitmap-kontrolelement tager image"
 
-msgid "only radio and combo controls take values"
-msgstr "kun alternativknap- og kombinationsbokskontrolelementer tager values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "kun radio-, combo- og listbox-kontrolelementer tager labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "kun radio-, combo- og listbox-kontrolelementer tager values"
 
 msgid "out of memory"
 msgstr "hukommelsen er opbrugt"
@@ -3066,8 +3075,8 @@ msgstr "to ressourcepakker med samme ResourceId i en samling"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type skal være string, expand, dword, qword, binary eller multi (fik '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type skal være text, checkbox, edit, radio eller combo (fik '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type skal være text, checkbox, edit, radio, combo, listbox eller bitmap (fik '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' er ikke en [file.*] i denne pakke"

@@ -888,6 +888,9 @@ msgstr "Nilai [define] harus berupa string"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] memerlukan '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] memerlukan image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] memerlukan 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` paket: dialog, halaman kode, normalisasi teks"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` paket atau bundel MSIX"
 
+msgid "a %s control has no property"
+msgstr "kontrol {1} tidak memiliki property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "kontrol {1} tidak memiliki teks; letakkan kontrol teks di sampingnya"
 
@@ -1442,9 +1448,6 @@ msgstr "sebuah aliran paket tidak dapat dibaca"
 
 msgid "a table has more than 32 columns"
 msgstr "sebuah tabel memiliki lebih dari 32 kolom"
-
-msgid "a text control has no property"
-msgstr "kontrol teks tidak memiliki properti"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "nilai `with` sebuah file berbagi komponennya: taruh `when` pada file"
@@ -2043,6 +2046,9 @@ msgstr "id harus GUID seperti {{12345678-1234-1234-1234-123456789ABC}: milik mod
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name harus 3 sampai 50 karakter dari A-Z, a-z, 0-9, '.' dan '-' (didapat '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image harus berupa berkas .bmp (Windows Installer hanya menampilkan BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "tabel inline tidak didukung; gunakan tabel [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on harus \"install\", \"uninstall\" atau \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: masing-masing adalah jenis file ('.' dan huruf kecil, digit, '_' atau '-'), \"*\" (setiap file), \"folder\", \"background\" (bagian kosong folder), \"drive\" atau \"assoc:<ID>\" (didapat '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "hanya kontrol radio dan combo yang menerima labels"
+msgid "only a bitmap control takes an image"
+msgstr "hanya kontrol bitmap yang menerima image"
 
-msgid "only radio and combo controls take values"
-msgstr "hanya kontrol radio dan combo yang menerima values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "hanya kontrol radio, combo, dan listbox yang menerima labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "hanya kontrol radio, combo, dan listbox yang menerima values"
 
 msgid "out of memory"
 msgstr "memori habis"
@@ -3066,8 +3075,8 @@ msgstr "dua paket sumber daya dengan ResourceId yang sama dalam bundel"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type harus string, expand, dword, qword, binary atau multi (didapat '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type harus text, checkbox, edit, radio atau combo (didapat '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type harus text, checkbox, edit, radio, combo, listbox atau bitmap (mendapat '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' bukan [file.*] dari paket ini"

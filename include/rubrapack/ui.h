@@ -48,6 +48,13 @@ struct rp_ui {
     void            *priv;
 };
 
+// RFC-0031 B10: a bitmap dialog-control's picture, its bytes read by the caller (ui.c does no I/O).
+typedef struct {
+    const char    *control_id;      // the [dialog-control.*] ID
+    const uint8_t *bmp;
+    size_t         len;
+} rp_ui_control_image_t;
+
 typedef struct {
     const char    *install_dir;     // Directory key the installdir/features sets let the user change
     const uint8_t *license_rtf;     // RTF text for the license dialog, or NULL
@@ -59,6 +66,8 @@ typedef struct {
     size_t         license_len_by_lang[RP_UI_LANG_MAX];
     bool details;               // the helper DLL is in the package: the progress page gets its details box
     bool helper;                // the helper DLL is in the package at all (the install folder page may call it)
+    const rp_ui_control_image_t *control_images;    // RFC-0031 B10: one per bitmap dialog-control, in ID order
+    size_t         control_image_count;
 } rp_ui_input_t;
 
 // Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts

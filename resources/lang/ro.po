@@ -888,6 +888,9 @@ msgstr "Valorile [define] trebuie să fie șiruri"
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] are nevoie de '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] are nevoie de image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] are nevoie de 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` al unui pachet: dialoguri, pagină de cod, normalizarea textului"
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` al unui pachet sau pachet grupat MSIX"
 
+msgid "a %s control has no property"
+msgstr "un control {1} nu are property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "un control {1} nu are text; puneți un control text lângă el"
 
@@ -1442,9 +1448,6 @@ msgstr "un flux al pachetului nu poate fi citit"
 
 msgid "a table has more than 32 columns"
 msgstr "un tabel are mai mult de 32 de coloane"
-
-msgid "a text control has no property"
-msgstr "un control text nu are proprietate"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "o valoare `with` un fișier îi împarte componenta: puneți `when` pe fișier"
@@ -2043,6 +2046,9 @@ msgstr "id trebuie să fie un GUID ca {12345678-1234-1234-1234-123456789ABC}: al
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name trebuie să aibă 3 până la 50 de caractere din A-Z, a-z, 0-9, '.' și '-' (primit '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image trebuie să fie un fișier .bmp (Windows Installer afișează doar BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "tabelele inline nu sunt acceptate; folosiți un tabel [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on trebuie să fie \"install\", \"uninstall\" sau \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: fiecare este un tip de fișier ('.' și litere mici, cifre, '_' sau '-'), \"*\" (orice fișier), \"folder\", \"background\" (partea goală a unui folder), \"drive\" sau \"assoc:<ID>\" (primit '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "doar controalele radio și combo primesc labels"
+msgid "only a bitmap control takes an image"
+msgstr "doar un control bitmap acceptă image"
 
-msgid "only radio and combo controls take values"
-msgstr "doar controalele radio și combo primesc values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "doar controalele radio, combo și listbox acceptă labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "doar controalele radio, combo și listbox acceptă values"
 
 msgid "out of memory"
 msgstr "memorie insuficientă"
@@ -3066,8 +3075,8 @@ msgstr "două pachete de resurse cu același ResourceId într-un pachet grupat"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type trebuie să fie string, expand, dword, qword, binary sau multi (primit '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type trebuie să fie text, checkbox, edit, radio sau combo (primit '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type trebuie să fie text, checkbox, edit, radio, combo, listbox sau bitmap (s-a primit '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' nu este un [file.*] al acestui pachet"

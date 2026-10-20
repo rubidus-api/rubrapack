@@ -888,6 +888,9 @@ msgstr "Стойностите на [define] трябва да са низове
 msgid "[dialog-control.%s] needs '%s'"
 msgstr "[dialog-control.{1}] изисква '{2}'"
 
+msgid "[dialog-control.%s] needs 'image'"
+msgstr "[dialog-control.{1}] изисква image"
+
 msgid "[dialog-control.%s] needs 'property'"
 msgstr "[dialog-control.{1}] изисква 'property'"
 
@@ -1200,6 +1203,9 @@ msgstr "`lint` на пакет: диалогови прозорци, кодов�
 msgid "`lint` of an MSIX package or bundle"
 msgstr "`lint` на пакет или сбор MSIX"
 
+msgid "a %s control has no property"
+msgstr "контролата {1} няма property"
+
 msgid "a %s control has no text; put a text control beside it"
 msgstr "контролата {1} няма текст; поставете текстова контрола до нея"
 
@@ -1442,9 +1448,6 @@ msgstr "поток от пакета не може да се прочете"
 
 msgid "a table has more than 32 columns"
 msgstr "таблица има повече от 32 колони"
-
-msgid "a text control has no property"
-msgstr "текстова контрола няма свойство"
 
 msgid "a value `with` a file shares its component: put `when` on the file"
 msgstr "стойност `with` файл споделя компонента му: поставете `when` на файла"
@@ -2043,6 +2046,9 @@ msgstr "id трябва да е GUID като {{12345678-1234-1234-1234-12345678
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name трябва да е от 3 до 50 знака от A-Z, a-z, 0-9, '.' и '-' (получено '{1}')"
 
+msgid "image must be a .bmp file (Windows Installer shows BMP only)"
+msgstr "image трябва да е файл .bmp (Windows Installer показва само BMP)"
+
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "вградени (inline) таблици не се поддържат; използвайте таблица [kind.ID]"
 
@@ -2400,11 +2406,14 @@ msgstr "on трябва да е \"install\", \"uninstall\" или \"both\""
 msgid "on: each is a file type ('.' and lower-case letters, digits, '_' or '-'), \"*\" (every file), \"folder\", \"background\" (the empty part of a folder), \"drive\" or \"assoc:<ID>\" (got '%s')"
 msgstr "on: всяко е файлов тип ('.' и малки букви, цифри, '_' или '-'), \"*\" (всеки файл), \"folder\", \"background\" (празната част на папка), \"drive\" или \"assoc:<ID>\" (получено '{1}')"
 
-msgid "only radio and combo controls take labels"
-msgstr "само контролите radio и combo приемат labels"
+msgid "only a bitmap control takes an image"
+msgstr "само контрола bitmap приема image"
 
-msgid "only radio and combo controls take values"
-msgstr "само контролите radio и combo приемат values"
+msgid "only radio, combo and listbox controls take labels"
+msgstr "само контролите radio, combo и listbox приемат labels"
+
+msgid "only radio, combo and listbox controls take values"
+msgstr "само контролите radio, combo и listbox приемат values"
 
 msgid "out of memory"
 msgstr "няма достатъчно памет"
@@ -3066,8 +3075,8 @@ msgstr "два ресурсни пакета с един ResourceId в сбор"
 msgid "type must be string, expand, dword, qword, binary or multi (got '%s')"
 msgstr "type трябва да е string, expand, dword, qword, binary или multi (получено '{1}')"
 
-msgid "type must be text, checkbox, edit, radio or combo (got '%s')"
-msgstr "type трябва да е text, checkbox, edit, radio или combo (получено '{1}')"
+msgid "type must be text, checkbox, edit, radio, combo, listbox or bitmap (got '%s')"
+msgstr "type трябва да е text, checkbox, edit, radio, combo, listbox или bitmap (получено '{1}')"
 
 msgid "typelib-file: '%s' is not a [file.*] of this package"
 msgstr "typelib-file: '{1}' не е [file.*] от този пакет"
