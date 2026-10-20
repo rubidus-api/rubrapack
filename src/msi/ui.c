@@ -864,9 +864,11 @@ static void progress_and_exits(ctx_t *c) {
     control(c, d, "ProgressBar", "ProgressBar", 25, 115, 320, 10, VIS | 0x10000, NULL, "", NULL);
     // RFC-0031 B10: billboards - a Billboard control in the upper body, and for each [billboard.*] a
     // Billboard row (shown while its feature's files install) with a Bitmap BBControl from a Binary.
-    if (c->ir->billboard_count && !c->rtl) {
+    if (c->ir->billboard_count) {
+        // The Billboard control goes on both the dialog and its mirrored twin; the Billboard,
+        // BBControl and Binary rows are global, so they are written once (not again for the twin).
         control(c, d, "Billboard", "Billboard", 25, 52, 320, 44, VIS, NULL, NULL, NULL);
-        for (size_t k = 0; k < c->ir->billboard_count; ++k) {
+        for (size_t k = 0; !c->rtl && k < c->ir->billboard_count; ++k) {
             const rp_ir_billboard_t *bb = &c->ir->billboards[k];
             const char *bn = NULL;
             for (size_t g = 0; g < c->bbimage_count; ++g) {
@@ -1270,10 +1272,12 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
             for (size_t g = 0; g < c->image_count; ++g) {
                 if (strcmp(c->images[g].control_id, x->id) != 0) continue;
                 bn = keep(c, "RpBmp", x->id);
-                rows_t *r = &c->binary;
-                s_(c, r, bn);
-                rp_msi_cell_t *bc = cell(c, r);
-                if (bc) { bc->bytes = (uint8_t *)c->images[g].bmp; bc->len = c->images[g].len; }
+                if (!c->rtl) {          // the Binary row is global: add it once, not again for the RTL twin
+                    rows_t *r = &c->binary;
+                    s_(c, r, bn);
+                    rp_msi_cell_t *bc = cell(c, r);
+                    if (bc) { bc->bytes = (uint8_t *)c->images[g].bmp; bc->len = c->images[g].len; }
+                }
                 break;
             }
             control(c, d->id, x->id, "Bitmap", x->x, x->y, x->width, x->height, VIS, NULL, bn, NULL);   // stretched to the control rect, as the banner is
