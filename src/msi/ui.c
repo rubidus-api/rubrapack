@@ -339,10 +339,12 @@ typedef struct {
     int                lseq;            // the next InstallUISequence number of a language action
     const rp_ui_control_image_t *images;    // RFC-0031 B10: bitmap dialog-controls' pictures
     size_t             image_count;
+    const rp_ui_control_image_t *bbimages;  // RFC-0031 B10: billboards' pictures
+    size_t             bbimage_count;
     bool               nomem;
     char             **strings;
     size_t             nstr, capstr;
-    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext, rptext;
+    rows_t             dialog, control, event, condition, mapping, style, uitext, binary, radio, combo, listbox, acttext, rptext, billboard, bbcontrol;
     rp_ui_prop_t      *props;
     size_t             nprops, capprops;
     rp_ui_seq_t       *seqs;
@@ -392,6 +394,10 @@ static const rp_msi_wcolumn_t combo_cols[] = { { "Property", KEY_S(72) }, { "Ord
     { "Text", L_N(64) } };
 // RFC-0028: a language's value of a property (Key) - Format 1: the installer formats it first.
 static const rp_msi_wcolumn_t rptext_cols[] = { { "Lang", KEY_S(16) }, { "Key", KEY_S(72) }, { "Text", L_N(0) }, { "Format", I2 } };
+// RFC-0031 B10: billboards shown on the progress page, and the controls (a Bitmap) drawn on each.
+static const rp_msi_wcolumn_t billboard_cols[] = { { "Billboard", KEY_S(50) }, { "Feature_", S(38) }, { "Action", S_N(50) }, { "Ordering", I2_N } };
+static const rp_msi_wcolumn_t bbcontrol_cols[] = { { "Billboard_", KEY_S(50) }, { "BBControl", KEY_S(50) }, { "Type", S(20) },
+    { "X", I2 }, { "Y", I2 }, { "Width", I2 }, { "Height", I2 }, { "Attributes", I4_N }, { "Text", L_N(0) } };
 
 static void rows_init(rows_t *r, const char *name, const rp_msi_wcolumn_t *cols, size_t n) {
     *r = (rows_t){ .cols = cols, .ncols = n, .name = name };
@@ -856,6 +862,28 @@ static void progress_and_exits(ctx_t *c) {
     control(c, d, "StatusLabel", "Text", 25, 100, 50, 10, VIS | NOPREFIX, NULL, T(c, "ProgressStatus"), NULL);
     control(c, d, "ActionText", "Text", 75, 100, 270, 10, VIS | NOPREFIX, NULL, "", NULL);
     control(c, d, "ProgressBar", "ProgressBar", 25, 115, 320, 10, VIS | 0x10000, NULL, "", NULL);
+    // RFC-0031 B10: billboards - a Billboard control in the upper body, and for each [billboard.*] a
+    // Billboard row (shown while its feature's files install) with a Bitmap BBControl from a Binary.
+    if (c->ir->billboard_count && !c->rtl) {
+        control(c, d, "Billboard", "Billboard", 25, 52, 320, 44, VIS, NULL, NULL, NULL);
+        for (size_t k = 0; k < c->ir->billboard_count; ++k) {
+            const rp_ir_billboard_t *bb = &c->ir->billboards[k];
+            const char *bn = NULL;
+            for (size_t g = 0; g < c->bbimage_count; ++g) {
+                if (strcmp(c->bbimages[g].control_id, bb->id) != 0) continue;
+                bn = keep(c, "RpBb", bb->id);
+                s_(c, &c->binary, bn);
+                rp_msi_cell_t *bc = cell(c, &c->binary);
+                if (bc) { bc->bytes = (uint8_t *)c->bbimages[g].bmp; bc->len = c->bbimages[g].len; }
+                break;
+            }
+            s_(c, &c->billboard, bb->id); s_(c, &c->billboard, bb->feature); s_(c, &c->billboard, "InstallFiles");
+            i_(c, &c->billboard, bb->order ? bb->order : (int32_t)k + 1);
+            s_(c, &c->bbcontrol, bb->id); s_(c, &c->bbcontrol, "Img"); s_(c, &c->bbcontrol, "Bitmap");
+            i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 320); i_(c, &c->bbcontrol, 44);
+            i_(c, &c->bbcontrol, 1); s_(c, &c->bbcontrol, bn);
+        }
+    }
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
     control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS, NULL, T(c, "Next"), NULL);
     // [ui] details: a scrolling box the helper DLL fills while the installation runs (RpDetails),
@@ -1732,6 +1760,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     c->details_dll = in->helper;
     c->images = in->control_images;
     c->image_count = in->control_image_count;
+    c->bbimages = in->billboard_images;
+    c->bbimage_count = in->billboard_image_count;
     rows_init(&c->dialog, "Dialog", dialog_cols, 10);
     rows_init(&c->control, "Control", control_cols, 12);
     rows_init(&c->event, "ControlEvent", event_cols, 6);
@@ -1745,6 +1775,8 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     rows_init(&c->listbox, "ListBox", listbox_cols, 4);
     rows_init(&c->acttext, "ActionText", acttext_cols, 3);
     rows_init(&c->rptext, "RpText", rptext_cols, 4);
+    rows_init(&c->billboard, "Billboard", billboard_cols, 4);
+    rows_init(&c->bbcontrol, "BBControl", bbcontrol_cols, 9);
 
     // Fonts: each language's face (P1a: Hangul shows in the Korean face), Segoe UI for English.
     // With several languages the styles carry the language's code, and the chosen language picks
@@ -1879,9 +1911,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     if (c->table) language_table(c);
     else if (c->multi) language_rows(c);
 
-    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext };
+    rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol };
     size_t nt = 0;
-    for (size_t i = 0; i < 13; ++i) {
+    for (size_t i = 0; i < sizeof all / sizeof *all; ++i) {
         rows_t *r = all[i];
         // FilesInUse fills its ListBox from the ListBox table, which must exist even when empty
         // (error 2205 otherwise, and the dialog is skipped: observed). ControlCondition is kept
@@ -1915,8 +1947,8 @@ void rp_ui_free(proven_allocator_t alloc, rp_ui_t *ui) {
     if (ui == NULL) return;
     ctx_t *c = ui->priv;
     if (c) {
-        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext };
-        for (size_t i = 0; i < 13; ++i) rp_mem_free(alloc, all[i]->cells);
+        rows_t *all[] = { &c->dialog, &c->control, &c->event, &c->condition, &c->mapping, &c->style, &c->uitext, &c->binary, &c->radio, &c->combo, &c->listbox, &c->acttext, &c->rptext, &c->billboard, &c->bbcontrol };
+        for (size_t i = 0; i < sizeof all / sizeof *all; ++i) rp_mem_free(alloc, all[i]->cells);
         for (size_t i = 0; i < c->nstr; ++i) rp_mem_free(alloc, c->strings[i]);
         rp_mem_free(alloc, c->strings);
         rp_mem_free(alloc, c->props);

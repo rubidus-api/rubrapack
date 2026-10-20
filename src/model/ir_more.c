@@ -199,6 +199,11 @@ void ir_more_checks(ctx_t *c) {
         const rp_ir_publish_t *x = &ir->publishes[k];
         if (x->file && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", x->file);
     }
+    // RFC-0031 B10: a billboard names the feature whose installation shows it.
+    for (size_t k = 0; k < ir->billboard_count; ++k) {
+        const rp_ir_billboard_t *x = &ir->billboards[k];
+        if (x->feature && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", x->feature);
+    }
     // RFC-0031 B8: an advertised shortcut advertises its target file's feature; that feature may
     // not be one marked advertise = "disallow".
     for (size_t k = 0; k < ir->shortcut_count; ++k) {

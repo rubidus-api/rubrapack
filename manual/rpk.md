@@ -255,6 +255,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image (`.bmp`, bitmap only), text-xx, labels-xx |
+| `[billboard.ID]` | **image** (`.bmp`), **feature**, order (MSI only; shown on the progress page while the feature installs) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when, advertise (`true`: see [Shortcuts](#shortcuts-shortcutid), MSI only) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
@@ -1531,6 +1532,20 @@ value = "typical"                 # the default, also for a silent installation
 - Page IDs starting with `Rp` and the control IDs of the frame (`Banner`, `Title`, `Description`,
   `BannerLine`, `BottomLine`, `Back`, `Next`, `Cancel`) are reserved; a page holds up to 64
   controls.
+
+### Billboards: `[billboard.ID]`
+
+```toml
+[billboard.Welcome]
+image = "ads/welcome.bmp"
+feature = "Main"
+order = 1
+```
+
+A billboard is a picture shown on the progress page while its `feature`'s files install, one after
+another in `order` (default: the order the billboards are written). Each names a `.bmp` in `image`
+(Windows Installer shows BMP only). Billboards are for an MSI; an MSIX installs the whole package at
+once, so a `[billboard.*]` is refused there (`RP1605`).
 
 ### Architectures and upgrade families
 

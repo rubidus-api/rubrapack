@@ -68,6 +68,8 @@ typedef struct {
     bool helper;                // the helper DLL is in the package at all (the install folder page may call it)
     const rp_ui_control_image_t *control_images;    // RFC-0031 B10: one per bitmap dialog-control, in ID order
     size_t         control_image_count;
+    const rp_ui_control_image_t *billboard_images;  // RFC-0031 B10: one per [billboard.*] (control_id = billboard ID)
+    size_t         billboard_image_count;
 } rp_ui_input_t;
 
 // Builds the tables for ir->ui (RP_UI_BASIC..RP_UI_FEATURES) in English, with ir->ui_texts

@@ -213,6 +213,21 @@ Tab 키는 내 컨트롤을 위에서 아래로, 그다음 왼쪽에서 오른�
 - 컨트롤 ID `Banner`, `Title`, `Description`, `BannerLine`, `BottomLine`, `Back`, `Next`, `Cancel` 은 틀의
   것이고, `Rp` 로 시작하는 페이지 ID 는 rubrapack 의 것이다. 한 페이지에 컨트롤은 64개까지다.
 
+## 설치하는 동안 보이는 그림: `[billboard.ID]`
+
+`[billboard.ID]` 는 feature 의 파일이 복사되는 동안 진행 화면에 `.bmp` 를 보인다. `image`, 함께 갈
+`feature`, `order` 를 준다:
+
+```toml
+[billboard.Welcome]
+image = "ads/welcome.bmp"
+feature = "Main"
+order = 1
+```
+
+한 feature 의 빌보드 여럿은 그 feature 가 설치되는 동안 `order` 순서로 돌아가며 바뀐다. 빌보드는 MSI 의
+것이다. MSIX 는 한 번에 설치하므로 거절한다.
+
 ## 모든 값에는 기본값이 있어야 한다: `[property.NAME]`
 
 대화창은 값을 *모을* 뿐이다. 조용한 설치(`/qn`)는 페이지를 하나도 보이지 않고 속성을 있는 그대로 쓴다. 그래서

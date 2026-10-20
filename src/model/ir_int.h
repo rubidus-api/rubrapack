@@ -125,6 +125,7 @@ char *ir_icon_source(ctx_t *c, const char *shown, rp_pos_t pos);
 void ir_parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x);
 void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x);
 void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_control_t *x);
+void ir_parse_billboard(ctx_t *c, const rp_ttable_t *t, rp_ir_billboard_t *x);
 void ir_dialog_checks(ctx_t *c);
 void ir_nfc_names(ctx_t *c);
 void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg);

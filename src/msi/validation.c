@@ -173,6 +173,12 @@ static const rule_t rules[] = {
     R("ListBox", "Text", "Text"),
     R("ComboBox", "Property", "Identifier"), RN("ComboBox", "Order", 1, 32767), R("ComboBox", "Value", "Formatted"),
     R("ComboBox", "Text", "Text"),
+    // RFC-0031 B10 (Microsoft Learn: "Billboard Table", "BBControl Table").
+    R("Billboard", "Billboard", "Identifier"), RK("Billboard", "Feature_", "Feature", 1), R("Billboard", "Action", "Identifier"),
+    RN("Billboard", "Ordering", 0, 32767),
+    RK("BBControl", "Billboard_", "Billboard", 1), R("BBControl", "BBControl", "Identifier"), R("BBControl", "Type", "Identifier"),
+    RN("BBControl", "X", 0, 32767), RN("BBControl", "Y", 0, 32767), RN("BBControl", "Width", 0, 32767),
+    RN("BBControl", "Height", 0, 32767), RN("BBControl", "Attributes", 0, MAXI), R("BBControl", "Text", "Formatted"),
     // rubrapack's own (RFC-0028): a dialog language's value of a property, set by RpLangApply.
     R("RpText", "Lang", "Identifier"), R("RpText", "Key", "Identifier"), R("RpText", "Text", "Text"),
     RN("RpText", "Format", 0, 1),

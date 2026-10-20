@@ -212,6 +212,21 @@ Every control names its `dialog`, a `type`, and `x`, `y`, `width`, `height`:
   `Cancel` belong to the frame; page IDs starting with `Rp` are rubrapack's. At most 64 controls a
   page.
 
+## Pictures while it installs: `[billboard.ID]`
+
+A `[billboard.ID]` shows a `.bmp` on the progress page while a feature's files copy. Give it an
+`image`, the `feature` it goes with, and an `order`:
+
+```toml
+[billboard.Welcome]
+image = "ads/welcome.bmp"
+feature = "Main"
+order = 1
+```
+
+Several billboards for one feature cycle in `order` while that feature installs. Billboards are an
+MSI thing; an MSIX installs all at once and refuses them.
+
 ## Every value needs a default: `[property.NAME]`
 
 The dialogs only *collect* values. A silent installation (`/qn`) shows no page and uses the

@@ -100,6 +100,24 @@ void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
     x->after = ir_get_str(c, t, "after", true, NULL);
 }
 
+// [billboard.ID] (RFC-0031 B10): a .bmp shown on the progress page while its feature installs.
+void ir_parse_billboard(ctx_t *c, const rp_ttable_t *t, rp_ir_billboard_t *x) {
+    static const char *const keys[] = { "image", "feature", "order", NULL };
+    ir_check_keys(c, t, keys);
+    ir_check_id(c, t, 50);
+    x->id = ir_dup(c, t->id);
+    x->pos = t->pos;
+    char *image = ir_get_str(c, t, "image", true, NULL);
+    if (image) {
+        if (!ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
+        else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
+        x->image_shown = ir_dup(c, image);
+        rp_mem_free(c->alloc, image);
+    }
+    x->feature = ir_get_str(c, t, "feature", true, NULL);
+    x->order = (int32_t)ir_get_int(c, t, "order", 0, 0, 32767);
+}
+
 void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_control_t *x) {
     static const char *const keys[] = { "dialog", "type", "x", "y", "width", "height", "text", "property", "values",
                                         "labels", "image", NULL }, *const lkeys[] = { "text", "labels", NULL };

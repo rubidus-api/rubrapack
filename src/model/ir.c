@@ -8,12 +8,12 @@
 static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "other-copy", "move", "odbc-driver", "odbc-source", "publish", "msix-extension", "msix-dependency", "merge", NULL };
+                                          "ui-text", "dialog", "dialog-control", "billboard", "assoc", "protocol", "com", "handler", "menu", "other-copy", "move", "odbc-driver", "odbc-source", "publish", "msix-extension", "msix-dependency", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu", "other-copy",
                                          "move", "odbc-driver", "odbc-source", "publish", "font", "permission", "require", "search", "remove", "copy", "action",
-                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
+                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "billboard", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
 
 bool ir_in_list(const char *s, const char *const *list) {
     for (size_t k = 0; list[k]; ++k) {
@@ -41,7 +41,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
 
     ir_check_format(&c);
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0, nother = 0, nmove = 0, nodbcd = 0, nodbcs = 0, npublish = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0, nother = 0, nmove = 0, nodbcd = 0, nodbcs = 0, npublish = 0, nbboard = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -111,6 +111,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
         else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
         else if (strcmp(t->kind, "dialog-control") == 0) ++ndctl;
+        else if (strcmp(t->kind, "billboard") == 0) ++nbboard;
         else if (strcmp(t->kind, "ui") == 0) uit = t;
         else if (strcmp(t->kind, "arp") == 0) arp = t;
         else if (strcmp(t->kind, "msix") == 0) ir_parse_msix(&c, t);
@@ -215,7 +216,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     ir->ui_texts = rp_mem_alloc(alloc, nuitext + 1, sizeof *ir->ui_texts);
     ir->dialogs = rp_mem_alloc(alloc, ndlg + 1, sizeof *ir->dialogs);
     ir->dialog_controls = rp_mem_alloc(alloc, ndctl + 1, sizeof *ir->dialog_controls);
-    if (ir->ui_texts == NULL || ir->dialogs == NULL || ir->dialog_controls == NULL) c.nomem = true;
+    ir->billboards = rp_mem_alloc(alloc, nbboard + 1, sizeof *ir->billboards);
+    if (ir->ui_texts == NULL || ir->dialogs == NULL || ir->dialog_controls == NULL || ir->billboards == NULL) c.nomem = true;
     if (ir->services == NULL || ir->fonts == NULL || ir->permissions == NULL) c.nomem = true;
     if (ir->properties == NULL || ir->actions == NULL || ir->registries == NULL || ir->shortcuts == NULL ||
         ir->removes == NULL || ir->copies == NULL || ir->envs == NULL || ir->inis == NULL || ir->requires == NULL ||
@@ -354,6 +356,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_dialog_control_t *x = &ir->dialog_controls[ir->dialog_control_count++];
             memset(x, 0, sizeof *x);
             ir_parse_dialog_control(&c, t, x);
+        } else if (strcmp(t->kind, "billboard") == 0) {
+            rp_ir_billboard_t *x = &ir->billboards[ir->billboard_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_billboard(&c, t, x);
         }
     }
     // Wildcards after every dir is known (their feature and the implicit sub folders).
@@ -498,6 +504,13 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_dialog_control_t t = ir->dialog_controls[j];
             ir->dialog_controls[j] = ir->dialog_controls[j - 1];
             ir->dialog_controls[j - 1] = t;
+        }
+    }
+    for (size_t i = 1; !c.nomem && i < ir->billboard_count; ++i) {
+        for (size_t j = i; j > 0 && ir_cmp_str(ir->billboards[j - 1].id, ir->billboards[j].id) > 0; --j) {
+            rp_ir_billboard_t t = ir->billboards[j];
+            ir->billboards[j] = ir->billboards[j - 1];
+            ir->billboards[j - 1] = t;
         }
     }
     if (!c.nomem && opt->nfc) ir_nfc_names(&c);
@@ -766,6 +779,12 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->labels_by_lang);
     }
     rp_mem_free(a, ir->dialog_controls);
+    for (size_t k = 0; k < ir->billboard_count; ++k) {
+        rp_ir_billboard_t *x = &ir->billboards[k];
+        char *xs[] = { x->id, x->image_source, x->image_shown, x->feature };
+        for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
+    }
+    rp_mem_free(a, ir->billboards);
     char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args };
     for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
     rp_mem_free(a, ir->removes);

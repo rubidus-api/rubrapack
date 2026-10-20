@@ -244,6 +244,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image(`.bmp`, bitmap 전용), text-xx, labels-xx |
+| `[billboard.ID]` | **image**(`.bmp`), **feature**, order (MSI 전용; 그 feature 가 설치되는 동안 진행 화면에 보임) |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when, advertise(`true`: [바로가기](#바로가기-shortcutid) 참고, MSI 전용) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
@@ -1386,6 +1387,20 @@ value = "typical"                 # 기본값, 창 없는 설치에서도 쓰인
   `[registry.*]`, `[ini.*]`, `[env.*]`, 조건 등에서 `[APP_MODE]` 로 쓸 수 있다.
 - `Rp` 로 시작하는 페이지 ID 와 틀의 컨트롤 ID(`Banner`, `Title`, `Description`, `BannerLine`,
   `BottomLine`, `Back`, `Next`, `Cancel`)는 예약되어 있다. 페이지 하나에는 컨트롤이 64개까지 든다.
+
+### 빌보드: `[billboard.ID]`
+
+```toml
+[billboard.Welcome]
+image = "ads/welcome.bmp"
+feature = "Main"
+order = 1
+```
+
+빌보드는 그 `feature` 의 파일이 설치되는 동안 진행 화면에 보이는 그림이다. `order` 순서대로 차례로
+바뀐다(기본: 빌보드를 적은 순서). 각 빌보드는 `image` 에 `.bmp` 를 가리킨다(Windows Installer 는 BMP 만
+보인다). 빌보드는 MSI 를 위한 것이다. MSIX 는 패키지 전체를 한 번에 설치하므로 `[billboard.*]` 는 거기서
+거절된다(`RP1605`).
 
 ### 아키텍처와 업그레이드 계열
 

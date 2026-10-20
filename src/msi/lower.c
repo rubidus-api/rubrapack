@@ -581,6 +581,8 @@ typedef struct {
     uint8_t         *lic, *rtf, *banner, *lang_rtf[RP_UI_LANG_MAX];
     rp_ui_control_image_t *ctl_imgs;    // B10: bitmap dialog-controls' bytes, alive until the package is written
     size_t           nctl_img;
+    rp_ui_control_image_t *bb_imgs;     // B10: billboards' bytes
+    size_t           nbb_img;
     uint8_t         *act_bin[64];      // RFC-0031 B6: Binary-table DLLs of single actions, freed at the end
     size_t           act_bin_count;
 } pkg_t;
@@ -2476,9 +2478,22 @@ static proven_err_t lower_dialogs(pkg_t *pk) {
             pk->ctl_imgs[gi++] = (rp_ui_control_image_t){ x->id, data, dlen };
         }
     }
+    // RFC-0031 B10: the same for [billboard.*] pictures.
+    pk->nbb_img = ir->billboard_count;
+    if (err == PROVEN_OK && pk->nbb_img) {
+        pk->bb_imgs = rp_mem_alloc(alloc, pk->nbb_img, sizeof *pk->bb_imgs);
+        if (pk->bb_imgs == NULL) err = PROVEN_ERR_NOMEM;
+        for (size_t k = 0; err == PROVEN_OK && k < ir->billboard_count; ++k) {
+            const rp_ir_billboard_t *bb = &ir->billboards[k];
+            uint8_t *data = NULL;
+            size_t dlen = 0;
+            if (bb->image_source) err = rp_pal_read_file(alloc, bb->image_source, 1u << 22, &data, &dlen);
+            pk->bb_imgs[k] = (rp_ui_control_image_t){ bb->id, data, dlen };
+        }
+    }
     if (err == PROVEN_OK) {
         rp_ui_input_t in = { dkey(ir, ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR"), pk->rtf, rtf_len, pk->banner, banner_len,
-                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img };
+                             { 0 }, { 0 }, pk->details, pk->any_purge, pk->ctl_imgs, pk->nctl_img, pk->bb_imgs, pk->nbb_img };
         for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) {
             in.license_rtf_by_lang[li] = pk->lang_rtf[li];
             in.license_len_by_lang[li] = lang_rtf_len[li];
@@ -2728,6 +2743,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_mem_free(alloc, pk->banner);
     for (size_t g = 0; g < pk->nctl_img; ++g) rp_mem_free(alloc, (uint8_t *)pk->ctl_imgs[g].bmp);
     rp_mem_free(alloc, pk->ctl_imgs);
+    for (size_t g = 0; g < pk->nbb_img; ++g) rp_mem_free(alloc, (uint8_t *)pk->bb_imgs[g].bmp);
+    rp_mem_free(alloc, pk->bb_imgs);
     for (size_t i = 0; i < pk->act_bin_count; ++i) rp_mem_free(alloc, pk->act_bin[i]);
     for (size_t i = 0; pk->icons && i < pk->nicons; ++i) rp_mem_free(alloc, pk->icons[i].data);
     rp_mem_free(alloc, pk->icons);

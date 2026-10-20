@@ -110,6 +110,17 @@ typedef struct {
     rp_pos_t pos;
 } rp_ir_shortcut_t;
 
+// [billboard.ID] (RFC-0031 B10): a picture shown on the progress page while its feature's files
+// install. One .bmp each; MSI only.
+typedef struct {
+    char    *id;
+    char    *image_source;      // the .bmp to open (joined with the .rpk dir)
+    char    *image_shown;       // the path as written
+    char    *feature;           // the feature whose installation shows it
+    int32_t  order;             // display order within the feature (0 = by ID)
+    rp_pos_t pos;
+} rp_ir_billboard_t;
+
 // [remove.ID] (RFC-0004): files matching `name` (or the folder itself) removed at install,
 // uninstall or both. [copy.ID]: a second copy of an installed file.
 typedef struct {
@@ -649,6 +660,8 @@ typedef struct {
     size_t            dialog_count;
     rp_ir_dialog_control_t *dialog_controls;    // in ID order
     size_t            dialog_control_count;
+    rp_ir_billboard_t *billboards;              // RFC-0031 B10: in ID order
+    size_t            billboard_count;
     rp_ir_permission_t *permissions;
     size_t            permission_count;
     rp_ir_merge_t    *merges;

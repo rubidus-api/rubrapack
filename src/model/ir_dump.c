@@ -316,6 +316,16 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         }
         rp_buf_byte(&b, '\n');
     }
+    for (size_t k = 0; k < ir->billboard_count; ++k) {
+        const rp_ir_billboard_t *x = &ir->billboards[k];
+        char num[16];
+        rp_buf_puts(&b, "billboard ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "image", x->image_shown);
+        kv(&b, "feature", x->feature);
+        if (x->order) { snprintf(num, sizeof num, "%d", x->order); kv(&b, "order", num); }
+        rp_buf_byte(&b, '\n');
+    }
     for (size_t k = 0; k < ir->font_count; ++k) {
         rp_buf_puts(&b, "font ");
         rp_buf_puts(&b, ir->fonts[k].id);
