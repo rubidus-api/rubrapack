@@ -90,6 +90,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "implicit", f->implicit ? "1" : "0");
                 if (f->required) kv(&b, "required", "1");
                 if (f->follow_parent) kv(&b, "follow-parent", "1");
+                if (f->no_advertise) kv(&b, "no-advertise", "1");
                 if (f->default_when) kv(&b, "default-when", f->default_when);
                 if (f->when) kv(&b, "when", f->when);
             } else if (kind == 1) {
@@ -408,6 +409,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "working-dir", sc->working_dir);
         if (sc->icon_shown) kv(&b, "icon", sc->icon_shown);
         if (sc->when) kv(&b, "when", sc->when);
+        if (sc->advertise) kv(&b, "advertise", "1");
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->menu_count; ++k) {

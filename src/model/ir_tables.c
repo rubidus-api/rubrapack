@@ -542,7 +542,7 @@ bool ir_shortcut_folder(const char *s) {
 }
 
 void ir_parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
-    static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", "icon", "when", NULL };
+    static const char *const keys[] = { "dir", "name", "target", "args", "description", "working-dir", "icon", "when", "advertise", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     s->id = ir_dup(c, t->id);
@@ -550,6 +550,14 @@ void ir_parse_shortcut(ctx_t *c, const rp_ttable_t *t, rp_ir_shortcut_t *s) {
     s->when = ir_get_when(c, t);
     s->icon_shown = ir_get_str(c, t, "icon", false, NULL);
     if (s->icon_shown) s->icon_source = ir_icon_source(c, s->icon_shown, ir_key_pos(t, "icon"));
+    // RFC-0031 B8: an advertised shortcut points at the feature (installed on demand, repaired when
+    // launched), so Windows needs its own Icon_; `when` (a conditional shortcut, RFC-0013 A2) is a
+    // different component shape and is not combined with it here.
+    s->advertise = ir_get_bool(c, t, "advertise", false);
+    if (s->advertise) {
+        if (s->icon_shown == NULL) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: an advertised shortcut needs an icon", t->id);
+        if (s->when) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "[shortcut.%s]: advertise is not combined with when", t->id);
+    }
     s->dir = ir_get_str(c, t, "dir", true, NULL);
     s->name = ir_get_str(c, t, "name", true, NULL);
     if (s->name) ir_target_name_ok(c, s->name, ir_key_pos(t, "name"));

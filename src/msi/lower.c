@@ -684,7 +684,7 @@ static void lower_features(pkg_t *pk) {
         if (!f->hidden) display += 2;
         i_(&pk->feature, f->level);
         null_(&pk->feature);
-        i_(&pk->feature, (f->required ? 0x10 : 0) | (f->follow_parent ? 0x2 : 0));    // UIDisallowAbsent, FollowParent (RFC-0013 A3)
+        i_(&pk->feature, (f->required ? 0x10 : 0) | (f->follow_parent ? 0x2 : 0) | (f->no_advertise ? 0x8 : 0));    // UIDisallowAbsent, FollowParent (RFC-0013 A3), DisallowAdvertise (B8)
         if (f->when) {                  // off (level 0) unless its condition holds (RFC-0013 A2)
             // Only at the first installation: at removal the property is gone, and a feature turned
             // off then would keep its files (observed, r1-vm).
@@ -993,7 +993,10 @@ static void lower_shortcuts(pkg_t *pk) {
             pk->any_write = true;
         }
         s_(&pk->shortcut, sc_comp);
-        s_(&pk->shortcut, kprintf(k, "[%s]%s", target->dir_key, escape_formatted(k, target->f->name)));
+        // Target: an advertised shortcut names the feature (Windows installs it on demand and
+        // repairs it when launched, RFC-0031 B8); an ordinary one names the target file's path.
+        if (sc->advertise) s_(&pk->shortcut, target->f->feature);
+        else s_(&pk->shortcut, kprintf(k, "[%s]%s", target->dir_key, escape_formatted(k, target->f->name)));
         s_(&pk->shortcut, sc->args);                                            // formatted (H2)
         s_(&pk->shortcut, sc->description);                                     // Text, not formatted
         const char *sc_icon = pk->icons ? icon_name(alloc, k, &pk->icon, pk->icons, &pk->nicons, sc->icon_source, &pk->icon_err) : NULL;

@@ -105,7 +105,12 @@ target = "file:Hello"
 | `parent = "Samples"` | 트리에서 다른 기능 아래의 줄 |
 | `follow-parent = true` | 부모가 설치될 때 정확히 함께 설치 |
 | `default-when = "OLDPACK"` | 기본은 꺼짐(level 이 1보다 큼), 조건이 맞으면 기본으로 켜짐 |
+| `advertise = "disallow"` | 이 기능은 광고(필요할 때 설치)되지 않는다 |
 | `hidden = true` | 트리에 아예 보이지 않음 |
+
+*광고* 바로가기는 처음 쓸 때 그 기능을 설치한다. 바로가기에 `advertise = true` 와 `icon` 을 주면
+Windows 가 아이콘을 보여 주고, 처음 실행할 때 기능을 설치하며, 파일이 빠지면 고친다(MSI 전용. 바로가기
+장 참고).
 
 기능 ID 는 dir, 파일과 이름 공간을 함께 쓴다: 기능 `Documentation` 과 폴더 `DocsDir` 는 ID 가 달라야 한다(아니면
 rubrapack 이 `RP1301` 로 알린다).

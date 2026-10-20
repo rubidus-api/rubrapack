@@ -210,7 +210,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version**(`a.b.c` 또는 `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name(ASCII), language, scope(`machine`, `user`, `dual`), ui(`none`, `basic`, `minimal`, `installdir`, `features`), license(`.txt`, `.md`, `.rtf`), reboot(`suppress`/`allow`), cleanup(`false`: 정리 작업 없음), preflight(`false`: 진행 전 점검 없음), close-programs(`ask`, `always`, `never`), extra-files(`ask`, `keep`, `delete`), parent(추가 기능: 본체 제품의 upgrade-code), remove-addons(`true`: 이 제품을 지우면 추가 기능도 지운다), replaces(이 패키지가 대신하는 제품들의 업그레이드 코드), downgrade-message, compress(`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; 기본 `mszip:6`), cab(`embed` 또는 `external`), cab-max-size(MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | 변수: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when |
+| `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when, advertise(`allow` 기본, `disallow`) |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
 | `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when, isolate-for(`.exe` 의 `file:ID`: 그 프로그램 옆에 이 DLL 의 전용 사본, MSI 전용) |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
@@ -244,7 +244,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
-| `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when |
+| `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when, advertise(`true`: [바로가기](#바로가기-shortcutid) 참고, MSI 전용) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
@@ -475,6 +475,13 @@ args = "--settings \"[INSTALLDIR]\""
 
 바로가기는 대상 파일(과 그 feature)에 딸린다. 바로가기 때문에 만든 폴더는 제거할 때 지운다. 컴퓨터
 전체 패키지에서 `Programs` 와 `Desktop` 은 모든 사용자의 시작 메뉴와 공용 바탕화면이다.
+
+`advertise = true` 는 광고(필요할 때 설치) 바로가기를 만든다. 대상은 대상 파일의 feature 이고,
+Windows 는 바로가기를 처음 쓸 때 그 feature 를 설치하며 빠진 것이 있으면 고친다. 광고 바로가기에는
+`icon` 이 필요하고(설치 전에 Windows 가 보여 준다) `when` 과 함께 쓰지 않는다. feature 에
+`advertise = "disallow"` 를 주면 그 feature 는 광고되지 않는다(그런 feature 를 가리키는 광고 바로가기는
+거절된다). 광고 바로가기는 MSI 를 위한 것이다. MSIX 는 패키지 전체를 설치하므로 거기서는 `advertise`
+가 거절된다.
 
 MSIX 에서 바로가기는 앱을 시작한다(대상은 `[msix-app.*]` 의 실행 파일이어야 한다): `Programs` 나
 `StartMenu` 의 것은 그 앱 자신의 시작 메뉴 항목이고(`args` 없음), `Desktop` 의 것은 매니페스트에

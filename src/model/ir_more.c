@@ -129,6 +129,13 @@ static bool find_feature(const rp_ir_t *ir, const char *id) {
     return false;
 }
 
+static const rp_ir_feature_t *find_feature_ptr(const rp_ir_t *ir, const char *id) {
+    for (size_t i = 0; id && i < ir->feature_count; ++i) {
+        if (strcmp(ir->features[i].id, id) == 0) return &ir->features[i];
+    }
+    return NULL;
+}
+
 // A standard action name that before/after may reference, and the reserved sequence ranges a bare
 // sequence number may not fall in.
 static bool standard_action(const char *s) {
@@ -191,6 +198,16 @@ void ir_more_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->publish_count; ++k) {
         const rp_ir_publish_t *x = &ir->publishes[k];
         if (x->file && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", x->file);
+    }
+    // RFC-0031 B8: an advertised shortcut advertises its target file's feature; that feature may
+    // not be one marked advertise = "disallow".
+    for (size_t k = 0; k < ir->shortcut_count; ++k) {
+        const rp_ir_shortcut_t *s = &ir->shortcuts[k];
+        if (!s->advertise) continue;
+        const rp_ir_file_t *tf = find_file(ir, s->target_file);
+        const rp_ir_feature_t *f = tf ? find_feature_ptr(ir, tf->feature) : NULL;
+        if (f && f->no_advertise)
+            ERR(c, s->pos, "RP1316", "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\"", s->id, f->id);
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         const rp_ir_file_t *f = &ir->files[k];

@@ -1151,6 +1151,12 @@ msgstr "[service.{1}]: ה-args עבור MSIX חייבים להיות טקסט פ
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file חייב לציין תוכנית שנכנסת לחבילה"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] מפרסם את התכונה '{2}', שבה advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise אינו משולב עם when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: ל-MSIX יש קיצורי דרך רק בשולחן העבודה ובתפריט התחל{2}"
 
@@ -1162,6 +1168,12 @@ msgstr "[shortcut.{1}]: קיצור דרך של MSIX תמיד קיים (when מי
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: קיצור דרך של MSIX מציג את הלוגו של היישום שלו; icon מיועד ל-MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: קיצור דרך מפורסם מיועד ל-MSI (MSIX מתקין את כל החבילה)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: קיצור דרך מפורסם זקוק לסמל"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: ה-args עבור MSIX חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
@@ -1462,6 +1474,9 @@ msgstr "action חייב להיות \"warn\" או \"refuse\" (התקבל '{1}')"
 
 msgid "adds too many tables"
 msgstr "מוסיף יותר מדי טבלאות"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise חייב להיות \"allow\" או \"disallow\" (התקבל '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' אינו עמוד בערכת תיבות דו-שיח זו (RpWelcomeDlg{2}{3}{4}) וגם לא [dialog.*]"
@@ -2575,7 +2590,6 @@ msgstr "rubrapack new: כמה שאלות יוצרות את המקור (Enter ל�
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "הרץ `rubrapack help <command>`; בדוק את הנתיבים ושתיקיית הפלט קיימת"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' ‏(מכונה 0x{2}) לא יכול לרוץ על המכונות של חבילה זו"

@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args за MSIX трябва да е обикновен т
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file трябва да посочва програма, която влиза в пакета"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] рекламира компонента '{2}', който е с advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise не се комбинира с when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX има преки пътища само на работния плот и в менюто \"Старт\"{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: пряк път на MSIX съществува вина�
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: пряк път на MSIX показва логото на приложението си; icon е за MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: рекламираната пряка връзка е за MSI (MSIX инсталира целия пакет)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: рекламираната пряка връзка се нуждае от икона"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args за MSIX трябва да е обикновен текст (без [...], попълвани при инсталиране)"
@@ -1460,6 +1472,9 @@ msgstr "action трябва да е \"warn\" или \"refuse\" (получено
 
 msgid "adds too many tables"
 msgstr "добавя твърде много таблици"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise трябва да е \"allow\" или \"disallow\" (получено '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' не е страница от този набор диалогови прозорци (RpWelcomeDlg{2}{3}{4}) или [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: няколко въпроса създават източ
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "изпълнете `rubrapack help <command>`; проверете пътищата и че изходната папка съществува"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (машина 0x{2}) не може да работи на машините на този пакет"

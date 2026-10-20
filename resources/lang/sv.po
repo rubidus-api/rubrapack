@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args för en MSIX måste vara ren text (inga [...] som fy
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file måste namnge ett program som ingår i paketet"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] annonserar funktionen '{2}', som har advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise kombineras inte med when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: en MSIX har bara genvägar på skrivbordet och på Start-menyn{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: en MSIX-genväg finns alltid (when gäller en MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: en MSIX-genväg visar sitt programs logotyp; icon gäller en MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: en annonserad genväg är för en MSI (en MSIX installerar hela paketet)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: en annonserad genväg behöver en ikon"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args för en MSIX måste vara ren text (inga [...] som fylls i vid installationen)"
@@ -1460,6 +1472,9 @@ msgstr "action måste vara \"warn\" eller \"refuse\" (fick '{1}')"
 
 msgid "adds too many tables"
 msgstr "lägger till för många tabeller"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise måste vara \"allow\" eller \"disallow\" (fick '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' är varken en sida i den här dialoguppsättningen (RpWelcomeDlg{2}{3}{4}) eller en [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: några frågor skapar källan (Retur tar värdet i [ ]).\
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "kör `rubrapack help <kommando>`; kontrollera sökvägarna och att utdatamappen finns"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (maskin 0x{2}) kan inte köras på det här paketets maskiner"

@@ -1151,6 +1151,12 @@ msgstr "[service.{1}]: MSIX کے لیے args سادہ متن ہونے چاہیی
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file کو ایسے پروگرام کا نام لینا چاہیے جو پیکیج میں جائے"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] خصوصیت '{2}' کی تشہیر کرتا ہے، جس میں advertise = \"disallow\" ہے"
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise کو when کے ساتھ نہیں ملایا جاتا"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX کے شارٹ کٹس صرف ڈیسک ٹاپ اور اسٹارٹ مینو میں ہوتے ہیں{2}"
 
@@ -1162,6 +1168,12 @@ msgstr "[shortcut.{1}]: MSIX شارٹ کٹ ہمیشہ موجود ہوتا ہے (
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX شارٹ کٹ اپنی ایپ کا لوگو دکھاتا ہے؛ icon MSI کے لیے ہے"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: ایک مشتہر شارٹ کٹ MSI کے لیے ہے (MSIX پورا پیکج انسٹال کرتا ہے)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: ایک مشتہر شارٹ کٹ کو ایک آئیکن درکار ہے"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX کے لیے args سادہ متن ہونے چاہییں (انسٹال پر بھرا جانے والا [...] نہیں)"
@@ -1462,6 +1474,9 @@ msgstr "action کو \"warn\" یا \"refuse\" ہونا چاہیے ('{1}' ملا)"
 
 msgid "adds too many tables"
 msgstr "بہت زیادہ جدول شامل کرتا ہے"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise کو \"allow\" یا \"disallow\" ہونا چاہیے ('{1}' موصول ہوا)"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' اس ڈائیلاگ سیٹ کا صفحہ (RpWelcomeDlg{2}{3}{4}) یا [dialog.*] نہیں"
@@ -2575,7 +2590,6 @@ msgstr "rubrapack new: چند سوال سورس بناتے ہیں (Enter [ ] ک�
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` چلائیں؛ راستے اور آؤٹ پٹ فولڈر کی موجودگی جانچیں"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (مشین 0x{2}) اس پیکیج کی مشینوں پر نہیں چل سکتا"

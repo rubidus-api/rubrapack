@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file 必须指向会放入安装包的程序"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] 公告功能 '{2}'，但该功能是 advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]：advertise 不与 when 一起使用"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX 只在桌面和“开始”菜单中有快捷方式{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: MSIX 快捷方式始终存在(when 用于 MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX 快捷方式显示其应用程序的徽标；icon 用于 MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]：公告快捷方式用于 MSI（MSIX 安装整个包）"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]：公告快捷方式需要一个图标"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
@@ -1460,6 +1472,9 @@ msgstr "action 必须是 \"warn\" 或 \"refuse\"（得到 '{1}'）"
 
 msgid "adds too many tables"
 msgstr "添加的表过多"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise 必须是 \"allow\" 或 \"disallow\"（得到 '{1}'）"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' 既不是此对话框集的页面(RpWelcomeDlg{2}{3}{4})，也不是 [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: 回答几个问题即可生成源文件(按 Enter 采用 
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "请运行 `rubrapack help <command>`；检查路径以及输出文件夹是否存在"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}'(机器 0x{2})无法在此安装包的机器上运行"

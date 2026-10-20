@@ -332,7 +332,7 @@ void ir_parse_module(ctx_t *c, const rp_ttable_t *t) {
 }
 
 void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
-    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", "default-when", NULL };
+    static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", "default-when", "advertise", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 38);
     f->id = ir_dup(c, t->id);
@@ -343,6 +343,15 @@ void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     f->hidden = ir_get_bool(c, t, "hidden", false);
     f->parent = ir_get_str(c, t, "parent", false, NULL);
     f->required = ir_get_bool(c, t, "required", false);
+    // RFC-0031 B8: whether this feature may be advertised (installed on demand). "allow" (the
+    // default) or "disallow" (Feature.Attributes DisallowAdvertise - an advertised shortcut to it
+    // is refused when built).
+    char *adv = ir_get_str(c, t, "advertise", false, NULL);
+    if (adv) {
+        if (strcmp(adv, "disallow") == 0) f->no_advertise = true;
+        else if (strcmp(adv, "allow") != 0) ERR(c, ir_key_pos(t, "advertise"), "RP1316", "advertise is \"allow\" or \"disallow\" (got '%s')", adv);
+        rp_mem_free(c->alloc, adv);
+    }
     f->follow_parent = ir_get_bool(c, t, "follow-parent", false);
     if (f->follow_parent && f->parent == NULL) ERR(c, ir_key_pos(t, "follow-parent"), "RP1316", "follow-parent needs a parent");
     f->when = ir_get_when(c, t);

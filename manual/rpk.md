@@ -221,7 +221,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 |---|---|
 | `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), extra-files (`ask`, `keep`, `delete`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
 | `[define]` | variables: `NAME = "value"` |
-| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when |
+| `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when, advertise (`allow` default, `disallow`) |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when, isolate-for (`file:ID` of an `.exe`: a private copy of this DLL beside that program, MSI only) |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
@@ -255,7 +255,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`), **x**, **y**, **width**, **height**, text, property, values, labels, text-xx, labels-xx |
-| `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when |
+| `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when, advertise (`true`: see [Shortcuts](#shortcuts-shortcutid), MSI only) |
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
@@ -512,6 +512,13 @@ args = "--settings \"[INSTALLDIR]\""
 A shortcut belongs to its target file (and its feature); folders created for it are removed at
 uninstall. In a per-machine package `Programs` and `Desktop` are the all-users Start menu and the
 Public Desktop.
+
+`advertise = true` makes an advertised (install-on-demand) shortcut: its target is the target
+file's feature, which Windows installs the first time the shortcut is used and repairs if anything
+is missing. An advertised shortcut needs an `icon` (Windows shows it before the feature is
+installed) and is not combined with `when`. A feature may be kept from being advertised with
+`advertise = "disallow"` (an advertised shortcut to it is then refused). Advertised shortcuts are
+for an MSI; an MSIX installs the whole package, so `advertise` is refused there.
 
 In an MSIX a shortcut starts an application (its target must be an `[msix-app.*]` executable): one
 in `Programs` or `StartMenu` is that application's own Start menu entry (no `args`); one on the

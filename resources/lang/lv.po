@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aiz
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file jānorāda programma, kas tiek iekļauta pakotnē"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] reklamē funkciju '{2}', kurai ir advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise netiek apvienots ar when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX ir saīsnes tikai darbvirsmā un izvēlnē Sākt{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: MSIX saīsne vienmēr ir (when ir paredzēts MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX saīsne rāda savas lietotnes logotipu; icon ir paredzēts MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: reklamēta saīsne ir paredzēta MSI (MSIX instalē visu pakotni)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: reklamētai saīsnei nepieciešama ikona"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
@@ -1460,6 +1472,9 @@ msgstr "action jābūt \"warn\" vai \"refuse\" (saņemts '{1}')"
 
 msgid "adds too many tables"
 msgstr "pievieno pārāk daudz tabulu"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise jābūt \"allow\" vai \"disallow\" (saņemts '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' nav šī dialogu komplekta lapa (RpWelcomeDlg{2}{3}{4}) vai [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: daži jautājumi izveido avotu (Enter ņem vērtību no [
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "palaidiet `rubrapack help <command>`; pārbaudiet ceļus un vai izvades mape pastāv"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (mašīna 0x{2}) nevar darboties šīs pakotnes mašīnās"

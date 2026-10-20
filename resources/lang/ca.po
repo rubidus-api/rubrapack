@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: els args d'un MSIX han de ser text simple (sense [...] om
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file ha d'indicar un programa que entri al paquet"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] anuncia la característica '{2}', que té advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise no es combina amb when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: un MSIX només té dreceres a l'escriptori i al menú Inici{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: una drecera MSIX hi és sempre (when és per a un MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: una drecera MSIX mostra el logotip de la seva aplicació; icon és per a un MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: una drecera anunciada és per a un MSI (un MSIX instal·la tot el paquet)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: una drecera anunciada necessita una icona"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: els args d'un MSIX han de ser text simple (sense [...] omplert en instal·lar)"
@@ -1460,6 +1472,9 @@ msgstr "action ha de ser \"warn\" o \"refuse\" (s'ha rebut '{1}')"
 
 msgid "adds too many tables"
 msgstr "afegeix massa taules"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise ha de ser \"allow\" o \"disallow\" (s'ha rebut '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' no és una pàgina d'aquest conjunt de diàlegs (RpWelcomeDlg{2}{3}{4}) ni un [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: unes quantes preguntes creen la font (Retorn agafa el val
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "executeu `rubrapack help <command>`; comproveu els camins i que existeixi la carpeta de sortida"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (màquina 0x{2}) no es pot executar a les màquines d'aquest paquet"

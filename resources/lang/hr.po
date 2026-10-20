@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file mora imenovati program koji ulazi u paket"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] oglašava značajku '{2}', koja ima advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise se ne kombinira s when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX ima prečace samo na radnoj površini i u izborniku Start{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: MSIX prečac uvijek postoji (when je za MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX prečac prikazuje logotip svoje aplikacije; icon je za MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: oglašavani prečac je za MSI (MSIX instalira cijeli paket)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: oglašavani prečac treba ikonu"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args za MSIX moraju biti običan tekst (bez [...] koji se popunjava pri instalaciji)"
@@ -1460,6 +1472,9 @@ msgstr "action mora biti \"warn\" ili \"refuse\" (primljeno '{1}')"
 
 msgid "adds too many tables"
 msgstr "dodaje previše tablica"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise mora biti \"allow\" ili \"disallow\" (dobiveno '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' nije stranica ovog skupa dijaloga (RpWelcomeDlg{2}{3}{4}) ni [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: nekoliko pitanja stvara izvor (Enter uzima vrijednost u [
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "pokrenite `rubrapack help <command>`; provjerite putanje i postoji li izlazna mapa"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (stroj 0x{2}) ne može raditi na strojevima ovog paketa"

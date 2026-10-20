@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: los args de un MSIX deben ser texto simple (sin [...] rel
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file debe nombrar un programa que entre en el paquete"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] anuncia la característica '{2}', que tiene advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise no se combina con when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: un MSIX solo tiene accesos directos en el escritorio y en el menú Inicio{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: un acceso directo de MSIX siempre está (when es para un
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: un acceso directo de MSIX muestra el logotipo de su aplicación; icon es para un MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: un acceso directo anunciado es para un MSI (un MSIX instala todo el paquete)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: un acceso directo anunciado necesita un icono"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: los args de un MSIX deben ser texto simple (sin [...] rellenado al instalar)"
@@ -1460,6 +1472,9 @@ msgstr "action debe ser \"warn\" o \"refuse\" (se recibió '{1}')"
 
 msgid "adds too many tables"
 msgstr "añade demasiadas tablas"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise debe ser \"allow\" o \"disallow\" (se obtuvo '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' no es una página de este conjunto de diálogos (RpWelcomeDlg{2}{3}{4}) ni un [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: unas pocas preguntas crean el origen (Intro toma el valor
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "ejecute `rubrapack help <command>`; compruebe las rutas y que exista la carpeta de salida"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (máquina 0x{2}) no se puede ejecutar en las máquinas de este paquete"

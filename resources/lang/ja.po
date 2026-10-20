@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: MSIX の args は単純な文字列でなければなり�
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file はパッケージに入るプログラムを指す必要があります"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] は機能 '{2}' を広告しますが、その機能は advertise = \"disallow\" です"
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise は when と一緒には使えません"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX のショートカットはデスクトップとスタート メニューにだけ置けます{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: MSIX のショートカットは常にあります (when
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX のショートカットはアプリケーションのロゴを表示します。icon は MSI 用です"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: 広告ショートカットは MSI 用です(MSIX はパッケージ全体をインストールします)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: 広告ショートカットにはアイコンが必要です"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
@@ -1460,6 +1472,9 @@ msgstr "action は \"warn\" か \"refuse\" です ('{1}' でした)"
 
 msgid "adds too many tables"
 msgstr "テーブルを追加しすぎます"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise は \"allow\" か \"disallow\" です('{1}' でした)"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' はこのダイアログ セットのページ (RpWelcomeDlg{2}{3}{4}) でも [dialog.*] でもありません"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: いくつかの質問でソースを作ります (Enter �
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` を実行してください。パスと出力フォルダーがあるかを確認してください"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (マシン 0x{2}) はこのパッケージのマシンでは実行できません"

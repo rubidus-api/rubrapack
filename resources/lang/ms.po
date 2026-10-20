@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args untuk MSIX mesti teks biasa (tiada [...] yang diisi 
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file mesti menamakan program yang masuk ke dalam pakej"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] mengiklankan ciri '{2}', yang mempunyai advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise tidak digabungkan dengan when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX hanya mempunyai pintasan di desktop dan dalam menu Mula{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: pintasan MSIX sentiasa ada (when untuk MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: pintasan MSIX memaparkan logo aplikasinya; icon untuk MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: pintasan yang diiklankan adalah untuk MSI (MSIX memasang keseluruhan pakej)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: pintasan yang diiklankan memerlukan ikon"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args untuk MSIX mesti teks biasa (tiada [...] yang diisi semasa pemasangan)"
@@ -1460,6 +1472,9 @@ msgstr "action mesti \"warn\" atau \"refuse\" (diterima '{1}')"
 
 msgid "adds too many tables"
 msgstr "menambah terlalu banyak jadual"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise mesti \"allow\" atau \"disallow\" (mendapat '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' bukan halaman set dialog ini (RpWelcomeDlg{2}{3}{4}) mahupun [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: beberapa soalan menghasilkan sumber (Enter mengambil nila
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "jalankan `rubrapack help <command>`; semak laluan dan bahawa folder output wujud"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (mesin 0x{2}) tidak boleh berjalan pada mesin pakej ini"

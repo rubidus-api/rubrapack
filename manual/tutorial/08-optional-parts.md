@@ -107,7 +107,12 @@ target = "file:Hello"
 | `parent = "Samples"` | a line under another feature in the tree |
 | `follow-parent = true` | installed exactly when its parent is |
 | `default-when = "OLDPACK"` | off by default (level above 1), on by default when the condition holds |
+| `advertise = "disallow"` | the feature may not be advertised (installed on demand) |
 | `hidden = true` | not shown in the tree at all |
+
+An *advertised* shortcut installs its feature the first time it is used. Give the shortcut
+`advertise = true` and an `icon`, and Windows shows the icon, installs the feature on the first
+launch and repairs it if files are missing (an MSI only; see the shortcuts chapter).
 
 Feature IDs share one name space with dirs and files: `Documentation` the feature and `DocsDir`
 the folder must have different IDs (rubrapack says so with `RP1301` otherwise).

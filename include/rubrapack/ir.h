@@ -25,6 +25,7 @@ typedef struct {
     bool     implicit;          // the default `Main` feature (G2)
     bool     required;          // RFC-0013 A3: cannot be set to "not installed" in the tree
     bool     follow_parent;     // RFC-0013 A3: installed where its parent is
+    bool     no_advertise;      // RFC-0031 B8: advertise = "disallow" (Feature.Attributes DisallowAdvertise)
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     char    *default_when;      // x48: a level above 1, but installed by default when this condition holds
     rp_pos_t pos;
@@ -105,6 +106,7 @@ typedef struct {
     char    *icon_source;       // .ico to open (RFC-0013 A1), or NULL: the target's own icon
     char    *when;              // RFC-0013 A2: then the shortcut has its own component
     char    *icon_shown;        // as written
+    bool     advertise;         // RFC-0031 B8: an advertised shortcut (Target = the feature; installs on demand)
     rp_pos_t pos;
 } rp_ir_shortcut_t;
 

@@ -1644,7 +1644,9 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         const rp_ir_shortcut_t *x = &ir->shortcuts[k];
         size_t a = app_of_file(ir, x->target_file);
         bool desktop = strcmp(x->dir, "Desktop") == 0, start = strcmp(x->dir, "Programs") == 0 || strcmp(x->dir, "StartMenu") == 0;
-        if (!desktop && !start) {
+        if (x->advertise) {
+            DERR(x->pos, "RP1613", "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)", x->id);
+        } else if (!desktop && !start) {
             DERR(x->pos, "RP1613", "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s", x->id,
                  strcmp(x->dir, "Startup") == 0 ? " (for Startup use [msix-extension] kind = \"startup-task\")" : "");
         } else if (a == SIZE_MAX) {

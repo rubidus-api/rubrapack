@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file trebuie să numească un program care intră în pachet"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] anunță caracteristica '{2}', care are advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise nu se combină cu when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: un MSIX are comenzi rapide doar pe desktop și în meniul Start{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: o comandă rapidă MSIX există mereu (when este pentru 
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: o comandă rapidă MSIX arată sigla aplicației sale; icon este pentru un MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: o scurtătură anunțată este pentru un MSI (un MSIX instalează tot pachetul)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: o scurtătură anunțată are nevoie de o pictogramă"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args pentru un MSIX trebuie să fie text simplu (fără [...] completate la instalare)"
@@ -1460,6 +1472,9 @@ msgstr "action trebuie să fie \"warn\" sau \"refuse\" (s-a primit '{1}')"
 
 msgid "adds too many tables"
 msgstr "adaugă prea multe tabele"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise trebuie să fie \"allow\" sau \"disallow\" (s-a primit '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' nu este nici o pagină a acestui set de dialoguri (RpWelcomeDlg{2}{3}{4}), nici un [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: câteva întrebări creează sursa (Enter preia valoarea 
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "rulați `rubrapack help <comandă>`; verificați căile și că folderul de ieșire există"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (mașina 0x{2}) nu poate rula pe mașinile acestui pachet"

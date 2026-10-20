@@ -1151,6 +1151,12 @@ msgstr "[service.{1}]: يجب أن تكون args لحزمة MSIX نصاً عاد
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: يجب أن يسمّي file برنامجاً يدخل في الحزمة"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] يُعلن عن الميزة '{2}'، التي لها advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: لا يُدمج advertise مع when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: لا تحتوي MSIX على اختصارات إلا على سطح المكتب وفي قائمة ابدأ{2}"
 
@@ -1162,6 +1168,12 @@ msgstr "[shortcut.{1}]: اختصار MSIX موجود دائماً (when خاص �
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: يعرض اختصار MSIX شعار تطبيقه؛ icon خاص بـ MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: الاختصار المُعلن عنه مخصص لـ MSI (يُثبّت MSIX الحزمة بأكملها)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: يحتاج الاختصار المُعلن عنه إلى أيقونة"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: يجب أن تكون args لحزمة MSIX نصاً عادياً (لا [...] تُملأ عند التثبيت)"
@@ -1462,6 +1474,9 @@ msgstr "يجب أن تكون action \"warn\" أو \"refuse\" (وردت '{1}')"
 
 msgid "adds too many tables"
 msgstr "يضيف جداول كثيرة جداً"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "يجب أن يكون advertise إما \"allow\" أو \"disallow\" (ورد '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' ليست صفحة في مجموعة الحوار هذه (RpWelcomeDlg{2}{3}{4}) ولا [dialog.*]"
@@ -2575,7 +2590,6 @@ msgstr "rubrapack new: بضعة أسئلة تنشئ المصدر (يأخذ Enter
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "شغّل `rubrapack help <command>`؛ تحقق من المسارات ومن وجود مجلد الإخراج"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: لا يمكن تشغيل '{1}' ‏(الجهاز 0x{2}) على أجهزة هذه الحزمة"

@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpild
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file turi nurodyti programą, patenkančią į paketą"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] reklamuoja funkciją '{2}', kuriai nustatyta advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise nederinamas su when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX turi nuorodas tik darbalaukyje ir meniu Pradžia{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: MSIX nuoroda yra visada (when skirtas MSI)"
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: MSIX nuoroda rodo savo programos logotipą; icon skirtas MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: reklamuojama nuoroda skirta MSI (MSIX įdiegia visą paketą)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: reklamuojamam nuorodai reikia piktogramos"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: MSIX args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
@@ -1460,6 +1472,9 @@ msgstr "action turi būti \"warn\" arba \"refuse\" (gauta '{1}')"
 
 msgid "adds too many tables"
 msgstr "prideda per daug lentelių"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise turi būti \"allow\" arba \"disallow\" (gauta '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' nėra šio dialogų rinkinio puslapis (RpWelcomeDlg{2}{3}{4}) ar [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: keli klausimai sukuria šaltinį (Enter paima reikšmę i
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "paleiskite `rubrapack help <command>`; patikrinkite kelius ir ar išvesties aplankas yra"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (mašina 0x{2}) negali veikti šio paketo mašinose"

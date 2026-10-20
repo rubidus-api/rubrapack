@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] d
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file moet een programma noemen dat in het pakket gaat"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] adverteert functie '{2}', die advertise = \"disallow\" heeft"
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise wordt niet gecombineerd met when"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: een MSIX heeft alleen snelkoppelingen op het bureaublad en in het startmenu{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: een MSIX-snelkoppeling is er altijd (when is voor een MS
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: een MSIX-snelkoppeling toont het logo van zijn applicatie; icon is voor een MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: een geadverteerde snelkoppeling is voor een MSI (een MSIX installeert het hele pakket)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: een geadverteerde snelkoppeling heeft een pictogram nodig"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args voor een MSIX moeten platte tekst zijn (geen [...] dat bij de installatie wordt ingevuld)"
@@ -1460,6 +1472,9 @@ msgstr "action moet \"warn\" of \"refuse\" zijn (gekregen: '{1}')"
 
 msgid "adds too many tables"
 msgstr "voegt te veel tabellen toe"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise moet \"allow\" of \"disallow\" zijn (kreeg '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' is geen pagina van deze dialoogset (RpWelcomeDlg{2}{3}{4}) en geen [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: een paar vragen maken de bron (Enter neemt de waarde tuss
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "voer `rubrapack help <opdracht>` uit; controleer de paden en of de uitvoermap bestaat"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (machine 0x{2}) kan niet draaien op de machines van dit pakket"

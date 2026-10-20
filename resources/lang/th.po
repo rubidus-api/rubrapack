@@ -1149,6 +1149,12 @@ msgstr "[service.{1}]: args สำหรับ MSIX ต้องเป็นข�
 msgid "[service.%s]: file must name a program that goes into the package"
 msgstr "[service.{1}]: file ต้องระบุโปรแกรมที่อยู่ในแพ็กเกจ"
 
+msgid "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\""
+msgstr "[shortcut.{1}] โฆษณาคุณลักษณะ '{2}' ซึ่งมี advertise = \"disallow\""
+
+msgid "[shortcut.%s]: advertise is not combined with when"
+msgstr "[shortcut.{1}]: advertise ใช้ร่วมกับ when ไม่ได้"
+
 msgid "[shortcut.%s]: an MSIX has shortcuts on the desktop and in the Start menu only%s"
 msgstr "[shortcut.{1}]: MSIX มีทางลัดเฉพาะบนเดสก์ท็อปและในเมนูเริ่ม{2}"
 
@@ -1160,6 +1166,12 @@ msgstr "[shortcut.{1}]: ทางลัดของ MSIX มีอยู่เ�
 
 msgid "[shortcut.%s]: an MSIX shortcut shows its application's logo; icon is for an MSI"
 msgstr "[shortcut.{1}]: ทางลัดของ MSIX แสดงโลโก้ของแอปพลิเคชัน icon ใช้กับ MSI"
+
+msgid "[shortcut.%s]: an advertised shortcut is for an MSI (an MSIX installs the whole package)"
+msgstr "[shortcut.{1}]: ทางลัดแบบโฆษณามีไว้สำหรับ MSI (MSIX ติดตั้งทั้งแพ็กเกจ)"
+
+msgid "[shortcut.%s]: an advertised shortcut needs an icon"
+msgstr "[shortcut.{1}]: ทางลัดแบบโฆษณาต้องมีไอคอน"
 
 msgid "[shortcut.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[shortcut.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
@@ -1460,6 +1472,9 @@ msgstr "action ต้องเป็น \"warn\" หรือ \"refuse\" (ได
 
 msgid "adds too many tables"
 msgstr "เพิ่มตารางมากเกินไป"
+
+msgid "advertise is \"allow\" or \"disallow\" (got '%s')"
+msgstr "advertise ต้องเป็น \"allow\" หรือ \"disallow\" (ได้รับ '{1}')"
 
 msgid "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]"
 msgstr "after = '{1}' ไม่ใช่หน้าในชุดกล่องโต้ตอบนี้ (RpWelcomeDlg{2}{3}{4}) และไม่ใช่ [dialog.*]"
@@ -2573,7 +2588,6 @@ msgstr "rubrapack new: คำถามไม่กี่ข้อจะสร้
 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "เรียก `rubrapack help <command>` ตรวจพาธและตรวจว่ามีโฟลเดอร์ผลลัพธ์อยู่"
-
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (เครื่อง 0x{2}) ทำงานบนเครื่องของแพ็กเกจนี้ไม่ได้"
