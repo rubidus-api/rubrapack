@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nije poslednji unos (nije paket koji je napisao rubr
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Nizovi tabela [[...]] nisu podržani; dajte svakoj stavci sopstveni [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check u [action.{1}] nema efekta: još ga ništa ne pokreće; uklonite ga"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] traži i do i undo (undo takođe poništava neuspeli do)"
@@ -949,7 +947,7 @@ msgid "[menu.%s] needs 'target': the program the item starts"
 msgstr "[menu.{1}] traži 'target': program koji stavka pokreće"
 
 msgid "[menu.%s]: Windows 11's menu takes an ID of letters and digits only (no '_'): rename it, or windows11 = false"
-msgstr "[menu.{1}]: мени оперативног система Windows 11 прима ID само од слова и цифара (без '_'): преименујте га или поставите windows11 = false"
+msgstr "[menu.{1}]: meni operativnog sistema Windows 11 prima ID samo od slova i cifara (bez '_'): preimenujte ga ili postavite windows11 = false"
 
 msgid "[menu.%s]: a sub-menu starts nothing: leave 'args' out"
 msgstr "[menu.{1}]: podmeni ništa ne pokreće: izostavite 'args'"
@@ -961,10 +959,10 @@ msgid "[menu.%s]: args has a part Windows Installer fills in at install time ([.
 msgstr "[menu.{1}]: args ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX sadrži samo fiksni tekst"
 
 msgid "[menu.%s]: hide-when is \"HKCU\\\\key\\\\value\" or \"HKLM\\\\...\", on an item of Windows 11's menu that is not in a sub-menu"
-msgstr "[menu.{1}]: hide-when је \"HKCU\\\\key\\\\value\" или \"HKLM\\\\...\", на ставци менија оперативног система Windows 11 која није у подменију"
+msgstr "[menu.{1}]: hide-when je \"HKCU\\\\key\\\\value\" ili \"HKLM\\\\...\", na stavci menija operativnog sistema Windows 11 koja nije u podmeniju"
 
 msgid "[menu.%s]: hide-when names a value this package writes ([registry.%s]): the item would never show"
-msgstr "[menu.{1}]: hide-when наводи вредност коју уписује сам овај пакет ([registry.{2}]): ставка се никад не би приказала"
+msgstr "[menu.{1}]: hide-when navodi vrednost koju upisuje sam ovaj paket ([registry.{2}]): stavka se nikad ne bi prikazala"
 
 msgid "[menu.%s]: its program is not in the MSIX (msi-only?)"
 msgstr "[menu.{1}]: njegov program nije u MSIX-u (msi-only?)"
@@ -976,7 +974,7 @@ msgid "[menu.%s]: list has a part Windows Installer fills in at install time ([.
 msgstr "[menu.{1}]: list ima deo koji Windows Installer popunjava pri instalaciji ([...]); MSIX sadrži samo fiksni tekst"
 
 msgid "[menu.%s]: list stands for %s when the paths do not fit a command line: it needs multi = \"one\", %s in args and %s (the list file) in list"
-msgstr "[menu.{1}]: list замењује {2} када путање не стају у командну линију: потребни су multi = \"one\", {3} у args и {4} (датотека са списком) у list"
+msgstr "[menu.{1}]: list zamenjuje {2} kada putanje ne staju u komandnu liniju: potrebni su multi = \"one\", {3} u args i {4} (datoteka sa spiskom) u list"
 
 msgid "[menu.%s]: on = \"%s\": there is no [assoc.%s]"
 msgstr "[menu.{1}]: on = \"{2}\": nema [assoc.{3}]"
@@ -1018,19 +1016,19 @@ msgid "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"
 msgstr "[msix-extension.{1}]: types je lista tipova datoteka, npr. [\".txt\", \"*\"]"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
-msgstr "[msix-extension.{1}]: verb '{2}': Windows прима само слова и цифре"
+msgstr "[msix-extension.{1}]: verb '{2}': Windows prima samo slova i cifre"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
-msgstr "[other-copy.{1}] наводи једну копију: msix (са publisher) или upgrade-code"
+msgstr "[other-copy.{1}] navodi jednu kopiju: msix (sa publisher) ili upgrade-code"
 
 msgid "[other-copy.%s]: msix is the package's identity name (3 to 50 letters, digits, '.' or '-') and needs publisher (\"CN=...\"), as its manifest has them"
-msgstr "[other-copy.{1}]: msix је назив идентитета пакета (3 до 50 слова, цифара, '.' или '-') и тражи publisher (\"CN=...\"), како их има његов манифест"
+msgstr "[other-copy.{1}]: msix je naziv identiteta paketa (3 do 50 slova, cifara, '.' ili '-') i traži publisher (\"CN=...\"), kako ih ima njegov manifest"
 
 msgid "[other-copy.%s]: the preflight looks for the other copy: it needs preflight = true"
-msgstr "[other-copy.{1}]: другу копију тражи претходна провера: потребно је preflight = true"
+msgstr "[other-copy.{1}]: drugu kopiju traži prethodna provera: potrebno je preflight = true"
 
 msgid "[other-copy.%s]: upgrade-code is this package's own (that is an upgrade, not another copy)"
-msgstr "[other-copy.{1}]: upgrade-code припада овом пакету (то је надоградња, а не друга копија)"
+msgstr "[other-copy.{1}]: upgrade-code pripada ovom paketu (to je nadogradnja, a ne druga kopija)"
 
 msgid "[permission.%s] needs its dir to have a feature"
 msgstr "[permission.{1}] traži da njegov dir ima funkciju"
@@ -1396,7 +1394,7 @@ msgid "action is neither a standard action nor in CustomAction"
 msgstr "akcija nije ni standardna akcija ni u CustomAction"
 
 msgid "action must be \"warn\" or \"refuse\" (got '%s')"
-msgstr "action мора бити \"warn\" или \"refuse\" (примљено '{1}')"
+msgstr "action mora biti \"warn\" ili \"refuse\" (primljeno '{1}')"
 
 msgid "adds too many tables"
 msgstr "dodaje previše tabela"
@@ -2059,7 +2057,7 @@ msgid "language must be \"neutral\", \"en-US\" or \"ko-KR\""
 msgstr "language mora biti \"neutral\", \"en-US\" ili \"ko-KR\""
 
 msgid "languages = \"all\" stands alone, not in an array: it takes every built-in language"
-msgstr "languages = \"all\" стоји самостално, не у низу: узима све уграђене језике"
+msgstr "languages = \"all\" stoji samostalno, ne u nizu: uzima sve ugrađene jezike"
 
 msgid "languages holds codes like \"ko\" or \"zh_TW\" (2 or 3 lower-case letters, and _ and a region's two capitals) (got '%s')"
 msgstr "languages sadrži kodove kao \"ko\" ili \"zh_TW\" (2 ili 3 mala slova, i _ i dva velika slova regiona) (dobijeno '{1}')"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' nije pronađen (ni kao varijante .scale-100 ... .scale-400)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo sa varijantama razmere traži ASCII ime datoteke sa ekstenzijom"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo mora biti .png u 8-bitnom RGB ili RGBA, bez preplitanja, najviše 1024 piksela po strani"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package je ime identiteta glavnog paketa (dobijeno '{1}')"
@@ -3924,16 +3925,32 @@ msgstr "[1] drugih korisnika ovog računara možda ima podešavanja ili podatke 
 
 msgctxt "installer"
 msgid "PreflightOtherStore"
-msgstr "[1] је већ инсталиран на овом рачунару из продавнице Microsoft Store или као пакет апликације ([2]). Две копије једног програма обе отварају његове датотеке и обе приказују његове меније.\r\n\r\nИнсталирати и ову?"
+msgstr "[1] je već instaliran na ovom računaru iz prodavnice Microsoft Store ili kao paket aplikacije ([2]). Dve kopije jednog programa obe otvaraju njegove datoteke i obe prikazuju njegove menije.\r\n\r\nInstalirati i ovu?"
 
 msgctxt "installer"
 msgid "PreflightOtherStoreRefuse"
-msgstr "[1] је већ инсталиран на овом рачунару из продавнице Microsoft Store или као пакет апликације ([2]). Прво уклоните ту копију (Поставке > Апликације), па инсталирајте ову."
+msgstr "[1] je već instaliran na ovom računaru iz prodavnice Microsoft Store ili kao paket aplikacije ([2]). Prvo uklonite tu kopiju (Postavke > Aplikacije), pa instalirajte ovu."
 
 msgctxt "installer"
 msgid "PreflightOtherMsi"
-msgstr "На овом рачунару већ постоји друга инсталација програма [1] ([2]). Две копије једног програма обе отварају његове датотеке и обе приказују његове меније.\r\n\r\nИнсталирати и ову?"
+msgstr "Na ovom računaru već postoji druga instalacija programa [1] ([2]). Dve kopije jednog programa obe otvaraju njegove datoteke i obe prikazuju njegove menije.\r\n\r\nInstalirati i ovu?"
 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
-msgstr "На овом рачунару већ постоји друга инсталација програма [1] ([2]). Прво је уклоните (Поставке > Апликације), па инсталирајте ову."
+msgstr "Na ovom računaru već postoji druga instalacija programa [1] ([2]). Prvo je uklonite (Postavke > Aplikacije), pa instalirajte ovu."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] nije mogao da se instalira, a poništavanje nije uklonilo sve. Ono što je ostalo navedeno je u nastavku. Ponovo pokrenite instalacioni program, a zatim uklonite [1] ako ga ne želite.\r\nEvidencija: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] nije mogao da se nadogradi, a poništavanje nije vratilo verziju koju ste imali. Razlike su navedene u nastavku. Popravite je instalacionim programom te verzije ili ponovo instalirajte novu verziju.\r\nEvidencija: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] nije mogao da se ukloni, a poništavanje ga nije vratilo. Razlike su navedene u nastavku. Popravite ga njegovim instalacionim programom, a zatim ga ponovo uklonite.\r\nEvidencija: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] nije mogao da se popravi, a poništavanje ga nije vratilo. Razlike su navedene u nastavku. Ponovo pokrenite instalacioni program da biste ga popravili.\r\nEvidencija: [2]"

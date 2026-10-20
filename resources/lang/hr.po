@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nije posljednji unos (nije paket koji je napisao rub
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Polja tablica [[...]] nisu podržana; svakoj stavci dajte vlastiti [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check u [action.{1}] nema učinka: još ga ništa ne pokreće; uklonite ga"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] treba i do i undo (undo također poništava neuspjeli do)"
@@ -2117,6 +2115,9 @@ msgstr "logotip '{1}' nije pronađen (ni kao inačice .scale-100 ... .scale-400)
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotip '{1}': logotip s inačicama mjerila treba ASCII naziv datoteke s nastavkom"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo mora biti .png u 8-bitnom RGB ili RGBA, bez preplitanja, najviše 1024 piksela po strani"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package je naziv identiteta glavnog paketa (dobiveno '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Na ovom računalu već postoji druga instalacija programa [1] ([2]). Dvi
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Na ovom računalu već postoji druga instalacija programa [1] ([2]). Najprije je uklonite (Postavke > Aplikacije), a zatim instalirajte ovu."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] nije se mogao instalirati, a poništavanje nije uklonilo sve. Ono što je ostalo navedeno je u nastavku. Ponovno pokrenite instalacijski program, a zatim uklonite [1] ako ga ne želite.\r\nZapisnik: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] nije se mogao nadograditi, a poništavanje nije vratilo verziju koju ste imali. Razlike su navedene u nastavku. Popravite je instalacijskim programom te verzije ili ponovno instalirajte novu verziju.\r\nZapisnik: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] nije se mogao ukloniti, a poništavanje ga nije vratilo. Razlike su navedene u nastavku. Popravite ga njegovim instalacijskim programom, a zatim ga ponovno uklonite.\r\nZapisnik: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] nije se mogao popraviti, a poništavanje ga nije vratilo. Razlike su navedene u nastavku. Ponovno pokrenite instalacijski program da biste ga popravili.\r\nZapisnik: [2]"

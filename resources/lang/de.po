@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ist nicht der letzte Eintrag (kein Paket, das rubrap
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-Tabellenarrays werden nicht unterstützt; geben Sie jedem Element ein eigenes [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check hat keine Wirkung: Noch führt nichts es aus; entfernen Sie es"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] braucht do und undo (undo macht auch ein fehlgeschlagenes do rückgängig)"
@@ -2117,6 +2115,9 @@ msgstr "Logo '{1}' nicht gefunden (auch nicht als .scale-100 ... .scale-400-Vari
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "Logo '{1}': Ein Logo mit Skalierungsvarianten braucht einen ASCII-Dateinamen mit Erweiterung"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo muss ein .png in 8-Bit-RGB oder -RGBA sein, nicht interlaced, höchstens 1024 Pixel je Seite"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package ist der Identitätsname des Hauptpakets (erhalten: '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Eine andere Installation von [1] ist bereits auf diesem Computer ([2]). 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Eine andere Installation von [1] ist bereits auf diesem Computer ([2]). Entfernen Sie sie zuerst (Einstellungen > Apps) und installieren Sie dann diese."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] konnte nicht installiert werden, und das Rückgängigmachen hat nicht alles entfernt. Was übrig ist, steht unten. Starten Sie das Setup erneut und entfernen Sie [1] dann, wenn Sie es nicht möchten.\r\nProtokoll: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] konnte nicht aktualisiert werden, und das Rückgängigmachen hat Ihre bisherige Version nicht wiederhergestellt. Die Unterschiede stehen unten. Reparieren Sie sie mit dem Setup dieser Version oder installieren Sie die neue Version erneut.\r\nProtokoll: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] konnte nicht entfernt werden, und das Rückgängigmachen hat es nicht wiederhergestellt. Die Unterschiede stehen unten. Reparieren Sie es mit seinem Setup und entfernen Sie es dann erneut.\r\nProtokoll: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] konnte nicht repariert werden, und das Rückgängigmachen hat es nicht wiederhergestellt. Die Unterschiede stehen unten. Starten Sie das Setup erneut, um es zu reparieren.\r\nProtokoll: [2]"

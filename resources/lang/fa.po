@@ -809,8 +809,6 @@ msgstr "[Content_Types].xml آخرین ورودی نیست (بسته‌ای نی
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "آرایه‌های جدول [[...]] پشتیبانی نمی‌شوند؛ به هر مورد [kind.ID] خودش را بدهید"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check اثری ندارد: هنوز چیزی آن را اجرا نمی‌کند؛ آن را حذف کنید"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] به do و undo هر دو نیاز دارد (undo یک do ناموفق را هم برمی‌گرداند)"
@@ -2119,6 +2117,9 @@ msgstr "لوگوی '{1}' یافت نشد (حتی به صورت نسخه‌های
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "لوگوی '{1}': لوگویی با نسخه‌های مقیاس به نام فایل ASCII با پسوند نیاز دارد"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo باید یک .png با RGB یا RGBA هشت‌بیتی، بدون درهم‌آمیزی و حداکثر ۱۰۲۴ پیکسل در هر ضلع باشد"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package نام هویت بسته اصلی است ('{1}' دریافت شد)"
@@ -3939,3 +3940,19 @@ msgstr "نصب دیگری از [1] از قبل روی این رایانه هست
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "نصب دیگری از [1] از قبل روی این رایانه هست ([2]). اول آن را حذف کنید (تنظیمات > برنامه‌ها)، بعد این یکی را نصب کنید."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] نصب نشد و لغو کردن همه‌چیز را برنداشت. آنچه مانده در زیر آمده است. نصب‌کننده را دوباره اجرا کنید، سپس اگر [1] را نمی‌خواهید آن را حذف کنید.\r\nگزارش: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] ارتقا نیافت و لغو کردن نسخه‌ای را که داشتید برنگرداند. تفاوت‌ها در زیر آمده است. آن را با نصب‌کنندهٔ همان نسخه تعمیر کنید یا نسخهٔ جدید را دوباره نصب کنید.\r\nگزارش: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] حذف نشد و لغو کردن آن را به حال قبل برنگرداند. تفاوت‌ها در زیر آمده است. آن را با نصب‌کننده‌اش تعمیر کنید و سپس دوباره حذف کنید.\r\nگزارش: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] تعمیر نشد و لغو کردن آن را به حال قبل برنگرداند. تفاوت‌ها در زیر آمده است. برای تعمیر، نصب‌کننده را دوباره اجرا کنید.\r\nگزارش: [2]"

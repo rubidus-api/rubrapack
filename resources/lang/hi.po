@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml अंतिम प्रविष्टि नह�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] तालिका-सरणियाँ समर्थित नहीं हैं; हर आइटम को अपना [kind.ID] दें"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check का कोई प्रभाव नहीं: अभी इसे कुछ नहीं चलाता; इसे हटाएँ"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] को do और undo दोनों चाहिए (undo विफल do को भी वापस लेता है)"
@@ -2117,6 +2115,9 @@ msgstr "लोगो '{1}' नहीं मिला (न ही .scale-100 ... 
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "लोगो '{1}': स्केल रूपों वाले लोगो को एक्सटेंशन सहित ASCII फ़ाइल नाम चाहिए"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo एक 8-बिट RGB या RGBA .png होना चाहिए, इंटरलेस्ड नहीं, हर भुजा अधिकतम 1024 पिक्सेल"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package मुख्य पैकेज का पहचान नाम है (मिला '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "इस कंप्यूटर पर [1] का एक और इं�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "इस कंप्यूटर पर [1] का एक और इंस्टॉलेशन पहले से है ([2])। पहले उसे हटाएँ (सेटिंग्स > ऐप्स), फिर इसे इंस्टॉल करें।"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] इंस्टॉल नहीं हो सका, और पूर्ववत करने से सब कुछ नहीं हटा। जो बचा है वह नीचे दिया है। इंस्टॉलर फिर से चलाएँ, फिर ज़रूरत न हो तो [1] हटा दें।\r\nलॉग: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] अपग्रेड नहीं हो सका, और पूर्ववत करने से आपका पिछला संस्करण वापस नहीं आया। अंतर नीचे दिए हैं। उस संस्करण के इंस्टॉलर से इसे ठीक करें, या नया संस्करण फिर से इंस्टॉल करें।\r\nलॉग: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] हटाया नहीं जा सका, और पूर्ववत करने से यह पहले जैसा नहीं हुआ। अंतर नीचे दिए हैं। इसके इंस्टॉलर से इसे ठीक करें, फिर दोबारा हटाएँ।\r\nलॉग: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] ठीक नहीं हो सका, और पूर्ववत करने से यह पहले जैसा नहीं हुआ। अंतर नीचे दिए हैं। इसे ठीक करने के लिए इंस्टॉलर फिर से चलाएँ।\r\nलॉग: [2]"

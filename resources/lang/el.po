@@ -807,8 +807,6 @@ msgstr "Το [Content_Types].xml δεν είναι η τελευταία κατ�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Οι πίνακες πινάκων [[...]] δεν υποστηρίζονται· δώστε σε κάθε στοιχείο το δικό του [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "Το check του [action.{1}] δεν έχει αποτέλεσμα: τίποτα δεν το εκτελεί ακόμη· αφαιρέστε το"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "Το [action.{1}] χρειάζεται και do και undo (το undo αναιρεί επίσης ένα αποτυχημένο do)"
@@ -2117,6 +2115,9 @@ msgstr "το λογότυπο '{1}' δεν βρέθηκε (ούτε ως παρ�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "λογότυπο '{1}': ένα λογότυπο με παραλλαγές κλίμακας χρειάζεται όνομα αρχείου ASCII με επέκταση"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "το logo πρέπει να είναι .png 8-bit RGB ή RGBA, χωρίς πλέξη, έως 1024 εικονοστοιχεία ανά πλευρά"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "το main-package είναι το όνομα ταυτότητας του κύριου πακέτου (δόθηκε '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Υπάρχει ήδη άλλη εγκατάσταση του [1] σε α
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Υπάρχει ήδη άλλη εγκατάσταση του [1] σε αυτόν τον υπολογιστή ([2]). Καταργήστε την πρώτα (Ρυθμίσεις > Εφαρμογές) και μετά εγκαταστήστε αυτό."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Το [1] δεν εγκαταστάθηκε και η αναίρεση δεν αφαίρεσε τα πάντα. Όσα έμειναν παρατίθενται παρακάτω. Εκτελέστε ξανά το πρόγραμμα εγκατάστασης και μετά καταργήστε το [1] αν δεν το θέλετε.\r\nΑρχείο καταγραφής: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Το [1] δεν αναβαθμίστηκε και η αναίρεση δεν επανέφερε την έκδοση που είχατε. Οι διαφορές παρατίθενται παρακάτω. Επιδιορθώστε την με το πρόγραμμα εγκατάστασης εκείνης της έκδοσης ή εγκαταστήστε ξανά τη νέα.\r\nΑρχείο καταγραφής: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Το [1] δεν καταργήθηκε και η αναίρεση δεν το επανέφερε. Οι διαφορές παρατίθενται παρακάτω. Επιδιορθώστε το με το πρόγραμμα εγκατάστασής του και μετά καταργήστε το ξανά.\r\nΑρχείο καταγραφής: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Το [1] δεν επιδιορθώθηκε και η αναίρεση δεν το επανέφερε. Οι διαφορές παρατίθενται παρακάτω. Εκτελέστε ξανά το πρόγραμμα εγκατάστασης για να το επιδιορθώσετε.\r\nΑρχείο καταγραφής: [2]"

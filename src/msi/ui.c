@@ -118,6 +118,12 @@ static const text_t texts[] = {
     { "PreflightOtherStoreRefuse", "[1] is already installed on this computer from the Microsoft Store or as an app package ([2]). Remove that copy first (Settings > Apps), then install this one." },
     { "PreflightOtherMsi", "Another installation of [1] is already on this computer ([2]). Two copies of one program both open its files and both show its menus.\r\n\r\nInstall this one too?" },
     { "PreflightOtherMsiRefuse", "Another installation of [1] is already on this computer ([2]). Remove it first (Settings > Apps), then install this one." },
+    // The double-failure report (RFC-0003 6): its first paragraph, one per kind of run. [1] the
+    // product, [2] the installation's log. The lines after it name what differs.
+    { "ReportInstall", "[1] could not be installed, and undoing that did not remove everything. What is left is listed below. Run the installer again, then remove [1] if you do not want it.\r\nLog: [2]" },
+    { "ReportUpgrade", "[1] could not be upgraded, and undoing that did not restore the version you had. What differs is listed below. Repair it with that version's installer, or install the new version again.\r\nLog: [2]" },
+    { "ReportRemove", "[1] could not be removed, and undoing that did not restore it. What differs is listed below. Repair it with its installer, then remove it again.\r\nLog: [2]" },
+    { "ReportRepair", "[1] could not be repaired, and undoing that did not restore it. What differs is listed below. Run the installer again to repair it.\r\nLog: [2]" },
     { "DirGuardText", "Setup stopped: the folder [1] already exists and is not owned by administrators, or it leads somewhere else through a link. Choose another folder, or have an administrator remove it first." },
     { "LaunchText", "&Launch [ProductName]" },
     { "SaveLog", "&Save log..." },

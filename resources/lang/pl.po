@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nie jest ostatnim wpisem (nie jest to pakiet zapisan
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tablice tabel [[...]] nie są obsługiwane; daj każdemu elementowi własne [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check nie ma efektu: nic go jeszcze nie uruchamia; usuń go"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] wymaga zarówno do, jak i undo (undo wycofuje też nieudane do)"
@@ -2117,6 +2115,9 @@ msgstr "nie znaleziono logo '{1}' (ani jako wariantów .scale-100 ... .scale-400
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo z wariantami skali wymaga nazwy pliku ASCII z rozszerzeniem"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo musi być plikiem .png RGB lub RGBA 8-bitowym, bez przeplotu, o boku najwyżej 1024 pikseli"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package to nazwa tożsamości pakietu głównego (otrzymano '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Na tym komputerze jest już inna instalacja programu [1] ([2]). Dwie kop
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Na tym komputerze jest już inna instalacja programu [1] ([2]). Najpierw ją usuń (Ustawienia > Aplikacje), a potem zainstaluj tę."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Nie udało się zainstalować programu [1], a cofnięcie nie usunęło wszystkiego. To, co zostało, wymieniono poniżej. Uruchom instalator ponownie, a potem usuń [1], jeśli go nie chcesz.\r\nDziennik: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Nie udało się uaktualnić programu [1], a cofnięcie nie przywróciło poprzedniej wersji. Różnice wymieniono poniżej. Napraw ją instalatorem tamtej wersji albo zainstaluj nową wersję ponownie.\r\nDziennik: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Nie udało się usunąć programu [1], a cofnięcie go nie przywróciło. Różnice wymieniono poniżej. Napraw go jego instalatorem, a potem usuń ponownie.\r\nDziennik: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Nie udało się naprawić programu [1], a cofnięcie go nie przywróciło. Różnice wymieniono poniżej. Uruchom instalator ponownie, aby go naprawić.\r\nDziennik: [2]"

@@ -226,9 +226,9 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`) - how the product shows in Installed apps |
+| `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`), logo (a `.png`: 8-bit RGB or RGBA, at most 1024 pixels a side; the menu package's logos) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
-| `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check |
+| `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check (exits 0 when what `do` made is there; for the report after a failed rollback) |
 | `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on (with `remove`: `install`, or `uninstall` - the whole key at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), recursive (`true`: the folder with everything in it, at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
@@ -411,8 +411,26 @@ rubrapack turns the pair into deferred, elevated actions with their rollback twi
 upgrade are all-or-nothing: if anything fails later (or `do`/`undo` itself exits non-zero), the
 files come back and the other command restores the registration. Both commands must be safe to run
 twice and must finish without asking anything - they run without a window, and nothing waits for a
-user. The arguments are passed as written (they are not formatted strings). `check` has no effect
-yet and only draws a warning (`RP1318`).
+user. The arguments are passed as written (they are not formatted strings).
+
+If a later step fails, Windows Installer undoes the installation, and the commands above put the
+registration back. Should that undoing itself go wrong, the user gets a report: a text file on the
+desktop (or in Downloads) named `<product> setup report <date and time>.txt`, in the user's language,
+saying what was being done, what is not as it was, what to do next, and where the installation's log
+is. It looks at the older version an upgrade was replacing (installed again?) and at each
+`check`:
+
+```toml
+[action.Tip]
+run = "file:MainExe"
+do = "--register"
+undo = "--unregister"
+check = "--status"        # exits 0 when what --register made is there
+```
+
+After the undoing, `check` should exit 0 when the product was there before (an upgrade, a repair, a
+removal) and not 0 after a first installation that failed. When everything is as it was, nothing is
+written. `check` is a formatted string (`[INSTALLDIR]` is the install folder).
 
 ### Registry values: `[registry.ID]`
 
@@ -546,8 +564,9 @@ The same table serves both menus of Windows:
   Explorer, and does nothing but what the installation wrote down for the item.
   - An **MSIX** has identity: the DLL goes into the package and the manifest declares the items.
   - An **MSI** installs two more files beside the item's program - the DLL and
-    `rubrapack_menu.msix`, a small package with only a manifest and logos (made from `[arp] icon`
-    when it has a 32-bit image, else plain) - and registers that
+    `rubrapack_menu.msix`, a small package with only a manifest and logos (made from `[arp] logo`, a
+    PNG, or else the largest 32-bit or PNG image of `[arp] icon`, fitted and centred; else plain) -
+    and registers that
     package for the program's folder when it is installed (for every user of the computer, others
     at their next sign-in) and removes it when it is removed. **It needs no certificate**: the
     package is unsigned in the form Windows accepts from an installation with administrator
@@ -783,7 +802,9 @@ on = "uninstall"            # the key with its values and every key below it
   Installed apps, the maintenance page's Remove, `msiexec /x`. **An upgrade never wipes**: the new
   version finds the settings as they were. A removal that fails and rolls back has touched nothing,
   for the deleting is done last, once the removal has succeeded - which also means that nothing
-  brings it back afterwards.
+  brings it back afterwards. Where rollback is turned off (the `DisableRollback` policy, or an
+  installation run that way) Windows Installer skips that last step; the wiping then happens at the
+  end of the removal itself instead.
 - **It deletes whatever is there**, not only what the program wrote. Name a folder that is the
   product's alone. If the user may choose the install folder and chooses one that holds other
   things, those go too.
@@ -802,7 +823,8 @@ on = "uninstall"            # the key with its values and every key below it
   `users = "all"` (below). For this purpose a per-machine package may name `HKCU` here, which it
   otherwise may not. The user's profile and `HKCU` are deleted with the
   user's own rights; the rest, in a per-machine package (`scope = "machine"`), by SYSTEM. A `dual`
-  package deletes everything with the rights of whoever removes it.
+  package installed for all users (`ALLUSERS=1`) does the same; installed for one user, it deletes
+  everything with that user's rights.
 - The folder's `[dir.ID]` must be a folder of this package, so it is created (empty) at
   installation if it was not there.
 - An MSIX needs none of this: Windows removes the package's folder and the package's own registry
@@ -1179,7 +1201,7 @@ replaces one text; the texts are MSI formatted strings, so `[ProductName]` is re
 give these five gets English), `DetailsFull` (the details box's check box),
 `LanguageTitle`, `LanguageText`, `LangGroup1` to `LangGroup9` (the regions of a grouped language
 page; a language without them gets English), `DirGuardText` (the guard's message below), `PreflightAsk`,
-`PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse` (the preflight's messages), and for a removal -
+`PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse` (the preflight's messages), `ReportInstall`, `ReportUpgrade`, `ReportRemove`, `ReportRepair` (the report after a failed rollback), and for a removal -
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
 `RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).

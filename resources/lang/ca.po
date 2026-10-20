@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml no és l'última entrada (no és un paquet escrit pe
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "les matrius de taules [[...]] no són compatibles; doneu a cada element el seu [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check no té cap efecte: encara no l'executa res; suprimiu-lo"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] necessita do i undo (undo també desfà un do fallit)"
@@ -2117,6 +2115,9 @@ msgstr "no es troba el logotip '{1}' (ni com a variants .scale-100 ... .scale-40
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotip '{1}': un logotip amb variants d'escala necessita un nom de fitxer ASCII amb extensió"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo ha de ser un .png RGB o RGBA de 8 bits, no entrellaçat, d'un màxim de 1024 píxels per costat"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package és el nom d'identitat del paquet principal (s'ha obtingut '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Ja hi ha una altra instal·lació del [1] en aquest ordinador ([2]). Due
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Ja hi ha una altra instal·lació del [1] en aquest ordinador ([2]). Elimineu-la primer (Configuració > Aplicacions) i després instal·leu aquesta."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "No s'ha pogut instal·lar el [1], i desfer-ho no ho ha tret tot. El que queda s'indica a sota. Torneu a executar l'instal·lador i després traieu el [1] si no el voleu.\r\nRegistre: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "No s'ha pogut actualitzar el [1], i desfer-ho no ha restaurat la versió que teníeu. Les diferències s'indiquen a sota. Repareu-la amb l'instal·lador d'aquella versió o torneu a instal·lar la nova.\r\nRegistre: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "No s'ha pogut treure el [1], i desfer-ho no l'ha restaurat. Les diferències s'indiquen a sota. Repareu-lo amb el seu instal·lador i després torneu-lo a treure.\r\nRegistre: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "No s'ha pogut reparar el [1], i desfer-ho no l'ha restaurat. Les diferències s'indiquen a sota. Torneu a executar l'instal·lador per reparar-lo.\r\nRegistre: [2]"

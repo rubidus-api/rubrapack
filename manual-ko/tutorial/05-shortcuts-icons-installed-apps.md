@@ -82,6 +82,7 @@ rubrapack 이 바로가기를 위해 만든 시작 메뉴 폴더는 바로가기
 | 키 | 효과 |
 |---|---|
 | `icon = "hello.ico"` | 목록의 아이콘 |
+| `logo = "hello.png"` | Windows 11 우클릭 메뉴용 작은 패키지의 그림(11장; 없으면 `icon` 으로 만든다) |
 | `help = "https://..."` | Windows 가 제품과 함께 보이는 지원 링크 |
 | `about = "https://..."` | 제품의 웹 페이지 |
 | `no-repair = true` | 이 제품에 복구가 없다 |

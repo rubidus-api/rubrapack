@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nėra paskutinis įrašas (tai ne paketas, kurį par
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Lentelių masyvai [[...]] nepalaikomi; kiekvienam elementui duokite savo [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check neturi poveikio: jo dar niekas nepaleidžia; pašalinkite jį"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] reikia ir do, ir undo (undo atšaukia ir nepavykusį do)"
@@ -2117,6 +2115,9 @@ msgstr "logotipas '{1}' nerastas (net kaip variantai .scale-100 ... .scale-400)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotipas '{1}': logotipui su mastelio variantais reikia ASCII failo pavadinimo su plėtiniu"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo turi būti 8 bitų RGB arba RGBA .png, nesupintas, ne didesnis kaip 1024 pikselių kraštinė"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package yra pagrindinio paketo tapatybės pavadinimas (gauta '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Šiame kompiuteryje jau yra kitas [1] įdiegimas ([2]). Dvi vienos progr
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Šiame kompiuteryje jau yra kitas [1] įdiegimas ([2]). Pirmiausia jį pašalinkite (Parametrai > Programos), tada įdiekite šią."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] įdiegti nepavyko, o atšaukimas nepašalino visko. Kas liko, išvardyta toliau. Paleiskite diegimo programą dar kartą, tada pašalinkite [1], jei jos nenorite.\r\nŽurnalas: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] atnaujinti nepavyko, o atšaukimas neatkūrė jūsų turėtos versijos. Skirtumai išvardyti toliau. Pataisykite ją tos versijos diegimo programa arba įdiekite naują versiją dar kartą.\r\nŽurnalas: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] pašalinti nepavyko, o atšaukimas jos neatkūrė. Skirtumai išvardyti toliau. Pataisykite ją jos diegimo programa, tada pašalinkite dar kartą.\r\nŽurnalas: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] pataisyti nepavyko, o atšaukimas jos neatkūrė. Skirtumai išvardyti toliau. Paleiskite diegimo programą dar kartą, kad ją pataisytumėte.\r\nŽurnalas: [2]"

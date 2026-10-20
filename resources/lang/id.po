@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml bukan entri terakhir (bukan paket yang ditulis rubra
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Array tabel [[...]] tidak didukung; beri setiap item [kind.ID] sendiri"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check [action.{1}] tidak berpengaruh: belum ada yang menjalankannya; hapus"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] memerlukan do dan undo (undo juga membatalkan do yang gagal)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' tidak ditemukan (juga tidak sebagai varian .scale-100 ... .sc
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo dengan varian skala memerlukan nama file ASCII dengan ekstensi"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo harus berupa .png RGB atau RGBA 8 bit, tidak interlace, paling banyak 1024 piksel per sisi"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package adalah nama identitas paket utama (didapat '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Sudah ada pemasangan lain [1] di komputer ini ([2]). Dua salinan satu pr
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Sudah ada pemasangan lain [1] di komputer ini ([2]). Hapus dulu (Pengaturan > Aplikasi), lalu pasang yang ini."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] tidak dapat dipasang, dan pembatalan tidak menghapus semuanya. Yang tersisa tercantum di bawah. Jalankan lagi penginstal, lalu hapus [1] jika Anda tidak menginginkannya.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] tidak dapat ditingkatkan, dan pembatalan tidak memulihkan versi yang Anda miliki. Perbedaannya tercantum di bawah. Perbaiki dengan penginstal versi itu, atau pasang lagi versi baru.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] tidak dapat dihapus, dan pembatalan tidak memulihkannya. Perbedaannya tercantum di bawah. Perbaiki dengan penginstalnya, lalu hapus lagi.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] tidak dapat diperbaiki, dan pembatalan tidak memulihkannya. Perbedaannya tercantum di bawah. Jalankan lagi penginstal untuk memperbaikinya.\r\nLog: [2]"

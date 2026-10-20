@@ -18,6 +18,28 @@ static bool ends_with_ci(const char *s, const char *suffix) {
 
 static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos);
 
+// A .png the identity package's logos are made from (RFC-0031 L7): 8-bit RGB or RGBA, not
+// interlaced, at most 1024 pixels a side - what the package's own decoder takes.
+char *ir_png_source(ctx_t *c, const char *shown, rp_pos_t pos) {
+    char *path = ends_with_ci(shown, ".png") ? ui_source(c, shown, pos) : NULL;
+    uint8_t *png = NULL;
+    size_t n = 0;
+    bool ok = path && rp_pal_read_file(c->alloc, path, 1u << 24, &png, &n) == PROVEN_OK && n >= 29 && memcmp(png, "\x89PNG\r\n\x1a\n", 8) == 0 &&
+              memcmp(png + 12, "IHDR", 4) == 0 && png[24] == 8 && (png[25] == 2 || png[25] == 6) && png[28] == 0;
+    if (ok) {
+        uint32_t w = (uint32_t)png[16] << 24 | (uint32_t)png[17] << 16 | (uint32_t)png[18] << 8 | png[19];
+        uint32_t h = (uint32_t)png[20] << 24 | (uint32_t)png[21] << 16 | (uint32_t)png[22] << 8 | png[23];
+        ok = w && h && w <= 1024 && h <= 1024;
+    }
+    rp_mem_free(c->alloc, png);
+    if (!ok && (path || !ends_with_ci(shown, ".png"))) {
+        ERR(c, pos, "RP1316", "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side");
+        rp_mem_free(c->alloc, path);
+        return NULL;
+    }
+    return path;
+}
+
 char *ir_icon_source(ctx_t *c, const char *shown, rp_pos_t pos) {
     if (!ends_with_ci(shown, ".ico")) {
         ERR(c, pos, "RP1316", "icon must be an .ico file");

@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ni zadnji vnos (ni paket, ki ga je zapisal rubrapack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Polja tabel [[...]] niso podprta; vsakemu elementu dajte lasten [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check v [action.{1}] nima učinka: še nič ga ne zažene; odstranite ga"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] potrebuje do in undo (undo tudi razveljavi neuspeli do)"
@@ -2117,6 +2115,9 @@ msgstr "logotipa '{1}' ni mogoče najti (niti kot različic .scale-100 ... .scal
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotip '{1}': logotip z različicami merila potrebuje ime datoteke ASCII s pripono"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo mora biti .png v 8-bitnem RGB ali RGBA, brez prepletanja, največ 1024 slikovnih pik na stranico"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package je ime identitete glavnega paketa (dobljeno '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "V tem računalniku je že druga namestitev programa [1] ([2]). Dve kopij
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "V tem računalniku je že druga namestitev programa [1] ([2]). Najprej jo odstranite (Nastavitve > Aplikacije), nato namestite to."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Programa [1] ni bilo mogoče namestiti in razveljavitev ni odstranila vsega. Kar je ostalo, je navedeno spodaj. Znova zaženite namestitveni program, nato odstranite [1], če ga ne želite.\r\nDnevnik: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Programa [1] ni bilo mogoče nadgraditi in razveljavitev ni obnovila različice, ki ste jo imeli. Razlike so navedene spodaj. Popravite jo z namestitvenim programom tiste različice ali znova namestite novo različico.\r\nDnevnik: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Programa [1] ni bilo mogoče odstraniti in razveljavitev ga ni obnovila. Razlike so navedene spodaj. Popravite ga z njegovim namestitvenim programom, nato ga znova odstranite.\r\nDnevnik: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Programa [1] ni bilo mogoče popraviti in razveljavitev ga ni obnovila. Razlike so navedene spodaj. Znova zaženite namestitveni program, da ga popravite.\r\nDnevnik: [2]"

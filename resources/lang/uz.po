@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml oxirgi yozuv emas (rubrapack yoki Windows qadoqlash 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] jadvallar massivlari qo‘llab-quvvatlanmaydi; har bir elementga o‘z [kind.ID] ini bering"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check ta’sir qilmaydi: uni hali hech narsa bajarmaydi; uni olib tashlang"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] ga do va undo ikkalasi kerak (undo muvaffaqiyatsiz do ni ham ortga qaytaradi)"
@@ -2117,6 +2115,9 @@ msgstr "'{1}' logotipi topilmadi (.scale-100 ... .scale-400 variantlari sifatida
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' logotipi: masshtab variantlari bor logotipga kengaytmali ASCII fayl nomi kerak"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 8 bitli RGB yoki RGBA .png bo'lishi kerak, oraliqsiz, har tomoni ko'pi bilan 1024 piksel"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package asosiy paketning identifikatsiya nomi ('{1}' olindi)"
@@ -3937,3 +3938,19 @@ msgstr "Bu kompyuterda [1] dasturining boshqa o'rnatmasi allaqachon bor ([2]). B
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Bu kompyuterda [1] dasturining boshqa o'rnatmasi allaqachon bor ([2]). Avval uni olib tashlang (Sozlamalar > Ilovalar), keyin buni o'rnating."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] o'rnatilmadi va bekor qilish hammasini olib tashlamadi. Qolganlari quyida keltirilgan. O'rnatuvchini qayta ishga tushiring, keyin kerak bo'lmasa [1] ni olib tashlang.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] yangilanmadi va bekor qilish oldingi versiyangizni tiklamadi. Farqlar quyida keltirilgan. Uni o'sha versiyaning o'rnatuvchisi bilan tuzating yoki yangi versiyani qayta o'rnating.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] olib tashlanmadi va bekor qilish uni avvalgi holiga keltirmadi. Farqlar quyida keltirilgan. Uni o'rnatuvchisi bilan tuzating, keyin qayta olib tashlang.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] tuzatilmadi va bekor qilish uni avvalgi holiga keltirmadi. Farqlar quyida keltirilgan. Tuzatish uchun o'rnatuvchini qayta ishga tushiring.\r\nJurnal: [2]"

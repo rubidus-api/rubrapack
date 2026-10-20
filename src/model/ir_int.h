@@ -111,6 +111,7 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x);
 void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e);
 
 // ir_ui.c
+char *ir_png_source(ctx_t *c, const char *shown, rp_pos_t pos);
 char *ir_icon_source(ctx_t *c, const char *shown, rp_pos_t pos);
 void ir_parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x);
 void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x);

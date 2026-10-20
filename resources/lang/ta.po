@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml கடைசி உள்ளீடு அல்ல (
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] அட்டவணை அணிகள் ஆதரிக்கப்படவில்லை; ஒவ்வொரு உருப்படிக்கும் அதன் சொந்த [kind.ID] ஐக் கொடுக்கவும்"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check க்கு விளைவு இல்லை: இன்னும் எதுவும் அதை இயக்குவதில்லை; அதை அகற்றவும்"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] க்கு do மற்றும் undo இரண்டும் தேவை (undo தோல்வியடைந்த do ஐயும் திரும்பப்பெறும்)"
@@ -2117,6 +2115,9 @@ msgstr "சின்னம் '{1}' கிடைக்கவில்லை (.sc
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "சின்னம் '{1}': அளவு மாறுபாடுகள் கொண்ட சின்னத்துக்கு நீட்டிப்புடன் ASCII கோப்புப் பெயர் தேவை"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo என்பது 8-பிட் RGB அல்லது RGBA .png ஆக, இடைப்பின்னல் இல்லாமல், ஒவ்வொரு பக்கமும் அதிகபட்சம் 1024 படப்புள்ளிகளாக இருக்க வேண்டும்"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package என்பது முதன்மைத் தொகுப்பின் அடையாளப் பெயர் ('{1}' கிடைத்தது)"
@@ -3937,3 +3938,19 @@ msgstr "இந்தக் கணினியில் [1]-இன் வேற�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "இந்தக் கணினியில் [1]-இன் வேறொரு நிறுவல் ஏற்கெனவே உள்ளது ([2]). முதலில் அதை அகற்றுங்கள் (அமைப்புகள் > பயன்பாடுகள்), பிறகு இதை நிறுவுங்கள்."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] நிறுவ முடியவில்லை, திரும்பப்பெறுதலும் எல்லாவற்றையும் அகற்றவில்லை. மீதமுள்ளவை கீழே உள்ளன. நிறுவியை மீண்டும் இயக்கி, வேண்டாம் எனில் [1] ஐ அகற்றுங்கள்.\r\nபதிவு: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] மேம்படுத்த முடியவில்லை, திரும்பப்பெறுதலும் உங்கள் முந்தைய பதிப்பை மீட்கவில்லை. வேறுபாடுகள் கீழே உள்ளன. அந்தப் பதிப்பின் நிறுவியால் சரிசெய்யுங்கள், அல்லது புதிய பதிப்பை மீண்டும் நிறுவுங்கள்.\r\nபதிவு: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] அகற்ற முடியவில்லை, திரும்பப்பெறுதலும் அதை முன்பிருந்தபடி மீட்கவில்லை. வேறுபாடுகள் கீழே உள்ளன. அதன் நிறுவியால் சரிசெய்து, மீண்டும் அகற்றுங்கள்.\r\nபதிவு: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] சரிசெய்ய முடியவில்லை, திரும்பப்பெறுதலும் அதை முன்பிருந்தபடி மீட்கவில்லை. வேறுபாடுகள் கீழே உள்ளன. சரிசெய்ய நிறுவியை மீண்டும் இயக்குங்கள்.\r\nபதிவு: [2]"

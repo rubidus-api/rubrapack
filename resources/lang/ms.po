@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml bukan entri terakhir (bukan pakej yang ditulis oleh 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tatasusunan jadual [[...]] tidak disokong; beri setiap item [kind.ID] sendiri"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check [action.{1}] tiada kesan: belum ada yang menjalankannya; buang"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] memerlukan kedua-dua do dan undo (undo juga membatalkan do yang gagal)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' tidak dijumpai (juga tidak sebagai varian .scale-100 ... .sca
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo dengan varian skala memerlukan nama fail ASCII dengan sambungan"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo mesti .png RGB atau RGBA 8 bit, tidak berjalin, paling banyak 1024 piksel setiap sisi"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package ialah nama identiti pakej utama (diterima '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Sudah ada pemasangan lain [1] pada komputer ini ([2]). Dua salinan satu 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Sudah ada pemasangan lain [1] pada komputer ini ([2]). Alih keluarnya dahulu (Tetapan > Aplikasi), kemudian pasang yang ini."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] tidak dapat dipasang, dan buat asal tidak mengalih keluar semuanya. Yang tinggal disenaraikan di bawah. Jalankan pemasang sekali lagi, kemudian alih keluar [1] jika anda tidak mahukannya.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] tidak dapat dinaik taraf, dan buat asal tidak memulihkan versi yang anda ada. Perbezaannya disenaraikan di bawah. Baiki dengan pemasang versi itu, atau pasang semula versi baharu.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] tidak dapat dialih keluar, dan buat asal tidak memulihkannya. Perbezaannya disenaraikan di bawah. Baiki dengan pemasangnya, kemudian alih keluar sekali lagi.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] tidak dapat dibaiki, dan buat asal tidak memulihkannya. Perbezaannya disenaraikan di bawah. Jalankan pemasang sekali lagi untuk membaikinya.\r\nLog: [2]"

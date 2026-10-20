@@ -807,8 +807,6 @@ msgstr "a [Content_Types].xml nem az utolsó bejegyzés (nem a rubrapack vagy a 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "a [[...]] táblatömbök nem támogatottak; minden elemnek adjon saját [kind.ID] táblát"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check hatástalan: még semmi sem futtatja; törölje"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] a do és az undo értéket is igényli (az undo egy sikertelen do-t is visszavon)"
@@ -2117,6 +2115,9 @@ msgstr "a(z) '{1}' embléma nem található (.scale-100 ... .scale-400 változat
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' embléma: a méretezési változatokkal bíró emblémához kiterjesztéses ASCII fájlnév kell"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "a logo 8 bites RGB vagy RGBA .png legyen, nem váltottsoros, oldalanként legfeljebb 1024 képpont"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "a main-package a fő csomag identitásneve (kapott: '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "A(z) [1] egy másik telepítése már megvan ezen a számítógépen ([2
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "A(z) [1] egy másik telepítése már megvan ezen a számítógépen ([2]). Először távolítsa el (Beállítások > Alkalmazások), majd telepítse ezt."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "A(z) [1] nem települt, és a visszavonás nem távolított el mindent. Ami maradt, lent látható. Futtassa újra a telepítőt, majd távolítsa el a(z) [1] programot, ha nem kell.\r\nNapló: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "A(z) [1] nem frissült, és a visszavonás nem állította vissza a korábbi verziót. Az eltérések lent láthatók. Javítsa ki annak a verziónak a telepítőjével, vagy telepítse újra az új verziót.\r\nNapló: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "A(z) [1] nem távolítható el, és a visszavonás nem állította vissza. Az eltérések lent láthatók. Javítsa ki a telepítőjével, majd távolítsa el újra.\r\nNapló: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "A(z) [1] nem javítható, és a visszavonás nem állította vissza. Az eltérések lent láthatók. A javításhoz futtassa újra a telepítőt.\r\nNapló: [2]"

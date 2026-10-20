@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml không phải mục cuối cùng (không phải gói
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Không hỗ trợ mảng bảng [[...]]; hãy cho mỗi mục một [kind.ID] riêng"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check của [action.{1}] không có tác dụng: chưa có gì chạy nó; hãy xóa nó"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] cần cả do và undo (undo cũng hoàn tác do bị lỗi)"
@@ -2117,6 +2115,9 @@ msgstr "không tìm thấy logo '{1}' (kể cả các biến thể .scale-100 ..
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo có biến thể tỷ lệ cần tên tệp ASCII có phần mở rộng"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo phải là tệp .png RGB hoặc RGBA 8 bit, không xen kẽ, mỗi cạnh tối đa 1024 điểm ảnh"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package là tên định danh của gói chính (nhận được '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Máy tính này đã có một bản cài khác của [1] ([2]). Hai b�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Máy tính này đã có một bản cài khác của [1] ([2]). Hãy gỡ nó trước (Cài đặt > Ứng dụng), rồi cài bản này."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Không cài được [1], và việc hoàn tác không gỡ hết. Những gì còn lại được liệt kê bên dưới. Hãy chạy lại trình cài đặt, rồi gỡ [1] nếu bạn không cần.\r\nNhật ký: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Không nâng cấp được [1], và việc hoàn tác không khôi phục phiên bản bạn đã có. Các điểm khác được liệt kê bên dưới. Hãy sửa bằng trình cài đặt của phiên bản đó, hoặc cài lại phiên bản mới.\r\nNhật ký: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Không gỡ được [1], và việc hoàn tác không khôi phục nó. Các điểm khác được liệt kê bên dưới. Hãy sửa bằng trình cài đặt của nó, rồi gỡ lại.\r\nNhật ký: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Không sửa được [1], và việc hoàn tác không khôi phục nó. Các điểm khác được liệt kê bên dưới. Hãy chạy lại trình cài đặt để sửa.\r\nNhật ký: [2]"

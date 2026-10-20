@@ -216,8 +216,17 @@ static HKEY root_key(const wchar_t *root) {
 
 static REGSAM view_flag(const wchar_t *view) { return wcscmp(view, L"32") == 0 ? KEY_WOW64_32KEY : KEY_WOW64_64KEY; }
 
+// A deferred action's data; also for its "<action>NR" twin, which runs instead of a commit action when
+// rollback is disabled (RFC-0031 L2; harmless for an action that has no twin).
 static UINT set_data(MSIHANDLE h, const wchar_t *action, writer_t *w) {
-    UINT rc = MsiSetPropertyW(h, action, w->bad ? L"" : (w->buf ? w->buf : L"RPQ1"));
+    const wchar_t *v = w->bad ? L"" : (w->buf ? w->buf : L"RPQ1");
+    UINT rc = MsiSetPropertyW(h, action, v);
+    wchar_t twin[96];
+    if (wcslen(action) < 90) {
+        wcscpy(twin, action);
+        wcscat(twin, L"NR");
+        (void)MsiSetPropertyW(h, twin, v);
+    }
     return w->bad ? ERROR_OUTOFMEMORY : rc;
 }
 
@@ -3459,5 +3468,194 @@ __declspec(dllexport) UINT __stdcall RpLangApply(MSIHANDLE h) {
         MsiCloseHandle(db);
     }
     if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    return ERROR_SUCCESS;
+}
+
+// ---- the double-failure report (RFC-0003 6, RFC-0031 B31) ----------------------------------------
+//
+// A package with [action]s: when an installation fails and its rollback does not put everything
+// back, the user finds a report on the desktop (or in Downloads) that says what differs and what
+// to do. The rollback action RP_Report sits right after InstallInitialize, so in a rollback it runs
+// last, as the installing user (impersonated), and looks at the end state:
+//   - each older version an upgrade found (RP_OLDER_FOUND) is installed again;
+//   - each [action] with check: its program exits 0 when what `do` made is there. After the
+//     rollback it should be there when the product was there before (an upgrade, a repair, a
+//     removal) and not after a first installation that failed.
+// Nothing differs: nothing is written (a rollback that worked says nothing).
+//   RpReportPrepare  immediate: RP_Report's data - "RPR1", the product's name, the log's path, the
+//                    report's first paragraph (for what was being done, in the user's language), whether the product was there before ("1"/"0"), the older codes
+//                    ("{..};{..}"), then per check: the program's path and its arguments.
+//   RpReport         rollback: checks, and writes the report when something differs.
+
+// MsiFormatRecord of a template (heap; NULL on failure).
+static wchar_t *format_text(MSIHANDLE h, const wchar_t *tmpl) {
+    MSIHANDLE rec = MsiCreateRecord(0);
+    MsiRecordSetStringW(rec, 0, tmpl);
+    DWORD n = 0;
+    wchar_t probe[1] = L"";
+    MsiFormatRecordW(h, rec, probe, &n);
+    wchar_t *out = HeapAlloc(GetProcessHeap(), 0, (n + 2) * sizeof *out);
+    ++n;
+    if (out && MsiFormatRecordW(h, rec, out, &n) != ERROR_SUCCESS) {
+        HeapFree(GetProcessHeap(), 0, out);
+        out = NULL;
+    }
+    MsiCloseHandle(rec);
+    return out;
+}
+
+__declspec(dllexport) UINT __stdcall RpReportPrepare(MSIHANDLE h) {
+    wchar_t *name = get_property(h, L"ProductName"), *log = get_property(h, L"MsiLogFileLocation");
+    wchar_t *installed = get_property(h, L"Installed"), *remove = get_property(h, L"REMOVE");
+    wchar_t *older = get_property(h, L"RP_OLDER_FOUND"), *checks = get_property(h, L"RP_REPORT");
+    bool before = installed && installed[0], removal = remove && _wcsicmp(remove, L"ALL") == 0, upgrade = older && older[0];
+    wchar_t *text = pre_text(h, removal ? L"ReportRemove" : before ? L"ReportRepair" : upgrade ? L"ReportUpgrade" : L"ReportInstall");
+    writer_t w = { 0 };
+    w_raw(&w, L"RPR1", 4);
+    w_field(&w, name ? name : L"");
+    w_field(&w, log ? log : L"");
+    w_field(&w, text ? text : L"");
+    w_field(&w, before || upgrade ? L"1" : L"0");
+    w_field(&w, older ? older : L"");
+    for (wchar_t *line = checks, *next; line && *line; line = next) {
+        next = wcschr(line, L'\n');
+        if (next) *next++ = 0;
+        wchar_t *tab = wcschr(line, L'\t');
+        if (tab == NULL) continue;
+        *tab = 0;
+        wchar_t key[300];
+        wfmt(key, 300, L"[#%ls]", line);
+        wchar_t *exe = format_text(h, key), *args = format_text(h, tab + 1);
+        if (exe && exe[0]) {
+            w_field(&w, exe);
+            w_field(&w, args ? args : L"");
+        }
+        if (exe) HeapFree(GetProcessHeap(), 0, exe);
+        if (args) HeapFree(GetProcessHeap(), 0, args);
+    }
+    set_data(h, L"RP_Report", &w);
+    if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
+    wchar_t *all[] = { name, log, installed, remove, older, checks, text };
+    for (size_t i = 0; i < sizeof all / sizeof all[0]; ++i) {
+        if (all[i]) HeapFree(GetProcessHeap(), 0, all[i]);
+    }
+    return ERROR_SUCCESS;
+}
+
+// Runs exe with args and waits up to a minute; its exit code, or -1 when it could not run.
+static long report_run(const wchar_t *exe, const wchar_t *args) {
+    size_t n = wcslen(exe) + wcslen(args) + 8;
+    wchar_t *line = HeapAlloc(GetProcessHeap(), 0, n * sizeof *line);
+    if (line == NULL) return -1;
+    wfmt(line, n, L"\"%ls\" %ls", exe, args);
+    STARTUPINFOW si;
+    PROCESS_INFORMATION pi;
+    memset(&si, 0, sizeof si);
+    si.cb = sizeof si;
+    long code = -1;
+    if (CreateProcessW(exe, line, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+        DWORD c = 0;
+        if (WaitForSingleObject(pi.hProcess, 60000) == WAIT_OBJECT_0 && GetExitCodeProcess(pi.hProcess, &c)) code = (long)c;
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+    }
+    HeapFree(GetProcessHeap(), 0, line);
+    return code;
+}
+
+// [1] and [2] of a report text replaced by f1 and f2.
+static void report_fill(writer_t *w, const wchar_t *tmpl, const wchar_t *f1, const wchar_t *f2) {
+    for (const wchar_t *p = tmpl; *p; ++p) {
+        if (p[0] == L'[' && (p[1] == L'1' || p[1] == L'2') && p[2] == L']') {
+            const wchar_t *v = p[1] == L'1' ? f1 : f2;
+            w_raw(w, v, wcslen(v));
+            p += 2;
+        } else {
+            w_raw(w, p, 1);
+        }
+    }
+}
+
+__declspec(dllexport) UINT __stdcall RpReport(MSIHANDLE h) {
+    wchar_t *data = get_property(h, L"CustomActionData");
+    if (data == NULL || wcsncmp(data, L"RPR1", 4) != 0) {
+        if (data) HeapFree(GetProcessHeap(), 0, data);
+        return ERROR_SUCCESS;
+    }
+    reader_t r = { data + 4, data + wcslen(data) };
+    static wchar_t name[512], log[MAX_PATH * 2], text[4096], before[4], older[4096], exe[MAX_PATH * 2], args[2048];
+    if (!r_field(&r, name, 512) || !r_field(&r, log, MAX_PATH * 2) || !r_field(&r, text, 4096) ||
+        !r_field(&r, before, 4) || !r_field(&r, older, 4096)) {
+        HeapFree(GetProcessHeap(), 0, data);
+        return ERROR_SUCCESS;
+    }
+    bool there = before[0] == L'1';
+    writer_t diff = { 0 };
+    unsigned found = 0;
+    wchar_t line[MAX_PATH * 4];
+    // The older versions an upgrade found.
+    for (wchar_t *ctx = NULL, *pc = wcstok(older, L";", &ctx); pc; pc = wcstok(NULL, L";", &ctx)) {
+        if (MsiQueryProductStateW(pc) != INSTALLSTATE_DEFAULT) {
+            wfmt(line, MAX_PATH * 4, L"- %ls: not installed (it was before)\r\n", pc);
+            w_raw(&diff, line, wcslen(line));
+            ++found;
+        }
+    }
+    // The checks.
+    while (r_field(&r, exe, MAX_PATH * 2) && r_field(&r, args, 2048)) {
+        bool exists = GetFileAttributesW(exe) != INVALID_FILE_ATTRIBUTES;
+        long code = exists ? report_run(exe, args) : -1;
+        bool registered = code == 0;
+        if (registered != there) {
+            if (!exists) wfmt(line, MAX_PATH * 4, L"- %ls: the program is not there (what it registers was there before)\r\n", exe);
+            else wfmt(line, MAX_PATH * 4, L"- \"%ls\" %ls: exit %ld (%ls)\r\n", exe, args, code,
+                      there ? L"what it checks was there before" : L"what it checks was not there before");
+            w_raw(&diff, line, wcslen(line));
+            ++found;
+        }
+    }
+    if (found == 0) {
+        log_line(h, L"rubrapack: report: the rollback put everything back");
+    } else {
+        // The user's desktop, else Downloads (known folders: a desktop moved to OneDrive is found too).
+        // FOLDERID_Desktop and FOLDERID_Downloads (here, not from uuid.lib).
+        static const GUID desktop = { 0xB4BFCC3A, 0xDB2C, 0x424C, { 0xB0, 0x29, 0x7F, 0xE9, 0x9A, 0x87, 0xC6, 0x41 } };
+        static const GUID downloads = { 0x374DE290, 0x123F, 0x4565, { 0x91, 0x64, 0x39, 0xC4, 0x92, 0x5E, 0x46, 0x7B } };
+        PWSTR folder = NULL;
+        if (FAILED(SHGetKnownFolderPath(&desktop, 0, NULL, &folder)) && FAILED(SHGetKnownFolderPath(&downloads, 0, NULL, &folder))) folder = NULL;
+        SYSTEMTIME st;
+        GetLocalTime(&st);
+        wchar_t path[MAX_PATH * 2];
+        wchar_t safe[128];
+        size_t sn = 0;
+        for (const wchar_t *p = name; *p && sn < 100; ++p) safe[sn++] = wcschr(L"\\/:*?\"<>|", *p) ? L'_' : *p;
+        safe[sn] = 0;
+        bool ok = false;
+        if (folder) {
+            wfmt(path, MAX_PATH * 2, L"%ls\\%ls setup report %04u-%02u-%02u %02u%02u%02u.txt", folder, safe, st.wYear, st.wMonth, st.wDay,
+                 st.wHour, st.wMinute, st.wSecond);
+            writer_t w = { 0 };
+            report_fill(&w, text, name, log[0] ? log : L"-");
+            w_raw(&w, L"\r\n\r\n", 4);
+            if (diff.buf) w_raw(&w, diff.buf, diff.len);
+            int n8 = w.buf ? WideCharToMultiByte(CP_UTF8, 0, w.buf, (int)w.len, NULL, 0, NULL, NULL) : 0;
+            char *u8 = n8 > 0 ? HeapAlloc(GetProcessHeap(), 0, (size_t)n8 + 3) : NULL;
+            if (u8) {
+                u8[0] = (char)0xEF; u8[1] = (char)0xBB; u8[2] = (char)0xBF;            // UTF-8 with a BOM: Notepad reads it at once
+                WideCharToMultiByte(CP_UTF8, 0, w.buf, (int)w.len, u8 + 3, n8, NULL, NULL);
+                HANDLE f = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+                DWORD put = 0;
+                ok = f != INVALID_HANDLE_VALUE && WriteFile(f, u8, (DWORD)n8 + 3, &put, NULL) && put == (DWORD)n8 + 3;
+                if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
+                HeapFree(GetProcessHeap(), 0, u8);
+            }
+            if (w.buf) HeapFree(GetProcessHeap(), 0, w.buf);
+            CoTaskMemFree(folder);
+        }
+        log_line(h, L"rubrapack: report: %u thing(s) differ after the rollback; %ls%ls", found, ok ? L"the report is " : L"no report could be written",
+                 ok ? path : L"");
+    }
+    if (diff.buf) HeapFree(GetProcessHeap(), 0, diff.buf);
+    HeapFree(GetProcessHeap(), 0, data);
     return ERROR_SUCCESS;
 }

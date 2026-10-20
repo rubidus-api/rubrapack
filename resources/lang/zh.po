@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml 不是最后一个条目(不是 rubrapack 或 Window
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "不支持 [[...]] 表数组；请为每一项单独写 [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] 的 check 没有作用: 目前不会运行它；请删除"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] 需要 do 和 undo(undo 也会回滚失败的 do)"
@@ -2117,6 +2115,9 @@ msgstr "找不到徽标 '{1}'(也没有 .scale-100 ... .scale-400 变体)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "徽标 '{1}': 带缩放变体的徽标需要带扩展名的 ASCII 文件名"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 必须是 8 位 RGB 或 RGBA、非隔行、每边不超过 1024 像素的 .png"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package 是主包的标识名称(实际为 '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "这台计算机上已有 [1] 的另一个安装（[2]）。同一程序�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "这台计算机上已有 [1] 的另一个安装（[2]）。请先删除它（设置 > 应用），再安装这一份。"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] 未能安装，撤销也没能全部清除。剩下的内容如下。请再次运行安装程序，如不需要再删除 [1]。\r\n日志：[2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] 未能升级，撤销也没能恢复原来的版本。不同之处如下。请用该版本的安装程序修复，或重新安装新版本。\r\n日志：[2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] 未能删除，撤销也没能恢复原样。不同之处如下。请用其安装程序修复后再删除。\r\n日志：[2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] 未能修复，撤销也没能恢复原样。不同之处如下。请再次运行安装程序进行修复。\r\n日志：[2]"

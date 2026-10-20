@@ -552,7 +552,7 @@ typedef struct {
     size_t           nicons;
     proven_err_t     icon_err;
     int32_t          comp_attr;        // a file's or folder's component: 64-bit unless x86
-    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details;
+    bool             any_write, any_remove, any_qword, any_rplan, any_purge, any_others, cleanup, preflight, reg_bad, menu, maintain, details, report;
     bool             extra;            // the preflight looks for what was not installed in the product's folders (extra-files)
     const char      *qplan;            // RP_QWORDS
     const char      *rplan;            // RP_REMOVES ([remove] upgrade = false)
@@ -1230,10 +1230,14 @@ static void lower_helper_actions(pkg_t *pk) {
     // A package without dialogs: the helper DLL asks an installed product's user what to do
     // (RpMaintain); the dialog sets have RpMaintenanceDlg.
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
+    // RFC-0003 6 / RFC-0031 B31: with [action]s, a rollback action that runs last in a rollback
+    // looks at the end state and writes the double-failure report when it is not what was there.
+    bool report = ir->action_count > 0 && !ir->module && part_len > 0;
+    pk->report = report;
     // RP_LANGS: which language a user's LANGID means ("1042=ko;1041=ja"), for a run in which no
     // dialog chose one - the helper's messages then follow the user's language. The first match
     // wins, so the dialogs' own languages come before the other built-in packs.
-    if ((preflight || maintain) && nlangs > 1) {
+    if ((preflight || maintain || report) && nlangs > 1) {
         const char *map = "";
         for (size_t i = 0; i < 2 * (nlangs - 1); ++i) {        // two passes over langs[1..]
             size_t pass = i / (nlangs - 1), b = 1 + i % (nlangs - 1);
@@ -1257,7 +1261,7 @@ static void lower_helper_actions(pkg_t *pk) {
     pk->details = details;
     // RFC-0028: past RP_UI_LANG_ACTIONS the dialogs' texts are put in place by RpLangApply (ui.c).
     bool lang_table = ir->ui != RP_UI_NONE && ir->ui_lang_count > RP_UI_LANG_ACTIONS;
-    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || lang_table) {
+    if (pk->any_qword || pk->any_rplan || pk->any_purge || guard || save_log || cleanup || preflight || menu || maintain || details || lang_table || report) {
         if (part_len == 0) {
             rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1901", false,
                            "%s needs resources/bin/rubrapack_ca-%s.dll, which this rubrapack was built without",
@@ -1521,6 +1525,26 @@ static void lower_helper_actions(pkg_t *pk) {
         s_(&pk->customaction, "RP_Preflight"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPreflight");
         pk->preflight = true;
     }
+    if (report) {
+        // RP_REPORT: a line per [action] with check - its program's file key, a tab, the check's
+        // arguments (formatted by RpReportPrepare).
+        const char *checks = "";
+        for (size_t i = 0; i < ir->action_count; ++i) {
+            const rp_ir_action_t *a = &ir->actions[i];
+            if (a->check_args == NULL || a->run_file == NULL) continue;
+            checks = kprintf(k, "%s%s", checks, kprintf(k, "%s\t%s\n", a->run_file, a->check_args));     // the File key is the ID
+        }
+        if (*checks) { s_(&pk->property, "RP_REPORT"); s_(&pk->property, checks); }
+        static const char *const rids[] = { "ReportInstall", "ReportUpgrade", "ReportRemove", "ReportRepair" };
+        for (size_t t = 0; t < sizeof rids / sizeof rids[0]; ++t) {
+            for (size_t b = 0; b < nlangs; ++b) {
+                s_(&pk->property, kprintf(k, "RpPre%s_%s", rids[t], langs[b]));
+                s_(&pk->property, rp_ui_text_lang(ir, rids[t], langs[b]));
+            }
+        }
+        s_(&pk->customaction, "RP_ReportPrepare"); i_(&pk->customaction, 1); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpReportPrepare");
+        s_(&pk->customaction, "RP_Report"); i_(&pk->customaction, 1 | 0x40 | 0x100 | 0x400); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpReport");
+    }
     if (maintain) {
         static const char *const ids[] = { "MaintTitle", "MaintText", "Repair", "Remove", "Cancel" };
         for (size_t t = 0; t < sizeof ids / sizeof ids[0]; ++t) {
@@ -1591,11 +1615,12 @@ static void lower_helper_actions(pkg_t *pk) {
     // preflight adds the folders whose extra files the user chose to delete (extra-files).
     if (pk->any_purge || pk->extra) {
         s_(&pk->property, "RP_PURGE"); s_(&pk->property, kprintf(k, "%s%s", pk->pplan, NULL));
-        if (ir->scope == 0) { s_(&pk->property, "RP_PURGE_SPLIT"); s_(&pk->property, "1"); }
+        // A dual package installed for all users (ALLUSERS=1) wipes its machine part as SYSTEM too (RFC-0031 L4).
+        if (ir->scope != 1) { s_(&pk->property, "RP_PURGE_SPLIT"); s_(&pk->property, "1"); }
         s_(&pk->customaction, "RP_PurgePrepare"); i_(&pk->customaction, 1 | 0x40); s_(&pk->customaction, "RpCa"); s_(&pk->customaction, "RpPurgePrepare");
         s_(&pk->customaction, "RP_PurgeUser"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400); s_(&pk->customaction, "RpCa");
         s_(&pk->customaction, "RpPurge");
-        if (ir->scope == 0) {
+        if (ir->scope != 1) {
             s_(&pk->customaction, "RP_PurgeMachine"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, "RpCa");
             s_(&pk->customaction, "RpPurge");
         }
@@ -1605,6 +1630,22 @@ static void lower_helper_actions(pkg_t *pk) {
             s_(&pk->customaction, "RP_PurgeOthers"); i_(&pk->customaction, 1 | 0x40 | 0x200 | 0x400 | 0x800); s_(&pk->customaction, "RpCa");
             s_(&pk->customaction, "RpPurgeOthers");
         }
+    }
+    // RFC-0031 L2: with rollback disabled (policy, or a DisableRollback action) Windows Installer runs
+    // no commit action. Each commit action has a twin "<name>NR", deferred without the commit flag and
+    // run only when RollbackDisabled is set, late in the script (sequence 6592..); the prepare actions
+    // give it the same data.
+    const size_t filled = pk->customaction.filled;      // CustomAction: Action, Type, Source, Target
+    for (size_t at = 0; at + 4 <= filled; at += 4) {
+        const rp_msi_cell_t *c = &pk->customaction.cells[at];   // re-read each time: adding rows moves the cells
+        if (c[0].kind != RP_MSI_STR || c[1].kind != RP_MSI_INT || !(c[1].i & 0x200) || c[2].kind != RP_MSI_STR || c[3].kind != RP_MSI_STR) continue;
+        char nm[96], src[96], tgt[96];
+        snprintf(nm, sizeof nm, "%.*sNR", (int)c[0].len, (const char *)c[0].bytes);
+        snprintf(src, sizeof src, "%.*s", (int)c[2].len, (const char *)c[2].bytes);
+        snprintf(tgt, sizeof tgt, "%.*s", (int)c[3].len, (const char *)c[3].bytes);
+        int32_t type = c[1].i & ~0x200;
+        s_(&pk->customaction, kdup(k, nm)); i_(&pk->customaction, type);
+        s_(&pk->customaction, kdup(k, src)); s_(&pk->customaction, kdup(k, tgt));
     }
 }
 
@@ -1939,6 +1980,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
         s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
     }
+    if (pk->report) {                   // RFC-0003 6: right after InstallInitialize, so it runs last in a rollback
+        s_(&pk->iexec, "RP_ReportPrepare"); null_(&pk->iexec); i_(&pk->iexec, 1495);
+        s_(&pk->iexec, "RP_Report"); null_(&pk->iexec); i_(&pk->iexec, 1501);
+    }
     if (pk->preflight) {                // before InstallValidate (1400): nothing has been touched yet
         s_(&pk->iexec, "RP_Preflight"); null_(&pk->iexec); i_(&pk->iexec, 1390);
     }
@@ -1961,7 +2006,17 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RP_PurgePrepare"); null_(&pk->iexec); i_(&pk->iexec, 3494);
         s_(&pk->iexec, "RP_PurgeUser"); null_(&pk->iexec); i_(&pk->iexec, 3495);
         if (ir->scope == 0) { s_(&pk->iexec, "RP_PurgeMachine"); null_(&pk->iexec); i_(&pk->iexec, 3496); }
+        else if (ir->scope == 2) { s_(&pk->iexec, "RP_PurgeMachine"); s_(&pk->iexec, "ALLUSERS=1"); i_(&pk->iexec, 3496); }
         if (pk->any_others) { s_(&pk->iexec, "RP_PurgeOthers"); null_(&pk->iexec); i_(&pk->iexec, 3497); }
+    }
+    {                                   // RFC-0031 L2: the commit actions' twins, when rollback is disabled
+        static const char *const commits[] = { "RP_CleanupRegister", "RP_RemoveCommit", "RP_PurgeUser", "RP_PurgeMachine", "RP_PurgeOthers" };
+        const bool have[] = { pk->cleanup, pk->any_rplan, pk->any_purge || pk->extra, (pk->any_purge || pk->extra) && ir->scope != 1, pk->any_others };
+        for (int i = 0; i < 5; ++i) {
+            if (!have[i]) continue;
+            const char *cond = i == 3 && ir->scope == 2 ? "RollbackDisabled AND ALLUSERS=1" : "RollbackDisabled";
+            s_(&pk->iexec, kprintf(k, "%sNR", commits[i], NULL)); s_(&pk->iexec, cond); i_(&pk->iexec, 6592 + i);
+        }
     }
     if (pk->menu) {
         for (int i = 1; i <= 4; ++i) {

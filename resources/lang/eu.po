@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ez da azken sarrera (ez da rubrapack-ek edo Windows-
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] taula-matrizeak ez dira onartzen; eman elementu bakoitzari bere [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check-ek ez du eraginik: oraindik ezerk ez du exekutatzen; kendu"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] taulak do eta undo behar ditu (undo-k huts egindako do bat ere desegiten du)"
@@ -2117,6 +2115,9 @@ msgstr "ez da '{1}' logotipoa aurkitu (ezta .scale-100 ... .scale-400 aldaera gi
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' logotipoa: eskala-aldaerak dituen logotipo batek luzapena duen ASCII fitxategi-izen bat behar du"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 8 biteko RGB edo RGBA .png bat izan behar da, tartekatu gabea, alde bakoitzeko gehienez 1024 pixel"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package pakete nagusiaren identitate-izena da ('{1}' jaso da)"
@@ -3937,3 +3938,19 @@ msgstr "[1]-ren beste instalazio bat dago dagoeneko ordenagailu honetan ([2]). P
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "[1]-ren beste instalazio bat dago dagoeneko ordenagailu honetan ([2]). Kendu hori lehenik (Ezarpenak > Aplikazioak), eta instalatu gero hau."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Ezin izan da [1] instalatu, eta desegiteak ez du dena kendu. Geratu dena behean dago. Exekutatu berriro instalatzailea, eta kendu gero [1] nahi ez baduzu.\r\nErregistroa: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Ezin izan da [1] bertsio-berritu, eta desegiteak ez du zeneukan bertsioa leheneratu. Desberdintasunak behean daude. Konpondu bertsio horren instalatzailearekin, edo instalatu berriro bertsio berria.\r\nErregistroa: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Ezin izan da [1] kendu, eta desegiteak ez du leheneratu. Desberdintasunak behean daude. Konpondu bere instalatzailearekin, eta kendu berriro gero.\r\nErregistroa: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Ezin izan da [1] konpondu, eta desegiteak ez du leheneratu. Desberdintasunak behean daude. Exekutatu berriro instalatzailea konpontzeko.\r\nErregistroa: [2]"

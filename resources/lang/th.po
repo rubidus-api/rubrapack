@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ไม่ใช่รายการสุดท้�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "ไม่รองรับอาร์เรย์ของตาราง [[...]] ให้แต่ละรายการมี [kind.ID] ของตัวเอง"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check ของ [action.{1}] ไม่มีผล ยังไม่มีอะไรเรียกใช้ ให้ลบออก"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] ต้องมีทั้ง do และ undo (undo ใช้ย้อน do ที่ล้มเหลวด้วย)"
@@ -2117,6 +2115,9 @@ msgstr "ไม่พบโลโก้ '{1}' (รวมถึงแบบ .scale
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "โลโก้ '{1}': โลโก้ที่มีแบบต่างสเกลต้องมีชื่อไฟล์ ASCII พร้อมนามสกุล"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo ต้องเป็นไฟล์ .png แบบ RGB หรือ RGBA 8 บิต ไม่สลับบรรทัด ด้านละไม่เกิน 1024 พิกเซล"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package คือชื่อเอกลักษณ์ของแพ็กเกจหลัก (ได้ '{1}')"
@@ -3852,7 +3853,7 @@ msgstr "ซ่อมแซม(&P)"
 
 msgctxt "installer"
 msgid "Setup.Remove"
-msgstr "ถอนการติดตั้ง(&R)"
+msgstr "ถอนออก(&R)"
 
 msgctxt "installer"
 msgid "Setup.Cancel"
@@ -3937,3 +3938,19 @@ msgstr "มีการติดตั้ง [1] อีกชุดหนึ่�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "มีการติดตั้ง [1] อีกชุดหนึ่งอยู่บนคอมพิวเตอร์นี้แล้ว ([2]) โปรดเอาออกก่อน (การตั้งค่า > แอป) แล้วจึงติดตั้งชุดนี้"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "ติดตั้ง [1] ไม่สำเร็จ และการย้อนกลับก็เอาออกได้ไม่หมด สิ่งที่เหลืออยู่แสดงไว้ด้านล่าง เรียกใช้ตัวติดตั้งอีกครั้ง แล้วถอน [1] ออกถ้าไม่ต้องการ\r\nบันทึก: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "อัปเกรด [1] ไม่สำเร็จ และการย้อนกลับก็คืนรุ่นเดิมไม่ได้ ส่วนที่ต่างไปแสดงไว้ด้านล่าง ซ่อมแซมด้วยตัวติดตั้งของรุ่นนั้น หรือติดตั้งรุ่นใหม่อีกครั้ง\r\nบันทึก: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "ถอน [1] ออกไม่สำเร็จ และการย้อนกลับก็คืนสภาพเดิมไม่ได้ ส่วนที่ต่างไปแสดงไว้ด้านล่าง ซ่อมแซมด้วยตัวติดตั้งของมัน แล้วถอนออกอีกครั้ง\r\nบันทึก: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "ซ่อมแซม [1] ไม่สำเร็จ และการย้อนกลับก็คืนสภาพเดิมไม่ได้ ส่วนที่ต่างไปแสดงไว้ด้านล่าง เรียกใช้ตัวติดตั้งอีกครั้งเพื่อซ่อมแซม\r\nบันทึก: [2]"

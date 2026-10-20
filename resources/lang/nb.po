@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml er ikke den siste oppføringen (ikke en pakke rubrap
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-matriser av tabeller støttes ikke; gi hvert element sin egen [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check har ingen virkning: ingenting kjører den ennå; fjern den"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] trenger både do og undo (undo ruller også tilbake en mislykket do)"
@@ -2117,6 +2115,9 @@ msgstr "logoen '{1}' ble ikke funnet (heller ikke som .scale-100 ... .scale-400-
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logoen '{1}': en logo med skalavarianter trenger et ASCII-filnavn med filtype"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo må være en .png i 8-bits RGB eller RGBA, ikke sammenflettet, høyst 1024 piksler per side"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package er hovedpakkens identitetsnavn (fikk '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Det finnes allerede en annen installasjon av [1] på datamaskinen ([2]).
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Det finnes allerede en annen installasjon av [1] på datamaskinen ([2]). Fjern den først (Innstillinger > Apper), og installer deretter denne."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] kunne ikke installeres, og angringen fjernet ikke alt. Det som er igjen, står nedenfor. Kjør installasjonsprogrammet på nytt, og fjern deretter [1] hvis du ikke vil ha det.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] kunne ikke oppgraderes, og angringen gjenopprettet ikke versjonen du hadde. Forskjellene står nedenfor. Reparer den med installasjonsprogrammet for den versjonen, eller installer den nye versjonen på nytt.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] kunne ikke fjernes, og angringen gjenopprettet det ikke. Forskjellene står nedenfor. Reparer det med installasjonsprogrammet, og fjern det deretter på nytt.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] kunne ikke repareres, og angringen gjenopprettet det ikke. Forskjellene står nedenfor. Kjør installasjonsprogrammet på nytt for å reparere det.\r\nLogg: [2]"

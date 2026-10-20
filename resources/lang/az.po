@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml son giriş deyil (rubrapack-in və ya Windows qabla�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] cədvəl massivləri dəstəklənmir; hər elementə öz [kind.ID]-sini verin"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check-in təsiri yoxdur: hələ heç nə onu icra etmir; onu silin"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] üçün həm do, həm də undo lazımdır (undo uğursuz do-nu da geri qaytarır)"
@@ -2117,6 +2115,9 @@ msgstr "'{1}' loqosu tapılmadı (.scale-100 ... .scale-400 variantları kimi d�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' loqosu: miqyas variantları olan loqo genişlənməli ASCII fayl adı tələb edir"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 8 bitlik RGB və ya RGBA .png olmalıdır, növbəli deyil, hər tərəfi ən çoxu 1024 piksel"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package əsas paketin kimlik adıdır ('{1}' alındı)"
@@ -3937,3 +3938,19 @@ msgstr "Bu kompüterdə [1] proqramının başqa quraşdırması artıq var ([2]
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Bu kompüterdə [1] proqramının başqa quraşdırması artıq var ([2]). Əvvəlcə onu silin (Parametrlər > Tətbiqlər), sonra bunu quraşdırın."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] quraşdırıla bilmədi və ləğvetmə hər şeyi silmədi. Qalanlar aşağıda sadalanıb. Quraşdırıcını yenidən işə salın, sonra istəmirsinizsə [1] proqramını silin.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] təkmilləşdirilə bilmədi və ləğvetmə əvvəlki versiyanızı bərpa etmədi. Fərqlər aşağıda sadalanıb. Onu həmin versiyanın quraşdırıcısı ilə bərpa edin və ya yeni versiyanı yenidən quraşdırın.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] silinə bilmədi və ləğvetmə onu əvvəlki halına qaytarmadı. Fərqlər aşağıda sadalanıb. Onu öz quraşdırıcısı ilə bərpa edin, sonra yenidən silin.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] bərpa edilə bilmədi və ləğvetmə onu əvvəlki halına qaytarmadı. Fərqlər aşağıda sadalanıb. Bərpa etmək üçün quraşdırıcını yenidən işə salın.\r\nJurnal: [2]"

@@ -809,8 +809,6 @@ msgstr "[Content_Types].xml ليس الإدخال الأخير (ليست حزم�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "مصفوفات الجداول [[...]] غير مدعومة؛ أعط كل عنصر [kind.ID] خاصاً به"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "لا أثر لـ check في [action.{1}]: لا شيء يشغّله بعد؛ أزله"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "يحتاج [action.{1}] إلى do وundo معاً (undo يتراجع أيضاً عن do فاشل)"
@@ -2119,6 +2117,9 @@ msgstr "لم يُعثر على الشعار '{1}' (ولا على متغيرات�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "الشعار '{1}': يحتاج الشعار ذو متغيرات المقياس إلى اسم ملف ASCII بامتداد"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "يجب أن يكون logo ملف .png بنظام RGB أو RGBA بعمق 8 بت، غير متداخل، وطول ضلعه 1024 بكسل على الأكثر"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package هو اسم هوية الحزمة الرئيسية (الموجود '{1}')"
@@ -3939,3 +3940,19 @@ msgstr "يوجد على هذا الكمبيوتر تثبيت آخر لـ [1] ([2
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "يوجد على هذا الكمبيوتر تثبيت آخر لـ [1] ([2]). أزله أولًا (الإعدادات > التطبيقات) ثم ثبّت هذه."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "تعذّر تثبيت [1]، ولم يُزل التراجع كل شيء. ما بقي مذكور أدناه. شغّل المثبّت مرة أخرى، ثم أزل [1] إن كنت لا تريده.\r\nالسجل: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "تعذّرت ترقية [1]، ولم يُعِد التراجع الإصدار الذي كان لديك. الفروق مذكورة أدناه. أصلحه بمثبّت ذلك الإصدار، أو ثبّت الإصدار الجديد مرة أخرى.\r\nالسجل: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "تعذّرت إزالة [1]، ولم يُعِده التراجع كما كان. الفروق مذكورة أدناه. أصلحه بمثبّته، ثم أزله مرة أخرى.\r\nالسجل: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "تعذّر إصلاح [1]، ولم يُعِده التراجع كما كان. الفروق مذكورة أدناه. شغّل المثبّت مرة أخرى لإصلاحه.\r\nالسجل: [2]"

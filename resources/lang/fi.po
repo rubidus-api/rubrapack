@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ei ole viimeinen merkintä (ei rubrapackin tai Windo
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-taulukkotaulukoita ei tueta; anna kullekin kohteelle oma [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check ei vaikuta: mikään ei vielä suorita sitä; poista se"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] tarvitsee sekä do- että undo-arvon (undo peruu myös epäonnistuneen do-toiminnon)"
@@ -2117,6 +2115,9 @@ msgstr "logoa '{1}' ei löytynyt (ei myöskään .scale-100 ... .scale-400 -vers
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': skaalaversioilla varustettu logo tarvitsee ASCII-tiedostonimen tunnisteineen"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo on 8-bittinen RGB- tai RGBA-.png, ei lomitettu, enintään 1024 pikseliä sivultaan"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package on pääpaketin identiteettinimi (saatiin '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Tässä tietokoneessa on jo toinen [1]-asennus ([2]). Ohjelman kaksi kop
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Tässä tietokoneessa on jo toinen [1]-asennus ([2]). Poista se ensin (Asetukset > Sovellukset) ja asenna sitten tämä."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Kohdetta [1] ei voitu asentaa, eikä peruminen poistanut kaikkea. Jäljelle jäänyt on lueteltu alla. Suorita asennusohjelma uudelleen ja poista sitten [1], jos et halua sitä.\r\nLoki: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Kohdetta [1] ei voitu päivittää, eikä peruminen palauttanut aiempaa versiotasi. Erot on lueteltu alla. Korjaa se sen version asennusohjelmalla tai asenna uusi versio uudelleen.\r\nLoki: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Kohdetta [1] ei voitu poistaa, eikä peruminen palauttanut sitä. Erot on lueteltu alla. Korjaa se sen asennusohjelmalla ja poista se sitten uudelleen.\r\nLoki: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Kohdetta [1] ei voitu korjata, eikä peruminen palauttanut sitä. Erot on lueteltu alla. Korjaa se suorittamalla asennusohjelma uudelleen.\r\nLoki: [2]"

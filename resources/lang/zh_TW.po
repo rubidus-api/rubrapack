@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml 不是最後一個項目(不是 rubrapack 或 Window
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "不支援 [[...]] 表陣列；請為每一項單獨寫 [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] 的 check 沒有作用: 目前不會執行它；請移除"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] 需要 do 和 undo(undo 也會復原失敗的 do)"
@@ -2117,6 +2115,9 @@ msgstr "找不到標誌 '{1}'(也沒有 .scale-100 ... .scale-400 變體)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "標誌 '{1}': 帶縮放變體的標誌需要帶副檔名的 ASCII 檔名"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 必須是 8 位元 RGB 或 RGBA、非交錯、每邊不超過 1024 像素的 .png"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package 是主要套件的識別名稱(實際為 '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "這台電腦上已有 [1] 的另一個安裝（[2]）。同一程式的�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "這台電腦上已有 [1] 的另一個安裝（[2]）。請先移除它（設定 > 應用程式），再安裝這一份。"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] 無法安裝，復原也沒能全部清除。剩下的內容如下。請再次執行安裝程式，如不需要再移除 [1]。\r\n記錄：[2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] 無法升級，復原也沒能恢復原來的版本。不同之處如下。請用該版本的安裝程式修復，或重新安裝新版本。\r\n記錄：[2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] 無法移除，復原也沒能恢復原樣。不同之處如下。請用其安裝程式修復後再移除。\r\n記錄：[2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] 無法修復，復原也沒能恢復原樣。不同之處如下。請再次執行安裝程式進行修復。\r\n記錄：[2]"

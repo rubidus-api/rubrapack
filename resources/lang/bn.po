@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml শেষ এন্ট্রি নয় (rubrapack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] টেবিলের অ্যারে সমর্থিত নয়; প্রতিটি আইটেমকে নিজস্ব [kind.ID] দিন"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check-এর কোনো প্রভাব নেই: এখনো কিছু এটি চালায় না; এটি সরান"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}]-এর জন্য do এবং undo দুটোই দরকার (undo একটি ব্যর্থ do-কেও ফিরিয়ে নেয়)"
@@ -2117,6 +2115,9 @@ msgstr "লোগো '{1}' পাওয়া যায়নি (.scale-100 ...
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "লোগো '{1}': স্কেল রূপসহ লোগোর জন্য এক্সটেনশনসহ ASCII ফাইলের নাম দরকার"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo অবশ্যই 8-বিট RGB বা RGBA .png হতে হবে, ইন্টারলেসড নয়, প্রতি বাহুতে সর্বোচ্চ 1024 পিক্সেল"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package হলো প্রধান প্যাকেজের পরিচয় নাম ('{1}' পাওয়া গেছে)"
@@ -3937,3 +3938,19 @@ msgstr "এই কম্পিউটারে [1]-এর আরেকটি ই�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "এই কম্পিউটারে [1]-এর আরেকটি ইনস্টলেশন আগেই আছে ([2])। আগে সেটি সরান (সেটিংস > অ্যাপ), তারপর এটি ইনস্টল করুন।"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] ইনস্টল করা যায়নি, আর পূর্বাবস্থায় ফেরানোও সব সরাতে পারেনি। যা রয়ে গেছে তা নিচে দেওয়া হলো। ইনস্টলার আবার চালান, তারপর না চাইলে [1] সরিয়ে দিন।\r\nলগ: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] আপগ্রেড করা যায়নি, আর পূর্বাবস্থায় ফেরানোও আপনার আগের সংস্করণ ফিরিয়ে আনেনি। পার্থক্যগুলো নিচে দেওয়া হলো। সেই সংস্করণের ইনস্টলার দিয়ে মেরামত করুন, অথবা নতুন সংস্করণ আবার ইনস্টল করুন।\r\nলগ: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] সরানো যায়নি, আর পূর্বাবস্থায় ফেরানোও এটিকে আগের মতো করেনি। পার্থক্যগুলো নিচে দেওয়া হলো। এর ইনস্টলার দিয়ে মেরামত করুন, তারপর আবার সরান।\r\nলগ: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] মেরামত করা যায়নি, আর পূর্বাবস্থায় ফেরানোও এটিকে আগের মতো করেনি। পার্থক্যগুলো নিচে দেওয়া হলো। মেরামত করতে ইনস্টলার আবার চালান।\r\nলগ: [2]"

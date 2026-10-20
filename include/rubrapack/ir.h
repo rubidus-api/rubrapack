@@ -580,6 +580,7 @@ typedef struct {
     rp_pos_t  arp_no_remove_pos;
     char     *arp_help, *arp_about;     // may be NULL
     char     *arp_icon_source, *arp_icon_shown;     // [arp] icon: .ico to open / as written (RFC-0013 A1)
+    char     *arp_logo_source, *arp_logo_shown;     // [arp] logo: a .png for the menu identity package's logos (RFC-0031 L7)
     // [msix] and [msix-app.ID] (RFC-0009; used only when the output is .msix)
     bool      has_msix;
     char     *msix_identity_name, *msix_publisher, *msix_publisher_display, *msix_min_version;

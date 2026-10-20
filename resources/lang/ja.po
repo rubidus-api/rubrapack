@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml が最後の項目ではありません (rubrapack �
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] のテーブル配列には対応していません。項目ごとに [kind.ID] を書いてください"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] の check には効果がありません: まだ何も実行しません。削除してください"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] には do と undo の両方が必要です (undo は失敗した do も元に戻します)"
@@ -2117,6 +2115,9 @@ msgstr "ロゴ '{1}' が見つかりません (.scale-100 ... .scale-400 の版�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "ロゴ '{1}': 倍率の版があるロゴには拡張子付きの ASCII のファイル名が必要です"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo は 8 ビット RGB または RGBA、インターレースなし、一辺 1024 ピクセル以下の .png です"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package はメイン パッケージの ID 名です ('{1}' でした)"
@@ -3937,3 +3938,19 @@ msgstr "[1] の別のインストールがこのコンピューターにすで�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "[1] の別のインストールがこのコンピューターにすでにあります ([2])。先にそれを削除してから (設定 > アプリ)、こちらをインストールしてください。"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] をインストールできず、元に戻す処理でもすべては消えませんでした。残ったものを下に示します。インストーラーをもう一度実行し、不要なら [1] を削除してください。\r\nログ: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] をアップグレードできず、元に戻す処理でも以前のバージョンは元どおりになりませんでした。違いを下に示します。そのバージョンのインストーラーで修復するか、新しいバージョンをもう一度インストールしてください。\r\nログ: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] を削除できず、元に戻す処理でも元どおりになりませんでした。違いを下に示します。インストーラーで修復してから、もう一度削除してください。\r\nログ: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] を修復できず、元に戻す処理でも元どおりになりませんでした。違いを下に示します。インストーラーをもう一度実行して修復してください。\r\nログ: [2]"

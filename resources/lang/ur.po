@@ -809,8 +809,6 @@ msgstr "[Content_Types].xml آخری اندراج نہیں (ایسا پیکیج 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] جدولوں کی ترتیبیں معاون نہیں؛ ہر آئٹم کو اپنا [kind.ID] دیں"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check کا کوئی اثر نہیں: ابھی اسے کچھ نہیں چلاتا؛ اسے ہٹائیں"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] کو do اور undo دونوں چاہییں (undo ناکام do کو بھی واپس لیتا ہے)"
@@ -2119,6 +2117,9 @@ msgstr "لوگو '{1}' نہیں ملا (نہ .scale-100 ... .scale-400 ورژن�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "لوگو '{1}': پیمانہ ورژنز والے لوگو کو ایکسٹینشن کے ساتھ ASCII فائل نام چاہیے"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo کو 8 بٹ RGB یا RGBA کی .png ہونا چاہیے، غیر انٹرلیسڈ، ہر طرف زیادہ سے زیادہ 1024 پکسل"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package مرکزی پیکیج کا شناختی نام ہے ('{1}' ملا)"
@@ -3939,3 +3940,19 @@ msgstr "اس کمپیوٹر پر [1] کی ایک اور تنصیب پہلے سے
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "اس کمپیوٹر پر [1] کی ایک اور تنصیب پہلے سے ہے ([2])۔ پہلے اسے ہٹائیں (ترتیبات > ایپس)، پھر یہ انسٹال کریں۔"
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] انسٹال نہیں ہو سکا، اور واپس لینے سے سب کچھ نہیں ہٹا۔ جو باقی ہے وہ نیچے درج ہے۔ انسٹالر دوبارہ چلائیں، پھر اگر [1] نہیں چاہیے تو اسے ہٹا دیں۔\r\nلاگ: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] اپ گریڈ نہیں ہو سکا، اور واپس لینے سے آپ کا پچھلا ورژن بحال نہیں ہوا۔ فرق نیچے درج ہیں۔ اس ورژن کے انسٹالر سے اسے مرمت کریں، یا نیا ورژن دوبارہ انسٹال کریں۔\r\nلاگ: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] ہٹایا نہیں جا سکا، اور واپس لینے سے یہ پہلے جیسا نہیں ہوا۔ فرق نیچے درج ہیں۔ اس کے انسٹالر سے اسے مرمت کریں، پھر دوبارہ ہٹائیں۔\r\nلاگ: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] کی مرمت نہیں ہو سکی، اور واپس لینے سے یہ پہلے جیسا نہیں ہوا۔ فرق نیچے درج ہیں۔ مرمت کے لیے انسٹالر دوبارہ چلائیں۔\r\nلاگ: [2]"

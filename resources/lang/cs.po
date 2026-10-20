@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml není poslední položka (není to balíček, který
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Pole tabulek [[...]] nejsou podporována; dejte každé položce vlastní [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check nemá účinek: zatím ho nic nespouští; odeberte ho"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] potřebuje do i undo (undo vrací také neúspěšné do)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' nebylo nalezeno (ani jako varianty .scale-100 ... .scale-400)
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo s variantami měřítka potřebuje název souboru v ASCII s příponou"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo musí být .png v 8bitovém RGB nebo RGBA, neprokládaný, nejvýš 1024 pixelů na stranu"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package je název identity hlavního balíčku (zadáno '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Na tomto počítači už je jiná instalace [1] ([2]). Dvě kopie jednoh
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Na tomto počítači už je jiná instalace [1] ([2]). Nejdřív ji odeberte (Nastavení > Aplikace), potom nainstalujte tuto."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] se nepodařilo nainstalovat a vrácení zpět neodstranilo vše. Co zbylo, je uvedeno níže. Spusťte instalační program znovu a pak [1] odeberte, pokud jej nechcete.\r\nProtokol: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] se nepodařilo upgradovat a vrácení zpět neobnovilo verzi, kterou jste měli. Rozdíly jsou uvedeny níže. Opravte ji instalačním programem té verze, nebo novou verzi nainstalujte znovu.\r\nProtokol: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] se nepodařilo odebrat a vrácení zpět jej neobnovilo. Rozdíly jsou uvedeny níže. Opravte jej jeho instalačním programem a pak jej odeberte znovu.\r\nProtokol: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] se nepodařilo opravit a vrácení zpět jej neobnovilo. Rozdíly jsou uvedeny níže. Spusťte instalační program znovu a opravte jej.\r\nProtokol: [2]"

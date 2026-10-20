@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml n'est pas la dernière entrée (ce n'est pas un pack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Les tableaux de tables [[...]] ne sont pas pris en charge ; donnez à chaque élément son propre [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check n'a aucun effet : rien ne l'exécute encore ; supprimez-le"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] a besoin de do et de undo (undo annule aussi un do échoué)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' introuvable (ni en variantes .scale-100 ... .scale-400)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}' : un logo avec variantes d'échelle a besoin d'un nom de fichier ASCII avec extension"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo doit être un .png RVB ou RVBA 8 bits, non entrelacé, d'au plus 1024 pixels de côté"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package est le nom d'identité du package principal (reçu : '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Une autre installation de [1] est déjà sur cet ordinateur ([2]). Deux 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Une autre installation de [1] est déjà sur cet ordinateur ([2]). Supprimez-la d'abord (Paramètres > Applications), puis installez celle-ci."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] n'a pas pu être installé, et l'annulation n'a pas tout retiré. Ce qui reste est indiqué ci-dessous. Relancez le programme d'installation, puis supprimez [1] si vous n'en voulez pas.\r\nJournal : [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] n'a pas pu être mis à niveau, et l'annulation n'a pas rétabli la version que vous aviez. Les différences sont indiquées ci-dessous. Réparez-la avec le programme d'installation de cette version, ou réinstallez la nouvelle.\r\nJournal : [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] n'a pas pu être supprimé, et l'annulation ne l'a pas rétabli. Les différences sont indiquées ci-dessous. Réparez-le avec son programme d'installation, puis supprimez-le à nouveau.\r\nJournal : [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] n'a pas pu être réparé, et l'annulation ne l'a pas rétabli. Les différences sont indiquées ci-dessous. Relancez le programme d'installation pour le réparer.\r\nJournal : [2]"

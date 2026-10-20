@@ -58,13 +58,14 @@ static WORD *rp_ask_item(WORD *p, DWORD style, DWORD ex, short x, short y, short
     return p;
 }
 
-// RP_ASK_FIRST, RP_ASK_SECOND or RP_ASK_CANCEL (also when the window cannot be made).
+// RP_ASK_FIRST, RP_ASK_SECOND or RP_ASK_CANCEL (also when the window cannot be made). The buttons are
+// 76 units wide: every pack's Repair / Remove / Cancel fits (T158, RFC-0031 L13).
 static int rp_ask(HWND owner, const rp_ask_t *a) {
     static const wchar_t face[] = L"Segoe UI";
     DWORD buf[96];
     memset(buf, 0, sizeof buf);
     DLGTEMPLATE t = { .style = DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_SETFOREGROUND | WS_POPUP | WS_CAPTION | WS_SYSMENU,
-                      .dwExtendedStyle = WS_EX_TOPMOST | (a->rtl ? WS_EX_LAYOUTRTL : 0), .cdit = 4, .cx = 232, .cy = 66 };
+                      .dwExtendedStyle = WS_EX_TOPMOST | (a->rtl ? WS_EX_LAYOUTRTL : 0), .cdit = 4, .cx = 262, .cy = 66 };
     memcpy(buf, &t, sizeof t);
     WORD *p = (WORD *)((uint8_t *)buf + sizeof t);
     *p++ = 0;               // no menu
@@ -74,10 +75,10 @@ static int rp_ask(HWND owner, const rp_ask_t *a) {
     memcpy(p, face, sizeof face);
     p += sizeof face / sizeof face[0];
     DWORD rd = a->rtl ? WS_EX_RTLREADING : 0;       // the mirrored window puts the text at the right
-    p = rp_ask_item(p, SS_LEFT | SS_NOPREFIX, rd, 10, 8, 212, 28, RP_ASK_ID_TEXT, 0x0082);
-    p = rp_ask_item(p, BS_DEFPUSHBUTTON | WS_TABSTOP, rd, 10, 44, 66, 14, RP_ASK_ID_FIRST, 0x0080);
-    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 83, 44, 66, 14, RP_ASK_ID_SECOND, 0x0080);
-    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 156, 44, 66, 14, IDCANCEL, 0x0080);
+    p = rp_ask_item(p, SS_LEFT | SS_NOPREFIX, rd, 10, 8, 242, 28, RP_ASK_ID_TEXT, 0x0082);
+    p = rp_ask_item(p, BS_DEFPUSHBUTTON | WS_TABSTOP, rd, 10, 44, 76, 14, RP_ASK_ID_FIRST, 0x0080);
+    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 93, 44, 76, 14, RP_ASK_ID_SECOND, 0x0080);
+    p = rp_ask_item(p, BS_PUSHBUTTON | WS_TABSTOP, rd, 176, 44, 76, 14, IDCANCEL, 0x0080);
     (void)p;
     INT_PTR r = DialogBoxIndirectParamW(GetModuleHandleW(NULL), (const DLGTEMPLATE *)buf, owner, rp_ask_proc, (LPARAM)a);
     return r == RP_ASK_FIRST || r == RP_ASK_SECOND ? (int)r : RP_ASK_CANCEL;

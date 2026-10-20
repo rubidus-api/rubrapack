@@ -236,57 +236,145 @@ static proven_err_t png_rgba(proven_allocator_t alloc, const uint8_t *rgba, uint
     return rp_buf_take(&p, out, len);
 }
 
-// A logo of `size` pixels from an .ico file's largest 32-bit bitmap image (the ones stored as PNG
-// are passed over: an icon has both), scaled with bilinear weights. PROVEN_ERR_NOT_FOUND when the
-// file has no such image - the caller then makes the plain logo.
-static proven_err_t logo_from_ico(proven_allocator_t alloc, const uint8_t *ico, size_t n, uint32_t size, uint8_t **out, size_t *len) {
-    if (n < 6 || ico[0] || ico[1] || ico[2] != 1 || ico[3]) return PROVEN_ERR_NOT_FOUND;
-    size_t count = (size_t)ico[4] | (size_t)ico[5] << 8;
-    const uint8_t *px = NULL;
-    uint32_t w = 0;
-    for (size_t i = 0; i < count && 6 + 16 * (i + 1) <= n; ++i) {
-        const uint8_t *e = ico + 6 + 16 * i;
-        uint32_t bytes = (uint32_t)e[8] | (uint32_t)e[9] << 8 | (uint32_t)e[10] << 16 | (uint32_t)e[11] << 24;
-        uint32_t at = (uint32_t)e[12] | (uint32_t)e[13] << 8 | (uint32_t)e[14] << 16 | (uint32_t)e[15] << 24;
-        if (at > n || bytes > n - at || bytes < 40) continue;
-        const uint8_t *h = ico + at;
-        uint32_t hs = (uint32_t)h[0] | (uint32_t)h[1] << 8 | (uint32_t)h[2] << 16 | (uint32_t)h[3] << 24;
-        uint32_t iw = (uint32_t)h[4] | (uint32_t)h[5] << 8 | (uint32_t)h[6] << 16 | (uint32_t)h[7] << 24;
-        uint32_t ih = (uint32_t)h[8] | (uint32_t)h[9] << 8 | (uint32_t)h[10] << 16 | (uint32_t)h[11] << 24;
-        uint32_t bpp = (uint32_t)h[14] | (uint32_t)h[15] << 8, comp = (uint32_t)h[16] | (uint32_t)h[17] << 8 | (uint32_t)h[18] << 16 | (uint32_t)h[19] << 24;
-        if (hs != 40 || bpp != 32 || comp != 0 || iw == 0 || iw > 256 || ih != 2 * iw) continue;      // the height counts the mask too
-        if ((uint64_t)40 + (uint64_t)iw * iw * 4 > bytes) continue;
-        if (iw > w) {
-            w = iw;
-            px = h + 40;
+// A PNG of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side, as top-down RGBA
+// (RFC-0031 L7: an .ico's PNG images and [arp] logo). PROVEN_ERR_NOT_FOUND for any other kind.
+static uint32_t get_be32(const uint8_t *p) { return (uint32_t)p[0] << 24 | (uint32_t)p[1] << 16 | (uint32_t)p[2] << 8 | p[3]; }
+
+static proven_err_t png_decode(proven_allocator_t alloc, const uint8_t *png, size_t n, uint8_t **out, uint32_t *ow, uint32_t *oh) {
+    static const uint8_t sig[8] = { 0x89, 'P', 'N', 'G', 13, 10, 26, 10 };
+    if (n < 33 || memcmp(png, sig, 8) != 0 || memcmp(png + 12, "IHDR", 4) != 0) return PROVEN_ERR_NOT_FOUND;
+    uint32_t w = get_be32(png + 16), h = get_be32(png + 20);
+    uint8_t depth = png[24], type = png[25], interlace = png[28];
+    if (w == 0 || h == 0 || w > 1024 || h > 1024 || depth != 8 || (type != 2 && type != 6) || interlace != 0 || png[26] || png[27])
+        return PROVEN_ERR_NOT_FOUND;
+    size_t bpp = type == 6 ? 4 : 3, row = (size_t)w * bpp, raw_len = (row + 1) * h;
+    rp_buf_t idat = rp_buf_new(alloc, 1u << 26);
+    for (size_t at = 8; at + 12 <= n;) {
+        uint32_t len = get_be32(png + at);
+        if (len > n - at - 12) break;
+        if (memcmp(png + at + 4, "IDAT", 4) == 0) rp_buf_put(&idat, png + at + 8, len);
+        if (memcmp(png + at + 4, "IEND", 4) == 0) break;
+        at += 12 + (size_t)len;
+    }
+    uint8_t *raw = rp_mem_alloc(alloc, raw_len ? raw_len : 1, 1);
+    size_t pos = 0, used = 0;
+    proven_err_t err = idat.err != PROVEN_OK || raw == NULL ? PROVEN_ERR_NOMEM : idat.len < 2 ? PROVEN_ERR_NOT_FOUND : PROVEN_OK;
+    if (err == PROVEN_OK) err = rp_inflate(idat.data + 2, idat.len - 2, raw, raw_len, &pos, &used);     // past the zlib header
+    if (err == PROVEN_OK && pos != raw_len) err = PROVEN_ERR_NOT_FOUND;
+    rp_buf_free(&idat);
+    uint8_t *rgba = err == PROVEN_OK ? rp_mem_alloc(alloc, (size_t)w * h, 4) : NULL;
+    if (err == PROVEN_OK && rgba == NULL) err = PROVEN_ERR_NOMEM;
+    for (uint32_t y = 0; err == PROVEN_OK && y < h; ++y) {          // undo the filters in place
+        uint8_t *line = raw + y * (row + 1) + 1, *prev = y ? raw + (y - 1) * (row + 1) + 1 : NULL;
+        uint8_t f = line[-1];
+        for (size_t x = 0; x < row; ++x) {
+            uint8_t a = x >= bpp ? line[x - bpp] : 0, b = prev ? prev[x] : 0, c = prev && x >= bpp ? prev[x - bpp] : 0;
+            int pa, pb, pc, pr;
+            switch (f) {
+            case 0: break;
+            case 1: line[x] = (uint8_t)(line[x] + a); break;
+            case 2: line[x] = (uint8_t)(line[x] + b); break;
+            case 3: line[x] = (uint8_t)(line[x] + ((a + b) >> 1)); break;
+            case 4:
+                pr = a + b - c; pa = abs(pr - a); pb = abs(pr - b); pc = abs(pr - c);
+                line[x] = (uint8_t)(line[x] + (pa <= pb && pa <= pc ? a : pb <= pc ? b : c));
+                break;
+            default: err = PROVEN_ERR_NOT_FOUND; x = row; break;
+            }
+        }
+        for (uint32_t x = 0; err == PROVEN_OK && x < w; ++x) {
+            uint8_t *o = rgba + ((size_t)y * w + x) * 4;
+            memcpy(o, line + x * bpp, 3);
+            o[3] = bpp == 4 ? line[x * bpp + 3] : 255;
         }
     }
-    if (px == NULL) return PROVEN_ERR_NOT_FOUND;
+    rp_mem_free(alloc, raw);
+    if (err != PROVEN_OK) {
+        rp_mem_free(alloc, rgba);
+        return err;
+    }
+    *out = rgba;
+    *ow = w;
+    *oh = h;
+    return PROVEN_OK;
+}
+
+// A square logo of `size` pixels from top-down RGBA w x h: scaled with bilinear weights to fit,
+// centred, the rest transparent.
+static proven_err_t logo_scale(proven_allocator_t alloc, const uint8_t *px, uint32_t w, uint32_t h, uint32_t size, uint8_t **out, size_t *len) {
     uint8_t *rgba = rp_mem_alloc(alloc, (size_t)size * size, 4);
     if (rgba == NULL) return PROVEN_ERR_NOMEM;
-    for (uint32_t y = 0; y < size; ++y) {
-        for (uint32_t x = 0; x < size; ++x) {
-            // The source point of this pixel's centre, in 1/256 of a source pixel; rows are bottom up.
-            uint32_t fx = (uint32_t)(((uint64_t)(2 * x + 1) * w * 256) / (2 * size)), fy = (uint32_t)(((uint64_t)(2 * y + 1) * w * 256) / (2 * size));
+    memset(rgba, 0, (size_t)size * size * 4);
+    uint32_t big = w > h ? w : h, dw = (uint32_t)((uint64_t)size * w / big), dh = (uint32_t)((uint64_t)size * h / big);
+    if (dw == 0) dw = 1;
+    if (dh == 0) dh = 1;
+    uint32_t ox = (size - dw) / 2, oy = (size - dh) / 2;
+    for (uint32_t y = 0; y < dh; ++y) {
+        for (uint32_t x = 0; x < dw; ++x) {
+            // The source point of this pixel's centre, in 1/256 of a source pixel.
+            uint32_t fx = (uint32_t)(((uint64_t)(2 * x + 1) * w * 256) / (2 * dw)), fy = (uint32_t)(((uint64_t)(2 * y + 1) * h * 256) / (2 * dh));
             fx = fx >= 128 ? fx - 128 : 0;
             fy = fy >= 128 ? fy - 128 : 0;
             uint32_t x0 = fx >> 8, y0 = fy >> 8, ax = fx & 255, ay = fy & 255;
-            uint32_t x1 = x0 + 1 < w ? x0 + 1 : x0, y1 = y0 + 1 < w ? y0 + 1 : y0;
+            uint32_t x1 = x0 + 1 < w ? x0 + 1 : x0, y1 = y0 + 1 < h ? y0 + 1 : y0;
             if (x0 >= w) x0 = x1 = w - 1;
-            if (y0 >= w) y0 = y1 = w - 1;
-            const uint8_t *p00 = px + ((size_t)(w - 1 - y0) * w + x0) * 4, *p10 = px + ((size_t)(w - 1 - y0) * w + x1) * 4;
-            const uint8_t *p01 = px + ((size_t)(w - 1 - y1) * w + x0) * 4, *p11 = px + ((size_t)(w - 1 - y1) * w + x1) * 4;
-            uint8_t *o = rgba + ((size_t)y * size + x) * 4;
+            if (y0 >= h) y0 = y1 = h - 1;
+            const uint8_t *p00 = px + ((size_t)y0 * w + x0) * 4, *p10 = px + ((size_t)y0 * w + x1) * 4;
+            const uint8_t *p01 = px + ((size_t)y1 * w + x0) * 4, *p11 = px + ((size_t)y1 * w + x1) * 4;
+            uint8_t *o = rgba + ((size_t)(oy + y) * size + ox + x) * 4;
             for (int c = 0; c < 4; ++c) {
                 uint32_t top = p00[c] * (256 - ax) + p10[c] * ax, bot = p01[c] * (256 - ax) + p11[c] * ax;
-                uint8_t v = (uint8_t)((top * (256 - ay) + bot * ay + 32768) >> 16);
-                o[c == 0 ? 2 : c == 2 ? 0 : c] = v;        // BGRA to RGBA
+                o[c] = (uint8_t)((top * (256 - ay) + bot * ay + 32768) >> 16);
             }
         }
     }
     proven_err_t err = png_rgba(alloc, rgba, size, out, len);
     rp_mem_free(alloc, rgba);
     return err;
+}
+
+// The largest image of an .ico file - a 32-bit bitmap or a PNG - as top-down RGBA.
+// PROVEN_ERR_NOT_FOUND when the file has none of those (the caller then makes the plain logo).
+static proven_err_t ico_image(proven_allocator_t alloc, const uint8_t *ico, size_t n, uint8_t **out, uint32_t *ow, uint32_t *oh) {
+    if (n < 6 || ico[0] || ico[1] || ico[2] != 1 || ico[3]) return PROVEN_ERR_NOT_FOUND;
+    size_t count = (size_t)ico[4] | (size_t)ico[5] << 8;
+    const uint8_t *best = NULL;
+    uint32_t bw = 0, bbytes = 0;
+    bool bpng = false;
+    for (size_t i = 0; i < count && 6 + 16 * (i + 1) <= n; ++i) {
+        const uint8_t *e = ico + 6 + 16 * i;
+        uint32_t bytes = (uint32_t)e[8] | (uint32_t)e[9] << 8 | (uint32_t)e[10] << 16 | (uint32_t)e[11] << 24;
+        uint32_t at = (uint32_t)e[12] | (uint32_t)e[13] << 8 | (uint32_t)e[14] << 16 | (uint32_t)e[15] << 24;
+        if (at > n || bytes > n - at || bytes < 40) continue;
+        const uint8_t *h = ico + at;
+        if (h[0] == 0x89 && bytes >= 24 && memcmp(h + 1, "PNG", 3) == 0) {
+            uint32_t iw = get_be32(h + 16);
+            if (iw > bw && iw <= 1024) { bw = iw; best = h; bbytes = bytes; bpng = true; }
+            continue;
+        }
+        uint32_t hs = (uint32_t)h[0] | (uint32_t)h[1] << 8 | (uint32_t)h[2] << 16 | (uint32_t)h[3] << 24;
+        uint32_t iw = (uint32_t)h[4] | (uint32_t)h[5] << 8 | (uint32_t)h[6] << 16 | (uint32_t)h[7] << 24;
+        uint32_t ih = (uint32_t)h[8] | (uint32_t)h[9] << 8 | (uint32_t)h[10] << 16 | (uint32_t)h[11] << 24;
+        uint32_t bpp = (uint32_t)h[14] | (uint32_t)h[15] << 8, comp = (uint32_t)h[16] | (uint32_t)h[17] << 8 | (uint32_t)h[18] << 16 | (uint32_t)h[19] << 24;
+        if (hs != 40 || bpp != 32 || comp != 0 || iw == 0 || iw > 256 || ih != 2 * iw) continue;      // the height counts the mask too
+        if ((uint64_t)40 + (uint64_t)iw * iw * 4 > bytes) continue;
+        if (iw > bw) { bw = iw; best = h; bbytes = bytes; bpng = false; }
+    }
+    if (best == NULL) return PROVEN_ERR_NOT_FOUND;
+    if (bpng) return png_decode(alloc, best, bbytes, out, ow, oh);
+    uint8_t *rgba = rp_mem_alloc(alloc, (size_t)bw * bw, 4);
+    if (rgba == NULL) return PROVEN_ERR_NOMEM;
+    const uint8_t *px = best + 40;
+    for (uint32_t y = 0; y < bw; ++y) {                 // bottom up BGRA to top down RGBA
+        for (uint32_t x = 0; x < bw; ++x) {
+            const uint8_t *s = px + ((size_t)(bw - 1 - y) * bw + x) * 4;
+            uint8_t *o = rgba + ((size_t)y * bw + x) * 4;
+            o[0] = s[2]; o[1] = s[1]; o[2] = s[0]; o[3] = s[3];
+        }
+    }
+    *out = rgba;
+    *ow = *oh = bw;
+    return PROVEN_OK;
 }
 
 // ---- the package root and the paths inside it ----------------------------------------------------
@@ -1877,13 +1965,19 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
                      "xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" xmlns:b4=\"http://schemas.microsoft.com/appx/2021/blockmap\" "
                      "IgnorableNamespaces=\"b4\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
     proven_err_t err = m.err;
-    uint8_t *ico = NULL;
+    // The picture: [arp] logo (a PNG), else the largest 32-bit or PNG image of [arp] icon, else none
+    // (a plain square).
+    uint8_t *ico = NULL, *pic = NULL;
     size_t ico_len = 0;
-    if (ir->arp_icon_source && rp_pal_read_file(alloc, ir->arp_icon_source, 1u << 22, &ico, &ico_len) != PROVEN_OK) ico = NULL;
+    uint32_t pw = 0, ph = 0;
+    const char *from = ir->arp_logo_source ? ir->arp_logo_source : ir->arp_icon_source;
+    if (from && rp_pal_read_file(alloc, from, 1u << 24, &ico, &ico_len) == PROVEN_OK) {
+        proven_err_t pe = ir->arp_logo_source ? png_decode(alloc, ico, ico_len, &pic, &pw, &ph) : ico_image(alloc, ico, ico_len, &pic, &pw, &ph);
+        if (pe != PROVEN_OK) pic = NULL;
+    }
     for (size_t i = 0; i < 3 && err == PROVEN_OK; ++i) {
         snprintf(items[i].path, sizeof items[i].path, "%s", logos[i].path);
-        // The package's own icon ([arp] icon) when it has a 32-bit bitmap image; else a plain square.
-        err = ico ? logo_from_ico(alloc, ico, ico_len, logos[i].size, &items[i].data, &items[i].data_len) : PROVEN_ERR_NOT_FOUND;
+        err = pic ? logo_scale(alloc, pic, pw, ph, logos[i].size, &items[i].data, &items[i].data_len) : PROVEN_ERR_NOT_FOUND;
         if (err == PROVEN_ERR_NOT_FOUND) err = default_logo(alloc, logos[i].size, &items[i].data, &items[i].data_len);
         if (err == PROVEN_OK) err = add_payload(alloc, &z, &bm, logos[i].path, NULL, items[i].data, items[i].data_len, false);
     }
@@ -1899,6 +1993,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
     else rp_zip_abort(&z);
     for (size_t i = 0; i < 3; ++i) rp_mem_free(alloc, items[i].data);
     rp_mem_free(alloc, ico);
+    rp_mem_free(alloc, pic);
     rp_buf_free(&m);
     rp_buf_free(&bm);
     rp_buf_free(&ct);

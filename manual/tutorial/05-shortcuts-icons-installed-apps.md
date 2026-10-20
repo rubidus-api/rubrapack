@@ -85,6 +85,7 @@ the shortcuts.
 | Key | Effect |
 |---|---|
 | `icon = "hello.ico"` | the icon in the list |
+| `logo = "hello.png"` | the picture of the Windows 11 right-click menu's small package (chapter 11; else made from `icon`) |
 | `help = "https://..."` | a support link Windows shows with the product |
 | `about = "https://..."` | the product's web page |
 | `no-repair = true` | no Repair for this product |

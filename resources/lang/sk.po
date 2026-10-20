@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nie je posledná položka (nie je to balík zapísan
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Polia tabuliek [[...]] nie sú podporované; každej položke dajte vlastné [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check v [action.{1}] nemá účinok: zatiaľ ho nič nespúšťa; odstráňte ho"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] potrebuje do aj undo (undo vráti aj neúspešné do)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' sa nenašlo (ani ako varianty .scale-100 ... .scale-400)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': logo s variantmi mierky potrebuje názov súboru v ASCII s príponou"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo musí byť .png v 8-bitovom RGB alebo RGBA, neprekladané, najviac 1024 pixelov na stranu"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package je názov identity hlavného balíka (zadané '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Na tomto počítači už je iná inštalácia [1] ([2]). Dve kópie jedn
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Na tomto počítači už je iná inštalácia [1] ([2]). Najprv ju odstráňte (Nastavenie > Aplikácie), potom nainštalujte túto."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] sa nepodarilo nainštalovať a vrátenie späť neodstránilo všetko. Čo zostalo, je uvedené nižšie. Spustite inštalačný program znova a potom [1] odstráňte, ak ho nechcete.\r\nDenník: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] sa nepodarilo inovovať a vrátenie späť neobnovilo verziu, ktorú ste mali. Rozdiely sú uvedené nižšie. Opravte ju inštalačným programom tej verzie alebo novú verziu nainštalujte znova.\r\nDenník: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] sa nepodarilo odstrániť a vrátenie späť ho neobnovilo. Rozdiely sú uvedené nižšie. Opravte ho jeho inštalačným programom a potom ho odstráňte znova.\r\nDenník: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] sa nepodarilo opraviť a vrátenie späť ho neobnovilo. Rozdiely sú uvedené nižšie. Spustite inštalačný program znova a opravte ho.\r\nDenník: [2]"

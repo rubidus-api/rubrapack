@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nu este ultima intrare (nu este un pachet scris de r
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tablourile de tabele [[...]] nu sunt acceptate; dați fiecărui element propriul [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check nu are efect: încă nimic nu îl rulează; eliminați-l"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] are nevoie atât de do, cât și de undo (undo anulează și un do eșuat)"
@@ -2117,6 +2115,9 @@ msgstr "sigla '{1}' nu a fost găsită (nici ca variante .scale-100 ... .scale-4
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "sigla '{1}': o siglă cu variante de scară are nevoie de un nume de fișier ASCII cu extensie"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo trebuie să fie un .png RGB sau RGBA pe 8 biți, neîntrețesut, de cel mult 1024 pixeli pe latură"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package este numele de identitate al pachetului principal (primit '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Pe acest computer există deja altă instalare a [1] ([2]). Două copii 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Pe acest computer există deja altă instalare a [1] ([2]). Eliminați-o întâi (Setări > Aplicații), apoi instalați-o pe aceasta."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] nu a putut fi instalat, iar anularea nu a eliminat totul. Ce a rămas e listat mai jos. Rulați din nou programul de instalare, apoi eliminați [1] dacă nu îl doriți.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] nu a putut fi actualizat, iar anularea nu a restabilit versiunea pe care o aveați. Diferențele sunt listate mai jos. Reparați-o cu programul de instalare al acelei versiuni sau instalați din nou versiunea nouă.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] nu a putut fi eliminat, iar anularea nu l-a restabilit. Diferențele sunt listate mai jos. Reparați-l cu programul său de instalare, apoi eliminați-l din nou.\r\nJurnal: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] nu a putut fi reparat, iar anularea nu l-a restabilit. Diferențele sunt listate mai jos. Rulați din nou programul de instalare pentru a-l repara.\r\nJurnal: [2]"

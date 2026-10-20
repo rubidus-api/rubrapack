@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml соңғы жазба емес (rubrapack немес
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] кестелер массивтеріне қолдау жоқ; әр элементке өз [kind.ID] беріңіз"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check әсер етпейді: оны әлі ештеңе орындамайды; оны жойыңыз"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] үшін do мен undo екеуі де керек (undo сәтсіз do-ны да кері қайтарады)"
@@ -2117,6 +2115,9 @@ msgstr "'{1}' логотипі табылмады (.scale-100 ... .scale-400 н�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' логотипі: масштаб нұсқалары бар логотипке кеңейтімі бар ASCII файл атауы керек"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 8 биттік RGB не RGBA .png болуы керек, жоларалық емес, әр қабырғасы ең көбі 1024 пиксель"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package - негізгі буманың сәйкестендіру атауы ('{1}' алынды)"
@@ -3937,3 +3938,19 @@ msgstr "Бұл компьютерде [1] бағдарламасының бас�
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Бұл компьютерде [1] бағдарламасының басқа орнатылымы бар ([2]). Алдымен оны жойыңыз (Параметрлер > Қолданбалар), содан кейін мұны орнатыңыз."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] орнатылмады, ал болдырмау бәрін алып тастамады. Қалғаны төменде берілген. Орнатқышты қайта іске қосыңыз, кейін [1] керек болмаса, оны жойыңыз.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] жаңартылмады, ал болдырмау бұрынғы нұсқаңызды қалпына келтірмеді. Айырмашылықтар төменде берілген. Оны сол нұсқаның орнатқышымен жөндеңіз не жаңа нұсқаны қайта орнатыңыз.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] жойылмады, ал болдырмау оны бұрынғы күйіне келтірмеді. Айырмашылықтар төменде берілген. Оны өз орнатқышымен жөндеп, қайта жойыңыз.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] жөнделмеді, ал болдырмау оны бұрынғы күйіне келтірмеді. Айырмашылықтар төменде берілген. Жөндеу үшін орнатқышты қайта іске қосыңыз.\r\nЖурнал: [2]"

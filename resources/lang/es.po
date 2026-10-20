@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml no es la última entrada (no es un paquete escrito p
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Las matrices de tablas [[...]] no están admitidas; dé a cada elemento su propio [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check no tiene efecto: todavía nada lo ejecuta; quítelo"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] necesita do y undo (undo también revierte un do fallido)"
@@ -2117,6 +2115,9 @@ msgstr "no se encuentra el logotipo '{1}' (ni como variantes .scale-100 ... .sca
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotipo '{1}': un logotipo con variantes de escala necesita un nombre de archivo ASCII con extensión"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo debe ser un .png RGB o RGBA de 8 bits, no entrelazado, de 1024 píxeles por lado como máximo"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package es el nombre de identidad del paquete principal (se recibió '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Ya hay otra instalación de [1] en este equipo ([2]). Dos copias de un p
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Ya hay otra instalación de [1] en este equipo ([2]). Quítela primero (Configuración > Aplicaciones) y luego instale esta."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "No se pudo instalar [1], y al deshacerlo no se quitó todo. Lo que queda se indica abajo. Vuelva a ejecutar el instalador y luego quite [1] si no lo quiere.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "No se pudo actualizar [1], y al deshacerlo no se restauró la versión que tenía. Las diferencias se indican abajo. Repárela con el instalador de esa versión o vuelva a instalar la nueva.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "No se pudo quitar [1], y al deshacerlo no se restauró. Las diferencias se indican abajo. Repárelo con su instalador y luego vuelva a quitarlo.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "No se pudo reparar [1], y al deshacerlo no se restauró. Las diferencias se indican abajo. Vuelva a ejecutar el instalador para repararlo.\r\nRegistro: [2]"

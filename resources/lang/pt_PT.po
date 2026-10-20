@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml não é a última entrada (não é um pacote gravado
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "matrizes de tabelas [[...]] não são suportadas; dê a cada item seu próprio [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check de [action.{1}] não tem efeito: nada o executa ainda; remova-o"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] precisa de do e undo (o undo também reverte um do que falhou)"
@@ -2117,6 +2115,9 @@ msgstr "logotipo '{1}' não encontrado (nem como variantes .scale-100 ... .scale
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotipo '{1}': um logotipo com variantes de escala precisa de um nome de ficheiro ASCII com extensão"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo tem de ser um .png RGB ou RGBA de 8 bits, não entrelaçado, com no máximo 1024 píxeis de lado"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package é o nome de identidade do pacote principal (recebido '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Já existe outra instalação de [1] neste computador ([2]). Duas cópia
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Já existe outra instalação de [1] neste computador ([2]). Remova-a primeiro (Definições > Aplicações) e depois instale esta."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Não foi possível instalar o [1], e anular não removeu tudo. O que ficou está indicado abaixo. Execute o instalador novamente e depois remova o [1] se não o quiser.\r\nRegisto: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Não foi possível atualizar o [1], e anular não repôs a versão que tinha. As diferenças estão indicadas abaixo. Repare-a com o instalador dessa versão ou instale novamente a nova versão.\r\nRegisto: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Não foi possível remover o [1], e anular não o repôs. As diferenças estão indicadas abaixo. Repare-o com o respetivo instalador e depois remova-o novamente.\r\nRegisto: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Não foi possível reparar o [1], e anular não o repôs. As diferenças estão indicadas abaixo. Execute o instalador novamente para o reparar.\r\nRegisto: [2]"

@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml is niet het laatste item (geen pakket dat rubrapack 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-arrays van tabellen worden niet ondersteund; geef elk item een eigen [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check heeft geen effect: niets voert het nog uit; verwijder het"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] heeft zowel do als undo nodig (de undo draait ook een mislukte do terug)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' niet gevonden (ook niet als .scale-100 ... .scale-400-variant
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': een logo met schaalvarianten heeft een ASCII-bestandsnaam met extensie nodig"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo moet een .png zijn in 8-bits RGB of RGBA, niet interlaced, hoogstens 1024 pixels per zijde"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package is de identiteitsnaam van het hoofdpakket (gekregen: '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Er staat al een andere installatie van [1] op deze computer ([2]). Twee 
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Er staat al een andere installatie van [1] op deze computer ([2]). Verwijder die eerst (Instellingen > Apps) en installeer dan deze."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] kon niet worden geïnstalleerd, en het ongedaan maken heeft niet alles verwijderd. Wat over is, staat hieronder. Start het installatieprogramma opnieuw en verwijder [1] daarna als u het niet wilt.\r\nLogboek: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] kon niet worden bijgewerkt, en het ongedaan maken heeft uw vorige versie niet hersteld. De verschillen staan hieronder. Herstel die met het installatieprogramma van die versie, of installeer de nieuwe versie opnieuw.\r\nLogboek: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] kon niet worden verwijderd, en het ongedaan maken heeft het niet hersteld. De verschillen staan hieronder. Herstel het met het installatieprogramma en verwijder het daarna opnieuw.\r\nLogboek: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] kon niet worden hersteld, en het ongedaan maken heeft het niet teruggezet. De verschillen staan hieronder. Start het installatieprogramma opnieuw om het te herstellen.\r\nLogboek: [2]"

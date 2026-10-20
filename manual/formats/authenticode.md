@@ -158,19 +158,19 @@ signature made with any key carries these same values. The streams in order of t
 | # | name (UTF-16LE) | Name | Size |
 |---|---|---|---|
 | 1 | `05 00 53 00 75 00` ... | `\005SummaryInformation` | 336 |
-| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 161280 |
+| 2 | `0b 43 31 41 35 47` ... | `Binary.RpCa` | 171008 |
 | 3 | `26 41 65 38 be 41` ... | `cab1.cab` | 6776 |
 | 4 | `40 48 0b 43 31 41` ... | `Binary` | 4 |
-| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 88 |
+| 5 | `40 48 0c 46 f6 45` ... | `CustomAction` | 112 |
 | 6 | `40 48 0d 43 35 42` ... | `Directory` | 18 |
 | 7 | `40 48 0f 42 e4 45` ... | `FeatureComponents` | 4 |
 | 8 | `40 48 0f 42 e4 45` ... | `Feature` | 16 |
 | 9 | `40 48 0f 43 2f 42` | `File` | 20 |
 | 10 | `40 48 16 42 27 43` ... | `Media` | 14 |
 | 11 | `40 48 3f 3b f2 43` ... | `_Columns` | 648 |
-| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 92722 |
-| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 5296 |
-| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 174 |
+| 12 | `40 48 3f 3f 77 45` ... | `_StringData` | 92789 |
+| 13 | `40 48 3f 3f 77 45` ... | `_StringPool` | 5312 |
+| 14 | `40 48 52 44 f6 45` ... | `InstallExecuteSequence` | 192 |
 | 15 | `40 48 52 44 f6 45` ... | `InstallUISequence` | 48 |
 | 16 | `40 48 59 45 f2 44` ... | `Property` | 2424 |
 | 17 | `40 48 7f 3f 64 41` ... | `_Tables` | 36 |
@@ -185,13 +185,13 @@ The prehash is the root's CLSID and state bits (20 bytes) and, per stream, its n
 two zero times: 908 bytes in all. Its SHA-256, the `\005MsiDigitalSignatureEx` value:
 
 ```text
-cc a5 88 a4 98 a5 17 0d 3f bf 32 a7 7e 42 d3 0a 4d ec 9e 89 1a 24 c0 63 c0 a5 82 7a 4a 97 11 77
+f3 16 67 e8 81 7b 49 ea 64 56 03 df 73 0e f6 dd 6d 98 34 b9 dd a4 90 b0 95 37 4c c7 a7 f0 d4 92
 ```
 
 The digest in `SpcIndirectDataContent` - SHA-256 over that value, every stream's bytes in the same
 order, and the root CLSID:
 
 ```text
-a7 4c 9d bc 19 2a ff f8 9d af ff e3 f9 2c 53 8e 6f 12 47 6f a7 1c dc ea a6 b0 18 6d 5a 51 15 a8
+c0 c4 c3 40 63 74 93 87 2c a5 59 17 c1 81 73 21 22 0a 54 db 8d 9b e3 f4 40 0d ba 9d 6d dc f2 f4
 ```
 

@@ -215,9 +215,9 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
-| `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`) - "설치된 앱"에 제품이 어떻게 보이는가 |
+| `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`), logo(`.png`: 8비트 RGB 나 RGBA, 한 변 1024픽셀 이하; 메뉴 패키지의 로고) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
-| `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check |
+| `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check(`do` 가 만든 것이 있으면 0 으로 끝남; 되돌리기가 실패했을 때의 보고서용) |
 | `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on(`remove` 와 함께: `install`, 또는 `uninstall` - 제거할 때 키 전체), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), recursive(`true`: 제거할 때 폴더와 그 안 전부), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
@@ -382,7 +382,23 @@ rubrapack 은 이 한 쌍을 관리자 권한의 지연(deferred) 동작과 그 
 그래서 제거와 업그레이드는 전부 되거나 전혀 되지 않는다: 뒤에서 무엇이 실패하면(또는 `do`/`undo`
 자체가 0 아닌 값으로 끝나면) 파일이 되돌아오고 다른 명령이 등록을 되살린다. 두 명령은 두 번 실행해도
 안전해야 하고, 아무것도 묻지 않고 끝나야 한다 - 창 없이 실행되고 사용자를 기다리는 것은 없다.
-인자는 쓴 그대로 넘어간다(서식 문자열이 아니다). `check` 는 아직 효과가 없어 경고(`RP1318`)만 낸다.
+인자는 쓴 그대로 넘어간다(서식 문자열이 아니다).
+
+뒤에서 무엇이 실패하면 Windows Installer 가 설치를 되돌리고, 위 명령들이 등록을 되살린다. 그 되돌리기마저 잘못되면
+사용자에게 보고서가 남는다: 바탕 화면(없으면 다운로드)의 `<제품> setup report <날짜와 시각>.txt` 로, 사용자의 언어로
+무엇을 하던 중이었는지, 무엇이 원래와 다른지, 이제 무엇을 하면 되는지, 설치 로그가 어디 있는지를 적는다. 보는 것은
+업그레이드가 바꾸던 옛 판(다시 설치돼 있는가)과 각 `check` 다:
+
+```toml
+[action.Tip]
+run = "file:MainExe"
+do = "--register"
+undo = "--unregister"
+check = "--status"        # --register 가 만든 것이 있으면 0 으로 끝난다
+```
+
+되돌린 뒤에 `check` 는 제품이 원래 있었으면(업그레이드, 복구, 제거) 0 으로, 처음 설치가 실패한 것이면 0 이 아닌
+값으로 끝나야 한다. 모두 원래대로면 아무것도 쓰지 않는다. `check` 는 서식 문자열이다(`[INSTALLDIR]` 은 설치 폴더).
 
 ### 레지스트리 값: `[registry.ID]`
 
@@ -509,7 +525,8 @@ multi = "single"                  # 하나만 골랐을 때만
   항목에 대해 적어 둔 일만 한다.
   - **MSIX** 는 신원이 있다: DLL 이 패키지에 들어가고 매니페스트가 항목을 선언한다.
   - **MSI** 는 항목의 프로그램 옆에 파일 둘을 더 설치한다 - 그 DLL 과, 매니페스트와 로고만 든 작은 패키지
-    `rubrapack_menu.msix`(로고는 `[arp] icon` 에 32비트 이미지가 있으면 그것으로, 없으면 단색으로 만든다). 설치할 때 이 패키지를 프로그램 폴더에 대해 등록하고(컴퓨터의 모든 사용자용,
+    `rubrapack_menu.msix`(로고는 `[arp] logo` 의 PNG 로, 없으면 `[arp] icon` 의 가장 큰 32비트나 PNG 이미지로 - 비율을
+    지켜 가운데에 - 만들고, 둘 다 없으면 단색). 설치할 때 이 패키지를 프로그램 폴더에 대해 등록하고(컴퓨터의 모든 사용자용,
     다른 사용자는 다음 로그인 때) 제거할 때 지운다. **인증서가 필요 없다**: 관리자 권한의 설치에서
     Windows 가 받아 주는 무서명 형식으로 만든다. `--key` 와 `[msix] publisher`(인증서의 주체)가 있으면
     서명한다. 등록할 수 없는 곳 - Windows 10 버전 2004 이전, 또는 관리자 권한이 없는 사용자의 사용자별 설치 - 에서는 설치가
@@ -723,7 +740,9 @@ on = "uninstall"            # 키와 그 값, 그 아래 모든 키
   생긴다. 다른 폴더는 보통의 `[remove]` 처럼 설치할 때 빈 채로 만든다. (0.41.0 은 프로필의 폴더도 만들었다.)
 - 제품(또는 그 행이 속한 기능)을 정말 지울 때만 한다 - "설치된 앱", 유지 관리 페이지의 제거, `msiexec /x`.
   **업그레이드는 절대 지우지 않는다**: 새 판은 설정을 그대로 만난다. 실패해서 되돌려진 제거는 아무것도 건드리지
-  않았다. 지우기는 제거가 성공한 뒤 맨 끝에 하기 때문이다 - 그래서 지운 뒤에는 되살릴 길도 없다.
+  않았다. 지우기는 제거가 성공한 뒤 맨 끝에 하기 때문이다 - 그래서 지운 뒤에는 되살릴 길도 없다. 롤백이 꺼져 있으면
+  (`DisableRollback` 정책, 또는 그렇게 실행한 설치) Windows Installer 는 그 마지막 단계를 건너뛰므로, 그때는 제거
+  과정의 끝에서 지운다.
 - **프로그램이 쓴 것만이 아니라 거기 있는 것은 무엇이든 지운다.** 그 제품만의 폴더를 적는다. 사용자가 설치
   폴더를 고를 수 있고 다른 것이 든 폴더를 고르면, 그것도 함께 지워진다.
 - 만들 때 거절(`RP1316`): `SystemRoot` 나 `Temp` 아래 폴더; `Software` 아래가 아닌 키, `Software\Microsoft`
@@ -738,7 +757,8 @@ on = "uninstall"            # 키와 그 값, 그 아래 모든 키
 - **AppData 와 `HKCU` 는 제품을 지우는 사용자의 것이다.** 그 자리에 `users = "all"` 을 적으면 다르다(아래).
   이 용도로는 컴퓨터 단위 패키지도 여기에 `HKCU` 를 적을 수 있다(다른 데서는 안 된다).
   사용자 프로필과 `HKCU` 는 그 사용자 권한으로, 나머지는 컴퓨터 단위 패키지(`scope = "machine"`)에서 SYSTEM 이
-  지운다. `dual` 패키지는 지우는 사람의 권한으로 전부 지운다.
+  지운다. `dual` 패키지도 모든 사용자용(`ALLUSERS=1`)으로 설치했으면 같고, 한 사용자용으로 설치했으면 그 사용자
+  권한으로 전부 지운다.
 - 폴더의 `[dir.ID]` 는 이 패키지의 폴더여야 하므로, 없으면 설치할 때 (빈 채로) 만들어진다.
 - MSIX 에는 필요 없다: Windows 가 패키지의 폴더와 패키지 자신의 레지스트리·AppData 를 함께 지운다.
 
@@ -1075,7 +1095,7 @@ text = "This will install [ProductName]. Close other programs first."
 `RemoveConfirmTextAll`, `RemoveAsk`, `RemoveAskAll`(제거 전의 두 번째 질문; 이 다섯을 주지 않는 다른 언어는 영어를
 쓴다), `DetailsFull`(상세 상자의 확인란), `LanguageTitle`, `LanguageText`, `LangGroup1`~`LangGroup9`(묶은 언어 페이지의
 지역; 주지 않는 언어는 영어를 쓴다), `DirGuardText`(아래 가드의 메시지),
-`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse`(사전 점검의 메시지), 그리고
+`PreflightAsk`, `PreflightSilent`, `PreflightFolder`, `PreflightCache`, `PreflightExtra`, `PreflightExtraSilent`, `PreflightOtherStore`, `PreflightOtherStoreRefuse`, `PreflightOtherMsi`, `PreflightOtherMsiRefuse`(사전 점검의 메시지), `ReportInstall`, `ReportUpgrade`, `ReportRemove`, `ReportRepair`(되돌리기가 실패했을 때의 보고서), 그리고
 제거할 때 - 유지보수 페이지의 제거, 또는 `REMOVE=ALL` - 쓰는 `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`, `RemovalFatalText`(이것을
 주지 않는 다른 언어는 설치 문구를 쓴다).

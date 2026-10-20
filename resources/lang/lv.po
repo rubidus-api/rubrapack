@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml nav pēdējais ieraksts (nav pakotne, ko rakstījis 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tabulu masīvi [[...]] netiek atbalstīti; piešķiriet katram vienumam savu [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check nav ietekmes: to vēl nekas nepalaiž; noņemiet to"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] nepieciešams gan do, gan undo (undo atsauc arī neveiksmīgu do)"
@@ -2117,6 +2115,9 @@ msgstr "logotips '{1}' nav atrasts (arī ne kā varianti .scale-100 ... .scale-4
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotips '{1}': logotipam ar mērogu variantiem nepieciešams ASCII faila nosaukums ar paplašinājumu"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo jābūt 8 bitu RGB vai RGBA .png, bez rindpārlēces, ne vairāk kā 1024 pikseļi malā"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package ir galvenās pakotnes identitātes nosaukums (saņemts '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Šajā datorā jau ir cita [1] instalācija ([2]). Divas vienas programm
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Šajā datorā jau ir cita [1] instalācija ([2]). Vispirms noņemiet to (Iestatījumi > Programmas), pēc tam instalējiet šo."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] nevarēja instalēt, un atsaukšana visu nenoņēma. Atlikušais ir uzskaitīts zemāk. Palaidiet instalētāju vēlreiz un pēc tam noņemiet [1], ja to nevēlaties.\r\nŽurnāls: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] nevarēja jaunināt, un atsaukšana neatjaunoja jūsu iepriekšējo versiju. Atšķirības ir uzskaitītas zemāk. Salabojiet to ar tās versijas instalētāju vai instalējiet jauno versiju vēlreiz.\r\nŽurnāls: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] nevarēja noņemt, un atsaukšana to neatjaunoja. Atšķirības ir uzskaitītas zemāk. Salabojiet to ar tā instalētāju un pēc tam noņemiet vēlreiz.\r\nŽurnāls: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] nevarēja salabot, un atsaukšana to neatjaunoja. Atšķirības ir uzskaitītas zemāk. Palaidiet instalētāju vēlreiz, lai to salabotu.\r\nŽurnāls: [2]"

@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml non é a última entrada (non é un paquete escrito 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "as matrices de táboas [[...]] non se admiten; dea a cada elemento o seu [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check non ten efecto: aínda nada o executa; quíteo"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] precisa do e undo (undo tamén desfai un do fallido)"
@@ -2117,6 +2115,9 @@ msgstr "non se atopa o logotipo '{1}' (nin como variantes .scale-100 ... .scale-
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotipo '{1}': un logotipo con variantes de escala precisa un nome de ficheiro ASCII con extensión"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo debe ser un .png RGB ou RGBA de 8 bits, non entrelazado, de como moito 1024 píxeles por lado"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package é o nome de identidade do paquete principal (obtívose '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Xa hai outra instalación de [1] neste ordenador ([2]). Dúas copias dun
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Xa hai outra instalación de [1] neste ordenador ([2]). Quítea primeiro (Configuración > Aplicacións) e despois instale esta."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Non se puido instalar [1], e desfacelo non quitou todo. O que queda indícase abaixo. Volva executar o instalador e despois quite [1] se non o quere.\r\nRexistro: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Non se puido actualizar [1], e desfacelo non restaurou a versión que tiña. As diferenzas indícanse abaixo. Repárea co instalador desa versión ou volva instalar a nova.\r\nRexistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Non se puido quitar [1], e desfacelo non o restaurou. As diferenzas indícanse abaixo. Repáreo co seu instalador e despois quíteo de novo.\r\nRexistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Non se puido reparar [1], e desfacelo non o restaurou. As diferenzas indícanse abaixo. Volva executar o instalador para reparalo.\r\nRexistro: [2]"

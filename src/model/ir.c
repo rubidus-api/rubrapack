@@ -748,6 +748,8 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->actions);
     rp_mem_free(a, ir->arp_help);
     rp_mem_free(a, ir->arp_icon_source);
+    rp_mem_free(a, ir->arp_logo_source);
+    rp_mem_free(a, ir->arp_logo_shown);
     rp_mem_free(a, ir->arp_icon_shown);
     rp_mem_free(a, ir->arp_about);
     rp_mem_free(a, ir->msix_identity_name);

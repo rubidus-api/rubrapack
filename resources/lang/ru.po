@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml - не последняя запись (пакет �
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "массивы таблиц [[...]] не поддерживаются; дайте каждому элементу свой [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check в [action.{1}] не действует: пока его ничто не запускает; удалите его"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] требует и do, и undo (undo также откатывает неудачный do)"
@@ -2117,6 +2115,9 @@ msgstr "логотип '{1}' не найден (и в вариантах .scale-
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "логотип '{1}': логотипу с вариантами масштаба нужно ASCII-имя файла с расширением"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo должен быть .png 8-бит RGB или RGBA, без чересстрочности, не больше 1024 пикселей по стороне"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package - имя удостоверения основного пакета (получено '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "На этом компьютере уже есть другая уста
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "На этом компьютере уже есть другая установка [1] ([2]). Сначала удалите её (Параметры > Приложения), затем установите эту."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Не удалось установить [1], и откат удалил не всё. Оставшееся перечислено ниже. Запустите установщик ещё раз, затем удалите [1], если он вам не нужен.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Не удалось обновить [1], и откат не восстановил прежнюю версию. Различия перечислены ниже. Восстановите её установщиком той версии или установите новую версию ещё раз.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Не удалось удалить [1], и откат не восстановил его. Различия перечислены ниже. Восстановите его установщиком, затем удалите снова.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Не удалось восстановить [1], и откат не вернул его в прежнее состояние. Различия перечислены ниже. Запустите установщик ещё раз, чтобы восстановить его.\r\nЖурнал: [2]"

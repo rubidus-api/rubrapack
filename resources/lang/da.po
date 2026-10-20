@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml er ikke den sidste post (ikke en pakke, som rubrapac
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-matricer af tabeller understøttes ikke; giv hvert element sit eget [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check har ingen virkning: intet kører det endnu; fjern det"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] kræver både do og undo (undo ruller også en mislykket do tilbage)"
@@ -2117,6 +2115,9 @@ msgstr "logoet '{1}' blev ikke fundet (heller ikke som .scale-100 ... .scale-400
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logoet '{1}': et logo med skalavarianter kræver et ASCII-filnavn med filtypenavn"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo skal være en .png i 8-bit RGB eller RGBA, ikke interlaced, højst 1024 pixel pr. side"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package er hovedpakkens identitetsnavn (fik '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Der er allerede en anden installation af [1] på computeren ([2]). To ko
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Der er allerede en anden installation af [1] på computeren ([2]). Fjern den først (Indstillinger > Apps), og installer så denne."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] kunne ikke installeres, og fortrydelsen fjernede ikke alt. Det, der er tilbage, står nedenfor. Kør installationsprogrammet igen, og fjern derefter [1], hvis du ikke vil have det.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] kunne ikke opgraderes, og fortrydelsen gendannede ikke den version, du havde. Forskellene står nedenfor. Reparer den med den versions installationsprogram, eller installer den nye version igen.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] kunne ikke fjernes, og fortrydelsen gendannede det ikke. Forskellene står nedenfor. Reparer det med dets installationsprogram, og fjern det derefter igen.\r\nLog: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] kunne ikke repareres, og fortrydelsen gendannede det ikke. Forskellene står nedenfor. Kør installationsprogrammet igen for at reparere det.\r\nLog: [2]"

@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml 이 마지막 항목이 아닙니다(rubrapack 이�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] 표 배열은 지원하지 않습니다. 항목마다 [kind.ID] 를 따로 주십시오"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] 의 check 는 효과가 없습니다: 아직 그것을 돌리는 것이 없습니다. 지우십시오"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] 에는 do 와 undo 가 모두 필요합니다(undo 는 실패한 do 를 되돌리는 데도 씁니다)"
@@ -2118,6 +2116,9 @@ msgstr "로고 '{1}'을(를) 찾을 수 없습니다(.scale-100 ... .scale-400 �
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "로고 '{1}': 배율 변형이 있는 로고는 확장명이 있는 ASCII 파일 이름이어야 합니다"
 
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo 는 8비트 RGB 또는 RGBA, 비월 주사 아님, 한 변 1024픽셀 이하의 .png 여야 합니다"
+
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package 는 주 패키지의 identity 이름입니다('{1}'을(를) 받음)"
 
@@ -3097,7 +3098,7 @@ msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <fo
 msgstr "사용법: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
 
 msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
-msgstr "사용법: rubrapack schema (the JSON Schema of sources, on stdout)"
+msgstr "사용법: rubrapack schema (원본 형식의 JSON Schema 를 표준 출력으로)"
 
 msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
 msgstr "사용법: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
@@ -3937,3 +3938,19 @@ msgstr "[1]의 다른 설치본이 이 컴퓨터에 이미 있습니다([2]). �
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "[1]의 다른 설치본이 이 컴퓨터에 이미 있습니다([2]). 그것을 먼저 제거하고(설정 > 앱) 이것을 설치하세요."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1]을(를) 설치하지 못했고, 되돌리기도 모두 지우지 못했습니다. 남은 것은 아래와 같습니다. 설치 프로그램을 다시 실행한 뒤, 필요 없으면 [1]을(를) 제거하세요.\r\n로그: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1]을(를) 업그레이드하지 못했고, 되돌리기도 쓰던 판을 그대로 되살리지 못했습니다. 다른 점은 아래와 같습니다. 그 판의 설치 프로그램으로 복구하거나, 새 판을 다시 설치하세요.\r\n로그: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1]을(를) 제거하지 못했고, 되돌리기도 원래대로 되살리지 못했습니다. 다른 점은 아래와 같습니다. 설치 프로그램으로 복구한 뒤 다시 제거하세요.\r\n로그: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1]을(를) 복구하지 못했고, 되돌리기도 원래대로 되살리지 못했습니다. 다른 점은 아래와 같습니다. 설치 프로그램을 다시 실행해 복구하세요.\r\n로그: [2]"

@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml non è l'ultima voce (non è un pacchetto scritto da
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "le matrici di tabelle [[...]] non sono supportate; dare a ogni elemento il proprio [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check di [action.{1}] non ha effetto: ancora niente lo esegue; rimuoverlo"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] richiede sia do sia undo (undo annulla anche un do non riuscito)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' non trovato (neanche come varianti .scale-100 ... .scale-400)
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': un logo con varianti di scala richiede un nome di file ASCII con estensione"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo deve essere un .png RGB o RGBA a 8 bit, non interlacciato, al massimo di 1024 pixel per lato"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package è il nome di identità del pacchetto principale (ricevuto '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Su questo computer c'è già un'altra installazione di [1] ([2]). Due co
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Su questo computer c'è già un'altra installazione di [1] ([2]). Rimuoverla prima (Impostazioni > App), poi installare questa."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Non è stato possibile installare [1], e l'annullamento non ha rimosso tutto. Ciò che resta è elencato sotto. Esegui di nuovo il programma di installazione, poi rimuovi [1] se non lo vuoi.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Non è stato possibile aggiornare [1], e l'annullamento non ha ripristinato la versione che avevi. Le differenze sono elencate sotto. Riparala con il programma di installazione di quella versione o installa di nuovo la nuova versione.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Non è stato possibile rimuovere [1], e l'annullamento non l'ha ripristinato. Le differenze sono elencate sotto. Riparalo con il suo programma di installazione, poi rimuovilo di nuovo.\r\nRegistro: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Non è stato possibile riparare [1], e l'annullamento non l'ha ripristinato. Le differenze sono elencate sotto. Esegui di nuovo il programma di installazione per ripararlo.\r\nRegistro: [2]"

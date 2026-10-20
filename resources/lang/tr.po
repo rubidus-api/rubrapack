@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml son girdi değil (rubrapack veya Windows paketleme A
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] tablo dizileri desteklenmez; her öğeye kendi [kind.ID]'sini verin"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check etkisiz: henüz hiçbir şey onu çalıştırmıyor; kaldırın"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] hem do hem undo gerektirir (undo başarısız bir do'yu da geri alır)"
@@ -2117,6 +2115,9 @@ msgstr "'{1}' logosu bulunamadı (.scale-100 ... .scale-400 türevleri olarak da
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "'{1}' logosu: ölçek türevleri olan bir logo, uzantılı bir ASCII dosya adı gerektirir"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo, 8 bit RGB ya da RGBA, taramalı olmayan, bir kenarı en çok 1024 piksel olan bir .png olmalıdır"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package ana paketin kimlik adıdır (alınan: '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Bu bilgisayarda [1] için başka bir yükleme zaten var ([2]). Bir progr
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Bu bilgisayarda [1] için başka bir yükleme zaten var ([2]). Önce onu kaldırın (Ayarlar > Uygulamalar), sonra bunu yükleyin."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] yüklenemedi ve geri alma her şeyi kaldıramadı. Kalanlar aşağıda listelenmiştir. Yükleyiciyi yeniden çalıştırın, istemiyorsanız ardından [1] uygulamasını kaldırın.\r\nGünlük: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] yükseltilemedi ve geri alma önceki sürümünüzü geri getiremedi. Farklar aşağıda listelenmiştir. O sürümün yükleyicisiyle onarın ya da yeni sürümü yeniden yükleyin.\r\nGünlük: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] kaldırılamadı ve geri alma onu eski haline getiremedi. Farklar aşağıda listelenmiştir. Yükleyicisiyle onarın, sonra yeniden kaldırın.\r\nGünlük: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] onarılamadı ve geri alma onu eski haline getiremedi. Farklar aşağıda listelenmiştir. Onarmak için yükleyiciyi yeniden çalıştırın.\r\nGünlük: [2]"

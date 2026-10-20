@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml är inte den sista posten (inget paket som rubrapack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-matriser av tabeller stöds inte; ge varje post en egen [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check har ingen effekt: inget kör den ännu; ta bort den"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] behöver både do och undo (undo återställer även en misslyckad do)"
@@ -2117,6 +2115,9 @@ msgstr "logotypen '{1}' hittades inte (inte heller som .scale-100 ... .scale-400
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logotypen '{1}': en logotyp med skalvarianter behöver ett ASCII-filnamn med filnamnstillägg"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo måste vara en .png i 8-bitars RGB eller RGBA, inte sammanflätad, högst 1024 pixlar per sida"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package är huvudpaketets identitetsnamn (fick '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Det finns redan en annan installation av [1] på datorn ([2]). Två kopi
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Det finns redan en annan installation av [1] på datorn ([2]). Ta först bort den (Inställningar > Appar) och installera sedan denna."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] kunde inte installeras, och ångrandet tog inte bort allt. Det som finns kvar listas nedan. Kör installationsprogrammet igen och ta sedan bort [1] om du inte vill ha det.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] kunde inte uppgraderas, och ångrandet återställde inte den version du hade. Skillnaderna listas nedan. Reparera den med den versionens installationsprogram, eller installera den nya versionen igen.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] kunde inte tas bort, och ångrandet återställde det inte. Skillnaderna listas nedan. Reparera det med dess installationsprogram och ta sedan bort det igen.\r\nLogg: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] kunde inte repareras, och ångrandet återställde det inte. Skillnaderna listas nedan. Kör installationsprogrammet igen för att reparera det.\r\nLogg: [2]"

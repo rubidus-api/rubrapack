@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml не е последният запис (не е п�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Масиви от таблици [[...]] не се поддържат; дайте на всеки елемент собствен [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "check на [action.{1}] няма ефект: още нищо не го изпълнява; премахнете го"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] изисква и do, и undo (undo също отменя неуспешно do)"
@@ -2117,6 +2115,9 @@ msgstr "логото '{1}' не е намерено (нито като вари�
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "лого '{1}': лого с варианти на мащаба изисква име на файл в ASCII с разширение"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo трябва да е .png 8-битов RGB или RGBA, без презредово, най-много 1024 пиксела на страна"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package е името на идентичността на основния пакет (получено '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "На този компютър вече има друга инстала
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "На този компютър вече има друга инсталация на [1] ([2]). Първо я премахнете (Настройки > Приложения), после инсталирайте това."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "[1] не можа да се инсталира и отмяната не премахна всичко. Останалото е изброено по-долу. Пуснете инсталатора отново, после премахнете [1], ако не го искате.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "[1] не можа да се надстрои и отмяната не възстанови версията, която имахте. Разликите са изброени по-долу. Поправете я с инсталатора на онази версия или инсталирайте новата версия отново.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "[1] не можа да се премахне и отмяната не го възстанови. Разликите са изброени по-долу. Поправете го с инсталатора му, после го премахнете отново.\r\nЖурнал: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "[1] не можа да се поправи и отмяната не го възстанови. Разликите са изброени по-долу. Пуснете инсталатора отново, за да го поправите.\r\nЖурнал: [2]"

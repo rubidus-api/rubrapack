@@ -809,8 +809,6 @@ msgstr "[Content_Types].xml אינו הרשומה האחרונה (לא חביל�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "מערכי טבלאות [[...]] אינם נתמכים; תן לכל פריט [kind.ID] משלו"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "ל-check של [action.{1}] אין השפעה: שום דבר עדיין לא מריץ אותו; הסר אותו"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] דורש גם do וגם undo (ה-undo גם מבטל do שנכשל)"
@@ -2119,6 +2117,9 @@ msgstr "הלוגו '{1}' לא נמצא (וגם לא הגרסאות .scale-100 ..
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "הלוגו '{1}': לוגו עם גרסאות קנה מידה דורש שם קובץ ASCII עם סיומת"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo חייב להיות .png ב-RGB או RGBA של 8 סיביות, לא משולב, עד 1024 פיקסלים לצלע"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package הוא שם הזהות של החבילה הראשית (התקבל '{1}')"
@@ -3939,3 +3940,19 @@ msgstr "במחשב הזה כבר יש התקנה אחרת של [1] ([2]). שני
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "במחשב הזה כבר יש התקנה אחרת של [1] ([2]). הסירו אותה קודם (הגדרות > יישומים), ואז התקינו את זה."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "לא ניתן היה להתקין את [1], והביטול לא הסיר הכול. מה שנשאר מפורט למטה. הפעילו שוב את תוכנית ההתקנה, ואז הסירו את [1] אם אינכם רוצים בו.\r\nיומן: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "לא ניתן היה לשדרג את [1], והביטול לא החזיר את הגרסה שהייתה לכם. ההבדלים מפורטים למטה. תקנו אותה בתוכנית ההתקנה של אותה גרסה, או התקינו שוב את הגרסה החדשה.\r\nיומן: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "לא ניתן היה להסיר את [1], והביטול לא החזיר אותו כפי שהיה. ההבדלים מפורטים למטה. תקנו אותו בתוכנית ההתקנה שלו, ואז הסירו אותו שוב.\r\nיומן: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "לא ניתן היה לתקן את [1], והביטול לא החזיר אותו כפי שהיה. ההבדלים מפורטים למטה. הפעילו שוב את תוכנית ההתקנה כדי לתקן אותו.\r\nיומן: [2]"

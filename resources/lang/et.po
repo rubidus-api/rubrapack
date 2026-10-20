@@ -807,8 +807,6 @@ msgstr "[Content_Types].xml ei ole viimane kirje (pole pakett, mille kirjutas ru
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tabelimassiive [[...]] ei toetata; andke igale üksusele oma [kind.ID]"
 
-msgid "[action.%s] check has no effect: nothing runs it yet; remove it"
-msgstr "[action.{1}] check ei mõju: miski ei käivita seda veel; eemaldage see"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] vajab nii do kui ka undo (undo tühistab ka nurjunud do)"
@@ -2117,6 +2115,9 @@ msgstr "logo '{1}' ei leitud (ka mitte variantidena .scale-100 ... .scale-400)"
 
 msgid "logo '%s': a logo with scale variants needs an ASCII file name with an extension"
 msgstr "logo '{1}': skaalavariantidega logo vajab laiendiga ASCII-failinime"
+
+msgid "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side"
+msgstr "logo peab olema 8-bitine RGB või RGBA .png, mitte põimitud, küljega kuni 1024 pikslit"
 
 msgid "main-package is the main package's identity name (got '%s')"
 msgstr "main-package on põhipaketi identiteedinimi (saadi '{1}')"
@@ -3937,3 +3938,19 @@ msgstr "Selles arvutis on juba teine [1] installimine ([2]). Ühe programmi kaks
 msgctxt "installer"
 msgid "PreflightOtherMsiRefuse"
 msgstr "Selles arvutis on juba teine [1] installimine ([2]). Eemaldage see esmalt (Sätted > Rakendused) ja installige siis see."
+
+msgctxt "installer"
+msgid "ReportInstall"
+msgstr "Toodet [1] ei saanud installida ja tagasivõtmine ei eemaldanud kõike. Allesjäänu on loetletud allpool. Käivitage installer uuesti ja eemaldage siis [1], kui te seda ei soovi.\r\nLogi: [2]"
+
+msgctxt "installer"
+msgid "ReportUpgrade"
+msgstr "Toodet [1] ei saanud uuendada ja tagasivõtmine ei taastanud teie varasemat versiooni. Erinevused on loetletud allpool. Parandage see selle versiooni installeriga või installige uus versioon uuesti.\r\nLogi: [2]"
+
+msgctxt "installer"
+msgid "ReportRemove"
+msgstr "Toodet [1] ei saanud eemaldada ja tagasivõtmine ei taastanud seda. Erinevused on loetletud allpool. Parandage see selle installeriga ja eemaldage siis uuesti.\r\nLogi: [2]"
+
+msgctxt "installer"
+msgid "ReportRepair"
+msgstr "Toodet [1] ei saanud parandada ja tagasivõtmine ei taastanud seda. Erinevused on loetletud allpool. Parandamiseks käivitage installer uuesti.\r\nLogi: [2]"

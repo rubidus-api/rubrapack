@@ -19,7 +19,7 @@ bool ir_tool_property(const char *s) {
 }
 
 void ir_parse_arp(ctx_t *c, const rp_ttable_t *t) {
-    static const char *const keys[] = { "no-modify", "no-repair", "no-remove", "help", "about", "icon", NULL };
+    static const char *const keys[] = { "no-modify", "no-repair", "no-remove", "help", "about", "icon", "logo", NULL };
     ir_check_keys(c, t, keys);
     c->ir->arp_no_modify = ir_get_bool(c, t, "no-modify", false);
     // Settings' Uninstall runs `msiexec /qb /x`, the engine's own reduced UI (its files-in-use box has
@@ -32,6 +32,8 @@ void ir_parse_arp(ctx_t *c, const rp_ttable_t *t) {
     c->ir->arp_about = ir_get_str(c, t, "about", false, NULL);
     c->ir->arp_icon_shown = ir_get_str(c, t, "icon", false, NULL);
     if (c->ir->arp_icon_shown) c->ir->arp_icon_source = ir_icon_source(c, c->ir->arp_icon_shown, ir_key_pos(t, "icon"));
+    c->ir->arp_logo_shown = ir_get_str(c, t, "logo", false, NULL);
+    if (c->ir->arp_logo_shown) c->ir->arp_logo_source = ir_png_source(c, c->ir->arp_logo_shown, ir_key_pos(t, "logo"));
 }
 
 // ---- [msix] and [msix-app.ID] (RFC-0009) --------------------------------------------------------
@@ -279,10 +281,6 @@ void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
     a->do_args = ir_get_fmt(c, t, "do", false, &has_do, IR_FMT_INSTALL);
     a->undo_args = ir_get_fmt(c, t, "undo", false, &has_undo, IR_FMT_INSTALL);
     a->check_args = ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL);
-    if (a->check_args) {
-        rp_srcdiag_add(c->d, ir_key_pos(t, "check"), "RP1318", true,
-                       "[action.%s] check has no effect: nothing runs it yet; remove it", t->id);
-    }
     if (!has_do || !has_undo) {
         ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
     }
