@@ -141,6 +141,9 @@ msgstr "{1} zawiera identyfikatory LANGID (1..65535), np. 1041"
 msgid "%s holds strings"
 msgstr "{1} zawiera ciągi znaków"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} to lista tekstów \"Klucz=Wartość\""
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} to nazwa czcionki o długości od 1 do 31 znaków, np. \"Segoe UI\" (otrzymano {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: pliki: {2}, błędy: {3}, ostrzeżenia: 0\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: nie pokazano kolejnych diagnostyk: {2}\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' nie jest standardową akcją, którą umieszcza rubrapack"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: plik '{2}' nie jest [file.*] tego pakietu"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml nie jest ostatnim wpisem (nie jest to pakiet zapisan
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tablice tabel [[...]] nie są obsługiwane; daj każdemu elementowi własne [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] umieszcza się raz: before, after lub sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] wymaga zarówno do, jak i undo (undo wycofuje też nieudane do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] wymaga entry: funkcji DLL do wywołania"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] wymaga run = \"file:<ID>\": program, który uruchamiają do i undo"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] uruchamia jedną rzecz: run (exe), dll (zainstalowana DLL) lub binary (DLL w pakiecie); albo do i undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} dotyczy pojedynczej akcji, nie pary do/undo"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: akcja odroczona uruchamiająca zainstalowany plik musi być po InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: akcja natychmiastowa działa jako użytkownik instalujący; as dotyczy innych faz"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args należą do programu; DLL otrzymuje data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check idzie z parą do/undo"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data dotyczy akcji odroczonej, commit lub rollback (natychmiastowa czyta właściwości)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry to funkcja biblioteki DLL; run przyjmuje args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args dla MSIX muszą być zwykłym tekstem (bez [...] wypełnianych przy instalacji)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX ustawia wszystkie swoje zmienne (when); użyj msi-only =
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jego wartość wskazuje miejsce, którego MSIX nie może dać (folder poza pakietem, który nie jest folderem Windows, lub część z czasu instalacji); użyj msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] jest już w folderze swojego programu; isolate-for dotyczy współdzielonej biblioteki DLL zainstalowanej gdzie indziej"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] jest w profilu użytkownika i ma component-guid: ścieżką klucza pozostaje plik, a reguły Windows wymagają tam wartości HKCU (ICE38); pomiń component-guid, aby ją uzyskać"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; albo msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] wymaga feature (lub with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature idzie z własnym składnikiem, nie z with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name wskazuje jeden plik; name ma symbole wieloznaczne"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args muszą być zwykłym tekstem (bez [...] wypełnianych przy instalacji)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types to lista typów plików, np. [\".txt\", \"*\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows przyjmuje tylko litery i cyfry"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: plik '{2}' nie jest biblioteką DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] wskazuje swój sterownik raz: driver (jeden [odbc-driver]) lub driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] z driver-name wymaga with = \"file:<ID>\": składnika, z którym jest instalowany"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: pakiet dla komputera rejestruje źródła danych dla komputera"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] wskazuje jedną kopię: msix (z publisher) lub upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "tablice wewnątrz tablic nie są obsługiwane"
 msgid "arrays must hold only strings or only integers"
 msgstr "tablice mogą zawierać tylko ciągi albo tylko liczby całkowite"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as musi mieć wartość \"system\" lub \"user\" (otrzymano '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "najwyżej {1} języków oprócz angielskiego"
 
@@ -1735,6 +1800,9 @@ msgstr "argumenty do/undo mają ponad 255 znaków"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "klucze z kropkami nie są obsługiwane; umieść klucz we własnej tabeli"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "sterownik '{1}' nie jest [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "zrzuć pakiet (tabele MSI jako IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "nie jest plikiem złożonym"
 
 msgid "is not valid UTF-8"
 msgstr "nie jest prawidłowym UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' nie jest programem (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "zachowaj kod uaktualnienia, podnieś wersję, zachowaj kody składników plików, które zostają"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type musi być \"image\", \"text\", \"audio\", \"video\", \"co
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "uprawnienia wymagają scope = \"machine\" (tu jest {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase musi mieć wartość \"immediate\", \"deferred\", \"commit\" lub \"rollback\" (otrzymano '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports musi być portem lub zakresem, np. \"8000-8100\", w granicach 1-65535 (otrzymano '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message wymaga refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "region {1} strony języków ma {2} języków, najwyżej {3} (X-Rubrapack-Group ich pakietów)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration musi mieć wartość \"machine\" lub \"user\" (otrzymano '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "rejestr '{1}' usuwa wartość; nie ma niczego do chronienia"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: kilka pytań tworzy źródło (Enter przyjmuje wartość 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "uruchom `rubrapack help <polecenie>`; sprawdź ścieżki i czy folder wyjściowy istnieje"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run musi mieć postać \"file:<ID>\" i wskazywać [file.*] tego pakietu"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (maszyna 0x{2}) nie może działać na maszynach tego pakietu"
@@ -2961,6 +3036,9 @@ msgstr "zbyt wiele pakietów w zestawie"
 
 msgid "trusted"
 msgstr "zaufany"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "dwie akcje mają wspólną sequence {1} ({2} i {3}); nadaj jednej [action] inną sequence, before lub after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "dwa pakiety jednej architektury w zestawie"

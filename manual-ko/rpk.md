@@ -212,12 +212,12 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
-| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when |
+| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when, isolate-for(`.exe` 의 `file:ID`: 그 프로그램 옆에 이 DLL 의 전용 사본, MSI 전용) |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
 | `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`), logo(`.png`: 8비트 RGB 나 RGBA, 한 변 1024픽셀 이하; 메뉴 패키지의 로고) - "설치된 앱"에 제품이 어떻게 보이는가 |
 | `[property.ID]` | **value**, secure, hidden - 대문자 이름의 공개 속성 |
-| `[action.ID]` | **run**(이 패키지의 `.exe` 를 가리키는 `file:ID`), **do**, **undo**, check(`do` 가 만든 것이 있으면 0 으로 끝남; 되돌리기가 실패했을 때의 보고서용) |
+| `[action.ID]` | do/undo 한 쌍: **run**(`.exe` 의 `file:ID`), **do**, **undo**, check(`do` 가 만든 것이 있으면 0; 되돌리기 실패 보고서용). 또는 동작 하나: **run** 과 args, 또는 **dll**(설치된 `.dll` 의 `file:ID`)이나 **binary**(패키지 안 `.dll`)와 **entry**; phase(`immediate`, `deferred` 기본, `commit`, `rollback`), as(`system`, `user`), when, data, before / after(표준 동작) 또는 sequence, ignore-exit. [프로그램이나 DLL 실행](#프로그램이나-dll-실행-actionid) 참조 |
 | `[registry.ID]` | **root**(`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on(`remove` 와 함께: `install`, 또는 `uninstall` - 제거할 때 키 전체), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name(`*` 와 `?`; 없으면 폴더 자체), **on**(`install`, `uninstall`, `both`), upgrade(`false`: 업그레이드가 이 판을 지울 때는 하지 않음), recursive(`true`: 제거할 때 폴더와 그 안 전부), users(`all`: 모든 사용자의 것, [모든 사용자의 것](#모든-사용자의-것-users--all) 참고), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode(`set`, `add`, `remove`), feature, when |
@@ -234,6 +234,10 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[permission.ID]` | **target**(`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode(`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source**(`file:ID`), **dir**, name(기본: 원본 파일 이름) |
+| `[move.ID]` | **from**(dir ID, 또는 `property:NAME`), **name**(와일드카드), **to**(dir ID), new-name, copy(`true`: 원본은 남음), with(`file:ID`) 또는 feature - 설치할 때 옮기거나 복사하는 파일. MSI 전용 |
+| `[odbc-driver.ID]` | **file**(드라이버 `.dll` 의 `file:ID`), **description**, setup(설정 `.dll` 의 `file:ID`), attributes(`["Key=Value", ...]`) - ODBC 드라이버. MSI 전용 |
+| `[odbc-source.ID]` | **driver**(`[odbc-driver]` ID) 또는 **driver-name**(**with** 과 함께), **name**, registration(`machine`, `user`), attributes - ODBC 데이터 원본. MSI 전용 |
+| `[publish.ID]` | **file**(`file:ID`: 그 구성 요소를 게시), **category**(`{GUID}`), **qualifier**, data - 다른 프로그램이 `MsiProvideQualifiedComponent` 로 찾는 구성 요소. MSI 전용 |
 | `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`). MSIX 에서는 파일과 레지스트리 값만 |
 | `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
 | `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), details(기본 `true`: 진행 페이지가 하는 일을 보인다), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
@@ -399,6 +403,43 @@ check = "--status"        # --register 가 만든 것이 있으면 0 으로 끝�
 
 되돌린 뒤에 `check` 는 제품이 원래 있었으면(업그레이드, 복구, 제거) 0 으로, 처음 설치가 실패한 것이면 0 이 아닌
 값으로 끝나야 한다. 모두 원래대로면 아무것도 쓰지 않는다. `check` 는 서식 문자열이다(`[INSTALLDIR]` 은 설치 폴더).
+
+### 프로그램이나 DLL 실행: 동작 하나 `[action.ID]`
+
+위의 do/undo 쌍 말고, `[action.*]` 하나로 한 가지를 한 번 실행한다:
+
+```toml
+[action.Warm]
+run = "file:MainExe"       # 이 패키지가 설치하는 .exe
+args = "--warm-cache"      # 서식 문자열([INSTALLDIR] 등이 채워진다)
+phase = "deferred"         # immediate | deferred(기본) | commit | rollback
+when = "NOT Installed"     # 조건(선택)
+before = "InstallFinalize" # 자리: 표준 동작 앞/뒤, 또는 sequence = <n>
+
+[action.Ping]
+dll = "file:HelperDll"     # 이 패키지가 설치하는 .dll
+entry = "PingServer"       # 부를 함수
+phase = "deferred"
+
+[action.Clean]
+binary = "clean.dll"       # 설치하지 않고 패키지에 담는 .dll
+entry = "CleanUp"
+phase = "commit"
+as = "system"              # system | user(컴퓨터 단위 패키지의 지연 동작은 기본 SYSTEM)
+data = "[INSTALLDIR]"      # 지연 DLL 이 CustomActionData 로 읽는 값(서식 문자열)
+```
+
+- `run`(exe), `dll`(설치된 DLL), `binary`(패키지 안 DLL, Binary 표) 중 하나. exe 는 `args` 를, DLL 은 `entry`(함수)와,
+  지연이면 `data` 를 받는다.
+- `phase`: **immediate** 는 설치를 정하는 동안 실행된다(속성을 읽고 쓸 수 있으며 설치하는 사용자로 돈다). **deferred** 는
+  변경과 함께 설치 중에, **commit** 은 설치가 성공한 뒤에, **rollback** 은 설치를 되돌릴 때 실행된다. `as` 와 `data` 는
+  deferred·commit·rollback 에만 쓴다.
+- `as`: 지연 동작이 누구로 도는가. 컴퓨터 단위는 SYSTEM, 사용자별은 사용자로 돈다. `as = "user"` 면 컴퓨터 단위 동작도
+  설치하는 사용자로, `as = "system"`(컴퓨터 단위에서만)이면 SYSTEM 으로.
+- 자리: 표준 동작(`InstallFiles`, `WriteRegistryValues`, `InstallFinalize` ...) `before`/`after`, 또는 `sequence = <숫자>`.
+  설치된 파일을 실행하는 지연 동작은 `InstallFiles` 뒤(4000 보다 큰 번호)에 와야 한다. 두 동작이 같은 번호에 올 수 없다.
+- `ignore-exit = true` 면 동작이 무엇을 돌려주든 설치가 이어진다. 기본은 0 아닌 종료(또는 실패를 돌려준 DLL)가 설치를
+  실패시킨다.
 
 ### 레지스트리 값: `[registry.ID]`
 
@@ -690,6 +731,41 @@ types = [".txt", "*"]             # 파일 형식. "*" 는 모든 파일
 평문이어야 한다. `display-name` 과 `description` 은 쓰지 않고, 서비스는 `start-on-install` 이 아니라
 `start` 대로 시작한다. `min-version = "10.0.19041.0"` 이상이 필요하다(`RP1614`). 패키지를 지우면 서비스가
 멈추고 지워지며, 방화벽 규칙도 함께 사라진다.
+
+### 파일 옮기기, ODBC, 게시 구성 요소
+
+이 표들은 MSIX 에 대응이 없다. MSIX 를 만들 때는 빠진다.
+
+```toml
+[move.OldLogs]
+from = "LegacyDir"        # dir ID, 또는 property:NAME([search] 가 찾은 폴더)
+name = "*.log"            # 파일, 와일드카드 가능
+to = "LogsDir"            # 이 패키지의 dir ID
+# new-name = "one.log"    # 파일 하나만 이름 바꾸기(와일드카드 불가); copy = true 면 원본은 남는다
+
+[odbc-driver.Mydb]
+file = "file:DriverDll"
+description = "My Database Driver"
+attributes = ["APILevel=2", "ConnectFunctions=YYN"]
+
+[odbc-source.Sample]
+driver = "Mydb"           # 또는 다른 방식으로 설치된 드라이버면 driver-name = "..." 와 with = "file:ID"
+name = "My Sample Data"
+attributes = ["Description=a sample data source"]
+
+[publish.Plugin]
+file = "file:PluginDll"   # 이 DLL 의 구성 요소를 게시한다
+category = "{8D1E2F30-...}"
+qualifier = "image/png"
+```
+
+- `[move.*]` 는 설치할 때 파일을 옮긴다(`copy = true` 면 복사). `with = "file:ID"` 면 옮긴 파일이 그 파일의 구성 요소에
+  속하고, 없으면 목적지 폴더에 자기 구성 요소를 갖는다(패키지에 기능이 둘 이상이면 `feature` 를 적는다).
+- `[odbc-driver.*]` 는 ODBC 드라이버를, `[odbc-source.*]` 는 그 드라이버의 데이터 원본을 등록한다. `attributes` 는 ODBC
+  키-값 쌍이다. 컴퓨터 단위 패키지는 데이터 원본을 컴퓨터용으로, 사용자별은 사용자용으로 등록한다(`registration` 으로 바꾼다).
+- `[publish.*]` 는 구성 요소를 게시해 다른 프로그램이 `MsiProvideQualifiedComponent` 로 범주와 한정자로 찾게 한다.
+- `[file.*]` 의 `isolate-for` 는 그 DLL 의 전용 사본을 지정한 프로그램 옆에 두어, 그 프로그램이 자기 판을 싣게 한다
+  (Windows 의 side-by-side 격리).
 
 ### 지우기와 복사: `[remove.ID]`, `[copy.ID]`
 

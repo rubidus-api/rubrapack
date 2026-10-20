@@ -102,3 +102,25 @@ RP_Register_Do	$C_185f...>2	4003
 
 `$C` 는 컴포넌트가 갈 상태(2 없음, 3 설치됨), `?C` 는 지금 상태다. "설치되어 있다가 사라짐"이면 undo, "들어옴"이면
 do 가 돈다.
+
+## 동작 하나, 그리고 파일 옮기기
+
+위의 한 쌍이 보통의 경우다. 동작 하나만 필요할 때 — 고른 순간에 무언가를 한 번 실행할 때 — 는 `undo` 없이
+`phase` 를 둔 `[action.*]` 하나를 쓴다:
+
+```toml
+[action.Warm]
+dll = "file:HelperDll"    # 또는 run = "file:MainExe" 와 args, 또는 패키지 안 binary = "ca.dll"
+entry = "WarmCache"
+phase = "deferred"        # immediate, deferred(기본), commit, rollback
+as = "system"             # system 또는 user
+data = "[INSTALLDIR]"     # DLL 이 이 값을 읽는다; before / after / sequence 로 자리를 정한다
+```
+
+`before`, `after`, `sequence` 로 자리를 정하고, `ignore-exit = true` 면 동작이 무엇을 돌려주든 설치가 이어진다.
+
+Windows Installer 의 나머지를 채우는 MSI 전용 표도 몇 개 있다: `[move.*]` 는 파일을 옮기고(`from`, `name`, `to`,
+`new-name`, `copy`), `[odbc-driver.*]` 와 `[odbc-source.*]` 는 ODBC 드라이버와 데이터 원본을 등록하며(`file`, `setup`,
+`description`, `attributes`, `driver`, `driver-name`, `registration`), `[publish.*]` 는 다른 프로그램이 찾는 구성 요소를
+게시한다(`file`, `category`, `qualifier`). `[file.*]` 의 `isolate-for` 는 프로그램에 전용 사본을 준다. 참조의 "프로그램이나
+DLL 실행"과 "파일 옮기기, ODBC, 게시 구성 요소"에 각각 있다.

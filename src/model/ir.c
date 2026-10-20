@@ -8,11 +8,11 @@
 static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
-                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "other-copy", "msix-extension", "msix-dependency", "merge", NULL };
+                                          "ui-text", "dialog", "dialog-control", "assoc", "protocol", "com", "handler", "menu", "other-copy", "move", "odbc-driver", "odbc-source", "publish", "msix-extension", "msix-dependency", "merge", NULL };
 static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu", "other-copy",
-                                         "font", "permission", "require", "search", "remove", "copy", "action",
+                                         "move", "odbc-driver", "odbc-source", "publish", "font", "permission", "require", "search", "remove", "copy", "action",
                                          "arp", "ui", "ui-text", "dialog", "dialog-control", "msix", "msix-app", "msix-extension", "msix-dependency", "merge", NULL };
 
 bool ir_in_list(const char *s, const char *const *list) {
@@ -41,7 +41,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
 
     ir_check_format(&c);
     const rp_ttable_t *package = NULL;
-    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0, nother = 0;
+    size_t nfeat = 0, ndir = 0, nfile = 0, nfolder = 0, nprop = 0, naction = 0, nreg = 0, nshort = 0, nrem = 0, ncopy = 0, nenv = 0, nini = 0, nreq = 0, nsearch = 0, nsvc = 0, nfont = 0, nperm = 0, nuitext = 0, ndlg = 0, ndctl = 0, nassoc = 0, nproto = 0, ncom = 0, nhandler = 0, nhandler_types = 0, next_ = 0, nmerge = 0, nmenu = 0, nmenu_on = 0, nother = 0, nmove = 0, nodbcd = 0, nodbcs = 0, npublish = 0;
     const rp_ttable_t *uit = NULL;
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
@@ -103,6 +103,10 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         }
         else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
         else if (strcmp(t->kind, "other-copy") == 0) ++nother;
+        else if (strcmp(t->kind, "move") == 0) ++nmove;
+        else if (strcmp(t->kind, "odbc-driver") == 0) ++nodbcd;
+        else if (strcmp(t->kind, "odbc-source") == 0) ++nodbcs;
+        else if (strcmp(t->kind, "publish") == 0) ++npublish;
         else if (strcmp(t->kind, "permission") == 0) ++nperm;
         else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
         else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
@@ -183,7 +187,12 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
                                     sizeof *ir->registries);
     ir->menus = rp_mem_alloc(alloc, nmenu + 1, sizeof *ir->menus);
     ir->others = rp_mem_alloc(alloc, nother + 1, sizeof *ir->others);
-    if (ir->menus == NULL || ir->others == NULL) c.nomem = true;
+    ir->moves = rp_mem_alloc(alloc, nmove + 1, sizeof *ir->moves);
+    ir->odbc_drivers = rp_mem_alloc(alloc, nodbcd + 1, sizeof *ir->odbc_drivers);
+    ir->odbc_sources = rp_mem_alloc(alloc, nodbcs + 1, sizeof *ir->odbc_sources);
+    ir->publishes = rp_mem_alloc(alloc, npublish + 1, sizeof *ir->publishes);
+    if (ir->menus == NULL || ir->others == NULL || ir->moves == NULL || ir->odbc_drivers == NULL || ir->odbc_sources == NULL ||
+        ir->publishes == NULL) c.nomem = true;
     ir->assocs = rp_mem_alloc(alloc, nassoc + 1, sizeof *ir->assocs);
     ir->protocols = rp_mem_alloc(alloc, nproto + 1, sizeof *ir->protocols);
     ir->coms = rp_mem_alloc(alloc, ncom + 1, sizeof *ir->coms);
@@ -301,6 +310,22 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
             rp_ir_other_t *x = &ir->others[ir->other_count++];
             memset(x, 0, sizeof *x);
             ir_parse_other(&c, t, x);
+        } else if (strcmp(t->kind, "move") == 0) {
+            rp_ir_move_t *x = &ir->moves[ir->move_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_move(&c, t, x);
+        } else if (strcmp(t->kind, "odbc-driver") == 0) {
+            rp_ir_odbc_driver_t *x = &ir->odbc_drivers[ir->odbc_driver_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_odbc_driver(&c, t, x);
+        } else if (strcmp(t->kind, "odbc-source") == 0) {
+            rp_ir_odbc_source_t *x = &ir->odbc_sources[ir->odbc_source_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_odbc_source(&c, t, x);
+        } else if (strcmp(t->kind, "publish") == 0) {
+            rp_ir_publish_t *x = &ir->publishes[ir->publish_count++];
+            memset(x, 0, sizeof *x);
+            ir_parse_publish(&c, t, x);
         } else if (strcmp(t->kind, "handler") == 0) {
             rp_ir_handler_t *x = &ir->handlers[ir->handler_count++];
             memset(x, 0, sizeof *x);
@@ -547,7 +572,7 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when };
+        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when, f->isolate_for };
         for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
@@ -563,7 +588,7 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->action_count; ++k) {
         rp_ir_action_t *x = &ir->actions[k];
-        char *xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args };
+        char *xs[] = { x->id, x->run_file, x->do_args, x->undo_args, x->check_args, x->args, x->dll_file, x->binary_shown, x->binary_source, x->entry, x->when, x->data, x->before, x->after };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     for (size_t k = 0; k < ir->registry_count; ++k) {
@@ -687,6 +712,7 @@ void rp_ir_free(rp_ir_t *ir) {
         rp_mem_free(a, x->message_by_lang);
     }
     rp_mem_free(a, ir->others);
+    ir_more_free(ir, a);
     rp_mem_free(a, ir->menu_exe);
     rp_mem_free(a, ir->menu_publisher);
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {

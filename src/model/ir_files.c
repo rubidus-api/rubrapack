@@ -417,10 +417,14 @@ bool ir_source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
 
 void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     static const char *const keys[] = { "dir", "source", "name", "any-arch", "keep", "vital", "feature",
-                                        "component-guid", "when", NULL };
+                                        "component-guid", "when", "isolate-for", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     f->id = ir_dup(c, t->id);
+    char *iso = ir_get_str(c, t, "isolate-for", false, NULL);
+    if (iso && (strncmp(iso, "file:", 5) != 0 || iso[5] == 0)) ERR(c, ir_key_pos(t, "isolate-for"), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", "isolate-for");
+    else if (iso) f->isolate_for = ir_dup(c, iso + 5);
+    rp_mem_free(c->alloc, iso);
     f->pos = t->pos;
     f->when = ir_get_when(c, t);
     f->dir = ir_get_str(c, t, "dir", true, NULL);

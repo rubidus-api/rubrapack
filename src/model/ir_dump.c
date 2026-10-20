@@ -121,6 +121,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
                 kv(&b, "component-guid", f->component_guid);
                 if (f->keep) kv(&b, "keep", "1");
                 if (f->when) kv(&b, "when", f->when);
+                if (f->isolate_for) kv(&b, "isolate-for", f->isolate_for);
             }
             rp_buf_byte(&b, '\n');
         }
@@ -172,12 +173,29 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     }
     for (size_t k = 0; k < ir->action_count; ++k) {
         const rp_ir_action_t *a = &ir->actions[k];
+        static const char *const phases[] = { "immediate", "deferred", "commit", "rollback" };
         rp_buf_puts(&b, "action ");
         rp_buf_puts(&b, a->id);
-        kv(&b, "run", a->run_file);
-        kv(&b, "do", a->do_args);
-        kv(&b, "undo", a->undo_args);
-        kv(&b, "check", a->check_args);
+        if (a->kind == RP_ACT_PAIR) {
+            kv(&b, "run", a->run_file);
+            kv(&b, "do", a->do_args);
+            kv(&b, "undo", a->undo_args);
+            if (a->check_args) kv(&b, "check", a->check_args);
+        } else {
+            if (a->run_file) kv(&b, "run", a->run_file);
+            if (a->dll_file) kv(&b, "dll", a->dll_file);
+            if (a->binary_shown) kv(&b, "binary", a->binary_shown);
+            if (a->entry) kv(&b, "entry", a->entry);
+            if (a->args) kv(&b, "args", a->args);
+            kv(&b, "phase", phases[a->phase]);
+            if (a->as_user >= 0) kv(&b, "as", a->as_user ? "user" : "system");
+            if (a->when) kv(&b, "when", a->when);
+            if (a->data) kv(&b, "data", a->data);
+            if (a->before) kv(&b, "before", a->before);
+            if (a->after) kv(&b, "after", a->after);
+            if (a->sequence) { char n[12]; snprintf(n, sizeof n, "%d", (int)a->sequence); kv(&b, "sequence", n); }
+            if (a->ignore_exit) kv(&b, "ignore-exit", "1");
+        }
         rp_buf_byte(&b, '\n');
     }
     static const char *const roots[] = { "HKMU", "HKCR", "HKCU", "HKLM" };     // index root + 1
@@ -413,6 +431,52 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "multi", multi[x->multi]);
         if (x->extended) kv(&b, "extended", "1");
         if (!x->windows11) kv(&b, "windows11", "0");
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->move_count; ++k) {
+        const rp_ir_move_t *x = &ir->moves[k];
+        rp_buf_puts(&b, "move ");
+        rp_buf_puts(&b, x->id);
+        if (x->from_dir) kv(&b, "from", x->from_dir);
+        if (x->from_prop) kv(&b, "from-prop", x->from_prop);
+        kv(&b, "name", x->name);
+        kv(&b, "to", x->to_dir);
+        if (x->new_name) kv(&b, "new-name", x->new_name);
+        kv(&b, "copy", x->copy ? "1" : "0");
+        if (x->with_file) kv(&b, "with", x->with_file);
+        if (x->feature) kv(&b, "feature", x->feature);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->odbc_driver_count; ++k) {
+        const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[k];
+        rp_buf_puts(&b, "odbc-driver ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "file", x->file);
+        if (x->setup) kv(&b, "setup", x->setup);
+        kv(&b, "description", x->description);
+        for (size_t j = 0; j < x->attribute_count; ++j) kv(&b, "attribute", x->attributes[j]);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->odbc_source_count; ++k) {
+        const rp_ir_odbc_source_t *x = &ir->odbc_sources[k];
+        rp_buf_puts(&b, "odbc-source ");
+        rp_buf_puts(&b, x->id);
+        if (x->driver) kv(&b, "driver", x->driver);
+        if (x->driver_name) kv(&b, "driver-name", x->driver_name);
+        kv(&b, "name", x->name);
+        kv(&b, "registration", x->user ? "user" : "machine");
+        for (size_t j = 0; j < x->attribute_count; ++j) kv(&b, "attribute", x->attributes[j]);
+        if (x->with_file) kv(&b, "with", x->with_file);
+        rp_buf_byte(&b, '\n');
+    }
+    for (size_t k = 0; k < ir->publish_count; ++k) {
+        const rp_ir_publish_t *x = &ir->publishes[k];
+        rp_buf_puts(&b, "publish ");
+        rp_buf_puts(&b, x->id);
+        kv(&b, "file", x->file);
+        kv(&b, "category", x->category);
+        kv(&b, "qualifier", x->qualifier);
+        if (x->data) kv(&b, "data", x->data);
         rp_buf_byte(&b, '\n');
     }
     for (size_t k = 0; k < ir->other_count; ++k) {

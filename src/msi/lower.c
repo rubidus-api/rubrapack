@@ -156,6 +156,7 @@ static void rows_finish(rows_t *r) {
 #define I4_N      0x1104u
 #define KEY_I4    0x2104u
 #define KEY_S_N(n) (0x3D00u | (n))
+#define KEY_L(n)  (0x2F00u | (n))
 
 static const rp_msi_wcolumn_t property_cols[] = { { "Property", KEY_S(72) }, { "Value", L(0) } };
 static const rp_msi_wcolumn_t directory_cols[] = { { "Directory", KEY_S(72) }, { "Directory_Parent", S_N(72) },
@@ -194,6 +195,19 @@ static const rp_msi_wcolumn_t removefile_cols[] = { { "FileKey", KEY_S(72) }, { 
                                                     { "DirProperty", S(72) }, { "InstallMode", I2 } };
 static const rp_msi_wcolumn_t duplicate_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "File_", S(72) },
                                                    { "DestName", L_N(255) }, { "DestFolder", S_N(72) } };
+// RFC-0031 wave 1.
+static const rp_msi_wcolumn_t movefile_cols[] = { { "FileKey", KEY_S(72) }, { "Component_", S(72) }, { "SourceName", L_N(255) },
+                                                  { "DestName", L_N(255) }, { "SourceFolder", S_N(72) }, { "DestFolder", S(72) },
+                                                  { "Options", I2 } };
+static const rp_msi_wcolumn_t odbcdriver_cols[] = { { "Driver", KEY_S(72) }, { "Component_", S(72) }, { "Description", L(255) },
+                                                    { "File_", S(72) }, { "File_Setup", S_N(72) } };
+static const rp_msi_wcolumn_t odbcattr_cols[] = { { "Driver_", KEY_S(72) }, { "Attribute", KEY_L(40) }, { "Value", L_N(255) } };
+static const rp_msi_wcolumn_t odbcsource_cols[] = { { "DataSource", KEY_S(72) }, { "Component_", S(72) }, { "Description", L(255) },
+                                                    { "DriverDescription", L(255) }, { "Registration", I2 } };
+static const rp_msi_wcolumn_t odbcsattr_cols[] = { { "DataSource_", KEY_S(72) }, { "Attribute", KEY_L(32) }, { "Value", L_N(255) } };
+static const rp_msi_wcolumn_t publish_cols[] = { { "ComponentId", KEY_S(38) }, { "Qualifier", KEY_L(255) }, { "Component_", KEY_S(72) },
+                                                 { "AppData", L_N(255) }, { "Feature_", S(38) } };
+static const rp_msi_wcolumn_t isolated_cols[] = { { "Component_Shared", KEY_S(72) }, { "Component_Application", KEY_S(72) } };
 static const rp_msi_wcolumn_t environment_cols[] = { { "Environment", KEY_S(72) }, { "Name", L(255) }, { "Value", L_N(255) },
                                                      { "Component_", S(72) } };
 static const rp_msi_wcolumn_t inifile_cols[] = { { "IniFile", KEY_S(72) }, { "FileName", L(255) }, { "DirProperty", S_N(72) },
@@ -547,7 +561,8 @@ typedef struct {
     rp_srcdiags_t     *diags;
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
-        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition;
+        appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition,
+        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated;
     icon_t          *icons;            // the Icon table's .ico files, in order of first use
     size_t           nicons;
     proven_err_t     icon_err;
@@ -564,6 +579,8 @@ typedef struct {
     size_t           nstreams;
     rp_ui_t         *ui;
     uint8_t         *lic, *rtf, *banner, *lang_rtf[RP_UI_LANG_MAX];
+    uint8_t         *act_bin[64];      // RFC-0031 B6: Binary-table DLLs of single actions, freed at the end
+    size_t           act_bin_count;
 } pkg_t;
 
 // Property: identity, scope, [arp], [property.*] and the lists of secure and hidden properties.
@@ -1232,7 +1249,9 @@ static void lower_helper_actions(pkg_t *pk) {
     bool maintain = ir->ui == RP_UI_NONE && !ir->module && part_len > 0;
     // RFC-0003 6 / RFC-0031 B31: with [action]s, a rollback action that runs last in a rollback
     // looks at the end state and writes the double-failure report when it is not what was there.
-    bool report = ir->action_count > 0 && !ir->module && part_len > 0;
+    bool report = false;
+    for (size_t i = 0; i < ir->action_count; ++i) report |= ir->actions[i].kind == RP_ACT_PAIR;
+    report = report && !ir->module && part_len > 0;
     pk->report = report;
     // RP_LANGS: which language a user's LANGID means ("1042=ko;1041=ja"), for a run in which no
     // dialog chose one - the helper's messages then follow the user's language. The first match
@@ -1531,7 +1550,7 @@ static void lower_helper_actions(pkg_t *pk) {
         const char *checks = "";
         for (size_t i = 0; i < ir->action_count; ++i) {
             const rp_ir_action_t *a = &ir->actions[i];
-            if (a->check_args == NULL || a->run_file == NULL) continue;
+            if (a->kind != RP_ACT_PAIR || a->check_args == NULL || a->run_file == NULL) continue;
             checks = kprintf(k, "%s%s", checks, kprintf(k, "%s\t%s\n", a->run_file, a->check_args));     // the File key is the ID
         }
         if (*checks) { s_(&pk->property, "RP_REPORT"); s_(&pk->property, checks); }
@@ -1632,20 +1651,22 @@ static void lower_helper_actions(pkg_t *pk) {
         }
     }
     // RFC-0031 L2: with rollback disabled (policy, or a DisableRollback action) Windows Installer runs
-    // no commit action. Each commit action has a twin "<name>NR", deferred without the commit flag and
-    // run only when RollbackDisabled is set, late in the script (sequence 6592..); the prepare actions
-    // give it the same data.
-    const size_t filled = pk->customaction.filled;      // CustomAction: Action, Type, Source, Target
-    for (size_t at = 0; at + 4 <= filled; at += 4) {
-        const rp_msi_cell_t *c = &pk->customaction.cells[at];   // re-read each time: adding rows moves the cells
-        if (c[0].kind != RP_MSI_STR || c[1].kind != RP_MSI_INT || !(c[1].i & 0x200) || c[2].kind != RP_MSI_STR || c[3].kind != RP_MSI_STR) continue;
-        char nm[96], src[96], tgt[96];
-        snprintf(nm, sizeof nm, "%.*sNR", (int)c[0].len, (const char *)c[0].bytes);
-        snprintf(src, sizeof src, "%.*s", (int)c[2].len, (const char *)c[2].bytes);
-        snprintf(tgt, sizeof tgt, "%.*s", (int)c[3].len, (const char *)c[3].bytes);
-        int32_t type = c[1].i & ~0x200;
-        s_(&pk->customaction, kdup(k, nm)); i_(&pk->customaction, type);
-        s_(&pk->customaction, kdup(k, src)); s_(&pk->customaction, kdup(k, tgt));
+    // no commit action. Each of rubrapack's own commit actions (RpCa, RpCleanupRegister/RpPurge/...)
+    // has a twin "<name>NR", deferred without the commit flag, run only when RollbackDisabled is set
+    // (sequence 6592.., added in lower_sequences); set_data gives it the same CustomActionData. An
+    // author's commit action is not twinned - it is skipped when rollback is off, as Windows does.
+    const int noimp = ir->scope == 0 ? 0x800 : 0;
+    struct { const char *name, *entry; bool have; int type; } commits[] = {
+        { "RP_CleanupRegister", "RpCleanupRegister", pk->cleanup, 1 | 0x40 | 0x400 | noimp },
+        { "RP_RemoveCommit", "RpRemoveCommit", pk->any_rplan, 1 | 0x40 | 0x400 | noimp },
+        { "RP_PurgeUser", "RpPurge", pk->any_purge || pk->extra, 1 | 0x40 | 0x400 },
+        { "RP_PurgeMachine", "RpPurge", (pk->any_purge || pk->extra) && ir->scope != 1, 1 | 0x40 | 0x400 | 0x800 },
+        { "RP_PurgeOthers", "RpPurgeOthers", pk->any_others, 1 | 0x40 | 0x400 | 0x800 },
+    };
+    for (size_t i = 0; i < sizeof commits / sizeof commits[0]; ++i) {
+        if (!commits[i].have) continue;
+        s_(&pk->customaction, kprintf(k, "%sNR", commits[i].name, NULL)); i_(&pk->customaction, commits[i].type);
+        s_(&pk->customaction, "RpCa"); s_(&pk->customaction, commits[i].entry);
     }
 }
 
@@ -1757,6 +1778,137 @@ static void lower_copies(pkg_t *pk) {
         s_(&pk->duplicate, strcmp(shortn, longn) == 0 ? longn : kprintf(k, "%s|%s", shortn, longn));
         s_(&pk->duplicate, dkey(ir, cp->dir));
         if (dir_in_profile(ir, cp->dir)) profile_folders(pk, dkey(ir, cp->dir), src->comp);       // ICE64 (RFC-0029)
+    }
+}
+
+// RFC-0031 wave 1: MoveFile, the ODBC tables, PublishComponent, IsolatedComponent.
+static const lfile_t *lfile_of(const pkg_t *pk, const char *id) {
+    for (size_t j = 0; id && j < pk->nfiles; ++j) {
+        if (strcmp(pk->files[j].key, id) == 0) return &pk->files[j];
+    }
+    return NULL;
+}
+
+// "SHORT|long" for a name that is not 8.3 already (MoveFile.DestName is a Filename).
+static const char *move_name(keep_t *k, const char *name) {
+    const char *dot = strrchr(name, '.');
+    size_t base = dot ? (size_t)(dot - name) : strlen(name), ext = dot ? strlen(dot + 1) : 0;
+    bool plain = base >= 1 && base <= 8 && ext <= 3;
+    for (const char *p = name; plain && *p; ++p) plain = (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_' || (p == dot);
+    if (plain) return name;
+    char sh[16];
+    size_t n = 0;
+    for (const char *p = name; *p && p != dot && n < 6; ++p) {
+        char ch = *p >= 'a' && *p <= 'z' ? (char)(*p - 32) : *p;
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_') sh[n++] = ch;
+    }
+    if (n == 0) sh[n++] = 'F';
+    sh[n++] = '~';
+    sh[n++] = '1';
+    if (dot) {
+        sh[n++] = '.';
+        for (const char *p = dot + 1, *e = dot + 4; *p && p < e; ++p) {
+            char ch = *p >= 'a' && *p <= 'z' ? (char)(*p - 32) : *p;
+            if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_') sh[n++] = ch;
+        }
+        if (sh[n - 1] == '.') --n;
+    }
+    sh[n] = 0;
+    return kprintf(k, "%s|%s", sh, name);
+}
+
+// One ODBCAttribute / ODBCSourceAttribute row from "Key=Value" (the IR checked the '=').
+static void odbc_attr(keep_t *k, rows_t *t, const char *owner, const char *kv) {
+    const char *eq = strchr(kv, '=');
+    char key[256];
+    size_t n = eq ? (size_t)(eq - kv) : strlen(kv);
+    if (n >= sizeof key) n = sizeof key - 1;
+    memcpy(key, kv, n);
+    key[n] = 0;
+    s_(t, owner); s_(t, kdup(k, key)); s_(t, eq ? eq + 1 : NULL);
+}
+
+static void lower_more(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    for (size_t i = 0; i < ir->move_count; ++i) {
+        const rp_ir_move_t *x = &ir->moves[i];
+        const char *comp = NULL;
+        if (x->with_file) {
+            const lfile_t *f = lfile_of(pk, x->with_file);
+            comp = f ? f->comp : NULL;
+        } else {
+            // A component of its own in the destination folder (the folder its key path, ICE18).
+            char ckey[23], guid[39];
+            rp_key_derive('C', kprintf(k, "move.%s", x->id, NULL), ckey);
+            const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), x->to_dir, "move", x->id };
+            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            comp = kdup(k, ckey);
+            s_(&pk->component, comp); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->to_dir));
+            i_(&pk->component, pk->comp_attr); null_(&pk->component); null_(&pk->component);
+            s_(&pk->featurecomp, x->feature); s_(&pk->featurecomp, comp);
+            s_(&pk->createfolder, dkey(ir, x->to_dir)); s_(&pk->createfolder, comp);
+        }
+        if (comp == NULL) {
+            pk->reg_bad = true;
+            continue;
+        }
+        const char *from = x->from_prop ? x->from_prop : dkey(ir, x->from_dir);
+        s_(&pk->movefile, x->id); s_(&pk->movefile, comp); s_(&pk->movefile, x->name);
+        s_(&pk->movefile, x->new_name ? move_name(k, x->new_name) : NULL);
+        s_(&pk->movefile, from); s_(&pk->movefile, dkey(ir, x->to_dir)); i_(&pk->movefile, x->copy ? 0 : 1);
+    }
+    for (size_t i = 0; i < ir->odbc_driver_count; ++i) {
+        const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[i];
+        const lfile_t *f = lfile_of(pk, x->file), *setup = x->setup ? lfile_of(pk, x->setup) : NULL;
+        if (f == NULL || (x->setup && setup == NULL)) {
+            pk->reg_bad = true;
+            continue;
+        }
+        s_(&pk->odbcdriver, x->id); s_(&pk->odbcdriver, f->comp); s_(&pk->odbcdriver, x->description);
+        s_(&pk->odbcdriver, f->key); s_(&pk->odbcdriver, setup ? setup->key : NULL);
+        for (size_t a = 0; a < x->attribute_count; ++a) odbc_attr(k, &pk->odbcattr, x->id, x->attributes[a]);
+    }
+    for (size_t i = 0; i < ir->odbc_source_count; ++i) {
+        const rp_ir_odbc_source_t *x = &ir->odbc_sources[i];
+        const char *comp = NULL, *dname = x->driver_name;
+        for (size_t j = 0; x->driver && j < ir->odbc_driver_count; ++j) {
+            if (strcmp(ir->odbc_drivers[j].id, x->driver) != 0) continue;
+            const lfile_t *f = lfile_of(pk, ir->odbc_drivers[j].file);
+            comp = f ? f->comp : NULL;
+            dname = ir->odbc_drivers[j].description;
+        }
+        if (x->with_file) {
+            const lfile_t *f = lfile_of(pk, x->with_file);
+            comp = f ? f->comp : NULL;
+        }
+        if (comp == NULL || dname == NULL) {
+            pk->reg_bad = true;
+            continue;
+        }
+        s_(&pk->odbcsource, x->id); s_(&pk->odbcsource, comp); s_(&pk->odbcsource, x->name);
+        s_(&pk->odbcsource, dname); i_(&pk->odbcsource, x->user ? 1 : 0);
+        for (size_t a = 0; a < x->attribute_count; ++a) odbc_attr(k, &pk->odbcsattr, x->id, x->attributes[a]);
+    }
+    for (size_t i = 0; i < ir->publish_count; ++i) {
+        const rp_ir_publish_t *x = &ir->publishes[i];
+        const lfile_t *f = lfile_of(pk, x->file);
+        if (f == NULL) {
+            pk->reg_bad = true;
+            continue;
+        }
+        s_(&pk->publish, x->category); s_(&pk->publish, x->qualifier); s_(&pk->publish, f->comp);
+        s_(&pk->publish, x->data); s_(&pk->publish, f->f->feature);
+    }
+    for (size_t i = 0; i < ir->file_count; ++i) {
+        const rp_ir_file_t *f = &ir->files[i];
+        if (f->isolate_for == NULL) continue;
+        const lfile_t *dll = lfile_of(pk, f->id), *app = lfile_of(pk, f->isolate_for);
+        if (dll == NULL || app == NULL) {
+            pk->reg_bad = true;
+            continue;
+        }
+        s_(&pk->isolated, dll->comp); s_(&pk->isolated, app->comp);
     }
 }
 
@@ -1922,6 +2074,105 @@ static void lower_upgrade(pkg_t *pk) {
 }
 
 // The install, UI, administrative and advertisement sequences, with the [action.*] do/undo pairs.
+// A DLL of the Binary table (RFC-0031 B6): the file read and kept as its stream. reg_bad on failure.
+static void add_binary(pkg_t *pk, const char *name, const char *source) {
+    uint8_t *data = NULL;
+    size_t len = 0;
+    if (source == NULL || rp_pal_read_file(pk->alloc, source, 1u << 24, &data, &len) != PROVEN_OK) {
+        pk->reg_bad = true;
+        return;
+    }
+    s_(&pk->binary, name); b_(&pk->binary, data, len);
+    if (pk->act_bin_count < 64) pk->act_bin[pk->act_bin_count++] = data;   // freed at the end
+    else rp_mem_free(pk->alloc, data);
+}
+
+// The sequence number of a standard action (MS Learn "Suggested InstallExecuteSequence"), for
+// before/after; 0 when the name is not one rubrapack places.
+static int32_t standard_sequence(const char *name) {
+    static const struct { const char *name; int32_t seq; } std[] = {
+        { "InstallInitialize", 1500 }, { "ProcessComponents", 1600 }, { "UnpublishComponents", 1700 },
+        { "RemoveFiles", 3500 }, { "InstallFiles", 4000 }, { "DuplicateFiles", 4210 }, { "MoveFiles", 3800 },
+        { "WriteRegistryValues", 5000 }, { "RegisterProduct", 6100 }, { "PublishComponents", 6500 },
+        { "InstallServices", 5800 }, { "StartServices", 5900 }, { "InstallODBC", 5400 }, { "RegisterFonts", 5300 },
+        { "InstallFinalize", 6600 },
+    };
+    for (size_t i = 0; i < sizeof std / sizeof std[0]; ++i) {
+        if (strcmp(std[i].name, name) == 0) return std[i].seq;
+    }
+    return 0;
+}
+
+// RFC-0031 B5/B6: one custom action as written - an installed exe, an installed DLL's function, or
+// a DLL in the Binary table - in the chosen phase, placed before/after a standard action or at a
+// sequence number.
+static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
+    const rp_ir_t *ir = pk->ir;
+    keep_t *k = pk->k;
+    int type, src_kind;         // CustomAction Type bits; Source: 1 Directory/property, 2 File, 3 Component, 6 Binary
+    const char *source = NULL, *target = NULL;
+    if (a->kind == RP_ACT_EXE) {
+        const lfile_t *f = lfile_of(pk, a->run_file);
+        if (f == NULL) { pk->reg_bad = true; return; }
+        type = a->phase == RP_PHASE_IMMEDIATE ? 18 : 18 | 0x400;        // an installed exe (Source: File) + its arguments
+        src_kind = 2;
+        source = f->key;
+        target = a->args ? a->args : "";
+    } else if (a->kind == RP_ACT_DLL) {
+        const lfile_t *f = lfile_of(pk, a->dll_file);
+        if (f == NULL) { pk->reg_bad = true; return; }
+        type = a->phase == RP_PHASE_IMMEDIATE ? 17 : 17 | 0x400;        // a DLL installed with the product
+        src_kind = 2;
+        source = f->key;
+        target = a->entry;
+    } else {                    // a DLL in the Binary table
+        char bkey[40];
+        rp_key_derive('B', a->id, bkey);
+        add_binary(pk, kdup(k, bkey), a->binary_source);
+        type = a->phase == RP_PHASE_IMMEDIATE ? 1 : 1 | 0x400;
+        src_kind = 6;
+        source = kdup(k, bkey);
+        target = a->entry;
+    }
+    (void)src_kind;
+    bool deferred = a->phase != RP_PHASE_IMMEDIATE;
+    if (a->phase == RP_PHASE_COMMIT) type |= 0x200;
+    if (a->phase == RP_PHASE_ROLLBACK) type |= 0x100;
+    // Who it runs as (a deferred action only): the package default, or as asked.
+    if (deferred) {
+        bool as_system = a->as_user == 1 ? false : a->as_user == 0 ? ir->scope == 0 : ir->scope == 0;
+        if (as_system) type |= 0x800;          // no impersonation: the SYSTEM account (per-machine only)
+    }
+    if (a->ignore_exit) type |= 0x40;
+    const char *name = kprintf(k, "RP_Act_%s", a->id, NULL);
+    s_(&pk->customaction, name); i_(&pk->customaction, type); s_(&pk->customaction, source); s_(&pk->customaction, target ? target : "");
+    // A deferred action's data: CustomActionData is set by an immediate action just before it.
+    if (deferred && a->data) {
+        const char *setter = kprintf(k, "RP_ActData_%s", a->id, NULL);
+        s_(&pk->customaction, setter); i_(&pk->customaction, 51); s_(&pk->customaction, name); s_(&pk->customaction, a->data);
+    }
+    // Placement in the execute sequence. before/after give the named action's number +/- 1; a bare
+    // sequence number is used as given; the default is just before InstallFinalize for a deferred
+    // action, or after InstallInitialize for an immediate one.
+    int32_t seq = a->sequence;
+    if (seq == 0 && (a->before || a->after)) {
+        int32_t base = standard_sequence(a->before ? a->before : a->after);
+        seq = base == 0 ? 0 : base + (a->after ? 1 : -1);
+    }
+    if (seq == 0) {
+        // A default that does not collide across the package's own actions: each gets its own slot by
+        // its index (rollback and immediate just after InstallInitialize, the rest late, past the
+        // commits' NR twins at 6592..6596). lower_sequences still errors if two ever land together.
+        size_t idx = 0;
+        for (size_t j = 0; j < ir->action_count; ++j) if (&ir->actions[j] == a) idx = j;
+        seq = a->phase == RP_PHASE_ROLLBACK ? 1502 + (int32_t)idx
+            : a->phase == RP_PHASE_IMMEDIATE ? 1496 - (int32_t)idx
+            : 6597 + (int32_t)idx;
+    }
+    if (deferred && a->data) { s_(&pk->iexec, kprintf(k, "RP_ActData_%s", a->id, NULL)); s_(&pk->iexec, a->when); i_(&pk->iexec, seq - 1); }
+    s_(&pk->iexec, name); s_(&pk->iexec, a->when); i_(&pk->iexec, seq);
+}
+
 static proven_err_t lower_sequences(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -1980,9 +2231,24 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "RemoveShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 3200);
         s_(&pk->iexec, "CreateShortcuts"); null_(&pk->iexec); i_(&pk->iexec, 4500);
     }
+    // RFC-0031 wave 1: the standard actions of the tables written (MS Learn "Suggested InstallExecuteSequence").
+    if (pk->movefile.filled) { s_(&pk->iexec, "MoveFiles"); null_(&pk->iexec); i_(&pk->iexec, 3800); }
+    if (pk->odbcdriver.filled || pk->odbcsource.filled) {
+        s_(&pk->iexec, "SetODBCFolders"); null_(&pk->iexec); i_(&pk->iexec, 1100);
+        s_(&pk->iexec, "RemoveODBC"); null_(&pk->iexec); i_(&pk->iexec, 2400);
+        s_(&pk->iexec, "InstallODBC"); null_(&pk->iexec); i_(&pk->iexec, 5400);
+    }
+    if (pk->publish.filled) {
+        s_(&pk->iexec, "UnpublishComponents"); null_(&pk->iexec); i_(&pk->iexec, 1700);
+        s_(&pk->iexec, "PublishComponents"); null_(&pk->iexec); i_(&pk->iexec, 6500);
+    }
+    if (pk->isolated.filled) {
+        s_(&pk->iexec, "IsolateComponents"); null_(&pk->iexec); i_(&pk->iexec, 950);
+        s_(&pk->iui, "IsolateComponents"); null_(&pk->iui); i_(&pk->iui, 950);
+    }
     if (pk->report) {                   // RFC-0003 6: right after InstallInitialize, so it runs last in a rollback
         s_(&pk->iexec, "RP_ReportPrepare"); null_(&pk->iexec); i_(&pk->iexec, 1495);
-        s_(&pk->iexec, "RP_Report"); null_(&pk->iexec); i_(&pk->iexec, 1501);
+        s_(&pk->iexec, "RP_Report"); null_(&pk->iexec); i_(&pk->iexec, 1502);
     }
     if (pk->preflight) {                // before InstallValidate (1400): nothing has been touched yet
         s_(&pk->iexec, "RP_Preflight"); null_(&pk->iexec); i_(&pk->iexec, 1390);
@@ -2044,6 +2310,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     }
     for (size_t i = 0; i < na; ++i) {
         const rp_ir_action_t *a = &ir->actions[i];
+        if (a->kind != RP_ACT_PAIR) {           // RFC-0031 B5/B6: a single action as written
+            lower_single_action(pk, a);
+            continue;
+        }
         const lfile_t *run = NULL;
         for (size_t j = 0; j < nfiles; ++j) {
             if (strcmp(files[j].key, a->run_file) == 0) run = &files[j];
@@ -2120,6 +2390,25 @@ static proven_err_t lower_sequences(pkg_t *pk) {
     };
     for (size_t i = 0; i < sizeof advt_exec / sizeof advt_exec[0]; ++i) {
         s_(&pk->advt, advt_exec[i].action); null_(&pk->advt); i_(&pk->advt, advt_exec[i].seq);
+    }
+    // RFC-0031 B5: no two execute-sequence rows share a number (an author's [action] sequence that
+    // lands on rubrapack's own), and a deferred run/dll action is not sequenced before the files are
+    // installed. The rows are Action, Condition, Sequence.
+    const rows_t *seqs[] = { &pk->iexec, &pk->iui };
+    for (size_t t = 0; t < 2 && err == PROVEN_OK; ++t) {
+        const rows_t *q = seqs[t];
+        for (size_t a = 0; a + 3 <= q->filled; a += 3) {
+            if (q->cells[a + 2].kind != RP_MSI_INT) continue;
+            for (size_t b = a + 3; b + 3 <= q->filled; b += 3) {
+                if (q->cells[b + 2].kind == RP_MSI_INT && q->cells[b + 2].i == q->cells[a + 2].i) {
+                    rp_srcdiag_add(pk->diags, (rp_pos_t){ 1, 1 }, "RP1313", false,
+                                   "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after",
+                                   (int)q->cells[a + 2].i, (int)q->cells[a].len, (const char *)q->cells[a].bytes,
+                                   (int)q->cells[b].len, (const char *)q->cells[b].bytes);
+                    err = PROVEN_ERR_INVALID_FORMAT;
+                }
+            }
+        }
     }
     return err;
 }
@@ -2251,13 +2540,21 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&pk->binary, alloc, "Binary", binary_cols, 2);
     rows_init(&pk->icon, alloc, "Icon", icon_cols, 2);
     rows_init(&pk->condition, alloc, "Condition", condition_cols, 3);
+    rows_init(&pk->movefile, alloc, "MoveFile", movefile_cols, 7);
+    rows_init(&pk->odbcdriver, alloc, "ODBCDriver", odbcdriver_cols, 5);
+    rows_init(&pk->odbcattr, alloc, "ODBCAttribute", odbcattr_cols, 3);
+    rows_init(&pk->odbcsource, alloc, "ODBCDataSource", odbcsource_cols, 5);
+    rows_init(&pk->odbcsattr, alloc, "ODBCSourceAttribute", odbcsattr_cols, 3);
+    rows_init(&pk->publish, alloc, "PublishComponent", publish_cols, 5);
+    rows_init(&pk->isolated, alloc, "IsolatedComponent", isolated_cols, 2);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &pk->property, &pk->directory, &pk->component, &pk->feature, &pk->featurecomp, &pk->file,
                       &pk->filehash, &pk->media, &pk->upgrade, &pk->customaction, &pk->iexec, &pk->iui, &pk->createfolder,
                       &pk->aexec, &pk->aui, &pk->advt, &pk->registry, &pk->removereg, &pk->shortcut, &pk->removefile,
                       &pk->duplicate, &pk->environment, &pk->inifile, &pk->removeini, &pk->launch, &pk->appsearch,
                       &pk->reglocator, &pk->drlocator, &pk->signature, &pk->complocator, &pk->svcinstall, &pk->svccontrol,
-                      &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition };
+                      &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition, &pk->movefile, &pk->odbcdriver,
+                      &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated };
     const size_t always = 16;
 
     lower_properties(pk, product_code);
@@ -2273,6 +2570,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     lower_services(pk);
     lower_helper_actions(pk);
     lower_permissions(pk);
+    lower_more(pk);
     lower_fonts(pk);
     lower_searches(pk);
     lower_copies(pk);
@@ -2407,6 +2705,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rp_mem_free(alloc, pk->lic);
     rp_mem_free(alloc, pk->rtf);
     rp_mem_free(alloc, pk->banner);
+    for (size_t i = 0; i < pk->act_bin_count; ++i) rp_mem_free(alloc, pk->act_bin[i]);
     for (size_t i = 0; pk->icons && i < pk->nicons; ++i) rp_mem_free(alloc, pk->icons[i].data);
     rp_mem_free(alloc, pk->icons);
     for (size_t li = 0; li < RP_UI_LANG_MAX; ++li) rp_mem_free(alloc, pk->lang_rtf[li]);

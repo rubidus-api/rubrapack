@@ -56,6 +56,7 @@ typedef struct {
     char    *feature;           // resolved (G2): never NULL
     char    *component_guid;    // user-fixed GUID or NULL
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
+    char    *isolate_for;       // RFC-0031 B4: file ID of the program this DLL is isolated for, or NULL
     rp_pos_t pos;
 } rp_ir_file_t;
 
@@ -328,6 +329,55 @@ typedef struct {
     char    *text;              // formatted
 } rp_ir_ltext_t;
 
+// RFC-0031 wave 1: MSI tables with no MSIX counterpart.
+// [move.ID]: MoveFile - files moved or copied at installation from a folder (a dir ID, or a
+// property a [search] fills) to one of the package's folders.
+typedef struct {
+    char    *id;
+    char    *from_dir, *from_prop;  // one of them
+    char    *name;                  // file name, wildcards allowed
+    char    *to_dir;                // dir ID
+    char    *new_name;              // or NULL: the same name
+    bool     copy;                  // copy = true: the source stays
+    char    *with_file;             // the component it goes with ("file:ID"), or NULL: a component of its own
+    char    *feature;               // with its own component; NULL = the default feature
+    rp_pos_t pos;
+} rp_ir_move_t;
+
+// [odbc-driver.ID] and [odbc-source.ID]: ODBCDriver / ODBCDataSource and their attributes.
+typedef struct {
+    char    *id;
+    char    *file;                  // file ID of the driver DLL
+    char    *setup;                 // file ID of its setup DLL, or NULL (the driver itself)
+    char    *description;           // the driver's name, as ODBC lists it
+    char   **attributes;            // "Key=Value"
+    size_t   attribute_count;
+    rp_pos_t pos;
+} rp_ir_odbc_driver_t;
+
+typedef struct {
+    char    *id;
+    char    *driver;                // an [odbc-driver] ID, or NULL with driver-name
+    char    *driver_name;           // a driver installed some other way, or NULL
+    char    *name;                  // the data source's name
+    bool     user;                  // registration = "user" (default "machine")
+    char   **attributes;
+    size_t   attribute_count;
+    char    *with_file;             // the component, when driver is not one of this package
+    rp_pos_t pos;
+} rp_ir_odbc_source_t;
+
+// [publish.ID]: PublishComponent - a qualified component other programs find with
+// MsiProvideQualifiedComponent.
+typedef struct {
+    char    *id;
+    char    *file;                  // file ID: its component is published
+    char    *category;              // {GUID}
+    char    *qualifier;
+    char    *data;                  // AppData, or NULL
+    rp_pos_t pos;
+} rp_ir_publish_t;
+
 // [other-copy.ID] (plan 2026-10-17-menu-list-and-hide): the same program installed another way - an
 // MSIX for the installing user, or another MSI - found by the preflight before a first install,
 // which warns (Yes / No) or refuses. MSI only; an MSIX build ignores it.
@@ -439,11 +489,28 @@ typedef struct {
 
 // A do/undo pair run from an installed exe (RFC-0003): `do` at install and repair, `undo` at
 // removal; the lowering adds conditions, order and rollback twins.
+// RFC-0031 B5/B6: or one action as written - an installed exe (run, args), an installed DLL's
+// function (dll, entry) or a DLL carried in the package (binary, entry) - in one phase, placed
+// before or after a standard action or at a sequence number.
+enum { RP_ACT_PAIR, RP_ACT_EXE, RP_ACT_DLL, RP_ACT_BINARY };
+enum { RP_PHASE_IMMEDIATE, RP_PHASE_DEFERRED, RP_PHASE_COMMIT, RP_PHASE_ROLLBACK };
 typedef struct {
     char    *id;
+    int      kind;              // RP_ACT_*
     char    *run_file;          // file ID of the exe (from run = "file:ID")
     char    *do_args, *undo_args;
     char    *check_args;        // may be NULL
+    char    *args;              // a single exe action's arguments (formatted), or NULL
+    char    *dll_file;          // RP_ACT_DLL: file ID
+    char    *binary_shown, *binary_source;  // RP_ACT_BINARY: as written / to open
+    char    *entry;             // the DLL's function
+    int      phase;             // RP_PHASE_*
+    int      as_user;           // -1 the package's default (system per machine, user per user), 0 system, 1 user
+    char    *when;              // condition, or NULL
+    char    *data;              // CustomActionData (formatted) of a deferred action, or NULL
+    char    *before, *after;    // a standard action's name, or NULL
+    int32_t  sequence;          // 0 = not given
+    bool     ignore_exit;       // the result is not checked
     rp_pos_t pos;
 } rp_ir_action_t;
 
@@ -546,6 +613,14 @@ typedef struct {
     size_t            menu_count;
     rp_ir_other_t    *others;               // [other-copy.*]
     size_t            other_count;
+    rp_ir_move_t     *moves;                // [move.*]
+    size_t            move_count;
+    rp_ir_odbc_driver_t *odbc_drivers;      // [odbc-driver.*]
+    size_t            odbc_driver_count;
+    rp_ir_odbc_source_t *odbc_sources;      // [odbc-source.*]
+    size_t            odbc_source_count;
+    rp_ir_publish_t  *publishes;            // [publish.*]
+    size_t            publish_count;
     // An item for the Windows 11 menu: an MSI then carries rubrapack's menu DLL and an identity
     // package beside the program `menu_exe` (a file ID), whose folder is the package's location.
     bool              menu_package;

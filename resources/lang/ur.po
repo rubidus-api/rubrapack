@@ -143,6 +143,9 @@ msgstr "{1} LANGIDs رکھتا ہے (1..65535)، جیسے 1041"
 msgid "%s holds strings"
 msgstr "{1} اسٹرنگز رکھتا ہے"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} \"کلید=قدر\" متون کی فہرست ہے"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 1 سے 31 حروف کا فونٹ نام ہے، جیسے \"Segoe UI\" ({2} ملا)"
 
@@ -220,6 +223,9 @@ msgstr "{1}: {2} فائلیں، {3} خرابیاں، 0 انتباہات\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: مزید {2} تشخیصات نہیں دکھائی گئیں\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' کوئی معیاری عمل نہیں جو rubrapack رکھتا ہے"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: فائل '{2}' اس پیکیج کی [file.*] نہیں"
@@ -809,9 +815,41 @@ msgstr "[Content_Types].xml آخری اندراج نہیں (ایسا پیکیج 
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] جدولوں کی ترتیبیں معاون نہیں؛ ہر آئٹم کو اپنا [kind.ID] دیں"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] ایک بار رکھا جاتا ہے: before، after یا sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] کو do اور undo دونوں چاہییں (undo ناکام do کو بھی واپس لیتا ہے)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] کو entry چاہیے: بلائے جانے والا DLL فنکشن"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] کو run = \"file:<ID>\" چاہیے: وہ پروگرام جسے do اور undo چلاتے ہیں"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] ایک چیز چلاتا ہے: run (ایک exe)، dll (انسٹال شدہ DLL) یا binary (پیکج میں موجود DLL)؛ یا do اور undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} ایک عمل کے لیے ہے، do/undo جوڑے کے لیے نہیں"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: انسٹال شدہ فائل چلانے والا مؤخر عمل InstallFiles کے بعد ہونا چاہیے (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: فوری عمل انسٹال کرنے والے صارف کے طور پر چلتا ہے؛ as دوسرے مراحل کے لیے ہے"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args پروگرام کے ہیں؛ DLL data لیتی ہے"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check do/undo جوڑے کے ساتھ جاتا ہے"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data مؤخر، commit یا rollback عمل کے لیے ہے (فوری عمل خصوصیات پڑھتا ہے)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry ایک DLL کا فنکشن ہے؛ run args لیتا ہے"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX کے لیے args سادہ متن ہونے چاہییں (انسٹال پر بھرا جانے والا [...] نہیں)"
@@ -887,6 +925,9 @@ msgstr "[env.{1}]: MSIX اپنے تمام متغیرات سیٹ کرتا ہے (w
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: اس کی قدر ایسی جگہ کا نام لیتی ہے جو MSIX نہیں دے سکتا (پیکیج سے باہر کا فولڈر جو Windows فولڈر نہیں، یا انسٹال کے وقت کا حصہ)؛ msi-only = true استعمال کریں"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] پہلے ہی اپنے پروگرام کے فولڈر میں ہے؛ isolate-for کسی اور جگہ انسٹال ہونے والی مشترکہ DLL کے لیے ہے"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] صارف کی پروفائل میں ہے اور اس میں component-guid ہے: اس کا کلیدی راستہ فائل ہی رہتا ہے، جبکہ Windows کے اصول وہاں HKCU قدر چاہتے ہیں (ICE38)؛ وہ پانے کے لیے component-guid ہٹا دیں"
@@ -1002,6 +1043,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}؛ یا msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] کو feature چاہیے (یا with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature اپنے جزو کے ساتھ جاتا ہے، with کے ساتھ نہیں"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name ایک فائل بتاتا ہے؛ name میں وائلڈ کارڈ ہیں"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args سادہ متن ہونے چاہییں (انسٹال پر بھرا جانے والا [...] نہیں)"
 
@@ -1019,6 +1069,18 @@ msgstr "[msix-extension.{1}]: types فائل اقسام کی فہرست ہے، �
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows صرف حروف اور ہندسے لیتا ہے"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: فائل '{2}' DLL نہیں ہے"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] اپنا ڈرائیور ایک بار بتاتا ہے: driver (ایک [odbc-driver]) یا driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] کو driver-name کے ساتھ with = \"file:<ID>\" چاہیے: وہ جزو جس کے ساتھ یہ انسٹال ہوتا ہے"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: فی کمپیوٹر پیکج ڈیٹا ذرائع کو کمپیوٹر کے لیے رجسٹر کرتا ہے"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] ایک کاپی بتاتا ہے: msix (publisher کے ساتھ) یا upgrade-code"
@@ -1464,6 +1526,9 @@ msgstr "ترتیب کے اندر ترتیبیں معاون نہیں"
 msgid "arrays must hold only strings or only integers"
 msgstr "ترتیبوں میں صرف اسٹرنگز یا صرف عدد صحیح ہونے چاہییں"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as کو \"system\" یا \"user\" ہونا چاہیے ('{1}' ملا)"
+
 msgid "at most %d languages besides English"
 msgstr "انگریزی کے علاوہ زیادہ سے زیادہ {1} زبانیں"
 
@@ -1737,6 +1802,9 @@ msgstr "do/undo دلائل 255 حروف سے لمبے ہیں"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "نقطے والی کلیدیں معاون نہیں؛ کلید کو اس کے اپنے جدول میں رکھیں"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "ڈرائیور '{1}' [odbc-driver.*] نہیں ہے"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "پیکیج ڈمپ کریں (MSI جدول IDT کے طور پر)"
 
@@ -2003,6 +2071,9 @@ msgstr "کمپاؤنڈ فائل نہیں"
 
 msgid "is not valid UTF-8"
 msgstr "درست UTF-8 نہیں"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' پروگرام (.exe) نہیں ہے"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "اپ گریڈ کوڈ رکھیں، ورژن بڑھائیں، رہنے والی فائلوں کے جزو کوڈز رکھیں"
@@ -2355,6 +2426,9 @@ msgstr "perceived-type کو \"image\"، \"text\"، \"audio\"، \"video\"، \"com
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "اجازتوں کو scope = \"machine\" چاہیے (یہ {1} ہے)"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase کو \"immediate\"، \"deferred\"، \"commit\" یا \"rollback\" ہونا چاہیے ('{1}' ملا)"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports کو پورٹ یا 1-65535 کے اندر \"8000-8100\" جیسی حد ہونا چاہیے ('{1}' ملا)"
 
@@ -2451,6 +2525,9 @@ msgstr "refuse-upgrade-message کو refuse-upgrade-below چاہیے"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "زبان کے صفحے کے علاقے {1} میں {2} زبانیں ہیں، زیادہ سے زیادہ {3} (ان کے پیک کا X-Rubrapack-Group)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration کو \"machine\" یا \"user\" ہونا چاہیے ('{1}' ملا)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "رجسٹری '{1}' ایک قدر ہٹاتی ہے؛ اس کے پاس بچانے کو کچھ نہیں"
 
@@ -2499,8 +2576,6 @@ msgstr "rubrapack new: چند سوال سورس بناتے ہیں (Enter [ ] ک�
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` چلائیں؛ راستے اور آؤٹ پٹ فولڈر کی موجودگی جانچیں"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run کو \"file:<ID>\" ہونا چاہیے جو اس پیکیج کی [file.*] کا نام لے"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (مشین 0x{2}) اس پیکیج کی مشینوں پر نہیں چل سکتا"
@@ -2963,6 +3038,9 @@ msgstr "بنڈل میں بہت زیادہ پیکیجز"
 
 msgid "trusted"
 msgstr "قابلِ اعتماد"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "دو اعمال ایک ہی sequence {1} رکھتے ہیں ({2} اور {3})؛ کسی ایک [action] کو دوسرا sequence، before یا after دیں"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "بنڈل میں ایک آرکیٹیکچر کے دو پیکیجز"

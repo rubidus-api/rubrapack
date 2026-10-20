@@ -141,6 +141,9 @@ msgstr "{1} sisaldab LANGID-e (1..65535), nt 1041"
 msgid "%s holds strings"
 msgstr "{1} sisaldab stringe"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} on \"Võti=Väärtus\" tekstide loend"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} on 1 kuni 31 märgi pikkune fondinimi, nt \"Segoe UI\" (saadi {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} faili, {3} viga, 0 hoiatust\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: veel {2} diagnostikat jäi näitamata\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' ei ole standardtoiming, mille rubrapack paigutab"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: fail '{2}' ei ole selle paketi [file.*]"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml ei ole viimane kirje (pole pakett, mille kirjutas ru
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Tabelimassiive [[...]] ei toetata; andke igale üksusele oma [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] paigutatakse üks kord: before, after või sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] vajab nii do kui ka undo (undo tühistab ka nurjunud do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] vajab entry't: väljakutsutavat DLL-funktsiooni"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] vajab run = \"file:<ID>\": programmi, mida do ja undo käivitavad"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] käivitab ühe asja: run (exe), dll (installitud DLL) või binary (paketis olev DLL); või do ja undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} on ühe toimingu jaoks, mitte do/undo paari jaoks"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: edasilükatud toiming, mis käivitab installitud faili, peab olema pärast InstallFiles'i (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: kohene toiming töötab installiva kasutajana; as on teiste faaside jaoks"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args kuuluvad programmile; DLL saab data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check käib do/undo paariga"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data on edasilükatud, commit- või rollback-toimingu jaoks (kohene loeb atribuute)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry on DLL-i funktsioon; run võtab args'i"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX-i args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX määrab kõik oma muutujad (when); kasutage msi-only = 
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: selle väärtus nimetab koha, mida MSIX anda ei saa (paketivälist kausta, mis pole Windowsi kaust, või installiaegset osa); kasutage msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] on juba oma programmi kaustas; isolate-for on mujale installitud jagatud DLL-i jaoks"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] on kasutajaprofiilis ja sellel on component-guid: võtmetee jääb failiks, kuigi Windowsi reeglid tahavad sinna HKCU väärtust (ICE38); selle saamiseks jätke component-guid ära"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; või msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] vajab feature'it (või with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature käib oma komponendiga, mitte with'iga"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name nimetab ühe faili; name'il on metamärgid"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args peab olema lihttekst (ilma installimisel täidetava [...]-ta)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types on failitüüpide loend, nt [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows võtab vastu ainult tähti ja numbreid"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: fail '{2}' ei ole DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] nimetab oma draiveri üks kord: driver (üks [odbc-driver]) või driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] vajab driver-name'iga with = \"file:<ID>\": komponenti, millega see installitakse"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: masinapõhine pakett registreerib andmeallikad masinale"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] nimetab ühe koopia: msix (koos publisher-iga) või upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "massiive massiivides ei toetata"
 msgid "arrays must hold only strings or only integers"
 msgstr "massiivid peavad sisaldama ainult stringe või ainult täisarve"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as peab olema \"system\" või \"user\" (saadi '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "kuni {1} keelt lisaks inglise keelele"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo argumendid on pikemad kui 255 märki"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "punktidega võtmeid ei toetata; pange võti oma tabelisse"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "draiver '{1}' ei ole [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "paketi väljastus (MSI-tabelid IDT-na)"
 
@@ -2001,6 +2069,9 @@ msgstr "ei ole liitfail"
 
 msgid "is not valid UTF-8"
 msgstr "ei ole sobiv UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' ei ole programm (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "säilitage täienduskood, tõstke versiooni, säilitage allesjäävate failide komponendikoodid"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type peab olema \"image\", \"text\", \"audio\", \"video\", \"c
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "õigused vajavad scope = \"machine\" (see on {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase peab olema \"immediate\", \"deferred\", \"commit\" või \"rollback\" (saadi '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports peab olema port või vahemik nagu \"8000-8100\" piires 1-65535 (saadi '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message vajab refuse-upgrade-below'd"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "keelelehe piirkonnas {1} on {2} keelt, kõige rohkem {3} (pakettide X-Rubrapack-Group)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration peab olema \"machine\" või \"user\" (saadi '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "register '{1}' eemaldab väärtuse; sel pole midagi kaitsta"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: mõni küsimus loob lähte (Enter võtab väärtuse [ ] s
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "käivitage `rubrapack help <command>`; kontrollige teid ja et väljundkaust on olemas"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (masin 0x{2}) ei saa töötada selle paketi masinatel"
@@ -2961,6 +3036,9 @@ msgstr "kogumis on liiga palju pakette"
 
 msgid "trusted"
 msgstr "usaldusväärne"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "kaks toimingut jagavad sequence'i {1} ({2} ja {3}); anna ühele [action]-ile teine sequence, before või after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "kogumis on kaks sama arhitektuuriga paketti"

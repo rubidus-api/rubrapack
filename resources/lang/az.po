@@ -141,6 +141,9 @@ msgstr "{1} LANGID-ləri saxlayır (1..65535), məsələn 1041"
 msgid "%s holds strings"
 msgstr "{1} sətirləri saxlayır"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} \"Açar=Dəyər\" mətnlərinin siyahısıdır"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 1-31 simvollu şrift adıdır, məsələn \"Segoe UI\" ({2} alındı)"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} fayl, {3} xəta, 0 xəbərdarlıq\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: daha {2} diaqnostika göstərilmədi\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' rubrapack-ın yerləşdirdiyi standart əməliyyat deyil"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: '{2}' faylı bu paketin [file.*]-ı deyil"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml son giriş deyil (rubrapack-in və ya Windows qabla�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] cədvəl massivləri dəstəklənmir; hər elementə öz [kind.ID]-sini verin"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] bir dəfə yerləşdirilir: before, after və ya sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] üçün həm do, həm də undo lazımdır (undo uğursuz do-nu da geri qaytarır)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] entry tələb edir: çağırılacaq DLL funksiyası"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] run = \"file:<ID>\" tələb edir: do və undo-nun işə saldığı proqram"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] bir şeyi işə salır: run (exe), dll (quraşdırılmış DLL) və ya binary (paketdəki DLL); və ya do və undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} tək əməliyyat üçündür, do/undo cütü üçün deyil"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: quraşdırılmış faylı işə salan təxirə salınmış əməliyyat InstallFiles-dan sonra olmalıdır (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: dərhal əməliyyat quraşdıran istifadəçi kimi işləyir; as digər mərhələlər üçündür"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args proqramındır; DLL data alır"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check do/undo cütü ilə gedir"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data təxirə salınmış, commit və ya rollback əməliyyatı üçündür (dərhal olan xassələri oxuyur)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry DLL-in funksiyasıdır; run args alır"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX üçün args sadə mətn olmalıdır (quraşdırmada doldurulan [...] yox)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX bütün dəyişənlərini təyin edir (when); msi-only =
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: onun dəyəri MSIX-in verə bilmədiyi yeri göstərir (paketdən kənar, Windows-a aid olmayan qovluq və ya quraşdırma zamanı hissə); msi-only = true istifadə edin"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] artıq öz proqramının qovluğundadır; isolate-for başqa yerə quraşdırılan paylaşılan DLL üçündür"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] istifadəçi profilindədir və component-guid var: onun açar yolu fayl olaraq qalır, Windows qaydaları isə orada HKCU dəyəri istəyir (ICE38); onu almaq üçün component-guid-i çıxarın"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; və ya msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] feature tələb edir (və ya with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature öz komponenti ilə gedir, with ilə deyil"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name bir faylı göstərir; name-də joker simvollar var"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args sadə mətn olmalıdır (quraşdırmada doldurulan [...] yox)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types fayl növləri siyahısıdır, məsələn [\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows yalnız hərf və rəqəmləri qəbul edir"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: '{2}' faylı DLL deyil"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] sürücüsünü bir dəfə göstərir: driver (bir [odbc-driver]) və ya driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] driver-name ilə with = \"file:<ID>\" tələb edir: birlikdə quraşdırıldığı komponent"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: kompüter üzrə paket verilən mənbələrini kompüter üçün qeydə alır"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] bir nüsxəni göstərir: msix (publisher ilə) və ya upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "massiv daxilində massivlər dəstəklənmir"
 msgid "arrays must hold only strings or only integers"
 msgstr "massivlər yalnız sətir və ya yalnız tam ədəd saxlamalıdır"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as \"system\" və ya \"user\" olmalıdır (alındı '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "ingiliscədən əlavə ən çoxu {1} dil"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo arqumentləri 255 simvoldan uzundur"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "nöqtəli açarlar dəstəklənmir; açarı öz cədvəlinə qoyun"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "'{1}' sürücüsü [odbc-driver.*] deyil"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "paketi çıxarır (MSI cədvəlləri IDT kimi)"
 
@@ -2001,6 +2069,9 @@ msgstr "mürəkkəb fayl deyil"
 
 msgid "is not valid UTF-8"
 msgstr "etibarlı UTF-8 deyil"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' proqram (.exe) deyil"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "təkmilləşdirmə kodunu saxlayın, versiyanı artırın, qalan faylların komponent kodlarını saxlayın"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type \"image\", \"text\", \"audio\", \"video\", \"compressed\"
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "icazələrə scope = \"machine\" lazımdır (bu {1}-dir)"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase \"immediate\", \"deferred\", \"commit\" və ya \"rollback\" olmalıdır (alındı '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports port və ya 1-65535 daxilində \"8000-8100\" kimi diapazon olmalıdır ('{1}' alındı)"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message üçün refuse-upgrade-below lazımdır"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "dil səhifəsinin {1}-ci regionunda {2} dil var, ən çoxu {3} (paketlərin X-Rubrapack-Group)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration \"machine\" və ya \"user\" olmalıdır (alındı '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "'{1}' reyestri dəyəri silir; qoruyacaq heç nəyi yoxdur"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: bir neçə sual mənbəni yaradır (Enter [ ] içindəki 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` işlədin; yolları və çıxış qovluğunun mövcudluğunu yoxlayın"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run bu paketin [file.*]-ını göstərən \"file:<ID>\" olmalıdır"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (maşın 0x{2}) bu paketin maşınlarında işləyə bilməz"
@@ -2961,6 +3036,9 @@ msgstr "dəstdə çox paket var"
 
 msgid "trusted"
 msgstr "etibarlı"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "iki əməliyyat eyni sequence {1} paylaşır ({2} və {3}); bir [action]-a başqa sequence, before və ya after verin"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "dəstdə bir arxitekturanın iki paketi"

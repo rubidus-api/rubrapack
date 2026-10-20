@@ -262,28 +262,76 @@ void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     p->hidden = ir_get_bool(c, t, "hidden", false);
 }
 
+// "file:ID" -> ID (an error when malformed).
+static char *action_file(ctx_t *c, const rp_ttable_t *t, const char *key) {
+    char *v = ir_get_str(c, t, key, false, NULL), *id = NULL;
+    if (v && (strncmp(v, "file:", 5) != 0 || v[5] == '\0')) ERR(c, ir_key_pos(t, key), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", key);
+    else if (v) id = ir_dup(c, v + 5);
+    rp_mem_free(c->alloc, v);
+    return id;
+}
+
 void ir_parse_action(ctx_t *c, const rp_ttable_t *t, rp_ir_action_t *a) {
-    static const char *const keys[] = { "run", "do", "undo", "check", NULL };
+    static const char *const keys[] = { "run", "do", "undo", "check", "args", "dll", "binary", "entry", "phase", "as", "when", "data",
+                                        "before", "after", "sequence", "ignore-exit", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 40);            // leaves room for the RP_<ID>_<Suffix> keys (72)
     a->id = ir_dup(c, t->id);
     a->pos = t->pos;
-    char *run = ir_get_str(c, t, "run", true, NULL);
-    if (run) {
-        if (strncmp(run, "file:", 5) != 0 || run[5] == '\0') {
-            ERR(c, ir_key_pos(t, "run"), "RP1311", "run must be \"file:<ID>\" naming a [file.*] of this package");
-        } else {
-            a->run_file = ir_dup(c, run + 5);
+    a->as_user = -1;
+    bool has_do = ir_find_key(t, "do") != NULL, has_undo = ir_find_key(t, "undo") != NULL;
+    a->run_file = action_file(c, t, "run");
+    if (has_do || has_undo) {             // a do/undo pair (RFC-0003)
+        a->kind = RP_ACT_PAIR;
+        a->do_args = ir_get_fmt(c, t, "do", false, NULL, IR_FMT_INSTALL);
+        a->undo_args = ir_get_fmt(c, t, "undo", false, NULL, IR_FMT_INSTALL);
+        a->check_args = ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL);
+        if (a->run_file == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs run = \"file:<ID>\": the program do and undo run", t->id);
+        if (!has_do || !has_undo) ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
+        static const char *const single[] = { "args", "dll", "binary", "entry", "phase", "as", "when", "data", "before", "after", "sequence", "ignore-exit", NULL };
+        for (size_t k = 0; single[k]; ++k) {
+            if (ir_find_key(t, single[k])) ERR(c, ir_key_pos(t, single[k]), "RP1316", "[action.%s]: %s is for a single action, not a do/undo pair", t->id, single[k]);
         }
-        rp_mem_free(c->alloc, run);
+        return;
     }
-    bool has_do = false, has_undo = false;
-    a->do_args = ir_get_fmt(c, t, "do", false, &has_do, IR_FMT_INSTALL);
-    a->undo_args = ir_get_fmt(c, t, "undo", false, &has_undo, IR_FMT_INSTALL);
-    a->check_args = ir_get_fmt(c, t, "check", false, NULL, IR_FMT_INSTALL);
-    if (!has_do || !has_undo) {
-        ERR(c, t->pos, "RP1312", "[action.%s] needs both do and undo (the undo also rolls back a failed do)", t->id);
+    // A single action.
+    a->dll_file = action_file(c, t, "dll");
+    a->binary_shown = ir_get_str(c, t, "binary", false, NULL);
+    if (a->binary_shown && ir_source_path_ok(c, a->binary_shown, ir_key_pos(t, "binary"))) a->binary_source = ir_join(c, c->opt->source_dir, a->binary_shown);
+    int forms = (a->run_file != NULL) + (a->dll_file != NULL) + (a->binary_shown != NULL);
+    a->kind = a->run_file ? RP_ACT_EXE : a->dll_file ? RP_ACT_DLL : RP_ACT_BINARY;
+    if (forms != 1) ERR(c, t->pos, "RP1202", "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo", t->id);
+    a->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
+    a->entry = ir_get_str(c, t, "entry", false, NULL);
+    if (a->kind == RP_ACT_EXE && a->entry) ERR(c, ir_key_pos(t, "entry"), "RP1316", "[action.%s]: entry is a DLL's function; run takes args", t->id);
+    if (a->kind != RP_ACT_EXE && a->args) ERR(c, ir_key_pos(t, "args"), "RP1316", "[action.%s]: args are a program's; a DLL gets data", t->id);
+    if (a->kind != RP_ACT_EXE && forms == 1 && a->entry == NULL) ERR(c, t->pos, "RP1202", "[action.%s] needs entry: the DLL's function to call", t->id);
+    char *phase = ir_get_str(c, t, "phase", false, NULL);
+    static const char *const phases[] = { "immediate", "deferred", "commit", "rollback" };
+    a->phase = RP_PHASE_DEFERRED;
+    if (phase) {
+        int found = -1;
+        for (int k = 0; k < 4; ++k) found = strcmp(phase, phases[k]) == 0 ? k : found;
+        if (found < 0) ERR(c, ir_key_pos(t, "phase"), "RP1316", "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')", phase);
+        else a->phase = found;
     }
+    rp_mem_free(c->alloc, phase);
+    char *as = ir_get_str(c, t, "as", false, NULL);
+    if (as && strcmp(as, "user") == 0) a->as_user = 1;
+    else if (as && strcmp(as, "system") == 0) a->as_user = 0;
+    else if (as) ERR(c, ir_key_pos(t, "as"), "RP1316", "as must be \"system\" or \"user\" (got '%s')", as);
+    if (as && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "as"), "RP1316", "[action.%s]: an immediate action runs as the user who installs; as is for the other phases", t->id);
+    rp_mem_free(c->alloc, as);
+    a->when = ir_get_when(c, t);
+    a->data = ir_get_fmt(c, t, "data", false, NULL, IR_FMT_INSTALL);
+    if (a->data && a->phase == RP_PHASE_IMMEDIATE) ERR(c, ir_key_pos(t, "data"), "RP1316", "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)", t->id);
+    a->before = ir_get_str(c, t, "before", false, NULL);
+    a->after = ir_get_str(c, t, "after", false, NULL);
+    a->sequence = (int32_t)ir_get_int(c, t, "sequence", 0, 1, 32767);
+    if ((a->before != NULL) + (a->after != NULL) + (a->sequence != 0) > 1)
+        ERR(c, t->pos, "RP1316", "[action.%s] is placed once: before, after or sequence", t->id);
+    a->ignore_exit = ir_get_bool(c, t, "ignore-exit", false);
+    if (ir_find_key(t, "check")) ERR(c, ir_key_pos(t, "check"), "RP1316", "[action.%s]: check goes with a do/undo pair", t->id);
 }
 
 static bool ieq_n(const char *a, const char *b, size_t n) {

@@ -109,3 +109,27 @@ RP_Register_Do	$C_185f...>2	4003
 
 `$C` is the state the component is going to (2 absent, 3 installed), `?C` the state it is in now.
 "Going away while installed" runs undo; "coming" runs do.
+
+## One action, and moving files
+
+The pair above is the usual case. When you need a single action instead — run something once at a
+chosen moment — write one `[action.*]` with `phase` and no `undo`:
+
+```toml
+[action.Warm]
+dll = "file:HelperDll"    # or run = "file:MainExe" with args, or binary = "ca.dll" in the package
+entry = "WarmCache"
+phase = "deferred"        # immediate, deferred (default), commit or rollback
+as = "system"             # system or user
+data = "[INSTALLDIR]"     # the DLL reads this; before / after / sequence choose where it runs
+```
+
+`before`, `after` or `sequence` choose where it goes, and `ignore-exit = true` lets the install
+go on whatever it returns.
+
+A few more MSI-only tables fill in the rest of Windows Installer: `[move.*]` moves files (`from`,
+`name`, `to`, `new-name`, `copy`), `[odbc-driver.*]` and `[odbc-source.*]` register an ODBC driver
+and data source (`file`, `setup`, `description`, `attributes`, `driver`, `driver-name`,
+`registration`), `[publish.*]` publishes a component other programs look up (`file`, `category`,
+`qualifier`), and `isolate-for` on a `[file.*]` DLL gives a program its own private copy. The
+Reference has each under "Running a program or DLL" and "Moving files, ODBC, published components".

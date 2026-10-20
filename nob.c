@@ -67,7 +67,7 @@ static const char *const core_sources[] = {
     "src/lang/toml.c",
     "src/model/ident.c",
     "src/model/ir.c", "src/model/ir_common.c", "src/model/ir_files.c", "src/model/ir_tables.c",
-    "src/model/ir_ui.c", "src/model/ir_check.c", "src/model/ir_dump.c", "src/model/ir_chain.c",
+    "src/model/ir_ui.c", "src/model/ir_more.c", "src/model/ir_check.c", "src/model/ir_dump.c", "src/model/ir_chain.c",
     "src/msi/db.c",
     "src/msi/db_write.c",
     "src/msi/lint.c",

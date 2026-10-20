@@ -141,6 +141,9 @@ msgstr "Το {1} περιέχει LANGID (1..65535), π.χ. 1041"
 msgid "%s holds strings"
 msgstr "Το {1} περιέχει συμβολοσειρές"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "το {1} είναι μια λίστα κειμένων \"Κλειδί=Τιμή\""
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "Το {1} είναι όνομα γραμματοσειράς 1 έως 31 χαρακτήρων, π.χ. \"Segoe UI\" (δόθηκε {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} αρχεία, {3} σφάλματα, 0 προειδοποιήσ�
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: {2} ακόμη διαγνωστικά δεν εμφανίζονται\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: το '{2}' δεν είναι τυπική ενέργεια που τοποθετεί το rubrapack"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: το αρχείο '{2}' δεν είναι [file.*] αυτού του πακέτου"
@@ -807,9 +813,41 @@ msgstr "Το [Content_Types].xml δεν είναι η τελευταία κατ�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Οι πίνακες πινάκων [[...]] δεν υποστηρίζονται· δώστε σε κάθε στοιχείο το δικό του [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "το [action.{1}] τοποθετείται μία φορά: before, after ή sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "Το [action.{1}] χρειάζεται και do και undo (το undo αναιρεί επίσης ένα αποτυχημένο do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "το [action.{1}] χρειάζεται entry: τη συνάρτηση της DLL προς κλήση"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "το [action.{1}] χρειάζεται run = \"file:<ID>\": το πρόγραμμα που εκτελούν τα do και undo"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "το [action.{1}] εκτελεί ένα πράγμα: run (ένα exe), dll (μια εγκατεστημένη DLL) ή binary (μια DLL στο πακέτο)· ή do και undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: το {2} είναι για μία ενέργεια, όχι για ζεύγος do/undo"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: μια αναβαλλόμενη ενέργεια που εκτελεί εγκατεστημένο αρχείο πρέπει να είναι μετά το InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: μια άμεση ενέργεια εκτελείται ως ο χρήστης που εγκαθιστά· το as είναι για τις άλλες φάσεις"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: τα args είναι ενός προγράμματος· μια DLL παίρνει data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: το check πάει με ζεύγος do/undo"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: το data είναι για αναβαλλόμενη, commit ή rollback ενέργεια (μια άμεση διαβάζει ιδιότητες)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: το entry είναι συνάρτηση μιας DLL· το run παίρνει args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: τα args για MSIX πρέπει να είναι απλό κείμενο (χωρίς [...] που συμπληρώνεται στην εγκατάσταση)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: ένα MSIX ορίζει όλες τις μεταβλητές
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: η τιμή του ονομάζει θέση που ένα MSIX δεν μπορεί να δώσει (φάκελο εκτός πακέτου που δεν είναι φάκελος των Windows, ή μέρος που ορίζεται στην εγκατάσταση)· χρησιμοποιήστε msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "το [file.{1}] είναι ήδη στον φάκελο του προγράμματός του· το isolate-for είναι για κοινόχρηστη DLL εγκατεστημένη αλλού"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "Το [file.{1}] βρίσκεται στο προφίλ του χρήστη και έχει component-guid: η διαδρομή κλειδιού του μένει το αρχείο, ενώ οι κανόνες των Windows θέλουν εκεί μια τιμή HKCU (ICE38)· αφαιρέστε το component-guid για να την αποκτήσει"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}· ή msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "το [move.{1}] χρειάζεται feature (ή with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: το feature πάει με δικό του στοιχείο, όχι με το with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: το new-name ονομάζει ένα αρχείο· το name έχει χαρακτήρες μπαλαντέρ"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: τα args πρέπει να είναι απλό κείμενο (χωρίς [...] που συμπληρώνεται στην εγκατάσταση)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: το types είναι λίστα τύπων αρχ
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': τα Windows δέχονται μόνο γράμματα και ψηφία"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: το αρχείο '{2}' δεν είναι DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "το [odbc-source.{1}] ονομάζει το πρόγραμμα οδήγησής του μία φορά: driver (ένα [odbc-driver]) ή driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "το [odbc-source.{1}] με driver-name χρειάζεται with = \"file:<ID>\": το στοιχείο με το οποίο εγκαθίσταται"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: ένα πακέτο ανά υπολογιστή καταχωρεί προελεύσεις δεδομένων για τον υπολογιστή"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] ονομάζει ένα αντίγραφο: msix (με publisher) ή upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "πίνακες μέσα σε πίνακες δεν υποστηρίζο�
 msgid "arrays must hold only strings or only integers"
 msgstr "οι πίνακες πρέπει να περιέχουν μόνο συμβολοσειρές ή μόνο ακεραίους"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "το as πρέπει να είναι \"system\" ή \"user\" (δόθηκε '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "το πολύ {1} γλώσσες εκτός από τα αγγλικά"
 
@@ -1735,6 +1800,9 @@ msgstr "τα ορίσματα do/undo είναι μεγαλύτερα από 255
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "κλειδιά με τελείες δεν υποστηρίζονται· βάλτε το κλειδί στον δικό του πίνακα"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "το πρόγραμμα οδήγησης '{1}' δεν είναι [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "απόρριψη πακέτου (πίνακες MSI ως IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "δεν είναι σύνθετο αρχείο"
 
 msgid "is not valid UTF-8"
 msgstr "δεν είναι έγκυρο UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: το '{1}' δεν είναι πρόγραμμα (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "κρατήστε τον κωδικό αναβάθμισης, αυξήστε την έκδοση, κρατήστε τους κωδικούς στοιχείων των αρχείων που μένουν"
@@ -2353,6 +2424,9 @@ msgstr "το perceived-type πρέπει να είναι \"image\", \"text\", \"
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "τα δικαιώματα χρειάζονται scope = \"machine\" (αυτό είναι {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "το phase πρέπει να είναι \"immediate\", \"deferred\", \"commit\" ή \"rollback\" (δόθηκε '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "το ports πρέπει να είναι θύρα ή εύρος όπως \"8000-8100\" μέσα στο 1-65535 (δόθηκε '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "το refuse-upgrade-message χρειάζεται refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "η περιοχή {1} της σελίδας γλωσσών έχει {2} γλώσσες, το πολύ {3} (X-Rubrapack-Group των πακέτων τους)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "το registration πρέπει να είναι \"machine\" ή \"user\" (δόθηκε '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "το registry '{1}' αφαιρεί μια τιμή· δεν έχει τίποτα να προστατεύσει"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: λίγες ερωτήσεις φτιάχνουν την �
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "εκτελέστε `rubrapack help <command>`· ελέγξτε τις διαδρομές και ότι υπάρχει ο φάκελος εξόδου"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "το run πρέπει να είναι \"file:<ID>\" που ονομάζει ένα [file.*] αυτού του πακέτου"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: το '{1}' (μηχάνημα 0x{2}) δεν μπορεί να εκτελεστεί στα μηχανήματα αυτού του πακέτου"
@@ -2961,6 +3036,9 @@ msgstr "πάρα πολλά πακέτα στη δέσμη"
 
 msgid "trusted"
 msgstr "αξιόπιστο"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "δύο ενέργειες μοιράζονται την sequence {1} ({2} και {3})· δώστε σε μια [action] άλλη sequence, before ή after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "δύο πακέτα της ίδιας αρχιτεκτονικής σε δέσμη"

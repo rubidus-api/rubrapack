@@ -141,6 +141,9 @@ msgstr "{1} chứa LANGID (1..65535), như 1041"
 msgid "%s holds strings"
 msgstr "{1} chứa chuỗi"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} là danh sách các văn bản \"Khóa=Giá trị\""
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} là tên phông dài 1 đến 31 ký tự, như \"Segoe UI\" (nhận được {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} tệp, {3} lỗi, 0 cảnh báo\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: còn {2} chẩn đoán không được hiển thị\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' không phải là hành động chuẩn mà rubrapack đặt"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: tệp '{2}' không phải [file.*] của gói này"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml không phải mục cuối cùng (không phải gói
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Không hỗ trợ mảng bảng [[...]]; hãy cho mỗi mục một [kind.ID] riêng"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] được đặt một lần: before, after hoặc sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] cần cả do và undo (undo cũng hoàn tác do bị lỗi)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] cần entry: hàm DLL cần gọi"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] cần run = \"file:<ID>\": chương trình mà do và undo chạy"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] chạy một thứ: run (exe), dll (DLL đã cài) hoặc binary (DLL trong gói); hoặc do và undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} dành cho một hành động, không phải cặp do/undo"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: hành động hoãn lại chạy một tệp đã cài phải nằm sau InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: hành động tức thời chạy với tư cách người dùng cài đặt; as dành cho các pha khác"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args thuộc về chương trình; DLL nhận data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check đi với cặp do/undo"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data dành cho hành động hoãn lại, commit hoặc rollback (hành động tức thời đọc thuộc tính)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry là hàm của một DLL; run nhận args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args cho MSIX phải là văn bản thuần (không có [...] điền lúc cài đặt)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX đặt mọi biến của nó (when); hãy dùng msi-onl
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: giá trị của nó nêu một nơi mà MSIX không thể cung cấp (thư mục ngoài gói không phải thư mục Windows, hoặc phần xác định lúc cài đặt); hãy dùng msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] đã ở trong thư mục chương trình của nó; isolate-for dành cho DLL dùng chung cài ở nơi khác"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] nằm trong hồ sơ người dùng và có component-guid: đường dẫn khóa vẫn là tệp, trong khi quy tắc của Windows muốn một giá trị HKCU ở đó (ICE38); bỏ component-guid để có giá trị đó"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; hoặc msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] cần feature (hoặc with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature đi với thành phần riêng, không phải với with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name nêu một tệp; name có ký tự đại diện"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args phải là văn bản thuần (không có [...] điền lúc cài đặt)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types là danh sách loại tệp, như [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows chỉ nhận chữ cái và chữ số"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: tệp '{2}' không phải là DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] nêu trình điều khiển của nó một lần: driver (một [odbc-driver]) hoặc driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] với driver-name cần with = \"file:<ID>\": thành phần mà nó được cài cùng"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: gói theo máy đăng ký nguồn dữ liệu cho máy"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] chỉ một bản: msix (kèm publisher) hoặc upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "không hỗ trợ mảng lồng trong mảng"
 msgid "arrays must hold only strings or only integers"
 msgstr "mảng chỉ được chứa toàn chuỗi hoặc toàn số nguyên"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as phải là \"system\" hoặc \"user\" (nhận được '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "tối đa {1} ngôn ngữ ngoài tiếng Anh"
 
@@ -1735,6 +1800,9 @@ msgstr "đối số do/undo dài hơn 255 ký tự"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "không hỗ trợ khóa có dấu chấm; hãy đặt khóa vào bảng riêng của nó"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "trình điều khiển '{1}' không phải là [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "xuất nội dung gói (bảng MSI dạng IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "không phải tệp phức hợp"
 
 msgid "is not valid UTF-8"
 msgstr "không phải UTF-8 hợp lệ"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' không phải là chương trình (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "giữ mã nâng cấp, tăng phiên bản, giữ mã thành phần của các tệp còn ở lại"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type phải là \"image\", \"text\", \"audio\", \"video\", \"c
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "quyền cần scope = \"machine\" (đây là {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase phải là \"immediate\", \"deferred\", \"commit\" hoặc \"rollback\" (nhận được '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports phải là một cổng hoặc dải như \"8000-8100\" trong 1-65535 (nhận được '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message cần refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "vùng {1} của trang ngôn ngữ có {2} ngôn ngữ, tối đa {3} (X-Rubrapack-Group của các gói)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration phải là \"machine\" hoặc \"user\" (nhận được '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' xóa một giá trị; nó không có gì để bảo vệ"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: vài câu hỏi tạo ra nguồn (Enter lấy giá trị 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "chạy `rubrapack help <command>`; kiểm tra đường dẫn và việc thư mục đầu ra có tồn tại"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run phải là \"file:<ID>\" chỉ tới một [file.*] của gói này"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (máy 0x{2}) không chạy được trên các máy của gói này"
@@ -2961,6 +3036,9 @@ msgstr "quá nhiều gói trong bó"
 
 msgid "trusted"
 msgstr "đáng tin cậy"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "hai hành động dùng chung sequence {1} ({2} và {3}); hãy cho một [action] sequence khác, before hoặc after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "hai gói cùng kiến trúc trong một bó"

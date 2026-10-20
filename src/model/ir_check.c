@@ -540,6 +540,7 @@ static void menu_values(ctx_t *c) {
 void ir_class_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     menu_checks(c);
+    ir_more_checks(c);
     // [other-copy.*]: the preflight looks; this product's own upgrade code is its own upgrade.
     for (size_t k = 0; k < ir->other_count; ++k) {
         const rp_ir_other_t *x = &ir->others[k];
@@ -1264,6 +1265,7 @@ void ir_cross_checks(ctx_t *c) {
             ERR(c, sc->pos, "RP1315", "working-dir '%s' is not a dir ID", sc->working_dir);
         }
     }
+    ir_more_pe_checks(c);
     // Actions: run names an exe of this package that the package's machines can start.
     for (size_t k = 0; k < ir->action_count; ++k) {
         const rp_ir_action_t *a = &ir->actions[k];
@@ -1288,6 +1290,7 @@ void ir_cross_checks(ctx_t *c) {
             if (strcmp(ir->actions[j].id, a->id) == 0) ERR(c, a->pos, "RP1301", "action '%s' is already defined", a->id);
         }
     }
+    ir_action_checks(c);
 
     for (size_t a = 0; folded && a < nf; ++a) {
         for (size_t b = a + 1; b < nf; ++b) {

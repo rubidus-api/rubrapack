@@ -106,6 +106,15 @@ void ir_parse_com(ctx_t *c, const rp_ttable_t *t, rp_ir_com_t *x);
 void ir_parse_handler(ctx_t *c, const rp_ttable_t *t, rp_ir_handler_t *x);
 void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x);
 void ir_parse_other(ctx_t *c, const rp_ttable_t *t, rp_ir_other_t *x);
+// ir_more.c (RFC-0031 wave 1)
+void ir_parse_move(ctx_t *c, const rp_ttable_t *t, rp_ir_move_t *x);
+void ir_parse_odbc_driver(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_driver_t *x);
+void ir_parse_odbc_source(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_source_t *x);
+void ir_parse_publish(ctx_t *c, const rp_ttable_t *t, rp_ir_publish_t *x);
+void ir_action_checks(ctx_t *c);
+void ir_more_checks(ctx_t *c);
+void ir_more_pe_checks(ctx_t *c);
+void ir_more_free(rp_ir_t *ir, proven_allocator_t a);
 void ir_menu_files(ctx_t *c);
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x);
 void ir_parse_env(ctx_t *c, const rp_ttable_t *t, rp_ir_env_t *e);

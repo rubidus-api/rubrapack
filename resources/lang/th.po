@@ -141,6 +141,9 @@ msgstr "{1} เก็บ LANGID (1..65535) เช่น 1041"
 msgid "%s holds strings"
 msgstr "{1} เก็บสตริง"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} เป็นรายการข้อความ \"คีย์=ค่า\""
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} เป็นชื่อแบบอักษรยาว 1 ถึง 31 อักขระ เช่น \"Segoe UI\" (ได้ {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} ไฟล์, ข้อผิดพลาด {3}, คำเต�
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ยังมีข้อความวินิจฉัยอีก {2} รายการที่ไม่ได้แสดง\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' ไม่ใช่การกระทำมาตรฐานที่ rubrapack วาง"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: ไฟล์ '{2}' ไม่ใช่ [file.*] ของแพ็กเกจนี้"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml ไม่ใช่รายการสุดท้�
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "ไม่รองรับอาร์เรย์ของตาราง [[...]] ให้แต่ละรายการมี [kind.ID] ของตัวเอง"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] วางหนึ่งครั้ง: before, after หรือ sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] ต้องมีทั้ง do และ undo (undo ใช้ย้อน do ที่ล้มเหลวด้วย)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] ต้องมี entry: ฟังก์ชัน DLL ที่จะเรียก"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] ต้องมี run = \"file:<ID>\": โปรแกรมที่ do และ undo รัน"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] รันสิ่งเดียว: run (ไฟล์ exe), dll (DLL ที่ติดตั้ง) หรือ binary (DLL ในแพ็กเกจ); หรือ do และ undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} ใช้กับการกระทำเดียว ไม่ใช่คู่ do/undo"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: การกระทำที่เลื่อนออกไปซึ่งรันไฟล์ที่ติดตั้งแล้วต้องอยู่หลัง InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: การกระทำทันทีจะรันในฐานะผู้ใช้ที่ติดตั้ง; as ใช้กับเฟสอื่น"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args เป็นของโปรแกรม; DLL รับ data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check ไปกับคู่ do/undo"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data ใช้กับการกระทำที่เลื่อนออกไป, commit หรือ rollback (การกระทำทันทีจะอ่านคุณสมบัติ)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry เป็นฟังก์ชันของ DLL; run รับ args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args สำหรับ MSIX ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX ตั้งค่าตัวแปรทั้งห�
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: ค่าของมันระบุตำแหน่งที่ MSIX ให้ไม่ได้ (โฟลเดอร์นอกแพ็กเกจที่ไม่ใช่โฟลเดอร์ของ Windows หรือส่วนที่กำหนดตอนติดตั้ง) ใช้ msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] อยู่ในโฟลเดอร์ของโปรแกรมตัวเองแล้ว; isolate-for ใช้กับ DLL ที่ใช้ร่วมกันซึ่งติดตั้งไว้ที่อื่น"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] อยู่ในโปรไฟล์ผู้ใช้และมี component-guid: คีย์พาธยังคงเป็นไฟล์ ขณะที่กฎของ Windows ต้องการค่า HKCU ที่นั่น (ICE38) ให้เอา component-guid ออกเพื่อให้ได้ค่านั้น"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3} หรือ msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] ต้องมี feature (หรือ with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature ไปกับคอมโพเนนต์ของตัวเอง ไม่ใช่กับ with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name ระบุไฟล์เดียว; name มีอักขระแทน"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types เป็นรายการชนิด�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows รับเฉพาะตัวอักษรและตัวเลข"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: ไฟล์ '{2}' ไม่ใช่ DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] ระบุไดรเวอร์ของตนหนึ่งครั้ง: driver (หนึ่ง [odbc-driver]) หรือ driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] ที่มี driver-name ต้องมี with = \"file:<ID>\": คอมโพเนนต์ที่ติดตั้งไปด้วยกัน"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: แพ็กเกจต่อเครื่องจะลงทะเบียนแหล่งข้อมูลให้กับเครื่อง"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] ระบุสำเนาหนึ่งชุด: msix (พร้อม publisher) หรือ upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "ไม่รองรับอาร์เรย์ซ้อนในอ
 msgid "arrays must hold only strings or only integers"
 msgstr "อาร์เรย์ต้องมีเฉพาะสตริงหรือเฉพาะจำนวนเต็ม"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as ต้องเป็น \"system\" หรือ \"user\" (ได้รับ '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "นอกจากภาษาอังกฤษแล้วมีได้ไม่เกิน {1} ภาษา"
 
@@ -1735,6 +1800,9 @@ msgstr "อาร์กิวเมนต์ do/undo ยาวเกิน 255 �
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "ไม่รองรับคีย์แบบมีจุด ให้ใส่คีย์ในตารางของมันเอง"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "ไดรเวอร์ '{1}' ไม่ใช่ [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "ถ่ายข้อมูลแพ็กเกจ (ตาราง MSI เป็น IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "ไม่ใช่ compound file"
 
 msgid "is not valid UTF-8"
 msgstr "ไม่ใช่ UTF-8 ที่ถูกต้อง"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' ไม่ใช่โปรแกรม (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "คงรหัสอัปเกรดไว้ เพิ่มเวอร์ชัน และคงรหัสคอมโพเนนต์ของไฟล์ที่ยังอยู่"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type ต้องเป็น \"image\", \"text\", \"audio\", 
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "สิทธิ์ต้องใช้ scope = \"machine\" (อันนี้เป็น {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase ต้องเป็น \"immediate\", \"deferred\", \"commit\" หรือ \"rollback\" (ได้รับ '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports ต้องเป็นพอร์ตหรือช่วงเช่น \"8000-8100\" ภายใน 1-65535 (ได้ '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message ต้องมี refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "ภูมิภาค {1} ของหน้าภาษามี {2} ภาษา ได้ไม่เกิน {3} (X-Rubrapack-Group ของแพ็ก)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration ต้องเป็น \"machine\" หรือ \"user\" (ได้รับ '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "รีจิสทรี '{1}' ลบค่า จึงไม่มีอะไรต้องปกป้อง"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: คำถามไม่กี่ข้อจะสร้
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "เรียก `rubrapack help <command>` ตรวจพาธและตรวจว่ามีโฟลเดอร์ผลลัพธ์อยู่"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (เครื่อง 0x{2}) ทำงานบนเครื่องของแพ็กเกจนี้ไม่ได้"
@@ -2961,6 +3036,9 @@ msgstr "แพ็กเกจในบันเดิลมากเกินไ
 
 msgid "trusted"
 msgstr "เชื่อถือได้"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "สองการกระทำใช้ sequence {1} ร่วมกัน ({2} และ {3}); กำหนดให้ [action] หนึ่งมี sequence อื่น, before หรือ after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "มีแพ็กเกจสถาปัตยกรรมเดียวกันสองแพ็กเกจในบันเดิล"

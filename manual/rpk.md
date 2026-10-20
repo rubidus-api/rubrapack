@@ -223,12 +223,12 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
-| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when |
+| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when, isolate-for (`file:ID` of an `.exe`: a private copy of this DLL beside that program, MSI only) |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
 | `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`), logo (a `.png`: 8-bit RGB or RGBA, at most 1024 pixels a side; the menu package's logos) - how the product shows in Installed apps |
 | `[property.ID]` | **value**, secure, hidden - an upper-case public property |
-| `[action.ID]` | **run** (`file:ID` of an `.exe` in this package), **do**, **undo**, check (exits 0 when what `do` made is there; for the report after a failed rollback) |
+| `[action.ID]` | a do/undo pair: **run** (`file:ID` of an `.exe`), **do**, **undo**, check (exits 0 when what `do` made is there; for the report after a failed rollback). Or one action: **run** with args, or **dll** (`file:ID` of an installed `.dll`) or **binary** (a `.dll` in the package) with **entry**; phase (`immediate`, `deferred` default, `commit`, `rollback`), as (`system`, `user`), when, data, before / after (a standard action) or sequence, ignore-exit. See [Running a program or DLL](#running-a-program-or-dll-actionid) |
 | `[registry.ID]` | **root** (`HKLM`, `HKCU`, `HKCR`, `HKMU`), **key**, name, value, type, remove, on (with `remove`: `install`, or `uninstall` - the whole key at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), keep, view, with, feature, when |
 | `[remove.ID]` | **dir**, name (`*` and `?`; omitted = the folder itself), **on** (`install`, `uninstall`, `both`), upgrade (`false`: not when an upgrade removes this version), recursive (`true`: the folder with everything in it, at removal), users (`all`: every user's, see [Every user's](#every-users-users--all)), feature |
 | `[ini.ID]` | **dir**, **file**, **section**, **key**, value, mode (`set`, `add`, `remove`), feature, when |
@@ -245,6 +245,10 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[permission.ID]` | **target** (`dir:ID`, `file:ID`, `registry:ID`), **sddl** |
 | `[env.ID]` | **name**, **value**, mode (`set`, `append`, `prepend`), keep, feature, when |
 | `[copy.ID]` | **source** (`file:ID`), **dir**, name (default: the source's name) |
+| `[move.ID]` | **from** (a dir ID, or `property:NAME`), **name** (wildcards), **to** (a dir ID), new-name, copy (`true`: the source stays), with (`file:ID`) or feature - files moved or copied at installation. MSI only |
+| `[odbc-driver.ID]` | **file** (`file:ID` of the driver `.dll`), **description**, setup (`file:ID` of its setup `.dll`), attributes (`["Key=Value", ...]`) - an ODBC driver. MSI only |
+| `[odbc-source.ID]` | **driver** (an `[odbc-driver]` ID) or **driver-name** (with **with**), **name**, registration (`machine`, `user`), attributes - an ODBC data source. MSI only |
+| `[publish.ID]` | **file** (`file:ID`: its component is published), **category** (`{GUID}`), **qualifier**, data - a component other programs find with `MsiProvideQualifiedComponent`. MSI only |
 | `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module); in an MSIX its files and registry values only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
 | `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), details (default `true`: the progress page shows what is being done), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
@@ -431,6 +435,46 @@ check = "--status"        # exits 0 when what --register made is there
 After the undoing, `check` should exit 0 when the product was there before (an upgrade, a repair, a
 removal) and not 0 after a first installation that failed. When everything is as it was, nothing is
 written. `check` is a formatted string (`[INSTALLDIR]` is the install folder).
+
+### Running a program or DLL: a single `[action.ID]`
+
+Besides the do/undo pair above, one `[action.*]` runs one thing once:
+
+```toml
+[action.Warm]
+run = "file:MainExe"       # an .exe this package installs
+args = "--warm-cache"      # a formatted string ([INSTALLDIR] and the like are filled in)
+phase = "deferred"         # immediate | deferred (default) | commit | rollback
+when = "NOT Installed"     # a condition (optional)
+before = "InstallFinalize" # where it goes: before / after a standard action, or sequence = <n>
+
+[action.Ping]
+dll = "file:HelperDll"     # a .dll this package installs
+entry = "PingServer"       # the function to call
+phase = "deferred"
+
+[action.Clean]
+binary = "clean.dll"       # a .dll carried in the package, not installed
+entry = "CleanUp"
+phase = "commit"
+as = "system"              # system | user (a per-machine package's deferred actions are SYSTEM by default)
+data = "[INSTALLDIR]"      # what the deferred DLL reads as its CustomActionData (a formatted string)
+```
+
+- One of `run` (an exe), `dll` (an installed DLL) or `binary` (a DLL in the package, in the Binary
+  table). An exe takes `args`; a DLL takes `entry` (its function) and, when deferred, `data`.
+- `phase`: an **immediate** action runs while the install is still being worked out (it may read
+  and set properties, and runs as the installing user); a **deferred** one runs during the install
+  with the changes it makes; a **commit** one after the install has succeeded; a **rollback** one
+  when the install is undone. Only a deferred, commit or rollback action takes `as` and `data`.
+- `as`: who a deferred action runs as. A per-machine package runs them as SYSTEM, a per-user one as
+  the user; `as = "user"` keeps a per-machine action as the installing user, `as = "system"` (a
+  per-machine package only) makes one SYSTEM.
+- Placement: `before` or `after` a standard action (`InstallFiles`, `WriteRegistryValues`,
+  `InstallFinalize`, ...), or `sequence = <number>`. A deferred action that runs an installed file
+  must come after `InstallFiles` (its number is above 4000). Two actions may not land on one number.
+- `ignore-exit = true`: the install goes on whatever the action returns. By default a non-zero exit
+  (or a DLL that returns failure) fails the install.
 
 ### Registry values: `[registry.ID]`
 
@@ -746,6 +790,44 @@ application, with the capability `packagedServices`, and `localSystemServices` f
 `display-name` and `description` are not used there, and the service starts by `start`, not by
 `start-on-install`. It needs `min-version = "10.0.19041.0"` or later (`RP1614`). Removing the
 package stops and removes the service; firewall rules go with the package too.
+
+### Moving files, ODBC, published components
+
+These tables have no MSIX counterpart; in an MSIX build they are left out.
+
+```toml
+[move.OldLogs]
+from = "LegacyDir"        # a dir ID, or property:NAME (a folder a [search] found)
+name = "*.log"            # the files, wildcards allowed
+to = "LogsDir"            # a dir ID of this package
+# new-name = "one.log"    # one file renamed (no wildcards); copy = true keeps the source
+
+[odbc-driver.Mydb]
+file = "file:DriverDll"
+description = "My Database Driver"
+attributes = ["APILevel=2", "ConnectFunctions=YYN"]
+
+[odbc-source.Sample]
+driver = "Mydb"           # or driver-name = "..." with = "file:ID" for a driver installed otherwise
+name = "My Sample Data"
+attributes = ["Description=a sample data source"]
+
+[publish.Plugin]
+file = "file:PluginDll"   # the DLL's component is published
+category = "{8D1E2F30-...}"
+qualifier = "image/png"
+```
+
+- `[move.*]` moves (or, with `copy = true`, copies) files at installation. With `with = "file:ID"`
+  the moved files belong to that file's component; otherwise the move gets a component of its own in
+  the destination folder (name the `feature` when the package has more than one).
+- `[odbc-driver.*]` registers an ODBC driver, `[odbc-source.*]` a data source of it. `attributes`
+  are the ODBC key-value pairs. A per-machine package registers data sources for the machine, a
+  per-user one for the user (`registration` overrides).
+- `[publish.*]` publishes a component so other programs find it by category and qualifier with
+  `MsiProvideQualifiedComponent`.
+- `isolate-for` on a `[file.*]` DLL puts a private copy of it beside the named program, so that
+  program loads its own version (Windows' side-by-side isolation).
 
 ### Removing and copying: `[remove.ID]`, `[copy.ID]`
 

@@ -141,6 +141,9 @@ msgstr "{1} inneholder LANGID-er (1..65535), som 1041"
 msgid "%s holds strings"
 msgstr "{1} inneholder strenger"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} er en liste med \"Nøkkel=Verdi\"-tekster"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} er et skriftnavn på 1 til 31 tegn, som \"Segoe UI\" (fikk {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} filer, {3} feil, 0 advarsler\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ytterligere {2} diagnoser vises ikke\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' er ikke en standardhandling som rubrapack plasserer"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: filen '{2}' er ikke en [file.*] i denne pakken"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml er ikke den siste oppføringen (ikke en pakke rubrap
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]]-matriser av tabeller støttes ikke; gi hvert element sin egen [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] plasseres én gang: before, after eller sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] trenger både do og undo (undo ruller også tilbake en mislykket do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] trenger entry: DLL-funksjonen som skal kalles"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] trenger run = \"file:<ID>\": programmet som do og undo kjører"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] kjører én ting: run (en exe), dll (en installert DLL) eller binary (en DLL i pakken); eller do og undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} er for én handling, ikke for et do/undo-par"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: en utsatt handling som kjører en installert fil må komme etter InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: en umiddelbar handling kjører som brukeren som installerer; as er for de andre fasene"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args hører til et program; en DLL får data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check hører til et do/undo-par"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data er for en utsatt, commit- eller rollback-handling (en umiddelbar leser egenskaper)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry er funksjonen til en DLL; run tar args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args for en MSIX må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: en MSIX setter alle variablene sine (when); bruk msi-only = t
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: verdien navngir et sted en MSIX ikke kan gi (en mappe utenfor pakken som ikke er en Windows-mappe, eller en del fra installasjonstiden); bruk msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] er allerede i mappen til programmet sitt; isolate-for er for en delt DLL installert et annet sted"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ligger i brukerprofilen og har component-guid: nøkkelbanen forblir filen, der Windows-reglene vil ha en HKCU-verdi (ICE38); fjern component-guid for å få en"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; eller msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] trenger feature (eller with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature hører til en egen komponent, ikke til with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name angir én fil; name har jokertegn"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types er en liste med filtyper, som [\".txt\", \"*
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows tar bare bokstaver og sifre"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: filen '{2}' er ikke en DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] angir driveren sin én gang: driver (en [odbc-driver]) eller driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] med driver-name trenger with = \"file:<ID>\": komponenten den installeres med"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: en pakke per maskin registrerer datakilder for maskinen"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] viser til én kopi: msix (med publisher) eller upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "matriser i matriser støttes ikke"
 msgid "arrays must hold only strings or only integers"
 msgstr "matriser kan bare inneholde strenger eller bare heltall"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as må være \"system\" eller \"user\" (fikk '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "høyst {1} språk i tillegg til engelsk"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo-argumentene er lengre enn 255 tegn"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "nøkler med punktum støttes ikke; legg nøkkelen i en egen tabell"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "driveren '{1}' er ikke en [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "dump en pakke (MSI-tabeller som IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "er ikke en sammensatt fil"
 
 msgid "is not valid UTF-8"
 msgstr "er ikke gyldig UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' er ikke et program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "behold oppgraderingskoden, øk versjonen, behold komponentkodene for filer som blir"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type må være \"image\", \"text\", \"audio\", \"video\", \"co
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "tillatelser trenger scope = \"machine\" (denne er {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase må være \"immediate\", \"deferred\", \"commit\" eller \"rollback\" (fikk '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports må være en port eller et område som \"8000-8100\" innenfor 1-65535 (fikk '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message trenger refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "region {1} på språksiden har {2} språk, høyst {3} (X-Rubrapack-Group i pakkene deres)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration må være \"machine\" eller \"user\" (fikk '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registeret '{1}' fjerner en verdi; det har ingenting å beskytte"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: noen få spørsmål lager kilden (Enter tar verdien i [ ]
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "kjør `rubrapack help <kommando>`; kontroller banene og at utdatamappen finnes"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (maskin 0x{2}) kan ikke kjøre på denne pakkens maskiner"
@@ -2961,6 +3036,9 @@ msgstr "for mange pakker i samlingen"
 
 msgid "trusted"
 msgstr "klarert"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "to handlinger deler sequence {1} ({2} og {3}); gi en [action] en annen sequence, before eller after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "to pakker med samme arkitektur i en samling"

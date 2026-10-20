@@ -141,6 +141,9 @@ msgstr "{1} vsebuje LANGID-e (1..65535), npr. 1041"
 msgid "%s holds strings"
 msgstr "{1} vsebuje nize"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} je seznam besedil \"Ključ=Vrednost\""
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} je ime pisave z 1 do 31 znaki, npr. \"Segoe UI\" (dobljeno {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} datotek, {3} napak, 0 opozoril\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: še {2} diagnostik ni prikazanih\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' ni standardno dejanje, ki ga postavi rubrapack"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: datoteka '{2}' ni [file.*] tega paketa"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml ni zadnji vnos (ni paket, ki ga je zapisal rubrapack
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "Polja tabel [[...]] niso podprta; vsakemu elementu dajte lasten [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] se postavi enkrat: before, after ali sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] potrebuje do in undo (undo tudi razveljavi neuspeli do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] potrebuje entry: funkcijo DLL za klic"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] potrebuje run = \"file:<ID>\": program, ki ga zaženeta do in undo"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] zažene eno stvar: run (exe), dll (nameščena DLL) ali binary (DLL v paketu); ali do in undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} je za eno dejanje, ne za par do/undo"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: odloženo dejanje, ki zažene nameščeno datoteko, mora biti za InstallFiles (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: takojšnje dejanje teče kot uporabnik, ki namešča; as je za druge faze"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args pripadajo programu; DLL dobi data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check gre s parom do/undo"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data je za odloženo, commit ali rollback dejanje (takojšnje bere lastnosti)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry je funkcija knjižnice DLL; run vzame args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: args za MSIX morajo biti navadno besedilo (brez [...], izpolnjenih ob namestitvi)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX nastavi vse svoje spremenljivke (when); uporabite msi-on
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: njegova vrednost navaja mesto, ki ga MSIX ne more dati (mapo zunaj paketa, ki ni mapa sistema Windows, ali del iz časa namestitve); uporabite msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] je že v mapi svojega programa; isolate-for je za skupno knjižnico DLL, nameščeno drugje"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] je v uporabniškem profilu in ima component-guid: pot ključa ostane datoteka, pravila sistema Windows pa tam zahtevajo vrednost HKCU (ICE38); izpustite component-guid, da jo dobite"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; ali msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] potrebuje feature (ali with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature gre z lastno komponento, ne z with"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name določa eno datoteko; name ima nadomestne znake"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args morajo biti navadno besedilo (brez [...], izpolnjenih ob namestitvi)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types je seznam vrst datotek, npr. [\".txt\", \"*\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows sprejme le črke in števke"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: datoteka '{2}' ni knjižnica DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] svoj gonilnik določi enkrat: driver (en [odbc-driver]) ali driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] z driver-name potrebuje with = \"file:<ID>\": komponento, s katero se namesti"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: paket za računalnik registrira podatkovne vire za računalnik"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] navaja eno kopijo: msix (s publisher) ali upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "polja v poljih niso podprta"
 msgid "arrays must hold only strings or only integers"
 msgstr "polja morajo vsebovati le nize ali le cela števila"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as mora biti \"system\" ali \"user\" (prejeto '{1}')"
+
 msgid "at most %d languages besides English"
 msgstr "največ {1} jezikov poleg angleščine"
 
@@ -1735,6 +1800,9 @@ msgstr "argumenti do/undo so daljši od 255 znakov"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "ključi s pikami niso podprti; ključ postavite v lastno tabelo"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "gonilnik '{1}' ni [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "izpis paketa (tabele MSI kot IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "ni sestavljena datoteka"
 
 msgid "is not valid UTF-8"
 msgstr "ni veljaven UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' ni program (.exe)"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "obdržite kodo nadgradnje, zvišajte različico, obdržite kode komponent datotek, ki ostanejo"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type mora biti \"image\", \"text\", \"audio\", \"video\", \"co
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "dovoljenja potrebujejo scope = \"machine\" (to je {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase mora biti \"immediate\", \"deferred\", \"commit\" ali \"rollback\" (prejeto '{1}')"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports mora biti vrata ali obseg kot \"8000-8100\" znotraj 1-65535 (dobljeno '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message potrebuje refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "regija {1} strani z jeziki ima {2} jezikov, največ {3} (X-Rubrapack-Group njihovih paketov)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration mora biti \"machine\" ali \"user\" (prejeto '{1}')"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "register '{1}' odstrani vrednost; nima česa varovati"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: nekaj vprašanj ustvari vir (Enter vzame vrednost v [ ]).
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "zaženite `rubrapack help <command>`; preverite poti in ali izhodna mapa obstaja"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run mora biti \"file:<ID>\", ki poimenuje [file.*] tega paketa"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (stroj 0x{2}) ne more teči na strojih tega paketa"
@@ -2961,6 +3036,9 @@ msgstr "preveč paketov v svežnju"
 
 msgid "trusted"
 msgstr "zaupanja vredno"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "dve dejanji si delita sequence {1} ({2} in {3}); dajte enemu [action] drugo sequence, before ali after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "dva paketa iste arhitekture v svežnju"

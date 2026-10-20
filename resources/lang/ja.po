@@ -141,6 +141,9 @@ msgstr "{1} には 1041 のような LANGID (1..65535) を書きます"
 msgid "%s holds strings"
 msgstr "{1} には文字列を書きます"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} は \"Key=Value\" テキストのリストです"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} は 1 から 31 文字の書体名です (\"Segoe UI\" など。{2} 文字でした)"
 
@@ -218,6 +221,9 @@ msgstr "{1}: ファイル {2} 個、エラー {3} 件、警告 0 件\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ほかに {2} 件の診断を表示していません\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' は rubrapack が置く標準アクションではありません"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: ファイル '{2}' はこのパッケージの [file.*] ではありません"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml が最後の項目ではありません (rubrapack �
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] のテーブル配列には対応していません。項目ごとに [kind.ID] を書いてください"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] は 1 回だけ配置します: before、after または sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] には do と undo の両方が必要です (undo は失敗した do も元に戻します)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] には entry が必要です: 呼び出す DLL の関数"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] には run = \"file:<ID>\" が必要です: do と undo が実行するプログラム"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] は 1 つを実行します: run(exe)、dll(インストール済み DLL)、binary(パッケージ内の DLL)。または do と undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} は単一アクション用で、do/undo のペア用ではありません"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: インストールされたファイルを実行する遅延アクションは InstallFiles の後に置きます(sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: 即時アクションはインストールするユーザーで動きます。as は他の phase 用です"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args はプログラムのものです。DLL は data を取ります"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check は do/undo のペアと一緒に使います"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data は deferred・commit・rollback のアクション用です(即時アクションはプロパティを読みます)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry は DLL の関数です。run は args を取ります"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX の args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX はすべての変数を設定します (when)。msi-onl
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 値が MSIX では与えられない場所 (Windows のフォルダーではないパッケージ外のフォルダー、またはインストール時に決まる部分) を指しています。msi-only = true を使ってください"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] はすでに自分のプログラムのフォルダーにあります。isolate-for は別の場所にインストールされる共有 DLL 用です"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] はユーザー プロファイルにあり、component-guid が指定されています。キー パスはファイルのままですが、Windows の規則はそこに HKCU 値を求めます (ICE38)。HKCU 値にするには component-guid を外してください"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}。または msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] には feature が必要です(または with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature は自分のコンポーネントと一緒に使います。with と一緒ではありません"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name はファイル 1 つを指します。name にワイルドカードがあります"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types は [\".txt\", \"*\"] のようなファイ�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows は英字と数字だけを受け付けます"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: ファイル '{2}' は DLL ではありません"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] はドライバーを 1 つ指定します: driver([odbc-driver])か driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] は driver-name とともに with = \"file:<ID>\" が必要です: 一緒にインストールされるコンポーネント"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: マシン単位のパッケージはデータソースをマシン用に登録します"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] はコピーを 1 つ指します: msix (publisher と一緒に) か upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "配列の中の配列には対応していません"
 msgid "arrays must hold only strings or only integers"
 msgstr "配列には文字列だけか整数だけを入れます"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as は \"system\" か \"user\" です('{1}' でした)"
+
 msgid "at most %d languages besides English"
 msgstr "英語のほかの言語は {1} 個までです"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo の引数が 255 文字を超えています"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "ドット付きのキーには対応していません。キーは専用のテーブルに置いてください"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "ドライバー '{1}' は [odbc-driver.*] ではありません"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "パッケージをダンプします (MSI テーブルを IDT で)"
 
@@ -2001,6 +2069,9 @@ msgstr "複合ファイルではありません"
 
 msgid "is not valid UTF-8"
 msgstr "有効な UTF-8 ではありません"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' はプログラム(.exe)ではありません"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "アップグレード コードはそのまま、バージョンは上げ、残るファイルのコンポーネント コードはそのままにしてください"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type は \"image\"、\"text\"、\"audio\"、\"video\"、\"comp
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "アクセス許可には scope = \"machine\" が必要です (これは {1} です)"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase は \"immediate\"、\"deferred\"、\"commit\"、\"rollback\" のいずれかです('{1}' でした)"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports は 1-65535 の範囲のポートか、\"8000-8100\" のような範囲でなければなりません ('{1}' でした)"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message には refuse-upgrade-below が必要です"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "言語ページの地域 {1} に言語が {2} 個あります。{3} 個までです(パックの X-Rubrapack-Group)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration は \"machine\" か \"user\" です('{1}' でした)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' は値を削除します。保護するものはありません"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: いくつかの質問でソースを作ります (Enter �
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` を実行してください。パスと出力フォルダーがあるかを確認してください"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (マシン 0x{2}) はこのパッケージのマシンでは実行できません"
@@ -2961,6 +3036,9 @@ msgstr "バンドルのパッケージが多すぎます"
 
 msgid "trusted"
 msgstr "信頼済み"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "アクション 2 つが sequence {1} を共有しています({2} と {3})。いずれかの [action] に別の sequence か before、after を指定してください"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "バンドルに同じアーキテクチャのパッケージが 2 つあります"

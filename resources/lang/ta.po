@@ -141,6 +141,9 @@ msgstr "{1} LANGID களைக் கொண்டுள்ளது (1..65535),
 msgid "%s holds strings"
 msgstr "{1} சரங்களைக் கொண்டுள்ளது"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} என்பது \"விசை=மதிப்பு\" உரைகளின் பட்டியல்"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} என்பது 1 முதல் 31 எழுத்துகள் கொண்ட எழுத்துருப் பெயர், எ.கா. \"Segoe UI\" ({2} கிடைத்தது)"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} கோப்புகள், {3} பிழைகள், 0 எ�
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: மேலும் {2} கண்டறிதல்கள் காட்டப்படவில்லை\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}: '{2}' என்பது rubrapack வைக்கும் நிலையான செயல் அல்ல"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: '{2}' கோப்பு இந்தத் தொகுப்பின் [file.*] அல்ல"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml கடைசி உள்ளீடு அல்ல (
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "[[...]] அட்டவணை அணிகள் ஆதரிக்கப்படவில்லை; ஒவ்வொரு உருப்படிக்கும் அதன் சொந்த [kind.ID] ஐக் கொடுக்கவும்"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] ஒருமுறை வைக்கப்படுகிறது: before, after அல்லது sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] க்கு do மற்றும் undo இரண்டும் தேவை (undo தோல்வியடைந்த do ஐயும் திரும்பப்பெறும்)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}]-க்கு entry தேவை: அழைக்கப்படும் DLL செயற்கூறு"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}]-க்கு run = \"file:<ID>\" தேவை: do மற்றும் undo இயக்கும் நிரல்"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] ஒன்றை இயக்குகிறது: run (ஒரு exe), dll (நிறுவப்பட்ட DLL) அல்லது binary (தொகுப்பில் உள்ள DLL); அல்லது do மற்றும் undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} ஒரு செயலுக்கானது, do/undo இணைக்கு அல்ல"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: நிறுவப்பட்ட கோப்பை இயக்கும் தாமதப்படுத்தப்பட்ட செயல் InstallFiles-க்குப் பிறகு இருக்க வேண்டும் (sequence > 4000)"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: உடனடி செயல் நிறுவும் பயனராக இயங்குகிறது; as மற்ற கட்டங்களுக்கானது"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args நிரலுக்குரியவை; DLL data பெறுகிறது"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check do/undo இணையுடன் செல்கிறது"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data என்பது தாமதப்படுத்தப்பட்ட, commit அல்லது rollback செயலுக்கானது (உடனடி செயல் பண்புகளைப் படிக்கிறது)"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry என்பது DLL-இன் செயற்கூறு; run args எடுக்கிறது"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX க்கான args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: ஒரு MSIX தன் எல்லா மாறிகள�
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: அதன் மதிப்பு MSIX கொடுக்க முடியாத இடத்தைக் குறிப்பிடுகிறது (தொகுப்புக்கு வெளியே Windows கோப்புறை அல்லாத கோப்புறை, அல்லது நிறுவல் நேரப் பகுதி); msi-only = true பயன்படுத்தவும்"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] ஏற்கெனவே தன் நிரலின் கோப்புறையில் உள்ளது; isolate-for என்பது வேறு இடத்தில் நிறுவப்படும் பகிரப்பட்ட DLL-க்கானது"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] பயனர் சுயவிவரத்தில் உள்ளது, அதற்கு component-guid உள்ளது: அதன் விசைப் பாதை கோப்பாகவே இருக்கும், ஆனால் Windows விதிகள் அங்கே HKCU மதிப்பை வேண்டுகின்றன (ICE38); அதைப் பெற component-guid ஐ நீக்கவும்"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}; அல்லது msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}]-க்கு feature தேவை (அல்லது with = \"file:<ID>\")"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature தன் கூறுடன் செல்கிறது, with உடன் அல்ல"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name ஒரு கோப்பைக் குறிக்கிறது; name-இல் வைல்டுகார்டுகள் உள்ளன"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types என்பது கோப்பு வக
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows எழுத்துகளையும் எண்களையும் மட்டுமே ஏற்கும்"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: கோப்பு '{2}' DLL அல்ல"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] தன் இயக்கியை ஒருமுறை குறிக்கிறது: driver (ஒரு [odbc-driver]) அல்லது driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] driver-name உடன் with = \"file:<ID>\" தேவை: எந்தக் கூறுடன் நிறுவப்படுகிறதோ அது"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: ஒரு கணினிக்கான தொகுப்பு தரவு மூலங்களை கணினிக்காகப் பதிவு செய்கிறது"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] ஒரு நகலைக் குறிக்கும்: msix (publisher உடன்) அல்லது upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "அணிகளுக்குள் அணிகள் ஆதரிக�
 msgid "arrays must hold only strings or only integers"
 msgstr "அணிகளில் சரங்கள் மட்டும் அல்லது முழு எண்கள் மட்டும் இருக்க வேண்டும்"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as \"system\" அல்லது \"user\" ஆக இருக்க வேண்டும் ('{1}' பெறப்பட்டது)"
+
 msgid "at most %d languages besides English"
 msgstr "ஆங்கிலம் தவிர அதிகபட்சம் {1} மொழிகள்"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo அளவுருக்கள் 255 எழுத்துக�
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "புள்ளியிட்ட விசைகள் ஆதரிக்கப்படவில்லை; விசையை அதன் சொந்த அட்டவணையில் வைக்கவும்"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "இயக்கி '{1}' என்பது [odbc-driver.*] அல்ல"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "ஒரு தொகுப்பை வெளியிடு (MSI அட்டவணைகள் IDT ஆக)"
 
@@ -2001,6 +2069,9 @@ msgstr "கூட்டுக் கோப்பு அல்ல"
 
 msgid "is not valid UTF-8"
 msgstr "சரியான UTF-8 அல்ல"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' நிரல் (.exe) அல்ல"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "மேம்படுத்தல் குறியீட்டை வைத்திருக்கவும், பதிப்பை உயர்த்தவும், தங்கும் கோப்புகளின் கூறு குறியீடுகளை வைத்திருக்கவும்"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type \"image\", \"text\", \"audio\", \"video\", \"compressed\"
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "அனுமதிகளுக்கு scope = \"machine\" தேவை (இது {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase \"immediate\", \"deferred\", \"commit\" அல்லது \"rollback\" ஆக இருக்க வேண்டும் ('{1}' பெறப்பட்டது)"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports ஒரு துறை அல்லது 1-65535 க்குள் \"8000-8100\" போன்ற வரம்பாக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message க்கு refuse-upgrade-below தேவை"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "மொழிப் பக்கத்தின் பகுதி {1} இல் {2} மொழிகள் உள்ளன, அதிகபட்சம் {3} (தொகுப்புகளின் X-Rubrapack-Group)"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration \"machine\" அல்லது \"user\" ஆக இருக்க வேண்டும் ('{1}' பெறப்பட்டது)"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "பதிவேடு '{1}' ஒரு மதிப்பை அகற்றும்; அதற்குப் பாதுகாக்க எதுவும் இல்லை"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: சில கேள்விகள் மூலத்த�
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "`rubrapack help <command>` ஐ இயக்கவும்; பாதைகளையும் வெளியீட்டுக் கோப்புறை உள்ளதா என்பதையும் சரிபார்க்கவும்"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}' (கணினி 0x{2}) இந்தத் தொகுப்பின் கணினிகளில் இயங்க முடியாது"
@@ -2961,6 +3036,9 @@ msgstr "தொகுதியில் மிக அதிகத் தொகு
 
 msgid "trusted"
 msgstr "நம்பகமானது"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "இரண்டு செயல்கள் ஒரே sequence {1} ஐப் பகிர்கின்றன ({2} மற்றும் {3}); ஒரு [action]-க்கு வேறு sequence, before அல்லது after கொடுக்கவும்"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "தொகுதியில் ஒரே கட்டமைப்பின் இரண்டு தொகுப்புகள்"

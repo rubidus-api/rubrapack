@@ -141,6 +141,9 @@ msgstr "{1} 应为 LANGID(1..65535)，如 1041"
 msgid "%s holds strings"
 msgstr "{1} 应为字符串"
 
+msgid "%s is a list of \"Key=Value\" texts"
+msgstr "{1} 是 \"Key=Value\" 文本的列表"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 是 1 到 31 个字符的字体名称，如 \"Segoe UI\"(实际为 {2})"
 
@@ -218,6 +221,9 @@ msgstr "{1}: {2} 个文件，{3} 个错误，0 个警告\n"
 
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: 另有 {2} 条诊断未显示\n"
+
+msgid "%s: '%s' is not a standard action rubrapack places"
+msgstr "{1}：'{2}' 不是 rubrapack 放置的标准操作"
 
 msgid "%s: file '%s' is not a [file.*] of this package"
 msgstr "{1}: 文件 '{2}' 不是此安装包的 [file.*]"
@@ -807,9 +813,41 @@ msgstr "[Content_Types].xml 不是最后一个条目(不是 rubrapack 或 Window
 msgid "[[...]] arrays of tables are not supported; give each item its own [kind.ID]"
 msgstr "不支持 [[...]] 表数组；请为每一项单独写 [kind.ID]"
 
+msgid "[action.%s] is placed once: before, after or sequence"
+msgstr "[action.{1}] 只放置一次：before、after 或 sequence"
 
 msgid "[action.%s] needs both do and undo (the undo also rolls back a failed do)"
 msgstr "[action.{1}] 需要 do 和 undo(undo 也会回滚失败的 do)"
+
+msgid "[action.%s] needs entry: the DLL's function to call"
+msgstr "[action.{1}] 需要 entry：要调用的 DLL 函数"
+
+msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
+msgstr "[action.{1}] 需要 run = \"file:<ID>\"：do 和 undo 运行的程序"
+
+msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
+msgstr "[action.{1}] 运行一件事：run（exe）、dll（已安装的 DLL）或 binary（包中的 DLL）；或 do 和 undo"
+
+msgid "[action.%s]: %s is for a single action, not a do/undo pair"
+msgstr "[action.{1}]: {2} 用于单个操作，而不是 do/undo 对"
+
+msgid "[action.%s]: a deferred action that runs an installed file must be after InstallFiles (sequence > 4000)"
+msgstr "[action.{1}]: 运行已安装文件的延迟操作必须在 InstallFiles 之后（sequence > 4000）"
+
+msgid "[action.%s]: an immediate action runs as the user who installs; as is for the other phases"
+msgstr "[action.{1}]: 立即操作以安装用户身份运行；as 用于其他 phase"
+
+msgid "[action.%s]: args are a program's; a DLL gets data"
+msgstr "[action.{1}]: args 是程序的；DLL 取 data"
+
+msgid "[action.%s]: check goes with a do/undo pair"
+msgstr "[action.{1}]: check 与 do/undo 对一起使用"
+
+msgid "[action.%s]: data is for a deferred, commit or rollback action (an immediate one reads properties)"
+msgstr "[action.{1}]: data 用于 deferred、commit 或 rollback 操作（立即操作读取属性）"
+
+msgid "[action.%s]: entry is a DLL's function; run takes args"
+msgstr "[action.{1}]: entry 是 DLL 的函数；run 取 args"
 
 msgid "[assoc.%s]: args for an MSIX must be plain text (no [...] filled in at install)"
 msgstr "[assoc.{1}]: MSIX 的 args 必须是纯文本(不能有安装时填入的 [...])"
@@ -885,6 +923,9 @@ msgstr "[env.{1}]: MSIX 会设置其所有变量(when)；请使用 msi-only = tr
 
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 其值指向 MSIX 无法提供的位置(不是 Windows 文件夹的包外文件夹，或安装时才确定的部分)；请使用 msi-only = true"
+
+msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
+msgstr "[file.{1}] 已在它自己程序的文件夹中；isolate-for 用于安装在别处的共享 DLL"
 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] 位于用户配置文件中且指定了 component-guid：其键路径仍为该文件，而 Windows 规则要求此处使用 HKCU 值 (ICE38)；去掉 component-guid 即可获得"
@@ -1000,6 +1041,15 @@ msgstr "[merge.{1}]: '{2}' {3}"
 msgid "[merge.%s]: '%s' %s; or msi-only = true"
 msgstr "[merge.{1}]: '{2}' {3}；或设置 msi-only = true"
 
+msgid "[move.%s] needs a feature (or with = \"file:<ID>\")"
+msgstr "[move.{1}] 需要 feature（或 with = \"file:<ID>\"）"
+
+msgid "[move.%s]: feature goes with a component of its own, not with"
+msgstr "[move.{1}]: feature 与自己的组件一起使用，而不是与 with 一起"
+
+msgid "[move.%s]: new-name names one file; name has wildcards"
+msgstr "[move.{1}]: new-name 指定一个文件；name 含有通配符"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args 必须是纯文本(不能有安装时填入的 [...])"
 
@@ -1017,6 +1067,18 @@ msgstr "[msix-extension.{1}]: types 是文件类型列表，如 [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 只接受字母和数字"
+
+msgid "[odbc-driver.%s]: file '%s' is not a DLL"
+msgstr "[odbc-driver.{1}]: 文件 '{2}' 不是 DLL"
+
+msgid "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name"
+msgstr "[odbc-source.{1}] 只指定一个驱动程序：driver（一个 [odbc-driver]）或 driver-name"
+
+msgid "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with"
+msgstr "[odbc-source.{1}] 用 driver-name 时需要 with = \"file:<ID>\"：随它一起安装的组件"
+
+msgid "[odbc-source.%s]: a per-machine package registers data sources for the machine"
+msgstr "[odbc-source.{1}]: 按计算机安装的包为计算机注册数据源"
 
 msgid "[other-copy.%s] names one copy: msix (with publisher) or upgrade-code"
 msgstr "[other-copy.{1}] 指明一份副本：msix（带 publisher）或 upgrade-code"
@@ -1462,6 +1524,9 @@ msgstr "不支持数组嵌套数组"
 msgid "arrays must hold only strings or only integers"
 msgstr "数组只能包含字符串或只能包含整数"
 
+msgid "as must be \"system\" or \"user\" (got '%s')"
+msgstr "as 必须是 \"system\" 或 \"user\"（得到 '{1}'）"
+
 msgid "at most %d languages besides English"
 msgstr "除英语外最多 {1} 种语言"
 
@@ -1735,6 +1800,9 @@ msgstr "do/undo 参数超过 255 个字符"
 msgid "dotted keys are not supported; put the key in its own table"
 msgstr "不支持带点的键；请将该键放到它自己的表中"
 
+msgid "driver '%s' is not an [odbc-driver.*]"
+msgstr "驱动程序 '{1}' 不是 [odbc-driver.*]"
+
 msgid "dump a package (MSI tables as IDT)"
 msgstr "转储安装包(MSI 表为 IDT)"
 
@@ -2001,6 +2069,9 @@ msgstr "不是复合文件"
 
 msgid "is not valid UTF-8"
 msgstr "不是有效的 UTF-8"
+
+msgid "isolate-for: '%s' is not a program (.exe)"
+msgstr "isolate-for: '{1}' 不是程序（.exe）"
 
 msgid "keep the upgrade code, raise the version, keep component codes of files that stay"
 msgstr "保持升级代码不变，提高版本号，保留仍存在文件的组件代码"
@@ -2353,6 +2424,9 @@ msgstr "perceived-type 必须是 \"image\"、\"text\"、\"audio\"、\"video\"、
 msgid "permissions need scope = \"machine\" (this is %s)"
 msgstr "权限需要 scope = \"machine\"(当前为 {1})"
 
+msgid "phase must be \"immediate\", \"deferred\", \"commit\" or \"rollback\" (got '%s')"
+msgstr "phase 必须是 \"immediate\"、\"deferred\"、\"commit\" 或 \"rollback\"（得到 '{1}'）"
+
 msgid "ports must be a port or a range like \"8000-8100\" within 1-65535 (got '%s')"
 msgstr "ports 必须是 1-65535 内的端口或范围，如 \"8000-8100\"(实际为 '{1}')"
 
@@ -2449,6 +2523,9 @@ msgstr "refuse-upgrade-message 需要 refuse-upgrade-below"
 msgid "region %d of the language page holds %zu languages, at most %d (X-Rubrapack-Group of their packs)"
 msgstr "语言页面的区域 {1} 有 {2} 种语言，最多 {3} 种（语言包的 X-Rubrapack-Group）"
 
+msgid "registration must be \"machine\" or \"user\" (got '%s')"
+msgstr "registration 必须是 \"machine\" 或 \"user\"（得到 '{1}'）"
+
 msgid "registry '%s' removes a value; it has nothing to protect"
 msgstr "registry '{1}' 删除一个值；没有需要保护的内容"
 
@@ -2497,8 +2574,6 @@ msgstr "rubrapack new: 回答几个问题即可生成源文件(按 Enter 采用 
 msgid "run `rubrapack help <command>`; check the paths and that the output folder exists"
 msgstr "请运行 `rubrapack help <command>`；检查路径以及输出文件夹是否存在"
 
-msgid "run must be \"file:<ID>\" naming a [file.*] of this package"
-msgstr "run 必须是指向此安装包中 [file.*] 的 \"file:<ID>\""
 
 msgid "run: '%s' (machine 0x%04X) cannot run on this package's machines"
 msgstr "run: '{1}'(机器 0x{2})无法在此安装包的机器上运行"
@@ -2961,6 +3036,9 @@ msgstr "捆绑包中的包过多"
 
 msgid "trusted"
 msgstr "受信任"
+
+msgid "two actions share sequence %d (%.*s and %.*s); give an [action] a different sequence, before or after"
+msgstr "两个操作共用 sequence {1}（{2} 和 {3}）；请给某个 [action] 另一个 sequence 或 before、after"
 
 msgid "two packages of one architecture in a bundle"
 msgstr "捆绑包中有两个同一体系结构的包"
