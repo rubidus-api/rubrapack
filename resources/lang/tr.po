@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: bir MSIX'in Başlat menüsü girdisi kendi uygulamasıd�
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: hiçbir iletişim kutusu metninin bu kimliği yok"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui], [package] içinde ui = \"basic\" ya da başka bir iletişim kutusu takımı gerektirir"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded bir MSI içindir; bir MSIX'in kendi kurulum arabirimi yoktur"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] için [package] içinde ui = \"basic\" veya başka bir iletişim kutusu kümesi gerekir (veya embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} kaçış dizisi bir Unicode skaler değeri değil"
@@ -1826,6 +1829,9 @@ msgstr "bir paketin dökümünü alır (IDT olarak MSI tabloları)"
 
 msgid "duplicate primary key"
 msgstr "yinelenen birincil anahtar"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded bir .dll dosyası olmalı (yazarın arabirim işleyicisi)"
 
 msgid "empty arrays are not supported"
 msgstr "boş diziler desteklenmez"

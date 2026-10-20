@@ -251,7 +251,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[publish.ID]` | **file** (`file:ID`: its component is published), **category** (`{GUID}`), **qualifier**, data - a component other programs find with `MsiProvideQualifiedComponent`. MSI only |
 | `[merge.ID]` | **source** (an `.msm` merge module), **dir** (where the module's own root goes), feature, config (`["Name=value", ...]` for a configurable module); in an MSIX its files and registry values only |
 | `[module]` | **name** (the module's ID: letters, digits, `_`; at most 35), **manufacturer**, **version**, **arch**, **id** (the module's GUID, kept in every version), language (`neutral` default, `en-US`, `ko-KR`), compress (`none`, `mszip`, `mszip:0`..`mszip:9`) - in place of `[package]`: a merge module, see [Writing a merge module](#writing-a-merge-module-module) |
-| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), details (default `true`: the progress page shows what is being done), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
+| `[ui]` | install-dir (a dir ID; default `INSTALLDIR`), banner (`.bmp`), launch (`file:ID`), launch-args, launch-checked, save-log (default `true`), details (default `true`: the progress page shows what is being done), embedded (a `.dll`: the author's own UI handler, MSI only), languages (added to English, e.g. `["ko"]`), license-xx, name-xx, font-xx, langid-xx - see [Several languages](#several-languages) |
 | `[ui-text.ID]` | **text** or text-xx - replaces one built-in dialog text |
 | `[dialog.ID]` | **after** (a built-in page or another `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image (`.bmp`, bitmap only), text-xx, labels-xx |
@@ -1296,6 +1296,13 @@ page; a language without them gets English), `DirGuardText` (the guard's message
 the maintenance page's Remove, or `REMOVE=ALL` - `RemovalProgressTitle`, `RemovalExitTitle`,
 `RemovalExitText`, `RemovalUserExitTitle`, `RemovalUserExitText`, `RemovalFatalTitle`,
 `RemovalFatalText` (another language that does not give these uses its install texts). In button texts `&` marks the access key (`&Next` is Alt+N).
+
+`embedded = "ui.dll"` carries the author's own UI handler (a DLL exporting `InitializeEmbeddedUI`,
+`EmbeddedUIHandler` and `ShutdownEmbeddedUI`) in the package; Windows runs it for the interactive
+installation in place of rubrapack's dialogs, so it may be given with `ui = "none"`. It is bypassed
+for a silent installation (`/qn`) and when another program drives the UI from outside - as the
+chained `setup.exe` does - so a chained package should not rely on its window. An embedded UI is for
+an MSI; an MSIX has no installer UI of its own and refuses it (`RP1605`).
 
 ### Several languages
 

@@ -1190,8 +1190,11 @@ msgstr "[shortcut.{1}]: إدخال قائمة ابدأ في MSIX هو تطبيق
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: لا يوجد نص حوار بهذا المعرّف"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "يحتاج [ui] إلى ui = \"basic\" أو مجموعة حوار أخرى في [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded مخصص لـ MSI؛ لا تملك حزمة MSIX واجهة تثبيت خاصة بها"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "يحتاج [ui] إلى ui = \"basic\" أو مجموعة حوارات أخرى في [package] (أو embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "تسلسل الهروب \\{1} ليس قيمة Unicode قياسية"
@@ -1828,6 +1831,9 @@ msgstr "تفريغ حزمة (جداول MSI بصيغة IDT)"
 
 msgid "duplicate primary key"
 msgstr "مفتاح أساسي مكرر"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "يجب أن يكون embedded ملف ‎.dll (معالج واجهة المؤلف)"
 
 msgid "empty arrays are not supported"
 msgstr "المصفوفات الفارغة غير مدعومة"

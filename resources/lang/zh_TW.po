@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX 的「開始」功能表項就是其應用程式，
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: 沒有此 ID 的對話方塊文字"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] 需要 [package] 中的 ui = \"basic\" 或其他對話方塊集"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded 用於 MSI；MSIX 沒有自己的安裝程式 UI"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] 需要 [package] 中的 ui = \"basic\" 或另一個對話方塊集（或 embedded = \"....dll\"）"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} 轉義不是 Unicode 標量值"
@@ -1826,6 +1829,9 @@ msgstr "轉儲安裝套件(MSI 表為 IDT)"
 
 msgid "duplicate primary key"
 msgstr "主鍵重複"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded 必須是 .dll 檔案（作者的 UI 處理常式）"
 
 msgid "empty arrays are not supported"
 msgstr "不支援空陣列"

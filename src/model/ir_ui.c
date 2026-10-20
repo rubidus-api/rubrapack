@@ -625,10 +625,19 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     ir->ui_details = ir->ui != 0 && (uit == NULL || ir_get_bool(c, uit, "details", true));
     ui_languages(c, uit);
     if (uit == NULL) return;
-    static const char *const keys[] = { "banner", "install-dir", "languages", "launch", "launch-args", "launch-checked", "save-log", "details", NULL },
+    static const char *const keys[] = { "banner", "install-dir", "languages", "launch", "launch-args", "launch-checked", "save-log", "details", "embedded", NULL },
                              *const lkeys[] = { "name", "font", "langid", "license", NULL };
     ir_check_keys_lang(c, uit, keys, lkeys);
-    if (ir->ui == 0) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package]");
+    // RFC-0031 B11: an author's own UI DLL (MsiEmbeddedUI). It is the whole interactive UI, so it is
+    // allowed with ui = "none" (no rubrapack dialogs); the DLL's bytes are carried in the package.
+    char *embedded = ir_get_str(c, uit, "embedded", false, NULL);
+    if (embedded) {
+        if (!ends_with_ci(embedded, ".dll")) ERR(c, ir_key_pos(uit, "embedded"), "RP1316", "embedded must be a .dll file (the author's UI handler)");
+        else ir->ui_embedded_source = ui_source(c, embedded, ir_key_pos(uit, "embedded"));
+        ir->ui_embedded_shown = ir_dup(c, embedded);
+        rp_mem_free(c->alloc, embedded);
+    }
+    if (ir->ui == 0 && ir->ui_embedded_source == NULL) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")");
     char *banner = ir_get_str(c, uit, "banner", false, NULL);
     if (banner) {
         if (!ends_with_ci(banner, ".bmp")) ERR(c, ir_key_pos(uit, "banner"), "RP1316", "banner must be a .bmp file (Windows Installer shows BMP only)");

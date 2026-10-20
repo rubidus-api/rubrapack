@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX izvēlnes Sākt ieraksts ir tā lietotne, kas nepie
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: nevienam dialoga tekstam nav šī ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] nepieciešams ui = \"basic\" vai cits dialogu komplekts [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded ir paredzēts MSI; MSIX nav savas instalētāja saskarnes"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] nepieciešams ui = \"basic\" vai cits dialogu kopums [package] (vai embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "atsoļa secība \\{1} nav Unicode skalārā vērtība"
@@ -1826,6 +1829,9 @@ msgstr "pakotnes izdruka (MSI tabulas kā IDT)"
 
 msgid "duplicate primary key"
 msgstr "dublēta primārā atslēga"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded jābūt .dll failam (autora saskarnes apstrādātājs)"
 
 msgid "empty arrays are not supported"
 msgstr "tukši masīvi netiek atbalstīti"

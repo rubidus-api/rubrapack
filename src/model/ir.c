@@ -785,7 +785,8 @@ void rp_ir_free(rp_ir_t *ir) {
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->billboards);
-    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args };
+    char *us[] = { ir->license_source, ir->license_shown, ir->banner_source, ir->ui_install_dir, ir->ui_launch_file, ir->ui_launch_args,
+                   ir->ui_embedded_source, ir->ui_embedded_shown };
     for (size_t k = 0; k < sizeof us / sizeof us[0]; ++k) rp_mem_free(a, us[k]);
     rp_mem_free(a, ir->removes);
     rp_mem_free(a, ir->copies);

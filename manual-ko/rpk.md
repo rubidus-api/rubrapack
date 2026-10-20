@@ -240,7 +240,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[publish.ID]` | **file**(`file:ID`: 그 구성 요소를 게시), **category**(`{GUID}`), **qualifier**, data - 다른 프로그램이 `MsiProvideQualifiedComponent` 로 찾는 구성 요소. MSI 전용 |
 | `[merge.ID]` | **source**(`.msm` 병합 모듈), **dir**(모듈의 뿌리 폴더가 갈 곳), feature, config(설정할 수 있는 모듈에 `["이름=값", ...]`). MSIX 에서는 파일과 레지스트리 값만 |
 | `[module]` | **name**(모듈의 ID: 영문자·숫자·`_`, 35자 이내), **manufacturer**, **version**, **arch**, **id**(모듈의 GUID, 모든 판에서 그대로), language(기본 `neutral`, `en-US`, `ko-KR`), compress(`none`, `mszip`, `mszip:0`..`mszip:9`) - `[package]` 대신: 병합 모듈, [병합 모듈 만들기](#병합-모듈-만들기-module) 참고 |
-| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), details(기본 `true`: 진행 페이지가 하는 일을 보인다), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
+| `[ui]` | install-dir(dir ID; 기본 `INSTALLDIR`), banner(`.bmp`), launch(`file:ID`), launch-args, launch-checked, save-log(기본 `true`), details(기본 `true`: 진행 페이지가 하는 일을 보인다), embedded(`.dll`: 작성자 자신의 UI 처리기, MSI 전용), languages(영어에 덧붙일 언어, 예 `["ko"]`), license-xx, name-xx, font-xx, langid-xx - [여러 언어](#여러-언어) 참고 |
 | `[ui-text.ID]` | **text** 또는 text-xx - 내장 대화창 문구 하나를 바꾼다 |
 | `[dialog.ID]` | **after**(내장 페이지 또는 다른 `[dialog.*]`), title, description, title-xx, description-xx |
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image(`.bmp`, bitmap 전용), text-xx, labels-xx |
@@ -1185,6 +1185,12 @@ text = "This will install [ProductName]. Close other programs first."
 주지 않는 다른 언어는 설치 문구를 쓴다).
 단추 문구에서 `&` 는 바로 가기 키를
 표시한다(`&Next` 는 Alt+N).
+
+`embedded = "ui.dll"` 은 작성자 자신의 UI 처리기(`InitializeEmbeddedUI`, `EmbeddedUIHandler`,
+`ShutdownEmbeddedUI` 를 내보내는 DLL)를 패키지에 담는다. Windows 가 대화형 설치에서 rubrapack 의 대화창
+대신 그것을 돌리므로 `ui = "none"` 과 함께 줄 수 있다. 조용한 설치(`/qn`)와 밖에서 다른 프로그램이 UI 를
+모는 경우(체인의 `setup.exe` 처럼)에는 건너뛴다. 그래서 체인 패키지는 그 창에 기대면 안 된다. 내장 UI 는
+MSI 를 위한 것이다. MSIX 는 자체 설치 UI 가 없어 거절한다(`RP1605`).
 
 ### 여러 언어
 

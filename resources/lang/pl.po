@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: wpis menu Start w MSIX to jego aplikacja, która nie prz
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: żaden tekst okna dialogowego nie ma tego identyfikatora"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] wymaga ui = \"basic\" lub innego zestawu okien w [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded jest dla MSI; MSIX nie ma własnego interfejsu instalatora"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] wymaga ui = \"basic\" lub innego zestawu okien w [package] (albo embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "sekwencja ucieczki \\{1} nie jest wartością skalarną Unicode"
@@ -1826,6 +1829,9 @@ msgstr "zrzuć pakiet (tabele MSI jako IDT)"
 
 msgid "duplicate primary key"
 msgstr "zduplikowany klucz podstawowy"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded musi być plikiem .dll (procedura obsługi interfejsu autora)"
 
 msgid "empty arrays are not supported"
 msgstr "puste tablice nie są obsługiwane"

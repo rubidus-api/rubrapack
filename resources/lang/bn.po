@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: একটি MSIX-এর স্টার্ট মেন
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: কোনো ডায়ালগ লেখার এই ID নেই"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui]-এর জন্য [package]-এ ui = \"basic\" বা অন্য ডায়ালগ সেট দরকার"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded MSI-এর জন্য; MSIX-এর নিজস্ব ইনস্টলার UI নেই"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui]-এর জন্য [package]-এ ui = \"basic\" বা অন্য একটি ডায়ালগ সেট প্রয়োজন (বা embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} এস্কেপ একটি ইউনিকোড স্কেলার মান নয়"
@@ -1826,6 +1829,9 @@ msgstr "একটি প্যাকেজ ডাম্প করুন (MSI ট
 
 msgid "duplicate primary key"
 msgstr "পুনরাবৃত্ত প্রাথমিক কী"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded অবশ্যই একটি .dll ফাইল হতে হবে (লেখকের UI হ্যান্ডলার)"
 
 msgid "empty arrays are not supported"
 msgstr "খালি অ্যারে সমর্থিত নয়"

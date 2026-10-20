@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: az MSIX Start menü-bejegyzése az alkalmazása, amely n
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: egyetlen párbeszédpanel-szövegnek sincs ilyen azonosítója"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "a [ui] igényli: ui = \"basic\" vagy más párbeszédkészlet a [package] táblában"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "a(z) [ui] embedded MSI-hez való; egy MSIX-nek nincs saját telepítőfelülete"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "a(z) [ui] a [package] ui = \"basic\" vagy más párbeszédkészletét igényli (vagy embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "a(z) \\{1} escape-szekvencia nem Unicode skalárérték"
@@ -1826,6 +1829,9 @@ msgstr "csomag kiírása (MSI táblák IDT formában)"
 
 msgid "duplicate primary key"
 msgstr "ismétlődő elsődleges kulcs"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "az embedded .dll fájl kell legyen (a szerző felületkezelője)"
 
 msgid "empty arrays are not supported"
 msgstr "az üres tömbök nem támogatottak"

@@ -46,6 +46,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "license", ir->license_shown);
         kv(&b, "install-dir", ir->ui_install_dir);
     }
+    if (ir->ui_embedded_shown) kv(&b, "embedded-ui", ir->ui_embedded_shown);
     if (ir->cab_external || ir->cab_max) {
         kv(&b, "cab", ir->cab_external ? "external" : "embed");
         snprintf(num, sizeof num, "%llu", (unsigned long long)(ir->cab_max >> 20));

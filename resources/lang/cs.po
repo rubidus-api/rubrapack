@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: položka nabídky Start v MSIX je jeho aplikace, která 
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: žádný text dialogu nemá toto ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] potřebuje ui = \"basic\" nebo jinou sadu dialogů v [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded je pro MSI; MSIX nemá vlastní uživatelské rozhraní instalátoru"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] vyžaduje ui = \"basic\" nebo jinou sadu dialogů v [package] (nebo embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "escape sekvence \\{1} není skalární hodnota Unicode"
@@ -1826,6 +1829,9 @@ msgstr "vypíše balíček (tabulky MSI jako IDT)"
 
 msgid "duplicate primary key"
 msgstr "duplicitní primární klíč"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded musí být soubor .dll (obslužná rutina uživatelského rozhraní autora)"
 
 msgid "empty arrays are not supported"
 msgstr "prázdná pole nejsou podporována"

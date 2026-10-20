@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: запис меню \"Пуск\" у MSIX - це його
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: жоден текст діалогового вікна не має цього ідентифікатора"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] потребує ui = \"basic\" або іншого набору діалогових вікон у [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded призначено для MSI; MSIX не має власного інтерфейсу встановлення"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] потребує ui = \"basic\" або інший набір діалогів у [package] (або embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "escape-послідовність \\{1} не є скалярним значенням Unicode"
@@ -1826,6 +1829,9 @@ msgstr "вивантажити пакет (таблиці MSI як IDT)"
 
 msgid "duplicate primary key"
 msgstr "повторюваний первинний ключ"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded має бути файлом .dll (обробник інтерфейсу автора)"
 
 msgid "empty arrays are not supported"
 msgstr "порожні масиви не підтримуються"

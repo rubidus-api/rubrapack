@@ -1190,8 +1190,11 @@ msgstr "[shortcut.{1}]: ورودی منوی شروع یک MSIX برنامه آن
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: هیچ متن گفتگویی این ID را ندارد"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] به ui = \"basic\" یا مجموعه گفتگوی دیگری در [package] نیاز دارد"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "‏[ui] embedded برای MSI است؛ یک MSIX رابط نصب‌کنندهٔ خاص خود را ندارد"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "‏[ui] به ui = \"basic\" یا مجموعهٔ گفت‌وگوی دیگری در [package] نیاز دارد (یا embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "دنباله گریز \\{1} یک مقدار اسکالر یونیکد نیست"
@@ -1828,6 +1831,9 @@ msgstr "تخلیه یک بسته (جدول‌های MSI به صورت IDT)"
 
 msgid "duplicate primary key"
 msgstr "کلید اصلی تکراری"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded باید یک پروندهٔ ‎.dll باشد (مدیریت‌کنندهٔ رابط کاربری نویسنده)"
 
 msgid "empty arrays are not supported"
 msgstr "آرایه‌های خالی پشتیبانی نمی‌شوند"

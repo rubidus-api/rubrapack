@@ -228,6 +228,19 @@ order = 1
 한 feature 의 빌보드 여럿은 그 feature 가 설치되는 동안 `order` 순서로 돌아가며 바뀐다. 빌보드는 MSI 의
 것이다. MSIX 는 한 번에 설치하므로 거절한다.
 
+## 나만의 UI DLL: `[ui] embedded`
+
+설치 UI 전체를 DLL 로 짰다면 `embedded` 로 이름을 주면 rubrapack 이 패키지에 담는다. Windows 가 이
+대화창들 대신 그것을 돌린다(그래서 `ui = "none"` 으로 둘 수 있다):
+
+```toml
+[ui]
+embedded = "ui/myui.dll"
+```
+
+그 DLL 은 `InitializeEmbeddedUI`, `EmbeddedUIHandler`, `ShutdownEmbeddedUI` 를 내보낸다. 조용한 설치와
+체인 안(`setup.exe` 가 UI 를 모는 곳)에서는 건너뛰며, MSI 기능이다.
+
 ## 모든 값에는 기본값이 있어야 한다: `[property.NAME]`
 
 대화창은 값을 *모을* 뿐이다. 조용한 설치(`/qn`)는 페이지를 하나도 보이지 않고 속성을 있는 그대로 쓴다. 그래서

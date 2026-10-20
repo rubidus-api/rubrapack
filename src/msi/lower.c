@@ -239,6 +239,9 @@ static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_
                                                   { "Table", S(32) }, { "SDDLText", S(0) }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t icon_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
+// RFC-0031 B11: the author's embedded UI handler DLL and its bytes.
+static const rp_msi_wcolumn_t embeddedui_cols[] = { { "MsiEmbeddedUI", KEY_S(72) }, { "FileName", S(255) }, { "Attributes", I2 },
+    { "MessageFilter", I4_N }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t condition_cols[] = { { "Feature_", KEY_S(38) }, { "Level", KEY_I2 }, { "Condition", S_N(255) } };
 static const rp_msi_wcolumn_t sequence_cols[] = { { "Action", KEY_S(72) }, { "Condition", S_N(255) }, { "Sequence", I2_N } };
 
@@ -562,7 +565,7 @@ typedef struct {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition,
-        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated;
+        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated, embeddedui;
     icon_t          *icons;            // the Icon table's .ico files, in order of first use
     size_t           nicons;
     proven_err_t     icon_err;
@@ -2094,6 +2097,29 @@ static void add_binary(pkg_t *pk, const char *name, const char *source) {
     else rp_mem_free(pk->alloc, data);
 }
 
+// RFC-0031 B11: the author's embedded UI handler (MsiEmbeddedUI). Its DLL is carried in the Data
+// column (a stream, not an installed file); Windows extracts it and calls InitializeEmbeddedUI /
+// EmbeddedUIHandler / ShutdownEmbeddedUI for the interactive UI (bypassed at /qn and inside a chain
+// whose setup.exe attaches its own external UI). MessageFilter is the standard set of messages a
+// full UI handles (FatalExit..ShowDialog, RMFilesInUse, InstallStart, InstallEnd).
+static void lower_embedded_ui(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    if (ir->ui_embedded_source == NULL) return;
+    uint8_t *data = NULL;
+    size_t len = 0;
+    if (rp_pal_read_file(pk->alloc, ir->ui_embedded_source, 1u << 24, &data, &len) != PROVEN_OK) {
+        pk->reg_bad = true;
+        return;
+    }
+    s_(&pk->embeddedui, "RpEmbeddedUI");
+    s_(&pk->embeddedui, "embedui.dll");             // the name Windows extracts it under (8.3-safe)
+    i_(&pk->embeddedui, 1);                         // Attributes: msidbEmbeddedUI - this is the UI
+    i_(&pk->embeddedui, 0x0E00FFFF);               // MessageFilter: FatalExit..ShowDialog + RMFilesInUse/InstallStart/InstallEnd
+    b_(&pk->embeddedui, data, len);
+    if (pk->act_bin_count < 64) pk->act_bin[pk->act_bin_count++] = data;   // freed at the end
+    else rp_mem_free(pk->alloc, data);
+}
+
 // The sequence number of a standard action (MS Learn "Suggested InstallExecuteSequence"), for
 // before/after; 0 when the name is not one rubrapack places.
 static int32_t standard_sequence(const char *name) {
@@ -2583,6 +2609,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&pk->odbcsattr, alloc, "ODBCSourceAttribute", odbcsattr_cols, 3);
     rows_init(&pk->publish, alloc, "PublishComponent", publish_cols, 5);
     rows_init(&pk->isolated, alloc, "IsolatedComponent", isolated_cols, 2);
+    rows_init(&pk->embeddedui, alloc, "MsiEmbeddedUI", embeddedui_cols, 5);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &pk->property, &pk->directory, &pk->component, &pk->feature, &pk->featurecomp, &pk->file,
                       &pk->filehash, &pk->media, &pk->upgrade, &pk->customaction, &pk->iexec, &pk->iui, &pk->createfolder,
@@ -2590,7 +2617,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                       &pk->duplicate, &pk->environment, &pk->inifile, &pk->removeini, &pk->launch, &pk->appsearch,
                       &pk->reglocator, &pk->drlocator, &pk->signature, &pk->complocator, &pk->svcinstall, &pk->svccontrol,
                       &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition, &pk->movefile, &pk->odbcdriver,
-                      &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated };
+                      &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated, &pk->embeddedui };
     const size_t always = 16;
 
     lower_properties(pk, product_code);
@@ -2607,6 +2634,7 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     lower_helper_actions(pk);
     lower_permissions(pk);
     lower_more(pk);
+    lower_embedded_ui(pk);
     lower_fonts(pk);
     lower_searches(pk);
     lower_copies(pk);

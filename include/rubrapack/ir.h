@@ -646,6 +646,8 @@ typedef struct {
     char             *license_source;       // path to open (joined with the .rpk directory), or NULL
     char             *license_shown;        // as written
     char             *banner_source;        // [ui] banner BMP, or NULL
+    char             *ui_embedded_source;    // RFC-0031 B11: [ui] embedded author UI DLL path, or NULL
+    char             *ui_embedded_shown;     // ... as written
     char             *ui_install_dir;       // [ui] install-dir (dir ID), or NULL
     char             *ui_launch_file;       // [ui] launch = "file:ID" (RFC-0013 A5), or NULL
     char             *ui_launch_args;       // [ui] launch-args (formatted), or NULL

@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX meniu Pradžia įrašas yra jo programa, kuri nepri
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: joks dialogo tekstas neturi šio ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] reikia ui = \"basic\" arba kito dialogų rinkinio [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded skirtas MSI; MSIX neturi savo diegimo programos sąsajos"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] reikia ui = \"basic\" arba kito dialogų rinkinio [package] (arba embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "valdymo seka \\{1} nėra Unicode skaliarinė reikšmė"
@@ -1826,6 +1829,9 @@ msgstr "paketo išvedimas (MSI lentelės kaip IDT)"
 
 msgid "duplicate primary key"
 msgstr "pasikartojantis pirminis raktas"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded turi būti .dll failas (autoriaus sąsajos tvarkytuvas)"
 
 msgid "empty arrays are not supported"
 msgstr "tušti masyvai nepalaikomi"

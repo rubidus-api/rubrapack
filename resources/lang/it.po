@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: la voce del menu Start di un MSIX è la sua applicazione
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: nessun testo delle finestre ha questo ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] richiede ui = \"basic\" o un altro insieme di finestre in [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded è per un MSI; un MSIX non ha un'interfaccia di installazione propria"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] richiede ui = \"basic\" o un altro set di finestre in [package] (o embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "l'escape \\{1} non è un valore scalare Unicode"
@@ -1826,6 +1829,9 @@ msgstr "esporta un pacchetto (tabelle MSI come IDT)"
 
 msgid "duplicate primary key"
 msgstr "chiave primaria duplicata"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded deve essere un file .dll (il gestore UI dell'autore)"
 
 msgid "empty arrays are not supported"
 msgstr "le matrici vuote non sono supportate"

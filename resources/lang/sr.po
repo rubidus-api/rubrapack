@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: unos menija Start u MSIX-u je njegova aplikacija, koja n
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: nijedan tekst dijaloga nema ovaj ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] traži ui = \"basic\" ili drugi skup dijaloga u [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded je za MSI; MSIX nema sopstveni instalacioni interfejs"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] zahteva ui = \"basic\" ili drugi skup dijaloga u [package] (ili embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "izlazna sekvenca \\{1} nije skalarna vrednost Unicode-a"
@@ -1826,6 +1829,9 @@ msgstr "ispis paketa (MSI tabele kao IDT)"
 
 msgid "duplicate primary key"
 msgstr "dupli primarni ključ"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded mora biti .dll datoteka (autorov rukovalac interfejsom)"
 
 msgid "empty arrays are not supported"
 msgstr "prazni nizovi nisu podržani"

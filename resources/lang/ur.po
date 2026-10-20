@@ -1190,8 +1190,11 @@ msgstr "[shortcut.{1}]: MSIX کا اسٹارٹ مینو اندراج اس کی �
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: کسی ڈائیلاگ متن کا یہ ID نہیں"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] کو [package] میں ui = \"basic\" یا کوئی اور ڈائیلاگ سیٹ چاہیے"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "‏[ui] embedded ایک MSI کے لیے ہے؛ MSIX کا اپنا انسٹالر UI نہیں ہوتا"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "‏[ui] کو [package] میں ui = \"basic\" یا کسی اور ڈائیلاگ سیٹ کی ضرورت ہے (یا embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} ایسکیپ یونی کوڈ اسکیلر قدر نہیں"
@@ -1828,6 +1831,9 @@ msgstr "پیکیج ڈمپ کریں (MSI جدول IDT کے طور پر)"
 
 msgid "duplicate primary key"
 msgstr "دہرائی گئی بنیادی کلید"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded ایک ‎.dll فائل ہونی چاہیے (مصنف کا UI ہینڈلر)"
 
 msgid "empty arrays are not supported"
 msgstr "خالی ترتیبیں معاون نہیں"

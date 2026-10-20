@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX-тің Бастау мәзіріндегі жазб
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: бұл ID бар диалог мәтіні жоқ"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] үшін [package] ішінде ui = \"basic\" немесе басқа диалогтар жиыны керек"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded MSI үшін; MSIX-тің өз орнатушы интерфейсі жоқ"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] үшін [package] ішінде ui = \"basic\" немесе басқа диалог жинағы қажет (немесе embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} басқару тізбегі Unicode скаляр мәні емес"
@@ -1826,6 +1829,9 @@ msgstr "буманы шығару (MSI кестелері IDT ретінде)"
 
 msgid "duplicate primary key"
 msgstr "қайталанған негізгі кілт"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded .dll файлы болуы керек (автордың интерфейс өңдеушісі)"
 
 msgid "empty arrays are not supported"
 msgstr "бос массивтерге қолдау жоқ"

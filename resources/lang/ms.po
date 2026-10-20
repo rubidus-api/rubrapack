@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: entri menu Mula MSIX ialah aplikasinya, yang tidak mener
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: tiada teks dialog dengan ID ini"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] memerlukan ui = \"basic\" atau set dialog lain dalam [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded adalah untuk MSI; MSIX tiada UI pemasang sendiri"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] memerlukan ui = \"basic\" atau set dialog lain dalam [package] (atau embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "Escape \\{1} bukan nilai skalar Unicode"
@@ -1826,6 +1829,9 @@ msgstr "longgok isi pakej (jadual MSI sebagai IDT)"
 
 msgid "duplicate primary key"
 msgstr "kunci utama pendua"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded mesti fail .dll (pengendali UI pengarang)"
 
 msgid "empty arrays are not supported"
 msgstr "tatasusunan kosong tidak disokong"

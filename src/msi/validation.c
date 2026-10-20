@@ -179,6 +179,9 @@ static const rule_t rules[] = {
     RK("BBControl", "Billboard_", "Billboard", 1), R("BBControl", "BBControl", "Identifier"), R("BBControl", "Type", "Identifier"),
     RN("BBControl", "X", 0, 32767), RN("BBControl", "Y", 0, 32767), RN("BBControl", "Width", 0, 32767),
     RN("BBControl", "Height", 0, 32767), RN("BBControl", "Attributes", 0, MAXI), R("BBControl", "Text", "Formatted"),
+    // RFC-0031 B11 (Microsoft Learn: "MsiEmbeddedUI Table").
+    R("MsiEmbeddedUI", "MsiEmbeddedUI", "Identifier"), R("MsiEmbeddedUI", "FileName", "Text"),
+    RN("MsiEmbeddedUI", "Attributes", 0, 3), RN("MsiEmbeddedUI", "MessageFilter", 0, MAXI), { "MsiEmbeddedUI", "Data", NONE, NONE, NULL, 0, "Binary", NULL },
     // rubrapack's own (RFC-0028): a dialog language's value of a property, set by RpLangApply.
     R("RpText", "Lang", "Identifier"), R("RpText", "Key", "Identifier"), R("RpText", "Text", "Text"),
     RN("RpText", "Format", 0, 1),

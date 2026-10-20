@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: รายการในเมนูเริ่มข�
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: ไม่มีข้อความกล่องโต้ตอบที่มี ID นี้"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] ต้องมี ui = \"basic\" หรือชุดกล่องโต้ตอบอื่นใน [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded มีไว้สำหรับ MSI; MSIX ไม่มี UI ตัวติดตั้งของตนเอง"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] ต้องมี ui = \"basic\" หรือชุดกล่องโต้ตอบอื่นใน [package] (หรือ embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "เอสเคป \\{1} ไม่ใช่ค่าสเกลาร์ Unicode"
@@ -1826,6 +1829,9 @@ msgstr "ถ่ายข้อมูลแพ็กเกจ (ตาราง MSI
 
 msgid "duplicate primary key"
 msgstr "คีย์หลักซ้ำ"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded ต้องเป็นไฟล์ .dll (ตัวจัดการ UI ของผู้สร้าง)"
 
 msgid "empty arrays are not supported"
 msgstr "ไม่รองรับอาร์เรย์ว่าง"

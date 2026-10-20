@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX:n Käynnistä-valikon kohde on sen sovellus, joka e
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: millään valintaikkunan tekstillä ei ole tätä tunnusta"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] tarvitsee ui = \"basic\" tai muun valintaikkunasarjan kohdassa [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded on MSI:tä varten; MSIX:llä ei ole omaa asennuskäyttöliittymää"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] tarvitsee ui = \"basic\" tai muun valintaikkunajoukon kohdassa [package] (tai embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "koodinvaihtojakso \\{1} ei ole Unicode-skalaariarvo"
@@ -1826,6 +1829,9 @@ msgstr "vedosta paketti (MSI-taulukot IDT-muodossa)"
 
 msgid "duplicate primary key"
 msgstr "kaksinkertainen perusavain"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded on oltava .dll-tiedosto (tekijän käyttöliittymäkäsittelijä)"
 
 msgid "empty arrays are not supported"
 msgstr "tyhjiä taulukoita ei tueta"

@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX baten Hasi menuko sarrera bere aplikazioa da, eta e
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: elkarrizketa-testurik ez du ID hau"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] taulak ui = \"basic\" edo beste elkarrizketa-multzo bat behar du [package]-n"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded MSI batentzat da; MSIX batek ez du instalatzaile-interfaze propiorik"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui]-k [package]-en ui = \"basic\" edo beste elkarrizketa-multzo bat behar du (edo embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} ihes-sekuentzia ez da Unicode balio eskalar bat"
@@ -1826,6 +1829,9 @@ msgstr "pakete bat irauli (MSI taulak IDT gisa)"
 
 msgid "duplicate primary key"
 msgstr "gako nagusi bikoiztua"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded .dll fitxategi bat izan behar da (egilearen interfaze-kudeatzailea)"
 
 msgid "empty arrays are not supported"
 msgstr "matrize hutsak ez dira onartzen"

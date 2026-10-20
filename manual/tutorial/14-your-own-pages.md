@@ -227,6 +227,19 @@ order = 1
 Several billboards for one feature cycle in `order` while that feature installs. Billboards are an
 MSI thing; an MSIX installs all at once and refuses them.
 
+## Your own UI DLL: `[ui] embedded`
+
+If you have written a whole installer UI as a DLL, name it with `embedded` and rubrapack carries it
+in the package; Windows runs it instead of these dialogs (so you can set `ui = "none"`):
+
+```toml
+[ui]
+embedded = "ui/myui.dll"
+```
+
+The DLL exports `InitializeEmbeddedUI`, `EmbeddedUIHandler` and `ShutdownEmbeddedUI`. It is skipped
+for a silent install and inside a chain (where `setup.exe` drives the UI), and it is an MSI feature.
+
 ## Every value needs a default: `[property.NAME]`
 
 The dialogs only *collect* values. A silent installation (`/qn`) shows no page and uses the

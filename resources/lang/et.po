@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX-i menüü Start kirje on selle rakendus, mis ei võ
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: ühelgi dialoogitekstil pole seda ID-d"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] vajab [package]-s ui = \"basic\" või muud dialoogikomplekti"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded on MSI jaoks; MSIX-il pole oma installeri kasutajaliidest"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] vajab [package] sees ui = \"basic\" või muud dialoogikomplekti (või embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "paojada \\{1} ei ole Unicode'i skalaarväärtus"
@@ -1826,6 +1829,9 @@ msgstr "paketi väljastus (MSI-tabelid IDT-na)"
 
 msgid "duplicate primary key"
 msgstr "korduv primaarvõti"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded peab olema .dll-fail (autori kasutajaliidese käitleja)"
 
 msgid "empty arrays are not supported"
 msgstr "tühje massiive ei toetata"

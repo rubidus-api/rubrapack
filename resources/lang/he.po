@@ -1190,8 +1190,11 @@ msgstr "[shortcut.{1}]: רשומת תפריט התחל של MSIX היא הייש
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: לאף טקסט של תיבת דו-שיח אין מזהה זה"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] דורש ui = \"basic\" או ערכת תיבות דו-שיח אחרת ב-[package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "‏[ui] embedded מיועד ל-MSI; ל-MSIX אין ממשק התקנה משלו"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "‏[ui] דורש ui = \"basic\" או ערכת תיבות דו-שיח אחרת ב-[package] (או embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "רצף הבריחה \\{1} אינו ערך סקלרי של Unicode"
@@ -1828,6 +1831,9 @@ msgstr "הצגת חבילה (טבלאות MSI כ-IDT)"
 
 msgid "duplicate primary key"
 msgstr "מפתח ראשי כפול"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded חייב להיות קובץ ‎.dll (מטפל הממשק של היוצר)"
 
 msgid "empty arrays are not supported"
 msgstr "מערכים ריקים אינם נתמכים"

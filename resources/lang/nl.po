@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: het startmenu-item van een MSIX is zijn applicatie, die 
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: geen dialoogtekst heeft deze ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] heeft ui = \"basic\" of een andere dialoogset in [package] nodig"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded is voor een MSI; een MSIX heeft geen eigen installatie-UI"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] heeft ui = \"basic\" of een andere dialoogset in [package] nodig (of embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "de escape \\{1} is geen Unicode-scalairwaarde"
@@ -1826,6 +1829,9 @@ msgstr "een pakket dumpen (MSI-tabellen als IDT)"
 
 msgid "duplicate primary key"
 msgstr "dubbele primaire sleutel"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded moet een .dll-bestand zijn (de UI-handler van de auteur)"
 
 msgid "empty arrays are not supported"
 msgstr "lege arrays worden niet ondersteund"

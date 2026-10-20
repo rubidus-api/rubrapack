@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: элемент меню «Пуск» у MSIX - это е
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: нет текста диалога с этим ID"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] требует ui = \"basic\" или другой набор диалогов в [package]"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded предназначено для MSI; у MSIX нет собственного интерфейса установки"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] требует ui = \"basic\" или другой набор диалогов в [package] (или embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "экранирование \\{1} не является скалярным значением Unicode"
@@ -1826,6 +1829,9 @@ msgstr "выгрузить пакет (таблицы MSI в виде IDT)"
 
 msgid "duplicate primary key"
 msgstr "повторяющийся первичный ключ"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded должно быть файлом .dll (обработчик интерфейса автора)"
 
 msgid "empty arrays are not supported"
 msgstr "пустые массивы не поддерживаются"

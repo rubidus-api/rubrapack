@@ -1188,8 +1188,11 @@ msgstr "[shortcut.{1}]: MSIX 의 시작 메뉴 항목은 애플리케이션 자�
 msgid "[ui-text.%s]: no dialog text has this ID"
 msgstr "[ui-text.{1}]: 이 ID 를 가진 대화창 문구가 없습니다"
 
-msgid "[ui] needs ui = \"basic\" or another dialog set in [package]"
-msgstr "[ui] 에는 [package] 의 ui = \"basic\" 등 대화창 세트가 필요합니다"
+msgid "[ui] embedded is for an MSI; an MSIX has no installer UI of its own"
+msgstr "[ui] embedded 는 MSI 를 위한 것입니다. MSIX 는 자체 설치 UI 가 없습니다"
+
+msgid "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")"
+msgstr "[ui] 에는 [package] 의 ui = \"basic\" 이나 다른 대화창 세트가 필요합니다(또는 embedded = \"....dll\")"
 
 msgid "\\%c escape is not a Unicode scalar value"
 msgstr "\\{1} 이스케이프가 유니코드 스칼라 값이 아닙니다"
@@ -1826,6 +1829,9 @@ msgstr "패키지 내용을 보입니다(MSI 표는 IDT 로)"
 
 msgid "duplicate primary key"
 msgstr "기본 키가 겹칩니다"
+
+msgid "embedded must be a .dll file (the author's UI handler)"
+msgstr "embedded 는 .dll 파일이어야 합니다(작성자의 UI 처리기)"
 
 msgid "empty arrays are not supported"
 msgstr "빈 배열은 지원하지 않습니다"
