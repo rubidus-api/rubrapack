@@ -9,7 +9,8 @@
 // switch, it asks which of the two to do (nothing at /quiet or /passive).
 // Built by `nob parts` for x64, x86 and arm64, reproducibly; Windows only.
 //
-//   setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>]
+//   setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>] [/lang <code>]
+//   /lang: the setup program's texts in that language ("ko", "ar", ...), not the display language's
 //
 // Exit code: 0, 3010 when a package asks for a restart, or the failing package's Windows Installer
 // error; 1620 for a damaged payload, 1602 when elevation is refused.
@@ -179,7 +180,8 @@ static bool parse(const uint8_t *m, uint32_t n, uint64_t payload_len, chain_t *c
 
 // The texts block: "RPTEXTS1", the number of languages; each its code, the number of its LANGIDs
 // and those, then T_COUNT texts (an empty one stays English). Anything out of place: English.
-static void texts_load(const uint8_t *m, uint32_t n, uint32_t at) {
+// `want`: a language code (/lang) chosen instead of the user's display language.
+static void texts_load(const uint8_t *m, uint32_t n, uint32_t at, const wchar_t *want) {
     if (at > n || n - at < 12 || memcmp(m + at, "RPTEXTS1", 8) != 0) return;
     uint32_t langs = u32(m + at + 8);
     at += 12;
@@ -188,13 +190,25 @@ static void texts_load(const uint8_t *m, uint32_t n, uint32_t at) {
         if (n - at < 4) return;
         uint32_t cl = u32(m + at);
         if (cl > n - at - 4) return;
+        bool named = false;         // the code is the one /lang gave
+        if (want && cl < 16) {
+            named = true;
+            for (uint32_t k = 0; named && k < 16; ++k) {
+                wchar_t a = k < cl ? (wchar_t)m[at + 4 + k] : 0, b = want[k];
+                if (a == L'-') a = L'_';
+                if (b == L'-') b = L'_';
+                named = (a | 0x20) == (b | 0x20);
+                if (a == 0 || b == 0) break;
+            }
+        }
         at += 4 + cl;
         if (n - at < 4) return;
         uint32_t ids = u32(m + at);
         at += 4;
         if (ids > 64 || ids * 4 > n - at) return;
-        bool mine = false;
-        for (uint32_t k = 0; k < ids; ++k) mine = mine || u32(m + at + 4 * k) == ui;
+        bool mine = want ? named : false;
+        LANGID first = ids ? (LANGID)u32(m + at) : 0;
+        for (uint32_t k = 0; !want && k < ids; ++k) mine = mine || u32(m + at + 4 * k) == ui;
         at += ids * 4;
         for (int t = 0; t < T_COUNT; ++t) {
             if (n - at < 4) return;
@@ -207,7 +221,7 @@ static void texts_load(const uint8_t *m, uint32_t n, uint32_t at) {
             at += 4 + l;
         }
         if (mine) {
-            rtl = rp_lcid_rtl(ui);
+            rtl = rp_lcid_rtl(want ? first : ui);
             return;
         }
     }
@@ -272,15 +286,16 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     int argc = 0;
     wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     bool uninstall = false, repair = false;
-    const wchar_t *log = NULL;
+    const wchar_t *log = NULL, *lang = NULL;
     for (int i = 1; argv && i < argc; ++i) {
         if (lstrcmpiW(argv[i], L"/quiet") == 0 || lstrcmpiW(argv[i], L"/q") == 0) quiet = true;
         else if (lstrcmpiW(argv[i], L"/passive") == 0) passive = true;
         else if (lstrcmpiW(argv[i], L"/uninstall") == 0 || lstrcmpiW(argv[i], L"/x") == 0) uninstall = true;
         else if (lstrcmpiW(argv[i], L"/repair") == 0) repair = true;
         else if (lstrcmpiW(argv[i], L"/log") == 0 && i + 1 < argc) log = argv[++i];
+        else if (lstrcmpiW(argv[i], L"/lang") == 0 && i + 1 < argc) lang = argv[++i];
         else {
-            say(L"Setup", L"Usage: setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>]", true);
+            say(L"Setup", L"Usage: setup.exe [/quiet | /passive] [/uninstall | /repair] [/log <file>] [/lang <code>]", true);
             return ERROR_INVALID_PARAMETER;
         }
     }
@@ -304,7 +319,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         say(L"Setup", texts[T_DAMAGED], true);
         return EXIT_DAMAGED;
     }
-    texts_load(manifest, mlen, c.texts_at);
+    texts_load(manifest, mlen, c.texts_at, lang);
     wchar_t *title = wide(c.name, c.name_len);
     if (title == NULL) return EXIT_DAMAGED;
 
@@ -403,7 +418,15 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         if (installed(p) != repair) continue;
         wchar_t *id = wide(p->id, p->id_len), *props = repair ? wide("REINSTALL=ALL REINSTALLMODE=ecmus", 33) : wide(p->properties, p->properties_len);
         wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
-        UINT r = id && props ? MsiInstallProductW(path, props) : ERROR_OUTOFMEMORY;
+        // /lang: the packages' own dialogs and messages in that language too.
+        wchar_t *all = props;
+        if (props && lang && lstrlenW(lang) < 16) {
+            size_t pn = (size_t)lstrlenW(props) + 40;
+            all = LocalAlloc(LMEM_FIXED, pn * sizeof *all);
+            if (all) wsprintfW(all, L"%s RPLANGUAGE=%s", props, lang);
+        }
+        UINT r = id && all ? MsiInstallProductW(path, all) : ERROR_OUTOFMEMORY;
+        if (all && all != props) LocalFree(all);
         if (r == ERROR_SUCCESS_REBOOT_REQUIRED) {
             result = (int)r;
         } else if (r != ERROR_SUCCESS && (repair || (p->flags & FLAG_VITAL))) {

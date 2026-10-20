@@ -83,6 +83,7 @@
 
 #include "../clean/pfro.h"
 #include "rp_appx.h"
+#include "rp_ask.h"
 
 // rubrapack_clean.exe for this architecture, as a byte array (written by `nob parts`).
 #if __has_include("rp_clean_part.h")
@@ -1532,8 +1533,34 @@ static wchar_t *pre_text(MSIHANDLE h, const wchar_t *id) {
     return text;
 }
 
+// Whether pre_text's language reads right to left: RPLANGUAGE's when a dialog chose one, else the
+// user's when the package has it (RFC-0031 L12).
+static bool pre_rtl(MSIHANDLE h) {
+    bool rtl = false;
+    wchar_t *lang = get_property(h, L"RPLANGUAGE");
+    if (lang && lang[0]) {
+        wchar_t name[LOCALE_NAME_MAX_LENGTH];
+        size_t n = 0;
+        for (const wchar_t *p = lang; *p && n + 1 < LOCALE_NAME_MAX_LENGTH; ++p) name[n++] = *p == L'_' ? L'-' : *p;
+        name[n] = 0;
+        rtl = rp_lcid_rtl(LocaleNameToLCID(name, 0));
+    } else {
+        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
+        size_t un = ul ? wcslen(ul) : 0;
+        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
+            if (wcsncmp(p, ul, un) == 0 && p[un] == L'=') rtl = rp_lcid_rtl((LCID)wcstoul(ul, NULL, 10));
+        }
+        if (ul) HeapFree(GetProcessHeap(), 0, ul);
+        if (map) HeapFree(GetProcessHeap(), 0, map);
+    }
+    if (lang) HeapFree(GetProcessHeap(), 0, lang);
+    return rtl;
+}
+
 // Shows (or, without UI, logs) a message made from the text `id` with fields 1..3; returns the button.
+// A right-to-left language's message reads from the right.
 static int pre_message(MSIHANDLE h, const wchar_t *id, UINT type, const wchar_t *f1, const wchar_t *f2, const wchar_t *f3) {
+    if (pre_rtl(h)) type |= MB_RTLREADING | MB_RIGHT;
     wchar_t *text = pre_text(h, id);
     MSIHANDLE rec = MsiCreateRecord(3);
     MsiRecordSetStringW(rec, 0, text && text[0] ? text : L"[1] [2] [3]");
@@ -2174,7 +2201,6 @@ __declspec(dllexport) UINT __stdcall RpPurgeOthers(MSIHANDLE h) {
 // choice is what the command line would have said: REINSTALL=ALL REINSTALLMODE=ecmus, or REMOVE=ALL.
 // Texts: the RpPreMaint* properties, as the preflight's.
 
-#include "rp_ask.h"
 #include "rp_script.h"
 
 static wchar_t *maint_text(MSIHANDLE h, const wchar_t *id) {
@@ -2199,15 +2225,7 @@ __declspec(dllexport) UINT __stdcall RpMaintain(MSIHANDLE h) {
     static const wchar_t *const ids[6] = { L"MaintTitle", L"MaintText", L"Repair", L"Remove", L"Cancel", L"RemoveAsk" };
     for (size_t i = 0; i < 6; ++i) t[i] = maint_text(h, ids[i]);
     rp_ask_t a = { t[0] ? t[0] : L"", t[1] ? t[1] : L"", t[2] ? t[2] : L"Repair", t[3] ? t[3] : L"Remove", t[4] ? t[4] : L"Cancel", false };
-    {   // the texts are the user's language when the package has it (pre_text): mirrored for one read right to left
-        wchar_t *ul = get_property(h, L"UserLanguageID"), *map = get_property(h, L"RP_LANGS");
-        size_t un = ul ? wcslen(ul) : 0;
-        for (const wchar_t *p = map; un && p && *p; p = wcschr(p, L';') ? wcschr(p, L';') + 1 : NULL) {
-            if (wcsncmp(p, ul, un) == 0 && p[un] == L'=') a.rtl = rp_lcid_rtl((LCID)wcstoul(ul, NULL, 10));
-        }
-        if (ul) HeapFree(GetProcessHeap(), 0, ul);
-        if (map) HeapFree(GetProcessHeap(), 0, map);
-    }
+    a.rtl = pre_rtl(h);     // the texts' language (pre_text) reads right to left: the window is mirrored
     int r;
     for (;;) {
         r = rp_ask(NULL, &a);       // no owner: the window in front may be anyone's
