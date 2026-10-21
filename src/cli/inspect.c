@@ -404,6 +404,9 @@ int rp_cmd_inspect(int argc, char **argv) {
         }
         return rp_mst_inspect(argv[2], base ? NULL : argv[3], base ? argv[4] : NULL);
     }
+    if (argc == 5 && strcmp(argv[3], "--transform") == 0) {     // RFC-0031 B12: an embedded instance transform
+        return rp_instance_inspect(argv[2], argv[4]);
+    }
     if (argc < 3 || argc > 4) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>");
         return RP_EXIT_USAGE;

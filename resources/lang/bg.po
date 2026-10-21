@@ -276,6 +276,9 @@ msgstr "'{1}' има нечетим поток с обобщена информ�
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' няма таблици Directory, Component, File и Media, от които да се извлича"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' няма вградена трансформация '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' няма четима обобщена информация"
 
@@ -2061,6 +2064,12 @@ msgstr "вградени (inline) таблици не се поддържат; �
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "инсталира се в същия път като ред {1} (Windows не различава главни и малки букви в имената{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances е за пакет на компютър (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances все още не може да се комбинира с [menu.*] (пакетът за идентичност на менюто е един на компилация)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "вътрешна грешка: вграден диалогов прозорец има нарушен ред на табулация; моля, докладвайте"
 
@@ -3062,6 +3071,9 @@ msgstr "твърде много локализирани текстове и м�
 
 msgid "too many packages in the bundle"
 msgstr "твърде много пакети в сбора"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "трансформацията '{1}' в '{2}' не може да се прочете: {3}"
 
 msgid "trusted"
 msgstr "доверен"

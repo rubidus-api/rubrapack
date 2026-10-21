@@ -278,6 +278,9 @@ msgstr "'{1}' یک جریان اطلاعات خلاصه ناخوانا دارد"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' جدول‌های Directory، Component، File و Media برای استخراج ندارد"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' تبدیل تعبیه‌شدهٔ '{2}' را ندارد"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' اطلاعات خلاصه خوانا ندارد"
 
@@ -2063,6 +2066,12 @@ msgstr "جدول‌های درون‌خطی پشتیبانی نمی‌شوند؛
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "به همان مسیر خط {1} نصب می‌شود (Windows در نام‌ها کوچکی و بزرگی حروف را نادیده می‌گیرد{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances برای بستهٔ هر رایانه است (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances هنوز با [menu.*] ترکیب نمی‌شود (بستهٔ هویت منو در هر ساخت یکی است)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "خطای داخلی: یک گفتگوی داخلی ترتیب زبانه خراب دارد؛ آن را گزارش کنید"
 
@@ -3064,6 +3073,9 @@ msgstr "متن‌های محلی‌شده و مقیاس‌های لوگو برا
 
 msgid "too many packages in the bundle"
 msgstr "بسته‌ها در مجموعه بیش از حدند"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "تبدیل '{1}' در '{2}' خوانده نمی‌شود: {3}"
 
 msgid "trusted"
 msgstr "مورد اعتماد"

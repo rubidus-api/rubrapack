@@ -212,6 +212,15 @@ the changed columns) and `delete`. By default the transform only applies to the 
 from (`--validate product-code,upgrade-code`); `--validate none` drops the checks. A transform
 carries tables, not files: a package whose files differ is refused (`RP0013`).
 
+A package built with `[package] instances` carries its instance transforms inside it;
+`inspect <package> --transform Instance1` lists one against the package's own base, the same way:
+
+```text
+C:\work\hello> rubrapack inspect multi.msi --transform Instance1
+Property	update	ProductCode	Value={...}
+Property	update	ProductName	Value=MultiApp (instance 1)
+```
+
 ## Signatures: `verify`
 
 Chapter 16 showed `verify`. It is the check to run on what you are about to publish:

@@ -276,6 +276,9 @@ msgstr "'{1}'의 요약 정보 스트림을 읽을 수 없습니다"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}'에 풀어낼 Directory, Component, File, Media 표가 없습니다"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' 에는 내장 변환 '{2}' 이(가) 없습니다"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}'에 읽을 수 있는 요약 정보가 없습니다"
 
@@ -2061,6 +2064,12 @@ msgstr "인라인 표는 지원하지 않습니다. [kind.ID] 표를 쓰십시�
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}번째 줄과 같은 경로에 설치됩니다(Windows 는 이름의 대소문자를 구별하지 않습니다{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances 는 컴퓨터 단위 패키지를 위한 것입니다(scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances 는 아직 [menu.*] 와 함께 쓸 수 없습니다(메뉴의 신원 패키지는 빌드마다 하나입니다)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "내부 오류: 내장 대화창의 탭 순서가 깨졌습니다. 알려 주십시오"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri 에 넣기에는 지역화된 글과 로고 배율이 너�
 
 msgid "too many packages in the bundle"
 msgstr "번들에 패키지가 너무 많습니다"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' 안의 변환 '{1}' 을(를) 읽을 수 없습니다: {3}"
 
 msgid "trusted"
 msgstr "신뢰함"

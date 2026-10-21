@@ -278,6 +278,9 @@ msgstr "'{1}' میں ناقابلِ مطالعہ خلاصہ معلومات اس�
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' میں نکالنے کے لیے Directory، Component، File اور Media جدول نہیں"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' میں سرایت شدہ ٹرانسفارم '{2}' نہیں ہے"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' میں قابلِ مطالعہ خلاصہ معلومات نہیں"
 
@@ -2063,6 +2066,12 @@ msgstr "ان لائن جدول معاون نہیں؛ [kind.ID] جدول استع
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "لائن {1} والے راستے پر ہی انسٹال ہوتا ہے (Windows ناموں میں حروف کے چھوٹے بڑے کو نظر انداز کرتا ہے{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances فی کمپیوٹر پیکج کے لیے ہے (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances کو ابھی [menu.*] کے ساتھ نہیں ملایا جا سکتا (مینیو کا شناختی پیکج فی بلڈ ایک ہوتا ہے)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "اندرونی خرابی: بلٹ اِن ڈائیلاگ کی ٹیب ترتیب ٹوٹی ہوئی ہے؛ رپورٹ کریں"
 
@@ -3064,6 +3073,9 @@ msgstr "resources.pri کے لیے بہت زیادہ مقامی متن اور ل�
 
 msgid "too many packages in the bundle"
 msgstr "بنڈل میں بہت زیادہ پیکیجز"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' میں ٹرانسفارم '{1}' پڑھا نہیں جا سکتا: {3}"
 
 msgid "trusted"
 msgstr "قابلِ اعتماد"

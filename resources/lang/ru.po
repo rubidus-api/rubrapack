@@ -276,6 +276,9 @@ msgstr "у '{1}' нечитаемый поток сводной информац
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "в '{1}' нет таблиц Directory, Component, File и Media для распаковки"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "в '{1}' нет встроенного преобразования '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "в '{1}' нет читаемой сводной информации"
 
@@ -2061,6 +2064,12 @@ msgstr "встроенные таблицы не поддерживаются; �
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "устанавливается по тому же пути, что и строка {1} (Windows не различает регистр в именах{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances предназначено для пакета на компьютер (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances пока нельзя сочетать с [menu.*] (пакет идентификации меню один на сборку)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "внутренняя ошибка: у встроенного диалога нарушен порядок обхода; сообщите об этом"
 
@@ -3062,6 +3071,9 @@ msgstr "слишком много локализованных текстов и
 
 msgid "too many packages in the bundle"
 msgstr "слишком много пакетов в наборе"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "не удаётся прочитать преобразование '{1}' в '{2}': {3}"
 
 msgid "trusted"
 msgstr "доверенный"

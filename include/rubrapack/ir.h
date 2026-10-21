@@ -575,6 +575,7 @@ typedef struct {
     char      replaces[16][39]; // [package] replaces: other products' UpgradeCodes this package removes (x47)
     size_t    replace_count;
     int       scope;            // 0 machine, 1 user, 2 dual (per-user by default, ALLUSERS=1 for machine)
+    int32_t   instances;        // RFC-0031 B12: [package] instances = N (>=2): N-1 named instance transforms embedded; 0/1 = none
     char     *downgrade_message;
     char     *refuse_below;     // refuse-upgrade-below (versions below it are refused), or NULL
     char     *refuse_message;   // may be NULL

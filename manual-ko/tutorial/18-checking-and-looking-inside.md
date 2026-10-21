@@ -201,6 +201,15 @@ C:\work\hello> msiexec /i hello.msi TRANSFORMS=custom.mst
 `--validate none` 은 이 확인을 뺀다. 변환은 표를 나르고 파일은 나르지 않는다: 파일이 다른 패키지는
 거부한다(`RP0013`).
 
+`[package] instances` 로 만든 패키지는 인스턴스 변환을 자기 안에 담는다. `inspect <패키지> --transform Instance1`
+은 그중 하나를 패키지 자신의 바탕과 견주어 같은 방식으로 보여 준다:
+
+```text
+C:\work\hello> rubrapack inspect multi.msi --transform Instance1
+Property	update	ProductCode	Value={...}
+Property	update	ProductName	Value=MultiApp (instance 1)
+```
+
 ## 서명: `verify`
 
 16장에서 `verify` 를 보았다. 배포하기 직전에 돌릴 검사다:

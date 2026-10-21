@@ -276,6 +276,9 @@ msgstr "'{1}' 的摘要資訊流無法讀取"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' 沒有可供解壓縮的 Directory、Component、File 和 Media 表"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' 沒有內嵌轉換 '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' 沒有可讀的摘要資訊"
 
@@ -2061,6 +2064,12 @@ msgstr "不支援內聯表；請使用 [kind.ID] 表"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "安裝到與第 {1} 行相同的路徑(Windows 名稱不區分大小寫{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances 用於以電腦為單位安裝的套件（scope = \"machine\"）"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances 尚不能與 [menu.*] 一起使用（功能表的識別套件每次組建只有一個）"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "內部錯誤: 某個內建對話方塊的 Tab 順序已損壞；請報告"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri 中的本地化文字和標誌縮放過多"
 
 msgid "too many packages in the bundle"
 msgstr "套件組合中的包過多"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "無法讀取 '{2}' 中的轉換 '{1}'：{3}"
 
 msgid "trusted"
 msgstr "受信任"

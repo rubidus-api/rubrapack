@@ -278,6 +278,9 @@ msgstr "'{1}' يحتوي على دفق معلومات ملخص غير قابل �
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' لا يحتوي على جداول Directory وComponent وFile وMedia للاستخراج منها"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "لا يحتوي '{1}' على التحويل المضمَّن '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' لا يحتوي على معلومات ملخص قابلة للقراءة"
 
@@ -2063,6 +2066,12 @@ msgstr "الجداول المضمّنة inline غير مدعومة؛ استخد�
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "يُثبَّت في المسار نفسه الذي في السطر {1} (يتجاهل Windows حالة الأحرف في الأسماء{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances مخصص لحزمة لكل كمبيوتر (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "لا يمكن بعد الجمع بين instances و[menu.*] (حزمة هوية القائمة واحدة لكل بناء)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "خطأ داخلي: ترتيب الجدولة في مربع حوار مضمّن مكسور؛ يرجى الإبلاغ عنه"
 
@@ -3064,6 +3073,9 @@ msgstr "نصوص مترجمة ومقاييس شعارات كثيرة جداً ل
 
 msgid "too many packages in the bundle"
 msgstr "حزم كثيرة جداً في المجموعة"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "تعذّرت قراءة التحويل '{1}' في '{2}': {3}"
 
 msgid "trusted"
 msgstr "موثوق"

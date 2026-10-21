@@ -40,6 +40,10 @@ void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
 [[nodiscard]] int rp_cmd_patch(int argc, char **argv);
 [[nodiscard]] int rp_msp_inspect(const char *path, const char *base);
 
+// `rubrapack inspect <file.msi> --transform <name>`: lists an embedded instance transform (RFC-0031
+// B12) against the package's own base tables.
+[[nodiscard]] int rp_instance_inspect(const char *path, const char *name);
+
 // `rubrapack extract <file.msi|file.cab> -d <new dir>` (RFC-0006 2).
 [[nodiscard]] int rp_cmd_extract(int argc, char **argv);
 

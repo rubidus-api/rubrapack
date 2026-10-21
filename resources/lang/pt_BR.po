@@ -276,6 +276,9 @@ msgstr "'{1}' tem um fluxo de informações de resumo ilegível"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' não tem tabelas Directory, Component, File e Media das quais extrair"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' não tem a transformação incorporada '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' não tem informações de resumo legíveis"
 
@@ -2061,6 +2064,12 @@ msgstr "tabelas embutidas não são suportadas; use uma tabela [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "é instalado no mesmo caminho que a linha {1} (o Windows ignora maiúsculas e minúsculas nos nomes{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances é para um pacote por máquina (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances ainda não se combina com [menu.*] (o pacote de identidade do menu é um por compilação)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "erro interno: um diálogo interno tem uma ordem de tabulação quebrada; relate o problema"
 
@@ -3062,6 +3071,9 @@ msgstr "textos localizados e escalas de logotipo demais para resources.pri"
 
 msgid "too many packages in the bundle"
 msgstr "pacotes demais no lote"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "não é possível ler a transformação '{1}' em '{2}': {3}"
 
 msgid "trusted"
 msgstr "confiável"

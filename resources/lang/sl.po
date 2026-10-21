@@ -276,6 +276,9 @@ msgstr "'{1}' ima neberljiv tok povzetka informacij"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nima tabel Directory, Component, File in Media, iz katerih bi razširil"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' nima vgrajene preslikave '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' nima berljivega povzetka informacij"
 
@@ -2061,6 +2064,12 @@ msgstr "tabele inline niso podprte; uporabite tabelo [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "namesti se na isto pot kot vrstica {1} (Windows v imenih ne razlikuje velikih in malih črk{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances je za paket na računalnik (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances še ni mogoče kombinirati z [menu.*] (paket identitete menija je en na gradnjo)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "notranja napaka: vgrajeno pogovorno okno ima pokvarjen vrstni red tabulatorja; prijavite to"
 
@@ -3062,6 +3071,9 @@ msgstr "preveč lokaliziranih besedil in meril logotipa za resources.pri"
 
 msgid "too many packages in the bundle"
 msgstr "preveč paketov v svežnju"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "preslikave '{1}' v '{2}' ni mogoče prebrati: {3}"
 
 msgid "trusted"
 msgstr "zaupanja vredno"

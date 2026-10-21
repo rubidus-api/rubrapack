@@ -219,7 +219,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 
 | Table | Keys (required in bold) |
 |---|---|
-| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), extra-files (`ask`, `keep`, `delete`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message |
+| `[package]` | **name**, **manufacturer**, **version** (`a.b.c` or `a.b.c.d`), **arch**, **upgrade-code**, upgrade-code-x64 / -arm64 / -x86, product-code, summary-name (ASCII), language, scope (`machine`, `user`, `dual`), ui (`none`, `basic`, `minimal`, `installdir`, `features`), license (`.txt`, `.md`, `.rtf`), reboot (`suppress`/`allow`), cleanup (`false`: no cleanup task), preflight (`false`: no checks before it goes on), close-programs (`ask`, `always`, `never`), extra-files (`ask`, `keep`, `delete`), parent (an add-on: the main product's upgrade-code), remove-addons (`true`: removing this product removes its add-ons), replaces (upgrade codes of products this package takes the place of), downgrade-message, compress (`none`, `mszip`, `mszip:0`..`mszip:9`, `lzx`, `lzx:15`..`lzx:21`; default `mszip:6`), cab (`embed` or `external`), cab-max-size (MiB), refuse-upgrade-below, refuse-upgrade-message, instances (N >= 2: N-1 named instances, machine only) |
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when, advertise (`allow` default, `disallow`) |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
@@ -1704,6 +1704,22 @@ packages cannot be removed in one Windows Installer run, so the add-ons go a few
 main product, not before it; build them so that they can be removed without it. It takes effect
 from the first main version built with it, and needs the cleanup task (`cleanup = false` is an
 error); both keys are for MSI packages only.
+
+### Several instances side by side: `instances`
+
+`[package] instances = N` (at least 2) lets the product be installed more than once on one computer.
+rubrapack embeds N-1 *instance transforms* in the package, named `Instance1` .. `Instance(N-1)`.
+Install the base product the usual way, and an instance with:
+
+```text
+msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:Instance1
+```
+
+Each instance has its own ProductCode, its own name (`<Name> (instance K)`, so Installed apps lists
+them apart), its own component GUIDs (Windows Installer requires this - two products in one place must
+not own the same components) and its own top folder (`<folder> (instance K)`); the upgrade code is
+shared, so each instance upgrades itself. It is for a per-machine package (`scope = "machine"`).
+Inspect a transform with `rubrapack inspect pkg.msi --transform Instance1`.
 
 ### Taking the place of other products: `replaces`
 

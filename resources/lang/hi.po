@@ -276,6 +276,9 @@ msgstr "'{1}' की सारांश जानकारी स्ट्री
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' में निकालने के लिए Directory, Component, File और Media तालिकाएँ नहीं हैं"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' में एम्बेडेड रूपांतरण '{2}' नहीं है"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' में पढ़ने योग्य सारांश जानकारी नहीं है"
 
@@ -2061,6 +2064,12 @@ msgstr "इनलाइन तालिकाएँ समर्थित नह
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "पंक्ति {1} वाले पथ पर ही इंस्टॉल होता है (Windows नामों में अक्षरों के छोटे-बड़े होने की उपेक्षा करता है{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances प्रति कंप्यूटर पैकेज के लिए है (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances को अभी [menu.*] के साथ नहीं जोड़ा जा सकता (मेन्यू का पहचान पैकेज प्रति बिल्ड एक होता है)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "आंतरिक त्रुटि: किसी अंतर्निहित संवाद का टैब क्रम टूटा है; कृपया इसकी रिपोर्ट करें"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri के लिए बहुत अधिक स्थान
 
 msgid "too many packages in the bundle"
 msgstr "बंडल में बहुत अधिक पैकेज"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' में रूपांतरण '{1}' पढ़ा नहीं जा सकता: {3}"
 
 msgid "trusted"
 msgstr "विश्वसनीय"

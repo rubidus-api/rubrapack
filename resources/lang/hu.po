@@ -276,6 +276,9 @@ msgstr "'{1}' összegzőadat-adatfolyama olvashatatlan"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nem tartalmaz Directory, Component, File és Media táblát, amelyből kibontható volna"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' nem tartalmazza a(z) '{2}' beágyazott átalakítást"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' nem tartalmaz olvasható összegzőadatokat"
 
@@ -2061,6 +2064,12 @@ msgstr "a beágyazott (inline) táblák nem támogatottak; használjon [kind.ID]
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "ugyanarra az útvonalra települ, mint a(z) {1}. sor (a Windows a nevekben nem különbözteti meg a kis- és nagybetűt{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "az instances gépenkénti csomaghoz való (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "az instances még nem kombinálható a [menu.*] elemmel (a menü identitáscsomagja buildenként egy)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "belső hiba: egy beépített párbeszédpanel tabulátorsorrendje hibás; kérjük, jelentse"
 
@@ -3062,6 +3071,9 @@ msgstr "túl sok honosított szöveg és emblémaméretezés a resources.pri sz�
 
 msgid "too many packages in the bundle"
 msgstr "túl sok csomag a kötegben"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "a(z) '{2}' '{1}' átalakítása nem olvasható: {3}"
 
 msgid "trusted"
 msgstr "megbízható"

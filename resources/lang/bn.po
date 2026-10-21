@@ -276,6 +276,9 @@ msgstr "'{1}'-এ একটি অপাঠ্য সারাংশ তথ্�
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}'-এ বের করার জন্য Directory, Component, File এবং Media টেবিল নেই"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}'-এ এম্বেড করা রূপান্তর '{2}' নেই"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}'-এ পাঠযোগ্য সারাংশ তথ্য নেই"
 
@@ -2061,6 +2064,12 @@ msgstr "ইনলাইন টেবিল সমর্থিত নয়; এ�
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "লাইন {1}-এর একই পথে ইনস্টল হয় (Windows নামে বড়-ছোট হাতের অক্ষর উপেক্ষা করে{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances প্রতি কম্পিউটার প্যাকেজের জন্য (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances এখনও [menu.*] এর সাথে একত্রিত করা যায় না (মেনুর পরিচয় প্যাকেজ প্রতি বিল্ডে একটি)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "অভ্যন্তরীণ ত্রুটি: একটি অন্তর্নির্মিত ডায়ালগের ট্যাব ক্রম ভাঙা; জানান"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri-এর জন্য অনেক বেশি স্থা
 
 msgid "too many packages in the bundle"
 msgstr "বান্ডলে অনেক বেশি প্যাকেজ"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}'-এর রূপান্তর '{1}' পড়া যাচ্ছে না: {3}"
 
 msgid "trusted"
 msgstr "বিশ্বস্ত"

@@ -276,6 +276,9 @@ msgstr "'{1}' okunamayan bir özet bilgisi akışına sahip"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' içinde çıkarılacak Directory, Component, File ve Media tabloları yok"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' katıştırılmış '{2}' dönüşümüne sahip değil"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' okunabilir özet bilgisine sahip değil"
 
@@ -2061,6 +2064,12 @@ msgstr "satır içi tablolar desteklenmez; bir [kind.ID] tablosu kullanın"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}. satırla aynı yola kurulur (Windows adlarda büyük/küçük harfi yok sayar{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances bilgisayar başına paket içindir (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances henüz [menu.*] ile birleştirilemez (menünün kimlik paketi her derlemede birdir)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "iç hata: yerleşik bir iletişim kutusunun sekme sırası bozuk; lütfen bildirin"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri için çok fazla yerelleştirilmiş metin ve logo ölçeğ
 
 msgid "too many packages in the bundle"
 msgstr "paket grubunda çok fazla paket"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' içindeki '{1}' dönüşümü okunamıyor: {3}"
 
 msgid "trusted"
 msgstr "güvenilir"

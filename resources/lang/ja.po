@@ -276,6 +276,9 @@ msgstr "'{1}' の概要情報ストリームが読めません"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' には展開元になる Directory、Component、File、Media テーブルがありません"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' には埋め込み変換 '{2}' がありません"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' には読める概要情報がありません"
 
@@ -2061,6 +2064,12 @@ msgstr "インライン テーブルには対応していません。[kind.ID] �
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1} 行目と同じパスにインストールされます (Windows は名前の大文字と小文字を区別しません{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances はコンピューター単位のパッケージ用です(scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances はまだ [menu.*] と併用できません(メニューの ID パッケージはビルドごとに 1 つです)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "内部エラー: 組み込みのダイアログのタブ順が壊れています。報告してください"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri にはローカライズされた文字列とロゴの倍�
 
 msgid "too many packages in the bundle"
 msgstr "バンドルのパッケージが多すぎます"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' 内の変換 '{1}' を読み取れません: {3}"
 
 msgid "trusted"
 msgstr "信頼済み"

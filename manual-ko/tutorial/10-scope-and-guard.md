@@ -113,3 +113,9 @@ RP_GUARD	INSTALLDIR
 `ALLUSERS = 2` 와 `MSIINSTALLPERUSER = 1` 의 짝은 Windows Installer 의 "둘 다를 위한 단일 패키지"다: 따로 말하지
 않으면 사용자별이다. 컴퓨터 전체 패키지는 `ALLUSERS = 1` 이다. `RP_GUARD` 는 도우미 DLL 에게 보호할 dir 을
 알린다. 묻는 페이지는 `Dialog` 표의 `RpScopeDlg` 다.
+
+## 한 컴퓨터에 여러 번: `instances`
+
+컴퓨터 전체 패키지는 `instances = N` 으로 나란히 N개까지 설치할 수 있다. rubrapack 은 N-1개의 인스턴스 변환
+(`Instance1` ..)을 담고, 하나는 `msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:Instance1` 로 설치한다. 각각
+자기 제품 코드·이름·폴더를 가진다.

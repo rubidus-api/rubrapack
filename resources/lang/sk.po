@@ -276,6 +276,9 @@ msgstr "'{1}' má nečitateľný prúd súhrnných informácií"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nemá tabuľky Directory, Component, File a Media, z ktorých by sa dalo rozbaliť"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' nemá vloženú transformáciu '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' nemá čitateľné súhrnné informácie"
 
@@ -2061,6 +2064,12 @@ msgstr "inline tabuľky nie sú podporované; použite tabuľku [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "inštaluje sa na tú istú cestu ako riadok {1} (Windows v názvoch nerozlišuje veľké a malé písmená{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances je pre balík na počítač (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances sa zatiaľ nedá kombinovať s [menu.*] (balík identity ponuky je jeden na zostavenie)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "vnútorná chyba: vstavaný dialóg má pokazené poradie tabulátora; nahláste to"
 
@@ -3062,6 +3071,9 @@ msgstr "príliš veľa lokalizovaných textov a mierok loga pre resources.pri"
 
 msgid "too many packages in the bundle"
 msgstr "príliš veľa balíkov vo zväzku"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "transformáciu '{1}' v '{2}' nemožno prečítať: {3}"
 
 msgid "trusted"
 msgstr "dôveryhodné"

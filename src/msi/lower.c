@@ -6,6 +6,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/build.h"
 #include "rubrapack/cab.h"
+#include "rubrapack/cfb.h"
 #include "rubrapack/ident.h"
 #include "rubrapack/lint.h"
 #include "rubrapack/md5.h"
@@ -19,6 +20,7 @@
 #include "rubrapack/pe.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
+#include "rubrapack/transform.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/ui.h"
 #include "rubrapack/version.h"
@@ -588,7 +590,18 @@ typedef struct {
     size_t           nbb_img;
     uint8_t         *act_bin[64];      // RFC-0031 B6: Binary-table DLLs of single actions, freed at the end
     size_t           act_bin_count;
+    int              instance;         // RFC-0031 B12: 0 = the base package, K >= 1 = the K-th instance variant
 } pkg_t;
+
+// RFC-0031 B12: the UUID namespace for a component GUID. The base (instance 0) keeps the original
+// namespace so every existing package is byte-identical; each instance derives distinct component
+// GUIDs, which the MSI component rules require for an instance in its own folder.
+static const char *comp_ns(const pkg_t *pk) {
+    if (pk->instance == 0) return "rubrapack.component";
+    char num[16];
+    snprintf(num, sizeof num, "%d", pk->instance);
+    return kprintf(pk->k, "rubrapack.component/i%s", num, NULL);
+}
 
 // Property: identity, scope, [arp], [property.*] and the lists of secure and hidden properties.
 static void lower_properties(pkg_t *pk, const char *product_code) {
@@ -600,7 +613,15 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     char lang[8];
     snprintf(lang, sizeof lang, "%u", ir->language);
     s_(&pk->property, "ProductCode"); s_(&pk->property, product_code);
-    s_(&pk->property, "ProductName"); s_(&pk->property, ir->name);
+    // RFC-0031 B12: an instance variant has its own name so Installed apps shows it separately and
+    // its [ProductName]-keyed registry (Shortcuts, Components) does not collide with the base's.
+    const char *prodname = ir->name;
+    if (pk->instance > 0) {
+        char suffix[24];
+        snprintf(suffix, sizeof suffix, " (instance %d)", pk->instance);
+        prodname = kprintf(k, "%s%s", ir->name, suffix);
+    }
+    s_(&pk->property, "ProductName"); s_(&pk->property, prodname);
     s_(&pk->property, "ProductVersion"); s_(&pk->property, ir->version);
     s_(&pk->property, "Manufacturer"); s_(&pk->property, ir->manufacturer);
     s_(&pk->property, "ProductLanguage"); s_(&pk->property, kdup(k, lang));
@@ -669,10 +690,22 @@ static void lower_directories(pkg_t *pk) {
         dnode_t *n = &dirs->v[i];
         s_(&pk->directory, n->key);
         s_(&pk->directory, n->parent);
+        // RFC-0031 B12: an instance variant's top product folder (one directly under a known folder,
+        // whose parent has no literal name) gets an " (instance K)" suffix so the instances install
+        // to separate folders. Nested folders keep their names (the suffix is only on the top one).
+        const char *lname = n->long_name;
+        if (pk->instance > 0 && lname && n->parent) {
+            const dnode_t *par = find_node(dirs, n->parent);
+            if (par && par->long_name == NULL) {
+                char suffix[24];
+                snprintf(suffix, sizeof suffix, " (instance %d)", pk->instance);
+                lname = kprintf(k, "%s%s", n->long_name, suffix);
+            }
+        }
         if (n->parent == NULL) s_(&pk->directory, "SourceDir");
-        else if (n->long_name == NULL) s_(&pk->directory, ".");
-        else if (strcmp(n->short_name, n->long_name) == 0) s_(&pk->directory, n->long_name);
-        else s_(&pk->directory, kprintf(k, "%s|%s", n->short_name, n->long_name));
+        else if (lname == NULL) s_(&pk->directory, ".");
+        else if (strcmp(n->short_name, lname) == 0) s_(&pk->directory, lname);
+        else s_(&pk->directory, kprintf(k, "%s|%s", n->short_name, lname));
     }
 }
 
@@ -788,7 +821,7 @@ static void lower_files(pkg_t *pk) {
         } else {
             const char *logical = kprintf(k, "%s/%s", lf->f->dir, lf->f->name);
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "file-hkcu" : "file", lf->key };
-            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         }
         s_(&pk->component, lf->comp);
         s_(&pk->component, kdup(k, guid));
@@ -866,7 +899,7 @@ static void lower_registry(pkg_t *pk) {
             const char *logical = kprintf(k, "%s\\%s", roots[r->root + 1], r->key);
             logical = kprintf(k, "%s\\%s", logical, r->name ? r->name : "");
             const char *fields[] = { ir->upgrade_code, "machine", r->view32 ? "x86" : arch_text(ir->arch), logical, "registry", r->id };
-            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             ckey = kdup(k, comp);
             bool keypath = !r->remove && r->type != RP_REG_QWORD;     // a qword has no Registry row
             int32_t attr = (keypath ? 4 : 0) | (ir->arch != RP_ARCH_X86 && !r->view32 ? 256 : 0) | (r->keep ? 16 : 0);
@@ -939,7 +972,7 @@ static void lower_addon(pkg_t *pk) {
     char comp[23], guid[39];
     rp_key_derive('C', "addon:parent", comp);
     const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), ir->parent, "addon", "parent" };
-    rp_uuid_derive("rubrapack.component", fields, 6, guid);
+    rp_uuid_derive(comp_ns(pk), fields, 6, guid);
     const char *ckey = kdup(k, comp);
     s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, "TARGETDIR");
     i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0)); null_(&pk->component); s_(&pk->component, "RP_AddonParent");
@@ -988,7 +1021,7 @@ static void lower_shortcuts(pkg_t *pk) {
             rp_key_derive('C', kprintf(k, "shortcut:%s", sc->id, NULL), comp);
             rp_key_derive('R', kprintf(k, "shortcut-when:%s", sc->id, NULL), rk);
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), sc->id, "shortcut", sc->id };
-            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             sc_comp = kdup(k, comp);
             s_(&pk->component, sc_comp); s_(&pk->component, kdup(k, guid)); s_(&pk->component, sdir);
             i_(&pk->component, 4 | (ir->arch != RP_ARCH_X86 ? 256 : 0));
@@ -1068,7 +1101,7 @@ static void lower_removes(pkg_t *pk) {
         bool aside = r->recursive && dir_in_profile(ir, r->dir);
         bool profile = !aside && dir_in_profile(ir, r->dir);
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "remove-hkcu" : "remove", r->id };
-        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, aside ? "TARGETDIR" : dkey(ir, r->dir));
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); null_(&pk->component);
@@ -1115,7 +1148,7 @@ static void lower_env(pkg_t *pk) {
         char comp[23], guid[39];
         rp_key_derive('C', kprintf(k, "env:%s", e->id, NULL), comp);
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), e->name, "env", e->id };
-        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, "TARGETDIR");
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (e->keep ? 16 : 0)); s_(&pk->component, e->when); null_(&pk->component);
@@ -1144,7 +1177,7 @@ static void lower_ini(pkg_t *pk) {
         logical = kprintf(k, "%s%s", logical, x->key);
         bool profile = dir_in_profile(ir, x->dir);                 // RFC-0029: an HKCU key path
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "ini-hkcu" : "ini", x->id };
-        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->dir));
         i_(&pk->component, (ir->arch != RP_ARCH_X86 ? 256 : 0) | (profile ? 4 : 0)); s_(&pk->component, x->when);
@@ -1694,7 +1727,7 @@ static void lower_permissions(pkg_t *pk) {
             char comp[23], guid[39];
             rp_key_derive('C', kprintf(k, "permission:%s", x->id, NULL), comp);
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), x->target, "permission", x->id };
-            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             const char *ckey = kdup(k, comp);
             lock = dkey(ir, x->target);
             s_(&pk->component, ckey); s_(&pk->component, kdup(k, guid)); s_(&pk->component, lock);
@@ -1852,7 +1885,7 @@ static void lower_more(pkg_t *pk) {
             char ckey[23], guid[39];
             rp_key_derive('C', kprintf(k, "move.%s", x->id, NULL), ckey);
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), x->to_dir, "move", x->id };
-            rp_uuid_derive("rubrapack.component", fields, 6, guid);
+            rp_uuid_derive(comp_ns(pk), fields, 6, guid);
             comp = kdup(k, ckey);
             s_(&pk->component, comp); s_(&pk->component, kdup(k, guid)); s_(&pk->component, dkey(ir, x->to_dir));
             i_(&pk->component, pk->comp_attr); null_(&pk->component); null_(&pk->component);
@@ -1933,7 +1966,7 @@ static void lower_folders(pkg_t *pk) {
         const char *logical = kprintf(k, "%s/%s", f->dir, f->name);
         bool profile = dir_in_profile(ir, f->dir);                 // RFC-0029: an HKCU key path
         const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "folder-hkcu" : "folder", f->id };
-        rp_uuid_derive("rubrapack.component", fields, 6, guid);
+        rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         const char *ckey = kdup(k, comp);
         s_(&pk->component, ckey);
         s_(&pk->component, kdup(k, guid));
@@ -2561,9 +2594,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs,
-                                  const rp_out_sink_t *sink) {
+                                  const rp_out_sink_t *sink, int instance) {
     pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
-                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1", .pplan = "RPP1" };
+                  .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1", .pplan = "RPP1",
+                  .instance = instance };
     pkg_t *pk = &pkg;
     rows_init(&pk->property, alloc, "Property", property_cols, 2);
     rows_init(&pk->directory, alloc, "Directory", directory_cols, 3);
@@ -2789,6 +2823,135 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     return err;
 }
 
+// RFC-0031 B12: embed N-1 instance transforms into the base package. Each variant differs only in
+// ProductCode, ProductName, the component GUIDs and the top folder (write_package with instance K);
+// rp_mst_write diffs it against the base, and the transform goes in as an "InstanceK" substorage.
+// Install an instance with: msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:InstanceK
+typedef struct { rp_cfb_t cfb; rp_msi_t msi; rp_msi_view_t view; uint8_t *sum; int step; } loaded_t;
+
+static proven_err_t load_pkg(proven_allocator_t alloc, const uint8_t *data, size_t len, const rp_limits_t *limits, loaded_t *l) {
+    static const uint16_t sumn[] = { 5, 'S', 'u', 'm', 'm', 'a', 'r', 'y', 'I', 'n', 'f', 'o', 'r', 'm', 'a', 't', 'i', 'o', 'n' };
+    *l = (loaded_t){ 0 };
+    const char *why = NULL;
+    proven_err_t err = rp_cfb_open(&l->cfb, alloc, data, len, limits, &why);
+    if (err != PROVEN_OK) return err;
+    l->step = 1;
+    err = rp_msi_open(&l->msi, alloc, &l->cfb, limits, &why);
+    if (err != PROVEN_OK) return err;
+    l->step = 2;
+    uint32_t id;
+    size_t slen = 0;
+    if (rp_cfb_find(&l->cfb, 0, sumn, sizeof sumn / sizeof sumn[0], &id) == PROVEN_OK) {
+        slen = (size_t)l->cfb.entries[id].size;
+        l->sum = rp_mem_alloc(alloc, slen + 1, 1);
+        if (l->sum == NULL) return PROVEN_ERR_NOMEM;
+        if ((err = rp_cfb_read(&l->cfb, id, l->sum, slen)) != PROVEN_OK) return err;
+    }
+    if ((err = rp_msi_view(&l->msi, l->sum, slen, &l->view)) != PROVEN_OK) return err;
+    l->step = 3;
+    return PROVEN_OK;
+}
+
+static void free_pkg(proven_allocator_t alloc, loaded_t *l) {
+    if (l->step >= 3) rp_msi_view_free(&l->msi, &l->view);
+    if (l->step >= 2) rp_msi_close(&l->msi);
+    if (l->step >= 1) rp_cfb_close(&l->cfb);
+    rp_mem_free(alloc, l->sum);
+    *l = (loaded_t){ 0 };
+}
+
+// Appends the root streams of `cfb` to list (under `parent`: 0 = root), tracking each buffer in bufs.
+static proven_err_t copy_streams(proven_allocator_t alloc, const rp_cfb_t *cfb, size_t parent,
+                                 rp_cfb_stream_t *list, size_t *count, size_t cap, uint8_t **bufs, size_t *nbuf, size_t bufcap) {
+    uint32_t ids[512];
+    size_t n = 0;
+    proven_err_t err = rp_cfb_children(cfb, 0, ids, sizeof ids / sizeof ids[0], &n);
+    for (size_t i = 0; err == PROVEN_OK && i < n; ++i) {
+        const rp_cfb_entry_t *e = &cfb->entries[ids[i]];
+        if (e->type != 2) continue;     // streams only (the root has no substorages in an MSI)
+        if (*count == cap || *nbuf + 2 > bufcap) return PROVEN_ERR_OUT_OF_BOUNDS;
+        uint8_t *data = rp_mem_alloc(alloc, (size_t)e->size ? (size_t)e->size : 1, 1);
+        uint16_t *nm = rp_mem_alloc(alloc, (size_t)e->name_len + 1, sizeof *nm);      // copy: the source cfb may be closed before the write
+        if (data == NULL || nm == NULL) { rp_mem_free(alloc, data); rp_mem_free(alloc, nm); return PROVEN_ERR_NOMEM; }
+        if ((err = rp_cfb_read(cfb, ids[i], data, (size_t)e->size)) != PROVEN_OK) { rp_mem_free(alloc, data); rp_mem_free(alloc, nm); return err; }
+        for (uint32_t c = 0; c < e->name_len; ++c) nm[c] = e->name[c];
+        bufs[(*nbuf)++] = data;
+        bufs[(*nbuf)++] = (uint8_t *)nm;
+        list[(*count)++] = (rp_cfb_stream_t){ .name = nm, .name_len = e->name_len, .data = data, .size = (size_t)e->size, .parent = parent };
+    }
+    return err;
+}
+
+static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
+                                    dirs_t *dirs, const char *package_code, const rp_limits_t *limits, const char *stem,
+                                    size_t jobs, const uint8_t *base_bytes, size_t base_len, uint8_t **newout, size_t *newlen) {
+    enum { CAP = 2048, BUFCAP = 2 * CAP };
+    rp_cfb_stream_t *list = rp_mem_alloc(alloc, CAP, sizeof *list);
+    uint8_t **bufs = rp_mem_alloc(alloc, BUFCAP, sizeof *bufs);
+    uint16_t (*names)[32] = rp_mem_alloc(alloc, (size_t)ir->instances, sizeof *names);
+    loaded_t base = { 0 };
+    size_t count = 0, nbuf = 0;
+    proven_err_t err = (list && bufs && names) ? load_pkg(alloc, base_bytes, base_len, limits, &base) : PROVEN_ERR_NOMEM;
+    if (err == PROVEN_OK) err = copy_streams(alloc, &base.cfb, 0, list, &count, CAP, bufs, &nbuf, BUFCAP);
+    char v3[24];
+    snprintf(v3, sizeof v3, "%u.%u.%u", ir->version_parts[0], ir->version_parts[1], ir->version_parts[2]);
+    for (int K = 1; err == PROVEN_OK && K < ir->instances; ++K) {
+        char pcode[39], iK[16];
+        snprintf(iK, sizeof iK, "i%d", K);
+        const char *fields[] = { ir->upgrade_code, arch_text(ir->arch), "machine", v3, iK };
+        rp_uuid_derive("rubrapack.product", fields, 5, pcode);
+        uint8_t *vb = NULL, *mst = NULL;
+        size_t vl = 0, ml = 0;
+        rp_build_file_t *vc = NULL;
+        size_t nvc = 0;
+        rp_srcdiags_t dd = { 0 };
+        err = write_package(alloc, ir, k, files, nfiles, dirs, pcode, package_code, limits, &vb, &vl, &dd, stem, &vc, &nvc, jobs, NULL, K);
+        rp_build_files_free(alloc, vc, nvc);
+        loaded_t var = { 0 };
+        rp_cfb_t mcfb = { 0 };
+        int mopen = 0;
+        if (err == PROVEN_OK) err = load_pkg(alloc, vb, vl, limits, &var);
+        if (err == PROVEN_OK) {
+            rp_mst_side_t sb = { &base.view.db, &base.cfb }, st = { &var.view.db, &var.cfb };
+            rp_mst_opts_t opts = { .summary_flags = 0 };    // an instance transform changes ProductCode; no validation (VM-tunable)
+            const char *why = NULL;
+            char tbl[64];
+            err = rp_mst_write(alloc, &sb, &st, &opts, limits, &mst, &ml, &why, tbl, sizeof tbl);
+        }
+        if (err == PROVEN_OK) {
+            const char *why = NULL;
+            err = rp_cfb_open(&mcfb, alloc, mst, ml, limits, &why);
+            if (err == PROVEN_OK) mopen = 1;
+        }
+        if (err == PROVEN_OK) {
+            char nm[24];
+            int nn = snprintf(nm, sizeof nm, "Instance%d", K);      // the substorage; install with TRANSFORMS=:InstanceK
+            uint16_t *w = names[K - 1];
+            for (int c = 0; c < nn; ++c) w[c] = (uint16_t)nm[c];
+            if (count == CAP) err = PROVEN_ERR_OUT_OF_BOUNDS;
+            else {
+                size_t sidx = count;
+                list[count++] = (rp_cfb_stream_t){ .name = w, .name_len = (size_t)nn, .storage = true };
+                err = copy_streams(alloc, &mcfb, sidx + 1, list, &count, CAP, bufs, &nbuf, BUFCAP);
+            }
+        }
+        if (mopen) rp_cfb_close(&mcfb);
+        rp_mem_free(alloc, mst);
+        free_pkg(alloc, &var);
+        rp_mem_free(alloc, vb);
+    }
+    if (err == PROVEN_OK) {
+        const uint8_t *clsid = base.step >= 1 ? base.cfb.entries[0].clsid : NULL;
+        err = rp_cfb_write(alloc, 12, clsid, list, count, limits, newout, newlen);
+    }
+    for (size_t i = 0; i < nbuf; ++i) rp_mem_free(alloc, bufs[i]);
+    rp_mem_free(alloc, bufs);
+    rp_mem_free(alloc, list);
+    rp_mem_free(alloc, names);
+    free_pkg(alloc, &base);
+    return err;
+}
+
 proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const rp_build_options_t *opt,
                             const rp_limits_t *limits, uint8_t **out, size_t *len,
                             rp_build_file_t **cabs, size_t *cab_count, rp_srcdiags_t *diags) {
@@ -2809,6 +2972,9 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     const char *stem = opt->cab_stem ? opt->cab_stem : "cab";
     keep_t k = { .alloc = alloc };
     dirs_t dirs = { .k = &k, .ir = ir };
+    // RFC-0031 B12: with instances the base is built to the heap (sink NULL) so the transforms can be
+    // embedded; the combined package is copied into the sink (the output file) at the end.
+    const rp_out_sink_t *bsink = ir->instances > 1 ? NULL : opt->sink;
     lfile_t *files = rp_mem_alloc(alloc, ir->file_count, sizeof *files);
     proven_err_t err = files ? PROVEN_OK : PROVEN_ERR_NOMEM;
     if (files) memset(files, 0, ir->file_count * sizeof *files);
@@ -3041,7 +3207,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             size_t nfcabs = 0;
             static const char zero[] = "{00000000-0000-0000-0000-000000000000}";
             err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, zero, limits, &first, &first_len,
-                                diags, stem, &fcabs, &nfcabs, opt->jobs, opt->sink);
+                                diags, stem, &fcabs, &nfcabs, opt->jobs, bsink, 0);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
@@ -3072,7 +3238,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                     done = true;
                 } else {
                     rp_build_files_free(alloc, fcabs, nfcabs);
-                    if (opt->sink) opt->sink->drop(opt->sink->ctx, first);
+                    if (bsink) bsink->drop(bsink->ctx, first);
                     else rp_mem_free(alloc, first);
                 }
                 rp_mem_free(alloc, two);
@@ -3084,11 +3250,35 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     if (err == PROVEN_OK && !done) {
         err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
                             opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
-                            stem, cabs, cab_count, opt->jobs, opt->sink);
+                            stem, cabs, cab_count, opt->jobs, bsink, 0);
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
                        "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'");
+    }
+    // RFC-0031 B12: the base is on the heap (bsink was NULL); embed the instance transforms and move
+    // the combined package into the real sink (the output file), so the caller's model is unchanged.
+    if (err == PROVEN_OK && ir->instances > 1) {
+        uint8_t *combined = NULL;
+        size_t clen = 0;
+        err = embed_instances(alloc, ir, &k, files, ir->file_count, &dirs, package_code, limits, stem, opt->jobs,
+                              *out, *len, &combined, &clen);
+        rp_mem_free(alloc, *out);       // the heap base (bsink was NULL for the instances build)
+        *out = NULL;
+        *len = 0;
+        if (err == PROVEN_OK) {
+            if (opt->sink) {
+                uint8_t *dst = NULL;
+                err = opt->sink->get(opt->sink->ctx, clen, &dst);
+                if (err == PROVEN_OK) { memcpy(dst, combined, clen); *out = dst; *len = clen; }
+                rp_mem_free(alloc, combined);
+            } else {
+                *out = combined;
+                *len = clen;
+            }
+        } else {
+            rp_mem_free(alloc, combined);
+        }
     }
 
     // One snapshot (RFC-0001 14.2) with mapped files: what was packed is still what was hashed.

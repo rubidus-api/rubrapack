@@ -276,6 +276,9 @@ msgstr "'{1}' இல் படிக்க முடியாத சுருக
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' இல் பிரித்தெடுக்க Directory, Component, File மற்றும் Media அட்டவணைகள் இல்லை"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' இல் உட்பொதிக்கப்பட்ட மாற்றம் '{2}' இல்லை"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' இல் படிக்கக்கூடிய சுருக்கத் தகவல் இல்லை"
 
@@ -2061,6 +2064,12 @@ msgstr "வரிக்குள் அட்டவணைகள் ஆதரி�
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "வரி {1} இன் அதே பாதையில் நிறுவப்படும் (Windows பெயர்களில் எழுத்து அளவைப் புறக்கணிக்கும்{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances என்பது ஒரு கணினிக்கு ஒரு தொகுப்புக்கானது (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances ஐ இன்னும் [menu.*] உடன் சேர்க்க முடியாது (மெனுவின் அடையாளத் தொகுப்பு ஒரு பில்டுக்கு ஒன்றே)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "உள் பிழை: உள்ளமைந்த உரையாடலின் தாவல் வரிசை உடைந்துள்ளது; தெரிவிக்கவும்"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri க்கு மிக அதிக உள்ளூர்�
 
 msgid "too many packages in the bundle"
 msgstr "தொகுதியில் மிக அதிகத் தொகுப்புகள்"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' இல் உள்ள மாற்றம் '{1}' ஐப் படிக்க முடியவில்லை: {3}"
 
 msgid "trusted"
 msgstr "நம்பகமானது"

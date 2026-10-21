@@ -276,6 +276,9 @@ msgstr "'{1}' ішінде оқылмайтын жиынтық ақпарат а
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' ішінде шығаруға арналған Directory, Component, File және Media кестелері жоқ"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' ішінде '{2}' ендірілген түрлендіруі жоқ"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' ішінде оқылатын жиынтық ақпарат жоқ"
 
@@ -2061,6 +2064,12 @@ msgstr "кірістірілген кестелерге қолдау жоқ; [ki
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}-жолмен бір жолға орнатылады (Windows атауларда әріп регистрін ескермейді{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances компьютерге бір бума үшін (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances әзірге [menu.*] -пен біріктірілмейді (мәзірдің бірегейлік бумасы әр құрастыруға біреу)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "ішкі қате: кірістірілген диалогтың табуляция реті бұзылған; хабарлаңыз"
 
@@ -3062,6 +3071,9 @@ msgstr "resources.pri үшін аударылған мәтіндер мен ло
 
 msgid "too many packages in the bundle"
 msgstr "жиында бумалар тым көп"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "'{2}' ішіндегі '{1}' түрлендіруін оқу мүмкін емес: {3}"
 
 msgid "trusted"
 msgstr "сенімді"

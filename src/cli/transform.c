@@ -226,6 +226,33 @@ int rp_cmd_patch(int argc, char **argv) {
 
 // `rubrapack inspect <file.msp> --base <base.msi>`: the patch's own tables, then each transform in
 // the order summary property 8 names them, listed against the base.
+// RFC-0031 B12: list an embedded instance transform against the package's own base tables.
+int rp_instance_inspect(const char *path, const char *name) {
+    proven_allocator_t heap = proven_heap_allocator();
+    rp_limits_t limits = rp_limits_default();
+    rp_pkg_t p;
+    int rc = rp_pkg_open(heap, path, &limits, &p);
+    if (rc != RP_EXIT_OK) return rc;
+    uint16_t wname[64];
+    size_t nl = 0;
+    for (const char *s = name; *s && nl < 63; ++s) wname[nl++] = (uint16_t)(unsigned char)*s;
+    uint32_t id;
+    rp_buf_t out = rp_buf_new(heap, limits.max_metadata);
+    const char *why = NULL;
+    if (rp_cfb_find(&p.cfb, 0, wname, nl, &id) != PROVEN_OK || p.cfb.entries[id].type != RP_CFB_STORAGE) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' has no embedded transform '%s'", path, name);
+        rc = RP_EXIT_IO;
+    } else if (rp_mst_list(heap, &p.cfb, id, &p.view.db, &limits, &out, &why) != PROVEN_OK) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "transform '%s' in '%s' cannot be read: %s", name, path, why && *why ? why : "unreadable");
+        rc = RP_EXIT_IO;
+    } else if (out.err != PROVEN_OK || rp_pal_write(RP_OUT_STDOUT, out.data, out.len) != PROVEN_OK) {
+        rc = RP_EXIT_IO;
+    }
+    rp_buf_free(&out);
+    rp_pkg_close(heap, &p);
+    return rc;
+}
+
 int rp_msp_inspect(const char *path, const char *base) {
     static const uint16_t summary_name[] = { 5, 'S', 'u', 'm', 'm', 'a', 'r', 'y', 'I', 'n', 'f', 'o', 'r', 'm', 'a', 't', 'i', 'o', 'n' };
     proven_allocator_t heap = proven_heap_allocator();

@@ -276,6 +276,9 @@ msgstr "'{1}':ssä on lukukelvoton yhteenvetotietovirta"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}':ssä ei ole Directory-, Component-, File- ja Media-taulukoita, joista purkaa"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "kohteessa '{1}' ei ole upotettua muunnosta '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}':ssä ei ole luettavia yhteenvetotietoja"
 
@@ -2061,6 +2064,12 @@ msgstr "sisäkkäisiä taulukoita (inline) ei tueta; käytä [kind.ID]-taulukkoa
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "asentuu samaan polkuun kuin rivi {1} (Windows ei erottele kirjainkokoa nimissä{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances on tietokonekohtaista pakettia varten (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances-arvoa ei voi vielä yhdistää [menu.*]-arvoon (valikon identiteettipaketti on yksi per koonti)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "sisäinen virhe: sisäänrakennetun valintaikkunan sarkainjärjestys on rikki; ilmoita siitä"
 
@@ -3062,6 +3071,9 @@ msgstr "liian monta lokalisoitua tekstiä ja logoskaalaa resources.pri-tiedostol
 
 msgid "too many packages in the bundle"
 msgstr "liian monta pakettia nipussa"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "muunnosta '{1}' kohteessa '{2}' ei voi lukea: {3}"
 
 msgid "trusted"
 msgstr "luotettu"

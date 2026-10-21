@@ -64,7 +64,7 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
                                         "upgrade-code-x64", "upgrade-code-arm64", "upgrade-code-x86",
                                         "product-code", "scope", "language", "ui", "license", "icon", "reboot",
                                         "downgrade-message", "compress", "cab", "cab-max-size", "refuse-upgrade-below",
-                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", "replaces", "preflight", "close-programs", "extra-files", NULL };
+                                        "refuse-upgrade-message", "cleanup", "parent", "remove-addons", "replaces", "preflight", "close-programs", "extra-files", "instances", NULL };
     rp_ir_t *ir = c->ir;
     ir_check_keys(c, t, keys);
     ir->name = ir_get_str(c, t, "name", true, NULL);
@@ -164,6 +164,12 @@ void ir_parse_package(ctx_t *c, const rp_ttable_t *t) {
         ERR(c, ir_key_pos(t, "scope"), "RP1308", "scope must be \"machine\", \"user\" or \"dual\"");
     }
     rp_mem_free(c->alloc, scope);
+    // RFC-0031 B12: instances = N (>= 2) embeds N-1 named instance transforms. Machine-only (an
+    // instance is a separate per-machine product of the same upgrade family).
+    if (ir_find_key(t, "instances")) {
+        ir->instances = (int32_t)ir_get_int(c, t, "instances", 2, 2, 100);
+        if (ir->scope != 0) ERR(c, ir_key_pos(t, "instances"), "RP1316", "instances is for a per-machine package (scope = \"machine\")");
+    }
 
     ir->language = 1033;
     char *lang = ir_get_str(c, t, "language", false, NULL);

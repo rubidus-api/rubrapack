@@ -276,6 +276,9 @@ msgstr "'{1}' fitxategiak laburpen-informazioko korronte irakurtezina du"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' fitxategiak ez du ateratzeko Directory, Component, File eta Media taularik"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}'-k ez du '{2}' kapsulatutako eraldaketarik"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' fitxategiak ez du laburpen-informazio irakurgarririk"
 
@@ -2061,6 +2064,12 @@ msgstr "lerro barneko taulak ez dira onartzen; erabili [kind.ID] taula bat"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}. lerroaren bide berean instalatzen da (Windows-ek ez ditu maiuskulak bereizten izenetan{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances ordenagailuko pakete baterako da (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances oraindik ezin da [menu.*]-rekin konbinatu (menuaren identitate-paketea konpilazio bakoitzeko bat da)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "barne-errorea: barneko elkarrizketa batek tabulazio-ordena hautsia du; jakinarazi"
 
@@ -3062,6 +3071,9 @@ msgstr "testu lokalizatu eta logotipo-eskala gehiegi resources.pri-rako"
 
 msgid "too many packages in the bundle"
 msgstr "pakete gehiegi sortan"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "ezin da '{2}'-ko '{1}' eraldaketa irakurri: {3}"
 
 msgid "trusted"
 msgstr "fidagarria"

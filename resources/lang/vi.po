@@ -276,6 +276,9 @@ msgstr "'{1}' có luồng thông tin tóm tắt không đọc được"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' không có bảng Directory, Component, File và Media để giải nén"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' không có phép biến đổi nhúng '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' không có thông tin tóm tắt đọc được"
 
@@ -2061,6 +2064,12 @@ msgstr "không hỗ trợ bảng inline; hãy dùng bảng [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "cài vào cùng đường dẫn với dòng {1} (Windows không phân biệt hoa thường trong tên{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances dành cho gói theo máy (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances chưa thể kết hợp với [menu.*] (gói danh tính của menu là một cho mỗi bản dựng)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "lỗi nội bộ: một hộp thoại dựng sẵn có thứ tự tab bị hỏng; vui lòng báo cáo"
 
@@ -3062,6 +3071,9 @@ msgstr "quá nhiều văn bản bản địa hóa và tỷ lệ logo cho resourc
 
 msgid "too many packages in the bundle"
 msgstr "quá nhiều gói trong bó"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "không thể đọc phép biến đổi '{1}' trong '{2}': {3}"
 
 msgid "trusted"
 msgstr "đáng tin cậy"

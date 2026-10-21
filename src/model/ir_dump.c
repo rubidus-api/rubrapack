@@ -40,6 +40,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
     else snprintf(num, sizeof num, "%d", ir->compress);
     kv(&b, "compress", ir->compress < 0 ? "none" : num);
     if (ir->scope) kv(&b, "scope", ir->scope == 1 ? "user" : "dual");      // only when set: older goldens stay
+    if (ir->instances) { char n[16]; snprintf(n, sizeof n, "%d", ir->instances); kv(&b, "instances", n); }
     if (ir->ui) {
         static const char *const sets[] = { "none", "basic", "minimal", "installdir", "features" };
         kv(&b, "ui", sets[ir->ui]);

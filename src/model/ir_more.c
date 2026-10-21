@@ -199,6 +199,11 @@ void ir_more_checks(ctx_t *c) {
         const rp_ir_publish_t *x = &ir->publishes[k];
         if (x->file && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", x->file);
     }
+    // RFC-0031 B12: the Windows 11 menu's identity package has one build-time family name, which an
+    // instance transform does not change, so two instances would register the same menu package.
+    // Until the menu data is made instance-aware, instances and [menu.*] are not combined.
+    if (ir->instances > 1 && ir->menu_count > 0)
+        ERR(c, ir->menus[0].pos, "RP1316", "instances is not yet combined with [menu.*] (the menu's identity package is one per build)");
     // RFC-0031 B10: a billboard names the feature whose installation shows it.
     for (size_t k = 0; k < ir->billboard_count; ++k) {
         const rp_ir_billboard_t *x = &ir->billboards[k];

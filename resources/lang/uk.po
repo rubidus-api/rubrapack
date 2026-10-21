@@ -276,6 +276,9 @@ msgstr "'{1}' має непридатний для читання потік з�
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' не має таблиць Directory, Component, File і Media, з яких можна розпакувати"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "у '{1}' немає вбудованого перетворення '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' не має придатних для читання зведених відомостей"
 
@@ -2061,6 +2064,12 @@ msgstr "вбудовані таблиці не підтримуються; ви�
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "встановлюється в той самий шлях, що й рядок {1} (Windows не розрізняє регістр в іменах{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances призначено для пакунка на комп'ютер (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances поки не можна поєднувати з [menu.*] (пакунок ідентичності меню один на збірку)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "внутрішня помилка: вбудоване діалогове вікно має пошкоджений порядок табуляції; повідомте про це"
 
@@ -3062,6 +3071,9 @@ msgstr "забагато локалізованих текстів і масшт
 
 msgid "too many packages in the bundle"
 msgstr "забагато пакетів у наборі"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "не вдається прочитати перетворення '{1}' у '{2}': {3}"
 
 msgid "trusted"
 msgstr "довірений"

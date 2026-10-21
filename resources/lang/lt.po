@@ -276,6 +276,9 @@ msgstr "'{1}' turi neperskaitomą suvestinės informacijos srautą"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' neturi lentelių Directory, Component, File ir Media, iš kurių išskleisti"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' neturi įterptosios transformacijos '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' neturi perskaitomos suvestinės informacijos"
 
@@ -2061,6 +2064,12 @@ msgstr "inline lentelės nepalaikomos; naudokite lentelę [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "įdiegiama tuo pačiu keliu kaip eilutė {1} (Windows pavadinimuose neskiria didžiųjų ir mažųjų raidžių{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances skirta paketui kiekvienam kompiuteriui (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances dar negalima derinti su [menu.*] (meniu tapatybės paketas yra vienas kiekvienam kūrimui)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "vidinė klaida: įtaisyto dialogo tabuliavimo tvarka sugadinta; praneškite apie tai"
 
@@ -3062,6 +3071,9 @@ msgstr "per daug lokalizuotų tekstų ir logotipo mastelių resources.pri"
 
 msgid "too many packages in the bundle"
 msgstr "rinkinyje per daug paketų"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "transformacijos '{1}' faile '{2}' nepavyksta nuskaityti: {3}"
 
 msgid "trusted"
 msgstr "patikimas"

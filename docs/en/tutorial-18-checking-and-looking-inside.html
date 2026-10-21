@@ -109,6 +109,10 @@ C:\work\hello&gt; rubrapack inspect custom.mst --base hello.msi
 Registry	update	Greeting	Value=Hello from the IT desk
 C:\work\hello&gt; msiexec /i hello.msi TRANSFORMS=custom.mst</code></pre>
 <p><code>inspect &lt;file.mst&gt; --base &lt;package&gt;</code> lists the transform's rows: <code>insert</code>, <code>update</code> (the key, then the changed columns) and <code>delete</code>. By default the transform only applies to the product it was made from (<code>--validate product-code,upgrade-code</code>); <code>--validate none</code> drops the checks. A transform carries tables, not files: a package whose files differ is refused (<code>RP0013</code>).</p>
+<p>A package built with <code>[package] instances</code> carries its instance transforms inside it; <code>inspect &lt;package&gt; --transform Instance1</code> lists one against the package's own base, the same way:</p>
+<pre><code class="lang-text">C:\work\hello&gt; rubrapack inspect multi.msi --transform Instance1
+Property	update	ProductCode	Value={...}
+Property	update	ProductName	Value=MultiApp (instance 1)</code></pre>
 <h3 id="signatures-verify">18.7 Signatures: <code>verify</code><a class="plink" href="#signatures-verify" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <p>Chapter 16 showed <code>verify</code>. It is the check to run on what you are about to publish:</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack verify hello.msi --system-roots</code></pre>

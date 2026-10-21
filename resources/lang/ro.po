@@ -276,6 +276,9 @@ msgstr "'{1}' are un flux de informații rezumat ilizibil"
 msgid "'%s' has no Directory, Component, File and Media tables to extract from"
 msgstr "'{1}' nu are tabele Directory, Component, File și Media din care să se extragă"
 
+msgid "'%s' has no embedded transform '%s'"
+msgstr "'{1}' nu are transformarea încorporată '{2}'"
+
 msgid "'%s' has no readable summary information"
 msgstr "'{1}' nu are informații rezumat lizibile"
 
@@ -2061,6 +2064,12 @@ msgstr "tabelele inline nu sunt acceptate; folosiți un tabel [kind.ID]"
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "se instalează în aceeași cale ca linia {1} (Windows ignoră majusculele în nume{2})"
 
+msgid "instances is for a per-machine package (scope = \"machine\")"
+msgstr "instances este pentru un pachet per computer (scope = \"machine\")"
+
+msgid "instances is not yet combined with [menu.*] (the menu's identity package is one per build)"
+msgstr "instances nu se combină încă cu [menu.*] (pachetul de identitate al meniului este unul per compilare)"
+
 msgid "internal error: a built-in dialog has a broken tab order; please report it"
 msgstr "eroare internă: un dialog încorporat are o ordine de tabulare stricată; raportați-o"
 
@@ -3062,6 +3071,9 @@ msgstr "prea multe texte localizate și scări de siglă pentru resources.pri"
 
 msgid "too many packages in the bundle"
 msgstr "prea multe pachete în pachetul grupat"
+
+msgid "transform '%s' in '%s' cannot be read: %s"
+msgstr "transformarea '{1}' din '{2}' nu poate fi citită: {3}"
 
 msgid "trusted"
 msgstr "de încredere"

@@ -123,3 +123,9 @@ RP_GUARD	INSTALLDIR
 `ALLUSERS = 2` together with `MSIINSTALLPERUSER = 1` is Windows Installer's "single package for
 both": per user unless asked otherwise. A per-machine package has `ALLUSERS = 1`. `RP_GUARD` lists
 the guarded dirs for the helper DLL. The page that asks is `RpScopeDlg` in the `Dialog` table.
+
+## More than once on a computer: `instances`
+
+A per-machine package can set `instances = N` to allow up to N copies side by side. rubrapack embeds
+N-1 instance transforms (`Instance1` ..); install one with `msiexec /i pkg.msi MSINEWINSTANCE=1
+TRANSFORMS=:Instance1`. Each gets its own product code, name and folder.
