@@ -94,10 +94,6 @@ static bool is_key(const mod_t *m, const char *s, size_t n) {
     return m->nkeys && rp_bsearch(&p, m->keys, m->nkeys, sizeof *m->keys, cmp_str) != NULL;
 }
 
-static rp_msi_cell_t str_cell(const char *s) {
-    return s ? (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) } : (rp_msi_cell_t){ .kind = RP_MSI_NULL };
-}
-
 // A key cell: with the suffix when the module defines that key.
 static rp_msi_cell_t renamed(mod_t *m, const rp_msi_cell_t *c) {
     if (c->kind != RP_MSI_STR || !is_key(m, (const char *)c->bytes, c->len)) return *c;
@@ -105,7 +101,7 @@ static rp_msi_cell_t renamed(mod_t *m, const rp_msi_cell_t *c) {
     if (s == NULL) return *c;
     memcpy(s, c->bytes, c->len);
     strcpy(s + c->len, m->sfx);
-    return str_cell(s);
+    return rp_msi_str_cell(s);
 }
 
 // A formatted value: [key], [#key], [!key], [$key] of the module's keys get the suffix.
@@ -136,7 +132,7 @@ static rp_msi_cell_t formatted(mod_t *m, const rp_msi_cell_t *c) {
         o[w++] = s[i++];
     }
     o[w] = '\0';
-    return str_cell(o);
+    return rp_msi_str_cell(o);
 }
 
 static int column_of(const rp_msi_wtable_t *t, const char *name) {
@@ -257,9 +253,9 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
     if (module_id) snprintf(module_id, strlen(ir->name) + 40, "%s%s", ir->name, m.sfx);
     rp_msi_cell_t *sig = cells(&m, 3);
     if (err == PROVEN_OK && sig && module_id) {
-        sig[0] = str_cell(module_id);
+        sig[0] = rp_msi_str_cell(module_id);
         sig[1] = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = ir->language };
-        sig[2] = str_cell(ir->version);
+        sig[2] = rp_msi_str_cell(ir->version);
         mt[nt++] = (rp_msi_wtable_t){ "ModuleSignature", modsig_cols, 3, sig, 1 };
     }
     size_t ncomp = component ? component->row_count : 0;
@@ -268,7 +264,7 @@ proven_err_t rp_msm_write(proven_allocator_t alloc, const rp_ir_t *ir, const rp_
         int cc = column_of(component, "Component");
         for (size_t r = 0; r < ncomp; ++r) {
             mc[3 * r] = component->cells[r * component->column_count + (size_t)cc];
-            mc[3 * r + 1] = str_cell(module_id);
+            mc[3 * r + 1] = rp_msi_str_cell(module_id);
             mc[3 * r + 2] = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = ir->language };
         }
         mt[nt++] = (rp_msi_wtable_t){ "ModuleComponents", modcomp_cols, 3, mc, ncomp };

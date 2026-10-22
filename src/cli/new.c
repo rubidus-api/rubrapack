@@ -18,6 +18,7 @@
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -250,13 +251,6 @@ static const char *const archs[] = { "x64", "x86", "arm64", NULL };
 static const char *const scopes[] = { "machine", "user", "dual", NULL };
 static const char *const uis[] = { "none", "basic", "minimal", "installdir", "features", NULL };
 
-static bool one_of(const char *s, const char *const *list) {
-    for (size_t i = 0; list[i]; ++i) {
-        if (strcmp(s, list[i]) == 0) return true;
-    }
-    return false;
-}
-
 const char *rpn_check_product(ans_t *a, char *v) {
     (void)a;
     size_t n = strlen(v);
@@ -288,9 +282,9 @@ const char *rpn_check_version(ans_t *a, char *v) {
     return NULL;
 }
 
-const char *rpn_check_arch(ans_t *a, char *v) { (void)a; return one_of(v, archs) ? NULL : "x64, x86 or arm64"; }
-const char *rpn_check_scope(ans_t *a, char *v) { (void)a; return one_of(v, scopes) ? NULL : "machine, user or dual"; }
-const char *rpn_check_ui(ans_t *a, char *v) { (void)a; return one_of(v, uis) ? NULL : "none, basic, minimal, installdir or features"; }
+const char *rpn_check_arch(ans_t *a, char *v) { (void)a; return rp_str_in_list(v, archs) ? NULL : "x64, x86 or arm64"; }
+const char *rpn_check_scope(ans_t *a, char *v) { (void)a; return rp_str_in_list(v, scopes) ? NULL : "machine, user or dual"; }
+const char *rpn_check_ui(ans_t *a, char *v) { (void)a; return rp_str_in_list(v, uis) ? NULL : "none, basic, minimal, installdir or features"; }
 
 const char *rpn_check_dist(ans_t *a, char *v) {
     for (char *p = v; *p; ++p) {

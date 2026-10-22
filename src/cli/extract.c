@@ -23,6 +23,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
+#include "rubrapack/str.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/suminfo.h"
@@ -617,17 +618,6 @@ out:
     return rc;
 }
 
-static bool ends_with_ci(const char *s, const char *suffix) {
-    size_t n = strlen(s), m = strlen(suffix);
-    if (n < m) return false;
-    for (size_t k = 0; k < m; ++k) {
-        char a = s[n - m + k];
-        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
-        if (a != suffix[k]) return false;
-    }
-    return true;
-}
-
 static bool parse_u64(const char *s, uint64_t *out) {
     const char *end = NULL;
     uint64_t v = 0;
@@ -657,8 +647,8 @@ int rp_cmd_extract(int argc, char **argv) {
             input = a;
         }
     }
-    if (input == NULL || dest == NULL || !(ends_with_ci(input, ".msi") || ends_with_ci(input, ".cab") || ends_with_ci(input, ".msix") ||
-                                             ends_with_ci(input, ".msixbundle") || ends_with_ci(input, ".exe"))) {
+    if (input == NULL || dest == NULL || !(rp_ascii_ends_with_ci(input, ".msi") || rp_ascii_ends_with_ci(input, ".cab") || rp_ascii_ends_with_ci(input, ".msix") ||
+                                             rp_ascii_ends_with_ci(input, ".msixbundle") || rp_ascii_ends_with_ci(input, ".exe"))) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]");
         return RP_EXIT_USAGE;
     }
@@ -674,11 +664,11 @@ int rp_cmd_extract(int argc, char **argv) {
         return RP_EXIT_IO;
     }
     int rc;
-    if (ends_with_ci(input, ".cab")) {
+    if (rp_ascii_ends_with_ci(input, ".cab")) {
         rc = plan_cab(&p, data, len);
-    } else if (ends_with_ci(input, ".exe")) {
+    } else if (rp_ascii_ends_with_ci(input, ".exe")) {
         rc = plan_chain(&p, data, len);
-    } else if (ends_with_ci(input, ".msix") || ends_with_ci(input, ".msixbundle")) {
+    } else if (rp_ascii_ends_with_ci(input, ".msix") || rp_ascii_ends_with_ci(input, ".msixbundle")) {
         rc = plan_msix(&p, data, len);
     } else {
         rp_cfb_t cfb;

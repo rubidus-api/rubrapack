@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "proven/allocator.h"
 #include "proven/types.h"
@@ -104,6 +105,13 @@ typedef struct {
     const uint8_t *bytes;   // RP_MSI_STR: string bytes in the pool code page; RP_MSI_BINARY: stream bytes
     size_t         len;     // an empty string is stored as null, as msi.dll does
 } rp_msi_cell_t;
+
+// A string cell from a C string: NULL yields a NULL cell, otherwise a string cell of strlen(s)
+// bytes (an empty string is a string cell of length 0 - the writer stores it as null, above).
+static inline rp_msi_cell_t rp_msi_str_cell(const char *s) {
+    return s ? (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) }
+             : (rp_msi_cell_t){ .kind = RP_MSI_NULL };
+}
 
 typedef struct {
     const char *name;       // column name (identifier)

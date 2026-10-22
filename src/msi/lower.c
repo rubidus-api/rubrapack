@@ -5,6 +5,7 @@
 
 #include "rubrapack/buf.h"
 #include "rubrapack/build.h"
+#include "rubrapack/str.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/ident.h"
@@ -351,16 +352,6 @@ static bool valid_83(const char *name) {
     return true;
 }
 
-static bool same_ci(const char *a, const char *b) {
-    for (; *a && *b; ++a, ++b) {
-        char x = *a, y = *b;
-        if (x >= 'a' && x <= 'z') x = (char)(x - 32);
-        if (y >= 'a' && y <= 'z') y = (char)(y - 32);
-        if (x != y) return false;
-    }
-    return *a == *b;
-}
-
 typedef struct {
     const char *long_name;
     char      **short_out;
@@ -408,7 +399,7 @@ static void assign_short(keep_t *k, sib_t *s, size_t n) {
             snprintf(cand, sizeof cand, "%.*s~%s%s%s", (int)keepn, stem, digits, en ? "." : "", ext);
             bool clash = false;
             for (size_t j = 0; j < n && !clash; ++j) {
-                if (j != i && *s[j].short_out && same_ci(*s[j].short_out, cand)) clash = true;
+                if (j != i && *s[j].short_out && rp_ascii_ieq(*s[j].short_out, cand)) clash = true;
             }
             if (!clash) {
                 *s[i].short_out = kdup(k, cand);
@@ -470,13 +461,6 @@ static const char *shortcut_dir_key(const rp_ir_t *ir, const rp_ir_shortcut_t *s
 static int cmp_keys(const lfile_t *a, const lfile_t *b) { return strcmp(a->key, b->key); }
 
 static const char *arch_text(rp_arch_t a) { return a == RP_ARCH_X64 ? "x64" : a == RP_ARCH_ARM64 ? "arm64" : "x86"; }
-
-static bool is_ascii(const char *s) {
-    for (; s && *s; ++s) {
-        if ((unsigned char)*s >= 0x80) return false;
-    }
-    return true;
-}
 
 // Text that goes into a Formatted column shows brackets literally (RFC-0002 6).
 static char *escape_formatted(keep_t *k, const char *s) {
@@ -2680,8 +2664,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     if (err == PROVEN_OK) err = lower_dialogs(pk);
 
     // Summary information: ASCII strings only, no code page (DECISIONS P1a/P1b).
-    const char *subject = ir->summary_name ? ir->summary_name : is_ascii(ir->name) ? ir->name : "rubrapack package";
-    const char *author = is_ascii(ir->manufacturer) ? ir->manufacturer : "rubrapack";
+    const char *subject = ir->summary_name ? ir->summary_name : rp_is_ascii(ir->name) ? ir->name : "rubrapack package";
+    const char *author = rp_is_ascii(ir->manufacturer) ? ir->manufacturer : "rubrapack";
     char tmpl[32];
     snprintf(tmpl, sizeof tmpl, "%s;%u", ir->arch == RP_ARCH_X64 ? "x64" : ir->arch == RP_ARCH_ARM64 ? "Arm64" : "Intel",
              ir->language);
@@ -3252,7 +3236,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
                             opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
                             stem, cabs, cab_count, opt->jobs, bsink, 0);
     }
-    if (err == PROVEN_OK && ir->summary_name == NULL && !is_ascii(ir->name)) {
+    if (err == PROVEN_OK && ir->summary_name == NULL && !rp_is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
                        "name is not ASCII and summary-name is missing; the summary Subject will read 'rubrapack package'");
     }

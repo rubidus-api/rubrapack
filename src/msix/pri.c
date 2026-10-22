@@ -15,6 +15,7 @@
 #include "rubrapack/mem.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pri.h"
+#include "rubrapack/str.h"
 #include "rubrapack/text.h"
 
 #include <stdio.h>
@@ -49,22 +50,6 @@ typedef struct {
     node_t            *nodes;
     int                nnodes;
 } tree_t;
-
-static int ascii_icmp(const char *a, const char *b) {
-    for (;; ++a, ++b) {
-        int x = (unsigned char)*a, y = (unsigned char)*b;
-        if (x >= 'a' && x <= 'z') x -= 32;
-        if (y >= 'a' && y <= 'z') y -= 32;
-        if (x != y || x == 0) return x - y;
-    }
-}
-
-static bool is_ascii(const char *s) {
-    for (; *s; ++s) {
-        if ((unsigned char)*s >= 0x80) return false;
-    }
-    return true;
-}
 
 // The node for `name` ("A/B/c"), made on the way; `item` for the last part.
 static int tree_add(tree_t *t, const char *name, bool item) {
@@ -106,7 +91,7 @@ static int tree_add(tree_t *t, const char *name, bool item) {
 static void sort_children(tree_t *t, int n) {
     node_t *x = &t->nodes[n];
     for (int i = 1; i < x->nchildren; ++i) {
-        for (int j = i; j > 0 && ascii_icmp(t->nodes[x->children[j - 1]].name, t->nodes[x->children[j]].name) > 0; --j) {
+        for (int j = i; j > 0 && rp_ascii_icmp(t->nodes[x->children[j - 1]].name, t->nodes[x->children[j]].name) > 0; --j) {
             int s = x->children[j];
             x->children[j] = x->children[j - 1];
             x->children[j - 1] = s;
@@ -169,8 +154,8 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
     bool use[4096];
     for (size_t i = 0; i < count; ++i) {
         bool lang = cands[i].qualifier == RP_PRI_LANGUAGE && cands[i].qvalue;
-        use[i] = part == NULL || (part[0] == '\0' ? !lang || ascii_icmp(cands[i].qvalue, default_language) == 0
-                                                   : lang && ascii_icmp(cands[i].qvalue, part) == 0);
+        use[i] = part == NULL || (part[0] == '\0' ? !lang || rp_ascii_icmp(cands[i].qvalue, default_language) == 0
+                                                   : lang && rp_ascii_icmp(cands[i].qvalue, part) == 0);
     }
 
     // Qualifiers: languages (the default first), then scales from small to large.
@@ -188,7 +173,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
             if (nq == MAX_QUALS) return PROVEN_ERR_OUT_OF_BOUNDS;
             uint16_t score = 0;
             if (lang) {
-                score = ascii_icmp(cands[i].qvalue, default_language) == 0 ? 1000 : 0;
+                score = rp_ascii_icmp(cands[i].qvalue, default_language) == 0 ? 1000 : 0;
             } else {
                 bool ok = false;
                 for (size_t s = 0; s < sizeof scales / sizeof scales[0]; ++s) {
@@ -241,7 +226,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         t.nnodes = 1;
     }
     for (size_t i = 0; err == PROVEN_OK && i < count; ++i) {
-        if (cands[i].name == NULL || cands[i].value == NULL || !is_ascii(cands[i].name)) err = PROVEN_ERR_INVALID_ARG;
+        if (cands[i].name == NULL || cands[i].value == NULL || !rp_is_ascii(cands[i].name)) err = PROVEN_ERR_INVALID_ARG;
         else if ((node_of[i] = tree_add(&t, cands[i].name, true)) < 0) err = PROVEN_ERR_INVALID_ARG;
     }
     int nscopes = 0, nitems = 0;
@@ -524,7 +509,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
             if (qindex[i] != set_order[s]) continue;
             while (v.len % 4) rp_buf_byte(&v, 0);
             size_t start = v.len;
-            bool ascii = is_ascii(cands[i].value);
+            bool ascii = rp_is_ascii(cands[i].value);
             if (ascii) rp_buf_put(&v, cands[i].value, strlen(cands[i].value) + 1);
             else put_u16s(&v, cands[i].value);
             vtype[i] = (uint8_t)(cands[i].path ? (ascii ? 5 : 1) : (ascii ? 3 : 0));

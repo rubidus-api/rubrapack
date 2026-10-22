@@ -11,6 +11,7 @@
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -18,17 +19,6 @@
 #include "proven/heap.h"
 
 enum { MAX_INPUT = 1u << 30 };
-
-static bool ends_with_ci(const char *s, const char *suffix) {
-    size_t n = strlen(s), m = strlen(suffix);
-    if (n < m) return false;
-    for (size_t k = 0; k < m; ++k) {
-        char a = s[n - m + k];
-        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
-        if (a != suffix[k]) return false;
-    }
-    return true;
-}
 
 void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p) {
     if (p->stage >= 4) rp_msi_view_free(&p->msi, &p->view);
@@ -193,16 +183,16 @@ static int lint_cmd(int argc, char **argv) {
             if ((strcmp(argv[i], "-D") == 0 || strcmp(argv[i], "--arch") == 0 || strcmp(argv[i], "--target") == 0) && i + 1 < argc) ++i;
         } else if (target == NULL) target = argv[i];
     }
-    if (target && (ends_with_ci(target, ".msix") || ends_with_ci(target, ".msixbundle"))) {
+    if (target && (rp_ascii_ends_with_ci(target, ".msix") || rp_ascii_ends_with_ci(target, ".msixbundle"))) {
         if (other || argc > 4 || (argc == 4 && !strict)) {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]");
             return RP_EXIT_USAGE;
         }
         return rp_msix_lint(target, strict);
     }
-    if (target && ends_with_ci(target, ".msi")) {
+    if (target && rp_ascii_ends_with_ci(target, ".msi")) {
         int extra = argc - 3 - (strict ? 1 : 0) - (previous ? 2 : 0);
-        if (other || extra != 0 || (previous && !ends_with_ci(previous, ".msi"))) {
+        if (other || extra != 0 || (previous && !rp_ascii_ends_with_ci(previous, ".msi"))) {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]");
             return RP_EXIT_USAGE;
         }

@@ -8,6 +8,7 @@
 
 #include "rubrapack/msix.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/str.h"
 
 #include "rubrapack/buf.h"
 #include "rubrapack/crypto.h"
@@ -96,14 +97,6 @@ static const char *extension(const char *path) {
     return dot && (!sep || dot > sep) && dot[1] ? dot + 1 : NULL;
 }
 
-static bool ieq(const char *a, const char *b) {
-    for (; *a && *b; ++a, ++b) {
-        char x = *a >= 'A' && *a <= 'Z' ? (char)(*a + 32) : *a, y = *b >= 'A' && *b <= 'Z' ? (char)(*b + 32) : *b;
-        if (x != y) return false;
-    }
-    return *a == *b;
-}
-
 static const char *content_type(const char *ext) {
     static const struct { const char *ext, *type; } map[] = {
         { "exe", "application/x-msdownload" }, { "dll", "application/x-msdownload" }, { "sys", "application/x-msdownload" },
@@ -113,7 +106,7 @@ static const char *content_type(const char *ext) {
         { "xml", "application/xml" }, { "pdf", "application/pdf" }, { "zip", "application/x-zip-compressed" },
     };
     for (size_t i = 0; ext && i < sizeof map / sizeof map[0]; ++i) {
-        if (ieq(ext, map[i].ext)) return map[i].type;
+        if (rp_ascii_ieq(ext, map[i].ext)) return map[i].type;
     }
     return "application/octet-stream";
 }
@@ -123,7 +116,7 @@ static bool already_compressed(const char *ext) {
     static const char *const list[] = { "png", "jpg", "jpeg", "gif", "zip", "7z", "gz", "bz2", "xz", "zst", "cab", "msix", "appx",
                                         "docx", "xlsx", "pptx", "mp3", "mp4", "m4a", "ogg", "webm", "webp", "woff", "woff2", NULL };
     for (size_t i = 0; ext && list[i]; ++i) {
-        if (ieq(ext, list[i])) return true;
+        if (rp_ascii_ieq(ext, list[i])) return true;
     }
     return false;
 }
@@ -426,12 +419,12 @@ static bool reserved(const char *path) {
     static const char *const names[] = { "AppxManifest.xml", "AppxBlockMap.xml", "[Content_Types].xml", "AppxSignature.p7x",
                                          "CodeIntegrity.cat", "resources.pri", "Registry.dat", "User.dat", "UserClasses.dat", NULL };
     for (size_t i = 0; names[i]; ++i) {
-        if (ieq(path, names[i])) return true;
+        if (rp_ascii_ieq(path, names[i])) return true;
     }
     char top[16];
     size_t n = strcspn(path, "\\");
     snprintf(top, sizeof top, "%.*s", (int)(n < 15 ? n : 15), path);
-    return n < 15 && path[n] == '\\' && (ieq(top, "AppxMetadata") || ieq(top, "VFS"));
+    return n < 15 && path[n] == '\\' && (rp_ascii_ieq(top, "AppxMetadata") || rp_ascii_ieq(top, "VFS"));
 }
 
 // The VFS folder for files anchored in a known location (RFC-0010 N5, narrowed to what Windows
@@ -1133,7 +1126,7 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
         const char *ext = extension(items[i].path);
         if (ext == NULL) continue;
         bool dup = false;
-        for (size_t k = 0; k < ns && !dup; ++k) dup = ieq(seen[k], ext);
+        for (size_t k = 0; k < ns && !dup; ++k) dup = rp_ascii_ieq(seen[k], ext);
         if (dup || ns == 256) continue;
         seen[ns++] = ext;
         char low[64];
@@ -2203,7 +2196,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         }
         if (x == NULL) {
             DERR(app->pos, "RP1607", "executable = \"%s\" must name a [file.*] that goes into the package", app->exe ? app->exe : "");
-        } else if (!ieq(extension(x->path) ? extension(x->path) : "", "exe")) {
+        } else if (!rp_ascii_ieq(extension(x->path) ? extension(x->path) : "", "exe")) {
             DERR(app->pos, "RP1607", "the executable '%s' must be an .exe", x->path);
         } else {
             snprintf(ap[a].exe, sizeof ap[a].exe, "%s", x->path);
@@ -2524,7 +2517,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     // Two paths that Windows would take for one (letters compared without case).
     for (size_t i = 0; i < n; ++i) {
         for (size_t k = i + 1; k < n; ++k) {
-            if (ieq(items[i].path, items[k].path)) DERR(items[k].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[i].path, items[k].path);
+            if (rp_ascii_ieq(items[i].path, items[k].path)) DERR(items[k].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[i].path, items[k].path);
         }
     }
     rp_buf_t *ext = rp_mem_alloc(alloc, ir->msix_app_count + 1, sizeof *ext);    // + package level
@@ -3082,14 +3075,14 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
             *why = TR_N("a package without Identity Name, Publisher, Version and ProcessorArchitecture (or ResourceId)");
         } else if (i && (strcmp(ids[i].name, ids[0].name) != 0 || strcmp(ids[i].publisher, ids[0].publisher) != 0 || strcmp(ids[i].version, ids[0].version) != 0)) {
             *why = TR_N("the packages of a bundle need the same Name, Publisher and Version");
-        } else if (strlen(parts[i].file_name) > 255 || !ext || (!ieq(ext, "msix") && !ieq(ext, "appx")) || strpbrk(parts[i].file_name, "/\\")) {
+        } else if (strlen(parts[i].file_name) > 255 || !ext || (!rp_ascii_ieq(ext, "msix") && !rp_ascii_ieq(ext, "appx")) || strpbrk(parts[i].file_name, "/\\")) {
             *why = TR_N("a package's name in the bundle must be a file name ending in .msix or .appx");
         } else {
             part_name(parts[i].file_name, zip_names[i], sizeof zip_names[i]);
             for (size_t k = 0; k < i && !*why; ++k) {
                 if (!resource && !rids[k][0] && strcmp(ids[k].arch, ids[i].arch) == 0) *why = TR_N("two packages of one architecture in a bundle");
                 else if (resource && strcmp(rids[k], rids[i]) == 0) *why = TR_N("two resource packages of one ResourceId in a bundle");
-                else if (ieq(parts[k].file_name, parts[i].file_name)) *why = TR_N("two packages of one name in a bundle");
+                else if (rp_ascii_ieq(parts[k].file_name, parts[i].file_name)) *why = TR_N("two packages of one name in a bundle");
             }
         }
         if (*why) err = PROVEN_ERR_INVALID_ARG;

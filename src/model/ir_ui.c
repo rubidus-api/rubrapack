@@ -1,27 +1,17 @@
 // src/model/ir_ui.c - dialogs, languages, [ui] checks and NFC names (RFC-0005, RFC-0012).
 
 #include "rubrapack/lang.h"
+#include "rubrapack/str.h"
 #include "ir_int.h"
 
 // ---- dialogs (RFC-0005) ------------------------------------------------------------------------
-
-static bool ends_with_ci(const char *s, const char *suffix) {
-    size_t n = strlen(s), m = strlen(suffix);
-    if (n < m) return false;
-    for (size_t k = 0; k < m; ++k) {
-        char a = s[n - m + k];
-        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
-        if (a != suffix[k]) return false;
-    }
-    return true;
-}
 
 static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos);
 
 // A .png the identity package's logos are made from (RFC-0031 L7): 8-bit RGB or RGBA, not
 // interlaced, at most 1024 pixels a side - what the package's own decoder takes.
 char *ir_png_source(ctx_t *c, const char *shown, rp_pos_t pos) {
-    char *path = ends_with_ci(shown, ".png") ? ui_source(c, shown, pos) : NULL;
+    char *path = rp_ascii_ends_with_ci(shown, ".png") ? ui_source(c, shown, pos) : NULL;
     uint8_t *png = NULL;
     size_t n = 0;
     bool ok = path && rp_pal_read_file(c->alloc, path, 1u << 24, &png, &n) == PROVEN_OK && n >= 29 && memcmp(png, "\x89PNG\r\n\x1a\n", 8) == 0 &&
@@ -32,7 +22,7 @@ char *ir_png_source(ctx_t *c, const char *shown, rp_pos_t pos) {
         ok = w && h && w <= 1024 && h <= 1024;
     }
     rp_mem_free(c->alloc, png);
-    if (!ok && (path || !ends_with_ci(shown, ".png"))) {
+    if (!ok && (path || !rp_ascii_ends_with_ci(shown, ".png"))) {
         ERR(c, pos, "RP1316", "logo must be a .png of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side");
         rp_mem_free(c->alloc, path);
         return NULL;
@@ -41,7 +31,7 @@ char *ir_png_source(ctx_t *c, const char *shown, rp_pos_t pos) {
 }
 
 char *ir_icon_source(ctx_t *c, const char *shown, rp_pos_t pos) {
-    if (!ends_with_ci(shown, ".ico")) {
+    if (!rp_ascii_ends_with_ci(shown, ".ico")) {
         ERR(c, pos, "RP1316", "icon must be an .ico file");
         return NULL;
     }
@@ -109,7 +99,7 @@ void ir_parse_billboard(ctx_t *c, const rp_ttable_t *t, rp_ir_billboard_t *x) {
     x->pos = t->pos;
     char *image = ir_get_str(c, t, "image", true, NULL);
     if (image) {
-        if (!ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
+        if (!rp_ascii_ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
         else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
         x->image_shown = ir_dup(c, image);
         rp_mem_free(c->alloc, image);
@@ -156,7 +146,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     char *image = ir_get_str(c, t, "image", false, &has_image);
     if (x->type == RP_DC_BITMAP) {
         if (image) {
-            if (!ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
+            if (!rp_ascii_ends_with_ci(image, ".bmp")) ERR(c, ir_key_pos(t, "image"), "RP1316", "image must be a .bmp file (Windows Installer shows BMP only)");
             else x->image_source = ui_source(c, image, ir_key_pos(t, "image"));
             x->image_shown = ir_dup(c, image);
         } else {
@@ -400,7 +390,7 @@ static int ui_lang_index(const rp_ir_t *ir, const char *code) {
 }
 
 // A license file of the dialogs: .txt/.md shown as text, .rtf as it is.
-static bool license_kind_ok(const char *s) { return ends_with_ci(s, ".txt") || ends_with_ci(s, ".rtf") || ends_with_ci(s, ".md"); }
+static bool license_kind_ok(const char *s) { return rp_ascii_ends_with_ci(s, ".txt") || rp_ascii_ends_with_ci(s, ".rtf") || rp_ascii_ends_with_ci(s, ".md"); }
 
 // languages = "all" (RFC-0028): every built-in pack, region by region in the order of the language
 // page's regions (RFC-0028 section 4), the widely used first; a built-in pack this list does not
@@ -539,7 +529,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         if (L->name == NULL && kl >= 0) L->name = ir_dup(c, known_langs[kl].name);
         if (L->font == NULL) L->font = ir_dup(c, kl >= 0 ? known_langs[kl].font : "Segoe UI");
         // A license shown as text names its face in RTF, which takes no face name it cannot spell in ASCII.
-        bool text_license = L->license_source && !ends_with_ci(L->license_source, ".rtf");
+        bool text_license = L->license_source && !rp_ascii_ends_with_ci(L->license_source, ".rtf");
         if (text_license && L->font && rp_ui_face_ascii(L->font) == NULL) {
             char key[16];
             snprintf(key, sizeof key, "font-%s", L->code);
@@ -615,7 +605,7 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     if (ir->license_shown) {
         rp_pos_t pos = ir_key_pos(pkg, "license");
         if (ir->ui == 0 || ir->ui == 1) ERR(c, pos, "RP1316", "a license needs ui = \"minimal\", \"installdir\" or \"features\"");
-        else if (!ends_with_ci(ir->license_shown, ".txt") && !ends_with_ci(ir->license_shown, ".rtf") && !ends_with_ci(ir->license_shown, ".md")) {
+        else if (!rp_ascii_ends_with_ci(ir->license_shown, ".txt") && !rp_ascii_ends_with_ci(ir->license_shown, ".rtf") && !rp_ascii_ends_with_ci(ir->license_shown, ".md")) {
             ERR(c, pos, "RP1316", "license must be a .txt, .md (shown as plain text) or .rtf file");
         } else {
             ir->license_source = ui_source(c, ir->license_shown, pos);
@@ -632,7 +622,7 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     // allowed with ui = "none" (no rubrapack dialogs); the DLL's bytes are carried in the package.
     char *embedded = ir_get_str(c, uit, "embedded", false, NULL);
     if (embedded) {
-        if (!ends_with_ci(embedded, ".dll")) ERR(c, ir_key_pos(uit, "embedded"), "RP1316", "embedded must be a .dll file (the author's UI handler)");
+        if (!rp_ascii_ends_with_ci(embedded, ".dll")) ERR(c, ir_key_pos(uit, "embedded"), "RP1316", "embedded must be a .dll file (the author's UI handler)");
         else ir->ui_embedded_source = ui_source(c, embedded, ir_key_pos(uit, "embedded"));
         ir->ui_embedded_shown = ir_dup(c, embedded);
         rp_mem_free(c->alloc, embedded);
@@ -640,7 +630,7 @@ void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg) {
     if (ir->ui == 0 && ir->ui_embedded_source == NULL) ERR(c, uit->pos, "RP1316", "[ui] needs ui = \"basic\" or another dialog set in [package] (or embedded = \"...dll\")");
     char *banner = ir_get_str(c, uit, "banner", false, NULL);
     if (banner) {
-        if (!ends_with_ci(banner, ".bmp")) ERR(c, ir_key_pos(uit, "banner"), "RP1316", "banner must be a .bmp file (Windows Installer shows BMP only)");
+        if (!rp_ascii_ends_with_ci(banner, ".bmp")) ERR(c, ir_key_pos(uit, "banner"), "RP1316", "banner must be a .bmp file (Windows Installer shows BMP only)");
         else ir->banner_source = ui_source(c, banner, ir_key_pos(uit, "banner"));
         rp_mem_free(c->alloc, banner);
     }

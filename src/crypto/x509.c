@@ -6,6 +6,7 @@
 // signing needs.
 
 #include "rubrapack/pki.h"
+#include "rubrapack/str.h"
 
 #include <string.h>
 
@@ -201,14 +202,6 @@ bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **wh
 
 static char lower(char c) { return c >= 'A' && c <= 'Z' ? (char)(c + 32) : c; }
 
-// ASCII case-insensitive equality of a[0..n) and b[0..n).
-static bool ieq(const char *a, const char *b, size_t n) {
-    for (size_t i = 0; i < n; ++i) {
-        if (lower(a[i]) != lower(b[i])) return false;
-    }
-    return true;
-}
-
 static bool dns_match(const char *pat, size_t pl, const char *host, size_t hl) {
     if (pl && pat[pl - 1] == '.') --pl;
     if (hl && host[hl - 1] == '.') --hl;
@@ -224,10 +217,10 @@ static bool dns_match(const char *pat, size_t pl, const char *host, size_t hl) {
         const char *dot = memchr(host, '.', hl);
         if (dot == NULL || dot == host) return false;      // exactly one non-empty label
         size_t tail = hl - (size_t)(dot - host);
-        return tail == rl && ieq(dot, rest, rl);
+        return tail == rl && rp_ascii_ieq_n(dot, rest, rl);
     }
     if (memchr(pat, '*', pl)) return false;                // no partial wildcards
-    return pl == hl && ieq(pat, host, pl);
+    return pl == hl && rp_ascii_ieq_n(pat, host, pl);
 }
 
 size_t rp_ip_parse(const char *s, uint8_t out[16]) {

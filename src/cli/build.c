@@ -11,6 +11,7 @@
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
+#include "rubrapack/str.h"
 #include "rubrapack/toml.h"
 
 #include <stdio.h>
@@ -20,17 +21,6 @@
 #include "proven/heap.h"
 
 enum { MAX_DEFINES = 64, MAX_SOURCE = 1u << 24 };
-
-static bool ends_with(const char *s, const char *suffix) {
-    size_t n = strlen(s), m = strlen(suffix);
-    if (n < m) return false;
-    for (size_t k = 0; k < m; ++k) {
-        char a = s[n - m + k], b = suffix[k];
-        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
-        if (a != b) return false;
-    }
-    return true;
-}
 
 // RFC-0016 3: <out without .msix/.msixbundle>.appinstaller, when the source names the addresses.
 static bool write_appinstaller(proven_allocator_t heap, const char *out, const uint8_t *data, size_t len) {
@@ -406,11 +396,11 @@ static int run(int argc, char **argv, bool lint) {
         else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
-    bool bundle = !lint && ends_with(out, ".msixbundle");
-    bool msix = (!lint && (bundle || ends_with(out, ".msix"))) || lint_msix;
-    bool chain_out = !lint && ends_with(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
-    bool msm_out = !lint && ends_with(out, ".msm");          // a merge module, from a [module] source (RFC-0017)
-    if (!lint && !msix && !chain_out && !msm_out && !ends_with(out, ".msi")) {
+    bool bundle = !lint && rp_ascii_ends_with_ci(out, ".msixbundle");
+    bool msix = (!lint && (bundle || rp_ascii_ends_with_ci(out, ".msix"))) || lint_msix;
+    bool chain_out = !lint && rp_ascii_ends_with_ci(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
+    bool msm_out = !lint && rp_ascii_ends_with_ci(out, ".msm");          // a merge module, from a [module] source (RFC-0017)
+    if (!lint && !msix && !chain_out && !msm_out && !rp_ascii_ends_with_ci(out, ".msi")) {
         rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe", out);
         goto done;
     }

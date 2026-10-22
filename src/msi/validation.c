@@ -200,10 +200,6 @@ static const rule_t *find(const char *table, const char *column) {
     return NULL;
 }
 
-static rp_msi_cell_t str(const char *s) {
-    return s ? (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) } : (rp_msi_cell_t){ .kind = RP_MSI_NULL };
-}
-
 static rp_msi_cell_t num(int32_t v) {
     return v == NONE ? (rp_msi_cell_t){ .kind = RP_MSI_NULL } : (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = v };
 }
@@ -253,10 +249,10 @@ proven_err_t rp_msi_validation(proven_allocator_t alloc, const rp_msi_wtable_t *
                 if (x) {
                     memcpy(row, x, NCOL * sizeof *row);
                 } else {
-                    for (size_t k = 0; k < NCOL; ++k) row[k] = str(NULL);
-                    row[0] = str(wt->name);
-                    row[1] = str(col->name);
-                    row[2] = str((col->type & 0x1000) ? "Y" : "N");
+                    for (size_t k = 0; k < NCOL; ++k) row[k] = rp_msi_str_cell(NULL);
+                    row[0] = rp_msi_str_cell(wt->name);
+                    row[1] = rp_msi_str_cell(col->name);
+                    row[2] = rp_msi_str_cell((col->type & 0x1000) ? "Y" : "N");
                 }
                 continue;
             }
@@ -266,16 +262,16 @@ proven_err_t rp_msi_validation(proven_allocator_t alloc, const rp_msi_wtable_t *
                 return PROVEN_ERR_NOT_FOUND;
             }
             rp_msi_cell_t *row = &cells[r++ * NCOL];
-            row[0] = str(wt->name);
-            row[1] = str(col->name);
-            row[2] = str((col->type & 0x1000) ? "Y" : "N");
+            row[0] = rp_msi_str_cell(wt->name);
+            row[1] = rp_msi_str_cell(col->name);
+            row[2] = rp_msi_str_cell((col->type & 0x1000) ? "Y" : "N");
             row[3] = num(rule->min);
             row[4] = num(rule->max);
-            row[5] = str(rule->keytable);
+            row[5] = rp_msi_str_cell(rule->keytable);
             row[6] = rule->keycol ? num(rule->keycol) : num(NONE);
-            row[7] = str(rule->category);
-            row[8] = str(rule->set);
-            row[9] = str(NULL);
+            row[7] = rp_msi_str_cell(rule->category);
+            row[8] = rp_msi_str_cell(rule->set);
+            row[9] = rp_msi_str_cell(NULL);
         }
     }
     out->cells = cells;

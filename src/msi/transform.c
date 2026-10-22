@@ -527,8 +527,6 @@ static const rp_msi_wcolumn_t columns_cols[] = {
     { "Type", RP_MSI_COL_VALID | 2 },
 };
 
-static rp_msi_cell_t cstr_cell(const char *s) { return (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) }; }
-
 proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, const rp_mst_side_t *target, const rp_mst_opts_t *opts,
                           const rp_limits_t *limits, uint8_t **out, size_t *len, const char **why, char *table, size_t table_cap) {
     if (base == NULL || target == NULL || opts == NULL || limits == NULL || out == NULL || len == NULL) return PROVEN_ERR_INVALID_ARG;
@@ -560,19 +558,19 @@ proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     size_t ti = 0, ci = 0;
     for (size_t t = 0; err == PROVEN_OK && t < A->table_count; ++t) {
         if (find_table(B, A->tables[t].name)) continue;
-        tcells[ti] = cstr_cell(A->tables[t].name);
+        tcells[ti] = rp_msi_str_cell(A->tables[t].name);
         if (!add_rec(&w, &w.tabs[0], &tcells[ti++], 0)) err = PROVEN_ERR_NOMEM;
     }
     for (size_t t = 0; err == PROVEN_OK && t < B->table_count; ++t) {
         const rp_msi_wtable_t *tb = &B->tables[t];
         if (find_table(A, tb->name)) continue;
-        tcells[ti] = cstr_cell(tb->name);
+        tcells[ti] = rp_msi_str_cell(tb->name);
         if (!add_rec(&w, &w.tabs[0], &tcells[ti++], 1u | 1u << 8)) err = PROVEN_ERR_NOMEM;
         for (size_t c = 0; err == PROVEN_OK && c < tb->column_count; ++c) {
             rp_msi_cell_t *row = &ccells[4 * ci++];
-            row[0] = cstr_cell(tb->name);
+            row[0] = rp_msi_str_cell(tb->name);
             row[1] = (rp_msi_cell_t){ .kind = RP_MSI_NULL };
-            row[2] = cstr_cell(tb->columns[c].name);
+            row[2] = rp_msi_str_cell(tb->columns[c].name);
             row[3] = (rp_msi_cell_t){ .kind = RP_MSI_INT, .i = tb->columns[c].type };
             if (!add_rec(&w, &w.tabs[1], row, 1u | 4u << 8)) err = PROVEN_ERR_NOMEM;
         }

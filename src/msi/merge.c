@@ -28,10 +28,6 @@ static bool cell_is(const rp_msi_cell_t *c, const char *s) {
     return c->kind == RP_MSI_STR && c->len == n && (n == 0 || memcmp(c->bytes, s, n) == 0);
 }
 
-static rp_msi_cell_t cstr(const char *s) {
-    return s ? (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) } : (rp_msi_cell_t){ .kind = RP_MSI_NULL };
-}
-
 static void *keep_alloc(rp_msi_module_t *m, size_t n, size_t size) {
     if (m->nkept == m->capkept) {
         size_t cap = m->capkept ? m->capkept * 2 : 16;
@@ -260,7 +256,7 @@ static proven_err_t merge_sequence(rp_msi_module_t *m, rp_msi_wtable_t *tables, 
                 seq = after ? b + 1 : b - 1;
                 while (seq_taken(ps, seq) && seq > 0 && seq < 32767) seq += after ? 1 : -1;
             }
-            rp_msi_cell_t add[3] = { cstr(keep_str(m, action)), row[cc], { .kind = RP_MSI_INT, .i = seq } };
+            rp_msi_cell_t add[3] = { rp_msi_str_cell(keep_str(m, action)), row[cc], { .kind = RP_MSI_INT, .i = seq } };
             if (add[0].bytes == NULL) return PROVEN_ERR_NOMEM;
             proven_err_t err = append_rows(m, ps, add, 1);
             if (err != PROVEN_OK) return err;
@@ -615,7 +611,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
                     if (err != PROVEN_OK) return err;
                 }
             }
-            if (is_dir && cell_is(&dst[1], "TARGETDIR")) dst[1] = cstr(dir_key);
+            if (is_dir && cell_is(&dst[1], "TARGETDIR")) dst[1] = rp_msi_str_cell(dir_key);
             if (seq_col >= 0 && dst[seq_col].kind == RP_MSI_INT) {
                 dst[seq_col].i += base;
                 if (dst[seq_col].i > last) last = dst[seq_col].i;
@@ -654,7 +650,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
         if (rows == NULL) return PROVEN_ERR_NOMEM;
         int c = col_of(mc, "Component");
         for (size_t r = 0; r < mc->row_count; ++r) {
-            rows[2 * r] = cstr(feature);
+            rows[2 * r] = rp_msi_str_cell(feature);
             rows[2 * r + 1] = mc->cells[r * mc->column_count + (size_t)(c < 0 ? 0 : c)];
         }
         proven_err_t err = append_rows(m, fc, rows, mc->row_count);
@@ -689,7 +685,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
     for (size_t k = 0; ie && k < sizeof std / sizeof std[0]; ++k) {
         const rp_msi_wtable_t *t = pkg_table(tables, *nt, std[k].table);
         if (t == NULL || t->row_count == 0 || seq_has(ie, std[k].action, NULL)) continue;
-        rp_msi_cell_t add[3] = { cstr(std[k].action), { .kind = RP_MSI_NULL }, { .kind = RP_MSI_INT, .i = std[k].seq } };
+        rp_msi_cell_t add[3] = { rp_msi_str_cell(std[k].action), { .kind = RP_MSI_NULL }, { .kind = RP_MSI_INT, .i = std[k].seq } };
         proven_err_t err = append_rows(m, ie, add, 1);
         if (err != PROVEN_OK) return err;
     }
@@ -711,7 +707,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
         char *sn = keep_str(m, name), *sr = keep_str(m, ref);
         if (sn == NULL || sr == NULL) return PROVEN_ERR_NOMEM;
         rp_msi_cell_t row[6] = { { .kind = RP_MSI_INT, .i = max_int(media, "DiskId") + 1 }, { .kind = RP_MSI_INT, .i = last },
-                                 { .kind = RP_MSI_NULL }, cstr(sr), { .kind = RP_MSI_NULL }, { .kind = RP_MSI_NULL } };
+                                 { .kind = RP_MSI_NULL }, rp_msi_str_cell(sr), { .kind = RP_MSI_NULL }, { .kind = RP_MSI_NULL } };
         proven_err_t err = append_rows(m, media, row, 1);
         if (err != PROVEN_OK) return err;
         *cab_stream = (rp_msi_wstream_t){ sn, m->cab, m->cab_len };

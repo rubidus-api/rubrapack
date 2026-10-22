@@ -15,6 +15,7 @@
 
 #include "rubrapack/cab.h"
 #include "rubrapack/ident.h"
+#include "rubrapack/str.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/num.h"
 #include "rubrapack/patch.h"
@@ -251,13 +252,6 @@ static proven_err_t add_storage(list_t *list, const uint16_t *name, size_t len, 
     list->v[list->count] = (rp_cfb_stream_t){ .name = name, .name_len = len, .storage = true, .clsid = clsid };
     *index = ++list->count;     // children name it as parent: index + 1
     return PROVEN_OK;
-}
-
-static bool ascii(const char *s) {
-    for (; *s; ++s) {
-        if ((unsigned char)*s >= 0x80) return false;
-    }
-    return true;
 }
 
 proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, const rp_mst_side_t *target, const rp_msp_opts_t *o,
@@ -500,7 +494,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         };
         rp_msi_cell_t *mc = zalloc(p, 3 * 7, sizeof *mc), sc[4];
         size_t nm = 0;
-        bool all_ascii = ascii(display) && ascii(maker) && ascii(url) && ascii(name) && (!o->family || ascii(o->family));
+        bool all_ascii = rp_is_ascii(display) && rp_is_ascii(maker) && rp_is_ascii(url) && rp_is_ascii(name) && (!o->family || rp_is_ascii(o->family));
         for (size_t i = 0; mc && i < 7; ++i) {
             if (!*meta[i][1]) continue;
             mc[3 * nm] = (rp_msi_cell_t){ .kind = RP_MSI_NULL };

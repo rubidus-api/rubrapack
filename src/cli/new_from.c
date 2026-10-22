@@ -23,6 +23,7 @@
 #include "rubrapack/msi.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
+#include "rubrapack/str.h"
 #include "rubrapack/suminfo.h"
 
 #include "proven/heap.h"
@@ -584,13 +585,6 @@ static const char *const handled_tables[] = {
 };
 
 // The original's standard actions (and rubrapack's own); anything else in a sequence is a custom action.
-static bool listed(const char *s, const char *const *list) {
-    for (size_t i = 0; list[i]; ++i) {
-        if (strcmp(s, list[i]) == 0) return true;
-    }
-    return false;
-}
-
 static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dist, const char *dist_rel, const char *pkg_name) {
     // ---- [package]
     const char *name = property(c, "ProductName"), *maker = property(c, "Manufacturer"), *version = property(c, "ProductVersion");
@@ -1262,7 +1256,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     size_t private_props = 0;
     for (size_t r = 0; r < rows(pt); ++r) {
         const char *pn = str(c, pt, r, "Property");
-        if (listed(pn, own_props) || strncmp(pn, "Msi", 3) == 0 || strncmp(pn, "MSI", 3) == 0 || strncmp(pn, "ARP", 3) == 0 ||
+        if (rp_str_in_list(pn, own_props) || strncmp(pn, "Msi", 3) == 0 || strncmp(pn, "MSI", 3) == 0 || strncmp(pn, "ARP", 3) == 0 ||
             strncmp(pn, "Wix", 3) == 0 || strncmp(pn, "WIX", 3) == 0 || strncmp(pn, "RP", 2) == 0 || strncmp(pn, "Rp", 2) == 0) {
             continue;
         }
@@ -1415,7 +1409,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     (void)std_actions;
     for (size_t i = 0; i < c->db->table_count; ++i) {
         const rp_msi_wtable_t *t = &c->db->tables[i];
-        if (t->row_count == 0 || listed(t->name, handled_tables)) continue;
+        if (t->row_count == 0 || rp_str_in_list(t->name, handled_tables)) continue;
         char line[160];
         snprintf(line, sizeof line, "#   %s: %zu rows\n", t->name, t->row_count);
         rp_buf_puts(&rest, line);

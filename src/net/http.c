@@ -4,6 +4,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/net.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 #include "rubrapack/tls.h"
 #include "rubrapack/version.h"
 
@@ -192,12 +193,7 @@ static proven_err_t get_line(conn_t *c, char *line, size_t cap, size_t *total) {
 
 static bool ieq_prefix(const char *s, const char *name) {
     size_t n = strlen(name);
-    for (size_t i = 0; i < n; ++i) {
-        char a = s[i], b = name[i];
-        if (a >= 'A' && a <= 'Z') a = (char)(a + 32);
-        if (a != b) return false;
-    }
-    return s[n] == ':';
+    return rp_ascii_ieq_n(s, name, n) && s[n] == ':';
 }
 
 static const char *value_of(const char *line) {
