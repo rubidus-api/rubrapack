@@ -35,6 +35,8 @@ void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
 // `rubrapack transform <base.msi> <target.msi> -o <out.mst>` and `inspect <file.mst>` (RFC-0016 3).
 [[nodiscard]] int rp_cmd_transform(int argc, char **argv);
 [[nodiscard]] int rp_cmd_diff(int argc, char **argv);
+[[nodiscard]] int rp_cmd_container(int argc, char **argv);
+[[nodiscard]] int rp_cmd_try(int argc, char **argv);
 [[nodiscard]] int rp_mst_inspect(const char *path, const char *what, const char *base);
 
 // `rubrapack patch <base.msi> <target.msi> -o <out.msp>` and `inspect <file.msp> --base <base.msi>`.

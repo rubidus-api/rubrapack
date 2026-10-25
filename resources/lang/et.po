@@ -342,6 +342,9 @@ msgstr "'{1}' ei ole PE-fail, MSI-pakett ega MSIX-pakett või -kogum"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ei ole tuntud kaust ega dir ID (tuntud kaustad: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' pole ei MSIX-pakett ega paketipere nimi (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ei ole cabinet, mida rubrapack suudab lugeda (stored või MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "ahel vajab vähemalt ühte [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "märk, mida Windows nimes ei luba (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "konteineris on kuni {1} paketiperet"
 
 msgid "a control character"
 msgstr "juhtmärk"
@@ -2997,6 +3003,9 @@ msgstr "ühendusmoodul {1}"
 msgid "the name %s"
 msgstr "nimi {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "paketipere {1} on konteineris kaks korda"
+
 msgid "the package is not signed"
 msgstr "pakett ei ole allkirjastatud"
 
@@ -3017,6 +3026,9 @@ msgstr "paketi sisu ei vasta selle allkirjale (seda muudeti pärast allkirjastam
 
 msgid "the package's directory cannot be read"
 msgstr "paketi kataloogi ei saa lugeda"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "paketi failinimes ei tohi olla jutumärke ega protsendimärki: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "kogumi paketid vajavad sama Name'i, Publisherit ja Versionit"
@@ -3384,8 +3396,14 @@ msgstr "ilma --pkcs11-ta näitab `keys list` Windowsi sertifikaadihoidlat"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' ei ole dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "kirjutab Windows Sandboxi seadistuse, mis paigaldab paketi värskesse ühekordsesse Windowsi"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "kirjuta paik (.msp): failid ja read, mis uuendavad installitud aluse sihtversiooniks"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "kirjutab jagatud paketikonteineri määratluse: ühes konteineris töötavad MSIX-paketid"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "kirjuta lähtefail (.toml; ka .rpk nimed): vastustest, küsitud või suvanditena antud, fikseeritud algfailist või olemasolevast MSI-st"

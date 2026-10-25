@@ -344,6 +344,9 @@ msgstr "'{1}' אינו קובץ PE, לא חבילת MSI ולא חבילת MSIX �
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' אינו תיקייה מוכרת וגם לא מזהה dir (תיקיות מוכרות: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' אינו חבילת MSIX ואינו שם של משפחת חבילות (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' אינו cabinet ש-rubrapack יכול לקרוא (מאוחסן או MSZIP)"
 
@@ -1342,6 +1345,9 @@ msgstr "שרשרת דורשת לפחות [chain-package.ID] אחד"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "תו ש-Windows אינו מתיר בשם (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "מכל מכיל לכל היותר {1} משפחות חבילות"
 
 msgid "a control character"
 msgstr "תו בקרה"
@@ -2999,6 +3005,9 @@ msgstr "מודול המיזוג {1}"
 msgid "the name %s"
 msgstr "השם {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "משפחת החבילות {1} מופיעה במכל פעמיים"
+
 msgid "the package is not signed"
 msgstr "החבילה אינה חתומה"
 
@@ -3019,6 +3028,9 @@ msgstr "התוכן של החבילה אינו תואם לחתימה שלה (הי
 
 msgid "the package's directory cannot be read"
 msgstr "לא ניתן לקרוא את הספרייה של החבילה"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "שם הקובץ של החבילה לא יכיל מירכאות או סימן אחוז: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "החבילות של צרור צריכות את אותם Name, Publisher ו-Version"
@@ -3386,8 +3398,14 @@ msgstr "בלי --pkcs11, `keys list` מציג את מאגר האישורים ש�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir ‏'{1}' אינו מזהה dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "כותב הגדרת Windows Sandbox שמתקינה את החבילה ב-Windows חדש וחד-פעמי"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "כתיבת תיקון (.msp): הקבצים והשורות שמעדכנים בסיס מותקן ליעד"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "כותב הגדרה של מכל חבילות משותף: חבילות MSIX שרצות במכל אחד"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "כתיבת קובץ מקור (.toml; גם שמות .rpk): מתשובות, שנשאלו או ניתנו כאפשרויות, קובץ פתיחה קבוע, או MSI קיים"

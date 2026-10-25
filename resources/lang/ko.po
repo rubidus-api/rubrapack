@@ -342,6 +342,9 @@ msgstr "'{1}'은(는) PE 파일도 MSI 패키지도 MSIX 패키지나 번들도 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}'은(는) 알려진 폴더도 dir ID 도 아닙니다(알려진 폴더: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' 는 MSIX 패키지도 패키지 패밀리 이름도 아니다 (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}'은(는) rubrapack 이 읽을 수 있는 캐비닛(stored 또는 MSZIP)이 아닙니다"
 
@@ -1340,6 +1343,9 @@ msgstr "체인에는 [chain-package.ID] 가 하나 이상 필요합니다"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows 가 이름에 허용하지 않는 문자(/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "컨테이너에는 패키지 패밀리가 {1}개까지 든다"
 
 msgid "a control character"
 msgstr "제어 문자"
@@ -2997,6 +3003,9 @@ msgstr "병합 모듈 {1}"
 msgid "the name %s"
 msgstr "이름 {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "패키지 패밀리 {1} 가 컨테이너에 두 번 있다"
+
 msgid "the package is not signed"
 msgstr "패키지가 서명되어 있지 않습니다"
 
@@ -3017,6 +3026,9 @@ msgstr "패키지의 내용이 서명과 맞지 않습니다(서명한 뒤에 �
 
 msgid "the package's directory cannot be read"
 msgstr "패키지의 디렉터리를 읽을 수 없습니다"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "패키지의 파일 이름에는 따옴표나 퍼센트 기호가 있으면 안 된다: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "번들의 패키지들은 Name, Publisher, Version 이 같아야 합니다"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 이 없으면 `keys list` 는 Windows 인증서 저장소를 �
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}'은(는) dir ID 가 아닙니다"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "패키지를 새것이고 버려도 되는 Windows 에 설치하는 Windows 샌드박스 구성을 쓴다"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "패치(.msp)를 씁니다: 설치된 기준 판을 대상 판으로 올리는 파일과 행"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "공유 패키지 컨테이너의 정의를 쓴다: 한 컨테이너에서 도는 MSIX 패키지들"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "소스 파일(.toml, .rpk 이름도)을 씁니다: 묻거나 옵션으로 받은 답, 고정된 시작용 틀, 또는 기존 MSI 로부터"

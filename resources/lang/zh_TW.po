@@ -342,6 +342,9 @@ msgstr "'{1}' 既不是 PE 檔案，也不是 MSI 安裝套件、MSIX 套件或�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' 既不是已知資料夾，也不是 dir ID(已知資料夾: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' 既不是 MSIX 套件，也不是套件系列名稱 (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' 不是 rubrapack 能讀取的 cabinet(stored 或 MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "鏈至少需要一個 [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows 不允許在名稱中使用的字元(/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "一個容器最多容納 {1} 個套件系列"
 
 msgid "a control character"
 msgstr "控制字元"
@@ -2997,6 +3003,9 @@ msgstr "合並模組 {1}"
 msgid "the name %s"
 msgstr "名稱 {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "套件系列 {1} 在容器中出現了兩次"
+
 msgid "the package is not signed"
 msgstr "安裝套件未簽章"
 
@@ -3017,6 +3026,9 @@ msgstr "安裝套件的內容與其簽章不符(簽章後被變更)"
 
 msgid "the package's directory cannot be read"
 msgstr "無法讀取安裝套件的目錄"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "套件的檔名不能包含引號或百分號：'{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "套件組合中的包須有相同的 Name、Publisher 和 Version"
@@ -3384,8 +3396,14 @@ msgstr "沒有 --pkcs11 時，`keys list` 顯示 Windows 憑證存放區"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' 不是 dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "寫出 Windows 沙箱設定，將套件安裝到全新的一次性 Windows 中"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "寫出修補程式(.msp): 將已安裝的基礎版本更新到目標的檔案和行"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "寫出共用套件容器的定義：在一個容器中執行的 MSIX 套件"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "寫出來源檔案(.toml；也可用 .rpk 名稱): 由問答或選項給出的答案、固定模板或現有 MSI 生成"

@@ -342,6 +342,9 @@ msgstr "'{1}' न PE फ़ाइल है, न MSI पैकेज, न MSIX �
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' न ज्ञात फ़ोल्डर है न dir ID (ज्ञात फ़ोल्डर: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' न MSIX पैकेज है न पैकेज परिवार का नाम (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ऐसी cabinet नहीं जिसे rubrapack पढ़ सके (stored या MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "chain को कम से कम एक [chain-package.ID] चाहि
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "ऐसा वर्ण जिसकी Windows नाम में अनुमति नहीं देता (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "एक कंटेनर में अधिकतम {1} पैकेज परिवार होते हैं"
 
 msgid "a control character"
 msgstr "नियंत्रण वर्ण"
@@ -2997,6 +3003,9 @@ msgstr "मर्ज मॉड्यूल {1}"
 msgid "the name %s"
 msgstr "नाम {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "पैकेज परिवार {1} कंटेनर में दो बार है"
+
 msgid "the package is not signed"
 msgstr "पैकेज हस्ताक्षरित नहीं है"
 
@@ -3017,6 +3026,9 @@ msgstr "पैकेज की सामग्री उसके हस्त�
 
 msgid "the package's directory cannot be read"
 msgstr "पैकेज की निर्देशिका पढ़ी नहीं जा सकती"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "पैकेज की फ़ाइल के नाम में उद्धरण चिह्न या प्रतिशत चिह्न नहीं होना चाहिए: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "बंडल के पैकेजों के Name, Publisher और Version एक जैसे होने चाहिए"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 के बिना `keys list` Windows प्रमाणप�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' dir ID नहीं है"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "एक Windows Sandbox कॉन्फ़िगरेशन लिखता है जो पैकेज को नए, एक बार के Windows में इंस्टॉल करता है"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "पैच (.msp) लिखें: वे फ़ाइलें और पंक्तियाँ जो इंस्टॉल किए गए आधार को लक्ष्य तक अपडेट करती हैं"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "साझा पैकेज कंटेनर की परिभाषा लिखता है: एक कंटेनर में चलने वाले MSIX पैकेज"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "स्रोत फ़ाइल लिखें (.toml; .rpk नाम भी): उत्तरों से, पूछे गए या विकल्पों के रूप में दिए गए, एक तय आरंभिक फ़ाइल, या किसी मौजूदा MSI से"

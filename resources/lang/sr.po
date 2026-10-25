@@ -342,6 +342,9 @@ msgstr "'{1}' nije ni PE datoteka, ni MSI paket, ni MSIX paket ili skup"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nije ni poznata fascikla ni dir ID (poznate fascikle: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' није ни MSIX пакет ни назив породице пакета (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nije cabinet koji rubrapack može da čita (stored ili MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "lanac traži bar jedan [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "znak koji Windows ne dozvoljava u imenu (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "контејнер држи највише {1} породица пакета"
 
 msgid "a control character"
 msgstr "kontrolni znak"
@@ -2997,6 +3003,9 @@ msgstr "modul za spajanje {1}"
 msgid "the name %s"
 msgstr "ime {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "породица пакета {1} је у контејнеру двапут"
+
 msgid "the package is not signed"
 msgstr "paket nije potpisan"
 
@@ -3017,6 +3026,9 @@ msgstr "sadržaj paketa se ne poklapa sa njegovim potpisom (promenjen je posle p
 
 msgid "the package's directory cannot be read"
 msgstr "direktorijum paketa ne može da se pročita"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "назив датотеке пакета не сме садржати наводнике ни знак процента: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "paketi skupa traže isti Name, Publisher i Version"
@@ -3384,8 +3396,14 @@ msgstr "bez --pkcs11 `keys list` prikazuje skladište sertifikata Windows-a"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' nije dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "записује конфигурацију Windows Sandbox-а која инсталира пакет у нови Windows за једнократну употребу"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "pisanje zakrpe (.msp): datoteke i redovi koji ažuriraju instaliranu osnovu na cilj"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "записује дефиницију заједничког контејнера пакета: MSIX пакети који раде у једном контејнеру"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "pisanje izvorne datoteke (.toml; i imena .rpk): iz odgovora, pitanih ili datih kao opcije, fiksnog početnog ili postojećeg MSI-ja"

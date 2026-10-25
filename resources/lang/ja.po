@@ -342,6 +342,9 @@ msgstr "'{1}' は PE ファイル、MSI パッケージ、MSIX パッケージ�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' は既知のフォルダーでも dir ID でもありません (既知のフォルダー: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' は MSIX パッケージでもパッケージ ファミリ名でもありません (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' は rubrapack が読めるキャビネット (stored または MSZIP) ではありません"
 
@@ -1340,6 +1343,9 @@ msgstr "チェーンには [chain-package.ID] が 1 つ以上必要です"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows が名前に許さない文字 (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "コンテナーに入るパッケージ ファミリは最大 {1} 個です"
 
 msgid "a control character"
 msgstr "制御文字"
@@ -2997,6 +3003,9 @@ msgstr "マージ モジュール {1}"
 msgid "the name %s"
 msgstr "名前 {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "パッケージ ファミリ {1} がコンテナーに 2 回あります"
+
 msgid "the package is not signed"
 msgstr "パッケージは署名されていません"
 
@@ -3017,6 +3026,9 @@ msgstr "パッケージの内容が署名と一致しません (署名の後に�
 
 msgid "the package's directory cannot be read"
 msgstr "パッケージのディレクトリを読めません"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "パッケージのファイル名に引用符やパーセント記号を含めることはできません: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "バンドルのパッケージは同じ Name、Publisher、Version でなければなりません"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 がなければ `keys list` は Windows の証明書ストア�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' は dir ID ではありません"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "パッケージを新しい使い捨ての Windows にインストールする Windows サンドボックス構成を書きます"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "パッチ (.msp) を書きます: インストール済みのベースをターゲットに更新するファイルと行"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "共有パッケージ コンテナーの定義を書きます: 1 つのコンテナーで動く MSIX パッケージ"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "ソース ファイル (.toml。.rpk の名前も可) を書きます: 質問かオプションで与えた答え、固定のひな形、既存の MSI から作ります"

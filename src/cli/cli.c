@@ -34,6 +34,10 @@ static const command_t commands[] = {
                  TR_N("check a signature: structure, digest, signature, and the path to a trusted certificate"), true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
                  TR_N("write a transform (.mst): what turns one package into the other"), true },
+    { "container", "container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>",
+                 TR_N("write a shared package container's definition: MSIX packages that run in one container"), true },
+    { "try",     "try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]",
+                 TR_N("write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"), true },
     { "diff",    "diff <a.msi> <b.msi>", TR_N("show what differs between two packages: tables, rows, cells and summary"), true },
     { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
                  TR_N("write a patch (.msp): the files and rows that update an installed base to the target"), true },
@@ -230,6 +234,8 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
     if (strcmp(name, "transform") == 0) return rp_cmd_transform(argc, argv);
     if (strcmp(name, "diff") == 0) return rp_cmd_diff(argc, argv);
+    if (strcmp(name, "container") == 0) return rp_cmd_container(argc, argv);
+    if (strcmp(name, "try") == 0) return rp_cmd_try(argc, argv);
     if (strcmp(name, "patch") == 0) return rp_cmd_patch(argc, argv);
 
     char buf[256];

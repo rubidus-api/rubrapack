@@ -342,6 +342,9 @@ msgstr "'{1}' PE fayl ham, MSI paket ham, MSIX paket yoki to‘plam ham emas"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ma’lum jild ham, dir ID ham emas (ma’lum jildlar: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' na MSIX paketi, na paket oilasining nomi (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' rubrapack o‘qiy oladigan cabinet emas (stored yoki MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "zanjirga kamida bitta [chain-package.ID] kerak"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows nomda ruxsat bermaydigan belgi (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "konteynerda ko‘pi bilan {1} ta paket oilasi bo‘ladi"
 
 msgid "a control character"
 msgstr "boshqaruv belgisi"
@@ -2997,6 +3003,9 @@ msgstr "{1} birlashtirish moduli"
 msgid "the name %s"
 msgstr "{1} nomi"
 
+msgid "the package family %s is in the container twice"
+msgstr "{1} paket oilasi konteynerda ikki marta bor"
+
 msgid "the package is not signed"
 msgstr "paket imzolanmagan"
 
@@ -3017,6 +3026,9 @@ msgstr "paket tarkibi imzosiga mos emas (imzolangandan keyin o‘zgartirilgan)"
 
 msgid "the package's directory cannot be read"
 msgstr "paket katalogini o‘qib bo‘lmaydi"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "paket faylining nomida qo‘shtirnoq yoki foiz belgisi bo‘lmasligi kerak: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "to‘plam paketlariga bir xil Name, Publisher va Version kerak"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 siz `keys list` Windows sertifikatlar omborini ko‘rsatadi"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' dir ID emas"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "paketni yangi, bir martalik Windows-ga o‘rnatadigan Windows Sandbox sozlamasini yozadi"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "yamoq yozish (.msp): o‘rnatilgan asosni maqsadgacha yangilaydigan fayllar va qatorlar"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "umumiy paket konteynerining ta’rifini yozadi: bitta konteynerda ishlaydigan MSIX paketlari"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "manba fayl yozish (.toml; .rpk nomlari ham): so‘ralgan yoki parametr sifatida berilgan javoblardan, qat’iy boshlang‘ich fayldan yoki mavjud MSI dan yasaladi"

@@ -342,6 +342,9 @@ msgstr "'{1}' no és ni un fitxer PE, ni un paquet MSI, ni un paquet o conjunt M
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' no és ni una carpeta coneguda ni un ID de dir (carpetes conegudes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' no és ni un paquet MSIX ni un nom de família de paquets (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' no és un fitxer cabinet que rubrapack pugui llegir (stored o MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "una cadena necessita com a mínim un [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "un caràcter que el Windows no permet en un nom (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "un contenidor té com a màxim {1} famílies de paquets"
 
 msgid "a control character"
 msgstr "un caràcter de control"
@@ -2997,6 +3003,9 @@ msgstr "el mòdul de combinació {1}"
 msgid "the name %s"
 msgstr "el nom {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "la família de paquets {1} és dues vegades al contenidor"
+
 msgid "the package is not signed"
 msgstr "el paquet no està signat"
 
@@ -3017,6 +3026,9 @@ msgstr "el contingut del paquet no coincideix amb la seva signatura (s'ha canvia
 
 msgid "the package's directory cannot be read"
 msgstr "no es pot llegir el directori del paquet"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "el nom del fitxer del paquet no pot contenir cometes ni el signe de percentatge: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "els paquets d'un conjunt necessiten el mateix Name, Publisher i Version"
@@ -3384,8 +3396,14 @@ msgstr "sense --pkcs11, `keys list` mostra el magatzem de certificats del Window
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' no és un ID de dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "escriu una configuració de Windows Sandbox que instal·la el paquet en un Windows nou i d'un sol ús"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "escriu un pedaç (.msp): els fitxers i les files que actualitzen una base instal·lada a l'objectiu"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "escriu la definició d'un contenidor de paquets compartit: paquets MSIX que s'executen en un contenidor"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "escriu un fitxer font (.toml; també noms .rpk): fet a partir de respostes, preguntades o donades com a opcions, d'un inicial fix o d'un MSI existent"

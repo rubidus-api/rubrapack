@@ -151,6 +151,7 @@ min-version = "10.0.18362.0"</code></pre>
 identity-name = "ExampleSoftware.Runtime"
 publisher = "CN=Example Software, O=Example Software, C=KR"
 framework = true</code></pre>
+<p>원본이 다른 패키지들이 한 컨테이너를 나눠 쓸 수도 있다 - 애플리케이션과 IT 부서가 그것을 위해 꾸린 추가 기능이 서로의 파일과 설정을 보게 된다. <code>rubrapack container ContosoSuite contoso.msix contoso-addons.msix -o suite.xml</code> 가 정의를 쓰고, 관리자가 <code>Add-AppSharedPackageContainer suite.xml</code> 로 배포한다.</p>
 <p>자기 설치 프로그램을 그대로 쓰는 프로그램도 패키지 신원을 가질 수 있다 - 별칭, 공유 대상, 앱 확장을 위해서다: <code>external-location = true</code>(와 <code>min-version = "10.0.19041.0"</code>)는 매니페스트만 든 패키지를 만들고, 설치 프로그램이 <code>Add-AppxPackage -Path &lt;패키지&gt; -ExternalLocation &lt;프로그램의 폴더&gt;</code> 로 등록한다.</p>
 <h3 id="고침이-필요한-프로그램-psf">17.9 고침이 필요한 프로그램: PSF<a class="plink" href="#고침이-필요한-프로그램-psf" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>어떤 프로그램은 MSIX 안에서 제대로 돌지 않는다: 자기 옆에 로그를 쓰거나, 자기 폴더를 작업 폴더로 여긴다. Microsoft 의 <em>Package Support Framework</em> 는 프로그램을 바꾸지 않고 그런 것을 고친다. NuGet 패키지(<code>Microsoft.PackageSupportFramework</code>, 그 <code>bin</code> 폴더)를 풀고, <code>config.json</code> 을 쓰고, 둘을 적는다:</p>

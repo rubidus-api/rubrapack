@@ -81,6 +81,10 @@ typedef enum {
 // be told); free with rp_mem_free.
 [[nodiscard]] char *rp_pal_exe_dir(proven_allocator_t alloc);
 
+// The full path of an existing file or folder (UTF-8, free with rp_mem_free), as the system resolves
+// it against the current folder; NULL when it is not there or out of memory (RFC-0031 B29).
+[[nodiscard]] char *rp_pal_full_path(proven_allocator_t alloc, const char *path_utf8);
+
 // ---- network (RFC-0008) -------------------------------------------------------------------------
 
 typedef struct rp_sock rp_sock_t;

@@ -1787,6 +1787,8 @@ rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack diff <a.msi> <b.msi>
+rubrapack container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>
+rubrapack try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]
 rubrapack new [msi] <name>
 rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
@@ -1905,6 +1907,18 @@ rubrapack version | help [command]
   아키텍처, 범위, MSIX 의 PackageFamilyName, 최소 Windows 판, 서명이 있으면 그 서명의 SHA-256. MSI 하나는 아키텍처
   하나이므로 여러 MSI 의 매니페스트는 손으로 합친다. `cab = "external"` 과는 함께 쓰지 않는다(`RP1617`): winget 은 파일
   하나를 내려받는다.
+- `try <패키지>` 는 `<패키지>.wsb`(또는 `-o`), 즉 *Windows 샌드박스* 구성을 쓴다: Windows 샌드박스 기능을 켠 Windows
+  에서 열면 새것이고 버려도 되는 Windows 가 뜨고, 패키지의 폴더를 그 바탕 화면에 읽기 전용으로 붙이고, 거기서 패키지를
+  설치한다 - MSI 는 샌드박스 바탕 화면에 로그를 남기는 `msiexec /i`, MSIX 는 `Add-AppxPackage -AllowUnsigned`
+  (`--unsigned-test` 패키지나 샌드박스가 믿는 인증서로 서명한 것). 샌드박스를 닫으면 모두 사라진다. 네트워크는
+  `--network` 가 없으면 꺼진다. 붙이는 폴더는 이 컴퓨터에서의 패키지 폴더 전체 경로이고, 다른 컴퓨터에서 쓸 .wsb 라면
+  `--host <폴더>` 로 준다.
+- `container <이름> <패키지>... -o <out.xml>` 는 *공유 패키지 컨테이너* 정의를 쓴다: 한 컨테이너에서 돌며 서로의 파일과
+  레지스트리를 보는 MSIX 패키지들 - 예를 들어 주 애플리케이션과 그 추가 기능 - 이다. 패키지(`.msix` 나 `.msixbundle`)마다
+  그 신원에서 읽은 패키지 패밀리 이름을 주고, 패밀리 이름(`Contoso.Addon_8wekyb3d8bbwe`)을 그대로 줄 수도 있다. 두
+  패키지에 같은 파일이 있으면 앞의 것이 우선한다. 관리자가 `Add-AppSharedPackageContainer <out.xml>` 로 배포하고
+  `Remove-AppSharedPackageContainer -Name <이름>` 으로 거둔다. 패키지를 먼저 설치할 필요는 없다. 한 패키지는 컨테이너
+  하나에만 든다.
 - `diff <a.msi> <b.msi>` 는 두 패키지의 다른 점을 한 줄에 하나씩, 표는 이름 순서, 행은 키 순서로 보인다:
   `<표>  insert  <칸들>`, `<표>  delete  <키들>`, `<표>  update  <키들>  <열>=<옛 값> -> <새 값>`,
   `<표>  new table  <열들>`(그 행들이 insert 로 뒤따른다), `<표>  dropped table`, `<표>  columns  <a 의 것> -> <b 의 것>`

@@ -342,6 +342,9 @@ msgstr "'{1}' nu este nici fișier PE, nici pachet MSI, nici pachet sau pachet g
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nu este nici folder cunoscut, nici ID dir (foldere cunoscute: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' nu este nici pachet MSIX, nici nume de familie de pachete (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nu este un cabinet pe care rubrapack îl poate citi (stored sau MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "un lanț are nevoie de cel puțin un [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "un caracter pe care Windows nu îl permite într-un nume (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "un container cuprinde cel mult {1} familii de pachete"
 
 msgid "a control character"
 msgstr "un caracter de control"
@@ -2997,6 +3003,9 @@ msgstr "modulul de îmbinare {1}"
 msgid "the name %s"
 msgstr "numele {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "familia de pachete {1} apare de două ori în container"
+
 msgid "the package is not signed"
 msgstr "pachetul nu este semnat"
 
@@ -3017,6 +3026,9 @@ msgstr "conținutul pachetului nu corespunde semnăturii sale (a fost modificat 
 
 msgid "the package's directory cannot be read"
 msgstr "directorul pachetului nu poate fi citit"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "numele fișierului pachetului nu trebuie să conțină ghilimele sau semnul procent: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "pachetele unui pachet grupat au nevoie de același Name, Publisher și Version"
@@ -3384,8 +3396,14 @@ msgstr "fără --pkcs11, `keys list` arată depozitul de certificate Windows"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' nu este un ID dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "scrie o configurație Windows Sandbox care instalează pachetul într-un Windows nou, de unică folosință"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "scrie un patch (.msp): fișierele și rândurile care actualizează o bază instalată la țintă"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "scrie definiția unui container de pachete partajat: pachete MSIX care rulează într-un container"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "scrie un fișier sursă (.toml; și nume .rpk): din răspunsuri, cerute sau date ca opțiuni, dintr-un fișier de pornire fix sau dintr-un MSI existent"

@@ -344,6 +344,9 @@ msgstr "'{1}' نه فایل PE است، نه بسته MSI و نه بسته یا 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' نه پوشه شناخته‌شده است و نه dir ID (پوشه‌های شناخته‌شده: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' نه بستهٔ MSIX است نه نام خانوادهٔ بسته (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' یک cabinet نیست که rubrapack بتواند بخواند (stored یا MSZIP)"
 
@@ -1342,6 +1345,9 @@ msgstr "یک زنجیره به دست‌کم یک [chain-package.ID] نیاز د
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "نویسه‌ای که Windows در نام مجاز نمی‌داند (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "یک ظرف حداکثر {1} خانوادهٔ بسته دارد"
 
 msgid "a control character"
 msgstr "یک نویسه کنترلی"
@@ -2999,6 +3005,9 @@ msgstr "ماژول ادغام {1}"
 msgid "the name %s"
 msgstr "نام {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "خانوادهٔ بستهٔ {1} دو بار در ظرف آمده است"
+
 msgid "the package is not signed"
 msgstr "بسته امضا نشده است"
 
@@ -3019,6 +3028,9 @@ msgstr "محتوای بسته با امضای آن جور نیست (پس از ا
 
 msgid "the package's directory cannot be read"
 msgstr "فهرست بسته خوانده نمی‌شود"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "نام پروندهٔ بسته نباید نقل‌قول یا نشانهٔ درصد داشته باشد: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "بسته‌های یک مجموعه به Name، Publisher و Version یکسان نیاز دارند"
@@ -3386,8 +3398,14 @@ msgstr "بدون --pkcs11، `keys list` مخزن گواهی Windows را نشا�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' یک شناسه dir نیست"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "پیکربندی Windows Sandbox را می‌نویسد که بسته را در یک Windows تازه و یک‌بارمصرف نصب می‌کند"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "یک وصله (.msp) بنویسید: فایل‌ها و ردیف‌هایی که یک پایه نصب‌شده را به هدف به‌روز می‌کنند"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "تعریف یک ظرف بستهٔ مشترک را می‌نویسد: بسته‌های MSIX که در یک ظرف اجرا می‌شوند"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "یک فایل منبع بنویسید (.toml؛ نام‌های .rpk هم): ساخته از پاسخ‌ها، پرسیده یا داده‌شده به‌صورت گزینه، یک آغازگر ثابت، یا یک MSI موجود"

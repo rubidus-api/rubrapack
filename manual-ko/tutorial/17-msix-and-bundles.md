@@ -239,6 +239,10 @@ publisher = "CN=Example Software, O=Example Software, C=KR"
 framework = true
 ```
 
+원본이 다른 패키지들이 한 컨테이너를 나눠 쓸 수도 있다 - 애플리케이션과 IT 부서가 그것을 위해 꾸린 추가 기능이 서로의
+파일과 설정을 보게 된다. `rubrapack container ContosoSuite contoso.msix contoso-addons.msix -o suite.xml` 가 정의를 쓰고,
+관리자가 `Add-AppSharedPackageContainer suite.xml` 로 배포한다.
+
 자기 설치 프로그램을 그대로 쓰는 프로그램도 패키지 신원을 가질 수 있다 - 별칭, 공유 대상, 앱 확장을 위해서다:
 `external-location = true`(와 `min-version = "10.0.19041.0"`)는 매니페스트만 든 패키지를 만들고, 설치 프로그램이
 `Add-AppxPackage -Path <패키지> -ExternalLocation <프로그램의 폴더>` 로 등록한다.

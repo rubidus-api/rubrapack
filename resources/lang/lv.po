@@ -342,6 +342,9 @@ msgstr "'{1}' nav ne PE fails, ne MSI pakotne, ne MSIX pakotne vai komplekts"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nav ne zināma mape, ne dir ID (zināmās mapes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' nav ne MSIX pakotne, ne pakotņu saimes nosaukums (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nav cabinet, ko rubrapack spēj nolasīt (stored vai MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "ķēdei nepieciešams vismaz viens [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "rakstzīme, ko Windows neatļauj nosaukumā (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "konteinerā ir ne vairāk kā {1} pakotņu saimes"
 
 msgid "a control character"
 msgstr "vadības rakstzīme"
@@ -2997,6 +3003,9 @@ msgstr "sapludināšanas modulis {1}"
 msgid "the name %s"
 msgstr "nosaukums {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "pakotņu saime {1} konteinerā ir divreiz"
+
 msgid "the package is not signed"
 msgstr "pakotne nav parakstīta"
 
@@ -3017,6 +3026,9 @@ msgstr "pakotnes saturs neatbilst tās parakstam (tas tika mainīts pēc parakst
 
 msgid "the package's directory cannot be read"
 msgstr "pakotnes direktoriju nevar nolasīt"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "pakotnes faila nosaukumā nedrīkst būt pēdiņas vai procentu zīme: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "komplekta pakotnēm nepieciešams vienāds Name, Publisher un Version"
@@ -3384,8 +3396,14 @@ msgstr "bez --pkcs11 `keys list` parāda Windows sertifikātu krātuvi"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' nav dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "ieraksta Windows Sandbox konfigurāciju, kas instalē pakotni jaunā, vienreizējā Windows"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "rakstīt ielāpu (.msp): faili un rindas, kas atjaunina instalēto bāzi līdz mērķim"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "ieraksta koplietojamas pakotņu konteinera definīciju: MSIX pakotnes, kas darbojas vienā konteinerā"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "rakstīt avota failu (.toml; arī .rpk nosaukumi): no atbildēm, jautātām vai dotām kā opcijas, fiksēta sākuma faila vai esoša MSI"

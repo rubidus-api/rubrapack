@@ -342,6 +342,9 @@ msgstr "Το '{1}' δεν είναι ούτε αρχείο PE, ούτε πακέ
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "Το '{1}' δεν είναι ούτε γνωστός φάκελος ούτε dir ID (γνωστοί φάκελοι: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "το '{1}' δεν είναι ούτε πακέτο MSIX ούτε όνομα οικογένειας πακέτων (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "Το '{1}' δεν είναι cabinet που μπορεί να διαβάσει το rubrapack (stored ή MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "μια αλυσίδα χρειάζεται τουλάχιστον ένα
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "χαρακτήρας που δεν επιτρέπουν τα Windows σε όνομα (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "ένα κοντέινερ χωράει έως {1} οικογένειες πακέτων"
 
 msgid "a control character"
 msgstr "χαρακτήρας ελέγχου"
@@ -2997,6 +3003,9 @@ msgstr "η λειτουργική μονάδα συγχώνευσης {1}"
 msgid "the name %s"
 msgstr "το όνομα {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "η οικογένεια πακέτων {1} είναι δύο φορές στο κοντέινερ"
+
 msgid "the package is not signed"
 msgstr "το πακέτο δεν είναι υπογεγραμμένο"
 
@@ -3017,6 +3026,9 @@ msgstr "τα περιεχόμενα του πακέτου δεν ταιριάζ�
 
 msgid "the package's directory cannot be read"
 msgstr "ο κατάλογος του πακέτου δεν μπορεί να διαβαστεί"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "το όνομα αρχείου του πακέτου δεν πρέπει να έχει εισαγωγικά ή σύμβολο ποσοστού: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "τα πακέτα μιας δέσμης χρειάζονται τα ίδια Name, Publisher και Version"
@@ -3384,8 +3396,14 @@ msgstr "χωρίς --pkcs11, το `keys list` δείχνει τον χώρο π�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "το working-dir '{1}' δεν είναι dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "γράφει μια ρύθμιση Windows Sandbox που εγκαθιστά το πακέτο σε καινούργια Windows μιας χρήσης"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "εγγραφή ενημέρωσης κώδικα (.msp): τα αρχεία και οι γραμμές που ενημερώνουν μια εγκατεστημένη βάση στον στόχο"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "γράφει τον ορισμό ενός κοινόχρηστου κοντέινερ πακέτων: πακέτα MSIX που τρέχουν σε ένα κοντέινερ"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "εγγραφή αρχείου πηγής (.toml· και ονόματα .rpk): από απαντήσεις, που ζητούνται ή δίνονται ως επιλογές, σταθερό αρχικό, ή υπάρχον MSI"

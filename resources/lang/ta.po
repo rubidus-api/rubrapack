@@ -342,6 +342,9 @@ msgstr "'{1}' PE கோப்பு, MSI தொகுப்பு, MSIX தொ�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' அறியப்பட்ட கோப்புறையும் அல்ல, dir ID யும் அல்ல (அறியப்பட்ட கோப்புறைகள்: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' MSIX தொகுப்பும் அல்ல, தொகுப்புக் குடும்பப் பெயரும் அல்ல (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' rubrapack படிக்கக்கூடிய cabinet அல்ல (stored அல்லது MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "ஒரு சங்கிலிக்குக் குறைந்த�
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows பெயரில் அனுமதிக்காத எழுத்து (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "ஒரு கொள்கலனில் அதிகபட்சம் {1} தொகுப்புக் குடும்பங்கள்"
 
 msgid "a control character"
 msgstr "ஒரு கட்டுப்பாட்டு எழுத்து"
@@ -2997,6 +3003,9 @@ msgstr "இணைப்பு தொகுதி {1}"
 msgid "the name %s"
 msgstr "பெயர் {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "{1} தொகுப்புக் குடும்பம் கொள்கலனில் இருமுறை உள்ளது"
+
 msgid "the package is not signed"
 msgstr "தொகுப்பு கையொப்பமிடப்படவில்லை"
 
@@ -3017,6 +3026,9 @@ msgstr "தொகுப்பின் உள்ளடக்கம் அதன�
 
 msgid "the package's directory cannot be read"
 msgstr "தொகுப்பின் கோப்பகத்தைப் படிக்க முடியாது"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "தொகுப்பின் கோப்புப் பெயரில் மேற்கோள்குறிகளோ சதவீதக் குறியோ இருக்கக்கூடாது: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "ஒரு தொகுதியின் தொகுப்புகளுக்கு ஒரே Name, Publisher மற்றும் Version தேவை"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 இல்லாமல் `keys list` Windows சான்றி
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' ஒரு dir ID அல்ல"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "தொகுப்பைப் புதிய, ஒருமுறைப் பயன்பாட்டு Windows இல் நிறுவும் Windows Sandbox உள்ளமைவை எழுதுகிறது"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "ஒரு திருத்தம் (.msp) எழுதவும்: நிறுவிய அடிப்படையை இலக்குக்குப் புதுப்பிக்கும் கோப்புகளும் வரிசைகளும்"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "பகிர்ந்த தொகுப்புக் கொள்கலனின் வரையறையை எழுதுகிறது: ஒரே கொள்கலனில் இயங்கும் MSIX தொகுப்புகள்"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "ஒரு மூலக் கோப்பை எழுதவும் (.toml; .rpk பெயர்களும்): பதில்களிலிருந்து, கேட்கப்பட்டோ விருப்பங்களாகக் கொடுக்கப்பட்டோ, ஒரு நிலையான தொடக்கம், அல்லது இருக்கும் MSI"

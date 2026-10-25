@@ -342,6 +342,9 @@ msgstr "'{1}' ez da PE fitxategia, ez MSI paketea, ez MSIX paketea edo sorta"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ez da karpeta ezaguna ez dir ID bat (karpeta ezagunak: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' ez da ez MSIX pakete bat ez pakete-familia baten izena (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ez da rubrapack-ek irakur dezakeen cabinet bat (stored edo MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "kate batek gutxienez [chain-package.ID] bat behar du"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows-ek izen batean onartzen ez duen karaktere bat (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "edukiontzi batek gehienez {1} pakete-familia ditu"
 
 msgid "a control character"
 msgstr "kontrol-karaktere bat"
@@ -2997,6 +3003,9 @@ msgstr "{1} bateratze-modulua"
 msgid "the name %s"
 msgstr "{1} izena"
 
+msgid "the package family %s is in the container twice"
+msgstr "{1} pakete-familia bi aldiz dago edukiontzian"
+
 msgid "the package is not signed"
 msgstr "paketea ez dago sinatuta"
 
@@ -3017,6 +3026,9 @@ msgstr "paketearen edukia ez dator bat bere sinadurarekin (sinatu ondoren aldatu
 
 msgid "the package's directory cannot be read"
 msgstr "ezin da paketearen direktorioa irakurri"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "paketearen fitxategi-izenak ez du komatxorik ez ehuneko ikurrik izan behar: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "sorta bateko paketeek Name, Publisher eta Version berak behar dituzte"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 gabe, `keys list`-ek Windows-en ziurtagiri-biltegia erakusten d
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' ez da dir ID bat"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "paketea Windows berri eta behin erabiltzeko batean instalatzen duen Windows Sandbox konfigurazio bat idazten du"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "adabaki bat idazten du (.msp): instalatutako oinarri bat helburura eguneratzen duten fitxategiak eta errenkadak"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "pakete-edukiontzi partekatu baten definizioa idazten du: edukiontzi batean exekutatzen diren MSIX paketeak"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "iturburu-fitxategi bat idazten du (.toml; .rpk izenak ere bai): erantzunetatik, galdetuta edo aukera gisa emanda, hasierako finko batetik edo dagoen MSI batetik egina"

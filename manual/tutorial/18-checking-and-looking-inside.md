@@ -236,6 +236,15 @@ _SummaryInformation	9	{...} -> {...}
 Each line is a table, the row's key and what differs; nothing is printed for two packages that are
 the same.
 
+## Installing without touching your own Windows: `try`
+
+`rubrapack try hello.msi` writes `hello.wsb`. Opened on Windows (with the *Windows Sandbox* feature
+turned on in "Turn Windows features on or off"), it starts a clean, throwaway Windows that installs
+`hello.msi` as it starts; try the installer, the program and its removal there, then close the
+window and nothing of it is left. Networking is off in it unless you add `--network`. A .wsb names
+the package's folder on this computer; for one opened on another, give that folder with
+`--host D:\builds`.
+
 ## Signatures: `verify`
 
 Chapter 16 showed `verify`. It is the check to run on what you are about to publish:

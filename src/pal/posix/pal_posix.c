@@ -1,6 +1,7 @@
 // src/pal/posix/pal_posix.c - POSIX: output and paths are UTF-8 bytes as they are.
 
 #define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700          // realpath (rp_pal_full_path)
 
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
@@ -102,6 +103,17 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     size_t n = strlen(v);
     char *c = rp_mem_alloc(alloc, n + 1, 1);
     if (c) memcpy(c, v, n + 1);
+    return c;
+}
+
+char *rp_pal_full_path(proven_allocator_t alloc, const char *path_utf8) {
+    if (path_utf8 == NULL) return NULL;
+    char *r = realpath(path_utf8, NULL);       // libc: proven has no path resolution
+    if (r == NULL) return NULL;
+    size_t len = strlen(r);
+    char *c = rp_mem_alloc(alloc, len + 1, 1);
+    if (c) memcpy(c, r, len + 1);
+    free(r);
     return c;
 }
 

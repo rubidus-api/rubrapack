@@ -342,6 +342,9 @@ msgstr "'{1}' ไม่ใช่ไฟล์ PE ไม่ใช่แพ็ก�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ไม่ใช่โฟลเดอร์ที่รู้จักและไม่ใช่ ID ของ dir (โฟลเดอร์ที่รู้จัก: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' ไม่ใช่ทั้งแพ็กเกจ MSIX และชื่อตระกูลแพ็กเกจ (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ไม่ใช่ cabinet ที่ rubrapack อ่านได้ (stored หรือ MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "chain ต้องมี [chain-package.ID] อย่างน้อย�
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "อักขระที่ Windows ไม่อนุญาตในชื่อ (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "คอนเทนเนอร์หนึ่งมีตระกูลแพ็กเกจได้ไม่เกิน {1} ตระกูล"
 
 msgid "a control character"
 msgstr "อักขระควบคุม"
@@ -2997,6 +3003,9 @@ msgstr "โมดูลผสาน {1}"
 msgid "the name %s"
 msgstr "ชื่อ {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "ตระกูลแพ็กเกจ {1} อยู่ในคอนเทนเนอร์สองครั้ง"
+
 msgid "the package is not signed"
 msgstr "แพ็กเกจไม่ได้ลงนาม"
 
@@ -3017,6 +3026,9 @@ msgstr "เนื้อหาของแพ็กเกจไม่ตรงก
 
 msgid "the package's directory cannot be read"
 msgstr "อ่านไดเรกทอรีของแพ็กเกจไม่ได้"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "ชื่อไฟล์ของแพ็กเกจต้องไม่มีเครื่องหมายคำพูดหรือเครื่องหมายเปอร์เซ็นต์: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "แพ็กเกจในบันเดิลต้องมี Name, Publisher และ Version เหมือนกัน"
@@ -3384,8 +3396,14 @@ msgstr "ถ้าไม่มี --pkcs11, `keys list` จะแสดงที�
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' ไม่ใช่ ID ของ dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "เขียนการตั้งค่า Windows Sandbox ที่ติดตั้งแพ็กเกจใน Windows ใหม่แบบใช้แล้วทิ้ง"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "เขียนแพตช์ (.msp): ไฟล์และแถวที่อัปเดตฐานที่ติดตั้งแล้วไปเป็นเป้าหมาย"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "เขียนนิยามของคอนเทนเนอร์แพ็กเกจที่ใช้ร่วมกัน: แพ็กเกจ MSIX ที่ทำงานในคอนเทนเนอร์เดียว"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "เขียนไฟล์ต้นฉบับ (.toml; ชื่อ .rpk ก็ได้): จากคำตอบที่ถามหรือให้เป็นตัวเลือก ไฟล์เริ่มต้นแบบตายตัว หรือ MSI ที่มีอยู่"

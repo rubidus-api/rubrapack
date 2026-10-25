@@ -342,6 +342,9 @@ msgstr "'{1}' 既不是 PE 文件，也不是 MSI 安装包、MSIX 包或捆绑�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' 既不是已知文件夹，也不是 dir ID(已知文件夹: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' 既不是 MSIX 包，也不是包系列名称 (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' 不是 rubrapack 能读取的 cabinet(stored 或 MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "链至少需要一个 [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "Windows 不允许在名称中使用的字符(/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "一个容器最多容纳 {1} 个包系列"
 
 msgid "a control character"
 msgstr "控制字符"
@@ -2997,6 +3003,9 @@ msgstr "合并模块 {1}"
 msgid "the name %s"
 msgstr "名称 {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "包系列 {1} 在容器中出现了两次"
+
 msgid "the package is not signed"
 msgstr "安装包未签名"
 
@@ -3017,6 +3026,9 @@ msgstr "安装包的内容与其签名不符(签名后被更改)"
 
 msgid "the package's directory cannot be read"
 msgstr "无法读取安装包的目录"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "包的文件名不能包含引号或百分号：'{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "捆绑包中的包须有相同的 Name、Publisher 和 Version"
@@ -3384,8 +3396,14 @@ msgstr "没有 --pkcs11 时，`keys list` 显示 Windows 证书存储"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' 不是 dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "写出 Windows 沙盒配置，把包安装到一个全新的一次性 Windows 中"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "写出补丁(.msp): 将已安装的基础版本更新到目标的文件和行"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "写出共享包容器的定义：在一个容器中运行的 MSIX 包"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "写出源文件(.toml；也可用 .rpk 名称): 由问答或选项给出的答案、固定模板或现有 MSI 生成"

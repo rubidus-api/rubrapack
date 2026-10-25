@@ -342,6 +342,9 @@ msgstr "'{1}' bukan file PE, paket MSI, maupun paket atau bundel MSIX"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' bukan folder yang dikenal maupun ID dir (folder yang dikenal: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' bukan paket MSIX maupun nama keluarga paket (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' bukan cabinet yang dapat dibaca rubrapack (stored atau MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "chain memerlukan setidaknya satu [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "karakter yang tidak diizinkan Windows dalam nama (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "sebuah kontainer memuat paling banyak {1} keluarga paket"
 
 msgid "a control character"
 msgstr "karakter kontrol"
@@ -2997,6 +3003,9 @@ msgstr "modul gabungan {1}"
 msgid "the name %s"
 msgstr "nama {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "keluarga paket {1} ada dua kali dalam kontainer"
+
 msgid "the package is not signed"
 msgstr "paket tidak ditandatangani"
 
@@ -3017,6 +3026,9 @@ msgstr "isi paket tidak cocok dengan tanda tangannya (diubah setelah ditandatang
 
 msgid "the package's directory cannot be read"
 msgstr "direktori paket tidak dapat dibaca"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "nama file paket tidak boleh berisi tanda kutip atau tanda persen: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "paket dalam bundel memerlukan Name, Publisher dan Version yang sama"
@@ -3384,8 +3396,14 @@ msgstr "tanpa --pkcs11, `keys list` menampilkan penyimpanan sertifikat Windows"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' bukan ID dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "menulis konfigurasi Windows Sandbox yang memasang paket di Windows baru yang sekali pakai"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "menulis patch (.msp): file dan baris yang memperbarui basis terinstal ke target"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "menulis definisi kontainer paket bersama: paket MSIX yang berjalan dalam satu kontainer"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "menulis file sumber (.toml; nama .rpk juga): dari jawaban, ditanyakan atau diberikan sebagai opsi, templat awal tetap, atau MSI yang ada"

@@ -342,6 +342,9 @@ msgstr "'{1}' không phải tệp PE, gói MSI hay gói/bó MSIX"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' không phải thư mục đã biết cũng không phải dir ID (thư mục đã biết: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' không phải gói MSIX cũng không phải tên họ gói (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' không phải cabinet mà rubrapack đọc được (stored hoặc MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "chain cần ít nhất một [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "ký tự Windows không cho phép trong tên (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "một vùng chứa có tối đa {1} họ gói"
 
 msgid "a control character"
 msgstr "ký tự điều khiển"
@@ -2997,6 +3003,9 @@ msgstr "mô-đun hợp nhất {1}"
 msgid "the name %s"
 msgstr "tên {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "họ gói {1} có hai lần trong vùng chứa"
+
 msgid "the package is not signed"
 msgstr "gói chưa được ký"
 
@@ -3017,6 +3026,9 @@ msgstr "nội dung gói không khớp với chữ ký (đã bị đổi sau khi 
 
 msgid "the package's directory cannot be read"
 msgstr "không đọc được thư mục của gói"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "tên tệp của gói không được chứa dấu ngoặc kép hay dấu phần trăm: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "các gói của một bó cần cùng Name, Publisher và Version"
@@ -3384,8 +3396,14 @@ msgstr "không có --pkcs11, `keys list` hiển thị kho chứng chỉ Windows"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' không phải dir ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "ghi cấu hình Windows Sandbox cài gói vào một Windows mới, dùng một lần"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "ghi bản vá (.msp): các tệp và hàng cập nhật bản gốc đã cài lên bản đích"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "ghi định nghĩa của một vùng chứa gói dùng chung: các gói MSIX chạy trong một vùng chứa"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "ghi tệp nguồn (.toml; cả tên .rpk): từ câu trả lời, được hỏi hoặc đưa qua tùy chọn, một tệp khởi đầu cố định, hoặc một MSI có sẵn"

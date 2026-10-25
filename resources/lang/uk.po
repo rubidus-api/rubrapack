@@ -342,6 +342,9 @@ msgstr "'{1}' не є ні файлом PE, ні пакетом MSI, ні пак
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' не є ні відомою папкою, ні ідентифікатором dir (відомі папки: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' — не пакет MSIX і не назва сімейства пакетів (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' не є cabinet, який rubrapack може прочитати (stored або MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "ланцюжок потребує щонайменше одного [cha
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "символ, який Windows не дозволяє в імені (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "контейнер вміщує щонайбільше {1} сімейств пакетів"
 
 msgid "a control character"
 msgstr "керівний символ"
@@ -2997,6 +3003,9 @@ msgstr "модуль злиття {1}"
 msgid "the name %s"
 msgstr "ім'я {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "сімейство пакетів {1} у контейнері двічі"
+
 msgid "the package is not signed"
 msgstr "пакет не підписано"
 
@@ -3017,6 +3026,9 @@ msgstr "вміст пакета не відповідає його підпис�
 
 msgid "the package's directory cannot be read"
 msgstr "не вдається прочитати каталог пакета"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "ім’я файла пакета не повинно містити лапок чи знака відсотка: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "пакети набору потребують однакових Name, Publisher і Version"
@@ -3384,8 +3396,14 @@ msgstr "без --pkcs11 `keys list` показує сховище сертифі
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' не є ідентифікатором dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "записує конфігурацію Windows Sandbox, яка встановлює пакет у нову одноразову Windows"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "записати виправлення (.msp): файли й рядки, що оновлюють встановлену основу до цілі"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "записує визначення спільного контейнера пакетів: пакети MSIX, що працюють в одному контейнері"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "записати файл джерела (.toml; також імена .rpk): з відповідей, запитаних або вказаних як параметри, з незмінного початкового файлу чи наявного MSI"

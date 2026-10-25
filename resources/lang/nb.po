@@ -342,6 +342,9 @@ msgstr "'{1}' er verken en PE-fil, en MSI-pakke eller en MSIX-pakke eller -samli
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' er verken en kjent mappe eller en dir-ID (kjente mapper: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' er verken en MSIX-pakke eller et pakkefamilienavn (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' er ikke en cabinet rubrapack kan lese (stored eller MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "en kjede trenger minst én [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "et tegn Windows ikke tillater i et navn (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "en beholder rommer høyst {1} pakkefamilier"
 
 msgid "a control character"
 msgstr "et kontrolltegn"
@@ -2997,6 +3003,9 @@ msgstr "flettemodulen {1}"
 msgid "the name %s"
 msgstr "navnet {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "pakkefamilien {1} er i beholderen to ganger"
+
 msgid "the package is not signed"
 msgstr "pakken er ikke signert"
 
@@ -3017,6 +3026,9 @@ msgstr "pakkens innhold samsvarer ikke med signaturen (den ble endret etter sign
 
 msgid "the package's directory cannot be read"
 msgstr "pakkens katalog kan ikke leses"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "pakkens filnavn kan ikke inneholde anførselstegn eller prosenttegn: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "pakkene i en samling trenger samme Name, Publisher og Version"
@@ -3384,8 +3396,14 @@ msgstr "uten --pkcs11 viser `keys list` Windows-sertifikatlageret"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' er ikke en dir-ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "skriv en Windows Sandbox-konfigurasjon som installerer pakken i et nytt Windows til engangsbruk"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "skriv en oppdatering (.msp): filene og radene som oppdaterer en installert base til målet"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "skriv definisjonen av en delt pakkebeholder: MSIX-pakker som kjører i én beholder"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "skriv en kildefil (.toml; også .rpk-navn): laget av svar, spurt eller gitt som alternativer, en fast startfil, eller en eksisterende MSI"

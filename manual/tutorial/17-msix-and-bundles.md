@@ -249,6 +249,11 @@ publisher = "CN=Example Software, O=Example Software, C=KR"
 framework = true
 ```
 
+Packages of different sources can also share one container - an application and the add-ons an
+IT department packaged for it, which then see each other's files and settings.
+`rubrapack container ContosoSuite contoso.msix contoso-addons.msix -o suite.xml` writes the
+definition, and `Add-AppSharedPackageContainer suite.xml` (as an administrator) deploys it.
+
 A program that keeps its own installer can still have package identity - for an alias, a share
 target, an app extension: `external-location = true` (with `min-version = "10.0.19041.0"`) builds a
 package that holds only the manifest, and the installer registers it with

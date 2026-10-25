@@ -344,6 +344,9 @@ msgstr "'{1}' ليس ملف PE، ولا حزمة MSI، ولا حزمة MSIX أو
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ليس مجلداً معروفاً ولا معرّف dir (المجلدات المعروفة: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' ليست حزمة MSIX ولا اسم عائلة حزم (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ليس ملف cabinet يستطيع rubrapack قراءته (مخزّن أو MSZIP)"
 
@@ -1342,6 +1345,9 @@ msgstr "تحتاج السلسلة إلى [chain-package.ID] واحد على ال
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "حرف لا يسمح به Windows في الاسم (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "تضم الحاوية {1} عائلة حزم على الأكثر"
 
 msgid "a control character"
 msgstr "حرف تحكم"
@@ -2999,6 +3005,9 @@ msgstr "وحدة الدمج {1}"
 msgid "the name %s"
 msgstr "الاسم {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "عائلة الحزم {1} موجودة في الحاوية مرتين"
+
 msgid "the package is not signed"
 msgstr "الحزمة غير موقّعة"
 
@@ -3019,6 +3028,9 @@ msgstr "محتويات الحزمة لا تطابق توقيعها (تغيّرت
 
 msgid "the package's directory cannot be read"
 msgstr "لا يمكن قراءة دليل الحزمة"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "يجب ألا يحوي اسم ملف الحزمة علامات اقتباس ولا علامة النسبة المئوية: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "تحتاج حزم المجموعة إلى Name وPublisher وVersion متطابقة"
@@ -3386,8 +3398,14 @@ msgstr "بدون --pkcs11، يعرض `keys list` مخزن شهادات Windows"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir ‏'{1}' ليس معرّف dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "كتابة إعداد Windows Sandbox يثبّت الحزمة في Windows جديد يمكن التخلص منه"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "كتابة تصحيح (.msp): الملفات والصفوف التي تحدّث أساساً مثبتاً إلى الهدف"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "كتابة تعريف حاوية حزم مشتركة: حزم MSIX تعمل في حاوية واحدة"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "كتابة ملف مصدر (.toml؛ وأسماء .rpk أيضاً): من إجابات، مسؤول عنها أو معطاة كخيارات، أو ملف بداية ثابت، أو MSI موجود"

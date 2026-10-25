@@ -342,6 +342,9 @@ msgstr "'{1}' není soubor PE, balíček MSI ani balíček či sada MSIX"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' není známá složka ani ID dir (známé složky: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' není balíček MSIX ani název rodiny balíčků (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' není cabinet, který rubrapack umí číst (stored nebo MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "řetěz potřebuje alespoň jeden [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "znak, který Windows v názvu nepovoluje (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "kontejner pojme nejvýše {1} rodin balíčků"
 
 msgid "a control character"
 msgstr "řídicí znak"
@@ -2997,6 +3003,9 @@ msgstr "slučovací modul {1}"
 msgid "the name %s"
 msgstr "název {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "rodina balíčků {1} je v kontejneru dvakrát"
+
 msgid "the package is not signed"
 msgstr "balíček není podepsán"
 
@@ -3017,6 +3026,9 @@ msgstr "obsah balíčku neodpovídá jeho podpisu (po podepsání byl změněn)"
 
 msgid "the package's directory cannot be read"
 msgstr "adresář balíčku nelze číst"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "název souboru balíčku nesmí obsahovat uvozovky ani znak procenta: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "balíčky sady potřebují stejné Name, Publisher a Version"
@@ -3384,8 +3396,14 @@ msgstr "bez --pkcs11 ukazuje `keys list` úložiště certifikátů Windows"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' není ID dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "zapíše konfiguraci Windows Sandbox, která nainstaluje balíček do nových, jednorázových Windows"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "zapíše opravu (.msp): soubory a řádky, které aktualizují nainstalovaný základ na cíl"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "zapíše definici sdíleného kontejneru balíčků: balíčky MSIX, které běží v jednom kontejneru"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "zapíše zdrojový soubor (.toml; i názvy .rpk): z odpovědí, dotázaných nebo zadaných jako volby, z pevného počátečního souboru nebo z existujícího MSI"

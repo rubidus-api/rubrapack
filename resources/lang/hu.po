@@ -342,6 +342,9 @@ msgstr "'{1}' se nem PE-fájl, se nem MSI-csomag, se nem MSIX-csomag vagy -köte
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' se nem ismert mappa, se nem dir-azonosító (ismert mappák: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' sem MSIX-csomag, sem csomagcsalád neve (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nem olyan cabinet, amelyet a rubrapack olvasni tud (stored vagy MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "a lánchoz legalább egy [chain-package.ID] kell"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "olyan karakter, amelyet a Windows nem enged névben (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "egy tárolóban legfeljebb {1} csomagcsalád lehet"
 
 msgid "a control character"
 msgstr "vezérlőkarakter"
@@ -2997,6 +3003,9 @@ msgstr "a(z) {1} egyesítési modul"
 msgid "the name %s"
 msgstr "a(z) {1} név"
 
+msgid "the package family %s is in the container twice"
+msgstr "a(z) {1} csomagcsalád kétszer szerepel a tárolóban"
+
 msgid "the package is not signed"
 msgstr "a csomag nincs aláírva"
 
@@ -3017,6 +3026,9 @@ msgstr "a csomag tartalma nem egyezik az aláírásával (az aláírás után me
 
 msgid "the package's directory cannot be read"
 msgstr "a csomag könyvtára nem olvasható"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "a csomag fájlneve nem tartalmazhat idézőjelet vagy százalékjelet: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "egy köteg csomagjainak ugyanaz a Name, Publisher és Version kell"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 nélkül a `keys list` a Windows tanúsítványtárolóját mut
 msgid "working-dir '%s' is not a dir ID"
 msgstr "a(z) '{1}' working-dir nem dir-azonosító"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "Windows Sandbox-konfigurációt ír, amely a csomagot egy friss, eldobható Windowsba telepíti"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "javítócsomag írása (.msp): a fájlok és sorok, amelyek egy telepített alapot a célra frissítenek"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "megosztott csomagtároló definícióját írja: egy tárolóban futó MSIX-csomagok"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "forrásfájl írása (.toml; .rpk nevek is): válaszokból (kérdezve vagy kapcsolóként megadva), rögzített kezdőfájlból vagy meglévő MSI-ből"

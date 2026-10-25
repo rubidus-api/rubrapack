@@ -342,6 +342,9 @@ msgstr "'{1}' is geen PE-bestand, geen MSI-pakket en geen MSIX-pakket of -bundel
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' is geen bekende map en geen dir-ID (bekende mappen: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' is geen MSIX-pakket en geen pakketfamilienaam (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' is geen cabinet dat rubrapack kan lezen (stored of MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "een keten heeft minstens één [chain-package.ID] nodig"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "een teken dat Windows niet toestaat in een naam (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "een container bevat hoogstens {1} pakketfamilies"
 
 msgid "a control character"
 msgstr "een besturingsteken"
@@ -2997,6 +3003,9 @@ msgstr "de samenvoegmodule {1}"
 msgid "the name %s"
 msgstr "de naam {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "de pakketfamilie {1} staat twee keer in de container"
+
 msgid "the package is not signed"
 msgstr "het pakket is niet ondertekend"
 
@@ -3017,6 +3026,9 @@ msgstr "de inhoud van het pakket komt niet overeen met zijn handtekening (het is
 
 msgid "the package's directory cannot be read"
 msgstr "de map van het pakket kan niet worden gelezen"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "de bestandsnaam van het pakket mag geen aanhalingstekens of procentteken bevatten: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "de pakketten van een bundel hebben dezelfde Name, Publisher en Version nodig"
@@ -3384,8 +3396,14 @@ msgstr "zonder --pkcs11 toont `keys list` het Windows-certificaatarchief"
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' is geen dir-ID"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "schrijft een Windows Sandbox-configuratie die het pakket installeert in een nieuwe wegwerp-Windows"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "een patch (.msp) schrijven: de bestanden en rijen die een geïnstalleerde basis bijwerken naar het doel"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "schrijft de definitie van een gedeelde pakketcontainer: MSIX-pakketten die in één container draaien"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "een bronbestand schrijven (.toml; ook .rpk-namen): gemaakt uit antwoorden, gevraagd of als opties gegeven, een vast startbestand, of een bestaande MSI"

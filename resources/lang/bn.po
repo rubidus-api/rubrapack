@@ -342,6 +342,9 @@ msgstr "'{1}' PE ফাইল, MSI প্যাকেজ বা MSIX প্য�
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' কোনো পরিচিত ফোল্ডার বা dir ID নয় (পরিচিত ফোল্ডার: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' কোনো MSIX প্যাকেজও নয়, প্যাকেজ পরিবারের নামও নয় (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' এমন cabinet নয় যা rubrapack পড়তে পারে (stored বা MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "একটি চেইনের জন্য অন্তত একট�
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "এমন অক্ষর যা Windows নামে অনুমোদন করে না (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "একটি কন্টেইনারে সর্বাধিক {1}টি প্যাকেজ পরিবার থাকে"
 
 msgid "a control character"
 msgstr "একটি নিয়ন্ত্রণ অক্ষর"
@@ -2997,6 +3003,9 @@ msgstr "মার্জ মডিউল {1}"
 msgid "the name %s"
 msgstr "নাম {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "প্যাকেজ পরিবার {1} কন্টেইনারে দুবার আছে"
+
 msgid "the package is not signed"
 msgstr "প্যাকেজটি স্বাক্ষরিত নয়"
 
@@ -3017,6 +3026,9 @@ msgstr "প্যাকেজের বিষয়বস্তু এর স্
 
 msgid "the package's directory cannot be read"
 msgstr "প্যাকেজের ডিরেক্টরি পড়া যায় না"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "প্যাকেজের ফাইলের নামে উদ্ধৃতিচিহ্ন বা শতাংশ চিহ্ন থাকা চলবে না: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "একটি বান্ডলের প্যাকেজগুলোর একই Name, Publisher এবং Version দরকার"
@@ -3384,8 +3396,14 @@ msgstr "--pkcs11 ছাড়া `keys list` Windows সার্টিফিক
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' কোনো dir ID নয়"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "একটি Windows Sandbox কনফিগারেশন লেখে যা প্যাকেজটি নতুন, ফেলে দেওয়া যায় এমন Windows-এ ইনস্টল করে"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "একটি প্যাচ (.msp) লিখুন: যে ফাইল ও সারি একটি ইনস্টল করা ভিত্তিকে লক্ষ্যে হালনাগাদ করে"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "একটি শেয়ার করা প্যাকেজ কন্টেইনারের সংজ্ঞা লেখে: একটি কন্টেইনারে চলা MSIX প্যাকেজ"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "একটি সোর্স ফাইল লিখুন (.toml; .rpk নামও): উত্তর থেকে তৈরি, জিজ্ঞাসা করা বা বিকল্প হিসেবে দেওয়া, একটি নির্দিষ্ট শুরু, বা একটি বিদ্যমান MSI"

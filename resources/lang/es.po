@@ -342,6 +342,9 @@ msgstr "'{1}' no es un archivo PE, ni un paquete MSI, ni un paquete o lote MSIX"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' no es una carpeta conocida ni un ID de dir (carpetas conocidas: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' no es ni un paquete MSIX ni un nombre de familia de paquetes (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' no es un archivo cabinet que rubrapack pueda leer (stored o MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "una cadena necesita al menos un [chain-package.ID]"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "un carácter que Windows no permite en un nombre (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "un contenedor admite como máximo {1} familias de paquetes"
 
 msgid "a control character"
 msgstr "un carácter de control"
@@ -2997,6 +3003,9 @@ msgstr "el módulo de combinación {1}"
 msgid "the name %s"
 msgstr "el nombre {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "la familia de paquetes {1} está dos veces en el contenedor"
+
 msgid "the package is not signed"
 msgstr "el paquete no está firmado"
 
@@ -3017,6 +3026,9 @@ msgstr "el contenido del paquete no coincide con su firma (se cambió después d
 
 msgid "the package's directory cannot be read"
 msgstr "no se puede leer el directorio del paquete"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "el nombre de archivo del paquete no debe contener comillas ni el signo de porcentaje: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "los paquetes de un lote necesitan el mismo Name, Publisher y Version"
@@ -3384,8 +3396,14 @@ msgstr "sin --pkcs11, `keys list` muestra el almacén de certificados de Windows
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' no es un ID de dir"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "escribe una configuración de Windows Sandbox que instala el paquete en un Windows nuevo y desechable"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "escribe una revisión (.msp): los archivos y filas que actualizan una base instalada al destino"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "escribe la definición de un contenedor de paquetes compartido: paquetes MSIX que se ejecutan en un contenedor"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "escribe un archivo de origen (.toml; también nombres .rpk): a partir de respuestas, preguntadas o dadas como opciones, de un inicio fijo o de un MSI existente"

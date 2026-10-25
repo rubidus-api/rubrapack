@@ -270,6 +270,27 @@ char *rp_pal_getenv(proven_allocator_t alloc, const char *name) {
     return c;
 }
 
+char *rp_pal_full_path(proven_allocator_t alloc, const char *path_utf8) {
+    proven_u16str_t w = { 0 };
+    if (path_utf8 == NULL || wide_path(alloc, path_utf8, &w) != PROVEN_OK) return NULL;
+    const wchar_t *in = (const wchar_t *)proven_u16str_as_ptr(&w);
+    DWORD need = GetFullPathNameW(in, 0, NULL, NULL);
+    wchar_t *buf = need ? rp_mem_alloc(alloc, (size_t)need + 1, sizeof *buf) : NULL;
+    DWORD got = buf ? GetFullPathNameW(in, need + 1, buf, NULL) : 0;
+    proven_u16str_destroy(alloc, &w);
+    char *c = NULL;
+    if (got && got <= need && GetFileAttributesW(buf) != INVALID_FILE_ATTRIBUTES) {
+        rp_text_result_t r = rp_utf16_to_utf8((const proven_u16 *)buf, got, NULL, 0);
+        c = r.err == PROVEN_OK ? rp_mem_alloc(alloc, r.units + 1, 1) : NULL;
+        if (c) {
+            (void)rp_utf16_to_utf8((const proven_u16 *)buf, got, (uint8_t *)c, r.units);
+            c[r.units] = 0;
+        }
+    }
+    rp_mem_free(alloc, buf);
+    return c;
+}
+
 char *rp_pal_exe_dir(proven_allocator_t alloc) {
     static wchar_t path[32768];
     DWORD n = GetModuleFileNameW(NULL, path, 32768);

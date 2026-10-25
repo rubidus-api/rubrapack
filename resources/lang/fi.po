@@ -342,6 +342,9 @@ msgstr "'{1}' ei ole PE-tiedosto, MSI-paketti eikä MSIX-paketti tai -nippu"
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ei ole tunnettu kansio eikä dir-tunnus (tunnetut kansiot: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
+msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
+msgstr "'{1}' ei ole MSIX-paketti eikä pakettiperheen nimi (<Name>_<publisher ID>)"
+
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' ei ole cabinet, jota rubrapack osaa lukea (stored tai MSZIP)"
 
@@ -1340,6 +1343,9 @@ msgstr "ketju tarvitsee vähintään yhden [chain-package.ID]-kohteen"
 
 msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "merkki, jota Windows ei salli nimessä (/ \\ : * ? \" < > |)"
+
+msgid "a container holds at most %u package families"
+msgstr "säilössä on enintään {1} pakettiperhettä"
 
 msgid "a control character"
 msgstr "ohjausmerkki"
@@ -2997,6 +3003,9 @@ msgstr "yhdistämismoduuli {1}"
 msgid "the name %s"
 msgstr "nimi {1}"
 
+msgid "the package family %s is in the container twice"
+msgstr "pakettiperhe {1} on säilössä kahdesti"
+
 msgid "the package is not signed"
 msgstr "pakettia ei ole allekirjoitettu"
 
@@ -3017,6 +3026,9 @@ msgstr "paketin sisältö ei vastaa sen allekirjoitusta (sitä muutettiin alleki
 
 msgid "the package's directory cannot be read"
 msgstr "paketin hakemistoa ei voi lukea"
+
+msgid "the package's file name must not hold quotes or a percent sign: '%s'"
+msgstr "paketin tiedostonimessä ei saa olla lainausmerkkejä eikä prosenttimerkkiä: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "nipun paketit tarvitsevat saman Namen, Publisherin ja Versionin"
@@ -3384,8 +3396,14 @@ msgstr "ilman --pkcs11-valitsinta `keys list` näyttää Windowsin varmennesäil
 msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' ei ole dir-tunnus"
 
+msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
+msgstr "kirjoittaa Windows Sandbox -määrityksen, joka asentaa paketin uuteen, kertakäyttöiseen Windowsiin"
+
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "kirjoita korjaustiedosto (.msp): tiedostot ja rivit, jotka päivittävät asennetun pohjan kohteeksi"
+
+msgid "write a shared package container's definition: MSIX packages that run in one container"
+msgstr "kirjoittaa jaetun pakettisäilön määrityksen: MSIX-paketit, jotka toimivat yhdessä säilössä"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "kirjoita lähdetiedosto (.toml; myös .rpk-nimet): vastauksista, kysyttyinä tai valitsimina annettuina, kiinteä aloitustiedosto tai olemassa oleva MSI"

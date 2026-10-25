@@ -1985,6 +1985,8 @@ rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
 rubrapack diff <a.msi> <b.msi>
+rubrapack container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>
+rubrapack try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]
 rubrapack new [msi] <name>
 rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
@@ -2136,6 +2138,22 @@ rubrapack version | help [command]
   version and, when it is signed, the SHA-256 of its signature. One MSI is one architecture: the
   manifests of several are merged by hand. Not with `cab = "external"` (`RP1617`): winget downloads
   one file.
+- `try <package>` writes `<package>.wsb` (or `-o`), a *Windows Sandbox* configuration: opened on
+  Windows with the Windows Sandbox feature turned on, it starts a fresh, disposable Windows, shares
+  the package's folder read-only on its desktop and installs the package there - `msiexec /i` with
+  a log on the sandbox's desktop for an MSI, `Add-AppxPackage -AllowUnsigned` for an MSIX (a
+  `--unsigned-test` package, or one signed by a certificate the sandbox trusts). Closing the
+  sandbox throws it all away. Networking is off unless `--network`. The shared folder is the
+  package's folder as a full path on this computer; `--host <folder>` gives it for a .wsb used on
+  another one.
+- `container <name> <package>... -o <out.xml>` writes a *shared package container* definition:
+  MSIX packages - a main application and its add-ons, say - that run in one container and see one
+  another's files and registry. Each package (`.msix` or `.msixbundle`) gives its package family
+  name, read from its identity; a family name (`Contoso.Addon_8wekyb3d8bbwe`) may be given as it is.
+  The first has the highest priority when two packages have the same file. An administrator deploys
+  it with `Add-AppSharedPackageContainer <out.xml>` (and takes it away with
+  `Remove-AppSharedPackageContainer -Name <name>`); the packages need not be installed first. A
+  package belongs to one container at most.
 - `diff <a.msi> <b.msi>` shows what differs between two packages, one line each, tables in name
   order and rows in key order: `<Table>  insert  <cells>`, `<Table>  delete  <keys>`,
   `<Table>  update  <keys>  <Column>=<old> -> <new>`, `<Table>  new table  <columns>` (its rows
