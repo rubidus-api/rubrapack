@@ -249,6 +249,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, framework, external-location, symbols(`.pdb` 파일), language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
+| `[msix-psf]` | **files**(Package Support Framework 의 파일이 든 폴더), **config**(그 `config.json`), launcher(기본 `PsfLauncher64.exe`, x86 은 `PsfLauncher32.exe`) - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
@@ -345,6 +346,14 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `Microsoft.VCLibs.140.00.UWPDesktop`(게시자 `CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond,
   S=Washington, C=US`), Windows App SDK - 를 쓸 수 있는 가장 오래된 판과 함께 적는다. 그것이 없으면 Windows 가
   패키지를 설치하지 않는다. MSI 빌드는 이 표를 뺀다.
+- `[msix-psf]` 는 MSIX 안에서 제대로 돌지 않는 프로그램 - 자기 옆에 쓰거나, 자기 폴더를 작업 폴더로 여기는 - 에
+  *Package Support Framework*(Microsoft 의 것, NuGet 패키지 `Microsoft.PackageSupportFramework`)를 붙인다. `files` 는
+  PSF 의 파일(`PsfLauncher64.exe`, `PsfRuntime64.dll`, `FileRedirectionFixup64.dll` 같은 고침 DLL; `$(ARCH)` 로 아키텍처를
+  고른다)이 든 폴더, `config` 는 그 `config.json` 이다. 둘 다 패키지 루트에 들어가고(폴더의 하위 폴더는 빠진다), 앱의
+  모든 진입 - 시작 메뉴 항목, 별칭과 다른 확장 - 이 시작 프로그램을 띄우며, 시작 프로그램이 `config.json` 대로
+  프로그램을 띄운다. rubrapack 은 `config.json` 을 그대로 복사하고, `"applications"` 에 각 `[msix-app.*]` 의 ID 가
+  있는지만 확인한다. 고침과 그 설정은 PSF 의 몫이다. `[env.*]` 나 `external-location` 과는 함께 쓰지 않으며(`RP1617`),
+  MSI 빌드는 이 표를 뺀다.
 - `background-color` 는 애플리케이션 타일의 색을 정하고, `hidden = true` 는 애플리케이션(예를 들어 도우미)을 시작
   메뉴에서 뺀다.
 - `main-package = "Contoso.Main"`(주 패키지의 정체 이름)은 이 패키지를 그 패키지의 *선택적 패키지*로 만든다: 주

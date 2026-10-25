@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': a licencszövegnek a betűtípus angol neve kell, ezért a nyelv saját betűtípusával jelenik meg; írja be az angol nevet (például \"Malgun Gothic\"), hogy ott is ezt a betűtípust használja"
 
+msgid "%s = '%s' must be a folder"
+msgstr "a(z) {1} = '{2}' mappa kell legyen"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1}-összetevő, de a csomag platformja {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: a types fájltípusok listája, például [\".txt\
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': a Windows csak betűket és számjegyeket fogad el"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "a [msix-psf] arm64-hez launcher = \"...\" beállítást igényel (a PSF indítóinak neve PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "a [msix-psf] nem fér össze sem az external-location = true, sem az [env.*] (a rubrapack saját indítója) beállítással"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "a [msix-psf] a PSF indítójával indítja az alkalmazásokat: [msix-app.ID] kell hozzá"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: a(z) '{1}' config nem nevezi meg a(z) '{2}' alkalmazást az \"applications\" részben"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: a files mappában nincs '{1}' (az indító)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: a(z) '{2}' fájl nem DLL"
@@ -2213,6 +2231,9 @@ msgstr "a launch értéke \"file:<ID>\" kell legyen, amely e csomag egy [file.*]
 
 msgid "launch-args needs launch"
 msgstr "a launch-args a launch értéket igényli"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "a launcher a PSF indítójának fájlneve a files mappában, például \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "a license csak .txt, .md (egyszerű szövegként jelenik meg) vagy .rtf fájl lehet"

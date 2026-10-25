@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': உரிம உரைக்கு எழுத்துருவின் ஆங்கிலப் பெயர் தேவை, எனவே அது மொழியின் சொந்த எழுத்துருவில் காட்டப்படுகிறது; அங்கும் இந்த எழுத்துருவைப் பயன்படுத்த ஆங்கிலப் பெயரை எழுதவும் (எ.கா. \"Malgun Gothic\")"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' ஒரு கோப்புறையாக இருக்க வேண்டும்"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1} கூறு, ஆனால் தொகுப்பின் இயங்குதளம் {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types என்பது கோப்பு வக
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows எழுத்துகளையும் எண்களையும் மட்டுமே ஏற்கும்"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "arm64 க்கான [msix-psf] க்கு launcher = \"...\" தேவை (PSF தன் துவக்கிகளை PsfLauncher32.exe, PsfLauncher64.exe என அழைக்கிறது)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] external-location = true உடனோ [env.*] (rubrapack இன் சொந்தத் துவக்கி) உடனோ சேராது"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] பயன்பாடுகளை PSF துவக்கி மூலம் தொடங்குகிறது: அதற்கு [msix-app.ID] தேவை"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' தன் \"applications\" இல் '{2}' பயன்பாட்டைக் குறிப்பிடவில்லை"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files இல் '{1}' (துவக்கி) இல்லை"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: கோப்பு '{2}' DLL அல்ல"
@@ -2213,6 +2231,9 @@ msgstr "launch இந்தத் தொகுப்பின் [file.*] ஐக
 
 msgid "launch-args needs launch"
 msgstr "launch-args க்கு launch தேவை"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher என்பது files இல் உள்ள PSF துவக்கியின் கோப்புப் பெயர், எ.கா. \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license ஒரு .txt, .md (எளிய உரையாகக் காட்டப்படும்) அல்லது .rtf கோப்பாக இருக்க வேண்டும்"

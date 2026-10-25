@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': লাইসেন্সের লেখার জন্য ফন্টের ইংরেজি নাম লাগে, তাই এটি ভাষার নিজস্ব ফন্টে দেখায়; সেখানেও এই ফন্ট ব্যবহার করতে ইংরেজি নামটি লিখুন (যেমন \"Malgun Gothic\")"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' একটি ফোল্ডার হতে হবে"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1} উপাদান, কিন্তু প্যাকেজের প্ল্যাটফর্ম {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types হলো ফাইল টাইপের �
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows শুধু অক্ষর ও অঙ্ক নেয়"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "arm64-এর জন্য [msix-psf]-এ launcher = \"...\" লাগে (PSF তার লঞ্চারগুলোর নাম দেয় PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] external-location = true বা [env.*] (rubrapack-এর নিজস্ব লঞ্চার) কোনোটির সঙ্গেই চলে না"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] অ্যাপ্লিকেশনগুলো PSF লঞ্চার দিয়ে চালু করে: এর জন্য [msix-app.ID] লাগে"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' তার \"applications\"-এ অ্যাপ্লিকেশন '{2}'-এর নাম দেয় না"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files-এ '{1}' নেই (লঞ্চার)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: ফাইল '{2}' DLL নয়"
@@ -2213,6 +2231,9 @@ msgstr "launch-কে এই প্যাকেজের একটি [file.*] �
 
 msgid "launch-args needs launch"
 msgstr "launch-args-এর জন্য launch দরকার"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher হলো files-এর PSF লঞ্চারের ফাইলের নাম, যেমন \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license-কে .txt, .md (সাধারণ লেখা হিসেবে দেখানো হয়) বা .rtf ফাইল হতে হবে"

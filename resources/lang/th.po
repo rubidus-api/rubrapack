@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': ข้อความสิทธิ์การใช้งานต้องใช้ชื่อภาษาอังกฤษของแบบอักษร จึงแสดงด้วยแบบอักษรของภาษานั้นเอง เขียนชื่อภาษาอังกฤษ (เช่น \"Malgun Gothic\") เพื่อใช้แบบอักษรนี้ที่นั่นด้วย"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' ต้องเป็นโฟลเดอร์"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "คอมโพเนนต์ {1} แต่แพลตฟอร์มของแพ็กเกจคือ {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types เป็นรายการชนิด�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows รับเฉพาะตัวอักษรและตัวเลข"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] สำหรับ arm64 ต้องมี launcher = \"...\" (PSF ตั้งชื่อตัวเปิดว่า PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] ใช้ร่วมกับ external-location = true หรือ [env.*] (ตัวเปิดของ rubrapack เอง) ไม่ได้"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] เริ่มแอปพลิเคชันผ่านตัวเปิด PSF: ต้องมี [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' ไม่ได้ระบุแอปพลิเคชัน '{2}' ใน \"applications\""
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: ไม่มี '{1}' (ตัวเปิด) ใน files"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: ไฟล์ '{2}' ไม่ใช่ DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch ต้องเป็น \"file:<ID>\" ที่ระบุ [fil
 
 msgid "launch-args needs launch"
 msgstr "launch-args ต้องมี launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher คือชื่อไฟล์ของตัวเปิด PSF ใน files เช่น \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license ต้องเป็นไฟล์ .txt, .md (แสดงเป็นข้อความธรรมดา) หรือ .rtf"

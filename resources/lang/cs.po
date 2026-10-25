@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': text licence potřebuje anglický název písma, a proto se zobrazí ve vlastním písmu jazyka; zapište anglický název (například \"Malgun Gothic\"), aby se toto písmo použilo i tam"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' musí být složka"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "součást {1}, ale platforma balíčku je {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types je seznam typů souborů, například [\".tx
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows přijímá jen písmena a číslice"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] pro arm64 vyžaduje launcher = \"...\" (PSF pojmenovává své spouštěče PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] nejde dohromady s external-location = true ani s [env.*] (vlastním spouštěčem rubrapacku)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] spouští aplikace přes spouštěč PSF: potřebuje [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' neuvádí aplikaci '{2}' ve svých \"applications\""
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: ve files chybí '{1}' (spouštěč)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: soubor '{2}' není knihovna DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
 
 msgid "launch-args needs launch"
 msgstr "launch-args potřebuje launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher je název souboru spouštěče PSF ve files, například \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license musí být soubor .txt, .md (zobrazený jako prostý text) nebo .rtf"

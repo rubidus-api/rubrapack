@@ -260,6 +260,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, external-location, symbols (`.pdb` files), language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
+| `[msix-psf]` | **files** (a folder of the Package Support Framework's files), **config** (its `config.json`), launcher (default `PsfLauncher64.exe`, x86 `PsfLauncher32.exe`) - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, **entry-point** (the activatable class that serves it), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args (on a content event only without class), display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
@@ -369,6 +370,16 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `Microsoft.VCLibs.140.00.UWPDesktop` (publisher `CN=Microsoft Corporation, O=Microsoft Corporation,
   L=Redmond, S=Washington, C=US`), the Windows App SDK - with the oldest version that will do;
   Windows refuses to install the package without it. An MSI build leaves the table out.
+- `[msix-psf]` brings the *Package Support Framework* (Microsoft's, from its NuGet package
+  `Microsoft.PackageSupportFramework`) to a program that does not run as it should inside an MSIX -
+  it writes beside itself, or expects its own folder as the working directory. `files` is a folder
+  of the PSF's files (`PsfLauncher64.exe`, `PsfRuntime64.dll`, the fixups such as
+  `FileRedirectionFixup64.dll`; `$(ARCH)` picks an architecture's) and `config` its `config.json`;
+  both go to the package's root (the folder's subfolders stay out), and every entry of the
+  application - its Start entry, its aliases and other extensions - starts the launcher, which
+  starts the program as `config.json` says. rubrapack copies `config.json` as it is and checks only
+  that it names each `[msix-app.*]` by its ID in `"applications"`; the fixups and their settings are
+  the PSF's. Not with `[env.*]` or `external-location` (`RP1617`); an MSI build leaves it out.
 - `background-color` colours the application's tile and `hidden = true` keeps an application (a
   helper, say) out of the Start menu.
 - `main-package = "Contoso.Main"` (the main package's identity name) makes the package an

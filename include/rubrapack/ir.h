@@ -711,6 +711,10 @@ typedef struct {
     bool      msix_framework;                   // framework = true: a framework package other packages depend on (RFC-0031 B19)
     bool      msix_external;                    // external-location = true: the identity of a program installed elsewhere (RFC-0031 B20)
     char    **msix_symbols;                     // [msix] symbols: the .pdb files of a .msixupload (RFC-0031 B22), paths to read
+    bool      has_psf;                          // [msix-psf] (RFC-0031 B26): the Package Support Framework
+    char     *psf_files, *psf_config;           // its folder of PSF files and its config.json, paths to read
+    char     *psf_launcher;                     // launcher = "...": the launcher's file name, or NULL (by architecture)
+    rp_pos_t  psf_pos;
     size_t    msix_symbol_count;
     bool      msix_no_langpacks;                // language-packs = false: a bundle keeps every language in its packages
     size_t    msix_dep_count;

@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': litsentsitekst vajab fondi ingliskeelset nime, seega kuvatakse see keele enda fondiga; kirjutage ingliskeelne nimi (nt \"Malgun Gothic\"), et seda fonti kasutataks ka seal"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' peab olema kaust"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "komponent {1}, kuid paketi platvorm on {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types on failitüüpide loend, nt [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows võtab vastu ainult tähti ja numbreid"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] vajab arm64 jaoks launcher = \"...\" (PSF nimetab oma käivitajad PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] ei sobi kokku ei external-location = true ega [env.*]-ga (rubrapacki enda käivitaja)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] käivitab rakendused PSF-i käivitaja kaudu: vaja on [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' ei nimeta oma \"applications\" all rakendust '{2}'"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: kaustas files pole '{1}' (käivitajat)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: fail '{2}' ei ole DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch peab olema \"file:<ID>\", mis nimetab selle paketi [file.*]"
 
 msgid "launch-args needs launch"
 msgstr "launch-args vajab launch'i"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher on PSF-i käivitaja failinimi kaustas files, näiteks \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license peab olema .txt-, .md- (kuvatakse lihttekstina) või .rtf-fail"

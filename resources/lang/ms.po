@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': teks lesen memerlukan nama fon dalam bahasa Inggeris, jadi ia dipaparkan dengan fon bahasa itu sendiri; tulis nama bahasa Inggerisnya (seperti \"Malgun Gothic\") supaya fon ini digunakan di sana juga"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' mestilah folder"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "komponen {1}, tetapi platform pakej ialah {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types ialah senarai jenis fail, seperti [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows hanya menerima huruf dan digit"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] untuk arm64 memerlukan launcher = \"...\" (PSF menamakan pelancarnya PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] tidak boleh digabung dengan external-location = true atau [env.*] (pelancar rubrapack sendiri)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] memulakan aplikasi melalui pelancar PSF: ia memerlukan [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' tidak menamakan aplikasi '{2}' dalam \"applications\"nya"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files tiada '{1}' (pelancar)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: fail '{2}' bukan DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch mesti \"file:<ID>\" yang menamakan [file.*] dalam pakej ini"
 
 msgid "launch-args needs launch"
 msgstr "launch-args memerlukan launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher ialah nama fail pelancar PSF dalam files, seperti \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license mesti fail .txt, .md (dipaparkan sebagai teks biasa) atau .rtf"

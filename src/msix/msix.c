@@ -25,6 +25,7 @@
 
 #include "proven/encode.h"
 #include "proven/hash.h"
+#include "proven/u8str.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2142,6 +2143,17 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             break;
         }
     }
+    // RFC-0031 B26: the PSF starts the applications; rubrapack's own launcher ([env.*]) and a program
+    // outside the package do not go with it.
+    if (ir->has_psf) {
+        bool env = false;
+        for (size_t i = 0; i < ir->env_count && !env; ++i) env = !ir->envs[i].msi_only;
+        if (ir->msix_app_count == 0) DERR(ir->psf_pos, "RP1617", "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]");
+        if (ir->msix_external || env) DERR(ir->psf_pos, "RP1617", "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)");
+        if (ir->psf_launcher == NULL && ir->arch == RP_ARCH_ARM64) {
+            DERR(ir->psf_pos, "RP1617", "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)");
+        }
+    }
     if (ir->msix_app_count == 0 && ir->msix_main == NULL && !ir->msix_framework) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
     // RFC-0019: a modification package changes its main package's files and registry; it has no
     // applications of its own.
@@ -2195,8 +2207,26 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         mod_files += mods[k].file_count;
     }
 
+    // RFC-0031 B26: the PSF's files, in name order (a listing has none of its own).
+    char **psf_names = NULL;
+    size_t npsf = 0;
+    if (ir->has_psf && ir->psf_files) {
+        if (rp_pal_list_dir(alloc, ir->psf_files, &psf_names, &npsf) != PROVEN_OK) {
+            DERR(ir->psf_pos, "RP1507", "cannot read '%s'", ir->psf_files);
+            psf_names = NULL;
+            npsf = 0;
+        }
+        for (size_t i = 1; i < npsf; ++i) {
+            for (size_t k = i; k > 0 && strcmp(psf_names[k - 1], psf_names[k]) > 0; --k) {
+                char *t = psf_names[k];
+                psf_names[k] = psf_names[k - 1];
+                psf_names[k - 1] = t;
+            }
+        }
+    }
+
     // The payload.
-    size_t cap = mod_files + ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri
+    size_t cap = mod_files + ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7 + npsf + 1, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri, the PSF
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -2298,6 +2328,50 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         it->pos = x->pos;
         ++n;
     }
+    // RFC-0031 B26: the PSF's files at the package's root - the launcher among them - and its
+    // config.json, which must name every application by its Id (in "applications").
+    char launcher[256] = "";
+    if (ir->has_psf) {
+        snprintf(launcher, sizeof launcher, "%s", ir->psf_launcher ? ir->psf_launcher
+                                                  : ir->arch == RP_ARCH_X86 ? "PsfLauncher32.exe" : ir->arch == RP_ARCH_X64 ? "PsfLauncher64.exe" : "");
+        bool found = false;
+        for (size_t i = 0; i < npsf; ++i) {
+            char path[2400];
+            snprintf(path, sizeof path, "%s/%s", ir->psf_files, psf_names[i]);
+            uint64_t size = 0;
+            if (rp_pal_stat(alloc, path, &size) != RP_FS_FILE) continue;       // the PSF's own subfolders (PsfMonitor) stay out
+            item_t *it = &items[n];
+            snprintf(it->path, sizeof it->path, "%s", psf_names[i]);
+            if (reserved(it->path)) DERR(ir->psf_pos, "RP1610", "'%s' is a name the MSIX format keeps for itself", it->path);
+            if (rp_pal_read_file(alloc, path, (size_t)1 << 30, &it->data, &it->data_len) != PROVEN_OK) {
+                DERR(ir->psf_pos, "RP1507", "cannot read '%s'", path);
+                continue;
+            }
+            it->pos = ir->psf_pos;
+            found |= launcher[0] && rp_ascii_ieq(psf_names[i], launcher);
+            ++n;
+        }
+        if (launcher[0] && !found && ir->psf_files) DERR(ir->psf_pos, "RP1617", "[msix-psf]: files has no '%s' (the launcher)", launcher);
+        item_t *it = &items[n];
+        snprintf(it->path, sizeof it->path, "config.json");
+        it->pos = ir->psf_pos;
+        if (ir->psf_config && rp_pal_read_file(alloc, ir->psf_config, 1u << 24, &it->data, &it->data_len) == PROVEN_OK) {
+            ++n;
+            for (size_t a = 0; a < ir->msix_app_count; ++a) {
+                char want[200];
+                snprintf(want, sizeof want, "\"%s\"", ir->msix_apps[a].id);
+                proven_u8str_view_t text = { .ptr = it->data, .size = it->data_len };
+                if (!proven_u8str_view_contains(text, PROVEN_LIT("\"applications\"")) || !proven_u8str_view_contains(text, proven_u8str_view_from_cstr(want))) {
+                    DERR(ir->psf_pos, "RP1617", "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\"", ir->psf_config, ir->msix_apps[a].id);
+                }
+            }
+        } else if (ir->psf_config) {
+            DERR(ir->psf_pos, "RP1507", "cannot read '%s'", ir->psf_config);
+        }
+    }
+    for (size_t i = 0; i < npsf; ++i) rp_mem_free(alloc, psf_names[i]);
+    rp_mem_free(alloc, psf_names);
+
     // Each application: its executable's package path, and its logos - the three given (checked),
     // or plain ones made here once for all applications.
     app_paths_t *ap = rp_mem_alloc(alloc, ir->msix_app_count ? ir->msix_app_count : 1, sizeof *ap);
@@ -2337,6 +2411,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
             bool env = false;
             for (size_t i = 0; i < ir->env_count && !env; ++i) env = !ir->envs[i].msi_only;
             if (env) snprintf(ap[a].start, sizeof ap[a].start, "rubrapack\\%s.exe", app->id);
+            else if (launcher[0]) snprintf(ap[a].start, sizeof ap[a].start, "%s", launcher);      // RFC-0031 B26
         }
         for (int k = 0; k < 3; ++k) {
             // RFC-0016 3: Logo.scale-NNN.png next to the logo - the logo in several scales, found

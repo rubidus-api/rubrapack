@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': лицензия мәтініне қаріптің ағылшынша атауы керек, сондықтан ол тілдің өз қаріпімен көрсетіледі; бұл қаріпті онда да пайдалану үшін ағылшынша атауын жазыңыз (мысалы, \"Malgun Gothic\")"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' қалта болуы керек"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1} құрамдас бөлігі, бірақ буманың платформасы - {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types - файл түрлерінің тізімі
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows тек әріптер мен цифрларды қабылдайды"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "arm64 үшін [msix-psf] launcher = \"...\" талап етеді (PSF іске қосқыштарын PsfLauncher32.exe, PsfLauncher64.exe деп атайды)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] external-location = true-мен де, [env.*]-пен де (rubrapack-тың өз іске қосқышы) бірге жүрмейді"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] қолданбаларды PSF іске қосқышы арқылы іске қосады: оған [msix-app.ID] керек"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: '{1}' config өз \"applications\" ішінде '{2}' қолданбасын атамайды"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files ішінде '{1}' жоқ (іске қосқыш)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: '{2}' файлы DLL емес"
@@ -2213,6 +2231,9 @@ msgstr "launch осы буманың [file.*] атайтын \"file:<ID>\" бо�
 
 msgid "launch-args needs launch"
 msgstr "launch-args үшін launch керек"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher — files ішіндегі PSF іске қосқышының файл аты, мысалы \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license .txt, .md (қарапайым мәтін ретінде көрсетіледі) немесе .rtf файлы болуы керек"

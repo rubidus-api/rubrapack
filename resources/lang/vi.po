@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': văn bản giấy phép cần tên tiếng Anh của phông chữ, nên nó hiển thị bằng phông của ngôn ngữ; hãy ghi tên tiếng Anh (như \"Malgun Gothic\") để dùng phông này ở đó nữa"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' phải là một thư mục"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "thành phần {1}, nhưng nền tảng của gói là {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types là danh sách loại tệp, như [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows chỉ nhận chữ cái và chữ số"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] cho arm64 cần launcher = \"...\" (PSF đặt tên các trình khởi chạy là PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] không đi cùng external-location = true lẫn [env.*] (trình khởi chạy riêng của rubrapack)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] khởi động các ứng dụng qua trình khởi chạy PSF: cần một [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' không nêu ứng dụng '{2}' trong \"applications\" của nó"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files không có '{1}' (trình khởi chạy)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: tệp '{2}' không phải là DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch phải là \"file:<ID>\" chỉ tới một [file.*] của gói n�
 
 msgid "launch-args needs launch"
 msgstr "launch-args cần launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher là tên tệp của trình khởi chạy PSF trong files, như \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license phải là tệp .txt, .md (hiển thị dạng văn bản thuần) hoặc .rtf"

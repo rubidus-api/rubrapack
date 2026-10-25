@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': 약관 글은 글꼴의 영어 이름이 있어야 그 글꼴로 보이므로 지금은 그 언어의 기본 글꼴로 나옵니다. 거기에도 이 글꼴을 쓰려면 영어 이름(\"Malgun Gothic\" 같은)을 쓰십시오"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' 는 폴더여야 한다"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1} 구성 요소인데 패키지의 플랫폼은 {2} 입니다"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types 는 [\".txt\", \"*\"] 같은 파일 형식�
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 는 영문자와 숫자만 받습니다"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "arm64 의 [msix-psf] 는 launcher = \"...\" 가 필요하다(PSF 는 시작 프로그램을 PsfLauncher32.exe, PsfLauncher64.exe 로 부른다)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] 는 external-location = true 와도, [env.*](rubrapack 자신의 시작 프로그램)와도 함께 쓰지 않는다"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] 는 애플리케이션을 PSF 시작 프로그램으로 시작한다: [msix-app.ID] 가 필요하다"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' 가 \"applications\" 에 애플리케이션 '{2}' 를 적지 않는다"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: files 에 '{1}'(시작 프로그램)가 없다"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: 파일 '{2}' 은(는) DLL 이 아닙니다"
@@ -2213,6 +2231,9 @@ msgstr "launch 는 이 패키지의 [file.*] 을 가리키는 \"file:<ID>\" 여�
 
 msgid "launch-args needs launch"
 msgstr "launch-args 에는 launch 가 필요합니다"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher 는 files 안의 PSF 시작 프로그램의 파일 이름이다. 예: \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license 는 .txt, .md(일반 글로 보임) 또는 .rtf 파일이어야 합니다"

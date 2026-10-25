@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': текстът на лиценза изисква английското име на шрифта, затова се показва с шрифта на езика; напишете английското име (например \"Malgun Gothic\"), за да се ползва този шрифт и там"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' трябва да е папка"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "компонент {1}, но платформата на пакета е {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types е списък от файлови типо
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows приема само букви и цифри"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] за arm64 изисква launcher = \"...\" (PSF нарича стартерите си PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] не върви нито с external-location = true, нито с [env.*] (собствения стартер на rubrapack)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] стартира приложенията чрез стартера на PSF: нужно е [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' не назовава приложението '{2}' в своите \"applications\""
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: във files няма '{1}' (стартера)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: файлът '{2}' не е DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch трябва да е \"file:<ID>\", посочващ [file.*] о�
 
 msgid "launch-args needs launch"
 msgstr "launch-args изисква launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher е името на файла на стартера на PSF във files, например \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license трябва да е файл .txt, .md (показва се като обикновен текст) или .rtf"

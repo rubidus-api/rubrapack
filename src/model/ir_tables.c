@@ -281,6 +281,47 @@ void ir_parse_msix_dep(ctx_t *c, const rp_ttable_t *t) {
     if (d->min_version && !four_part_version(d->min_version)) ERR(c, ir_key_pos(t, "min-version"), "RP1603", "min-version must have four parts, such as 14.0.24217.0");
 }
 
+// [msix-psf] (RFC-0031 B26): the Package Support Framework the author brings - a folder of its files
+// (PsfLauncher, PsfRuntime, the fixups), which go to the package's root, and the config.json that
+// says what they fix. A path to read, under the source's folder; $(ARCH) picks an architecture's.
+static char *psf_path(ctx_t *c, const rp_ttable_t *t, const char *key, rp_fskind_t want) {
+    char *s = ir_get_str(c, t, key, true, NULL);
+    if (s == NULL || !ir_source_path_ok(c, s, ir_key_pos(t, key))) {
+        rp_mem_free(c->alloc, s);
+        return NULL;
+    }
+    const char *dir = c->opt->source_dir ? c->opt->source_dir : ".";
+    size_t n = strlen(dir) + strlen(s) + 2;
+    char *path = rp_mem_alloc(c->alloc, n, 1);
+    if (path == NULL) {
+        c->nomem = true;
+    } else {
+        snprintf(path, n, "%s/%s", dir, s);
+        uint64_t size = 0;
+        rp_fskind_t kind = rp_pal_stat(c->alloc, path, &size);
+        if (kind == RP_FS_NONE) ERR(c, ir_key_pos(t, key), "RP1507", "source file '%s' not found", s);
+        else if (kind != want && want == RP_FS_DIR) ERR(c, ir_key_pos(t, key), "RP1508", "%s = '%s' must be a folder", key, s);
+        else if (kind != want) ERR(c, ir_key_pos(t, key), "RP1508", "source '%s' is not a regular file", s);
+    }
+    rp_mem_free(c->alloc, s);
+    return path;
+}
+
+void ir_parse_msix_psf(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "files", "config", "launcher", NULL };
+    ir_check_keys(c, t, keys);
+    rp_ir_t *ir = c->ir;
+    ir->has_psf = true;
+    ir->psf_pos = t->pos;
+    ir->psf_files = psf_path(c, t, "files", RP_FS_DIR);
+    ir->psf_config = psf_path(c, t, "config", RP_FS_FILE);
+    ir->psf_launcher = ir_get_str(c, t, "launcher", false, NULL);
+    const char *l = ir->psf_launcher;
+    if (l && (strpbrk(l, "/\\:") || !rp_ascii_ends_with_ci(l, ".exe"))) {
+        ERR(c, ir_key_pos(t, "launcher"), "RP1306", "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\"");
+    }
+}
+
 void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     static const char *const keys[] = { "value", "secure", "hidden", NULL };
     ir_check_keys(c, t, keys);

@@ -254,6 +254,22 @@ target, an app extension: `external-location = true` (with `min-version = "10.0.
 package that holds only the manifest, and the installer registers it with
 `Add-AppxPackage -Path <package> -ExternalLocation <the program's folder>`.
 
+## A program that needs fixes: the PSF
+
+Some programs do not run as they should inside an MSIX: they write a log beside themselves, or
+take their own folder for the working directory. Microsoft's *Package Support Framework* fixes such
+things without changing the program. Unpack its NuGet package (`Microsoft.PackageSupportFramework`,
+the `bin` folder), write its `config.json`, and name both:
+
+```toml
+[msix-psf]
+files = "psf/bin"            # PsfLauncher64.exe, PsfRuntime64.dll, the fixups
+config = "psf/config.json"   # "applications": [{ "id": "Hello", "executable": "hello.exe", ... }]
+```
+
+The application then starts through `PsfLauncher64.exe` (`launcher` names another one), which
+applies the fixups `config.json` lists and starts `hello.exe`.
+
 ## What the other tables become
 
 - `[shortcut.StartMenu]` in `Programs` to the application's executable *is* the application's

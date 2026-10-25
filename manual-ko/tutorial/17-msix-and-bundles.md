@@ -243,6 +243,21 @@ framework = true
 `external-location = true`(와 `min-version = "10.0.19041.0"`)는 매니페스트만 든 패키지를 만들고, 설치 프로그램이
 `Add-AppxPackage -Path <패키지> -ExternalLocation <프로그램의 폴더>` 로 등록한다.
 
+## 고침이 필요한 프로그램: PSF
+
+어떤 프로그램은 MSIX 안에서 제대로 돌지 않는다: 자기 옆에 로그를 쓰거나, 자기 폴더를 작업 폴더로 여긴다. Microsoft 의
+*Package Support Framework* 는 프로그램을 바꾸지 않고 그런 것을 고친다. NuGet 패키지(`Microsoft.PackageSupportFramework`,
+그 `bin` 폴더)를 풀고, `config.json` 을 쓰고, 둘을 적는다:
+
+```toml
+[msix-psf]
+files = "psf/bin"            # PsfLauncher64.exe, PsfRuntime64.dll, 고침 DLL 들
+config = "psf/config.json"   # "applications": [{ "id": "Hello", "executable": "hello.exe", ... }]
+```
+
+그러면 앱은 `PsfLauncher64.exe` 로 시작하고(`launcher` 로 다른 것을 고를 수 있다), 시작 프로그램이 `config.json` 에
+적힌 고침을 붙여 `hello.exe` 를 띄운다.
+
 ## 다른 표들은 무엇이 되나
 
 - `Programs` 에 있고 애플리케이션의 실행 파일을 가리키는 `[shortcut.StartMenu]` 는 애플리케이션의 시작 메뉴 항목

@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': 授權合約文字需要字型的英文名稱，因此會以該語言的預設字型顯示；若要在此也使用此字型，請寫英文名稱(如 \"Malgun Gothic\")"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' 必須是資料夾"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "{1} 元件，但安裝套件的平台是 {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types 是檔案類型列表，如 [\".txt\", \"*\"
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows 只接受字母和數字"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "arm64 的 [msix-psf] 需要 launcher = \"...\"（PSF 的啟動器名為 PsfLauncher32.exe, PsfLauncher64.exe）"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] 不能與 external-location = true 或 [env.*]（rubrapack 自己的啟動器）一起使用"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] 透過 PSF 啟動器啟動應用程式：需要一個 [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]：config '{1}' 的 \"applications\" 中沒有應用程式 '{2}'"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]：files 中沒有 '{1}'（啟動器）"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: 檔案 '{2}' 不是 DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch 必須是指向此安裝套件中 [file.*] 的 \"file:<ID>\""
 
 msgid "launch-args needs launch"
 msgstr "launch-args 需要 launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher 是 files 中 PSF 啟動器的檔名，例如 \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license 必須是 .txt、.md(以純文字顯示)或 .rtf 檔案"

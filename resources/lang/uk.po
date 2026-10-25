@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': текстові ліцензії потрібна англійська назва шрифту, тому він показується власним шрифтом мови; напишіть англійську назву (наприклад, \"Malgun Gothic\"), щоб і там використати цей шрифт"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' має бути текою"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "компонент {1}, але платформа пакета - {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types - список типів файлів, на
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows приймає лише літери й цифри"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] для arm64 потребує launcher = \"...\" (PSF називає свої засоби запуску PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] не поєднується ні з external-location = true, ні з [env.*] (власним засобом запуску rubrapack)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] запускає програми через засіб запуску PSF: потрібен [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' не називає програму '{2}' у своїх \"applications\""
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: у files немає '{1}' (засобу запуску)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: файл '{2}' — не DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch має бути \"file:<ID>\" і називати [file.*] цьо
 
 msgid "launch-args needs launch"
 msgstr "launch-args потребує launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher — ім’я файла засобу запуску PSF у files, наприклад \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license має бути файлом .txt, .md (показується як простий текст) або .rtf"

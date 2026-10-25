@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': το κείμενο άδειας χρειάζεται το αγγλικό όνομα της γραμματοσειράς, γι' αυτό εμφανίζεται με τη γραμματοσειρά της γλώσσας· γράψτε το αγγλικό όνομα (π.χ. \"Malgun Gothic\") για να χρησιμοποιηθεί και εκεί αυτή η γραμματοσειρά"
 
+msgid "%s = '%s' must be a folder"
+msgstr "το {1} = '{2}' πρέπει να είναι φάκελος"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "στοιχείο {1}, αλλά η πλατφόρμα του πακέτου είναι {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: το types είναι λίστα τύπων αρχ
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': τα Windows δέχονται μόνο γράμματα και ψηφία"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "το [msix-psf] για arm64 χρειάζεται launcher = \"...\" (το PSF ονομάζει τους εκκινητές του PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "το [msix-psf] δεν συνδυάζεται ούτε με external-location = true ούτε με [env.*] (τον εκκινητή του rubrapack)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "το [msix-psf] ξεκινά τις εφαρμογές μέσω του εκκινητή PSF: χρειάζεται [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: το config '{1}' δεν αναφέρει την εφαρμογή '{2}' στα \"applications\" του"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: το files δεν έχει '{1}' (τον εκκινητή)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: το αρχείο '{2}' δεν είναι DLL"
@@ -2213,6 +2231,9 @@ msgstr "το launch πρέπει να είναι \"file:<ID>\" που ονομά
 
 msgid "launch-args needs launch"
 msgstr "το launch-args χρειάζεται launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "το launcher είναι το όνομα αρχείου του εκκινητή PSF στο files, όπως \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "το license πρέπει να είναι αρχείο .txt, .md (εμφανίζεται ως απλό κείμενο) ή .rtf"

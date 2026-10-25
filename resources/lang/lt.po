@@ -126,6 +126,9 @@ msgstr "{1} '{2}': {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}': licencijos tekstui reikia šrifto pavadinimo anglų kalba, todėl jis rodomas pačios kalbos šriftu; parašykite angliškąjį pavadinimą (pvz., \"Malgun Gothic\"), kad šis šriftas būtų naudojamas ir ten"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' turi būti aplankas"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "komponentas {1}, bet paketo platforma yra {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}]: types yra failų tipų sąrašas, pvz., [\".txt\",
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows priima tik raides ir skaitmenis"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] arm64 atveju reikia launcher = \"...\" (PSF savo paleidiklius vadina PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] nedera nei su external-location = true, nei su [env.*] (paties rubrapack paleidikliu)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] paleidžia programas per PSF paleidiklį: reikia [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf]: config '{1}' savo \"applications\" nemini programos '{2}'"
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf]: aplanke files nėra '{1}' (paleidiklio)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: failas '{2}' nėra DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
 
 msgid "launch-args needs launch"
 msgstr "launch-args reikia launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher yra PSF paleidiklio failo vardas aplanke files, pvz., \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license turi būti .txt, .md (rodomas kaip paprastas tekstas) arba .rtf failas"

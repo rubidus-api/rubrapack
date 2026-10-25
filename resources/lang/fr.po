@@ -126,6 +126,9 @@ msgstr "{1} '{2}' : {3}"
 msgid "%s '%s': the license text needs the face's English name, so it shows in the language's own face; write the English name (like \"Malgun Gothic\") to use this face there too"
 msgstr "{1} '{2}' : le texte de la licence a besoin du nom anglais de la police, il s'affiche donc dans la police propre à la langue ; écrivez le nom anglais (comme \"Malgun Gothic\") pour utiliser aussi cette police"
 
+msgid "%s = '%s' must be a folder"
+msgstr "{1} = '{2}' doit être un dossier"
+
 msgid "%s component, but the package platform is %.*s"
 msgstr "composant {1}, mais la plateforme du package est {2}"
 
@@ -1094,6 +1097,21 @@ msgstr "[msix-extension.{1}] : types est une liste de types de fichiers, comme [
 
 msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}] : verb '{2}' : Windows n'accepte que des lettres et des chiffres"
+
+msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
+msgstr "[msix-psf] pour arm64 nécessite launcher = \"...\" (le PSF nomme ses lanceurs PsfLauncher32.exe, PsfLauncher64.exe)"
+
+msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
+msgstr "[msix-psf] ne va ni avec external-location = true ni avec [env.*] (le lanceur propre à rubrapack)"
+
+msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
+msgstr "[msix-psf] lance les applications par le lanceur PSF : il lui faut un [msix-app.ID]"
+
+msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
+msgstr "[msix-psf] : le config '{1}' ne nomme pas l'application '{2}' dans ses \"applications\""
+
+msgid "[msix-psf]: files has no '%s' (the launcher)"
+msgstr "[msix-psf] : files n'a pas '{1}' (le lanceur)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}] : le fichier '{2}' n'est pas une DLL"
@@ -2213,6 +2231,9 @@ msgstr "launch doit être \"file:<ID>\" et nommer un [file.*] de ce package"
 
 msgid "launch-args needs launch"
 msgstr "launch-args a besoin de launch"
+
+msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
+msgstr "launcher est le nom de fichier du lanceur PSF dans files, comme \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license doit être un fichier .txt, .md (affiché en texte brut) ou .rtf"
