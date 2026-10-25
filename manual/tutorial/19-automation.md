@@ -186,6 +186,49 @@ The key and its password come from the server's secret store (for example the re
 them in the repository. A key on a hardware token or in a cloud signing service is used with
 `--pkcs11` instead (chapter 16).
 
+A whole GitHub Actions workflow, `.github/workflows/release.yml`, that builds and signs the MSI
+and the MSIX bundle when a tag such as `v2.2.0` is pushed, and attaches them to the run:
+
+```yaml
+name: release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get rubrapack
+        run: |
+          V=0.48.0
+          curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
+          chmod +x rubrapack
+      - name: Build and sign
+        env:
+          SIGN_PFX: ${{ secrets.SIGN_PFX_BASE64 }}    # the .pfx, base64-encoded
+          SIGN_PASS: ${{ secrets.SIGN_PASS }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p out
+          printf '%s' "$SIGN_PFX" | base64 -d > signer.pfx
+          ./rubrapack lint hello.toml --strict -D VERSION="$VERSION"
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msixbundle" -D VERSION="$VERSION" --arch x64,arm64 \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          rm -f signer.pfx
+          ./rubrapack verify "out/hello-$VERSION.msi" --system-roots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: out/
+```
+
+Every step stops the job when rubrapack's exit code is not 0. `verify --system-roots` trusts the
+roots Linux has, so it passes for a certificate from a public certification authority; for a
+company's own CA give `--trust ca.pem` instead.
+
 ## In an editor: `schema`
 
 `rubrapack schema` prints a JSON Schema of sources - every table, its keys, which are required, and

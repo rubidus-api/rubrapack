@@ -175,6 +175,48 @@ chmod +x rubrapack
 키와 그 비밀번호는 서버의 비밀 저장소(예를 들어 GitHub Actions 저장소의 *secrets*)에서 이 단계 동안만 파일과 환경
 변수로 온다. 절대 저장소에 넣지 않는다. 하드웨어 토큰이나 클라우드 서명 서비스의 키는 대신 `--pkcs11` 로 쓴다(16장).
 
+`v2.2.0` 같은 태그를 밀어 넣으면 MSI 와 MSIX 번들을 빌드하고 서명해 실행 결과에 붙이는 GitHub Actions 워크플로
+전체, `.github/workflows/release.yml`:
+
+```yaml
+name: release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get rubrapack
+        run: |
+          V=0.48.0
+          curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
+          chmod +x rubrapack
+      - name: Build and sign
+        env:
+          SIGN_PFX: ${{ secrets.SIGN_PFX_BASE64 }}    # .pfx 를 base64 로 바꾼 것
+          SIGN_PASS: ${{ secrets.SIGN_PASS }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p out
+          printf '%s' "$SIGN_PFX" | base64 -d > signer.pfx
+          ./rubrapack lint hello.toml --strict -D VERSION="$VERSION"
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msixbundle" -D VERSION="$VERSION" --arch x64,arm64 \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          rm -f signer.pfx
+          ./rubrapack verify "out/hello-$VERSION.msi" --system-roots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: out/
+```
+
+rubrapack 의 종료 코드가 0 이 아니면 그 단계에서 작업이 멈춘다. `verify --system-roots` 는 Linux 가 가진 루트를
+믿으므로 공인 인증 기관의 인증서면 통과한다. 회사 자체 CA 라면 대신 `--trust ca.pem` 을 준다.
+
 ## 편집기에서: `schema`
 
 `rubrapack schema` 는 원본의 JSON Schema 를 출력한다 - 모든 표, 그 키, 어느 키가 꼭 있어야 하는지, 어느 키가

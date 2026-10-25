@@ -105,6 +105,41 @@ chmod +x rubrapack
 ./rubrapack build hello.toml -o "hello-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
     --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com</code></pre>
 <p>The key and its password come from the server's secret store (for example the repository's <em>secrets</em> in GitHub Actions) into a file and an environment variable for this step only. Never put them in the repository. A key on a hardware token or in a cloud signing service is used with <code>--pkcs11</code> instead (chapter 16).</p>
+<p>A whole GitHub Actions workflow, <code>.github/workflows/release.yml</code>, that builds and signs the MSI and the MSIX bundle when a tag such as <code>v2.2.0</code> is pushed, and attaches them to the run:</p>
+<pre><code class="lang-yaml">name: release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get rubrapack
+        run: |
+          V=0.48.0
+          curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
+          chmod +x rubrapack
+      - name: Build and sign
+        env:
+          SIGN_PFX: ${{ secrets.SIGN_PFX_BASE64 }}    # the .pfx, base64-encoded
+          SIGN_PASS: ${{ secrets.SIGN_PASS }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p out
+          printf '%s' "$SIGN_PFX" | base64 -d &gt; signer.pfx
+          ./rubrapack lint hello.toml --strict -D VERSION="$VERSION"
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msi" -D VERSION="$VERSION" --reproducible \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          ./rubrapack build hello.toml -o "out/hello-$VERSION.msixbundle" -D VERSION="$VERSION" --arch x64,arm64 \
+              --key signer.pfx --pass-env SIGN_PASS --timestamp http://timestamp.digicert.com
+          rm -f signer.pfx
+          ./rubrapack verify "out/hello-$VERSION.msi" --system-roots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: out/</code></pre>
+<p>Every step stops the job when rubrapack's exit code is not 0. <code>verify --system-roots</code> trusts the roots Linux has, so it passes for a certificate from a public certification authority; for a company's own CA give <code>--trust ca.pem</code> instead.</p>
 <h3 id="in-an-editor-schema">19.6 In an editor: <code>schema</code><a class="plink" href="#in-an-editor-schema" aria-label="Link to this section" title="Link to this section">#</a></h3>
 <p><code>rubrapack schema</code> prints a JSON Schema of sources - every table, its keys, which are required, and which take <code>true</code>/<code>false</code> or a number - so an editor that knows TOML completes the keys while you type and underlines a misspelled one. In Visual Studio Code with the <em>Even Better TOML</em> extension (or anything built on Taplo):</p>
 <pre><code class="lang-text">C:\work\hello&gt; rubrapack schema &gt; rubrapack.schema.json</code></pre>

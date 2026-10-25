@@ -332,13 +332,16 @@ typedef struct {
     proven_allocator_t alloc;
     const char        *path;
     rp_outmap_t       *om;
+    bool               failed;      // the output file could not be made (a missing folder, say)
 } outfile_t;
 
 static proven_err_t outfile_get(void *ctx, size_t len, uint8_t **data) {
     outfile_t *o = ctx;
     rp_pal_outmap_discard(o->alloc, o->om);
     o->om = NULL;
-    return rp_pal_outmap_create(o->alloc, o->path, len, data, &o->om);
+    proven_err_t err = rp_pal_outmap_create(o->alloc, o->path, len, data, &o->om);
+    o->failed |= err != PROVEN_OK && err != PROVEN_ERR_NOMEM;
+    return err;
 }
 
 static void outfile_drop(void *ctx, uint8_t *data) {
@@ -639,7 +642,7 @@ static int run(int argc, char **argv, bool lint) {
             base = base ? base + 1 : out;
             snprintf(stem, sizeof stem, "%.*s", (int)(strlen(base) - 4), base);
             size_t outdir = (size_t)(base - out);
-            outfile_t of = { heap, out, NULL };
+            outfile_t of = { heap, out, NULL, false };
             rp_out_sink_t sink = { outfile_get, outfile_drop, &of };
             rp_build_options_t bopt = { reproducible, stem, jobs, lint ? NULL : &sink };
             uint8_t *msi = NULL;
@@ -648,6 +651,7 @@ static int run(int argc, char **argv, bool lint) {
             rp_build_file_t *cabs = NULL;
             size_t ncabs = 0;
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
+            if (err != PROVEN_OK && of.failed) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);     // said nothing else
             rp_ir_free(&ir);
             // --key: signed before anything is written (the same code as `rubrapack sign`).
             if (err == PROVEN_OK && !lint && rp_sign_wanted(&sign)) {
