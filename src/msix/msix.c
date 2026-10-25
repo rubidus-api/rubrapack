@@ -1468,15 +1468,11 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             rp_buf_puts(b, "          </uap3:AppExtensionHost>\r\n        </uap3:Extension>\r\n");
             *ns |= NS_UAP3;
         } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
-            // Without entry-point the application's own program serves it (a full-trust process).
+            // EntryPoint is the activatable class that serves it: Windows refuses to register an app
+            // service without one, Windows.FullTrustApplication included (0x80080204).
             NEED(x->pos, x->multi ? "an app service with multiple-instances" : "an app service", x->multi ? 15063u : 14393u);
             rp_buf_puts(b, "        <uap:Extension Category=\"windows.appService\"");
-            if (x->entry) {
-                attr(b, "EntryPoint", x->entry);
-            } else {
-                attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
-                rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\"");
-            }
+            attr(b, "EntryPoint", x->entry);
             rp_buf_puts(b, ">\r\n          <uap:AppService");
             attr(b, "Name", x->name);
             if (x->multi) {
@@ -1520,8 +1516,10 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                 rp_buf_puts(b, "              <desktop3:Content");
                 attr(b, "ContentEvent", x->names[j]);
                 attr(b, "Verb", x->verb);
+                // Windows refuses Content with both (0x80080204): a drop-target class takes the
+                // place of the verb's command-line parameters.
                 if (x->clsid) attr(b, "DropTargetHandler", guid);
-                if (x->args) attr(b, "Parameters", args);
+                else if (x->args) attr(b, "Parameters", args);
                 rp_buf_puts(b, " />\r\n");
             }
             for (size_t j = 0; j < x->event_count; ++j) {

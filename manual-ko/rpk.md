@@ -249,7 +249,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
-| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, entry-point(기본은 앱의 프로그램), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args, display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
+| `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
 | `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
 
@@ -745,8 +745,9 @@ kind = "app-extension-host"       # 이 앱이 이 범주들의 확장을 불러
 names = ["com.example.editor.plugin"]
 
 [msix-extension.Sync]
-kind = "app-service"              # 다른 앱이 이름으로 부른다. 백그라운드 작업이면 entry-point = "Class.Name"
+kind = "app-service"              # 다른 앱이 이름으로 부른다. entry-point 는 서비스를 맡는 클래스
 name = "com.example.sync"
+entry-point = "Example.SyncService"
 
 [msix-extension.Share]
 kind = "share-target"             # Windows 공유 창에 앱이 나온다(min-version 10.0.19041.0)

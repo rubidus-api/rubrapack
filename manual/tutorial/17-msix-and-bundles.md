@@ -172,7 +172,7 @@ writes it only when a package has them.
   Share window for some file `types` or data `formats`, and an entry in the AutoPlay choices when a
   card or device is connected. An extension has a `name` (its category), an `extension-id` and a
   `public-folder` of files the host may read; a host lists `names`; a service has a `name`, an
-  `entry-point` for a background task and `multiple-instances`; AutoPlay takes `content-events`
+  `entry-point` (the class that serves it) and `multiple-instances`; AutoPlay takes `content-events`
   (volumes such as a camera card) and `device-events` (a device, handled by a COM `class`). The
   program does the work when it is called; the Reference has an example of each.
 

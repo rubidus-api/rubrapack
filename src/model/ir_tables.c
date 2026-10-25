@@ -1201,7 +1201,7 @@ static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t
     } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
         x->name = ir_get_str(c, t, "name", true, NULL);
         if (x->name) contract_name(c, t, "name", x->name, 2, 39);
-        x->entry = ir_get_str(c, t, "entry-point", false, NULL);
+        x->entry = ir_get_str(c, t, "entry-point", true, NULL);
         x->multi = ir_get_bool(c, t, "multiple-instances", false);
     } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
         const rp_tkey_t *tk = ir_find_key(t, "types");
