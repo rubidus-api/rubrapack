@@ -144,6 +144,9 @@ msgstr "{1} conté cadenes"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} és una llista de textos \"Clau=Valor\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} és una llista de textos, com ara [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} és un nom de tipus de lletra d'1 a 31 caràcters, com ara \"Segoe UI\" (s'ha obtingut {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} no és un codi que faci servir aquest rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} ha de ser \"file:<ID>\" i indicar un [file.*] d'aquest paquet"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} ha de tenir de {2} a {3} lletres, xifres, '.' o '-', sense començar per '.' (s'ha obtingut '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} ha de ser un GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature va amb un component propi, no amb with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name anomena un fitxer; name té comodins"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: un destí de compartició necessita types, formats o tots dos"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: un gestor de reproducció automàtica necessita content-events, device-events o tots dos"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args ha de ser text simple (sense [...] omplert en instal·lar)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events necessiten class (la classe COM IHWEventHandler del programa)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file ha de ser {2}"
@@ -1502,6 +1517,9 @@ msgstr "un MSIX no pot posar fitxers a la carpeta temporal"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "una aplicació té un àlies ([msix-extension.{1}] ja n'és un)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "una aplicació té un sol destí de compartició ([msix-extension.{1}] ja ho és)"
 
 msgid "an empty name"
 msgstr "un nom buit"
@@ -2124,8 +2142,8 @@ msgstr "la clau '{1}' és fora d'una taula; només 'format' va abans de la prime
 msgid "key file '%s': %s"
 msgstr "fitxer de clau '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind ha de ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" o \"context-menu\" (s'ha obtingut '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind ha de ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" o \"autoplay\" (s'ha obtingut '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind ha de ser \"preview\", \"thumbnail\" o \"property\" (s'ha obtingut '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "la propietat '{1}' ha de ser un nom públic: lletres majúscules, xifres
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol ha de ser \"tcp\" o \"udp\" (s'ha obtingut '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder ha de ser una carpeta del paquet, com ara \"Public\" (s'ha obtingut '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher és l'editor del paquet, com ara \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

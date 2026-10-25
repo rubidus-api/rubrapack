@@ -162,6 +162,14 @@ rubrapack 은 둘 다 패키지의 `resources.pri`, 곧 Windows 가 이름과 �
   클래스, 그리고 어떤 파일 `types` 에 대한 탐색기 오른쪽 메뉴 항목(DLL 과 `verb`). 참조의 "MSIX 전용"에 각각의
   예가 있다.
 
+- `kind = "app-extension"` 과 `"app-extension-host"`, `"app-service"`, `"share-target"`, `"autoplay"` 는 Windows 가
+  다른 앱과 사용자에게 내보이는 것을 밝힌다: 이름 붙은 범주의 플러그인과 그런 플러그인을 불러오는 앱, 다른 앱이 이름으로
+  부르는 서비스, 어떤 파일 `types` 나 데이터 `formats` 에 대한 공유 창의 자리, 카드나 장치를 연결할 때 자동 실행 선택지의
+  항목. 확장에는 `name`(범주), `extension-id`, 호스트가 읽을 수 있는 파일의 `public-folder` 가 있고, 호스트는 `names` 를
+  적는다. 서비스는 `name`, 백그라운드 작업이면 `entry-point`, 그리고 `multiple-instances` 를 가진다. 자동 실행은
+  `content-events`(카메라 카드 같은 볼륨)와 `device-events`(장치, COM `class` 가 처리)를 받는다. 불렸을 때 일은 프로그램이
+  한다. 참조에 각각의 예가 있다.
+
 `[msix-app.*]` 표가 여럿이면 `app = "Hello"` 로 덤이 어느 애플리케이션의 것인지 밝힌다. 기본값은 첫 번째다. MSI
 빌드는 이 표들을 뺀다.
 

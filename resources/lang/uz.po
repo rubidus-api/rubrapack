@@ -144,6 +144,9 @@ msgstr "{1} satrlarni saqlaydi"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} — \"Kalit=Qiymat\" matnlari ro'yxati"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} matnlar ro‘yxati, masalan [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 1 dan 31 belgigacha bo‘lgan shrift nomi, masalan \"Segoe UI\" ({2} olindi)"
 
@@ -173,6 +176,9 @@ msgstr "{1} bu rubrapack ishlatadigan kod emas{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} bu paketning [file.*] ini ko‘rsatuvchi \"file:<ID>\" bo‘lishi kerak"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} {2}–{3} ta harf, raqam, '.' yoki '-' bo‘lishi va '.' bilan boshlanmasligi kerak ('{4}' olindi)"
 
 msgid "%s must be a GUID"
 msgstr "{1} GUID bo‘lishi kerak"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature o'z komponenti bilan boradi, with bilan emas"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name bitta faylni ko'rsatadi; name'da joker belgilar bor"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: ulashish maqsadiga types, formats yoki ikkalasi kerak"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: avtomatik ishga tushirish ishlovchisiga content-events, device-events yoki ikkalasi kerak"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args oddiy matn bo‘lishi kerak (o‘rnatishda to‘ldiriladigan [...] siz)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events uchun class kerak (dasturning IHWEventHandler COM sinfi)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file {2} bo‘lishi kerak"
@@ -1502,6 +1517,9 @@ msgstr "MSIX vaqtinchalik jildga fayl qo‘ya olmaydi"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "ilovaning bitta taxallusi bo‘ladi ([msix-extension.{1}] allaqachon shunday)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "ilovaning bitta ulashish maqsadi bo‘ladi ([msix-extension.{1}] allaqachon shu)"
 
 msgid "an empty name"
 msgstr "bo‘sh nom"
@@ -2124,8 +2142,8 @@ msgstr "'{1}' kaliti jadvaldan tashqarida; birinchi jadvaldan oldin faqat 'forma
 msgid "key file '%s': %s"
 msgstr "'{1}' kalit fayli: {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" yoki \"context-menu\" bo‘lishi kerak ('{1}' olindi)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" yoki \"autoplay\" bo‘lishi kerak ('{1}' olindi)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind \"preview\", \"thumbnail\" yoki \"property\" bo‘lishi kerak ('{1}' olindi)"
@@ -2522,6 +2540,9 @@ msgstr "'{1}' xususiyati ochiq nom bo‘lishi kerak: katta harflar, raqamlar va 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol \"tcp\" yoki \"udp\" bo‘lishi kerak ('{1}' olindi)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder paketning jildi bo‘lishi kerak, masalan \"Public\" ('{1}' olindi)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher paketning nashriyotchisi, masalan \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

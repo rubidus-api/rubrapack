@@ -144,6 +144,9 @@ msgstr "{1} contiene stringhe"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} è un elenco di testi \"Chiave=Valore\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} è un elenco di testi, ad esempio [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} è un nome di tipo di carattere da 1 a 31 caratteri, come \"Segoe UI\" (ricevuti {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} non è un codice usato da questo rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} deve essere \"file:<ID>\" e indicare un [file.*] di questo pacchetto"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} deve avere da {2} a {3} lettere, cifre, '.' o '-', senza iniziare con '.' (ricevuto '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} deve essere un GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature va con un componente proprio, non con with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name indica un file; name ha caratteri jolly"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: una destinazione di condivisione richiede types, formats o entrambi"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: un gestore di AutoPlay richiede content-events, device-events o entrambi"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args deve essere testo semplice (nessun [...] compilato all'installazione)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events richiedono class (la classe COM IHWEventHandler del programma)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file deve essere {2}"
@@ -1502,6 +1517,9 @@ msgstr "un MSIX non può mettere file nella cartella temporanea"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "un'applicazione ha un solo alias ([msix-extension.{1}] lo è già)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "un'applicazione ha una sola destinazione di condivisione ([msix-extension.{1}] lo è già)"
 
 msgid "an empty name"
 msgstr "un nome vuoto"
@@ -2124,8 +2142,8 @@ msgstr "chiave '{1}' fuori da una tabella; solo 'format' viene prima della prima
 msgid "key file '%s': %s"
 msgstr "file della chiave '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind deve essere \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" o \"context-menu\" (ricevuto '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind deve essere \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" o \"autoplay\" (ricevuto '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind deve essere \"preview\", \"thumbnail\" o \"property\" (ricevuto '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "la proprietà '{1}' deve essere un nome pubblico: lettere maiuscole, cif
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol deve essere \"tcp\" o \"udp\" (ricevuto '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder deve essere una cartella del pacchetto, ad esempio \"Public\" (ricevuto '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher è l'editore del pacchetto, come \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

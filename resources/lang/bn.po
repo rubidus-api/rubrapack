@@ -144,6 +144,9 @@ msgstr "{1}-এ স্ট্রিং থাকে"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} হলো \"কী=মান\" পাঠের একটি তালিকা"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} হলো লেখার তালিকা, যেমন [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} হলো 1 থেকে 31 অক্ষরের ফন্টের নাম, যেমন \"Segoe UI\" ({2} পাওয়া গেছে)"
 
@@ -173,6 +176,9 @@ msgstr "{1} এই rubrapack-এর ব্যবহৃত কোনো কোড
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1}-কে এই প্যাকেজের একটি [file.*] নির্দেশকারী \"file:<ID>\" হতে হবে"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1}-কে {2} থেকে {3}টি অক্ষর, অঙ্ক, '.' বা '-' হতে হবে, '.' দিয়ে শুরু নয় ('{4}' পাওয়া গেছে)"
 
 msgid "%s must be a GUID"
 msgstr "{1}-কে একটি GUID হতে হবে"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature নিজের উপাদানের সঙ্�
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name একটি ফাইল নির্দেশ করে; name-এ ওয়াইল্ডকার্ড আছে"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: শেয়ার টার্গেটের types, formats বা দুটোই দরকার"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: অটোপ্লে হ্যান্ডলারের content-events, device-events বা দুটোই দরকার"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args সাধারণ লেখা হতে হবে (ইনস্টলের সময় পূরণ হওয়া [...] নয়)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events-এর class দরকার (প্রোগ্রামের IHWEventHandler COM ক্লাস)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file-কে {2} হতে হবে"
@@ -1502,6 +1517,9 @@ msgstr "একটি MSIX অস্থায়ী ফোল্ডারে ফ�
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "একটি অ্যাপের একটি উপনাম থাকে ([msix-extension.{1}] ইতিমধ্যে একটি)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "একটি অ্যাপ্লিকেশনের একটি শেয়ার টার্গেট থাকে ([msix-extension.{1}] ইতিমধ্যে একটি)"
 
 msgid "an empty name"
 msgstr "একটি খালি নাম"
@@ -2124,8 +2142,8 @@ msgstr "কী '{1}' টেবিলের বাইরে; প্রথম ট�
 msgid "key file '%s': %s"
 msgstr "কী ফাইল '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind-কে \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" বা \"context-menu\" হতে হবে ('{1}' পাওয়া গেছে)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind-কে \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" বা \"autoplay\" হতে হবে ('{1}' পাওয়া গেছে)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind-কে \"preview\", \"thumbnail\" বা \"property\" হতে হবে ('{1}' পাওয়া গেছে)"
@@ -2522,6 +2540,9 @@ msgstr "বৈশিষ্ট্য '{1}'-কে পাবলিক নাম �
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol-কে \"tcp\" বা \"udp\" হতে হবে ('{1}' পাওয়া গেছে)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder-কে প্যাকেজের একটি ফোল্ডার হতে হবে, যেমন \"Public\" ('{1}' পাওয়া গেছে)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher হলো প্যাকেজের প্রকাশক, যেমন \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

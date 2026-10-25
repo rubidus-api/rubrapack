@@ -280,7 +280,8 @@ typedef struct {
 
 // [msix-extension.ID] (RFC-0010 N4): what only an MSIX has; left out of an MSI.
 typedef enum { RP_MSIX_EXT_ALIAS, RP_MSIX_EXT_STARTUP, RP_MSIX_EXT_FIREWALL, RP_MSIX_EXT_COM, RP_MSIX_EXT_TOAST,
-               RP_MSIX_EXT_CONTEXT_MENU } rp_msix_ext_kind_t;
+               RP_MSIX_EXT_CONTEXT_MENU, RP_MSIX_EXT_APP_EXTENSION, RP_MSIX_EXT_APP_EXTENSION_HOST, RP_MSIX_EXT_APP_SERVICE,
+               RP_MSIX_EXT_SHARE_TARGET, RP_MSIX_EXT_AUTOPLAY } rp_msix_ext_kind_t;
 typedef struct {
     char              *id;
     rp_msix_ext_kind_t kind;
@@ -299,8 +300,20 @@ typedef struct {
     char              *args;        // com-server (an exe), toast: plain text, or NULL
     char              *prog_id;     // com-server made from a [com.*]: its ProgID, or NULL
     char              *verb;        // context-menu: the verb's ID (default the table's ID)
-    char             **types;       // context-menu: ".ext" or "*"
+    char             **types;       // context-menu, share-target: ".ext" or "*"
     size_t             type_count;
+    // RFC-0031 B15-B18 (written into an MSIX only, RFC-0031 section 10):
+    char              *name;        // app-extension: the category it serves; app-service: the service's name
+    char              *ext_id;      // app-extension: its Id (default the table's ID)
+    char              *folder;      // app-extension: the public folder, or NULL
+    char              *description; // app-extension, share-target: or NULL
+    char              *entry;       // app-service: an activatable class, or NULL = the application's program
+    bool               multi;       // app-service: SupportsMultipleInstances
+    char              *action;      // autoplay: the action shown ("Import pictures")
+    char             **names;       // app-extension-host: categories; share-target: data formats;
+    size_t             name_count;  //   autoplay: content events
+    char             **events;      // autoplay: device events (need class: the IHWEventHandler)
+    size_t             event_count;
     rp_pos_t           pos;
 } rp_ir_msix_ext_t;
 

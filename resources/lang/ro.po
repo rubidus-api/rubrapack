@@ -144,6 +144,9 @@ msgstr "{1} conține șiruri"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} este o listă de texte \"Cheie=Valoare\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} este o listă de texte, de exemplu [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} este un nume de font de 1 până la 31 de caractere, de exemplu \"Segoe UI\" (primit {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} nu este un cod pe care îl folosește acest rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} trebuie să fie \"file:<ID>\" și să numească un [file.*] al acestui pachet"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} trebuie să aibă între {2} și {3} litere, cifre, '.' sau '-' și să nu înceapă cu '.' (primit '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} trebuie să fie un GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature merge cu o componentă proprie, nu cu with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name indică un fișier; name are metacaractere"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: o țintă de partajare are nevoie de types, formats sau ambele"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: un handler de redare automată are nevoie de content-events, device-events sau ambele"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args trebuie să fie text simplu (fără [...] completate la instalare)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events au nevoie de class (clasa COM IHWEventHandler a programului)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file trebuie să fie {2}"
@@ -1502,6 +1517,9 @@ msgstr "un MSIX nu poate plasa fișiere în folderul temporar"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "o aplicație are un singur alias ([msix-extension.{1}] este deja unul)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "o aplicație are o singură țintă de partajare ([msix-extension.{1}] este deja una)"
 
 msgid "an empty name"
 msgstr "un nume gol"
@@ -2124,8 +2142,8 @@ msgstr "cheia '{1}' în afara unui tabel; doar 'format' vine înaintea primului 
 msgid "key file '%s': %s"
 msgstr "fișierul de cheie '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind trebuie să fie \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" sau \"context-menu\" (primit '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind trebuie să fie \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" sau \"autoplay\" (primit '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind trebuie să fie \"preview\", \"thumbnail\" sau \"property\" (primit '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "proprietatea '{1}' trebuie să fie un nume public: majuscule, cifre și 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol trebuie să fie \"tcp\" sau \"udp\" (primit '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder trebuie să fie un folder al pachetului, de exemplu \"Public\" (primit '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher este editorul pachetului, de exemplu \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

@@ -144,6 +144,9 @@ msgstr "{1} சரங்களைக் கொண்டுள்ளது"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} என்பது \"விசை=மதிப்பு\" உரைகளின் பட்டியல்"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} என்பது உரைகளின் பட்டியல், எ.கா. [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} என்பது 1 முதல் 31 எழுத்துகள் கொண்ட எழுத்துருப் பெயர், எ.கா. \"Segoe UI\" ({2} கிடைத்தது)"
 
@@ -173,6 +176,9 @@ msgstr "{1} இந்த rubrapack பயன்படுத்தும் க�
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} இந்தத் தொகுப்பின் [file.*] ஐக் குறிக்கும் \"file:<ID>\" ஆக இருக்க வேண்டும்"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} {2} முதல் {3} எழுத்துகள், இலக்கங்கள், '.' அல்லது '-' ஆக இருக்க வேண்டும், '.' இல் தொடங்கக்கூடாது ('{4}' கிடைத்தது)"
 
 msgid "%s must be a GUID"
 msgstr "{1} ஒரு GUID ஆக இருக்க வேண்டும்"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature தன் கூறுடன் செல்கி�
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name ஒரு கோப்பைக் குறிக்கிறது; name-இல் வைல்டுகார்டுகள் உள்ளன"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: பகிர்வு இலக்குக்கு types, formats அல்லது இரண்டும் தேவை"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: தானியங்கு இயக்கக் கையாளிக்கு content-events, device-events அல்லது இரண்டும் தேவை"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args எளிய உரையாக இருக்க வேண்டும் (நிறுவும்போது நிரப்பப்படும் [...] இல்லை)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events க்கு class தேவை (நிரலின் IHWEventHandler COM வகுப்பு)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file {2} ஆக இருக்க வேண்டும்"
@@ -1502,6 +1517,9 @@ msgstr "ஒரு MSIX தற்காலிகக் கோப்புறை�
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "ஒரு பயன்பாட்டுக்கு ஒரு மாற்றுப்பெயர் உண்டு ([msix-extension.{1}] ஏற்கெனவே ஒன்று)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "ஒரு பயன்பாட்டுக்கு ஒரே பகிர்வு இலக்கு ([msix-extension.{1}] ஏற்கெனவே அதுதான்)"
 
 msgid "an empty name"
 msgstr "காலியான பெயர்"
@@ -2124,8 +2142,8 @@ msgstr "விசை '{1}' அட்டவணைக்கு வெளியே 
 msgid "key file '%s': %s"
 msgstr "விசைக் கோப்பு '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" அல்லது \"context-menu\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" அல்லது \"autoplay\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind \"preview\", \"thumbnail\" அல்லது \"property\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
@@ -2522,6 +2540,9 @@ msgstr "பண்பு '{1}' ஒரு பொதுப் பெயராக �
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol \"tcp\" அல்லது \"udp\" ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder தொகுப்பின் ஒரு கோப்புறையாக இருக்க வேண்டும், எ.கா. \"Public\" ('{1}' கிடைத்தது)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher என்பது தொகுப்பின் வெளியீட்டாளர், எ.கா. \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

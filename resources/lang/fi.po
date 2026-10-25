@@ -144,6 +144,9 @@ msgstr "{1} sisältää merkkijonoja"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} on luettelo \"Avain=Arvo\"-teksteistä"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} on luettelo tekstejä, esimerkiksi [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} on 1-31 merkin fontin nimi, kuten \"Segoe UI\" (saatiin {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} ei ole koodi, jota tämä rubrapack käyttää{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1}:n on oltava \"file:<ID>\", joka nimeää tämän paketin [file.*]-taulukon"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1}:n on oltava {2}–{3} kirjainta, numeroa, '.' tai '-' eikä se saa alkaa '.':llä (saatiin '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1}:n on oltava GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature kuuluu omaan komponenttiin, ei with-arvoon"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name nimeää yhden tiedoston; name sisältää yleismerkkejä"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: jakokohde tarvitsee types, formats tai molemmat"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: automaattisen toiston käsittelijä tarvitsee content-events, device-events tai molemmat"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: argsin on oltava pelkkää tekstiä (ei asennuksessa täytettäviä [...])"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events tarvitsevat class:n (ohjelman IHWEventHandler-COM-luokka)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: filen on oltava {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX ei voi sijoittaa tiedostoja tilapäiskansioon"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "sovelluksella on yksi alias ([msix-extension.{1}] on jo sellainen)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "sovelluksella on yksi jakokohde ([msix-extension.{1}] on jo sellainen)"
 
 msgid "an empty name"
 msgstr "tyhjä nimi"
@@ -2124,8 +2142,8 @@ msgstr "avain '{1}' taulukon ulkopuolella; vain 'format' tulee ennen ensimmäist
 msgid "key file '%s': %s"
 msgstr "avaintiedosto '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kindin on oltava \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" tai \"context-menu\" (saatiin '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kindin on oltava \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" tai \"autoplay\" (saatiin '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kindin on oltava \"preview\", \"thumbnail\" tai \"property\" (saatiin '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "ominaisuuden '{1}' on oltava julkinen nimi: isoja kirjaimia, numeroita j
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocolin on oltava \"tcp\" tai \"udp\" (saatiin '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folderin on oltava paketin kansio, esimerkiksi \"Public\" (saatiin '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher on paketin julkaisija, kuten \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

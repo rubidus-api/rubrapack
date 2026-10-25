@@ -144,6 +144,9 @@ msgstr "{1} 에는 문자열이 들어갑니다"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} 은(는) \"Key=Value\" 텍스트의 목록입니다"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} 은 텍스트 목록입니다. 예: [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 은(는) \"Segoe UI\" 같은 1~31자의 글꼴 이름입니다({2}자를 받음)"
 
@@ -173,6 +176,9 @@ msgstr "{1} 은(는) 이 rubrapack 이 쓰는 코드가 아닙니다{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} 은(는) 이 패키지의 [file.*] 을 가리키는 \"file:<ID>\" 여야 합니다"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} 은 {2}~{3}자의 영문자, 숫자, '.', '-' 여야 하고 '.' 로 시작할 수 없습니다('{4}'을(를) 받음)"
 
 msgid "%s must be a GUID"
 msgstr "{1} 은(는) GUID 여야 합니다"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature 는 자기 구성 요소와 함께 씁니다. with �
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name 은 파일 하나를 가리킵니다. name 에 와일드카드가 있습니다"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: 공유 대상에는 types, formats 또는 둘 다가 필요합니다"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: 자동 실행 처리기에는 content-events, device-events 또는 둘 다가 필요합니다"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args 는 고정된 글이어야 합니다(설치할 때 채우는 [...] 없이)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events 에는 class(프로그램의 IHWEventHandler COM 클래스)가 필요합니다"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file 은 {2} 이어야 합니다"
@@ -1502,6 +1517,9 @@ msgstr "MSIX 는 임시 폴더에 파일을 둘 수 없습니다"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "애플리케이션의 별칭은 하나입니다([msix-extension.{1}] 이(가) 이미 하나입니다)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "응용 프로그램의 공유 대상은 하나입니다([msix-extension.{1}] 이 이미 그것입니다)"
 
 msgid "an empty name"
 msgstr "빈 이름"
@@ -2124,8 +2142,8 @@ msgstr "키 '{1}'이(가) 표 밖에 있습니다. 첫 표 앞에는 'format' �
 msgid "key file '%s': %s"
 msgstr "키 파일 '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind 는 \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\" 중 하나여야 합니다('{1}'을(를) 받음)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind 는 \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\", \"autoplay\" 중 하나여야 합니다('{1}'을(를) 받음)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind 는 \"preview\", \"thumbnail\", \"property\" 중 하나여야 합니다('{1}'을(를) 받음)"
@@ -2522,6 +2540,9 @@ msgstr "속성 '{1}'은(는) 공개 이름이어야 합니다: 대문자, 숫자
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol 은 \"tcp\" 또는 \"udp\" 여야 합니다('{1}'을(를) 받음)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder 는 패키지 안의 폴더여야 합니다. 예: \"Public\"('{1}'을(를) 받음)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher 는 \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\" 같은 패키지의 publisher 입니다"

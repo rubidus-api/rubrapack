@@ -144,6 +144,9 @@ msgstr "{1} vsebuje nize"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} je seznam besedil \"Ključ=Vrednost\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} je seznam besedil, npr. [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} je ime pisave z 1 do 31 znaki, npr. \"Segoe UI\" (dobljeno {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} ni koda, ki jo uporablja ta rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} mora biti \"file:<ID>\", ki poimenuje [file.*] tega paketa"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} mora imeti od {2} do {3} črk, števk, '.' ali '-' in se ne sme začeti z '.' (dobljeno '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} mora biti GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature gre z lastno komponento, ne z with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name določa eno datoteko; name ima nadomestne znake"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: cilj skupne rabe potrebuje types, formats ali oboje"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: rutina za samodejno predvajanje potrebuje content-events, device-events ali oboje"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args morajo biti navadno besedilo (brez [...], izpolnjenih ob namestitvi)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events potrebujejo class (razred COM IHWEventHandler programa)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file mora biti {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX ne more postaviti datotek v začasno mapo"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "aplikacija ima en alias ([msix-extension.{1}] je že eden)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "aplikacija ima en cilj skupne rabe ([msix-extension.{1}] je že tak cilj)"
 
 msgid "an empty name"
 msgstr "prazno ime"
@@ -2124,8 +2142,8 @@ msgstr "ključ '{1}' je zunaj tabele; pred prvo tabelo je le 'format'"
 msgid "key file '%s': %s"
 msgstr "datoteka ključa '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind mora biti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" ali \"context-menu\" (dobljeno '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind mora biti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ali \"autoplay\" (dobljeno '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind mora biti \"preview\", \"thumbnail\" ali \"property\" (dobljeno '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "lastnost '{1}' mora biti javno ime: velike črke, števke in '_'"
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol mora biti \"tcp\" ali \"udp\" (dobljeno '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder mora biti mapa paketa, npr. \"Public\" (dobljeno '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher je izdajatelj paketa, npr. \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

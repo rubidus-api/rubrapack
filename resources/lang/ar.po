@@ -146,6 +146,9 @@ msgstr "{1} يحمل سلاسل نصية"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} قائمة من نصوص \"مفتاح=قيمة\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} قائمة نصوص، مثل [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} اسم خط من 1 إلى 31 حرفاً، مثل \"Segoe UI\" (الموجود {2})"
 
@@ -175,6 +178,9 @@ msgstr "{1} ليس رمزاً يستخدمه rubrapack هذا{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "يجب أن يكون {1} على شكل \"file:<ID>\" يسمّي [file.*] في هذه الحزمة"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "يجب أن يكون {1} من {2} إلى {3} من الحروف أو الأرقام أو '.' أو '-' ولا يبدأ بـ '.' (الموجود '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "يجب أن يكون {1} معرّف GUID"
@@ -1058,8 +1064,17 @@ msgstr "[move.{1}]: يذهب feature مع مكوّن خاص به، لا مع wit
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: يحدد new-name ملفًا واحدًا؛ ويحتوي name على أحرف بدل"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: يحتاج هدف المشاركة إلى types أو formats أو كليهما"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: يحتاج معالج التشغيل التلقائي إلى content-events أو device-events أو كليهما"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: يجب أن تكون args نصاً عادياً (لا [...] تُملأ عند التثبيت)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: تحتاج device-events إلى class (فئة COM الخاصة بـ IHWEventHandler في البرنامج)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: يجب أن يكون file ‏{2}"
@@ -1504,6 +1519,9 @@ msgstr "لا يمكن لـ MSIX وضع ملفات في المجلد المؤقت
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "للتطبيق اسم مستعار واحد ([msix-extension.{1}] هو واحد بالفعل)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "للتطبيق هدف مشاركة واحد ([msix-extension.{1}] هو هذا الهدف بالفعل)"
 
 msgid "an empty name"
 msgstr "اسم فارغ"
@@ -2126,8 +2144,8 @@ msgstr "المفتاح '{1}' خارج جدول؛ لا يأتي قبل الجدو
 msgid "key file '%s': %s"
 msgstr "ملف المفتاح '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "يجب أن يكون kind هو \"alias\" أو \"startup-task\" أو \"firewall\" أو \"com-server\" أو \"toast\" أو \"context-menu\" (الموجود '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "يجب أن يكون kind هو \"alias\" أو \"startup-task\" أو \"firewall\" أو \"com-server\" أو \"toast\" أو \"context-menu\" أو \"app-extension\" أو \"app-extension-host\" أو \"app-service\" أو \"share-target\" أو \"autoplay\" (الموجود '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "يجب أن يكون kind هو \"preview\" أو \"thumbnail\" أو \"property\" (الموجود '{1}')"
@@ -2524,6 +2542,9 @@ msgstr "يجب أن تكون الخاصية '{1}' اسماً عاماً: أحر�
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "يجب أن يكون protocol هو \"tcp\" أو \"udp\" (الموجود '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "يجب أن يكون public-folder مجلدًا في الحزمة، مثل \"Public\" (الموجود '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher هو ناشر الحزمة، مثل \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

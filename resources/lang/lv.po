@@ -144,6 +144,9 @@ msgstr "{1} satur virknes"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} ir \"Atslēga=Vērtība\" tekstu saraksts"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} ir tekstu saraksts, piemēram, [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} ir fonta nosaukums no 1 līdz 31 rakstzīmei, piem., \"Segoe UI\" (saņemts {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} nav kods, ko izmanto šis rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} jābūt \"file:<ID>\", kas norāda šīs pakotnes [file.*]"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} jābūt no {2} līdz {3} burtiem, cipariem, '.' vai '-', nesākot ar '.' (saņemts '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} jābūt GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature iet ar savu komponentu, nevis ar with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name norāda vienu failu; name ir aizstājējzīmes"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: kopīgošanas mērķim vajag types, formats vai abus"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: automātiskās atskaņošanas apdarinātājam vajag content-events, device-events vai abus"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args jābūt vienkāršam tekstam (bez [...], ko aizpilda instalēšanas laikā)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events vajag class (programmas IHWEventHandler COM klasi)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file jābūt {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX nevar novietot failus pagaidu mapē"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "lietotnei ir viens aizstājvārds ([msix-extension.{1}] jau ir viens)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "lietojumprogrammai ir viens kopīgošanas mērķis ([msix-extension.{1}] jau ir tāds)"
 
 msgid "an empty name"
 msgstr "tukšs nosaukums"
@@ -2124,8 +2142,8 @@ msgstr "atslēga '{1}' ir ārpus tabulas; pirms pirmās tabulas ir tikai 'format
 msgid "key file '%s': %s"
 msgstr "atslēgas fails '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind jābūt \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" vai \"context-menu\" (saņemts '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind jābūt \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" vai \"autoplay\" (saņemts '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind jābūt \"preview\", \"thumbnail\" vai \"property\" (saņemts '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "rekvizītam '{1}' jābūt publiskam nosaukumam: lielie burti, cipari un 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol jābūt \"tcp\" vai \"udp\" (saņemts '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder jābūt pakotnes mapei, piemēram, \"Public\" (saņemts '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher ir pakotnes izdevējs, piem., \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

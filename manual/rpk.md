@@ -260,7 +260,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
-| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading), app (an `[msix-app.*]` ID; default the first) - MSIX only |
+| `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, entry-point (default: the application's program), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args, display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
 | `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
 
@@ -791,6 +791,39 @@ for a DLL), `desktop:ToastNotificationActivation` with the program registered fo
 `args`, and `desktop4:FileExplorerContextMenus` with the DLL as the class. Windows lists the
 classes in its packaged COM catalog while the package is installed. The context menu shows only if
 the DLL implements the verb (IExplorerCommand); rubrapack registers it, it does not write it.
+
+```toml
+[msix-extension.Plugin]
+kind = "app-extension"            # this package offers an extension of the category "name"
+name = "com.example.editor.plugin"
+public-folder = "Public"          # files a host may read; extension-id defaults to the table ID
+
+[msix-extension.Plugins]
+kind = "app-extension-host"       # this application loads extensions of these categories
+names = ["com.example.editor.plugin"]
+
+[msix-extension.Sync]
+kind = "app-service"              # other apps call it by name; entry-point = "Class.Name" for a background task
+name = "com.example.sync"
+
+[msix-extension.Share]
+kind = "share-target"             # the app is offered in Windows' Share window (min-version 10.0.19041.0)
+types = [".png", ".jpg"]          # "*" = any file
+formats = ["Text", "Uri"]
+
+[msix-extension.Import]
+kind = "autoplay"                 # offered when a camera card or a device is connected
+action = "Import pictures"
+content-events = ["ShowPicturesOnArrival"]
+args = "--import"                 # or class = "{GUID}": the program's IDropTarget class
+```
+
+These become `uap3:AppExtension`, `uap3:AppExtensionHost`, `uap:AppService`, `uap:ShareTarget`
+and `desktop3:AutoPlayHandler` in the application. Windows registers them while the package is
+installed; what each does when it is called (reading the extension's public folder, answering
+the app service, taking the shared data, importing) is the program's own code. `device-events`
+name the class that handles the device (`class`, its IHWEventHandler), served by a `com-server`
+table of the package. An application has one share target.
 
 A `[service.*]` goes into an MSIX as a packaged service (`desktop6:Service`, in the first
 application, with the capability `packagedServices`, and `localSystemServices` for

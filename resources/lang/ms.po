@@ -144,6 +144,9 @@ msgstr "{1} mengandungi rentetan"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} ialah senarai teks \"Kunci=Nilai\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} ialah senarai teks, seperti [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} ialah nama fon 1 hingga 31 aksara, seperti \"Segoe UI\" (diterima {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} bukan kod yang digunakan oleh rubrapack ini{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} mesti \"file:<ID>\" yang menamakan [file.*] dalam pakej ini"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} mesti terdiri daripada {2} hingga {3} huruf, digit, '.' atau '-', tidak bermula dengan '.' (diterima '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} mesti GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature pergi dengan komponen sendiri, bukan dengan with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name menamakan satu fail; name mempunyai aksara bebas"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: sasaran kongsi memerlukan types, formats atau kedua-duanya"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: pengendali main automatik memerlukan content-events, device-events atau kedua-duanya"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args mesti teks biasa (tiada [...] yang diisi semasa pemasangan)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events memerlukan class (kelas COM IHWEventHandler program)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file mesti {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX tidak boleh meletakkan fail dalam folder sementara"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "aplikasi mempunyai satu alias ([msix-extension.{1}] sudah satu)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "sesebuah aplikasi mempunyai satu sasaran kongsi ([msix-extension.{1}] sudah pun sasaran itu)"
 
 msgid "an empty name"
 msgstr "nama kosong"
@@ -2124,8 +2142,8 @@ msgstr "kunci '{1}' di luar jadual; hanya 'format' yang datang sebelum jadual pe
 msgid "key file '%s': %s"
 msgstr "fail kunci '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind mesti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" atau \"context-menu\" (diterima '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind mesti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" atau \"autoplay\" (diterima '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind mesti \"preview\", \"thumbnail\" atau \"property\" (diterima '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "sifat '{1}' mesti nama awam: huruf besar, digit dan '_'"
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol mesti \"tcp\" atau \"udp\" (diterima '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder mesti folder pakej, seperti \"Public\" (diterima '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher ialah penerbit pakej, seperti \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

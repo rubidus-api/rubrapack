@@ -144,6 +144,9 @@ msgstr "{1} เก็บสตริง"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} เป็นรายการข้อความ \"คีย์=ค่า\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} เป็นรายการข้อความ เช่น [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} เป็นชื่อแบบอักษรยาว 1 ถึง 31 อักขระ เช่น \"Segoe UI\" (ได้ {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} ไม่ใช่รหัสที่ rubrapack นี้ใช้
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} ต้องเป็น \"file:<ID>\" ที่ระบุ [file.*] ของแพ็กเกจนี้"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} ต้องเป็นตัวอักษร ตัวเลข '.' หรือ '-' จำนวน {2} ถึง {3} ตัว และไม่ขึ้นต้นด้วย '.' (ได้ '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} ต้องเป็น GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature ไปกับคอมโพเนนต์ขอ�
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name ระบุไฟล์เดียว; name มีอักขระแทน"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: เป้าหมายการแชร์ต้องมี types, formats หรือทั้งสองอย่าง"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: ตัวจัดการการเล่นอัตโนมัติต้องมี content-events, device-events หรือทั้งสองอย่าง"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args ต้องเป็นข้อความธรรมดา (ไม่มี [...] ที่เติมตอนติดตั้ง)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events ต้องมี class (คลาส COM IHWEventHandler ของโปรแกรม)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file ต้องเป็น {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX วางไฟล์ในโฟลเดอร์ชั่วค�
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "แอปพลิเคชันมี alias ได้หนึ่งชื่อ ([msix-extension.{1}] เป็นหนึ่งอยู่แล้ว)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "แอปพลิเคชันหนึ่งมีเป้าหมายการแชร์ได้หนึ่งรายการ ([msix-extension.{1}] เป็นรายการนั้นแล้ว)"
 
 msgid "an empty name"
 msgstr "ชื่อว่าง"
@@ -2124,8 +2142,8 @@ msgstr "คีย์ '{1}' อยู่นอกตาราง มีเพี�
 msgid "key file '%s': %s"
 msgstr "ไฟล์คีย์ '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind ต้องเป็น \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" หรือ \"context-menu\" (ได้ '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind ต้องเป็น \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" หรือ \"autoplay\" (ได้ '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind ต้องเป็น \"preview\", \"thumbnail\" หรือ \"property\" (ได้ '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "คุณสมบัติ '{1}' ต้องเป็นชื่อ�
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol ต้องเป็น \"tcp\" หรือ \"udp\" (ได้ '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder ต้องเป็นโฟลเดอร์ของแพ็กเกจ เช่น \"Public\" (ได้ '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher คือผู้เผยแพร่ของแพ็กเกจ เช่น \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

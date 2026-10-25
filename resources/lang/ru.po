@@ -144,6 +144,9 @@ msgstr "{1} содержит строки"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} — это список текстов \"Ключ=Значение\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} — список текстов, например [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} - имя шрифта длиной от 1 до 31 символа, например \"Segoe UI\" (получено {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} - не код, который использует этот rubrapac
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} должен быть \"file:<ID>\" и указывать [file.*] этого пакета"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} должен содержать от {2} до {3} букв, цифр, '.' или '-' и не начинаться с '.' (получено '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} должен быть GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature идёт со своим компонентом, а 
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name указывает один файл; в name есть подстановочные знаки"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: цели общего доступа нужны types, formats или оба"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: обработчику автозапуска нужны content-events, device-events или оба"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args должны быть простым текстом (без [...], заполняемых при установке)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events нужен class (COM-класс IHWEventHandler программы)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file должен быть {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX не может размещать файлы во временно
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "у приложения один alias ([msix-extension.{1}] уже является им)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "у приложения одна цель общего доступа ([msix-extension.{1}] уже является ею)"
 
 msgid "an empty name"
 msgstr "пустое имя"
@@ -2124,8 +2142,8 @@ msgstr "ключ '{1}' вне таблицы; до первой таблицы �
 msgid "key file '%s': %s"
 msgstr "файл ключа '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind должен быть \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" или \"context-menu\" (получено '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind должен быть \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" или \"autoplay\" (получено '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind должен быть \"preview\", \"thumbnail\" или \"property\" (получено '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "свойство '{1}' должно быть открытым имене
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol должен быть \"tcp\" или \"udp\" (получено '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder должен быть папкой пакета, например \"Public\" (получено '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher - издатель пакета, например \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

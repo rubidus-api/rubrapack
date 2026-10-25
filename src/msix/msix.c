@@ -715,7 +715,7 @@ static void loc_free(loc_t *l) {
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
 enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
-       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_DESKTOP5 = 2048, NS_COUNT = 12 };
+       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_DESKTOP5 = 2048, NS_DESKTOP3 = 4096, NS_COUNT = 13 };
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
 enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17, CAP_UNVIRTUALIZED = 1 << 18 };
 
@@ -988,7 +988,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "uap6", "http://schemas.microsoft.com/appx/manifest/uap/windows10/6" },
                                              { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" },
                                              { "rescap6", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" },
-                                             { "desktop5", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/5" } };
+                                             { "desktop5", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/5" },
+                                             { "desktop3", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/3" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -1431,6 +1432,107 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             attr(b, "DisplayName", x->display ? x->display : app->display ? app->display : ir->name);
             rp_buf_puts(b, " />\r\n        </desktop:Extension>\r\n");
             *ns |= NS_DESKTOP;
+        }
+    }
+    // The contracts of RFC-0031 B15-B18 (element forms from Microsoft Learn's package manifest
+    // schema reference), per application in ID order.
+    for (size_t k = 0; k < ir->msix_ext_count; ++k) {
+        const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
+        size_t a = app_by_id(ir, x->app);
+        if (a == SIZE_MAX || x->kind < RP_MSIX_EXT_APP_EXTENSION) continue;
+        const rp_ir_msix_app_t *app = &ir->msix_apps[a];
+        const char *display = x->display ? x->display : app->display ? app->display : ir->name;
+        rp_buf_t *b = &ext[a];
+        if (x->args && (!literal(x->args, args, sizeof args) || args[0] == ' ' || args[0] == 0)) {
+            DERR(x->pos, "RP1613", "[msix-extension.%s]: args must be plain text (no [...] filled in at install)", x->id);
+            continue;
+        }
+        if (x->kind == RP_MSIX_EXT_APP_EXTENSION) {
+            NEED(x->pos, "an app extension", 14393u);
+            rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExtension\">\r\n          <uap3:AppExtension");
+            attr(b, "Name", x->name);
+            attr(b, "Id", x->ext_id);
+            if (x->folder) attr(b, "PublicFolder", x->folder);
+            attr(b, "DisplayName", display);
+            if (x->description) attr(b, "Description", x->description);
+            rp_buf_puts(b, " />\r\n        </uap3:Extension>\r\n");
+            *ns |= NS_UAP3;
+        } else if (x->kind == RP_MSIX_EXT_APP_EXTENSION_HOST) {
+            NEED(x->pos, "an app extension host", 14393u);
+            rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExtensionHost\">\r\n          <uap3:AppExtensionHost>\r\n");
+            for (size_t j = 0; j < x->name_count; ++j) {
+                rp_buf_puts(b, "            <uap3:Name>");
+                xml_text(b, x->names[j]);
+                rp_buf_puts(b, "</uap3:Name>\r\n");
+            }
+            rp_buf_puts(b, "          </uap3:AppExtensionHost>\r\n        </uap3:Extension>\r\n");
+            *ns |= NS_UAP3;
+        } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
+            // Without entry-point the application's own program serves it (a full-trust process).
+            NEED(x->pos, x->multi ? "an app service with multiple-instances" : "an app service", x->multi ? 15063u : 14393u);
+            rp_buf_puts(b, "        <uap:Extension Category=\"windows.appService\"");
+            if (x->entry) {
+                attr(b, "EntryPoint", x->entry);
+            } else {
+                attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
+                rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\"");
+            }
+            rp_buf_puts(b, ">\r\n          <uap:AppService");
+            attr(b, "Name", x->name);
+            if (x->multi) {
+                rp_buf_puts(b, " uap4:SupportsMultipleInstances=\"true\"");
+                *ns |= NS_UAP4;
+            }
+            rp_buf_puts(b, " />\r\n        </uap:Extension>\r\n");
+        } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
+            NEED(x->pos, "a share target", 19041u);
+            rp_buf_puts(b, "        <uap:Extension Category=\"windows.shareTarget\">\r\n          <uap:ShareTarget");
+            if (x->description) attr(b, "Description", x->description);
+            rp_buf_puts(b, ">\r\n");
+            if (x->type_count) {
+                bool any = false;
+                for (size_t j = 0; j < x->type_count; ++j) any |= strcmp(x->types[j], "*") == 0;
+                rp_buf_puts(b, "            <uap:SupportedFileTypes>\r\n");
+                for (size_t j = 0; j < x->type_count && !any; ++j) {
+                    rp_buf_puts(b, "              <uap:FileType>");
+                    xml_text(b, x->types[j]);
+                    rp_buf_puts(b, "</uap:FileType>\r\n");
+                }
+                if (any) rp_buf_puts(b, "              <uap:SupportsAnyFileType />\r\n");
+                rp_buf_puts(b, "            </uap:SupportedFileTypes>\r\n");
+            }
+            for (size_t j = 0; j < x->name_count; ++j) {
+                rp_buf_puts(b, "            <uap:DataFormat>");
+                xml_text(b, x->names[j]);
+                rp_buf_puts(b, "</uap:DataFormat>\r\n");
+            }
+            rp_buf_puts(b, "          </uap:ShareTarget>\r\n        </uap:Extension>\r\n");
+        } else {
+            NEED(x->pos, "an AutoPlay handler", 16299u);
+            char guid[37];
+            snprintf(guid, sizeof guid, "%.36s", x->clsid ? x->clsid + 1 : "");
+            rp_buf_puts(b, "        <desktop3:Extension Category=\"windows.autoPlayHandler\">\r\n          <desktop3:AutoPlayHandler>\r\n"
+                           "            <desktop3:InvokeAction");
+            attr(b, "ActionDisplayName", x->action);
+            attr(b, "ProviderDisplayName", display);
+            rp_buf_puts(b, ">\r\n");
+            for (size_t j = 0; j < x->name_count; ++j) {
+                rp_buf_puts(b, "              <desktop3:Content");
+                attr(b, "ContentEvent", x->names[j]);
+                attr(b, "Verb", x->verb);
+                if (x->clsid) attr(b, "DropTargetHandler", guid);
+                if (x->args) attr(b, "Parameters", args);
+                rp_buf_puts(b, " />\r\n");
+            }
+            for (size_t j = 0; j < x->event_count; ++j) {
+                rp_buf_puts(b, "              <desktop3:Device");
+                attr(b, "DeviceEvent", x->events[j]);
+                attr(b, "HWEventHandler", guid);
+                if (x->args) attr(b, "InitCmdLine", args);
+                rp_buf_puts(b, " />\r\n");
+            }
+            rp_buf_puts(b, "            </desktop3:InvokeAction>\r\n          </desktop3:AutoPlayHandler>\r\n        </desktop3:Extension>\r\n");
+            *ns |= NS_DESKTOP3;
         }
     }
     // Firewall rules (RFC-0016 2): package level, one FirewallRules per program, in ID order.

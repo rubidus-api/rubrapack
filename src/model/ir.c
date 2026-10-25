@@ -731,10 +731,14 @@ void rp_ir_free(rp_ir_t *ir) {
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         rp_ir_msix_ext_t *x = &ir->msix_exts[k];
         char *xs[] = { x->id, x->app, x->alias, x->task_id, x->display, x->file, x->profile, x->clsid, x->threading, x->args, x->verb,
-                       x->prog_id };
+                       x->prog_id, x->name, x->ext_id, x->folder, x->description, x->entry, x->action };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
         for (size_t j = 0; j < x->type_count; ++j) rp_mem_free(a, x->types[j]);
         rp_mem_free(a, x->types);
+        for (size_t j = 0; j < x->name_count; ++j) rp_mem_free(a, x->names[j]);
+        rp_mem_free(a, x->names);
+        for (size_t j = 0; j < x->event_count; ++j) rp_mem_free(a, x->events[j]);
+        rp_mem_free(a, x->events);
     }
     rp_mem_free(a, ir->msix_exts);
     for (size_t k = 0; k < ir->permission_count; ++k) {

@@ -144,6 +144,9 @@ msgstr "{1} には文字列を書きます"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} は \"Key=Value\" テキストのリストです"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} はテキストのリストです (例: [\"{2}\"])"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} は 1 から 31 文字の書体名です (\"Segoe UI\" など。{2} 文字でした)"
 
@@ -173,6 +176,9 @@ msgstr "{1} はこの rubrapack が使うコードではありません{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} はこのパッケージの [file.*] を指す \"file:<ID>\" でなければなりません"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} は {2}～{3} 文字の英字、数字、'.'、'-' で、'.' で始まらないものでなければなりません ('{4}' でした)"
 
 msgid "%s must be a GUID"
 msgstr "{1} は GUID でなければなりません"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature は自分のコンポーネントと一緒に使い�
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name はファイル 1 つを指します。name にワイルドカードがあります"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: 共有ターゲットには types、formats、またはその両方が必要です"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: 自動再生ハンドラーには content-events、device-events、またはその両方が必要です"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args は単純な文字列でなければなりません (インストール時に埋まる [...] は不可)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events には class (プログラムの IHWEventHandler COM クラス) が必要です"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file は {2} でなければなりません"
@@ -1502,6 +1517,9 @@ msgstr "MSIX は一時フォルダーにファイルを置けません"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "アプリケーションの alias は 1 つです ([msix-extension.{1}] が既にそれです)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "アプリケーションの共有ターゲットは 1 つです ([msix-extension.{1}] が既にそれです)"
 
 msgid "an empty name"
 msgstr "空の名前"
@@ -2124,8 +2142,8 @@ msgstr "キー '{1}' がテーブルの外にあります。最初のテーブ�
 msgid "key file '%s': %s"
 msgstr "キー ファイル '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind は \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\"、\"context-menu\" のいずれかでなければなりません ('{1}' でした)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind は \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\"、\"context-menu\"、\"app-extension\"、\"app-extension-host\"、\"app-service\"、\"share-target\"、\"autoplay\" のいずれかでなければなりません ('{1}' でした)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind は \"preview\"、\"thumbnail\"、\"property\" のいずれかでなければなりません ('{1}' でした)"
@@ -2522,6 +2540,9 @@ msgstr "プロパティ '{1}' はパブリックな名前でなければなり�
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol は \"tcp\" か \"udp\" でなければなりません ('{1}' でした)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder はパッケージ内のフォルダーでなければなりません (例: \"Public\"、'{1}' でした)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher はパッケージの発行元です。例: \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

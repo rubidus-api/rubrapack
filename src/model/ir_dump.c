@@ -555,7 +555,9 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
         rp_buf_puts(&b, "msix-extension ");
         rp_buf_puts(&b, x->id);
-        kv(&b, "kind", x->kind == RP_MSIX_EXT_ALIAS ? "alias" : "startup-task");
+        static const char *const kinds[] = { "alias", "startup-task", "firewall", "com-server", "toast", "context-menu", "app-extension",
+                                             "app-extension-host", "app-service", "share-target", "autoplay" };
+        kv(&b, "kind", kinds[x->kind]);
         kv(&b, "app", x->app);
         kv(&b, "alias", x->alias);
         kv(&b, "task-id", x->task_id);

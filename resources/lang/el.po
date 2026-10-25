@@ -144,6 +144,9 @@ msgstr "Το {1} περιέχει συμβολοσειρές"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "το {1} είναι μια λίστα κειμένων \"Κλειδί=Τιμή\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "το {1} είναι λίστα κειμένων, όπως [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "Το {1} είναι όνομα γραμματοσειράς 1 έως 31 χαρακτήρων, π.χ. \"Segoe UI\" (δόθηκε {2})"
 
@@ -173,6 +176,9 @@ msgstr "Το {1} δεν είναι κωδικός που χρησιμοποιε�
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "Το {1} πρέπει να είναι \"file:<ID>\" που ονομάζει ένα [file.*] αυτού του πακέτου"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "το {1} πρέπει να έχει {2} έως {3} γράμματα, ψηφία, '.' ή '-' και να μην αρχίζει με '.' (δόθηκε '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "Το {1} πρέπει να είναι GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: το feature πάει με δικό του στοιχείο,
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: το new-name ονομάζει ένα αρχείο· το name έχει χαρακτήρες μπαλαντέρ"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: ένας στόχος κοινής χρήσης χρειάζεται types, formats ή και τα δύο"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: ένα πρόγραμμα αυτόματης αναπαραγωγής χρειάζεται content-events, device-events ή και τα δύο"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: τα args πρέπει να είναι απλό κείμενο (χωρίς [...] που συμπληρώνεται στην εγκατάσταση)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: τα device-events χρειάζονται class (την κλάση COM IHWEventHandler του προγράμματος)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: το file πρέπει να είναι {2}"
@@ -1502,6 +1517,9 @@ msgstr "ένα MSIX δεν μπορεί να τοποθετήσει αρχεία
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "μια εφαρμογή έχει ένα alias (το [msix-extension.{1}] είναι ήδη ένα)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "μια εφαρμογή έχει έναν στόχο κοινής χρήσης (το [msix-extension.{1}] είναι ήδη ένας)"
 
 msgid "an empty name"
 msgstr "κενό όνομα"
@@ -2124,8 +2142,8 @@ msgstr "το κλειδί '{1}' είναι εκτός πίνακα· μόνο τ
 msgid "key file '%s': %s"
 msgstr "αρχείο κλειδιού '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "το kind πρέπει να είναι \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" ή \"context-menu\" (δόθηκε '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "το kind πρέπει να είναι \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ή \"autoplay\" (δόθηκε '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "το kind πρέπει να είναι \"preview\", \"thumbnail\" ή \"property\" (δόθηκε '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "η ιδιότητα '{1}' πρέπει να είναι δημόσιο ό
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "το protocol πρέπει να είναι \"tcp\" ή \"udp\" (δόθηκε '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "το public-folder πρέπει να είναι φάκελος του πακέτου, όπως \"Public\" (δόθηκε '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "το publisher είναι ο εκδότης του πακέτου, π.χ. \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

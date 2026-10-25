@@ -144,6 +144,9 @@ msgstr "{1} obsahuje řetězce"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} je seznam textů \"Klíč=Hodnota\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} je seznam textů, například [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} je název písma o 1 až 31 znacích, například \"Segoe UI\" (zadáno {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} není kód, který tento rubrapack používá{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} musí být \"file:<ID>\" a jmenovat [file.*] tohoto balíčku"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} musí mít {2} až {3} písmen, číslic, '.' nebo '-' a nesmí začínat '.' (zadáno '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} musí být GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature patří k vlastní komponentě, ne k with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name určuje jeden soubor; name má zástupné znaky"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: cíl sdílení potřebuje types, formats nebo obojí"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: obslužná rutina automatického přehrávání potřebuje content-events, device-events nebo obojí"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args musí být prostý text (žádné [...] doplňované při instalaci)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events potřebují class (třídu COM IHWEventHandler programu)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file musí být {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX nemůže umístit soubory do dočasné složky"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "aplikace má jeden alias ([msix-extension.{1}] už jím je)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "aplikace má jeden cíl sdílení ([msix-extension.{1}] už jím je)"
 
 msgid "an empty name"
 msgstr "prázdný název"
@@ -2124,8 +2142,8 @@ msgstr "klíč '{1}' mimo tabulku; před první tabulkou je jen 'format'"
 msgid "key file '%s': %s"
 msgstr "soubor klíče '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind musí být \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" nebo \"context-menu\" (zadáno '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind musí být \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" nebo \"autoplay\" (zadáno '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind musí být \"preview\", \"thumbnail\" nebo \"property\" (zadáno '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "vlastnost '{1}' musí být veřejný název: velká písmena, číslice 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol musí být \"tcp\" nebo \"udp\" (zadáno '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder musí být složka balíčku, například \"Public\" (zadáno '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher je vydavatel balíčku, například \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

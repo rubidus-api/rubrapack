@@ -144,6 +144,9 @@ msgstr "{1} inneholder strenger"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} er en liste med \"Nøkkel=Verdi\"-tekster"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} er en liste med tekster, for eksempel [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} er et skriftnavn på 1 til 31 tegn, som \"Segoe UI\" (fikk {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} er ikke en kode denne rubrapack bruker{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} må være \"file:<ID>\" som navngir en [file.*] i denne pakken"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} må være {2} til {3} bokstaver, sifre, '.' eller '-' og kan ikke starte med '.' (fikk '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} må være en GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature hører til en egen komponent, ikke til with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name angir én fil; name har jokertegn"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: et delingsmål trenger types, formats eller begge"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: en behandler for automatisk avspilling trenger content-events, device-events eller begge"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args må være ren tekst (ingen [...] som fylles inn ved installasjonen)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events trenger class (programmets IHWEventHandler-COM-klasse)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file må være {2}"
@@ -1502,6 +1517,9 @@ msgstr "en MSIX kan ikke plassere filer i den midlertidige mappen"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "et program har ett alias ([msix-extension.{1}] er allerede ett)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "et program har ett delingsmål ([msix-extension.{1}] er det allerede)"
 
 msgid "an empty name"
 msgstr "et tomt navn"
@@ -2124,8 +2142,8 @@ msgstr "nøkkelen '{1}' utenfor en tabell; bare 'format' kommer før den første
 msgid "key file '%s': %s"
 msgstr "nøkkelfilen '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind må være \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" eller \"context-menu\" (fikk '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind må være \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" eller \"autoplay\" (fikk '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind må være \"preview\", \"thumbnail\" eller \"property\" (fikk '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "egenskapen '{1}' må være et offentlig navn: store bokstaver, sifre og 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol må være \"tcp\" eller \"udp\" (fikk '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder må være en mappe i pakken, for eksempel \"Public\" (fikk '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher er pakkens utgiver, som \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

@@ -146,6 +146,9 @@ msgstr "{1} מכיל מחרוזות"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} הוא רשימה של טקסטים \"מפתח=ערך\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} היא רשימת טקסטים, כמו [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} הוא שם גופן בן 1 עד 31 תווים, כמו \"Segoe UI\" (התקבל {2})"
 
@@ -175,6 +178,9 @@ msgstr "{1} אינו קוד שה-rubrapack הזה משתמש בו{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} חייב להיות \"file:<ID>\" שמציין [file.*] של חבילה זו"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} חייב להיות בין {2} ל-{3} אותיות, ספרות, '.' או '-', ולא להתחיל ב-'.' (התקבל '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} חייב להיות GUID"
@@ -1058,8 +1064,17 @@ msgstr "[move.{1}]: feature הולך עם רכיב משלו, לא עם with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name מציין קובץ אחד; ל-name יש תווים כלליים"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: יעד שיתוף צריך types, formats או את שניהם"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: מטפל הפעלה אוטומטית צריך content-events, device-events או את שניהם"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: ה-args חייבים להיות טקסט פשוט (ללא [...] שממולא בהתקנה)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events צריכים class (מחלקת ה-COM של IHWEventHandler בתוכנית)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file חייב להיות {2}"
@@ -1504,6 +1519,9 @@ msgstr "MSIX אינה יכולה למקם קבצים בתיקייה הזמנית
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "ליישום יש alias אחד ([msix-extension.{1}] כבר אחד כזה)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "ליישום יש יעד שיתוף אחד ([msix-extension.{1}] הוא כבר יעד כזה)"
 
 msgid "an empty name"
 msgstr "שם ריק"
@@ -2126,8 +2144,8 @@ msgstr "המפתח '{1}' מחוץ לטבלה; רק 'format' בא לפני הטב
 msgid "key file '%s': %s"
 msgstr "קובץ מפתח '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind חייב להיות \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" או \"context-menu\" (התקבל '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind חייב להיות \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" או \"autoplay\" (התקבל '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind חייב להיות \"preview\", \"thumbnail\" או \"property\" (התקבל '{1}')"
@@ -2524,6 +2542,9 @@ msgstr "המאפיין '{1}' חייב להיות שם ציבורי: אותיות
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol חייב להיות \"tcp\" או \"udp\" (התקבל '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder חייב להיות תיקייה של החבילה, כמו \"Public\" (התקבל '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher הוא המפרסם של החבילה, כמו \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

@@ -144,6 +144,9 @@ msgstr "{1} contén cadeas"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} é unha lista de textos \"Clave=Valor\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} é unha lista de textos, como [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} é un nome de fonte de 1 a 31 caracteres, como \"Segoe UI\" (obtívose {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} non é un código que use este rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} debe ser \"file:<ID>\" e nomear un [file.*] deste paquete"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} debe ter de {2} a {3} letras, díxitos, '.' ou '-', sen comezar por '.' (obtívose '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} debe ser un GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature vai cun compoñente propio, non con with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name nomea un ficheiro; name ten comodíns"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: un destino de compartición precisa types, formats ou ambos"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: un xestor de reprodución automática precisa content-events, device-events ou ambos"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args debe ser texto simple (sen [...] enchido ao instalar)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events precisan class (a clase COM IHWEventHandler do programa)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file debe ser {2}"
@@ -1502,6 +1517,9 @@ msgstr "un MSIX non pode poñer ficheiros no cartafol temporal"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "unha aplicación ten un alias ([msix-extension.{1}] xa é un)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "unha aplicación ten un só destino de compartición ([msix-extension.{1}] xa o é)"
 
 msgid "an empty name"
 msgstr "un nome baleiro"
@@ -2124,8 +2142,8 @@ msgstr "a chave '{1}' está fóra dunha táboa; só 'format' vai antes da primei
 msgid "key file '%s': %s"
 msgstr "ficheiro de chave '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind debe ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" ou \"context-menu\" (obtívose '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind debe ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ou \"autoplay\" (obtívose '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind debe ser \"preview\", \"thumbnail\" ou \"property\" (obtívose '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "a propiedade '{1}' debe ser un nome público: letras maiúsculas, díxit
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol debe ser \"tcp\" ou \"udp\" (obtívose '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder debe ser un cartafol do paquete, como \"Public\" (obtívose '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher é o editor do paquete, como \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

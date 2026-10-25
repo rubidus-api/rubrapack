@@ -144,6 +144,9 @@ msgstr "{1} contém cadeias"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} é uma lista de textos \"Chave=Valor\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} é uma lista de textos, como [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} é um nome de fonte de 1 a 31 caracteres, como \"Segoe UI\" (recebido {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} não é um código que este rubrapack usa{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} deve ser \"file:<ID>\" e indicar um [file.*] deste pacote"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} deve ter de {2} a {3} letras, dígitos, '.' ou '-', sem começar por '.' (recebido '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} deve ser um GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature vai com um componente próprio, não com with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name indica um ficheiro; name tem carateres universais"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: um destino de partilha precisa de types, formats ou ambos"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: um processador de reprodução automática precisa de content-events, device-events ou ambos"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args deve ser texto simples (sem [...] preenchido na instalação)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events precisam de class (a classe COM IHWEventHandler do programa)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file deve ser {2}"
@@ -1502,6 +1517,9 @@ msgstr "um MSIX não pode colocar ficheiros na pasta temporária"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "uma aplicação tem um único alias ([msix-extension.{1}] já é um)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "uma aplicação tem um único destino de partilha ([msix-extension.{1}] já é um)"
 
 msgid "an empty name"
 msgstr "um nome vazio"
@@ -2124,8 +2142,8 @@ msgstr "chave '{1}' fora de uma tabela; só 'format' vem antes da primeira tabel
 msgid "key file '%s': %s"
 msgstr "ficheiro de chave '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind deve ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" ou \"context-menu\" (recebido '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind deve ser \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" ou \"autoplay\" (recebido '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind deve ser \"preview\", \"thumbnail\" ou \"property\" (recebido '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "a propriedade '{1}' deve ser um nome público: letras maiúsculas, dígi
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol deve ser \"tcp\" ou \"udp\" (recebido '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder deve ser uma pasta do pacote, como \"Public\" (recebido '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher é o editor do pacote, como \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

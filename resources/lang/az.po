@@ -144,6 +144,9 @@ msgstr "{1} sətirləri saxlayır"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} \"Açar=Dəyər\" mətnlərinin siyahısıdır"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} mətnlər siyahısıdır, məsələn [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 1-31 simvollu şrift adıdır, məsələn \"Segoe UI\" ({2} alındı)"
 
@@ -173,6 +176,9 @@ msgstr "{1} bu rubrapack-in istifadə etdiyi kod deyil{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} bu paketin [file.*]-ını göstərən \"file:<ID>\" olmalıdır"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} {2}-{3} hərf, rəqəm, '.' və ya '-' olmalı, '.' ilə başlamamalıdır ('{4}' alındı)"
 
 msgid "%s must be a GUID"
 msgstr "{1} GUID olmalıdır"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature öz komponenti ilə gedir, with ilə deyil"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name bir faylı göstərir; name-də joker simvollar var"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: paylaşma hədəfinə types, formats və ya hər ikisi lazımdır"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: avtomatik işə salma işləyicisinə content-events, device-events və ya hər ikisi lazımdır"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args sadə mətn olmalıdır (quraşdırmada doldurulan [...] yox)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events üçün class lazımdır (proqramın IHWEventHandler COM sinfi)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file {2} olmalıdır"
@@ -1502,6 +1517,9 @@ msgstr "MSIX faylları müvəqqəti qovluğa yerləşdirə bilməz"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "tətbiqin bir ləqəbi olur ([msix-extension.{1}] artıq budur)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "Tətbiqin bir paylaşma hədəfi olur ([msix-extension.{1}] artıq odur)"
 
 msgid "an empty name"
 msgstr "boş ad"
@@ -2124,8 +2142,8 @@ msgstr "'{1}' açarı cədvəldən kənardadır; ilk cədvəldən əvvəl yalnı
 msgid "key file '%s': %s"
 msgstr "açar faylı '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" və ya \"context-menu\" olmalıdır ('{1}' alındı)"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" və ya \"autoplay\" olmalıdır ('{1}' alındı)"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind \"preview\", \"thumbnail\" və ya \"property\" olmalıdır ('{1}' alındı)"
@@ -2522,6 +2540,9 @@ msgstr "'{1}' xassəsi ictimai ad olmalıdır: böyük hərflər, rəqəmlər v�
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol \"tcp\" və ya \"udp\" olmalıdır ('{1}' alındı)"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder paketin qovluğu olmalıdır, məsələn \"Public\" ('{1}' alındı)"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher paketin naşiridir, məsələn \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

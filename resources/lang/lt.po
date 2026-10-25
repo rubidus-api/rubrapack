@@ -144,6 +144,9 @@ msgstr "{1} turi eilutes"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} yra \"Raktas=Reikšmė\" tekstų sąrašas"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} yra tekstų sąrašas, pvz., [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} yra šrifto pavadinimas iš 1-31 simbolio, pvz., \"Segoe UI\" (gauta {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} nėra kodas, kurį naudoja šis rubrapack{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} turi būti \"file:<ID>\", nurodantis šio paketo [file.*]"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} turi būti nuo {2} iki {3} raidžių, skaitmenų, '.' arba '-' ir negali prasidėti '.' (gauta '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} turi būti GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature eina su savo komponentu, ne su with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name nurodo vieną failą; name turi pakaitos simbolių"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: bendrinimo paskirčiai reikia types, formats arba abiejų"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: automatinio paleidimo doroklei reikia content-events, device-events arba abiejų"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args turi būti paprastas tekstas (be [...], užpildomų diegiant)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events reikia class (programos IHWEventHandler COM klasės)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file turi būti {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX negali dėti failų į laikinąjį aplanką"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "programa turi vieną alias ([msix-extension.{1}] jau yra vienas)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "programa turi vieną bendrinimo paskirtį ([msix-extension.{1}] jau ja yra)"
 
 msgid "an empty name"
 msgstr "tuščias pavadinimas"
@@ -2124,8 +2142,8 @@ msgstr "raktas '{1}' yra už lentelės; prieš pirmąją lentelę eina tik 'form
 msgid "key file '%s': %s"
 msgstr "rakto failas '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind turi būti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" arba \"context-menu\" (gauta '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind turi būti \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" arba \"autoplay\" (gauta '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind turi būti \"preview\", \"thumbnail\" arba \"property\" (gauta '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "savybė '{1}' turi būti viešas pavadinimas: didžiosios raidės, skait
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol turi būti \"tcp\" arba \"udp\" (gauta '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder turi būti paketo aplankas, pvz., \"Public\" (gauta '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher yra paketo leidėjas, pvz., \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

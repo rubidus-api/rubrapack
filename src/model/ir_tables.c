@@ -1123,9 +1123,131 @@ void ir_parse_menu(ctx_t *c, const rp_ttable_t *t, rp_ir_menu_t *x) {
     }
 }
 
+// RFC-0031 B15-B18: the MSIX contracts. Each kind takes the keys of its row (with kind and app).
+static const char *const contract_kinds[] = { "app-extension", "app-extension-host", "app-service", "share-target", "autoplay", NULL };
+static const char *const contract_keys[] = { "name", "extension-id", "public-folder", "description", "names", "entry-point",
+                                             "multiple-instances", "formats", "action", "content-events", "device-events", NULL };
+static const char *const contract_allowed[][8] = {
+    { "name", "extension-id", "public-folder", "display-name", "description", NULL },
+    { "names", NULL },
+    { "name", "entry-point", "multiple-instances", NULL },
+    { "types", "formats", "description", NULL },
+    { "action", "display-name", "content-events", "device-events", "verb", "class", "args", NULL },
+};
+
+// A name the manifest takes: lo..hi letters, digits, '.' and '-', not starting with '.'.
+static void contract_name(ctx_t *c, const rp_ttable_t *t, const char *key, const char *v, unsigned lo, unsigned hi) {
+    size_t n = strlen(v);
+    bool ok = n >= lo && n <= hi && v[0] != '.';
+    for (size_t k = 0; ok && k < n; ++k) {
+        char ch = v[k];
+        ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.' || ch == '-';
+    }
+    if (!ok) ERR(c, ir_key_pos(t, key), "RP1316", "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')", key, lo, hi, v);
+}
+
+// A list of texts (1-255 characters, no backslash); an empty list or another value is refused.
+static char **contract_list(ctx_t *c, const rp_ttable_t *t, const char *key, const char *example, size_t *count) {
+    const rp_tkey_t *tk = ir_find_key(t, key);
+    *count = 0;
+    if (tk == NULL) return NULL;
+    if (tk->val.kind != RP_TV_ARRAY || tk->val.count == 0) {
+        ERR(c, tk->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", key, example);
+        return NULL;
+    }
+    char **out = rp_mem_alloc(c->alloc, tk->val.count, sizeof *out);
+    if (out == NULL) {
+        c->nomem = true;
+        return NULL;
+    }
+    bool bad = false;
+    for (size_t k = 0; k < tk->val.count; ++k) {
+        const rp_tval_t *v = &tk->val.items[k];
+        char *s = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+        if (s == NULL || s[0] == 0 || strlen(s) > 255 || strchr(s, '\\')) bad = true;
+        if (s) out[(*count)++] = s;
+    }
+    if (bad) ERR(c, tk->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", key, example);
+    return out;
+}
+
+static void parse_msix_contract(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x, const char *kind, const char *const *known) {
+    size_t row = 0;
+    while (strcmp(contract_kinds[row], kind) != 0) ++row;
+    x->kind = (rp_msix_ext_kind_t)(RP_MSIX_EXT_APP_EXTENSION + (int)row);
+    for (size_t k = 0; k < t->count; ++k) {
+        const char *key = t->keys[k].key;
+        if (strcmp(key, "kind") == 0 || strcmp(key, "app") == 0 || ir_in_list(key, contract_allowed[row])) continue;
+        if (ir_in_list(key, known)) ERR(c, t->keys[k].pos, "RP1316", "%s does not belong to kind = \"%s\"", key, kind);
+    }
+    if (x->kind == RP_MSIX_EXT_APP_EXTENSION) {
+        x->name = ir_get_str(c, t, "name", true, NULL);
+        if (x->name) contract_name(c, t, "name", x->name, 2, 65519);
+        x->ext_id = ir_get_str(c, t, "extension-id", false, NULL);
+        if (x->ext_id) contract_name(c, t, "extension-id", x->ext_id, 2, 39);
+        else x->ext_id = ir_dup(c, t->id);
+        x->folder = ir_get_str(c, t, "public-folder", false, NULL);
+        if (x->folder && (x->folder[0] == 0 || x->folder[0] == '\\' || x->folder[0] == '/' || strlen(x->folder) > 256 ||
+                          strpbrk(x->folder, "<>:\"|?*") || strstr(x->folder, ".."))) {
+            ERR(c, ir_key_pos(t, "public-folder"), "RP1316", "public-folder must be a folder of the package, like \"Public\" (got '%s')", x->folder);
+        }
+        for (char *q = x->folder; q && *q; ++q) if (*q == '/') *q = '\\';
+        x->display = ir_get_str(c, t, "display-name", false, NULL);
+        x->description = ir_get_str(c, t, "description", false, NULL);
+    } else if (x->kind == RP_MSIX_EXT_APP_EXTENSION_HOST) {
+        x->names = contract_list(c, t, "names", "com.example.plugin", &x->name_count);
+        if (!ir_find_key(t, "names")) ERR(c, t->pos, "RP1316", "%s is a list of texts, like [\"%s\"]", "names", "com.example.plugin");
+        for (size_t k = 0; k < x->name_count; ++k) contract_name(c, t, "names", x->names[k], 2, 65519);
+    } else if (x->kind == RP_MSIX_EXT_APP_SERVICE) {
+        x->name = ir_get_str(c, t, "name", true, NULL);
+        if (x->name) contract_name(c, t, "name", x->name, 2, 39);
+        x->entry = ir_get_str(c, t, "entry-point", false, NULL);
+        x->multi = ir_get_bool(c, t, "multiple-instances", false);
+    } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
+        const rp_tkey_t *tk = ir_find_key(t, "types");
+        if (tk && (tk->val.kind != RP_TV_ARRAY || tk->val.count == 0)) {
+            ERR(c, tk->pos, "RP1316", "[msix-extension.%s]: types is a list of file types, like [\".txt\", \"*\"]", t->id);
+        } else if (tk) {
+            x->types = rp_mem_alloc(c->alloc, tk->val.count, sizeof *x->types);
+            if (x->types == NULL) c->nomem = true;
+            for (size_t k = 0; x->types && k < tk->val.count; ++k) {
+                const rp_tval_t *v = &tk->val.items[k];
+                char *ty = v->kind == RP_TV_STRING ? ir_subst(c, v) : NULL;
+                bool ok = ty && (strcmp(ty, "*") == 0 || (ty[0] == '.' && ty[1] && !strpbrk(ty + 1, ".\\")));
+                if (!ok) ERR(c, tk->pos, "RP1316", "types: each is \".ext\" or \"*\" (every file)");
+                if (ty) x->types[x->type_count++] = ty;
+            }
+        }
+        x->names = contract_list(c, t, "formats", "Text", &x->name_count);
+        if (!tk && !ir_find_key(t, "formats")) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: a share target needs types, formats or both", t->id);
+        x->description = ir_get_str(c, t, "description", false, NULL);
+    } else {
+        x->action = ir_get_str(c, t, "action", true, NULL);
+        x->display = ir_get_str(c, t, "display-name", false, NULL);
+        x->names = contract_list(c, t, "content-events", "ShowPicturesOnArrival", &x->name_count);
+        x->events = contract_list(c, t, "device-events", "ImageSourceArrival", &x->event_count);
+        if (!ir_find_key(t, "content-events") && !ir_find_key(t, "device-events")) {
+            ERR(c, t->pos, "RP1316", "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both", t->id);
+        }
+        x->verb = ir_get_str(c, t, "verb", false, NULL);
+        if (x->verb == NULL) x->verb = ir_dup(c, t->id);
+        bool alnum = x->verb != NULL;
+        for (const char *q = x->verb; alnum && *q; ++q) alnum = (*q >= 'A' && *q <= 'Z') || (*q >= 'a' && *q <= 'z') || (*q >= '0' && *q <= '9');
+        if (x->verb && !alnum) ERR(c, t->pos, "RP1316", "[msix-extension.%s]: verb '%s': Windows takes letters and digits only", t->id, x->verb);
+        x->clsid = ir_get_str(c, t, "class", false, NULL);
+        if (x->clsid && !ir_guid_ok(x->clsid)) ERR(c, ir_key_pos(t, "class"), "RP1316", "class must be a GUID like {12345678-...} (got '%s')", x->clsid);
+        if (x->event_count && x->clsid == NULL) {
+            ERR(c, t->pos, "RP1316", "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)", t->id);
+        }
+        x->args = ir_get_str(c, t, "args", false, NULL);
+    }
+}
+
 void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
     static const char *const keys[] = { "kind", "app", "alias", "task-id", "display-name", "enabled", "file", "direction",
-                                        "protocol", "ports", "profile", "class", "threading", "args", "verb", "types", NULL };
+                                        "protocol", "ports", "profile", "class", "threading", "args", "verb", "types", "name",
+                                        "extension-id", "public-folder", "description", "names", "entry-point",
+                                        "multiple-instances", "formats", "action", "content-events", "device-events", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     x->id = ir_dup(c, t->id);
@@ -1244,8 +1366,15 @@ void ir_parse_msix_ext(ctx_t *c, const rp_ttable_t *t, rp_ir_msix_ext_t *x) {
         for (size_t k = 0; k < sizeof other / sizeof other[0]; ++k) {
             if (ir_find_key(t, other[k])) ERR(c, ir_key_pos(t, other[k]), "RP1316", "%s does not belong to kind = \"%s\"", other[k], kind);
         }
+    } else if (kind && ir_in_list(kind, contract_kinds)) {
+        parse_msix_contract(c, t, x, kind, keys);
     } else if (kind) {
-        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')", kind);
+        ERR(c, ir_key_pos(t, "kind"), "RP1316", "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", "
+            "\"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')", kind);
+    }
+    // The keys of the RFC-0031 kinds belong to them alone.
+    for (size_t k = 0; kind && !ir_in_list(kind, contract_kinds) && contract_keys[k]; ++k) {
+        if (ir_find_key(t, contract_keys[k])) ERR(c, ir_key_pos(t, contract_keys[k]), "RP1316", "%s does not belong to kind = \"%s\"", contract_keys[k], kind);
     }
     rp_mem_free(c->alloc, kind);
 }

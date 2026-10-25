@@ -144,6 +144,9 @@ msgstr "{1} innehåller strängar"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} är en lista med \"Nyckel=Värde\"-texter"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} är en lista med texter, till exempel [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} är ett teckensnittsnamn på 1 till 31 tecken, som \"Segoe UI\" (fick {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} är ingen kod som den här rubrapack använder{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} måste vara \"file:<ID>\" som namnger en [file.*] i det här paketet"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} måste vara {2} till {3} bokstäver, siffror, '.' eller '-' och får inte börja med '.' (fick '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} måste vara ett GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature hör till en egen komponent, inte till with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name anger en fil; name har jokertecken"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: ett delningsmål behöver types, formats eller båda"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: en hanterare för automatisk uppspelning behöver content-events, device-events eller båda"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args måste vara ren text (inga [...] som fylls i vid installationen)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events behöver class (programmets IHWEventHandler-COM-klass)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file måste vara {2}"
@@ -1502,6 +1517,9 @@ msgstr "en MSIX kan inte placera filer i den tillfälliga mappen"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "ett program har ett alias ([msix-extension.{1}] är redan ett)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "ett program har ett delningsmål ([msix-extension.{1}] är redan ett)"
 
 msgid "an empty name"
 msgstr "ett tomt namn"
@@ -2124,8 +2142,8 @@ msgstr "nyckeln '{1}' utanför en tabell; bara 'format' kommer före den första
 msgid "key file '%s': %s"
 msgstr "nyckelfilen '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind måste vara \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" eller \"context-menu\" (fick '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind måste vara \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" eller \"autoplay\" (fick '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind måste vara \"preview\", \"thumbnail\" eller \"property\" (fick '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "egenskapen '{1}' måste vara ett offentligt namn: versaler, siffror och 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol måste vara \"tcp\" eller \"udp\" (fick '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder måste vara en mapp i paketet, till exempel \"Public\" (fick '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher är paketets utgivare, som \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

@@ -144,6 +144,9 @@ msgstr "{1} berisi string"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} adalah daftar teks \"Kunci=Nilai\""
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} adalah daftar teks, seperti [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} adalah nama font 1 sampai 31 karakter, seperti \"Segoe UI\" (didapat {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} bukan kode yang digunakan rubrapack ini{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} harus berupa \"file:<ID>\" yang menyebut [file.*] dari paket ini"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} harus terdiri atas {2} sampai {3} huruf, angka, '.' atau '-', tidak diawali '.' (didapat '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} harus berupa GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature ikut dengan komponen sendiri, bukan dengan with"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name menyebut satu berkas; name memiliki karakter pengganti"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: target berbagi memerlukan types, formats, atau keduanya"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: penangan putar otomatis memerlukan content-events, device-events, atau keduanya"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args harus berupa teks biasa (tanpa [...] yang diisi saat instalasi)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events memerlukan class (kelas COM IHWEventHandler milik program)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file harus {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX tidak dapat menempatkan file di folder sementara"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "aplikasi memiliki satu alias ([msix-extension.{1}] sudah menjadi satu)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "sebuah aplikasi memiliki satu target berbagi ([msix-extension.{1}] sudah menjadi target itu)"
 
 msgid "an empty name"
 msgstr "nama kosong"
@@ -2124,8 +2142,8 @@ msgstr "kunci '{1}' di luar tabel; hanya 'format' yang datang sebelum tabel pert
 msgid "key file '%s': %s"
 msgstr "file kunci '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind harus \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" atau \"context-menu\" (didapat '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind harus \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" atau \"autoplay\" (didapat '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind harus \"preview\", \"thumbnail\" atau \"property\" (didapat '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "properti '{1}' harus nama publik: huruf besar, digit dan '_'"
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol harus \"tcp\" atau \"udp\" (didapat '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder harus berupa folder paket, seperti \"Public\" (didapat '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher adalah penerbit paket, seperti \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

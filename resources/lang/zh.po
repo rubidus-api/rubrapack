@@ -144,6 +144,9 @@ msgstr "{1} 应为字符串"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} 是 \"Key=Value\" 文本的列表"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} 是文本列表，例如 [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1} 是 1 到 31 个字符的字体名称，如 \"Segoe UI\"(实际为 {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1} 不是此 rubrapack 使用的代码{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1} 必须是指向此安装包中 [file.*] 的 \"file:<ID>\""
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} 必须由 {2} 到 {3} 个字母、数字、'.' 或 '-' 组成，且不能以 '.' 开头(实际为 '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} 必须是 GUID"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature 与自己的组件一起使用，而不是与 with �
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name 指定一个文件；name 含有通配符"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: 共享目标需要 types、formats 或两者"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: 自动播放处理程序需要 content-events、device-events 或两者"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args 必须是纯文本(不能有安装时填入的 [...])"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events 需要 class(程序的 IHWEventHandler COM 类)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file 必须是 {2}"
@@ -1502,6 +1517,9 @@ msgstr "MSIX 不能在临时文件夹中放置文件"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "一个应用程序只有一个 alias([msix-extension.{1}] 已是)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "一个应用程序只有一个共享目标([msix-extension.{1}] 已是该目标)"
 
 msgid "an empty name"
 msgstr "空名称"
@@ -2124,8 +2142,8 @@ msgstr "键 '{1}' 位于表之外；只有 'format' 能在第一个表之前"
 msgid "key file '%s': %s"
 msgstr "密钥文件 '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind 必须是 \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\" 或 \"context-menu\"(实际为 '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind 必须是 \"alias\"、\"startup-task\"、\"firewall\"、\"com-server\"、\"toast\"、\"context-menu\"、\"app-extension\"、\"app-extension-host\"、\"app-service\"、\"share-target\" 或 \"autoplay\"(实际为 '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind 必须是 \"preview\"、\"thumbnail\" 或 \"property\"(实际为 '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "属性 '{1}' 必须是公共名称: 大写字母、数字和 '_'"
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol 必须是 \"tcp\" 或 \"udp\"(实际为 '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder 必须是包中的文件夹，例如 \"Public\"(实际为 '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher 是安装包的发布者，如 \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

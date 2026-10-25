@@ -144,6 +144,9 @@ msgstr "{1} dizeler tutar"
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1}, \"Anahtar=Değer\" metinlerinin bir listesidir"
 
+msgid "%s is a list of texts, like [\"%s\"]"
+msgstr "{1} bir metin listesidir, örneğin [\"{2}\"]"
+
 msgid "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)"
 msgstr "{1}, 1 ile 31 karakter arası bir yazı tipi adıdır, örneğin \"Segoe UI\" (alınan: {2})"
 
@@ -173,6 +176,9 @@ msgstr "{1}, bu rubrapack'in kullandığı bir kod değil{2}{3}"
 
 msgid "%s must be \"file:<ID>\" naming a [file.*] of this package"
 msgstr "{1}, bu paketin bir [file.*] tablosunu adlandıran \"file:<ID>\" olmalıdır"
+
+msgid "%s must be %u to %u letters, digits, '.' or '-', not starting with '.' (got '%s')"
+msgstr "{1} {2} ile {3} arasında harf, rakam, '.' veya '-' olmalı ve '.' ile başlamamalıdır (alınan: '{4}')"
 
 msgid "%s must be a GUID"
 msgstr "{1} bir GUID olmalıdır"
@@ -1056,8 +1062,17 @@ msgstr "[move.{1}]: feature kendi bileşeniyle birlikte gider, with ile değil"
 msgid "[move.%s]: new-name names one file; name has wildcards"
 msgstr "[move.{1}]: new-name tek bir dosyayı belirtir; name joker karakter içerir"
 
+msgid "[msix-extension.%s]: a share target needs types, formats or both"
+msgstr "[msix-extension.{1}]: paylaşım hedefi için types, formats veya ikisi gerekir"
+
+msgid "[msix-extension.%s]: an autoplay handler needs content-events, device-events or both"
+msgstr "[msix-extension.{1}]: otomatik kullan işleyicisi için content-events, device-events veya ikisi gerekir"
+
 msgid "[msix-extension.%s]: args must be plain text (no [...] filled in at install)"
 msgstr "[msix-extension.{1}]: args düz metin olmalıdır (kurulumda doldurulan [...] olmadan)"
+
+msgid "[msix-extension.%s]: device-events need class (the program's IHWEventHandler COM class)"
+msgstr "[msix-extension.{1}]: device-events için class gerekir (programın IHWEventHandler COM sınıfı)"
 
 msgid "[msix-extension.%s]: file must be %s"
 msgstr "[msix-extension.{1}]: file {2} olmalıdır"
@@ -1502,6 +1517,9 @@ msgstr "bir MSIX geçici klasöre dosya yerleştiremez"
 
 msgid "an application has one alias ([msix-extension.%s] is one already)"
 msgstr "bir uygulamanın bir diğer adı olur ([msix-extension.{1}] zaten bir tane)"
+
+msgid "an application has one share target ([msix-extension.%s] is one already)"
+msgstr "bir uygulamanın tek bir paylaşım hedefi olur ([msix-extension.{1}] zaten odur)"
 
 msgid "an empty name"
 msgstr "boş bir ad"
@@ -2124,8 +2142,8 @@ msgstr "'{1}' anahtarı bir tablonun dışında; ilk tablodan önce yalnızca 'f
 msgid "key file '%s': %s"
 msgstr "anahtar dosyası '{1}': {2}"
 
-msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" or \"context-menu\" (got '%s')"
-msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\" veya \"context-menu\" olmalıdır (alınan: '{1}')"
+msgid "kind must be \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" or \"autoplay\" (got '%s')"
+msgstr "kind \"alias\", \"startup-task\", \"firewall\", \"com-server\", \"toast\", \"context-menu\", \"app-extension\", \"app-extension-host\", \"app-service\", \"share-target\" veya \"autoplay\" olmalıdır (alınan: '{1}')"
 
 msgid "kind must be \"preview\", \"thumbnail\" or \"property\" (got '%s')"
 msgstr "kind \"preview\", \"thumbnail\" veya \"property\" olmalıdır (alınan: '{1}')"
@@ -2522,6 +2540,9 @@ msgstr "'{1}' özelliği genel bir ad olmalıdır: büyük harfler, rakamlar ve 
 
 msgid "protocol must be \"tcp\" or \"udp\" (got '%s')"
 msgstr "protocol \"tcp\" veya \"udp\" olmalıdır (alınan: '{1}')"
+
+msgid "public-folder must be a folder of the package, like \"Public\" (got '%s')"
+msgstr "public-folder paketin bir klasörü olmalıdır, örneğin \"Public\" (alınan: '{1}')"
 
 msgid "publisher is the package's publisher, such as \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""
 msgstr "publisher paketin yayımcısıdır, örneğin \"CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US\""

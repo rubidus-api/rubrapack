@@ -584,6 +584,9 @@ void ir_class_checks(ctx_t *c) {
             if (x->kind == RP_MSIX_EXT_ALIAS && y->kind == RP_MSIX_EXT_ALIAS && ir_cmp_str(x->app, y->app) == 0) {
                 ERR(c, x->pos, "RP1301", "an application has one alias ([msix-extension.%s] is one already)", y->id);
             }
+            if (x->kind == RP_MSIX_EXT_SHARE_TARGET && y->kind == RP_MSIX_EXT_SHARE_TARGET && ir_cmp_str(x->app, y->app) == 0) {
+                ERR(c, x->pos, "RP1301", "an application has one share target ([msix-extension.%s] is one already)", y->id);
+            }
             if (x->kind == RP_MSIX_EXT_STARTUP && y->kind == RP_MSIX_EXT_STARTUP && strcmp(x->task_id, y->task_id) == 0) {
                 ERR(c, x->pos, "RP1301", "task-id '%s' is already used by [msix-extension.%s]", x->task_id, y->id);
             }
