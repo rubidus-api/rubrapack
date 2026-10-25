@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs .msi-rako da"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch sorta baterako: x64, x86 eta arm64 zerrenda, bakoitza behin ('{1}' jaso da)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch-ek arkitektura bat onartzen du, edo zerrenda bat .msixbundle irteerarako"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch-ek arkitektura bat onartzen du, edo zerrenda bat .msixbundle / .msixupload irteerarako"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp eta --allow-unsigned-cabs --key-ekin doaz"
@@ -2463,8 +2463,8 @@ msgstr "radio, combo eta listbox kontrolek soilik onartzen dute values"
 msgid "out of memory"
 msgstr "ez dago behar adina memoria"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "'{1}' irteera: rubrapack-ek .msi, .msm, .msix, .msixbundle eta kate baten instalazio-.exe idazten ditu"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "'{1}' irteera: rubrapack-ek .msi, .msm, .msix, .msixbundle, .msixupload eta kate baten instalazio-.exe idazten ditu"
 
 msgid "package '%s' %s"
 msgstr "'{1}' paketea {2}"
@@ -2744,6 +2744,9 @@ msgstr "laburpen-informazioa ezin da oraindik IDT gisa erakutsi"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name ASCII izan behar da (laburpen-informazioak ASCII bakarrik du)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols .pdb fitxategien zerrenda da, adibidez [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "{1} {2} taula"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} bezalako GUID bat i
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "erabilera: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "erabilera: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (zerrenda bat sorta baterako)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "erabilera: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (zerrenda bat sorta baterako)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "erabilera: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

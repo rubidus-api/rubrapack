@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs .msi uchun"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch to‘plam uchun: x64, x86 va arm64 ro‘yxati, har biri bir martadan ('{1}' olindi)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch bitta arxitekturani yoki .msixbundle chiqishi uchun ro‘yxatni oladi"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch bitta arxitekturani yoki .msixbundle / .msixupload chiqishi uchun ro‘yxatni oladi"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp va --allow-unsigned-cabs --key bilan birga ishlatiladi"
@@ -2463,8 +2463,8 @@ msgstr "values ni faqat radio, combo va listbox boshqaruvlari qabul qiladi"
 msgid "out of memory"
 msgstr "xotira yetarli emas"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "'{1}' chiqishi: rubrapack .msi, .msm, .msix, .msixbundle va zanjirning o‘rnatish .exe faylini yozadi"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "'{1}' chiqishi: rubrapack .msi, .msm, .msix, .msixbundle, .msixupload va zanjirning o‘rnatish .exe faylini yozadi"
 
 msgid "package '%s' %s"
 msgstr "'{1}' paketi {2}"
@@ -2744,6 +2744,9 @@ msgstr "qisqacha ma’lumotni hali IDT sifatida ko‘rsatib bo‘lmaydi"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name ASCII bo‘lishi kerak (qisqacha ma’lumot faqat ASCII ni saqlaydi)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols — .pdb fayllar ro‘yxati, masalan [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "{1} {2} jadvali"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} kabi GUID bo‘lish
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "foydalanish: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "foydalanish: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (to‘plam uchun ro‘yxat)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "foydalanish: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (to‘plam uchun ro‘yxat)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "foydalanish: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs .msi-এর জন্য"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "বান্ডলের জন্য --arch: x64, x86 এবং arm64-এর তালিকা, প্রতিটি একবার ('{1}' পাওয়া গেছে)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch একটি আর্কিটেকচার, বা .msixbundle আউটপুটের জন্য তালিকা নেয়"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch একটি আর্কিটেকচার, বা .msixbundle / .msixupload আউটপুটের জন্য তালিকা নেয়"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp এবং --allow-unsigned-cabs --key-এর সাথে যায়"
@@ -2463,8 +2463,8 @@ msgstr "শুধু radio, combo ও listbox নিয়ন্ত্রণ val
 msgid "out of memory"
 msgstr "মেমরি ফুরিয়ে গেছে"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "আউটপুট '{1}': rubrapack .msi, .msm, .msix, .msixbundle এবং একটি চেইনের সেটআপ .exe লেখে"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "আউটপুট '{1}': rubrapack .msi, .msm, .msix, .msixbundle, .msixupload এবং একটি চেইনের সেটআপ .exe লেখে"
 
 msgid "package '%s' %s"
 msgstr "প্যাকেজ '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "সারাংশ তথ্য এখনো IDT হিসেবে দ�
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name-কে ASCII হতে হবে (সারাংশ তথ্যে শুধু ASCII থাকে)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols হলো .pdb ফাইলের তালিকা, যেমন [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "টেবিল {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code-কে {{12345678-1234-1234-1234-123456789ABC}-এর ম�
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "ব্যবহার: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "ব্যবহার: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

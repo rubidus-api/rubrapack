@@ -507,8 +507,8 @@ msgstr "a --allow-unsigned-cabs .msi fájlokhoz való"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch köteghez: x64, x86 és arm64 listája, mindegyik egyszer (kapott: '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "a --arch egy architektúrát fogad el, vagy listát .msixbundle kimenethez"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "a --arch egy architektúrát fogad el, vagy listát .msixbundle / .msixupload kimenethez"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "a --cert, --pass-env, --pass-file, --timestamp és --allow-unsigned-cabs a --key kapcsolóval együtt használható"
@@ -2463,8 +2463,8 @@ msgstr "csak a radio, combo és listbox vezérlők fogadnak el values értéket"
 msgid "out of memory"
 msgstr "elfogyott a memória"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "'{1}' kimenet: a rubrapack .msi, .msm, .msix, .msixbundle fájlt és lánc telepítő .exe-jét írja"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "'{1}' kimenet: a rubrapack .msi, .msm, .msix, .msixbundle, .msixupload fájlt és lánc telepítő .exe-jét írja"
 
 msgid "package '%s' %s"
 msgstr "a(z) '{1}' csomag {2}"
@@ -2744,6 +2744,9 @@ msgstr "az összegzőadatok még nem jeleníthetők meg IDT-ként"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "a summary-name csak ASCII lehet (az összegzőadatok csak ASCII-t tartalmaznak)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "a symbols .pdb-fájlok listája, például [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "a(z) {1} tábla {2}"
@@ -3201,8 +3204,8 @@ msgstr "az upgrade-code egy GUID kell legyen, például {12345678-1234-1234-1234
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "használat: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "használat: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista egy köteghez)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "használat: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista egy köteghez)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "használat: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

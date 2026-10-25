@@ -830,6 +830,8 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_main_publisher);
     for (size_t k = 0; k < ir->msix_cap_count; ++k) rp_mem_free(a, ir->msix_caps[k]);
     rp_mem_free(a, ir->msix_caps);
+    for (size_t k = 0; k < ir->msix_symbol_count; ++k) rp_mem_free(a, ir->msix_symbols[k]);
+    rp_mem_free(a, ir->msix_symbols);
     for (size_t k = 0; k < ir->msix_dep_count; ++k) {
         rp_ir_msix_dep_t *x = &ir->msix_deps[k];
         char *xs[] = { x->id, x->name, x->publisher, x->min_version };

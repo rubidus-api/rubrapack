@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs é para .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch para um lote: uma lista de x64, x86 e arm64, cada um uma vez (recebido '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch aceita uma arquitetura, ou uma lista para uma saída .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch aceita uma arquitetura, ou uma lista para uma saída .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp e --allow-unsigned-cabs vão com --key"
@@ -2463,8 +2463,8 @@ msgstr "apenas os controlos radio, combo e listbox aceitam values"
 msgid "out of memory"
 msgstr "memória insuficiente"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "saída '{1}': o rubrapack grava .msi, .msm, .msix, .msixbundle e o setup .exe de uma cadeia"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "saída '{1}': o rubrapack grava .msi, .msm, .msix, .msixbundle, .msixupload e o setup .exe de uma cadeia"
 
 msgid "package '%s' %s"
 msgstr "pacote '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "as informações de resumo ainda não podem ser mostradas como IDT"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name deve ser ASCII (as informações de resumo contêm apenas ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols é uma lista de ficheiros .pdb, como [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "tabela {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code deve ser um GUID como {12345678-1234-1234-1234-123456789ABC
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "uso: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "uso: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (uma lista para um lote)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "uso: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (uma lista para um lote)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "uso: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

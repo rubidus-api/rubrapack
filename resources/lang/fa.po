@@ -509,8 +509,8 @@ msgstr "--allow-unsigned-cabs برای .msi است"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch برای مجموعه: فهرستی از x64، x86 و arm64، هر کدام یک بار ('{1}' دریافت شد)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch یک معماری، یا فهرستی برای خروجی .msixbundle می‌پذیرد"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch یک معماری، یا فهرستی برای خروجی .msixbundle / .msixupload می‌پذیرد"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert، --pass-env، --pass-file، --timestamp و --allow-unsigned-cabs همراه --key می‌آیند"
@@ -2465,8 +2465,8 @@ msgstr "فقط کنترل‌های radio، combo و listbox مقدار values ر
 msgid "out of memory"
 msgstr "حافظه کافی نیست"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "خروجی '{1}': rubrapack فایل‌های .msi، .msm، .msix، .msixbundle و .exe نصب زنجیره را می‌نویسد"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "خروجی '{1}': rubrapack فایل‌های .msi، .msm، .msix، .msixbundle، .msixupload و .exe نصب زنجیره را می‌نویسد"
 
 msgid "package '%s' %s"
 msgstr "بسته '{1}' {2}"
@@ -2746,6 +2746,9 @@ msgstr "اطلاعات خلاصه هنوز نمی‌تواند به صورت IDT
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name باید ASCII باشد (اطلاعات خلاصه فقط ASCII دارد)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols فهرستی از پرونده‌های .pdb است، مانند [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "جدول {1} {2}"
@@ -3203,8 +3206,8 @@ msgstr "upgrade-code باید یک GUID مانند {{12345678-1234-1234-1234-123
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "کاربرد: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "کاربرد: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (فهرستی برای یک مجموعه)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "کاربرد: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (فهرستی برای یک مجموعه)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "کاربرد: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

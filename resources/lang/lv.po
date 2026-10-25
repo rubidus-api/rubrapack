@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs ir paredzēts .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch komplektam: saraksts ar x64, x86 un arm64, katrs vienreiz (saņemts '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch pieņem vienu arhitektūru vai sarakstu .msixbundle izvadei"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch pieņem vienu arhitektūru vai sarakstu .msixbundle / .msixupload izvadei"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp un --allow-unsigned-cabs tiek lietoti ar --key"
@@ -2463,8 +2463,8 @@ msgstr "values pieņem tikai radio, combo un listbox vadīklas"
 msgid "out of memory"
 msgstr "nepietiek atmiņas"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "izvade '{1}': rubrapack raksta .msi, .msm, .msix, .msixbundle un ķēdes setup .exe"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "izvade '{1}': rubrapack raksta .msi, .msm, .msix, .msixbundle, .msixupload un ķēdes setup .exe"
 
 msgid "package '%s' %s"
 msgstr "pakotne '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "kopsavilkuma informāciju vēl nevar parādīt kā IDT"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name jābūt ASCII (kopsavilkuma informācija satur tikai ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols ir .pdb failu saraksts, piemēram, [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "tabula {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code jābūt GUID kā {{12345678-1234-1234-1234-123456789ABC}"
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "lietojums: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "lietojums: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (saraksts komplektam)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "lietojums: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (saraksts komplektam)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "lietojums: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

@@ -183,6 +183,7 @@ ExampleSoftware.Hello_2.1.0.0_x86.msix	11208	stored
 ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored</code></pre>
 <p>Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. <code>--key</code> 를 주면 번들과 그 안의 패키지 모두에 서명한다.</p>
 <p>원본에 다른 언어의 이름(<code>display-name-ko</code> 따위)이 있으면 번들은 언어마다 그 언어의 글만 담은 <em>리소스 패키지</em> <code>ExampleSoftware.Hello_2.1.0.0_language-ko.msix</code> 도 담고, 아키텍처 패키지에는 원본 자신의 언어만 남는다. Windows 는 사용자가 설정한 언어의 리소스 패키지만 설치하므로 보지도 않을 글을 내려받는 사람이 없고, 나중에 Windows 에 더한 언어는 다음 업데이트 때 받아 온다. <code>[msix]</code> 에 <code>language-packs = false</code> 를 두면 모든 언어를 아키텍처 패키지에 그대로 둔다.</p>
+<p>Microsoft Store 에 낼 때는 출력 이름을 <code>.msixupload</code> 로 끝낸다: 파트너 센터는 그 파일에 든 번들을 아키텍처마다의 공개 기호와 함께 받고, 기호는 <code>[msix]</code> 에 <code>symbols = ["bin/$(ARCH)/hello.pdb"]</code> 로 적는다. 앱 서명은 Store 가 하므로 <code>--key</code> 도 <code>--unsigned-test</code> 도 필요 없다(뒤의 것은 게시자를 바꾼다).</p>
 <h3 id="웹-사이트에서-업데이트-appinstaller">17.13 웹 사이트에서 업데이트: <code>.appinstaller</code><a class="plink" href="#웹-사이트에서-업데이트-appinstaller" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <p>Windows 는 MSIX 를 올려 둔 웹 사이트(또는 공유 폴더)에서 스스로 최신으로 유지할 수 있다. 패키지를 둘 곳을 적으면 rubrapack 이 그 옆에 <em>App Installer 파일</em>을 쓴다:</p>
 <pre><code class="lang-text">[msix]

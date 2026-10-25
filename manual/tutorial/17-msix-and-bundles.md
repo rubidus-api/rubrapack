@@ -349,6 +349,11 @@ installs the resource packages of the languages the user has set, so nobody down
 never see, and a language added to Windows later is fetched with the next update.
 `language-packs = false` in `[msix]` keeps every language in the architecture packages instead.
 
+For the Microsoft Store, end the output in `.msixupload` instead: Partner Center takes the bundle
+in that file together with each architecture's public symbols, which `[msix]` names with
+`symbols = ["bin/$(ARCH)/hello.pdb"]`. The Store signs the app itself, so neither `--key` nor
+`--unsigned-test` is needed (the latter would change the publisher).
+
 ## Updates from a web site: `.appinstaller`
 
 Windows can keep an MSIX up to date by itself, from a web site (or a file share) you publish it on.

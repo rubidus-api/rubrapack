@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs je za .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch za skup: popis x64, x86 i arm64, svaki jednom (dobiveno '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch prima jednu arhitekturu ili popis za izlaz .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch prima jednu arhitekturu ili popis za izlaz .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp i --allow-unsigned-cabs idu s --key"
@@ -2463,8 +2463,8 @@ msgstr "samo kontrole radio, combo i listbox primaju values"
 msgid "out of memory"
 msgstr "nema dovoljno memorije"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "izlaz '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle i setup .exe lanca"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "izlaz '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle, .msixupload i setup .exe lanca"
 
 msgid "package '%s' %s"
 msgstr "paket '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "sažetak informacija još se ne može prikazati kao IDT"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name mora biti ASCII (sažetak informacija sadrži samo ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols je popis .pdb datoteka, npr. [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "tablica {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}"
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "upotreba: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "upotreba: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (popis za skup paketa)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "upotreba: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (popis za skup paketa)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "upotreba: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

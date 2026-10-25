@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs dotyczy plików .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch dla zestawu: lista x64, x86 i arm64, każda raz (otrzymano '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch przyjmuje jedną architekturę lub listę dla wyjścia .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch przyjmuje jedną architekturę lub listę dla wyjścia .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp i --allow-unsigned-cabs idą z --key"
@@ -2463,8 +2463,8 @@ msgstr "tylko kontrolki radio, combo i listbox przyjmują values"
 msgid "out of memory"
 msgstr "brak pamięci"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "wyjście '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle i instalacyjny .exe łańcucha"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "wyjście '{1}': rubrapack zapisuje .msi, .msm, .msix, .msixbundle, .msixupload i instalacyjny .exe łańcucha"
 
 msgid "package '%s' %s"
 msgstr "pakiet '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "informacji podsumowania nie można jeszcze pokazać jako IDT"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name musi być w ASCII (informacje podsumowania zawierają tylko ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols to lista plików .pdb, np. [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "tabela {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code musi być identyfikatorem GUID, np. {12345678-1234-1234-123
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "użycie: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "użycie: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista dla zestawu)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "użycie: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista dla zestawu)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "użycie: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

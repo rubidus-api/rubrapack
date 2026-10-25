@@ -765,6 +765,7 @@ const char *const rp_schema_lines[] = {
     "    \"registry-virtualization\": {\n",
     "     \"type\": \"boolean\"\n",
     "    },\n",
+    "    \"symbols\": {},\n",
     "    \"update-background\": {\n",
     "     \"type\": \"boolean\"\n",
     "    },\n",

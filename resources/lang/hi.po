@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs .msi के लिए है"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "बंडल के लिए --arch: x64, x86 और arm64 की सूची, हर एक एक बार (मिला '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch एक आर्किटेक्चर लेता है, या .msixbundle आउटपुट के लिए सूची"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch एक आर्किटेक्चर लेता है, या .msixbundle / .msixupload आउटपुट के लिए सूची"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp और --allow-unsigned-cabs --key के साथ आते हैं"
@@ -2463,8 +2463,8 @@ msgstr "केवल radio, combo और listbox नियंत्रण values
 msgid "out of memory"
 msgstr "मेमोरी समाप्त"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "आउटपुट '{1}': rubrapack .msi, .msm, .msix, .msixbundle और chain का setup .exe लिखता है"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "आउटपुट '{1}': rubrapack .msi, .msm, .msix, .msixbundle, .msixupload और chain का setup .exe लिखता है"
 
 msgid "package '%s' %s"
 msgstr "पैकेज '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "सारांश जानकारी अभी IDT के रूप 
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name ASCII होना चाहिए (सारांश जानकारी में केवल ASCII होता है)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols .pdb फ़ाइलों की सूची है, जैसे [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "तालिका {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} जैसा GUID �
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "उपयोग: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "उपयोग: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (बंडल के लिए सूची)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "उपयोग: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (बंडल के लिए सूची)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "उपयोग: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

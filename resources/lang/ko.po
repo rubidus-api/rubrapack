@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs 는 .msi 에 씁니다"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "번들의 --arch: x64, x86, arm64 를 각각 한 번씩 적은 목록입니다('{1}'을(를) 받음)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch 는 아키텍처 하나, 또는 .msixbundle 출력일 때 목록입니다"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch 는 아키텍처 하나, 또는 .msixbundle / .msixupload 출력일 때 목록입니다"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp, --allow-unsigned-cabs 는 --key 와 함께 씁니다"
@@ -2463,8 +2463,8 @@ msgstr "values 는 radio, combo, listbox 컨트롤만 받습니다"
 msgid "out of memory"
 msgstr "메모리가 모자랍니다"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "출력 '{1}': rubrapack 은 .msi, .msm, .msix, .msixbundle 과 체인의 설치 프로그램 .exe 를 씁니다"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "출력 '{1}': rubrapack 은 .msi, .msm, .msix, .msixbundle, .msixupload 와 체인의 설치 프로그램 .exe 를 씁니다"
 
 msgid "package '%s' %s"
 msgstr "패키지 '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "요약 정보는 아직 IDT 로 보일 수 없습니다"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name 은 ASCII 여야 합니다(요약 정보는 ASCII 만 담습니다)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols 는 .pdb 파일의 목록이다. 예: [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "표 {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code 는 {{12345678-1234-1234-1234-123456789ABC} 같은 GUID 여
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "사용법: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "사용법: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "사용법: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "사용법: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

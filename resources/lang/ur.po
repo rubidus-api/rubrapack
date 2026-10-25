@@ -509,8 +509,8 @@ msgstr "--allow-unsigned-cabs .msi کے لیے ہے"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "بنڈل کے لیے --arch: x64، x86 اور arm64 کی فہرست، ہر ایک ایک بار ('{1}' ملا)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch ایک آرکیٹیکچر، یا .msixbundle آؤٹ پٹ کے لیے فہرست لیتا ہے"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch ایک آرکیٹیکچر، یا .msixbundle / .msixupload آؤٹ پٹ کے لیے فہرست لیتا ہے"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert، --pass-env، --pass-file، --timestamp اور --allow-unsigned-cabs --key کے ساتھ آتے ہیں"
@@ -2465,8 +2465,8 @@ msgstr "صرف radio، combo اور listbox کنٹرول values لیتے ہیں"
 msgid "out of memory"
 msgstr "میموری ختم ہو گئی"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "آؤٹ پٹ '{1}': rubrapack .msi، .msm، .msix، .msixbundle اور چین کا سیٹ اپ .exe لکھتا ہے"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "آؤٹ پٹ '{1}': rubrapack .msi، .msm، .msix، .msixbundle، .msixupload اور چین کا سیٹ اپ .exe لکھتا ہے"
 
 msgid "package '%s' %s"
 msgstr "پیکیج '{1}' {2}"
@@ -2746,6 +2746,9 @@ msgstr "خلاصہ معلومات ابھی IDT کے طور پر نہیں دکھ�
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name کو ASCII ہونا چاہیے (خلاصہ معلومات صرف ASCII رکھتی ہے)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols ‏.pdb فائلوں کی فہرست ہے، جیسے [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "جدول {1} {2}"
@@ -3203,8 +3206,8 @@ msgstr "upgrade-code کو {{12345678-1234-1234-1234-123456789ABC} جیسا GUID 
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "استعمال: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "استعمال: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (بنڈل کے لیے فہرست)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "استعمال: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (بنڈل کے لیے فہرست)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "استعمال: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

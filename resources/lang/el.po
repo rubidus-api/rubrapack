@@ -507,8 +507,8 @@ msgstr "Το --allow-unsigned-cabs είναι για .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch για δέσμη: λίστα από x64, x86 και arm64, το καθένα μία φορά (δόθηκε '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "Το --arch δέχεται μία αρχιτεκτονική, ή λίστα για έξοδο .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "Το --arch δέχεται μία αρχιτεκτονική, ή λίστα για έξοδο .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "Τα --cert, --pass-env, --pass-file, --timestamp και --allow-unsigned-cabs πάνε με το --key"
@@ -2463,8 +2463,8 @@ msgstr "μόνο τα στοιχεία ελέγχου radio, combo και listbo
 msgid "out of memory"
 msgstr "η μνήμη εξαντλήθηκε"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "έξοδος '{1}': το rubrapack γράφει .msi, .msm, .msix, .msixbundle και το setup .exe μιας αλυσίδας"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "έξοδος '{1}': το rubrapack γράφει .msi, .msm, .msix, .msixbundle, .msixupload και το setup .exe μιας αλυσίδας"
 
 msgid "package '%s' %s"
 msgstr "πακέτο '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "οι πληροφορίες σύνοψης δεν μπορούν να ε
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "το summary-name πρέπει να είναι ASCII (οι πληροφορίες σύνοψης περιέχουν μόνο ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "το symbols είναι λίστα αρχείων .pdb, όπως [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "πίνακας {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "το upgrade-code πρέπει να είναι GUID όπως {{12345678-
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "χρήση: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "χρήση: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (λίστα για δέσμη)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "χρήση: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (λίστα για δέσμη)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "χρήση: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

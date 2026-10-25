@@ -331,6 +331,10 @@ Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key`
 언어는 다음 업데이트 때 받아 온다. `[msix]` 에 `language-packs = false` 를 두면 모든 언어를 아키텍처 패키지에 그대로
 둔다.
 
+Microsoft Store 에 낼 때는 출력 이름을 `.msixupload` 로 끝낸다: 파트너 센터는 그 파일에 든 번들을 아키텍처마다의
+공개 기호와 함께 받고, 기호는 `[msix]` 에 `symbols = ["bin/$(ARCH)/hello.pdb"]` 로 적는다. 앱 서명은 Store 가 하므로
+`--key` 도 `--unsigned-test` 도 필요 없다(뒤의 것은 게시자를 바꾼다).
+
 ## 웹 사이트에서 업데이트: `.appinstaller`
 
 Windows 는 MSIX 를 올려 둔 웹 사이트(또는 공유 폴더)에서 스스로 최신으로 유지할 수 있다. 패키지를 둘 곳을 적으면

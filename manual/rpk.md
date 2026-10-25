@@ -257,7 +257,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image (`.bmp`, bitmap only), text-xx, labels-xx |
 | `[billboard.ID]` | **image** (`.bmp`), **feature**, order (MSI only; shown on the progress page while the feature installs) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when, advertise (`true`: see [Shortcuts](#shortcuts-shortcutid), MSI only) |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, external-location, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, external-location, symbols (`.pdb` files), language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, **entry-point** (the activatable class that serves it), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args (on a content event only without class), display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
@@ -417,6 +417,12 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `<identity-name>_<version>_<arch>.msix` inside. Windows installs the package for its own
   architecture from it (an x64 machine takes x64 before x86). `$(ARCH)` gives each build its own
   programs: `source = "bin/$(ARCH)/app.exe"`. The bundle's version is the packages' version.
+- An output ending in `.msixupload` is what the Microsoft Store's Partner Center takes: that bundle,
+  `<identity-name>_<version>_<arch>_..._<arch>.msixbundle`, in a ZIP, and for each architecture an
+  `<identity-name>_<version>_<arch>.appxsym` - a ZIP of the public symbols `[msix] symbols` names
+  (`symbols = ["bin/$(ARCH)/app.pdb"]`), which the Store uses for crash reports. Without `symbols`
+  it holds the bundle alone. It need not be signed - the Store signs what it publishes - but not
+  `--unsigned-test` either, which changes the publisher the Store checks.
 
 ### Registering with an installed program: `[action.ID]`
 
@@ -1948,13 +1954,13 @@ leaves: 242 units for `name.ext` with a three-letter extension, 246 for a name w
 ## Command line
 
 ```text
-rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE]...
-                [--arch x64|arm64|x86 | --arch <list> (.msixbundle)]
+rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE]...
+                [--arch x64|arm64|x86 | --arch <list> (.msixbundle, .msixupload)]
                 [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<key> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
-                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
+                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]

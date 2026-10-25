@@ -246,7 +246,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image(`.bmp`, bitmap 전용), text-xx, labels-xx |
 | `[billboard.ID]` | **image**(`.bmp`), **feature**, order (MSI 전용; 그 feature 가 설치되는 동안 진행 화면에 보임) |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when, advertise(`true`: [바로가기](#바로가기-shortcutid) 참고, MSI 전용) |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, framework, external-location, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, framework, external-location, symbols(`.pdb` 파일), language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
@@ -384,6 +384,11 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `<identity-name>_<version>_<arch>.msix` 라는 이름을 갖는다. Windows 는 그 가운데 자기 아키텍처의
   패키지를 설치한다(x64 컴퓨터는 x86 보다 x64 를 고른다). `$(ARCH)` 로 빌드마다 제 프로그램을 준다:
   `source = "bin/$(ARCH)/app.exe"`. 묶음의 판은 패키지들의 판이다.
+- 출력 이름이 `.msixupload` 로 끝나면 Microsoft Store 의 파트너 센터가 받는 파일이다: 그 묶음
+  `<identity-name>_<version>_<arch>_..._<arch>.msixbundle` 을 ZIP 에 담고, 아키텍처마다
+  `<identity-name>_<version>_<arch>.appxsym` - `[msix] symbols` 가 적은 공개 기호(`symbols = ["bin/$(ARCH)/app.pdb"]`)의
+  ZIP 으로, Store 가 충돌 보고에 쓴다 - 을 함께 담는다. `symbols` 가 없으면 묶음만 든다. 서명은 하지 않아도 되지만
+  (게시하는 것은 Store 가 서명한다) `--unsigned-test` 도 쓰지 않는다: Store 가 확인하는 게시자가 바뀐다.
 
 ### 설치한 프로그램으로 등록하기: `[action.ID]`
 
@@ -1754,13 +1759,13 @@ guard = true
 ## 명령줄
 
 ```text
-rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE]...
-                [--arch x64|arm64|x86 | --arch <목록> (.msixbundle)]
+rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE]...
+                [--arch x64|arm64|x86 | --arch <목록> (.msixbundle, .msixupload)]
                 [--compress none|mszip|mszip:N|lzx|lzx:N] [--jobs N] [--nfc] [--reproducible]
                 [<키> [--cert <chain.pem>]
                  [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
-                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle)
+                [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]

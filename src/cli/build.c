@@ -134,7 +134,10 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
 }
 
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
-// named <identity>_<version>_<arch>.msix inside, the architectures in the order given.
+// named <identity>_<version>_<arch>.msix inside, the architectures in the order given. A .msixupload
+// (RFC-0031 B22) is that bundle, <identity>_<version>_<arch>_..._<arch>.msixbundle, in a plain ZIP
+// with an <identity>_<version>_<arch>.appxsym (a ZIP of the [msix] symbols) for each architecture
+// that names some.
 static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const char *dir, const rp_define_t *defines, size_t ndef,
                         char (*archs)[8], size_t narch, bool nfc, const rp_msix_options_t *mopt, const rp_sign_args_t *sign,
                         const char *out, const char *src, rp_srcdiags_t *d) {
@@ -148,6 +151,12 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     rp_msix_langpack_t *lp = NULL;    // RFC-0019: the language resource packages, from the first build
     size_t nlp = 0;
     char lp_prefix[280] = "";
+    bool upload = rp_ascii_ends_with_ci(out, ".msixupload");
+    rp_msix_part_t syms[3];
+    uint8_t *sym_data[3] = { 0 };
+    static char sym_names[3][320];
+    char bundle_name[320] = "";
+    size_t nsym = 0;
     proven_err_t err = PROVEN_OK;
     for (size_t k = 0; k < (narch ? narch : 1) && err == PROVEN_OK; ++k) {
         rp_ir_t ir;
@@ -180,8 +189,48 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
             snprintf(names[n], sizeof names[n], "%s_%u.%u.%u.%u_%s.msix", ir.msix_identity_name, v[0], v[1], v[2], v[3], arch_names[ir.arch]);
             if (n == 0) snprintf(lp_prefix, sizeof lp_prefix, "%s_%u.%u.%u.%u", ir.msix_identity_name, v[0], v[1], v[2], v[3]);
+            if (n == 0) snprintf(bundle_name, sizeof bundle_name, "%s", lp_prefix);
+            size_t bn = strlen(bundle_name);
+            snprintf(bundle_name + bn, sizeof bundle_name - bn, "_%s", arch_names[ir.arch]);
             parts[n] = (rp_msix_part_t){ names[n], pkgs[n], len };
             ++n;
+        }
+        // RFC-0031 B22: this architecture's public symbols, zipped into its .appxsym.
+        if (err == PROVEN_OK && upload && ir.msix_symbol_count) {
+            size_t ns = ir.msix_symbol_count, np = 0;
+            rp_msix_part_t *pdb = rp_mem_alloc(heap, ns, sizeof *pdb);
+            uint8_t **pdb_data = rp_mem_alloc(heap, ns, sizeof *pdb_data);
+            if (pdb == NULL || pdb_data == NULL) err = PROVEN_ERR_NOMEM;
+            for (size_t i = 0; i < ns && err == PROVEN_OK; ++i) {
+                const char *path = ir.msix_symbols[i], *base = strrchr(path, '/');
+                base = base ? base + 1 : path;
+                for (size_t j = 0; j < np && err == PROVEN_OK; ++j) {
+                    if (!rp_ascii_ieq(pdb[j].file_name, base)) continue;
+                    rp_diag_error(RP_DIAG_OUTPUT, "'%s' and '%s' are the same path in the package", pdb[j].file_name, base);
+                    err = PROVEN_ERR_INVALID_ARG;
+                }
+                size_t pl = 0;
+                if (err == PROVEN_OK && rp_pal_read_file(heap, path, (size_t)1 << 32, &pdb_data[np], &pl) != PROVEN_OK) {
+                    rp_diag_error(RP_DIAG_INPUT, "cannot read '%s'", path);
+                    err = PROVEN_ERR_IO;
+                }
+                if (err == PROVEN_OK) {
+                    pdb[np] = (rp_msix_part_t){ base, pdb_data[np], pl };
+                    ++np;
+                }
+            }
+            if (err == PROVEN_OK) {
+                unsigned v[4] = { 0 };
+                for (size_t i = 0; i < ir.version_count && i < 4; ++i) v[i] = ir.version_parts[i];
+                snprintf(sym_names[nsym], sizeof sym_names[nsym], "%s_%u.%u.%u.%u_%s.appxsym", ir.msix_identity_name, v[0], v[1], v[2], v[3],
+                         arch_names[ir.arch]);
+                size_t sl = 0;
+                err = rp_msix_plain_zip(heap, pdb, np, true, &sym_data[nsym], &sl);
+                if (err == PROVEN_OK) syms[nsym] = (rp_msix_part_t){ sym_names[nsym], sym_data[nsym], sl }, ++nsym;
+            }
+            for (size_t i = 0; i < np; ++i) rp_mem_free(heap, pdb_data[i]);
+            rp_mem_free(heap, pdb_data);
+            rp_mem_free(heap, pdb);
         }
         rp_ir_free(&ir);
     }
@@ -215,6 +264,21 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             b = sb;
             bl = sl;
         }
+        if (err == PROVEN_OK && rc == RP_EXIT_OK && upload) {      // RFC-0031 B22: the bundle and the symbols, stored
+            rp_msix_part_t up[4];
+            size_t nu = 0;
+            size_t bn = strlen(bundle_name);
+            snprintf(bundle_name + bn, sizeof bundle_name - bn, ".msixbundle");
+            up[nu++] = (rp_msix_part_t){ bundle_name, b, bl };
+            for (size_t i = 0; i < nsym; ++i) up[nu++] = syms[i];
+            uint8_t *u = NULL;
+            size_t ul = 0;
+            err = rp_msix_plain_zip(heap, up, nu, false, &u, &ul);
+            rp_mem_free(heap, b);
+            b = u;
+            bl = ul;
+            if (err != PROVEN_OK) why = "the upload file is too large";
+        }
         if (err != PROVEN_OK) {
             rp_diag_error(RP_DIAG_OUTPUT, "cannot bundle the packages: %s", why ? why : "out of memory");
             rc = RP_EXIT_IO;
@@ -230,6 +294,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     }
     rp_mem_free(heap, ai);
     for (size_t i = 0; i < n; ++i) rp_mem_free(heap, pkgs[i]);
+    for (size_t i = 0; i < nsym; ++i) rp_mem_free(heap, sym_data[i]);
     return rc;
 }
 
@@ -393,22 +458,22 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
         goto done;
     }
-    bool bundle = !lint && rp_ascii_ends_with_ci(out, ".msixbundle");
+    bool bundle = !lint && (rp_ascii_ends_with_ci(out, ".msixbundle") || rp_ascii_ends_with_ci(out, ".msixupload"));
     bool msix = (!lint && (bundle || rp_ascii_ends_with_ci(out, ".msix"))) || lint_msix;
     bool chain_out = !lint && rp_ascii_ends_with_ci(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)
     bool msm_out = !lint && rp_ascii_ends_with_ci(out, ".msm");          // a merge module, from a [module] source (RFC-0017)
     if (!lint && !msix && !chain_out && !msm_out && !rp_ascii_ends_with_ci(out, ".msi")) {
-        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe", out);
+        rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe", out);
         goto done;
     }
     // A bundle takes a list of architectures (RFC-0010 P8b-2); everything else one.
     char arch_list[3][8];
     size_t narch = 0;
     if (arch && strchr(arch, ',') && !bundle) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch takes one architecture, or a list for a .msixbundle output");
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--arch takes one architecture, or a list for a .msixbundle or .msixupload output");
         goto done;
     }
     for (const char *p = arch; bundle && p && *p;) {

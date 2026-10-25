@@ -3192,6 +3192,31 @@ static void copy_elements(rp_buf_t *m, const char *man, size_t ml, const char *e
     }
 }
 
+proven_err_t rp_msix_plain_zip(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, bool deflate, uint8_t **out,
+                               size_t *len) {
+    *out = NULL;
+    *len = 0;
+    rp_zip_writer_t z;
+    rp_zip_begin(&z, alloc, (size_t)1 << 33);
+    proven_err_t err = PROVEN_OK;
+    for (size_t i = 0; i < n && err == PROVEN_OK; ++i) {
+        if (parts[i].len >= 0xFFFFFFFFu) {
+            err = PROVEN_ERR_INVALID_ARG;
+            break;
+        }
+        uint32_t crc = proven_crc32((proven_mem_view_t){ (const proven_byte_t *)parts[i].data, parts[i].len });
+        uint8_t *c = NULL;
+        size_t cl = 0;
+        if (deflate) err = rp_deflate(alloc, parts[i].data, parts[i].len, 6, &c, &cl);
+        if (err == PROVEN_OK) rp_zip_add_plain(&z, parts[i].file_name, deflate ? 8 : 0, deflate ? c : parts[i].data, deflate ? cl : parts[i].len, crc, parts[i].len);
+        rp_mem_free(alloc, c);
+    }
+    if (err == PROVEN_OK) err = z.out.err;
+    if (err == PROVEN_OK) return rp_zip_finish(&z, out, len);
+    rp_zip_abort(&z);
+    return err;
+}
+
 proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, uint8_t **out,
                             size_t *len, const char **why) {
     enum { MAX_PARTS = 64 };

@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs は .msi 用です"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "バンドルの --arch: x64、x86、arm64 をそれぞれ 1 回ずつ並べます ('{1}' でした)"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch はアーキテクチャを 1 つ取ります。.msixbundle の出力なら一覧を取ります"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch はアーキテクチャを 1 つ取ります。.msixbundle / .msixupload の出力なら一覧を取ります"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert、--pass-env、--pass-file、--timestamp、--allow-unsigned-cabs は --key と一緒に使います"
@@ -2463,8 +2463,8 @@ msgstr "values は radio, combo, listbox コントロールのみが取ります
 msgid "out of memory"
 msgstr "メモリ不足"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "出力 '{1}': rubrapack が書くのは .msi、.msm、.msix、.msixbundle とチェーンのセットアップ .exe です"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "出力 '{1}': rubrapack が書くのは .msi、.msm、.msix、.msixbundle、.msixupload とチェーンのセットアップ .exe です"
 
 msgid "package '%s' %s"
 msgstr "パッケージ '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "概要情報はまだ IDT で表示できません"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name は ASCII でなければなりません (概要情報は ASCII しか持てません)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols は .pdb ファイルの一覧です。例: [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "テーブル {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code は {12345678-1234-1234-1234-123456789ABC} のような GUI
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "使い方: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "使い方: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (バンドルなら一覧)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "使い方: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (バンドルなら一覧)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "使い方: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

@@ -507,8 +507,8 @@ msgstr "--allow-unsigned-cabs ใช้กับ .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch สำหรับบันเดิล: รายการ x64, x86 และ arm64 อย่างละครั้ง (ได้ '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "--arch รับสถาปัตยกรรมเดียว หรือรายการสำหรับผลลัพธ์ .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "--arch รับสถาปัตยกรรมเดียว หรือรายการสำหรับผลลัพธ์ .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "--cert, --pass-env, --pass-file, --timestamp และ --allow-unsigned-cabs ใช้คู่กับ --key"
@@ -2463,8 +2463,8 @@ msgstr "เฉพาะตัวควบคุม radio, combo และ listbo
 msgid "out of memory"
 msgstr "หน่วยความจำไม่พอ"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "ผลลัพธ์ '{1}': rubrapack เขียน .msi, .msm, .msix, .msixbundle และ setup .exe ของ chain"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "ผลลัพธ์ '{1}': rubrapack เขียน .msi, .msm, .msix, .msixbundle, .msixupload และ setup .exe ของ chain"
 
 msgid "package '%s' %s"
 msgstr "แพ็กเกจ '{1}' {2}"
@@ -2744,6 +2744,9 @@ msgstr "ยังแสดงข้อมูลสรุปเป็น IDT ไ�
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name ต้องเป็น ASCII (ข้อมูลสรุปเก็บได้เฉพาะ ASCII)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols คือรายการไฟล์ .pdb เช่น [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "ตาราง {1} {2}"
@@ -3201,8 +3204,8 @@ msgstr "upgrade-code ต้องเป็น GUID เช่น {{12345678-1234-
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "วิธีใช้: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "วิธีใช้: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (รายการสำหรับบันเดิล)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "วิธีใช้: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (รายการสำหรับบันเดิล)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "วิธีใช้: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

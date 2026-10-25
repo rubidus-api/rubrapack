@@ -73,6 +73,12 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim,
                                           uint8_t **out, size_t *len, const char **why);
 
+// A plain ZIP of files (RFC-0031 B22) - an .appxsym of .pdb files (deflated) or a .msixupload of a
+// bundle and its .appxsym files (stored) - as Explorer's "Compressed (zipped) folder" makes one,
+// which is how Microsoft's docs say to make them by hand: ZIP32 entries, each under 4 GiB.
+[[nodiscard]] proven_err_t rp_msix_plain_zip(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, bool deflate,
+                                             uint8_t **out, size_t *len);
+
 // A payload file of a package, as its block map names it; for a bundle, its manifest and packages.
 typedef struct {
     char    *name;          // block map name (backslashes), UTF-8

@@ -710,6 +710,8 @@ typedef struct {
     bool      msix_modification;                // modification = true: a modification package of msix_main
     bool      msix_framework;                   // framework = true: a framework package other packages depend on (RFC-0031 B19)
     bool      msix_external;                    // external-location = true: the identity of a program installed elsewhere (RFC-0031 B20)
+    char    **msix_symbols;                     // [msix] symbols: the .pdb files of a .msixupload (RFC-0031 B22), paths to read
+    size_t    msix_symbol_count;
     bool      msix_no_langpacks;                // language-packs = false: a bundle keeps every language in its packages
     size_t    msix_dep_count;
     rp_ir_msix_block_t *msix_blocks;            // tables an MSIX cannot carry, without msi-only = true

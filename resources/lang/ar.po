@@ -509,8 +509,8 @@ msgstr "--allow-unsigned-cabs مخصص لملفات .msi"
 msgid "--arch for a bundle: a list of x64, x86 and arm64, each once (got '%s')"
 msgstr "--arch لمجموعة حزم: قائمة من x64 وx86 وarm64، كل منها مرة واحدة (الموجود '{1}')"
 
-msgid "--arch takes one architecture, or a list for a .msixbundle output"
-msgstr "يأخذ --arch بنية واحدة، أو قائمة لإخراج .msixbundle"
+msgid "--arch takes one architecture, or a list for a .msixbundle or .msixupload output"
+msgstr "يأخذ --arch بنية واحدة، أو قائمة لإخراج .msixbundle / .msixupload"
 
 msgid "--cert, --pass-env, --pass-file, --timestamp and --allow-unsigned-cabs go with --key"
 msgstr "تُستخدم --cert و--pass-env و--pass-file و--timestamp و--allow-unsigned-cabs مع --key"
@@ -2465,8 +2465,8 @@ msgstr "عناصر التحكم radio وcombo وlistbox وحدها تقبل valu
 msgid "out of memory"
 msgstr "نفدت الذاكرة"
 
-msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle and a chain's setup .exe"
-msgstr "الإخراج '{1}': يكتب rubrapack ملفات .msi و.msm و.msix و.msixbundle وملف setup .exe للسلسلة"
+msgid "output '%s': rubrapack writes .msi, .msm, .msix, .msixbundle, .msixupload and a chain's setup .exe"
+msgstr "الإخراج '{1}': يكتب rubrapack ملفات .msi و.msm و.msix و.msixbundle و.msixupload وملف setup .exe للسلسلة"
 
 msgid "package '%s' %s"
 msgstr "الحزمة '{1}' {2}"
@@ -2746,6 +2746,9 @@ msgstr "لا يمكن عرض معلومات الملخص بصيغة IDT بعد"
 
 msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "يجب أن يكون summary-name بأحرف ASCII (تحمل معلومات الملخص ASCII فقط)"
+
+msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols قائمة بملفات .pdb، مثل [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "الجدول {1} {2}"
@@ -3203,8 +3206,8 @@ msgstr "يجب أن يكون upgrade-code معرّف GUID مثل {{12345678-1234
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "الاستخدام: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "الاستخدام: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86 (قائمة لمجموعة حزم)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgstr "الاستخدام: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (قائمة لمجموعة حزم)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "الاستخدام: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
