@@ -938,6 +938,9 @@ msgstr "[env.{1}]: MSIX اپنے تمام متغیرات سیٹ کرتا ہے (w
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: اس کی قدر ایسی جگہ کا نام لیتی ہے جو MSIX نہیں دے سکتا (پیکیج سے باہر کا فولڈر جو Windows فولڈر نہیں، یا انسٹال کے وقت کا حصہ)؛ msi-only = true استعمال کریں"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: external-location = true کے ساتھ پیکیج میں پروگرام کی کوئی فائل نہیں ہوتی، اس لیے rubrapack کا لانچر بھی نہیں؛ یا msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] پہلے ہی اپنے پروگرام کے فولڈر میں ہے؛ isolate-for کسی اور جگہ انسٹال ہونے والی مشترکہ DLL کے لیے ہے"
 
@@ -1888,6 +1891,12 @@ msgstr "ایکسٹینشن '{1}' کا پہلے سے پروگرام ہے ([assoc.
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "ایکسٹینشن کو '.' اور چھوٹے حروف، ہندسے، '_' یا '-' ہونا چاہیے ('{1}' ملا)"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true پیکیج کو کہیں اور نصب پروگرام کی شناخت بناتا ہے: یہ فریم ورک، اختیاری یا ترمیمی پیکیج نہیں"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true کے لیے Windows بلڈ 19041 یا بعد کا درکار ہے: [msix] min-version = \"10.0.19041.0\" سیٹ کریں"
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false کے ساتھ extra-files کا کوئی اثر نہیں"

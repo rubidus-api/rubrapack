@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX nastaví všechny své proměnné (when); použijte msi-
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jeho hodnota jmenuje místo, které MSIX nemůže poskytnout (složku mimo balíček, která není složkou Windows, nebo část z doby instalace); použijte msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: s external-location = true balíček nenese žádný soubor programu, tedy ani spouštěč rubrapacku; nebo msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] už je ve složce svého programu; isolate-for je pro sdílenou knihovnu DLL nainstalovanou jinde"
 
@@ -1886,6 +1889,12 @@ msgstr "přípona '{1}' už má program ([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension musí být '.' a malá písmena, číslice, '_' nebo '-' (zadáno '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true dělá z balíčku identitu programu nainstalovaného jinde: není to balíček architektury, volitelný ani modifikační balíček"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true vyžaduje Windows sestavení 19041 nebo novější: nastavte [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nemá s preflight = false účinek"

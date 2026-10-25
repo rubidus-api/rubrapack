@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX 는 자기 변수를 모두 설정합니다(when). msi-o
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 그 값이 MSIX 가 줄 수 없는 곳(패키지 밖에 있고 Windows 폴더가 아닌 폴더, 또는 설치할 때 정해지는 부분)을 가리킵니다. msi-only = true 를 쓰십시오"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: external-location = true 면 패키지에 프로그램의 파일이 하나도 없으니 rubrapack 의 시작 프로그램도 없다. 아니면 msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] 은(는) 이미 자기 프로그램의 폴더에 있습니다. isolate-for 는 다른 곳에 설치되는 공유 DLL 을 위한 것입니다"
 
@@ -1886,6 +1889,12 @@ msgstr "확장명 '{1}'에는 이미 프로그램이 있습니다([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension 은 '.' 뒤에 소문자, 숫자, '_', '-' 가 와야 합니다('{1}'을(를) 받음)"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true 는 다른 곳에 설치된 프로그램의 신원을 만든다: 프레임워크, 선택적, 수정 패키지가 아니다"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true 는 Windows 빌드 19041 이상이 필요하다: [msix] min-version = \"10.0.19041.0\" 로 정한다"
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false 이면 extra-files 는 효과가 없습니다"

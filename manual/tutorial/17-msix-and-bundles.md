@@ -249,6 +249,11 @@ publisher = "CN=Example Software, O=Example Software, C=KR"
 framework = true
 ```
 
+A program that keeps its own installer can still have package identity - for an alias, a share
+target, an app extension: `external-location = true` (with `min-version = "10.0.19041.0"`) builds a
+package that holds only the manifest, and the installer registers it with
+`Add-AppxPackage -Path <package> -ExternalLocation <the program's folder>`.
+
 ## What the other tables become
 
 - `[shortcut.StartMenu]` in `Programs` to the application's executable *is* the application's

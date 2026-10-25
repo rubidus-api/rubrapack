@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX đặt mọi biến của nó (when); hãy dùng msi-onl
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: giá trị của nó nêu một nơi mà MSIX không thể cung cấp (thư mục ngoài gói không phải thư mục Windows, hoặc phần xác định lúc cài đặt); hãy dùng msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: với external-location = true gói không chứa tệp nào của chương trình, nên cũng không có trình khởi chạy của rubrapack; hoặc msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] đã ở trong thư mục chương trình của nó; isolate-for dành cho DLL dùng chung cài ở nơi khác"
 
@@ -1886,6 +1889,12 @@ msgstr "phần mở rộng '{1}' đã có chương trình ([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension phải là '.' và chữ thường, chữ số, '_' hoặc '-' (nhận được '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true biến gói thành danh tính của một chương trình được cài ở nơi khác: không phải gói khung, gói tùy chọn hay gói sửa đổi"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true cần Windows bản dựng 19041 trở lên: đặt [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files không có tác dụng khi preflight = false"

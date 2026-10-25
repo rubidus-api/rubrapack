@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX nastavi vse svoje spremenljivke (when); uporabite msi-on
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: njegova vrednost navaja mesto, ki ga MSIX ne more dati (mapo zunaj paketa, ki ni mapa sistema Windows, ali del iz časa namestitve); uporabite msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: z external-location = true paket ne vsebuje nobene datoteke programa, torej tudi ne zaganjalnika rubrapack; ali msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] je že v mapi svojega programa; isolate-for je za skupno knjižnico DLL, nameščeno drugje"
 
@@ -1886,6 +1889,12 @@ msgstr "pripona '{1}' že ima program ([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension mora biti '.' in male črke, števke, '_' ali '-' (dobljeno '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true naredi paket identiteto programa, nameščenega drugje: ni paket ogrodja, izbirni ali spreminjevalni paket"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true potrebuje gradnjo Windows 19041 ali novejšo: nastavite [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nima učinka s preflight = false"

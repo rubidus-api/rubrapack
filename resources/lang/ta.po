@@ -936,6 +936,9 @@ msgstr "[env.{1}]: ஒரு MSIX தன் எல்லா மாறிகள�
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: அதன் மதிப்பு MSIX கொடுக்க முடியாத இடத்தைக் குறிப்பிடுகிறது (தொகுப்புக்கு வெளியே Windows கோப்புறை அல்லாத கோப்புறை, அல்லது நிறுவல் நேரப் பகுதி); msi-only = true பயன்படுத்தவும்"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: external-location = true உடன் தொகுப்பில் நிரலின் எந்தக் கோப்பும் இல்லை, எனவே rubrapack இன் துவக்கியும் இல்லை; அல்லது msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] ஏற்கெனவே தன் நிரலின் கோப்புறையில் உள்ளது; isolate-for என்பது வேறு இடத்தில் நிறுவப்படும் பகிரப்பட்ட DLL-க்கானது"
 
@@ -1886,6 +1889,12 @@ msgstr "நீட்டிப்பு '{1}' க்கு ஏற்கெனவ�
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "நீட்டிப்பு '.' மற்றும் சிற்றெழுத்துகள், இலக்கங்கள், '_' அல்லது '-' ஆக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true தொகுப்பை வேறு இடத்தில் நிறுவப்பட்ட நிரலின் அடையாளமாக்குகிறது: இது கட்டமைப்பு, விருப்ப அல்லது மாற்றத் தொகுப்பு அல்ல"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true க்கு Windows கட்டமைப்பு 19041 அல்லது பிந்தையது தேவை: [msix] min-version = \"10.0.19041.0\" ஐ அமைக்கவும்"
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false உடன் extra-files க்கு விளைவு இல்லை"

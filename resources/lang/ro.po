@@ -936,6 +936,9 @@ msgstr "[env.{1}]: un MSIX setează toate variabilele sale (when); folosiți msi
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: valoarea sa numește un loc pe care un MSIX nu îl poate oferi (un folder din afara pachetului care nu este folder Windows, sau o parte din momentul instalării); folosiți msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: cu external-location = true pachetul nu conține niciun fișier al programului, deci nici lansatorul rubrapack; sau msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] este deja în folderul programului său; isolate-for este pentru o DLL partajată instalată în altă parte"
 
@@ -1886,6 +1889,12 @@ msgstr "extensia '{1}' are deja un program ([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension trebuie să fie '.' și litere mici, cifre, '_' sau '-' (primit '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true face din pachet identitatea unui program instalat în altă parte: nu este pachet cadru, opțional sau de modificare"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true necesită versiunea Windows 19041 sau mai nouă: setați [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nu are efect cu preflight = false"

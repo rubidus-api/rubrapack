@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX 会设置其所有变量(when)；请使用 msi-only = tr
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 其值指向 MSIX 无法提供的位置(不是 Windows 文件夹的包外文件夹，或安装时才确定的部分)；请使用 msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]：使用 external-location = true 时，包中不含程序的任何文件，因此也没有 rubrapack 的启动器；或者 msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] 已在它自己程序的文件夹中；isolate-for 用于安装在别处的共享 DLL"
 
@@ -1886,6 +1889,12 @@ msgstr "扩展名 '{1}' 已有程序([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension 必须是 '.' 加小写字母、数字、'_' 或 '-'(实际为 '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true 使包成为安装在别处的程序的标识：它不是框架包、可选包或修改包"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true 需要 Windows 内部版本 19041 或更高：请设置 [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false 时 extra-files 不起作用"

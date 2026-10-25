@@ -936,6 +936,9 @@ msgstr "[env.{1}]: ένα MSIX ορίζει όλες τις μεταβλητές
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: η τιμή του ονομάζει θέση που ένα MSIX δεν μπορεί να δώσει (φάκελο εκτός πακέτου που δεν είναι φάκελος των Windows, ή μέρος που ορίζεται στην εγκατάσταση)· χρησιμοποιήστε msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: με external-location = true το πακέτο δεν περιέχει κανένα αρχείο του προγράμματος, άρα ούτε τον εκκινητή του rubrapack· ή msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "το [file.{1}] είναι ήδη στον φάκελο του προγράμματός του· το isolate-for είναι για κοινόχρηστη DLL εγκατεστημένη αλλού"
 
@@ -1886,6 +1889,12 @@ msgstr "η επέκταση '{1}' έχει ήδη πρόγραμμα ([assoc.{2}
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "το extension πρέπει να είναι '.' και πεζά γράμματα, ψηφία, '_' ή '-' (δόθηκε '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "το external-location = true κάνει το πακέτο ταυτότητα ενός προγράμματος εγκατεστημένου αλλού: όχι πακέτο πλαισίου, προαιρετικό ή τροποποίησης"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "το external-location = true χρειάζεται έκδοση Windows 19041 ή νεότερη: ορίστε [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "το extra-files δεν έχει αποτέλεσμα με preflight = false"

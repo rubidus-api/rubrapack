@@ -257,7 +257,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[dialog-control.ID]` | **dialog**, **type** (`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image (`.bmp`, bitmap only), text-xx, labels-xx |
 | `[billboard.ID]` | **image** (`.bmp`), **feature**, order (MSI only; shown on the progress page while the feature installs) |
 | `[shortcut.ID]` | **dir** (a dir ID, or `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target** (`file:ID`), args, description, working-dir (a dir ID), icon (`.ico`), when, advertise (`true`: see [Shortcuts](#shortcuts-shortcutid), MSI only) |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, external-location, language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, **entry-point** (the activatable class that serves it), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args (on a content event only without class), display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
@@ -387,6 +387,16 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   (`Framework` in the manifest's `Properties`). Windows lets it declare no applications, no
   capabilities (so no `[service]` and no virtualization settings) and no dependencies of its own
   (`RP1617`); its files go to its own folder, the dir `INSTALLDIR`.
+- `external-location = true` makes a package with an *external location* (a "sparse" or identity
+  package): it gives package identity - and so the aliases, extensions and other declarations of
+  the `[msix-extension.*]` tables - to a program that its own installer (an MSI, say) puts in a
+  folder. The package holds only the manifest and its default logos; files, copies, INI files and
+  registry values stay the installer's, and the manifest's paths are read from that folder.
+  Register it with `Add-AppxPackage -Path <package> -ExternalLocation <the program's folder>`.
+  Windows 10 2004 and later (`min-version = "10.0.19041.0"`, `RP1614`); not with `framework` or
+  `main-package`, nor with `[env.*]` (`RP1617`). A program started on its own, rather than through
+  the package, has the identity only when its application manifest names it (an `<msix>` element
+  with the package's `publisher`, `packageName` and `applicationId`).
 - In a bundle, the texts of each language other than the package's own (`display-name-xx`,
   `description-xx`, `publisher-display-name-xx`) go into a resource package of that language
   (`<identity>_<version>_language-xx.msix`, `ResourcePackage`, no execution) with its part of

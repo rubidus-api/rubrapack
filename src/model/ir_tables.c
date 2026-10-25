@@ -66,7 +66,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     static const char *const keys[] = { "identity-name", "publisher", "publisher-display-name", "min-version", "appinstaller-uri",
                                         "package-uri", "update-hours", "update-prompt", "update-blocks", "update-background",
                                         "display-name", "capabilities", "file-system-virtualization", "registry-virtualization",
-                                        "main-package", "main-publisher", "modification", "language-packs", "framework", NULL };
+                                        "main-package", "main-publisher", "modification", "language-packs", "framework", "external-location", NULL };
     static const char *const lang_bases[] = { "display-name", "publisher-display-name", NULL };
     ir_check_keys_lang(c, t, keys, lang_bases);
     rp_ir_t *ir = c->ir;
@@ -114,6 +114,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     ir->msix_modification = ir_get_bool(c, t, "modification", false);
     ir->msix_no_langpacks = !ir_get_bool(c, t, "language-packs", true);
     ir->msix_framework = ir_get_bool(c, t, "framework", false);       // RFC-0031 B19
+    ir->msix_external = ir_get_bool(c, t, "external-location", false);    // RFC-0031 B20
     if (ir->msix_main && !msix_name_ok(ir->msix_main)) {
         ERR(c, ir_key_pos(t, "main-package"), "RP1601", "main-package is the main package's identity name (got '%s')", ir->msix_main);
     }

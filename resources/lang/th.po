@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX ตั้งค่าตัวแปรทั้งห�
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: ค่าของมันระบุตำแหน่งที่ MSIX ให้ไม่ได้ (โฟลเดอร์นอกแพ็กเกจที่ไม่ใช่โฟลเดอร์ของ Windows หรือส่วนที่กำหนดตอนติดตั้ง) ใช้ msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: เมื่อ external-location = true แพ็กเกจไม่มีไฟล์ใดของโปรแกรมเลย จึงไม่มีตัวเปิดของ rubrapack ด้วย หรือ msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] อยู่ในโฟลเดอร์ของโปรแกรมตัวเองแล้ว; isolate-for ใช้กับ DLL ที่ใช้ร่วมกันซึ่งติดตั้งไว้ที่อื่น"
 
@@ -1886,6 +1889,12 @@ msgstr "นามสกุล '{1}' มีโปรแกรมอยู่แ�
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension ต้องเป็น '.' ตามด้วยตัวพิมพ์เล็ก ตัวเลข '_' หรือ '-' (ได้ '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true ทำให้แพ็กเกจเป็นข้อมูลประจำตัวของโปรแกรมที่ติดตั้งไว้ที่อื่น: ไม่ใช่แพ็กเกจเฟรมเวิร์ก แพ็กเกจเสริม หรือแพ็กเกจปรับแต่ง"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true ต้องใช้ Windows บิลด์ 19041 ขึ้นไป: ตั้งค่า [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files ไม่มีผลเมื่อ preflight = false"

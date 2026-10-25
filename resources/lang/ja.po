@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX はすべての変数を設定します (when)。msi-onl
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: 値が MSIX では与えられない場所 (Windows のフォルダーではないパッケージ外のフォルダー、またはインストール時に決まる部分) を指しています。msi-only = true を使ってください"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: external-location = true ではパッケージにプログラムのファイルが入らないため、rubrapack のランチャーも入りません。または msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] はすでに自分のプログラムのフォルダーにあります。isolate-for は別の場所にインストールされる共有 DLL 用です"
 
@@ -1886,6 +1889,12 @@ msgstr "拡張子 '{1}' には既にプログラムがあります ([assoc.{2}])
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension は '.' と小文字、数字、'_'、'-' でなければなりません ('{1}' でした)"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true はパッケージを別の場所にインストールされたプログラムの ID にします: フレームワーク、オプション、変更パッケージではありません"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true には Windows ビルド 19041 以降が必要です: [msix] min-version = \"10.0.19041.0\" を設定してください"
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "preflight = false のときは extra-files に効果はありません"

@@ -715,7 +715,7 @@ static void loc_free(loc_t *l) {
 // The namespaces the extensions use (RFC-0010 N4), declared only when used so that a package without
 // extensions keeps the P8a manifest.
 enum { NS_UAP3 = 1, NS_UAP4 = 2, NS_DESKTOP = 4, NS_DESKTOP7 = 8, NS_DESKTOP2 = 16, NS_DESKTOP6 = 32, NS_COM = 64,
-       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_DESKTOP5 = 2048, NS_DESKTOP3 = 4096, NS_COUNT = 13 };
+       NS_DESKTOP4 = 128, NS_UAP6 = 256, NS_UAP7 = 512, NS_RESCAP6 = 1024, NS_DESKTOP5 = 2048, NS_DESKTOP3 = 4096, NS_UAP10 = 8192, NS_COUNT = 14 };
 // Capabilities the extensions need, in the same flag word above the namespaces (RFC-0016 2).
 enum { CAP_SERVICES = 1 << 16, CAP_SYSTEM_SERVICES = 1 << 17, CAP_UNVIRTUALIZED = 1 << 18 };
 
@@ -989,7 +989,8 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
                                              { "uap7", "http://schemas.microsoft.com/appx/manifest/uap/windows10/7" },
                                              { "rescap6", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" },
                                              { "desktop5", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/5" },
-                                             { "desktop3", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/3" } };
+                                             { "desktop3", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/3" },
+                                             { "uap10", "http://schemas.microsoft.com/appx/manifest/uap/windows10/10" } };
     for (int k = 0; k < NS_COUNT; ++k) {
         if (!(ns & (1u << k))) continue;
         rp_buf_puts(m, "         xmlns:");
@@ -1022,6 +1023,7 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     if (ir->msix_no_fs_virt) rp_buf_puts(m, "    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>\r\n");
     if (ir->msix_no_reg_virt) rp_buf_puts(m, "    <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>\r\n");
     if (ir->msix_modification) rp_buf_puts(m, "    <rescap6:ModificationPackage>true</rescap6:ModificationPackage>\r\n");    // RFC-0019
+    if (ir->msix_external) rp_buf_puts(m, "    <uap10:AllowExternalContent>true</uap10:AllowExternalContent>\r\n");      // RFC-0031 B20
     rp_buf_puts(m, "  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
     attr(m, "MinVersion", ir->msix_min_version ? ir->msix_min_version : "10.0.17763.0");
     rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n");
@@ -1057,7 +1059,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_puts(m, "    <Application");
         attr(m, "Id", a->id);
         attr(m, "Executable", ap[i].start[0] ? ap[i].start : ap[i].exe);
-        rp_buf_puts(m, " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
+        // From an external location the program runs as a desktop program of medium integrity (RFC-0031 B20).
+        rp_buf_puts(m, ir->msix_external ? " uap10:TrustLevel=\"mediumIL\" uap10:RuntimeBehavior=\"win32App\">\r\n      <uap:VisualElements"
+                                         : " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
         char res[160];
         snprintf(res, sizeof res, "ms-resource:%sDisplayName", a->id);
         attr(m, "DisplayName", ap[i].loc_display ? res : display);
@@ -2124,6 +2128,20 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         else if (ir->msix_dep_count) what = "[msix-dependency]", at = ir->msix_deps[0].pos;
         if (what) DERR(at, "RP1617", "a framework package has no applications, capabilities or dependencies of its own (%s)", what);
     }
+    // RFC-0031 B20: a package with an external location gives identity to a program its own installer
+    // puts in a folder; Windows reads the program from there (uap10:AllowExternalContent, build 19041).
+    if (ir->msix_external) {
+        if (ir->msix_framework || ir->msix_main) {
+            DERR(ir->msix_pos, "RP1617", "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package");
+        }
+        if (min_build(ir) < 19041) DERR(ir->msix_pos, "RP1614", "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\"");
+        for (size_t i = 0; i < ir->env_count; ++i) {
+            if (ir->envs[i].msi_only) continue;
+            DERR(ir->envs[i].pos, "RP1617", "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true",
+                 ir->envs[i].id);
+            break;
+        }
+    }
     if (ir->msix_app_count == 0 && ir->msix_main == NULL && !ir->msix_framework) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
     // RFC-0019: a modification package changes its main package's files and registry; it has no
     // applications of its own.
@@ -2649,6 +2667,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
     if (ir->msix_main) ns |= ir->msix_main_publisher || ir->msix_modification ? NS_UAP4 : NS_UAP3;     // RFC-0019
     if (ir->msix_modification) ns |= NS_RESCAP6;
+    if (ir->msix_external) ns |= NS_UAP10 | CAP_UNVIRTUALIZED;     // RFC-0031 B20: Windows' own template has both
     if (ir->msix_framework && (ns & (CAP_SERVICES | CAP_SYSTEM_SERVICES))) {
         DERR(ir->msix_pos, "RP1617", "a framework package has no applications, capabilities or dependencies of its own (%s)", "[service]");
     }
@@ -2678,6 +2697,20 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         if (ext[a].err != PROVEN_OK) DERR(top, "RP1613", "out of memory");
     }
     proven_err_t err = d->errors != errors ? PROVEN_ERR_INVALID_FORMAT : PROVEN_OK;
+    // RFC-0031 B20: with an external location the program's own installer puts its files, copies,
+    // INI files and registry values in place; the package keeps only what rubrapack made for the
+    // manifest (the default logos, resources.pri). The manifest's paths are read from that folder.
+    if (ir->msix_external) {
+        size_t kept = 0;
+        for (size_t i = 0; i < n; ++i) {
+            if (strncmp(items[i].path, "Assets\\Default", 14) == 0 || strcmp(items[i].path, "resources.pri") == 0) {
+                items[kept++] = items[i];
+            } else {
+                rp_mem_free(alloc, items[i].data);
+            }
+        }
+        n = kept;
+    }
 
     // The archive: payload, manifest, block map, content types (Windows' order).
     rp_zip_writer_t z;

@@ -239,6 +239,10 @@ publisher = "CN=Example Software, O=Example Software, C=KR"
 framework = true
 ```
 
+자기 설치 프로그램을 그대로 쓰는 프로그램도 패키지 신원을 가질 수 있다 - 별칭, 공유 대상, 앱 확장을 위해서다:
+`external-location = true`(와 `min-version = "10.0.19041.0"`)는 매니페스트만 든 패키지를 만들고, 설치 프로그램이
+`Add-AppxPackage -Path <패키지> -ExternalLocation <프로그램의 폴더>` 로 등록한다.
+
 ## 다른 표들은 무엇이 되나
 
 - `Programs` 에 있고 애플리케이션의 실행 파일을 가리키는 `[shortcut.StartMenu]` 는 애플리케이션의 시작 메뉴 항목

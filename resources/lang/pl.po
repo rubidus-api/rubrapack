@@ -936,6 +936,9 @@ msgstr "[env.{1}]: MSIX ustawia wszystkie swoje zmienne (when); użyj msi-only =
 msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that is not a Windows folder, or an install-time part); use msi-only = true"
 msgstr "[env.{1}]: jego wartość wskazuje miejsce, którego MSIX nie może dać (folder poza pakietem, który nie jest folderem Windows, lub część z czasu instalacji); użyj msi-only = true"
 
+msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
+msgstr "[env.{1}]: przy external-location = true pakiet nie zawiera żadnego pliku programu, więc i programu uruchamiającego rubrapack; lub msi-only = true"
+
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] jest już w folderze swojego programu; isolate-for dotyczy współdzielonej biblioteki DLL zainstalowanej gdzie indziej"
 
@@ -1886,6 +1889,12 @@ msgstr "rozszerzenie '{1}' ma już program ([assoc.{2}])"
 
 msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s')"
 msgstr "extension musi być '.' i małymi literami, cyframi, '_' lub '-' (otrzymano '{1}')"
+
+msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
+msgstr "external-location = true czyni pakiet tożsamością programu zainstalowanego gdzie indziej: nie jest to pakiet struktury, opcjonalny ani modyfikacyjny"
+
+msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true wymaga kompilacji Windows 19041 lub nowszej: ustaw [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nie ma efektu przy preflight = false"
