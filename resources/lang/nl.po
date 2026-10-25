@@ -1350,6 +1350,9 @@ msgstr "de onderdeel- of mappenketen van een bestand is verbroken"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "een lettertype gaat in een MSIX via een [font.*] die het noemt"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "een frameworkpakket heeft geen eigen toepassingen, mogelijkheden of afhankelijkheden ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "een hash die de tokenondertekening niet kent"
 

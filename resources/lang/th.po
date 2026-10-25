@@ -1350,6 +1350,9 @@ msgstr "สายคอมโพเนนต์หรือไดเรกทอ
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "แบบอักษรเข้าสู่ MSIX ผ่าน [font.*] ที่ระบุมัน"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "แพ็กเกจเฟรมเวิร์กไม่มีแอปพลิเคชัน ความสามารถ หรือการพึ่งพาของตัวเอง ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "แฮชที่การลงนามด้วยโทเค็นไม่รู้จัก"
 

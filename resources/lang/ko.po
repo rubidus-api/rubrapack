@@ -1350,6 +1350,9 @@ msgstr "파일의 구성 요소 또는 디렉터리 사슬이 끊겨 있습니�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "글꼴은 그것을 가리키는 [font.*] 을 통해 MSIX 에 들어갑니다"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "프레임워크 패키지에는 자기 애플리케이션, 기능, 의존이 없다 ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "토큰 서명이 모르는 해시입니다"
 

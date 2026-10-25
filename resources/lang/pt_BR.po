@@ -1350,6 +1350,9 @@ msgstr "a cadeia de componente ou diretório de um arquivo está quebrada"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "uma fonte entra em um MSIX por meio de um [font.*] que a indica"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "um pacote de estrutura não tem aplicativos, recursos nem dependências próprios ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "um hash que a assinatura por token não conhece"
 

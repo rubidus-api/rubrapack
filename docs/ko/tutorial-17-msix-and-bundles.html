@@ -146,6 +146,11 @@ main-package = "ExampleSoftware.Hello"
 modification = true
 min-version = "10.0.18362.0"</code></pre>
 <p>둘 다 <code>[msix-app.*]</code> 표가 없어도 된다. 선택적 패키지의 파일은 자기 폴더(dir <code>INSTALLDIR</code>)에, 수정 패키지의 파일은 가상 파일 시스템에 들어가 주 애플리케이션이 본다. 주 패키지의 게시자가 다른 사람이면 <code>main-publisher</code> 로 적는다.</p>
+<p><em>프레임워크 패키지</em>는 그 반대다: 여러 패키지가 기대는 공유 파일이다. 자기 애플리케이션, 능력, 의존 패키지가 없고, 그것을 쓰는 패키지마다 <code>[msix-dependency.*]</code> 표에 이름을 적는다:</p>
+<pre><code class="lang-toml">[msix]
+identity-name = "ExampleSoftware.Runtime"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+framework = true</code></pre>
 <h3 id="다른-표들은-무엇이-되나">17.9 다른 표들은 무엇이 되나<a class="plink" href="#다른-표들은-무엇이-되나" aria-label="이 절의 주소" title="이 절의 주소">#</a></h3>
 <ul><li><code>Programs</code> 에 있고 애플리케이션의 실행 파일을 가리키는 <code>[shortcut.StartMenu]</code> 는 애플리케이션의 시작 메뉴 항목 <em>그 자체</em>다. <code>Desktop</code> 의 바로가기도 <code>min-version = "10.0.19645.0"</code> 부터 된다. 다른 곳의 바로가기, 인수나 <code>icon</code> 이 있는 바로가기는 MSI 전용이다(<code>RP1613</code>).</li><li><code>[assoc.HelloDoc]</code> 는 애플리케이션의 파일 형식 연결이 된다. 그 파일 형식은 애플리케이션의 로고로 보인다.</li><li><code>[registry.Greeting]</code> 은 패키지의 <em>가상 레지스트리</em>에 들어간다: 애플리케이션은 값이 실제 레지스트리에 있는 것처럼 보지만, 컴퓨터의 레지스트리는 그대로다. <code>Software</code> 아래의 키만 들어갈 수 있다(<code>RP1612</code>).</li><li><code>[service.*]</code>(12장)는 패키지 서비스가 된다: 이름·시작·계정은 같고, Windows 10 2004 판부터 된다 (<code>min-version = "10.0.19041.0"</code>). 패키지를 지우면 함께 사라진다.</li><li><code>[ini.*]</code> 는 패키지 안의 INI 파일이 된다. 패키지를 빌드할 때 쓴다.</li><li><code>[env.HelloHome]</code>: MSIX 는 컴퓨터의 환경을 바꾸지 못한다. 할 수 있는 것은 애플리케이션 자신의 프로세스에 변수를 주는 것이다: 애플리케이션이 rubrapack 의 작은 실행기(패키지 안의 <code>rubrapack\Hello.exe</code>)를 거쳐 시작하고, 실행기가 변수를 정한 뒤 <code>hello.exe</code> 를 시작한다. <code>HELLO_HOME</code> 은 다른 프로그램도 보라고 둔 것이라 이 원본은 <code>msi-only = true</code> 로 MSI 에만 둔다. 그 줄이 없으면 MSIX 는 그 변수를 Hello 에게만 준다.</li></ul>
 <p><code>msi-only = true</code> 는 표를 MSI 에는 두고 MSIX 에서는 뺀다. MSIX 가 아예 담지 못하는 것 - <code>[require.*]</code>, <code>[action.*]</code> - 은 내가 뜻을 밝힐 때까지 빌드를 멈춘다:</p>

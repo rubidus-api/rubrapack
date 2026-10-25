@@ -1350,6 +1350,9 @@ msgstr "η αλυσίδα στοιχείου ή καταλόγου ενός αρ
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "μια γραμματοσειρά μπαίνει σε MSIX μέσω [font.*] που την ονομάζει"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "ένα πακέτο πλαισίου δεν έχει δικές του εφαρμογές, δυνατότητες ή εξαρτήσεις ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "κατακερματισμός που δεν γνωρίζει η υπογραφή του διακριτικού"
 

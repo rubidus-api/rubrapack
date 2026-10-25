@@ -1009,7 +1009,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     attr(m, "Publisher", publisher);
     attr(m, "Version", version);
     attr(m, "ProcessorArchitecture", arch[ir->arch]);
-    rp_buf_puts(m, " />\r\n  <Properties>\r\n    <DisplayName>");
+    rp_buf_puts(m, " />\r\n  <Properties>\r\n");
+    if (ir->msix_framework) rp_buf_puts(m, "    <Framework>true</Framework>\r\n");     // first in Properties (RFC-0031 B19)
+    rp_buf_puts(m, "    <DisplayName>");
     xml_text(m, loc->pkg_display ? "ms-resource:PackageDisplayName" : ir->msix_display ? ir->msix_display : ir->name);
     rp_buf_puts(m, "</DisplayName>\r\n    <PublisherDisplayName>");
     xml_text(m, loc->pub_display ? "ms-resource:PublisherDisplayName" : ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer);
@@ -1084,8 +1086,9 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     // kinds, then the device capabilities; runFullTrust always, and what the features need.
     static const char *const cap_elem[] = { "Capability", "uap:Capability", "uap3:Capability", "uap6:Capability", "uap7:Capability",
                                             "rescap:Capability", "DeviceCapability" };
-    // An optional or modification package has none: its main package's apply (RFC-0019).
-    if (ir->msix_main) {
+    // An optional or modification package has none: its main package's apply (RFC-0019); a
+    // framework package cannot declare them (RFC-0031 B19).
+    if (ir->msix_main || ir->msix_framework) {
         rp_buf_puts(m, "</Package>\r\n");
         return;
     }
@@ -2109,7 +2112,19 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     // RFC-0031 B11: an author's embedded UI handler is for an MSI; an MSIX has no custom installer UI.
     if (ir->ui_embedded_source) DERR(top, "RP1605", "[ui] embedded is for an MSI; an MSIX has no installer UI of its own");
     if (!ir->has_msix) DERR(top, "RP1604", "a .msix output needs an [msix] table (identity-name, publisher)");
-    if (ir->msix_app_count == 0 && ir->msix_main == NULL) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
+    // RFC-0031 B19: a framework package is used by other packages; Windows lets it declare no
+    // applications, capabilities or dependencies of its own (the Framework element's remarks).
+    if (ir->msix_framework) {
+        const char *what = NULL;
+        rp_pos_t at = ir->msix_pos;
+        if (ir->msix_app_count) what = "[msix-app]", at = ir->msix_apps[0].pos;
+        else if (ir->msix_cap_count) what = "capabilities", at = ir->msix_caps_pos;
+        else if (ir->msix_no_fs_virt || ir->msix_no_reg_virt) what = "file-system-virtualization / registry-virtualization";
+        else if (ir->msix_main) what = "main-package";
+        else if (ir->msix_dep_count) what = "[msix-dependency]", at = ir->msix_deps[0].pos;
+        if (what) DERR(at, "RP1617", "a framework package has no applications, capabilities or dependencies of its own (%s)", what);
+    }
+    if (ir->msix_app_count == 0 && ir->msix_main == NULL && !ir->msix_framework) DERR(top, "RP1606", "a .msix output needs an [msix-app.ID] table naming the executable");
     // RFC-0019: a modification package changes its main package's files and registry; it has no
     // applications of its own.
     if (ir->msix_modification && ir->msix_app_count) DERR(ir->msix_apps[0].pos, "RP1617", "a modification package has no applications of its own");
@@ -2634,6 +2649,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     if (d->errors == errors) build_extensions(ir, items, n, ap, ext, &ns, d);
     if (ir->msix_main) ns |= ir->msix_main_publisher || ir->msix_modification ? NS_UAP4 : NS_UAP3;     // RFC-0019
     if (ir->msix_modification) ns |= NS_RESCAP6;
+    if (ir->msix_framework && (ns & (CAP_SERVICES | CAP_SYSTEM_SERVICES))) {
+        DERR(ir->msix_pos, "RP1617", "a framework package has no applications, capabilities or dependencies of its own (%s)", "[service]");
+    }
     // RFC-0018: the capabilities the source names, and write virtualization turned off.
     for (size_t k = 0; k < ir->msix_cap_count; ++k) {
         const char *c = ir->msix_caps[k];

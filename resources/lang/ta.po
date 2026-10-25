@@ -1350,6 +1350,9 @@ msgstr "ஒரு கோப்பின் கூறு அல்லது க�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "ஓர் எழுத்துரு அதைக் குறிப்பிடும் [font.*] மூலம் MSIX இல் செல்லும்"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "கட்டமைப்புத் தொகுப்புக்குச் சொந்தப் பயன்பாடுகள், திறன்கள் அல்லது சார்புகள் இல்லை ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "டோக்கன் கையொப்பமிடல் அறியாத ஹாஷ்"
 

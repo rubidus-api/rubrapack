@@ -1350,6 +1350,9 @@ msgstr "chuỗi thành phần hoặc thư mục của một tệp bị đứt"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "phông chữ vào MSIX qua một [font.*] nêu tên nó"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "gói khung không có ứng dụng, khả năng hay phụ thuộc riêng ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "hàm băm mà việc ký bằng token không biết"
 

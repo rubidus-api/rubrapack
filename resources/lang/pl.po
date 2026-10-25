@@ -1350,6 +1350,9 @@ msgstr "łańcuch składnika lub katalogu pliku jest przerwany"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "czcionka trafia do MSIX przez wskazujący ją [font.*]"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "pakiet struktury nie ma własnych aplikacji, możliwości ani zależności ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "skrót, którego podpisywanie tokenem nie zna"
 

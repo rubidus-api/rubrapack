@@ -229,6 +229,16 @@ min-version = "10.0.18362.0"
 둘 다 `[msix-app.*]` 표가 없어도 된다. 선택적 패키지의 파일은 자기 폴더(dir `INSTALLDIR`)에, 수정 패키지의 파일은
 가상 파일 시스템에 들어가 주 애플리케이션이 본다. 주 패키지의 게시자가 다른 사람이면 `main-publisher` 로 적는다.
 
+*프레임워크 패키지*는 그 반대다: 여러 패키지가 기대는 공유 파일이다. 자기 애플리케이션, 능력, 의존 패키지가 없고, 그것을
+쓰는 패키지마다 `[msix-dependency.*]` 표에 이름을 적는다:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.Runtime"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+framework = true
+```
+
 ## 다른 표들은 무엇이 되나
 
 - `Programs` 에 있고 애플리케이션의 실행 파일을 가리키는 `[shortcut.StartMenu]` 는 애플리케이션의 시작 메뉴 항목

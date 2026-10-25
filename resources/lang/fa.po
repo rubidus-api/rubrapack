@@ -1352,6 +1352,9 @@ msgstr "زنجیره مؤلفه یا پوشه یک فایل شکسته است"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "یک قلم از طریق [font.*]ی که آن را نام می‌برد وارد MSIX می‌شود"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "بستهٔ چارچوب برنامه، قابلیت یا وابستگی از آن خود ندارد ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "هشی که امضای توکن آن را نمی‌شناسد"
 

@@ -1350,6 +1350,9 @@ msgstr "faylning komponent yoki katalog zanjiri uzilgan"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "shrift MSIX ga uni ko‘rsatadigan [font.*] orqali kiradi"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "freymvork paketining o‘z ilovalari, imkoniyatlari yoki bog‘liqliklari yo‘q ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "token imzosi bilmaydigan xesh"
 

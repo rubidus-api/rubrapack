@@ -1350,6 +1350,9 @@ msgstr "la cadena de components o directoris d'un fitxer està trencada"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "un tipus de lletra entra en un MSIX mitjançant un [font.*] que l'indica"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "un paquet de marc no té aplicacions, capacitats ni dependències pròpies ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "un resum que la signatura del testimoni no coneix"
 

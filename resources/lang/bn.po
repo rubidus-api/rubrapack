@@ -1350,6 +1350,9 @@ msgstr "একটি ফাইলের উপাদান বা ডিরে�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "একটি ফন্ট MSIX-এ যায় একটি [font.*]-এর মাধ্যমে যা তার নাম দেয়"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "ফ্রেমওয়ার্ক প্যাকেজের নিজস্ব কোনো অ্যাপ্লিকেশন, সক্ষমতা বা নির্ভরতা থাকে না ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "এমন একটি হ্যাশ যা টোকেন স্বাক্ষর জানে না"
 

@@ -1350,6 +1350,9 @@ msgstr "bir dosyanın bileşen veya dizin zinciri bozuk"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "bir yazı tipi, onu adlandıran bir [font.*] üzerinden MSIX'e girer"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "bir çerçeve paketinin kendi uygulamaları, yetenekleri veya bağımlılıkları yoktur ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "belirteç imzalamanın tanımadığı bir özet"
 

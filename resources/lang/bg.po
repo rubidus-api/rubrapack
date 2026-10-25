@@ -1350,6 +1350,9 @@ msgstr "веригата от компонент или директория н�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "шрифт влиза в MSIX чрез [font.*], който го посочва"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "рамковият пакет няма собствени приложения, възможности или зависимости ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "хеш, който подписването с токен не познава"
 

@@ -1350,6 +1350,9 @@ msgstr "en fils komponent- eller katalogkedja är bruten"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "ett teckensnitt ingår i en MSIX genom en [font.*] som namnger det"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "ett ramverkspaket har inga egna program, funktioner eller beroenden ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "en hash som tokensigneringen inte känner till"
 

@@ -1350,6 +1350,9 @@ msgstr "die Komponenten- oder Verzeichniskette einer Datei ist unterbrochen"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "eine Schriftart kommt über ein [font.*], das sie nennt, in ein MSIX"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "ein Frameworkpaket hat keine eigenen Anwendungen, Funktionen oder Abhängigkeiten ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "ein Hash, den die Tokensignatur nicht kennt"
 

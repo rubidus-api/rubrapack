@@ -1352,6 +1352,9 @@ msgstr "שרשרת הרכיב או התיקייה של קובץ שבורה"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "גופן נכנס ל-MSIX דרך [font.*] שמציין אותו"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "לחבילת מסגרת אין יישומים, יכולות או תלויות משלה ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "גיבוב שחתימת האסימון אינה מכירה"
 

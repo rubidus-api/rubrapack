@@ -238,6 +238,17 @@ Neither needs `[msix-app.*]` tables; an optional package's files go to its own f
 `INSTALLDIR`), a modification package's into the virtual file system, where the main application
 sees them. `main-publisher` names the main package's publisher when it is someone else's.
 
+A *framework package* is the other way round: shared files that several packages depend on. It has
+no applications, capabilities or dependencies of its own; each package that uses it names it in an
+`[msix-dependency.*]` table:
+
+```toml
+[msix]
+identity-name = "ExampleSoftware.Runtime"
+publisher = "CN=Example Software, O=Example Software, C=KR"
+framework = true
+```
+
 ## What the other tables become
 
 - `[shortcut.StartMenu]` in `Programs` to the application's executable *is* the application's

@@ -1350,6 +1350,9 @@ msgstr "egy fájl összetevő- vagy könyvtárlánca megszakadt"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "a betűtípus az őt megnevező [font.*] táblán át kerül az MSIX-be"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "a keretrendszer-csomagnak nincsenek saját alkalmazásai, képességei vagy függőségei ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "olyan kivonat, amelyet a tokenes aláírás nem ismer"
 

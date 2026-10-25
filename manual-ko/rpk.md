@@ -246,7 +246,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[dialog-control.ID]` | **dialog**, **type**(`text`, `checkbox`, `edit`, `radio`, `combo`, `listbox`, `bitmap`), **x**, **y**, **width**, **height**, text, property, values, labels, image(`.bmp`, bitmap 전용), text-xx, labels-xx |
 | `[billboard.ID]` | **image**(`.bmp`), **feature**, order (MSI 전용; 그 feature 가 설치되는 동안 진행 화면에 보임) |
 | `[shortcut.ID]` | **dir**(dir ID, 또는 `Programs`, `Desktop`, `StartMenu`, `Startup`), **name**, **target**(`file:ID`), args, description, working-dir(dir ID), icon(`.ico`), when, advertise(`true`: [바로가기](#바로가기-shortcutid) 참고, MSI 전용) |
-| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
+| `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, framework, language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
@@ -355,6 +355,10 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   Windows 10 1903, `min-version = "10.0.18362.0"`). 두 가지 모두 `[msix-app.*]` 표가 꼭 있지는 않고, 능력과 가상화
   설정은 두지 않는다: 주 패키지의 것이 적용된다(`RP1617`). 애플리케이션이 없으면 dir `INSTALLDIR` 가 패키지 자신의
   폴더다(선택적 패키지. 수정 패키지는 모두 가상 파일 시스템에 둔다).
+- `framework = true` 는 *프레임워크 패키지*를 만든다: 다른 패키지가 `[msix-dependency.*]` 에 적고 Windows 가 그들
+  모두를 위해 한 번 설치하는 파일 - 런타임, 공유 라이브러리 - 이다(매니페스트 `Properties` 의 `Framework`). Windows 는
+  자기 애플리케이션, 능력(그러니 `[service]` 와 가상화 설정도), 의존 패키지를 두지 못하게 한다(`RP1617`). 파일은 자기
+  폴더인 dir `INSTALLDIR` 에 들어간다.
 - 번들에서는 패키지 자신의 언어가 아닌 언어의 글(`display-name-xx`, `description-xx`,
   `publisher-display-name-xx`)이 그 언어의 리소스 패키지(`<정체>_<판>_language-xx.msix`, `ResourcePackage`, 실행
   없음)에 `resources.pri` 의 제 몫과 함께 들어간다. Windows 는 사용자 언어의 것만 설치한다. `language-packs = false`

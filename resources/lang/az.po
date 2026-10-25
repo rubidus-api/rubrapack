@@ -1350,6 +1350,9 @@ msgstr "faylın komponent və ya kataloq zənciri qırılıb"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "şrift MSIX-ə onu adlandıran [font.*] vasitəsilə daxil olur"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "çərçivə paketinin özünə məxsus tətbiqləri, imkanları və ya asılılıqları yoxdur ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "token imzasının bilmədiyi heş"
 

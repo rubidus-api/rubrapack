@@ -1350,6 +1350,9 @@ msgstr "la catena di componente o directory di un file è interrotta"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "un tipo di carattere entra in un MSIX tramite un [font.*] che lo indica"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "un pacchetto framework non ha applicazioni, funzionalità né dipendenze proprie ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "un hash che la firma tramite token non conosce"
 

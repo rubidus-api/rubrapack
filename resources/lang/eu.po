@@ -1350,6 +1350,9 @@ msgstr "fitxategi baten osagai- edo direktorio-katea hautsita dago"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "letra-tipo bat MSIX batean sartzen da hura izendatzen duen [font.*] baten bidez"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "esparru-pakete batek ez du bere aplikaziorik, gaitasunik edo mendekotasunik ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "token-sinadurak ezagutzen ez duen hash bat"
 

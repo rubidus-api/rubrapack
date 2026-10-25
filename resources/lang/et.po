@@ -1350,6 +1350,9 @@ msgstr "faili komponendi- või kataloogiahel on katki"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "font läheb MSIX-i seda nimetava [font.*] kaudu"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "raamistikupaketil pole oma rakendusi, võimalusi ega sõltuvusi ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "räsi, mida tõendiga allkirjastamine ei tunne"
 

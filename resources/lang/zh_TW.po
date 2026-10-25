@@ -1350,6 +1350,9 @@ msgstr "檔案的元件或目錄鏈已損壞"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "字型透過指定它的 [font.*] 放入 MSIX"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "架構套件沒有自己的應用程式、功能或相依性（{1}）"
+
 msgid "a hash the token signing does not know"
 msgstr "權杖簽章不認識的雜湊"
 

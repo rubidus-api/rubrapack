@@ -1350,6 +1350,9 @@ msgstr "lanac komponente ili direktorija datoteke je prekinut"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "font ulazi u MSIX preko [font.*] koji ga imenuje"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "paket okvira nema vlastite aplikacije, mogućnosti ni ovisnosti ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "sažetak koji potpisivanje tokenom ne poznaje"
 

@@ -1350,6 +1350,9 @@ msgstr "řetěz součásti nebo adresáře souboru je přerušen"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "písmo jde do MSIX přes [font.*], který ho jmenuje"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "balíček architektury nemá vlastní aplikace, schopnosti ani závislosti ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "hash, který podepisování tokenem nezná"
 

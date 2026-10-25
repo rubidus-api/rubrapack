@@ -1350,6 +1350,9 @@ msgstr "rantai komponen atau direktori sebuah fail terputus"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "fon masuk ke MSIX melalui [font.*] yang menamakannya"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "pakej rangka kerja tidak mempunyai aplikasi, keupayaan atau kebergantungan sendiri ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "cincangan yang tidak dikenali oleh tandatangan token"
 

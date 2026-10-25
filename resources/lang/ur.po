@@ -1352,6 +1352,9 @@ msgstr "فائل کے جزو یا ڈائریکٹری کی زنجیر ٹوٹی ہ
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "فونٹ MSIX میں ایسے [font.*] کے ذریعے جاتا ہے جو اس کا نام لے"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "فریم ورک پیکیج کی اپنی کوئی ایپلیکیشن، صلاحیت یا انحصار نہیں ہوتا ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "ایسا ہیش جسے ٹوکن دستخط نہیں جانتا"
 

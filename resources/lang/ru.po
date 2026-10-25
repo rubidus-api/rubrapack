@@ -1350,6 +1350,9 @@ msgstr "цепочка компонента или каталога файла �
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "шрифт попадает в MSIX через [font.*], который его указывает"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "у пакета платформы нет собственных приложений, возможностей и зависимостей ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "хэш, который не знает подпись токеном"
 

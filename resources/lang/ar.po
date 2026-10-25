@@ -1352,6 +1352,9 @@ msgstr "سلسلة المكوّن أو الدليل لملف ما مكسورة"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "يدخل الخط في MSIX عبر [font.*] يسمّيه"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "حزمة إطار العمل ليس لها تطبيقات أو قدرات أو تبعيات خاصة بها ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "تجزئة لا يعرفها توقيع الرمز المميز"
 

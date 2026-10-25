@@ -1350,6 +1350,9 @@ msgstr "किसी फ़ाइल की घटक या निर्दे�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "फ़ॉन्ट MSIX में उसे नामित करने वाले [font.*] के ज़रिए जाता है"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "फ़्रेमवर्क पैकेज के अपने कोई एप्लिकेशन, क्षमताएँ या निर्भरताएँ नहीं होतीं ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "ऐसा हैश जिसे टोकन हस्ताक्षर नहीं जानता"
 

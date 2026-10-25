@@ -1350,6 +1350,9 @@ msgstr "faila komponenta vai direktorijas ķēde ir pārrauta"
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "fonts nonāk MSIX caur [font.*], kas to norāda"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "ietvara pakotnei nav savu lietojumprogrammu, iespēju vai atkarību ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "jaukšana, ko marķiera parakstīšana nepazīst"
 

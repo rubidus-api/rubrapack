@@ -1350,6 +1350,9 @@ msgstr "файлдың құрамдас бөлік не каталог тізб�
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "қаріп MSIX-ке оны атайтын [font.*] арқылы кіреді"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "фреймворк бумасының өз қолданбалары, мүмкіндіктері немесе тәуелділіктері жоқ ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "токен қолтаңбасы білмейтін хэш"
 

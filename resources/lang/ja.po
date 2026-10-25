@@ -1350,6 +1350,9 @@ msgstr "ファイルのコンポーネントかディレクトリのつながり
 msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "フォントはそれを指す [font.*] を通して MSIX に入ります"
 
+msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
+msgstr "フレームワーク パッケージは独自のアプリケーション、機能、依存関係を持ちません ({1})"
+
 msgid "a hash the token signing does not know"
 msgstr "トークン署名が知らないハッシュ"
 
