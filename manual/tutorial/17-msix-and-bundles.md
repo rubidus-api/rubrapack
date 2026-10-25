@@ -340,7 +340,8 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 ```
 
 Windows installs the package for its own processor from it. With `--key` the bundle and each
-package in it are signed.
+package in it are signed. `--flat` keeps the packages out of the bundle, as files beside it, so that
+a later version can ship only those that changed.
 
 When the source has names in other languages (`display-name-ko` and the like), the bundle also
 holds one *resource package* per language, `ExampleSoftware.Hello_2.1.0.0_language-ko.msix`, with

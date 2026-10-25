@@ -255,8 +255,20 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         uint8_t *b = NULL;
         size_t bl = 0;
         const char *why = NULL;
-        err = rp_msix_bundle(heap, parts, n, &lim, &b, &bl, &why);
-        if (err == PROVEN_OK && rp_sign_wanted(sign)) {    // --key: the packages, then the bundle
+        // RFC-0031 B23: --flat signs each package by itself (Windows wants the bundle's certificate
+        // on every one), then the bundle names them; they go beside it.
+        for (size_t i = 0; mopt->flat && rp_sign_wanted(sign) && i < n && rc == RP_EXIT_OK; ++i) {
+            uint8_t *sp = NULL;
+            size_t sl = 0;
+            rc = rp_sign_bytes(sign, out, pkgs[i], parts[i].len, &sp, &sl);
+            if (rc != RP_EXIT_OK) break;
+            rp_mem_free(heap, pkgs[i]);
+            pkgs[i] = sp;
+            parts[i].data = sp;
+            parts[i].len = sl;
+        }
+        if (rc == RP_EXIT_OK) err = mopt->flat ? rp_msix_bundle_flat(heap, parts, n, &lim, &b, &bl, &why) : rp_msix_bundle(heap, parts, n, &lim, &b, &bl, &why);
+        if (err == PROVEN_OK && rc == RP_EXIT_OK && rp_sign_wanted(sign)) {    // --key: the packages, then the bundle
             uint8_t *sb = NULL;
             size_t sl = 0;
             rc = rp_sign_bytes(sign, out, b, bl, &sb, &sl);
@@ -289,6 +301,20 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
             rc = RP_EXIT_IO;
         } else if (!write_appinstaller(heap, out, ai, ai_len)) {
             rc = RP_EXIT_IO;
+        }
+        // The packages of a flat bundle, in the bundle's folder under the names it gives them.
+        for (size_t i = 0; mopt->flat && rc == RP_EXIT_OK && i < n; ++i) {
+            char path[1600];
+            const char *slash = strrchr(out, '/');
+#if defined(_WIN32)
+            const char *bslash = strrchr(out, '\\');
+            if (bslash && (!slash || bslash > slash)) slash = bslash;
+#endif
+            snprintf(path, sizeof path, "%.*s%s", slash ? (int)(slash - out + 1) : 0, out, parts[i].file_name);
+            if (rp_pal_write_file_atomic(heap, path, parts[i].data, parts[i].len) != PROVEN_OK) {
+                rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", path);
+                rc = RP_EXIT_IO;
+            }
         }
         rp_mem_free(heap, b);
     }
@@ -420,6 +446,8 @@ static int run(int argc, char **argv, bool lint) {
             reproducible = true;
         } else if (!lint && strcmp(a, "--unsigned-test") == 0) {
             msix_opt.unsigned_test = true;
+        } else if (!lint && strcmp(a, "--flat") == 0) {
+            msix_opt.flat = true;
         } else if (!lint && strcmp(a, "--msix-compress") == 0 && next) {
             if (strcmp(next, "store") != 0 && strcmp(next, "deflate") != 0) {
                 rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--msix-compress takes deflate or store (got '%s')", next);
@@ -458,7 +486,7 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]");
         goto done;
     }
     bool bundle = !lint && (rp_ascii_ends_with_ci(out, ".msixbundle") || rp_ascii_ends_with_ci(out, ".msixupload"));
@@ -491,6 +519,10 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (target && strcmp(target, msix ? "msix" : "msi") != 0) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target %s does not match the output '%s'", target, out);
+        goto done;
+    }
+    if (msix_opt.flat && (!bundle || rp_ascii_ends_with_ci(out, ".msixupload"))) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--flat is for a .msixbundle output (its packages are written beside it)");
         goto done;
     }
     if (!msix && (msix_opt.unsigned_test || msix_compress_given)) {

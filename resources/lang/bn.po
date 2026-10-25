@@ -519,6 +519,9 @@ msgstr "--compress .msi-এর জন্য; MSIX --msix-compress deflate|store 
 msgid "--dist names a new folder beside the source (no path)"
 msgstr "--dist উৎসের পাশে একটি নতুন ফোল্ডারের নাম দেয় (পথ ছাড়া)"
 
+msgid "--flat is for a .msixbundle output (its packages are written beside it)"
+msgstr "--flat হলো .msixbundle আউটপুটের জন্য (এর প্যাকেজগুলো এর পাশে লেখা হয়)"
+
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1 থেকে 64 পর্যন্ত একটি সংখ্যা নেয় ('{1}' পাওয়া গেছে)"
 
@@ -3204,8 +3207,8 @@ msgstr "upgrade-code-কে {{12345678-1234-1234-1234-123456789ABC}-এর ম�
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "ব্যবহার: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
-msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "ব্যবহার: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

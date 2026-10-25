@@ -26,6 +26,7 @@ typedef struct {
 
 typedef struct {
     bool unsigned_test;     // --unsigned-test: the Publisher gets the unsigned-package OID (RFC-0001 13)
+    bool flat;              // --flat: a flat bundle, its packages written beside it (RFC-0031 B23)
     bool store;             // --msix-compress store: no payload file is deflated
     // RFC-0019, for a bundle: when not NULL, the texts of languages other than the package's go into
     // resource packages, returned here (free each data and the array with rp_mem_free), and the
@@ -72,6 +73,10 @@ typedef struct {
 // architecture; the bundle's version is theirs. PROVEN_ERR_INVALID_ARG with *why otherwise.
 [[nodiscard]] proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim,
                                           uint8_t **out, size_t *len, const char **why);
+// A flat bundle (RFC-0031 B23), as MakeAppx bundle /fb writes it: the bundle manifest (the 2016
+// schema) names each package by FileName only, and the packages stay beside the bundle.
+[[nodiscard]] proven_err_t rp_msix_bundle_flat(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim,
+                                               uint8_t **out, size_t *len, const char **why);
 
 // A plain ZIP of files (RFC-0031 B22) - an .appxsym of .pdb files (deflated) or a .msixupload of a
 // bundle and its .appxsym files (stored) - as Explorer's "Compressed (zipped) folder" makes one,

@@ -417,6 +417,10 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `<identity-name>_<version>_<arch>.msix` inside. Windows installs the package for its own
   architecture from it (an x64 machine takes x64 before x86). `$(ARCH)` gives each build its own
   programs: `source = "bin/$(ARCH)/app.exe"`. The bundle's version is the packages' version.
+  With `--flat` it is a *flat bundle*: the bundle holds only its manifest, which names the packages,
+  and they are written beside it, each a file of its own - an update can then ship only the packages
+  that changed. Windows installs it from that folder (the packages must stay beside it), and with
+  `--key` every package is signed as well as the bundle. Outside the Store only.
 - An output ending in `.msixupload` is what the Microsoft Store's Partner Center takes: that bundle,
   `<identity-name>_<version>_<arch>_..._<arch>.msixbundle`, in a ZIP, and for each architecture an
   `<identity-name>_<version>_<arch>.appxsym` - a ZIP of the public symbols `[msix] symbols` names
@@ -1219,8 +1223,9 @@ only.
 ### Cabinets
 
 Files are compressed into one cabinet embedded in the package, with MSZIP (deflate) or LZX
-(`compress = "lzx"`: typically 5 to 20% smaller, about 4 MB a second on one processor where MSZIP
-uses them all). `cab-max-size = N` starts a new
+(`compress = "lzx"`: typically 5 to 20% smaller, about 4 MB a second on one processor for each
+cabinet folder of up to 2 GiB - a larger package's folders run side by side - where MSZIP uses them
+all). `cab-max-size = N` starts a new
 cabinet after N MiB of files; `cab = "external"` writes the cabinets next to the package as
 `<name>.cab` (or `<name>-1.cab`, `<name>-2.cab`, ...), which must travel with it; without
 `cab-max-size` external cabinets are split before 2 GiB each. Windows Installer cannot open a
@@ -1961,6 +1966,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixu
                  [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
+                [--flat]                                               (.msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]

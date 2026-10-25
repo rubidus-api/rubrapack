@@ -63,6 +63,60 @@ static void zjob_run(void *ctx, size_t i) {
     j->err = rp_deflate_dict(j->alloc, j->dict, j->dn, j->raw, j->rn, j->level, &j->z, &j->zn);
 }
 
+// LZX (RFC-0031 L17): one folder's CFDATA records - files[first, end) back to back in 32 KiB
+// frames of one encoder - into `b`. A folder depends on nothing outside it, so folders may be made
+// on threads of their own and joined in order: the same bytes as one after another.
+static proven_err_t lzx_folder(proven_allocator_t alloc, const rp_cab_file_t *files, size_t first, size_t end, unsigned wbits,
+                               uint64_t bytes, rp_buf_t *b) {
+    rp_lzx_enc_t *enc = NULL;
+    proven_err_t err = rp_lzx_enc_new(alloc, wbits, &enc);
+    uint8_t *chunk = err == PROVEN_OK ? rp_mem_alloc(alloc, BLOCK, 1) : NULL;
+    if (err == PROVEN_OK && chunk == NULL) err = PROVEN_ERR_NOMEM;
+    size_t file = first, file_off = 0;
+    for (uint64_t k = 0; err == PROVEN_OK && k < (bytes + BLOCK - 1) / BLOCK; ++k) {
+        size_t fill = 0;
+        while (fill < BLOCK && file < end) {
+            size_t left = files[file].size - file_off;
+            size_t take = left < BLOCK - fill ? left : BLOCK - fill;
+            if (take) memcpy(chunk + fill, files[file].data + file_off, take);
+            fill += take;
+            file_off += take;
+            if (file_off == files[file].size) {
+                ++file;
+                file_off = 0;
+            }
+        }
+        const uint8_t *z = NULL;
+        size_t zn = 0;
+        err = rp_lzx_enc_frame(enc, chunk, fill, &z, &zn);
+        if (err == PROVEN_OK && zn > 0xFFFF) err = PROVEN_ERR_OUT_OF_BOUNDS;
+        if (err != PROVEN_OK) break;
+        rp_buf_u32le(b, block_checksum(z, (uint16_t)zn, (uint16_t)fill));
+        rp_buf_u16le(b, (uint16_t)zn);
+        rp_buf_u16le(b, (uint16_t)fill);
+        rp_buf_put(b, z, zn);
+    }
+    rp_mem_free(alloc, chunk);
+    rp_lzx_enc_free(enc);
+    return err == PROVEN_OK ? b->err : err;
+}
+
+typedef struct {
+    proven_allocator_t   alloc;
+    const rp_cab_file_t *files;
+    size_t               first, end;
+    unsigned             wbits;
+    uint64_t             bytes;
+    rp_buf_t             out;
+    proven_err_t         err;
+} lzxjob_t;
+
+static void lzxjob_run(void *ctx, size_t i) {
+    lzxjob_t *j = &((lzxjob_t *)ctx)[i];
+    j->out = rp_buf_new(j->alloc, (size_t)(j->bytes + (BLOCK / 4 + 2048 + 8) * ((j->bytes + BLOCK - 1) / BLOCK) + 64));
+    j->err = lzx_folder(j->alloc, j->files, j->first, j->end, j->wbits, j->bytes, &j->out);
+}
+
 enum { MAX_FOLDERS = 0xFFFF };
 size_t rp_cab_folder_blocks = 0xFFFF;       // blocks per folder at most (a test may lower it)
 
@@ -152,18 +206,37 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
     // time on `jobs` threads and written in order; a block's dictionary is the previous block of
     // its folder.
     size_t batch = compress >= 0 && !lzx ? jobs * 4 : 1;
-    uint8_t *raw = rp_mem_alloc(alloc, (batch + 1) * BLOCK, 1);        // [previous block][batch blocks]
-    zjob_t *zj = rp_mem_alloc(alloc, batch, sizeof *zj);
-    proven_err_t err = raw && zj ? PROVEN_OK : PROVEN_ERR_NOMEM;
-    size_t file = 0, file_off = 0;
-    rp_lzx_enc_t *enc = NULL;
-    for (size_t f = 0; err == PROVEN_OK && f < nfold; ++f) {
-        if (lzx) {                          // LZX: one encoder per folder, its frames in order
-            rp_lzx_enc_free(enc);
-            enc = NULL;
-            err = rp_lzx_enc_new(alloc, (unsigned)(compress - RP_CAB_LZX(0)), &enc);
-            if (err != PROVEN_OK) break;
+    proven_err_t err = PROVEN_OK;
+    if (lzx) {
+        // Each folder by itself; on threads when there are several (RFC-0031 L17).
+        lzxjob_t *lj = rp_mem_alloc(alloc, nfold, sizeof *lj);
+        if (lj == NULL) err = PROVEN_ERR_NOMEM;
+        for (size_t f = 0, k = 0; lj && f < nfold; ++f) {
+            size_t first = k;
+            while (k < count && folder_of[k] == f) ++k;
+            lj[f] = (lzxjob_t){ .alloc = alloc, .files = files, .first = first, .end = k, .wbits = (unsigned)(compress - RP_CAB_LZX(0)), .bytes = fbytes[f] };
         }
+        for (size_t f0 = 0; lj && err == PROVEN_OK && f0 < nfold; f0 += jobs) {     // `jobs` folders in memory at a time
+            size_t nf = nfold - f0 < jobs ? nfold - f0 : jobs;
+            if (nf > 1) rp_pal_parallel_for(jobs, nf, lzxjob_run, lj + f0);
+            else lzxjob_run(lj + f0, 0);
+            for (size_t f = f0; f < f0 + nf; ++f) {
+                if (err == PROVEN_OK && lj[f].err != PROVEN_OK) err = lj[f].err;
+                if (err == PROVEN_OK && b.err == PROVEN_OK) {
+                    uint32_t v = (uint32_t)b.len;
+                    for (int k = 0; k < 4; ++k) b.data[folder_at + FOLDER * f + (size_t)k] = (uint8_t)(v >> (8 * k));
+                    rp_buf_put(&b, lj[f].out.data, lj[f].out.len);
+                }
+                rp_buf_free(&lj[f].out);
+            }
+        }
+        rp_mem_free(alloc, lj);
+    }
+    uint8_t *raw = lzx ? NULL : rp_mem_alloc(alloc, (batch + 1) * BLOCK, 1);        // [previous block][batch blocks]
+    zjob_t *zj = lzx ? NULL : rp_mem_alloc(alloc, batch, sizeof *zj);
+    if (!lzx && (raw == NULL || zj == NULL)) err = PROVEN_ERR_NOMEM;
+    size_t file = 0, file_off = 0;
+    for (size_t f = 0; !lzx && err == PROVEN_OK && f < nfold; ++f) {
         if (b.err == PROVEN_OK) {
             uint32_t v = (uint32_t)b.len;
             for (int k = 0; k < 4; ++k) b.data[folder_at + FOLDER * f + (size_t)k] = (uint8_t)(v >> (8 * k));
@@ -191,20 +264,6 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
             }
             // skip files of this folder that are empty (no bytes to place)
             while (file < count && folder_of[file] == f && files[file].size == 0) ++file;
-            if (lzx) {
-                for (size_t j = 0; j < nb && err == PROVEN_OK; ++j) {
-                    const uint8_t *z = NULL;
-                    size_t zn = 0;
-                    err = rp_lzx_enc_frame(enc, raw + (j + 1) * BLOCK, fill_of[j], &z, &zn);
-                    if (err == PROVEN_OK && zn > 0xFFFF) err = PROVEN_ERR_OUT_OF_BOUNDS;
-                    if (err != PROVEN_OK) break;
-                    rp_buf_u32le(&b, block_checksum(z, (uint16_t)zn, (uint16_t)fill_of[j]));
-                    rp_buf_u16le(&b, (uint16_t)zn);
-                    rp_buf_u16le(&b, (uint16_t)fill_of[j]);
-                    rp_buf_put(&b, z, zn);
-                }
-                continue;
-            }
             if (compress < 0) {
                 for (size_t j = 0; j < nb; ++j) {
                     const uint8_t *chunk = raw + (j + 1) * BLOCK;
@@ -245,7 +304,6 @@ proven_err_t rp_cab_write_ex(proven_allocator_t alloc, const rp_cab_file_t *file
             prev_len = fill_of[nb - 1];
         }
     }
-    rp_lzx_enc_free(enc);
     rp_mem_free(alloc, raw);
     rp_mem_free(alloc, zj);
     rp_mem_free(alloc, folder_of);

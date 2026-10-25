@@ -589,7 +589,8 @@ proven_err_t rp_msix_sign(proven_allocator_t alloc, const uint8_t *pkg, size_t l
                 ++np;
             }
         }
-        if (err == PROVEN_OK) err = rp_msix_bundle(alloc, parts, np, &lim, &rebuilt, &rl, why);
+        // A flat bundle (RFC-0031 B23) holds no package: it is signed as it is, its packages apart.
+        if (err == PROVEN_OK && np) err = rp_msix_bundle(alloc, parts, np, &lim, &rebuilt, &rl, why);
         for (size_t i = 0; signed_pkgs && i < np; ++i) rp_mem_free(alloc, signed_pkgs[i]);
         rp_mem_free(alloc, signed_pkgs);
         rp_mem_free(alloc, parts);

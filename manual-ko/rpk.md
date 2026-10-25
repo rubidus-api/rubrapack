@@ -384,6 +384,9 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   `<identity-name>_<version>_<arch>.msix` 라는 이름을 갖는다. Windows 는 그 가운데 자기 아키텍처의
   패키지를 설치한다(x64 컴퓨터는 x86 보다 x64 를 고른다). `$(ARCH)` 로 빌드마다 제 프로그램을 준다:
   `source = "bin/$(ARCH)/app.exe"`. 묶음의 판은 패키지들의 판이다.
+  `--flat` 을 주면 *평평한 묶음*이 된다: 묶음에는 패키지 이름을 적은 매니페스트만 들고, 패키지들은 그 옆에 각각 따로
+  쓰인다 - 업데이트 때 바뀐 패키지만 내보낼 수 있다. Windows 는 그 폴더에서 설치하며(패키지는 묶음 옆에 있어야 한다),
+  `--key` 를 주면 묶음과 함께 패키지마다 서명한다. Store 밖에서만 쓴다.
 - 출력 이름이 `.msixupload` 로 끝나면 Microsoft Store 의 파트너 센터가 받는 파일이다: 그 묶음
   `<identity-name>_<version>_<arch>_..._<arch>.msixbundle` 을 ZIP 에 담고, 아키텍처마다
   `<identity-name>_<version>_<arch>.appxsym` - `[msix] symbols` 가 적은 공개 기호(`symbols = ["bin/$(ARCH)/app.pdb"]`)의
@@ -1115,7 +1118,8 @@ name = "InstallDir"
 ### 캐비닛
 
 파일은 패키지에 넣는 캐비닛 하나로 MSZIP(deflate)이나 LZX(`compress = "lzx"`: 대개 5~20% 더 작고,
-MSZIP 이 처리기를 모두 쓰는 데 비해 처리기 하나로 초당 4 MB 쯤)로 압축한다. `cab-max-size = N` 은 파일이 N MiB 를 넘을 때마다 새
+MSZIP 이 처리기를 모두 쓰는 데 비해 2 GiB 까지의 캐비닛 폴더마다 처리기 하나로 초당 4 MB 쯤 - 더 큰 패키지는 폴더들이
+나란히 돈다)로 압축한다. `cab-max-size = N` 은 파일이 N MiB 를 넘을 때마다 새
 캐비닛을 시작하고, `cab = "external"` 은 캐비닛을 패키지 옆에 `<name>.cab`(또는 `<name>-1.cab`,
 `<name>-2.cab`, ...)으로 쓴다. 그 캐비닛은 패키지와 함께 다녀야 하고, `cab-max-size` 가 없으면 캐비닛마다
 2 GiB 전에 나눈다. Windows Installer 는 2 GiB 이상인 패키지를 열지 못하므로, 그만큼 큰 내장 캐비닛은
@@ -1766,6 +1770,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixu
                  [--timestamp <URL> [--tsa-trust <인증서>] [--tls-trust <인증서>] [--system-roots]
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
+                [--flat]                                               (.msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]

@@ -2912,11 +2912,14 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
     const char *te;
     while (next_tag(&x, "Package", &te)) {
         char type[32], ver[64], arch[16], file[1024], off_s[32], size_s[32];
-        uint64_t off, size;
+        uint64_t off = 0, size = 0;
         const char *from = x.p - 1;
         x.p = te;
-        if (!attr_value(from, te, "FileName", file, sizeof file) || !attr_value(from, te, "Offset", off_s, sizeof off_s) ||
-            !attr_value(from, te, "Size", size_s, sizeof size_s) || !parse_u64(off_s, &off) || !parse_u64(size_s, &size)) {
+        // RFC-0031 B23: in a flat bundle a Package names a file beside the bundle (no Offset, no Size).
+        bool outside = attr_value(from, te, "FileName", file, sizeof file) && !attr_value(from, te, "Offset", off_s, sizeof off_s) &&
+                       !attr_value(from, te, "Size", size_s, sizeof size_s);
+        if (!outside && (!attr_value(from, te, "FileName", file, sizeof file) || !attr_value(from, te, "Offset", off_s, sizeof off_s) ||
+            !attr_value(from, te, "Size", size_s, sizeof size_s) || !parse_u64(off_s, &off) || !parse_u64(size_s, &size))) {
             *why = TR_N("a Package of the bundle manifest without FileName, Offset or Size");
             return PROVEN_ERR_INVALID_FORMAT;
         }
@@ -2935,6 +2938,20 @@ static proven_err_t bundle_packages(proven_allocator_t alloc, const uint8_t *pkg
             return PROVEN_ERR_INVALID_FORMAT;
         }
         if (resource) snprintf(arch, sizeof arch, "~%.14s", rid);   // kept apart from the architectures below
+        if (outside) {
+            for (size_t i = 0; i < narch; ++i) {
+                if (strcmp(archs[i], arch) == 0) {
+                    *why = "two packages of one architecture in the bundle";
+                    return PROVEN_ERR_INVALID_FORMAT;
+                }
+            }
+            if (narch == sizeof archs / sizeof archs[0]) {
+                *why = TR_N("too many packages in the bundle");
+                return PROVEN_ERR_INVALID_FORMAT;
+            }
+            snprintf(archs[narch++], sizeof archs[0], "%s", arch);
+            continue;
+        }
         size_t k = SIZE_MAX;
         for (size_t i = 0; i < ne && k == SIZE_MAX; ++i) {
             if (!used[i] && zip_name_is(e[i].name, file)) k = i;
@@ -3217,8 +3234,8 @@ proven_err_t rp_msix_plain_zip(proven_allocator_t alloc, const rp_msix_part_t *p
     return err;
 }
 
-proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, uint8_t **out,
-                            size_t *len, const char **why) {
+static proven_err_t bundle_write(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, bool flat,
+                                 uint8_t **out, size_t *len, const char **why) {
     enum { MAX_PARTS = 64 };
     *out = NULL;
     *len = 0;
@@ -3268,7 +3285,9 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
     rp_buf_t man = rp_buf_new(alloc, 1u << 24), bm = rp_buf_new(alloc, 1u << 20);
     if (err == PROVEN_OK) {
         rp_buf_puts(&man, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
-                          "<Bundle xmlns=\"http://schemas.microsoft.com/appx/2013/bundle\" SchemaVersion=\"5.0\" "
+                          "<Bundle xmlns=\"http://schemas.microsoft.com/appx/");
+        rp_buf_puts(&man, flat ? "2016" : "2013");     // MakeAppx /fb writes the 2016 schema
+        rp_buf_puts(&man, "/bundle\" SchemaVersion=\"5.0\" "
                           "xmlns:b4=\"http://schemas.microsoft.com/appx/2018/bundle\" xmlns:b5=\"http://schemas.microsoft.com/appx/2019/bundle\" "
                           "IgnorableNamespaces=\"b4 b5\">\r\n\t<Identity");
         attr(&man, "Name", ids[0].name);
@@ -3279,14 +3298,16 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
         for (size_t i = 0; i < n; ++i) {
             // Stored entries: a local header of 30 bytes and the name, the bytes, a 24-byte ZIP64 descriptor.
             size_t lfh = 0, before = z.out.len;
-            rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(parts[i].data), parts[i].len }), parts[i].len, &lfh);
+            if (!flat) rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(parts[i].data), parts[i].len }), parts[i].len, &lfh);
             rp_buf_puts(&man, rids[i][0] ? "\t\t<Package Type=\"resource\"" : "\t\t<Package Type=\"application\"");
             attr(&man, "Version", ids[i].version);
             if (rids[i][0]) attr(&man, "ResourceId", rids[i]);
             else attr(&man, "Architecture", ids[i].arch);
             attr(&man, "FileName", parts[i].file_name);
-            attr_u64(&man, "Offset", before + lfh);
-            attr_u64(&man, "Size", parts[i].len);
+            if (!flat) {                // a flat bundle's packages are files of their own
+                attr_u64(&man, "Offset", before + lfh);
+                attr_u64(&man, "Size", parts[i].len);
+            }
             rp_buf_puts(&man, ">\r\n\t\t\t<Resources>\r\n");
             copy_elements(&man, (const char *)mans[i], mlens[i], "Resource", "Resource", res);
             rp_buf_puts(&man, "\t\t\t</Resources>\r\n\t\t\t<b4:Dependencies>\r\n");
@@ -3309,7 +3330,13 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
                              "<Default Extension=\"msix\" ContentType=\"application/vnd.ms-appx\" />"
                              "<Default Extension=\"xml\" ContentType=\"application/vnd.ms-appx.bundlemanifest+xml\" />"
                              "<Override PartName=\"/AppxBlockMap.xml\" ContentType=\"application/vnd.ms-appx.blockmap+xml\" /></Types>";
-    if (err == PROVEN_OK) err = add_payload(alloc, &z, NULL, "[Content_Types].xml", "[Content_Types].xml", (const uint8_t *)ct, sizeof ct - 1, true);
+    static const char ct_flat[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                                  "<Default Extension=\"xml\" ContentType=\"application/vnd.ms-appx.bundlemanifest+xml\" />"
+                                  "<Override PartName=\"/AppxBlockMap.xml\" ContentType=\"application/vnd.ms-appx.blockmap+xml\" /></Types>";
+    if (err == PROVEN_OK) {
+        err = add_payload(alloc, &z, NULL, "[Content_Types].xml", "[Content_Types].xml", (const uint8_t *)(flat ? ct_flat : ct),
+                          (flat ? sizeof ct_flat : sizeof ct) - 1, true);
+    }
     if (err == PROVEN_OK) err = z.out.err;
     if (err == PROVEN_OK) err = rp_zip_finish(&z, out, len);
     else rp_zip_abort(&z);
@@ -3317,4 +3344,14 @@ proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *part
     rp_buf_free(&bm);
     for (size_t i = 0; i < n; ++i) rp_mem_free(alloc, mans[i]);
     return err;
+}
+
+proven_err_t rp_msix_bundle(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, uint8_t **out,
+                            size_t *len, const char **why) {
+    return bundle_write(alloc, parts, n, lim, false, out, len, why);
+}
+
+proven_err_t rp_msix_bundle_flat(proven_allocator_t alloc, const rp_msix_part_t *parts, size_t n, const rp_limits_t *lim, uint8_t **out,
+                                 size_t *len, const char **why) {
+    return bundle_write(alloc, parts, n, lim, true, out, len, why);
 }

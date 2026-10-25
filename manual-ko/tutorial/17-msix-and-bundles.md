@@ -324,6 +324,7 @@ ExampleSoftware.Hello_2.1.0.0_arm64.msix	11119	stored
 ```
 
 Windows 는 그중 자기 처리기에 맞는 패키지를 설치한다. `--key` 를 주면 번들과 그 안의 패키지 모두에 서명한다.
+`--flat` 은 패키지를 번들 밖, 그 옆의 파일로 두어 다음 판에서 바뀐 것만 내보낼 수 있게 한다.
 
 원본에 다른 언어의 이름(`display-name-ko` 따위)이 있으면 번들은 언어마다 그 언어의 글만 담은 *리소스 패키지*
 `ExampleSoftware.Hello_2.1.0.0_language-ko.msix` 도 담고, 아키텍처 패키지에는 원본 자신의 언어만 남는다. Windows 는
