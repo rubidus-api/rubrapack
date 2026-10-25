@@ -221,6 +221,21 @@ Property	update	ProductCode	Value={...}
 Property	update	ProductName	Value=MultiApp (instance 1)
 ```
 
+## What changed between two builds: `diff`
+
+`diff` compares two packages row by row - before a release, say, to see what the new version
+changes:
+
+```text
+C:\work\hello> rubrapack diff hello-2.0.msi hello-2.1.msi
+File	update	Hello	FileSize=48128 -> 49152	Version=2.0.0.0 -> 2.1.0.0
+Property	update	ProductVersion	Value=2.0.0 -> 2.1.0
+_SummaryInformation	9	{...} -> {...}
+```
+
+Each line is a table, the row's key and what differs; nothing is printed for two packages that are
+the same.
+
 ## Signatures: `verify`
 
 Chapter 16 showed `verify`. It is the check to run on what you are about to publish:

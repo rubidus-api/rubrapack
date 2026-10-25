@@ -1784,6 +1784,7 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
+rubrapack diff <a.msi> <b.msi>
 rubrapack new [msi] <name>
 rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
@@ -1894,6 +1895,12 @@ rubrapack version | help [command]
   것(`RP0013`): 열이 다른 표, 바뀐 `File` 이나 `Media` 표(변환은 파일을 나르지 않는다), 표의 16번째 뒤의
   열이 바뀐 것. `inspect <파일.mst> --base <base.msi>` 는 행을, `inspect <파일.mst> --summary` 는
   요약 정보를 보여 준다.
+- `diff <a.msi> <b.msi>` 는 두 패키지의 다른 점을 한 줄에 하나씩, 표는 이름 순서, 행은 키 순서로 보인다:
+  `<표>  insert  <칸들>`, `<표>  delete  <키들>`, `<표>  update  <키들>  <열>=<옛 값> -> <새 값>`,
+  `<표>  new table  <열들>`(그 행들이 insert 로 뒤따른다), `<표>  dropped table`, `<표>  columns  <a 의 것> -> <b 의 것>`
+  (그런 표의 행은 비교하지 않는다), `_SummaryInformation  <속성>  <옛 값> -> <새 값>` 이고, 칸은 탭으로 나뉜다. 이진
+  칸은 `[stream <표>.<키들>, <n> bytes]` 로 보이고 바이트로 비교한다. 캐비닛은 비교하지 않으며, 바뀐 파일은 `File` 과
+  `MsiFileHash` 가 보여 준다. 둘이 같으면 아무것도 쓰지 않고, 어느 쪽이든 종료 코드는 0 이다.
 - `patch <base.msi> <target.msi> -o <out.msp>` 는 설치된 바탕 판을 그 자리에서 대상 판으로 고치는 패치를
   쓴다: 제품 변환(달라진 행; 있던 파일은 바탕 패키지의 캐비닛 속 자리를 지킨다), 패치 변환(새 파일과 바뀐
   파일의 새 자리, 패치의 캐비닛을 가리키는 Media 행, PatchPackage, PatchFiles 동작), 그리고 그 파일들을

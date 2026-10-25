@@ -1,5 +1,6 @@
-// src/cli/transform.c - `rubrapack transform <base.msi> <target.msi> -o <out.mst>` and
-// `rubrapack inspect <file.mst> --base <base.msi> | --summary` (RFC-0016 3, rubrapack/transform.h).
+// src/cli/transform.c - `rubrapack transform <base.msi> <target.msi> -o <out.mst>`,
+// `rubrapack inspect <file.mst> --base <base.msi> | --summary` (RFC-0016 3, rubrapack/transform.h)
+// and `rubrapack diff <a.msi> <b.msi>` (RFC-0031 B27).
 
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -92,6 +93,34 @@ int rp_cmd_transform(int argc, char **argv) {
             rc = RP_EXIT_IO;
         }
         rp_mem_free(heap, mst);
+    }
+    rp_pkg_close(heap, &a);
+    rp_pkg_close(heap, &b);
+    return rc;
+}
+
+// `diff`: what differs between two packages, one line each (rp_msi_diff); nothing when they are the same.
+int rp_cmd_diff(int argc, char **argv) {
+    if (argc != 4 || argv[2][0] == '-' || argv[3][0] == '-') {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack diff <a.msi> <b.msi>");
+        return RP_EXIT_USAGE;
+    }
+    proven_allocator_t heap = proven_heap_allocator();
+    rp_limits_t limits = rp_limits_default();
+    rp_pkg_t a, b;
+    int rc = rp_pkg_open(heap, argv[2], &limits, &a);
+    if (rc == RP_EXIT_OK) rc = rp_pkg_open(heap, argv[3], &limits, &b);
+    else b = (rp_pkg_t){ 0 };
+    if (rc == RP_EXIT_OK) {
+        rp_mst_side_t sa = { &a.view.db, &a.cfb }, sb = { &b.view.db, &b.cfb };
+        rp_buf_t out = rp_buf_new(heap, limits.max_metadata);
+        if (rp_msi_diff(heap, &sa, &sb, &limits, &out) != PROVEN_OK) {
+            rp_diag_error(RP_DIAG_BAD_PACKAGE, "cannot compare '%s' and '%s'", argv[2], argv[3]);
+            rc = RP_EXIT_IO;
+        } else if (out.len && fwrite(out.data, 1, out.len, stdout) != out.len) {
+            rc = RP_EXIT_IO;
+        }
+        rp_buf_free(&out);
     }
     rp_pkg_close(heap, &a);
     rp_pkg_close(heap, &b);

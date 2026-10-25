@@ -56,4 +56,15 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t storage, const rp_msi_wdb_t *base,
                                        const rp_limits_t *limits, rp_buf_t *out, const char **why);
 
+// What differs between two packages (RFC-0031 B27), for a reader: tables in name order, rows in key
+// order, one line each - "<Table>\tinsert\t<cells>", "<Table>\tdelete\t<keys>",
+// "<Table>\tupdate\t<keys>\t<Column>=<old> -> <new>..." (the cells as rp_mst_list writes them;
+// a binary cell as "[stream <Table>.<keys>, <n> bytes]"), "<Table>\tnew table\t<columns>" before a
+// new table's rows, "<Table>\tdropped table", "<Table>\tcolumns\t<a's> -> <b's>" for a table whose
+// columns changed (its rows are not compared), and "_SummaryInformation\t<property>\t<old> -> <new>".
+// Nothing is written when the two are the same. Cabinets are not compared: File and MsiFileHash show
+// what changed in them.
+[[nodiscard]] proven_err_t rp_msi_diff(proven_allocator_t alloc, const rp_mst_side_t *a, const rp_mst_side_t *b, const rp_limits_t *limits,
+                                       rp_buf_t *out);
+
 #endif // RUBRAPACK_TRANSFORM_H

@@ -1632,6 +1632,9 @@ msgstr "ClientHello नहीं बनाया जा सकता"
 msgid "cannot bundle the packages: %s"
 msgstr "पैकेजों को बंडल नहीं किया जा सकता: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "'{1}' और '{2}' की तुलना नहीं हो सकती"
+
 msgid "cannot create '%s'"
 msgstr "'{1}' नहीं बनाया जा सकता"
 
@@ -2712,6 +2715,9 @@ msgstr "सेवाओं को scope = \"machine\" चाहिए (यह {1
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "शॉर्टकट नाम {1} UTF-16 इकाइयों का है; 8.3 छोटे नाम के साथ MSI में अधिकतम {2} आते हैं"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "दो पैकेजों में क्या अलग है दिखाता है: तालिकाएँ, पंक्तियाँ, कोष्ठ और सारांश"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "PE फ़ाइल, MSI पैकेज, MSIX पैकेज या बंडल पर हस्ताक्षर करें"
 
@@ -3230,6 +3236,9 @@ msgstr "उपयोग: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "उपयोग: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (बंडल के लिए सूची)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "उपयोग: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "उपयोग: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

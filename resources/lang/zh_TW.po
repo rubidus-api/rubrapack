@@ -1632,6 +1632,9 @@ msgstr "無法建置 ClientHello"
 msgid "cannot bundle the packages: %s"
 msgstr "無法將安裝套件打成套件組合: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "無法比較 '{1}' 和 '{2}'"
+
 msgid "cannot create '%s'"
 msgstr "無法建立 '{1}'"
 
@@ -2712,6 +2715,9 @@ msgstr "服務需要 scope = \"machine\"(目前為 {1})"
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "捷徑名稱為 {1} 個 UTF-16 單元；加上其 8.3 短名稱，MSI 最多容納 {2}"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "顯示兩個套件之間的不同：資料表、列、儲存格和摘要"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "為 PE 檔案、MSI 安裝套件、MSIX 套件或套件組合簽章"
 
@@ -3230,6 +3236,9 @@ msgstr "用法: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "用法: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (套件組合則為列表)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "用法: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "用法: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

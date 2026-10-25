@@ -1632,6 +1632,9 @@ msgstr "ClientHello ஐ உருவாக்க முடியாது"
 msgid "cannot bundle the packages: %s"
 msgstr "தொகுப்புகளைத் தொகுதியாக்க முடியாது: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "'{1}' மற்றும் '{2}' ஐ ஒப்பிட முடியாது"
+
 msgid "cannot create '%s'"
 msgstr "'{1}' ஐ உருவாக்க முடியாது"
 
@@ -2712,6 +2715,9 @@ msgstr "சேவைகளுக்கு scope = \"machine\" தேவை (இ�
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "குறுக்குவழிப் பெயர் {1} UTF-16 அலகுகள்; 8.3 குறும்பெயருடன் MSI அதிகபட்சம் {2} ஐக் கொள்ளும்"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "இரண்டு தொகுப்புகளுக்கு இடையிலான வேறுபாட்டைக் காட்டுகிறது: அட்டவணைகள், வரிசைகள், கலங்கள், சுருக்கம்"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "ஒரு PE கோப்பு, MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதியைக் கையொப்பமிடு"
 
@@ -3230,6 +3236,9 @@ msgstr "பயன்பாடு: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "பயன்பாடு: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (தொகுப்புக்கான பட்டியல்)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "பயன்பாடு: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "பயன்பாடு: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

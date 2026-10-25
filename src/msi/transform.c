@@ -927,3 +927,251 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
     rp_mem_free(alloc, tnames);
     return err;
 }
+
+// ---- diff (RFC-0031 B27) ---------------------------------------------------------------------------
+
+static void diff_text(rp_buf_t *b, const uint8_t *p, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (p[i] < 0x20 || p[i] == 0x7F) {
+            char x[5];
+            snprintf(x, sizeof x, "\\x%02X", p[i]);
+            rp_buf_puts(b, x);
+        } else {
+            rp_buf_byte(b, p[i]);
+        }
+    }
+}
+
+static void diff_cell(rp_buf_t *out, const rp_cfb_t *cfb, const char *table, const rp_msi_wcolumn_t *cols, size_t nc, const rp_msi_cell_t *row,
+                      size_t c) {
+    const rp_msi_cell_t *v = &row[c];
+    if (is_null(v)) return;
+    if (is_binary(cols[c].type)) {
+        char name[128];
+        uint16_t packed[32];
+        size_t pl;
+        uint32_t id;
+        rp_buf_puts(out, "[stream ");
+        if (!binary_name(table, cols, nc, row, name, sizeof name)) {
+            rp_buf_puts(out, table);
+            rp_buf_puts(out, "...]");
+            return;
+        }
+        diff_text(out, (const uint8_t *)name, strlen(name));
+        if (rp_msi_stream_name(name, false, packed, &pl) == PROVEN_OK && rp_cfb_find(cfb, 0, packed, pl, &id) == PROVEN_OK) {
+            rp_buf_puts(out, ", ");
+            rp_buf_long(out, (long long)cfb->entries[id].size);
+            rp_buf_puts(out, " bytes]");
+        } else {
+            rp_buf_puts(out, ", missing]");
+        }
+    } else if (v->kind == RP_MSI_STR) {
+        diff_text(out, v->bytes, v->len);
+    } else if (v->kind == RP_MSI_INT) {
+        rp_buf_long(out, v->i);
+    }
+}
+
+static void diff_keys(rp_buf_t *out, const rp_cfb_t *cfb, const rp_msi_wtable_t *t, const rp_msi_cell_t *row) {
+    for (size_t c = 0; c < t->column_count; ++c) {
+        if (!(t->columns[c].type & RP_MSI_COL_KEY)) continue;
+        rp_buf_byte(out, '\t');
+        diff_cell(out, cfb, t->name, t->columns, t->column_count, row, c);
+    }
+}
+
+static void diff_row(rp_buf_t *out, const rp_cfb_t *cfb, const rp_msi_wtable_t *t, const rp_msi_cell_t *row, bool insert) {
+    rp_buf_puts(out, t->name);
+    rp_buf_puts(out, insert ? "\tinsert" : "\tdelete");
+    if (!insert) {
+        diff_keys(out, cfb, t, row);
+    } else {
+        for (size_t c = 0; c < t->column_count; ++c) {
+            rp_buf_byte(out, '\t');
+            diff_cell(out, cfb, t->name, t->columns, t->column_count, row, c);
+        }
+    }
+    rp_buf_byte(out, '\n');
+}
+
+static void diff_columns(rp_buf_t *out, const rp_msi_wtable_t *t) {
+    for (size_t c = 0; c < t->column_count; ++c) {
+        if (c) rp_buf_byte(out, ' ');
+        rp_buf_puts(out, t->columns[c].name);
+    }
+}
+
+static proven_err_t diff_rows(proven_allocator_t alloc, const rp_mst_side_t *sa, const rp_mst_side_t *sb, const rp_limits_t *limits,
+                              const rp_msi_wtable_t *a, const rp_msi_wtable_t *b, rp_buf_t *out) {
+    size_t nc = b->column_count;
+    const rp_msi_cell_t **ra = rp_mem_alloc(alloc, (a ? a->row_count : 0) + 1, sizeof *ra);
+    const rp_msi_cell_t **rb = rp_mem_alloc(alloc, b->row_count + 1, sizeof *rb);
+    size_t na = a ? a->row_count : 0;
+    proven_err_t err = ra && rb ? PROVEN_OK : PROVEN_ERR_NOMEM;
+    for (size_t r = 0; err == PROVEN_OK && r < na; ++r) ra[r] = &a->cells[r * nc];
+    for (size_t r = 0; err == PROVEN_OK && r < b->row_count; ++r) rb[r] = &b->cells[r * nc];
+    if (err == PROVEN_OK && (!sort_rows(alloc, b->columns, nc, ra, na) || !sort_rows(alloc, b->columns, nc, rb, b->row_count))) err = PROVEN_ERR_NOMEM;
+    size_t i = 0, j = 0;
+    while (err == PROVEN_OK && (i < na || j < b->row_count)) {
+        int c = i == na ? 1 : j == b->row_count ? -1 : key_cmp(b->columns, nc, ra[i], rb[j]);
+        if (c < 0) {
+            diff_row(out, sa->cfb, a, ra[i], false);
+        } else if (c > 0) {
+            diff_row(out, sb->cfb, b, rb[j], true);
+        } else {
+            bool any = false;
+            for (size_t k = 0; k < nc; ++k) {
+                uint16_t type = b->columns[k].type;
+                if (type & RP_MSI_COL_KEY) continue;
+                bool same;
+                if (is_binary(type)) {
+                    same = is_null(&ra[i][k]) == is_null(&rb[j][k]);
+                    if (same && !is_null(&ra[i][k])) {
+                        char name[128];
+                        uint8_t *x = NULL, *y = NULL;
+                        size_t xn = 0, yn = 0;
+                        same = binary_name(b->name, b->columns, nc, ra[i], name, sizeof name) &&
+                               read_stream(alloc, sa->cfb, 0, name, false, (size_t)limits->max_output, &x, &xn) == PROVEN_OK &&
+                               read_stream(alloc, sb->cfb, 0, name, false, (size_t)limits->max_output, &y, &yn) == PROVEN_OK &&
+                               xn == yn && memcmp(x, y, xn) == 0;
+                        rp_mem_free(alloc, x);
+                        rp_mem_free(alloc, y);
+                    }
+                } else {
+                    same = is_null(&ra[i][k]) == is_null(&rb[j][k]) && cell_cmp(&ra[i][k], &rb[j][k], type) == 0;
+                }
+                if (same) continue;
+                if (!any) {
+                    rp_buf_puts(out, b->name);
+                    rp_buf_puts(out, "\tupdate");
+                    diff_keys(out, sb->cfb, b, rb[j]);
+                    any = true;
+                }
+                rp_buf_byte(out, '\t');
+                rp_buf_puts(out, b->columns[k].name);
+                rp_buf_byte(out, '=');
+                diff_cell(out, sa->cfb, b->name, b->columns, nc, ra[i], k);
+                rp_buf_puts(out, " -> ");
+                diff_cell(out, sb->cfb, b->name, b->columns, nc, rb[j], k);
+            }
+            if (any) rp_buf_byte(out, '\n');
+        }
+        if (c <= 0) ++i;
+        if (c >= 0) ++j;
+    }
+    rp_mem_free(alloc, ra);
+    rp_mem_free(alloc, rb);
+    return err;
+}
+
+// The summary as "<property>\t<value>" lines (rp_suminfo_export_idt without its three header lines).
+static proven_err_t summary_lines(proven_allocator_t alloc, const rp_msi_wdb_t *db, uint8_t **idt, size_t *len, const char **body) {
+    *idt = NULL;
+    *len = 0;
+    *body = "";
+    if (db->summary == NULL) return PROVEN_OK;
+    rp_suminfo_t si = { .count = 0 };
+    proven_err_t err = rp_suminfo_parse(db->summary, db->summary_len, &si);
+    uint8_t *raw = NULL;
+    size_t rl = 0;
+    if (err == PROVEN_OK) err = rp_suminfo_export_idt(&si, alloc, &raw, &rl);
+    if (err != PROVEN_OK) return err;
+    *idt = rp_mem_alloc(alloc, rl + 1, 1);        // with a terminating NUL, for the lookups below
+    if (*idt == NULL) {
+        rp_mem_free(alloc, raw);
+        return PROVEN_ERR_NOMEM;
+    }
+    memcpy(*idt, raw, rl);
+    (*idt)[rl] = 0;
+    *len = rl;
+    rp_mem_free(alloc, raw);
+    const char *p = (const char *)*idt;
+    for (int k = 0; k < 3 && p; ++k) {
+        p = memchr(p, '\n', *len - (size_t)(p - (const char *)*idt));
+        if (p) ++p;
+    }
+    *body = p ? p : "";
+    return PROVEN_OK;
+}
+
+static const char *summary_value(const char *body, const char *pid, size_t *n) {
+    size_t pl = strlen(pid);
+    for (const char *p = body; *p;) {
+        const char *e = strchr(p, '\n');
+        size_t ll = e ? (size_t)(e - p) : strlen(p);
+        if (ll > pl && memcmp(p, pid, pl) == 0 && p[pl] == '\t') {
+            *n = ll - pl - 1;
+            if (*n && p[pl + 1 + *n - 1] == '\r') --*n;
+            return p + pl + 1;
+        }
+        p += ll + (e ? 1 : 0);
+    }
+    return NULL;
+}
+
+static void diff_summary(rp_buf_t *out, const char *x, const char *y) {
+    for (unsigned pid = 0; pid < 32; ++pid) {
+        char k[8];
+        snprintf(k, sizeof k, "%u", pid);
+        size_t xn = 0, yn = 0;
+        const char *a = summary_value(x, k, &xn), *b = summary_value(y, k, &yn);
+        if ((a == NULL && b == NULL) || (a && b && xn == yn && memcmp(a, b, xn) == 0)) continue;
+        rp_buf_puts(out, "_SummaryInformation\t");
+        rp_buf_puts(out, k);
+        rp_buf_byte(out, '\t');
+        if (a) diff_text(out, (const uint8_t *)a, xn);
+        rp_buf_puts(out, " -> ");
+        if (b) diff_text(out, (const uint8_t *)b, yn);
+        rp_buf_byte(out, '\n');
+    }
+}
+
+proven_err_t rp_msi_diff(proven_allocator_t alloc, const rp_mst_side_t *a, const rp_mst_side_t *b, const rp_limits_t *limits, rp_buf_t *out) {
+    size_t n = a->db->table_count + b->db->table_count, nn = 0;
+    const char **names = rp_mem_alloc(alloc, n + 1, sizeof *names);
+    if (names == NULL) return PROVEN_ERR_NOMEM;
+    for (size_t t = 0; t < a->db->table_count; ++t) names[nn++] = a->db->tables[t].name;
+    for (size_t t = 0; t < b->db->table_count; ++t) {
+        if (find_table(a->db, b->db->tables[t].name) == NULL) names[nn++] = b->db->tables[t].name;
+    }
+    for (size_t i = 1; i < nn; ++i) {          // name order (a few dozen tables)
+        for (size_t k = i; k > 0 && strcmp(names[k - 1], names[k]) > 0; --k) {
+            const char *t = names[k];
+            names[k] = names[k - 1];
+            names[k - 1] = t;
+        }
+    }
+    proven_err_t err = PROVEN_OK;
+    for (size_t k = 0; k < nn && err == PROVEN_OK; ++k) {
+        const rp_msi_wtable_t *ta = find_table(a->db, names[k]), *tb = find_table(b->db, names[k]);
+        if (tb == NULL) {
+            rp_buf_puts(out, names[k]);
+            rp_buf_puts(out, "\tdropped table\n");
+        } else if (ta == NULL) {
+            rp_buf_puts(out, names[k]);
+            rp_buf_puts(out, "\tnew table\t");
+            diff_columns(out, tb);
+            rp_buf_byte(out, '\n');
+            err = diff_rows(alloc, a, b, limits, NULL, tb, out);
+        } else if (!same_columns(ta, tb)) {
+            rp_buf_puts(out, names[k]);
+            rp_buf_puts(out, "\tcolumns\t");
+            diff_columns(out, ta);
+            rp_buf_puts(out, " -> ");
+            diff_columns(out, tb);
+            rp_buf_byte(out, '\n');
+        } else {
+            err = diff_rows(alloc, a, b, limits, ta, tb, out);
+        }
+    }
+    rp_mem_free(alloc, names);
+    uint8_t *xi = NULL, *yi = NULL;
+    size_t xl = 0, yl = 0;
+    const char *x = "", *y = "";
+    if (err == PROVEN_OK) err = summary_lines(alloc, a->db, &xi, &xl, &x);
+    if (err == PROVEN_OK) err = summary_lines(alloc, b->db, &yi, &yl, &y);
+    if (err == PROVEN_OK) diff_summary(out, x, y);
+    rp_mem_free(alloc, xi);
+    rp_mem_free(alloc, yi);
+    return err == PROVEN_OK ? out->err : err;
+}

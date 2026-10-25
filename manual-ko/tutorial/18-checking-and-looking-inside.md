@@ -210,6 +210,19 @@ Property	update	ProductCode	Value={...}
 Property	update	ProductName	Value=MultiApp (instance 1)
 ```
 
+## 두 빌드 사이에 바뀐 것: `diff`
+
+`diff` 는 두 패키지를 행마다 비교한다 - 예를 들어 출시 전에 새 판이 무엇을 바꾸는지 볼 때:
+
+```text
+C:\work\hello> rubrapack diff hello-2.0.msi hello-2.1.msi
+File	update	Hello	FileSize=48128 -> 49152	Version=2.0.0.0 -> 2.1.0.0
+Property	update	ProductVersion	Value=2.0.0 -> 2.1.0
+_SummaryInformation	9	{...} -> {...}
+```
+
+한 줄마다 표, 행의 키, 다른 점이 나온다. 두 패키지가 같으면 아무것도 쓰지 않는다.
+
 ## 서명: `verify`
 
 16장에서 `verify` 를 보았다. 배포하기 직전에 돌릴 검사다:

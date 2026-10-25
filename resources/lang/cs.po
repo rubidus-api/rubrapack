@@ -1632,6 +1632,9 @@ msgstr "nelze sestavit ClientHello"
 msgid "cannot bundle the packages: %s"
 msgstr "balíčky nelze spojit do sady: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "'{1}' a '{2}' nelze porovnat"
+
 msgid "cannot create '%s'"
 msgstr "'{1}' nelze vytvořit"
 
@@ -2712,6 +2715,9 @@ msgstr "služby potřebují scope = \"machine\" (toto je {1})"
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "název zástupce má jednotek UTF-16: {1}; s krátkým názvem 8.3 pojme MSI nejvýše {2}"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "ukáže, čím se dva balíčky liší: tabulky, řádky, buňky a souhrn"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "podepíše soubor PE, balíček MSI, balíček nebo sadu MSIX"
 
@@ -3230,6 +3236,9 @@ msgstr "použití: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "použití: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (seznam pro sadu)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "použití: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "použití: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

@@ -1632,6 +1632,9 @@ msgstr "ClientHello 를 만들 수 없습니다"
 msgid "cannot bundle the packages: %s"
 msgstr "패키지를 번들로 묶을 수 없습니다: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "'{1}' 와 '{2}' 를 비교할 수 없다"
+
 msgid "cannot create '%s'"
 msgstr "'{1}'을(를) 만들 수 없습니다"
 
@@ -2712,6 +2715,9 @@ msgstr "서비스에는 scope = \"machine\" 이 필요합니다(지금은 {1})"
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "바로 가기 이름이 UTF-16 단위 {1}개입니다. MSI 는 8.3 짧은 이름과 합쳐 {2}개까지 담습니다"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "두 패키지의 다른 점을 보인다: 표, 행, 칸, 요약"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "PE 파일, MSI 패키지, MSIX 패키지나 번들에 서명합니다"
 
@@ -3230,6 +3236,9 @@ msgstr "사용법: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "사용법: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "사용법: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "사용법: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

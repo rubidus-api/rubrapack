@@ -1632,6 +1632,9 @@ msgstr "der ClientHello kann nicht erstellt werden"
 msgid "cannot bundle the packages: %s"
 msgstr "die Pakete können nicht gebündelt werden: {1}"
 
+msgid "cannot compare '%s' and '%s'"
+msgstr "'{1}' und '{2}' lassen sich nicht vergleichen"
+
 msgid "cannot create '%s'"
 msgstr "'{1}' kann nicht erstellt werden"
 
@@ -2712,6 +2715,9 @@ msgstr "Dienste brauchen scope = \"machine\" (dieses ist {1})"
 msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at most %zu"
 msgstr "der Verknüpfungsname hat {1} UTF-16-Einheiten; mit seinem 8.3-Kurznamen fasst MSI höchstens {2}"
 
+msgid "show what differs between two packages: tables, rows, cells and summary"
+msgstr "zeigt, was sich zwischen zwei Paketen unterscheidet: Tabellen, Zeilen, Zellen und Zusammenfassung"
+
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "signiert eine PE-Datei, ein MSI-Paket, ein MSIX-Paket oder -Bundle"
 
@@ -3230,6 +3236,9 @@ msgstr "Aufruf: rubrapack {1}\n\n{2}{3}\n"
 
 msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
 msgstr "Aufruf: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (eine Liste für ein Bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+
+msgid "usage: rubrapack diff <a.msi> <b.msi>"
+msgstr "Aufruf: rubrapack diff <a.msi> <b.msi>"
 
 msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
 msgstr "Aufruf: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"

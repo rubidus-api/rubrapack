@@ -1982,6 +1982,7 @@ rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
 rubrapack inspect <file.cab>
+rubrapack diff <a.msi> <b.msi>
 rubrapack new [msi] <name>
 rubrapack new [<file>.toml] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
@@ -2122,6 +2123,14 @@ rubrapack version | help [command]
   whose columns differ, a changed `File` or `Media` table (a transform carries no files), a changed
   column past the 16th of its table. `inspect <file.mst> --base <base.msi>` lists the rows,
   `inspect <file.mst> --summary` the summary information.
+- `diff <a.msi> <b.msi>` shows what differs between two packages, one line each, tables in name
+  order and rows in key order: `<Table>  insert  <cells>`, `<Table>  delete  <keys>`,
+  `<Table>  update  <keys>  <Column>=<old> -> <new>`, `<Table>  new table  <columns>` (its rows
+  follow as inserts), `<Table>  dropped table`, `<Table>  columns  <a's> -> <b's>` (rows of such a
+  table are not compared) and `_SummaryInformation  <property>  <old> -> <new>`, the fields
+  separated by tabs. A binary cell is shown as `[stream <Table>.<keys>, <n> bytes]` and compared by
+  its bytes; cabinets are not compared, `File` and `MsiFileHash` show which files changed. Nothing
+  is printed when the two are the same; the exit code is 0 either way.
 - `patch <base.msi> <target.msi> -o <out.msp>` writes a patch that updates an installed base to
   the target in place: a product transform (the rows that differ; existing files keep their place
   in the base's cabinets), a patch transform (the new and changed files' new places, a Media row for

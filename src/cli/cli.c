@@ -24,7 +24,7 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle> [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
+    { "build",   "build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [--flat] [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
                  TR_N("build a package from a source file"), true },
     { "sign",    "sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
                  TR_N("sign a PE file, an MSI package, an MSIX package or bundle"), true },
@@ -34,6 +34,7 @@ static const command_t commands[] = {
                  TR_N("check a signature: structure, digest, signature, and the path to a trusted certificate"), true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
                  TR_N("write a transform (.mst): what turns one package into the other"), true },
+    { "diff",    "diff <a.msi> <b.msi>", TR_N("show what differs between two packages: tables, rows, cells and summary"), true },
     { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
                  TR_N("write a patch (.msp): the files and rows that update an installed base to the target"), true },
     { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msi> [table|--summary] --json | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
@@ -228,6 +229,7 @@ int rp_main(int argc, char **argv) {
     if (strcmp(name, "keys") == 0) return rp_cmd_keys(argc, argv);
     if (strcmp(name, "verify") == 0) return rp_cmd_verify(argc, argv);
     if (strcmp(name, "transform") == 0) return rp_cmd_transform(argc, argv);
+    if (strcmp(name, "diff") == 0) return rp_cmd_diff(argc, argv);
     if (strcmp(name, "patch") == 0) return rp_cmd_patch(argc, argv);
 
     char buf[256];
