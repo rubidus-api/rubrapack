@@ -144,6 +144,9 @@ msgstr "{1} LANGID-értékeket tartalmaz (1..65535), például 1041"
 msgid "%s holds strings"
 msgstr "{1} karakterláncokat tartalmaz"
 
+msgid "%s is %u to %u characters long"
+msgstr "a(z) {1} {2}–{3} karakter hosszú"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} a \"Kulcs=Érték\" szövegek listája"
 
@@ -188,6 +191,9 @@ msgstr "{1} csak GUID lehet"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} egy GUID kell legyen, például {12345678-...} (kapott: '{2}')"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "a(z) {1} http:// vagy https:// cím kell legyen (kapott '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} https://, http:// vagy file:// cím, vagy \\\\server\\share útvonal kell legyen (kapott: '{2}')"
@@ -584,6 +590,15 @@ msgstr "a --unsigned-test aláírás nélküli csomagokhoz való; --key mellett 
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "a --validate none értéket fogad, vagy ezek némelyikét: product-code,upgrade-code,language,platform"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "a --winget .msi, .msix vagy .msixbundle kimenethez való"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "a --winget [winget] táblát igényel: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "a --winget egy fájlban kéri a csomagot: a winget egyet tölt le, így nem lehet cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "a -D {1} kétszer van megadva"
@@ -2106,6 +2121,9 @@ msgstr "icon: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "az id egy GUID kell legyen, például {12345678-1234-1234-1234-123456789ABC}: a modul saját, minden verzióban megtartva"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "az identifier a winget Publisher.Package azonosítója: 2–8 rész, egyenként 1–32 karakter, szóköz és \\ / : * ? \" < > | nélkül (kapott '{1}')"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "az identity-name 3-50 karakter lehet az A-Z, a-z, 0-9, '.' és '-' közül (kapott: '{1}')"
 
@@ -2799,6 +2817,9 @@ msgstr "táblák"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "táblák és kulcsok: ismeretlen tábla vagy kulcs, hiányzó kötelező, szolgáltatás nélküli elem, ha vannak szolgáltatások"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "a tags legfeljebb 16 keresőszó listája, például [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "nem fogad konfigurációt (nincs ModuleConfiguration táblája)"
 
@@ -3234,8 +3255,8 @@ msgstr "az upgrade-code egy GUID kell legyen, például {12345678-1234-1234-1234
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "használat: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "használat: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista egy köteghez)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "használat: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista egy köteghez)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "használat: rubrapack diff <a.msi> <b.msi>"

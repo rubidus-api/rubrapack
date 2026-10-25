@@ -144,6 +144,9 @@ msgstr "{1} obsahuje LANGID (1..65535), napr. 1041"
 msgid "%s holds strings"
 msgstr "{1} obsahuje reťazce"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} má dĺžku {2} až {3} znakov"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} je zoznam textov \"Kľúč=Hodnota\""
 
@@ -188,6 +191,9 @@ msgstr "{1} musí byť GUID"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} musí byť GUID ako {{12345678-...} (zadané '{2}')"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} musí byť adresa http:// alebo https:// (zadané '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} musí byť adresa https://, http:// alebo file://, alebo cesta \\\\server\\share (zadané '{2}')"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test je pre balíky bez podpisu; s --key ho vynechajte"
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate prijíma none alebo niektoré z product-code,upgrade-code,language,platform"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget je pre výstup .msi, .msix alebo .msixbundle"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget potrebuje tabuľku [winget]: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget potrebuje balík v jednom súbore: winget sťahuje jeden, teda nie cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} je zadané dvakrát"
@@ -2106,6 +2121,9 @@ msgstr "icon: súbor '{1}' nie je [file.*] tohto balíka"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id musí byť GUID ako {{12345678-1234-1234-1234-123456789ABC}: vlastný GUID modulu, rovnaký v každej verzii"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier je Publisher.Package pre winget: 2 až 8 častí po 1 až 32 znakov, bez medzier a \\ / : * ? \" < > | (zadané '{1}')"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name musí mať 3 až 50 znakov z A-Z, a-z, 0-9, '.' a '-' (zadané '{1}')"
 
@@ -2799,6 +2817,9 @@ msgstr "tabuľky"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "tabuľky a kľúče: neznáma tabuľka alebo kľúč, chýbajúci povinný, položka bez funkcie, keď funkcie existujú"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags je zoznam najviac 16 hľadaných výrazov, napríklad [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "neprijíma konfiguráciu (nemá ModuleConfiguration)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code musí byť GUID ako {{12345678-1234-1234-1234-123456789ABC}
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "použitie: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "použitie: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (zoznam pre zväzok)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "použitie: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (zoznam pre zväzok)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "použitie: rubrapack diff <a.msi> <b.msi>"

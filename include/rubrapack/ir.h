@@ -711,6 +711,14 @@ typedef struct {
     bool      msix_framework;                   // framework = true: a framework package other packages depend on (RFC-0031 B19)
     bool      msix_external;                    // external-location = true: the identity of a program installed elsewhere (RFC-0031 B20)
     char    **msix_symbols;                     // [msix] symbols: the .pdb files of a .msixupload (RFC-0031 B22), paths to read
+    bool      has_winget;                       // [winget] (RFC-0031 B28): what a winget manifest says besides the package
+    char     *wg_id, *wg_url, *wg_license, *wg_desc;                      // identifier, installer-url, license, short-description
+    char     *wg_publisher_url, *wg_package_url, *wg_license_url, *wg_moniker;
+    char    **wg_tags;
+    size_t    wg_tag_count;
+    rp_ir_ltext_t *wg_desc_by_lang;             // short-description-xx
+    size_t    wg_desc_by_lang_count;
+    rp_pos_t  wg_pos;
     bool      has_psf;                          // [msix-psf] (RFC-0031 B26): the Package Support Framework
     char     *psf_files, *psf_config;           // its folder of PSF files and its config.json, paths to read
     char     *psf_launcher;                     // launcher = "...": the launcher's file name, or NULL (by architecture)

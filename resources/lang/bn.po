@@ -144,6 +144,9 @@ msgstr "{1}-এ LANGID থাকে (1..65535), যেমন 1041"
 msgid "%s holds strings"
 msgstr "{1}-এ স্ট্রিং থাকে"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} {2} থেকে {3} অক্ষর দীর্ঘ"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} হলো \"কী=মান\" পাঠের একটি তালিকা"
 
@@ -188,6 +191,9 @@ msgstr "{1}-কে একটি GUID হতে হবে"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1}-কে {{12345678-...} এর মতো GUID হতে হবে ('{2}' পাওয়া গেছে)"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} একটি http:// বা https:// ঠিকানা হতে হবে ('{2}' পাওয়া গেছে)"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1}-কে https://, http:// বা file:// ঠিকানা, অথবা \\\\server\\share পথ হতে হবে ('{2}' পাওয়া গেছে)"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test স্বাক্ষরহীন প্যাকেজ�
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate none, অথবা product-code,upgrade-code,language,platform-এর কয়েকটি নেয়"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget হলো .msi, .msix বা .msixbundle আউটপুটের জন্য"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget-এর জন্য একটি [winget] টেবিল লাগে: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget-এর জন্য প্যাকেজ একটি ফাইলে থাকতে হবে: winget একটি ফাইল নামায়, তাই cab = \"external\" নয়"
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} দুবার দেওয়া হয়েছে"
@@ -2106,6 +2121,9 @@ msgstr "icon: ফাইল '{1}' এই প্যাকেজের [file.*] ন
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id-কে {{12345678-1234-1234-1234-123456789ABC} এর মতো GUID হতে হবে: মডিউলের নিজস্ব, প্রতিটি সংস্করণে রাখা হয়"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier হলো winget-এর Publisher.Package: ১ থেকে ৩২ অক্ষরের ২ থেকে ৮টি অংশ, ফাঁকা ও \\ / : * ? \" < > | ছাড়া ('{1}' পাওয়া গেছে)"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name-কে A-Z, a-z, 0-9, '.' এবং '-' এর 3 থেকে 50টি অক্ষর হতে হবে ('{1}' পাওয়া গেছে)"
 
@@ -2799,6 +2817,9 @@ msgstr "টেবিল"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "টেবিল ও কী: অজানা টেবিল বা কী, অনুপস্থিত প্রয়োজনীয় কী, বৈশিষ্ট্য থাকলে বৈশিষ্ট্যবিহীন আইটেম"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags হলো সর্বাধিক ১৬টি অনুসন্ধান শব্দের তালিকা, যেমন [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "কোনো কনফিগারেশন নেয় না (ModuleConfiguration নেই)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code-কে {{12345678-1234-1234-1234-123456789ABC}-এর ম�
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "ব্যবহার: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "ব্যবহার: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (বান্ডলের জন্য একটি তালিকা)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "ব্যবহার: rubrapack diff <a.msi> <b.msi>"

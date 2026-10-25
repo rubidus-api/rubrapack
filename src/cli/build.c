@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "rubrapack/winget.h"
+
 #include "proven/heap.h"
 
 enum { MAX_DEFINES = 64, MAX_SOURCE = 1u << 24 };
@@ -133,6 +135,8 @@ static int build_chain(proven_allocator_t heap, const rp_tdoc_t *doc, const char
     return rc;
 }
 
+static bool winget_from(proven_allocator_t heap, const rp_ir_t *ir, rp_winget_t *wg, rp_srcdiags_t *d);
+
 // A .msixbundle: the source built once per architecture (its own $(ARCH) each time), every package
 // named <identity>_<version>_<arch>.msix inside, the architectures in the order given. A .msixupload
 // (RFC-0031 B22) is that bundle, <identity>_<version>_<arch>_..._<arch>.msixbundle, in a plain ZIP
@@ -152,6 +156,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     size_t nlp = 0;
     char lp_prefix[280] = "";
     bool upload = rp_ascii_ends_with_ci(out, ".msixupload");
+    rp_winget_t wg = { 0 };
     rp_msix_part_t syms[3];
     uint8_t *sym_data[3] = { 0 };
     static char sym_names[3][320];
@@ -162,6 +167,7 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
         rp_ir_t ir;
         rp_ir_options_t opt = { dir, defines, ndef, narch ? archs[k] : NULL, NULL, out, nfc, NULL, NULL, NULL };
         err = rp_ir_build(heap, doc, &opt, &ir, d);
+        if (err == PROVEN_OK && mopt->winget && !winget_from(heap, &ir, &wg, d)) err = PROVEN_ERR_INVALID_FORMAT;
         char menu_dll[1600] = "", menu_none[8] = "";
         if (err == PROVEN_OK) {
             char stem[1500];
@@ -321,6 +327,8 @@ static int build_bundle(proven_allocator_t heap, const rp_tdoc_t *doc, const cha
     rp_mem_free(heap, ai);
     for (size_t i = 0; i < n; ++i) rp_mem_free(heap, pkgs[i]);
     for (size_t i = 0; i < nsym; ++i) rp_mem_free(heap, sym_data[i]);
+    if (rc == RP_EXIT_OK && mopt->winget) rc = rp_winget_write(heap, &wg, out, mopt->winget);
+    rp_winget_free(heap, &wg);
     return rc;
 }
 
@@ -351,6 +359,24 @@ static void outfile_drop(void *ctx, uint8_t *data) {
     o->om = NULL;
 }
 
+// --winget (RFC-0031 B28): the source must have a [winget] table, and the package must be one file.
+static bool winget_from(proven_allocator_t heap, const rp_ir_t *ir, rp_winget_t *wg, rp_srcdiags_t *d) {
+    if (!ir->has_winget) {
+        rp_srcdiag_add(d, (rp_pos_t){ 1, 1 }, "RP1202", false, "--winget needs a [winget] table: identifier, installer-url, license, short-description");
+        return false;
+    }
+    if (ir->cab_external) {
+        rp_srcdiag_add(d, ir->wg_pos, "RP1617", false, "--winget needs the package in one file: winget downloads one, so not cab = \"external\"");
+        return false;
+    }
+    if (wg->id) return true;                // a bundle's first build gave it
+    if (!rp_winget_take(heap, ir, wg)) {
+        rp_srcdiag_add(d, ir->wg_pos, "RP1612", false, "out of memory");
+        return false;
+    }
+    return true;
+}
+
 static int run(int argc, char **argv, bool lint) {
     char menu_dll[1600] = "", menu_pkg[1600] = "";      // the Windows 11 menu's files beside the output, while building
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
@@ -363,6 +389,7 @@ static int run(int argc, char **argv, bool lint) {
     size_t jobs = 0;
     bool lint_msix = false;
     rp_msix_options_t msix_opt = { 0 };
+    rp_winget_t wg = { 0 };                 // --winget: what the manifest takes from the source
     const char *target = NULL;
     int rc = RP_EXIT_USAGE;
 
@@ -451,6 +478,9 @@ static int run(int argc, char **argv, bool lint) {
             msix_opt.unsigned_test = true;
         } else if (!lint && strcmp(a, "--flat") == 0) {
             msix_opt.flat = true;
+        } else if (!lint && strcmp(a, "--winget") == 0 && next) {
+            msix_opt.winget = next;
+            ++i;
         } else if (!lint && strcmp(a, "--msix-compress") == 0 && next) {
             if (strcmp(next, "store") != 0 && strcmp(next, "deflate") != 0) {
                 rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--msix-compress takes deflate or store (got '%s')", next);
@@ -489,7 +519,7 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (src == NULL || out == NULL) {
         if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]");
+        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]");
         goto done;
     }
     bool bundle = !lint && (rp_ascii_ends_with_ci(out, ".msixbundle") || rp_ascii_ends_with_ci(out, ".msixupload"));
@@ -522,6 +552,10 @@ static int run(int argc, char **argv, bool lint) {
     }
     if (target && strcmp(target, msix ? "msix" : "msi") != 0) {
         rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--target %s does not match the output '%s'", target, out);
+        goto done;
+    }
+    if (msix_opt.winget && (chain_out || msm_out || rp_ascii_ends_with_ci(out, ".msixupload"))) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--winget is for a .msi, .msix or .msixbundle output");
         goto done;
     }
     if (msix_opt.flat && (!bundle || rp_ascii_ends_with_ci(out, ".msixupload"))) {
@@ -584,6 +618,7 @@ static int run(int argc, char **argv, bool lint) {
         if (err == PROVEN_OK) {
             rp_ir_options_t opt = { dir, defines, ndef, arch, compress, lint ? (lint_msix ? "lint.msix" : NULL) : out, nfc, NULL, NULL, NULL };
             err = rp_ir_build(heap, &doc, &opt, &ir, &d);
+            if (err == PROVEN_OK && msix_opt.winget && !winget_from(heap, &ir, &wg, &d)) err = PROVEN_ERR_INVALID_FORMAT;
             if (err == PROVEN_OK && !lint) {
                 int menu_rc = menu_files(heap, &doc, &opt, &ir, &d, msix, &sign, out, menu_dll, menu_pkg, sizeof menu_dll, &err);
                 if (menu_rc != RP_EXIT_OK) {
@@ -630,6 +665,7 @@ static int run(int argc, char **argv, bool lint) {
             rp_mem_free(heap, pkg);
             rp_srcdiag_print(&d, src);
             rc = sign_rc != RP_EXIT_OK ? sign_rc : err == PROVEN_OK ? RP_EXIT_OK : d.errors ? RP_EXIT_SOURCE : RP_EXIT_IO;
+            if (rc == RP_EXIT_OK && msix_opt.winget && !lint) rc = rp_winget_write(heap, &wg, out, msix_opt.winget);
         } else if (err == PROVEN_OK) {
             rp_limits_t limits = rp_limits_default();
             // External cabinets are named after the package: <stem>.cab next to <stem>.msi.
@@ -700,12 +736,14 @@ static int run(int argc, char **argv, bool lint) {
                  : d.errors                        ? RP_EXIT_SOURCE
                                                    : RP_EXIT_IO;
             if (rc == RP_EXIT_OK && strict && d.warnings) rc = RP_EXIT_LINT;
+            if (rc == RP_EXIT_OK && msix_opt.winget && !lint) rc = rp_winget_write(heap, &wg, out, msix_opt.winget);
         } else {
             rp_srcdiag_print(&d, src);
             rc = err == PROVEN_ERR_INVALID_FORMAT ? RP_EXIT_SOURCE : RP_EXIT_IO;
         }
     }
 done:
+    rp_winget_free(proven_heap_allocator(), &wg);
     if (menu_dll[0]) (void)rp_pal_remove_file(proven_heap_allocator(), menu_dll);
     if (menu_pkg[0]) (void)rp_pal_remove_file(proven_heap_allocator(), menu_pkg);
     for (size_t k = 0; k < ndef; ++k) rp_mem_free(proven_heap_allocator(), define_buf[k]);

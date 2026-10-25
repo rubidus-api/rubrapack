@@ -5,7 +5,7 @@
 
 // ---- tables ----------------------------------------------------------------------------------
 
-static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", "msix-psf", NULL };
+static const char *const top_kinds[] = { "package", "module", "define", "arp", "ui", "msix", "msix-psf", "winget", NULL };
 static const char *const item_kinds[] = { "feature", "dir", "file", "files", "folder", "property", "action", "registry",
                                           "shortcut", "remove", "copy", "env", "ini", "require", "search", "service", "font", "permission",
                                           "ui-text", "dialog", "dialog-control", "billboard", "assoc", "protocol", "com", "handler", "menu", "other-copy", "move", "odbc-driver", "odbc-source", "publish", "msix-extension", "msix-dependency", "merge", NULL };
@@ -13,7 +13,7 @@ static const char *const later_kinds[] = { NULL };
 static const char *const all_kinds[] = { "package", "module", "define", "arp", "property", "feature", "dir", "file", "files", "folder",
                                          "registry", "shortcut", "env", "ini", "service", "assoc", "protocol", "com", "handler", "menu", "other-copy",
                                          "move", "odbc-driver", "odbc-source", "publish", "font", "permission", "require", "search", "remove", "copy", "action",
-                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "billboard", "msix", "msix-app", "msix-extension", "msix-dependency", "msix-psf", "merge", NULL };
+                                         "arp", "ui", "ui-text", "dialog", "dialog-control", "billboard", "msix", "msix-app", "msix-extension", "msix-dependency", "msix-psf", "winget", "merge", NULL };
 
 bool ir_in_list(const char *s, const char *const *list) {
     for (size_t k = 0; list[k]; ++k) {
@@ -118,10 +118,11 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         else if (strcmp(t->kind, "msix-app") == 0) ir_parse_msix_app(&c, t);
         else if (strcmp(t->kind, "msix-dependency") == 0) ir_parse_msix_dep(&c, t);
         else if (strcmp(t->kind, "msix-psf") == 0) ir_parse_msix_psf(&c, t);
+        else if (strcmp(t->kind, "winget") == 0) ir_parse_winget(&c, t);
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
-                                               "assoc", "protocol", "com", "handler", "menu", "other-copy", "shortcut", "font", "service", "msix-dependency", "msix-psf", "copy", "ini", "env", "merge", NULL };
+                                               "assoc", "protocol", "com", "handler", "menu", "other-copy", "shortcut", "font", "service", "msix-dependency", "msix-psf", "winget", "copy", "ini", "env", "merge", NULL };
         if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
@@ -831,6 +832,11 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->msix_main_publisher);
     for (size_t k = 0; k < ir->msix_cap_count; ++k) rp_mem_free(a, ir->msix_caps[k]);
     rp_mem_free(a, ir->msix_caps);
+    char *wg[] = { ir->wg_id, ir->wg_url, ir->wg_license, ir->wg_desc, ir->wg_publisher_url, ir->wg_package_url, ir->wg_license_url, ir->wg_moniker };
+    for (size_t k = 0; k < sizeof wg / sizeof wg[0]; ++k) rp_mem_free(a, wg[k]);
+    for (size_t k = 0; k < ir->wg_tag_count; ++k) rp_mem_free(a, ir->wg_tags[k]);
+    rp_mem_free(a, ir->wg_tags);
+    free_ltexts(a, ir->wg_desc_by_lang, ir->wg_desc_by_lang_count);
     rp_mem_free(a, ir->psf_files);
     rp_mem_free(a, ir->psf_config);
     rp_mem_free(a, ir->psf_launcher);

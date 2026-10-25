@@ -322,6 +322,82 @@ void ir_parse_msix_psf(ctx_t *c, const rp_ttable_t *t) {
     }
 }
 
+// [winget] (RFC-0031 B28): what `build --winget DIR` needs besides the package itself - the
+// identifier, where the installer will be downloaded from, its license and a short description -
+// checked against the winget manifest schema 1.12.0's patterns and lengths.
+static bool wg_url_ok(const char *u) {
+    return u && (strncmp(u, "https://", 8) == 0 || strncmp(u, "http://", 7) == 0 || strncmp(u, "HTTPS://", 8) == 0 || strncmp(u, "HTTP://", 7) == 0) &&
+           strlen(u) <= 2048 && !strpbrk(u, " \t\r\n");
+}
+
+static bool wg_id_ok(const char *s) {
+    size_t parts = 0, len = 0;
+    if (s == NULL || strlen(s) > 128) return false;
+    for (const char *p = s;; ++p) {
+        if (*p == '.' || *p == 0) {
+            if (len == 0 || len > 32) return false;
+            ++parts;
+            len = 0;
+            if (*p == 0) break;
+        } else if ((unsigned char)*p <= 0x20 || strchr("\\/:*?\"<>|", *p)) {
+            return false;
+        } else {
+            ++len;
+        }
+    }
+    return parts >= 2 && parts <= 8;
+}
+
+void ir_parse_winget(ctx_t *c, const rp_ttable_t *t) {
+    static const char *const keys[] = { "identifier", "installer-url", "license", "short-description", "publisher-url", "package-url",
+                                        "license-url", "moniker", "tags", NULL };
+    static const char *const lang_bases[] = { "short-description", NULL };
+    ir_check_keys_lang(c, t, keys, lang_bases);
+    rp_ir_t *ir = c->ir;
+    ir->has_winget = true;
+    ir->wg_pos = t->pos;
+    ir->wg_id = ir_get_str(c, t, "identifier", true, NULL);
+    ir->wg_url = ir_get_str(c, t, "installer-url", true, NULL);
+    ir->wg_license = ir_get_str(c, t, "license", true, NULL);
+    ir->wg_desc = ir_get_str(c, t, "short-description", true, NULL);
+    ir_get_ltexts(c, t, "short-description", &ir->wg_desc_by_lang, &ir->wg_desc_by_lang_count);
+    ir->wg_publisher_url = ir_get_str(c, t, "publisher-url", false, NULL);
+    ir->wg_package_url = ir_get_str(c, t, "package-url", false, NULL);
+    ir->wg_license_url = ir_get_str(c, t, "license-url", false, NULL);
+    ir->wg_moniker = ir_get_str(c, t, "moniker", false, NULL);
+    if (ir->wg_id && !wg_id_ok(ir->wg_id)) {
+        ERR(c, ir_key_pos(t, "identifier"), "RP1306", "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')", ir->wg_id);
+    }
+    const char *const url_keys[] = { "installer-url", "publisher-url", "package-url", "license-url" };
+    const char *const urls[] = { ir->wg_url, ir->wg_publisher_url, ir->wg_package_url, ir->wg_license_url };
+    for (size_t k = 0; k < 4; ++k) {
+        if (urls[k] && !wg_url_ok(urls[k])) ERR(c, ir_key_pos(t, url_keys[k]), "RP1306", "%s must be an http:// or https:// address (got '%s')", url_keys[k], urls[k]);
+    }
+    if (ir->wg_license && (strlen(ir->wg_license) < 3 || strlen(ir->wg_license) > 512)) ERR(c, ir_key_pos(t, "license"), "RP1306", "%s is %u to %u characters long", "license", 3u, 512u);
+    if (ir->wg_desc && (strlen(ir->wg_desc) < 3 || strlen(ir->wg_desc) > 256)) ERR(c, ir_key_pos(t, "short-description"), "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
+    for (size_t k = 0; k < ir->wg_desc_by_lang_count; ++k) {
+        size_t n = strlen(ir->wg_desc_by_lang[k].text);
+        if (n < 3 || n > 256) ERR(c, t->pos, "RP1306", "%s is %u to %u characters long", "short-description", 3u, 256u);
+    }
+    if (ir->wg_moniker && (strlen(ir->wg_moniker) < 1 || strlen(ir->wg_moniker) > 40)) ERR(c, ir_key_pos(t, "moniker"), "RP1306", "%s is %u to %u characters long", "moniker", 1u, 40u);
+    const rp_tkey_t *tags = ir_find_key(t, "tags");
+    if (tags && (tags->val.kind != RP_TV_ARRAY || tags->val.count > 16 || (tags->val.count && tags->val.items[0].kind != RP_TV_STRING))) {
+        ERR(c, tags->pos, "RP1306", "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]");
+    } else if (tags && tags->val.count) {
+        ir->wg_tags = rp_mem_alloc(c->alloc, tags->val.count, sizeof *ir->wg_tags);
+        if (ir->wg_tags == NULL) c->nomem = true;
+        for (size_t k = 0; ir->wg_tags && k < tags->val.count; ++k) {
+            char *s = ir_subst(c, &tags->val.items[k]);
+            if (s == NULL) continue;
+            if (strlen(s) < 1 || strlen(s) > 40) ERR(c, tags->pos, "RP1306", "%s is %u to %u characters long", "a tag", 1u, 40u);
+            for (size_t j = 0; j < ir->wg_tag_count; ++j) {
+                if (strcmp(ir->wg_tags[j], s) == 0) ERR(c, tags->pos, "RP1306", "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]");
+            }
+            ir->wg_tags[ir->wg_tag_count++] = s;
+        }
+    }
+}
+
 void ir_parse_property(ctx_t *c, const rp_ttable_t *t, rp_ir_property_t *p) {
     static const char *const keys[] = { "value", "secure", "hidden", NULL };
     ir_check_keys(c, t, keys);

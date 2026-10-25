@@ -229,6 +229,31 @@ Every step stops the job when rubrapack's exit code is not 0. `verify --system-r
 roots Linux has, so it passes for a certificate from a public certification authority; for a
 company's own CA give `--trust ca.pem` instead.
 
+## In the Windows Package Manager: `--winget`
+
+To publish a release through `winget install`, the package needs a manifest in Microsoft's
+winget-pkgs repository. rubrapack writes it with the package; `[winget]` gives what the package
+does not know:
+
+```toml
+[winget]
+identifier = "ExampleSoftware.Hello"
+installer-url = "https://example.com/download/hello-$(VERSION).msi"
+license = "MIT"
+short-description = "Says hello"
+short-description-ko = "인사를 한다"
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello-2.2.0.msi -D VERSION=2.2.0 --winget manifests
+```
+
+`manifests\` then holds `ExampleSoftware.Hello.yaml`, `.installer.yaml` (with the package's SHA-256
+and ProductCode) and the locale files; upload the package to `installer-url` and submit the folder
+(`winget validate --manifest manifests` checks it first). `publisher-url`, `package-url`,
+`license-url`, a `moniker` (the short name `winget install` also takes) and `tags` (search terms)
+fill in the rest of the store listing.
+
 ## In an editor: `schema`
 
 `rubrapack schema` prints a JSON Schema of sources - every table, its keys, which are required, and

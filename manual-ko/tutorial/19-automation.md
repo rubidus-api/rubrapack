@@ -217,6 +217,29 @@ jobs:
 rubrapack 의 종료 코드가 0 이 아니면 그 단계에서 작업이 멈춘다. `verify --system-roots` 는 Linux 가 가진 루트를
 믿으므로 공인 인증 기관의 인증서면 통과한다. 회사 자체 CA 라면 대신 `--trust ca.pem` 을 준다.
 
+## Windows 패키지 관리자에: `--winget`
+
+`winget install` 로 판을 내놓으려면 Microsoft 의 winget-pkgs 저장소에 매니페스트가 있어야 한다. rubrapack 은 패키지와
+함께 그것을 쓰고, 패키지가 모르는 것은 `[winget]` 이 준다:
+
+```toml
+[winget]
+identifier = "ExampleSoftware.Hello"
+installer-url = "https://example.com/download/hello-$(VERSION).msi"
+license = "MIT"
+short-description = "Says hello"
+short-description-ko = "인사를 한다"
+```
+
+```text
+C:\work\hello> rubrapack build hello.toml -o hello-2.2.0.msi -D VERSION=2.2.0 --winget manifests
+```
+
+그러면 `manifests\` 에 `ExampleSoftware.Hello.yaml`, `.installer.yaml`(패키지의 SHA-256 과 ProductCode 를 담은),
+locale 파일들이 생긴다. 패키지를 `installer-url` 에 올리고 폴더를 제출한다(먼저 `winget validate --manifest manifests`
+로 확인한다). `publisher-url`, `package-url`, `license-url`, `moniker`(`winget install` 이 받는 짧은 이름), `tags`(검색어)
+로 목록의 나머지를 채운다.
+
 ## 편집기에서: `schema`
 
 `rubrapack schema` 는 원본의 JSON Schema 를 출력한다 - 모든 표, 그 키, 어느 키가 꼭 있어야 하는지, 어느 키가

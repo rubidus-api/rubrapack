@@ -52,6 +52,7 @@ static const char *const core_sources[] = {
     "src/cli/extract.c",
     "src/cli/new.c", "src/cli/new_from.c", "src/cli/edit.c", "src/cli/explain.c", "src/cli/explain_table.c", "src/cli/json.c", "src/cli/schema.c", "src/cli/schema_table.c",
     "src/cli/sign.c",
+    "src/cli/winget.c",
     "src/codec/deflate.c",
     "src/codec/lzx.c",
     "src/codec/md5.c",

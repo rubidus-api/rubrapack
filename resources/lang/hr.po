@@ -144,6 +144,9 @@ msgstr "{1} sadrži LANGID-ove (1..65535), npr. 1041"
 msgid "%s holds strings"
 msgstr "{1} sadrži nizove"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} je dug {2} do {3} znakova"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} je popis tekstova \"Ključ=Vrijednost\""
 
@@ -188,6 +191,9 @@ msgstr "{1} mora biti GUID"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} mora biti GUID kao {{12345678-...} (dobiveno '{2}')"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} mora biti adresa http:// ili https:// (dobiveno '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} mora biti adresa https://, http:// ili file://, ili putanja \\\\server\\share (dobiveno '{2}')"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test je za pakete bez potpisa; s --key ga izostavite"
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate prima none ili neke od product-code,upgrade-code,language,platform"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget je za izlaz .msi, .msix ili .msixbundle"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget treba tablicu [winget]: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget treba paket u jednoj datoteci: winget preuzima jednu, dakle ne cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} je naveden dvaput"
@@ -2106,6 +2121,9 @@ msgstr "icon: datoteka '{1}' nije [file.*] ovog paketa"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}: vlastiti GUID modula, isti u svakoj verziji"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier je wingetov Publisher.Package: 2 do 8 dijelova od 1 do 32 znaka, bez razmaka i \\ / : * ? \" < > | (dobiveno '{1}')"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name mora imati 3 do 50 znakova iz A-Z, a-z, 0-9, '.' i '-' (dobiveno '{1}')"
 
@@ -2799,6 +2817,9 @@ msgstr "tablice"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "tablice i ključevi: nepoznata tablica ili ključ, nedostaje obavezni, stavka bez značajke kad značajke postoje"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags je popis od najviše 16 pojmova za pretraživanje, npr. [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "ne prima konfiguraciju (nema ModuleConfiguration)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}"
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "upotreba: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "upotreba: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (popis za skup paketa)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "upotreba: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (popis za skup paketa)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "upotreba: rubrapack diff <a.msi> <b.msi>"

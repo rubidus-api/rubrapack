@@ -144,6 +144,9 @@ msgstr "{1} chứa LANGID (1..65535), như 1041"
 msgid "%s holds strings"
 msgstr "{1} chứa chuỗi"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} dài {2} đến {3} ký tự"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} là danh sách các văn bản \"Khóa=Giá trị\""
 
@@ -188,6 +191,9 @@ msgstr "{1} phải là GUID"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} phải là GUID như {{12345678-...} (nhận được '{2}')"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} phải là địa chỉ http:// hoặc https:// (nhận '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} phải là địa chỉ https://, http:// hoặc file://, hoặc đường dẫn \\\\server\\share (nhận được '{2}')"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test dành cho gói không có chữ ký; khi có --key thì 
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate nhận none, hoặc một vài trong product-code,upgrade-code,language,platform"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget dành cho đầu ra .msi, .msix hoặc .msixbundle"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget cần một bảng [winget]: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget cần gói trong một tệp: winget tải một tệp, nên không dùng cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} được đưa hai lần"
@@ -2106,6 +2121,9 @@ msgstr "icon: tệp '{1}' không phải [file.*] của gói này"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id phải là GUID như {{12345678-1234-1234-1234-123456789ABC}: của chính mô-đun, giữ nguyên ở mọi phiên bản"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier là Publisher.Package của winget: 2 đến 8 phần, mỗi phần 1 đến 32 ký tự, không có khoảng trắng hay \\ / : * ? \" < > | (nhận '{1}')"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name phải dài 3 đến 50 ký tự gồm A-Z, a-z, 0-9, '.' và '-' (nhận được '{1}')"
 
@@ -2799,6 +2817,9 @@ msgstr "bảng"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "bảng và khóa: bảng hoặc khóa không xác định, thiếu mục bắt buộc, một mục không có tính năng khi đã có tính năng"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags là danh sách tối đa 16 từ tìm kiếm, như [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "không nhận cấu hình (không có ModuleConfiguration)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code phải là GUID như {{12345678-1234-1234-1234-123456789ABC
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "cách dùng: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "cách dùng: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (danh sách cho bó)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "cách dùng: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (danh sách cho bó)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "cách dùng: rubrapack diff <a.msi> <b.msi>"

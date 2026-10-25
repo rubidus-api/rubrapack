@@ -144,6 +144,9 @@ msgstr "{1} 에는 1041 같은 LANGID(1..65535)가 들어갑니다"
 msgid "%s holds strings"
 msgstr "{1} 에는 문자열이 들어갑니다"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} 는 {2}~{3}자다"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} 은(는) \"Key=Value\" 텍스트의 목록입니다"
 
@@ -188,6 +191,9 @@ msgstr "{1} 은(는) GUID 여야 합니다"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} 은(는) {{12345678-...} 같은 GUID 여야 합니다('{2}'을(를) 받음)"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} 는 http:// 나 https:// 주소여야 한다('{2}' 를 받음)"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} 은(는) https://, http://, file:// 주소이거나 \\\\server\\share 경로여야 합니다('{2}'을(를) 받음)"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test 는 서명 없는 패키지에 씁니다. --key 를 줄 
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate 는 none, 또는 product-code,upgrade-code,language,platform 중 몇 개입니다"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget 은 .msi, .msix, .msixbundle 출력에 쓴다"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget 은 [winget] 표가 필요하다: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget 은 패키지가 파일 하나여야 한다: winget 은 하나를 내려받으니 cab = \"external\" 는 안 된다"
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} 이(가) 두 번 주어졌습니다"
@@ -2106,6 +2121,9 @@ msgstr "icon: 파일 '{1}'은(는) 이 패키지의 [file.*] 이 아닙니다"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id 는 {{12345678-1234-1234-1234-123456789ABC} 같은 GUID 여야 합니다: 모듈 자신의 것으로 모든 판에서 같습니다"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier 는 winget 의 Publisher.Package 다: 1~32자 부분 2~8개, 공백과 \\ / : * ? \" < > | 는 안 된다('{1}' 를 받음)"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name 은 A-Z, a-z, 0-9, '.', '-' 로 된 3~50자여야 합니다('{1}'을(를) 받음)"
 
@@ -2799,6 +2817,9 @@ msgstr "표"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "표와 키: 알 수 없는 표나 키, 빠진 필수 키, 기능이 생긴 뒤 기능 없는 항목"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags 는 검색어 16개까지의 목록이다. 예: [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "구성을 받지 않습니다(ModuleConfiguration 이 없습니다)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code 는 {{12345678-1234-1234-1234-123456789ABC} 같은 GUID 여
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "사용법: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "사용법: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "사용법: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "사용법: rubrapack diff <a.msi> <b.msi>"

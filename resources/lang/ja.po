@@ -144,6 +144,9 @@ msgstr "{1} には 1041 のような LANGID (1..65535) を書きます"
 msgid "%s holds strings"
 msgstr "{1} には文字列を書きます"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} の長さは {2}～{3} 文字です"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} は \"Key=Value\" テキストのリストです"
 
@@ -188,6 +191,9 @@ msgstr "{1} は GUID でなければなりません"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} は {12345678-...} のような GUID でなければなりません ('{2}' でした)"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} は http:// か https:// のアドレスである必要があります ('{2}' を受け取りました)"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} は https://、http://、file:// のアドレスか \\\\server\\share のパスでなければなりません ('{2}' でした)"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test は署名のないパッケージ用です。--key が�
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate は none か、product-code,upgrade-code,language,platform のいくつかを取ります"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget は .msi、.msix、.msixbundle 出力用です"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget には [winget] テーブルが必要です: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget にはパッケージが 1 つのファイルである必要があります (winget は 1 つをダウンロードするため cab = \"external\" は不可)"
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} が 2 回指定されています"
@@ -2106,6 +2121,9 @@ msgstr "icon: ファイル '{1}' はこのパッケージの [file.*] ではあ�
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id は {12345678-1234-1234-1234-123456789ABC} のような GUID でなければなりません: モジュール自身のもので、どのバージョンでも変えません"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier は winget の Publisher.Package です: 1～32 文字の部分が 2～8 個、空白と \\ / : * ? \" < > | は不可 ('{1}' を受け取りました)"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name は A-Z、a-z、0-9、'.'、'-' の 3 から 50 文字でなければなりません ('{1}' でした)"
 
@@ -2799,6 +2817,9 @@ msgstr "テーブル"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "テーブルとキー: 不明なテーブルやキー、必須のものの欠落、機能があるのに機能のない項目"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags は最大 16 個の検索語の一覧です。例: [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "構成を取りません (ModuleConfiguration がありません)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code は {12345678-1234-1234-1234-123456789ABC} のような GUI
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "使い方: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "使い方: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (バンドルなら一覧)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "使い方: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (バンドルなら一覧)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "使い方: rubrapack diff <a.msi> <b.msi>"

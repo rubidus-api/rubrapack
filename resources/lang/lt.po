@@ -144,6 +144,9 @@ msgstr "{1} turi LANGID (1..65535), pvz., 1041"
 msgid "%s holds strings"
 msgstr "{1} turi eilutes"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} ilgis yra {2}–{3} simbolių"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} yra \"Raktas=Reikšmė\" tekstų sąrašas"
 
@@ -188,6 +191,9 @@ msgstr "{1} turi būti GUID"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} turi būti GUID kaip {{12345678-...} (gauta '{2}')"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} turi būti http:// arba https:// adresas (gauta '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} turi būti adresas https://, http:// arba file:// arba kelias \\\\server\\share (gauta '{2}')"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test skirtas paketams be parašo; su --key jo nenurodykite"
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate priima none arba kai kuriuos iš product-code,upgrade-code,language,platform"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget skirtas .msi, .msix arba .msixbundle išvesčiai"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget reikia lentelės [winget]: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget reikia paketo viename faile: winget atsisiunčia vieną, todėl ne cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} nurodytas du kartus"
@@ -2106,6 +2121,9 @@ msgstr "icon: failas '{1}' nėra šio paketo [file.*]"
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id turi būti GUID kaip {{12345678-1234-1234-1234-123456789ABC}: paties modulio, toks pat kiekvienoje versijoje"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier yra winget Publisher.Package: 2–8 dalys po 1–32 simbolius, be tarpų ir \\ / : * ? \" < > | (gauta '{1}')"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name turi būti 3-50 simbolių iš A-Z, a-z, 0-9, '.' ir '-' (gauta '{1}')"
 
@@ -2799,6 +2817,9 @@ msgstr "lentelės"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "lentelės ir raktai: nežinoma lentelė ar raktas, trūksta privalomo, elementas be funkcijos, kai funkcijos yra"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags yra ne daugiau kaip 16 paieškos žodžių sąrašas, pvz., [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "nepriima konfigūracijos (neturi ModuleConfiguration)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code turi būti GUID kaip {{12345678-1234-1234-1234-123456789ABC
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "naudojimas: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "naudojimas: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (sąrašas rinkiniui)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "naudojimas: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (sąrašas rinkiniui)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "naudojimas: rubrapack diff <a.msi> <b.msi>"

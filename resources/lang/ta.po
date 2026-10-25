@@ -144,6 +144,9 @@ msgstr "{1} LANGID களைக் கொண்டுள்ளது (1..65535),
 msgid "%s holds strings"
 msgstr "{1} சரங்களைக் கொண்டுள்ளது"
 
+msgid "%s is %u to %u characters long"
+msgstr "{1} {2} முதல் {3} எழுத்துகள் நீளம்"
+
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} என்பது \"விசை=மதிப்பு\" உரைகளின் பட்டியல்"
 
@@ -188,6 +191,9 @@ msgstr "{1} ஒரு GUID ஆக இருக்க வேண்டும்"
 
 msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} {{12345678-...} போன்ற GUID ஆக இருக்க வேண்டும் ('{2}' கிடைத்தது)"
+
+msgid "%s must be an http:// or https:// address (got '%s')"
+msgstr "{1} ஒரு http:// அல்லது https:// முகவரியாக இருக்க வேண்டும் ('{2}' பெறப்பட்டது)"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} https://, http:// அல்லது file:// முகவரி, அல்லது \\\\server\\share பாதையாக இருக்க வேண்டும் ('{2}' கிடைத்தது)"
@@ -584,6 +590,15 @@ msgstr "--unsigned-test கையொப்பம் இல்லாத தொக
 
 msgid "--validate takes none, or some of product-code,upgrade-code,language,platform"
 msgstr "--validate none அல்லது product-code,upgrade-code,language,platform இல் சிலவற்றை ஏற்கும்"
+
+msgid "--winget is for a .msi, .msix or .msixbundle output"
+msgstr "--winget என்பது .msi, .msix அல்லது .msixbundle வெளியீட்டுக்கானது"
+
+msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
+msgstr "--winget க்கு [winget] அட்டவணை தேவை: identifier, installer-url, license, short-description"
+
+msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
+msgstr "--winget க்கு தொகுப்பு ஒரே கோப்பாக இருக்க வேண்டும்: winget ஒன்றைப் பதிவிறக்குகிறது, எனவே cab = \"external\" கூடாது"
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} இருமுறை கொடுக்கப்பட்டுள்ளது"
@@ -2106,6 +2121,9 @@ msgstr "icon: கோப்பு '{1}' இந்தத் தொகுப்ப�
 msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module's own, kept in every version"
 msgstr "id {{12345678-1234-1234-1234-123456789ABC} போன்ற GUID ஆக இருக்க வேண்டும்: தொகுதியின் சொந்தம், ஒவ்வொரு பதிப்பிலும் வைக்கப்படும்"
 
+msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
+msgstr "identifier என்பது winget இன் Publisher.Package: 1 முதல் 32 எழுத்துகள் கொண்ட 2 முதல் 8 பகுதிகள், இடைவெளியும் \\ / : * ? \" < > | உம் இல்லாமல் ('{1}' பெறப்பட்டது)"
+
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name A-Z, a-z, 0-9, '.' மற்றும் '-' இலிருந்து 3 முதல் 50 எழுத்துகளாக இருக்க வேண்டும் ('{1}' கிடைத்தது)"
 
@@ -2799,6 +2817,9 @@ msgstr "அட்டவணைகள்"
 msgid "tables and keys: an unknown table or key, a required one missing, an item without a feature once features exist"
 msgstr "அட்டவணைகளும் விசைகளும்: அறியப்படாத அட்டவணை அல்லது விசை, இல்லாத தேவையான விசை, அம்சங்கள் இருக்கும்போது அம்சம் இல்லாத உருப்படி"
 
+msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
+msgstr "tags என்பது அதிகபட்சம் 16 தேடல் சொற்களின் பட்டியல், எ.கா. [\"editor\", \"text\"]"
+
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "உள்ளமைவை ஏற்காது (ModuleConfiguration இல்லை)"
 
@@ -3234,8 +3255,8 @@ msgstr "upgrade-code {{12345678-1234-1234-1234-123456789ABC} போன்ற GUI
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "பயன்பாடு: rubrapack {1}\n\n{2}{3}\n"
 
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
-msgstr "பயன்பாடு: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (தொகுப்புக்கான பட்டியல்)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat]"
+msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
+msgstr "பயன்பாடு: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (தொகுப்புக்கான பட்டியல்)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
 
 msgid "usage: rubrapack diff <a.msi> <b.msi>"
 msgstr "பயன்பாடு: rubrapack diff <a.msi> <b.msi>"

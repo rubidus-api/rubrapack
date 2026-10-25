@@ -249,6 +249,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities(이름들), file-system-virtualization, registry-virtualization(기본 `true`), main-package, main-publisher, modification, framework, external-location, symbols(`.pdb` 파일), language-packs(기본 `true`), appinstaller-uri, package-uri, update-hours(0-255, 기본 24), update-prompt, update-blocks, update-background - [MSIX 패키지](#msix-패키지) 참고 |
 | `[msix-app.ID]` | **executable**(`[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo(저마다 `.scale-NNN` 변형을 둘 수 있다), background-color(기본 `transparent`, `#RRGGBB`), hidden(시작 메뉴 항목 없음) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - MSIX 가 필요로 하는 프레임워크 패키지 - MSIX 전용 |
+| `[winget]` | **identifier**(`Publisher.Package`), **installer-url**(패키지를 내려받을 주소), **license**, **short-description**, short-description-xx, publisher-url, package-url, license-url, moniker, tags(16개까지) - `build --winget DIR` 가 읽는다 |
 | `[msix-psf]` | **files**(Package Support Framework 의 파일이 든 폴더), **config**(그 `config.json`), launcher(기본 `PsfLauncher64.exe`, x86 은 `PsfLauncher32.exe`) - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
@@ -1780,6 +1781,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixu
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
                 [--flat]                                               (.msixbundle)
+                [--winget <dir>]                                       (.msi, .msix, .msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
@@ -1895,6 +1897,14 @@ rubrapack version | help [command]
   것(`RP0013`): 열이 다른 표, 바뀐 `File` 이나 `Media` 표(변환은 파일을 나르지 않는다), 표의 16번째 뒤의
   열이 바뀐 것. `inspect <파일.mst> --base <base.msi>` 는 행을, `inspect <파일.mst> --summary` 는
   요약 정보를 보여 준다.
+- `build ... --winget <폴더>` 는 지은 패키지의 *winget* 매니페스트도 쓴다 - Windows 패키지 관리자 저장소가 받는
+  파일들(`<identifier>.yaml`, `.installer.yaml`, `.locale.<언어>.yaml`, 그리고 `short-description-xx` 마다 locale 파일
+  하나 더; 스키마 1.12.0)이다. 패키지가 말하지 않는 것은 원본의 `[winget]` 표가 준다: `identifier`, 내려받을 주소
+  `installer-url`(`$(VERSION)`, `$(ARCH)` 같은 변수를 쓸 수 있다. 모든 아키텍처를 담는 번들에는 `$(ARCH)` 없는 주소를
+  준다), `license`, `short-description`. 나머지는 쓴 패키지에서 다시 읽는다: SHA-256, MSI 의 ProductCode, UpgradeCode,
+  아키텍처, 범위, MSIX 의 PackageFamilyName, 최소 Windows 판, 서명이 있으면 그 서명의 SHA-256. MSI 하나는 아키텍처
+  하나이므로 여러 MSI 의 매니페스트는 손으로 합친다. `cab = "external"` 과는 함께 쓰지 않는다(`RP1617`): winget 은 파일
+  하나를 내려받는다.
 - `diff <a.msi> <b.msi>` 는 두 패키지의 다른 점을 한 줄에 하나씩, 표는 이름 순서, 행은 키 순서로 보인다:
   `<표>  insert  <칸들>`, `<표>  delete  <키들>`, `<표>  update  <키들>  <열>=<옛 값> -> <새 값>`,
   `<표>  new table  <열들>`(그 행들이 insert 로 뒤따른다), `<표>  dropped table`, `<표>  columns  <a 의 것> -> <b 의 것>`

@@ -2361,7 +2361,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                 char want[200];
                 snprintf(want, sizeof want, "\"%s\"", ir->msix_apps[a].id);
                 proven_u8str_view_t text = { .ptr = it->data, .size = it->data_len };
-                if (!proven_u8str_view_contains(text, PROVEN_LIT("\"applications\"")) || !proven_u8str_view_contains(text, proven_u8str_view_from_cstr(want))) {
+                proven_size_t at = proven_u8str_view_find(text, 0, PROVEN_LIT("\"applications\""));
+                if (at == PROVEN_INDEX_NOT_FOUND || proven_u8str_view_find(text, at, proven_u8str_view_from_cstr(want)) == PROVEN_INDEX_NOT_FOUND) {
                     DERR(ir->psf_pos, "RP1617", "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\"", ir->psf_config, ir->msix_apps[a].id);
                 }
             }
@@ -2773,12 +2774,12 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     proven_err_t err = d->errors != errors ? PROVEN_ERR_INVALID_FORMAT : PROVEN_OK;
     // RFC-0031 B20: with an external location the program's own installer puts its files, copies,
-    // INI files and registry values in place; the package keeps only what rubrapack made for the
-    // manifest (the default logos, resources.pri). The manifest's paths are read from that folder.
+    // INI files and registry values in place; the package keeps only what the manifest names of its
+    // own - the logos (Assets\, given or default) and resources.pri.
     if (ir->msix_external) {
         size_t kept = 0;
         for (size_t i = 0; i < n; ++i) {
-            if (strncmp(items[i].path, "Assets\\Default", 14) == 0 || strcmp(items[i].path, "resources.pri") == 0) {
+            if (strncmp(items[i].path, "Assets\\", 7) == 0 || strcmp(items[i].path, "resources.pri") == 0) {
                 items[kept++] = items[i];
             } else {
                 rp_mem_free(alloc, items[i].data);

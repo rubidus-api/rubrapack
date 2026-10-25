@@ -260,6 +260,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix]` | **identity-name**, **publisher**, display-name, display-name-xx, publisher-display-name, publisher-display-name-xx, min-version, capabilities (names), file-system-virtualization, registry-virtualization (default `true`), main-package, main-publisher, modification, framework, external-location, symbols (`.pdb` files), language-packs (default `true`), appinstaller-uri, package-uri, update-hours (0-255, default 24), update-prompt, update-blocks, update-background - see [MSIX packages](#msix-packages) |
 | `[msix-app.ID]` | **executable** (a `[file.*]` ID), display-name, display-name-xx, description, description-xx, logo-150, logo-44, store-logo (each with optional `.scale-NNN` variants), background-color (`transparent` default, `#RRGGBB`), hidden (no Start menu entry) |
 | `[msix-dependency.ID]` | **name**, **publisher**, **min-version** - a framework package the MSIX needs - MSIX only |
+| `[winget]` | **identifier** (`Publisher.Package`), **installer-url** (where the package will be downloaded from), **license**, **short-description**, short-description-xx, publisher-url, package-url, license-url, moniker, tags (at most 16) - read by `build --winget DIR` |
 | `[msix-psf]` | **files** (a folder of the Package Support Framework's files), **config** (its `config.json`), launcher (default `PsfLauncher64.exe`, x86 `PsfLauncher32.exe`) - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, **entry-point** (the activatable class that serves it), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args (on a content event only without class), display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
@@ -1978,6 +1979,7 @@ rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixu
                   [--proxy <URL>]] [--allow-unsigned-cabs]]
                 [--unsigned-test] [--msix-compress deflate|store]      (.msix, .msixbundle, .msixupload)
                 [--flat]                                               (.msixbundle)
+                [--winget <dir>]                                       (.msi, .msix, .msixbundle)
 rubrapack inspect <file.msi> [table | --summary | --files | --streams]
 rubrapack inspect <file.msi> [table | --summary] --json
 rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]
@@ -2123,6 +2125,17 @@ rubrapack version | help [command]
   whose columns differ, a changed `File` or `Media` table (a transform carries no files), a changed
   column past the 16th of its table. `inspect <file.mst> --base <base.msi>` lists the rows,
   `inspect <file.mst> --summary` the summary information.
+- `build ... --winget <dir>` also writes the *winget* manifest of the package it built - the files
+  the Windows Package Manager's repository takes (`<identifier>.yaml`, `.installer.yaml`,
+  `.locale.<language>.yaml`, and one more locale file for each `short-description-xx`; schema
+  1.12.0). The source's `[winget]` table gives what the package does not say: the `identifier`,
+  the `installer-url` it will be downloaded from (`$(VERSION)`, `$(ARCH)` and other variables work;
+  for a bundle, which serves every architecture, give one without `$(ARCH)`), the `license` and a
+  `short-description`. The rest is read back from the package as written: its SHA-256, an MSI's
+  ProductCode, UpgradeCode, architecture and scope, an MSIX's PackageFamilyName, minimum Windows
+  version and, when it is signed, the SHA-256 of its signature. One MSI is one architecture: the
+  manifests of several are merged by hand. Not with `cab = "external"` (`RP1617`): winget downloads
+  one file.
 - `diff <a.msi> <b.msi>` shows what differs between two packages, one line each, tables in name
   order and rows in key order: `<Table>  insert  <cells>`, `<Table>  delete  <keys>`,
   `<Table>  update  <keys>  <Column>=<old> -> <new>`, `<Table>  new table  <columns>` (its rows
