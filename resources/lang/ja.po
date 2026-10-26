@@ -864,6 +864,9 @@ msgstr "[action.{1}] には entry が必要です: 呼び出す DLL の関数"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] には run = \"file:<ID>\" が必要です: do と undo が実行するプログラム"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] は InstallFinalize より前にこのパッケージのファイルを実行しますが、初回インストールではそのファイルはまだありません (Windows インストーラー エラー 1721 または 1723)。InstallFinalize の後に置くか、deferred にしてください"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] は 1 つを実行します: run(exe)、dll(インストール済み DLL)、binary(パッケージ内の DLL)。または do と undo"
 

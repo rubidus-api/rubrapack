@@ -864,6 +864,9 @@ msgstr "[action.{1}] exige entry : la fonction de la DLL à appeler"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] exige run = \"file:<ID>\" : le programme que do et undo exécutent"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] exécute un fichier de ce package avant InstallFinalize, alors qu'une première installation ne l'a pas encore (erreur Windows Installer 1721 ou 1723) : placez-la après InstallFinalize ou rendez-la deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] exécute une chose : run (un exe), dll (une DLL installée) ou binary (une DLL du paquet) ; ou do et undo"
 

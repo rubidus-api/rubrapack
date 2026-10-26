@@ -864,6 +864,9 @@ msgstr "[action.{1}] vajab entry't: väljakutsutavat DLL-funktsiooni"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] vajab run = \"file:<ID>\": programmi, mida do ja undo käivitavad"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] käivitab selle paketi faili enne InstallFinalize'i, kui esimesel installil seda veel pole (Windows Installeri viga 1721 või 1723): pange see InstallFinalize'i järele või tehke see deferred'iks"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] käivitab ühe asja: run (exe), dll (installitud DLL) või binary (paketis olev DLL); või do ja undo"
 

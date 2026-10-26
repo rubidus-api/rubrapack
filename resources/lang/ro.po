@@ -864,6 +864,9 @@ msgstr "[action.{1}] are nevoie de entry: funcția DLL de apelat"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] are nevoie de run = \"file:<ID>\": programul pe care îl rulează do și undo"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] rulează un fișier al acestui pachet înainte de InstallFinalize, când o primă instalare încă nu îl are (eroarea Windows Installer 1721 sau 1723): puneți-o după InstallFinalize sau faceți-o deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] rulează un lucru: run (un exe), dll (o DLL instalată) sau binary (o DLL din pachet); sau do și undo"
 

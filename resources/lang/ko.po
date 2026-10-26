@@ -864,6 +864,9 @@ msgstr "[action.{1}] 에는 entry 가 필요합니다: 부를 DLL 의 함수"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] 에는 run = \"file:<ID>\" 가 필요합니다: do 와 undo 가 실행하는 프로그램"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] 은(는) InstallFinalize 앞에서 이 패키지의 파일을 실행하는데, 첫 설치에서는 그 파일이 아직 없습니다(Windows Installer 오류 1721 또는 1723): InstallFinalize 뒤에 두거나 deferred 로 하세요"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] 은(는) 한 가지를 실행합니다: run(exe), dll(설치된 DLL), binary(패키지 안 DLL). 또는 do 와 undo"
 

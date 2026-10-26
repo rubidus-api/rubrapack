@@ -864,6 +864,9 @@ msgstr "[action.{1}]-க்கு entry தேவை: அழைக்கப்�
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}]-க்கு run = \"file:<ID>\" தேவை: do மற்றும் undo இயக்கும் நிரல்"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] InstallFinalize க்கு முன் இந்தத் தொகுப்பின் கோப்பை இயக்குகிறது, முதல் நிறுவலில் அந்தக் கோப்பு இன்னும் இல்லை (Windows Installer பிழை 1721 அல்லது 1723): அதை InstallFinalize க்குப் பின் வைக்கவும் அல்லது deferred ஆக்கவும்"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] ஒன்றை இயக்குகிறது: run (ஒரு exe), dll (நிறுவப்பட்ட DLL) அல்லது binary (தொகுப்பில் உள்ள DLL); அல்லது do மற்றும் undo"
 

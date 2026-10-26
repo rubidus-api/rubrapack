@@ -510,7 +510,12 @@ data = "[INSTALLDIR]"      # what the deferred DLL reads as its CustomActionData
   per-machine package only) makes one SYSTEM.
 - Placement: `before` or `after` a standard action (`InstallFiles`, `WriteRegistryValues`,
   `InstallFinalize`, ...), or `sequence = <number>`. A deferred action that runs an installed file
-  must come after `InstallFiles` (its number is above 4000). Two actions may not land on one number.
+  must come after `InstallFiles` (its number is above 4000). An immediate one that runs an
+  installed file (`run`, `dll`) goes after `InstallFinalize` by default - only then is the file
+  there on a first installation - and placing it earlier is warned about (`RP1313`: Windows
+  Installer stops with 1721 or 1723). Two actions may not land on one number.
+- `when`: the action's condition. A `run` or `dll` action without one gets `NOT REMOVE~="ALL"`: while
+  the package is being removed its own files are not there to run.
 - `ignore-exit = true`: the install goes on whatever the action returns. By default a non-zero exit
   (or a DLL that returns failure) fails the install.
 
@@ -1799,8 +1804,12 @@ msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:Instance1
 
 Each instance has its own ProductCode, its own name (`<Name> (instance K)`, so Installed apps lists
 them apart), its own component GUIDs (Windows Installer requires this - two products in one place must
-not own the same components) and its own top folder (`<folder> (instance K)`); the upgrade code is
-shared, so each instance upgrades itself. It is for a per-machine package (`scope = "machine"`).
+not own the same components), its own top folder (`<folder> (instance K)`) and its own upgrade
+code, derived from the package's and K - with one shared code, an installed instance made Windows
+refuse a new one as a downgrade, and a later version would have removed its siblings. A later
+version built from the same source carries the same codes, so instance K upgrades instance K alone
+(install it with `MSINEWINSTANCE=1 TRANSFORMS=:InstanceK` again). It is for a per-machine package
+(`scope = "machine"`).
 Inspect a transform with `rubrapack inspect pkg.msi --transform Instance1`.
 
 ### Taking the place of other products: `replaces`

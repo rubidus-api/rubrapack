@@ -467,7 +467,11 @@ data = "[INSTALLDIR]"      # 지연 DLL 이 CustomActionData 로 읽는 값(서�
 - `as`: 지연 동작이 누구로 도는가. 컴퓨터 단위는 SYSTEM, 사용자별은 사용자로 돈다. `as = "user"` 면 컴퓨터 단위 동작도
   설치하는 사용자로, `as = "system"`(컴퓨터 단위에서만)이면 SYSTEM 으로.
 - 자리: 표준 동작(`InstallFiles`, `WriteRegistryValues`, `InstallFinalize` ...) `before`/`after`, 또는 `sequence = <숫자>`.
-  설치된 파일을 실행하는 지연 동작은 `InstallFiles` 뒤(4000 보다 큰 번호)에 와야 한다. 두 동작이 같은 번호에 올 수 없다.
+  설치된 파일을 실행하는 지연 동작은 `InstallFiles` 뒤(4000 보다 큰 번호)에 와야 한다. 설치된 파일을 실행하는
+  즉시 동작(`run`, `dll`)은 기본으로 `InstallFinalize` 뒤에 온다 - 첫 설치에서는 그때에야 파일이 있다 - 그보다 앞에
+  두면 경고한다(`RP1313`: Windows Installer 가 1721 이나 1723 으로 멈춘다). 두 동작이 같은 번호에 올 수 없다.
+- `when`: 동작의 조건. 조건이 없는 `run`·`dll` 동작에는 `NOT REMOVE~="ALL"` 이 붙는다: 패키지를 지우는 동안에는
+  그 파일이 실행할 자리에 없다.
 - `ignore-exit = true` 면 동작이 무엇을 돌려주든 설치가 이어진다. 기본은 0 아닌 종료(또는 실패를 돌려준 DLL)가 설치를
   실패시킨다.
 
@@ -1614,8 +1618,10 @@ msiexec /i pkg.msi MSINEWINSTANCE=1 TRANSFORMS=:Instance1
 
 각 인스턴스는 자기 ProductCode, 자기 이름(`<이름> (instance K)`, 그래서 Installed apps 에 따로 나온다),
 자기 구성 요소 GUID(Windows Installer 가 요구한다 — 한 자리의 두 제품은 같은 구성 요소를 가지면 안 된다),
-자기 최상위 폴더(`<폴더> (instance K)`)를 가진다. 업그레이드 코드는 공유하므로 각 인스턴스는 자기를
-업그레이드한다. 컴퓨터 단위 패키지용이다(`scope = "machine"`). 변환은 `rubrapack inspect pkg.msi --transform Instance1`
+자기 최상위 폴더(`<폴더> (instance K)`), 그리고 패키지의 것과 K 에서 끌어낸 자기 업그레이드 코드를 가진다 - 한 코드를
+같이 쓰면 설치된 인스턴스 때문에 Windows 가 새 인스턴스를 다운그레이드로 거절하고, 다음 판이 형제 인스턴스를 지웠을
+것이다. 같은 원본으로 지은 다음 판은 같은 코드를 가지므로 인스턴스 K 는 인스턴스 K 만 업그레이드한다(다시
+`MSINEWINSTANCE=1 TRANSFORMS=:InstanceK` 로 설치한다). 컴퓨터 단위 패키지용이다(`scope = "machine"`). 변환은 `rubrapack inspect pkg.msi --transform Instance1`
 로 본다.
 
 ### 다른 제품을 대신하기: `replaces`

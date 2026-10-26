@@ -864,6 +864,9 @@ msgstr "[action.{1}] potrebuje entry: funkcijo DLL za klic"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] potrebuje run = \"file:<ID>\": program, ki ga zaženeta do in undo"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] zažene datoteko tega paketa pred InstallFinalize, ko je prva namestitev še nima (napaka Windows Installer 1721 ali 1723): postavite dejanje za InstallFinalize ali ga nastavite kot deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] zažene eno stvar: run (exe), dll (nameščena DLL) ali binary (DLL v paketu); ali do in undo"
 

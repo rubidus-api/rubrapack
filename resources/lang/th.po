@@ -864,6 +864,9 @@ msgstr "[action.{1}] ต้องมี entry: ฟังก์ชัน DLL ท�
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] ต้องมี run = \"file:<ID>\": โปรแกรมที่ do และ undo รัน"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] เรียกใช้ไฟล์ของแพ็กเกจนี้ก่อน InstallFinalize ซึ่งการติดตั้งครั้งแรกยังไม่มีไฟล์นั้น (ข้อผิดพลาด Windows Installer 1721 หรือ 1723): ให้วางไว้หลัง InstallFinalize หรือทำให้เป็น deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] รันสิ่งเดียว: run (ไฟล์ exe), dll (DLL ที่ติดตั้ง) หรือ binary (DLL ในแพ็กเกจ); หรือ do และ undo"
 

@@ -864,6 +864,9 @@ msgstr "το [action.{1}] χρειάζεται entry: τη συνάρτηση τ
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "το [action.{1}] χρειάζεται run = \"file:<ID>\": το πρόγραμμα που εκτελούν τα do και undo"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "το [action.{1}] εκτελεί ένα αρχείο αυτού του πακέτου πριν από το InstallFinalize, όταν μια πρώτη εγκατάσταση δεν το έχει ακόμη (σφάλμα 1721 ή 1723 του Windows Installer): τοποθετήστε το μετά το InstallFinalize ή κάντε το deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "το [action.{1}] εκτελεί ένα πράγμα: run (ένα exe), dll (μια εγκατεστημένη DLL) ή binary (μια DLL στο πακέτο)· ή do και undo"
 

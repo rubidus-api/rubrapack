@@ -864,6 +864,9 @@ msgstr "[action.{1}] 需要 entry：要呼叫的 DLL 函式"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] 需要 run = \"file:<ID>\"：do 和 undo 執行的程式"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] 在 InstallFinalize 之前執行此套件的檔案，而首次安裝時該檔案尚不存在（Windows Installer 錯誤 1721 或 1723）：請將其放在 InstallFinalize 之後，或改為 deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] 執行一件事：run（exe）、dll（已安裝的 DLL）或 binary（套件中的 DLL）；或 do 和 undo"
 

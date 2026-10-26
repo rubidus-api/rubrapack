@@ -594,6 +594,19 @@ static const char *comp_ns(const pkg_t *pk) {
 }
 
 // Property: identity, scope, [arp], [property.*] and the lists of secure and hidden properties.
+// The package's upgrade code - or, for an instance (RFC-0031 B12), one of its own derived from it and
+// the instance's number: instances that shared one found each other in FindRelatedProducts, so a new
+// instance was refused as a downgrade and a later version would have removed its siblings (x80-vm).
+// Each instance's later versions carry the same derived code and upgrade that instance alone.
+static const char *upgrade_code_of(pkg_t *pk) {
+    if (pk->instance <= 0) return pk->ir->upgrade_code;
+    char ik[16], guid[39];
+    snprintf(ik, sizeof ik, "i%d", pk->instance);
+    const char *fields[] = { pk->ir->upgrade_code, ik };
+    rp_uuid_derive("rubrapack.instance-upgrade", fields, 2, guid);
+    return kdup(pk->k, guid);
+}
+
 static void lower_properties(pkg_t *pk, const char *product_code) {
     proven_allocator_t alloc = pk->alloc;
     const rp_ir_t *ir = pk->ir;
@@ -615,7 +628,7 @@ static void lower_properties(pkg_t *pk, const char *product_code) {
     s_(&pk->property, "ProductVersion"); s_(&pk->property, ir->version);
     s_(&pk->property, "Manufacturer"); s_(&pk->property, ir->manufacturer);
     s_(&pk->property, "ProductLanguage"); s_(&pk->property, kdup(k, lang));
-    s_(&pk->property, "UpgradeCode"); s_(&pk->property, ir->upgrade_code);
+    s_(&pk->property, "UpgradeCode"); s_(&pk->property, upgrade_code_of(pk));
     // Scope (RFC-0004 H3): machine ALLUSERS=1; user and dual use the single-package form ALLUSERS=2
     // with MSIINSTALLPERUSER=1 (per-user by default; dual installs per machine with ALLUSERS=1
     // MSIINSTALLPERUSER="" on the command line).
@@ -1006,8 +1019,11 @@ static void lower_shortcuts(pkg_t *pk) {
         // even in a per-machine package, and want such a component keyed by an HKCU value, not by
         // a program file. It is in the target file's feature, and it names the target by its folder
         // and name rather than [#File], which would tie it to the file's component (ICE69).
+        // An advertised shortcut is the exception: Windows creates it only when its component is the
+        // target file's own, keyed by that file (CreateShortcuts joins Component.KeyPath = File;
+        // x76-vm: otherwise none is made), and ICE43 does not ask advertised shortcuts for HKCU.
         const char *sc_comp = target->comp;
-        bool own = true;
+        bool own = !sc->advertise;
         if (own) {
             char comp[23], guid[39], rk[23];
             rp_key_derive('C', kprintf(k, "shortcut:%s", sc->id, NULL), comp);
@@ -2125,12 +2141,13 @@ static void refusal(pkg_t *pk, const char *name, const char *id, const char *cus
 static void lower_upgrade(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
-    s_(&pk->upgrade, ir->upgrade_code); s_(&pk->upgrade, ir->version); null_(&pk->upgrade); null_(&pk->upgrade);
+    const char *uc = upgrade_code_of(pk);
+    s_(&pk->upgrade, uc); s_(&pk->upgrade, ir->version); null_(&pk->upgrade); null_(&pk->upgrade);
     i_(&pk->upgrade, 0x002 | 0x100); null_(&pk->upgrade); s_(&pk->upgrade, "RP_NEWER_FOUND");
-    s_(&pk->upgrade, ir->upgrade_code); null_(&pk->upgrade); s_(&pk->upgrade, ir->version); null_(&pk->upgrade);
+    s_(&pk->upgrade, uc); null_(&pk->upgrade); s_(&pk->upgrade, ir->version); null_(&pk->upgrade);
     i_(&pk->upgrade, 0x001); null_(&pk->upgrade); s_(&pk->upgrade, "RP_OLDER_FOUND");
     if (ir->refuse_below) {         // detect only (0x002), below the given version (max exclusive)
-        s_(&pk->upgrade, ir->upgrade_code); null_(&pk->upgrade); s_(&pk->upgrade, ir->refuse_below); null_(&pk->upgrade);
+        s_(&pk->upgrade, uc); null_(&pk->upgrade); s_(&pk->upgrade, ir->refuse_below); null_(&pk->upgrade);
         i_(&pk->upgrade, 0x002); null_(&pk->upgrade); s_(&pk->upgrade, "RP_REFUSED_OLD");
     }
     // x47: [package] replaces - every version (0.0.0 and up) of those products is removed by
@@ -2254,7 +2271,13 @@ static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
     }
     // Placement in the execute sequence. before/after give the named action's number +/- 1; a bare
     // sequence number is used as given; the default is just before InstallFinalize for a deferred
-    // action, or after InstallInitialize for an immediate one.
+    // action; an immediate one runs just before InstallInitialize, or - when it runs a file of the
+    // package, which a first installation has only once InstallFinalize ran the script (x75-vm:
+    // error 1721) - just after InstallFinalize.
+    bool own_file = a->kind == RP_ACT_EXE || a->kind == RP_ACT_DLL;
+    // A file of the package is not there to run while the package is removed: without a `when` of
+    // the author's such an action is left out of a removal (x75-vm: error 1721 after InstallFinalize).
+    const char *when = a->when ? a->when : own_file ? "NOT REMOVE~=\"ALL\"" : NULL;
     int32_t seq = a->sequence;
     if (seq == 0 && (a->before || a->after)) {
         int32_t base = standard_sequence(a->before ? a->before : a->after);
@@ -2267,11 +2290,16 @@ static void lower_single_action(pkg_t *pk, const rp_ir_action_t *a) {
         size_t idx = 0;
         for (size_t j = 0; j < ir->action_count; ++j) if (&ir->actions[j] == a) idx = j;
         seq = a->phase == RP_PHASE_ROLLBACK ? 1502 + (int32_t)idx
-            : a->phase == RP_PHASE_IMMEDIATE ? 1496 - (int32_t)idx
+            : a->phase == RP_PHASE_IMMEDIATE ? (own_file ? 6601 + (int32_t)idx : 1496 - (int32_t)idx)
             : 6597 + (int32_t)idx;
+    } else if (!deferred && own_file && seq < 6600 && !(a->when && strstr(a->when, "Installed"))) {
+        rp_srcdiag_add(pk->diags, a->pos, "RP1313", true,
+                       "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet "
+                       "(Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred",
+                       a->id);
     }
-    if (deferred && a->data) { s_(&pk->iexec, kprintf(k, "RP_ActData_%s", a->id, NULL)); s_(&pk->iexec, a->when); i_(&pk->iexec, seq - 1); }
-    s_(&pk->iexec, name); s_(&pk->iexec, a->when); i_(&pk->iexec, seq);
+    if (deferred && a->data) { s_(&pk->iexec, kprintf(k, "RP_ActData_%s", a->id, NULL)); s_(&pk->iexec, when); i_(&pk->iexec, seq - 1); }
+    s_(&pk->iexec, name); s_(&pk->iexec, when); i_(&pk->iexec, seq);
 }
 
 static proven_err_t lower_sequences(pkg_t *pk) {
@@ -2975,7 +3003,9 @@ static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir,
             if (count == CAP) err = PROVEN_ERR_OUT_OF_BOUNDS;
             else {
                 size_t sidx = count;
-                list[count++] = (rp_cfb_stream_t){ .name = w, .name_len = (size_t)nn, .storage = true };
+                // A transform's storage carries the transform class, as msi.dll and the patches have it.
+                static const uint8_t mst_clsid[16] = { 0x82, 0x10, 0x0C, 0, 0, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46 };
+                list[count++] = (rp_cfb_stream_t){ .name = w, .name_len = (size_t)nn, .storage = true, .clsid = mst_clsid };
                 err = copy_streams(alloc, &mcfb, sidx + 1, list, &count, CAP, bufs, &nbuf, BUFCAP);
             }
         }

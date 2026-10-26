@@ -864,6 +864,9 @@ msgstr "[action.{1}]-এর entry লাগে: যে DLL ফাংশন ড�
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}]-এর run = \"file:<ID>\" লাগে: do ও undo যে প্রোগ্রাম চালায়"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] InstallFinalize-এর আগে এই প্যাকেজের একটি ফাইল চালায়, অথচ প্রথম ইনস্টলেশনে সেই ফাইল এখনও থাকে না (Windows Installer ত্রুটি 1721 বা 1723): এটিকে InstallFinalize-এর পরে রাখুন বা deferred করুন"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] একটি জিনিস চালায়: run (একটি exe), dll (ইনস্টল করা DLL) বা binary (প্যাকেজের DLL); বা do ও undo"
 

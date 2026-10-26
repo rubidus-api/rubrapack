@@ -899,6 +899,9 @@ static void progress_and_exits(ctx_t *c) {
     event(c, d, "Cancel", "SpawnDialog", "RpCancelDlg", NULL, 1);
     mapping(c, d, "ActionText", "ActionText", "Text");
     mapping(c, d, "ProgressBar", "SetProgress", "Progress");
+    // A Billboard control is switched by the progress messages it subscribes to, as a progress bar
+    // is (Microsoft Learn "ControlEvent Overview"; without it no billboard showed, x77-vm).
+    if (c->ir->billboard_count) mapping(c, d, "Billboard", "SetProgress", "Progress");
     static const char *const exits[][3] = { { "RpExitDlg", "ExitTitle", "ExitText" },
                                             { "RpUserExitDlg", "UserExitTitle", "UserExitText" },
                                             { "RpFatalDlg", "FatalTitle", "FatalText" } };

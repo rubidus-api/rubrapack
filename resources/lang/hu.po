@@ -864,6 +864,9 @@ msgstr "[action.{1}] entry-t igényel: a meghívandó DLL-függvényt"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] run = \"file:<ID>\" értéket igényel: a program, amelyet a do és az undo futtat"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "az [action.{1}] a csomag egy fájlját futtatja az InstallFinalize előtt, amikor egy első telepítésnél az még nincs meg (Windows Installer 1721-es vagy 1723-as hiba): tegye az InstallFinalize után, vagy legyen deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] egy dolgot futtat: run (exe), dll (telepített DLL) vagy binary (a csomag DLL-je); vagy do és undo"
 

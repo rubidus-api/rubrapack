@@ -864,6 +864,9 @@ msgstr "[action.{1}] entry қажет етеді: шақырылатын DLL ф�
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] run = \"file:<ID>\" қажет етеді: do мен undo іске қосатын бағдарлама"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] InstallFinalize алдында осы буманың файлын іске қосады, ал алғашқы орнатуда ол файл әлі жоқ (Windows Installer қатесі 1721 не 1723): әрекетті InstallFinalize кейін қойыңыз немесе deferred етіңіз"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] бір нәрсені іске қосады: run (exe), dll (орнатылған DLL) не binary (бумадағы DLL); не do мен undo"
 

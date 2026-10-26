@@ -866,6 +866,9 @@ msgstr "[action.{1}] דורש entry: פונקציית ה-DLL שיש לקרוא"
 msgid "[action.%s] needs run = \"file:<ID>\": the program do and undo run"
 msgstr "[action.{1}] דורש run = \"file:<ID>\": התוכנית ש-do ו-undo מריצים"
 
+msgid "[action.%s] runs a file of this package before InstallFinalize, where a first installation does not have it yet (Windows Installer error 1721 or 1723): place it after InstallFinalize, or make it deferred"
+msgstr "[action.{1}] מריץ קובץ של חבילה זו לפני InstallFinalize, כשבהתקנה ראשונה הקובץ עוד לא קיים (שגיאת Windows Installer 1721 או 1723): מקמו אותו אחרי InstallFinalize או הפכו אותו ל-deferred"
+
 msgid "[action.%s] runs one thing: run (an exe), dll (an installed DLL) or binary (a DLL in the package); or do and undo"
 msgstr "[action.{1}] מריץ דבר אחד: run (קובץ exe), dll (DLL מותקנת) או binary (DLL בחבילה); או do ו-undo"
 

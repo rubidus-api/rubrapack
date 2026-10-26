@@ -224,7 +224,7 @@ void ir_more_checks(ctx_t *c) {
         if (f->isolate_for == NULL) continue;
         const rp_ir_file_t *app = find_file(ir, f->isolate_for);
         if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "isolate-for", f->isolate_for);
-        if (strcmp(f->dir, app ? app->dir : f->dir) == 0)
+        if (app && f->dir && app->dir && strcmp(f->dir, app->dir) == 0)     // a file without dir is refused elsewhere
             ERR(c, f->pos, "RP1316", "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere", f->id);
     }
 }
