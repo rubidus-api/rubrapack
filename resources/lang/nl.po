@@ -333,11 +333,11 @@ msgstr "'{1}' is ook een dir-ID; geef de variabele een andere naam"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' is gebouwd voor machine 0x{2}, niet voor de arch van dit pakket; stel any-arch = true in als dat de bedoeling is"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' is geen PE-bestand (.exe, .dll), geen MSI-pakket en geen MSIX-pakket of -bundel"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' is geen PE-bestand (.exe, .dll), geen MSI-pakket, geen MSIX-pakket of -bundel en geen cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' is geen PE-bestand, geen MSI-pakket en geen MSIX-pakket of -bundel"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' is geen PE-bestand, geen MSI-pakket, geen MSIX-pakket of -bundel en geen cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' is geen bekende map en geen dir-ID (bekende mappen: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat is voor een .msixbundle-uitvoer (de pakketten worden ernaast gesc
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs neemt een getal van 1 tot 64 (gekregen: '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key ondertekent ten hoogste {1} externe cabinets; verhoog cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store is een Windows-certificaatarchief; gebruik elders een sleutelbestand of --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "een beschadigde PE-sectietabel"
 
 msgid "a damaged ZIP64 end record"
 msgstr "een beschadigd ZIP64-eindrecord"
+
+msgid "a damaged cabinet header"
+msgstr "een beschadigde cabinet-header"
 
 msgid "a damaged hive bin"
 msgstr "een beschadigde hive-bin"
@@ -2457,6 +2463,9 @@ msgstr "geen ZIP-archief (geen eindrecord)"
 msgid "not a ZIP archive (too short)"
 msgstr "geen ZIP-archief (te kort)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "geen cabinet (geen MSCF-header)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "geen proxy-URL die rubrapack aanneemt (http://host:poort)"
 
@@ -2913,6 +2922,15 @@ msgstr "het archief heeft geen ZIP64-eindrecord"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "het bundelmanifest heeft geen Identity Name, Publisher en Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "het cabinet heeft geen ruimte voor een handtekening"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "het cabinet heeft gereserveerde ruimte in zijn mappen of gegevensblokken, die rubrapack niet indeelt"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "de handtekening van het cabinet gebruikt een hash die rubrapack niet controleert (alleen SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "de centrale map ligt buiten het archief"
 
@@ -3104,6 +3122,9 @@ msgstr "het certificaat van de server is niet voor TLS-servers (zijn uitgebreid 
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "het handtekeningschema van de server past niet bij de sleutel van zijn certificaat"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "de handtekening ligt niet waar het cabinet zegt"
 
 msgid "the signature does not verify"
 msgstr "de handtekening klopt niet"

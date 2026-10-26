@@ -333,11 +333,11 @@ msgstr "'{1}' ஒரு dir ID ஆகவும் உள்ளது; மாற�
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' இந்தத் தொகுப்பின் கட்டமைப்புக்கு அல்ல, 0x{2} கணினிக்காக உருவாக்கப்பட்டது; வேண்டுமென்றே என்றால் any-arch = true என அமைக்கவும்"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE கோப்பு (.exe, .dll), MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி எதுவும் அல்ல"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE கோப்பு (.exe, .dll), MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி, cabinet எதுவும் அல்ல"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE கோப்பு, MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி எதுவும் அல்ல"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE கோப்பு, MSI தொகுப்பு, MSIX தொகுப்பு அல்லது தொகுதி, cabinet எதுவும் அல்ல"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' அறியப்பட்ட கோப்புறையும் அல்ல, dir ID யும் அல்ல (அறியப்பட்ட கோப்புறைகள்: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat என்பது .msixbundle வெளியீட்டுக�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1 முதல் 64 வரையிலான எண்ணை ஏற்கும் ('{1}' கிடைத்தது)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key அதிகபட்சம் {1} வெளி cabinet களில் கையொப்பமிடும்; cab-max-size ஐ உயர்த்தவும்"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store ஒரு Windows சான்றிதழ் சேமிப்பகம்; வேறிடத்தில் விசைக் கோப்பு அல்லது --pkcs11 பயன்படுத்தவும்"
@@ -1361,6 +1364,9 @@ msgstr "சேதமடைந்த PE பிரிவு அட்டவணை"
 
 msgid "a damaged ZIP64 end record"
 msgstr "சேதமடைந்த ZIP64 இறுதிப் பதிவு"
+
+msgid "a damaged cabinet header"
+msgstr "சேதமடைந்த cabinet தலைப்பு"
 
 msgid "a damaged hive bin"
 msgstr "சேதமடைந்த hive bin"
@@ -2457,6 +2463,9 @@ msgstr "ZIP காப்பகம் அல்ல (இறுதிப் பத�
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP காப்பகம் அல்ல (மிகக் குறுகியது)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet அல்ல (MSCF தலைப்பு இல்லை)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack ஏற்கும் பதிலாள் URL அல்ல (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "காப்பகத்தில் ZIP64 இறுதிப் பத�
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "தொகுதி மேனிஃபெஸ்டில் Identity Name, Publisher மற்றும் Version இல்லை"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet இல் கையொப்பத்துக்கு இடம் இல்லை"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet இன் கோப்புறைகளில் அல்லது தரவுத் தொகுதிகளில் rubrapack கையாளாத ஒதுக்கிய இடம் உள்ளது"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet இன் கையொப்பம் rubrapack சரிபார்க்காத ஹாஷைப் பயன்படுத்துகிறது (SHA-256 மட்டும்)"
+
 msgid "the central directory lies outside the archive"
 msgstr "மையக் கோப்பகம் காப்பகத்துக்கு வெளியே உள்ளது"
 
@@ -3104,6 +3122,9 @@ msgstr "சேவையகத்தின் சான்றிதழ் TLS ச
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "சேவையகத்தின் கையொப்ப முறை அதன் சான்றிதழின் விசைக்குப் பொருந்தவில்லை"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "cabinet சொல்லும் இடத்தில் கையொப்பம் இல்லை"
 
 msgid "the signature does not verify"
 msgstr "கையொப்பம் சரிபார்க்கப்படவில்லை"

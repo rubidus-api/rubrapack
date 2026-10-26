@@ -377,6 +377,23 @@ static bool winget_from(proven_allocator_t heap, const rp_ir_t *ir, rp_winget_t 
     return true;
 }
 
+// RFC-0031 B13: build --key signs each external cabinet with the same key, as `rubrapack sign` would.
+typedef struct {
+    const rp_sign_args_t *args;
+    const char           *label;
+    rp_cab_signer_t      *signer;
+    int                   rc;
+} cab_sign_t;
+
+static proven_err_t cab_sign(void *ctx, const uint8_t *cab, size_t len, uint8_t **out, size_t *out_len) {
+    cab_sign_t *c = ctx;
+    int rc = rp_sign_bytes(c->args, c->label, cab, len, out, out_len);
+    if (rc == RP_EXIT_OK) return PROVEN_OK;
+    c->rc = rc;
+    c->signer->failed = true;
+    return PROVEN_ERR_INVALID_ARG;
+}
+
 static int run(int argc, char **argv, bool lint) {
     char menu_dll[1600] = "", menu_pkg[1600] = "";      // the Windows 11 menu's files beside the output, while building
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
@@ -680,7 +697,27 @@ static int run(int argc, char **argv, bool lint) {
             size_t outdir = (size_t)(base - out);
             outfile_t of = { heap, out, NULL, false };
             rp_out_sink_t sink = { outfile_get, outfile_drop, &of };
-            rp_build_options_t bopt = { reproducible, stem, jobs, lint ? NULL : &sink };
+            rp_build_options_t bopt = { reproducible, stem, jobs, lint ? NULL : &sink, NULL };
+            // --key with external cabinets: each is signed and named in MsiDigitalSignature (RFC-0031 B13).
+            char cablabel[1600];
+            rp_cab_signer_t signer = { 0 };
+            cab_sign_t cs = { &sign, cablabel, &signer, RP_EXIT_OK };
+            uint8_t *cert = NULL;
+            if (!lint && ir.cab_external && rp_sign_wanted(&sign)) {
+                snprintf(cablabel, sizeof cablabel, "%.*s%s.cab", (int)outdir, out, stem);
+                int crc = rp_sign_cert(&sign, &cert, &signer.cert_len);
+                if (crc != RP_EXIT_OK) {
+                    rp_ir_free(&ir);
+                    rp_srcdiag_print(&d, src);
+                    rc = crc;
+                    goto done;
+                }
+                signer.sign = cab_sign;
+                signer.ctx = &cs;
+                signer.cert = cert;
+                bopt.cab_signer = &signer;
+                sign.cabs_signed = true;
+            }
             uint8_t *msi = NULL;
             size_t msi_len = 0;
             bool msi_on_heap = lint;        // otherwise it is the output file's mapping
@@ -689,6 +726,15 @@ static int run(int argc, char **argv, bool lint) {
             err = rp_msi_from_ir(heap, &ir, &bopt, &limits, &msi, &msi_len, &cabs, &ncabs, &d);
             if (err != PROVEN_OK && of.failed) rp_diag_error(RP_DIAG_OUTPUT, "cannot write '%s'", out);     // said nothing else
             rp_ir_free(&ir);
+            rp_mem_free(heap, cert);
+            rp_cab_signer_free(heap, &signer);
+            if (signer.failed) {            // rp_sign_bytes said why
+                rp_pal_outmap_discard(heap, of.om);
+                rp_build_files_free(heap, cabs, ncabs);
+                rp_srcdiag_print(&d, src);
+                rc = cs.rc;
+                goto done;
+            }
             // --key: signed before anything is written (the same code as `rubrapack sign`).
             if (err == PROVEN_OK && !lint && rp_sign_wanted(&sign)) {
                 uint8_t *signed_msi = NULL;

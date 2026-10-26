@@ -333,11 +333,11 @@ msgstr "'{1}' je také ID dir; pojmenujte proměnnou jinak"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' je sestaven pro stroj 0x{2}, ne pro arch tohoto balíčku; nastavte any-arch = true, je-li to záměr"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' není soubor PE (.exe, .dll), balíček MSI ani balíček či sada MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' není soubor PE (.exe, .dll), balíček MSI balíček či sada MSIX ani cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' není soubor PE, balíček MSI ani balíček či sada MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' není soubor PE, balíček MSI balíček či sada MSIX ani cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' není známá složka ani ID dir (známé složky: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat je pro výstup .msixbundle (jeho balíčky se zapíší vedle ně
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs přijímá číslo od 1 do 64 (zadáno '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key podepíše nejvýše {1} externích cabinetů; zvyšte cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store je úložiště certifikátů Windows; jinde použijte soubor klíče nebo --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "poškozená tabulka oddílů PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "poškozený koncový záznam ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "poškozená hlavička cabinetu"
 
 msgid "a damaged hive bin"
 msgstr "poškozený blok podregistru (hive bin)"
@@ -2457,6 +2463,9 @@ msgstr "není archiv ZIP (chybí koncový záznam)"
 msgid "not a ZIP archive (too short)"
 msgstr "není archiv ZIP (příliš krátký)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "není cabinet (chybí hlavička MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "není adresa URL proxy, kterou rubrapack přijímá (http://hostitel:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "archiv nemá koncový záznam ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "manifest sady nemá Identity Name, Publisher a Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet nemá místo pro podpis"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet má vyhrazené místo ve složkách nebo datových blocích, které rubrapack nezpracovává"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "podpis cabinetu používá hash, který rubrapack nekontroluje (jen SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "centrální adresář leží mimo archiv"
 
@@ -3104,6 +3122,9 @@ msgstr "certifikát serveru není pro servery TLS (jeho rozšířené použití 
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "schéma podpisu serveru neodpovídá klíči jeho certifikátu"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "podpis neleží tam, kde cabinet uvádí"
 
 msgid "the signature does not verify"
 msgstr "podpis se neověřil"

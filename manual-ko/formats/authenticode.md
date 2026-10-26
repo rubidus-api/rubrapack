@@ -94,7 +94,32 @@ Microsoft 는 MSI 패키지를 어떻게 해시하는지 공개하지 않는다.
   0 이 아닌 시각이 있다)와 맞춰 알아냈다: 시험한 후보 가운데 저장된 `MsiDigitalSignatureEx` 값 둘을 모두 내는
   배치는 이것 하나이고, 이것으로 두 다이제스트도 맞는다. 그 패치들에는 루트 바로 아래의 저장소만 있었다.
 - 서명은 `.msi` 안에 든 것만 덮는다: 밖의 캐비닛(`#` 으로 시작하지 않는 Media 표 `Cabinet` 값)은
-  다이제스트에 들지 않는다.
+  다이제스트에 들지 않는다. 그것들은 따로 서명하고(다음 절) 패키지의 `MsiDigitalSignature` 표에 적는다.
+
+## 캐비닛
+
+캐비닛이 서명을 어디에 두는지도 설명한 문서가 없다. 아래 배치는 Windows 의 signtool 이 쓰는 것이다. rubrapack 은
+같은 키로 캐비닛에 바이트까지 같게 서명하고, Windows Installer 는 그 결과를 받는다. [observed]
+
+- 서명은 헤더의 예약 공간(MS-CAB `cfhdrRESERVE_PRESENT`, 플래그 0x0004)에 산다: `cbCFHeader` = 20,
+  `cbCFFolder` = 0, `cbCFData` = 0, 그다음 `abReserve` 20바이트: `00 00 10 00`, 서명의 위치(4바이트,
+  리틀엔디언), 크기(4바이트), 0 8바이트. 예약 공간이 없는 캐비닛은 36바이트 헤더 뒤에 이 24바이트가 끼고, 크기가
+  다른 헤더 공간이 있으면 바뀐다. `cbCabinet`, `coffFiles`, 모든 폴더의 `coffCabStart` 가 함께 움직인다.
+  (signtool 은 makecab 의 `ReservePerCabinetSize=6144` 도 이렇게 20바이트로 줄인다.)
+- 서명 - 위와 같은 CMS `ContentInfo` - 은 캐비닛 뒤에 붙는다: `cbCabinet` 에서 시작하고, 크기는 8 의 배수다(DER
+  뒤는 0 바이트). `cbCabinet` 은 그것을 세지 않는다.
+- 다이제스트는 앞의 `cbCabinet` 바이트에서 `reserved1`(위치 4, 4바이트), `cbCFHeader`(위치 36, 2바이트),
+  `abReserve`(위치 40, 20바이트)를 뺀 것의 해시다 - 그래서 서명 전과 뒤의 바이트가 같게 해시된다.
+- `data` = `SEQUENCE { 1.3.6.1.4.1.311.2.1.28, [1] { OCTET STRING <a6 b5 86 d5 b4 a1 24 66 ae 05 a2 17
+  da 8e 60 d6>, OCTET STRING <SET { SEQUENCE { 1.3.6.1.4.1.311.2.5.1, SET { OCTET STRING <cbCabinet 을
+  리틀엔디언 4바이트로 쓴 것의 SHA-256> } } }> } }`.
+- signtool 의 서명 특성은 Windows 서명기의 것과 같고, `SpcSpOpusInfo` 만 빈 `SEQUENCE`(`30 00`)다.
+- 패키지에서는 `MsiDigitalCertificate` 가 서명 인증서(`CertData`, DER)를 담고, `MsiDigitalSignature` 에 `Media`,
+  캐비닛의 `DiskId`, 그 인증서의 키, `Hash` = 캐비닛 `SignerInfo` 의 서명 값(마지막 `OCTET STRING`:
+  `MsiGetFileSignatureInformation` 이 해시로 돌려주는 것)의 행이 든다. 그러면 Windows Installer 는 캐비닛의 서명이
+  올바르고 그 인증서로 만든 것일 때만 거기서 설치하며 - 시험 인증서는 신뢰받지 않아도 됐다 - 바뀐 캐비닛
+  (`TRUST_E_BAD_DIGEST`)이나 다른 사람이 서명한 것은 1330, 서명이 없는 것은 1329 로 멈춘다. `Hash` 에 다이제스트를
+  넣었을 때는 Windows 가 올바른 캐비닛도 거부했다(1330).
 
 ## 타임스탬프
 

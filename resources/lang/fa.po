@@ -335,11 +335,11 @@ msgstr "'{1}' یک dir ID هم هست؛ نام دیگری به متغیر بده
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' برای ماشین 0x{2} ساخته شده، نه برای معماری این بسته؛ اگر عمدی است any-arch = true بگذارید"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' نه فایل PE (.exe، .dll) است، نه بسته MSI و نه بسته یا مجموعه MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' نه فایل PE (.exe، .dll) است، نه بسته MSI، نه بسته یا مجموعه MSIX و نه cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' نه فایل PE است، نه بسته MSI و نه بسته یا مجموعه MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' نه فایل PE است، نه بسته MSI، نه بسته یا مجموعه MSIX و نه cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' نه پوشه شناخته‌شده است و نه dir ID (پوشه‌های شناخته‌شده: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
@@ -538,6 +538,9 @@ msgstr "--flat برای خروجی .msixbundle است (بسته‌هایش کن�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs عددی از 1 تا 64 می‌پذیرد ('{1}' دریافت شد)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key حداکثر {1} cabinet بیرونی را امضا می‌کند؛ cab-max-size را بزرگ‌تر کنید"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store یک انبار گواهی Windows است؛ جای دیگر از فایل کلید یا --pkcs11 استفاده کنید"
@@ -1363,6 +1366,9 @@ msgstr "جدول بخش PE آسیب‌دیده"
 
 msgid "a damaged ZIP64 end record"
 msgstr "رکورد پایانی ZIP64 آسیب‌دیده"
+
+msgid "a damaged cabinet header"
+msgstr "سرآیند cabinet آسیب‌دیده است"
 
 msgid "a damaged hive bin"
 msgstr "bin هایو آسیب‌دیده"
@@ -2459,6 +2465,9 @@ msgstr "بایگانی ZIP نیست (رکورد پایانی نیست)"
 msgid "not a ZIP archive (too short)"
 msgstr "بایگانی ZIP نیست (خیلی کوتاه است)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet نیست (سرآیند MSCF ندارد)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "یک URL پراکسی نیست که rubrapack بپذیرد (http://host:port)"
 
@@ -2915,6 +2924,15 @@ msgstr "بایگانی رکورد پایانی ZIP64 ندارد"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "مانیفست مجموعه Identity Name، Publisher و Version ندارد"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet جایی برای امضا ندارد"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet در پوشه‌ها یا بلوک‌های داده‌اش فضای رزروشده‌ای دارد که rubrapack آن را مدیریت نمی‌کند"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "امضای cabinet از درهمسازی استفاده می‌کند که rubrapack بررسی نمی‌کند (فقط SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "فهرست مرکزی بیرون از بایگانی است"
 
@@ -3106,6 +3124,9 @@ msgstr "گواهی سرور برای سرورهای TLS نیست (کاربرد �
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "طرح امضای سرور با کلید گواهی آن جور نیست"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "امضا جایی نیست که cabinet می‌گوید"
 
 msgid "the signature does not verify"
 msgstr "امضا تأیید نمی‌شود"

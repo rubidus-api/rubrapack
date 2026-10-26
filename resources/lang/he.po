@@ -335,11 +335,11 @@ msgstr "'{1}' הוא גם מזהה dir; תן למשתנה שם אחר"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' בנוי למכונה 0x{2}, לא לארכיטקטורה של חבילה זו; הגדר any-arch = true אם זו הכוונה"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' אינו קובץ PE ‏(.exe, .dll), לא חבילת MSI ולא חבילת MSIX או צרור"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' אינו קובץ PE ‏(.exe, .dll), לא חבילת MSI, לא חבילת MSIX או צרור ולא cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' אינו קובץ PE, לא חבילת MSI ולא חבילת MSIX או צרור"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' אינו קובץ PE, לא חבילת MSI, לא חבילת MSIX או צרור ולא cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' אינו תיקייה מוכרת וגם לא מזהה dir (תיקיות מוכרות: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -538,6 +538,9 @@ msgstr "--flat מיועד לפלט .msixbundle (החבילות שלו נכתבו
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs מקבל מספר מ-1 עד 64 (התקבל '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key חותם על {1} קובצי cabinet חיצוניים לכל היותר; הגדילו את cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store הוא מאגר אישורים של Windows; במקומות אחרים השתמש בקובץ מפתח או ב---pkcs11"
@@ -1363,6 +1366,9 @@ msgstr "טבלת מקטעי PE פגומה"
 
 msgid "a damaged ZIP64 end record"
 msgstr "רשומת סיום ZIP64 פגומה"
+
+msgid "a damaged cabinet header"
+msgstr "כותרת cabinet פגומה"
 
 msgid "a damaged hive bin"
 msgstr "hive bin פגום"
@@ -2459,6 +2465,9 @@ msgstr "אינו ארכיון ZIP (אין רשומת סיום)"
 msgid "not a ZIP archive (too short)"
 msgstr "אינו ארכיון ZIP (קצר מדי)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "אינו cabinet (אין כותרת MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "אינו URL של proxy ש-rubrapack מקבל (http://host:port)"
 
@@ -2915,6 +2924,15 @@ msgstr "בארכיון אין רשומת סיום ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "במניפסט הצרור אין Identity Name, Publisher ו-Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "אין ב-cabinet מקום לחתימה"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "ל-cabinet יש מקום שמור בתיקיות או בבלוקי הנתונים, ש-rubrapack אינו מטפל בו"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "החתימה של ה-cabinet משתמשת בגיבוב ש-rubrapack אינו בודק (SHA-256 בלבד)"
+
 msgid "the central directory lies outside the archive"
 msgstr "הספרייה המרכזית נמצאת מחוץ לארכיון"
 
@@ -3106,6 +3124,9 @@ msgstr "האישור של השרת אינו לשרתי TLS (השימוש המו�
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "שיטת החתימה של השרת אינה מתאימה למפתח של האישור שלו"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "החתימה אינה במקום שה-cabinet אומר"
 
 msgid "the signature does not verify"
 msgstr "החתימה אינה מאומתת"

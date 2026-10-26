@@ -333,11 +333,11 @@ msgstr "'{1}' dir ID bat ere bada; eman beste izen bat aldagaiari"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' 0x{2} makinarako konpilatu da, ez pakete honen arkitekturarako; ezarri any-arch = true nahita bada"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ez da PE fitxategia (.exe, .dll), ez MSI paketea, ez MSIX paketea edo sorta"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ez da PE fitxategia (.exe, .dll), ez MSI paketea, ez MSIX paketea edo sorta, ez cabinet-a"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ez da PE fitxategia, ez MSI paketea, ez MSIX paketea edo sorta"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ez da PE fitxategia, ez MSI paketea, ez MSIX paketea edo sorta, ez cabinet-a"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ez da karpeta ezaguna ez dir ID bat (karpeta ezagunak: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat .msixbundle irteerarako da (bere paketeak ondoan idazten dira)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs-ek 1etik 64ra arteko zenbaki bat onartzen du ('{1}' jaso da)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key-k gehienez {1} kanpoko cabinet sinatzen ditu; handitu cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store Windows-en ziurtagiri-biltegi bat da; beste leku batzuetan erabili gako-fitxategi bat edo --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "PE sekzio-taula hondatua"
 
 msgid "a damaged ZIP64 end record"
 msgstr "ZIP64 amaiera-erregistro hondatua"
+
+msgid "a damaged cabinet header"
+msgstr "cabinet goiburu hondatua"
 
 msgid "a damaged hive bin"
 msgstr "hive bin hondatua"
@@ -2457,6 +2463,9 @@ msgstr "ez da ZIP artxibo bat (ez dago amaiera-erregistrorik)"
 msgid "not a ZIP archive (too short)"
 msgstr "ez da ZIP artxibo bat (laburregia)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ez da cabinet bat (ez dago MSCF goibururik)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ez da rubrapack-ek onartzen duen proxy-URL bat (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "artxiboak ez du ZIP64 amaiera-erregistrorik"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "sortaren manifestuak ez ditu Identity Name, Publisher eta Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet-ak ez du sinadurarentzako lekurik"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet-ak karpetetan edo datu-blokeetan gordetako lekua du, eta rubrapack-ek ez du hori kudeatzen"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet-aren sinadurak rubrapack-ek egiaztatzen ez duen hash bat erabiltzen du (SHA-256 soilik)"
+
 msgid "the central directory lies outside the archive"
 msgstr "direktorio zentrala artxibotik kanpo dago"
 
@@ -3104,6 +3122,9 @@ msgstr "zerbitzariaren ziurtagiria ez da TLS zerbitzarietarako (bere gako-erabil
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "zerbitzariaren sinadura-eskema ez dator bat bere ziurtagiriaren gakoarekin"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "sinadura ez dago cabinet-ak dioen tokian"
 
 msgid "the signature does not verify"
 msgstr "sinadura ez da egiaztatzen"

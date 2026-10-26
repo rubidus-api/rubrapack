@@ -333,11 +333,11 @@ msgstr "'{1}' сонымен қатар dir ID; айнымалыға басқа 
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' осы буманың архитектурасы үшін емес, 0x{2} машинасы үшін жасалған; әдейі болса any-arch = true орнатыңыз"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE файлы (.exe, .dll) да, MSI бумасы да, MSIX бумасы не жиыны да емес"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE файлы (.exe, .dll) да, MSI бумасы да, MSIX бумасы не жиыны да, cabinet да емес"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE файлы да, MSI бумасы да, MSIX бумасы не жиыны да емес"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE файлы да, MSI бумасы да, MSIX бумасы не жиыны да, cabinet да емес"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' белгілі қалта да, dir ID да емес (белгілі қалталар: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat .msixbundle шығысына арналған (бумалары �
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1-ден 64-ке дейінгі санды алады ('{1}' алынды)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key ең көбі {1} сыртқы cabinet қолтаңбалайды; cab-max-size мәнін арттырыңыз"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store - Windows сертификаттар қоймасы; басқа жерде кілт файлын немесе --pkcs11 пайдаланыңыз"
@@ -1361,6 +1364,9 @@ msgstr "бүлінген PE бөлімдер кестесі"
 
 msgid "a damaged ZIP64 end record"
 msgstr "бүлінген ZIP64 соңғы жазбасы"
+
+msgid "a damaged cabinet header"
+msgstr "бүлінген cabinet тақырыбы"
 
 msgid "a damaged hive bin"
 msgstr "бүлінген hive bin"
@@ -2457,6 +2463,9 @@ msgstr "ZIP мұрағаты емес (соңғы жазба жоқ)"
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP мұрағаты емес (тым қысқа)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet емес (MSCF тақырыбы жоқ)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack қабылдайтын прокси URL емес (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "мұрағатта ZIP64 соңғы жазбасы жоқ"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "жиын манифестінде Identity Name, Publisher және Version жоқ"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet ішінде қолтаңбаға орын жоқ"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet қалталарында немесе деректер блоктарында rubrapack өңдемейтін сақталған орын бар"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet қолтаңбасы rubrapack тексермейтін хэшті қолданады (тек SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "орталық каталог мұрағаттан тыс жатыр"
 
@@ -3104,6 +3122,9 @@ msgstr "сервер сертификаты TLS серверлеріне арн�
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "сервердің қолтаңба схемасы оның сертификат кілтіне сай емес"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "қолтаңба cabinet айтқан жерде емес"
 
 msgid "the signature does not verify"
 msgstr "қолтаңба тексерілмейді"

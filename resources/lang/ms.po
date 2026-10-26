@@ -333,11 +333,11 @@ msgstr "'{1}' juga ID dir; beri pemboleh ubah nama lain"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' dibina untuk mesin 0x{2}, bukan seni bina pakej ini; tetapkan any-arch = true jika memang disengajakan"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' bukan fail PE (.exe, .dll), pakej MSI, mahupun pakej atau himpunan MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' bukan fail PE (.exe, .dll), pakej MSI, pakej atau himpunan MSIX, mahupun cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' bukan fail PE, pakej MSI, mahupun pakej atau himpunan MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' bukan fail PE, pakej MSI, pakej atau himpunan MSIX, mahupun cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' bukan folder yang dikenali mahupun ID dir (folder dikenali: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat adalah untuk output .msixbundle (pakej-pakejnya ditulis di sebela
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs menerima nombor 1 hingga 64 (diterima '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key menandatangani paling banyak {1} cabinet luaran; naikkan cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store ialah stor sijil Windows; di tempat lain gunakan fail kunci atau --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "jadual seksyen PE rosak"
 
 msgid "a damaged ZIP64 end record"
 msgstr "rekod akhir ZIP64 rosak"
+
+msgid "a damaged cabinet header"
+msgstr "pengepala cabinet rosak"
 
 msgid "a damaged hive bin"
 msgstr "hive bin rosak"
@@ -2457,6 +2463,9 @@ msgstr "bukan arkib ZIP (tiada rekod akhir)"
 msgid "not a ZIP archive (too short)"
 msgstr "bukan arkib ZIP (terlalu pendek)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "bukan cabinet (tiada pengepala MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "bukan URL proksi yang diterima oleh rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arkib tiada rekod akhir ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "manifest himpunan tiada Identity Name, Publisher dan Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet tiada ruang untuk tandatangan"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet mempunyai ruang simpanan dalam folder atau blok datanya, yang tidak dikendalikan oleh rubrapack"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "tandatangan cabinet menggunakan cincangan yang tidak disemak oleh rubrapack (hanya SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "central directory berada di luar arkib"
 
@@ -3104,6 +3122,9 @@ msgstr "sijil pelayan bukan untuk pelayan TLS (extended key usage-nya)"
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "skema tandatangan pelayan tidak sesuai dengan kunci sijilnya"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "tandatangan tiada di tempat yang dinyatakan oleh cabinet"
 
 msgid "the signature does not verify"
 msgstr "tandatangan tidak disahkan"

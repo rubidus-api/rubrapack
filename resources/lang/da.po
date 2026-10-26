@@ -333,11 +333,11 @@ msgstr "'{1}' er også et dir-ID; giv variablen et andet navn"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' er bygget til maskine 0x{2}, ikke til denne pakkes arch; angiv any-arch = true, hvis det er meningen"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' er hverken en PE-fil (.exe, .dll), en MSI-pakke eller en MSIX-pakke eller -samling"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' er hverken en PE-fil (.exe, .dll), en MSI-pakke, en MSIX-pakke eller -samling eller en cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' er hverken en PE-fil, en MSI-pakke eller en MSIX-pakke eller -samling"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' er hverken en PE-fil, en MSI-pakke, en MSIX-pakke eller -samling eller en cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' er hverken en kendt mappe eller et dir-ID (kendte mapper: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat er til et .msixbundle-output (dets pakker skrives ved siden af)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs tager et tal fra 1 til 64 (fik '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key signerer højst {1} eksterne cabinets; hæv cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store er et Windows-certifikatlager; brug andre steder en nøglefil eller --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "en beskadiget PE-sektionstabel"
 
 msgid "a damaged ZIP64 end record"
 msgstr "en beskadiget ZIP64-slutpost"
+
+msgid "a damaged cabinet header"
+msgstr "en beskadiget cabinet-header"
 
 msgid "a damaged hive bin"
 msgstr "en beskadiget hive-bin"
@@ -2457,6 +2463,9 @@ msgstr "ikke et ZIP-arkiv (ingen slutpost)"
 msgid "not a ZIP archive (too short)"
 msgstr "ikke et ZIP-arkiv (for kort)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ikke en cabinet (ingen MSCF-header)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ikke en proxy-URL, som rubrapack accepterer (http://vært:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arkivet har ingen ZIP64-slutpost"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "samlingsmanifestet har ingen Identity Name, Publisher og Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet'en har ikke plads til en signatur"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet'en har reserveret plads i sine mapper eller datablokke, som rubrapack ikke håndterer"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet'ens signatur bruger en hash, som rubrapack ikke kontrollerer (kun SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "den centrale mappe ligger uden for arkivet"
 
@@ -3104,6 +3122,9 @@ msgstr "serverens certifikat er ikke til TLS-servere (dens udvidede nøglebrug)"
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "serverens signaturskema passer ikke til nøglen i dens certifikat"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "signaturen ligger ikke, hvor cabinet'en siger"
 
 msgid "the signature does not verify"
 msgstr "signaturen kan ikke verificeres"

@@ -120,17 +120,24 @@ hello-signed.msi
 
 서명 안 된 파일은 `structure: invalid ... the package is not signed` 라고 나온다.
 
-## 외부 캐비닛은 서명되지 않는다
+## 외부 캐비닛
 
-서명은 `.msi` 만 덮는다. `cab = "external"`(15장)이면 누군가 `.cab` 파일을 몰래 바꿔치기할 수 있으므로 `sign` 은
-그런 패키지를 거부한다:
+`.msi` 의 서명은 `.msi` 만 덮는다. `cab = "external"`(15장)이면 누군가 `.cab` 파일을 몰래 바꿔치기할 수 있다. 그래서
+`build --key` 는 캐비닛마다 서명하고 어느 인증서가 서명했는지 패키지에 적는다. Windows Installer 는 바뀌었거나,
+바꿔치기했거나, 다른 사람이 서명한 캐비닛을 거부한다:
+
+```text
+C:\work\hello> rubrapack build hello.toml -o out-x64\hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
+```
+
+`--key` 없이 지은 뒤에 서명하는 패키지는 그렇게 할 수 없으므로 `sign` 이 거부한다:
 
 ```text
 C:\work\hello\out-x64> rubrapack sign hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
 rubrapack: error[RP0011]: 'hello-x64.msi': the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs
 ```
 
-`--allow-unsigned-cabs` 는 경고와 함께 `.msi` 에만 서명한다. 서명할 패키지에는 넣어 둔 캐비닛을 쓰는 편이 낫다.
+`--allow-unsigned-cabs` 는 경고와 함께 `.msi` 에만 서명한다. 그 대신 `--key` 로 짓거나 넣어 둔 캐비닛을 쓴다.
 
 ## 안에서 무슨 일이 일어났나
 

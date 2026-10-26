@@ -108,7 +108,41 @@ given non-zero state bits, times and CLSIDs told the fields apart. [observed]
   candidates tried that gives both stored `MsiDigitalSignatureEx` values, and with it both digests
   match. Only storages directly at the root were in those patches.
 - A signature covers what is inside the `.msi` only: cabinets outside it (Media table `Cabinet`
-  values that do not start with `#`) are not part of the digest.
+  values that do not start with `#`) are not part of the digest. Those are signed themselves
+  (next section) and named in the package's `MsiDigitalSignature` table.
+
+## Cabinets
+
+No document describes where a cabinet keeps its signature either. The layout below is what
+Windows' signtool writes; rubrapack signs a cabinet byte for byte the same with the same key, and
+Windows Installer accepts the result. [observed]
+
+- The signature lives in the header's reserved space (MS-CAB `cfhdrRESERVE_PRESENT`, flag
+  0x0004): `cbCFHeader` = 20, `cbCFFolder` = 0, `cbCFData` = 0, then the 20 bytes of `abReserve`:
+  `00 00 10 00`, the signature's offset (4 bytes, little-endian), its size (4 bytes), 8 zero
+  bytes. A cabinet that has no reserved space gets these 24 bytes inserted after the 36-byte
+  header, and one with header space of another size has it replaced; `cbCabinet`, `coffFiles`
+  and every folder's `coffCabStart` move with them. (signtool shrinks makecab's
+  `ReservePerCabinetSize=6144` to 20 bytes the same way.)
+- The signature - the same CMS `ContentInfo` as above - follows the cabinet: it starts at
+  `cbCabinet`, and its size is a multiple of 8 (zero bytes after the DER). `cbCabinet` does not
+  count it.
+- The digest is the hash of the first `cbCabinet` bytes without `reserved1` (offset 4, 4 bytes),
+  `cbCFHeader` (offset 36, 2 bytes) and `abReserve` (offset 40, 20 bytes) - so the bytes before
+  and after signing hash the same.
+- `data` = `SEQUENCE { 1.3.6.1.4.1.311.2.1.28, [1] { OCTET STRING <a6 b5 86 d5 b4 a1 24 66 ae 05 a2 17
+  da 8e 60 d6>, OCTET STRING <SET { SEQUENCE { 1.3.6.1.4.1.311.2.5.1, SET { OCTET STRING <the SHA-256
+  of cbCabinet as 4 bytes, little-endian> } } }> } }`.
+- signtool's signed attributes are those of Windows' signer, except that `SpcSpOpusInfo` is an
+  empty `SEQUENCE` (`30 00`).
+- In the package, `MsiDigitalCertificate` holds the signing certificate (`CertData`, DER) and
+  `MsiDigitalSignature` has a row `Media`, the cabinet's `DiskId`, that certificate's key and
+  `Hash` = the signature value of the cabinet's `SignerInfo` (the last `OCTET STRING`: what
+  `MsiGetFileSignatureInformation` returns as the hash). Windows Installer then installs from the
+  cabinet only when its signature is valid and made with that certificate - the test certificate
+  needed no trust - and stops with 1330 for a changed cabinet (`TRUST_E_BAD_DIGEST`) or one signed
+  by someone else, and 1329 for an unsigned one. With `Hash` set to the digest instead, Windows
+  refused the right cabinet too (1330).
 
 ## Timestamps
 

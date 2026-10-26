@@ -506,7 +506,7 @@ static proven_err_t sign_archive(proven_allocator_t alloc, const uint8_t *pkg, s
     }
     if (err == PROVEN_OK) {
         sip_info(&data, bundle);
-        err = rp_authenticode_build_ex(alloc, kf, leaf, RP_HASH_SHA256, data.data, data.len, rec.data, rec.len, ts, true, &sig, &sl, why);
+        err = rp_authenticode_build_ex(alloc, kf, leaf, RP_HASH_SHA256, data.data, data.len, rec.data, rec.len, ts, RP_ATTRS_APPX, &sig, &sl, why);
     }
     if (err == PROVEN_OK) {
         rp_buf_t p7x = rp_buf_new(alloc, sl + 8);

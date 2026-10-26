@@ -333,11 +333,11 @@ msgstr "'{1}' est aussi un ID de dir ; donnez un autre nom à la variable"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' est compilé pour la machine 0x{2}, pas pour l'arch de ce package ; définissez any-arch = true si c'est voulu"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' n'est ni un fichier PE (.exe, .dll), ni un package MSI, ni un package ou bundle MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' n'est ni un fichier PE (.exe, .dll), ni un package MSI, ni un package ou bundle MSIX, ni un cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' n'est ni un fichier PE, ni un package MSI, ni un package ou bundle MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' n'est ni un fichier PE, ni un package MSI, ni un package ou bundle MSIX, ni un cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' n'est ni un dossier connu ni un ID de dir (dossiers connus : ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat est pour une sortie .msixbundle (ses paquets sont écrits à côt
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs accepte un nombre de 1 à 64 (reçu : '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key signe au plus {1} cabinets externes ; augmentez cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store est un magasin de certificats Windows ; ailleurs, utilisez un fichier de clé ou --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "une table des sections PE endommagée"
 
 msgid "a damaged ZIP64 end record"
 msgstr "un enregistrement de fin ZIP64 endommagé"
+
+msgid "a damaged cabinet header"
+msgstr "un en-tête de cabinet endommagé"
 
 msgid "a damaged hive bin"
 msgstr "un bin de ruche endommagé"
@@ -2457,6 +2463,9 @@ msgstr "pas une archive ZIP (pas d'enregistrement de fin)"
 msgid "not a ZIP archive (too short)"
 msgstr "pas une archive ZIP (trop courte)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "pas un cabinet (pas d'en-tête MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "pas une URL de proxy acceptée par rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "l'archive n'a pas d'enregistrement de fin ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "le manifeste du bundle n'a pas d'Identity Name, Publisher et Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "le cabinet n'a pas de place pour une signature"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "le cabinet a de l'espace réservé dans ses dossiers ou ses blocs de données, que rubrapack ne gère pas"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "la signature du cabinet utilise un hachage que rubrapack ne vérifie pas (SHA-256 seulement)"
+
 msgid "the central directory lies outside the archive"
 msgstr "le répertoire central est hors de l'archive"
 
@@ -3104,6 +3122,9 @@ msgstr "le certificat du serveur n'est pas destiné aux serveurs TLS (son utilis
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "le schéma de signature du serveur ne correspond pas à la clé de son certificat"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "la signature n'est pas là où le cabinet l'indique"
 
 msgid "the signature does not verify"
 msgstr "la signature n'est pas vérifiée"

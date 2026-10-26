@@ -333,11 +333,11 @@ msgstr "'{1}' je tudi dir ID; spremenljivki dajte drugo ime"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' je zgrajen za stroj 0x{2}, ne za arhitekturo tega paketa; nastavite any-arch = true, če je to namerno"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ni ne datoteka PE (.exe, .dll), ne paket MSI, ne paket ali sveženj MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ni ne datoteka PE (.exe, .dll), ne paket MSI, ne paket ali sveženj MSIX, ne cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ni ne datoteka PE, ne paket MSI, ne paket ali sveženj MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ni ne datoteka PE, ne paket MSI, ne paket ali sveženj MSIX, ne cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ni ne znana mapa ne dir ID (znane mape: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat je za izhod .msixbundle (njegovi paketi se zapišejo poleg)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs sprejme število od 1 do 64 (dobljeno '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key podpiše največ {1} zunanjih cabinetov; povečajte cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store je shramba potrdil sistema Windows; drugje uporabite datoteko ključa ali --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "poškodena tabela razdelkov PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "poškodan končni zapis ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "poškodovana glava cabineta"
 
 msgid "a damaged hive bin"
 msgstr "poškodovan hive bin"
@@ -2457,6 +2463,9 @@ msgstr "ni arhiv ZIP (ni končnega zapisa)"
 msgid "not a ZIP archive (too short)"
 msgstr "ni arhiv ZIP (prekratek)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ni cabinet (ni glave MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ni URL proxyja, ki ga rubrapack sprejme (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arhiv nima končnega zapisa ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "manifest svežnja nima Identity Name, Publisher in Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet nima prostora za podpis"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet ima rezerviran prostor v mapah ali podatkovnih blokih, ki ga rubrapack ne obravnava"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "podpis cabineta uporablja zgoščevanje, ki ga rubrapack ne preverja (le SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "osrednji imenik je zunaj arhiva"
 
@@ -3104,6 +3122,9 @@ msgstr "potrdilo strežnika ni za strežnike TLS (njegova razširjena uporaba kl
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "shema podpisa strežnika ne ustreza ključu njegovega potrdila"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "podpis ni tam, kjer pravi cabinet"
 
 msgid "the signature does not verify"
 msgstr "podpis se ne preveri"

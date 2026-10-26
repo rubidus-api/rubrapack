@@ -333,11 +333,11 @@ msgstr "'{1}' on ka dir ID; andke muutujale teine nimi"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' on koostatud masinale 0x{2}, mitte selle paketi arhitektuurile; määrake any-arch = true, kui see on tahtlik"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ei ole PE-fail (.exe, .dll), MSI-pakett ega MSIX-pakett või -kogum"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ei ole PE-fail (.exe, .dll), MSI-pakett, MSIX-pakett või -kogum ega cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ei ole PE-fail, MSI-pakett ega MSIX-pakett või -kogum"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ei ole PE-fail, MSI-pakett, MSIX-pakett või -kogum ega cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ei ole tuntud kaust ega dir ID (tuntud kaustad: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat on .msixbundle-väljundi jaoks (selle paketid kirjutatakse kõrva
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs võtab arvu 1 kuni 64 (saadi '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key allkirjastab kuni {1} välist cabinet'i; suurendage cab-max-size väärtust"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store on Windowsi sertifikaadisalv; mujal kasutage võtmefaili või --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "kahjustatud PE jaotiste tabel"
 
 msgid "a damaged ZIP64 end record"
 msgstr "kahjustatud ZIP64 lõpukirje"
+
+msgid "a damaged cabinet header"
+msgstr "kahjustatud cabinet'i päis"
 
 msgid "a damaged hive bin"
 msgstr "kahjustatud hive bin"
@@ -2457,6 +2463,9 @@ msgstr "ei ole ZIP-arhiiv (lõpukirje puudub)"
 msgid "not a ZIP archive (too short)"
 msgstr "ei ole ZIP-arhiiv (liiga lühike)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ei ole cabinet (MSCF-päis puudub)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "pole puhverserveri URL, mida rubrapack aktsepteerib (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arhiivil pole ZIP64 lõpukirjet"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "kogumi manifestil pole Identity Name'i, Publisherit ja Versionit"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet'is pole allkirjale ruumi"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet'i kaustades või andmeplokkides on reserveeritud ruumi, mida rubrapack ei käsitle"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet'i allkiri kasutab räsi, mida rubrapack ei kontrolli (ainult SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "keskkataloog on arhiivist väljas"
 
@@ -3104,6 +3122,9 @@ msgstr "serveri sertifikaat ei ole TLS-serveritele (selle laiendatud võtmekasut
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "serveri allkirjaskeem ei sobi selle sertifikaadi võtmega"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "allkiri ei asu seal, kus cabinet ütleb"
 
 msgid "the signature does not verify"
 msgstr "allkiri ei kinnitu"

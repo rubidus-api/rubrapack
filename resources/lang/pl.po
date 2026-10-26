@@ -333,11 +333,11 @@ msgstr "'{1}' jest też identyfikatorem dir; nadaj zmiennej inną nazwę"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' zbudowano dla maszyny 0x{2}, nie dla arch tego pakietu; ustaw any-arch = true, jeśli to zamierzone"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nie jest ani plikiem PE (.exe, .dll), ani pakietem MSI, ani pakietem lub zestawem MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nie jest ani plikiem PE (.exe, .dll), ani pakietem MSI, ani pakietem lub zestawem MSIX, ani plikiem cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nie jest ani plikiem PE, ani pakietem MSI, ani pakietem lub zestawem MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nie jest ani plikiem PE, ani pakietem MSI, ani pakietem lub zestawem MSIX, ani plikiem cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nie jest ani znanym folderem, ani identyfikatorem dir (znane foldery: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat jest dla wyjścia .msixbundle (jego pakiety są zapisywane obok)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs przyjmuje liczbę od 1 do 64 (otrzymano '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key podpisuje najwyżej {1} zewnętrznych plików cabinet; zwiększ cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store to magazyn certyfikatów systemu Windows; gdzie indziej użyj pliku klucza lub --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "uszkodzona tabela sekcji PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "uszkodzony rekord końcowy ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "uszkodzony nagłówek pliku cabinet"
 
 msgid "a damaged hive bin"
 msgstr "uszkodzony blok gałęzi (hive bin)"
@@ -2457,6 +2463,9 @@ msgstr "to nie archiwum ZIP (brak rekordu końcowego)"
 msgid "not a ZIP archive (too short)"
 msgstr "to nie archiwum ZIP (za krótkie)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "to nie jest plik cabinet (brak nagłówka MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "to nie adres URL serwera proxy akceptowany przez rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "archiwum nie ma rekordu końcowego ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "manifest zestawu nie ma Identity Name, Publisher i Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "plik cabinet nie ma miejsca na podpis"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "plik cabinet ma zarezerwowane miejsce w folderach lub blokach danych, którego rubrapack nie obsługuje"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "podpis pliku cabinet używa skrótu, którego rubrapack nie sprawdza (tylko SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "katalog centralny leży poza archiwum"
 
@@ -3104,6 +3122,9 @@ msgstr "certyfikat serwera nie jest dla serwerów TLS (jego rozszerzone użycie 
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "schemat podpisu serwera nie pasuje do klucza jego certyfikatu"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "podpis nie leży tam, gdzie wskazuje plik cabinet"
 
 msgid "the signature does not verify"
 msgstr "podpis się nie weryfikuje"

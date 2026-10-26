@@ -182,6 +182,11 @@ static const rule_t rules[] = {
     // RFC-0031 B11 (Microsoft Learn: "MsiEmbeddedUI Table").
     R("MsiEmbeddedUI", "MsiEmbeddedUI", "Identifier"), R("MsiEmbeddedUI", "FileName", "Text"),
     RN("MsiEmbeddedUI", "Attributes", 0, 3), RN("MsiEmbeddedUI", "MessageFilter", 0, MAXI), { "MsiEmbeddedUI", "Data", NONE, NONE, NULL, 0, "Binary", NULL },
+    // RFC-0031 B13 (Microsoft Learn: "MsiDigitalSignature Table", "MsiDigitalCertificate Table").
+    RS("MsiDigitalSignature", "Table", "Identifier", "Media"), R("MsiDigitalSignature", "SignObject", "Text"),
+    RK("MsiDigitalSignature", "DigitalCertificate_", "MsiDigitalCertificate", 1),
+    { "MsiDigitalSignature", "Hash", NONE, NONE, NULL, 0, "Binary", NULL },
+    R("MsiDigitalCertificate", "DigitalCertificate", "Identifier"), { "MsiDigitalCertificate", "CertData", NONE, NONE, NULL, 0, "Binary", NULL },
     // rubrapack's own (RFC-0028): a dialog language's value of a property, set by RpLangApply.
     R("RpText", "Lang", "Identifier"), R("RpText", "Key", "Identifier"), R("RpText", "Text", "Text"),
     RN("RpText", "Format", 0, 1),

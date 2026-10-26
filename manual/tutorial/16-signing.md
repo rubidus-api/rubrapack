@@ -129,18 +129,26 @@ hello-signed.msi
 
 An unsigned file says `structure: invalid ... the package is not signed`.
 
-## External cabinets are not covered
+## External cabinets
 
-A signature covers the `.msi` only. With `cab = "external"` (chapter 15) someone could swap the
-`.cab` files unnoticed, so `sign` refuses such a package:
+A signature of the `.msi` covers the `.msi` only. With `cab = "external"` (chapter 15) someone could
+swap the `.cab` files unnoticed. `build --key` therefore signs each cabinet as well and writes into
+the package which certificate signed it; Windows Installer refuses a cabinet that was changed,
+replaced or signed by someone else:
+
+```text
+C:\work\hello> rubrapack build hello.toml -o out-x64\hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
+```
+
+A package built without `--key` and signed afterwards cannot get that, so `sign` refuses it:
 
 ```text
 C:\work\hello\out-x64> rubrapack sign hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
 rubrapack: error[RP0011]: 'hello-x64.msi': the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs
 ```
 
-`--allow-unsigned-cabs` signs the `.msi` anyway, with a warning. Prefer embedded cabinets for
-signed packages.
+`--allow-unsigned-cabs` signs the `.msi` anyway, with a warning. Build it with `--key` instead, or
+use embedded cabinets.
 
 ## What happened inside
 

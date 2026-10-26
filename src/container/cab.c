@@ -11,6 +11,7 @@
 
 enum {
     HEADER = 36,
+    RESERVE_PRESENT = 4,        // cfhdrRESERVE_PRESENT
     FOLDER = 8,
     BLOCK = 32768,          // uncompressed bytes per CFDATA block
     TYPE_NONE = 0,
@@ -327,16 +328,24 @@ proven_err_t rp_cab_write(proven_allocator_t alloc, const rp_cab_file_t *files, 
 proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t len, const rp_limits_t *limits,
                          rp_cab_file_t **files, size_t *count, uint8_t **arena) {
     if (cab == NULL || limits == NULL || files == NULL || count == NULL || arena == NULL) return PROVEN_ERR_INVALID_ARG;
-    if (len < HEADER || memcmp(cab, "MSCF", 4) != 0 || rd32(cab + 8) != len) return PROVEN_ERR_INVALID_FORMAT;
+    if (len < HEADER || memcmp(cab, "MSCF", 4) != 0 || rd32(cab + 8) > len) return PROVEN_ERR_INVALID_FORMAT;
+    len = rd32(cab + 8);        // an Authenticode signature may follow the cabinet (RFC-0031 B13)
     uint32_t files_off = rd32(cab + 16);
     uint16_t nfolders = rd16(cab + 26), nfiles = rd16(cab + 28), flags = rd16(cab + 30);
-    if (flags != 0 || nfolders == 0 || nfiles > limits->max_entries) return PROVEN_ERR_UNSUPPORTED;
-    if ((uint64_t)HEADER + (uint64_t)FOLDER * nfolders > len) return PROVEN_ERR_INVALID_FORMAT;
+    if ((flags & ~RESERVE_PRESENT) != 0 || nfolders == 0 || nfiles > limits->max_entries) return PROVEN_ERR_UNSUPPORTED;
+    // Reserved header space (a signature's, or makecab's) is skipped; reserved space in folders
+    // or data blocks is not read.
+    size_t folders = HEADER;
+    if (flags & RESERVE_PRESENT) {
+        if (len < HEADER + 4 || cab[38] != 0 || cab[39] != 0) return PROVEN_ERR_UNSUPPORTED;
+        folders += 4 + (size_t)rd16(cab + 36);
+    }
+    if ((uint64_t)folders + (uint64_t)FOLDER * nfolders > len) return PROVEN_ERR_INVALID_FORMAT;
 
     // Uncompressed folder sizes first, to allocate one arena for all data.
     uint64_t total = 0;
     for (uint16_t f = 0; f < nfolders; ++f) {
-        const uint8_t *fo = cab + HEADER + FOLDER * f;
+        const uint8_t *fo = cab + folders + FOLDER * f;
         uint32_t off = rd32(fo);
         uint16_t nblocks = rd16(fo + 4), type = rd16(fo + 6);
         unsigned wbits = type >> 8 & 0x1F;
@@ -372,7 +381,7 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
     size_t at = 0;
     proven_err_t err = PROVEN_OK;
     for (uint16_t f = 0; f < nfolders && err == PROVEN_OK; ++f) {
-        const uint8_t *fo = cab + HEADER + FOLDER * f;
+        const uint8_t *fo = cab + folders + FOLDER * f;
         uint32_t off = rd32(fo);
         uint16_t type = rd16(fo + 6);
         folder_base[f] = at;

@@ -333,11 +333,11 @@ msgstr "'{1}' একটি dir ID-ও; ভেরিয়েবলের অন�
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' মেশিন 0x{2}-এর জন্য তৈরি, এই প্যাকেজের আর্কিটেকচারের জন্য নয়; ইচ্ছাকৃত হলে any-arch = true সেট করুন"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE ফাইল (.exe, .dll), MSI প্যাকেজ বা MSIX প্যাকেজ বা বান্ডল কোনোটিই নয়"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE ফাইল (.exe, .dll), MSI প্যাকেজ, MSIX প্যাকেজ বা বান্ডল বা cabinet কোনোটিই নয়"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' PE ফাইল, MSI প্যাকেজ বা MSIX প্যাকেজ বা বান্ডল কোনোটিই নয়"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' PE ফাইল, MSI প্যাকেজ, MSIX প্যাকেজ বা বান্ডল বা cabinet কোনোটিই নয়"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' কোনো পরিচিত ফোল্ডার বা dir ID নয় (পরিচিত ফোল্ডার: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat হলো .msixbundle আউটপুটের জন্য (এ�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1 থেকে 64 পর্যন্ত একটি সংখ্যা নেয় ('{1}' পাওয়া গেছে)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key সর্বাধিক {1}টি বাইরের cabinet-এ স্বাক্ষর করে; cab-max-size বাড়ান"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store হলো Windows সার্টিফিকেট স্টোর; অন্যত্র কী ফাইল বা --pkcs11 ব্যবহার করুন"
@@ -1361,6 +1364,9 @@ msgstr "একটি ক্ষতিগ্রস্ত PE সেকশন টে
 
 msgid "a damaged ZIP64 end record"
 msgstr "একটি ক্ষতিগ্রস্ত ZIP64 শেষ রেকর্ড"
+
+msgid "a damaged cabinet header"
+msgstr "ক্ষতিগ্রস্ত cabinet হেডার"
 
 msgid "a damaged hive bin"
 msgstr "একটি ক্ষতিগ্রস্ত হাইভ bin"
@@ -2457,6 +2463,9 @@ msgstr "ZIP আর্কাইভ নয় (শেষ রেকর্ড নে
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP আর্কাইভ নয় (খুব ছোট)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet নয় (MSCF হেডার নেই)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack গ্রহণ করে এমন প্রক্সি URL নয় (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "আর্কাইভে ZIP64 শেষ রেকর্ড নেই"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "বান্ডল ম্যানিফেস্টে Identity Name, Publisher এবং Version নেই"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet-এ স্বাক্ষরের জায়গা নেই"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet-এর ফোল্ডার বা ডেটা ব্লকে সংরক্ষিত জায়গা আছে, যা rubrapack সামলায় না"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet-এর স্বাক্ষর এমন হ্যাশ ব্যবহার করে যা rubrapack যাচাই করে না (কেবল SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "কেন্দ্রীয় ডিরেক্টরি আর্কাইভের বাইরে"
 
@@ -3104,6 +3122,9 @@ msgstr "সার্ভারের সার্টিফিকেট TLS সা
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "সার্ভারের স্বাক্ষর পদ্ধতি এর সার্টিফিকেটের কী-এর সাথে মেলে না"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "স্বাক্ষর সেখানে নেই যেখানে cabinet বলে"
 
 msgid "the signature does not verify"
 msgstr "স্বাক্ষর যাচাই হয় না"

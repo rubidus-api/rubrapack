@@ -333,11 +333,11 @@ msgstr "'{1}' egyben dir-azonosító is; adjon más nevet a változónak"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' a 0x{2} géphez készült, nem e csomag arch értékéhez; állítsa be az any-arch = true értéket, ha ez a szándék"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' se nem PE-fájl (.exe, .dll), se nem MSI-csomag, se nem MSIX-csomag vagy -köteg"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' se nem PE-fájl (.exe, .dll), se nem MSI-csomag, se nem MSIX-csomag vagy -köteg, se nem cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' se nem PE-fájl, se nem MSI-csomag, se nem MSIX-csomag vagy -köteg"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' se nem PE-fájl, se nem MSI-csomag, se nem MSIX-csomag vagy -köteg, se nem cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' se nem ismert mappa, se nem dir-azonosító (ismert mappák: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "a --flat .msixbundle kimenethez való (csomagjai mellé íródnak)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "a --jobs 1 és 64 közötti számot fogad el (kapott: '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "a --key legfeljebb {1} külső cabinetet ír alá; növelje a cab-max-size értékét"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "a --key-store egy Windows-tanúsítványtároló; máshol használjon kulcsfájlt vagy --pkcs11-et"
@@ -1361,6 +1364,9 @@ msgstr "sérült PE szakasztábla"
 
 msgid "a damaged ZIP64 end record"
 msgstr "sérült ZIP64 záró rekord"
+
+msgid "a damaged cabinet header"
+msgstr "sérült cabinet-fejléc"
 
 msgid "a damaged hive bin"
 msgstr "sérült kaptárblokk (hive bin)"
@@ -2457,6 +2463,9 @@ msgstr "nem ZIP-archívum (nincs záró rekord)"
 msgid "not a ZIP archive (too short)"
 msgstr "nem ZIP-archívum (túl rövid)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "nem cabinet (nincs MSCF-fejléc)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "nem olyan proxy URL, amelyet a rubrapack elfogad (http://gazda:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "az archívumnak nincs ZIP64 záró rekordja"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "a kötegjegyzékben nincs Identity Name, Publisher és Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "a cabinetben nincs hely aláírásnak"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "a cabinet mappáiban vagy adatblokkjaiban fenntartott hely van, amelyet a rubrapack nem kezel"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "a cabinet aláírása olyan kivonatot használ, amelyet a rubrapack nem ellenőriz (csak SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "a központi könyvtár az archívumon kívül van"
 
@@ -3104,6 +3122,9 @@ msgstr "a kiszolgáló tanúsítványa nem TLS-kiszolgálókhoz való (a kibőv�
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "a kiszolgáló aláírási sémája nem illik a tanúsítványa kulcsához"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "az aláírás nem ott van, ahol a cabinet mondja"
 
 msgid "the signature does not verify"
 msgstr "az aláírás nem ellenőrizhető"

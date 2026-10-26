@@ -333,11 +333,11 @@ msgstr "'{1}' เป็น ID ของ dir ด้วย ตั้งชื่�
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' สร้างสำหรับเครื่อง 0x{2} ไม่ใช่ arch ของแพ็กเกจนี้ ถ้าตั้งใจเช่นนั้นให้ตั้ง any-arch = true"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ไม่ใช่ไฟล์ PE (.exe, .dll) ไม่ใช่แพ็กเกจ MSI และไม่ใช่แพ็กเกจหรือบันเดิล MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ไม่ใช่ไฟล์ PE (.exe, .dll) ไม่ใช่แพ็กเกจ MSI ไม่ใช่แพ็กเกจหรือบันเดิล MSIX และไม่ใช่ cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ไม่ใช่ไฟล์ PE ไม่ใช่แพ็กเกจ MSI และไม่ใช่แพ็กเกจหรือบันเดิล MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ไม่ใช่ไฟล์ PE ไม่ใช่แพ็กเกจ MSI ไม่ใช่แพ็กเกจหรือบันเดิล MSIX และไม่ใช่ cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ไม่ใช่โฟลเดอร์ที่รู้จักและไม่ใช่ ID ของ dir (โฟลเดอร์ที่รู้จัก: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat ใช้กับผลลัพธ์ .msixbundle (แพ็ก
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs รับตัวเลข 1 ถึง 64 (ได้ '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key ลงนาม cabinet ภายนอกได้ไม่เกิน {1} ไฟล์ ให้เพิ่ม cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store เป็นที่เก็บใบรับรองของ Windows ที่อื่นให้ใช้ไฟล์คีย์หรือ --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "ตารางเซกชัน PE เสียหาย"
 
 msgid "a damaged ZIP64 end record"
 msgstr "ระเบียนท้าย ZIP64 เสียหาย"
+
+msgid "a damaged cabinet header"
+msgstr "ส่วนหัว cabinet เสียหาย"
 
 msgid "a damaged hive bin"
 msgstr "hive bin เสียหาย"
@@ -2457,6 +2463,9 @@ msgstr "ไม่ใช่ไฟล์ ZIP (ไม่มีระเบียน
 msgid "not a ZIP archive (too short)"
 msgstr "ไม่ใช่ไฟล์ ZIP (สั้นเกินไป)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ไม่ใช่ cabinet (ไม่มีส่วนหัว MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ไม่ใช่ URL ของพร็อกซีที่ rubrapack ยอมรับ (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "ไฟล์เก็บถาวรไม่มีระเบียน
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "แมนิเฟสต์บันเดิลไม่มี Identity Name, Publisher และ Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet ไม่มีที่สำหรับลายเซ็น"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet มีพื้นที่สำรองในโฟลเดอร์หรือบล็อกข้อมูล ซึ่ง rubrapack ไม่จัดการ"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "ลายเซ็นของ cabinet ใช้แฮชที่ rubrapack ไม่ตรวจ (เฉพาะ SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "central directory อยู่นอกไฟล์เก็บถาวร"
 
@@ -3104,6 +3122,9 @@ msgstr "ใบรับรองของเซิร์ฟเวอร์ไม
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "รูปแบบลายเซ็นของเซิร์ฟเวอร์ไม่เข้ากับคีย์ในใบรับรอง"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "ลายเซ็นไม่อยู่ในตำแหน่งที่ cabinet ระบุ"
 
 msgid "the signature does not verify"
 msgstr "ลายเซ็นตรวจสอบไม่ผ่าน"

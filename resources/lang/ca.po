@@ -333,11 +333,11 @@ msgstr "'{1}' també és un ID de dir; doneu un altre nom a la variable"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' està compilat per a la màquina 0x{2}, no per a l'arquitectura d'aquest paquet; definiu any-arch = true si és intencionat"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' no és ni un fitxer PE (.exe, .dll), ni un paquet MSI, ni un paquet o conjunt MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' no és ni un fitxer PE (.exe, .dll), ni un paquet MSI, ni un paquet o conjunt MSIX, ni un cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' no és ni un fitxer PE, ni un paquet MSI, ni un paquet o conjunt MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' no és ni un fitxer PE, ni un paquet MSI, ni un paquet o conjunt MSIX, ni un cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' no és ni una carpeta coneguda ni un ID de dir (carpetes conegudes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat és per a una sortida .msixbundle (els seus paquets s'escriuen al
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs admet un nombre de l'1 al 64 (s'ha obtingut '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key signa com a màxim {1} cabinets externs; augmenteu cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store és un magatzem de certificats del Windows; en altres llocs feu servir un fitxer de clau o --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "una taula de seccions PE malmesa"
 
 msgid "a damaged ZIP64 end record"
 msgstr "un registre final ZIP64 malmès"
+
+msgid "a damaged cabinet header"
+msgstr "una capçalera de cabinet malmesa"
 
 msgid "a damaged hive bin"
 msgstr "un bin de rusc malmès"
@@ -2457,6 +2463,9 @@ msgstr "no és un arxiu ZIP (no hi ha registre final)"
 msgid "not a ZIP archive (too short)"
 msgstr "no és un arxiu ZIP (massa curt)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "no és un cabinet (no hi ha capçalera MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "no és un URL de servidor intermediari que accepti rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "l'arxiu no té registre final ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "el manifest del conjunt no té Identity Name, Publisher ni Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "el cabinet no té lloc per a una signatura"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "el cabinet té espai reservat a les carpetes o als blocs de dades, que rubrapack no gestiona"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "la signatura del cabinet fa servir un hash que rubrapack no comprova (només SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "el directori central és fora de l'arxiu"
 
@@ -3104,6 +3122,9 @@ msgstr "el certificat del servidor no és per a servidors TLS (el seu ús de cla
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "l'esquema de signatura del servidor no s'adiu amb la clau del seu certificat"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "la signatura no és on diu el cabinet"
 
 msgid "the signature does not verify"
 msgstr "la signatura no es verifica"

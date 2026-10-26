@@ -335,11 +335,11 @@ msgstr "'{1}' ایک dir ID بھی ہے؛ متغیر کو کوئی اور نام
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' مشین 0x{2} کے لیے بنا ہے، اس پیکیج کے آرکیٹیکچر کے لیے نہیں؛ اگر جان بوجھ کر ہے تو any-arch = true سیٹ کریں"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' نہ PE فائل (.exe، .dll) ہے، نہ MSI پیکیج اور نہ MSIX پیکیج یا بنڈل"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' نہ PE فائل (.exe، .dll) ہے، نہ MSI پیکیج، نہ MSIX پیکیج یا بنڈل اور نہ cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' نہ PE فائل ہے، نہ MSI پیکیج اور نہ MSIX پیکیج یا بنڈل"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' نہ PE فائل ہے، نہ MSI پیکیج، نہ MSIX پیکیج یا بنڈل اور نہ cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' نہ کوئی معلوم فولڈر ہے اور نہ dir ID (معلوم فولڈرز: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
@@ -538,6 +538,9 @@ msgstr "--flat ‏.msixbundle آؤٹ پٹ کے لیے ہے (اس کے پیکیج
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1 سے 64 تک کا عدد لیتا ہے ('{1}' ملا)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key زیادہ سے زیادہ {1} بیرونی cabinet پر دستخط کرتا ہے؛ cab-max-size بڑھائیں"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store ایک Windows سرٹیفکیٹ اسٹور ہے؛ دوسری جگہ کلید فائل یا --pkcs11 استعمال کریں"
@@ -1363,6 +1366,9 @@ msgstr "خراب PE سیکشن جدول"
 
 msgid "a damaged ZIP64 end record"
 msgstr "خراب ZIP64 اختتامی ریکارڈ"
+
+msgid "a damaged cabinet header"
+msgstr "خراب cabinet ہیڈر"
 
 msgid "a damaged hive bin"
 msgstr "خراب ہائیو bin"
@@ -2459,6 +2465,9 @@ msgstr "ZIP آرکائیو نہیں (اختتامی ریکارڈ نہیں)"
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP آرکائیو نہیں (بہت چھوٹا)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet نہیں (MSCF ہیڈر نہیں)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ایسا پراکسی URL نہیں جو rubrapack قبول کرے (http://host:port)"
 
@@ -2915,6 +2924,15 @@ msgstr "آرکائیو میں ZIP64 اختتامی ریکارڈ نہیں"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "بنڈل مینی فیسٹ میں Identity Name، Publisher اور Version نہیں"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet میں دستخط کے لیے جگہ نہیں"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet کے فولڈرز یا ڈیٹا بلاکس میں مخصوص جگہ ہے جسے rubrapack نہیں سنبھالتا"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet کا دستخط ایسا ہیش استعمال کرتا ہے جسے rubrapack نہیں جانچتا (صرف SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "مرکزی ڈائریکٹری آرکائیو سے باہر ہے"
 
@@ -3106,6 +3124,9 @@ msgstr "سرور کا سرٹیفکیٹ TLS سرورز کے لیے نہیں (اس
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "سرور کی دستخطی اسکیم اس کے سرٹیفکیٹ کی کلید سے میل نہیں کھاتی"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "دستخط وہاں نہیں جہاں cabinet بتاتا ہے"
 
 msgid "the signature does not verify"
 msgstr "دستخط تصدیق نہیں ہوتا"

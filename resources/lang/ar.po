@@ -335,11 +335,11 @@ msgstr "'{1}' هو أيضاً معرّف dir؛ أعط المتغير اسماً 
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' مبني للجهاز 0x{2}، وليس لبنية هذه الحزمة؛ عيّن any-arch = true إذا كان ذلك مقصوداً"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ليس ملف PE ‏(.exe، .dll)، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ليس ملف PE ‏(.exe، .dll)، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم، ولا ملف cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' ليس ملف PE، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' ليس ملف PE، ولا حزمة MSI، ولا حزمة MSIX أو مجموعة حزم، ولا ملف cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' ليس مجلداً معروفاً ولا معرّف dir (المجلدات المعروفة: ProgramFiles، ProgramFiles32، CommonFiles، AppData، LocalAppData، CommonAppData، StartMenu، Programs، Desktop، Windows، System، Fonts، Temp)"
@@ -538,6 +538,9 @@ msgstr "--flat لمخرجات .msixbundle (تُكتب حزمها بجانبها)
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "يأخذ --jobs رقماً من 1 إلى 64 (الموجود '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "يوقّع --key حتى {1} من ملفات cabinet الخارجية فقط؛ ارفع cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store هو مخزن شهادات Windows؛ في غير Windows استخدم ملف مفتاح أو --pkcs11"
@@ -1363,6 +1366,9 @@ msgstr "جدول أقسام PE تالف"
 
 msgid "a damaged ZIP64 end record"
 msgstr "سجل نهاية ZIP64 تالف"
+
+msgid "a damaged cabinet header"
+msgstr "رأس cabinet تالف"
 
 msgid "a damaged hive bin"
 msgstr "hive bin تالف"
@@ -2459,6 +2465,9 @@ msgstr "ليس أرشيف ZIP (لا يوجد سجل النهاية)"
 msgid "not a ZIP archive (too short)"
 msgstr "ليس أرشيف ZIP (قصير جداً)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ليس ملف cabinet (لا يوجد رأس MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ليس عنوان URL لوكيل يقبله rubrapack ‏(http://host:port)"
 
@@ -2915,6 +2924,15 @@ msgstr "ليس في الأرشيف سجل نهاية ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "لا يحتوي بيان مجموعة الحزم على Identity Name وPublisher وVersion"
 
+msgid "the cabinet has no room for a signature"
+msgstr "لا مكان في cabinet للتوقيع"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "في مجلدات cabinet أو كتل بياناته مساحة محجوزة لا يتعامل معها rubrapack"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "توقيع cabinet يستخدم تجزئة لا يتحقق منها rubrapack (SHA-256 فقط)"
+
 msgid "the central directory lies outside the archive"
 msgstr "يقع الدليل المركزي خارج الأرشيف"
 
@@ -3106,6 +3124,9 @@ msgstr "شهادة الخادم ليست لخوادم TLS (استخدام الم
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "مخطط توقيع الخادم لا يناسب مفتاح شهادته"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "التوقيع ليس حيث يقول cabinet"
 
 msgid "the signature does not verify"
 msgstr "التوقيع غير سليم"

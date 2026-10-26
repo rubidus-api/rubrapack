@@ -333,11 +333,11 @@ msgstr "'{1}' è anche un ID dir; dare un altro nome alla variabile"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' è compilato per la macchina 0x{2}, non per l'arch di questo pacchetto; impostare any-arch = true se è voluto"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' non è né un file PE (.exe, .dll), né un pacchetto MSI, né un pacchetto o bundle MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' non è né un file PE (.exe, .dll), né un pacchetto MSI, né un pacchetto o bundle MSIX, né un cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' non è né un file PE, né un pacchetto MSI, né un pacchetto o bundle MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' non è né un file PE, né un pacchetto MSI, né un pacchetto o bundle MSIX, né un cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' non è né una cartella nota né un ID dir (cartelle note: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat è per un output .msixbundle (i suoi pacchetti vengono scritti ac
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs accetta un numero da 1 a 64 (ricevuto '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key firma al massimo {1} cabinet esterni; aumentare cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store è un archivio certificati di Windows; altrove usare un file di chiave o --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "una tabella delle sezioni PE danneggiata"
 
 msgid "a damaged ZIP64 end record"
 msgstr "un record finale ZIP64 danneggiato"
+
+msgid "a damaged cabinet header"
+msgstr "un'intestazione di cabinet danneggiata"
 
 msgid "a damaged hive bin"
 msgstr "un bin dell'hive danneggiato"
@@ -2457,6 +2463,9 @@ msgstr "non è un archivio ZIP (nessun record finale)"
 msgid "not a ZIP archive (too short)"
 msgstr "non è un archivio ZIP (troppo corto)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "non è un cabinet (nessuna intestazione MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "non è un URL di proxy accettato da rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "l'archivio non ha un record finale ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "il manifesto del bundle non ha Identity Name, Publisher e Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "il cabinet non ha spazio per una firma"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "il cabinet ha spazio riservato nelle cartelle o nei blocchi di dati, che rubrapack non gestisce"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "la firma del cabinet usa un hash che rubrapack non controlla (solo SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "la directory centrale è fuori dall'archivio"
 
@@ -3104,6 +3122,9 @@ msgstr "il certificato del server non è per server TLS (il suo utilizzo chiave 
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "lo schema di firma del server non corrisponde alla chiave del suo certificato"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "la firma non si trova dove dice il cabinet"
 
 msgid "the signature does not verify"
 msgstr "la firma non è verificata"

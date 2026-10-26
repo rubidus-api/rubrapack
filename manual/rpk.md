@@ -2203,13 +2203,19 @@ rubrapack version | help [command]
   names inside it. An `.msix` unpacks its files (not the ZIP's own
   `[Content_Types].xml` and `AppxBlockMap.xml`) after every block has matched its hash.
 - `sign` adds an Authenticode signature (SHA-256; RSA, or ECDSA P-256/P-384) to a PE file, an MSI
-  package, an MSIX package or a bundle (whose packages are signed first), in place or
+  package, an MSIX package or a bundle (whose packages are signed first), or a cabinet, in place or
   to `-o`; `build --key` signs the package as it is built (the same code), and a signed
   `--reproducible` build still gives the same bytes every time (the signature holds no time) - unless
   it is timestamped: a timestamp carries the server's time and serial number, so it differs on every
-  run, and only the package inside the signature stays the same. An MSI
-  whose cabinets lie outside it is refused: its signature would not cover them - use embedded
-  cabinets, or `--allow-unsigned-cabs` to sign the `.msi` alone with a warning. The key
+  run, and only the package inside the signature stays the same. `build --key` of a package with
+  `cab = "external"` signs each cabinet too, as Windows' signtool does (byte for byte), and names it
+  in `MsiDigitalSignature` with its certificate in `MsiDigitalCertificate`: Windows Installer then
+  refuses a cabinet that was changed (1330), replaced by an unsigned one (1329) or signed by
+  another certificate (1330). `sign` of a finished MSI whose cabinets lie outside it is refused:
+  its signature would not cover them - build it with `--key`, use embedded cabinets, or
+  `--allow-unsigned-cabs` to sign the `.msi` alone with a warning. A cabinet on its own is signed
+  in its reserved header space (made, or resized to 20 bytes, when it has none or another size),
+  and `verify` checks one. The key
   file is a PKCS#12 file (`.pfx`/`.p12`: AES with PBKDF2-HMAC-SHA256, SHA-256 MAC - what current
   Windows and OpenSSL export) or a PKCS#8 PEM/DER key, plain or encrypted with PBES2; `--cert` adds
   certificates the key file does not hold. The certificate must be for code signing, must not be a

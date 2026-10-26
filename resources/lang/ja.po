@@ -333,11 +333,11 @@ msgstr "'{1}' は dir ID でもあります。変数には別の名前を付け�
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' はマシン 0x{2} 用にビルドされており、このパッケージの arch 用ではありません。意図したものなら any-arch = true を設定してください"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' は PE ファイル (.exe、.dll)、MSI パッケージ、MSIX パッケージやバンドルのどれでもありません"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' は PE ファイル (.exe、.dll)、MSI パッケージ、MSIX パッケージやバンドル、キャビネットのどれでもありません"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' は PE ファイル、MSI パッケージ、MSIX パッケージやバンドルのどれでもありません"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' は PE ファイル、MSI パッケージ、MSIX パッケージやバンドル、キャビネットのどれでもありません"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' は既知のフォルダーでも dir ID でもありません (既知のフォルダー: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat は .msixbundle 出力用です (パッケージはその隣に�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs は 1 から 64 の数を取ります ('{1}' でした)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key で署名できる外部キャビネットは {1} 個までです。cab-max-size を大きくしてください"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store は Windows の証明書ストアです。ほかの環境ではキー ファイルか --pkcs11 を使ってください"
@@ -1361,6 +1364,9 @@ msgstr "壊れた PE セクション テーブル"
 
 msgid "a damaged ZIP64 end record"
 msgstr "壊れた ZIP64 終端レコード"
+
+msgid "a damaged cabinet header"
+msgstr "キャビネットのヘッダーが壊れています"
 
 msgid "a damaged hive bin"
 msgstr "壊れたハイブ bin"
@@ -2457,6 +2463,9 @@ msgstr "ZIP アーカイブではありません (終端レコードなし)"
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP アーカイブではありません (短すぎます)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "キャビネットではありません (MSCF ヘッダーがありません)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack が受け付けるプロキシの URL (http://host:port) ではありません"
 
@@ -2913,6 +2922,15 @@ msgstr "アーカイブに ZIP64 終端レコードがありません"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "バンドル マニフェストに Identity の Name、Publisher、Version がありません"
 
+msgid "the cabinet has no room for a signature"
+msgstr "キャビネットに署名を置く場所がありません"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "キャビネットのフォルダーかデータ ブロックに予約領域があり、rubrapack はそれを扱いません"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "キャビネットの署名は rubrapack が確認しないハッシュを使っています (SHA-256 のみ)"
+
 msgid "the central directory lies outside the archive"
 msgstr "中央ディレクトリがアーカイブの外にあります"
 
@@ -3104,6 +3122,9 @@ msgstr "サーバーの証明書は TLS サーバー用ではありません (�
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "サーバーの署名方式が証明書の鍵と合いません"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "署名がキャビネットの示す位置にありません"
 
 msgid "the signature does not verify"
 msgstr "署名を検証できません"

@@ -95,14 +95,15 @@ static proven_err_t stamp(proven_allocator_t alloc, const rp_timestamper_t *ts, 
 proven_err_t rp_authenticode_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
                                    size_t data_len, const uint8_t *digest, const rp_timestamper_t *ts, uint8_t **out, size_t *out_len,
                                    const char **why) {
-    return rp_authenticode_build_ex(alloc, kf, leaf, alg, data, data_len, digest, 0, ts, false, out, out_len, why);
+    return rp_authenticode_build_ex(alloc, kf, leaf, alg, data, data_len, digest, 0, ts, RP_ATTRS_WINDOWS, out, out_len, why);
 }
 
 // A SignedData whose content, of type `ctype`, is SEQUENCE { ind } (`ind` holds its contents and is
-// consumed); `appx` keeps the signed attributes to contentType and messageDigest.
+// consumed); `attrs` (RP_ATTRS_*) chooses the signed attributes.
 static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
-                                 size_t ctype_len, rp_buf_t ind, const rp_timestamper_t *ts, bool appx, uint8_t **out, size_t *out_len,
+                                 size_t ctype_len, rp_buf_t ind, const rp_timestamper_t *ts, int attrs, uint8_t **out, size_t *out_len,
                                  const char **why) {
+    bool appx = attrs == RP_ATTRS_APPX;
     size_t hn, hl = rp_hash_size(alg);
     const uint8_t *hoid = hash_oid(alg, &hn);
     rp_cert_t lc;
@@ -118,11 +119,13 @@ static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *k
     // Signed attributes, each SEQUENCE { type, SET { value } }.
     rp_buf_t attr[4];
     static const uint8_t opus[] = { 0x30, 0x08, 0xA0, 0x02, 0x80, 0x00, 0xA1, 0x02, 0x80, 0x00 };
+    static const uint8_t opus_empty[] = { 0x30, 0x00 };     // signtool's (RFC-0031 B13: tests/fixtures/cab-sign)
     for (int i = 0; i < 4; ++i) attr[i] = rp_buf_new(alloc, 4096);
     rp_buf_t v;
     rp_der_put_oid(&attr[0], O_SPC_OPUS, sizeof O_SPC_OPUS);
     v = rp_buf_new(alloc, 256);
-    rp_buf_put(&v, opus, sizeof opus);
+    if (attrs == RP_ATTRS_SIGNTOOL) rp_buf_put(&v, opus_empty, sizeof opus_empty);
+    else rp_buf_put(&v, opus, sizeof opus);
     rp_der_wrap(&attr[0], RP_DER_SET, &v);
     rp_der_put_oid(&attr[1], O_CONTENT_TYPE, sizeof O_CONTENT_TYPE);
     v = rp_buf_new(alloc, 256);
@@ -260,7 +263,7 @@ static proven_err_t build_signed(proven_allocator_t alloc, const rp_keyfile_t *k
 }
 
 proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *data,
-                                      size_t data_len, const uint8_t *digest, size_t digest_len, const rp_timestamper_t *ts, bool appx,
+                                      size_t data_len, const uint8_t *digest, size_t digest_len, const rp_timestamper_t *ts, int attrs,
                                       uint8_t **out, size_t *out_len, const char **why) {
     size_t hn, dl = digest_len ? digest_len : rp_hash_size(alg);
     const uint8_t *hoid = hash_oid(alg, &hn);
@@ -270,7 +273,7 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
     put_alg(&di, hoid, hn);
     rp_der_put(&di, RP_DER_OCTET_STRING, digest, dl);
     rp_der_wrap(&ind, RP_DER_SEQUENCE, &di);
-    return build_signed(alloc, kf, leaf, alg, O_SPC_INDIRECT, sizeof O_SPC_INDIRECT, ind, ts, appx, out, out_len, why);
+    return build_signed(alloc, kf, leaf, alg, O_SPC_INDIRECT, sizeof O_SPC_INDIRECT, ind, ts, attrs, out, out_len, why);
 }
 
 proven_err_t rp_signed_content_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
@@ -278,7 +281,7 @@ proven_err_t rp_signed_content_build(proven_allocator_t alloc, const rp_keyfile_
                                      const char **why) {
     rp_buf_t ind = rp_buf_new(alloc, 1u << 24);
     rp_buf_put(&ind, content, content_len);
-    return build_signed(alloc, kf, leaf, alg, ctype, ctype_len, ind, NULL, true, out, out_len, why);
+    return build_signed(alloc, kf, leaf, alg, ctype, ctype_len, ind, NULL, RP_ATTRS_APPX, out, out_len, why);
 }
 
 // ---- checking -----------------------------------------------------------------------------------

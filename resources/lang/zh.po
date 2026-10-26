@@ -333,11 +333,11 @@ msgstr "'{1}' 也是 dir ID；请给变量另取名称"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' 是为机器 0x{2} 构建的，不是为此安装包的 arch；如果确是有意，请设置 any-arch = true"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' 既不是 PE 文件(.exe、.dll)，也不是 MSI 安装包、MSIX 包或捆绑包"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' 既不是 PE 文件(.exe、.dll)，也不是 MSI 安装包、MSIX 包、捆绑包或 cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' 既不是 PE 文件，也不是 MSI 安装包、MSIX 包或捆绑包"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' 既不是 PE 文件，也不是 MSI 安装包、MSIX 包、捆绑包或 cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' 既不是已知文件夹，也不是 dir ID(已知文件夹: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat 用于 .msixbundle 输出（其包写在它旁边）"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 接受 1 到 64 的数字(实际为 '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key 最多为 {1} 个外部 cabinet 签名；请调大 cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store 是 Windows 证书存储；其他系统请使用密钥文件或 --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "损坏的 PE 节表"
 
 msgid "a damaged ZIP64 end record"
 msgstr "损坏的 ZIP64 结束记录"
+
+msgid "a damaged cabinet header"
+msgstr "cabinet 头已损坏"
 
 msgid "a damaged hive bin"
 msgstr "损坏的配置单元 bin"
@@ -2457,6 +2463,9 @@ msgstr "不是 ZIP 压缩包(没有结束记录)"
 msgid "not a ZIP archive (too short)"
 msgstr "不是 ZIP 压缩包(太短)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "不是 cabinet（没有 MSCF 头）"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "不是 rubrapack 接受的代理 URL(http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "该压缩包没有 ZIP64 结束记录"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "捆绑包清单中没有 Identity Name、Publisher 和 Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet 中没有放签名的位置"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet 的文件夹或数据块中有保留空间，rubrapack 不处理它"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet 的签名使用了 rubrapack 不检查的哈希（仅 SHA-256）"
+
 msgid "the central directory lies outside the archive"
 msgstr "中央目录位于压缩包之外"
 
@@ -3104,6 +3122,9 @@ msgstr "服务器的证书不用于 TLS 服务器(其扩展密钥用法)"
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "服务器的签名方案与其证书的密钥不符"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "签名不在 cabinet 所说的位置"
 
 msgid "the signature does not verify"
 msgstr "签名验证失败"

@@ -333,11 +333,11 @@ msgstr "'{1}'은(는) dir ID 이기도 합니다. 변수에 다른 이름을 주
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}'은(는) 이 패키지의 arch 가 아니라 머신 0x{2} 용으로 빌드되었습니다. 의도한 것이면 any-arch = true 를 주십시오"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}'은(는) PE 파일(.exe, .dll)도 MSI 패키지도 MSIX 패키지나 번들도 아닙니다"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}'은(는) PE 파일(.exe, .dll)도 MSI 패키지도 MSIX 패키지나 번들도 캐비닛도 아닙니다"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}'은(는) PE 파일도 MSI 패키지도 MSIX 패키지나 번들도 아닙니다"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}'은(는) PE 파일도 MSI 패키지도 MSIX 패키지나 번들도 캐비닛도 아닙니다"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}'은(는) 알려진 폴더도 dir ID 도 아닙니다(알려진 폴더: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat 는 .msixbundle 출력에 쓴다(그 패키지들은 옆에 쓰�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 는 1 에서 64 사이의 수입니다('{1}'을(를) 받음)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key 는 외부 캐비닛을 {1}개까지만 서명합니다. cab-max-size 를 올리세요"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store 는 Windows 인증서 저장소입니다. 다른 곳에서는 키 파일이나 --pkcs11 을 쓰십시오"
@@ -1361,6 +1364,9 @@ msgstr "PE 섹션 표가 손상되었습니다"
 
 msgid "a damaged ZIP64 end record"
 msgstr "ZIP64 끝 레코드가 손상되었습니다"
+
+msgid "a damaged cabinet header"
+msgstr "캐비닛 헤더가 손상되었습니다"
 
 msgid "a damaged hive bin"
 msgstr "하이브 bin 이 손상되었습니다"
@@ -2457,6 +2463,9 @@ msgstr "ZIP 아카이브가 아닙니다(끝 레코드 없음)"
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP 아카이브가 아닙니다(너무 짧음)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "캐비닛이 아닙니다(MSCF 헤더가 없음)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack 이 받는 프록시 URL(http://host:port)이 아닙니다"
 
@@ -2913,6 +2922,15 @@ msgstr "아카이브에 ZIP64 끝 레코드가 없습니다"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "번들 매니페스트에 Identity 의 Name, Publisher, Version 이 없습니다"
 
+msgid "the cabinet has no room for a signature"
+msgstr "캐비닛에 서명이 들어갈 자리가 없습니다"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "캐비닛의 폴더나 데이터 블록에 예약 공간이 있습니다. rubrapack 은 그것을 다루지 않습니다"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "캐비닛의 서명이 rubrapack 이 확인하지 않는 해시를 씁니다(SHA-256 만)"
+
 msgid "the central directory lies outside the archive"
 msgstr "중앙 디렉터리가 아카이브 밖에 있습니다"
 
@@ -3104,6 +3122,9 @@ msgstr "서버의 인증서가 TLS 서버용이 아닙니다(확장 키 용도)"
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "서버의 서명 방식이 그 인증서의 키와 맞지 않습니다"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "서명이 캐비닛이 말하는 곳에 있지 않습니다"
 
 msgid "the signature does not verify"
 msgstr "서명이 검증되지 않습니다"

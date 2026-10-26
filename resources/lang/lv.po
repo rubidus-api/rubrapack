@@ -333,11 +333,11 @@ msgstr "'{1}' ir arī dir ID; piešķiriet mainīgajam citu nosaukumu"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' ir būvēts mašīnai 0x{2}, nevis šīs pakotnes arhitektūrai; iestatiet any-arch = true, ja tas ir apzināti"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nav ne PE fails (.exe, .dll), ne MSI pakotne, ne MSIX pakotne vai komplekts"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nav ne PE fails (.exe, .dll), ne MSI pakotne, ne MSIX pakotne vai komplekts, ne cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nav ne PE fails, ne MSI pakotne, ne MSIX pakotne vai komplekts"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nav ne PE fails, ne MSI pakotne, ne MSIX pakotne vai komplekts, ne cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nav ne zināma mape, ne dir ID (zināmās mapes: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat ir .msixbundle izvadei (tās pakotnes tiek rakstītas blakus)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs pieņem skaitli no 1 līdz 64 (saņemts '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key paraksta ne vairāk kā {1} ārējos cabinet; palieliniet cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store ir Windows sertifikātu krātuve; citur izmantojiet atslēgas failu vai --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "bojāta PE sekciju tabula"
 
 msgid "a damaged ZIP64 end record"
 msgstr "bojāts ZIP64 beigu ieraksts"
+
+msgid "a damaged cabinet header"
+msgstr "bojāta cabinet galvene"
 
 msgid "a damaged hive bin"
 msgstr "bojāts hive bin"
@@ -2457,6 +2463,9 @@ msgstr "nav ZIP arhīvs (nav beigu ieraksta)"
 msgid "not a ZIP archive (too short)"
 msgstr "nav ZIP arhīvs (pārāk īss)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "nav cabinet (nav MSCF galvenes)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "nav starpniekservera URL, ko rubrapack pieņem (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arhīvam nav ZIP64 beigu ieraksta"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "komplekta manifestam nav Identity Name, Publisher un Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet nav vietas parakstam"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet mapēs vai datu blokos ir rezervēta vieta, ko rubrapack neapstrādā"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet paraksts izmanto jaucējkodu, ko rubrapack nepārbauda (tikai SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "centrālā direktorija atrodas ārpus arhīva"
 
@@ -3104,6 +3122,9 @@ msgstr "servera sertifikāts nav paredzēts TLS serveriem (tā paplašinātais a
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "servera paraksta shēma neatbilst tā sertifikāta atslēgai"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "paraksts neatrodas tur, kur norāda cabinet"
 
 msgid "the signature does not verify"
 msgstr "paraksts netiek apstiprināts"

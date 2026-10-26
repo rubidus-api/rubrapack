@@ -333,11 +333,11 @@ msgstr "'{1}' taip pat yra dir ID; kintamajam duokite kitą pavadinimą"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' sukurtas mašinai 0x{2}, o ne šio paketo architektūrai; nustatykite any-arch = true, jei taip ir norėta"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nėra nei PE failas (.exe, .dll), nei MSI paketas, nei MSIX paketas ar rinkinys"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nėra nei PE failas (.exe, .dll), nei MSI paketas, nei MSIX paketas ar rinkinys, nei cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nėra nei PE failas, nei MSI paketas, nei MSIX paketas ar rinkinys"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nėra nei PE failas, nei MSI paketas, nei MSIX paketas ar rinkinys, nei cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nėra nei žinomas aplankas, nei dir ID (žinomi aplankai: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat skirtas .msixbundle išvesčiai (jos paketai rašomi šalia)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs priima skaičių nuo 1 iki 64 (gauta '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key pasirašo ne daugiau kaip {1} išorinių cabinet; padidinkite cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store yra Windows sertifikatų saugykla; kitur naudokite rakto failą arba --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "sugadinta PE sekcijų lentelė"
 
 msgid "a damaged ZIP64 end record"
 msgstr "sugadintas ZIP64 pabaigos įrašas"
+
+msgid "a damaged cabinet header"
+msgstr "sugadinta cabinet antraštė"
 
 msgid "a damaged hive bin"
 msgstr "sugadintas hive bin"
@@ -2457,6 +2463,9 @@ msgstr "nėra ZIP archyvas (nėra pabaigos įrašo)"
 msgid "not a ZIP archive (too short)"
 msgstr "nėra ZIP archyvas (per trumpas)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "ne cabinet (nėra MSCF antraštės)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "nėra tarpinio serverio URL, kurį priima rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "archyvas neturi ZIP64 pabaigos įrašo"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "rinkinio manifestas neturi Identity Name, Publisher ir Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet neturi vietos parašui"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet aplankuose ar duomenų blokuose yra rezervuotos vietos, kurios rubrapack netvarko"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet parašas naudoja maišą, kurio rubrapack netikrina (tik SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "centrinis katalogas yra už archyvo ribų"
 
@@ -3104,6 +3122,9 @@ msgstr "serverio sertifikatas neskirtas TLS serveriams (jo išplėstinė rakto p
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "serverio parašo schema netinka jo sertifikato raktui"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "parašas yra ne ten, kur nurodo cabinet"
 
 msgid "the signature does not verify"
 msgstr "parašas nepatvirtinamas"

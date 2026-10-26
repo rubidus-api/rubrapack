@@ -333,11 +333,11 @@ msgstr "'{1}' həm də dir ID-dir; dəyişənə başqa ad verin"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' bu paketin arxitekturası üçün deyil, 0x{2} maşını üçün qurulub; qəsdəndirsə any-arch = true təyin edin"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nə PE faylı (.exe, .dll), nə MSI paketi, nə də MSIX paketi və ya dəstidir"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nə PE faylı (.exe, .dll), nə MSI paketi, nə MSIX paketi və ya dəsti, nə də cabinet-dir"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nə PE faylı, nə MSI paketi, nə də MSIX paketi və ya dəstidir"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nə PE faylı, nə MSI paketi, nə MSIX paketi və ya dəsti, nə də cabinet-dir"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nə məlum qovluq, nə də dir ID-dir (məlum qovluqlar: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat .msixbundle çıxışı üçündür (paketləri onun yanında yaz
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs 1-dən 64-ə qədər ədəd qəbul edir ('{1}' alındı)"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key ən çoxu {1} xarici cabinet imzalayır; cab-max-size-ı artırın"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store Windows sertifikat anbarıdır; başqa yerdə açar faylından və ya --pkcs11-dən istifadə edin"
@@ -1361,6 +1364,9 @@ msgstr "zədələnmiş PE bölmə cədvəli"
 
 msgid "a damaged ZIP64 end record"
 msgstr "zədələnmiş ZIP64 son qeydi"
+
+msgid "a damaged cabinet header"
+msgstr "zədələnmiş cabinet başlığı"
 
 msgid "a damaged hive bin"
 msgstr "zədələnmiş hive bin"
@@ -2457,6 +2463,9 @@ msgstr "ZIP arxivi deyil (son qeyd yoxdur)"
 msgid "not a ZIP archive (too short)"
 msgstr "ZIP arxivi deyil (çox qısadır)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "cabinet deyil (MSCF başlığı yoxdur)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "rubrapack-in qəbul etdiyi proksi URL deyil (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arxivdə ZIP64 son qeydi yoxdur"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "dəst manifestində Identity Name, Publisher və Version yoxdur"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet-də imza üçün yer yoxdur"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet-in qovluqlarında və ya məlumat bloklarında rubrapack-in işləmədiyi ayrılmış yer var"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet-in imzası rubrapack-in yoxlamadığı heş istifadə edir (yalnız SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "mərkəzi kataloq arxivin xaricindədir"
 
@@ -3104,6 +3122,9 @@ msgstr "serverin sertifikatı TLS serverləri üçün deyil (onun genişləndiri
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "serverin imza sxemi sertifikatının açarına uyğun gəlmir"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "imza cabinet-in dediyi yerdə deyil"
 
 msgid "the signature does not verify"
 msgstr "imza təsdiqlənmir"

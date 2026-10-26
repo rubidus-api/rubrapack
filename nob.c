@@ -111,6 +111,7 @@ static const char *const core_sources[] = {
     "src/pal/pal_fs.c",
     "src/sign/msi_sign.c",
     "src/sign/pe_sign.c",
+    "src/sign/cab_sign.c",
     "src/sign/tsp.c",
     "src/text/utf.c",
     "src/text/nfc.c",

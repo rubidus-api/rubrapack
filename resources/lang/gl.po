@@ -333,11 +333,11 @@ msgstr "'{1}' tamén é un ID de dir; déalle outro nome á variable"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' está compilado para a máquina 0x{2}, non para a arquitectura deste paquete; defina any-arch = true se é intencionado"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' non é nin un ficheiro PE (.exe, .dll), nin un paquete MSI, nin un paquete ou conxunto MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' non é nin un ficheiro PE (.exe, .dll), nin un paquete MSI, nin un paquete ou conxunto MSIX, nin un cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' non é nin un ficheiro PE, nin un paquete MSI, nin un paquete ou conxunto MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' non é nin un ficheiro PE, nin un paquete MSI, nin un paquete ou conxunto MSIX, nin un cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' non é nin un cartafol coñecido nin un ID de dir (cartafoles coñecidos: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat é para unha saída .msixbundle (os seus paquetes escríbense ao 
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs admite un número do 1 ao 64 (obtívose '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key asina como moito {1} cabinets externos; aumente cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store é un almacén de certificados de Windows; noutros sitios use un ficheiro de chave ou --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "unha táboa de seccións PE danada"
 
 msgid "a damaged ZIP64 end record"
 msgstr "un rexistro final ZIP64 danado"
+
+msgid "a damaged cabinet header"
+msgstr "unha cabeceira de cabinet danada"
 
 msgid "a damaged hive bin"
 msgstr "un bin de hive danado"
@@ -2457,6 +2463,9 @@ msgstr "non é un arquivo ZIP (non hai rexistro final)"
 msgid "not a ZIP archive (too short)"
 msgstr "non é un arquivo ZIP (demasiado curto)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "non é un cabinet (non hai cabeceira MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "non é un URL de proxy que acepte rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "o arquivo non ten rexistro final ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "o manifesto do conxunto non ten Identity Name, Publisher nin Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "o cabinet non ten sitio para unha sinatura"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "o cabinet ten espazo reservado nos seus cartafoles ou bloques de datos, que rubrapack non xestiona"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "a sinatura do cabinet usa un hash que rubrapack non comproba (só SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "o directorio central está fóra do arquivo"
 
@@ -3104,6 +3122,9 @@ msgstr "o certificado do servidor non é para servidores TLS (o seu uso de chave
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "o esquema de sinatura do servidor non encaixa coa chave do seu certificado"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "a sinatura non está onde di o cabinet"
 
 msgid "the signature does not verify"
 msgstr "a sinatura non se verifica"

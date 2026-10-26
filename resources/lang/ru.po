@@ -333,11 +333,11 @@ msgstr "'{1}' также является ID dir; дайте переменно�
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' собран для машины 0x{2}, а не для arch этого пакета; задайте any-arch = true, если так и задумано"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' не является ни файлом PE (.exe, .dll), ни пакетом MSI, ни пакетом или пакетом-набором MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' не является ни файлом PE (.exe, .dll), ни пакетом MSI, ни пакетом или пакетом-набором MSIX, ни CAB-файлом"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' не является ни файлом PE, ни пакетом MSI, ни пакетом или пакетом-набором MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' не является ни файлом PE, ни пакетом MSI, ни пакетом или пакетом-набором MSIX, ни CAB-файлом"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' не является ни известной папкой, ни ID dir (известные папки: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat — для вывода .msixbundle (его пакеты запи
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs принимает число от 1 до 64 (получено '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key подписывает не более {1} внешних CAB-файлов; увеличьте cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store - хранилище сертификатов Windows; в других системах используйте файл ключа или --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "поврежденная таблица разделов PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "поврежденная завершающая запись ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "повреждён заголовок CAB-файла"
 
 msgid "a damaged hive bin"
 msgstr "поврежденный bin куста"
@@ -2457,6 +2463,9 @@ msgstr "не архив ZIP (нет завершающей записи)"
 msgid "not a ZIP archive (too short)"
 msgstr "не архив ZIP (слишком короткий)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "не CAB-файл (нет заголовка MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "не URL прокси, который принимает rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "в архиве нет завершающей записи ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "в манифесте набора нет Identity Name, Publisher и Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "в CAB-файле нет места для подписи"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "в папках или блоках данных CAB-файла есть зарезервированное место, которое rubrapack не обрабатывает"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "подпись CAB-файла использует хэш, который rubrapack не проверяет (только SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "центральный каталог лежит вне архива"
 
@@ -3104,6 +3122,9 @@ msgstr "сертификат сервера не предназначен для
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "схема подписи сервера не соответствует ключу его сертификата"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "подпись находится не там, где указывает CAB-файл"
 
 msgid "the signature does not verify"
 msgstr "подпись не проверяется"

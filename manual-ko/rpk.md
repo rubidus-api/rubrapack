@@ -1962,12 +1962,17 @@ rubrapack version | help [command]
   `COM1` 등), 끝의 점이나 공백이 든 이름, 대소문자만 다른 두 경로는 거부한다. 기본 한도는 항목
   100,000개와 16 GiB 다. `.cab` 은 안의 이름대로 푼다. `.msix` 는 블록이 모두 해시와 맞은 뒤 파일(ZIP
   자신의 `[Content_Types].xml` 과 `AppxBlockMap.xml` 은 빼고)을 푼다.
-- `sign` 은 PE 파일, MSI 패키지, MSIX 패키지나 묶음(안의 패키지를 먼저 서명한다)에 Authenticode
+- `sign` 은 PE 파일, MSI 패키지, MSIX 패키지나 묶음(안의 패키지를 먼저 서명한다), 캐비닛에 Authenticode
   서명(SHA-256; RSA 또는 ECDSA P-256/P-384)을 제자리에서, 또는 `-o` 로 붙인다. `build --key` 는
   짓는 김에 (같은 코드로) 서명하고, 서명한 `--reproducible` 빌드도 매번 같은 바이트다(서명에 시각이
   없다) - 타임스탬프가 붙지 않는 한: 타임스탬프에는 서버의 시각과 일련번호가 들어 매번 다르고, 서명
-  안의 패키지만 같다. 캐비닛이 밖에 있는 MSI 는 거부한다: 서명이 그것을 덮지 못한다 - 캐비닛을 안에
-  넣거나, `--allow-unsigned-cabs` 로 경고와 함께 `.msi` 만 서명한다. 키 파일은 PKCS#12 파일
+  안의 패키지만 같다. `cab = "external"` 인 패키지를 `build --key` 로 지으면 캐비닛마다 Windows 의 signtool 과
+  (바이트까지) 같게 서명하고, `MsiDigitalSignature` 에 적고 그 인증서를 `MsiDigitalCertificate` 에 둔다: 그러면
+  Windows Installer 가 바뀐 캐비닛(1330), 서명 없는 것으로 바꿔치기한 캐비닛(1329), 다른 인증서로 서명한
+  캐비닛(1330)을 거부한다. 다 지은 MSI 의 캐비닛이 밖에 있으면 `sign` 은 거부한다: 서명이 그것을 덮지 못한다 -
+  `--key` 로 짓거나, 캐비닛을 안에 넣거나, `--allow-unsigned-cabs` 로 경고와 함께 `.msi` 만 서명한다. 캐비닛
+  하나는 헤더의 예약 공간에 서명한다(없거나 크기가 다르면 20바이트로 만들거나 고친다). `verify` 가 그것을 확인한다.
+  키 파일은 PKCS#12 파일
   (`.pfx`/`.p12`: PBKDF2-HMAC-SHA256 의 AES, SHA-256 MAC - 요즘 Windows 와 OpenSSL 이 내보내는
   것)이거나, 평문 또는 PBES2 로 암호화한 PKCS#8 PEM/DER 키다. `--cert` 는 키 파일에 없는 인증서를
   더한다. 인증서는 코드 서명용이어야 하고, CA 가 아니어야 하며, 지금 유효해야 한다. 암호는 환경 변수나

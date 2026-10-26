@@ -333,11 +333,11 @@ msgstr "'{1}' är också ett dir-ID; ge variabeln ett annat namn"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' är byggd för maskin 0x{2}, inte för det här paketets arch; ange any-arch = true om det är avsikten"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' är varken en PE-fil (.exe, .dll), ett MSI-paket eller ett MSIX-paket eller -paketsamling"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' är varken en PE-fil (.exe, .dll), ett MSI-paket, ett MSIX-paket eller -paketsamling eller en cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' är varken en PE-fil, ett MSI-paket eller ett MSIX-paket eller -paketsamling"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' är varken en PE-fil, ett MSI-paket, ett MSIX-paket eller -paketsamling eller en cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' är varken en känd mapp eller ett dir-ID (kända mappar: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat är för en .msixbundle-utdata (dess paket skrivs bredvid)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs tar ett tal från 1 till 64 (fick '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key signerar högst {1} externa cabinets; höj cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store är ett certifikatarkiv i Windows; använd annars en nyckelfil eller --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "en skadad PE-sektionstabell"
 
 msgid "a damaged ZIP64 end record"
 msgstr "en skadad ZIP64-slutpost"
+
+msgid "a damaged cabinet header"
+msgstr "ett skadat cabinet-huvud"
 
 msgid "a damaged hive bin"
 msgstr "en skadad hive-bin"
@@ -2457,6 +2463,9 @@ msgstr "inget ZIP-arkiv (ingen slutpost)"
 msgid "not a ZIP archive (too short)"
 msgstr "inget ZIP-arkiv (för kort)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "inte en cabinet (inget MSCF-huvud)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "ingen proxy-URL som rubrapack godtar (http://värd:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arkivet har ingen ZIP64-slutpost"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "paketsamlingsmanifestet har inga Identity Name, Publisher och Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet-filen har ingen plats för en signatur"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet-filen har reserverat utrymme i sina mappar eller datablock, som rubrapack inte hanterar"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "cabinet-filens signatur använder en hash som rubrapack inte kontrollerar (bara SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "den centrala katalogen ligger utanför arkivet"
 
@@ -3104,6 +3122,9 @@ msgstr "serverns certifikat är inte för TLS-servrar (dess utökade nyckelanvä
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "serverns signaturschema passar inte nyckeln i dess certifikat"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "signaturen ligger inte där cabinet-filen säger"
 
 msgid "the signature does not verify"
 msgstr "signaturen verifieras inte"

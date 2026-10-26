@@ -56,13 +56,18 @@ typedef struct {
     bool          ts_bad;       // the unsigned attributes are malformed or hold more than one timestamp
 } rp_authenticode_check_t;
 
+// The signed attributes: Windows' signer's (SpcSpOpusInfo with empty program name and URL,
+// contentType, SpcStatementType, messageDigest); the AppX SIP's for MSIX packages and bundles
+// (contentType and messageDigest only, RFC-0011); signtool's (as Windows' signer's, but an empty
+// SpcSpOpusInfo SEQUENCE - a cabinet, RFC-0031 B13).
+enum { RP_ATTRS_WINDOWS, RP_ATTRS_APPX, RP_ATTRS_SIGNTOOL };
+
 // The same with a digest of `digest_len` bytes (0: the hash's size; an MSIX signs the AppX SIP's
-// "APPX" record of hashes) and a choice of signed attributes: `appx` = contentType and messageDigest only, as the
-// AppX SIP writes them for MSIX packages and bundles (RFC-0011). An EC key signs with ECDSA; the
+// "APPX" record of hashes) and a choice of signed attributes (RP_ATTRS_*). An EC key signs with ECDSA; the
 // signer's algorithm is then id-ecPublicKey and the value DER SEQUENCE { r, s } (Windows' form).
 [[nodiscard]] proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg,
                                                     const uint8_t *data, size_t data_len, const uint8_t *digest, size_t digest_len,
-                                                    const rp_timestamper_t *ts, bool appx, uint8_t **out, size_t *out_len,
+                                                    const rp_timestamper_t *ts, int attrs, uint8_t **out, size_t *out_len,
                                                     const char **why);
 
 // A SignedData over other content (RFC-0016 3: a catalog): `ctype` is the content type's OID
@@ -95,6 +100,26 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
 
 // Verifies a signed PE file.
 void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, const char **why);
+
+// ---- cabinets (RFC-0031 B13) ---------------------------------------------------------------------
+
+// A cabinet with room for a signature, as signtool lays it out (src/sign/cab_sign.c): 20 bytes of
+// reserved header space in place of whatever header space it had, offsets moved. A signed one, or
+// one with reserved space in its folders or data blocks, is refused.
+[[nodiscard]] proven_err_t rp_cab_prepare(proven_allocator_t alloc, const uint8_t *cab, size_t len, uint8_t **out, size_t *out_len,
+                                          const char **why);
+
+// The SHA-256 Authenticode digest of a cabinet that has the room (rp_cab_prepare): what a signature
+// signs, and MsiDigitalSignature's Hash.
+[[nodiscard]] proven_err_t rp_cab_digest(const uint8_t *cab, size_t len, uint8_t digest[32], const char **why);
+
+// Signs a cabinet (prepared first when it has no room): the signature goes after it and the
+// reserved space says where.
+[[nodiscard]] proven_err_t rp_cab_sign(proven_allocator_t alloc, const uint8_t *cab, size_t len, const rp_keyfile_t *kf, int64_t now,
+                                       const rp_timestamper_t *ts, uint8_t **out, size_t *out_len, const char **why);
+
+// Verifies a signed cabinet.
+void rp_cab_verify(const uint8_t *cab, size_t len, rp_authenticode_check_t *r, const char **why);
 
 // ---- MSI ---------------------------------------------------------------------------------------
 

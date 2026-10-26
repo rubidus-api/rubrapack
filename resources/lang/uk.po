@@ -333,11 +333,11 @@ msgstr "'{1}' також ідентифікатор dir; дайте змінні
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' зібрано для машини 0x{2}, а не для arch цього пакета; задайте any-arch = true, якщо так задумано"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' не є ні файлом PE (.exe, .dll), ні пакетом MSI, ні пакетом або набором MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' не є ні файлом PE (.exe, .dll), ні пакетом MSI, ні пакетом або набором MSIX, ні cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' не є ні файлом PE, ні пакетом MSI, ні пакетом або набором MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' не є ні файлом PE, ні пакетом MSI, ні пакетом або набором MSIX, ні cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' не є ні відомою папкою, ні ідентифікатором dir (відомі папки: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat — для виводу .msixbundle (його пакети зап
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs приймає число від 1 до 64 (отримано '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key підписує не більше {1} зовнішніх cabinet; збільште cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store - сховище сертифікатів Windows; деінде використовуйте файл ключа або --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "пошкоджена таблиця розділів PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "пошкоджений кінцевий запис ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "пошкоджений заголовок cabinet"
 
 msgid "a damaged hive bin"
 msgstr "пошкоджений блок вулика (hive bin)"
@@ -2457,6 +2463,9 @@ msgstr "не архів ZIP (немає кінцевого запису)"
 msgid "not a ZIP archive (too short)"
 msgstr "не архів ZIP (закороткий)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "не cabinet (немає заголовка MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "не URL проксі, який приймає rubrapack (http://хост:порт)"
 
@@ -2913,6 +2922,15 @@ msgstr "архів не має кінцевого запису ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "маніфест набору не має Identity Name, Publisher і Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "у cabinet немає місця для підпису"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "у теках або блоках даних cabinet є зарезервоване місце, яке rubrapack не обробляє"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "підпис cabinet використовує хеш, який rubrapack не перевіряє (лише SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "центральний каталог лежить поза архівом"
 
@@ -3104,6 +3122,9 @@ msgstr "сертифікат сервера не для серверів TLS (й
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "схема підпису сервера не відповідає ключу його сертифіката"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "підпис лежить не там, де вказує cabinet"
 
 msgid "the signature does not verify"
 msgstr "підпис не перевіряється"

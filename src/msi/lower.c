@@ -19,6 +19,7 @@
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
 #include "rubrapack/pe.h"
+#include "rubrapack/sign.h"
 #include "rubrapack/suminfo.h"
 #include "rubrapack/text.h"
 #include "rubrapack/transform.h"
@@ -204,11 +205,11 @@ static const rp_msi_wcolumn_t movefile_cols[] = { { "FileKey", KEY_S(72) }, { "C
                                                   { "Options", I2 } };
 static const rp_msi_wcolumn_t odbcdriver_cols[] = { { "Driver", KEY_S(72) }, { "Component_", S(72) }, { "Description", L(255) },
                                                     { "File_", S(72) }, { "File_Setup", S_N(72) } };
-static const rp_msi_wcolumn_t odbcattr_cols[] = { { "Driver_", KEY_S(72) }, { "Attribute", KEY_L(40) }, { "Value", L_N(255) } };
+static const rp_msi_wcolumn_t odbcattr_cols[] = { { "Driver_", KEY_S(72) }, { "Attribute", KEY_S(40) }, { "Value", L_N(255) } };
 static const rp_msi_wcolumn_t odbcsource_cols[] = { { "DataSource", KEY_S(72) }, { "Component_", S(72) }, { "Description", L(255) },
                                                     { "DriverDescription", L(255) }, { "Registration", I2 } };
-static const rp_msi_wcolumn_t odbcsattr_cols[] = { { "DataSource_", KEY_S(72) }, { "Attribute", KEY_L(32) }, { "Value", L_N(255) } };
-static const rp_msi_wcolumn_t publish_cols[] = { { "ComponentId", KEY_S(38) }, { "Qualifier", KEY_L(255) }, { "Component_", KEY_S(72) },
+static const rp_msi_wcolumn_t odbcsattr_cols[] = { { "DataSource_", KEY_S(72) }, { "Attribute", KEY_S(32) }, { "Value", L_N(255) } };
+static const rp_msi_wcolumn_t publish_cols[] = { { "ComponentId", KEY_S(38) }, { "Qualifier", KEY_S(255) }, { "Component_", KEY_S(72) },
                                                  { "AppData", L_N(255) }, { "Feature_", S(38) } };
 static const rp_msi_wcolumn_t isolated_cols[] = { { "Component_Shared", KEY_S(72) }, { "Component_Application", KEY_S(72) } };
 static const rp_msi_wcolumn_t environment_cols[] = { { "Environment", KEY_S(72) }, { "Name", L(255) }, { "Value", L_N(255) },
@@ -243,6 +244,10 @@ static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t icon_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 // RFC-0031 B11: the author's embedded UI handler DLL and its bytes.
+// RFC-0031 B13 (Microsoft Learn: "MsiDigitalSignature Table", "MsiDigitalCertificate Table").
+static const rp_msi_wcolumn_t digsig_cols[] = { { "Table", KEY_S(32) }, { "SignObject", KEY_S(72) }, { "DigitalCertificate_", S(72) },
+                                                { "Hash", 0x1900u } };
+static const rp_msi_wcolumn_t digcert_cols[] = { { "DigitalCertificate", KEY_S(72) }, { "CertData", 0x0900u } };
 static const rp_msi_wcolumn_t embeddedui_cols[] = { { "MsiEmbeddedUI", KEY_S(72) }, { "FileName", S(255) }, { "Attributes", I2 },
     { "MessageFilter", I4_N }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t condition_cols[] = { { "Feature_", KEY_S(38) }, { "Level", KEY_I2 }, { "Condition", S_N(255) } };
@@ -551,7 +556,8 @@ typedef struct {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition,
-        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated, embeddedui;
+        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated, embeddedui, digsig, digcert;
+    rp_cab_signer_t *signer;            // RFC-0031 B13: external cabinets signed (NULL: not)
     icon_t          *icons;            // the Icon table's .ico files, in order of first use
     size_t           nicons;
     proven_err_t     icon_err;
@@ -810,7 +816,9 @@ static void lower_files(pkg_t *pk) {
         s_(&pk->component, lf->comp);
         s_(&pk->component, kdup(k, guid));
         s_(&pk->component, lf->dir_key);
-        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0));     // keep: Permanent, left at removal (RFC-0013 A7)
+        // keep: Permanent, left at removal (RFC-0013 A7); a DLL isolated for a program counts its
+        // users (SharedDllRefCount, ICE62).
+        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0) | (lf->f->isolate_for ? 8 : 0));
         s_(&pk->component, lf->f->when);                            // RFC-0013 A2
         s_(&pk->component, profile ? profile_keypath(pk, lf->comp) : lf->key);
         if (profile || dir_in_profile(ir, lf->f->dir)) profile_folders(pk, lf->dir_key, lf->comp);      // ICE64, a fixed GUID too
@@ -2014,6 +2022,49 @@ static proven_err_t lower_cabinets(pkg_t *pk, const char *cab_stem, const rp_lim
         err = rp_cab_write_ex(alloc, cf, n, ir->compress, jobs ? jobs : rp_pal_cpu_count(), limits, &cab, &cab_len);
         rp_mem_free(alloc, cf);
         if (err != PROVEN_OK) break;
+        if (pk->signer) {
+            // RFC-0031 B13: signed in place, and named in MsiDigitalSignature with its signature's
+            // value. A signer without `sign` (an instance's variant, only compared) takes the values
+            // the package's own build kept.
+            rp_cab_signer_t *sg = pk->signer;
+            uint8_t *prep = NULL, *sgn = NULL;
+            size_t pl = 0, sl = 0;
+            const char *why = NULL;
+            if (g >= RP_CAB_SIGNED_MAX) {
+                rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1516", false, "--key signs at most %d external cabinets; raise cab-max-size", RP_CAB_SIGNED_MAX);
+                err = PROVEN_ERR_OUT_OF_BOUNDS;
+            }
+            if (err == PROVEN_OK) err = rp_cab_prepare(alloc, cab, cab_len, &prep, &pl, &why);
+            if (err == PROVEN_OK && sg->sign) err = sg->sign(sg->ctx, prep, pl, &sgn, &sl);
+            if (err == PROVEN_OK && sg->sign) {
+                rp_authenticode_check_t r;
+                rp_cab_verify(sgn, sl, &r, &why);
+                uint8_t *h = r.signature_ok && r.sig.n ? rp_mem_alloc(alloc, r.sig.n, 1) : NULL;
+                if (h == NULL) err = r.signature_ok ? PROVEN_ERR_NOMEM : PROVEN_ERR_INVALID_STATE;
+                else memcpy(h, r.sig.p, r.sig.n);
+                rp_mem_free(alloc, sg->hash[g]);
+                sg->hash[g] = h;
+                sg->hash_len[g] = h ? r.sig.n : 0;
+            } else if (err == PROVEN_OK && sg->hash[g] == NULL) {
+                err = PROVEN_ERR_INVALID_STATE;
+            }
+            rp_mem_free(alloc, cab);
+            if (sgn) {
+                rp_mem_free(alloc, prep);
+                cab = sgn;
+                cab_len = sl;
+            } else {
+                cab = prep;
+                cab_len = pl;
+            }
+            if (err != PROVEN_OK) {
+                rp_mem_free(alloc, cab);
+                break;
+            }
+            s_(&pk->digsig, "Media"); s_(&pk->digsig, kprintf(k, "%s", num, NULL)); s_(&pk->digsig, "RpCabSigner");
+            b_(&pk->digsig, sg->hash[g], sg->hash_len[g]);
+            if (g == 0) { s_(&pk->digcert, "RpCabSigner"); b_(&pk->digcert, sg->cert, sg->cert_len); }
+        }
         if (ir->cab_external) {
             size_t nl = strlen(name) + 1;
             char *copy = rp_mem_alloc(alloc, nl, 1);
@@ -2578,10 +2629,10 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                                   dirs_t *dirs, const char *product_code, const char *package_code,
                                   const rp_limits_t *limits, uint8_t **out, size_t *len, rp_srcdiags_t *diags,
                                   const char *cab_stem, rp_build_file_t **xcabs, size_t *nxcabs, size_t jobs,
-                                  const rp_out_sink_t *sink, int instance) {
+                                  const rp_out_sink_t *sink, int instance, rp_cab_signer_t *signer) {
     pkg_t pkg = { .alloc = alloc, .ir = ir, .k = k, .files = files, .nfiles = nfiles, .dirs = dirs, .diags = diags,
                   .comp_attr = ir->arch == RP_ARCH_X86 ? 0 : 256, .qplan = "RPQ1", .rplan = "RPR1", .pplan = "RPP1",
-                  .instance = instance };
+                  .instance = instance, .signer = ir->cab_external ? signer : NULL };
     pkg_t *pk = &pkg;
     rows_init(&pk->property, alloc, "Property", property_cols, 2);
     rows_init(&pk->directory, alloc, "Directory", directory_cols, 3);
@@ -2628,6 +2679,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&pk->publish, alloc, "PublishComponent", publish_cols, 5);
     rows_init(&pk->isolated, alloc, "IsolatedComponent", isolated_cols, 2);
     rows_init(&pk->embeddedui, alloc, "MsiEmbeddedUI", embeddedui_cols, 5);
+    rows_init(&pk->digsig, alloc, "MsiDigitalSignature", digsig_cols, 4);
+    rows_init(&pk->digcert, alloc, "MsiDigitalCertificate", digcert_cols, 2);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &pk->property, &pk->directory, &pk->component, &pk->feature, &pk->featurecomp, &pk->file,
                       &pk->filehash, &pk->media, &pk->upgrade, &pk->customaction, &pk->iexec, &pk->iui, &pk->createfolder,
@@ -2635,7 +2688,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                       &pk->duplicate, &pk->environment, &pk->inifile, &pk->removeini, &pk->launch, &pk->appsearch,
                       &pk->reglocator, &pk->drlocator, &pk->signature, &pk->complocator, &pk->svcinstall, &pk->svccontrol,
                       &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition, &pk->movefile, &pk->odbcdriver,
-                      &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated, &pk->embeddedui };
+                      &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated, &pk->embeddedui,
+                      &pk->digsig, &pk->digcert };
     const size_t always = 16;
 
     lower_properties(pk, product_code);
@@ -2868,7 +2922,12 @@ static proven_err_t copy_streams(proven_allocator_t alloc, const rp_cfb_t *cfb, 
 
 static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir, keep_t *k, lfile_t *files, size_t nfiles,
                                     dirs_t *dirs, const char *package_code, const rp_limits_t *limits, const char *stem,
-                                    size_t jobs, const uint8_t *base_bytes, size_t base_len, uint8_t **newout, size_t *newlen) {
+                                    size_t jobs, const uint8_t *base_bytes, size_t base_len, uint8_t **newout, size_t *newlen,
+                                    const rp_cab_signer_t *signer) {
+    // The variants are only compared with the base: their cabinets are not signed, but they get the
+    // same MsiDigitalSignature rows (the package's own build kept the values).
+    rp_cab_signer_t rows_only = signer ? *signer : (rp_cab_signer_t){ 0 };
+    rows_only.sign = NULL;
     enum { CAP = 2048, BUFCAP = 2 * CAP };
     rp_cfb_stream_t *list = rp_mem_alloc(alloc, CAP, sizeof *list);
     uint8_t **bufs = rp_mem_alloc(alloc, BUFCAP, sizeof *bufs);
@@ -2889,7 +2948,8 @@ static proven_err_t embed_instances(proven_allocator_t alloc, const rp_ir_t *ir,
         rp_build_file_t *vc = NULL;
         size_t nvc = 0;
         rp_srcdiags_t dd = { 0 };
-        err = write_package(alloc, ir, k, files, nfiles, dirs, pcode, package_code, limits, &vb, &vl, &dd, stem, &vc, &nvc, jobs, NULL, K);
+        err = write_package(alloc, ir, k, files, nfiles, dirs, pcode, package_code, limits, &vb, &vl, &dd, stem, &vc, &nvc, jobs, NULL, K,
+                            signer ? &rows_only : NULL);
         rp_build_files_free(alloc, vc, nvc);
         loaded_t var = { 0 };
         rp_cfb_t mcfb = { 0 };
@@ -3191,7 +3251,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             size_t nfcabs = 0;
             static const char zero[] = "{00000000-0000-0000-0000-000000000000}";
             err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, zero, limits, &first, &first_len,
-                                diags, stem, &fcabs, &nfcabs, opt->jobs, bsink, 0);
+                                diags, stem, &fcabs, &nfcabs, opt->jobs, bsink, 0, opt->cab_signer);
             if (err == PROVEN_OK) {
                 uint8_t d[PROVEN_SHA256_SIZE];
                 proven_sha256((proven_mem_view_t){ first, first_len }, d);
@@ -3234,7 +3294,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     if (err == PROVEN_OK && !done) {
         err = write_package(alloc, ir, &k, files, ir->file_count, &dirs, product_code, package_code, limits, out, len,
                             opt->reproducible ? &(rp_srcdiags_t){ 0 } : diags,  // the first pass reported already
-                            stem, cabs, cab_count, opt->jobs, bsink, 0);
+                            stem, cabs, cab_count, opt->jobs, bsink, 0, opt->cab_signer);
     }
     if (err == PROVEN_OK && ir->summary_name == NULL && !rp_is_ascii(ir->name)) {
         rp_srcdiag_add(diags, (rp_pos_t){ 1, 1 }, "RP1203", true,
@@ -3246,7 +3306,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         uint8_t *combined = NULL;
         size_t clen = 0;
         err = embed_instances(alloc, ir, &k, files, ir->file_count, &dirs, package_code, limits, stem, opt->jobs,
-                              *out, *len, &combined, &clen);
+                              *out, *len, &combined, &clen, opt->cab_signer);
         rp_mem_free(alloc, *out);       // the heap base (bsink was NULL for the instances build)
         *out = NULL;
         *len = 0;
@@ -3285,4 +3345,12 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     keep_free(&k);
     if (err == PROVEN_OK && k.nomem) err = PROVEN_ERR_NOMEM;
     return err;
+}
+
+void rp_cab_signer_free(proven_allocator_t alloc, rp_cab_signer_t *s) {
+    for (size_t i = 0; s && i < RP_CAB_SIGNED_MAX; ++i) {
+        rp_mem_free(alloc, s->hash[i]);
+        s->hash[i] = NULL;
+        s->hash_len[i] = 0;
+    }
 }

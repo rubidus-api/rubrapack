@@ -333,11 +333,11 @@ msgstr "Το '{1}' είναι επίσης dir ID· δώστε άλλο όνομ
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "Το '{1}' είναι για μηχάνημα 0x{2}, όχι για την αρχιτεκτονική αυτού του πακέτου· ορίστε any-arch = true αν είναι σκόπιμο"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "Το '{1}' δεν είναι ούτε αρχείο PE (.exe, .dll), ούτε πακέτο MSI, ούτε πακέτο ή δέσμη MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "Το '{1}' δεν είναι ούτε αρχείο PE (.exe, .dll), ούτε πακέτο MSI, ούτε πακέτο ή δέσμη MSIX, ούτε cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "Το '{1}' δεν είναι ούτε αρχείο PE, ούτε πακέτο MSI, ούτε πακέτο ή δέσμη MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "Το '{1}' δεν είναι ούτε αρχείο PE, ούτε πακέτο MSI, ούτε πακέτο ή δέσμη MSIX, ούτε cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "Το '{1}' δεν είναι ούτε γνωστός φάκελος ούτε dir ID (γνωστοί φάκελοι: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "το --flat είναι για έξοδο .msixbundle (τα πακέτα 
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "Το --jobs δέχεται αριθμό από 1 έως 64 (δόθηκε '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "το --key υπογράφει έως {1} εξωτερικά cabinet· αυξήστε το cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "Το --key-store είναι χώρος πιστοποιητικών των Windows· αλλού χρησιμοποιήστε αρχείο κλειδιού ή --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "κατεστραμμένος πίνακας ενοτήτων PE"
 
 msgid "a damaged ZIP64 end record"
 msgstr "κατεστραμμένη εγγραφή τέλους ZIP64"
+
+msgid "a damaged cabinet header"
+msgstr "κατεστραμμένη κεφαλίδα cabinet"
 
 msgid "a damaged hive bin"
 msgstr "κατεστραμμένο hive bin"
@@ -2457,6 +2463,9 @@ msgstr "δεν είναι αρχείο ZIP (καμία εγγραφή τέλου
 msgid "not a ZIP archive (too short)"
 msgstr "δεν είναι αρχείο ZIP (πολύ μικρό)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "δεν είναι cabinet (δεν υπάρχει κεφαλίδα MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "δεν είναι URL διακομιστή μεσολάβησης που δέχεται το rubrapack (http://host:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "το αρχείο δεν έχει εγγραφή τέλους ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "το manifest δέσμης δεν έχει Identity Name, Publisher και Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "το cabinet δεν έχει χώρο για υπογραφή"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "το cabinet έχει δεσμευμένο χώρο στους φακέλους ή στα μπλοκ δεδομένων του, που το rubrapack δεν χειρίζεται"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "η υπογραφή του cabinet χρησιμοποιεί κατακερματισμό που το rubrapack δεν ελέγχει (μόνο SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "ο κεντρικός κατάλογος βρίσκεται έξω από το αρχείο"
 
@@ -3104,6 +3122,9 @@ msgstr "το πιστοποιητικό του διακομιστή δεν εί�
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "το σχήμα υπογραφής του διακομιστή δεν ταιριάζει με το κλειδί του πιστοποιητικού του"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "η υπογραφή δεν βρίσκεται εκεί που λέει το cabinet"
 
 msgid "the signature does not verify"
 msgstr "η υπογραφή δεν επαληθεύεται"

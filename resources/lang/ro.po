@@ -333,11 +333,11 @@ msgstr "'{1}' este și un ID dir; dați variabilei alt nume"
 msgid "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended"
 msgstr "'{1}' este construit pentru mașina 0x{2}, nu pentru arch-ul acestui pachet; setați any-arch = true dacă asta se intenționează"
 
-msgid "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nu este nici fișier PE (.exe, .dll), nici pachet MSI, nici pachet sau pachet grupat MSIX"
+msgid "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nu este nici fișier PE (.exe, .dll), nici pachet MSI, nici pachet sau pachet grupat MSIX, nici cabinet"
 
-msgid "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle"
-msgstr "'{1}' nu este nici fișier PE, nici pachet MSI, nici pachet sau pachet grupat MSIX"
+msgid "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet"
+msgstr "'{1}' nu este nici fișier PE, nici pachet MSI, nici pachet sau pachet grupat MSIX, nici cabinet"
 
 msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 msgstr "'{1}' nu este nici folder cunoscut, nici ID dir (foldere cunoscute: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
@@ -536,6 +536,9 @@ msgstr "--flat este pentru o ieșire .msixbundle (pachetele sale sunt scrise al�
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs primește un număr de la 1 la 64 (primit '{1}')"
+
+msgid "--key signs at most %d external cabinets; raise cab-max-size"
+msgstr "--key semnează cel mult {1} cabinet-uri externe; măriți cab-max-size"
 
 msgid "--key-store is a Windows certificate store; elsewhere use a key file or --pkcs11"
 msgstr "--key-store este un depozit de certificate Windows; în alte părți folosiți un fișier de cheie sau --pkcs11"
@@ -1361,6 +1364,9 @@ msgstr "un tabel de secțiuni PE deteriorat"
 
 msgid "a damaged ZIP64 end record"
 msgstr "o înregistrare finală ZIP64 deteriorată"
+
+msgid "a damaged cabinet header"
+msgstr "un antet de cabinet deteriorat"
 
 msgid "a damaged hive bin"
 msgstr "un bin de hive deteriorat"
@@ -2457,6 +2463,9 @@ msgstr "nu este o arhivă ZIP (nicio înregistrare finală)"
 msgid "not a ZIP archive (too short)"
 msgstr "nu este o arhivă ZIP (prea scurtă)"
 
+msgid "not a cabinet (no MSCF header)"
+msgstr "nu este un cabinet (lipsește antetul MSCF)"
+
 msgid "not a proxy URL rubrapack accepts (http://host:port)"
 msgstr "nu este un URL de proxy pe care rubrapack îl acceptă (http://gazdă:port)"
 
@@ -2913,6 +2922,15 @@ msgstr "arhiva nu are înregistrare finală ZIP64"
 msgid "the bundle manifest has no Identity Name, Publisher and Version"
 msgstr "manifestul pachetului grupat nu are Identity Name, Publisher și Version"
 
+msgid "the cabinet has no room for a signature"
+msgstr "cabinet-ul nu are loc pentru o semnătură"
+
+msgid "the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out"
+msgstr "cabinet-ul are spațiu rezervat în folderele sau blocurile de date, pe care rubrapack nu îl tratează"
+
+msgid "the cabinet's signature uses a hash rubrapack does not check (only SHA-256)"
+msgstr "semnătura cabinet-ului folosește un hash pe care rubrapack nu îl verifică (doar SHA-256)"
+
 msgid "the central directory lies outside the archive"
 msgstr "directorul central se află în afara arhivei"
 
@@ -3104,6 +3122,9 @@ msgstr "certificatul serverului nu este pentru servere TLS (utilizarea extinsă 
 
 msgid "the server's signature scheme does not fit its certificate's key"
 msgstr "schema de semnătură a serverului nu se potrivește cu cheia certificatului său"
+
+msgid "the signature does not lie where the cabinet says"
+msgstr "semnătura nu se află unde spune cabinet-ul"
 
 msgid "the signature does not verify"
 msgstr "semnătura nu se verifică"

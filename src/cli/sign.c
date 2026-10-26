@@ -25,6 +25,7 @@ enum { MAX_INPUT = 1u << 30, MAX_KEY = 1u << 22 };
 
 static bool is_pe(const uint8_t *d, size_t n) { return n >= 2 && d[0] == 'M' && d[1] == 'Z'; }
 static bool is_zip(const uint8_t *d, size_t n) { return n >= 4 && memcmp(d, "PK\3\4", 4) == 0; }
+static bool is_cab(const uint8_t *d, size_t n) { return n >= 4 && memcmp(d, "MSCF", 4) == 0; }     // RFC-0031 B13
 static bool is_cfb(const uint8_t *d, size_t n) {
     static const uint8_t sig[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
     return n >= 8 && memcmp(d, sig, 8) == 0;
@@ -242,11 +243,38 @@ static int load_system_roots(proven_allocator_t heap, rp_keyfile_t *kf, rp_der_s
     return RP_EXIT_OK;
 }
 
+int rp_sign_cert(const rp_sign_args_t *a, uint8_t **der, size_t *len) {
+    proven_allocator_t heap = proven_heap_allocator();
+    *der = NULL;
+    *len = 0;
+    const char *problem = key_options_problem(a);
+    if (problem) {
+        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", problem);
+        return RP_EXIT_USAGE;
+    }
+    rp_keyfile_t kf;
+    int rc = a->key ? load_key(heap, a->key, a->cert, a->pass_env, a->pass_file, &kf) : load_external(heap, a, &kf);
+    if (rc != RP_EXIT_OK) return rc;
+    int leaf;
+    const char *why = NULL;
+    if (!rp_sign_check_key(&kf, (int64_t)(proven_time_now() / 1000000000), &leaf, &why)) {
+        rp_diag_error(RP_DIAG_SIGN, "%s", why ? why : "the key cannot sign");
+        rc = RP_EXIT_SIGN;
+    } else if ((*der = rp_mem_alloc(heap, kf.cert_len[leaf] + 1, 1)) == NULL) {
+        rc = RP_EXIT_IO;
+    } else {
+        memcpy(*der, kf.certs[leaf], kf.cert_len[leaf]);
+        *len = kf.cert_len[leaf];
+    }
+    rp_keyfile_free(&kf);
+    return rc;
+}
+
 int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, uint8_t **out, size_t *out_len) {
     proven_allocator_t heap = proven_heap_allocator();
-    bool pe = is_pe(data, len), cfb = is_cfb(data, len), zip = is_zip(data, len);
-    if (!pe && !cfb && !zip) {
-        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll), an MSI package nor an MSIX package or bundle", label);
+    bool pe = is_pe(data, len), cfb = is_cfb(data, len), zip = is_zip(data, len), cab = is_cab(data, len);
+    if (!pe && !cfb && !zip && !cab) {
+        rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet", label);
         return RP_EXIT_USAGE;
     }
     // Three trusts, never mixed (RFC-0008 T2): the key's own chain, the TSA's (--tsa-trust), and
@@ -280,7 +308,8 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
     const rp_timestamper_t *ts = a->timestamp ? &stamper : NULL;
     proven_err_t err = pe    ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
                        : zip ? rp_msix_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
-                             : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs, &external, out, out_len, &why);
+                       : cab ? rp_cab_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
+                             : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs || a->cabs_signed, &external, out, out_len, &why);
     rp_keyfile_free(&kf);
     rp_mem_free(heap, tsa_anchors);
     rp_mem_free(heap, tls_anchors);
@@ -295,7 +324,7 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
         rp_diag_error(RP_DIAG_SIGN, "'%s': %s", label, why ? why : "cannot sign");
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
     }
-    if (external) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
+    if (external && !a->cabs_signed) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
     if (!a->timestamp) rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", label);
     return RP_EXIT_OK;
 }
@@ -426,8 +455,8 @@ int rp_cmd_verify(int argc, char **argv) {
         rc = RP_EXIT_IO;
         goto done;
     }
-    if (!is_pe(data, len) && !is_cfb(data, len) && !is_zip(data, len)) {
-        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file, an MSI package nor an MSIX package or bundle", file);
+    if (!is_pe(data, len) && !is_cfb(data, len) && !is_zip(data, len) && !is_cab(data, len)) {
+        rp_diag_error(RP_DIAG_VERIFY, "'%s' is neither a PE file, an MSI package, an MSIX package or bundle nor a cabinet", file);
         rc = RP_EXIT_USAGE;
         goto done;
     }
@@ -435,6 +464,7 @@ int rp_cmd_verify(int argc, char **argv) {
     const char *why = NULL;
     if (is_pe(data, len)) rp_pe_verify(data, len, &r, &why);
     else if (is_zip(data, len)) rp_msix_verify(heap, data, len, &r, &sig, &why);
+    else if (is_cab(data, len)) rp_cab_verify(data, len, &r, &why);
     else rp_msi_verify(heap, data, len, &r, &sig, &why);
     int64_t now = check_time(heap);
 

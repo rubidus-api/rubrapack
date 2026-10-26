@@ -80,12 +80,17 @@ typedef struct {
     const char *proxy;                  // --proxy http://host:port (else https_proxy/http_proxy, no_proxy)
     bool        system_roots;           // --system-roots: the operating system's roots for it too
     bool        allow_unsigned_cabs;
+    bool        cabs_signed;            // build --key: the external cabinets are signed (RFC-0031 B13)
     // A key that stays where it is (RFC-0011 P9b): a PKCS#11 token, or the Windows store.
     const char *pkcs11, *key_label, *token_label;   // --pkcs11 <module> --key-label <label> [--token-label <label>]
     const char *pin_env, *pin_file;                 // --pin-env VAR | --pin-file FILE (never on the command line)
     const char *key_store;                          // --key-store <SHA-1 thumbprint> (Windows)
     bool        machine_store;                      // --machine-store: LocalMachine\My instead of CurrentUser\My
 } rp_sign_args_t;
+
+// The signing certificate (DER, a copy to free with rp_mem_free) of the key the options name, checked
+// as signing checks it: what MsiDigitalCertificate holds for signed external cabinets (RFC-0031 B13).
+[[nodiscard]] int rp_sign_cert(const rp_sign_args_t *a, uint8_t **der, size_t *len);
 
 // "2026-09-27T07:44:31Z" from seconds since 1970.
 void rp_iso_time(int64_t t, char out[64]);
