@@ -237,6 +237,9 @@ msgstr "{1}: {2} tiedostoa, {3} virhettä, 0 varoitusta\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: {2} diagnostiikkaa lisää, ei näytetty\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' ei ole ohjelma (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' ei ole vakiotoiminto, jonka rubrapack sijoittaa"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] on jo ohjelmansa kansiossa; isolate-for on jaetulle DLL:lle, 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] on käyttäjäprofiilissa ja sillä on component-guid: avainpolku pysyy tiedostona, vaikka Windowsin säännöt haluavat siihen HKCU-arvon (ICE38); jätä component-guid pois saadaksesi sen"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' ei ole .NET-kokoonpano (ei CLI-otsaketta, jossa on Assembly-rivi)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET-kokoonpano kantaa luettelonsa itse; manifest on Win32-kokoonpanolle"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32-kokoonpano tarvitsee manifest = \"file:<ID>\", luettelotiedostonsa"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: jaettu .NET-kokoonpano menee GAC:iin, joka ottaa vain vahvalla nimellä varustetut; allekirjoita se tai anna assembly-for = \"file:<ohjelma>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: jaettu Win32-kokoonpano (WinSxS) tarvitsee luotetulla varmenteella allekirjoitetun katalogin, jota rubrapack ei tee; anna yksityiselle assembly-for = \"file:<ohjelma>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for ja manifest kuuluvat yhteen assembly = \"dotnet\" tai \"win32\" kanssa"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: sen luettelossa '{2}' ei ole assemblyIdentity-elementtiä, jossa on name ja version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: sen luettelon '{2}' on oltava samassa dir- ja feature-kohteessa (ja saman when-ehdon alla): ne ovat yksi komponentti"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: luettelo '{2}' kuuluu toiselle kokoonpanolle tai on itse kokoonpano"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Resurssienhallinta lataa {2}-käsittelijän DLL:stä; [com.{3}] on ohjelma"
 
@@ -1628,6 +1658,9 @@ msgstr "taulukoissa saa olla vain merkkijonoja tai vain kokonaislukuja"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as on oltava \"system\" tai \"user\" (saatiin '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assemblyn on oltava \"dotnet\" tai \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "enintään {1} kieltä englannin lisäksi"

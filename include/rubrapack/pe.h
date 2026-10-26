@@ -30,4 +30,23 @@ typedef struct {
 // headers or resources point outside the file gives PROVEN_ERR_INVALID_FORMAT.
 [[nodiscard]] proven_err_t rp_pe_read(const uint8_t *data, size_t len, rp_pe_info_t *info);
 
+// A .NET assembly's identity (RFC-0031 B9), from its CLI header and metadata (ECMA-335 Partition
+// II: the metadata root, the #~ tables, the #Strings and #Blob heaps): the Assembly table's name,
+// version and culture, the public key token (the last 8 bytes of the SHA-1 of the public key,
+// reversed) and the processor architecture (from the CLI flags and the machine: "MSIL", "x86",
+// "AMD64", "ARM64"), as the GAC and MsiAssemblyName write them.
+typedef struct {
+    bool     is_assembly;       // a CLI header and an Assembly row
+    char     name[256];
+    uint16_t version[4];
+    char     culture[64];       // "" for neutral
+    bool     has_token;         // strong-named
+    uint8_t  token[8];
+    char     arch[8];
+} rp_pe_assembly_t;
+
+// Reads it. A file that is not PE or not .NET gives is_assembly = false and PROVEN_OK; metadata
+// that points outside the file or that it does not understand gives PROVEN_ERR_INVALID_FORMAT.
+[[nodiscard]] proven_err_t rp_pe_assembly(const uint8_t *data, size_t len, rp_pe_assembly_t *out);
+
 #endif // RUBRAPACK_PE_H

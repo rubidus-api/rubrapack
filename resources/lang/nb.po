@@ -237,6 +237,9 @@ msgstr "{1}: {2} filer, {3} feil, 0 advarsler\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ytterligere {2} diagnoser vises ikke\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' er ikke et program (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' er ikke en standardhandling som rubrapack plasserer"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] er allerede i mappen til programmet sitt; isolate-for er for 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ligger i brukerprofilen og har component-guid: nøkkelbanen forblir filen, der Windows-reglene vil ha en HKCU-verdi (ICE38); fjern component-guid for å få en"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' er ikke en .NET-samling (ingen CLI-hode med en Assembly-rad)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: en .NET-samling bærer selv manifestet sitt; manifest er for en Win32-samling"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: en Win32-samling trenger manifest = \"file:<ID>\", manifestfilen sin"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: en delt .NET-samling havner i GAC, som bare tar samlinger med sterkt navn; signer den eller oppgi assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: en delt Win32-samling (WinSxS) trenger en katalog signert med et klarert sertifikat, som rubrapack ikke lager; oppgi assembly-for = \"file:<program>\" for en privat"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for og manifest hører til assembly = \"dotnet\" eller \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: manifestet '{2}' har ingen assemblyIdentity med name og version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: manifestet '{2}' må ligge i samme dir og feature (og under samme when): de to er én komponent"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifestet '{2}' tilhører en annen samling eller er selv en samling"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Filutforsker laster inn en {2}-behandler fra en DLL; [com.{3}] er et program"
 
@@ -1628,6 +1658,9 @@ msgstr "matriser kan bare inneholde strenger eller bare heltall"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as må være \"system\" eller \"user\" (fikk '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly må være \"dotnet\" eller \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "høyst {1} språk i tillegg til engelsk"

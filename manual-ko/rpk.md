@@ -212,7 +212,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[define]` | 변수: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level(1-32767), hidden, parent, required, follow-parent, when, default-when, advertise(`allow` 기본, `disallow`) |
 | `[dir.ID]` | **path** = `기준/상대/경로`, feature, guard(`true`: [설치 폴더 지키기](#설치-폴더-지키기) 참고) |
-| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when, isolate-for(`.exe` 의 `file:ID`: 그 프로그램 옆에 이 DLL 의 전용 사본, MSI 전용) |
+| `[file.ID]` | **dir**, **source**, name, vital(기본 true), any-arch, feature, component-guid, keep, when, isolate-for(`.exe` 의 `file:ID`: 그 프로그램 옆에 이 DLL 의 전용 사본, MSI 전용), assembly(`dotnet`, `win32`), assembly-for(`.exe` 의 `file:ID`: 개인 어셈블리), manifest(Win32 어셈블리 매니페스트의 `file:ID`) - [어셈블리](#어셈블리-assembly) 참조 |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
 | `[arp]` | no-modify, no-repair, no-remove, help(URL), about(URL), icon(`.ico`), logo(`.png`: 8비트 RGB 나 RGBA, 한 변 1024픽셀 이하; 메뉴 패키지의 로고) - "설치된 앱"에 제품이 어떻게 보이는가 |
@@ -840,6 +840,39 @@ qualifier = "image/png"
 - `[publish.*]` 는 구성 요소를 게시해 다른 프로그램이 `MsiProvideQualifiedComponent` 로 범주와 한정자로 찾게 한다.
 - `[file.*]` 의 `isolate-for` 는 그 DLL 의 전용 사본을 지정한 프로그램 옆에 두어, 그 프로그램이 자기 판을 싣게 한다
   (Windows 의 side-by-side 격리).
+
+### 어셈블리: `assembly`
+
+`[file.*]` DLL 에 `assembly` 를 주면 Windows Installer 가 그것을 어셈블리로 설치한다(MsiAssembly·MsiAssemblyName 표와,
+그것을 게시하는 동작):
+
+```toml
+[file.Lib]                       # 전역 어셈블리 캐시(GAC)에 들어가는 .NET 어셈블리
+dir = "INSTALLDIR"
+source = "bin/Contoso.Lib.dll"
+assembly = "dotnet"
+
+[file.Native]                    # 프로그램 전용 Win32 어셈블리
+dir = "INSTALLDIR"
+source = "bin/native.dll"
+assembly = "win32"
+manifest = "file:NativeManifest"
+assembly-for = "file:App"
+
+[file.NativeManifest]
+dir = "INSTALLDIR"
+source = "bin/Contoso.Native.manifest"
+```
+
+- `.NET` 어셈블리는 스스로 이름을 댄다: rubrapack 이 그 CLI 메타데이터에서 이름, 판, 문화권, 공개 키 토큰, 프로세서
+  아키텍처를 Windows 처럼 읽는다. `assembly-for` 가 없으면 자기 폴더가 아니라 GAC 에 들어가며, GAC 는 강한 이름이 있는
+  어셈블리만 받는다. 어느 CPU 용(MSIL)으로 지은 어셈블리는 패키지의 아키텍처 검사를 통과한다.
+- Win32 어셈블리는 매니페스트에서 이름을 댄다: `manifest` 는 같은 폴더·기능·`when` 의 `[file.*]` 를 가리키고, 그 파일은
+  DLL 의 구성 요소에 들어간다(키 경로는 DLL). 매니페스트의 `assemblyIdentity` 가 name, version, type,
+  processorArchitecture, publicKeyToken 을 준다. 개인 어셈블리여야 한다(`assembly-for`): WinSxS 의 공유 어셈블리에는
+  신뢰된 인증서로 서명한 카탈로그가 필요한데 rubrapack 은 그것을 만들지 않는다.
+- `assembly-for = "file:<프로그램>"` 은 어셈블리를 그 프로그램 전용으로, 그 파일의 폴더에 설치한다.
+- MSIX 는 어셈블리를 받지 않는다(`RP1605`; `msi-only = true` 면 그 파일을 MSIX 에서 뺀다).
 
 ### 지우기와 복사: `[remove.ID]`, `[copy.ID]`
 

@@ -237,6 +237,9 @@ msgstr "{1}: {2} fișiere, {3} erori, 0 avertismente\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: încă {2} diagnostice neafișate\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' nu este un program (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nu este o acțiune standard pe care o plasează rubrapack"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] este deja în folderul programului său; isolate-for este pen
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] se află în profilul utilizatorului și are component-guid: calea cheie rămâne fișierul, unde regulile Windows cer o valoare HKCU (ICE38); omiteți component-guid pentru a obține una"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' nu este un ansamblu .NET (niciun antet CLI cu un rând Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: un ansamblu .NET își poartă singur manifestul; manifest este pentru un ansamblu Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: un ansamblu Win32 are nevoie de manifest = \"file:<ID>\", fișierul său manifest"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: un ansamblu .NET partajat merge în GAC, care acceptă doar ansambluri cu nume tare; semnați-l sau dați assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: un ansamblu Win32 partajat (WinSxS) are nevoie de un catalog semnat cu un certificat de încredere, pe care rubrapack nu îl creează; dați assembly-for = \"file:<program>\" pentru unul privat"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for și manifest merg cu assembly = \"dotnet\" sau \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: manifestul său '{2}' nu are assemblyIdentity cu name și version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: manifestul său '{2}' trebuie să fie în același dir și feature (și sub același when): cele două sunt o componentă"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifestul '{2}' este al altui ansamblu sau este el însuși un ansamblu"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer încarcă un handler {2} dintr-un DLL; [com.{3}] este un program"
 
@@ -1628,6 +1658,9 @@ msgstr "tablourile trebuie să conțină doar șiruri sau doar numere întregi"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as trebuie să fie \"system\" sau \"user\" (s-a primit '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly trebuie să fie \"dotnet\" sau \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "cel mult {1} limbi pe lângă engleză"

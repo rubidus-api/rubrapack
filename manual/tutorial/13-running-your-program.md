@@ -131,5 +131,7 @@ A few more MSI-only tables fill in the rest of Windows Installer: `[move.*]` mov
 `name`, `to`, `new-name`, `copy`), `[odbc-driver.*]` and `[odbc-source.*]` register an ODBC driver
 and data source (`file`, `setup`, `description`, `attributes`, `driver`, `driver-name`,
 `registration`), `[publish.*]` publishes a component other programs look up (`file`, `category`,
-`qualifier`), and `isolate-for` on a `[file.*]` DLL gives a program its own private copy. The
+`qualifier`), `isolate-for` on a `[file.*]` DLL gives a program its own private copy, and
+`assembly` (`dotnet` or `win32`, with `assembly-for` and, for Win32, `manifest`) installs a DLL as
+an assembly - a .NET one into the global assembly cache. The
 Reference has each under "Running a program or DLL" and "Moving files, ODBC, published components".

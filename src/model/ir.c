@@ -587,8 +587,10 @@ void rp_ir_free(rp_ir_t *ir) {
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when, f->isolate_for };
+        char *fs[] = { f->id, f->dir, f->source, f->source_path, f->name, f->feature, f->component_guid, f->when, f->isolate_for,
+                       f->assembly_for, f->manifest, f->manifest_of };
         for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
+        for (size_t j = 0; j < 6; ++j) rp_mem_free(a, f->asm_names[j][0]), rp_mem_free(a, f->asm_names[j][1]);
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
         rp_ir_folder_t *f = &ir->folders[k];

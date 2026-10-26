@@ -237,6 +237,9 @@ msgstr "{1}: {2} αρχεία, {3} σφάλματα, 0 προειδοποιήσ�
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: {2} ακόμη διαγνωστικά δεν εμφανίζονται\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: το '{2}' δεν είναι πρόγραμμα (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: το '{2}' δεν είναι τυπική ενέργεια που τοποθετεί το rubrapack"
 
@@ -978,6 +981,33 @@ msgstr "το [file.{1}] είναι ήδη στον φάκελο του προγ�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "Το [file.{1}] βρίσκεται στο προφίλ του χρήστη και έχει component-guid: η διαδρομή κλειδιού του μένει το αρχείο, ενώ οι κανόνες των Windows θέλουν εκεί μια τιμή HKCU (ICE38)· αφαιρέστε το component-guid για να την αποκτήσει"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: το '{2}' δεν είναι συγκρότηση .NET (καμία κεφαλίδα CLI με γραμμή Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: μια συγκρότηση .NET φέρει μόνη της τη δήλωσή της· το manifest είναι για συγκρότηση Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: μια συγκρότηση Win32 χρειάζεται manifest = \"file:<ID>\", το αρχείο δήλωσής της"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση .NET μπαίνει στο GAC, που δέχεται μόνο συγκροτήσεις με ισχυρό όνομα· υπογράψτε την ή δώστε assembly-for = \"file:<πρόγραμμα>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση Win32 (WinSxS) χρειάζεται κατάλογο υπογεγραμμένο με αξιόπιστο πιστοποιητικό, που το rubrapack δεν φτιάχνει· για ιδιωτική δώστε assembly-for = \"file:<πρόγραμμα>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: τα assembly-for και manifest πάνε με assembly = \"dotnet\" ή \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: η δήλωσή του '{2}' δεν έχει assemblyIdentity με name και version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: η δήλωσή του '{2}' πρέπει να είναι στο ίδιο dir και feature (και με το ίδιο when): τα δύο είναι ένα στοιχείο"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: η δήλωση '{2}' ανήκει σε άλλη συγκρότηση ή είναι η ίδια συγκρότηση"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: η Εξερεύνηση φορτώνει χειριστή {2} από DLL· το [com.{3}] είναι πρόγραμμα"
 
@@ -1628,6 +1658,9 @@ msgstr "οι πίνακες πρέπει να περιέχουν μόνο συμ
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "το as πρέπει να είναι \"system\" ή \"user\" (δόθηκε '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "το assembly πρέπει να είναι \"dotnet\" ή \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "το πολύ {1} γλώσσες εκτός από τα αγγλικά"

@@ -237,6 +237,9 @@ msgstr "{1}: {2} файла, {3} грешки, 0 предупреждения\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: още {2} диагностики не са показани\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' не е програма (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' не е стандартно действие, което rubrapack поставя"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] вече е в папката на програмата си;
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] е в потребителския профил и има component-guid: ключовият път остава файлът, а правилата на Windows искат там стойност HKCU (ICE38); премахнете component-guid, за да получите такава"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' не е асембли .NET (няма CLI заглавка с ред Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: асемблито .NET само носи своя манифест; manifest е за асембли Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: асемблито Win32 се нуждае от manifest = \"file:<ID>\" — своя файл с манифест"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: споделено асембли .NET отива в GAC, който приема само асемблита със силно име; подпишете го или задайте assembly-for = \"file:<програма>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: споделено асембли Win32 (WinSxS) се нуждае от каталог, подписан с доверен сертификат, който rubrapack не създава; за частно задайте assembly-for = \"file:<програма>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for и manifest вървят с assembly = \"dotnet\" или \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: манифестът '{2}' няма assemblyIdentity с name и version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: манифестът '{2}' трябва да е в същия dir и feature (и при същото when): двата са един компонент"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: манифестът '{2}' е на друго асембли или сам е асембли"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer зарежда манипулатор {2} от DLL; [com.{3}] е програма"
 
@@ -1628,6 +1658,9 @@ msgstr "масивите трябва да съдържат само низов�
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as трябва да е \"system\" или \"user\" (получено '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly трябва да е \"dotnet\" или \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "най-много {1} езика освен английския"

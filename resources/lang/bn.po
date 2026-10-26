@@ -237,6 +237,9 @@ msgstr "{1}: {2}টি ফাইল, {3}টি ত্রুটি, 0টি স�
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: আরও {2}টি ডায়াগনস্টিক দেখানো হয়নি\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' প্রোগ্রাম (.exe) নয়"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' rubrapack যে স্ট্যান্ডার্ড ক্রিয়া বসায় তা নয়"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] ইতিমধ্যে তার প্রোগ্রা�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ব্যবহারকারীর প্রোফাইলে আছে এবং এতে component-guid আছে: এর কী পাথ ফাইলটিই থাকে, অথচ Windows-এর নিয়ম সেখানে একটি HKCU মান চায় (ICE38); সেটি পেতে component-guid বাদ দিন"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' .NET অ্যাসেম্বলি নয় (Assembly সারি থাকা CLI হেডার নেই)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET অ্যাসেম্বলি নিজের ম্যানিফেস্ট নিজেই বহন করে; manifest Win32 অ্যাসেম্বলির জন্য"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 অ্যাসেম্বলির manifest = \"file:<ID>\", অর্থাৎ তার ম্যানিফেস্ট ফাইল দরকার"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: শেয়ার করা .NET অ্যাসেম্বলি GAC-এ যায়, যা কেবল শক্ত-নামের অ্যাসেম্বলি নেয়; এতে স্বাক্ষর করুন বা assembly-for = \"file:<প্রোগ্রাম>\" দিন"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: শেয়ার করা Win32 অ্যাসেম্বলির (WinSxS) বিশ্বস্ত সার্টিফিকেটে স্বাক্ষরিত ক্যাটালগ দরকার, যা rubrapack বানায় না; ব্যক্তিগতের জন্য assembly-for = \"file:<প্রোগ্রাম>\" দিন"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for ও manifest, assembly = \"dotnet\" বা \"win32\"-এর সঙ্গে যায়"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: এর ম্যানিফেস্ট '{2}'-এ name ও version সহ assemblyIdentity নেই"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: এর ম্যানিফেস্ট '{2}' একই dir ও feature-এ (একই when-এ) থাকতে হবে: দুটি এক উপাদান"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: ম্যানিফেস্ট '{2}' অন্য অ্যাসেম্বলির বা নিজেই অ্যাসেম্বলি"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer একটি DLL থেকে {2} হ্যান্ডলার লোড করে; [com.{3}] একটি প্রোগ্রাম"
 
@@ -1628,6 +1658,9 @@ msgstr "অ্যারেতে শুধু স্ট্রিং বা শ�
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as \"system\" বা \"user\" হতে হবে ('{1}' পাওয়া গেছে)"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly অবশ্যই \"dotnet\" বা \"win32\" হতে হবে"
 
 msgid "at most %d languages besides English"
 msgstr "ইংরেজি ছাড়া সর্বোচ্চ {1}টি ভাষা"

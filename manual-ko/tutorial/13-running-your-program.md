@@ -122,5 +122,6 @@ data = "[INSTALLDIR]"     # DLL 이 이 값을 읽는다; before / after / seque
 Windows Installer 의 나머지를 채우는 MSI 전용 표도 몇 개 있다: `[move.*]` 는 파일을 옮기고(`from`, `name`, `to`,
 `new-name`, `copy`), `[odbc-driver.*]` 와 `[odbc-source.*]` 는 ODBC 드라이버와 데이터 원본을 등록하며(`file`, `setup`,
 `description`, `attributes`, `driver`, `driver-name`, `registration`), `[publish.*]` 는 다른 프로그램이 찾는 구성 요소를
-게시한다(`file`, `category`, `qualifier`). `[file.*]` 의 `isolate-for` 는 프로그램에 전용 사본을 준다. 참조의 "프로그램이나
+게시한다(`file`, `category`, `qualifier`). `[file.*]` 의 `isolate-for` 는 프로그램에 전용 사본을 주고, `assembly`(`dotnet`
+또는 `win32`, `assembly-for` 와, Win32 면 `manifest` 와 함께)는 DLL 을 어셈블리로 설치한다 - .NET 은 전역 어셈블리 캐시에. 참조의 "프로그램이나
 DLL 실행"과 "파일 옮기기, ODBC, 게시 구성 요소"에 각각 있다.

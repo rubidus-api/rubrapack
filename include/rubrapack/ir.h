@@ -58,6 +58,14 @@ typedef struct {
     char    *component_guid;    // user-fixed GUID or NULL
     char    *when;              // RFC-0013 A2: an MSI condition, or NULL
     char    *isolate_for;       // RFC-0031 B4: file ID of the program this DLL is isolated for, or NULL
+    // RFC-0031 B9: an assembly (MsiAssembly, MsiAssemblyName). A .NET one names itself in its CLI
+    // metadata; a Win32 one in its manifest, a [file] of its own (`manifest`) that joins the DLL's
+    // component (`manifest_of` on it). `assembly_for`: the program it is private to (else global).
+    enum { RP_ASM_NONE, RP_ASM_DOTNET, RP_ASM_WIN32 } assembly;
+    char    *assembly_for;      // file ID, or NULL
+    char    *manifest;          // RP_ASM_WIN32: the manifest's file ID
+    char    *manifest_of;       // on the manifest: the DLL's file ID (set by the checks)
+    char    *asm_names[6][2];   // the identity, name and value pairs (set by the checks; NULL ends)
     rp_pos_t pos;
 } rp_ir_file_t;
 

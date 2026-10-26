@@ -432,7 +432,7 @@ bool ir_source_path_ok(ctx_t *c, const char *s, rp_pos_t pos) {
 
 void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     static const char *const keys[] = { "dir", "source", "name", "any-arch", "keep", "vital", "feature",
-                                        "component-guid", "when", "isolate-for", NULL };
+                                        "component-guid", "when", "isolate-for", "assembly", "assembly-for", "manifest", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
     f->id = ir_dup(c, t->id);
@@ -440,6 +440,30 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
     if (iso && (strncmp(iso, "file:", 5) != 0 || iso[5] == 0)) ERR(c, ir_key_pos(t, "isolate-for"), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", "isolate-for");
     else if (iso) f->isolate_for = ir_dup(c, iso + 5);
     rp_mem_free(c->alloc, iso);
+    // RFC-0031 B9: an assembly.
+    char *asm_kind = ir_get_str(c, t, "assembly", false, NULL);
+    if (asm_kind && strcmp(asm_kind, "dotnet") == 0) f->assembly = RP_ASM_DOTNET;
+    else if (asm_kind && strcmp(asm_kind, "win32") == 0) f->assembly = RP_ASM_WIN32;
+    else if (asm_kind) ERR(c, ir_key_pos(t, "assembly"), "RP1308", "assembly must be \"dotnet\" or \"win32\"");
+    rp_mem_free(c->alloc, asm_kind);
+    static const char *const refs[] = { "assembly-for", "manifest" };
+    for (int r = 0; r < 2; ++r) {
+        char *v = ir_get_str(c, t, refs[r], false, NULL);
+        if (v && (strncmp(v, "file:", 5) != 0 || v[5] == 0)) ERR(c, ir_key_pos(t, refs[r]), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", refs[r]);
+        else if (v && r == 0) f->assembly_for = ir_dup(c, v + 5);
+        else if (v) f->manifest = ir_dup(c, v + 5);
+        rp_mem_free(c->alloc, v);
+    }
+    if ((f->assembly_for || f->manifest) && f->assembly == RP_ASM_NONE) {
+        ERR(c, t->pos, "RP1202", "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\"", t->id);
+    }
+    if (f->assembly == RP_ASM_WIN32 && f->manifest == NULL) {
+        ERR(c, t->pos, "RP1202", "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", t->id);
+    } else if (f->assembly == RP_ASM_DOTNET && f->manifest) {
+        ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", t->id);
+    } else if (f->assembly == RP_ASM_WIN32 && f->assembly_for == NULL) {
+        ERR(c, t->pos, "RP1316", "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one", t->id);
+    }
     f->pos = t->pos;
     f->when = ir_get_when(c, t);
     f->dir = ir_get_str(c, t, "dir", true, NULL);

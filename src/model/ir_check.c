@@ -947,7 +947,11 @@ void ir_cross_checks(ctx_t *c) {
                         f->source);
                 } else if (pi.is_pe && !f->any_arch) {
                     uint16_t want = ir->arch == RP_ARCH_X64 ? RP_PE_AMD64 : ir->arch == RP_ARCH_ARM64 ? RP_PE_ARM64 : RP_PE_I386;
-                    if (pi.machine != want) {
+                    // A .NET assembly built for any CPU (MSIL) says i386 in its header and runs on every
+                    // architecture (RFC-0031 B9).
+                    rp_pe_assembly_t asm_info;
+                    bool msil = rp_pe_assembly(data, len, &asm_info) == PROVEN_OK && asm_info.is_assembly && strcmp(asm_info.arch, "MSIL") == 0;
+                    if (pi.machine != want && !msil) {
                         ERR(c, f->pos, "RP1512",
                             "'%s' is built for machine 0x%04X, not for this package's arch; set any-arch = true if that is intended",
                             f->source, pi.machine);

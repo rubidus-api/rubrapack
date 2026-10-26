@@ -3,6 +3,7 @@
 // (PublishComponent), and their checks against the rest of the package.
 
 #include "ir_int.h"
+#include "rubrapack/msix.h"
 
 #include <string.h>
 
@@ -229,6 +230,85 @@ void ir_more_checks(ctx_t *c) {
     }
 }
 
+// RFC-0031 B9: an assembly's identity, as MsiAssemblyName lists it - for a .NET one from its CLI
+// metadata (a shared one, in the GAC, must be strong-named), for a Win32 one from its manifest's
+// assemblyIdentity (the manifest a [file] in the same folder and feature, which joins the DLL's
+// component). assembly-for must name a program.
+static void asm_name(ctx_t *c, rp_ir_file_t *f, size_t *n, const char *name, const char *value) {
+    if (*n < 6 && value && *value) {
+        f->asm_names[*n][0] = ir_dup(c, name);
+        f->asm_names[*n][1] = ir_dup(c, value);
+        ++*n;
+    }
+}
+
+static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
+    rp_ir_t *ir = c->ir;
+    if (f->assembly == RP_ASM_NONE || f->source_path == NULL) return;
+    if (f->assembly_for) {
+        const rp_ir_file_t *app = find_file(ir, f->assembly_for);
+        if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "assembly-for", f->assembly_for);
+        else if (app->pe_machine == 0 || app->pe_is_dll) ERR(c, f->pos, "RP1316", "%s: '%s' is not a program (.exe)", "assembly-for", f->assembly_for);
+    }
+    size_t n = 0;
+    if (f->assembly == RP_ASM_DOTNET) {
+        uint8_t *d = NULL;
+        size_t len = 0;
+        rp_pe_assembly_t a;
+        if (rp_pal_read_file(c->alloc, f->source_path, 1u << 30, &d, &len) != PROVEN_OK || rp_pe_assembly(d, len, &a) != PROVEN_OK || !a.is_assembly) {
+            ERR(c, f->pos, "RP1316", "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)", f->id, f->source);
+        } else if (f->assembly_for == NULL && !a.has_token) {
+            ERR(c, f->pos, "RP1316", "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\"", f->id);
+        } else {
+            char ver[32], tok[17];
+            snprintf(ver, sizeof ver, "%u.%u.%u.%u", a.version[0], a.version[1], a.version[2], a.version[3]);
+            for (int i = 0; i < 8; ++i) snprintf(tok + 2 * i, 3, "%02X", a.token[i]);
+            asm_name(c, f, &n, "Name", a.name);
+            asm_name(c, f, &n, "Version", ver);
+            asm_name(c, f, &n, "Culture", a.culture[0] ? a.culture : "neutral");
+            if (a.has_token) asm_name(c, f, &n, "PublicKeyToken", tok);
+            asm_name(c, f, &n, "ProcessorArchitecture", a.arch);
+        }
+        rp_mem_free(c->alloc, d);
+        return;
+    }
+    if (f->manifest == NULL) return;        // refused when it was read
+    rp_ir_file_t *m = NULL;
+    for (size_t k = 0; k < ir->file_count; ++k) {
+        if (ir->files[k].id && strcmp(ir->files[k].id, f->manifest) == 0) m = &ir->files[k];
+    }
+    if (m == NULL) {
+        ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "manifest", f->manifest);
+        return;
+    }
+    if (m->manifest_of || m->assembly != RP_ASM_NONE || m == f) {
+        ERR(c, f->pos, "RP1316", "[file.%s]: the manifest '%s' is another assembly's or an assembly itself", f->id, f->manifest);
+        return;
+    }
+    if (!f->dir || !m->dir || strcmp(f->dir, m->dir) != 0 || !f->feature || !m->feature || strcmp(f->feature, m->feature) != 0 ||
+        (f->when == NULL) != (m->when == NULL) || (f->when && strcmp(f->when, m->when) != 0)) {
+        ERR(c, f->pos, "RP1316", "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component", f->id, f->manifest);
+        return;
+    }
+    m->manifest_of = ir_dup(c, f->id);
+    uint8_t *x = NULL;
+    size_t len = 0;
+    static const char *const attrs[][2] = { { "name", "name" }, { "version", "version" }, { "type", "type" },
+                                            { "processorArchitecture", "processorArchitecture" }, { "publicKeyToken", "publicKeyToken" } };
+    char v[256];
+    if (m->source_path == NULL || rp_pal_read_file(c->alloc, m->source_path, 1u << 20, &x, &len) != PROVEN_OK ||
+        !rp_xml_attr((const char *)x, len, "assemblyIdentity", "name", v, sizeof v) ||
+        !rp_xml_attr((const char *)x, len, "assemblyIdentity", "version", v, sizeof v)) {
+        ERR(c, f->pos, "RP1316", "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version", f->id, f->manifest);
+    } else {
+        for (size_t i = 0; i < sizeof attrs / sizeof attrs[0]; ++i) {
+            if (rp_xml_attr((const char *)x, len, "assemblyIdentity", attrs[i][0], v, sizeof v)) asm_name(c, f, &n, attrs[i][1], v);
+            else if (strcmp(attrs[i][0], "type") == 0) asm_name(c, f, &n, "type", "win32");
+        }
+    }
+    rp_mem_free(c->alloc, x);
+}
+
 // After the files' PE headers are read: what must be a DLL or a program is one.
 void ir_more_pe_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
@@ -241,6 +321,7 @@ void ir_more_pe_checks(ctx_t *c) {
         const rp_ir_file_t *f = &ir->files[k], *app = f->isolate_for ? find_file(ir, f->isolate_for) : NULL;
         if (app && (app->pe_machine == 0 || app->pe_is_dll)) ERR(c, f->pos, "RP1316", "isolate-for: '%s' is not a program (.exe)", f->isolate_for);
     }
+    for (size_t k = 0; k < ir->file_count; ++k) asm_identity(c, &ir->files[k]);
 }
 
 static void free_list(proven_allocator_t a, char **v, size_t n) {

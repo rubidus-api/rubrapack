@@ -244,6 +244,10 @@ static const rp_msi_wcolumn_t lockperm_cols[] = { { "MsiLockPermissionsEx", KEY_
 static const rp_msi_wcolumn_t binary_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 static const rp_msi_wcolumn_t icon_cols[] = { { "Name", KEY_S(72) }, { "Data", 0x0900u } };
 // RFC-0031 B11: the author's embedded UI handler DLL and its bytes.
+// RFC-0031 B9 (Microsoft Learn: "MsiAssembly Table", "MsiAssemblyName Table").
+static const rp_msi_wcolumn_t assembly_cols[] = { { "Component_", KEY_S(72) }, { "Feature_", S(38) }, { "File_Manifest", S_N(72) },
+                                                  { "File_Application", S_N(72) }, { "Attributes", I2_N } };
+static const rp_msi_wcolumn_t assemblyname_cols[] = { { "Component_", KEY_S(72) }, { "Name", KEY_S(255) }, { "Value", S(255) } };
 // RFC-0031 B13 (Microsoft Learn: "MsiDigitalSignature Table", "MsiDigitalCertificate Table").
 static const rp_msi_wcolumn_t digsig_cols[] = { { "Table", KEY_S(32) }, { "SignObject", KEY_S(72) }, { "DigitalCertificate_", S(72) },
                                                 { "Hash", 0x1900u } };
@@ -556,7 +560,7 @@ typedef struct {
     rows_t property, directory, component, feature, featurecomp, file, filehash, media, upgrade, customaction, iexec, iui,
         aexec, aui, advt, createfolder, registry, removereg, shortcut, removefile, duplicate, environment, inifile, removeini, launch,
         appsearch, reglocator, drlocator, signature, complocator, svcinstall, svccontrol, font, lockperm, binary, icon, condition,
-        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated, embeddedui, digsig, digcert;
+        movefile, odbcdriver, odbcattr, odbcsource, odbcsattr, publish, isolated, embeddedui, digsig, digcert, assembly, assemblyname;
     rp_cab_signer_t *signer;            // RFC-0031 B13: external cabinets signed (NULL: not)
     icon_t          *icons;            // the Icon table's .ico files, in order of first use
     size_t           nicons;
@@ -808,6 +812,28 @@ static void profile_folders(pkg_t *pk, const char *dir_key, const char *ckey) {
 }
 
 // Files, components, hashes (in File key order = sequence order)
+static const lfile_t *lfile_of(const pkg_t *pk, const char *id);
+
+// RFC-0031 B9: MsiAssembly (Attributes 0 .NET, 1 Win32; File_Manifest the .NET DLL itself or the
+// Win32 manifest; File_Application the program a private one belongs to) and the identity pairs.
+static void lower_assemblies(pkg_t *pk) {
+    const rp_ir_t *ir = pk->ir;
+    for (size_t i = 0; i < pk->nfiles; ++i) {
+        const lfile_t *lf = &pk->files[i];
+        const rp_ir_file_t *f = lf->f;
+        if (f->assembly == RP_ASM_NONE) continue;
+        const lfile_t *app = f->assembly_for ? lfile_of(pk, f->assembly_for) : NULL;
+        s_(&pk->assembly, lf->comp); s_(&pk->assembly, f->feature);
+        s_(&pk->assembly, f->assembly == RP_ASM_WIN32 ? f->manifest : lf->key);
+        s_(&pk->assembly, app ? app->key : NULL);
+        i_(&pk->assembly, f->assembly == RP_ASM_WIN32 ? 1 : 0);
+        for (size_t n = 0; n < 6 && f->asm_names[n][0]; ++n) {
+            s_(&pk->assemblyname, lf->comp); s_(&pk->assemblyname, f->asm_names[n][0]); s_(&pk->assemblyname, f->asm_names[n][1]);
+        }
+    }
+    (void)ir;
+}
+
 static void lower_files(pkg_t *pk) {
     const rp_ir_t *ir = pk->ir;
     keep_t *k = pk->k;
@@ -826,18 +852,21 @@ static void lower_files(pkg_t *pk) {
             const char *fields[] = { ir->upgrade_code, "machine", arch_text(ir->arch), logical, profile ? "file-hkcu" : "file", lf->key };
             rp_uuid_derive(comp_ns(pk), fields, 6, guid);
         }
-        s_(&pk->component, lf->comp);
-        s_(&pk->component, kdup(k, guid));
-        s_(&pk->component, lf->dir_key);
-        // keep: Permanent, left at removal (RFC-0013 A7); a DLL isolated for a program counts its
-        // users (SharedDllRefCount, ICE62).
-        i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0) | (lf->f->isolate_for ? 8 : 0));
-        s_(&pk->component, lf->f->when);                            // RFC-0013 A2
-        s_(&pk->component, profile ? profile_keypath(pk, lf->comp) : lf->key);
-        if (profile || dir_in_profile(ir, lf->f->dir)) profile_folders(pk, lf->dir_key, lf->comp);      // ICE64, a fixed GUID too
+        // A Win32 assembly's manifest is a second file of its DLL's component (RFC-0031 B9).
+        if (lf->f->manifest_of == NULL) {
+            s_(&pk->component, lf->comp);
+            s_(&pk->component, kdup(k, guid));
+            s_(&pk->component, lf->dir_key);
+            // keep: Permanent, left at removal (RFC-0013 A7); a DLL isolated for a program counts its
+            // users (SharedDllRefCount, ICE62).
+            i_(&pk->component, pk->comp_attr | (lf->f->keep ? 16 : 0) | (profile ? 4 : 0) | (lf->f->isolate_for ? 8 : 0));
+            s_(&pk->component, lf->f->when);                            // RFC-0013 A2
+            s_(&pk->component, profile ? profile_keypath(pk, lf->comp) : lf->key);
+            if (profile || dir_in_profile(ir, lf->f->dir)) profile_folders(pk, lf->dir_key, lf->comp);      // ICE64, a fixed GUID too
 
-        s_(&pk->featurecomp, lf->f->feature);
-        s_(&pk->featurecomp, lf->comp);
+            s_(&pk->featurecomp, lf->f->feature);
+            s_(&pk->featurecomp, lf->comp);
+        }
 
         s_(&pk->file, lf->key);
         s_(&pk->file, lf->comp);
@@ -2371,6 +2400,10 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         s_(&pk->iexec, "UnpublishComponents"); null_(&pk->iexec); i_(&pk->iexec, 1700);
         s_(&pk->iexec, "PublishComponents"); null_(&pk->iexec); i_(&pk->iexec, 6500);
     }
+    if (pk->assembly.filled) {          // RFC-0031 B9 (the standard actions' suggested numbers)
+        s_(&pk->iexec, "MsiUnpublishAssemblies"); null_(&pk->iexec); i_(&pk->iexec, 1750);
+        s_(&pk->iexec, "MsiPublishAssemblies"); null_(&pk->iexec); i_(&pk->iexec, 6250);
+    }
     if (pk->isolated.filled) {
         s_(&pk->iexec, "IsolateComponents"); null_(&pk->iexec); i_(&pk->iexec, 950);
         s_(&pk->iui, "IsolateComponents"); null_(&pk->iui); i_(&pk->iui, 950);
@@ -2517,6 +2550,7 @@ static proven_err_t lower_sequences(pkg_t *pk) {
         { "CostInitialize", 800 }, { "CostFinalize", 1000 }, { "InstallValidate", 1400 }, { "InstallInitialize", 1500 },
         { "PublishFeatures", 6300 }, { "PublishProduct", 6400 }, { "InstallFinalize", 6600 },
     };
+    if (pk->assembly.filled) { s_(&pk->advt, "MsiPublishAssemblies"); null_(&pk->advt); i_(&pk->advt, 6250); }
     for (size_t i = 0; i < sizeof advt_exec / sizeof advt_exec[0]; ++i) {
         s_(&pk->advt, advt_exec[i].action); null_(&pk->advt); i_(&pk->advt, advt_exec[i].seq);
     }
@@ -2708,6 +2742,8 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
     rows_init(&pk->isolated, alloc, "IsolatedComponent", isolated_cols, 2);
     rows_init(&pk->embeddedui, alloc, "MsiEmbeddedUI", embeddedui_cols, 5);
     rows_init(&pk->digsig, alloc, "MsiDigitalSignature", digsig_cols, 4);
+    rows_init(&pk->assembly, alloc, "MsiAssembly", assembly_cols, 5);
+    rows_init(&pk->assemblyname, alloc, "MsiAssemblyName", assemblyname_cols, 3);
     rows_init(&pk->digcert, alloc, "MsiDigitalCertificate", digcert_cols, 2);
     // The P3 tables are written only when they have rows, so packages without them stay as they were.
     rows_t *all[] = { &pk->property, &pk->directory, &pk->component, &pk->feature, &pk->featurecomp, &pk->file,
@@ -2717,13 +2753,14 @@ static proven_err_t write_package(proven_allocator_t alloc, const rp_ir_t *ir, k
                       &pk->reglocator, &pk->drlocator, &pk->signature, &pk->complocator, &pk->svcinstall, &pk->svccontrol,
                       &pk->font, &pk->lockperm, &pk->binary, &pk->icon, &pk->condition, &pk->movefile, &pk->odbcdriver,
                       &pk->odbcattr, &pk->odbcsource, &pk->odbcsattr, &pk->publish, &pk->isolated, &pk->embeddedui,
-                      &pk->digsig, &pk->digcert };
+                      &pk->digsig, &pk->digcert, &pk->assembly, &pk->assemblyname };
     const size_t always = 16;
 
     lower_properties(pk, product_code);
     lower_directories(pk);
     lower_features(pk);
     lower_files(pk);
+    lower_assemblies(pk);
     lower_registry(pk);
     lower_addon(pk);
     lower_shortcuts(pk);
@@ -3125,7 +3162,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         lf->f = f;
         lf->key = kdup(&k, f->id);
         char comp[23];
-        rp_key_derive('C', f->id, comp);
+        rp_key_derive('C', f->manifest_of ? f->manifest_of : f->id, comp);      // a Win32 manifest joins its DLL's (B9)
         lf->comp = kdup(&k, comp);
         lf->dir_key = kdup(&k, dkey(ir, f->dir));
         size_t n = 0;

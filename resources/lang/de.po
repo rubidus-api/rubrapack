@@ -237,6 +237,9 @@ msgstr "{1}: {2} Dateien, {3} Fehler, 0 Warnungen\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: {2} weitere Diagnosen nicht angezeigt\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' ist kein Programm (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' ist keine Standardaktion, die rubrapack platziert"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] ist schon im Ordner seines Programms; isolate-for ist für ei
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] liegt im Benutzerprofil und hat component-guid: der Schlüsselpfad bleibt die Datei, wo die Windows-Regeln einen HKCU-Wert verlangen (ICE38); component-guid weglassen, um einen zu bekommen"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' ist keine .NET-Assembly (kein CLI-Header mit einer Assembly-Zeile)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: eine .NET-Assembly trägt ihr Manifest selbst; manifest ist für eine Win32-Assembly"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: eine Win32-Assembly braucht manifest = \"file:<ID>\", ihre Manifestdatei"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: eine gemeinsame .NET-Assembly kommt in den GAC, der nur Assemblys mit starkem Namen annimmt; signieren Sie sie oder geben Sie assembly-for = \"file:<Programm>\" an"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: eine gemeinsame Win32-Assembly (WinSxS) braucht einen mit einem vertrauenswürdigen Zertifikat signierten Katalog, den rubrapack nicht erstellt; geben Sie für eine private assembly-for = \"file:<Programm>\" an"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for und manifest gehören zu assembly = \"dotnet\" oder \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: sein Manifest '{2}' hat keine assemblyIdentity mit name und version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: sein Manifest '{2}' muss im selben dir und feature (und unter demselben when) liegen: beide sind eine Komponente"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: das Manifest '{2}' gehört zu einer anderen Assembly oder ist selbst eine"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Der Explorer lädt einen {2}-Handler aus einer DLL; [com.{3}] ist ein Programm"
 
@@ -1628,6 +1658,9 @@ msgstr "Arrays dürfen nur Zeichenfolgen oder nur ganze Zahlen enthalten"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as muss \"system\" oder \"user\" sein (erhalten: '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly muss \"dotnet\" oder \"win32\" sein"
 
 msgid "at most %d languages besides English"
 msgstr "höchstens {1} Sprachen neben Englisch"

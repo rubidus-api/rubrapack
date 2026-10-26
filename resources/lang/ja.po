@@ -237,6 +237,9 @@ msgstr "{1}: ファイル {2} 個、エラー {3} 件、警告 0 件\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ほかに {2} 件の診断を表示していません\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' はプログラム (.exe) ではありません"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' は rubrapack が置く標準アクションではありません"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] はすでに自分のプログラムのフォルダーにあ�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] はユーザー プロファイルにあり、component-guid が指定されています。キー パスはファイルのままですが、Windows の規則はそこに HKCU 値を求めます (ICE38)。HKCU 値にするには component-guid を外してください"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' は .NET アセンブリではありません (Assembly 行を持つ CLI ヘッダーがありません)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET アセンブリはマニフェストを自身に持ちます。manifest は Win32 アセンブリ用です"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 アセンブリには manifest = \"file:<ID>\" (そのマニフェスト ファイル) が必要です"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: 共有 .NET アセンブリは GAC に入りますが、GAC は厳密な名前を持つものしか受け付けません。署名するか、assembly-for = \"file:<プログラム>\" を指定してください"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: 共有 Win32 アセンブリ (WinSxS) には信頼された証明書で署名したカタログが必要ですが、rubrapack はそれを作りません。プライベート アセンブリにするには assembly-for = \"file:<プログラム>\" を指定してください"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for と manifest は assembly = \"dotnet\" か \"win32\" と一緒に使います"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: マニフェスト '{2}' に name と version を持つ assemblyIdentity がありません"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: マニフェスト '{2}' は同じ dir と feature に (同じ when で) 置く必要があります。この 2 つは 1 つのコンポーネントです"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: マニフェスト '{2}' は別のアセンブリのもの、またはそれ自体がアセンブリです"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: エクスプローラーは {2} ハンドラーを DLL から読み込みます。[com.{3}] はプログラムです"
 
@@ -1628,6 +1658,9 @@ msgstr "配列には文字列だけか整数だけを入れます"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as は \"system\" か \"user\" です('{1}' でした)"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly は \"dotnet\" か \"win32\" でなければなりません"
 
 msgid "at most %d languages besides English"
 msgstr "英語のほかの言語は {1} 個までです"

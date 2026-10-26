@@ -237,6 +237,9 @@ msgstr "{1}: {2} datoteka, {3} pogrešaka, 0 upozorenja\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: još {2} dijagnostika nije prikazano\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' nije program (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nije standardna radnja koju rubrapack postavlja"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] već je u mapi svojeg programa; isolate-for je za zajedničku
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] nalazi se u korisničkom profilu i ima component-guid: putanja ključa ostaje datoteka, a pravila sustava Windows ondje traže HKCU vrijednost (ICE38); izostavite component-guid da biste je dobili"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' nije .NET sklop (nema CLI zaglavlja s retkom Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET sklop sam nosi svoj manifest; manifest je za Win32 sklop"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 sklop treba manifest = \"file:<ID>\", svoju datoteku manifesta"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: zajednički .NET sklop ide u GAC, koji prima samo sklopove s jakim imenom; potpišite ga ili navedite assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: zajednički Win32 sklop (WinSxS) treba katalog potpisan pouzdanim certifikatom, koji rubrapack ne izrađuje; za privatni navedite assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for i manifest idu uz assembly = \"dotnet\" ili \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: njegov manifest '{2}' nema assemblyIdentity s name i version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: njegov manifest '{2}' mora biti u istom dir i feature (i pod istim when): oba su jedna komponenta"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifest '{2}' pripada drugom sklopu ili je i sam sklop"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer učitava rukovatelj {2} iz DLL-a; [com.{3}] je program"
 
@@ -1628,6 +1658,9 @@ msgstr "polja moraju sadržavati samo nizove ili samo cijele brojeve"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as mora biti \"system\" ili \"user\" (primljeno '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly mora biti \"dotnet\" ili \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "najviše {1} jezika osim engleskog"

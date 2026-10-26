@@ -237,6 +237,9 @@ msgstr "{1}: 파일 {2}개, 오류 {3}개, 경고 0개\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: 진단 {2}개를 더 보이지 않았습니다\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' 은(는) 프로그램(.exe)이 아닙니다"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' 은(는) rubrapack 이 두는 표준 동작이 아닙니다"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] 은(는) 이미 자기 프로그램의 폴더에 있습니다
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] 은(는) 사용자 프로필에 있고 component-guid 가 있습니다. 키 경로는 파일 그대로이며, Windows 규칙은 그곳에 HKCU 값을 원합니다(ICE38). HKCU 값을 쓰려면 component-guid 를 빼십시오"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' 은(는) .NET 어셈블리가 아닙니다(Assembly 행이 있는 CLI 헤더가 없음)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET 어셈블리는 매니페스트를 스스로 담습니다. manifest 는 Win32 어셈블리용입니다"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 어셈블리에는 manifest = \"file:<ID>\", 곧 그 매니페스트 파일이 필요합니다"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: 공유 .NET 어셈블리는 GAC 에 들어가는데 GAC 는 강한 이름이 있는 것만 받습니다. 서명하거나 assembly-for = \"file:<프로그램>\" 을 주세요"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: 공유 Win32 어셈블리(WinSxS)에는 신뢰된 인증서로 서명한 카탈로그가 필요한데 rubrapack 은 그것을 만들지 않습니다. 개인 어셈블리로 하려면 assembly-for = \"file:<프로그램>\" 을 주세요"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for 와 manifest 는 assembly = \"dotnet\" 또는 \"win32\" 와 함께 씁니다"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: 매니페스트 '{2}' 에 name 과 version 이 있는 assemblyIdentity 가 없습니다"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: 매니페스트 '{2}' 은(는) 같은 dir 과 feature 에 (같은 when 으로) 있어야 합니다: 둘은 한 구성 요소입니다"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: 매니페스트 '{2}' 은(는) 다른 어셈블리의 것이거나 그 자체가 어셈블리입니다"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: 탐색기는 {2} 처리기를 DLL 에서 로드합니다. [com.{3}] 은(는) 프로그램입니다"
 
@@ -1628,6 +1658,9 @@ msgstr "배열에는 문자열만 또는 정수만 넣어야 합니다"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as 는 \"system\" 또는 \"user\" 여야 합니다('{1}'을(를) 받음)"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly 는 \"dotnet\" 또는 \"win32\" 여야 합니다"
 
 msgid "at most %d languages besides English"
 msgstr "영어 외에 언어는 {1}개까지입니다"

@@ -237,6 +237,9 @@ msgstr "{1}: {2} failai, {3} klaidos, 0 įspėjimų\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: dar {2} diagnostikos neparodyta\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' nėra programa (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nėra standartinis veiksmas, kurį įdeda rubrapack"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] jau yra savo programos aplanke; isolate-for skirtas bendrai D
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] yra naudotojo profilyje ir turi component-guid: rakto kelias lieka failas, nors Windows taisyklės ten nori HKCU reikšmės (ICE38); praleiskite component-guid, kad ją gautumėte"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' nėra .NET rinkinys (nėra CLI antraštės su Assembly eilute)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET rinkinys savo manifestą neša pats; manifest skirtas Win32 rinkiniui"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 rinkiniui reikia manifest = \"file:<ID>\", jo manifesto failo"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: bendrinamas .NET rinkinys patenka į GAC, kuri priima tik stipriojo vardo rinkinius; pasirašykite jį arba nurodykite assembly-for = \"file:<programa>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: bendrinamam Win32 rinkiniui (WinSxS) reikia katalogo, pasirašyto patikimu sertifikatu, kurio rubrapack nekuria; privačiam nurodykite assembly-for = \"file:<programa>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for ir manifest naudojami su assembly = \"dotnet\" arba \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: jo manifeste '{2}' nėra assemblyIdentity su name ir version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: jo manifestas '{2}' turi būti tame pačiame dir ir feature (ir su tuo pačiu when): abu yra vienas komponentas"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifestas '{2}' priklauso kitam rinkiniui arba pats yra rinkinys"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer įkelia {2} doroklį iš DLL; [com.{3}] yra programa"
 
@@ -1628,6 +1658,9 @@ msgstr "masyvuose turi būti tik eilutės arba tik sveikieji skaičiai"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as turi būti \"system\" arba \"user\" (gauta '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly turi būti \"dotnet\" arba \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "ne daugiau kaip {1} kalbų be anglų"

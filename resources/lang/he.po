@@ -239,6 +239,9 @@ msgstr "{1}: {2} קבצים, {3} שגיאות, 0 אזהרות\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: עוד {2} אבחונים שלא הוצגו\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' אינו תוכנית (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' אינו פעולה סטנדרטית ש-rubrapack ממקם"
 
@@ -980,6 +983,33 @@ msgstr "[file.{1}] כבר בתיקיית התוכנית שלו; isolate-for מי
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] נמצא בפרופיל המשתמש ויש לו component-guid: נתיב המפתח נשאר הקובץ, בעוד שכללי Windows דורשים שם ערך HKCU (ICE38); השמט את component-guid כדי לקבל אותו"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' אינו הרכבת .NET (אין כותרת CLI עם שורת Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: הרכבת .NET נושאת את המניפסט שלה בעצמה; manifest מיועד להרכבת Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: הרכבת Win32 צריכה manifest = \"file:<ID>\", קובץ המניפסט שלה"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: הרכבת .NET משותפת נכנסת ל-GAC, שמקבל רק הרכבות עם שם חזק; חתמו עליה או תנו assembly-for = \"file:<תוכנית>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: הרכבת Win32 משותפת (WinSxS) צריכה קטלוג חתום בתעודה מהימנה, ש-rubrapack אינו יוצר; להרכבה פרטית תנו assembly-for = \"file:<תוכנית>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for ו-manifest הולכים עם assembly = \"dotnet\" או \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: במניפסט שלו '{2}' אין assemblyIdentity עם name ו-version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: המניפסט שלו '{2}' חייב להיות באותו dir ו-feature (ותחת אותו when): השניים הם רכיב אחד"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: המניפסט '{2}' שייך להרכבה אחרת או שהוא עצמו הרכבה"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: הסייר טוען מטפל {2} מ-DLL; [com.{3}] הוא תוכנית"
 
@@ -1630,6 +1660,9 @@ msgstr "מערכים חייבים להכיל רק מחרוזות או רק מס�
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as חייב להיות \"system\" או \"user\" (התקבל '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly חייב להיות \"dotnet\" או \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "לכל היותר {1} שפות מלבד אנגלית"

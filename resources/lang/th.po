@@ -237,6 +237,9 @@ msgstr "{1}: {2} ไฟล์, ข้อผิดพลาด {3}, คำเต�
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ยังมีข้อความวินิจฉัยอีก {2} รายการที่ไม่ได้แสดง\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' ไม่ใช่โปรแกรม (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' ไม่ใช่การกระทำมาตรฐานที่ rubrapack วาง"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] อยู่ในโฟลเดอร์ของโปร�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] อยู่ในโปรไฟล์ผู้ใช้และมี component-guid: คีย์พาธยังคงเป็นไฟล์ ขณะที่กฎของ Windows ต้องการค่า HKCU ที่นั่น (ICE38) ให้เอา component-guid ออกเพื่อให้ได้ค่านั้น"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' ไม่ใช่แอสเซมบลี .NET (ไม่มีส่วนหัว CLI ที่มีแถว Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: แอสเซมบลี .NET มีแมนิเฟสต์อยู่ในตัว manifest ใช้กับแอสเซมบลี Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: แอสเซมบลี Win32 ต้องมี manifest = \"file:<ID>\" คือไฟล์แมนิเฟสต์ของมัน"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: แอสเซมบลี .NET ที่ใช้ร่วมกันจะเข้า GAC ซึ่งรับเฉพาะที่มีชื่อแบบเข้มงวด ให้ลงนาม หรือระบุ assembly-for = \"file:<โปรแกรม>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: แอสเซมบลี Win32 ที่ใช้ร่วมกัน (WinSxS) ต้องมีแคตตาล็อกที่ลงนามด้วยใบรับรองที่เชื่อถือได้ ซึ่ง rubrapack ไม่สร้าง สำหรับแบบส่วนตัวให้ระบุ assembly-for = \"file:<โปรแกรม>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for และ manifest ใช้คู่กับ assembly = \"dotnet\" หรือ \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ไม่มี assemblyIdentity ที่มี name และ version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ต้องอยู่ใน dir และ feature เดียวกัน (และ when เดียวกัน): ทั้งสองเป็นคอมโพเนนต์เดียว"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: แมนิเฟสต์ '{2}' เป็นของแอสเซมบลีอื่น หรือเป็นแอสเซมบลีเสียเอง"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer โหลดตัวจัดการ {2} จาก DLL แต่ [com.{3}] เป็นโปรแกรม"
 
@@ -1628,6 +1658,9 @@ msgstr "อาร์เรย์ต้องมีเฉพาะสตริง
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as ต้องเป็น \"system\" หรือ \"user\" (ได้รับ '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly ต้องเป็น \"dotnet\" หรือ \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "นอกจากภาษาอังกฤษแล้วมีได้ไม่เกิน {1} ภาษา"

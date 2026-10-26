@@ -2114,6 +2114,11 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         const rp_ir_msix_block_t *b = &ir->msix_blocks[i];
         DERR(b->pos, "RP1605", "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it", b->kind, b->id);
     }
+    // RFC-0031 B9: an assembly is registered by Windows Installer (the GAC, WinSxS, a program's own).
+    for (size_t i = 0; i < ir->file_count; ++i) {
+        const rp_ir_file_t *f = &ir->files[i];
+        if (f->assembly != RP_ASM_NONE && !f->msi_only) DERR(f->pos, "RP1605", "[%s.%s] cannot go into an MSIX; add msi-only = true to build the MSIX without it", "file", f->id);
+    }
     // RFC-0031 B11: an author's embedded UI handler is for an MSI; an MSIX has no custom installer UI.
     if (ir->ui_embedded_source) DERR(top, "RP1605", "[ui] embedded is for an MSI; an MSIX has no installer UI of its own");
     if (!ir->has_msix) DERR(top, "RP1604", "a .msix output needs an [msix] table (identity-name, publisher)");

@@ -237,6 +237,9 @@ msgstr "{1}: {2} dosya, {3} hata, 0 uyarı\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: {2} tanılama daha gösterilmedi\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' bir program (.exe) değil"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}', rubrapack'in yerleştirdiği standart bir eylem değil"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] zaten kendi programının klasöründe; isolate-for başka ye
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] kullanıcı profilinde ve component-guid değeri var: anahtar yolu dosya olarak kalır, oysa Windows kuralları orada bir HKCU değeri ister (ICE38); bunu almak için component-guid'i kaldırın"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' bir .NET derlemesi değil (Assembly satırı olan CLI üst bilgisi yok)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: bir .NET derlemesi bildirimini kendisi taşır; manifest Win32 derlemesi içindir"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: bir Win32 derlemesi manifest = \"file:<ID>\", yani bildirim dosyası gerektirir"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: paylaşılan bir .NET derlemesi GAC'ye gider; GAC yalnızca tanımlayıcı adlı derlemeleri kabul eder; imzalayın veya assembly-for = \"file:<program>\" verin"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: paylaşılan bir Win32 derlemesi (WinSxS), güvenilir bir sertifikayla imzalanmış bir katalog gerektirir; rubrapack bunu oluşturmaz; özel bir derleme için assembly-for = \"file:<program>\" verin"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for ve manifest, assembly = \"dotnet\" veya \"win32\" ile kullanılır"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: '{2}' bildiriminde name ve version içeren assemblyIdentity yok"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: '{2}' bildirimi aynı dir ve feature içinde (ve aynı when altında) olmalıdır: ikisi tek bileşendir"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: '{2}' bildirimi başka bir derlemenin ya da kendisi bir derleme"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Dosya Gezgini bir {2} işleyicisini DLL'den yükler; [com.{3}] bir programdır"
 
@@ -1628,6 +1658,9 @@ msgstr "diziler yalnızca dize ya da yalnızca tamsayı tutmalıdır"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as \"system\" ya da \"user\" olmalıdır (alınan: '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly \"dotnet\" veya \"win32\" olmalıdır"
 
 msgid "at most %d languages besides English"
 msgstr "İngilizce dışında en fazla {1} dil"

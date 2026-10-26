@@ -237,6 +237,9 @@ msgstr "{1}: {2} filer, {3} fel, 0 varningar\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ytterligare {2} diagnoser visas inte\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' är inget program (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' är inte en standardåtgärd som rubrapack placerar"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] ligger redan i sitt programs mapp; isolate-for är för en de
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ligger i användarprofilen och har component-guid: nyckelsökvägen förblir filen, där Windows regler vill ha ett HKCU-värde (ICE38); ta bort component-guid för att få ett"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' är ingen .NET-sammansättning (inget CLI-huvud med en Assembly-rad)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: en .NET-sammansättning bär sitt manifest själv; manifest är för en Win32-sammansättning"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: en Win32-sammansättning behöver manifest = \"file:<ID>\", sin manifestfil"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: en delad .NET-sammansättning hamnar i GAC, som bara tar sammansättningar med starkt namn; signera den eller ange assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: en delad Win32-sammansättning (WinSxS) behöver en katalog signerad med ett betrott certifikat, som rubrapack inte gör; ange assembly-for = \"file:<program>\" för en privat"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for och manifest hör till assembly = \"dotnet\" eller \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: manifestet '{2}' har ingen assemblyIdentity med name och version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: manifestet '{2}' måste ligga i samma dir och feature (och under samma when): de två är en komponent"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifestet '{2}' hör till en annan sammansättning eller är själv en sammansättning"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Utforskaren läser in en {2}-hanterare från en DLL; [com.{3}] är ett program"
 
@@ -1628,6 +1658,9 @@ msgstr "matriser får bara innehålla strängar eller bara heltal"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as måste vara \"system\" eller \"user\" (fick '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly måste vara \"dotnet\" eller \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "högst {1} språk utöver engelska"

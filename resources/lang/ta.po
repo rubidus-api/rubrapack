@@ -237,6 +237,9 @@ msgstr "{1}: {2} கோப்புகள், {3} பிழைகள், 0 எ�
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: மேலும் {2} கண்டறிதல்கள் காட்டப்படவில்லை\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' நிரல் (.exe) அல்ல"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' என்பது rubrapack வைக்கும் நிலையான செயல் அல்ல"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] ஏற்கெனவே தன் நிரலின் க�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] பயனர் சுயவிவரத்தில் உள்ளது, அதற்கு component-guid உள்ளது: அதன் விசைப் பாதை கோப்பாகவே இருக்கும், ஆனால் Windows விதிகள் அங்கே HKCU மதிப்பை வேண்டுகின்றன (ICE38); அதைப் பெற component-guid ஐ நீக்கவும்"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' .NET அசெம்பிளி அல்ல (Assembly வரிசையுள்ள CLI தலைப்பு இல்லை)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET அசெம்பிளி தன் மேனிஃபெஸ்டைத் தானே கொண்டிருக்கும்; manifest Win32 அசெம்பிளிக்கானது"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 அசெம்பிளிக்கு manifest = \"file:<ID>\", அதாவது அதன் மேனிஃபெஸ்ட் கோப்பு தேவை"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: பகிர்ந்த .NET அசெம்பிளி GAC க்குச் செல்லும், அது வலுவான பெயருள்ளவற்றை மட்டுமே ஏற்கும்; கையொப்பமிடவும் அல்லது assembly-for = \"file:<நிரல்>\" கொடுக்கவும்"
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: பகிர்ந்த Win32 அசெம்பிளிக்கு (WinSxS) நம்பகமான சான்றிதழால் கையொப்பமிட்ட பட்டியல் தேவை, அதை rubrapack உருவாக்காது; தனிப்பட்டதற்கு assembly-for = \"file:<நிரல்>\" கொடுக்கவும்"
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for, manifest இரண்டும் assembly = \"dotnet\" அல்லது \"win32\" உடன் வரும்"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: அதன் மேனிஃபெஸ்ட் '{2}' இல் name, version உள்ள assemblyIdentity இல்லை"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: அதன் மேனிஃபெஸ்ட் '{2}' அதே dir, feature இல் (அதே when உடன்) இருக்க வேண்டும்: இரண்டும் ஒரு கூறு"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: மேனிஃபெஸ்ட் '{2}' வேறு அசெம்பிளியினுடையது அல்லது அதுவே அசெம்பிளி"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Explorer ஒரு {2} கையாளியை DLL இலிருந்து ஏற்றும்; [com.{3}] ஒரு நிரல்"
 
@@ -1628,6 +1658,9 @@ msgstr "அணிகளில் சரங்கள் மட்டும் அ
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as \"system\" அல்லது \"user\" ஆக இருக்க வேண்டும் ('{1}' பெறப்பட்டது)"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly \"dotnet\" அல்லது \"win32\" ஆக இருக்க வேண்டும்"
 
 msgid "at most %d languages besides English"
 msgstr "ஆங்கிலம் தவிர அதிகபட்சம் {1} மொழிகள்"

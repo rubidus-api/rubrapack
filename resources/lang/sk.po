@@ -237,6 +237,9 @@ msgstr "{1}: {2} súborov, {3} chýb, 0 upozornení\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: ďalších {2} diagnostík sa nezobrazilo\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' nie je program (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' nie je štandardná akcia, ktorú rubrapack umiestňuje"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] je už v priečinku svojho programu; isolate-for je pre zdie�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] je v profile používateľa a má component-guid: cestou kľúča zostáva súbor, kde pravidlá Windows chcú hodnotu HKCU (ICE38); vynechajte component-guid, aby ste ju získali"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' nie je zostava .NET (chýba hlavička CLI s riadkom Assembly)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: zostava .NET nesie svoj manifest sama; manifest je pre zostavu Win32"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: zostava Win32 potrebuje manifest = \"file:<ID>\", svoj súbor manifestu"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: zdieľaná zostava .NET ide do GAC, ktorá prijíma iba zostavy so silným názvom; podpíšte ju alebo zadajte assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: zdieľaná zostava Win32 (WinSxS) potrebuje katalóg podpísaný dôveryhodným certifikátom, ktorý rubrapack nevytvára; pre súkromnú zadajte assembly-for = \"file:<program>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for a manifest patria k assembly = \"dotnet\" alebo \"win32\""
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: jeho manifest '{2}' nemá assemblyIdentity s name a version"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: jeho manifest '{2}' musí byť v rovnakom dir a feature (a pod rovnakým when): obe tvoria jeden komponent"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: manifest '{2}' patrí inej zostave alebo je sám zostavou"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Prieskumník načítava obslužný program {2} z DLL; [com.{3}] je program"
 
@@ -1628,6 +1658,9 @@ msgstr "polia musia obsahovať len reťazce alebo len celé čísla"
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as musí byť \"system\" alebo \"user\" (zadané '{1}')"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly musí byť \"dotnet\" alebo \"win32\""
 
 msgid "at most %d languages besides English"
 msgstr "najviac {1} jazykov okrem angličtiny"

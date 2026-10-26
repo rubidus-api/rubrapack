@@ -223,7 +223,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[define]` | variables: `NAME = "value"` |
 | `[feature.ID]` | **title**, description, level (1-32767), hidden, parent, required, follow-parent, when, default-when, advertise (`allow` default, `disallow`) |
 | `[dir.ID]` | **path** = `$(Base)/relative/path`, feature, guard (`true`: see [Guarding the install folder](#guarding-the-install-folder)) |
-| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when, isolate-for (`file:ID` of an `.exe`: a private copy of this DLL beside that program, MSI only) |
+| `[file.ID]` | **dir**, **source**, name, vital (default true), any-arch, feature, component-guid, keep, when, isolate-for (`file:ID` of an `.exe`: a private copy of this DLL beside that program, MSI only), assembly (`dotnet`, `win32`), assembly-for (`file:ID` of an `.exe`: a private assembly), manifest (`file:ID` of a Win32 assembly's manifest) - see [Assemblies](#assemblies-assembly) |
 | `[files.ID]` | **dir**, **glob**, vital, any-arch, feature, keep, when |
 | `[folder.ID]` | **dir**, **name**, keep, feature |
 | `[arp]` | no-modify, no-repair, no-remove, help (URL), about (URL), icon (`.ico`), logo (a `.png`: 8-bit RGB or RGBA, at most 1024 pixels a side; the menu package's logos) - how the product shows in Installed apps |
@@ -912,6 +912,42 @@ qualifier = "image/png"
   `MsiProvideQualifiedComponent`.
 - `isolate-for` on a `[file.*]` DLL puts a private copy of it beside the named program, so that
   program loads its own version (Windows' side-by-side isolation).
+
+### Assemblies: `assembly`
+
+`assembly` on a `[file.*]` DLL makes Windows Installer install it as an assembly (the MsiAssembly
+and MsiAssemblyName tables, and the actions that publish them):
+
+```toml
+[file.Lib]                       # a .NET assembly for the global assembly cache (GAC)
+dir = "INSTALLDIR"
+source = "bin/Contoso.Lib.dll"
+assembly = "dotnet"
+
+[file.Native]                    # a Win32 assembly private to the program
+dir = "INSTALLDIR"
+source = "bin/native.dll"
+assembly = "win32"
+manifest = "file:NativeManifest"
+assembly-for = "file:App"
+
+[file.NativeManifest]
+dir = "INSTALLDIR"
+source = "bin/Contoso.Native.manifest"
+```
+
+- A `.NET` assembly names itself: rubrapack reads its name, version, culture, public key token and
+  processor architecture from its CLI metadata, as Windows does. Without `assembly-for` it goes into
+  the GAC - not into its folder - which takes strong-named assemblies only. An assembly built for any
+  CPU (MSIL) passes the package's architecture check.
+- A Win32 assembly names itself in its manifest: `manifest` points at a `[file.*]` of the same
+  folder, feature and `when`, which joins the DLL's component (the DLL stays its key path); the
+  manifest's `assemblyIdentity` gives name, version, type, processorArchitecture and publicKeyToken.
+  It must be private (`assembly-for`): a shared one in WinSxS needs a catalog signed by a trusted
+  certificate, which rubrapack does not make.
+- `assembly-for = "file:<program>"` installs the assembly privately, for that program, in the
+  folder of its file.
+- An MSIX does not take assemblies (`RP1605`; `msi-only = true` leaves the file out of it).
 
 ### Removing and copying: `[remove.ID]`, `[copy.ID]`
 

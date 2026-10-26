@@ -182,6 +182,10 @@ static const rule_t rules[] = {
     // RFC-0031 B11 (Microsoft Learn: "MsiEmbeddedUI Table").
     R("MsiEmbeddedUI", "MsiEmbeddedUI", "Identifier"), R("MsiEmbeddedUI", "FileName", "Text"),
     RN("MsiEmbeddedUI", "Attributes", 0, 3), RN("MsiEmbeddedUI", "MessageFilter", 0, MAXI), { "MsiEmbeddedUI", "Data", NONE, NONE, NULL, 0, "Binary", NULL },
+    // RFC-0031 B9 (Microsoft Learn: "MsiAssembly Table", "MsiAssemblyName Table").
+    RK("MsiAssembly", "Component_", "Component", 1), RK("MsiAssembly", "Feature_", "Feature", 1), RK("MsiAssembly", "File_Manifest", "File", 1),
+    RK("MsiAssembly", "File_Application", "File", 1), RN("MsiAssembly", "Attributes", 0, 1),
+    RK("MsiAssemblyName", "Component_", "Component", 1), R("MsiAssemblyName", "Name", "Text"), R("MsiAssemblyName", "Value", "Text"),
     // RFC-0031 B13 (Microsoft Learn: "MsiDigitalSignature Table", "MsiDigitalCertificate Table").
     RS("MsiDigitalSignature", "Table", "Identifier", "Media"), R("MsiDigitalSignature", "SignObject", "Text"),
     RK("MsiDigitalSignature", "DigitalCertificate_", "MsiDigitalCertificate", 1),

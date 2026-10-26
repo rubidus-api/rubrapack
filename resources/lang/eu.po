@@ -237,6 +237,9 @@ msgstr "{1}: {2} fitxategi, {3} errore, 0 abisu\n"
 msgid "%s: %zu more diagnostics not shown\n"
 msgstr "{1}: erakusten ez diren beste {2} diagnostiko\n"
 
+msgid "%s: '%s' is not a program (.exe)"
+msgstr "{1}: '{2}' ez da programa bat (.exe)"
+
 msgid "%s: '%s' is not a standard action rubrapack places"
 msgstr "{1}: '{2}' ez da rubrapack-ek jartzen duen ekintza estandar bat"
 
@@ -978,6 +981,33 @@ msgstr "[file.{1}] bere programaren karpetan dago jada; isolate-for beste nonbai
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] erabiltzailearen profilean dago eta component-guid du: gako-bidea fitxategia izaten jarraitzen du, Windows-en arauek han HKCU balio bat nahi duten arren (ICE38); kendu component-guid hura lortzeko"
 
+msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
+msgstr "[file.{1}]: '{2}' ez da .NET multzo bat (ez dago Assembly errenkadadun CLI goibururik)"
+
+msgid "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one"
+msgstr "[file.{1}]: .NET multzo batek berak darama bere manifestua; manifest Win32 multzoentzat da"
+
+msgid "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file"
+msgstr "[file.{1}]: Win32 multzo batek manifest = \"file:<ID>\" behar du, bere manifestu-fitxategia"
+
+msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
+msgstr "[file.{1}]: .NET multzo partekatua GACera doa, eta hark izen sendodun multzoak soilik onartzen ditu; sinatu edo eman assembly-for = \"file:<programa>\""
+
+msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
+msgstr "[file.{1}]: Win32 multzo partekatu batek (WinSxS) ziurtagiri fidagarri batez sinatutako katalogoa behar du, eta rubrapack-ek ez du egiten; pribatu baterako eman assembly-for = \"file:<programa>\""
+
+msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
+msgstr "[file.{1}]: assembly-for eta manifest assembly = \"dotnet\" edo \"win32\"-rekin doaz"
+
+msgid "[file.%s]: its manifest '%s' has no assemblyIdentity with a name and a version"
+msgstr "[file.{1}]: bere '{2}' manifestuak ez du name eta version dituen assemblyIdentity-rik"
+
+msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
+msgstr "[file.{1}]: bere '{2}' manifestuak dir eta feature berean egon behar du (when berarekin): biak osagai bakarra dira"
+
+msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
+msgstr "[file.{1}]: '{2}' manifestua beste multzo batena da edo bera da multzo bat"
+
 msgid "[handler.%s]: Explorer loads a %s handler from a DLL; [com.%s] is a program"
 msgstr "[handler.{1}]: Arakatzaileak {2} kudeatzaile bat DLL batetik kargatzen du; [com.{3}] programa bat da"
 
@@ -1628,6 +1658,9 @@ msgstr "matrizeek kateak bakarrik edo osoko zenbakiak bakarrik izan behar dituzt
 
 msgid "as must be \"system\" or \"user\" (got '%s')"
 msgstr "as \"system\" edo \"user\" izan behar da ('{1}' jaso da)"
+
+msgid "assembly must be \"dotnet\" or \"win32\""
+msgstr "assembly \"dotnet\" edo \"win32\" izan behar da"
 
 msgid "at most %d languages besides English"
 msgstr "gehienez {1} hizkuntza ingelesaz gain"
