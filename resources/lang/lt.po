@@ -810,6 +810,9 @@ msgstr "Versijos ir naujinimai"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer leidžia ne daugiau kaip 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows nepasakė, kas įdiegta '{1}'"
+
 msgid "Windows name"
 msgstr "Windows pavadinimas"
 
@@ -2112,6 +2115,12 @@ msgstr "nėra ProductCode ar ProductVersion"
 msgid "has no Property table"
 msgstr "nėra lentelės Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "neturi tapatybės (Name, Publisher ir Version)"
+
+msgid "has no summary information"
+msgstr "neturi suvestinės informacijos"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "turi įrašų lentelei, kurios neapibrėžia nei bazė, nei transformacija"
 
@@ -2138,6 +2147,9 @@ msgstr "image turi būti .bmp failas (Windows Installer rodo tik BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline lentelės nepalaikomos; naudokite lentelę [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed klausia Windows, kas įdiegta; veikia tik Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "įdiegiama tuo pačiu keliu kaip eilutė {1} (Windows pavadinimuose neskiria didžiųjų ir mažųjų raidžių{2})"
@@ -2180,6 +2192,12 @@ msgstr "nėra Windows Installer duomenų bazė"
 
 msgid "is not a compound file"
 msgstr "nėra sudėtinis failas"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nėra pataisa: neturi pataisos kodo, tikslinių produktų ar transformacijų"
+
+msgid "is not a valid MSIX package"
+msgstr "nėra tinkamas MSIX paketas"
 
 msgid "is not valid UTF-8"
 msgstr "nėra tinkamas UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' taip pat yra [assoc.{2}] su kitu aprašu, target, icon arb
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id turi būti raidės, skaitmenys, '.', '_' arba '-', neprasidėti skaitmeniu, ne daugiau kaip 39 (gauta '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties skirtos Windows Installer paketams; MSIX jų nepriima"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "savybė '{1}' jau priklauso valdikliui '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: failas '{1}' nėra šio paketo [file.*]"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "įrašykite šaltinį kaip UTF-8 (arba UTF-16 su BOM) su LF arba CRLF eilučių pabaigomis"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "pasako, ar šiame Windows įdiegtas produktas su tuo naujinimo kodu ar tos šeimos programos paketas"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "schema '{1}' jau turi programą ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "šaltinio failas '{1}' nerastas"
 msgid "source must be \"file:<ID>\""
 msgstr "source turi būti \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source turi būti .msi paketas"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source turi būti .msi, .msix, .msixbundle arba .msp paketas"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "šaltinio kelias '{1}' turi būti santykinis šaltinio failo atžvilgiu"

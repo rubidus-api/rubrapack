@@ -7,9 +7,12 @@
 #include "rubrapack/chain.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/msi.h"
+#include "rubrapack/msix.h"
+#include "rubrapack/suminfo.h"
 #include "rubrapack/parts.h"
+#include "rubrapack/str.h"
 
-enum { TRAILER = 32, FLAG_VITAL = 1, CHAIN_ELEVATE = 1, MAX_PACKAGE = 1 << 30 };     // a package up to 1 GiB
+enum { TRAILER = 32, FLAG_VITAL = 1, FLAG_MSIX = 2, FLAG_MSP = 4, FLAG_BUNDLE = 8, CHAIN_ELEVATE = 1, MAX_PACKAGE = 1 << 30 };     // a package up to 1 GiB
 
 bool rp_chain_is(const rp_tdoc_t *doc) {
     for (size_t k = 0; doc && k < doc->count; ++k) {
@@ -121,9 +124,15 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
         p->properties = ir_get_str(&c, t, "properties", false, NULL);
         p->vital = ir_get_bool(&c, t, "vital", true);
         if (p->shown) {
-            size_t n = strlen(p->shown);
-            if (n < 4 || ir_ascii_casecmp(p->shown + n - 4, ".msi") != 0) {
-                ERR(&c, ir_key_pos(t, "source"), "RP1308", "source must be an .msi package");
+            // RFC-0031 B14: an MSIX package or bundle, or a patch, beside MSI packages.
+            p->kind = rp_ascii_ends_with_ci(p->shown, ".msi")  ? RP_CHAIN_MSI
+                      : rp_ascii_ends_with_ci(p->shown, ".msp") ? RP_CHAIN_MSP
+                      : rp_ascii_ends_with_ci(p->shown, ".msix") || rp_ascii_ends_with_ci(p->shown, ".msixbundle") ? RP_CHAIN_MSIX
+                                                                                                                      : (rp_chain_kind_t)-1;
+            if ((int)p->kind < 0) {
+                ERR(&c, ir_key_pos(t, "source"), "RP1308", "source must be an .msi, .msix, .msixbundle or .msp package");
+            } else if (p->kind == RP_CHAIN_MSIX && p->properties) {
+                ERR(&c, ir_key_pos(t, "properties"), "RP1308", "properties are for Windows Installer packages; an MSIX takes none");
             } else if (ir_source_path_ok(&c, p->shown, ir_key_pos(t, "source"))) {
                 p->source = ir_join(&c, opt->source_dir ? opt->source_dir : ".", p->shown);
                 uint64_t size;
@@ -191,6 +200,73 @@ static const char *msi_codes(proven_allocator_t alloc, const uint8_t *data, size
     return bad;
 }
 
+// An MSIX package's or bundle's family name and Identity Version (copies), or a reason it is not one.
+static const char *msix_codes(proven_allocator_t alloc, const uint8_t *data, size_t len, const rp_limits_t *limits,
+                              char **code, char **version) {
+    rp_msix_file_t *files = NULL;
+    uint8_t *man = NULL;
+    size_t nf = 0, ml = 0;
+    const char *why = NULL, *bad = NULL;
+    char name[256], publisher[8400], ver[64];
+    *code = *version = NULL;
+    if (rp_msix_open(alloc, data, len, limits, &files, &nf, &man, &ml, &why) != PROVEN_OK) {
+        bad = TR_N("is not a valid MSIX package");
+    } else if (!rp_xml_attr((const char *)man, ml, "Identity", "Name", name, sizeof name) ||
+               !rp_xml_attr((const char *)man, ml, "Identity", "Publisher", publisher, sizeof publisher) ||
+               !rp_xml_attr((const char *)man, ml, "Identity", "Version", ver, sizeof ver)) {
+        bad = TR_N("has no identity (Name, Publisher and Version)");
+    } else {
+        char id[14];
+        rp_msix_publisher_id(publisher, id);
+        size_t cn = strlen(name) + 15, vn = strlen(ver) + 1;
+        *code = rp_mem_alloc(alloc, cn, 1);
+        *version = rp_mem_alloc(alloc, vn, 1);
+        if (*code) snprintf(*code, cn, "%s_%s", name, id);
+        if (*version) memcpy(*version, ver, vn);
+    }
+    rp_msix_files_free(alloc, files, nf);
+    rp_mem_free(alloc, man);
+    return bad;
+}
+
+// A patch's code (summary property 9) and the product codes it targets (7), or a reason it is not one.
+static const char *msp_codes(proven_allocator_t alloc, const uint8_t *data, size_t len, const rp_limits_t *limits,
+                             char **code, char **version) {
+    static const uint16_t sname[] = { 5, 'S', 'u', 'm', 'm', 'a', 'r', 'y', 'I', 'n', 'f', 'o', 'r', 'm', 'a', 't', 'i', 'o', 'n' };
+    rp_cfb_t cfb;
+    const char *why = NULL, *bad = NULL;
+    *code = *version = NULL;
+    if (rp_cfb_open(&cfb, alloc, data, len, limits, &why) != PROVEN_OK) return TR_N("is not a compound file");
+    uint32_t id;
+    uint8_t *sum = NULL;
+    size_t sn = 0;
+    rp_suminfo_t si = { .count = 0 };
+    if (rp_cfb_find(&cfb, 0, sname, sizeof sname / sizeof sname[0], &id) != PROVEN_OK || cfb.entries[id].size > limits->max_metadata ||
+        (sum = rp_mem_alloc(alloc, (sn = (size_t)cfb.entries[id].size) + 1, 1)) == NULL || rp_cfb_read(&cfb, id, sum, sn) != PROVEN_OK ||
+        rp_suminfo_parse(sum, sn, &si) != PROVEN_OK) {
+        bad = TR_N("has no summary information");
+    }
+    const rp_suminfo_prop_t *patch = NULL, *targets = NULL, *storages = NULL;
+    for (size_t i = 0; bad == NULL && i < si.count; ++i) {
+        if (si.props[i].type != RP_VT_LPSTR) continue;
+        if (si.props[i].pid == 9) patch = &si.props[i];
+        else if (si.props[i].pid == 7) targets = &si.props[i];
+        else if (si.props[i].pid == 8) storages = &si.props[i];
+    }
+    if (bad == NULL && (patch == NULL || patch->str_len != 38 || targets == NULL || targets->str_len == 0 || storages == NULL || storages->str_len == 0)) {
+        bad = TR_N("is not a patch: it has no patch code, target products or transforms");
+    }
+    if (bad == NULL) {
+        *code = rp_mem_alloc(alloc, patch->str_len + 1, 1);
+        *version = rp_mem_alloc(alloc, targets->str_len + 1, 1);
+        if (*code) memcpy(*code, patch->str, patch->str_len), (*code)[patch->str_len] = '\0';
+        if (*version) memcpy(*version, targets->str, targets->str_len), (*version)[targets->str_len] = '\0';
+    }
+    rp_mem_free(alloc, sum);
+    rp_cfb_close(&cfb);
+    return bad;
+}
+
 // The setup program's texts a language pack may give (msgctxt "installer"), in the order
 // src/setup/rubrapack_setup.c reads them.
 static const char *const setup_texts[] = {
@@ -229,7 +305,9 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
             break;
         }
         char *code = NULL, *version = NULL;
-        const char *bad = msi_codes(alloc, data, n, limits, &code, &version);
+        const char *bad = p->kind == RP_CHAIN_MSIX ? msix_codes(alloc, data, n, limits, &code, &version)
+                          : p->kind == RP_CHAIN_MSP ? msp_codes(alloc, data, n, limits, &code, &version)
+                                                    : msi_codes(alloc, data, n, limits, &code, &version);
         if (bad) {
             rp_srcdiag_add(diags, p->pos, "RP1308", false, "package '%s' %s", p->shown, bad);
             err = PROVEN_ERR_INVALID_FORMAT;
@@ -242,7 +320,10 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
             put_str(&m, p->properties);
             put_str(&m, code);
             put_str(&m, version);
-            rp_buf_u32le(&m, p->vital ? FLAG_VITAL : 0);
+            uint32_t kind = p->kind == RP_CHAIN_MSP ? FLAG_MSP
+                            : p->kind == RP_CHAIN_MSIX ? FLAG_MSIX | (rp_ascii_ends_with_ci(p->shown, ".msixbundle") ? FLAG_BUNDLE : 0)
+                                                       : 0;
+            rp_buf_u32le(&m, (p->vital ? FLAG_VITAL : 0) | kind);
             rp_buf_u64le(&m, offset);
             rp_buf_u64le(&m, n);
             rp_buf_put(&m, sha, 32);
@@ -347,7 +428,10 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
         TAKE(e[i].product_code);
         TAKE(e[i].version);
         if (mlen - at < 52) goto bad;
-        e[i].vital = (rd32(m + at) & FLAG_VITAL) != 0;
+        uint32_t fl = rd32(m + at);
+        e[i].vital = (fl & FLAG_VITAL) != 0;
+        e[i].kind = fl & FLAG_MSP ? RP_CHAIN_MSP : fl & FLAG_MSIX ? RP_CHAIN_MSIX : RP_CHAIN_MSI;
+        e[i].ext = fl & FLAG_MSP ? ".msp" : fl & FLAG_BUNDLE ? ".msixbundle" : fl & FLAG_MSIX ? ".msix" : ".msi";
         uint64_t off = rd64(m + at + 4), size = rd64(m + at + 12);
         if (off > mat - start || size > mat - start - off) goto bad;
         e[i].data = exe + start + off;

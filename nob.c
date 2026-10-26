@@ -55,6 +55,7 @@ static const char *const core_sources[] = {
     "src/cli/winget.c",
     "src/cli/container.c",
     "src/cli/try.c",
+    "src/cli/installed.c",
     "src/codec/deflate.c",
     "src/codec/lzx.c",
     "src/codec/md5.c",
@@ -375,7 +376,7 @@ static int parts(void) {
         n = snprintf(cmd, sizeof cmd,
                      "%s/bin/%s-w64-mingw32-clang -std=c23 -O2 -Wall -Wextra -Werror -municode -mwindows -s "
                      "-ffile-prefix-map=$PWD=. -Wl,--no-insert-timestamp -Wl,--build-id=none src/setup/rubrapack_setup.c "
-                     "-lmsi -lbcrypt -lshell32 -luser32 -ladvapi32 -o %s",
+                     "-lmsi -lbcrypt -lshell32 -luser32 -ladvapi32 -lruntimeobject -lole32 -o %s",
                      root, part_archs[i][1], out);
         if (n < 0 || (size_t)n >= sizeof cmd || run(cmd) != 0 || (data = read_all(out, &len)) == NULL) {
             rc = 1;

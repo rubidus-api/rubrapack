@@ -319,7 +319,9 @@ the first `vital` package that fails; `setup.exe /uninstall` removes them again,
 Started again when everything is installed, it asks whether to repair or remove (`/repair` and
 `/uninstall` say so in advance).
 `elevate = false` in `[chain]` keeps it from asking for administrator rights (for per-user
-packages). Everything else is in [the reference](../rpk.md#several-packages-in-one-setup-chain).
+packages). A `source` may also be a patch (`hello-1.0.1.msp`, after the package it updates) or an
+MSIX package (`hello.msix`), which the setup program adds through Windows' package manager.
+Everything else is in [the reference](../rpk.md#several-packages-in-one-setup-chain).
 
 ## Where to go from here
 

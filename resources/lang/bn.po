@@ -810,6 +810,9 @@ msgstr "সংস্করণ ও আপগ্রেড"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer সর্বোচ্চ 255.255.65535(.65535) অনুমোদন করে"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "'{1}'-এর জন্য কী ইনস্টল করা আছে Windows তা বলেনি"
+
 msgid "Windows name"
 msgstr "Windows নাম"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode বা ProductVersion নেই"
 msgid "has no Property table"
 msgstr "Property টেবিল নেই"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "এর পরিচয় নেই (Name, Publisher ও Version)"
+
+msgid "has no summary information"
+msgstr "এতে সারাংশ তথ্য নেই"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "এমন একটি টেবিলের রেকর্ড আছে যা বেস বা ট্রান্সফর্ম কেউ সংজ্ঞায়িত করে না"
 
@@ -2138,6 +2147,9 @@ msgstr "image অবশ্যই একটি .bmp ফাইল হতে হব
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ইনলাইন টেবিল সমর্থিত নয়; একটি [kind.ID] টেবিল ব্যবহার করুন"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed Windows-কে জিজ্ঞেস করে কী ইনস্টল করা আছে; এটি কেবল Windows-এ চলে"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "লাইন {1}-এর একই পথে ইনস্টল হয় (Windows নামে বড়-ছোট হাতের অক্ষর উপেক্ষা করে{2})"
@@ -2180,6 +2192,12 @@ msgstr "Windows Installer ডেটাবেস নয়"
 
 msgid "is not a compound file"
 msgstr "কম্পাউন্ড ফাইল নয়"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "প্যাচ নয়: এতে প্যাচ কোড, লক্ষ্য পণ্য বা রূপান্তর নেই"
+
+msgid "is not a valid MSIX package"
+msgstr "বৈধ MSIX প্যাকেজ নয়"
 
 msgid "is not valid UTF-8"
 msgstr "বৈধ UTF-8 নয়"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' [assoc.{2}]-এ অন্য বিবরণ, target, icon
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id-কে অক্ষর, সংখ্যা, '.', '_' বা '-' হতে হবে, সংখ্যা দিয়ে শুরু নয়, সর্বোচ্চ 39 ('{1}' পাওয়া গেছে)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer প্যাকেজের জন্য; MSIX এটি নেয় না"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "বৈশিষ্ট্য '{1}' ইতিমধ্যে কন্ট্রোল '{2}'-এর"
 
@@ -2709,6 +2730,9 @@ msgstr "run: ফাইল '{1}' এই প্যাকেজের [file.*] ন�
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "উৎসটি LF বা CRLF লাইন শেষসহ UTF-8 (বা BOM-সহ UTF-16) হিসেবে সংরক্ষণ করুন"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "এই Windows-এ সেই আপগ্রেড কোডের পণ্য বা সেই ফ্যামিলির অ্যাপ প্যাকেজ ইনস্টল করা আছে কি না বলে"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "স্কিম '{1}'-এর ইতিমধ্যে একটি প্রোগ্রাম আছে ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "উৎস ফাইল '{1}' পাওয়া যায়নি"
 msgid "source must be \"file:<ID>\""
 msgstr "source-কে \"file:<ID>\" হতে হবে"
 
-msgid "source must be an .msi package"
-msgstr "source-কে একটি .msi প্যাকেজ হতে হবে"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source-কে একটি .msi, .msix, .msixbundle বা .msp প্যাকেজ হতে হবে"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "উৎস পথ '{1}'-কে উৎস ফাইলের সাপেক্ষে হতে হবে"

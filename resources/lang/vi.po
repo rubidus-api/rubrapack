@@ -810,6 +810,9 @@ msgstr "Phiên bản và nâng cấp"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer cho phép tối đa 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows không cho biết những gì đã được cài đặt cho '{1}'"
+
 msgid "Windows name"
 msgstr "tên Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "không có ProductCode hoặc ProductVersion"
 msgid "has no Property table"
 msgstr "không có bảng Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "không có định danh (Name, Publisher và Version)"
+
+msgid "has no summary information"
+msgstr "không có thông tin tóm tắt"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "có bản ghi cho bảng mà cả bản gốc lẫn transform đều không định nghĩa"
 
@@ -2138,6 +2147,9 @@ msgstr "image phải là tệp .bmp (Windows Installer chỉ hiển thị BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "không hỗ trợ bảng inline; hãy dùng bảng [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed hỏi Windows những gì đã được cài đặt; chỉ chạy trên Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "cài vào cùng đường dẫn với dòng {1} (Windows không phân biệt hoa thường trong tên{2})"
@@ -2180,6 +2192,12 @@ msgstr "không phải cơ sở dữ liệu Windows Installer"
 
 msgid "is not a compound file"
 msgstr "không phải tệp phức hợp"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "không phải bản vá: không có mã bản vá, sản phẩm đích hoặc phép biến đổi"
+
+msgid "is not a valid MSIX package"
+msgstr "không phải gói MSIX hợp lệ"
 
 msgid "is not valid UTF-8"
 msgstr "không phải UTF-8 hợp lệ"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' cũng có trong [assoc.{2}] với mô tả, target, icon h
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id phải là chữ cái, chữ số, '.', '_' hoặc '-', không bắt đầu bằng chữ số, tối đa 39 (nhận được '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties dành cho gói Windows Installer; MSIX không nhận"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "thuộc tính '{1}' đã thuộc về điều khiển '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: tệp '{1}' không phải [file.*] của gói này"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "lưu nguồn dưới dạng UTF-8 (hoặc UTF-16 có BOM), với ký tự xuống dòng LF hoặc CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "cho biết Windows này đã cài đặt sản phẩm có mã nâng cấp đó hoặc gói ứng dụng thuộc họ đó hay chưa"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "lược đồ '{1}' đã có chương trình ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "không tìm thấy tệp nguồn '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "source phải là \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source phải là gói .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source phải là gói .msi, .msix, .msixbundle hoặc .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "đường dẫn nguồn '{1}' phải tương đối với tệp nguồn"

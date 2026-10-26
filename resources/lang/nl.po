@@ -810,6 +810,9 @@ msgstr "Versies en upgrades"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer staat hoogstens 255.255.65535(.65535) toe"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows heeft niet gezegd wat er voor '{1}' is geïnstalleerd"
+
 msgid "Windows name"
 msgstr "Windows-naam"
 
@@ -2112,6 +2115,12 @@ msgstr "heeft geen ProductCode of ProductVersion"
 msgid "has no Property table"
 msgstr "heeft geen Property-tabel"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "heeft geen identiteit (Name, Publisher en Version)"
+
+msgid "has no summary information"
+msgstr "heeft geen samenvattingsgegevens"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "heeft records voor een tabel die noch de basis noch de transformatie definieert"
 
@@ -2138,6 +2147,9 @@ msgstr "image moet een .bmp-bestand zijn (Windows Installer toont alleen BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline-tabellen worden niet ondersteund; gebruik een [kind.ID]-tabel"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed vraagt Windows wat er is geïnstalleerd; het werkt alleen op Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "installeert naar hetzelfde pad als regel {1} (Windows negeert hoofdletters in namen{2})"
@@ -2180,6 +2192,12 @@ msgstr "is geen Windows Installer-database"
 
 msgid "is not a compound file"
 msgstr "is geen samengesteld bestand"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "is geen patch: het heeft geen patchcode, doelproducten of transformaties"
+
+msgid "is not a valid MSIX package"
+msgstr "is geen geldig MSIX-pakket"
 
 msgid "is not valid UTF-8"
 msgstr "is geen geldige UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' staat ook in [assoc.{2}] met een andere description, targe
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id moet bestaan uit letters, cijfers, '.', '_' of '-', niet beginnend met een cijfer, hoogstens 39 (gekregen: '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties zijn voor Windows Installer-pakketten; een MSIX neemt er geen"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "eigenschap '{1}' hoort al bij besturingselement '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: bestand '{1}' is geen [file.*] van dit pakket"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "sla de bron op als UTF-8 (of UTF-16 met een BOM), met LF- of CRLF-regeleinden"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "geeft aan of op deze Windows een product met die upgradecode of een app-pakket van die familie is geïnstalleerd"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "schema '{1}' heeft al een programma ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "bronbestand '{1}' niet gevonden"
 msgid "source must be \"file:<ID>\""
 msgstr "source moet \"file:<ID>\" zijn"
 
-msgid "source must be an .msi package"
-msgstr "source moet een .msi-pakket zijn"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source moet een .msi-, .msix-, .msixbundle- of .msp-pakket zijn"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "bronpad '{1}' moet relatief zijn ten opzichte van het bronbestand"

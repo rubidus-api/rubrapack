@@ -810,6 +810,9 @@ msgstr "Bertsioak eta eguneratzeak"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer-ek gehienez 255.255.65535(.65535) onartzen du"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows-ek ez du esan zer dagoen instalatuta '{1}'(e)rako"
+
 msgid "Windows name"
 msgstr "Windows izena"
 
@@ -2112,6 +2115,12 @@ msgstr "ez du ProductCode ez ProductVersion"
 msgid "has no Property table"
 msgstr "ez du Property taularik"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "ez du identitaterik (Name, Publisher eta Version)"
+
+msgid "has no summary information"
+msgstr "ez du laburpen-informaziorik"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "ez oinarriak ez eraldaketak definitzen ez duten taula baterako erregistroak ditu"
 
@@ -2138,6 +2147,9 @@ msgstr "image .bmp fitxategi bat izan behar da (Windows Installer-ek BMP soilik 
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "lerro barneko taulak ez dira onartzen; erabili [kind.ID] taula bat"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed-ek Windows-i galdetzen dio zer dagoen instalatuta; Windows-en soilik dabil"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}. lerroaren bide berean instalatzen da (Windows-ek ez ditu maiuskulak bereizten izenetan{2})"
@@ -2180,6 +2192,12 @@ msgstr "ez da Windows Installer datu-base bat"
 
 msgid "is not a compound file"
 msgstr "ez da fitxategi konposatu bat"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "ez da adabaki bat: ez du adabaki-koderik, helburuko produkturik edo eraldaketarik"
+
+msgid "is not a valid MSIX package"
+msgstr "ez da baliozko MSIX pakete bat"
 
 msgid "is not valid UTF-8"
 msgstr "ez da UTF-8 baliozkoa"
@@ -2580,6 +2598,9 @@ msgstr "'{1}' prog-id [assoc.{2}]-n ere badago beste deskribapen, target, icon e
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id letrak, digituak, '.', '_' edo '-' izan behar da, ez digitu batez hasita, gehienez 39 ('{1}' jaso da)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer paketeentzat da; MSIX batek ez du onartzen"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "'{1}' propietatea '{2}' kontrolarena da dagoeneko"
 
@@ -2709,6 +2730,9 @@ msgstr "run: '{1}' fitxategia ez da pakete honetako [file.*] bat"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "gorde iturburua UTF-8 gisa (edo BOM duen UTF-16 gisa), LF edo CRLF lerro-amaierekin"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "Windows honek eguneratze-kode horretako produktu bat edo familia horretako aplikazio-pakete bat instalatuta duen esaten du"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "'{1}' eskemak badu programa bat ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "ez da '{1}' iturburu-fitxategia aurkitu"
 msgid "source must be \"file:<ID>\""
 msgstr "source \"file:<ID>\" izan behar da"
 
-msgid "source must be an .msi package"
-msgstr "source .msi pakete bat izan behar da"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source .msi, .msix, .msixbundle edo .msp pakete bat izan behar da"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "'{1}' iturburu-bidea iturburu-fitxategiarekiko erlatiboa izan behar da"

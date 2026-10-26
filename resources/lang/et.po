@@ -810,6 +810,9 @@ msgstr "Versioonid ja täiendused"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer lubab kuni 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows ei öelnud, mis on '{1}' jaoks installitud"
+
 msgid "Windows name"
 msgstr "Windowsi nimi"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode või ProductVersion puudub"
 msgid "has no Property table"
 msgstr "tabel Property puudub"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "pole identiteeti (Name, Publisher ja Version)"
+
+msgid "has no summary information"
+msgstr "pole kokkuvõtteteavet"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "sisaldab kirjeid tabelile, mida ei määratle ei alus ega teisendus"
 
@@ -2138,6 +2147,9 @@ msgstr "image peab olema .bmp-fail (Windows Installer kuvab ainult BMP-d)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline-tabeleid ei toetata; kasutage tabelit [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed küsib Windowsilt, mis on installitud; töötab ainult Windowsis"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "installitakse samale teele kui rida {1} (Windows ei erista nimedes suur- ja väiketähti{2})"
@@ -2180,6 +2192,12 @@ msgstr "ei ole Windows Installeri andmebaas"
 
 msgid "is not a compound file"
 msgstr "ei ole liitfail"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "ei ole paik: sel pole paiga koodi, sihttooteid ega teisendusi"
+
+msgid "is not a valid MSIX package"
+msgstr "ei ole kehtiv MSIX-pakett"
 
 msgid "is not valid UTF-8"
 msgstr "ei ole sobiv UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' on ka [assoc.{2}]-s teise kirjelduse, target'i, icon'i võ
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id peab koosnema tähtedest, numbritest, '.', '_' või '-', mitte algama numbriga, kuni 39 (saadi '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties on Windows Installeri pakettidele; MSIX neid ei võta"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "atribuut '{1}' kuulub juba juhtelemendile '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: fail '{1}' ei ole selle paketi [file.*]"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "salvestage lähe UTF-8-na (või BOM-iga UTF-16-na) LF- või CRLF-reavahetustega"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "ütleb, kas selles Windowsis on installitud selle uuenduskoodiga toode või selle perekonna rakenduspakett"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "skeemil '{1}' on juba programm ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "lähtefaili '{1}' ei leitud"
 msgid "source must be \"file:<ID>\""
 msgstr "source peab olema \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source peab olema .msi-pakett"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source peab olema .msi-, .msix-, .msixbundle- või .msp-pakett"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "lähtetee '{1}' peab olema lähtefaili suhtes suhteline"

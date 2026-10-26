@@ -810,6 +810,9 @@ msgstr "Sürümler ve yükseltmeler"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer en fazla 255.255.65535(.65535) izin verir"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows, '{1}' için nelerin yüklü olduğunu söylemedi"
+
 msgid "Windows name"
 msgstr "Windows adı"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode veya ProductVersion'ı yok"
 msgid "has no Property table"
 msgstr "Property tablosu yok"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "kimliği yok (Name, Publisher ve Version)"
+
+msgid "has no summary information"
+msgstr "özet bilgisi yok"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "ne tabanın ne de dönüşümün tanımladığı bir tablo için kayıtlara sahip"
 
@@ -2138,6 +2147,9 @@ msgstr "image bir .bmp dosyası olmalı (Windows Installer yalnızca BMP göster
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "satır içi tablolar desteklenmez; bir [kind.ID] tablosu kullanın"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed, Windows'a nelerin yüklü olduğunu sorar; yalnızca Windows'ta çalışır"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}. satırla aynı yola kurulur (Windows adlarda büyük/küçük harfi yok sayar{2})"
@@ -2180,6 +2192,12 @@ msgstr "bir Windows Installer veritabanı değil"
 
 msgid "is not a compound file"
 msgstr "bir bileşik dosya değil"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "bir yama değil: yama kodu, hedef ürünleri veya dönüşümleri yok"
+
+msgid "is not a valid MSIX package"
+msgstr "geçerli bir MSIX paketi değil"
 
 msgid "is not valid UTF-8"
 msgstr "geçerli UTF-8 değil"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}', farklı bir description, target, icon veya args ile [asso
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id harfler, rakamlar, '.', '_' veya '-' olmalı, rakamla başlamamalı, en fazla 39 (alınan: '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer paketleri içindir; MSIX almaz"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "'{1}' özelliği zaten '{2}' denetimine ait"
 
@@ -2709,6 +2730,9 @@ msgstr "run: '{1}' dosyası bu paketin bir [file.*] tablosu değil"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "kaynağı LF veya CRLF satır sonlarıyla UTF-8 (ya da BOM'lu UTF-16) olarak kaydedin"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "bu Windows'ta o yükseltme koduna sahip bir ürünün veya o aileden bir uygulama paketinin yüklü olup olmadığını söyler"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "'{1}' şemasının zaten bir programı var ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "kaynak dosya '{1}' bulunamadı"
 msgid "source must be \"file:<ID>\""
 msgstr "source \"file:<ID>\" olmalıdır"
 
-msgid "source must be an .msi package"
-msgstr "source bir .msi paketi olmalıdır"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source bir .msi, .msix, .msixbundle veya .msp paketi olmalıdır"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "kaynak yolu '{1}' kaynak dosyaya göre göreli olmalıdır"

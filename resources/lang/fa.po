@@ -812,6 +812,9 @@ msgstr "نسخه‌ها و ارتقاها"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer حداکثر 255.255.65535(.65535) را مجاز می‌داند"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows نگفت برای '{1}' چه چیزی نصب شده است"
+
 msgid "Windows name"
 msgstr "نام Windows"
 
@@ -2114,6 +2117,12 @@ msgstr "ProductCode یا ProductVersion ندارد"
 msgid "has no Property table"
 msgstr "جدول Property ندارد"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "هویت ندارد (Name، Publisher و Version)"
+
+msgid "has no summary information"
+msgstr "اطلاعات خلاصه ندارد"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "برای جدولی که نه پایه و نه تبدیل تعریف می‌کند رکوردهایی دارد"
 
@@ -2140,6 +2149,9 @@ msgstr "image باید یک پروندهٔ ‎.bmp باشد (Windows Installer �
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "جدول‌های درون‌خطی پشتیبانی نمی‌شوند؛ از یک جدول [kind.ID] استفاده کنید"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed از Windows می‌پرسد چه چیزی نصب شده است؛ فقط روی Windows کار می‌کند"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "به همان مسیر خط {1} نصب می‌شود (Windows در نام‌ها کوچکی و بزرگی حروف را نادیده می‌گیرد{2})"
@@ -2182,6 +2194,12 @@ msgstr "پایگاه داده Windows Installer نیست"
 
 msgid "is not a compound file"
 msgstr "فایل مرکب نیست"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "وصله نیست: کد وصله، محصولات هدف یا تبدیل‌ها ندارد"
+
+msgid "is not a valid MSIX package"
+msgstr "بسته MSIX معتبری نیست"
 
 msgid "is not valid UTF-8"
 msgstr "UTF-8 معتبر نیست"
@@ -2582,6 +2600,9 @@ msgstr "prog-id '{1}' در [assoc.{2}] هم با توضیح، target، icon یا
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id باید حروف، ارقام، '.'، '_' یا '-' باشد، بدون آغاز با رقم، حداکثر 39 ('{1}' دریافت شد)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties برای بسته‌های Windows Installer است؛ MSIX آن را نمی‌پذیرد"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "ویژگی '{1}' از قبل متعلق به کنترل '{2}' است"
 
@@ -2711,6 +2732,9 @@ msgstr "run: فایل '{1}' یک [file.*] از این بسته نیست"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "منبع را به صورت UTF-8 (یا UTF-16 با BOM) با پایان خط LF یا CRLF ذخیره کنید"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "می‌گوید آیا روی این Windows محصولی با آن کد ارتقا یا بسته برنامه‌ای از آن خانواده نصب شده است"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "طرح '{1}' از قبل برنامه‌ای دارد ([protocol.{2}])"
 
@@ -2771,8 +2795,8 @@ msgstr "فایل منبع '{1}' یافت نشد"
 msgid "source must be \"file:<ID>\""
 msgstr "source باید \"file:<ID>\" باشد"
 
-msgid "source must be an .msi package"
-msgstr "source باید یک بسته .msi باشد"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source باید یک بسته .msi، .msix، .msixbundle یا .msp باشد"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "مسیر منبع '{1}' باید نسبت به فایل منبع باشد"

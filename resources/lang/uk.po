@@ -810,6 +810,9 @@ msgstr "Версії та оновлення"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer дозволяє щонайбільше 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows не повідомила, що встановлено для '{1}'"
+
 msgid "Windows name"
 msgstr "ім'я Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "не має ProductCode або ProductVersion"
 msgid "has no Property table"
 msgstr "не має таблиці Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "не має ідентичності (Name, Publisher і Version)"
+
+msgid "has no summary information"
+msgstr "не має зведених відомостей"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "має записи для таблиці, яку не визначає ні основа, ні перетворення"
 
@@ -2138,6 +2147,9 @@ msgstr "image має бути файлом .bmp (Windows Installer показу�
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "вбудовані таблиці не підтримуються; використайте таблицю [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed запитує Windows, що встановлено; працює лише у Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "встановлюється в той самий шлях, що й рядок {1} (Windows не розрізняє регістр в іменах{2})"
@@ -2180,6 +2192,12 @@ msgstr "не є базою даних Windows Installer"
 
 msgid "is not a compound file"
 msgstr "не є складеним файлом"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "не є виправленням: у нього немає коду виправлення, цільових продуктів або перетворень"
+
+msgid "is not a valid MSIX package"
+msgstr "не є дійсним пакетом MSIX"
 
 msgid "is not valid UTF-8"
 msgstr "не є правильним UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' також є в [assoc.{2}] з іншим description, ta
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id має складатися з літер, цифр, '.', '_' або '-', не починатися з цифри, щонайбільше 39 (отримано '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties призначені для пакетів Windows Installer; MSIX їх не приймає"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "властивість '{1}' уже належить елементу керування '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: файл '{1}' не є [file.*] цього пакета"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "збережіть джерело як UTF-8 (або UTF-16 з BOM) із закінченнями рядків LF або CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "повідомляє, чи встановлено в цій Windows продукт із цим кодом оновлення або пакет програми цього сімейства"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "схема '{1}' уже має програму ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "файл джерела '{1}' не знайдено"
 msgid "source must be \"file:<ID>\""
 msgstr "source має бути \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source має бути пакетом .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source має бути пакетом .msi, .msix, .msixbundle або .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "шлях джерела '{1}' має бути відносним до файлу джерела"

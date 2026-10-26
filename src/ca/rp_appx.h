@@ -1,5 +1,6 @@
 // src/ca/rp_appx.h - registering and removing the identity package of [menu.*] items (plan
-// 2026-10-09) through Windows' PackageManager, from C. Included by the helper DLL.
+// 2026-10-09) through Windows' PackageManager, from C. Included by the helper DLL, and by the chain
+// bootstrapper for the MSIX packages of a chain (RFC-0031 B14).
 //
 // Windows 11 shows in its context menu only what a package with identity declares. An MSI gets one
 // by registering a small package (a manifest and logos) with the program's folder as its external
@@ -165,7 +166,8 @@ static HRESULT appx_hstring_call(void *obj, int slot, const wchar_t *text) {
 
 typedef struct {
     const wchar_t *package;         // the .msix file (add)
-    const wchar_t *external;        // the program's folder (add)
+    const wchar_t *external;        // the program's folder (add), or NULL: the package holds its files
+                                    // (the chain's MSIX packages, RFC-0031 B14)
     const wchar_t *full_name;       // remove
     const wchar_t *family;          // provision, deprovision
     bool           machine, allow_unsigned, remove;
@@ -206,11 +208,11 @@ static DWORD WINAPI appx_thread(void *arg) {
         hr = appx_query(pm, &APPX_IID_PM9, &pm9);
         j->step = L"Uri";
         if (SUCCEEDED(hr)) hr = appx_uri(j->package, &uri);
-        if (SUCCEEDED(hr)) hr = appx_uri(j->external, &ext);
+        if (SUCCEEDED(hr) && j->external) hr = appx_uri(j->external, &ext);
         if (SUCCEEDED(hr) && j->machine) {
             j->step = L"StagePackageOptions";
             hr = appx_new(L"Windows.Management.Deployment.StagePackageOptions", &APPX_IID_STAGE_OPTIONS, &opt);
-            if (SUCCEEDED(hr)) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *))APPX_SLOT(opt, APPX_STAGE_PUT_EXTERNAL))(opt, ext);
+            if (SUCCEEDED(hr) && ext) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *))APPX_SLOT(opt, APPX_STAGE_PUT_EXTERNAL))(opt, ext);
             if (SUCCEEDED(hr) && j->allow_unsigned) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, boolean))APPX_SLOT(opt, APPX_STAGE_PUT_UNSIGNED))(opt, 1);
             j->step = L"StagePackageByUriAsync";
             if (SUCCEEDED(hr)) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *, void *, void **))APPX_SLOT(pm9, APPX_PM9_STAGE))(pm9, uri, opt, &op);
@@ -221,7 +223,7 @@ static DWORD WINAPI appx_thread(void *arg) {
         } else if (SUCCEEDED(hr)) {
             j->step = L"AddPackageOptions";
             hr = appx_new(L"Windows.Management.Deployment.AddPackageOptions", &APPX_IID_ADD_OPTIONS, &opt);
-            if (SUCCEEDED(hr)) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *))APPX_SLOT(opt, APPX_ADD_PUT_EXTERNAL))(opt, ext);
+            if (SUCCEEDED(hr) && ext) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *))APPX_SLOT(opt, APPX_ADD_PUT_EXTERNAL))(opt, ext);
             if (SUCCEEDED(hr) && j->allow_unsigned) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, boolean))APPX_SLOT(opt, APPX_ADD_PUT_UNSIGNED))(opt, 1);
             j->step = L"AddPackageByUriAsync";
             if (SUCCEEDED(hr)) hr = ((HRESULT(STDMETHODCALLTYPE *)(void *, void *, void *, void **))APPX_SLOT(pm9, APPX_PM9_ADD))(pm9, uri, opt, &op);

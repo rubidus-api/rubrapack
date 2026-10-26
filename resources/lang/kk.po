@@ -810,6 +810,9 @@ msgstr "Нұсқалар және жаңартулар"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer ең көбі 255.255.65535(.65535) рұқсат етеді"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows '{1}' үшін не орнатылғанын айтпады"
+
 msgid "Windows name"
 msgstr "Windows атауы"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode та, ProductVersion да жоқ"
 msgid "has no Property table"
 msgstr "Property кестесі жоқ"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "сәйкестендіруі жоқ (Name, Publisher және Version)"
+
+msgid "has no summary information"
+msgstr "жиынтық ақпараты жоқ"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "негіз де, түрлендіру де анықтамайтын кестеге арналған жазбалар бар"
 
@@ -2138,6 +2147,9 @@ msgstr "image .bmp файлы болуы керек (Windows Installer тек BM
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "кірістірілген кестелерге қолдау жоқ; [kind.ID] кестесін пайдаланыңыз"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed Windows жүйесінен не орнатылғанын сұрайды; тек Windows жүйесінде жұмыс істейді"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}-жолмен бір жолға орнатылады (Windows атауларда әріп регистрін ескермейді{2})"
@@ -2180,6 +2192,12 @@ msgstr "Windows Installer дерекқоры емес"
 
 msgid "is not a compound file"
 msgstr "құрама файл емес"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "түзету емес: түзету коды, мақсатты өнімдері немесе түрлендірулері жоқ"
+
+msgid "is not a valid MSIX package"
+msgstr "жарамды MSIX бумасы емес"
 
 msgid "is not valid UTF-8"
 msgstr "жарамды UTF-8 емес"
@@ -2580,6 +2598,9 @@ msgstr "'{1}' prog-id [assoc.{2}] ішінде басқа сипаттама, ta
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id әріптер, сандар, '.', '_' не '-' болуы керек, саннан басталмайды, ең көбі 39 ('{1}' алынды)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer бумаларына арналған; MSIX оларды қабылдамайды"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "'{1}' сипаты '{2}' басқару элементіне тиесілі"
 
@@ -2709,6 +2730,9 @@ msgstr "run: '{1}' файлы осы буманың [file.*] емес"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "бастапқы файлды LF не CRLF жол соңдарымен UTF-8 (не BOM бар UTF-16) ретінде сақтаңыз"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "осы Windows жүйесінде сол жаңарту коды бар өнім немесе сол отбасының қолданба бумасы орнатылғанын айтады"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "'{1}' схемасының бағдарламасы бар ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "'{1}' бастапқы файлы табылмады"
 msgid "source must be \"file:<ID>\""
 msgstr "source \"file:<ID>\" болуы керек"
 
-msgid "source must be an .msi package"
-msgstr "source .msi бумасы болуы керек"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source .msi, .msix, .msixbundle немесе .msp бумасы болуы керек"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "'{1}' бастапқы жолы бастапқы файлға қатысты болуы керек"

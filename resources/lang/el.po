@@ -810,6 +810,9 @@ msgstr "Εκδόσεις και αναβαθμίσεις"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Το Windows Installer επιτρέπει το πολύ 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "τα Windows δεν είπαν τι είναι εγκατεστημένο για '{1}'"
+
 msgid "Windows name"
 msgstr "όνομα των Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "δεν έχει ProductCode ή ProductVersion"
 msgid "has no Property table"
 msgstr "δεν έχει πίνακα Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "δεν έχει ταυτότητα (Name, Publisher και Version)"
+
+msgid "has no summary information"
+msgstr "δεν έχει πληροφορίες σύνοψης"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "έχει εγγραφές για πίνακα που δεν ορίζει ούτε η βάση ούτε ο μετασχηματισμός"
 
@@ -2138,6 +2147,9 @@ msgstr "το image πρέπει να είναι αρχείο .bmp (το Windows 
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ενσωματωμένοι (inline) πίνακες δεν υποστηρίζονται· χρησιμοποιήστε πίνακα [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "το installed ρωτά τα Windows τι είναι εγκατεστημένο· λειτουργεί μόνο στα Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "εγκαθίσταται στην ίδια διαδρομή με τη γραμμή {1} (τα Windows αγνοούν πεζά/κεφαλαία στα ονόματα{2})"
@@ -2180,6 +2192,12 @@ msgstr "δεν είναι βάση δεδομένων του Windows Installer"
 
 msgid "is not a compound file"
 msgstr "δεν είναι σύνθετο αρχείο"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "δεν είναι ενημέρωση κώδικα: δεν έχει κωδικό ενημέρωσης, προϊόντα-στόχους ή μετασχηματισμούς"
+
+msgid "is not a valid MSIX package"
+msgstr "δεν είναι έγκυρο πακέτο MSIX"
 
 msgid "is not valid UTF-8"
 msgstr "δεν είναι έγκυρο UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "το prog-id '{1}' είναι επίσης στο [assoc.{2}] με άλ�
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "το prog-id πρέπει να είναι γράμματα, ψηφία, '.', '_' ή '-', όχι ψηφίο στην αρχή, το πολύ 39 (δόθηκε '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "το properties είναι για πακέτα Windows Installer· ένα MSIX δεν δέχεται"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "η ιδιότητα '{1}' ανήκει ήδη στο στοιχείο ελέγχου '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: το αρχείο '{1}' δεν είναι [file.*] αυτού το�
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "αποθηκεύστε την πηγή ως UTF-8 (ή UTF-16 με BOM), με τέλη γραμμής LF ή CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "λέει αν σε αυτά τα Windows είναι εγκατεστημένο ένα προϊόν με αυτόν τον κωδικό αναβάθμισης ή ένα πακέτο εφαρμογής αυτής της οικογένειας"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "το σχήμα '{1}' έχει ήδη πρόγραμμα ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "το αρχείο πηγής '{1}' δεν βρέθηκε"
 msgid "source must be \"file:<ID>\""
 msgstr "το source πρέπει να είναι \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "το source πρέπει να είναι πακέτο .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "το source πρέπει να είναι πακέτο .msi, .msix, .msixbundle ή .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "η διαδρομή πηγής '{1}' πρέπει να είναι σχετική με το αρχείο πηγής"

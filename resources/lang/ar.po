@@ -812,6 +812,9 @@ msgstr "الإصدارات والترقيات"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "يسمح Windows Installer بحد أقصى 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "لم يذكر Windows ما المثبت لـ '{1}'"
+
 msgid "Windows name"
 msgstr "اسم Windows"
 
@@ -2114,6 +2117,12 @@ msgstr "لا يحتوي على ProductCode أو ProductVersion"
 msgid "has no Property table"
 msgstr "لا يحتوي على جدول Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "ليس لها هوية (Name وPublisher وVersion)"
+
+msgid "has no summary information"
+msgstr "ليس لها معلومات ملخص"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "يحتوي على سجلات لجدول لا يعرّفه الأساس ولا التحويل"
 
@@ -2140,6 +2149,9 @@ msgstr "يجب أن يكون image ملف ‎.bmp (يعرض Windows Installer ص
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "الجداول المضمّنة inline غير مدعومة؛ استخدم جدول [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "يسأل installed نظام Windows عما هو مثبت؛ يعمل على Windows فقط"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "يُثبَّت في المسار نفسه الذي في السطر {1} (يتجاهل Windows حالة الأحرف في الأسماء{2})"
@@ -2182,6 +2194,12 @@ msgstr "ليس قاعدة بيانات Windows Installer"
 
 msgid "is not a compound file"
 msgstr "ليس ملفاً مركّباً"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "ليست تصحيحاً: ليس لها رمز تصحيح أو منتجات مستهدفة أو تحويلات"
+
+msgid "is not a valid MSIX package"
+msgstr "ليست حزمة MSIX صالحة"
 
 msgid "is not valid UTF-8"
 msgstr "ليس UTF-8 صالحاً"
@@ -2582,6 +2600,9 @@ msgstr "prog-id ‏'{1}' موجود أيضاً في [assoc.{2}] بوصف أو ه
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "يجب أن يتكون prog-id من حروف وأرقام و'.' و'_' و'-'، لا يبدأ برقم، 39 حرفاً على الأكثر (الموجود '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties لحزم Windows Installer؛ لا تقبلها حزمة MSIX"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "الخاصية '{1}' تابعة بالفعل لعنصر التحكم '{2}'"
 
@@ -2711,6 +2732,9 @@ msgstr "run: الملف '{1}' ليس [file.*] في هذه الحزمة"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "احفظ المصدر بترميز UTF-8 (أو UTF-16 مع BOM)، بنهايات أسطر LF أو CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "يخبر ما إذا كان على Windows هذا منتج برمز الترقية ذاك أو حزمة تطبيق من تلك العائلة مثبتة"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "للمخطط '{1}' برنامج بالفعل ([protocol.{2}])"
 
@@ -2771,8 +2795,8 @@ msgstr "لم يُعثر على ملف المصدر '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "يجب أن يكون source على شكل \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "يجب أن يكون source حزمة .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "يجب أن يكون source حزمة .msi أو .msix أو .msixbundle أو .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "يجب أن يكون مسار المصدر '{1}' نسبياً لملف المصدر"

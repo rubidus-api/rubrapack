@@ -54,6 +54,7 @@ typedef struct {
     size_t             nowned, capowned;
     bool               nomem;
     const char        *path;    // the input, for messages
+    bool               by_key;  // rp_pkg_files: items named by File key, no folders
 } plan_t;
 
 static void own(plan_t *p, void *ptr) {
@@ -294,10 +295,12 @@ static int plan_chain(plan_t *p, const uint8_t *data, size_t len) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': package '%s' does not match its SHA-256", p->path, e[i].id);
             return RP_EXIT_IO;
         }
-        size_t il = strlen(e[i].id);
-        char *rel = dup_n(p, e[i].id, il + 4);
+        size_t il = strlen(e[i].id), el = strlen(e[i].ext);
+        char *rel = rp_mem_alloc(p->alloc, il + el + 1, 1);
         if (rel == NULL) return RP_EXIT_IO;
-        memcpy(rel + il, ".msi", 5);
+        own(p, rel);
+        memcpy(rel, e[i].id, il);
+        memcpy(rel + il, e[i].ext, el + 1);
         if (!path_ok(p, rel, "file") || !add_file(p, rel, e[i].data, (size_t)e[i].size)) return RP_EXIT_IO;
     }
     return p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
@@ -609,13 +612,53 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                 goto out;
             }
         }
-        if (!add_file(p, rel, data, size)) goto out;
+        if (!(p->by_key ? add_item(p, key, false, data, size) : add_file(p, rel, data, size))) goto out;
     }
     rc = p->nomem ? RP_EXIT_IO : RP_EXIT_OK;
 out:
     rp_msi_view_free(&msi, &view);
     rp_msi_close(&msi);
     return rc;
+}
+
+// The package's folder ("." when the path names none), for external cabinets and uncompressed files.
+static char *folder_of(plan_t *p, const char *path) {
+    const char *slash = strrchr(path, '/');
+#if defined(_WIN32)
+    const char *bs = strrchr(path, '\\');
+    if (bs && (!slash || bs > slash)) slash = bs;
+#endif
+    return slash ? dup_n(p, path, (size_t)(slash - path)) : dup_n(p, ".", 1);
+}
+
+// RFC-0031 L19: every file of a package by its File key, found as extract finds it (embedded or
+// external cabinets, or the source tree of an uncompressed package) and checked the same way.
+int rp_pkg_files(proven_allocator_t heap, const rp_cfb_t *cfb, const char *path, rp_pkg_files_t *out) {
+    *out = (rp_pkg_files_t){ 0 };
+    plan_t *p = rp_mem_alloc(heap, 1, sizeof *p);
+    if (p == NULL) return RP_EXIT_IO;
+    rp_limits_t limits = rp_limits_default();
+    *p = (plan_t){ .alloc = heap, .limits = limits, .read = limits, .path = path, .by_key = true };
+    char *dir = folder_of(p, path);
+    int rc = dir ? plan_msi(p, cfb, dir) : RP_EXIT_IO;
+    rp_cab_file_t *v = rc == RP_EXIT_OK ? rp_mem_alloc(heap, p->count + 1, sizeof *v) : NULL;
+    if (rc == RP_EXIT_OK && v == NULL) rc = RP_EXIT_IO;
+    for (size_t i = 0; v && i < p->count; ++i) v[i] = (rp_cab_file_t){ p->items[i].rel, p->items[i].data, p->items[i].size };
+    *out = (rp_pkg_files_t){ v, v ? p->count : 0, p };
+    if (rc != RP_EXIT_OK) rp_pkg_files_free(heap, out);
+    return rc;
+}
+
+void rp_pkg_files_free(proven_allocator_t heap, rp_pkg_files_t *f) {
+    plan_t *p = f->owner;
+    if (p) {
+        for (size_t i = 0; i < p->nowned; ++i) rp_mem_free(heap, p->owned[i]);
+        rp_mem_free(heap, p->owned);
+        rp_mem_free(heap, p->items);
+        rp_mem_free(heap, p);
+    }
+    rp_mem_free(heap, f->v);
+    *f = (rp_pkg_files_t){ 0 };
 }
 
 static bool parse_u64(const char *s, uint64_t *out) {
@@ -677,13 +720,7 @@ int rp_cmd_extract(int argc, char **argv) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s' is not a valid package: %s", input, why ? why : "unreadable");
             rc = RP_EXIT_IO;
         } else {
-            // The package's folder, for external cabinets and uncompressed files.
-            const char *slash = strrchr(input, '/');
-#if defined(_WIN32)
-            const char *bs = strrchr(input, '\\');
-            if (bs && (!slash || bs > slash)) slash = bs;
-#endif
-            char *dir = slash ? dup_n(&p, input, (size_t)(slash - input)) : dup_n(&p, ".", 1);
+            char *dir = folder_of(&p, input);
             rc = dir ? plan_msi(&p, &cfb, dir) : RP_EXIT_IO;
             if (rc == RP_EXIT_OK) rc = write_plan(&p, dest);
             rp_cfb_close(&cfb);

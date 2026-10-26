@@ -810,6 +810,9 @@ msgstr "เวอร์ชันและการอัปเกรด"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer อนุญาตได้สูงสุด 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows ไม่ได้บอกว่ามีอะไรติดตั้งสำหรับ '{1}'"
+
 msgid "Windows name"
 msgstr "ชื่อของ Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "ไม่มี ProductCode หรือ ProductVersion"
 msgid "has no Property table"
 msgstr "ไม่มีตาราง Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "ไม่มีข้อมูลประจำตัว (Name, Publisher และ Version)"
+
+msgid "has no summary information"
+msgstr "ไม่มีข้อมูลสรุป"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "มีระเบียนของตารางที่ทั้งฐานและทรานส์ฟอร์มไม่ได้กำหนด"
 
@@ -2138,6 +2147,9 @@ msgstr "image ต้องเป็นไฟล์ .bmp (Windows Installer แ�
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ไม่รองรับตารางแบบ inline ให้ใช้ตาราง [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed ถาม Windows ว่ามีอะไรติดตั้งอยู่ ทำงานได้บน Windows เท่านั้น"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "ติดตั้งลงพาธเดียวกับบรรทัด {1} (Windows ไม่สนตัวพิมพ์เล็กใหญ่ในชื่อ{2})"
@@ -2180,6 +2192,12 @@ msgstr "ไม่ใช่ฐานข้อมูล Windows Installer"
 
 msgid "is not a compound file"
 msgstr "ไม่ใช่ compound file"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "ไม่ใช่แพตช์: ไม่มีรหัสแพตช์ ผลิตภัณฑ์เป้าหมาย หรือการแปลง"
+
+msgid "is not a valid MSIX package"
+msgstr "ไม่ใช่แพ็กเกจ MSIX ที่ถูกต้อง"
 
 msgid "is not valid UTF-8"
 msgstr "ไม่ใช่ UTF-8 ที่ถูกต้อง"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' อยู่ใน [assoc.{2}] ด้วยแต่มี
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id ต้องเป็นตัวอักษร ตัวเลข '.', '_' หรือ '-' ห้ามขึ้นต้นด้วยตัวเลข ไม่เกิน 39 (ได้ '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties ใช้กับแพ็กเกจ Windows Installer; MSIX ไม่รับ"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "คุณสมบัติ '{1}' เป็นของตัวควบคุม '{2}' อยู่แล้ว"
 
@@ -2709,6 +2730,9 @@ msgstr "run: ไฟล์ '{1}' ไม่ใช่ [file.*] ของแพ็�
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "บันทึกต้นฉบับเป็น UTF-8 (หรือ UTF-16 ที่มี BOM) โดยใช้ตัวจบบรรทัด LF หรือ CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "บอกว่า Windows นี้ติดตั้งผลิตภัณฑ์ที่มีรหัสอัปเกรดนั้นหรือแพ็กเกจแอปของตระกูลนั้นไว้หรือไม่"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "สคีม '{1}' มีโปรแกรมอยู่แล้ว ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "ไม่พบไฟล์ต้นทาง '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "source ต้องเป็น \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source ต้องเป็นแพ็กเกจ .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source ต้องเป็นแพ็กเกจ .msi, .msix, .msixbundle หรือ .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "พาธต้นทาง '{1}' ต้องสัมพัทธ์กับไฟล์ต้นฉบับ"

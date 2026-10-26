@@ -264,7 +264,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[msix-psf]` | **files** (a folder of the Package Support Framework's files), **config** (its `config.json`), launcher (default `PsfLauncher64.exe`, x86 `PsfLauncher32.exe`) - MSIX only |
 | `[msix-extension.ID]` | **kind** (`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction** (`in`, `out`), **protocol** (`tcp`, `udp`), ports (`8080` or `8000-8100`), profile (`all`, `domain`, `private`, `public`), file (default: the application's program); `com-server`: **file** (an `.exe` or `.dll`), **class** (`{GUID}`), display-name, args (`.exe`), threading (`sta` default, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file (default: the application's program), args (default `-ToastActivated`); `context-menu`: **file** (a `.dll`), **class**, **types** (`[".txt", "*"]`), verb (default: the table ID; letters and digits only), threading; `app-extension`: **name** (the category it serves), extension-id (default: the table ID), public-folder, display-name, description; `app-extension-host`: **names** (the categories it loads); `app-service`: **name**, **entry-point** (the activatable class that serves it), multiple-instances; `share-target`: types (`[".txt", "*"]`), formats (`["Text", "Uri"]`; at least one of the two), description; `autoplay`: **action**, content-events, device-events (at least one), verb (default: the table ID), class (`{GUID}`; needed with device-events), args (on a content event only without class), display-name), app (an `[msix-app.*]` ID; default the first) - MSIX only |
 | `[chain]` | **name**, **manufacturer**, **version**, arch (the setup program's: `x64`, `x86`, `arm64`), elevate (default `true`), languages (codes with a language pack, for the setup program's own texts) - a chain source: see [Several packages in one setup](#several-packages-in-one-setup-chain) |
-| `[chain-package.ID]` | **source** (an `.msi`), properties (msiexec properties), vital (default `true`) |
+| `[chain-package.ID]` | **source** (an `.msi`, `.msp`, `.msix` or `.msixbundle`), properties (msiexec properties; not for an MSIX), vital (default `true`) |
 
 `$(Base)` in a dir path is another dir ID or a Windows folder: `$(ProgramFiles)` (64-bit for
 x64/arm64, 32-bit for x86), `$(ProgramFiles(x86))`, `$(CommonProgramFiles)`, `$(APPDATA)`,
@@ -1069,6 +1069,16 @@ back, the ones before it stay. `properties` are passed to that package as on msi
 - The setup program's own texts are English, and Korean for a Korean user; `[chain] languages =
   ["ja"]` adds a language that has a pack ([Language packs](#language-packs), its `Setup.*` texts).
   It shows the language of the user's display language.
+- A package may also be a patch (`.msp`) or an MSIX package or bundle (`.msix`, `.msixbundle`). A
+  patch is applied with Windows Installer to the products it targets that are installed (a chain
+  lists it after its product), and is skipped when it is applied already; `/uninstall` takes it
+  off them. An MSIX is added through Windows' package manager - for every user (staged and
+  provisioned; the signed-in user has it a moment later) when the chain is elevated, for the user
+  otherwise - and skipped when the user has its family; `/uninstall` removes it (and its
+  provisioning). An MSIX takes no `properties`; an unsigned test package (`--unsigned-test`) is
+  accepted as Windows accepts it. `/repair` repairs the MSI packages only: a patch is repaired
+  with its product, an MSIX has nothing to repair. `inspect setup.exe` names each package's kind;
+  for a patch it shows the patch code and target products, for an MSIX its family name and version.
 - A chain holds only `[chain]`, `[chain-package.ID]` and `[define]`; each package is built from its
   own source first. `--key` signs the setup program like any program; `inspect setup.exe` lists its
   packages and `extract setup.exe -d dir` takes them out.
@@ -2154,6 +2164,13 @@ rubrapack version | help [command]
   it with `Add-AppSharedPackageContainer <out.xml>` (and takes it away with
   `Remove-AppSharedPackageContainer -Name <name>`); the packages need not be installed first. A
   package belongs to one container at most.
+- `installed <{upgrade code}|package family name>` asks the Windows it runs on whether a product
+  of that upgrade code (per machine, or per user for the user who runs it) or an app package of
+  that family (for the user who runs it) is installed - what an `[other-copy]` table looks for
+  before a first installation. One line for each, fields separated by tabs:
+  `msi  <product code>  <version>  <name>` or `msix  <package full name>`. The exit code is 0 when
+  something is installed and 1 when nothing is, so a script can test it. On other systems it says
+  that it runs on Windows only (`RP0002`, exit code 2).
 - `diff <a.msi> <b.msi>` shows what differs between two packages, one line each, tables in name
   order and rows in key order: `<Table>  insert  <cells>`, `<Table>  delete  <keys>`,
   `<Table>  update  <keys>  <Column>=<old> -> <new>`, `<Table>  new table  <columns>` (its rows
@@ -2167,8 +2184,11 @@ rubrapack version | help [command]
   in the base's cabinets), a patch transform (the new and changed files' new places, a Media row for
   the patch's cabinet, PatchPackage, the PatchFiles action) and the cabinet of those files whole, as
   Microsoft's `MsiMsp.exe` lays them out. Both packages need the same product and upgrade code, the
-  same first two version numbers (a *small update* or *minor upgrade*), embedded cabinets, and every
-  file and component of the base. `--patch-code {GUID}` (default: derived from the two package
+  same first two version numbers (a *small update* or *minor upgrade*), and every file and
+  component of the base. The files are read where each package keeps them - embedded cabinets,
+  cabinets next to the package (`cab = "external"`) or the source folders of an uncompressed
+  package, such as an administrative image (`msiexec /a`) - so give each package with its
+  cabinets beside it; the carried files go into the patch's own cabinet either way. `--patch-code {GUID}` (default: derived from the two package
   codes), `--family <name>` (MsiPatchSequence; default the product name), `--no-removal` (the
   patch cannot be removed on its own). Refusals are `RP0013`. `inspect <file.msp> --base <base.msi>`
   lists the patch's tables and both transforms. `sign` signs a patch like a package (its

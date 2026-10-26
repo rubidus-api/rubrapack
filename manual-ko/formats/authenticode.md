@@ -172,6 +172,6 @@ f3 16 67 e8 81 7b 49 ea 64 56 03 df 73 0e f6 dd 6d 98 34 b9 dd a4 90 b0 95 37 4c
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-23 90 9c ed 3c 9c 95 f1 b1 37 e5 92 07 2f ba b2 74 11 a3 33 84 98 5e b3 fa 20 c4 d5 19 b3 4d 47
+77 d7 5b da 7b b9 58 ec 76 39 3d 8d b3 46 c8 8f 66 c8 49 60 af b9 3e cb 74 12 16 b0 80 b3 7b 37
 ```
 

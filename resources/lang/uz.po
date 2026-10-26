@@ -810,6 +810,9 @@ msgstr "Versiyalar va yangilashlar"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer ko‘pi bilan 255.255.65535(.65535) ga ruxsat beradi"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows '{1}' uchun nima o'rnatilganini aytmadi"
+
 msgid "Windows name"
 msgstr "Windows nomi"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode ham, ProductVersion ham yo‘q"
 msgid "has no Property table"
 msgstr "Property jadvali yo‘q"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "identifikatori yo‘q (Name, Publisher va Version)"
+
+msgid "has no summary information"
+msgstr "qisqacha ma’lumoti yo‘q"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "na asos, na transformatsiya aniqlamaydigan jadval uchun yozuvlar bor"
 
@@ -2138,6 +2147,9 @@ msgstr "image .bmp fayli bo'lishi kerak (Windows Installer faqat BMP ko'rsatadi)
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "ichki jadvallar qo‘llab-quvvatlanmaydi; [kind.ID] jadvalidan foydalaning"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed Windowsdan nima o'rnatilganini so'raydi; faqat Windowsda ishlaydi"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1}-qator bilan bir xil yo‘lga o‘rnatiladi (Windows nomlarda harf registrini hisobga olmaydi{2})"
@@ -2180,6 +2192,12 @@ msgstr "Windows Installer ma’lumotlar bazasi emas"
 
 msgid "is not a compound file"
 msgstr "tarkibiy fayl emas"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "yamoq emas: yamoq kodi, maqsadli mahsulotlar yoki o‘zgartirishlar yo‘q"
+
+msgid "is not a valid MSIX package"
+msgstr "yaroqli MSIX paket emas"
 
 msgid "is not valid UTF-8"
 msgstr "yaroqli UTF-8 emas"
@@ -2580,6 +2598,9 @@ msgstr "'{1}' prog-id [assoc.{2}] da boshqa tavsif, target, icon yoki args bilan
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id harflar, raqamlar, '.', '_' yoki '-' bo‘lishi kerak, raqam bilan boshlanmaydi, ko‘pi bilan 39 ('{1}' olindi)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer paketlari uchun; MSIX ularni qabul qilmaydi"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "'{1}' xususiyati allaqachon '{2}' boshqaruv elementiga tegishli"
 
@@ -2709,6 +2730,9 @@ msgstr "run: '{1}' fayli bu paketning [file.*] i emas"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "manbani LF yoki CRLF qator oxirlari bilan UTF-8 (yoki BOM li UTF-16) sifatida saqlang"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "ushbu Windowsda shu yangilash kodli mahsulot yoki shu oilaning ilova paketi o'rnatilganmi, shuni aytadi"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "'{1}' sxemasining dasturi allaqachon bor ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "'{1}' manba fayli topilmadi"
 msgid "source must be \"file:<ID>\""
 msgstr "source \"file:<ID>\" bo‘lishi kerak"
 
-msgid "source must be an .msi package"
-msgstr "source .msi paket bo‘lishi kerak"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source .msi, .msix, .msixbundle yoki .msp paket bo‘lishi kerak"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "'{1}' manba yo‘li manba fayliga nisbatan bo‘lishi kerak"

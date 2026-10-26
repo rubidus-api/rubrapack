@@ -810,6 +810,9 @@ msgstr "版本与升级"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer 最多允许 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows 没有说明 '{1}' 安装了什么"
+
 msgid "Windows name"
 msgstr "Windows 名称"
 
@@ -2112,6 +2115,12 @@ msgstr "没有 ProductCode 或 ProductVersion"
 msgid "has no Property table"
 msgstr "没有 Property 表"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "没有标识（Name、Publisher 和 Version）"
+
+msgid "has no summary information"
+msgstr "没有摘要信息"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "含有基础包和转换都未定义的表的记录"
 
@@ -2138,6 +2147,9 @@ msgstr "image 必须是 .bmp 文件（Windows Installer 只显示 BMP）"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "不支持内联表；请使用 [kind.ID] 表"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed 向 Windows 询问已安装的内容；它只在 Windows 上运行"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "安装到与第 {1} 行相同的路径(Windows 名称不区分大小写{2})"
@@ -2180,6 +2192,12 @@ msgstr "不是 Windows Installer 数据库"
 
 msgid "is not a compound file"
 msgstr "不是复合文件"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "不是补丁：它没有补丁代码、目标产品或转换"
+
+msgid "is not a valid MSIX package"
+msgstr "不是有效的 MSIX 包"
 
 msgid "is not valid UTF-8"
 msgstr "不是有效的 UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 description、target、icon �
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id 必须由字母、数字、'.'、'_' 或 '-' 组成，不以数字开头，最多 39 个(实际为 '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties 用于 Windows Installer 安装包；MSIX 不接受"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "属性 '{1}' 已属于控件 '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: 文件 '{1}' 不是此安装包的 [file.*]"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "请将源文件保存为 UTF-8(或带 BOM 的 UTF-16)，行尾为 LF 或 CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "说明此 Windows 是否安装了该升级代码的产品或该系列的应用包"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "协议 '{1}' 已有程序([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "找不到源文件 '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "source 必须是 \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source 必须是 .msi 安装包"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source 必须是 .msi、.msix、.msixbundle 或 .msp 包"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "源路径 '{1}' 必须相对于源文件"

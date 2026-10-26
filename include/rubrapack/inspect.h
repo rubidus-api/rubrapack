@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/msi.h"
 
@@ -36,6 +37,9 @@ void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
 [[nodiscard]] int rp_cmd_transform(int argc, char **argv);
 [[nodiscard]] int rp_cmd_diff(int argc, char **argv);
 [[nodiscard]] int rp_cmd_container(int argc, char **argv);
+[[nodiscard]] int rp_cmd_installed(int argc, char **argv);
+// "<Name>_<13 letters and digits>", as Windows writes a package family name (container, installed).
+[[nodiscard]] bool rp_family_name_ok(const char *s);
 [[nodiscard]] int rp_cmd_try(int argc, char **argv);
 [[nodiscard]] int rp_mst_inspect(const char *path, const char *what, const char *base);
 
@@ -49,6 +53,17 @@ void rp_pkg_close(proven_allocator_t heap, rp_pkg_t *p);
 
 // `rubrapack extract <file.msi|file.cab> -d <new dir>` (RFC-0006 2).
 [[nodiscard]] int rp_cmd_extract(int argc, char **argv);
+
+// Every file of an MSI by its File key (name = the key), from embedded or external cabinets or the
+// source tree of an uncompressed package, checked against size and MsiFileHash as extract checks
+// them (RFC-0031 L19, for `patch`). Prints why not and returns an exit code; free it either way.
+typedef struct {
+    rp_cab_file_t *v;
+    size_t         count;
+    void          *owner;
+} rp_pkg_files_t;
+[[nodiscard]] int rp_pkg_files(proven_allocator_t heap, const rp_cfb_t *cfb, const char *path, rp_pkg_files_t *out);
+void rp_pkg_files_free(proven_allocator_t heap, rp_pkg_files_t *f);
 
 // `rubrapack new [msi] <name>` and `rubrapack guid [--from <text>]` (RFC-0006 5).
 [[nodiscard]] int rp_cmd_new(int argc, char **argv);

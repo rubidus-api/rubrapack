@@ -255,7 +255,9 @@ publisher = "CN=12345678-ABCD-..."
 action = "warn"                   # 그래도 설치할지 묻는다. "refuse" 면 멈춘다
 ```
 
-참조의 "다른 사본"에 자세히 있다.
+참조의 "다른 사본"에 자세히 있다. Windows 컴퓨터에서 손으로나 스크립트로 살피려면
+`rubrapack installed Hello.Hello_<게시자 ID>`(또는 중괄호 안의 업그레이드 코드)를 쓴다. 설치된 것을 보이고, 아무것도
+없으면 1 로 끝난다.
 
 ## COM 클래스: `[com.ID]`
 

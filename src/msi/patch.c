@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum { PATCH_ADDED = 0x1000, PATCH_FILES_SEQ = 4001, MAX_OWN = 4096 };
+enum { PATCH_ADDED = 0x1000, FILE_NONCOMPRESSED = 0x2000, FILE_COMPRESSED = 0x4000, PATCH_FILES_SEQ = 4001, MAX_OWN = 4096 };
 
 typedef struct {
     proven_allocator_t alloc;
@@ -135,11 +135,21 @@ static const char *sum_str(pctx_t *p, const rp_msi_wdb_t *db, uint32_t pid) {
     return "";
 }
 
+// Summary property `pid` as a number (`dflt` when there is none).
+static int32_t sum_int(const rp_msi_wdb_t *db, uint32_t pid, int32_t dflt) {
+    rp_suminfo_t si = { .count = 0 };
+    if (db->summary == NULL || rp_suminfo_parse(db->summary, db->summary_len, &si) != PROVEN_OK) return dflt;
+    for (size_t i = 0; i < si.count; ++i) {
+        if (si.props[i].pid == pid && si.props[i].type == RP_VT_I4) return si.props[i].i;
+    }
+    return dflt;
+}
+
 // ---- the packages' files --------------------------------------------------------------------
 
 typedef struct {
-    rp_cab_file_t *v;
-    size_t         count;
+    const rp_cab_file_t *v;
+    size_t               count;
 } files_t;
 
 // Every file of the package's embedded cabinets.
@@ -306,21 +316,23 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     files_t bytes_a = { 0 }, bytes_b = { 0 };
     size_t *pick = NULL, npick = 0;
     if (err == PROVEN_OK && fb && fb->row_count) {
-        err = load_files(p, base, &bytes_a);
-        if (err == PROVEN_OK) err = load_files(p, target, &bytes_b);
+        if (o->base_files) bytes_a = (files_t){ o->base_files, o->base_count };
+        else err = load_files(p, base, &bytes_a);
+        if (o->target_files) bytes_b = (files_t){ o->target_files, o->target_count };
+        else if (err == PROVEN_OK) err = load_files(p, target, &bytes_b);
         pick = zalloc(p, fb->row_count, sizeof *pick);
         if (err == PROVEN_OK && pick == NULL) err = PROVEN_ERR_NOMEM;
         for (size_t r = 0; err == PROVEN_OK && r < fb->row_count; ++r) {
             const rp_msi_cell_t *rb = &fb->cells[r * fb->column_count];
             const rp_cab_file_t *nb = file_bytes(&bytes_b, &rb[0]);
             if (nb == NULL) {
-                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file that is not in an embedded cabinet of the target");
+                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file whose bytes the target does not hold");
                 break;
             }
             const rp_msi_cell_t *ra = fa ? row_by_key(fa, &rb[0]) : NULL;
             const rp_cab_file_t *na = ra ? file_bytes(&bytes_a, &rb[0]) : NULL;
             if (ra && na == NULL) {
-                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file that is not in an embedded cabinet of the base");
+                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file whose bytes the base does not hold");
                 break;
             }
             if (ra == NULL || na->size != nb->size || memcmp(na->data, nb->data, nb->size) != 0) {
@@ -374,6 +386,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     }
     const char *new_package = sum_str(p, B, 9), *new_subject = sum_str(p, B, 3), *new_comments = sum_str(p, B, 6);
     int32_t start = (max_seq / 1000 + 1) * 1000, disk = max_disk + 1;
+    int32_t target_words = sum_int(B, 15, 2);       // Word Count: bit 1, compressed by default
     static const char cab_name[] = "RP_PATCH_CAB";
 
     // #RP1's target: RP1's plus what makes it a patch.
@@ -390,7 +403,10 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
             if (cells == NULL) err = PROVEN_ERR_NOMEM;
             for (size_t k = 0; err == PROVEN_OK && k < npick; ++k) {
                 rp_msi_cell_t *row = &cells[pick[k] * x->column_count];
-                row[fattr] = int_cell((row[fattr].kind == RP_MSI_INT ? row[fattr].i : 0) | PATCH_ADDED);
+                int32_t a = (row[fattr].kind == RP_MSI_INT ? row[fattr].i : 0) | PATCH_ADDED;
+                // In the patch's cabinet now, whatever the target was (RFC-0031 L19).
+                if ((a & FILE_NONCOMPRESSED) || !(target_words & 2)) a = (a & ~FILE_NONCOMPRESSED) | FILE_COMPRESSED;
+                row[fattr] = int_cell(a);
                 row[fseq] = int_cell(start + (int32_t)k);
             }
             x->cells = cells;

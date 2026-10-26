@@ -262,7 +262,9 @@ publisher = "CN=12345678-ABCD-..."
 action = "warn"                   # ask whether to install anyway; "refuse" stops
 ```
 
-The Reference has it under "Another copy".
+The Reference has it under "Another copy". To look by hand, or from a script, on a Windows
+computer: `rubrapack installed Hello.Hello_<publisher ID>` (or an upgrade code in braces) prints
+what is installed and exits with 1 when nothing is.
 
 ## COM classes: `[com.ID]`
 

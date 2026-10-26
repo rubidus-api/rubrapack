@@ -810,6 +810,9 @@ msgstr "Verzije i nadogradnje"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer dozvoljava najviše 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows nije rekao šta je instalirano za '{1}'"
+
 msgid "Windows name"
 msgstr "Windows naziv"
 
@@ -2112,6 +2115,12 @@ msgstr "nema ProductCode ni ProductVersion"
 msgid "has no Property table"
 msgstr "nema tabelu Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "nema identitet (Name, Publisher i Version)"
+
+msgid "has no summary information"
+msgstr "nema rezimea"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "ima zapise za tabelu koju ne definiše ni osnova ni transformacija"
 
@@ -2138,6 +2147,9 @@ msgstr "image mora biti .bmp datoteka (Windows Installer prikazuje samo BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline tabele nisu podržane; koristite tabelu [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed pita Windows šta je instalirano; radi samo na Windows-u"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "instalira se na istu putanju kao red {1} (Windows ne razlikuje velika i mala slova u imenima{2})"
@@ -2180,6 +2192,12 @@ msgstr "nije baza podataka Windows Installera"
 
 msgid "is not a compound file"
 msgstr "nije složena datoteka"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nije zakrpa: nema kod zakrpe, ciljne proizvode ni transformacije"
+
+msgid "is not a valid MSIX package"
+msgstr "nije ispravan MSIX paket"
 
 msgid "is not valid UTF-8"
 msgstr "nije važeći UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' je i u [assoc.{2}] sa drugim opisom, target-om, icon-om il
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id moraju biti slova, cifre, '.', '_' ili '-', ne počinjati cifrom, najviše 39 (dobijeno '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties su za pakete Windows Installer-a; MSIX ih ne prima"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "svojstvo '{1}' već pripada kontroli '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: datoteka '{1}' nije [file.*] ovog paketa"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "sačuvajte izvor kao UTF-8 (ili UTF-16 sa BOM-om), sa završecima redova LF ili CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "govori da li je u ovom Windows-u instaliran proizvod sa tim kodom nadogradnje ili paket aplikacije te porodice"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "šema '{1}' već ima program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "izvorna datoteka '{1}' nije pronađena"
 msgid "source must be \"file:<ID>\""
 msgstr "source mora biti \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source mora biti paket .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source mora biti paket .msi, .msix, .msixbundle ili .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "izvorna putanja '{1}' mora biti relativna u odnosu na izvornu datoteku"

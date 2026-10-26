@@ -810,6 +810,9 @@ msgstr "Versiuni și actualizări"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer permite cel mult 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows nu a spus ce este instalat pentru '{1}'"
+
 msgid "Windows name"
 msgstr "nume Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "nu are ProductCode sau ProductVersion"
 msgid "has no Property table"
 msgstr "nu are tabel Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "nu are identitate (Name, Publisher și Version)"
+
+msgid "has no summary information"
+msgstr "nu are informații de rezumat"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "are înregistrări pentru un tabel pe care nu îl definește nici baza, nici transformarea"
 
@@ -2138,6 +2147,9 @@ msgstr "image trebuie să fie un fișier .bmp (Windows Installer afișează doar
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "tabelele inline nu sunt acceptate; folosiți un tabel [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed întreabă Windows ce este instalat; funcționează numai pe Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "se instalează în aceeași cale ca linia {1} (Windows ignoră majusculele în nume{2})"
@@ -2180,6 +2192,12 @@ msgstr "nu este o bază de date Windows Installer"
 
 msgid "is not a compound file"
 msgstr "nu este un fișier compus"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nu este un patch: nu are cod de patch, produse țintă sau transformări"
+
+msgid "is not a valid MSIX package"
+msgstr "nu este un pachet MSIX valid"
 
 msgid "is not valid UTF-8"
 msgstr "nu este UTF-8 valid"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' este și în [assoc.{2}] cu alt description, target, icon 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id trebuie să fie litere, cifre, '.', '_' sau '-', să nu înceapă cu o cifră, cel mult 39 (primit '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties sunt pentru pachetele Windows Installer; un MSIX nu le acceptă"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "proprietatea '{1}' aparține deja controlului '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: fișierul '{1}' nu este un [file.*] al acestui pachet"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "salvați sursa ca UTF-8 (sau UTF-16 cu BOM), cu sfârșituri de linie LF sau CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "spune dacă acest Windows are instalat un produs cu acel cod de upgrade sau un pachet de aplicație din acea familie"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "schema '{1}' are deja un program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "fișierul sursă '{1}' nu a fost găsit"
 msgid "source must be \"file:<ID>\""
 msgstr "source trebuie să fie \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source trebuie să fie un pachet .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source trebuie să fie un pachet .msi, .msix, .msixbundle sau .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "calea sursă '{1}' trebuie să fie relativă la fișierul sursă"

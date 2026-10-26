@@ -810,6 +810,9 @@ msgstr "Versions i actualitzacions"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "El Windows Installer admet com a màxim 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows no ha dit què hi ha instal·lat per a '{1}'"
+
 msgid "Windows name"
 msgstr "nom de Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "no té ProductCode ni ProductVersion"
 msgid "has no Property table"
 msgstr "no té taula Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "no té identitat (Name, Publisher i Version)"
+
+msgid "has no summary information"
+msgstr "no té informació de resum"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "té registres per a una taula que no defineixen ni la base ni la transformació"
 
@@ -2138,6 +2147,9 @@ msgstr "image ha de ser un fitxer .bmp (Windows Installer només mostra BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "les taules en línia no són compatibles; feu servir una taula [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed pregunta a Windows què hi ha instal·lat; només funciona a Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "s'instal·la al mateix camí que la línia {1} (el Windows no distingeix majúscules als noms{2})"
@@ -2180,6 +2192,12 @@ msgstr "no és una base de dades del Windows Installer"
 
 msgid "is not a compound file"
 msgstr "no és un fitxer compost"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "no és una revisió: no té codi de revisió, productes de destinació ni transformacions"
+
+msgid "is not a valid MSIX package"
+msgstr "no és un paquet MSIX vàlid"
 
 msgid "is not valid UTF-8"
 msgstr "no és UTF-8 vàlid"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' també és a [assoc.{2}] amb una altra descripció, target
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id han de ser lletres, xifres, '.', '_' o '-', sense començar per una xifra, com a màxim 39 (s'ha obtingut '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties és per als paquets del Windows Installer; un MSIX no n'admet"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "la propietat '{1}' ja pertany al control '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: el fitxer '{1}' no és un [file.*] d'aquest paquet"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "deseu la font com a UTF-8 (o UTF-16 amb BOM), amb finals de línia LF o CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "diu si aquest Windows té instal·lat un producte d'aquest codi d'actualització o un paquet d'aplicació d'aquesta família"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "l'esquema '{1}' ja té un programa ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "no es troba el fitxer font '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "source ha de ser \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source ha de ser un paquet .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source ha de ser un paquet .msi, .msix, .msixbundle o .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "el camí de font '{1}' ha de ser relatiu al fitxer font"

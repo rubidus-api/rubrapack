@@ -228,6 +228,14 @@ int rp_cmd_patch(int argc, char **argv) {
     int rc = rp_pkg_open(heap, in[0], &limits, &a);
     if (rc == RP_EXIT_OK) rc = rp_pkg_open(heap, in[1], &limits, &b);
     else b = (rp_pkg_t){ 0 };
+    // The files, wherever each package keeps them (RFC-0031 L19).
+    rp_pkg_files_t fa = { 0 }, fb = { 0 };
+    if (rc == RP_EXIT_OK) rc = rp_pkg_files(heap, &a.cfb, in[0], &fa);
+    if (rc == RP_EXIT_OK) rc = rp_pkg_files(heap, &b.cfb, in[1], &fb);
+    opts.base_files = fa.v;
+    opts.base_count = fa.count;
+    opts.target_files = fb.v;
+    opts.target_count = fb.count;
     if (rc == RP_EXIT_OK) {
         rp_mst_side_t sa = { &a.view.db, &a.cfb }, sb = { &b.view.db, &b.cfb };
         uint8_t *msp = NULL;
@@ -248,6 +256,8 @@ int rp_cmd_patch(int argc, char **argv) {
         }
         rp_mem_free(heap, msp);
     }
+    rp_pkg_files_free(heap, &fa);
+    rp_pkg_files_free(heap, &fb);
     rp_pkg_close(heap, &a);
     rp_pkg_close(heap, &b);
     return rc;

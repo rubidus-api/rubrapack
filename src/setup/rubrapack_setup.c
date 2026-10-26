@@ -3,9 +3,12 @@
 // `rubrapack build` appends packages and a manifest to a copy of this program. At run time it
 // finds that payload at the end of its own file (before an Authenticode signature, if any),
 // checks every package's SHA-256, writes the packages to a new temporary folder and installs them
-// in order with msi.dll. A package that is already installed is skipped; a vital package that fails
-// stops the chain (each package rolls itself back). /uninstall removes the packages in reverse
-// order, /repair repairs the installed ones. Started with every package installed and neither
+// in order: an MSI with msi.dll, a patch with MsiApplyPatch, an MSIX package or bundle with Windows'
+// PackageManager (RFC-0031 B14; for every user - staged and provisioned - when the chain is
+// elevated, else for the user). A package that is already installed is skipped; a vital package
+// that fails stops the chain (each package rolls itself back). /uninstall removes the packages in
+// reverse order, /repair repairs the installed MSI packages (a patch is repaired with its product,
+// an MSIX has nothing to repair). Started with every package installed and neither
 // switch, it asks which of the two to do (nothing at /quiet or /passive).
 // Built by `nob parts` for x64, x86 and arm64, reproducibly; Windows only.
 //
@@ -28,12 +31,16 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "../ca/rp_appx.h"
 #include "../ca/rp_ask.h"
 
 enum {
     TRAILER = 32,
     MAX_PACKAGES = 64,
     FLAG_VITAL = 1,
+    FLAG_MSIX = 2,
+    FLAG_MSP = 4,
+    FLAG_BUNDLE = 8,
     CHAIN_ELEVATE = 1,
     EXIT_DAMAGED = 1620,
     EXIT_CANCELLED = 1602,
@@ -77,7 +84,7 @@ static const wchar_t *texts[T_COUNT] = {
 // `tmpl` with {1} as `one` and {2} as the number `two`.
 static void fill(wchar_t *out, size_t cap, const wchar_t *tmpl, const wchar_t *one, unsigned two) {
     wchar_t num[16];
-    wsprintfW(num, L"%u", two);
+    wsprintfW(num, two > 0xFFFF ? L"0x%08X" : L"%u", two);     // an HRESULT (an MSIX) in hex
     size_t o = 0;
     for (const wchar_t *p = tmpl; *p && o + 1 < cap; ++p) {
         const wchar_t *ins = NULL;
@@ -272,11 +279,91 @@ static int relaunch(const wchar_t *self, const wchar_t *args) {
     return (int)code;
 }
 
+typedef LONG(WINAPI *by_family_fn)(PCWSTR, UINT32 *, PWSTR *, UINT32 *, WCHAR *);
+
+// The full names of the user's packages of an MSIX family (one LocalAlloc block, NULL-terminated), or NULL.
+static PWSTR *family_packages(const wchar_t *family) {
+    HMODULE k32 = GetModuleHandleW(L"kernel32.dll");
+    by_family_fn by_family = k32 ? (by_family_fn)(void (*)(void))GetProcAddress(k32, "GetPackagesByPackageFamily") : NULL;
+    UINT32 count = 0, chars = 0;
+    if (by_family == NULL || by_family(family, &count, NULL, &chars, NULL) != ERROR_INSUFFICIENT_BUFFER || count == 0) return NULL;
+    PWSTR *names = LocalAlloc(LMEM_FIXED | LMEM_ZEROINIT, ((size_t)count + 1) * sizeof *names + ((size_t)chars + 1) * sizeof(WCHAR));
+    if (names && by_family(family, &count, names, &chars, (WCHAR *)(names + count + 1)) != ERROR_SUCCESS) {
+        LocalFree(names);
+        names = NULL;
+    }
+    if (names) names[count] = NULL;
+    return names;
+}
+
+// Whether a patch is applied to `product` (in any context this program can see).
+static bool patch_applied(const wchar_t *patch, const wchar_t *product) {
+    static const MSIINSTALLCONTEXT contexts[] = { MSIINSTALLCONTEXT_MACHINE, MSIINSTALLCONTEXT_USERUNMANAGED, MSIINSTALLCONTEXT_USERMANAGED };
+    for (size_t i = 0; i < sizeof contexts / sizeof contexts[0]; ++i) {
+        wchar_t state[8];
+        DWORD n = sizeof state / sizeof state[0];
+        if (MsiGetPatchInfoExW(patch, product, NULL, contexts[i], INSTALLPROPERTY_PATCHSTATE, state, &n) == ERROR_SUCCESS && lstrcmpW(state, L"1") == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// The i-th product code of a patch's targets ("{...};{...}"), into `out`; false past the last.
+static bool target(const package_t *p, uint32_t i, wchar_t out[39]) {
+    uint32_t at = 0;
+    for (uint32_t k = 0; k < i; ++k) {
+        while (at < p->version_len && p->version[at] != ';') ++at;
+        if (at == p->version_len) return false;
+        ++at;
+    }
+    if (p->version_len - at < 38) return false;
+    for (int k = 0; k < 38; ++k) out[k] = (wchar_t)(unsigned char)p->version[at + k];
+    out[38] = 0;
+    return true;
+}
+
 static bool installed(const package_t *p) {
     wchar_t *pc = wide(p->product_code, p->product_code_len);
-    bool yes = pc && MsiQueryProductStateW(pc) == INSTALLSTATE_DEFAULT;
+    bool yes = false;
+    if (pc && (p->flags & FLAG_MSIX)) {
+        PWSTR *names = family_packages(pc);
+        yes = names != NULL;
+        LocalFree(names);
+    } else if (pc && (p->flags & FLAG_MSP)) {
+        wchar_t product[39];
+        for (uint32_t i = 0; !yes && target(p, i, product); ++i) yes = patch_applied(pc, product);
+    } else if (pc) {
+        yes = MsiQueryProductStateW(pc) == INSTALLSTATE_DEFAULT;
+    }
     LocalFree(pc);
     return yes;
+}
+
+static const wchar_t *ext(const package_t *p) {
+    return p->flags & FLAG_MSP ? L"msp" : p->flags & FLAG_BUNDLE ? L"msixbundle" : p->flags & FLAG_MSIX ? L"msix" : L"msi";
+}
+
+// An MSIX package or bundle added (for every user when `machine`) or removed (every package of its
+// family the user has); a Windows Installer error number for the chain's exit code, *hr the cause.
+static UINT appx(const package_t *p, const wchar_t *path, bool machine, bool remove, HRESULT *hr) {
+    wchar_t *family = wide(p->product_code, p->product_code_len);
+    *hr = E_OUTOFMEMORY;
+    if (family == NULL) return ERROR_OUTOFMEMORY;
+    if (remove) {
+        PWSTR *names = family_packages(family);
+        *hr = S_OK;
+        for (size_t i = 0; names && names[i] && SUCCEEDED(*hr); ++i) {
+            appx_job_t j = { .full_name = names[i], .family = family, .machine = machine, .remove = true };
+            *hr = appx_run(&j);
+        }
+        LocalFree(names);
+    } else {
+        appx_job_t j = { .package = path, .family = family, .machine = machine, .allow_unsigned = true };
+        *hr = appx_run(&j);
+    }
+    LocalFree(family);
+    return SUCCEEDED(*hr) ? ERROR_SUCCESS : ERROR_INSTALL_FAILURE;
 }
 
 int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
@@ -368,7 +455,22 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
             const package_t *p = &c.p[k];
             if (!installed(p)) continue;
             wchar_t *pc = wide(p->product_code, p->product_code_len);
-            UINT r = pc ? MsiConfigureProductW(pc, INSTALLLEVEL_DEFAULT, INSTALLSTATE_ABSENT) : ERROR_OUTOFMEMORY;
+            UINT r = ERROR_OUTOFMEMORY;
+            if (pc && (p->flags & FLAG_MSIX)) {
+                HRESULT hr;
+                r = appx(p, NULL, (c.flags & CHAIN_ELEVATE) != 0, true, &hr);
+            } else if (pc && (p->flags & FLAG_MSP)) {
+                // From every target it is applied to (a product that goes later takes it along anyway).
+                wchar_t product[39];
+                r = ERROR_SUCCESS;
+                for (uint32_t i = 0; target(p, i, product); ++i) {
+                    if (!patch_applied(pc, product)) continue;
+                    UINT one = MsiRemovePatchesW(pc, product, INSTALLTYPE_SINGLE_INSTANCE, NULL);     // the only type it takes
+                    if (one != ERROR_SUCCESS && r != ERROR_SUCCESS_REBOOT_REQUIRED) r = one;
+                }
+            } else if (pc) {
+                r = MsiConfigureProductW(pc, INSTALLLEVEL_DEFAULT, INSTALLSTATE_ABSENT);
+            }
             LocalFree(pc);
             if (r == ERROR_SUCCESS_REBOOT_REQUIRED) result = (int)r;
             else if (r != ERROR_SUCCESS && result == 0) result = (int)r;
@@ -402,7 +504,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     for (uint32_t k = 0; k < c.count && result != EXIT_DAMAGED; ++k) {
         const package_t *p = &c.p[k];
         wchar_t *id = wide(p->id, p->id_len);
-        wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
+        wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(p));
         if (id == NULL || !extract(f, start + p->offset, p->size, p->sha256, path)) {
             say(title, texts[T_DAMAGED], true);
             result = EXIT_DAMAGED;
@@ -415,9 +517,9 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         // A repair takes the installed packages only, each from its package here: the folder the
         // product was installed from is gone, and missing files need the package (error 1706 otherwise).
         // The properties are what the dialogs' Repair sets.
-        if (installed(p) != repair) continue;
+        if (installed(p) != repair || (repair && (p->flags & (FLAG_MSIX | FLAG_MSP)))) continue;
         wchar_t *id = wide(p->id, p->id_len), *props = repair ? wide("REINSTALL=ALL REINSTALLMODE=ecmus", 33) : wide(p->properties, p->properties_len);
-        wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
+        wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(p));
         // /lang: the packages' own dialogs and messages in that language too.
         wchar_t *all = props;
         if (props && lang && lstrlenW(lang) < 16) {
@@ -425,12 +527,17 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
             all = LocalAlloc(LMEM_FIXED, pn * sizeof *all);
             if (all) wsprintfW(all, L"%s RPLANGUAGE=%s", props, lang);
         }
-        UINT r = id && all ? MsiInstallProductW(path, all) : ERROR_OUTOFMEMORY;
+        HRESULT hr = S_OK;
+        UINT r = id == NULL || all == NULL       ? ERROR_OUTOFMEMORY
+                 : (p->flags & FLAG_MSIX)        ? appx(p, path, (c.flags & CHAIN_ELEVATE) != 0, false, &hr)
+                 : (p->flags & FLAG_MSP)         ? MsiApplyPatchW(path, NULL, INSTALLTYPE_DEFAULT, all)
+                                                 : MsiInstallProductW(path, all);
         if (all && all != props) LocalFree(all);
         if (r == ERROR_SUCCESS_REBOOT_REQUIRED) {
             result = (int)r;
         } else if (r != ERROR_SUCCESS && (repair || (p->flags & FLAG_VITAL))) {
-            fill(msg, sizeof msg / sizeof msg[0], repair ? texts[T_REPAIRFAILED] : texts[T_INSTALLFAILED], id ? id : L"?", (unsigned)r);
+            fill(msg, sizeof msg / sizeof msg[0], repair ? texts[T_REPAIRFAILED] : texts[T_INSTALLFAILED], id ? id : L"?",
+                 FAILED(hr) ? (unsigned)hr : (unsigned)r);
             say(title, msg, true);
             result = (int)r;
         }
@@ -439,7 +546,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
     }
     for (uint32_t k = 0; k < c.count; ++k) {
         wchar_t *id = wide(c.p[k].id, c.p[k].id_len);
-        wsprintfW(path, L"%s\\%s.msi", dir, id ? id : L"package");
+        wsprintfW(path, L"%s\\%s.%s", dir, id ? id : L"package", ext(&c.p[k]));
         DeleteFileW(path);
         LocalFree(id);
     }

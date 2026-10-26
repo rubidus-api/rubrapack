@@ -810,6 +810,9 @@ msgstr "Versijas un jauninājumi"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer pieļauj ne vairāk kā 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows nepateica, kas ir instalēts priekš '{1}'"
+
 msgid "Windows name"
 msgstr "Windows nosaukums"
 
@@ -2112,6 +2115,12 @@ msgstr "nav ProductCode vai ProductVersion"
 msgid "has no Property table"
 msgstr "nav tabulas Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "nav identitātes (Name, Publisher un Version)"
+
+msgid "has no summary information"
+msgstr "nav kopsavilkuma informācijas"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "satur ierakstus tabulai, ko nedefinē ne bāze, ne transformācija"
 
@@ -2138,6 +2147,9 @@ msgstr "image jābūt .bmp failam (Windows Installer rāda tikai BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline tabulas netiek atbalstītas; izmantojiet tabulu [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed jautā Windows, kas ir instalēts; darbojas tikai Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "tiek instalēts tajā pašā ceļā kā rinda {1} (Windows nosaukumos neatšķir lielos un mazos burtus{2})"
@@ -2180,6 +2192,12 @@ msgstr "nav Windows Installer datubāze"
 
 msgid "is not a compound file"
 msgstr "nav saliktais fails"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nav ielāps: tam nav ielāpa koda, mērķa produktu vai transformāciju"
+
+msgid "is not a valid MSIX package"
+msgstr "nav derīga MSIX pakotne"
 
 msgid "is not valid UTF-8"
 msgstr "nav derīgs UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' ir arī [assoc.{2}] ar citu aprakstu, target, icon vai arg
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id jābūt burtiem, cipariem, '.', '_' vai '-', nesākoties ar ciparu, ne vairāk kā 39 (saņemts '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties ir Windows Installer pakotnēm; MSIX tās nepieņem"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "rekvizīts '{1}' jau pieder vadīklai '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: fails '{1}' nav šīs pakotnes [file.*]"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "saglabājiet avotu kā UTF-8 (vai UTF-16 ar BOM) ar LF vai CRLF rindu beigām"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "pasaka, vai šajā Windows ir instalēts produkts ar šo jaunināšanas kodu vai šīs saimes lietotnes pakotne"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "shēmai '{1}' jau ir programma ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "avota fails '{1}' nav atrasts"
 msgid "source must be \"file:<ID>\""
 msgstr "source jābūt \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source jābūt .msi pakotnei"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source jābūt .msi, .msix, .msixbundle vai .msp pakotnei"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "avota ceļam '{1}' jābūt relatīvam pret avota failu"

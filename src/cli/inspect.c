@@ -350,7 +350,8 @@ static int inspect_cab(const char *path, const uint8_t *data, size_t len, proven
 }
 
 // A setup program: the chain's name, then one line per package - ID, size, ProductCode, version,
-// vital or optional, whether its SHA-256 matches, its msiexec properties.
+// vital or optional, whether its SHA-256 matches, its msiexec properties, its kind (msi, msix,
+// msixbundle, msp; an MSIX has its family name and version, a patch its code and targets).
 static int inspect_chain(const char *path, const uint8_t *data, size_t len, proven_allocator_t heap) {
     char name[256];
     rp_chain_entry_t *e = NULL;
@@ -375,6 +376,8 @@ static int inspect_chain(const char *path, const uint8_t *data, size_t len, prov
         rp_buf_puts(&b, e[i].vital ? "\tvital" : "\toptional");
         rp_buf_puts(&b, e[i].hash_ok ? "\tsha256-ok\t" : "\tsha256-MISMATCH\t");
         rp_buf_puts(&b, e[i].properties);
+        rp_buf_byte(&b, '\t');
+        rp_buf_puts(&b, e[i].ext + 1);
         rp_buf_byte(&b, '\n');
     }
     rp_mem_free(heap, e);

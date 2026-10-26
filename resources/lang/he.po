@@ -812,6 +812,9 @@ msgstr "גרסאות ושדרוגים"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer מאפשר לכל היותר 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows לא אמר מה מותקן עבור '{1}'"
+
 msgid "Windows name"
 msgstr "שם של Windows"
 
@@ -2114,6 +2117,12 @@ msgstr "אין בו ProductCode או ProductVersion"
 msgid "has no Property table"
 msgstr "אין בו טבלת Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "אין לה זהות (Name, Publisher ו-Version)"
+
+msgid "has no summary information"
+msgstr "אין לה מידע סיכום"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "יש בו רשומות לטבלה שלא הבסיס ולא הטרנספורם מגדירים"
 
@@ -2140,6 +2149,9 @@ msgstr "image חייב להיות קובץ ‎.bmp (‏Windows Installer מצי�
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "טבלאות inline אינן נתמכות; השתמש בטבלת [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed שואל את Windows מה מותקן; פועל רק ב-Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "מותקן לאותו נתיב כמו שורה {1} (Windows מתעלם מגודל אותיות בשמות{2})"
@@ -2182,6 +2194,12 @@ msgstr "אינו מסד נתונים של Windows Installer"
 
 msgid "is not a compound file"
 msgstr "אינו קובץ מורכב"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "אינו תיקון: אין לו קוד תיקון, מוצרי יעד או המרות"
+
+msgid "is not a valid MSIX package"
+msgstr "אינה חבילת MSIX תקינה"
 
 msgid "is not valid UTF-8"
 msgstr "אינו UTF-8 תקין"
@@ -2582,6 +2600,9 @@ msgstr "prog-id ‏'{1}' נמצא גם ב-[assoc.{2}] עם תיאור, target, i
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id חייב להיות אותיות, ספרות, '.', '_' או '-', לא מתחיל בספרה, לכל היותר 39 (התקבל '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties מיועד לחבילות Windows Installer; MSIX אינו מקבל אותן"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "המאפיין '{1}' כבר שייך לפקד '{2}'"
 
@@ -2711,6 +2732,9 @@ msgstr "run: הקובץ '{1}' אינו [file.*] של חבילה זו"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "שמור את המקור כ-UTF-8 (או UTF-16 עם BOM), עם סיומות שורה LF או CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "אומר אם ב-Windows הזה מותקן מוצר עם קוד השדרוג הזה או חבילת אפליקציה מהמשפחה הזו"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "לסכמה '{1}' כבר יש תוכנית ([protocol.{2}])"
 
@@ -2771,8 +2795,8 @@ msgstr "קובץ המקור '{1}' לא נמצא"
 msgid "source must be \"file:<ID>\""
 msgstr "source חייב להיות \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source חייב להיות חבילת .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source חייב להיות חבילת .msi, .msix, .msixbundle או .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "נתיב המקור '{1}' חייב להיות יחסי לקובץ המקור"

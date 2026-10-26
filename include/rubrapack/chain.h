@@ -7,8 +7,10 @@
 //   the packages, back to back;
 //   the manifest: "RPCHAIN1", u32 package count, u32 flags (1 = elevate), the chain's name,
 //     manufacturer and version, then per package its ID, msiexec properties, ProductCode and
-//     ProductVersion (each u32 length + UTF-8), u32 flags (1 = vital), u64 offset (from the first
-//     package), u64 size, SHA-256;
+//     ProductVersion (each u32 length + UTF-8), u32 flags (1 = vital; 2 = an MSIX package, 2|8 =
+//     an MSIX bundle, 4 = a patch - RFC-0031 B14), u64 offset (from the first package), u64 size, SHA-256.
+//     An MSIX gives its package family name and Identity Version in place of ProductCode and
+//     ProductVersion, a patch its patch code and the product codes it targets (";" between them);
 //   zero bytes up to a multiple of 8 for the whole file, so a signature can follow directly;
 //   a 32-byte trailer: u64 file offset of the first package, u64 file offset of the manifest, u32
 //     manifest size, u32 0, "RPCHAIN!".
@@ -26,9 +28,12 @@
 
 enum { RP_CHAIN_MAX = 64 };
 
+typedef enum { RP_CHAIN_MSI, RP_CHAIN_MSIX, RP_CHAIN_MSP } rp_chain_kind_t;
+
 typedef struct {
-    char    *id;            // [chain-package.ID]: also the package's file name (ID.msi) while installing
-    char    *source;        // the .msi, joined with the source's folder
+    char    *id;            // [chain-package.ID]: also the package's file name (ID.msi, ...) while installing
+    char    *source;        // the package, joined with the source's folder
+    rp_chain_kind_t kind;   // by the source's extension: .msi, .msix / .msixbundle, .msp
     char    *shown;         // as written
     char    *properties;    // msiexec properties ("NAME=value ..."), or NULL
     bool     vital;         // a failure stops the chain (default)
@@ -55,14 +60,17 @@ typedef struct {
                                           rp_chain_t *out, rp_srcdiags_t *diags);
 void rp_chain_free(rp_chain_t *c);
 
-// Writes the setup program: reads every package (each must be an MSI with a ProductCode) and
-// appends it with the manifest to the bootstrapper for c->arch. Problems go to the diagnostics.
+// Writes the setup program: reads every package (an MSI with a ProductCode, an MSIX package or
+// bundle with an identity, a patch with a patch code) and appends it with the manifest to the
+// bootstrapper for c->arch. Problems go to the diagnostics.
 [[nodiscard]] proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const rp_limits_t *limits,
                                           uint8_t **out, size_t *len, rp_srcdiags_t *diags);
 
 typedef struct {
     const char    *id, *properties, *product_code, *version;     // NUL-terminated copies
     bool           vital;
+    rp_chain_kind_t kind;
+    const char    *ext;         // ".msi", ".msix", ".msixbundle" or ".msp": the package's file name is id + ext
     const uint8_t *data;        // the package's bytes, inside the setup program
     uint64_t       size;
     bool           hash_ok;     // its SHA-256 matches the manifest

@@ -810,6 +810,9 @@ msgstr "Versiones y actualizaciones"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer admite como máximo 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows no indicó qué está instalado para '{1}'"
+
 msgid "Windows name"
 msgstr "nombre de Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "no tiene ProductCode ni ProductVersion"
 msgid "has no Property table"
 msgstr "no tiene tabla Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "no tiene identidad (Name, Publisher y Version)"
+
+msgid "has no summary information"
+msgstr "no tiene información de resumen"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "tiene registros de una tabla que no definen ni la base ni la transformación"
 
@@ -2138,6 +2147,9 @@ msgstr "image debe ser un archivo .bmp (Windows Installer solo muestra BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "no se admiten tablas en línea; use una tabla [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed pregunta a Windows qué está instalado; solo funciona en Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "se instala en la misma ruta que la línea {1} (Windows no distingue mayúsculas y minúsculas en los nombres{2})"
@@ -2180,6 +2192,12 @@ msgstr "no es una base de datos de Windows Installer"
 
 msgid "is not a compound file"
 msgstr "no es un archivo compuesto"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "no es una revisión: no tiene código de revisión, productos de destino ni transformaciones"
+
+msgid "is not a valid MSIX package"
+msgstr "no es un paquete MSIX válido"
 
 msgid "is not valid UTF-8"
 msgstr "no es UTF-8 válido"
@@ -2580,6 +2598,9 @@ msgstr "el prog-id '{1}' también está en [assoc.{2}] con otra description, tar
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id debe ser letras, dígitos, '.', '_' o '-', sin empezar por un dígito, como máximo 39 (se recibió '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties es para paquetes de Windows Installer; un MSIX no las admite"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "la propiedad '{1}' ya pertenece al control '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: el archivo '{1}' no es un [file.*] de este paquete"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "guarde el origen como UTF-8 (o UTF-16 con BOM), con finales de línea LF o CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "indica si este Windows tiene instalado un producto de ese código de actualización o un paquete de aplicación de esa familia"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "el esquema '{1}' ya tiene un programa ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "no se encuentra el archivo de origen '{1}'"
 msgid "source must be \"file:<ID>\""
 msgstr "source debe ser \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source debe ser un paquete .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source debe ser un paquete .msi, .msix, .msixbundle o .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "la ruta de origen '{1}' debe ser relativa al archivo de origen"

@@ -810,6 +810,9 @@ msgstr "Версии и надстройки"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer позволява най-много 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows не съобщи какво е инсталирано за '{1}'"
+
 msgid "Windows name"
 msgstr "име на Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "няма ProductCode или ProductVersion"
 msgid "has no Property table"
 msgstr "няма таблица Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "няма идентичност (Name, Publisher и Version)"
+
+msgid "has no summary information"
+msgstr "няма обобщена информация"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "има записи за таблица, която нито основата, нито трансформацията дефинира"
 
@@ -2138,6 +2147,9 @@ msgstr "image трябва да е файл .bmp (Windows Installer показв
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "вградени (inline) таблици не се поддържат; използвайте таблица [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed пита Windows какво е инсталирано; работи само в Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "инсталира се в същия път като ред {1} (Windows не различава главни и малки букви в имената{2})"
@@ -2180,6 +2192,12 @@ msgstr "не е база данни на Windows Installer"
 
 msgid "is not a compound file"
 msgstr "не е съставен файл"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "не е корекция: няма код на корекция, целеви продукти или трансформации"
+
+msgid "is not a valid MSIX package"
+msgstr "не е валиден пакет MSIX"
 
 msgid "is not valid UTF-8"
 msgstr "не е валиден UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' е също в [assoc.{2}] с друго описание,
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id трябва да е букви, цифри, '.', '_' или '-', да не започва с цифра, най-много 39 (получено '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties са за пакети на Windows Installer; MSIX не ги приема"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "свойството '{1}' вече принадлежи на контролата '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: файлът '{1}' не е [file.*] от този пакет"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "запишете източника като UTF-8 (или UTF-16 с BOM), с край на ред LF или CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "казва дали в този Windows е инсталиран продукт с този код за надграждане или пакет на приложение от това семейство"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "схемата '{1}' вече има програма ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "изходният файл '{1}' не е намерен"
 msgid "source must be \"file:<ID>\""
 msgstr "source трябва да е \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source трябва да е пакет .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source трябва да е пакет .msi, .msix, .msixbundle или .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "пътят на източника '{1}' трябва да е относителен спрямо изходния файл"

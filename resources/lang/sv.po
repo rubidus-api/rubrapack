@@ -810,6 +810,9 @@ msgstr "Versioner och uppgraderingar"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer tillåter högst 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows sa inte vad som är installerat för '{1}'"
+
 msgid "Windows name"
 msgstr "Windows-namn"
 
@@ -2112,6 +2115,12 @@ msgstr "har ingen ProductCode eller ProductVersion"
 msgid "has no Property table"
 msgstr "har ingen Property-tabell"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "har ingen identitet (Name, Publisher och Version)"
+
+msgid "has no summary information"
+msgstr "har ingen sammanfattningsinformation"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "har poster för en tabell som varken basen eller transformeringen definierar"
 
@@ -2138,6 +2147,9 @@ msgstr "image måste vara en .bmp-fil (Windows Installer visar endast BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "infogade tabeller stöds inte; använd en [kind.ID]-tabell"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed frågar Windows vad som är installerat; det körs bara på Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "installeras till samma sökväg som rad {1} (Windows skiljer inte på versaler och gemener i namn{2})"
@@ -2180,6 +2192,12 @@ msgstr "är ingen Windows Installer-databas"
 
 msgid "is not a compound file"
 msgstr "är ingen sammansatt fil"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "är ingen korrigering: den har ingen korrigeringskod, inga målprodukter eller transformeringar"
+
+msgid "is not a valid MSIX package"
+msgstr "är inget giltigt MSIX-paket"
 
 msgid "is not valid UTF-8"
 msgstr "är inte giltig UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' finns också i [assoc.{2}] med en annan description, targe
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id måste vara bokstäver, siffror, '.', '_' eller '-', inte börja med en siffra, högst 39 (fick '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties är för Windows Installer-paket; ett MSIX tar inga"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "egenskapen '{1}' tillhör redan kontrollen '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: filen '{1}' är ingen [file.*] i det här paketet"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "spara källan som UTF-8 (eller UTF-16 med BOM), med LF- eller CRLF-radslut"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "talar om ifall denna Windows har en produkt med den uppgraderingskoden eller ett apppaket från den familjen installerat"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "schemat '{1}' har redan ett program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "källfilen '{1}' hittades inte"
 msgid "source must be \"file:<ID>\""
 msgstr "source måste vara \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source måste vara ett .msi-paket"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source måste vara ett .msi-, .msix-, .msixbundle- eller .msp-paket"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "källsökvägen '{1}' måste vara relativ till källfilen"

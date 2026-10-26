@@ -29,7 +29,7 @@ static void xml_escaped(rp_buf_t *b, const char *s) {
 }
 
 // "<Name>_<13 letters and digits>", as Windows writes a package family name.
-static bool family_ok(const char *s) {
+bool rp_family_name_ok(const char *s) {
     const char *u = strrchr(s, '_');
     if (u == NULL || u == s || strlen(u + 1) != 13) return false;
     for (const char *p = s; p < u; ++p) {
@@ -98,7 +98,7 @@ int rp_cmd_container(int argc, char **argv) {
         if (rp_ascii_ends_with_ci(in[k], ".msix") || rp_ascii_ends_with_ci(in[k], ".msixbundle")) {
             int rc = family_of(heap, in[k], families[k], sizeof families[k]);
             if (rc != RP_EXIT_OK) return rc;
-        } else if (family_ok(in[k])) {
+        } else if (rp_family_name_ok(in[k])) {
             snprintf(families[k], sizeof families[k], "%s", in[k]);
         } else {
             rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)", in[k]);

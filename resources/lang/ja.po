@@ -810,6 +810,9 @@ msgstr "バージョンとアップグレード"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows インストーラーで使えるのは 255.255.65535(.65535) までです"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows は '{1}' について何がインストールされているかを返しませんでした"
+
 msgid "Windows name"
 msgstr "Windows の名前"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode か ProductVersion がありません"
 msgid "has no Property table"
 msgstr "Property テーブルがありません"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "ID (Name、Publisher、Version) がありません"
+
+msgid "has no summary information"
+msgstr "概要情報がありません"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "ベースでも変換でも定義されていないテーブルのレコードがあります"
 
@@ -2138,6 +2147,9 @@ msgstr "image は .bmp ファイルです(Windows Installer は BMP のみ表示
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "インライン テーブルには対応していません。[kind.ID] テーブルを使ってください"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed はインストールされているものを Windows に問い合わせます。Windows でのみ動作します"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "{1} 行目と同じパスにインストールされます (Windows は名前の大文字と小文字を区別しません{2})"
@@ -2180,6 +2192,12 @@ msgstr "Windows インストーラーのデータベースではありません"
 
 msgid "is not a compound file"
 msgstr "複合ファイルではありません"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "パッチではありません: パッチ コード、対象製品、変換がありません"
+
+msgid "is not a valid MSIX package"
+msgstr "有効な MSIX パッケージではありません"
 
 msgid "is not valid UTF-8"
 msgstr "有効な UTF-8 ではありません"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' は [assoc.{2}] にも、別の description、target、ico
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id は英字、数字、'.'、'_'、'-' で、数字で始めず 39 文字まででなければなりません ('{1}' でした)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties は Windows インストーラー パッケージ用です。MSIX は受け付けません"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "プロパティ '{1}' は既にコントロール '{2}' のものです"
 
@@ -2709,6 +2730,9 @@ msgstr "run: ファイル '{1}' はこのパッケージの [file.*] ではあ�
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "ソースは UTF-8 (または BOM 付きの UTF-16) で、改行は LF か CRLF で保存してください"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "この Windows に、そのアップグレード コードの製品またはそのファミリのアプリ パッケージがインストールされているかを示します"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "スキーム '{1}' には既にプログラムがあります ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "ソース ファイル '{1}' が見つかりません"
 msgid "source must be \"file:<ID>\""
 msgstr "source は \"file:<ID>\" でなければなりません"
 
-msgid "source must be an .msi package"
-msgstr "source は .msi パッケージでなければなりません"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source は .msi、.msix、.msixbundle、.msp のいずれかのパッケージでなければなりません"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "ソースのパス '{1}' はソース ファイルからの相対パスでなければなりません"

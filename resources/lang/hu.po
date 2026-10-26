@@ -810,6 +810,9 @@ msgstr "Verziók és frissítések"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "a Windows Installer legfeljebb 255.255.65535(.65535) értéket enged"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "a Windows nem mondta meg, mi van telepítve ehhez: '{1}'"
+
 msgid "Windows name"
 msgstr "Windows-név"
 
@@ -2112,6 +2115,12 @@ msgstr "nincs ProductCode vagy ProductVersion értéke"
 msgid "has no Property table"
 msgstr "nincs Property táblája"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "nincs identitása (Name, Publisher és Version)"
+
+msgid "has no summary information"
+msgstr "nincs összegző információja"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "olyan táblához tartalmaz rekordokat, amelyet sem az alap, sem az átalakítás nem definiál"
 
@@ -2138,6 +2147,9 @@ msgstr "az image .bmp fájl kell legyen (a Windows Installer csak BMP-t jelenít
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "a beágyazott (inline) táblák nem támogatottak; használjon [kind.ID] táblát"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "az installed megkérdezi a Windowst, mi van telepítve; csak Windowson fut"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "ugyanarra az útvonalra települ, mint a(z) {1}. sor (a Windows a nevekben nem különbözteti meg a kis- és nagybetűt{2})"
@@ -2180,6 +2192,12 @@ msgstr "nem Windows Installer adatbázis"
 
 msgid "is not a compound file"
 msgstr "nem összetett fájl"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nem javítócsomag: nincs javítókódja, célterméke vagy átalakítása"
+
+msgid "is not a valid MSIX package"
+msgstr "nem érvényes MSIX-csomag"
 
 msgid "is not valid UTF-8"
 msgstr "nem érvényes UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "a(z) '{1}' prog-id az [assoc.{2}] táblában is szerepel más descriptio
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "a prog-id betűkből, számjegyekből, '.', '_' vagy '-' jelből álljon, ne kezdődjön számjeggyel, legfeljebb 39 (kapott: '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "a properties a Windows Installer-csomagokhoz való; egy MSIX nem fogad el ilyet"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "a(z) '{1}' tulajdonság már a(z) '{2}' vezérlőhöz tartozik"
 
@@ -2709,6 +2730,9 @@ msgstr "run: a(z) '{1}' fájl nem [file.*] ebben a csomagban"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "mentse a forrást UTF-8-ként (vagy BOM-os UTF-16-ként), LF vagy CRLF sorvégekkel"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "megmondja, hogy ezen a Windowson telepítve van-e az adott frissítési kódú termék vagy az adott család alkalmazáscsomagja"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "a(z) '{1}' sémához már tartozik program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "a(z) '{1}' forrásfájl nem található"
 msgid "source must be \"file:<ID>\""
 msgstr "a source értéke csak \"file:<ID>\" lehet"
 
-msgid "source must be an .msi package"
-msgstr "a source csak .msi csomag lehet"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "a source csak .msi, .msix, .msixbundle vagy .msp csomag lehet"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "a(z) '{1}' forrásútvonal a forrásfájlhoz képest relatív legyen"

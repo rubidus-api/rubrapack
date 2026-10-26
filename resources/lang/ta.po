@@ -810,6 +810,9 @@ msgstr "பதிப்புகள் மற்றும் மேம்பட�
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer அதிகபட்சம் 255.255.65535(.65535) ஐ அனுமதிக்கும்"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "'{1}'க்கு என்ன நிறுவப்பட்டுள்ளது என்று Windows சொல்லவில்லை"
+
 msgid "Windows name"
 msgstr "Windows பெயர்"
 
@@ -2112,6 +2115,12 @@ msgstr "ProductCode அல்லது ProductVersion இல்லை"
 msgid "has no Property table"
 msgstr "Property அட்டவணை இல்லை"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "அடையாளம் இல்லை (Name, Publisher, Version)"
+
+msgid "has no summary information"
+msgstr "சுருக்கத் தகவல் இல்லை"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "அடிப்படையோ உருமாற்றமோ வரையறுக்காத அட்டவணைக்கான பதிவுகள் உள்ளன"
 
@@ -2138,6 +2147,9 @@ msgstr "image ஒரு .bmp கோப்பாக இருக்க வேண�
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "வரிக்குள் அட்டவணைகள் ஆதரிக்கப்படவில்லை; ஒரு [kind.ID] அட்டவணையைப் பயன்படுத்தவும்"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed என்ன நிறுவப்பட்டுள்ளது என்று Windows-இடம் கேட்கிறது; இது Windows-இல் மட்டுமே இயங்கும்"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "வரி {1} இன் அதே பாதையில் நிறுவப்படும் (Windows பெயர்களில் எழுத்து அளவைப் புறக்கணிக்கும்{2})"
@@ -2180,6 +2192,12 @@ msgstr "Windows Installer தரவுத்தளம் அல்ல"
 
 msgid "is not a compound file"
 msgstr "கூட்டுக் கோப்பு அல்ல"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "இணைப்பு அல்ல: இணைப்புக் குறியீடு, இலக்குத் தயாரிப்புகள் அல்லது உருமாற்றங்கள் இல்லை"
+
+msgid "is not a valid MSIX package"
+msgstr "செல்லுபடியான MSIX தொகுப்பு அல்ல"
 
 msgid "is not valid UTF-8"
 msgstr "சரியான UTF-8 அல்ல"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' [assoc.{2}] இல் வேறு விளக்கம�
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id எழுத்துகள், இலக்கங்கள், '.', '_' அல்லது '-' ஆக இருக்க வேண்டும், இலக்கத்தில் தொடங்கக்கூடாது, அதிகபட்சம் 39 ('{1}' கிடைத்தது)"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties Windows Installer தொகுப்புகளுக்கானது; MSIX அதை ஏற்காது"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "பண்பு '{1}' ஏற்கெனவே கட்டுப்பாடு '{2}' க்கு உரியது"
 
@@ -2709,6 +2730,9 @@ msgstr "run: கோப்பு '{1}' இந்தத் தொகுப்ப�
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "மூலத்தை LF அல்லது CRLF வரி முடிவுகளுடன் UTF-8 (அல்லது BOM உடன் UTF-16) ஆகச் சேமிக்கவும்"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "அந்த மேம்படுத்தல் குறியீட்டின் தயாரிப்போ அந்தக் குடும்பத்தின் பயன்பாட்டுத் தொகுப்போ இந்த Windows-இல் நிறுவப்பட்டுள்ளதா என்று சொல்கிறது"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "திட்டம் '{1}' க்கு ஏற்கெனவே ஒரு நிரல் உள்ளது ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "மூலக் கோப்பு '{1}' கிடைக்கவில�
 msgid "source must be \"file:<ID>\""
 msgstr "source \"file:<ID>\" ஆக இருக்க வேண்டும்"
 
-msgid "source must be an .msi package"
-msgstr "source ஒரு .msi தொகுப்பாக இருக்க வேண்டும்"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source ஒரு .msi, .msix, .msixbundle அல்லது .msp தொகுப்பாக இருக்க வேண்டும்"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "மூலப் பாதை '{1}' மூலக் கோப்பைப் பொறுத்ததாக இருக்க வேண்டும்"

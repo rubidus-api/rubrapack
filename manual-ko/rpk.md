@@ -253,7 +253,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[msix-psf]` | **files**(Package Support Framework 의 파일이 든 폴더), **config**(그 `config.json`), launcher(기본 `PsfLauncher64.exe`, x86 은 `PsfLauncher32.exe`) - MSIX 전용 |
 | `[msix-extension.ID]` | **kind**(`alias`: **alias**; `startup-task`: task-id, display-name, enabled; `firewall`: **direction**(`in`, `out`), **protocol**(`tcp`, `udp`), ports(`8080` 또는 `8000-8100`), profile(`all`, `domain`, `private`, `public`), file(기본은 앱의 프로그램); `com-server`: **file**(`.exe` 나 `.dll`), **class**(`{GUID}`), display-name, args(`.exe`), threading(`sta` 기본, `mta`, `both`, `neutral`; `.dll`); `toast`: **class**, file(기본은 앱의 프로그램), args(기본 `-ToastActivated`); `context-menu`: **file**(`.dll`), **class**, **types**(`[".txt", "*"]`), verb(기본은 표 ID; 영문자와 숫자만), threading; `app-extension`: **name**(제공하는 범주), extension-id(기본은 표 ID), public-folder, display-name, description; `app-extension-host`: **names**(불러오는 범주들); `app-service`: **name**, **entry-point**(서비스를 맡는 활성화 가능 클래스), multiple-instances; `share-target`: types(`[".txt", "*"]`), formats(`["Text", "Uri"]`; 둘 중 하나는 있어야 함), description; `autoplay`: **action**, content-events, device-events(하나는 있어야 함), verb(기본은 표 ID), class(`{GUID}`; device-events 에 필요), args(내용 이벤트에서는 class 가 없을 때만), display-name), app(`[msix-app.*]` ID; 기본은 첫째) - MSIX 전용 |
 | `[chain]` | **name**, **manufacturer**, **version**, arch(설치 프로그램 자신의 것: `x64`, `x86`, `arm64`), elevate(기본 `true`), languages(설치 프로그램 자신의 문구에 쓸, 언어팩이 있는 언어 코드) - 체인 원본: [설치 프로그램 하나에 여러 패키지](#설치-프로그램-하나에-여러-패키지-chain) 참고 |
-| `[chain-package.ID]` | **source**(`.msi`), properties(msiexec 속성), vital(기본 `true`) |
+| `[chain-package.ID]` | **source**(`.msi`, `.msp`, `.msix`, `.msixbundle`), properties(msiexec 속성; MSIX 에는 없음), vital(기본 `true`) |
 
 dir 경로의 `$(기준)`은 다른 dir ID 이거나 Windows 폴더다: `$(ProgramFiles)`(x64/arm64 는 64비트,
 x86 은 32비트), `$(ProgramFiles(x86))`, `$(CommonProgramFiles)`, `$(APPDATA)`, `$(LOCALAPPDATA)`,
@@ -973,6 +973,14 @@ users = "all"
   `elevate = false` 로 한다.
 - 설치 프로그램 자신의 문구는 영어이고 한국어 사용자에게는 한국어다. `[chain] languages = ["ja"]` 는 언어팩이 있는
   언어를 더한다([언어팩](#언어팩)의 `Setup.*` 문구). 사용자의 표시 언어에 맞는 것이 나온다.
+- 패키지는 패치(`.msp`)나 MSIX 패키지·번들(`.msix`, `.msixbundle`)이어도 된다. 패치는 Windows Installer 로 그것이
+  겨냥하는 제품 중 설치된 것에 적용하고(체인에는 그 제품 뒤에 둔다), 이미 적용되어 있으면 건너뛴다. `/uninstall` 은
+  그 제품들에서 패치를 뗀다. MSIX 는 Windows 의 패키지 관리자로 더한다 - 체인이 권한을 올리면 모든 사용자에게
+  (준비하고 제공하며, 로그인한 사용자에게는 잠시 뒤 생긴다), 아니면 그 사용자에게 - 그리고 사용자가 그 패밀리를 이미
+  가졌으면 건너뛴다. `/uninstall` 은 그것을(제공까지) 지운다. MSIX 는 `properties` 를 받지 않는다. 서명하지 않은 시험
+  패키지(`--unsigned-test`)는 Windows 가 받는 대로 받는다. `/repair` 는 MSI 패키지만 복구한다: 패치는 그 제품과 함께
+  복구되고, MSIX 는 복구할 것이 없다. `inspect setup.exe` 는 패키지마다 종류를 보이고, 패치는 패치 코드와 대상 제품을,
+  MSIX 는 패밀리 이름과 판을 보인다.
 - 체인에는 `[chain]`, `[chain-package.ID]`, `[define]` 만 들어간다. 패키지마다 먼저 자기 원본으로 빌드한다.
   `--key` 는 여느 프로그램처럼 설치 프로그램에 서명한다. `inspect setup.exe` 는 패키지 목록을, `extract setup.exe
   -d 폴더` 는 패키지들을 꺼내 준다.
@@ -1919,6 +1927,11 @@ rubrapack version | help [command]
   패키지에 같은 파일이 있으면 앞의 것이 우선한다. 관리자가 `Add-AppSharedPackageContainer <out.xml>` 로 배포하고
   `Remove-AppSharedPackageContainer -Name <이름>` 으로 거둔다. 패키지를 먼저 설치할 필요는 없다. 한 패키지는 컨테이너
   하나에만 든다.
+- `installed <{업그레이드 코드}|패키지 패밀리 이름>` 은 그것이 도는 Windows 에 그 업그레이드 코드의 제품(컴퓨터
+  단위, 또는 실행한 사용자의 사용자 단위)이나 그 패밀리의 앱 패키지(실행한 사용자의 것)가 설치되어 있는지 묻는다 -
+  `[other-copy]` 표가 첫 설치 전에 찾는 것과 같다. 하나에 한 줄씩, 칸은 탭으로 나뉜다:
+  `msi  <제품 코드>  <판>  <이름>` 또는 `msix  <패키지 전체 이름>`. 설치된 것이 있으면 종료 코드 0, 없으면 1 이라
+  스크립트가 그대로 시험할 수 있다. 다른 시스템에서는 Windows 에서만 돈다고 말한다(`RP0002`, 종료 코드 2).
 - `diff <a.msi> <b.msi>` 는 두 패키지의 다른 점을 한 줄에 하나씩, 표는 이름 순서, 행은 키 순서로 보인다:
   `<표>  insert  <칸들>`, `<표>  delete  <키들>`, `<표>  update  <키들>  <열>=<옛 값> -> <새 값>`,
   `<표>  new table  <열들>`(그 행들이 insert 로 뒤따른다), `<표>  dropped table`, `<표>  columns  <a 의 것> -> <b 의 것>`
@@ -1929,8 +1942,10 @@ rubrapack version | help [command]
   쓴다: 제품 변환(달라진 행; 있던 파일은 바탕 패키지의 캐비닛 속 자리를 지킨다), 패치 변환(새 파일과 바뀐
   파일의 새 자리, 패치의 캐비닛을 가리키는 Media 행, PatchPackage, PatchFiles 동작), 그리고 그 파일들을
   통째로 담은 캐비닛을 Microsoft 의 `MsiMsp.exe` 와 같은 모양으로. 두 패키지는 제품 코드와 업그레이드
-  코드가 같고, 판의 앞 두 수가 같고(*작은 업데이트* 나 *마이너 업그레이드*), 캐비닛이 내장이고, 바탕의 파일과
-  구성 요소를 모두 가져야 한다. `--patch-code {GUID}`(기본: 두 패키지 코드에서 끌어냄), `--family <이름>`
+  코드가 같고, 판의 앞 두 수가 같고(*작은 업데이트* 나 *마이너 업그레이드*), 바탕의 파일과 구성 요소를 모두
+  가져야 한다. 파일은 패키지마다 그것을 두는 곳에서 읽는다 - 내장 캐비닛, 패키지 옆의 캐비닛(`cab = "external"`),
+  또는 관리 이미지(`msiexec /a`) 같은 비압축 패키지의 원본 폴더 - 그러니 각 패키지를 그 캐비닛과 함께 준다.
+  패치가 나르는 파일은 어느 경우든 패치 자신의 캐비닛에 든다. `--patch-code {GUID}`(기본: 두 패키지 코드에서 끌어냄), `--family <이름>`
   (MsiPatchSequence; 기본은 제품 이름), `--no-removal`(패치를 따로 제거할 수 없게). 거부는 `RP0013` 이다.
   `inspect <파일.msp> --base <base.msi>` 는 패치의 표와 두 변환을 보여 준다. `sign` 은 패치에도 패키지처럼
   서명하고(그 변환까지 서명에 든다), `verify` 가 그것을 확인한다.

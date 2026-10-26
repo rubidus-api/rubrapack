@@ -10,6 +10,7 @@
 
 #include "proven/allocator.h"
 #include "proven/types.h"
+#include "rubrapack/cab.h"
 #include "rubrapack/limits.h"
 #include "rubrapack/transform.h"
 
@@ -18,12 +19,16 @@ typedef struct {
     const char *source_list;        // summary property 5: where the patch can be found again ("" when NULL)
     const char *family;             // MsiPatchSequence.PatchFamily; NULL: the product name
     bool        no_removal;         // MsiPatchMetadata AllowRemoval = 0
+    // The packages' files by File key (RFC-0031 L19: from external cabinets or an uncompressed
+    // source tree too, rp_pkg_files); NULL: read from the packages' embedded cabinets.
+    const rp_cab_file_t *base_files, *target_files;
+    size_t               base_count, target_count;
 } rp_msp_opts_t;
 
 // Writes the patch from base to target. What a patch cannot carry is refused with
 // PROVEN_ERR_UNSUPPORTED and *why (and `table` naming what it is about): another product or upgrade
 // code, another major or minor version or a lower one, a file or component the target no longer
-// has, a component whose GUID changed, a cabinet that is not embedded. Deterministic.
+// has, a component whose GUID changed, a file whose bytes cannot be found. Deterministic.
 [[nodiscard]] proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, const rp_mst_side_t *target,
                                         const rp_msp_opts_t *opts, const rp_limits_t *limits, uint8_t **out, size_t *len,
                                         const char **why, char *table, size_t table_cap);

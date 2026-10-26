@@ -810,6 +810,9 @@ msgstr "Verzie a aktualizácie"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer povoľuje najviac 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows nepovedal, čo je pre '{1}' nainštalované"
+
 msgid "Windows name"
 msgstr "názov Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "nemá ProductCode ani ProductVersion"
 msgid "has no Property table"
 msgstr "nemá tabuľku Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "nemá identitu (Name, Publisher a Version)"
+
+msgid "has no summary information"
+msgstr "nemá súhrnné informácie"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "má záznamy pre tabuľku, ktorú nedefinuje ani základ, ani transformácia"
 
@@ -2138,6 +2147,9 @@ msgstr "image musí byť súbor .bmp (Windows Installer zobrazuje iba BMP)"
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "inline tabuľky nie sú podporované; použite tabuľku [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed sa pýta systému Windows, čo je nainštalované; beží len vo Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "inštaluje sa na tú istú cestu ako riadok {1} (Windows v názvoch nerozlišuje veľké a malé písmená{2})"
@@ -2180,6 +2192,12 @@ msgstr "nie je databáza Windows Installer"
 
 msgid "is not a compound file"
 msgstr "nie je zložený súbor"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "nie je oprava: nemá kód opravy, cieľové produkty ani transformácie"
+
+msgid "is not a valid MSIX package"
+msgstr "nie je platný balík MSIX"
 
 msgid "is not valid UTF-8"
 msgstr "nie je platné UTF-8"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' je aj v [assoc.{2}] s iným popisom, target, icon alebo ar
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id musí byť písmená, číslice, '.', '_' alebo '-', nezačínať číslicou, najviac 39 (zadané '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties sú pre balíky Inštalátora systému Windows; MSIX ich neprijíma"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "vlastnosť '{1}' už patrí ovládaciemu prvku '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: súbor '{1}' nie je [file.*] tohto balíka"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "uložte zdroj ako UTF-8 (alebo UTF-16 s BOM) s koncami riadkov LF alebo CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "povie, či je v tomto systéme Windows nainštalovaný produkt s týmto kódom inovácie alebo balík aplikácie tejto rodiny"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "schéma '{1}' už má program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "zdrojový súbor '{1}' sa nenašiel"
 msgid "source must be \"file:<ID>\""
 msgstr "source musí byť \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source musí byť balík .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source musí byť balík .msi, .msix, .msixbundle alebo .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "zdrojová cesta '{1}' musí byť relatívna k zdrojovému súboru"

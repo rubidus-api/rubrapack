@@ -810,6 +810,9 @@ msgstr "Versi dan peningkatan"
 msgid "Windows Installer allows at most 255.255.65535(.65535)"
 msgstr "Windows Installer mengizinkan paling tinggi 255.255.65535(.65535)"
 
+msgid "Windows did not say what is installed for '%s'"
+msgstr "Windows tidak memberi tahu apa yang terpasang untuk '{1}'"
+
 msgid "Windows name"
 msgstr "nama Windows"
 
@@ -2112,6 +2115,12 @@ msgstr "tidak memiliki ProductCode atau ProductVersion"
 msgid "has no Property table"
 msgstr "tidak memiliki tabel Property"
 
+msgid "has no identity (Name, Publisher and Version)"
+msgstr "tidak memiliki identitas (Name, Publisher, dan Version)"
+
+msgid "has no summary information"
+msgstr "tidak memiliki informasi ringkasan"
+
 msgid "has records for a table neither the base nor the transform defines"
 msgstr "memiliki catatan untuk tabel yang tidak didefinisikan basis maupun transform"
 
@@ -2138,6 +2147,9 @@ msgstr "image harus berupa berkas .bmp (Windows Installer hanya menampilkan BMP)
 
 msgid "inline tables are not supported; use a [kind.ID] table"
 msgstr "tabel inline tidak didukung; gunakan tabel [kind.ID]"
+
+msgid "installed asks Windows what is installed; it runs on Windows only"
+msgstr "installed menanyakan kepada Windows apa yang terpasang; hanya berjalan di Windows"
 
 msgid "installs to the same path as line %u (Windows ignores case in names%s)"
 msgstr "terinstal ke jalur yang sama dengan baris {1} (Windows mengabaikan huruf besar/kecil dalam nama{2})"
@@ -2180,6 +2192,12 @@ msgstr "bukan basis data Windows Installer"
 
 msgid "is not a compound file"
 msgstr "bukan compound file"
+
+msgid "is not a patch: it has no patch code, target products or transforms"
+msgstr "bukan patch: tidak memiliki kode patch, produk target, atau transformasi"
+
+msgid "is not a valid MSIX package"
+msgstr "bukan paket MSIX yang valid"
 
 msgid "is not valid UTF-8"
 msgstr "bukan UTF-8 yang valid"
@@ -2580,6 +2598,9 @@ msgstr "prog-id '{1}' juga ada di [assoc.{2}] dengan deskripsi, target, icon ata
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id harus huruf, digit, '.', '_' atau '-', tidak diawali digit, paling banyak 39 (didapat '{1}')"
 
+msgid "properties are for Windows Installer packages; an MSIX takes none"
+msgstr "properties untuk paket Windows Installer; MSIX tidak menerimanya"
+
 msgid "property '%s' already belongs to control '%s'"
 msgstr "properti '{1}' sudah milik kontrol '{2}'"
 
@@ -2709,6 +2730,9 @@ msgstr "run: file '{1}' bukan [file.*] dari paket ini"
 msgid "save the source as UTF-8 (or UTF-16 with a BOM), with LF or CRLF line ends"
 msgstr "simpan sumber sebagai UTF-8 (atau UTF-16 dengan BOM), dengan akhir baris LF atau CRLF"
 
+msgid "say whether this Windows has a product of that upgrade code or an app package of that family installed"
+msgstr "memberi tahu apakah Windows ini memiliki produk dengan kode peningkatan itu atau paket aplikasi dari keluarga itu yang terpasang"
+
 msgid "scheme '%s' already has a program ([protocol.%s])"
 msgstr "skema '{1}' sudah memiliki program ([protocol.{2}])"
 
@@ -2769,8 +2793,8 @@ msgstr "file sumber '{1}' tidak ditemukan"
 msgid "source must be \"file:<ID>\""
 msgstr "source harus \"file:<ID>\""
 
-msgid "source must be an .msi package"
-msgstr "source harus paket .msi"
+msgid "source must be an .msi, .msix, .msixbundle or .msp package"
+msgstr "source harus paket .msi, .msix, .msixbundle, atau .msp"
 
 msgid "source path '%s' must be relative to the source file"
 msgstr "jalur sumber '{1}' harus relatif terhadap file sumber"
