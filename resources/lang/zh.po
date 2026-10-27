@@ -3096,8 +3096,8 @@ msgstr "安装包已签名；rubrapack 不会重复签名或替换签名"
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "安装包已签名；rubrapack 只为未签名的安装包签名(且从不重复签名)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "安装包使用了其外部的 cabinet，.msi 的签名不涵盖它们；请用嵌入的 cabinet 构建，或用 --allow-unsigned-cabs 仍然签名"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "安装包使用了其外部的 cabinet，.msi 的签名不涵盖它们；请用 --key 构建以同时签名它们，或用嵌入的 cabinet 构建，或用 --allow-unsigned-cabs 仍然签名"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "安装包的内容与其签名不符(签名后被更改)"

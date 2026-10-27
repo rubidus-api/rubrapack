@@ -3096,8 +3096,8 @@ msgstr "pachetul este deja semnat; rubrapack nu semnează de două ori și nu î
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "pachetul este deja semnat; rubrapack semnează pachete nesemnate (și niciodată de două ori)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "pachetul folosește cabinet-uri în afara sa, pe care o semnătură a .msi-ului nu le acoperă; construiți-l cu cabinet-uri încorporate, sau semnați oricum cu --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pachetul folosește cabinet-uri în afara sa, pe care o semnătură a .msi-ului nu le acoperă; construiți-l cu --key ca să fie semnate și ele, sau cu cabinet-uri încorporate, sau semnați oricum cu --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "conținutul pachetului nu corespunde semnăturii sale (a fost modificat după semnare)"

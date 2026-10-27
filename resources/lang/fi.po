@@ -3096,8 +3096,8 @@ msgstr "paketti on jo allekirjoitettu; rubrapack ei allekirjoita kahdesti eikä 
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "paketti on jo allekirjoitettu; rubrapack allekirjoittaa allekirjoittamattomia paketteja (eikä koskaan kahdesti)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "paketti käyttää itsensä ulkopuolisia cabinetteja, joita .msi:n allekirjoitus ei kata; rakenna se upotetuin cabinetein, tai allekirjoita silti valinnalla --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "paketti käyttää itsensä ulkopuolisia cabinetteja, joita .msi:n allekirjoitus ei kata; rakenna se valinnalla --key, jolloin nekin allekirjoitetaan, tai upotetuin cabinetein, tai allekirjoita silti valinnalla --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "paketin sisältö ei vastaa sen allekirjoitusta (sitä muutettiin allekirjoituksen jälkeen)"

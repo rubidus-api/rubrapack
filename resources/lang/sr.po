@@ -127,7 +127,7 @@ msgid "%s '%s': the license text needs the face's English name, so it shows in t
 msgstr "{1} '{2}': tekst licence traži englesko ime fonta, pa se prikazuje fontom samog jezika; napišite englesko ime (npr. \"Malgun Gothic\") da bi se i tamo koristio ovaj font"
 
 msgid "%s = '%s' must be a folder"
-msgstr "{1} = '{2}' мора бити фасцикла"
+msgstr "{1} = '{2}' mora biti fascikla"
 
 msgid "%s component, but the package platform is %.*s"
 msgstr "komponenta {1}, ali platforma paketa je {2}"
@@ -145,7 +145,7 @@ msgid "%s holds strings"
 msgstr "{1} sadrži niske"
 
 msgid "%s is %u to %u characters long"
-msgstr "{1} је дуг од {2} до {3} знакова"
+msgstr "{1} je dug od {2} do {3} znakova"
 
 msgid "%s is a list of \"Key=Value\" texts"
 msgstr "{1} je lista tekstova \"Ključ=Vrednost\""
@@ -193,7 +193,7 @@ msgid "%s must be a GUID like {12345678-...} (got '%s')"
 msgstr "{1} mora biti GUID kao {{12345678-...} (dobijeno '{2}')"
 
 msgid "%s must be an http:// or https:// address (got '%s')"
-msgstr "{1} мора бити адреса http:// или https:// (примљено '{2}')"
+msgstr "{1} mora biti adresa http:// ili https:// (primljeno '{2}')"
 
 msgid "%s must be an https://, http:// or file:// address, or a \\\\server\\share path (got '%s')"
 msgstr "{1} mora biti adresa https://, http:// ili file://, ili putanja \\\\server\\share (dobijeno '{2}')"
@@ -346,7 +346,7 @@ msgid "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles,
 msgstr "'{1}' nije ni poznata fascikla ni dir ID (poznate fascikle: ProgramFiles, ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, Windows, System, Fonts, Temp)"
 
 msgid "'%s' is neither an MSIX package nor a package family name (<Name>_<publisher ID>)"
-msgstr "'{1}' није ни MSIX пакет ни назив породице пакета (<Name>_<publisher ID>)"
+msgstr "'{1}' nije ni MSIX paket ni naziv porodice paketa (<Name>_<publisher ID>)"
 
 msgid "'%s' is not a cabinet rubrapack can read (stored or MSZIP)"
 msgstr "'{1}' nije cabinet koji rubrapack može da čita (stored ili MSZIP)"
@@ -535,7 +535,7 @@ msgid "--dist names a new folder beside the source (no path)"
 msgstr "--dist imenuje novu fasciklu pored izvora (bez putanje)"
 
 msgid "--flat is for a .msixbundle output (its packages are written beside it)"
-msgstr "--flat је за излаз .msixbundle (његови пакети се записују поред)"
+msgstr "--flat je za izlaz .msixbundle (njegovi paketi se zapisuju pored)"
 
 msgid "--jobs takes a number from 1 to 64 (got '%s')"
 msgstr "--jobs prima broj od 1 do 64 (dobijeno '{1}')"
@@ -601,13 +601,13 @@ msgid "--validate takes none, or some of product-code,upgrade-code,language,plat
 msgstr "--validate prima none, ili neke od product-code,upgrade-code,language,platform"
 
 msgid "--winget is for a .msi, .msix or .msixbundle output"
-msgstr "--winget је за излаз .msi, .msix или .msixbundle"
+msgstr "--winget je za izlaz .msi, .msix ili .msixbundle"
 
 msgid "--winget needs a [winget] table: identifier, installer-url, license, short-description"
-msgstr "--winget тражи табелу [winget]: identifier, installer-url, license, short-description"
+msgstr "--winget traži tabelu [winget]: identifier, installer-url, license, short-description"
 
 msgid "--winget needs the package in one file: winget downloads one, so not cab = \"external\""
-msgstr "--winget тражи пакет у једној датотеци: winget преузима једну, дакле не cab = \"external\""
+msgstr "--winget traži paket u jednoj datoteci: winget preuzima jednu, dakle ne cab = \"external\""
 
 msgid "-D %.*s is given twice"
 msgstr "-D {1} je naveden dvaput"
@@ -973,7 +973,7 @@ msgid "[env.%s]: its value names a place an MSIX cannot give (a folder outside t
 msgstr "[env.{1}]: njegova vrednost navodi mesto koje MSIX ne može da da (fasciklu van paketa koja nije fascikla Windowsa, ili deo iz vremena instalacije); koristite msi-only = true"
 
 msgid "[env.%s]: with external-location = true the package carries none of the program's files, so not rubrapack's launcher either; or msi-only = true"
-msgstr "[env.{1}]: са external-location = true пакет не носи ниједну датотеку програма, па ни покретач rubrapack-а; или msi-only = true"
+msgstr "[env.{1}]: sa external-location = true paket ne nosi nijednu datoteku programa, pa ni pokretač rubrapack-a; ili msi-only = true"
 
 msgid "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere"
 msgstr "[file.{1}] je već u fascikli svog programa; isolate-for je za deljenu DLL instaliranu drugde"
@@ -1156,19 +1156,19 @@ msgid "[msix-extension.%s]: verb '%s': Windows takes letters and digits only"
 msgstr "[msix-extension.{1}]: verb '{2}': Windows prima samo slova i cifre"
 
 msgid "[msix-psf] for arm64 needs launcher = \"...\" (the PSF names its launchers PsfLauncher32.exe and PsfLauncher64.exe)"
-msgstr "[msix-psf] за arm64 захтева launcher = \"...\" (PSF своје покретаче назива PsfLauncher32.exe, PsfLauncher64.exe)"
+msgstr "[msix-psf] za arm64 zahteva launcher = \"...\" (PSF svoje pokretače naziva PsfLauncher32.exe, PsfLauncher64.exe)"
 
 msgid "[msix-psf] goes with neither external-location = true nor [env.*] (rubrapack's own launcher)"
-msgstr "[msix-psf] не иде ни са external-location = true ни са [env.*] (сопственим покретачем rubrapack-а)"
+msgstr "[msix-psf] ne ide ni sa external-location = true ni sa [env.*] (sopstvenim pokretačem rubrapack-a)"
 
 msgid "[msix-psf] starts the applications through the PSF launcher: it needs an [msix-app.ID]"
-msgstr "[msix-psf] покреће апликације преко PSF покретача: потребан је [msix-app.ID]"
+msgstr "[msix-psf] pokreće aplikacije preko PSF pokretača: potreban je [msix-app.ID]"
 
 msgid "[msix-psf]: config '%s' does not name the application '%s' in its \"applications\""
-msgstr "[msix-psf]: config '{1}' не наводи апликацију '{2}' у својим \"applications\""
+msgstr "[msix-psf]: config '{1}' ne navodi aplikaciju '{2}' u svojim \"applications\""
 
 msgid "[msix-psf]: files has no '%s' (the launcher)"
-msgstr "[msix-psf]: files нема '{1}' (покретач)"
+msgstr "[msix-psf]: files nema '{1}' (pokretač)"
 
 msgid "[odbc-driver.%s]: file '%s' is not a DLL"
 msgstr "[odbc-driver.{1}]: fajl '{2}' nije DLL"
@@ -1384,7 +1384,7 @@ msgid "a character Windows does not allow in a name (/ \\ : * ? \" < > |)"
 msgstr "znak koji Windows ne dozvoljava u imenu (/ \\ : * ? \" < > |)"
 
 msgid "a container holds at most %u package families"
-msgstr "контејнер држи највише {1} породица пакета"
+msgstr "kontejner drži najviše {1} porodica paketa"
 
 msgid "a control character"
 msgstr "kontrolni znak"
@@ -1438,7 +1438,7 @@ msgid "a font goes into an MSIX through a [font.*] that names it"
 msgstr "font ulazi u MSIX preko [font.*] koji ga imenuje"
 
 msgid "a framework package has no applications, capabilities or dependencies of its own (%s)"
-msgstr "пакет оквира нема сопствене апликације, могућности ни зависности ({1})"
+msgstr "paket okvira nema sopstvene aplikacije, mogućnosti ni zavisnosti ({1})"
 
 msgid "a hash the token signing does not know"
 msgstr "heš koji potpisivanje tokenom ne poznaje"
@@ -1699,7 +1699,7 @@ msgid "cannot bundle the packages: %s"
 msgstr "paketi ne mogu da se spoje u skup: {1}"
 
 msgid "cannot compare '%s' and '%s'"
-msgstr "'{1}' и '{2}' не могу да се упореде"
+msgstr "'{1}' i '{2}' ne mogu da se uporede"
 
 msgid "cannot create '%s'"
 msgstr "'{1}' ne može da se napravi"
@@ -1981,10 +1981,10 @@ msgid "extension must be '.' and lower-case letters, digits, '_' or '-' (got '%s
 msgstr "extension mora biti '.' i mala slova, cifre, '_' ili '-' (dobijeno '{1}')"
 
 msgid "external-location = true makes the identity of a program installed elsewhere: not a framework, optional or modification package"
-msgstr "external-location = true чини пакет идентитетом програма инсталираног негде другде: није пакет оквира, опциони ни пакет измене"
+msgstr "external-location = true čini paket identitetom programa instaliranog negde drugde: nije paket okvira, opcioni ni paket izmene"
 
 msgid "external-location = true needs Windows build 19041 or later: set [msix] min-version = \"10.0.19041.0\""
-msgstr "external-location = true захтева Windows верзију 19041 или новију: поставите [msix] min-version = \"10.0.19041.0\""
+msgstr "external-location = true zahteva Windows verziju 19041 ili noviju: postavite [msix] min-version = \"10.0.19041.0\""
 
 msgid "extra-files has no effect with preflight = false"
 msgstr "extra-files nema efekta uz preflight = false"
@@ -2179,7 +2179,7 @@ msgid "id must be a GUID like {12345678-1234-1234-1234-123456789ABC}: the module
 msgstr "id mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}: sopstveni GUID modula, isti u svakoj verziji"
 
 msgid "identifier is winget's Publisher.Package: 2 to 8 parts of 1 to 32 characters, no spaces or \\ / : * ? \" < > | (got '%s')"
-msgstr "identifier је winget-ов Publisher.Package: од 2 до 8 делова по 1 до 32 знака, без размака и \\ / : * ? \" < > | (примљено '{1}')"
+msgstr "identifier je winget-ov Publisher.Package: od 2 do 8 delova po 1 do 32 znaka, bez razmaka i \\ / : * ? \" < > | (primljeno '{1}')"
 
 msgid "identity-name must be 3 to 50 characters of A-Z, a-z, 0-9, '.' and '-' (got '%s')"
 msgstr "identity-name mora imati 3 do 50 znakova iz A-Z, a-z, 0-9, '.' i '-' (dobijeno '{1}')"
@@ -2320,7 +2320,7 @@ msgid "launch-args needs launch"
 msgstr "launch-args traži launch"
 
 msgid "launcher is the file name of the PSF launcher in files, like \"PsfLauncher64.exe\""
-msgstr "launcher је назив датотеке PSF покретача у files, на пример \"PsfLauncher64.exe\""
+msgstr "launcher je naziv datoteke PSF pokretača u files, na primer \"PsfLauncher64.exe\""
 
 msgid "license must be a .txt, .md (shown as plain text) or .rtf file"
 msgstr "license mora biti datoteka .txt, .md (prikazuje se kao običan tekst) ili .rtf"
@@ -2809,7 +2809,7 @@ msgid "shortcut name is %zu UTF-16 units; with its 8.3 short name MSI holds at m
 msgstr "ime prečice ima {1} UTF-16 jedinica; sa kratkim imenom 8.3 MSI prima najviše {2}"
 
 msgid "show what differs between two packages: tables, rows, cells and summary"
-msgstr "приказује по чему се два пакета разликују: табеле, редови, ћелије и сажетак"
+msgstr "prikazuje po čemu se dva paketa razlikuju: tabele, redovi, ćelije i sažetak"
 
 msgid "sign a PE file, an MSI package, an MSIX package or bundle"
 msgstr "potpisivanje PE datoteke, MSI paketa, MSIX paketa ili skupa"
@@ -2869,7 +2869,7 @@ msgid "summary-name must be ASCII (summary information holds ASCII only)"
 msgstr "summary-name mora biti ASCII (sažetak informacija sadrži samo ASCII)"
 
 msgid "symbols is a list of .pdb files, like [\"build/$(ARCH)/app.pdb\"]"
-msgstr "symbols је листа .pdb датотека, на пример [\"build/$(ARCH)/app.pdb\"]"
+msgstr "symbols je lista .pdb datoteka, na primer [\"build/$(ARCH)/app.pdb\"]"
 
 msgid "table %s %s"
 msgstr "tabela {1} {2}"
@@ -2893,7 +2893,7 @@ msgid "tables and keys: an unknown table or key, a required one missing, an item
 msgstr "tabele i ključevi: nepoznata tabela ili ključ, nedostaje obavezan, stavka bez funkcije kada funkcije postoje"
 
 msgid "tags is a list of at most 16 search terms, like [\"editor\", \"text\"]"
-msgstr "tags је листа од највише 16 појмова за претрагу, на пример [\"editor\", \"text\"]"
+msgstr "tags je lista od najviše 16 pojmova za pretragu, na primer [\"editor\", \"text\"]"
 
 msgid "takes no configuration (it has no ModuleConfiguration)"
 msgstr "ne prima konfiguraciju (nema ModuleConfiguration)"
@@ -3082,7 +3082,7 @@ msgid "the name %s"
 msgstr "ime {1}"
 
 msgid "the package family %s is in the container twice"
-msgstr "породица пакета {1} је у контејнеру двапут"
+msgstr "porodica paketa {1} je u kontejneru dvaput"
 
 msgid "the package is not signed"
 msgstr "paket nije potpisan"
@@ -3096,8 +3096,8 @@ msgstr "paket je već potpisan; rubrapack ne potpisuje dvaput niti zamenjuje pot
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "paket je već potpisan; rubrapack potpisuje nepotpisane pakete (i nikada dvaput)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "paket koristi cabinet-e izvan sebe, koje potpis .msi-ja ne pokriva; napravite ga sa ugrađenim cabinet-ima ili ipak potpišite sa --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "paket koristi cabinet-e izvan sebe, koje potpis .msi-ja ne pokriva; napravite ga sa --key da se i oni potpišu, ili sa ugrađenim cabinet-ima, ili ipak potpišite sa --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "sadržaj paketa se ne poklapa sa njegovim potpisom (promenjen je posle potpisivanja)"
@@ -3106,7 +3106,7 @@ msgid "the package's directory cannot be read"
 msgstr "direktorijum paketa ne može da se pročita"
 
 msgid "the package's file name must not hold quotes or a percent sign: '%s'"
-msgstr "назив датотеке пакета не сме садржати наводнике ни знак процента: '{1}'"
+msgstr "naziv datoteke paketa ne sme sadržati navodnike ni znak procenta: '{1}'"
 
 msgid "the packages of a bundle need the same Name, Publisher and Version"
 msgstr "paketi skupa traže isti Name, Publisher i Version"
@@ -3478,13 +3478,13 @@ msgid "working-dir '%s' is not a dir ID"
 msgstr "working-dir '{1}' nije dir ID"
 
 msgid "write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"
-msgstr "записује конфигурацију Windows Sandbox-а која инсталира пакет у нови Windows за једнократну употребу"
+msgstr "zapisuje konfiguraciju Windows Sandbox-a koja instalira paket u novi Windows za jednokratnu upotrebu"
 
 msgid "write a patch (.msp): the files and rows that update an installed base to the target"
 msgstr "pisanje zakrpe (.msp): datoteke i redovi koji ažuriraju instaliranu osnovu na cilj"
 
 msgid "write a shared package container's definition: MSIX packages that run in one container"
-msgstr "записује дефиницију заједничког контејнера пакета: MSIX пакети који раде у једном контејнеру"
+msgstr "zapisuje definiciju zajedničkog kontejnera paketa: MSIX paketi koji rade u jednom kontejneru"
 
 msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
 msgstr "pisanje izvorne datoteke (.toml; i imena .rpk): iz odgovora, pitanih ili datih kao opcije, fiksnog početnog ili postojećeg MSI-ja"

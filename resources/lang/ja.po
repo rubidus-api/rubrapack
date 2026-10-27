@@ -3096,8 +3096,8 @@ msgstr "パッケージは既に署名されています。rubrapack は二重�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "パッケージは既に署名されています。rubrapack が署名するのは署名のないパッケージだけです (二重には決して署名しません)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "パッケージは外部のキャビネットを使っていて、.msi の署名はそれを含みません。キャビネットを埋め込んでビルドするか、--allow-unsigned-cabs でそれでも署名してください"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "パッケージは外部のキャビネットを使っていて、.msi の署名はそれを含みません。--key でビルドしてキャビネットも署名するか、キャビネットを埋め込んでビルドするか、--allow-unsigned-cabs でそれでも署名してください"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "パッケージの内容が署名と一致しません (署名の後に変更されました)"

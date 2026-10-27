@@ -3096,8 +3096,8 @@ msgstr "pakotne jau ir parakstīta; rubrapack neparaksta divreiz un neaizstāj p
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "pakotne jau ir parakstīta; rubrapack paraksta neparakstītas pakotnes (un nekad divreiz)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "pakotne izmanto cabinet failus ārpus sevis, ko .msi paraksts neaptver; būvējiet to ar iegultiem cabinet failiem vai tomēr parakstiet ar --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakotne izmanto cabinet failus ārpus sevis, ko .msi paraksts neaptver; būvējiet to ar --key, lai parakstītu arī tos, vai ar iegultiem cabinet failiem, vai tomēr parakstiet ar --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "pakotnes saturs neatbilst tās parakstam (tas tika mainīts pēc parakstīšanas)"

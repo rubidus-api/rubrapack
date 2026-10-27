@@ -3096,8 +3096,8 @@ msgstr "paket allaqachon imzolangan; rubrapack ikki marta imzolamaydi va imzoni 
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "paket allaqachon imzolangan; rubrapack imzolanmagan paketlarni imzolaydi (va hech qachon ikki marta emas)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "paket o‘zidan tashqaridagi cabinet lardan foydalanadi, ularni .msi imzosi qamramaydi; uni ichki cabinet lar bilan yig‘ing yoki baribir --allow-unsigned-cabs bilan imzolang"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "paket o‘zidan tashqaridagi cabinet lardan foydalanadi, ularni .msi imzosi qamramaydi; ularni ham imzolash uchun uni --key bilan yig‘ing, yoki ichki cabinet lar bilan yig‘ing, yoki baribir --allow-unsigned-cabs bilan imzolang"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "paket tarkibi imzosiga mos emas (imzolangandan keyin o‘zgartirilgan)"

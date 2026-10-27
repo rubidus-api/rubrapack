@@ -3096,8 +3096,8 @@ msgstr "il pacchetto è già firmato; rubrapack non firma due volte né sostitui
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "il pacchetto è già firmato; rubrapack firma pacchetti non firmati (e mai due volte)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "il pacchetto usa cabinet esterni, che una firma del .msi non copre; crearlo con cabinet incorporati, o firmare comunque con --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "il pacchetto usa cabinet esterni, che una firma del .msi non copre; crearlo con --key per firmare anche quelli, o con cabinet incorporati, o firmare comunque con --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "il contenuto del pacchetto non corrisponde alla firma (è stato modificato dopo la firma)"

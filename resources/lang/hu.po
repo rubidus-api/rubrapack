@@ -3096,8 +3096,8 @@ msgstr "a csomag már alá van írva; a rubrapack nem ír alá kétszer, és nem
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "a csomag már alá van írva; a rubrapack aláíratlan csomagokat ír alá (és sosem kétszer)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "a csomag önmagán kívüli cabineteket használ, amelyeket az .msi aláírása nem fed le; készítse beágyazott cabinetekkel, vagy írja alá mégis a --allow-unsigned-cabs kapcsolóval"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "a csomag önmagán kívüli cabineteket használ, amelyeket az .msi aláírása nem fed le; készítse a --key kapcsolóval, hogy azok is alá legyenek írva, vagy beágyazott cabinetekkel, vagy írja alá mégis a --allow-unsigned-cabs kapcsolóval"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "a csomag tartalma nem egyezik az aláírásával (az aláírás után megváltozott)"

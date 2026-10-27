@@ -3096,8 +3096,8 @@ msgstr "balík je už podpísaný; rubrapack nepodpisuje dvakrát ani nenahrádz
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "balík je už podpísaný; rubrapack podpisuje nepodpísané balíky (a nikdy dvakrát)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "balík používa cabinety mimo seba, ktoré podpis .msi nepokrýva; zostavte ho s vloženými cabinetmi alebo ho aj tak podpíšte cez --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "balík používa cabinety mimo seba, ktoré podpis .msi nepokrýva; zostavte ho s --key, aby sa podpísali aj ony, alebo s vloženými cabinetmi, alebo ho aj tak podpíšte cez --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "obsah balíka nezodpovedá jeho podpisu (bol zmenený po podpísaní)"

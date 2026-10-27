@@ -3096,8 +3096,8 @@ msgstr "தொகுப்பு ஏற்கெனவே கையொப்ப�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "தொகுப்பு ஏற்கெனவே கையொப்பமிடப்பட்டுள்ளது; rubrapack கையொப்பமில்லாத தொகுப்புகளைக் கையொப்பமிடும் (ஒருபோதும் இருமுறை அல்ல)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "தொகுப்பு தனக்கு வெளியே உள்ள cabinet களைப் பயன்படுத்துகிறது, அவற்றை .msi இன் கையொப்பம் உள்ளடக்காது; உட்பொதிந்த cabinet களுடன் உருவாக்கவும், அல்லது --allow-unsigned-cabs உடன் எப்படியும் கையொப்பமிடவும்"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "தொகுப்பு தனக்கு வெளியே உள்ள cabinet களைப் பயன்படுத்துகிறது, அவற்றை .msi இன் கையொப்பம் உள்ளடக்காது; அவற்றையும் கையொப்பமிட --key உடன் உருவாக்கவும், அல்லது உட்பொதிந்த cabinet களுடன் உருவாக்கவும், அல்லது --allow-unsigned-cabs உடன் எப்படியும் கையொப்பமிடவும்"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "தொகுப்பின் உள்ளடக்கம் அதன் கையொப்பத்துடன் பொருந்தவில்லை (கையொப்பமிட்ட பின் மாற்றப்பட்டது)"

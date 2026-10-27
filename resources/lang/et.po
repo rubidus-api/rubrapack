@@ -3096,8 +3096,8 @@ msgstr "pakett on juba allkirjastatud; rubrapack ei allkirjasta kaks korda ega a
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "pakett on juba allkirjastatud; rubrapack allkirjastab allkirjastamata pakette (ja mitte kunagi kaks korda)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "pakett kasutab väljaspool end olevaid cabineteid, mida .msi allkiri ei kata; koostage see manustatud cabinetidega või allkirjastage siiski suvandiga --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakett kasutab väljaspool end olevaid cabineteid, mida .msi allkiri ei kata; koostage see suvandiga --key, et ka need allkirjastada, või manustatud cabinetidega, või allkirjastage siiski suvandiga --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "paketi sisu ei vasta selle allkirjale (seda muudeti pärast allkirjastamist)"

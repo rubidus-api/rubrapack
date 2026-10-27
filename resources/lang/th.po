@@ -3096,8 +3096,8 @@ msgstr "แพ็กเกจลงนามแล้ว rubrapack ไม่ล�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "แพ็กเกจลงนามแล้ว rubrapack ลงนามเฉพาะแพ็กเกจที่ยังไม่ลงนาม (และไม่ลงนามซ้ำ)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "แพ็กเกจใช้ cabinet ภายนอกซึ่งลายเซ็นของ .msi ไม่ครอบคลุม ให้สร้างแบบฝัง cabinet หรือลงนามต่อด้วย --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "แพ็กเกจใช้ cabinet ภายนอกซึ่งลายเซ็นของ .msi ไม่ครอบคลุม ให้สร้างด้วย --key เพื่อลงนาม cabinet ด้วย หรือสร้างแบบฝัง cabinet หรือลงนามต่อด้วย --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "เนื้อหาของแพ็กเกจไม่ตรงกับลายเซ็น (ถูกเปลี่ยนหลังลงนาม)"

@@ -3096,8 +3096,8 @@ msgstr "gói đã được ký; rubrapack không ký hai lần hay thay chữ k�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "gói đã được ký; rubrapack ký các gói chưa ký (và không bao giờ ký hai lần)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "gói dùng cabinet bên ngoài nó, mà chữ ký của .msi không bao phủ; hãy tạo gói với cabinet nhúng, hoặc vẫn ký bằng --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "gói dùng cabinet bên ngoài nó, mà chữ ký của .msi không bao phủ; hãy tạo gói với --key để ký cả chúng, hoặc với cabinet nhúng, hoặc vẫn ký bằng --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "nội dung gói không khớp với chữ ký (đã bị đổi sau khi ký)"

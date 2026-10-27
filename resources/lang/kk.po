@@ -3096,8 +3096,8 @@ msgstr "бумаға қол қойылған; rubrapack екі рет қол қ�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "бумаға қол қойылған; rubrapack қол қойылмаған бумаларға қол қояды (және ешқашан екі рет емес)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "бума өзінен тыс cabinet файлдарын пайдаланады, оларды .msi қолтаңбасы қамтымайды; оны ендірілген cabinet файлдарымен жасаңыз немесе бәрібір --allow-unsigned-cabs арқылы қол қойыңыз"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "бума өзінен тыс cabinet файлдарын пайдаланады, оларды .msi қолтаңбасы қамтымайды; оларға да қол қою үшін оны --key арқылы жасаңыз, не ендірілген cabinet файлдарымен жасаңыз, не бәрібір --allow-unsigned-cabs арқылы қол қойыңыз"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "буманың мазмұны қолтаңбасына сай емес (қол қойылғаннан кейін өзгертілген)"

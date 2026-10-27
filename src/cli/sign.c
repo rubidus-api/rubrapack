@@ -325,7 +325,12 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
         return err == PROVEN_ERR_NOMEM ? RP_EXIT_IO : RP_EXIT_SIGN;
     }
     if (external && !a->cabs_signed) rp_diag_warning(RP_DIAG_SIGN, "'%s': its external cabinets are not covered by the signature (--allow-unsigned-cabs)", label);
-    if (!a->timestamp) rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", label);
+    // Once a run: build --key signs each external cabinet and then the .msi with the same options.
+    static bool told_timestamp;
+    if (!a->timestamp && !told_timestamp) {
+        told_timestamp = true;
+        rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", label);
+    }
     return RP_EXIT_OK;
 }
 

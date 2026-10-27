@@ -3096,8 +3096,8 @@ msgstr "paketas jau pasirašytas; rubrapack nepasirašo du kartus ir nekeičia p
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "paketas jau pasirašytas; rubrapack pasirašo nepasirašytus paketus (ir niekada du kartus)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "paketas naudoja cabinet failus už savęs, kurių .msi parašas neapima; sukurkite jį su įterptais cabinet failais arba vis tiek pasirašykite su --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "paketas naudoja cabinet failus už savęs, kurių .msi parašas neapima; sukurkite jį su --key, kad būtų pasirašyti ir jie, arba su įterptais cabinet failais, arba vis tiek pasirašykite su --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "paketo turinys neatitinka jo parašo (jis pakeistas po pasirašymo)"

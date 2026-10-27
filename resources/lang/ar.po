@@ -3098,8 +3098,8 @@ msgstr "الحزمة موقّعة بالفعل؛ لا يوقّع rubrapack مر�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "الحزمة موقّعة بالفعل؛ يوقّع rubrapack الحزم غير الموقّعة (ولا يوقّع مرتين أبداً)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "تستخدم الحزمة ملفات cabinet خارجها، لا يغطيها توقيع ملف .msi؛ ابنها بملفات cabinet مضمّنة، أو وقّع على أي حال باستخدام --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "تستخدم الحزمة ملفات cabinet خارجها، لا يغطيها توقيع ملف .msi؛ ابنها باستخدام --key لتوقيعها أيضًا، أو بملفات cabinet مضمّنة، أو وقّع على أي حال باستخدام --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "محتويات الحزمة لا تطابق توقيعها (تغيّرت بعد التوقيع)"

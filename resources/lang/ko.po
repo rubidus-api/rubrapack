@@ -3096,8 +3096,8 @@ msgstr "패키지가 이미 서명되어 있습니다. rubrapack 은 두 번 서
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "패키지가 이미 서명되어 있습니다. rubrapack 은 서명되지 않은 패키지에 서명합니다(두 번은 하지 않습니다)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "패키지가 자기 밖의 캐비닛을 쓰는데 .msi 의 서명은 그것을 덮지 않습니다. 내장 캐비닛으로 빌드하거나 --allow-unsigned-cabs 로 그대로 서명하십시오"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "패키지가 자기 밖의 캐비닛을 쓰는데 .msi 의 서명은 그것을 덮지 않습니다. --key 로 빌드해 캐비닛까지 서명하거나, 내장 캐비닛으로 빌드하거나, --allow-unsigned-cabs 로 그대로 서명하십시오"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "패키지의 내용이 서명과 맞지 않습니다(서명한 뒤에 바뀌었습니다)"

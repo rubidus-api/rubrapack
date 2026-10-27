@@ -3096,8 +3096,8 @@ msgstr "pakej sudah ditandatangani; rubrapack tidak menandatangani dua kali atau
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "pakej sudah ditandatangani; rubrapack menandatangani pakej yang belum ditandatangani (dan tidak pernah dua kali)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "pakej menggunakan cabinet di luar dirinya, yang tidak diliputi tandatangan .msi; binanya dengan cabinet terbenam, atau tandatangani juga dengan --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "pakej menggunakan cabinet di luar dirinya, yang tidak diliputi tandatangan .msi; binanya dengan --key supaya ia turut ditandatangani, atau dengan cabinet terbenam, atau tandatangani juga dengan --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "kandungan pakej tidak sepadan dengan tandatangannya (diubah selepas ditandatangani)"

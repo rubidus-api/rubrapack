@@ -3096,8 +3096,8 @@ msgstr "пакет уже підписано; rubrapack не підписує д
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "пакет уже підписано; rubrapack підписує непідписані пакети (і ніколи двічі)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "пакет використовує cabinet поза собою, які підпис .msi не охоплює; зберіть його з вбудованими cabinet або все одно підпишіть із --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "пакет використовує cabinet поза собою, які підпис .msi не охоплює; зберіть його з --key, щоб підписати і їх, або з вбудованими cabinet, або все одно підпишіть із --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "вміст пакета не відповідає його підпису (його змінено після підписування)"

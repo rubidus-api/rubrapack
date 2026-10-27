@@ -3096,8 +3096,8 @@ msgstr "το πακέτο είναι ήδη υπογεγραμμένο· το ru
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "το πακέτο είναι ήδη υπογεγραμμένο· το rubrapack υπογράφει μη υπογεγραμμένα πακέτα (και ποτέ δύο φορές)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "το πακέτο χρησιμοποιεί cabinet έξω από αυτό, που δεν καλύπτει η υπογραφή του .msi· δημιουργήστε το με ενσωματωμένα cabinet, ή υπογράψτε έτσι κι αλλιώς με --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "το πακέτο χρησιμοποιεί cabinet έξω από αυτό, που δεν καλύπτει η υπογραφή του .msi· δημιουργήστε το με --key για να υπογραφούν κι αυτά, ή με ενσωματωμένα cabinet, ή υπογράψτε έτσι κι αλλιώς με --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "τα περιεχόμενα του πακέτου δεν ταιριάζουν με την υπογραφή του (άλλαξε μετά την υπογραφή)"

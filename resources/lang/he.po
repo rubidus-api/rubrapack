@@ -3098,8 +3098,8 @@ msgstr "החבילה כבר חתומה; rubrapack אינו חותם פעמיים
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "החבילה כבר חתומה; rubrapack חותם על חבילות לא חתומות (ולעולם לא פעמיים)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "החבילה משתמשת ב-cabinets מחוץ לה, שחתימה של ה-.msi אינה מכסה; בנה אותה עם cabinets מוטמעים, או חתום בכל זאת עם --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "החבילה משתמשת ב-cabinets מחוץ לה, שחתימה של ה-.msi אינה מכסה; בנה אותה עם --key כדי לחתום גם עליהם, או עם cabinets מוטמעים, או חתום בכל זאת עם --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "התוכן של החבילה אינו תואם לחתימה שלה (היא שונתה לאחר החתימה)"

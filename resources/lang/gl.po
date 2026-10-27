@@ -3096,8 +3096,8 @@ msgstr "o paquete xa está asinado; rubrapack non asina dúas veces nin substit�
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "o paquete xa está asinado; rubrapack asina paquetes sen asinar (e nunca dúas veces)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "o paquete usa cabinets fóra de si mesmo, que a sinatura do .msi non cobre; constrúao con cabinets incrustados, ou asine igualmente con --allow-unsigned-cabs"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "o paquete usa cabinets fóra de si mesmo, que a sinatura do .msi non cobre; constrúao con --key para asinalos tamén, ou con cabinets incrustados, ou asine igualmente con --allow-unsigned-cabs"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "o contido do paquete non coincide coa súa sinatura (cambiouse despois de asinalo)"

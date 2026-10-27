@@ -3096,8 +3096,8 @@ msgstr "पैकेज पहले से हस्ताक्षरित �
 msgid "the package is signed already; rubrapack signs unsigned packages (and never twice)"
 msgstr "पैकेज पहले से हस्ताक्षरित है; rubrapack बिना हस्ताक्षर वाले पैकेजों पर हस्ताक्षर करता है (और कभी दो बार नहीं)"
 
-msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
-msgstr "पैकेज अपने बाहर की cabinet उपयोग करता है, जिन्हें .msi का हस्ताक्षर शामिल नहीं करता; इसे एम्बेडेड cabinet के साथ बनाएँ, या फिर भी --allow-unsigned-cabs से हस्ताक्षर करें"
+msgid "the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs"
+msgstr "पैकेज अपने बाहर की cabinet उपयोग करता है, जिन्हें .msi का हस्ताक्षर शामिल नहीं करता; उन पर भी हस्ताक्षर के लिए इसे --key के साथ बनाएँ, या एम्बेडेड cabinet के साथ बनाएँ, या फिर भी --allow-unsigned-cabs से हस्ताक्षर करें"
 
 msgid "the package's contents do not match its signature (it was changed after signing)"
 msgstr "पैकेज की सामग्री उसके हस्ताक्षर से मेल नहीं खाती (हस्ताक्षर के बाद बदली गई)"
