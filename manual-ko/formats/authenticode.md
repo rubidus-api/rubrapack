@@ -121,6 +121,30 @@ Microsoft 는 MSI 패키지를 어떻게 해시하는지 공개하지 않는다.
   (`TRUST_E_BAD_DIGEST`)이나 다른 사람이 서명한 것은 1330, 서명이 없는 것은 1329 로 멈춘다. `Hash` 에 다이제스트를
   넣었을 때는 Windows 가 올바른 캐비닛도 거부했다(1330).
 
+## 공유 Win32 어셈블리의 카탈로그
+
+Win32 어셈블리는 매니페스트를 덮는 카탈로그(`<이름>.manifest` 옆의 `<이름>.cat`)가 있어야 나란히 저장소(WinSxS)에
+들어가며, 그 카탈로그는 매니페스트의 `assemblyIdentity` 가 공개 키 토큰으로 가리키는 키로 서명해야 한다. Microsoft
+Learn 의 "Assembly Signing Example" 은 `mt -hashupdate -makecdfs`, `makecat`, `signtool sign` 으로 만든다. 키는
+2048비트 이상의 RSA 여야 하고 신뢰될 필요는 없다. `build --key` 는 같은 카탈로그를 스스로 쓴다. [observed: makecat 과
+signtool 의 출력, 그것을 설치한 Windows 11]
+
+- 공개 키 토큰: 강한 이름 공개 키 블롭의 SHA-1 의 마지막 8바이트를 뒤집은 것. 블롭은 `00 24 00 00`(CALG_RSA_SIGN),
+  `04 80 00 00`(CALG_SHA1), 블롭의 크기(4바이트), 그다음 CAPI `PUBLICKEYBLOB`(`06 02 00 00 00 24 00 00 'RSA1'`,
+  모듈러스의 비트 길이, 공개 지수, 리틀 엔디언 모듈러스)이다. 매니페스트에는 소문자 16진 16자리로 쓴다.
+- 카탈로그는 CMS `SignedData` 이고, 그 내용(형식 `1.3.6.1.4.1.311.10.1`, 인증서 신뢰 목록)은 `SEQUENCE { SEQUENCE {
+  1.3.6.1.4.1.311.12.1.1 }, OCTET STRING <16바이트 목록 식별자>, UTCTime, SEQUENCE { 1.3.6.1.4.1.311.12.1.2, NULL },
+  SEQUENCE { 구성원, 구성원 } }` 이다.
+- 두 구성원 모두 매니페스트다: 하나는 SHA-1 의 대문자 16진으로, 하나는 파일 이름으로 표시한다(각 표시는 끝의 0 을 포함한
+  UTF-16LE, `OCTET STRING` 안). 각각 속성이 둘이다: `1.3.6.1.4.1.311.2.1.4` 에 `SEQUENCE { SEQUENCE {
+  1.3.6.1.4.1.311.2.1.25, [2] { [0] } }, SEQUENCE { SEQUENCE { sha1, NULL }, OCTET STRING <매니페스트의 SHA-1> } }`,
+  그리고 `1.3.6.1.4.1.311.12.2.2` 에 `SEQUENCE { BMPString "{DE351A42-8E59-11D0-8C47-00C04FC295EE}", INTEGER 512 }`.
+- 서명된 속성은 signtool 의 것(빈 `SpcSpOpusInfo`)이고, `messageDigest` 는 신뢰 목록 내용의(`SEQUENCE` 머리 없이)
+  SHA-256 이다.
+- 매니페스트 자신의 `<file>` 항목에는 `hash` 속성이 필요 없다(`mt -hashupdate` 가 넣는 것). Windows 11 의 Windows
+  Installer 는 어셈블리를 `WinSxS\Fusion\<신원>\<주.부>\<버전>` 에 두고, 카탈로그가 바뀐 패키지는 거부한다
+  (`AssemblyCopy` 에서 오류 1310).
+
 ## 타임스탬프
 
 타임스탬프 없는 서명은 서명 인증서가 만료되면 더는 유효하지 않다. RFC 3161 타임스탬프가 있으면 Windows 는
@@ -197,6 +221,6 @@ f3 16 67 e8 81 7b 49 ea 64 56 03 df 73 0e f6 dd 6d 98 34 b9 dd a4 90 b0 95 37 4c
 `SpcIndirectDataContent` 의 다이제스트 - 그 값, 같은 순서의 모든 스트림 바이트, 뿌리 CLSID 에 대한 SHA-256:
 
 ```text
-77 d7 5b da 7b b9 58 ec 76 39 3d 8d b3 46 c8 8f 66 c8 49 60 af b9 3e cb 74 12 16 b0 80 b3 7b 37
+8b e8 92 f7 07 5a e1 7d d9 9d 1b 01 b0 b2 28 2a eb 68 08 be 20 b1 fe 00 f8 85 1e 90 4b 70 9d 13
 ```
 

@@ -869,8 +869,12 @@ source = "bin/Contoso.Native.manifest"
   어셈블리만 받는다. 어느 CPU 용(MSIL)으로 지은 어셈블리는 패키지의 아키텍처 검사를 통과한다.
 - Win32 어셈블리는 매니페스트에서 이름을 댄다: `manifest` 는 같은 폴더·기능·`when` 의 `[file.*]` 를 가리키고, 그 파일은
   DLL 의 구성 요소에 들어간다(키 경로는 DLL). 매니페스트의 `assemblyIdentity` 가 name, version, type,
-  processorArchitecture, publicKeyToken 을 준다. 개인 어셈블리여야 한다(`assembly-for`): WinSxS 의 공유 어셈블리에는
-  신뢰된 인증서로 서명한 카탈로그가 필요한데 rubrapack 은 그것을 만들지 않는다.
+  processorArchitecture, publicKeyToken 을 준다. `assembly-for` 가 없으면 공유 어셈블리다: Windows 가 그것을 나란히
+  저장소(WinSxS)에 두고, 자기 매니페스트에서 그 이름을 대는 모든 프로그램이 쓴다. Windows 는 매니페스트의
+  `publicKeyToken` 이 가리키는 키로 서명한 매니페스트의 카탈로그가 있을 때만 받으므로, 이런 패키지는 `--key` 로 짓는다:
+  rubrapack 이 매니페스트의 카탈로그(그 옆의 `<이름>.cat`, makecat 과 signtool 이 만드는 꼴)를 써서 그 키로 서명한다.
+  키는 2048비트 이상의 RSA 여야 하고 신뢰될 필요는 없다. `publicKeyToken` 이 없거나 다른 키의 것을 대는 매니페스트는
+  거부되며, 메시지가 그 키 자신의 토큰을 알려 준다.
 - `assembly-for = "file:<프로그램>"` 은 어셈블리를 그 프로그램 전용으로, 그 파일의 폴더에 설치한다.
 - MSIX 는 어셈블리를 받지 않는다(`RP1605`; `msi-only = true` 면 그 파일을 MSIX 에서 뺀다).
 
@@ -1005,7 +1009,8 @@ users = "all"
 
 - `setup.exe` 는 Windows Installer 의 진행 창과 마지막 안내를 보인다. `/passive` 는 진행만, `/quiet` 는 아무것도
   보이지 않는다. `/uninstall` 은 패키지들을 뒤에서부터 지우고, `/repair` 는 설치된 패키지들을 복구한다. `/log <파일>` 은 자세한 기록을 쓴다. `/lang <코드>`(`/lang ar`)는 설치 프로그램의 문구와, `RPLANGUAGE` 로 패키지들의 대화창까지 표시 언어 대신 그 언어로 보인다. 종료 코드:
-  0, 3010(다시 시작 필요), 실패한 패키지의 오류, 설치 프로그램이 손상되면 1620, 사용자가 권한 올리기를 거절하면 1602.
+  0, 3010(다시 시작 필요: 이때 마지막 안내가 Windows 를 다시 시작하라고 말한다. 설치 프로그램이 직접 다시 시작하지는
+  않는다), 실패한 패키지의 오류, 설치 프로그램이 손상되면 1620, 사용자가 권한 올리기를 거절하면 1602.
 - `elevate = true`(기본)면 설치 프로그램이 모든 패키지를 위해 관리자 권한을 한 번 묻는다. 사용자별 체인은
   `elevate = false` 로 한다.
 - 설치 프로그램 자신의 문구는 영어이고 한국어 사용자에게는 한국어다. `[chain] languages = ["ja"]` 는 언어팩이 있는

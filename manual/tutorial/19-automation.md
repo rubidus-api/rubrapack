@@ -173,7 +173,7 @@ rubrapack runs on Linux too, and builds the same bytes there with `--reproducibl
 build server (GitHub Actions, GitLab CI, Jenkins) does not need Windows. On a Linux runner:
 
 ```text
-V=0.48.0
+V=0.49.0
 curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
 chmod +x rubrapack
 ./rubrapack lint hello.toml --strict
@@ -201,7 +201,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get rubrapack
         run: |
-          V=0.48.0
+          V=0.49.0
           curl -sLo rubrapack "https://github.com/rubidus-api/rubrapack/releases/download/v$V/rubrapack-$V-linux-x86_64"
           chmod +x rubrapack
       - name: Build and sign

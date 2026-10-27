@@ -134,7 +134,7 @@ C:\work\hello> rubrapack build hello.toml -o out-x64\hello-x64.msi --key signer.
 
 ```text
 C:\work\hello\out-x64> rubrapack sign hello-x64.msi --key signer.pfx --pass-env SIGN_PASS
-rubrapack: error[RP0011]: 'hello-x64.msi': the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with embedded cabinets, or sign anyway with --allow-unsigned-cabs
+rubrapack: error[RP0011]: 'hello-x64.msi': the package uses cabinets outside itself, which a signature of the .msi does not cover; build it with --key to sign them too, or with embedded cabinets, or sign anyway with --allow-unsigned-cabs
 ```
 
 `--allow-unsigned-cabs` 는 경고와 함께 `.msi` 에만 서명한다. 그 대신 `--key` 로 짓거나 넣어 둔 캐비닛을 쓴다.
