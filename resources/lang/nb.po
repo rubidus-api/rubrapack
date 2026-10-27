@@ -993,8 +993,20 @@ msgstr "[file.{1}]: en Win32-samling trenger manifest = \"file:<ID>\", manifestf
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: en delt .NET-samling havner i GAC, som bare tar samlinger med sterkt navn; signer den eller oppgi assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: en delt Win32-samling (WinSxS) trenger en katalog signert med et klarert sertifikat, som rubrapack ikke lager; oppgi assembly-for = \"file:<program>\" for en privat"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: en delt Win32-samling går inn i WinSxS med en katalog signert med nøkkelen manifestets publicKeyToken angir; bygg med --key (eller angi assembly-for = \"file:<program>\" for en privat)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifestet angir publicKeyToken \"{2}\", men tokenet til --key er \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: manifestet '{2}' for en delt Win32-samling angir signereren: publicKeyToken i assemblyIdentity (tokenet til --key den bygges med)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "katalogen til en delt Win32-samling krever en RSA-nøkkel på 2048 biter eller mer"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for og manifest hører til assembly = \"dotnet\" eller \"win32\""

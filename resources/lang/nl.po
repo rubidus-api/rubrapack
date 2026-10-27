@@ -993,8 +993,20 @@ msgstr "[file.{1}]: een Win32-assembly heeft manifest = \"file:<ID>\" nodig, het
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: een gedeelde .NET-assembly gaat in de GAC, die alleen assembly's met een sterke naam aanneemt; onderteken hem of geef assembly-for = \"file:<programma>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: een gedeelde Win32-assembly (WinSxS) heeft een catalogus nodig die met een vertrouwd certificaat is ondertekend, en die maakt rubrapack niet; geef assembly-for = \"file:<programma>\" voor een privé-assembly"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: een gedeelde Win32-assembly gaat naar WinSxS met een catalogus die is ondertekend met de sleutel die publicKeyToken in het manifest noemt; bouw met --key (of geef assembly-for = \"file:<programma>\" voor een privé-assembly)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: het manifest noemt publicKeyToken \"{2}\", maar het token van de --key is \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: het manifest '{2}' van een gedeelde Win32-assembly noemt de ondertekenaar: publicKeyToken in assemblyIdentity (het token van de --key waarmee wordt gebouwd)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "de catalogus van een gedeelde Win32-assembly vereist een RSA-sleutel van 2048 bits of meer"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for en manifest horen bij assembly = \"dotnet\" of \"win32\""

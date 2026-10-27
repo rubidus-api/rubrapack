@@ -993,8 +993,20 @@ msgstr "[file.{1}]: eine Win32-Assembly braucht manifest = \"file:<ID>\", ihre M
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: eine gemeinsame .NET-Assembly kommt in den GAC, der nur Assemblys mit starkem Namen annimmt; signieren Sie sie oder geben Sie assembly-for = \"file:<Programm>\" an"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: eine gemeinsame Win32-Assembly (WinSxS) braucht einen mit einem vertrauenswürdigen Zertifikat signierten Katalog, den rubrapack nicht erstellt; geben Sie für eine private assembly-for = \"file:<Programm>\" an"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: eine gemeinsame Win32-Assembly kommt mit einem Katalog nach WinSxS, der mit dem Schlüssel signiert ist, den publicKeyToken im Manifest nennt; bauen Sie mit --key (oder geben Sie für eine private assembly-for = \"file:<Programm>\" an)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: das Manifest nennt publicKeyToken \"{2}\", das Token des --key ist aber \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: das Manifest '{2}' einer gemeinsamen Win32-Assembly nennt ihren Signierer: publicKeyToken in assemblyIdentity (das Token des --key, mit dem gebaut wird)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "der Katalog einer gemeinsamen Win32-Assembly braucht einen RSA-Schlüssel mit 2048 Bit oder mehr"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for und manifest gehören zu assembly = \"dotnet\" oder \"win32\""

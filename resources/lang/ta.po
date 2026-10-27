@@ -993,8 +993,20 @@ msgstr "[file.{1}]: Win32 அசெம்பிளிக்கு manifest = \"f
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: பகிர்ந்த .NET அசெம்பிளி GAC க்குச் செல்லும், அது வலுவான பெயருள்ளவற்றை மட்டுமே ஏற்கும்; கையொப்பமிடவும் அல்லது assembly-for = \"file:<நிரல்>\" கொடுக்கவும்"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: பகிர்ந்த Win32 அசெம்பிளிக்கு (WinSxS) நம்பகமான சான்றிதழால் கையொப்பமிட்ட பட்டியல் தேவை, அதை rubrapack உருவாக்காது; தனிப்பட்டதற்கு assembly-for = \"file:<நிரல்>\" கொடுக்கவும்"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: பகிர்ந்த Win32 அசெம்பிளி, மேனிஃபெஸ்டின் publicKeyToken குறிக்கும் விசையால் கையொப்பமிட்ட பட்டியலுடன் WinSxS இல் செல்கிறது; --key உடன் உருவாக்கவும் (அல்லது தனிப்பட்டதற்கு assembly-for = \"file:<நிரல்>\" கொடுக்கவும்)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: மேனிஃபெஸ்ட் publicKeyToken \"{2}\" எனக் கூறுகிறது, ஆனால் --key இன் டோக்கன் \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: பகிர்ந்த Win32 அசெம்பிளியின் மேனிஃபெஸ்ட் '{2}' கையொப்பமிடுபவரைக் குறிக்கிறது: assemblyIdentity இல் publicKeyToken (உருவாக்கப் பயன்படும் --key இன் டோக்கன்)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "பகிர்ந்த Win32 அசெம்பிளியின் பட்டியலுக்கு 2048 பிட் அல்லது அதற்கு மேற்பட்ட RSA விசை தேவை"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for, manifest இரண்டும் assembly = \"dotnet\" அல்லது \"win32\" உடன் வரும்"

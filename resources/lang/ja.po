@@ -993,8 +993,20 @@ msgstr "[file.{1}]: Win32 アセンブリには manifest = \"file:<ID>\" (その
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: 共有 .NET アセンブリは GAC に入りますが、GAC は厳密な名前を持つものしか受け付けません。署名するか、assembly-for = \"file:<プログラム>\" を指定してください"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: 共有 Win32 アセンブリ (WinSxS) には信頼された証明書で署名したカタログが必要ですが、rubrapack はそれを作りません。プライベート アセンブリにするには assembly-for = \"file:<プログラム>\" を指定してください"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: 共有 Win32 アセンブリは、マニフェストの publicKeyToken が示すキーで署名したカタログと共に WinSxS に入ります。--key でビルドしてください (プライベート アセンブリにするには assembly-for = \"file:<プログラム>\" を指定)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: マニフェストの publicKeyToken は \"{2}\" ですが、--key のトークンは \"{3}\" です"
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: 共有 Win32 アセンブリのマニフェスト '{2}' は署名者を示します: assemblyIdentity の publicKeyToken (ビルドに使う --key のトークン)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "共有 Win32 アセンブリのカタログには 2048 ビット以上の RSA キーが必要です"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for と manifest は assembly = \"dotnet\" か \"win32\" と一緒に使います"

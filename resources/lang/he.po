@@ -995,8 +995,20 @@ msgstr "[file.{1}]: הרכבת Win32 צריכה manifest = \"file:<ID>\", קוב
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: הרכבת .NET משותפת נכנסת ל-GAC, שמקבל רק הרכבות עם שם חזק; חתמו עליה או תנו assembly-for = \"file:<תוכנית>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: הרכבת Win32 משותפת (WinSxS) צריכה קטלוג חתום בתעודה מהימנה, ש-rubrapack אינו יוצר; להרכבה פרטית תנו assembly-for = \"file:<תוכנית>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: assembly משותף של Win32 נכנס ל-WinSxS עם קטלוג החתום במפתח שה-publicKeyToken במניפסט מציין; בנה עם --key (או תן assembly-for = \"file:<תוכנית>\" ל-assembly פרטי)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: המניפסט מציין publicKeyToken \"{2}\", אבל האסימון של --key הוא \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: המניפסט '{2}' של assembly משותף של Win32 מציין את החותם: publicKeyToken ב-assemblyIdentity (האסימון של ה---key שאיתו בונים)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "קטלוג של assembly משותף של Win32 דורש מפתח RSA של 2048 סיביות או יותר"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ו-manifest הולכים עם assembly = \"dotnet\" או \"win32\""

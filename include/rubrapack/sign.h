@@ -77,6 +77,22 @@ enum { RP_ATTRS_WINDOWS, RP_ATTRS_APPX, RP_ATTRS_SIGNTOOL };
                                                    const uint8_t *ctype, size_t ctype_len, const uint8_t *content, size_t content_len,
                                                    uint8_t **out, size_t *out_len, const char **why);
 
+// The same with a timestamper and a choice of signed attributes (RP_ATTRS_*): a shared Win32
+// assembly's catalog is signed as signtool signs one (RFC-0031 B9).
+[[nodiscard]] proven_err_t rp_signed_content_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg,
+                                                      const uint8_t *ctype, size_t ctype_len, const uint8_t *content, size_t content_len,
+                                                      const rp_timestamper_t *ts, int attrs, uint8_t **out, size_t *out_len,
+                                                      const char **why);
+
+// RFC-0031 B9, src/sign/sxs.c: a shared Win32 assembly (WinSxS). rp_sxs_token gives the public key
+// token (16 lower-case hex digits) a manifest names for the RSA key of a certificate (DER), which
+// must be 2048 bits or more; rp_sxs_catalog makes the signed catalog (<manifest name>.cat) of the
+// manifest, as makecat and signtool make it, with `this_update` as its time; `now` checks the key.
+[[nodiscard]] bool rp_sxs_token(const uint8_t *cert, size_t len, char token[17], const char **why);
+[[nodiscard]] proven_err_t rp_sxs_catalog(proven_allocator_t alloc, const char *manifest_name, const uint8_t *manifest, size_t mlen,
+                                          int64_t this_update, const rp_keyfile_t *kf, int64_t now, const rp_timestamper_t *ts,
+                                          uint8_t **out, size_t *out_len, const char **why);
+
 // Parses a SignedData and checks its attributes and signature; the caller compares the file digest
 // (digest_ok is set when `digest` is given and equals the signed one).
 void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *digest, rp_authenticode_check_t *r, const char **why);

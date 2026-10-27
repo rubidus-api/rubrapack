@@ -4,6 +4,7 @@
 
 #include "ir_int.h"
 #include "rubrapack/msix.h"
+#include "rubrapack/str.h"
 
 #include <string.h>
 
@@ -305,8 +306,58 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
             if (rp_xml_attr((const char *)x, len, "assemblyIdentity", attrs[i][0], v, sizeof v)) asm_name(c, f, &n, attrs[i][1], v);
             else if (strcmp(attrs[i][0], "type") == 0) asm_name(c, f, &n, "type", "win32");
         }
+        // A shared one goes into WinSxS with a catalog the build makes and signs (rp_ir_add_sxs_catalog):
+        // the manifest names the signer by its public key token.
+        if (f->assembly_for == NULL && !rp_xml_attr((const char *)x, len, "assemblyIdentity", "publicKeyToken", v, sizeof v)) {
+            ERR(c, f->pos, "RP1316", "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)", f->id, f->manifest);
+        }
     }
     rp_mem_free(c->alloc, x);
+}
+
+static char *dup_a(proven_allocator_t a, const char *s) {
+    size_t n = strlen(s) + 1;
+    char *d = rp_mem_alloc(a, n, 1);
+    if (d) memcpy(d, s, n);
+    return d;
+}
+
+bool rp_ir_sxs_shared(const rp_ir_file_t *f) { return f->assembly == RP_ASM_WIN32 && f->assembly_for == NULL && f->manifest; }
+
+proven_err_t rp_ir_add_sxs_catalog(rp_ir_t *ir, size_t dll, uint8_t *cat, size_t len) {
+    proven_allocator_t a = ir->alloc;
+    const rp_ir_file_t *d = &ir->files[dll], *m = NULL;
+    for (size_t k = 0; k < ir->file_count; ++k) {
+        if (strcmp(ir->files[k].id, d->manifest) == 0) m = &ir->files[k];
+    }
+    if (m == NULL) return PROVEN_ERR_INVALID_ARG;
+    size_t nl = strlen(m->name), base = nl > 9 && rp_ascii_ends_with_ci(m->name, ".manifest") ? nl - 9 : nl;
+    char *id = rp_mem_alloc(a, strlen(m->id) + 5, 1), *name = rp_mem_alloc(a, base + 5, 1);
+    rp_ir_file_t *v = rp_mem_alloc(a, ir->file_count + 1, sizeof *v);
+    if (id == NULL || name == NULL || v == NULL) {
+        rp_mem_free(a, id);
+        rp_mem_free(a, name);
+        rp_mem_free(a, v);
+        return PROVEN_ERR_NOMEM;
+    }
+    sprintf(id, "%s.cat", m->id);
+    memcpy(name, m->name, base);
+    memcpy(name + base, ".cat", 5);
+    rp_ir_file_t f = { .id = id, .name = name, .dir = dup_a(a, m->dir), .source = dup_a(a, name), .feature = dup_a(a, m->feature),
+                       .when = m->when ? dup_a(a, m->when) : NULL, .manifest_of = dup_a(a, d->id), .vital = true,
+                       .size = len, .data = cat, .data_len = len, .pos = d->pos };
+    if (f.dir == NULL || f.source == NULL || f.feature == NULL || f.manifest_of == NULL || (m->when && f.when == NULL)) {
+        char *fs[] = { id, name, f.dir, f.source, f.feature, f.when, f.manifest_of };
+        for (size_t k = 0; k < sizeof fs / sizeof fs[0]; ++k) rp_mem_free(a, fs[k]);
+        rp_mem_free(a, v);
+        return PROVEN_ERR_NOMEM;
+    }
+    memcpy(v, ir->files, ir->file_count * sizeof *v);
+    v[ir->file_count] = f;
+    rp_mem_free(a, ir->files);
+    ir->files = v;
+    ++ir->file_count;
+    return PROVEN_OK;
 }
 
 // After the files' PE headers are read: what must be a DLL or a program is one.

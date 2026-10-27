@@ -993,8 +993,20 @@ msgstr "[file.{1}]: assembly Win32 cần manifest = \"file:<ID>\", tức tệp m
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: assembly .NET dùng chung vào GAC, nơi chỉ nhận assembly có tên mạnh; hãy ký nó hoặc đặt assembly-for = \"file:<chương trình>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: assembly Win32 dùng chung (WinSxS) cần một danh mục được ký bằng chứng chỉ tin cậy, mà rubrapack không tạo; với assembly riêng hãy đặt assembly-for = \"file:<chương trình>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: assembly Win32 dùng chung vào WinSxS cùng một catalog được ký bằng khóa mà publicKeyToken trong manifest chỉ ra; hãy tạo bằng --key (hoặc cho assembly-for = \"file:<chương trình>\" để dùng riêng)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest ghi publicKeyToken \"{2}\", nhưng token của --key là \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: manifest '{2}' của assembly Win32 dùng chung chỉ ra người ký: publicKeyToken trong assemblyIdentity (token của --key dùng để tạo)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "catalog của assembly Win32 dùng chung cần khóa RSA từ 2048 bit trở lên"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for và manifest đi cùng assembly = \"dotnet\" hoặc \"win32\""

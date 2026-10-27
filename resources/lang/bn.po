@@ -993,8 +993,20 @@ msgstr "[file.{1}]: Win32 অ্যাসেম্বলির manifest = \"file
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: শেয়ার করা .NET অ্যাসেম্বলি GAC-এ যায়, যা কেবল শক্ত-নামের অ্যাসেম্বলি নেয়; এতে স্বাক্ষর করুন বা assembly-for = \"file:<প্রোগ্রাম>\" দিন"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: শেয়ার করা Win32 অ্যাসেম্বলির (WinSxS) বিশ্বস্ত সার্টিফিকেটে স্বাক্ষরিত ক্যাটালগ দরকার, যা rubrapack বানায় না; ব্যক্তিগতের জন্য assembly-for = \"file:<প্রোগ্রাম>\" দিন"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: শেয়ার করা Win32 অ্যাসেম্বলি WinSxS-এ যায় এমন ক্যাটালগ নিয়ে যা ম্যানিফেস্টের publicKeyToken যে কী-র নাম দেয় তা দিয়ে স্বাক্ষরিত; --key দিয়ে তৈরি করুন (বা ব্যক্তিগত অ্যাসেম্বলির জন্য assembly-for = \"file:<প্রোগ্রাম>\" দিন)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: ম্যানিফেস্ট publicKeyToken \"{2}\" বলে, কিন্তু --key-এর টোকেন \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: শেয়ার করা Win32 অ্যাসেম্বলির ম্যানিফেস্ট '{2}' তার স্বাক্ষরকারীর নাম দেয়: assemblyIdentity-তে publicKeyToken (যে --key দিয়ে তৈরি তার টোকেন)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "শেয়ার করা Win32 অ্যাসেম্বলির ক্যাটালগের জন্য 2048 বিট বা তার বেশি RSA কী লাগে"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ও manifest, assembly = \"dotnet\" বা \"win32\"-এর সঙ্গে যায়"

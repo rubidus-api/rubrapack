@@ -993,8 +993,20 @@ msgstr "[file.{1}]: sestavení Win32 potřebuje manifest = \"file:<ID>\", svůj 
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: sdílené sestavení .NET jde do GAC, která přijímá jen sestavení se silným názvem; podepište ho nebo zadejte assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: sdílené sestavení Win32 (WinSxS) potřebuje katalog podepsaný důvěryhodným certifikátem, který rubrapack nevytváří; pro soukromé zadejte assembly-for = \"file:<program>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: sdílené sestavení Win32 jde do WinSxS s katalogem podepsaným klíčem, který uvádí publicKeyToken v manifestu; sestavte s --key (nebo pro soukromé zadejte assembly-for = \"file:<program>\")"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest uvádí publicKeyToken \"{2}\", ale token klíče --key je \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: manifest '{2}' sdíleného sestavení Win32 uvádí podepisujícího: publicKeyToken v assemblyIdentity (token klíče --key, se kterým se sestavuje)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "katalog sdíleného sestavení Win32 potřebuje klíč RSA o 2048 bitech nebo více"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for a manifest patří k assembly = \"dotnet\" nebo \"win32\""

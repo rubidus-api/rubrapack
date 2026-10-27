@@ -993,8 +993,20 @@ msgstr "[file.{1}]: асемблито Win32 се нуждае от manifest = \
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: споделено асембли .NET отива в GAC, който приема само асемблита със силно име; подпишете го или задайте assembly-for = \"file:<програма>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: споделено асембли Win32 (WinSxS) се нуждае от каталог, подписан с доверен сертификат, който rubrapack не създава; за частно задайте assembly-for = \"file:<програма>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: споделен Win32 асембли влиза в WinSxS с каталог, подписан с ключа, който посочва publicKeyToken в манифеста; създайте с --key (или задайте assembly-for = \"file:<програма>\" за частен)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: манифестът посочва publicKeyToken \"{2}\", но маркерът на --key е \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: манифестът '{2}' на споделен Win32 асембли посочва подписващия: publicKeyToken в assemblyIdentity (маркерът на --key, с който се създава)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "каталогът на споделен Win32 асембли изисква RSA ключ от 2048 бита или повече"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for и manifest вървят с assembly = \"dotnet\" или \"win32\""

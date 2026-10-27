@@ -993,8 +993,20 @@ msgstr "[file.{1}]: μια συγκρότηση Win32 χρειάζεται manif
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση .NET μπαίνει στο GAC, που δέχεται μόνο συγκροτήσεις με ισχυρό όνομα· υπογράψτε την ή δώστε assembly-for = \"file:<πρόγραμμα>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση Win32 (WinSxS) χρειάζεται κατάλογο υπογεγραμμένο με αξιόπιστο πιστοποιητικό, που το rubrapack δεν φτιάχνει· για ιδιωτική δώστε assembly-for = \"file:<πρόγραμμα>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση Win32 μπαίνει στο WinSxS με κατάλογο υπογεγραμμένο με το κλειδί που ορίζει το publicKeyToken του manifest· δημιουργήστε με --key (ή δώστε assembly-for = \"file:<πρόγραμμα>\" για ιδιωτική)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: το manifest ορίζει publicKeyToken \"{2}\", αλλά το token του --key είναι \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: το manifest '{2}' κοινόχρηστης συγκρότησης Win32 ορίζει τον υπογράφοντα: publicKeyToken στο assemblyIdentity (το token του --key με το οποίο δημιουργείται)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "ο κατάλογος κοινόχρηστης συγκρότησης Win32 χρειάζεται κλειδί RSA 2048 bit ή περισσότερο"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: τα assembly-for και manifest πάνε με assembly = \"dotnet\" ή \"win32\""

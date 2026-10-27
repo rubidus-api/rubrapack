@@ -993,8 +993,20 @@ msgstr "[file.{1}]：Win32 程序集需要 manifest = \"file:<ID>\"，即它的�
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]：共享 .NET 程序集进入 GAC，而 GAC 只接受强名称程序集；请为它签名，或给出 assembly-for = \"file:<程序>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]：共享的 Win32 程序集（WinSxS）需要用受信任证书签名的目录文件，rubrapack 不生成它；如要私有程序集，请给出 assembly-for = \"file:<程序>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]：共享 Win32 程序集随一个由清单中 publicKeyToken 所指密钥签名的编录进入 WinSxS；请用 --key 构建（或为私有程序集指定 assembly-for = \"file:<程序>\"）"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]：清单的 publicKeyToken 为 \"{2}\"，但 --key 的令牌为 \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]：{2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]：共享 Win32 程序集的清单 '{2}' 须指明签名者：assemblyIdentity 中的 publicKeyToken（构建所用 --key 的令牌）"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "共享 Win32 程序集的编录需要 2048 位或以上的 RSA 密钥"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]：assembly-for 和 manifest 要与 assembly = \"dotnet\" 或 \"win32\" 一起使用"

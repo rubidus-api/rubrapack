@@ -461,8 +461,6 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
         ERR(c, t->pos, "RP1202", "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", t->id);
     } else if (f->assembly == RP_ASM_DOTNET && f->manifest) {
         ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", t->id);
-    } else if (f->assembly == RP_ASM_WIN32 && f->assembly_for == NULL) {
-        ERR(c, t->pos, "RP1316", "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one", t->id);
     }
     f->pos = t->pos;
     f->when = ir_get_when(c, t);

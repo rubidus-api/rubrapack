@@ -591,6 +591,7 @@ void rp_ir_free(rp_ir_t *ir) {
                        f->assembly_for, f->manifest, f->manifest_of };
         for (size_t j = 0; j < sizeof fs / sizeof fs[0]; ++j) rp_mem_free(a, fs[j]);
         for (size_t j = 0; j < 6; ++j) rp_mem_free(a, f->asm_names[j][0]), rp_mem_free(a, f->asm_names[j][1]);
+        rp_mem_free(a, f->data);
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
         rp_ir_folder_t *f = &ir->folders[k];

@@ -270,10 +270,30 @@ int rp_sign_cert(const rp_sign_args_t *a, uint8_t **der, size_t *len) {
     return rc;
 }
 
+// A shared Win32 assembly's manifest, to make its signed catalog of (RFC-0031 B9).
+typedef struct {
+    const char *name;
+    int64_t     this_update;
+} sxs_t;
+
+static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, const sxs_t *sxs, uint8_t **out,
+                     size_t *out_len);
+
 int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, uint8_t **out, size_t *out_len) {
+    return sign_with(a, label, data, len, NULL, out, out_len);
+}
+
+int rp_sign_sxs_catalog(const rp_sign_args_t *a, const char *label, const char *manifest_name, const uint8_t *manifest, size_t len,
+                        int64_t this_update, uint8_t **out, size_t *out_len) {
+    sxs_t x = { manifest_name, this_update };
+    return sign_with(a, label, manifest, len, &x, out, out_len);
+}
+
+static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *data, size_t len, const sxs_t *sxs, uint8_t **out,
+                     size_t *out_len) {
     proven_allocator_t heap = proven_heap_allocator();
-    bool pe = is_pe(data, len), cfb = is_cfb(data, len), zip = is_zip(data, len), cab = is_cab(data, len);
-    if (!pe && !cfb && !zip && !cab) {
+    bool pe = !sxs && is_pe(data, len), cfb = !sxs && is_cfb(data, len), zip = !sxs && is_zip(data, len), cab = !sxs && is_cab(data, len);
+    if (!sxs && !pe && !cfb && !zip && !cab) {
         rp_diag_error(RP_DIAG_SIGN, "'%s' is neither a PE file (.exe, .dll), an MSI package, an MSIX package or bundle nor a cabinet", label);
         return RP_EXIT_USAGE;
     }
@@ -306,7 +326,8 @@ int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *dat
                      .tls_anchor_count = tls_kf.cert_count };
     rp_timestamper_t stamper = { rp_tsa_stamp, &tsa };
     const rp_timestamper_t *ts = a->timestamp ? &stamper : NULL;
-    proven_err_t err = pe    ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
+    proven_err_t err = sxs   ? rp_sxs_catalog(heap, sxs->name, data, len, sxs->this_update ? sxs->this_update : now, &kf, now, ts, out, out_len, &why)
+                       : pe  ? rp_pe_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
                        : zip ? rp_msix_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
                        : cab ? rp_cab_sign(heap, data, len, &kf, now, ts, out, out_len, &why)
                              : rp_msi_sign(heap, data, len, &kf, now, ts, a->allow_unsigned_cabs || a->cabs_signed, &external, out, out_len, &why);

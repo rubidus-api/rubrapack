@@ -995,8 +995,20 @@ msgstr "[file.{1}]: Win32 اسمبلی کو manifest = \"file:<ID>\"، یعنی 
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: مشترک .NET اسمبلی GAC میں جاتی ہے، جو صرف مضبوط نام والی اسمبلیاں لیتی ہے؛ اس پر دستخط کریں یا assembly-for = \"file:<پروگرام>\" دیں"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: مشترک Win32 اسمبلی (WinSxS) کو قابل اعتماد سرٹیفکیٹ سے دستخط شدہ کیٹلاگ چاہیے، جو rubrapack نہیں بناتا؛ نجی اسمبلی کے لیے assembly-for = \"file:<پروگرام>\" دیں"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: مشترکہ Win32 اسمبلی WinSxS میں ایسے کیٹلاگ کے ساتھ جاتی ہے جس پر وہ کلید دستخط کرے جس کا نام مینی فیسٹ کا publicKeyToken دیتا ہے؛ --key کے ساتھ بنائیں (یا نجی اسمبلی کے لیے assembly-for = \"file:<پروگرام>\" دیں)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: مینی فیسٹ publicKeyToken \"{2}\" بتاتا ہے، لیکن --key کا ٹوکن \"{3}\" ہے"
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: مشترکہ Win32 اسمبلی کا مینی فیسٹ '{2}' اپنے دستخط کنندہ کا نام دیتا ہے: assemblyIdentity میں publicKeyToken (جس --key سے بنایا جائے اس کا ٹوکن)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "مشترکہ Win32 اسمبلی کے کیٹلاگ کے لیے 2048 بٹ یا اس سے بڑی RSA کلید درکار ہے"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for اور manifest، assembly = \"dotnet\" یا \"win32\" کے ساتھ آتے ہیں"

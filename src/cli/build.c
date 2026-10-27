@@ -11,6 +11,8 @@
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/parts.h"
+#include "rubrapack/pki.h"
+#include "rubrapack/sign.h"
 #include "rubrapack/str.h"
 #include "rubrapack/toml.h"
 
@@ -394,6 +396,66 @@ static proven_err_t cab_sign(void *ctx, const uint8_t *cab, size_t len, uint8_t 
     return PROVEN_ERR_INVALID_ARG;
 }
 
+// RFC-0031 B9: each shared Win32 assembly gets the signed catalog of its manifest (<name>.cat
+// beside it), made with --key, whose public key token the manifest must name. Without --key the
+// package cannot be built: Windows refuses the assembly without its catalog.
+static int sxs_catalogs(proven_allocator_t heap, rp_ir_t *ir, const rp_sign_args_t *sign, bool reproducible, rp_srcdiags_t *d) {
+    size_t n = ir->file_count;
+    uint8_t *cert = NULL;
+    size_t cert_len = 0;
+    char token[17] = "";
+    int rc = RP_EXIT_OK;
+    for (size_t i = 0; rc == RP_EXIT_OK && i < n; ++i) {
+        const rp_ir_file_t *f = &ir->files[i], *m = NULL;
+        if (!rp_ir_sxs_shared(f)) continue;
+        for (size_t k = 0; k < n; ++k) {
+            if (strcmp(ir->files[k].id, f->manifest) == 0) m = &ir->files[k];
+        }
+        if (m == NULL) continue;                // refused by the checks
+        if (!rp_sign_wanted(sign)) {
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)", f->id);
+            rc = RP_EXIT_SOURCE;
+            break;
+        }
+        const char *why = NULL;
+        if (cert == NULL) {
+            rc = rp_sign_cert(sign, &cert, &cert_len);
+            if (rc != RP_EXIT_OK) break;
+            if (!rp_sxs_token(cert, cert_len, token, &why)) {
+                rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: %s", f->id, why);
+                rc = RP_EXIT_SIGN;
+                break;
+            }
+        }
+        const char *named = NULL;
+        for (size_t k = 0; k < 6 && f->asm_names[k][0]; ++k) {
+            if (strcmp(f->asm_names[k][0], "publicKeyToken") == 0) named = f->asm_names[k][1];
+        }
+        if (named == NULL || !rp_ascii_ieq(named, token)) {
+            rp_srcdiag_add(d, f->pos, "RP1316", false, "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\"", f->id, named ? named : "", token);
+            rc = RP_EXIT_SOURCE;
+            break;
+        }
+        uint8_t *man = NULL, *cat = NULL;
+        size_t ml = 0, cl = 0;
+        if (rp_pal_read_file(heap, m->source_path, 1u << 20, &man, &ml) != PROVEN_OK) {
+            rp_srcdiag_add(d, m->pos, "RP1509", false, "cannot read source file '%s'", m->source);
+            rc = RP_EXIT_IO;
+            break;
+        }
+        rp_cert_t c;
+        int64_t when = reproducible && rp_cert_parse(cert, cert_len, &c, &why) ? c.not_before : 0;
+        rc = rp_sign_sxs_catalog(sign, m->source, m->name, man, ml, when, &cat, &cl);
+        rp_mem_free(heap, man);
+        if (rc == RP_EXIT_OK && rp_ir_add_sxs_catalog(ir, i, cat, cl) != PROVEN_OK) {
+            rp_mem_free(heap, cat);
+            rc = RP_EXIT_IO;
+        }
+    }
+    rp_mem_free(heap, cert);
+    return rc;
+}
+
 static int run(int argc, char **argv, bool lint) {
     char menu_dll[1600] = "", menu_pkg[1600] = "";      // the Windows 11 menu's files beside the output, while building
     const char *src = NULL, *out = NULL, *arch = NULL, *compress = NULL;
@@ -685,6 +747,13 @@ static int run(int argc, char **argv, bool lint) {
             if (rc == RP_EXIT_OK && msix_opt.winget && !lint) rc = rp_winget_write(heap, &wg, out, msix_opt.winget);
         } else if (err == PROVEN_OK) {
             rp_limits_t limits = rp_limits_default();
+            int sxs_rc = lint ? RP_EXIT_OK : sxs_catalogs(heap, &ir, &sign, reproducible, &d);
+            if (sxs_rc != RP_EXIT_OK) {
+                rp_ir_free(&ir);
+                rp_srcdiag_print(&d, src);
+                rc = sxs_rc;
+                goto done;
+            }
             // External cabinets are named after the package: <stem>.cab next to <stem>.msi.
             char stem[512], cabpath[1536];
             const char *base = strrchr(out, '/');

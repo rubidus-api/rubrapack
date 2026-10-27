@@ -109,6 +109,10 @@ static inline bool rp_sign_wanted(const rp_sign_args_t *a) { return a->key || a-
 // Signs a PE file or an MSI package held in memory; prints its own diagnostics (`label` names the
 // file) and returns an exit code.
 [[nodiscard]] int rp_sign_bytes(const rp_sign_args_t *a, const char *label, const uint8_t *in, size_t len, uint8_t **out, size_t *out_len);
+// The signed catalog (<manifest>.cat) of a shared Win32 assembly's manifest, made and signed with
+// the key the options name, its time `this_update` (RFC-0031 B9). Says why itself when it fails.
+[[nodiscard]] int rp_sign_sxs_catalog(const rp_sign_args_t *a, const char *label, const char *manifest_name, const uint8_t *manifest, size_t len,
+                                      int64_t this_update, uint8_t **out, size_t *out_len);
 
 // `rubrapack sign` and `rubrapack verify` (RFC-0007 S4).
 [[nodiscard]] int rp_cmd_sign(int argc, char **argv);

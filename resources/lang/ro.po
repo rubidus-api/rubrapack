@@ -993,8 +993,20 @@ msgstr "[file.{1}]: un ansamblu Win32 are nevoie de manifest = \"file:<ID>\", fi
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: un ansamblu .NET partajat merge în GAC, care acceptă doar ansambluri cu nume tare; semnați-l sau dați assembly-for = \"file:<program>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: un ansamblu Win32 partajat (WinSxS) are nevoie de un catalog semnat cu un certificat de încredere, pe care rubrapack nu îl creează; dați assembly-for = \"file:<program>\" pentru unul privat"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: un ansamblu Win32 partajat intră în WinSxS cu un catalog semnat cu cheia pe care o numește publicKeyToken din manifest; construiți cu --key (sau dați assembly-for = \"file:<program>\" pentru unul privat)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifestul numește publicKeyToken \"{2}\", dar tokenul cheii --key este \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: manifestul '{2}' al unui ansamblu Win32 partajat își numește semnatarul: publicKeyToken în assemblyIdentity (tokenul cheii --key cu care se construiește)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "catalogul unui ansamblu Win32 partajat necesită o cheie RSA de 2048 de biți sau mai mult"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for și manifest merg cu assembly = \"dotnet\" sau \"win32\""

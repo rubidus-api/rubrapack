@@ -66,6 +66,10 @@ typedef struct {
     char    *manifest;          // RP_ASM_WIN32: the manifest's file ID
     char    *manifest_of;       // on the manifest: the DLL's file ID (set by the checks)
     char    *asm_names[6][2];   // the identity, name and value pairs (set by the checks; NULL ends)
+    // A file rubrapack makes itself (a shared Win32 assembly's catalog, rp_ir_add_sxs_catalog):
+    // its bytes, owned, in place of source_path (NULL).
+    uint8_t *data;
+    size_t   data_len;
     rp_pos_t pos;
 } rp_ir_file_t;
 
@@ -763,6 +767,13 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt,
                                        rp_ir_t *ir, rp_srcdiags_t *diags);
 void rp_ir_free(rp_ir_t *ir);
+
+// RFC-0031 B9: a shared Win32 assembly (assembly = "win32" without assembly-for) goes into WinSxS
+// with a signed catalog of its manifest, which the build makes with its --key. rp_ir_add_sxs_catalog
+// adds it (`cat` is taken over) as <manifest name minus .manifest>.cat beside the manifest, in the
+// DLL's component, after the IR is built and before it is lowered.
+bool rp_ir_sxs_shared(const rp_ir_file_t *f);
+[[nodiscard]] proven_err_t rp_ir_add_sxs_catalog(rp_ir_t *ir, size_t dll, uint8_t *cat, size_t len);
 
 // The package's name as a registry key part (its letters and digits): a [menu.*] verb's key is
 // "<that>.<menu ID>".

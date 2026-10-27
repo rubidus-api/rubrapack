@@ -993,8 +993,20 @@ msgstr "[file.{1}]: un acoblament Win32 necessita manifest = \"file:<ID>\", el s
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: un acoblament .NET compartit va a la GAC, que només accepta acoblaments amb nom segur; signeu-lo o doneu assembly-for = \"file:<programa>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: un acoblament Win32 compartit (WinSxS) necessita un catàleg signat amb un certificat de confiança, que rubrapack no crea; doneu assembly-for = \"file:<programa>\" per a un de privat"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: un assembly Win32 compartit va a WinSxS amb un catàleg signat per la clau que indica el publicKeyToken del manifest; creeu-lo amb --key (o doneu assembly-for = \"file:<programa>\" per a un de privat)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: el manifest indica publicKeyToken \"{2}\", però el testimoni de la --key és \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: el manifest '{2}' d'un assembly Win32 compartit indica el signant: publicKeyToken a assemblyIdentity (el testimoni de la --key amb què es crea)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "el catàleg d'un assembly Win32 compartit necessita una clau RSA de 2048 bits o més"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for i manifest van amb assembly = \"dotnet\" o \"win32\""

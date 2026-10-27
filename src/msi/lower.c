@@ -3165,8 +3165,10 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         rp_key_derive('C', f->manifest_of ? f->manifest_of : f->id, comp);      // a Win32 manifest joins its DLL's (B9)
         lf->comp = kdup(&k, comp);
         lf->dir_key = kdup(&k, dkey(ir, f->dir));
-        size_t n = 0;
-        if (rp_pal_map_file(alloc, f->source_path, limits->max_output, &lf->data, &n, &lf->map) != PROVEN_OK) {
+        size_t n = f->data_len;
+        if (f->data) {
+            lf->data = f->data;             // made by rubrapack (a shared Win32 assembly's catalog)
+        } else if (rp_pal_map_file(alloc, f->source_path, limits->max_output, &lf->data, &n, &lf->map) != PROVEN_OK) {
             rp_srcdiag_add(diags, f->pos, "RP1509", false, "cannot read source file '%s'", f->source);
             err = PROVEN_ERR_IO;
             break;

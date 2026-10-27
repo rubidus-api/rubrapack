@@ -993,8 +993,20 @@ msgstr "[file.{1}]：Win32 組件需要 manifest = \"file:<ID>\"，即它的資�
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]：共用 .NET 組件會進入 GAC，而 GAC 只接受強式名稱組件；請簽署它，或給出 assembly-for = \"file:<程式>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]：共用的 Win32 組件（WinSxS）需要以受信任憑證簽署的目錄檔，rubrapack 不產生它；如要私用組件，請給出 assembly-for = \"file:<程式>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]：共用 Win32 組件會隨著由資訊清單中 publicKeyToken 所指金鑰簽署的目錄進入 WinSxS；請用 --key 建置（或為私用組件指定 assembly-for = \"file:<程式>\"）"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]：資訊清單的 publicKeyToken 為 \"{2}\"，但 --key 的權杖為 \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]：{2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]：共用 Win32 組件的資訊清單 '{2}' 須指明簽署者：assemblyIdentity 中的 publicKeyToken（建置所用 --key 的權杖）"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "共用 Win32 組件的目錄需要 2048 位元以上的 RSA 金鑰"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]：assembly-for 和 manifest 要與 assembly = \"dotnet\" 或 \"win32\" 一起使用"

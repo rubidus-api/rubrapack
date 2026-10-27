@@ -993,8 +993,20 @@ msgstr "[file.{1}]: bir Win32 derlemesi manifest = \"file:<ID>\", yani bildirim 
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: paylaşılan bir .NET derlemesi GAC'ye gider; GAC yalnızca tanımlayıcı adlı derlemeleri kabul eder; imzalayın veya assembly-for = \"file:<program>\" verin"
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: paylaşılan bir Win32 derlemesi (WinSxS), güvenilir bir sertifikayla imzalanmış bir katalog gerektirir; rubrapack bunu oluşturmaz; özel bir derleme için assembly-for = \"file:<program>\" verin"
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: paylaşılan bir Win32 derlemesi, bildirimindeki publicKeyToken'ın belirttiği anahtarla imzalanmış bir katalogla WinSxS'e girer; --key ile oluşturun (ya da özel bir derleme için assembly-for = \"file:<program>\" verin)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: bildirim publicKeyToken \"{2}\" belirtiyor, ancak --key anahtarının belirteci \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: paylaşılan Win32 derlemesinin '{2}' bildirimi imzalayanını belirtir: assemblyIdentity içinde publicKeyToken (oluşturmada kullanılan --key anahtarının belirteci)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "paylaşılan bir Win32 derlemesinin kataloğu 2048 bit veya daha büyük bir RSA anahtarı gerektirir"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ve manifest, assembly = \"dotnet\" veya \"win32\" ile kullanılır"

@@ -279,9 +279,15 @@ proven_err_t rp_authenticode_build_ex(proven_allocator_t alloc, const rp_keyfile
 proven_err_t rp_signed_content_build(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
                                      size_t ctype_len, const uint8_t *content, size_t content_len, uint8_t **out, size_t *out_len,
                                      const char **why) {
+    return rp_signed_content_build_ex(alloc, kf, leaf, alg, ctype, ctype_len, content, content_len, NULL, RP_ATTRS_APPX, out, out_len, why);
+}
+
+proven_err_t rp_signed_content_build_ex(proven_allocator_t alloc, const rp_keyfile_t *kf, int leaf, rp_hash_alg_t alg, const uint8_t *ctype,
+                                        size_t ctype_len, const uint8_t *content, size_t content_len, const rp_timestamper_t *ts, int attrs,
+                                        uint8_t **out, size_t *out_len, const char **why) {
     rp_buf_t ind = rp_buf_new(alloc, 1u << 24);
     rp_buf_put(&ind, content, content_len);
-    return build_signed(alloc, kf, leaf, alg, ctype, ctype_len, ind, NULL, RP_ATTRS_APPX, out, out_len, why);
+    return build_signed(alloc, kf, leaf, alg, ctype, ctype_len, ind, ts, attrs, out, out_len, why);
 }
 
 // ---- checking -----------------------------------------------------------------------------------

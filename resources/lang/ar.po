@@ -995,8 +995,20 @@ msgstr "[file.{1}]: يحتاج تجميع Win32 إلى manifest = \"file:<ID>\"�
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: يذهب تجميع .NET المشترك إلى GAC، وهو لا يقبل إلا التجميعات ذات الاسم القوي؛ وقّعه أو أعطِ assembly-for = \"file:<برنامج>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: يحتاج تجميع Win32 المشترك (WinSxS) إلى كتالوج موقّع بشهادة موثوقة، ولا ينشئه rubrapack؛ للتجميع الخاص أعطِ assembly-for = \"file:<برنامج>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: يدخل تجميع Win32 المشترك إلى WinSxS مع كتالوج موقّع بالمفتاح الذي يسمّيه publicKeyToken في البيان؛ ابنِ باستخدام --key (أو أعطِ assembly-for = \"file:<البرنامج>\" لتجميع خاص)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: يسمّي البيان publicKeyToken \"{2}\"، لكن رمز المفتاح --key هو \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: يسمّي بيان تجميع Win32 المشترك '{2}' موقّعه: publicKeyToken في assemblyIdentity (رمز المفتاح --key الذي يُبنى به)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "يحتاج كتالوج تجميع Win32 المشترك إلى مفتاح RSA بطول 2048 بت أو أكثر"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: يُستخدم assembly-for وmanifest مع assembly = \"dotnet\" أو \"win32\""

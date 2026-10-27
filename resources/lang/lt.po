@@ -993,8 +993,20 @@ msgstr "[file.{1}]: Win32 rinkiniui reikia manifest = \"file:<ID>\", jo manifest
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: bendrinamas .NET rinkinys patenka į GAC, kuri priima tik stipriojo vardo rinkinius; pasirašykite jį arba nurodykite assembly-for = \"file:<programa>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: bendrinamam Win32 rinkiniui (WinSxS) reikia katalogo, pasirašyto patikimu sertifikatu, kurio rubrapack nekuria; privačiam nurodykite assembly-for = \"file:<programa>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: bendrinamas Win32 rinkinys patenka į WinSxS su katalogu, pasirašytu raktu, kurį nurodo manifesto publicKeyToken; kurkite su --key (arba privačiam nurodykite assembly-for = \"file:<programa>\")"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifestas nurodo publicKeyToken \"{2}\", bet --key rakto žetonas yra \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: bendrinamo Win32 rinkinio manifestas '{2}' nurodo pasirašantįjį: publicKeyToken elemente assemblyIdentity (--key, kuriuo kuriama, žetonas)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "bendrinamo Win32 rinkinio katalogui reikia bent 2048 bitų RSA rakto"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ir manifest naudojami su assembly = \"dotnet\" arba \"win32\""

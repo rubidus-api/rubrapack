@@ -943,8 +943,12 @@ source = "bin/Contoso.Native.manifest"
 - A Win32 assembly names itself in its manifest: `manifest` points at a `[file.*]` of the same
   folder, feature and `when`, which joins the DLL's component (the DLL stays its key path); the
   manifest's `assemblyIdentity` gives name, version, type, processorArchitecture and publicKeyToken.
-  It must be private (`assembly-for`): a shared one in WinSxS needs a catalog signed by a trusted
-  certificate, which rubrapack does not make.
+  Without `assembly-for` it is shared: Windows puts it in the side-by-side store (WinSxS) for every
+  program that names it in its own manifest. Windows takes it only with a catalog of the manifest
+  signed by the key its `publicKeyToken` names, so such a package is built with `--key`: rubrapack
+  writes the manifest's catalog (`<name>.cat` beside it, as makecat and signtool do) and signs it
+  with that key, which must be RSA of 2048 bits or more but need not be trusted. A manifest without
+  `publicKeyToken`, or naming another key's, is refused, and the message gives the key's own token.
 - `assembly-for = "file:<program>"` installs the assembly privately, for that program, in the
   folder of its file.
 - An MSIX does not take assemblies (`RP1605`; `msi-only = true` leaves the file out of it).

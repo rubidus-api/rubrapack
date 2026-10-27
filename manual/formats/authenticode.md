@@ -144,6 +144,34 @@ Windows Installer accepts the result. [observed]
   by someone else, and 1329 for an unsigned one. With `Hash` set to the digest instead, Windows
   refused the right cabinet too (1330).
 
+## Catalogs of shared Win32 assemblies
+
+A Win32 assembly goes into the side-by-side store (WinSxS) only with a catalog (`<name>.cat`
+beside `<name>.manifest`) that covers its manifest and is signed by the key whose public key token
+the manifest's `assemblyIdentity` names. Microsoft Learn's "Assembly Signing Example" makes it with
+`mt -hashupdate -makecdfs`, `makecat` and `signtool sign`; the key must be RSA, 2048 bits or more,
+and need not be trusted. `build --key` writes the same catalog itself. [observed: makecat and
+signtool's output, Windows 11 installing it]
+
+- The public key token: the last 8 bytes, reversed, of the SHA-1 of the strong-name public key
+  blob - `00 24 00 00` (CALG_RSA_SIGN), `04 80 00 00` (CALG_SHA1), the blob's size (4 bytes), then
+  the CAPI `PUBLICKEYBLOB` (`06 02 00 00 00 24 00 00 'RSA1'`, the modulus' bit length, the public
+  exponent, the modulus little-endian). The manifest writes it as 16 lower-case hex digits.
+- The catalog is a CMS `SignedData` whose content (type `1.3.6.1.4.1.311.10.1`, a certificate
+  trust list) is `SEQUENCE { SEQUENCE { 1.3.6.1.4.1.311.12.1.1 }, OCTET STRING <16-byte list
+  identifier>, UTCTime, SEQUENCE { 1.3.6.1.4.1.311.12.1.2, NULL }, SEQUENCE { member, member } }`.
+- Both members are the manifest: one tagged with the upper-case hex of its SHA-1, one with its file
+  name (each tag UTF-16LE with the terminating zero, in an `OCTET STRING`). Each has two attributes:
+  `1.3.6.1.4.1.311.2.1.4` holding `SEQUENCE { SEQUENCE { 1.3.6.1.4.1.311.2.1.25, [2] { [0] } },
+  SEQUENCE { SEQUENCE { sha1, NULL }, OCTET STRING <the manifest's SHA-1> } }`, and
+  `1.3.6.1.4.1.311.12.2.2` holding `SEQUENCE { BMPString "{DE351A42-8E59-11D0-8C47-00C04FC295EE}",
+  INTEGER 512 }`.
+- The signed attributes are signtool's (an empty `SpcSpOpusInfo`); `messageDigest` is the SHA-256
+  of the trust list's contents, without its `SEQUENCE` header.
+- The manifest's own `<file>` entries need no `hash` attributes (`mt -hashupdate` adds them).
+  Windows Installer puts the assembly in `WinSxS\Fusion\<identity>\<major.minor>\<version>` on
+  Windows 11 and refuses a package whose catalog was changed (error 1310 at `AssemblyCopy`).
+
 ## Timestamps
 
 A signature without a timestamp stops being valid when the signing certificate expires. With an

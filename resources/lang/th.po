@@ -993,8 +993,20 @@ msgstr "[file.{1}]: แอสเซมบลี Win32 ต้องมี manifes
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: แอสเซมบลี .NET ที่ใช้ร่วมกันจะเข้า GAC ซึ่งรับเฉพาะที่มีชื่อแบบเข้มงวด ให้ลงนาม หรือระบุ assembly-for = \"file:<โปรแกรม>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: แอสเซมบลี Win32 ที่ใช้ร่วมกัน (WinSxS) ต้องมีแคตตาล็อกที่ลงนามด้วยใบรับรองที่เชื่อถือได้ ซึ่ง rubrapack ไม่สร้าง สำหรับแบบส่วนตัวให้ระบุ assembly-for = \"file:<โปรแกรม>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: แอสเซมบลี Win32 แบบใช้ร่วมจะเข้า WinSxS พร้อมแคตตาล็อกที่ลงนามด้วยคีย์ที่ publicKeyToken ในแมนิเฟสต์ระบุ ให้สร้างด้วย --key (หรือระบุ assembly-for = \"file:<โปรแกรม>\" สำหรับแบบส่วนตัว)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: แมนิเฟสต์ระบุ publicKeyToken \"{2}\" แต่โทเค็นของ --key คือ \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ของแอสเซมบลี Win32 แบบใช้ร่วมต้องระบุผู้ลงนาม: publicKeyToken ใน assemblyIdentity (โทเค็นของ --key ที่ใช้สร้าง)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "แคตตาล็อกของแอสเซมบลี Win32 แบบใช้ร่วมต้องใช้คีย์ RSA ขนาด 2048 บิตขึ้นไป"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for และ manifest ใช้คู่กับ assembly = \"dotnet\" หรือ \"win32\""

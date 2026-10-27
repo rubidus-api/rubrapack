@@ -993,8 +993,20 @@ msgstr "[file.{1}]: збірці Win32 потрібен manifest = \"file:<ID>\"
 msgid "[file.%s]: a shared .NET assembly goes into the GAC, which takes strong-named ones only; sign it, or give assembly-for = \"file:<program>\""
 msgstr "[file.{1}]: спільна збірка .NET потрапляє до GAC, а він приймає лише збірки зі строгим ім'ям; підпишіть її або вкажіть assembly-for = \"file:<програма>\""
 
-msgid "[file.%s]: a shared Win32 assembly (WinSxS) needs a catalog signed by a trusted certificate, which rubrapack does not make; give assembly-for = \"file:<program>\" for a private one"
-msgstr "[file.{1}]: спільній збірці Win32 (WinSxS) потрібен каталог, підписаний довіреним сертифікатом, а rubrapack його не створює; для приватної збірки вкажіть assembly-for = \"file:<програма>\""
+msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
+msgstr "[file.{1}]: спільна збірка Win32 потрапляє до WinSxS з каталогом, підписаним ключем, який називає publicKeyToken у маніфесті; зберіть із --key (або вкажіть assembly-for = \"file:<програма>\" для приватної)"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: маніфест називає publicKeyToken \"{2}\", але маркер ключа --key — \"{3}\""
+
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
+msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
+msgstr "[file.{1}]: маніфест '{2}' спільної збірки Win32 називає підписувача: publicKeyToken в assemblyIdentity (маркер ключа --key, з яким збирається пакет)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "каталогу спільної збірки Win32 потрібен ключ RSA довжиною 2048 біт або більше"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for і manifest використовуються з assembly = \"dotnet\" або \"win32\""
