@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "सेटअप पूरा हुआ।"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "परिवर्तन पूरे करने के लिए Windows पुनः आरंभ करें।"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "इस फ़ोल्डर में पहले से फ़ाइलें या फ़ोल्डर हैं। [ProductName] हटाए जाने पर फ़ोल्डर की हर चीज़ हट जाती है - जो अभी है वह भी। खाली या नया फ़ोल्डर सुरक्षित विकल्प है।"
 

@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "O‘rnatish tugadi."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "O‘zgarishlarni yakunlash uchun Windows’ni qayta ishga tushiring."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Bu jildda allaqachon fayllar yoki jildlar bor. [ProductName] o‘chirilganda jilddagi hamma narsa o‘chiriladi - hozir undagilar ham. Bo‘sh yoki yangi jild xavfsizroq tanlov."
 

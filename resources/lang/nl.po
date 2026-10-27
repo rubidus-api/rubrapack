@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "De installatie is voltooid."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Start Windows opnieuw op om de wijzigingen te voltooien."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Deze map bevat al bestanden of mappen. Als [ProductName] wordt verwijderd, wordt alles in de map verwijderd - ook wat er nu in staat. Een lege of nieuwe map is de veilige keuze."
 

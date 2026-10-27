@@ -1103,7 +1103,7 @@ back, the ones before it stay. `properties` are passed to that package as on msi
   progress; `/quiet` nothing. `/uninstall` removes the packages, last first; `/repair` repairs the
   installed ones. `/log <file>` writes a
   verbose log. `/lang <code>` (`/lang ar`) shows the setup program's texts, and the packages' dialogs
-  through `RPLANGUAGE`, in that language instead of the display language's. Exit code: 0, 3010 (a restart is needed), the failing package's error, 1620 for a
+  through `RPLANGUAGE`, in that language instead of the display language's. Exit code: 0, 3010 (a restart is needed: the last message then says to restart Windows; the setup program never restarts it), the failing package's error, 1620 for a
   damaged setup program, 1602 when the user refuses elevation.
 - With `elevate = true` (the default) the setup program asks for administrator rights once, for all
   packages; per-user chains set `elevate = false`.

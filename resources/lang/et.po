@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Installimine on lõpetatud."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Muudatuste lõpetamiseks taaskäivitage Windows."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Selles kaustas on juba faile või kaustu. Kui [ProductName] eemaldatakse, kustutatakse kõik kaustas olev - ka see, mis seal praegu on. Tühi või uus kaust on turvalisem valik."
 

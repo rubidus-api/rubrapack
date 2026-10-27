@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "S'ha completat la instal·lació."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Reinicieu el Windows per completar els canvis."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Aquesta carpeta ja conté fitxers o carpetes. Quan se suprimeixi [ProductName], s'eliminarà tot el que hi hagi a la carpeta, també el que ara hi ha. Una carpeta buida o nova és una opció més segura."
 

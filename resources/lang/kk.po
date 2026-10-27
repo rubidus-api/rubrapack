@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Орнату аяқталды."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Өзгерістерді аяқтау үшін Windows жүйесін қайта іске қосыңыз."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Бұл қалтада файлдар немесе қалталар бар. [ProductName] жойылғанда қалтадағының бәрі жойылады - қазір бары да. Бос немесе жаңа қалта қауіпсізірек."
 

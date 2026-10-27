@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalēšana ir pabeigta."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Lai pabeigtu izmaiņas, restartējiet Windows."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Šajā mapē jau ir faili vai mapes. Kad [ProductName] tiek noņemts, tiek dzēsts viss mapē - arī tas, kas tajā ir tagad. Tukša vai jauna mape ir drošāka izvēle."
 

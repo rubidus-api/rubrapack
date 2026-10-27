@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "安裝完成。"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "請重新啟動 Windows 以完成變更。"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "此資料夾中已有檔案或資料夾。移除 [ProductName] 時，此資料夾中的所有內容都會被移除 - 包括現在已有的內容。選擇空資料夾或新資料夾更安全。"
 

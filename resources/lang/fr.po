@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "L'installation est terminée."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Redémarrez Windows pour terminer les modifications."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ce dossier contient déjà des fichiers ou des dossiers. Lors de la désinstallation de [ProductName], tout ce qui se trouve dans ce dossier est supprimé - y compris ce qui s'y trouve maintenant. Un dossier vide ou nouveau est le choix sûr."
 

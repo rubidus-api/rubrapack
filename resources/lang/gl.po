@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Completouse a instalación."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Reinicie Windows para completar os cambios."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Este cartafol xa contén ficheiros ou cartafoles. Cando se quite [ProductName], eliminarase todo o que haxa no cartafol, tamén o que hai agora. Un cartafol baleiro ou novo é unha opción máis segura."
 

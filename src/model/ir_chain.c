@@ -272,6 +272,7 @@ static const char *msp_codes(proven_allocator_t alloc, const uint8_t *data, size
 static const char *const setup_texts[] = {
     "Setup.Damaged", "Setup.Ask", "Setup.Repair", "Setup.Remove", "Setup.Cancel", "Setup.RemoveAsk", "Setup.Removed",
     "Setup.RemoveFailed", "Setup.TempFailed", "Setup.RepairFailed", "Setup.InstallFailed", "Setup.Repaired", "Setup.Finished",
+    "Setup.Restart",
 };
 
 proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const rp_limits_t *limits, uint8_t **out, size_t *len,

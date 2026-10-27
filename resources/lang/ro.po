@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalarea s-a încheiat."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Reporniți Windows pentru a finaliza modificările."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Acest folder conține deja fișiere sau foldere. La eliminarea [ProductName] se șterge tot din folder - inclusiv ce există acum. Un folder gol sau nou este alegerea sigură."
 

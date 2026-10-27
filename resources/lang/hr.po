@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalacija je završena."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Ponovno pokrenite Windows da biste dovršili promjene."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ova mapa već sadrži datoteke ili mape. Kad se [ProductName] ukloni, briše se sve u mapi - i ono što je sada u njoj. Prazna ili nova mapa sigurniji je izbor."
 

@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Inštalácia sa skončila."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Na dokončenie zmien reštartujte systém Windows."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Tento priečinok už obsahuje súbory alebo priečinky. Keď sa [ProductName] odstráni, odstráni sa všetko v priečinku - aj to, čo je v ňom teraz. Prázdny alebo nový priečinok je bezpečná voľba."
 

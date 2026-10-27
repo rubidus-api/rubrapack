@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Asennus on valmis."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Viimeistele muutokset käynnistämällä Windows uudelleen."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Tässä kansiossa on jo tiedostoja tai kansioita. Kun [ProductName] poistetaan, kaikki kansion sisältö poistetaan - myös se, mitä siellä on nyt. Tyhjä tai uusi kansio on turvallinen valinta."
 

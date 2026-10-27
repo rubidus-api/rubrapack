@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "การติดตั้งเสร็จสิ้น"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "รีสตาร์ต Windows เพื่อให้การเปลี่ยนแปลงเสร็จสมบูรณ์"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "โฟลเดอร์นี้มีไฟล์หรือโฟลเดอร์อยู่แล้ว เมื่อถอน [ProductName] ทุกอย่างในโฟลเดอร์จะถูกลบ รวมถึงสิ่งที่อยู่ตอนนี้ด้วย โฟลเดอร์ว่างหรือโฟลเดอร์ใหม่จึงปลอดภัยกว่า"
 

@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Установка завершена."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Перезапустите Windows, чтобы завершить изменения."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "В этой папке уже есть файлы или папки. При удалении [ProductName] все содержимое папки удаляется - в том числе то, что есть в ней сейчас. Безопаснее выбрать пустую или новую папку."
 

@@ -64,7 +64,7 @@ typedef struct {
 // `rubrapack build` fills from language packs ("Setup.*"), picked by the user's display language.
 // {1} is a package's ID, {2} an error number.
 enum { T_DAMAGED, T_ASK, T_REPAIR, T_REMOVE, T_CANCEL, T_REMOVEASK, T_REMOVED, T_REMOVEFAILED, T_TEMPFAILED, T_REPAIRFAILED,
-       T_INSTALLFAILED, T_REPAIRED, T_FINISHED, T_COUNT };
+       T_INSTALLFAILED, T_REPAIRED, T_FINISHED, T_RESTART, T_COUNT };
 static const wchar_t *texts[T_COUNT] = {
     L"This setup program is damaged: download it again.",
     L"These programs are already installed. Choose what to do.",
@@ -79,6 +79,7 @@ static const wchar_t *texts[T_COUNT] = {
     L"{1} could not be installed (error {2}). Nothing after it was installed.",
     L"The programs were repaired.",
     L"Setup finished.",
+    L"Restart Windows to complete the changes.",
 };
 
 // `tmpl` with {1} as `one` and {2} as the number `two`.
@@ -104,6 +105,16 @@ static bool rtl;            // the texts are in a language that reads right to l
 static void say(const wchar_t *title, const wchar_t *text, bool error) {
     if (quiet || (passive && !error)) return;
     MessageBoxW(NULL, text, title, MB_OK | (error ? MB_ICONERROR : MB_ICONINFORMATION) | rp_mb_rtl(rtl));
+}
+
+// The closing message: with "restart Windows" after it when a package asked for a restart (3010).
+static void say_done(const wchar_t *title, const wchar_t *text, int result) {
+    wchar_t both[1024];
+    if (result == ERROR_SUCCESS_REBOOT_REQUIRED && lstrlenW(text) + lstrlenW(texts[T_RESTART]) + 3 < (int)(sizeof both / sizeof both[0])) {
+        wsprintfW(both, L"%s\n\n%s", text, texts[T_RESTART]);
+        text = both;
+    }
+    say(title, text, false);
 }
 
 // UTF-8 to a new wide string (LocalFree), or NULL.
@@ -475,7 +486,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
             if (r == ERROR_SUCCESS_REBOOT_REQUIRED) result = (int)r;
             else if (r != ERROR_SUCCESS && result == 0) result = (int)r;
         }
-        if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, texts[T_REMOVED], false);
+        if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say_done(title, texts[T_REMOVED], result);
         else say(title, texts[T_REMOVEFAILED], true);
         CloseHandle(f);
         return result;
@@ -551,7 +562,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, LPWSTR cmdline, int show) {
         LocalFree(id);
     }
     RemoveDirectoryW(dir);
-    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say(title, repair ? texts[T_REPAIRED] : texts[T_FINISHED], false);
+    if (result == 0 || result == ERROR_SUCCESS_REBOOT_REQUIRED) say_done(title, repair ? texts[T_REPAIRED] : texts[T_FINISHED], result);
     LocalFree(title);
     LocalFree(manifest);
     return result;

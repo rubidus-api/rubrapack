@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalacija je završena."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Ponovo pokrenite Windows da biste dovršili promene."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ova fascikla već sadrži datoteke ili fascikle. Kada se [ProductName] ukloni, briše se sve u fascikli - i ono što je sada u njoj. Prazna ili nova fascikla je bezbedniji izbor."
 

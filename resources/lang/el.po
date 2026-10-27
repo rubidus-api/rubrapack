@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Η εγκατάσταση τελείωσε."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Επανεκκινήστε τα Windows για να ολοκληρωθούν οι αλλαγές."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Αυτός ο φάκελος έχει ήδη αρχεία ή φακέλους. Όταν καταργηθεί το [ProductName], διαγράφεται ό,τι υπάρχει στον φάκελο - και ό,τι υπάρχει τώρα. Ένας κενός ή νέος φάκελος είναι η ασφαλής επιλογή."
 

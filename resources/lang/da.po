@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Installationen er fuldført."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Genstart Windows for at fuldføre ændringerne."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Denne mappe indeholder allerede filer eller mapper. Når [ProductName] fjernes, slettes alt i mappen - også det, der er der nu. En tom eller ny mappe er det sikre valg."
 

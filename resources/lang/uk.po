@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Інсталяцію завершено."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Перезапустіть Windows, щоб завершити зміни."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ця папка вже містить файли або папки. Під час видалення [ProductName] буде видалено весь вміст папки - зокрема те, що є в ній зараз. Безпечний вибір - порожня або нова папка."
 

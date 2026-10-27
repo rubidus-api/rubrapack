@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalace byla dokončena."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Dokončete změny restartováním systému Windows."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Tato složka již obsahuje soubory nebo složky. Při odebrání [ProductName] se odstraní vše ve složce - i to, co v ní je nyní. Prázdná nebo nová složka je bezpečná volba."
 

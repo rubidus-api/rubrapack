@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Setup abgeschlossen."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Starten Sie Windows neu, um die Änderungen abzuschließen."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Dieser Ordner enthält bereits Dateien oder Ordner. Wenn [ProductName] entfernt wird, wird alles in diesem Ordner gelöscht - auch das, was jetzt darin ist. Ein leerer oder neuer Ordner ist die sichere Wahl."
 

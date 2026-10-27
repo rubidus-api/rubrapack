@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Kurulum tamamlandı."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Değişiklikleri tamamlamak için Windows'u yeniden başlatın."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Bu klasörde zaten dosya veya klasör var. [ProductName] kaldırıldığında klasördeki her şey silinir - şu anda içinde olanlar da. Boş veya yeni bir klasör güvenli seçimdir."
 

@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Cài đặt đã xong."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Khởi động lại Windows để hoàn tất các thay đổi."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Thư mục này đã có tệp hoặc thư mục. Khi gỡ [ProductName], mọi thứ trong thư mục sẽ bị xóa - kể cả những gì đang có bây giờ. Thư mục trống hoặc mới là lựa chọn an toàn."
 

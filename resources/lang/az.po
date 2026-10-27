@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Quraşdırma başa çatdı."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Dəyişiklikləri tamamlamaq üçün Windows-u yenidən başladın."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Bu qovluqda artıq fayllar və ya qovluqlar var. [ProductName] silinəndə qovluqdakı hər şey silinir - indi orada olanlar da. Boş və ya yeni qovluq daha təhlükəsiz seçimdir."
 

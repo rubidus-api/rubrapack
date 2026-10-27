@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalacja została zakończona."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Uruchom ponownie system Windows, aby dokończyć zmiany."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ten folder zawiera już pliki lub foldery. Po usunięciu [ProductName] zostanie usunięta cała zawartość folderu - także to, co jest w nim teraz. Pusty lub nowy folder to bezpieczny wybór."
 

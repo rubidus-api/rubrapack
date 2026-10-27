@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "A instalação foi concluída."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Reinicie o Windows para concluir as alterações."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Esta pasta já contém ficheiros ou pastas. Quando o [ProductName] for removido, tudo o que estiver na pasta será eliminado - inclusive o que há nela agora. Uma pasta vazia ou nova é a escolha segura."
 

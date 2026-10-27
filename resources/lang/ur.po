@@ -4202,6 +4202,10 @@ msgid "Setup.Finished"
 msgstr "سیٹ اپ مکمل ہو گیا۔"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "تبدیلیاں مکمل کرنے کے لیے Windows دوبارہ شروع کریں۔"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "اس فولڈر میں پہلے سے فائلیں یا فولڈر موجود ہیں۔ جب [ProductName] ہٹایا جائے گا تو فولڈر کی ہر چیز حذف ہو جائے گی - وہ بھی جو ابھی اس میں ہے۔ خالی یا نیا فولڈر زیادہ محفوظ انتخاب ہے۔"
 

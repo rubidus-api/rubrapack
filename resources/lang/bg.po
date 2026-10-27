@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Инсталирането завърши."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Рестартирайте Windows, за да завършат промените."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "В тази папка вече има файлове или папки. Когато [ProductName] бъде премахнат, всичко в папката се изтрива - и това, което е там сега. Празна или нова папка е безопасният избор."
 

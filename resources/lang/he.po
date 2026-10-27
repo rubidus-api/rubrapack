@@ -4202,6 +4202,10 @@ msgid "Setup.Finished"
 msgstr "ההתקנה הסתיימה."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "הפעל מחדש את Windows כדי להשלים את השינויים."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "בתיקייה זו כבר יש קבצים או תיקיות. כש-[ProductName] יוסר, כל מה שבתיקייה יימחק - גם מה שיש בה עכשיו. תיקייה ריקה או חדשה היא הבחירה הבטוחה."
 

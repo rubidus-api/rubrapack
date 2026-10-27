@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Installazione completata."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Riavviare Windows per completare le modifiche."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Questa cartella contiene già file o cartelle. Quando [ProductName] viene rimosso, tutto il contenuto della cartella viene eliminato - anche quello presente ora. Una cartella vuota o nuova è la scelta sicura."
 

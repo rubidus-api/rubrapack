@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "A telepítés befejeződött."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "A módosítások befejezéséhez indítsa újra a Windowst."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Ebben a mappában már vannak fájlok vagy mappák. A(z) [ProductName] eltávolításakor a mappában minden törlődik - az is, ami most benne van. Üres vagy új mappa a biztonságos választás."
 

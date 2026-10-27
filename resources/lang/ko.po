@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "설치를 마쳤습니다."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "변경을 마치려면 Windows 를 다시 시작하십시오."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "이 폴더에는 이미 파일이나 폴더가 들어 있습니다. [ProductName]을(를) 제거하면 이 폴더 안의 모든 것이 지워집니다 - 지금 있는 것도 함께. 빈 폴더나 새 폴더를 고르는 것이 안전합니다."
 

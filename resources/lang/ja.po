@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "セットアップが完了しました。"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "変更を完了するには Windows を再起動してください。"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "このフォルダーには既にファイルやフォルダーがあります。[ProductName] を削除すると、このフォルダーの中身はすべて削除されます - 今あるものも含めて。空のフォルダーか新しいフォルダーを選ぶのが安全です。"
 

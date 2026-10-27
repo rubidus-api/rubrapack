@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Diegimas baigtas."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Kad pakeitimai būtų baigti, paleiskite Windows iš naujo."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Šiame aplanke jau yra failų ar aplankų. Pašalinus [ProductName], ištrinama viskas, kas aplanke - ir tai, kas jame yra dabar. Tuščias ar naujas aplankas yra saugesnis pasirinkimas."
 

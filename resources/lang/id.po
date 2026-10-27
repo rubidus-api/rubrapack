@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Penyiapan selesai."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Mulai ulang Windows untuk menyelesaikan perubahan."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Folder ini sudah berisi file atau folder. Saat [ProductName] dihapus, semua yang ada di folder ikut dihapus - termasuk yang ada sekarang. Folder kosong atau baru adalah pilihan yang aman."
 

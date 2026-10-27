@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "அமைவு முடிந்தது."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "மாற்றங்களை நிறைவுசெய்ய Windows ஐ மறுதொடக்கம் செய்யவும்."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "இந்தக் கோப்புறையில் ஏற்கெனவே கோப்புகள் அல்லது கோப்புறைகள் உள்ளன. [ProductName] அகற்றப்படும்போது கோப்புறையில் உள்ள அனைத்தும் நீக்கப்படும் - இப்போது உள்ளவையும் கூட. காலியான அல்லது புதிய கோப்புறை பாதுகாப்பான தேர்வு."
 

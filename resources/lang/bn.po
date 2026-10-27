@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "সেটআপ সম্পূর্ণ হয়েছে।"
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "পরিবর্তনগুলি সম্পূর্ণ করতে Windows পুনরায় চালু করুন।"
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "এই ফোল্ডারে আগে থেকেই ফাইল বা ফোল্ডার আছে। [ProductName] সরানো হলে ফোল্ডারের সবকিছু মুছে যাবে - এখন যা আছে তাও। একটি খালি বা নতুন ফোল্ডার বেশি নিরাপদ পছন্দ।"
 

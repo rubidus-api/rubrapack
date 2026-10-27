@@ -4202,6 +4202,10 @@ msgid "Setup.Finished"
 msgstr "انتهى الإعداد."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "أعد تشغيل Windows لإكمال التغييرات."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "يحتوي هذا المجلد بالفعل على ملفات أو مجلدات. عند إزالة [ProductName]، يُحذف كل ما في المجلد - بما في ذلك ما هو موجود الآن. المجلد الفارغ أو الجديد هو الاختيار الآمن."
 

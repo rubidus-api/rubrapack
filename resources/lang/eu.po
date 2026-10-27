@@ -4200,6 +4200,10 @@ msgid "Setup.Finished"
 msgstr "Instalazioa osatu da."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "Berrabiarazi Windows aldaketak osatzeko."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "Karpeta honek fitxategiak edo karpetak ditu dagoeneko. [ProductName] kentzean, karpetako guztia ezabatuko da, orain dagoena ere bai. Karpeta huts edo berri bat aukera seguruagoa da."
 

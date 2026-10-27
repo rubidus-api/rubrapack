@@ -4202,6 +4202,10 @@ msgid "Setup.Finished"
 msgstr "نصب کامل شد."
 
 msgctxt "installer"
+msgid "Setup.Restart"
+msgstr "برای کامل شدن تغییرات، Windows را دوباره راه‌اندازی کنید."
+
+msgctxt "installer"
 msgid "DirNotEmptyText"
 msgstr "این پوشه از قبل فایل یا پوشه دارد. وقتی [ProductName] حذف شود، همه چیز در این پوشه پاک می‌شود - حتی آنچه اکنون در آن است. پوشه خالی یا جدید انتخاب امن‌تری است."
 
