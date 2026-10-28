@@ -13,6 +13,7 @@
 // and byte limits hold. Then the target (missing or empty) is filled with new directories and
 // new files only - an existing name is never opened, followed or replaced.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
@@ -692,7 +693,7 @@ int rp_cmd_extract(int argc, char **argv) {
     }
     if (input == NULL || dest == NULL || !(rp_ascii_ends_with_ci(input, ".msi") || rp_ascii_ends_with_ci(input, ".cab") || rp_ascii_ends_with_ci(input, ".msix") ||
                                              rp_ascii_ends_with_ci(input, ".msixbundle") || rp_ascii_ends_with_ci(input, ".exe"))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]");
+        (void)rp_cli_usage_error("extract");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

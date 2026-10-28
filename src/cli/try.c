@@ -5,6 +5,7 @@
 // throws everything away. Networking is off unless --network. Open the .wsb on Windows with the
 // Windows Sandbox feature turned on.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -29,7 +30,6 @@ static void xml_escaped(rp_buf_t *b, const char *s) {
 }
 
 int rp_cmd_try(int argc, char **argv) {
-    static const char usage[] = "usage: rubrapack try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]";
     const char *pkg = NULL, *out = NULL, *host = NULL;
     bool network = false;
     for (int i = 2; i < argc; ++i) {
@@ -38,14 +38,14 @@ int rp_cmd_try(int argc, char **argv) {
         else if (strcmp(argv[i], "--network") == 0) network = true;
         else if (argv[i][0] != '-' && pkg == NULL) pkg = argv[i];
         else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+            (void)rp_cli_usage_error("try");
             return RP_EXIT_USAGE;
         }
     }
     bool msi = pkg && rp_ascii_ends_with_ci(pkg, ".msi");
     bool msix = pkg && (rp_ascii_ends_with_ci(pkg, ".msix") || rp_ascii_ends_with_ci(pkg, ".msixbundle"));
     if (!msi && !msix) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+        (void)rp_cli_usage_error("try");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

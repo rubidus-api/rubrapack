@@ -3,6 +3,7 @@
 // package (a .msix or .msixbundle) gives its family name, Identity Name and the publisher ID; a
 // family name may also be given as it is. The first one has the highest priority.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/limits.h"
@@ -70,14 +71,13 @@ static int family_of(proven_allocator_t heap, const char *path, char *out, size_
 }
 
 int rp_cmd_container(int argc, char **argv) {
-    static const char usage[] = "usage: rubrapack container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>";
     const char *name = NULL, *out = NULL, *in[MAX_FAMILIES];
     size_t nin = 0;
     for (int i = 2; i < argc; ++i) {
         if (strcmp(argv[i], "-o") == 0 && i + 1 < argc) {
             out = argv[++i];
         } else if (argv[i][0] == '-') {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+            (void)rp_cli_usage_error("container");
             return RP_EXIT_USAGE;
         } else if (name == NULL) {
             name = argv[i];
@@ -89,7 +89,7 @@ int rp_cmd_container(int argc, char **argv) {
         }
     }
     if (name == NULL || nin == 0 || out == NULL || name[0] == 0 || strlen(name) > 255) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+        (void)rp_cli_usage_error("container");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

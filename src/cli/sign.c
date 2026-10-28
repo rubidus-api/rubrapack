@@ -3,6 +3,7 @@
 // Passwords come only from an environment variable or a file, never from the command line
 // (process lists show arguments), and are wiped after use.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
@@ -350,7 +351,7 @@ static int sign_with(const rp_sign_args_t *a, const char *label, const uint8_t *
     static bool told_timestamp;
     if (!a->timestamp && !told_timestamp) {
         told_timestamp = true;
-        rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", label);
+        rp_diag_warning(RP_DIAG_SIGN, "'%s': no --timestamp: the signature stops being valid when the certificate expires", a->output ? a->output : label);
     }
     return RP_EXIT_OK;
 }
@@ -390,7 +391,7 @@ int rp_cmd_sign(int argc, char **argv) {
         }
     }
     if (file == NULL || !rp_sign_wanted(&a) || (a.pass_env && a.pass_file) || ((a.tsa_trust || a.tls_trust || a.system_roots || a.proxy) && !a.timestamp)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]");
+        (void)rp_cli_usage_error("sign");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -464,7 +465,7 @@ int rp_cmd_verify(int argc, char **argv) {
         }
     }
     if (file == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...");
+        (void)rp_cli_usage_error("verify");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

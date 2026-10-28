@@ -33,11 +33,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/stat.h>
 #if defined(_WIN32)
 #include <direct.h>
 #define make_dir(p) _mkdir(p)
 #else
-#include <sys/stat.h>
 #define make_dir(p) mkdir((p), 0777)
 #endif
 
@@ -534,7 +534,21 @@ static int build(const target_t *t) {
     return 0;
 }
 
+// A nob older than nob.c may not know a source added since: it fails to link, or builds without it.
+// When argv[0] names this program's file, a newer nob.c beside it stops the build with how to rebuild.
+static bool stale_self(const char *self) {
+    struct stat me, src;
+    char exe[1024];
+    snprintf(exe, sizeof exe, "%s.exe", self);
+    if (stat(self, &me) != 0 && stat(exe, &me) != 0) return false;
+    return stat("nob.c", &src) == 0 && src.st_mtime > me.st_mtime;
+}
+
 int main(int argc, char **argv) {
+    if (argc > 0 && stale_self(argv[0])) {
+        fprintf(stderr, "nob: nob.c is newer than %s - rebuild it first: cc -std=c23 -o %s nob.c\n", argv[0], argv[0]);
+        return 1;
+    }
 #if defined(_WIN32)
     target_t t = { .name = "native", .cc = "gcc", .kind = KIND_WIN32 };
 #else

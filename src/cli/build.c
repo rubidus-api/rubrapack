@@ -1,5 +1,6 @@
 // src/cli/build.c - `rubrapack build <src.toml> -o <out.msi> [options]` (RFC-0001 7, 7.1).
 
+#include "rubrapack/cli.h"
 #include "rubrapack/build.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
@@ -597,10 +598,11 @@ static int run(int argc, char **argv, bool lint) {
         goto done;
     }
     if (src == NULL || out == NULL) {
-        if (lint) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]");
-        else rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]");
+        if (lint) (void)rp_cli_usage_error("lint");
+        else (void)rp_cli_usage_error("build");
         goto done;
     }
+    sign.output = out;
     bool bundle = !lint && (rp_ascii_ends_with_ci(out, ".msixbundle") || rp_ascii_ends_with_ci(out, ".msixupload"));
     bool msix = (!lint && (bundle || rp_ascii_ends_with_ci(out, ".msix"))) || lint_msix;
     bool chain_out = !lint && rp_ascii_ends_with_ci(out, ".exe");       // a setup program for a [chain] (RFC-0016 3)

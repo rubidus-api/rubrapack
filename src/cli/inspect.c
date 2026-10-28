@@ -2,6 +2,7 @@
 // Results go to stdout as UTF-8 (IDT for tables, as MsiDatabaseExport writes it); diagnostics
 // to stderr.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/cfb.h"
@@ -411,7 +412,7 @@ int rp_cmd_inspect(int argc, char **argv) {
         return rp_instance_inspect(argv[2], argv[4]);
     }
     if (argc < 3 || argc > 4) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>");
+        (void)rp_cli_usage_error("inspect");
         return RP_EXIT_USAGE;
     }
     const char *path = argv[2], *what = argc == 4 ? argv[3] : NULL;

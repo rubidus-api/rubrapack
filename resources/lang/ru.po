@@ -3357,35 +3357,17 @@ msgstr "upgrade = false - для on = \"uninstall\" или \"both\" (устан�
 msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
 msgstr "upgrade-code должен быть GUID вида {12345678-1234-1234-1234-123456789ABC}"
 
+msgid "usage: rubrapack %s"
+msgstr "использование: rubrapack {1}"
+
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "использование: rubrapack {1}\n\n{2}{3}\n"
-
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-msgstr "использование: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (список для набора)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-
-msgid "usage: rubrapack diff <a.msi> <b.msi>"
-msgstr "использование: rubrapack diff <a.msi> <b.msi>"
-
-msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-msgstr "использование: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-
-msgid "usage: rubrapack explain [RPnnnn]"
-msgstr "использование: rubrapack explain [RPnnnn]"
-
-msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-msgstr "использование: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-
-msgid "usage: rubrapack guid [--from <text>]"
-msgstr "использование: rubrapack guid [--from <text>]"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
 msgstr "использование: rubrapack inspect <file.cab> (без таблицы и параметров)"
 
 msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
 msgstr "использование: rubrapack inspect <file.msi> [table|--summary] --json"
-
-msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
-msgstr "использование: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
 
 msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
 msgstr "использование: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
@@ -3396,29 +3378,11 @@ msgstr "использование: rubrapack inspect <file.mst> --base <base.ms
 msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
 msgstr "использование: rubrapack inspect <setup.exe> (без таблицы и параметров)"
 
-msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-msgstr "использование: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-
 msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 msgstr "использование: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 
 msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
 msgstr "использование: rubrapack lint <file.msix|file.msixbundle> [--strict]"
-
-msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-msgstr "использование: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-
-msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
-msgstr "использование: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (готовый шаблон <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; имена .rpk тоже принимаются"
-
-msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
-msgstr "использование: rubrapack schema (JSON Schema исходников в stdout)"
-
-msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-msgstr "использование: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-
-msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
-msgstr "использование: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
 
 msgid "use '/' in path"
 msgstr "используйте '/' в path"

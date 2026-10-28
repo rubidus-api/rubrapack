@@ -74,18 +74,27 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
   조건(`when`), 겸용 패키지의 "나만 / 모든 사용자", 완료 페이지에서 프로그램 실행. "설치된 앱"과 바로가기의
   아이콘, 제거할 때 남기는 파일도 지원합니다. x64, x86, Arm64 패키지를 만듭니다. Windows 폴더와 환경 변수는
   제 이름으로 씁니다(`$(ProgramFiles)`, `$(LOCALAPPDATA)`, `$(USERNAME)`).
+- **Windows Installer 의 그 밖의 기능:** 설치된 프로그램이나 DLL 함수를 돌리는 사용자 지정 동작(즉시·지연·커밋·롤백,
+  데이터 포함), 설치 때 파일 옮기기·복사, ODBC 드라이버와 데이터 원본, 게시된 구성 요소와 격리된 구성 요소,
+  전역 어셈블리 캐시에 넣는 .NET 어셈블리와 side-by-side 저장소(WinSxS)에 넣는 Win32 어셈블리(Windows 가 요구하는
+  서명된 카탈로그 포함), 한 제품의 여러 인스턴스, 광고된 바로가기, 빌보드, 목록·그림 컨트롤, 직접 만든 설치
+  UI(내장 UI DLL), 서명된 외부 캐비닛.
 - **업데이트와 묶음 설치:** 패키지의 두 판으로 만드는 변환(`.mst`, `rubrapack transform`)과 패치(`.msp`,
-  `rubrapack patch`), 여러 패키지를 차례로 설치하고 관리자 권한은 한 번만 묻는 `setup.exe`(`[chain]`).
+  `rubrapack patch`), 여러 패키지를 차례로 설치하고 관리자 권한은 한 번만 묻는 `setup.exe`(`[chain]`) - 패치 적용과 MSIX 추가도 합니다.
 - **MSIX:** 가상 레지스트리(`Registry.dat`, `User.dat`)와 가상 파일 시스템을 쓰는 완전 신뢰 데스크톱 앱,
   패키지 하나에 여러 앱, 파일 형식, 프로토콜, 실행 별칭, 시작 작업, 방화벽 규칙, COM 서버, 알림 활성화, 상황별
   메뉴, 바탕화면 바로가기, 공유 글꼴, 여러 언어의 이름과 여러 배율의 로고(`resources.pri`), 자동 업데이트용
   `.appinstaller` 파일, 여러 아키텍처를 담는 묶음, Windows 서명기처럼 `CodeIntegrity.cat` 을 넣는 서명, 서명 없는
-  시험 패키지를 지원합니다.
+  시험 패키지를 지원합니다. 앱 확장과 그 호스트, 앱 서비스, 공유 대상, 자동 실행(AutoPlay), 프레임워크 패키지,
+  다른 곳에 설치된 프로그램을 위한 패키지(외부 위치), 평평한 묶음, 스토어 업로드 파일(`.msixupload`),
+  Package Support Framework 도 지원합니다.
 - **서명:** PE 파일, MSI 와 MSIX 패키지와 묶음에 Authenticode 서명을 합니다. RSA 와 ECDSA 를 쓰고,
   RFC 3161 타임스탬프(HTTP 또는 자체 TLS 1.3)를 붙입니다. 키는 PFX/PEM 파일, PKCS#11 토큰(`--pkcs11`), 또는
   NCrypt 를 거친 Windows 인증서 저장소(`--key-store`)에서 가져옵니다. 그래서 하드웨어 밖으로 나가면 안 되는
   코드 서명 키도 그 자리에 둔 채 서명할 수 있습니다.
-- **확인:** `lint`(원본과 어떤 도구로 만든 MSI·MSIX 든, 그리고 MSI 를 이전 판과 대조), `inspect`, `extract`, `verify`, `keys list`.
+- **확인:** `lint`(원본과 어떤 도구로 만든 MSI·MSIX 든, 그리고 MSI 를 이전 판과 대조), `inspect`, `extract`, `verify`, `keys list`, `diff`(두 패키지 비교), Windows 에서 `installed`.
+- **패키지 둘레:** `build --winget` 은 winget 매니페스트를 씁니다(아키텍처마다 지은 여러 MSI 를 매니페스트 하나에).
+  `try` 는 패키지를 설치하는 Windows 샌드박스 구성을, `container` 는 MSIX 패키지의 공유 패키지 컨테이너를 씁니다.
 - **재현 가능하고 빠릅니다:** 같은 원본은 Linux 에서도 Windows 에서도, 압축하는 스레드 수와 상관없이 같은
   바이트가 됩니다(기본은 모든 프로세서).
 
@@ -93,7 +102,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 
 - WiX 의 앞단이 아니고 WiX 와 호환되지도 않습니다. `.wxs` 파일은 읽지 않습니다.
 - 패치는 바뀐 파일을 통째로 담습니다(바이너리 차분 없음). 변환은 파일을 담지 않습니다.
-- `setup.exe` 체인은 자기가 담은 `.msi` 패키지만 설치합니다: 무엇을 내려받거나 다른 설치 프로그램을 실행하지
+- `setup.exe` 체인은 자기가 담은 `.msi`, `.msp`, `.msix` 패키지만 설치합니다: 무엇을 내려받거나 다른 설치 프로그램을 실행하지
   않고, Windows Installer 창 말고 자기 페이지는 없습니다.
 - 도구 자체는 64비트 전용입니다(x86 패키지도 만듭니다).
 

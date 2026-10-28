@@ -333,14 +333,15 @@ for a stream that is there), `--summary --json` the summary information.
 C:\work\hello> rubrapack help
 rubrapack 0.49.0 - build Windows Installer (.msi) and MSIX (.msix) packages
 
-usage: rubrapack [--lang en|ko] <command> [arguments]
+usage: rubrapack [--lang <code>] <command> [arguments]
 
 commands:
-  build    build a package from a source file
-  sign     sign a PE file, an MSI package, an MSIX package or bundle
+  build     build a package from a source file
+  lint      check a source or package without writing anything
+  sign      sign a PE file, an MSI package, an MSIX package or bundle
   ...
 C:\work\hello> rubrapack help sign
-usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> ...
+usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle|.cab> (--key <key.pfx|.pem> ...
 C:\work\hello> rubrapack version
 rubrapack 0.49.0 (proven_c_lib-v0.6.0)
 ```

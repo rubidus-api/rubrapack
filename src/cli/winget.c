@@ -21,7 +21,7 @@
 
 #include "proven/hash.h"
 
-static char *dup(proven_allocator_t alloc, const char *s, bool *ok) {
+static char *copy_text(proven_allocator_t alloc, const char *s, bool *ok) {
     if (s == NULL) return NULL;
     size_t n = strlen(s) + 1;
     char *d = rp_mem_alloc(alloc, n, 1);
@@ -33,28 +33,28 @@ static char *dup(proven_allocator_t alloc, const char *s, bool *ok) {
 bool rp_winget_take(proven_allocator_t alloc, const rp_ir_t *ir, rp_winget_t *w) {
     memset(w, 0, sizeof *w);
     bool ok = true;
-    w->id = dup(alloc, ir->wg_id, &ok);
-    w->url = dup(alloc, ir->wg_url, &ok);
-    w->license = dup(alloc, ir->wg_license, &ok);
-    w->desc = dup(alloc, ir->wg_desc, &ok);
-    w->publisher_url = dup(alloc, ir->wg_publisher_url, &ok);
-    w->package_url = dup(alloc, ir->wg_package_url, &ok);
-    w->license_url = dup(alloc, ir->wg_license_url, &ok);
-    w->moniker = dup(alloc, ir->wg_moniker, &ok);
-    w->name = dup(alloc, ir->has_msix && ir->msix_display ? ir->msix_display : ir->name, &ok);
-    w->publisher = dup(alloc, ir->has_msix && ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer, &ok);
+    w->id = copy_text(alloc, ir->wg_id, &ok);
+    w->url = copy_text(alloc, ir->wg_url, &ok);
+    w->license = copy_text(alloc, ir->wg_license, &ok);
+    w->desc = copy_text(alloc, ir->wg_desc, &ok);
+    w->publisher_url = copy_text(alloc, ir->wg_publisher_url, &ok);
+    w->package_url = copy_text(alloc, ir->wg_package_url, &ok);
+    w->license_url = copy_text(alloc, ir->wg_license_url, &ok);
+    w->moniker = copy_text(alloc, ir->wg_moniker, &ok);
+    w->name = copy_text(alloc, ir->has_msix && ir->msix_display ? ir->msix_display : ir->name, &ok);
+    w->publisher = copy_text(alloc, ir->has_msix && ir->msix_publisher_display ? ir->msix_publisher_display : ir->manufacturer, &ok);
     w->locale = ir->language == 1042 ? "ko-KR" : "en-US";
     w->scope = ir->scope;
     if (ir->wg_tag_count) {
         w->tags = rp_mem_alloc(alloc, ir->wg_tag_count, sizeof *w->tags);
         if (w->tags == NULL) ok = false;
-        for (size_t k = 0; w->tags && k < ir->wg_tag_count; ++k) w->tags[w->tag_count++] = dup(alloc, ir->wg_tags[k], &ok);
+        for (size_t k = 0; w->tags && k < ir->wg_tag_count; ++k) w->tags[w->tag_count++] = copy_text(alloc, ir->wg_tags[k], &ok);
     }
     if (ir->wg_desc_by_lang_count) {
         w->descs = rp_mem_alloc(alloc, ir->wg_desc_by_lang_count, sizeof *w->descs);
         if (w->descs == NULL) ok = false;
         for (size_t k = 0; w->descs && k < ir->wg_desc_by_lang_count; ++k) {
-            w->descs[k] = (rp_winget_text_t){ dup(alloc, ir->wg_desc_by_lang[k].lang, &ok), dup(alloc, ir->wg_desc_by_lang[k].text, &ok) };
+            w->descs[k] = (rp_winget_text_t){ copy_text(alloc, ir->wg_desc_by_lang[k].lang, &ok), copy_text(alloc, ir->wg_desc_by_lang[k].text, &ok) };
             ++w->desc_count;
         }
     }

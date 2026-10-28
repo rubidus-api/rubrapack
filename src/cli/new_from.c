@@ -87,7 +87,7 @@ static char *dupn(cx_t *c, const char *s, size_t n) {
     return d;
 }
 
-static char *dup(cx_t *c, const char *s) { return s ? dupn(c, s, strlen(s)) : NULL; }
+static char *cx_dup(cx_t *c, const char *s) { return s ? dupn(c, s, strlen(s)) : NULL; }
 
 static char *fmt2(cx_t *c, const char *f, const char *a, const char *b) {
     size_t n = strlen(f) + strlen(a) + (b ? strlen(b) : 0) + 1;
@@ -124,9 +124,9 @@ static const char *str(cx_t *c, table_t t, size_t r, const char *name) {
     if (v->kind == RP_MSI_INT) {
         char num[16];
         snprintf(num, sizeof num, "%ld", (long)v->i);
-        return dup(c, num);
+        return cx_dup(c, num);
     }
-    if (v->kind != RP_MSI_STR) return dup(c, "");
+    if (v->kind != RP_MSI_STR) return cx_dup(c, "");
     return dupn(c, (const char *)v->bytes, v->len);
 }
 
@@ -264,7 +264,7 @@ static void add_rename(cx_t *c, const char *from, const char *to, int kind) {
         c->ren_kind = k;
         c->capren = cap;
     }
-    c->ren_from[c->nren] = dup(c, from);
+    c->ren_from[c->nren] = cx_dup(c, from);
     c->ren_to[c->nren] = (char *)to;
     c->ren_kind[c->nren++] = kind;
 }
@@ -296,7 +296,7 @@ static const char *make_id(cx_t *c, const char *key, int kind) {
     char cand[96];
     snprintf(cand, sizeof cand, "%s", id);
     for (int k = 2; id_used(c, cand) && k < 100000; ++k) snprintf(cand, sizeof cand, "%s_%d", id, k);
-    const char *out = dup(c, cand);
+    const char *out = cx_dup(c, cand);
     if (out == NULL) return "";
     remember(c, out);
     if (kind && strcmp(out, key) != 0) add_rename(c, key, out, kind);
@@ -340,7 +340,7 @@ static const char *follow(cx_t *c, const char *v) {
 // back to the text.
 static const char *unescape(cx_t *c, const char *v) {
     if (strstr(v, "[\\") == NULL) return v;
-    char *out = dup(c, v);
+    char *out = cx_dup(c, v);
     if (out == NULL) return v;
     size_t o = 0;
     for (const char *p = v; *p;) {
@@ -476,7 +476,7 @@ static void dir_resolve(cx_t *c, dirs_t *ds, dir_t *x, unsigned depth) {
         pname = e.err == PROVEN_OK ? dupn(c, (const char *)e.data, e.len) : name;
         rp_buf_free(&e);
     }
-    x->target = dot ? (is_root(p) ? x->key : p->target) : (p->target[0] ? fmt2(c, "%s/%s", p->target, name) : dup(c, name));
+    x->target = dot ? (is_root(p) ? x->key : p->target) : (p->target[0] ? fmt2(c, "%s/%s", p->target, name) : cx_dup(c, name));
     // Its rubrapack path: under a standard folder ($(Base)/name), under another [dir] ($(ID)/name).
     const char *base = standard_base(x->key, c->arch);
     if (standard_key(x->key)) {

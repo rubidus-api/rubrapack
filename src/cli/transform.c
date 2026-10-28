@@ -2,6 +2,7 @@
 // `rubrapack inspect <file.mst> --base <base.msi> | --summary` (RFC-0016 3, rubrapack/transform.h)
 // and `rubrapack diff <a.msi> <b.msi>` (RFC-0031 B27).
 
+#include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
@@ -17,7 +18,6 @@
 
 enum { MAX_INPUT = 1u << 30 };
 
-static const char usage[] = "usage: rubrapack transform <base.msi> <target.msi> -o <out.mst> [--validate none|<list>]";
 
 // --validate: "none", or names joined by commas.
 static bool validate_flags(const char *s, uint32_t *flags) {
@@ -59,12 +59,12 @@ int rp_cmd_transform(int argc, char **argv) {
         } else if (argv[i][0] != '-' && nin < 2) {
             in[nin++] = argv[i];
         } else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+            (void)rp_cli_usage_error("transform");
             return RP_EXIT_USAGE;
         }
     }
     if (nin != 2 || out == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+        (void)rp_cli_usage_error("transform");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -102,7 +102,7 @@ int rp_cmd_transform(int argc, char **argv) {
 // `diff`: what differs between two packages, one line each (rp_msi_diff); nothing when they are the same.
 int rp_cmd_diff(int argc, char **argv) {
     if (argc != 4 || argv[2][0] == '-' || argv[3][0] == '-') {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack diff <a.msi> <b.msi>");
+        (void)rp_cli_usage_error("diff");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();
@@ -186,7 +186,6 @@ int rp_mst_inspect(const char *path, const char *what, const char *base) {
 
 // `rubrapack patch <base.msi> <target.msi> -o <out.msp>` (RFC-0016 3, rubrapack/patch.h).
 int rp_cmd_patch(int argc, char **argv) {
-    static const char pusage[] = "usage: rubrapack patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]";
     const char *in[2] = { NULL, NULL }, *out = NULL;
     rp_msp_opts_t opts = { 0 };
     size_t nin = 0;
@@ -212,12 +211,12 @@ int rp_cmd_patch(int argc, char **argv) {
         } else if (argv[i][0] != '-' && nin < 2) {
             in[nin++] = argv[i];
         } else {
-            rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", pusage);
+            (void)rp_cli_usage_error("patch");
             return RP_EXIT_USAGE;
         }
     }
     if (nin != 2 || out == NULL) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", pusage);
+        (void)rp_cli_usage_error("patch");
         return RP_EXIT_USAGE;
     }
     const char *slash = strrchr(out, '/'), *back = strrchr(out, '\\');

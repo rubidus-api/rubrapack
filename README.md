@@ -87,22 +87,33 @@ A first package, step by step, is the first chapter of the manual:
   started from the finished page; icons for Installed apps and shortcuts; files kept at removal.
   x64, x86 and Arm64 packages. Windows' folders and environment variables by their own names
   (`$(ProgramFiles)`, `$(LOCALAPPDATA)`, `$(USERNAME)`).
+- **More of Windows Installer:** custom actions that run an installed program or a DLL's function
+  (immediate, deferred, commit or rollback, with their data), files moved or copied at install,
+  ODBC drivers and data sources, published and isolated components, .NET assemblies into the
+  global assembly cache and Win32 assemblies into the side-by-side store (with the signed catalog
+  Windows requires), several instances of one product, advertised shortcuts, billboards, list and
+  picture controls, an installer UI of your own (embedded UI DLL), and signed external cabinets.
 - **Updates and suites:** transforms (`.mst`, `rubrapack transform`) and patches (`.msp`,
   `rubrapack patch`) made from two versions of a package; a `setup.exe` that installs several
-  packages in order, elevating once (`[chain]`).
+  packages in order, elevating once, and also applies patches and adds MSIX packages (`[chain]`).
 - **MSIX:** full-trust desktop applications with a virtual registry (`Registry.dat`,
   `User.dat`) and virtual file system, several applications per package, file types, protocols,
   execution aliases, startup tasks, firewall rules, COM servers, toast activation, context menus,
   desktop shortcuts, shared fonts; names in several languages and logos in several scales
   (`resources.pri`); `.appinstaller` files for automatic updates; bundles of several
   architectures; signed packages with `CodeIntegrity.cat` as Windows' signer makes them; unsigned
-  test packages.
+  test packages; app extensions and their hosts, app services, Share targets and AutoPlay; framework
+  packages, packages for a program installed elsewhere (external location), flat bundles, Store
+  upload files (`.msixupload`) and the Package Support Framework.
 - **Signing:** Authenticode for PE files, MSI and MSIX packages and bundles, RSA or ECDSA, with
   RFC 3161 timestamps (over HTTP or its own TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
   token (`--pkcs11`), or the Windows certificate store through NCrypt (`--key-store`), so a
   code-signing key that must stay in hardware stays there.
 - **Checking:** `lint` (sources and any MSI or MSIX, and an MSI against the version before it),
-  `inspect`, `extract`, `verify`, `keys list`.
+  `inspect`, `extract`, `verify`, `keys list`, `diff` (two packages), and on Windows `installed`.
+- **Around the package:** `build --winget` writes the winget manifest (several MSIs, one per
+  architecture, in one manifest), `try` a Windows Sandbox configuration that installs it, and
+  `container` a shared package container for MSIX packages.
 - **Reproducible and fast:** the same source gives the same bytes on Linux and on Windows, whatever
   the number of threads compressing it (every processor by default).
 
@@ -110,8 +121,8 @@ A first package, step by step, is the first chapter of the manual:
 
 - Not a WiX front end and not WiX-compatible; it does not read `.wxs` files.
 - Patches carry changed files whole (no binary deltas); a transform carries no files.
-- The `setup.exe` chain installs the `.msi` packages it carries; it does not download anything,
-  run other installers, or show pages of its own beyond Windows Installer's.
+- The `setup.exe` chain installs the `.msi`, `.msp` and `.msix` packages it carries; it does not
+  download anything, run other installers, or show pages of its own beyond Windows Installer's.
 - The tool itself is 64-bit only (it builds x86 packages too).
 
 ## Status

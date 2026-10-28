@@ -9,6 +9,7 @@
 // shortcut needs a file ID, and a glob cannot leave a file out), each sub folder as a glob, and
 // optional sub folders as features the user may tick (level 2).
 
+#include "rubrapack/cli.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/diag.h"
@@ -685,13 +686,7 @@ static void print_command(const ans_t *a) {
 }
 
 static int usage(void) {
-    rp_diag_error(RP_DIAG_EXTRA_ARGUMENT,
-                  "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> "
-                  "[--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] "
-                  "[--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] "
-                  "[--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | "
-                  "rubrapack new <name> (a fixed starter <name>.toml) | "
-                  "rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too");
+    (void)rp_cli_usage_error("new");
     return RP_EXIT_USAGE;
 }
 
@@ -893,7 +888,7 @@ int rp_cmd_guid(int argc, char **argv) {
         const char *fields[1] = { argv[3] };
         rp_uuid_derive("guid", fields, 1, out);
     } else {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack guid [--from <text>]");
+        (void)rp_cli_usage_error("guid");
         return RP_EXIT_USAGE;
     }
     char line[48];

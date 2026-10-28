@@ -2,6 +2,7 @@
 // token (--pkcs11) or, on Windows, the "My" certificate stores - with what `sign` needs to use them
 // and, for MSIX, the publisher each certificate signs for. Nothing secret is printed.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
@@ -47,7 +48,7 @@ int rp_cmd_keys(int argc, char **argv) {
         else i += used - 1;
     }
     if (bad || a.key || a.key_store || a.cert || a.key_label || (a.pin_env && a.pin_file) || ((a.token_label || a.pin_env || a.pin_file) && !a.pkcs11)) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]");
+        (void)rp_cli_usage_error("keys");
         return RP_EXIT_USAGE;
     }
     proven_allocator_t heap = proven_heap_allocator();

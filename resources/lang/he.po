@@ -3359,35 +3359,17 @@ msgstr "upgrade = false מיועד ל-on = \"uninstall\" או \"both\" (התקנ
 msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
 msgstr "upgrade-code חייב להיות GUID כמו {{12345678-1234-1234-1234-123456789ABC}"
 
+msgid "usage: rubrapack %s"
+msgstr "שימוש: rubrapack {1}"
+
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "שימוש: rubrapack {1}\n\n{2}{3}\n"
-
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-msgstr "שימוש: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (רשימה עבור צרור)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-
-msgid "usage: rubrapack diff <a.msi> <b.msi>"
-msgstr "שימוש: rubrapack diff <a.msi> <b.msi>"
-
-msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-msgstr "שימוש: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-
-msgid "usage: rubrapack explain [RPnnnn]"
-msgstr "שימוש: rubrapack explain [RPnnnn]"
-
-msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-msgstr "שימוש: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-
-msgid "usage: rubrapack guid [--from <text>]"
-msgstr "שימוש: rubrapack guid [--from <text>]"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
 msgstr "שימוש: rubrapack inspect <file.cab> (ללא טבלה או אפשרות)"
 
 msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
 msgstr "שימוש: rubrapack inspect <file.msi> [table|--summary] --json"
-
-msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
-msgstr "שימוש: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
 
 msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
 msgstr "שימוש: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
@@ -3398,29 +3380,11 @@ msgstr "שימוש: rubrapack inspect <file.mst> --base <base.msi> | --summary |
 msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
 msgstr "שימוש: rubrapack inspect <setup.exe> (ללא טבלה או אפשרות)"
 
-msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-msgstr "שימוש: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-
 msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 msgstr "שימוש: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 
 msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
 msgstr "שימוש: rubrapack lint <file.msix|file.msixbundle> [--strict]"
-
-msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-msgstr "שימוש: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-
-msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
-msgstr "שימוש: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (קובץ פתיחה קבוע <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; גם שמות .rpk מתקבלים"
-
-msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
-msgstr "שימוש: rubrapack schema (ה-JSON Schema של מקורות, ב-stdout)"
-
-msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-msgstr "שימוש: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-
-msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
-msgstr "שימוש: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
 
 msgid "use '/' in path"
 msgstr "השתמש ב-'/' בנתיב"

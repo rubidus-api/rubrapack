@@ -81,6 +81,7 @@ typedef struct {
     bool        system_roots;           // --system-roots: the operating system's roots for it too
     bool        allow_unsigned_cabs;
     bool        cabs_signed;            // build --key: the external cabinets are signed (RFC-0031 B13)
+    const char *output;                 // build: the package being built, which a once-a-run warning names
     // A key that stays where it is (RFC-0011 P9b): a PKCS#11 token, or the Windows store.
     const char *pkcs11, *key_label, *token_label;   // --pkcs11 <module> --key-label <label> [--token-label <label>]
     const char *pin_env, *pin_file;                 // --pin-env VAR | --pin-file FILE (never on the command line)

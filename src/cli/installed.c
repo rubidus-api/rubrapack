@@ -6,6 +6,7 @@
 // Exit 0 when something is installed, 1 when nothing is. Both functions are found at run time
 // (msi.dll from System32, kernel32), so rubrapack.exe still starts where one is missing.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
@@ -19,7 +20,6 @@
 
 enum { NOTHING_INSTALLED = 1 };
 
-static const char usage[] = "usage: rubrapack installed <{upgrade code}|package family name>";
 
 // "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}", either case; written to `out` in upper case.
 static bool upgrade_code(const char *s, char out[39]) {
@@ -48,7 +48,7 @@ static bool upgrade_code(const char *s, char out[39]) {
 int rp_cmd_installed(int argc, char **argv) {
     char code[39];
     if (argc != 3 || !(upgrade_code(argv[2], code) || rp_family_name_ok(argv[2]))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+        (void)rp_cli_usage_error("installed");
         return RP_EXIT_USAGE;
     }
     rp_diag_error(RP_DIAG_NOT_IMPLEMENTED, "installed asks Windows what is installed; it runs on Windows only");
@@ -148,7 +148,7 @@ int rp_cmd_installed(int argc, char **argv) {
     char code[39];
     bool msi = argc == 3 && upgrade_code(argv[2], code);
     if (!msi && !(argc == 3 && rp_family_name_ok(argv[2]))) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "%s", usage);
+        (void)rp_cli_usage_error("installed");
         return RP_EXIT_USAGE;
     }
     rp_buf_t o = rp_buf_new(proven_heap_allocator(), 1u << 20);

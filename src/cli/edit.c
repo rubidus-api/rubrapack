@@ -4,6 +4,7 @@
 // stays as it was. After each change the text is parsed again, so a change that would break the
 // TOML is undone at once; saving checks the source like `lint`.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/buf.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/diag.h"
@@ -748,8 +749,7 @@ static void summary(const src_t *s) {
 }
 
 static int usage(void) {
-    rp_diag_error(RP_DIAG_EXTRA_ARGUMENT,
-                  "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]");
+    (void)rp_cli_usage_error("edit");
     return RP_EXIT_USAGE;
 }
 

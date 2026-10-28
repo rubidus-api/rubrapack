@@ -3357,35 +3357,17 @@ msgstr "upgrade = false je za on = \"uninstall\" ili \"both\" (instalacija nikad
 msgid "upgrade-code must be a GUID like {12345678-1234-1234-1234-123456789ABC}"
 msgstr "upgrade-code mora biti GUID kao {{12345678-1234-1234-1234-123456789ABC}"
 
+msgid "usage: rubrapack %s"
+msgstr "upotreba: rubrapack {1}"
+
 msgid "usage: rubrapack %s\n\n%s%s\n"
 msgstr "upotreba: rubrapack {1}\n\n{2}{3}\n"
-
-msgid "usage: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-msgstr "upotreba: rubrapack build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [-D NAME=VALUE] [--arch x64|arm64|x86 (lista za skup paketa)] [--compress none] [--jobs N] [--nfc] [--reproducible] [--key <key> [--cert <chain.pem>] [--pass-env VAR | --pass-file FILE] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]"
-
-msgid "usage: rubrapack diff <a.msi> <b.msi>"
-msgstr "upotreba: rubrapack diff <a.msi> <b.msi>"
-
-msgid "usage: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-msgstr "upotreba: rubrapack edit <file>.toml | rubrapack edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]"
-
-msgid "usage: rubrapack explain [RPnnnn]"
-msgstr "upotreba: rubrapack explain [RPnnnn]"
-
-msgid "usage: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-msgstr "upotreba: rubrapack extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]"
-
-msgid "usage: rubrapack guid [--from <text>]"
-msgstr "upotreba: rubrapack guid [--from <text>]"
 
 msgid "usage: rubrapack inspect <file.cab> (no table or option)"
 msgstr "upotreba: rubrapack inspect <file.cab> (bez tabele ili opcije)"
 
 msgid "usage: rubrapack inspect <file.msi> [table|--summary] --json"
 msgstr "upotreba: rubrapack inspect <file.msi> [table|--summary] --json"
-
-msgid "usage: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
-msgstr "upotreba: rubrapack inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>"
 
 msgid "usage: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
 msgstr "upotreba: rubrapack inspect <file.msix|file.msixbundle> [--files | --manifest]"
@@ -3396,29 +3378,11 @@ msgstr "upotreba: rubrapack inspect <file.mst> --base <base.msi> | --summary | -
 msgid "usage: rubrapack inspect <setup.exe> (no table or option)"
 msgstr "upotreba: rubrapack inspect <setup.exe> (bez tabele ili opcije)"
 
-msgid "usage: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-msgstr "upotreba: rubrapack keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]"
-
 msgid "usage: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 msgstr "upotreba: rubrapack lint <file.msi> [--previous <old.msi>] [--strict]"
 
 msgid "usage: rubrapack lint <file.msix|file.msixbundle> [--strict]"
 msgstr "upotreba: rubrapack lint <file.msix|file.msixbundle> [--strict]"
-
-msgid "usage: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-msgstr "upotreba: rubrapack lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict]"
-
-msgid "usage: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (a fixed starter <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; .rpk names are taken too"
-msgstr "upotreba: rubrapack new [<file>.toml] | rubrapack new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | rubrapack new <name> (fiksni početni <name>.toml) | rubrapack new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]; prihvataju se i imena .rpk"
-
-msgid "usage: rubrapack schema (the JSON Schema of sources, on stdout)"
-msgstr "upotreba: rubrapack schema (JSON Schema izvora, na stdout)"
-
-msgid "usage: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-msgstr "upotreba: rubrapack sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]"
-
-msgid "usage: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
-msgstr "upotreba: rubrapack verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]..."
 
 msgid "use '/' in path"
 msgstr "koristite '/' u putanji"

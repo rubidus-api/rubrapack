@@ -24,41 +24,53 @@ typedef struct {
 } command_t;
 
 static const command_t commands[] = {
-    { "build",   "build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload> [--flat] [--winget DIR] [-D NAME=VALUE] [--arch x64|arm64|x86[,...]] [--compress none] [--nfc] [--reproducible] [--key <key> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint>] [--cert <chain>] [--allow-unsigned-cabs]",
+    { "build",   "build <src.toml> -o <out.msi|out.msm|out.msix|out.msixbundle|out.msixupload|setup.exe> [-D NAME=VALUE] [--arch x64|arm64|x86 (a list for a bundle)] [--compress none] [--jobs N] [--nfc] [--reproducible] [(--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs]] [--unsigned-test] [--msix-compress deflate|store] [--flat] [--winget DIR]",
                  TR_N("build a package from a source file"), true },
-    { "sign",    "sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle|.cab> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--allow-unsigned-cabs] [-o <out>]",
+    { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--nfc] [--strict] [--json] | lint <file.msi> [--previous <old.msi>] [--strict] [--json] | lint <file.msix|file.msixbundle> [--strict] [--json]",
+                 TR_N("check a source or package without writing anything"), true },
+    { "sign",    "sign <file.exe|.dll|.msi|.msp|.msix|.msixbundle|.cab> (--key <key.pfx|.pem> [--pass-env VAR | --pass-file FILE] | --pkcs11 <module> --key-label <label> [--token-label <label>] [--pin-env VAR | --pin-file FILE] | --key-store <thumbprint> [--machine-store]) [--cert <chain.pem>] [--timestamp <URL> [--tsa-trust <certificates>] [--tls-trust <certificates>] [--system-roots] [--proxy <URL>]] [--allow-unsigned-cabs] [-o <out>]",
                  TR_N("sign a PE file, an MSI package, an MSIX package or bundle"), true },
+    { "verify",  "verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle|.cab> [--trust <certificates>]... [--system-roots] [--tsa-trust <certificates>]...",
+                 TR_N("check a signature: structure, digest, signature, and the path to a trusted certificate"), true },
     { "keys",    "keys list [--pkcs11 <module> [--token-label <label>] [--pin-env VAR | --pin-file FILE]]",
                  TR_N("list the keys a token or the Windows certificate store can sign with"), true },
-    { "verify",  "verify <file.exe|.dll|.msi|.msp|.msix|.msixbundle|.cab> [--trust <certificate>]...",
-                 TR_N("check a signature: structure, digest, signature, and the path to a trusted certificate"), true },
+    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msi> [table|--summary] --json | inspect <file.msix|file.msixbundle> [--files|--manifest] | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.mst> --summary|--streams | inspect <file.cab> | inspect <setup.exe>",
+                 TR_N("dump a package (MSI tables as IDT)"), true },
+    { "extract", "extract <file.msi|file.msix|file.msixbundle|file.cab|setup.exe> -d <new dir> [--limit-entries N] [--limit-bytes N]",
+                 TR_N("unpack a package into a new directory, laid out as it installs"), true },
+    { "diff",    "diff <a.msi> <b.msi>", TR_N("show what differs between two packages: tables, rows, cells and summary"), true },
     { "transform", "transform <base.msi> <target.msi> -o <out.mst> [--validate none|product-code,upgrade-code,language,platform]",
                  TR_N("write a transform (.mst): what turns one package into the other"), true },
-    { "container", "container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>",
-                 TR_N("write a shared package container's definition: MSIX packages that run in one container"), true },
-    { "try",     "try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]",
-                 TR_N("write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"), true },
-    { "installed", "installed <{upgrade code}|package family name>",
-                 TR_N("say whether this Windows has a product of that upgrade code or an app package of that family installed"), true },
-    { "diff",    "diff <a.msi> <b.msi>", TR_N("show what differs between two packages: tables, rows, cells and summary"), true },
     { "patch",   "patch <base.msi> <target.msi> -o <out.msp> [--patch-code {GUID}] [--family <name>] [--no-removal]",
                  TR_N("write a patch (.msp): the files and rows that update an installed base to the target"), true },
-    { "inspect", "inspect <file.msi> [table|--summary|--files|--streams] | inspect <file.msi> [table|--summary] --json | inspect <file.mst|file.msp> --base <base.msi> | inspect <file.cab>",
-                 TR_N("dump a package (MSI tables as IDT)"), true },
-    { "extract", "extract <file.msi|file.cab> -d <new dir> [--limit-entries N] [--limit-bytes N]",
-                 TR_N("unpack a package into a new directory, laid out as it installs"), true },
-    { "lint",    "lint <src.toml> [-D NAME=VALUE] [--arch x64|arm64|x86] [--target msi|msix] [--strict] [--json] | lint <file.msi> [--previous <old.msi>] [--strict] [--json]",
-                 TR_N("check a source or package without writing anything"), true },
-    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [options] | new <name> | new <file>.toml --from <package.msi> [--dist <folder>] [--publisher \"CN=...\"]", TR_N("write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"), true },
+    { "new",     "new [<file>.toml] [-i] | new <file>.toml --dist <folder> [--name <text>] [--manufacturer <text>] [--version <a.b.c>] [--arch x64|x86|arm64] [--main <file>|-] [--install-dir <folder>] [--scope machine|user|dual] [--ui none|basic|minimal|installdir|features] [--license <file>|-] [--languages ko|-] [--optional <folder,...>|-] [--shortcuts start,desktop|none] | new <name> | new <file>.toml --from <package.msi> [--dist <new folder>] [--publisher \"CN=...\"]", TR_N("write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"), true },
     { "edit",    "edit <file>.toml [--set table.key=value]... [--unset table.key]... [--sync]", TR_N("change a source in place: through a menu of questions, or with the options"), true },
     { "guid",    "guid [--from <text>]", TR_N("print a random GUID, or the one rubrapack derives from a text"), true },
     { "schema",  "schema", TR_N("print the JSON Schema of sources (for an editor that completes and checks keys)"), true },
     { "explain", "explain [RPnnnn]", TR_N("what a diagnostic code means, the messages that carry it, what to do and where the manual says more"), true },
+    { "try",     "try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]",
+                 TR_N("write a Windows Sandbox configuration that installs the package in a fresh, disposable Windows"), true },
+    { "container", "container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>",
+                 TR_N("write a shared package container's definition: MSIX packages that run in one container"), true },
+    { "installed", "installed <{upgrade code}|package family name>",
+                 TR_N("say whether this Windows has a product of that upgrade code or an app package of that family installed"), true },
     { "version", "version", TR_N("print the version"), true },
     { "help",    "help [command]", TR_N("print this help, or one command's usage"), true },
 };
 
 enum { COMMAND_COUNT = sizeof commands / sizeof commands[0] };
+
+const char *rp_cli_usage(const char *command) {
+    for (size_t i = 0; i < COMMAND_COUNT; ++i) {
+        if (strcmp(commands[i].name, command) == 0) return commands[i].usage;
+    }
+    return command;
+}
+
+int rp_cli_usage_error(const char *command) {
+    rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack %s", rp_cli_usage(command));
+    return RP_EXIT_USAGE;
+}
 
 static const command_t *find_command(const char *name) {
     for (size_t i = 0; i < COMMAND_COUNT; ++i) {
@@ -155,7 +167,7 @@ static int cmd_help(int argc, char **argv) {
                       shown(argv[2], buf, sizeof buf));
         return RP_EXIT_USAGE;
     }
-    char line[512];
+    char line[2048];                    // the longest usage (build) is over 600 bytes
     rp_lang_format(line, sizeof line, "usage: rubrapack %s\n\n%s%s\n", c->usage, rp_tr(c->summary),
                    c->implemented ? "" : " (not implemented yet)");
     return rp_pal_puts(RP_OUT_STDOUT, line) == PROVEN_OK ? RP_EXIT_OK : RP_EXIT_IO;

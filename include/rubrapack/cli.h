@@ -7,4 +7,10 @@
 // Every argument must be UTF-8; an argument that is not is a usage error.
 [[nodiscard]] int rp_main(int argc, char **argv);
 
+// A command's usage line, from the one table `help` prints (src/cli/cli.c).
+const char *rp_cli_usage(const char *command);
+
+// Prints "usage: rubrapack <the command's usage>" as a usage error; returns RP_EXIT_USAGE.
+int rp_cli_usage_error(const char *command);
+
 #endif // RUBRAPACK_CLI_H

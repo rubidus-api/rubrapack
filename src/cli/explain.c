@@ -2,6 +2,7 @@
 // messages that carry it (explain_table.c, generated from src/), what to do, and where the manual
 // says more. Without a code: the code ranges.
 
+#include "rubrapack/cli.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/inspect.h"
@@ -112,7 +113,7 @@ int rp_cmd_explain(int argc, char **argv) {
         return RP_EXIT_OK;
     }
     if (argc > 3) {
-        rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "usage: rubrapack explain [RPnnnn]");
+        (void)rp_cli_usage_error("explain");
         return RP_EXIT_USAGE;
     }
     // "RP1612", "rp1612" and "1612" alike.
