@@ -238,7 +238,8 @@ C:\work\hello> rubrapack build hello.toml -o hello-2.2.0.msi -D VERSION=2.2.0 --
 그러면 `manifests\` 에 `ExampleSoftware.Hello.yaml`, `.installer.yaml`(패키지의 SHA-256 과 ProductCode 를 담은),
 locale 파일들이 생긴다. 패키지를 `installer-url` 에 올리고 폴더를 제출한다(먼저 `winget validate --manifest manifests`
 로 확인한다). `publisher-url`, `package-url`, `license-url`, `moniker`(`winget install` 이 받는 짧은 이름), `tags`(검색어)
-로 목록의 나머지를 채운다.
+로 목록의 나머지를 채운다. x86 MSI 도 내려면 `installer-url` 에 `$(ARCH)` 를 넣고 `--arch x86 --winget manifests` 로도
+지으면 그 설치 항목이 같은 파일에 더해진다.
 
 ## 편집기에서: `schema`
 

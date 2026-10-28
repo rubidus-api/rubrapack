@@ -1957,7 +1957,9 @@ rubrapack version | help [command]
   `installer-url`(`$(VERSION)`, `$(ARCH)` 같은 변수를 쓸 수 있다. 모든 아키텍처를 담는 번들에는 `$(ARCH)` 없는 주소를
   준다), `license`, `short-description`. 나머지는 쓴 패키지에서 다시 읽는다: SHA-256, MSI 의 ProductCode, UpgradeCode,
   아키텍처, 범위, MSIX 의 PackageFamilyName, 최소 Windows 판, 서명이 있으면 그 서명의 SHA-256. MSI 하나는 아키텍처
-  하나이므로 여러 MSI 의 매니페스트는 손으로 합친다. `cab = "external"` 과는 함께 쓰지 않는다(`RP1617`): winget 은 파일
+  하나이고, `Installers` 의 MSI 항목마다 자기 Scope, ProductCode, UpgradeCode 를 담는다: 같은 폴더에 다른 아키텍처로 다시
+  지으면(식별자와 판이 같을 때) 그 MSI 의 항목이 거기 있는 installer 파일에 더해지고, 같은 아키텍처의 항목은 바뀐다(항목
+  순서는 x86, x64, arm64). 다른 판이면 파일을 새로 쓴다. `cab = "external"` 과는 함께 쓰지 않는다(`RP1617`): winget 은 파일
   하나를 내려받는다.
 - `try <패키지>` 는 `<패키지>.wsb`(또는 `-o`), 즉 *Windows 샌드박스* 구성을 쓴다: Windows 샌드박스 기능을 켠 Windows
   에서 열면 새것이고 버려도 되는 Windows 가 뜨고, 패키지의 폴더를 그 바탕 화면에 읽기 전용으로 붙이고, 거기서 패키지를

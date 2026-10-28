@@ -34,7 +34,8 @@ void rp_winget_free(proven_allocator_t alloc, rp_winget_t *w);
 
 // Writes the manifest of the package at `pkg` (a .msi, .msix or .msixbundle) into `dir` (made when
 // it is not there): <id>.yaml, <id>.installer.yaml, <id>.locale.<locale>.yaml. Prints why not and
-// returns an exit code.
+// returns an exit code. An MSI's installer entry joins rubrapack's installer file already in `dir`
+// for the same identifier and version (one entry per architecture); anything else is written over.
 [[nodiscard]] int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *pkg, const char *dir);
 
 #endif // RUBRAPACK_WINGET_H

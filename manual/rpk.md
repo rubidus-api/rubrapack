@@ -2194,8 +2194,11 @@ rubrapack version | help [command]
   for a bundle, which serves every architecture, give one without `$(ARCH)`), the `license` and a
   `short-description`. The rest is read back from the package as written: its SHA-256, an MSI's
   ProductCode, UpgradeCode, architecture and scope, an MSIX's PackageFamilyName, minimum Windows
-  version and, when it is signed, the SHA-256 of its signature. One MSI is one architecture: the
-  manifests of several are merged by hand. Not with `cab = "external"` (`RP1617`): winget downloads
+  version and, when it is signed, the SHA-256 of its signature. One MSI is one architecture, and
+  each MSI's entry in `Installers` holds its own Scope, ProductCode and UpgradeCode: built again
+  for another architecture into the same directory (same identifier and version), the MSI's entry
+  joins the installer file there, replacing one of the same architecture (entries in the order x86,
+  x64, arm64); another version writes the file afresh. Not with `cab = "external"` (`RP1617`): winget downloads
   one file.
 - `try <package>` writes `<package>.wsb` (or `-o`), a *Windows Sandbox* configuration: opened on
   Windows with the Windows Sandbox feature turned on, it starts a fresh, disposable Windows, shares

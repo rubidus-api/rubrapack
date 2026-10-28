@@ -252,7 +252,8 @@ C:\work\hello> rubrapack build hello.toml -o hello-2.2.0.msi -D VERSION=2.2.0 --
 and ProductCode) and the locale files; upload the package to `installer-url` and submit the folder
 (`winget validate --manifest manifests` checks it first). `publisher-url`, `package-url`,
 `license-url`, a `moniker` (the short name `winget install` also takes) and `tags` (search terms)
-fill in the rest of the store listing.
+fill in the rest of the store listing. For an x86 MSI as well, put `$(ARCH)` in `installer-url`
+and build it with `--arch x86 --winget manifests` too: its installer joins the same file.
 
 ## In an editor: `schema`
 

@@ -244,6 +244,97 @@ static bool write_one(proven_allocator_t alloc, const char *dir, const char *id,
     return true;
 }
 
+// ---- several MSIs, one manifest --------------------------------------------------------------------
+
+// One MSI is one architecture. Its Installers entry holds all the MSI says (Scope, ProductCode,
+// UpgradeCode), so the entries of several MSIs sit side by side: a build of the same identifier and
+// version into a directory that holds rubrapack's installer file for it keeps that file's entries for
+// the other architectures and replaces the one for its own. Entries are in a fixed order (x86, x64,
+// arm64), whichever was built first. Any other file there is written over, as before.
+
+typedef struct {
+    const char *p;
+    size_t      n, rank;
+} entry_t;
+
+static size_t arch_rank(const char *a, size_t n) {
+    static const char *const order[] = { "x86", "x64", "arm64", "neutral" };
+    for (size_t k = 0; k < sizeof order / sizeof order[0]; ++k) {
+        if (strlen(order[k]) == n && memcmp(order[k], a, n) == 0) return k;
+    }
+    return sizeof order / sizeof order[0];
+}
+
+static const char *find(const char *s, const char *end, const char *what) {
+    size_t n = strlen(what);
+    for (const char *p = s; p + n <= end; ++p) {
+        if (memcmp(p, what, n) == 0) return p;
+    }
+    return NULL;
+}
+
+static void msi_entry(rp_buf_t *b, const rp_winget_t *w, const facts_t *f) {
+    kv(b, "- ", "Architecture", f->narch ? f->archs[0] : "x86");
+    if (w->scope != 2) kv(b, "  ", "Scope", w->scope == 1 ? "user" : "machine");
+    kv(b, "  ", "InstallerUrl", w->url);
+    kv(b, "  ", "InstallerSha256", f->sha);
+    kv(b, "  ", "ProductCode", f->product_code);
+    if (f->upgrade_code[0]) {
+        rp_buf_puts(b, "  AppsAndFeaturesEntries:\n");
+        kv(b, "  - ", "UpgradeCode", f->upgrade_code);
+    }
+}
+
+// The entries of the MSI just built and of the other architectures already in the directory.
+static bool msi_entries(proven_allocator_t alloc, const char *dir, const rp_winget_t *w, const facts_t *f, rp_buf_t *b) {
+    rp_buf_t mine = rp_buf_new(alloc, 1u << 16);
+    msi_entry(&mine, w, f);
+    entry_t e[8];
+    size_t ne = 0;
+    e[ne++] = (entry_t){ (const char *)mine.data, mine.len, arch_rank(f->narch ? f->archs[0] : "x86", f->narch ? strlen(f->archs[0]) : 3) };
+    char path[2400];
+    snprintf(path, sizeof path, "%s/%s.installer.yaml", dir, w->id);
+    rp_buf_t vb = rp_buf_new(alloc, 256);
+    rp_buf_puts(&vb, "\nPackageIdentifier: ");
+    rp_json_str(&vb, w->id, strlen(w->id));
+    rp_buf_puts(&vb, "\nPackageVersion: ");
+    rp_json_str(&vb, f->version, strlen(f->version));
+    rp_buf_puts(&vb, "\nInstallerType: \"msi\"\nInstallers:\n");
+    uint8_t *old = NULL;
+    size_t olen = 0;
+    if (vb.err == PROVEN_OK && rp_pal_stat(alloc, path, &(uint64_t){ 0 }) == RP_FS_FILE && rp_pal_read_file(alloc, path, 1u << 20, &old, &olen) == PROVEN_OK) {
+        const char *s = (const char *)old, *end = s + olen;
+        rp_buf_byte(&vb, 0);
+        const char *at = olen > 23 && memcmp(s, "# Created by rubrapack ", 23) == 0 ? find(s, end, (const char *)vb.data) : NULL;
+        const char *from = at ? at + vb.len - 1 : NULL;
+        const char *stop = from ? find(from, end, "\nManifestType: ") : NULL;
+        // Each entry starts at a line "- Architecture: "; the file's other lines start in column 0.
+        for (const char *p = from; stop && p <= stop && ne < sizeof e / sizeof e[0];) {
+            if (end - p < 17 || memcmp(p, "- Architecture: \"", 17) != 0) break;
+            const char *q = p + 1;
+            while (q < stop && !(q[0] == '\n' && q[1] != ' ')) ++q;
+            const char *a = p + 17, *ae = memchr(a, '"', (size_t)(q - a));
+            size_t r = ae ? arch_rank(a, (size_t)(ae - a)) : 99;
+            if (r != e[0].rank) e[ne++] = (entry_t){ p, (size_t)(q - p) + 1, r };
+            p = q + 1;
+        }
+    }
+    // Insertion sort by architecture.
+    for (size_t i = 1; i < ne; ++i) {
+        for (size_t j = i; j > 0 && e[j].rank < e[j - 1].rank; --j) {
+            entry_t t = e[j];
+            e[j] = e[j - 1];
+            e[j - 1] = t;
+        }
+    }
+    for (size_t i = 0; i < ne; ++i) rp_buf_put(b, e[i].p, e[i].n);
+    bool ok = mine.err == PROVEN_OK && vb.err == PROVEN_OK;
+    rp_mem_free(alloc, old);
+    rp_buf_free(&vb);
+    rp_buf_free(&mine);
+    return ok;
+}
+
 int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *pkg, const char *dir) {
     rp_limits_t lim = rp_limits_default();
     uint8_t *data = NULL;
@@ -270,27 +361,25 @@ int rp_winget_write(proven_allocator_t alloc, const rp_winget_t *w, const char *
     kv(&b, "", "DefaultLocale", w->locale);
     tail(&b, "version");
     ok = write_one(alloc, dir, w->id, "", &b);
-    // The installer file: one installer per architecture, all the same file for a bundle.
+    // The installer file: one installer per architecture, all the same file for a bundle. An MSI's
+    // entry carries all it says, so several MSIs (one per architecture) share one file.
     b.len = 0;
     head(&b, "installer", w, &f);
     kv(&b, "", "InstallerType", f.msix ? "msix" : "msi");
-    if (!f.msix && w->scope != 2) kv(&b, "", "Scope", w->scope == 1 ? "user" : "machine");
     if (f.msix) {
         kv(&b, "", "PackageFamilyName", f.family);
         kv(&b, "", "MinimumOSVersion", f.min_os);
-    } else {
-        kv(&b, "", "ProductCode", f.product_code);
-        if (f.upgrade_code[0]) {
-            rp_buf_puts(&b, "AppsAndFeaturesEntries:\n");
-            kv(&b, "- ", "UpgradeCode", f.upgrade_code);
-        }
     }
     rp_buf_puts(&b, "Installers:\n");
-    for (size_t k = 0; k < f.narch; ++k) {
-        kv(&b, "- ", "Architecture", f.archs[k]);
-        kv(&b, "  ", "InstallerUrl", w->url);
-        kv(&b, "  ", "InstallerSha256", f.sha);
-        if (f.sig_sha[0]) kv(&b, "  ", "SignatureSha256", f.sig_sha);
+    if (f.msix) {
+        for (size_t k = 0; k < f.narch; ++k) {
+            kv(&b, "- ", "Architecture", f.archs[k]);
+            kv(&b, "  ", "InstallerUrl", w->url);
+            kv(&b, "  ", "InstallerSha256", f.sha);
+            if (f.sig_sha[0]) kv(&b, "  ", "SignatureSha256", f.sig_sha);
+        }
+    } else {
+        ok = ok && msi_entries(alloc, dir, w, &f, &b);
     }
     tail(&b, "installer");
     ok = ok && write_one(alloc, dir, w->id, ".installer", &b);
