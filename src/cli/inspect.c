@@ -154,7 +154,7 @@ static int column_of(const rp_msi_t *msi, const tab_t *t, const char *name) {
 }
 
 static rp_msi_value_t cell(const tab_t *t, size_t row, int col) {
-    return t->rows.cells[row * t->rows.column_count + (size_t)col];
+    return rp_msi_rcell(&t->rows, row, col);
 }
 
 // The long name of a "short|long" name; a DefaultDir's "target:source" gives the target

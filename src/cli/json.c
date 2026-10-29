@@ -59,7 +59,7 @@ static void table_json(rp_buf_t *b, const rp_msi_wtable_t *t) {
     for (size_t r = 0; r < t->row_count; ++r) {
         rp_buf_puts(b, r ? ",\n  [" : "\n  [");
         for (size_t c = 0; c < t->column_count; ++c) {
-            const rp_msi_cell_t *v = &t->cells[r * t->column_count + c];
+            const rp_msi_cell_t *v = rp_msi_wcell(t, r, (ptrdiff_t)c);
             if (c) rp_buf_puts(b, ", ");
             if (v->kind == RP_MSI_STR) rp_json_str(b, (const char *)v->bytes, v->len);
             else if (v->kind == RP_MSI_INT) rp_buf_long(b, v->i);

@@ -36,7 +36,7 @@ static size_t column(const rp_msi_wtable_t *t, const char *name) {
 }
 
 static const rp_msi_cell_t *cellp(const rp_msi_wtable_t *t, size_t row, size_t col) {
-    return col == SIZE_MAX ? NULL : &t->cells[row * t->column_count + col];
+    return col == SIZE_MAX ? NULL : rp_msi_wcell(t, row, (ptrdiff_t)col);
 }
 
 // An integer cell's value (0 for a column the table does not have).

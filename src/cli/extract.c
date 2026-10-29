@@ -370,7 +370,7 @@ static bool tab(const rp_msi_wdb_t *db, const char *name, const char *const *col
 }
 
 static const rp_msi_cell_t *at(const tab_t *t, size_t row, size_t c) {
-    return &t->t->cells[row * t->t->column_count + t->cols[c]];
+    return rp_msi_wcell(t->t, row, (ptrdiff_t)t->cols[c]);
 }
 
 static char *cell_str(plan_t *p, const rp_msi_cell_t *c) {

@@ -120,7 +120,7 @@ static int col(table_t t, const char *name) {
 static const char *str(cx_t *c, table_t t, size_t r, const char *name) {
     int k = col(t, name);
     if (k < 0) return NULL;
-    const rp_msi_cell_t *v = &t.t->cells[r * t.t->column_count + (size_t)k];
+    const rp_msi_cell_t *v = rp_msi_wcell(t.t, r, k);
     if (v->kind == RP_MSI_INT) {
         char num[16];
         snprintf(num, sizeof num, "%ld", (long)v->i);
@@ -132,13 +132,13 @@ static const char *str(cx_t *c, table_t t, size_t r, const char *name) {
 
 static bool is_null(table_t t, size_t r, const char *name) {
     int k = col(t, name);
-    return k < 0 || t.t->cells[r * t.t->column_count + (size_t)k].kind == RP_MSI_NULL;
+    return k < 0 || rp_msi_wcell(t.t, r, k)->kind == RP_MSI_NULL;
 }
 
 static int32_t num(table_t t, size_t r, const char *name, int32_t dflt) {
     int k = col(t, name);
     if (k < 0) return dflt;
-    const rp_msi_cell_t *v = &t.t->cells[r * t.t->column_count + (size_t)k];
+    const rp_msi_cell_t *v = rp_msi_wcell(t.t, r, k);
     return v->kind == RP_MSI_INT ? v->i : dflt;
 }
 

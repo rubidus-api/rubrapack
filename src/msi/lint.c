@@ -53,7 +53,7 @@ static size_t column(const rp_msi_wtable_t *t, const char *name) {
 }
 
 static const rp_msi_cell_t *cell(const rp_msi_wtable_t *t, size_t row, size_t col) {
-    return &t->cells[row * t->column_count + col];
+    return rp_msi_wcell(t, row, (ptrdiff_t)col);
 }
 
 // An empty string is stored as null (msi.dll does the same).

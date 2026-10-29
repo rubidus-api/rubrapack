@@ -117,9 +117,9 @@ static const char *property(const rp_msi_wdb_t *db, const char *name, char *out,
         const rp_msi_wtable_t *tb = &db->tables[t];
         if (strcmp(tb->name, "Property") != 0 || tb->column_count < 2) continue;
         for (size_t r = 0; r < tb->row_count; ++r) {
-            const rp_msi_cell_t *c = &tb->cells[r * tb->column_count];
-            if (c[0].kind == RP_MSI_STR && c[0].len == strlen(name) && memcmp(c[0].bytes, name, c[0].len) == 0 && c[1].kind == RP_MSI_STR) {
-                snprintf(out, cap, "%.*s", (int)c[1].len, (const char *)c[1].bytes);
+            const rp_msi_cell_t *k = rp_msi_wcell(tb, r, 0), *v = rp_msi_wcell(tb, r, 1);
+            if (k->kind == RP_MSI_STR && k->len == strlen(name) && memcmp(k->bytes, name, k->len) == 0 && v->kind == RP_MSI_STR) {
+                snprintf(out, cap, "%.*s", (int)v->len, (const char *)v->bytes);
             }
         }
     }
