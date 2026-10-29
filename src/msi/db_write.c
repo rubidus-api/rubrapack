@@ -59,8 +59,6 @@ static uint32_t string_id(const pool_t *pool, str_t s) {
 
 static str_t cstr(const char *s) { return (str_t){ (const uint8_t *)s, s ? strlen(s) : 0 }; }
 
-static bool is_binary(uint16_t type) { return (type & RP_MSI_COL_STRING) && !(type & RP_MSI_COL_NONBINARY); }
-
 // Collects every string occurrence, then dedupes; refs = occurrences (format notes F2 rule).
 static proven_err_t build_pool(const rp_msi_wdb_t *db, pool_t *pool) {
     size_t occ = 0;
@@ -178,7 +176,7 @@ static bool cell_ok(const rp_msi_cell_t *cell, uint16_t type) {
     if (cell->kind == RP_MSI_NULL || (cell->kind == RP_MSI_STR && cell->len == 0)) {
         return (type & RP_MSI_COL_NULLABLE) != 0;
     }
-    if (is_binary(type)) return cell->kind == RP_MSI_BINARY;
+    if (rp_msi_col_binary(type)) return cell->kind == RP_MSI_BINARY;
     if (type & RP_MSI_COL_STRING) return cell->kind == RP_MSI_STR && memchr(cell->bytes, 0, cell->len) == NULL;
     if (cell->kind != RP_MSI_INT) return false;
     if ((type & RP_MSI_COL_WIDTH) == 4) return cell->i != INT32_MIN;
@@ -330,7 +328,7 @@ proven_err_t rp_msi_write_to(proven_allocator_t alloc, const rp_msi_wdb_t *db, u
             for (size_t r = 0; r < nr; ++r) {
                 const rp_msi_cell_t *cell = &tb->cells[idx[r] * nc + c];
                 uint32_t v = stored(&pool, cell, type);
-                if (is_binary(type)) rp_buf_u16le(&b, (uint16_t)v);
+                if (rp_msi_col_binary(type)) rp_buf_u16le(&b, (uint16_t)v);
                 else if (type & RP_MSI_COL_STRING) put_ref(&b, &pool, v);
                 else if ((type & RP_MSI_COL_WIDTH) == 4) rp_buf_u32le(&b, cell->kind == RP_MSI_INT ? v : 0);
                 else rp_buf_u16le(&b, (uint16_t)(cell->kind == RP_MSI_INT ? v : 0));

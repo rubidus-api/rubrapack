@@ -2130,6 +2130,9 @@ msgstr "має таблицю ModuleSubstitution без стандартних �
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "має шаблон ModuleSubstitution, що називає елемент, якого немає в ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "має таблицю Registry без стандартних стовпців"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "має компонент з умовою; MSIX встановлює все"
 

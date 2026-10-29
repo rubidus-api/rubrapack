@@ -2132,6 +2132,9 @@ msgstr "يحتوي على جدول ModuleSubstitution بلا الأعمدة ال
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "يحتوي على قالب ModuleSubstitution يسمّي عنصراً ليس في ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "يحتوي على جدول Registry بلا الأعمدة القياسية"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "يحتوي على مكوّن بشرط؛ تثبّت MSIX كل شيء"
 

@@ -4,6 +4,7 @@
 // stream in the order given. Streams under 4096 bytes go to the mini stream in 64-byte units.
 
 #include "rubrapack/cfb.h"
+#include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 
 #include <stdckdint.h>
@@ -17,19 +18,6 @@
 enum { CUTOFF = 4096, MINI = 64, HEADER_DIFAT = 109, ENTRY = 128 };
 
 static const uint8_t signature[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
-
-static void wr16(uint8_t *p, uint16_t v) {
-    p[0] = (uint8_t)v;
-    p[1] = (uint8_t)(v >> 8);
-}
-static void wr32(uint8_t *p, uint32_t v) {
-    wr16(p, (uint16_t)v);
-    wr16(p + 2, (uint16_t)(v >> 16));
-}
-static void wr64(uint8_t *p, uint64_t v) {
-    wr32(p, (uint32_t)v);
-    wr32(p + 4, (uint32_t)(v >> 32));
-}
 
 static uint16_t upper(uint16_t c) { return (c >= 'a' && c <= 'z') ? (uint16_t)(c - 32) : c; }
 
@@ -191,48 +179,48 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
     uint8_t *dir = f + ((size_t)dir_first + 1) * ss;
     for (size_t i = 0; i < dir_sectors * ss / ENTRY; ++i) {     // unused entries: links = NOSTREAM
         uint8_t *e = dir + i * ENTRY;
-        wr32(e + 68, FREESECT);
-        wr32(e + 72, FREESECT);
-        wr32(e + 76, FREESECT);
+        rp_wr32(e + 68, FREESECT);
+        rp_wr32(e + 72, FREESECT);
+        rp_wr32(e + 76, FREESECT);
     }
     static const uint16_t root_name[] = { 'R', 'o', 'o', 't', ' ', 'E', 'n', 't', 'r', 'y' };
     uint8_t *root = dir;
-    for (size_t i = 0; i < 10; ++i) wr16(root + 2 * i, root_name[i]);
-    wr16(root + 64, 22);
+    for (size_t i = 0; i < 10; ++i) rp_wr16(root + 2 * i, root_name[i]);
+    rp_wr16(root + 64, 22);
     root[66] = 5;
     root[67] = 1;       // black
-    wr32(root + 76, tree_root);
+    rp_wr32(root + 76, tree_root);
     if (clsid) memcpy(root + 80, clsid, 16);
-    wr32(root + 116, mini_len ? mini_first : ENDOFCHAIN);
-    wr64(root + 120, mini_len);
+    rp_wr32(root + 116, mini_len ? mini_first : ENDOFCHAIN);
+    rp_wr64(root + 120, mini_len);
 
     uint32_t mini_next = 0;
     for (size_t k = 0; k < count && err == PROVEN_OK; ++k) {
         const rp_cfb_stream_t *s = &streams[k];
         uint8_t *e = dir + (k + 1) * ENTRY;
-        for (size_t i = 0; i < s->name_len; ++i) wr16(e + 2 * i, s->name[i]);
-        wr16(e + 64, (uint16_t)((s->name_len + 1) * 2));
+        for (size_t i = 0; i < s->name_len; ++i) rp_wr16(e + 2 * i, s->name[i]);
+        rp_wr16(e + 64, (uint16_t)((s->name_len + 1) * 2));
         e[66] = s->storage ? 1 : 2;
         e[67] = 1;
-        wr32(e + 68, left[k + 1]);
-        wr32(e + 72, right[k + 1]);
-        wr32(e + 76, s->storage ? child[k + 1] : FREESECT);
-        wr64(e + 120, s->size);
+        rp_wr32(e + 68, left[k + 1]);
+        rp_wr32(e + 72, right[k + 1]);
+        rp_wr32(e + 76, s->storage ? child[k + 1] : FREESECT);
+        rp_wr64(e + 120, s->size);
         if (s->storage) {
             if (s->clsid) memcpy(e + 80, s->clsid, 16);
-            wr32(e + 116, 0);
+            rp_wr32(e + 116, 0);
         } else if (s->size == 0) {
-            wr32(e + 116, ENDOFCHAIN);
+            rp_wr32(e + 116, ENDOFCHAIN);
         } else if (s->size < CUTOFF) {
             uint32_t n = (uint32_t)ceil_div(s->size, MINI);
-            wr32(e + 116, mini_next);
+            rp_wr32(e + 116, mini_next);
             // Mini sectors are laid out back to back inside the contiguous mini stream sectors.
             memcpy(f + ((size_t)mini_first + 1) * ss + (size_t)mini_next * MINI, s->data, s->size);
             for (uint32_t i = 0; i < n; ++i) minifat[mini_next + i] = (i + 1 < n) ? mini_next + i + 1 : ENDOFCHAIN;
             mini_next += n;
         } else {
             uint32_t n = (uint32_t)ceil_div(s->size, ss);
-            wr32(e + 116, next);
+            rp_wr32(e + 116, next);
             memcpy(f + ((size_t)next + 1) * ss, s->data, s->size);
             for (uint32_t i = 0; i < n; ++i) table[next + i] = (i + 1 < n) ? next + i + 1 : ENDOFCHAIN;
             next += n;
@@ -241,34 +229,34 @@ proven_err_t rp_cfb_write_to(proven_allocator_t alloc, unsigned sector_shift, co
 
     // Mini FAT sectors, FAT sectors, DIFAT sectors.
     for (size_t i = 0; i < minifat_sectors * per_fat; ++i) {
-        wr32(f + ((size_t)minifat_first + 1) * ss + i * 4, minifat[i]);
+        rp_wr32(f + ((size_t)minifat_first + 1) * ss + i * 4, minifat[i]);
     }
-    for (size_t i = 0; i < fat * per_fat; ++i) wr32(f + ((size_t)fat_first + 1) * ss + i * 4, table[i]);
+    for (size_t i = 0; i < fat * per_fat; ++i) rp_wr32(f + ((size_t)fat_first + 1) * ss + i * 4, table[i]);
     for (size_t d = 0; d < difat; ++d) {
         uint8_t *p = f + ((size_t)difat_first + d + 1) * ss;
         for (size_t i = 0; i < per_fat - 1; ++i) {
             size_t idx = HEADER_DIFAT + d * (per_fat - 1) + i;
-            wr32(p + 4 * i, idx < fat ? fat_first + (uint32_t)idx : FREESECT);
+            rp_wr32(p + 4 * i, idx < fat ? fat_first + (uint32_t)idx : FREESECT);
         }
-        wr32(p + 4 * (per_fat - 1), d + 1 < difat ? difat_first + (uint32_t)d + 1 : ENDOFCHAIN);
+        rp_wr32(p + 4 * (per_fat - 1), d + 1 < difat ? difat_first + (uint32_t)d + 1 : ENDOFCHAIN);
     }
 
     // Header.
     memcpy(f, signature, 8);
-    wr16(f + 24, 0x003E);
-    wr16(f + 26, sector_shift == 12 ? 4 : 3);
-    wr16(f + 28, 0xFFFE);
-    wr16(f + 30, (uint16_t)sector_shift);
-    wr16(f + 32, 6);
-    wr32(f + 40, sector_shift == 12 ? (uint32_t)dir_sectors : 0);
-    wr32(f + 44, (uint32_t)fat);
-    wr32(f + 48, dir_first);
-    wr32(f + 56, CUTOFF);
-    wr32(f + 60, minifat_sectors ? minifat_first : ENDOFCHAIN);
-    wr32(f + 64, (uint32_t)minifat_sectors);
-    wr32(f + 68, difat ? difat_first : ENDOFCHAIN);
-    wr32(f + 72, (uint32_t)difat);
-    for (size_t i = 0; i < HEADER_DIFAT; ++i) wr32(f + 76 + 4 * i, i < fat ? fat_first + (uint32_t)i : FREESECT);
+    rp_wr16(f + 24, 0x003E);
+    rp_wr16(f + 26, sector_shift == 12 ? 4 : 3);
+    rp_wr16(f + 28, 0xFFFE);
+    rp_wr16(f + 30, (uint16_t)sector_shift);
+    rp_wr16(f + 32, 6);
+    rp_wr32(f + 40, sector_shift == 12 ? (uint32_t)dir_sectors : 0);
+    rp_wr32(f + 44, (uint32_t)fat);
+    rp_wr32(f + 48, dir_first);
+    rp_wr32(f + 56, CUTOFF);
+    rp_wr32(f + 60, minifat_sectors ? minifat_first : ENDOFCHAIN);
+    rp_wr32(f + 64, (uint32_t)minifat_sectors);
+    rp_wr32(f + 68, difat ? difat_first : ENDOFCHAIN);
+    rp_wr32(f + 72, (uint32_t)difat);
+    for (size_t i = 0; i < HEADER_DIFAT; ++i) rp_wr32(f + 76 + 4 * i, i < fat ? fat_first + (uint32_t)i : FREESECT);
 
     rp_mem_free(alloc, child);
     rp_mem_free(alloc, sorted);

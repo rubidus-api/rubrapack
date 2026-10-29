@@ -48,11 +48,6 @@ static void to_be(const uint32_t *v, size_t limbs, uint8_t *out, size_t len) {
     for (size_t i = 0; i < len; ++i) out[len - 1 - i] = i / 4 < limbs ? (uint8_t)(v[i / 4] >> (8 * (i % 4))) : 0;
 }
 
-static void from_be(uint32_t *v, size_t limbs, const uint8_t *b, size_t len) {
-    memset(v, 0, limbs * sizeof *v);
-    for (size_t i = 0; i < len && i < 4 * limbs; ++i) v[i / 4] |= (uint32_t)b[len - 1 - i] << (8 * (i % 4));
-}
-
 // r = a - b mod p for a, b < p, without a data-dependent branch.
 static void sub_mod(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const uint32_t *b) {
     uint64_t borrow = 0;
@@ -126,8 +121,8 @@ proven_err_t rp_rsa_sign(const rp_rsa_key_t *key, rp_hash_alg_t alg, const uint8
     if (!rp_mont_init(&mn, n, nl) || !rp_mont_init(&mp, p, pl) || !rp_mont_init(&mq, q, ql)) return PROVEN_ERR_INVALID_ARG;
     // n = p q, or the components do not belong together.
     uint32_t prod[2 * RP_BN_LIMBS] = { 0 }, pv[RP_BN_LIMBS], qv[RP_BN_LIMBS];
-    from_be(pv, mp.k, p, pl);
-    from_be(qv, mq.k, q, ql);
+    rp_bn_from_be(pv, mp.k, p, pl);
+    rp_bn_from_be(qv, mq.k, q, ql);
     for (size_t i = 0; i < mq.k; ++i) {
         uint64_t c = 0;
         for (size_t j = 0; j < mp.k; ++j) {
@@ -204,7 +199,7 @@ bool rp_rsa_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_le
     if (sig_len != n_len || !e_len || !rp_mont_init(&mn, n, n_len)) return false;
     if (memcmp(sig, n, n_len) >= 0) return false;       // s < n (same length, big-endian)
     uint32_t sv[RP_BN_LIMBS], mv[RP_BN_LIMBS];
-    from_be(sv, mn.k, sig, sig_len);
+    rp_bn_from_be(sv, mn.k, sig, sig_len);
     rp_mont_exp_pub(&mn, mv, sv, e, e_len);
     uint8_t em[4 * RP_BN_LIMBS], got[4 * RP_BN_LIMBS];
     if (!encode(alg, digest, em, n_len)) return false;
@@ -235,7 +230,7 @@ bool rp_rsa_pss_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t 
     if (sig_len != n_len || !e_len || !rp_mont_init(&mn, n, n_len)) return false;
     if (memcmp(sig, n, n_len) >= 0) return false;
     uint32_t sv[RP_BN_LIMBS], mv[RP_BN_LIMBS];
-    from_be(sv, mn.k, sig, sig_len);
+    rp_bn_from_be(sv, mn.k, sig, sig_len);
     rp_mont_exp_pub(&mn, mv, sv, e, e_len);
     uint8_t m[4 * RP_BN_LIMBS];
     to_be(mv, mn.k, m, n_len);

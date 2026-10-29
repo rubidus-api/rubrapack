@@ -2130,6 +2130,9 @@ msgstr "memiliki tabel ModuleSubstitution tanpa kolom standar"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "memiliki templat ModuleSubstitution yang menyebut item yang tidak ada di ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "memiliki tabel Registry tanpa kolom standar"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "memiliki komponen dengan kondisi; MSIX menginstal semuanya"
 

@@ -27,7 +27,7 @@ typedef struct {
     size_t             nkept, capkept;
 } rp_msi_module_t;
 
-// Reads a merge module. *why says what is wrong (the caller names the file).
+// Reads a merge module. *why says what is wrong (the caller names the file). Close it even after a failure.
 [[nodiscard]] proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_msi_module_t *m, const char **why);
 void rp_msi_module_close(rp_msi_module_t *m);
 

@@ -6,6 +6,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
 #include "rubrapack/crypto.h"
+#include "rubrapack/le.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/suminfo.h"
@@ -377,9 +378,6 @@ proven_err_t rp_chain_write(proven_allocator_t alloc, const rp_chain_t *c, const
 
 // ---- reading one -----------------------------------------------------------------------------
 
-static uint32_t rd32(const uint8_t *p) { return (uint32_t)p[0] | (uint32_t)p[1] << 8 | (uint32_t)p[2] << 16 | (uint32_t)p[3] << 24; }
-static uint64_t rd64(const uint8_t *p) { return rd32(p) | (uint64_t)rd32(p + 4) << 32; }
-
 proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t len, char *name, size_t name_cap,
                            rp_chain_entry_t **entries, size_t *count) {
     if (exe == NULL || entries == NULL || count == NULL) return PROVEN_ERR_INVALID_ARG;
@@ -388,21 +386,21 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
     // The payload ends where a signature starts (the PE certificate table), else at the file's end.
     size_t end = len;
     if (len >= 0x40 && exe[0] == 'M' && exe[1] == 'Z') {
-        uint32_t pe = rd32(exe + 0x3C);
+        uint32_t pe = rp_rd32(exe + 0x3C);
         if ((uint64_t)pe + 24 + 112 + 40 <= len && memcmp(exe + pe, "PE\0\0", 4) == 0) {
             uint16_t magic = (uint16_t)(exe[pe + 24] | exe[pe + 25] << 8);
             size_t dirs = pe + (magic == 0x20B ? 24 + 112 : 24 + 96);
-            uint32_t cert = rd32(exe + dirs + 32), cert_size = rd32(exe + dirs + 36);
+            uint32_t cert = rp_rd32(exe + dirs + 32), cert_size = rp_rd32(exe + dirs + 36);
             if (cert && cert_size && cert <= len) end = cert;
         }
     }
     if (end < TRAILER || memcmp(exe + end - 8, "RPCHAIN!", 8) != 0) return PROVEN_ERR_NOT_FOUND;
     const uint8_t *t = exe + end - TRAILER;
-    uint64_t start = rd64(t), mat = rd64(t + 8), mlen = rd32(t + 16);
+    uint64_t start = rp_rd64(t), mat = rp_rd64(t + 8), mlen = rp_rd32(t + 16);
     if (start > mat || mat > end - TRAILER || mlen > end - TRAILER - mat || mlen < 16) return PROVEN_ERR_INVALID_FORMAT;
     const uint8_t *m = exe + mat;
     if (memcmp(m, "RPCHAIN1", 8) != 0) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t n = rd32(m + 8);
+    uint32_t n = rp_rd32(m + 8);
     if (n == 0 || n > RP_CHAIN_MAX) return PROVEN_ERR_INVALID_FORMAT;
     rp_chain_entry_t *e = rp_mem_alloc(alloc, n + 1, sizeof *e + mlen + 16);    // entries, then the strings
     if (e == NULL) return PROVEN_ERR_NOMEM;
@@ -411,8 +409,8 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
     const char *s[4];
 #define TAKE(dst)                                                                         \
     do {                                                                                  \
-        if (mlen - at < 4 || rd32(m + at) > mlen - at - 4) goto bad;                      \
-        uint32_t l_ = rd32(m + at);                                                       \
+        if (mlen - at < 4 || rp_rd32(m + at) > mlen - at - 4) goto bad;                      \
+        uint32_t l_ = rp_rd32(m + at);                                                       \
         memcpy(sp, m + at + 4, l_);                                                       \
         sp[l_] = '\0';                                                                    \
         (dst) = sp;                                                                       \
@@ -429,11 +427,11 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
         TAKE(e[i].product_code);
         TAKE(e[i].version);
         if (mlen - at < 52) goto bad;
-        uint32_t fl = rd32(m + at);
+        uint32_t fl = rp_rd32(m + at);
         e[i].vital = (fl & FLAG_VITAL) != 0;
         e[i].kind = fl & FLAG_MSP ? RP_CHAIN_MSP : fl & FLAG_MSIX ? RP_CHAIN_MSIX : RP_CHAIN_MSI;
         e[i].ext = fl & FLAG_MSP ? ".msp" : fl & FLAG_BUNDLE ? ".msixbundle" : fl & FLAG_MSIX ? ".msix" : ".msi";
-        uint64_t off = rd64(m + at + 4), size = rd64(m + at + 12);
+        uint64_t off = rp_rd64(m + at + 4), size = rp_rd64(m + at + 12);
         if (off > mat - start || size > mat - start - off) goto bad;
         e[i].data = exe + start + off;
         e[i].size = size;

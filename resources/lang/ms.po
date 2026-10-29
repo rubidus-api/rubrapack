@@ -2130,6 +2130,9 @@ msgstr "mempunyai jadual ModuleSubstitution tanpa lajur piawai"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "mempunyai templat ModuleSubstitution yang menamakan item yang tiada dalam ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "mempunyai jadual Registry tanpa lajur piawai"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "mempunyai komponen dengan syarat; MSIX memasang segala-galanya"
 

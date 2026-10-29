@@ -2130,6 +2130,9 @@ msgstr "are un tabel ModuleSubstitution fără coloanele standard"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "are un șablon ModuleSubstitution care numește un element pe care ModuleConfiguration nu îl are"
 
+msgid "has a Registry table without the standard columns"
+msgstr "are un tabel Registry fără coloanele standard"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "are o componentă cu o condiție; un MSIX instalează tot"
 

@@ -2130,6 +2130,9 @@ msgstr "標準の列のない ModuleSubstitution テーブルがあります"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration にない項目を指す ModuleSubstitution のテンプレートがあります"
 
+msgid "has a Registry table without the standard columns"
+msgstr "標準の列のない Registry テーブルがあります"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "条件付きのコンポーネントがあります。MSIX はすべてをインストールします"
 

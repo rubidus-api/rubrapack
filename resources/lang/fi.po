@@ -2130,6 +2130,9 @@ msgstr "sisältää ModuleSubstitution-taulukon ilman vakiosarakkeita"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "sisältää ModuleSubstitution-mallin, joka nimeää kohteen, jota ModuleConfigurationissa ei ole"
 
+msgid "has a Registry table without the standard columns"
+msgstr "sisältää Registry-taulukon ilman vakiosarakkeita"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "sisältää komponentin, jolla on ehto; MSIX asentaa kaiken"
 

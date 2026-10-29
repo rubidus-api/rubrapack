@@ -39,6 +39,11 @@ static const rp_msi_cell_t *cellp(const rp_msi_wtable_t *t, size_t row, size_t c
     return col == SIZE_MAX ? NULL : &t->cells[row * t->column_count + col];
 }
 
+// An integer cell's value (0 for a column the table does not have).
+static int32_t num(const rp_msi_cell_t *c) {
+    return c ? c->i : 0;
+}
+
 // A string cell as a NUL-terminated copy ("" for null).
 static const char *str(side_t *s, const rp_msi_cell_t *c) {
     if (c == NULL || c->kind != RP_MSI_STR) return "";
@@ -69,7 +74,7 @@ static const char *str(side_t *s, const rp_msi_cell_t *c) {
 static bool is(const rp_msi_cell_t *c, const char *v) {
     size_t n = strlen(v);
     if (c == NULL || c->kind != RP_MSI_STR) return n == 0;
-    return c->len == n && memcmp(c->bytes, v, n) == 0;
+    return c->len == n && (n == 0 || memcmp(c->bytes, v, n) == 0);
 }
 
 static bool same_guid(const rp_msi_cell_t *a, const rp_msi_cell_t *b) {
@@ -133,7 +138,7 @@ static void dir_path(side_t *s, const char *key, char *out, size_t cap, int dept
 // What a component's key path points at: a file, a registry value, or its folder.
 static void key_path(side_t *s, size_t row, char *out, size_t cap) {
     const rp_msi_wtable_t *c = table(s->db, "Component");
-    int32_t attr = cellp(c, row, column(c, "Attributes"))->i;
+    int32_t attr = num(cellp(c, row, column(c, "Attributes")));
     const char *kp = str(s, cellp(c, row, column(c, "KeyPath")));
     char dir[1024];
     dir_path(s, str(s, cellp(c, row, column(c, "Directory_"))), dir, sizeof dir, 0);
@@ -144,7 +149,7 @@ static void key_path(side_t *s, size_t row, char *out, size_t cap) {
         size_t kk = column(t, "Registry");
         for (size_t r = 0; t && r < t->row_count; ++r) {
             if (!is(cellp(t, r, kk), kp)) continue;
-            CUT(out, cap, "registry %d\\%s\\%s", cellp(t, r, column(t, "Root"))->i, str(s, cellp(t, r, column(t, "Key"))),
+            CUT(out, cap, "registry %d\\%s\\%s", num(cellp(t, r, column(t, "Root"))), str(s, cellp(t, r, column(t, "Key"))),
                      str(s, cellp(t, r, column(t, "Name"))));
             return;
         }
@@ -238,7 +243,7 @@ proven_err_t rp_msi_lint_previous(proven_allocator_t alloc, const rp_msi_wdb_t *
         bool found = false;
         for (size_t r = 0; fn && r < fn->row_count && !found; ++r) {
             const rp_msi_cell_t *x = cellp(fn, r, column(fn, "Feature"));
-            found = x && fc && x->kind == fc->kind && x->len == fc->len && memcmp(x->bytes, fc->bytes, fc->len) == 0;
+            found = x && fc && x->kind == fc->kind && x->len == fc->len && (fc->len == 0 || memcmp(x->bytes, fc->bytes, fc->len) == 0);
         }
         const char *f = str(&o, fc);
         if (!found) {

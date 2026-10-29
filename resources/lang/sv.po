@@ -2130,6 +2130,9 @@ msgstr "har en ModuleSubstitution-tabell utan standardkolumnerna"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "har en ModuleSubstitution-mall som namnger en post som ModuleConfiguration saknar"
 
+msgid "has a Registry table without the standard columns"
+msgstr "har en Registry-tabell utan standardkolumnerna"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "har en komponent med ett villkor; en MSIX installerar allt"
 

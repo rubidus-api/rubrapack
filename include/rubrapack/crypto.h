@@ -143,6 +143,8 @@ typedef struct {
     uint32_t n0inv;             // -n^-1 mod 2^32
 } rp_mont_t;
 
+// k little-endian limbs from big-endian bytes (the low 4k bytes; missing ones are zero).
+void rp_bn_from_be(uint32_t *v, size_t k, const uint8_t *b, size_t len);
 // An odd modulus as big-endian bytes (no more than RP_BN_LIMBS limbs); false otherwise.
 bool rp_mont_init(rp_mont_t *m, const uint8_t *mod, size_t len);
 // r = x mod n for a big-endian x of up to 2k limbs with x < n * R (e.g. x < n^2); r in k limbs.

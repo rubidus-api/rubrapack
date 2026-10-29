@@ -323,7 +323,7 @@ const char *rpn_check_optional(ans_t *a, char *v) {
         if (!rpn_in_names(&a->scan.dirs, t)) return TR_N("give sub folders of the program folder, separated by commas, or - for none");
         ++count;
     }
-    return count ? NULL : "give sub folders of the program folder, separated by commas, or - for none";
+    return count ? NULL : TR_N("give sub folders of the program folder, separated by commas, or - for none");
 }
 
 const char *rpn_check_license(ans_t *a, char *v) {

@@ -2130,6 +2130,9 @@ msgstr "tiene una tabla ModuleSubstitution sin las columnas estándar"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "tiene una plantilla de ModuleSubstitution que nombra un elemento que ModuleConfiguration no tiene"
 
+msgid "has a Registry table without the standard columns"
+msgstr "tiene una tabla Registry sin las columnas estándar"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "tiene un componente con condición; un MSIX lo instala todo"
 

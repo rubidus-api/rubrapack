@@ -2130,6 +2130,9 @@ msgstr "standart ustunlarsiz ModuleSubstitution jadvali bor"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration da yo‘q elementni ko‘rsatadigan ModuleSubstitution shabloni bor"
 
+msgid "has a Registry table without the standard columns"
+msgstr "standart ustunlarsiz Registry jadvali bor"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "sharti bor komponent bor; MSIX hammasini o‘rnatadi"
 

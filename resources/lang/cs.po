@@ -2130,6 +2130,9 @@ msgstr "má tabulku ModuleSubstitution bez standardních sloupců"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "má šablonu ModuleSubstitution jmenující položku, kterou ModuleConfiguration nemá"
 
+msgid "has a Registry table without the standard columns"
+msgstr "má tabulku Registry bez standardních sloupců"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "má součást s podmínkou; MSIX instaluje vše"
 

@@ -2130,6 +2130,9 @@ msgstr "szabványos oszlopok nélküli ModuleSubstitution táblát tartalmaz"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "olyan ModuleSubstitution sablont tartalmaz, amely a ModuleConfigurationben nem szereplő elemet nevez meg"
 
+msgid "has a Registry table without the standard columns"
+msgstr "szabványos oszlopok nélküli Registry táblát tartalmaz"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "feltételes összetevőt tartalmaz; az MSIX mindent telepít"
 

@@ -167,8 +167,8 @@ static bool ber_elem(const ber_t *c, const uint8_t *p, size_t n, rp_buf_t *out, 
     bool join = tag == 0x24;            // constructed OCTET STRING -> primitive
     rp_buf_t kids = rp_buf_new(c->alloc, c->limit);
     size_t u;
-    bool ok = ber_children(c, p + head, n - head, indefinite, len, &kids, &u, depth, join);
-    if (ok && kids.err == PROVEN_OK) {
+    bool ok = ber_children(c, p + head, n - head, indefinite, len, &kids, &u, depth, join) && kids.err == PROVEN_OK;
+    if (ok) {
         rp_buf_byte(out, join ? RP_DER_OCTET_STRING : tag);
         put_len(out, kids.len);
         rp_buf_put(out, kids.data, kids.len);

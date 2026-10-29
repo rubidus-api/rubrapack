@@ -2130,6 +2130,9 @@ msgstr "நிலையான நெடுவரிசைகள் இல்ல�
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration இல் இல்லாத உருப்படியைக் குறிப்பிடும் ModuleSubstitution வார்ப்புரு உள்ளது"
 
+msgid "has a Registry table without the standard columns"
+msgstr "நிலையான நெடுவரிசைகள் இல்லாத Registry அட்டவணை உள்ளது"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "நிபந்தனை கொண்ட ஒரு கூறு உள்ளது; ஒரு MSIX எல்லாவற்றையும் நிறுவும்"
 

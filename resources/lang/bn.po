@@ -2130,6 +2130,9 @@ msgstr "মানক কলাম ছাড়া একটি ModuleSubstitutio
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "এমন একটি ModuleSubstitution টেমপ্লেট আছে যা ModuleConfiguration-এ নেই এমন আইটেমের নাম দেয়"
 
+msgid "has a Registry table without the standard columns"
+msgstr "মানক কলাম ছাড়া একটি Registry টেবিল আছে"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "শর্তসহ একটি উপাদান আছে; একটি MSIX সবকিছু ইনস্টল করে"
 

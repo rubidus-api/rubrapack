@@ -17,21 +17,13 @@
 //  - the signed attributes are signtool's: an empty SpcSpOpusInfo.
 
 #include "rubrapack/lang.h"
+#include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/sign.h"
 
 #include <string.h>
 
 enum { HEADER = 36, RESERVE_PRESENT = 4, PREV_CABINET = 1, NEXT_CABINET = 2, RESERVE = 20, INSERTED = 4 + RESERVE };
-
-static uint16_t rd16(const uint8_t *p) { return (uint16_t)(p[0] | (p[1] << 8)); }
-static uint32_t rd32(const uint8_t *p) { return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24); }
-static void wr32(uint8_t *p, uint32_t v) {
-    p[0] = (uint8_t)v;
-    p[1] = (uint8_t)(v >> 8);
-    p[2] = (uint8_t)(v >> 16);
-    p[3] = (uint8_t)(v >> 24);
-}
 
 // The header's layout: whether it has signtool's reserved space, and where the folders start.
 typedef struct {
@@ -49,24 +41,24 @@ static bool cab_layout(const uint8_t *c, size_t len, cab_t *l, const char **why)
         *why = TR_N("not a cabinet (no MSCF header)");
         return false;
     }
-    l->cb = rd32(c + 8);
-    l->nfolders = rd16(c + 26);
-    uint16_t flags = rd16(c + 30);
+    l->cb = rp_rd32(c + 8);
+    l->nfolders = rp_rd16(c + 26);
+    uint16_t flags = rp_rd16(c + 30);
     size_t at = HEADER;
     if (l->cb < HEADER || l->cb > len) {
         *why = TR_N("a damaged cabinet header");
         return false;
     }
     if (flags & RESERVE_PRESENT) {
-        if (l->cb < HEADER + 4 || c[38] != 0 || c[39] != 0 || (size_t)rd16(c + 36) + HEADER + 4 > l->cb) {
+        if (l->cb < HEADER + 4 || c[38] != 0 || c[39] != 0 || (size_t)rp_rd16(c + 36) + HEADER + 4 > l->cb) {
             *why = TR_N("the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out");
             return false;
         }
-        l->reserve = 4 + (size_t)rd16(c + 36);
-        l->reserved = rd16(c + 36) == RESERVE && rd32(c + 40) == 0x00100000u;
+        l->reserve = 4 + (size_t)rp_rd16(c + 36);
+        l->reserved = rp_rd16(c + 36) == RESERVE && rp_rd32(c + 40) == 0x00100000u;
         if (l->reserved) {
-            l->sig_off = rd32(c + 44);
-            l->sig_size = rd32(c + 48);
+            l->sig_off = rp_rd32(c + 44);
+            l->sig_size = rp_rd32(c + 48);
         }
         at += l->reserve;
     }
@@ -108,7 +100,7 @@ static size_t cab_data(uint32_t cb, uint8_t out[160]) {
         0x31, 0x22, 0x04, 0x20,
     };
     uint8_t le[4];
-    wr32(le, cb);
+    rp_wr32(le, cb);
     memcpy(out, head, sizeof head);
     rp_hash(RP_HASH_SHA256, le, 4, out + sizeof head);
     return sizeof head + 32;
@@ -137,11 +129,11 @@ proven_err_t rp_cab_prepare(proven_allocator_t alloc, const uint8_t *cab, size_t
     o[42] = 0x10;               // abReserve begins 00 00 10 00
     memcpy(o + HEADER + INSERTED, cab + HEADER + l.reserve, l.cb - HEADER - l.reserve);
     o[30] |= RESERVE_PRESENT;
-    wr32(o + 8, (uint32_t)n);
-    wr32(o + 16, (uint32_t)((int64_t)rd32(o + 16) + delta));       // coffFiles
+    rp_wr32(o + 8, (uint32_t)n);
+    rp_wr32(o + 16, (uint32_t)((int64_t)rp_rd32(o + 16) + delta));       // coffFiles
     for (size_t f = 0; f < l.nfolders; ++f) {                         // coffCabStart
         uint8_t *p = o + (size_t)((int64_t)l.folders + delta) + f * 8;
-        wr32(p, (uint32_t)((int64_t)rd32(p) + delta));
+        rp_wr32(p, (uint32_t)((int64_t)rp_rd32(p) + delta));
     }
     *out = o;
     *out_len = (size_t)n;
@@ -180,8 +172,8 @@ proven_err_t rp_cab_sign(proven_allocator_t alloc, const uint8_t *cab, size_t le
         memcpy(o, work, wl);
         memcpy(o + wl, p7, p7_len);
         memset(o + wl + p7_len, 0, padded - p7_len);
-        wr32(o + 44, (uint32_t)wl);
-        wr32(o + 48, (uint32_t)padded);
+        rp_wr32(o + 44, (uint32_t)wl);
+        rp_wr32(o + 48, (uint32_t)padded);
         *out = o;
         *out_len = wl + padded;
     }

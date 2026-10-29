@@ -2130,6 +2130,9 @@ msgstr "có bảng ModuleSubstitution không có các cột chuẩn"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "có mẫu ModuleSubstitution nêu mục mà ModuleConfiguration không có"
 
+msgid "has a Registry table without the standard columns"
+msgstr "có bảng Registry không có các cột chuẩn"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "có thành phần có điều kiện; MSIX cài mọi thứ"
 

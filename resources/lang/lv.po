@@ -2130,6 +2130,9 @@ msgstr "satur tabulu ModuleSubstitution bez standarta kolonnām"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "satur ModuleSubstitution veidni, kas norāda vienumu, kura ModuleConfiguration nav"
 
+msgid "has a Registry table without the standard columns"
+msgstr "satur tabulu Registry bez standarta kolonnām"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "satur komponentu ar nosacījumu; MSIX instalē visu"
 

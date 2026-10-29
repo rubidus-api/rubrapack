@@ -1,21 +1,13 @@
 // src/sign/pe_sign.c - Authenticode for PE files (include/rubrapack/sign.h), from Microsoft's
 // "Windows Authenticode Portable Executable Signature Format" and the PE/COFF specification.
 
+#include "rubrapack/le.h"
 #include "rubrapack/limits.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/sign.h"
 
 #include <string.h>
-
-static uint16_t rd16(const uint8_t *p) { return (uint16_t)(p[0] | (p[1] << 8)); }
-static uint32_t rd32(const uint8_t *p) { return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24); }
-static void wr32(uint8_t *p, uint32_t v) {
-    p[0] = (uint8_t)v;
-    p[1] = (uint8_t)(v >> 8);
-    p[2] = (uint8_t)(v >> 16);
-    p[3] = (uint8_t)(v >> 24);
-}
 
 typedef struct {
     size_t   checksum;      // offset of CheckSum
@@ -32,29 +24,29 @@ static bool layout(const uint8_t *pe, size_t len, layout_t *l, const char **why)
         *why = TR_N("not a PE file (no MZ header)");
         return false;
     }
-    uint32_t nt = rd32(pe + 0x3C);
+    uint32_t nt = rp_rd32(pe + 0x3C);
     if (!rp_range_ok(nt, 24, len) || memcmp(pe + nt, "PE\0\0", 4) != 0) {
         *why = TR_N("not a PE file (no PE header)");
         return false;
     }
-    l->nsections = rd16(pe + nt + 6);
-    uint16_t opt_size = rd16(pe + nt + 20);
+    l->nsections = rp_rd16(pe + nt + 6);
+    uint16_t opt_size = rp_rd16(pe + nt + 20);
     size_t opt = nt + 24;
     if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) {
         *why = TR_N("a damaged PE optional header");
         return false;
     }
-    uint16_t magic = rd16(pe + opt);
+    uint16_t magic = rp_rd16(pe + opt);
     size_t nrva_off = magic == 0x20B ? 108 : magic == 0x10B ? 92 : 0, dd_off = magic == 0x20B ? 112 : 96;
-    if (nrva_off == 0 || opt_size < dd_off + 5 * 8 || rd32(pe + opt + nrva_off) < 5) {
+    if (nrva_off == 0 || opt_size < dd_off + 5 * 8 || rp_rd32(pe + opt + nrva_off) < 5) {
         *why = TR_N("a PE file without a certificate table entry");
         return false;
     }
     l->checksum = opt + 64;
-    l->headers = rd32(pe + opt + 60);
+    l->headers = rp_rd32(pe + opt + 60);
     l->certdir = opt + dd_off + 4 * 8;
-    l->cert_off = rd32(pe + l->certdir);
-    l->cert_size = rd32(pe + l->certdir + 4);
+    l->cert_off = rp_rd32(pe + l->certdir);
+    l->cert_size = rp_rd32(pe + l->certdir + 4);
     l->sections = opt + opt_size;
     if (!rp_range_ok(l->sections, (uint64_t)l->nsections * 40, len) || l->headers > len || l->headers < l->sections + (size_t)l->nsections * 40) {
         *why = TR_N("a damaged PE section table");
@@ -85,11 +77,11 @@ static bool pe_stream(const uint8_t *pe, size_t len, void (*feed)(void *, const 
     }
     for (uint16_t k = 0; k < l.nsections; ++k) {
         const uint8_t *s = pe + l.sections + 40u * k;
-        if (rd32(s + 16) == 0) continue;
+        if (rp_rd32(s + 16) == 0) continue;
         order[n++] = k;
     }
     for (size_t i = 1; i < n; ++i) {
-        for (size_t j = i; j > 0 && rd32(pe + l.sections + 40u * order[j - 1] + 20) > rd32(pe + l.sections + 40u * order[j] + 20); --j) {
+        for (size_t j = i; j > 0 && rp_rd32(pe + l.sections + 40u * order[j - 1] + 20) > rp_rd32(pe + l.sections + 40u * order[j] + 20); --j) {
             uint32_t t = order[j];
             order[j] = order[j - 1];
             order[j - 1] = t;
@@ -99,7 +91,7 @@ static bool pe_stream(const uint8_t *pe, size_t len, void (*feed)(void *, const 
     size_t end = l.cert_size ? l.cert_off : len;
     for (size_t i = 0; i < n; ++i) {
         const uint8_t *s = pe + l.sections + 40u * order[i];
-        uint32_t size = rd32(s + 16), off = rd32(s + 20);
+        uint32_t size = rp_rd32(s + 16), off = rp_rd32(s + 20);
         if (!rp_range_ok(off, size, end)) {
             *why = TR_N("a section lies outside the file");
             return false;
@@ -154,7 +146,7 @@ static uint32_t pe_checksum(const uint8_t *pe, size_t len, size_t cs) {
     uint64_t sum = 0;
     for (size_t i = 0; i < len; i += 2) {
         if (i >= cs && i < cs + 4) continue;
-        uint32_t w = i + 1 < len ? rd16(pe + i) : pe[i];
+        uint32_t w = i + 1 < len ? rp_rd16(pe + i) : pe[i];
         sum += w;
         sum = (sum & 0xFFFF) + (sum >> 16);
     }
@@ -207,15 +199,15 @@ proven_err_t rp_pe_sign(proven_allocator_t alloc, const uint8_t *pe, size_t len,
     }
     memcpy(o, work, padded);
     memset(o + padded, 0, wlen);
-    wr32(o + padded, (uint32_t)wlen);
+    rp_wr32(o + padded, (uint32_t)wlen);
     o[padded + 4] = 0x00;                            // wRevision 0x0200
     o[padded + 5] = 0x02;
     o[padded + 6] = 0x02;                            // wCertificateType PKCS_SIGNED_DATA
     o[padded + 7] = 0x00;
     memcpy(o + padded + 8, p7, p7_len);
-    wr32(o + l.certdir, (uint32_t)padded);
-    wr32(o + l.certdir + 4, (uint32_t)wlen);
-    wr32(o + l.checksum, pe_checksum(o, padded + wlen, l.checksum));
+    rp_wr32(o + l.certdir, (uint32_t)padded);
+    rp_wr32(o + l.certdir + 4, (uint32_t)wlen);
+    rp_wr32(o + l.checksum, pe_checksum(o, padded + wlen, l.checksum));
     rp_mem_free(alloc, work);
     rp_mem_free(alloc, p7);
     *out = o;
@@ -232,8 +224,8 @@ void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, con
         return;
     }
     const uint8_t *w = pe + l.cert_off;
-    uint32_t wl = rd32(w);
-    if (wl < 8 || wl > l.cert_size || rd16(w + 4) != 0x0200 || rd16(w + 6) != 0x0002) {
+    uint32_t wl = rp_rd32(w);
+    if (wl < 8 || wl > l.cert_size || rp_rd16(w + 4) != 0x0200 || rp_rd16(w + 6) != 0x0002) {
         *why = TR_N("the certificate table does not hold an Authenticode signature");
         return;
     }

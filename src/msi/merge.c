@@ -100,7 +100,7 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
     // ModuleID is <name>.<GUID with underscores>
     const rp_msi_cell_t *id = &sig->cells[0];
     size_t n = id->kind == RP_MSI_STR && id->len < sizeof m->module_id ? id->len : 0;
-    memcpy(m->module_id, id->bytes, n);
+    if (n) memcpy(m->module_id, id->bytes, n);
     m->module_id[n] = 0;
     // Strings outside ASCII must already be UTF-8: the package's code page is 65001.
     if (m->msi.codepage != 65001) {

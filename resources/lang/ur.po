@@ -2132,6 +2132,9 @@ msgstr "معیاری کالموں کے بغیر ModuleSubstitution جدول ہے
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ایسا ModuleSubstitution سانچہ ہے جو ایسے آئٹم کا نام لیتا ہے جو ModuleConfiguration میں نہیں"
 
+msgid "has a Registry table without the standard columns"
+msgstr "معیاری کالموں کے بغیر Registry جدول ہے"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "شرط والا ایک جزو ہے؛ MSIX سب کچھ انسٹال کرتا ہے"
 

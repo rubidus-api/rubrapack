@@ -1,6 +1,7 @@
 // src/msi/db.c - MSI database reader and IDT export (include/rubrapack/msi.h, format notes F2).
 
 #include "rubrapack/buf.h"
+#include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/text.h"
@@ -78,11 +79,6 @@ proven_err_t rp_msi_unpack_name(const uint16_t *name, size_t len, char *out, siz
 
 // ---- helpers ---------------------------------------------------------------------------------
 
-static uint16_t rd16(const uint8_t *p) { return (uint16_t)(p[0] | (p[1] << 8)); }
-static uint32_t rd32(const uint8_t *p) {
-    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
-}
-
 // Reads a whole stream named by a (packed) MSI name. A missing stream gives NOT_FOUND.
 static proven_err_t read_named(const rp_msi_t *msi, const char *name, bool table, uint8_t **data, size_t *len) {
     uint16_t packed[32];
@@ -106,12 +102,8 @@ static proven_err_t read_named(const rp_msi_t *msi, const char *name, bool table
     return PROVEN_OK;
 }
 
-static bool is_binary(uint16_t type) {
-    return (type & RP_MSI_COL_STRING) && !(type & RP_MSI_COL_NONBINARY);
-}
-
 static size_t cell_width(const rp_msi_t *msi, uint16_t type) {
-    if (is_binary(type)) return 2;
+    if (rp_msi_col_binary(type)) return 2;
     if (type & RP_MSI_COL_STRING) return msi->long_refs ? 3 : 2;
     return (type & RP_MSI_COL_WIDTH) == 4 ? 4 : 2;
 }
@@ -137,10 +129,10 @@ static proven_err_t decode_rows(const rp_msi_t *msi, const uint8_t *data, size_t
             rp_msi_value_t *v = &rows->cells[r * ncols + c];
             const uint8_t *p = data + off;
             *v = (rp_msi_value_t){ .kind = RP_MSI_NULL };
-            if (is_binary(types[c])) {
-                if (rd16(p) != 0) v->kind = RP_MSI_BINARY;
+            if (rp_msi_col_binary(types[c])) {
+                if (rp_rd16(p) != 0) v->kind = RP_MSI_BINARY;
             } else if (types[c] & RP_MSI_COL_STRING) {
-                uint32_t id = rd16(p) | (w == 3 ? (uint32_t)p[2] << 16 : 0);
+                uint32_t id = rp_rd16(p) | (w == 3 ? (uint32_t)p[2] << 16 : 0);
                 if (id != 0) {
                     if (id >= msi->string_count || msi->strings[id].refcount == 0) {
                         rp_mem_free(msi->alloc, rows->cells);
@@ -151,13 +143,13 @@ static proven_err_t decode_rows(const rp_msi_t *msi, const uint8_t *data, size_t
                     v->s = id;
                 }
             } else if (w == 2) {
-                uint16_t raw = rd16(p);
+                uint16_t raw = rp_rd16(p);
                 if (raw != 0) {
                     v->kind = RP_MSI_INT;
                     v->i = (int32_t)raw - 0x8000;
                 }
             } else {
-                uint32_t raw = rd32(p);
+                uint32_t raw = rp_rd32(p);
                 if (raw != 0) {
                     v->kind = RP_MSI_INT;
                     v->i = (int32_t)(raw ^ 0x80000000u);
@@ -252,14 +244,14 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
     err = read_named(msi, "_StringData", true, &msi->string_data, &msi->string_data_len);
     if (err != PROVEN_OK) FAIL(err == PROVEN_ERR_NOT_FOUND ? PROVEN_ERR_INVALID_FORMAT : err, "no string data");
     if (pool_len < 4) FAIL(PROVEN_ERR_INVALID_FORMAT, "string pool header missing");
-    uint32_t header = rd32(pool);
+    uint32_t header = rp_rd32(pool);
     msi->long_refs = (header & 0x80000000u) != 0;
     msi->codepage = header & 0x7FFFFFFFu;
 
     size_t count = 1;       // id 0
     for (size_t i = 4; i < pool_len; count++) {
         if (pool_len - i < 4) FAIL(PROVEN_ERR_INVALID_FORMAT, "string pool entry cut short");
-        uint16_t length = rd16(pool + i), refs = rd16(pool + i + 2);
+        uint16_t length = rp_rd16(pool + i), refs = rp_rd16(pool + i + 2);
         i += 4;
         if (length == 0 && refs != 0) {
             if (pool_len - i < 4) FAIL(PROVEN_ERR_INVALID_FORMAT, "long string length missing");
@@ -273,11 +265,11 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
     msi->strings[0] = (rp_msi_string_t){ 0 };
     uint64_t offset = 0;
     for (size_t i = 4, id = 1; i < pool_len; ++id) {
-        uint32_t length = rd16(pool + i);
-        uint16_t refs = rd16(pool + i + 2);
+        uint32_t length = rp_rd16(pool + i);
+        uint16_t refs = rp_rd16(pool + i + 2);
         i += 4;
         if (length == 0 && refs != 0) {     // long string: the u32 byte length follows
-            length = rd32(pool + i);
+            length = rp_rd32(pool + i);
             i += 4;
         }
         // Bit 15 of the reference word marks a string with non-ASCII bytes (format notes F2).
@@ -485,7 +477,7 @@ proven_err_t rp_msi_export_idt(const rp_msi_t *msi, size_t table, uint8_t **out,
         uint16_t type = t->columns[c].type;
         bool nullable = type & RP_MSI_COL_NULLABLE;
         if (c) rp_buf_byte(&b, '\t');
-        if (is_binary(type)) {
+        if (rp_msi_col_binary(type)) {
             rp_buf_puts(&b, nullable ? "V0" : "v0");
         } else if (type & RP_MSI_COL_STRING) {
             bool loc = type & RP_MSI_COL_LOCALIZABLE;

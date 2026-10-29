@@ -2130,6 +2130,9 @@ msgstr "turi lentelę ModuleSubstitution be standartinių stulpelių"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "turi ModuleSubstitution šabloną, nurodantį elementą, kurio ModuleConfiguration neturi"
 
+msgid "has a Registry table without the standard columns"
+msgstr "turi lentelę Registry be standartinių stulpelių"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "turi komponentą su sąlyga; MSIX įdiegia viską"
 

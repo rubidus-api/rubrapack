@@ -68,11 +68,6 @@ typedef struct {
 
 size_t rp_ec_size(rp_ec_curve_t curve) { return CURVES[curve].len; }
 
-static void from_be(uint32_t *v, size_t k, const uint8_t *b, size_t len) {
-    memset(v, 0, k * sizeof *v);
-    for (size_t i = 0; i < len && i < 4 * k; ++i) v[i / 4] |= (uint32_t)b[len - 1 - i] << (8 * (i % 4));
-}
-
 static void to_be(const uint32_t *v, uint8_t *out, size_t len) {
     for (size_t i = 0; i < len; ++i) out[len - 1 - i] = (uint8_t)(v[i / 4] >> (8 * (i % 4)));
 }
@@ -82,7 +77,7 @@ static bool ctx_init(ctx_t *x, rp_ec_curve_t curve) {
     x->c = &CURVES[curve];
     if (!rp_mont_init(&x->fp, x->c->p, x->c->len) || !rp_mont_init(&x->fn, x->c->n, x->c->len)) return false;
     uint32_t t[L];
-    from_be(t, x->fp.k, x->c->b, x->c->len);
+    rp_bn_from_be(t, x->fp.k, x->c->b, x->c->len);
     rp_mont_to(&x->fp, x->b, t);
     uint32_t one[L] = { 1 };
     rp_mont_to(&x->fp, x->one, one);
@@ -178,8 +173,8 @@ static void from_affine(const ctx_t *c, pt_t *p, const uint32_t *x, const uint32
 
 static void generator(const ctx_t *c, pt_t *g) {
     uint32_t x[L], y[L];
-    from_be(x, c->fp.k, c->c->gx, c->c->len);
-    from_be(y, c->fp.k, c->c->gy, c->c->len);
+    rp_bn_from_be(x, c->fp.k, c->c->gx, c->c->len);
+    rp_bn_from_be(y, c->fp.k, c->c->gy, c->c->len);
     from_affine(c, g, x, y);
 }
 
@@ -194,8 +189,8 @@ static bool in_range(const ctx_t *c, const uint8_t *v) {
 static bool on_curve(const ctx_t *c, const uint8_t *qx, const uint8_t *qy) {
     if (memcmp(qx, c->c->p, c->c->len) >= 0 || memcmp(qy, c->c->p, c->c->len) >= 0) return false;
     uint32_t x[L], y[L], xm[L], ym[L], l[L], r[L], t[L];
-    from_be(x, c->fp.k, qx, c->c->len);
-    from_be(y, c->fp.k, qy, c->c->len);
+    rp_bn_from_be(x, c->fp.k, qx, c->c->len);
+    rp_bn_from_be(y, c->fp.k, qy, c->c->len);
     rp_mont_to(&c->fp, xm, x);
     rp_mont_to(&c->fp, ym, y);
     rp_mont_mul(&c->fp, l, ym, ym);
@@ -225,8 +220,8 @@ bool rp_ecdh(rp_ec_curve_t curve, const uint8_t *d, const uint8_t *px, const uin
     ctx_t c;
     if (!ctx_init(&c, curve) || !in_range(&c, d) || !on_curve(&c, px, py)) return false;
     uint32_t x[L], y[L];
-    from_be(x, c.fp.k, px, c.c->len);
-    from_be(y, c.fp.k, py, c.c->len);
+    rp_bn_from_be(x, c.fp.k, px, c.c->len);
+    rp_bn_from_be(y, c.fp.k, py, c.c->len);
     pt_t p, q;
     from_affine(&c, &p, x, y);
     smul(&c, &q, &p, d);
@@ -244,7 +239,7 @@ static void hash_to_scalar(const ctx_t *c, const uint8_t *digest, size_t hl, uin
     if (hl >= len) memcpy(buf, digest, len);                    // P-256/P-384 lengths are whole bytes
     else memcpy(buf + (len - hl), digest, hl);
     uint32_t v[L], r[L];
-    from_be(v, c->fn.k, buf, len);
+    rp_bn_from_be(v, c->fn.k, buf, len);
     rp_mont_reduce_bytes(&c->fn, buf, len, r);                 // < 2n, so one reduction suffices
     (void)v;
     to_be(r, out, len);
@@ -315,9 +310,9 @@ proven_err_t rp_ecdsa_sign(rp_ec_curve_t curve, const uint8_t *d, rp_hash_alg_t 
         to_be(rv, rb, len);
         if (!in_range(&c, rb)) continue;
         // s = k^-1 (h + r d) mod n.
-        from_be(dv, c.fn.k, d, len);
-        from_be(hv, c.fn.k, h, len);
-        from_be(kv, c.fn.k, k, len);
+        rp_bn_from_be(dv, c.fn.k, d, len);
+        rp_bn_from_be(hv, c.fn.k, h, len);
+        rp_bn_from_be(kv, c.fn.k, k, len);
         rp_mont_exp_ct(&c.fn, ki, kv, nm2, len);
         rp_mont_mulmod(&c.fn, t, rv, dv);
         uint32_t tm[L], hm[L], sm[L], kim[L];
@@ -353,9 +348,9 @@ bool rp_ecdsa_verify(rp_ec_curve_t curve, const uint8_t *qx, const uint8_t *qy, 
     memcpy(nm2, c.c->n, len);
     nm2[len - 1] = (uint8_t)(nm2[len - 1] - 2);
     uint32_t sv[L], w[L], hv[L], rv[L], a[L], b[L];
-    from_be(sv, c.fn.k, s, len);
-    from_be(hv, c.fn.k, h, len);
-    from_be(rv, c.fn.k, r, len);
+    rp_bn_from_be(sv, c.fn.k, s, len);
+    rp_bn_from_be(hv, c.fn.k, h, len);
+    rp_bn_from_be(rv, c.fn.k, r, len);
     rp_mont_exp_pub(&c.fn, w, sv, nm2, len);            // s^-1
     rp_mont_mulmod(&c.fn, a, hv, w);
     rp_mont_mulmod(&c.fn, b, rv, w);
@@ -364,8 +359,8 @@ bool rp_ecdsa_verify(rp_ec_curve_t curve, const uint8_t *qx, const uint8_t *qy, 
     pt_t g, q, p1, p2, sum;
     generator(&c, &g);
     uint32_t x[L], y[L];
-    from_be(x, c.fp.k, qx, len);
-    from_be(y, c.fp.k, qy, len);
+    rp_bn_from_be(x, c.fp.k, qx, len);
+    rp_bn_from_be(y, c.fp.k, qy, len);
     from_affine(&c, &q, x, y);
     smul(&c, &p1, &g, u1);
     smul(&c, &p2, &q, u2);

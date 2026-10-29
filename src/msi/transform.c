@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static bool is_binary(uint16_t t) { return (t & RP_MSI_COL_STRING) && !(t & RP_MSI_COL_NONBINARY); }
 static bool is_string(uint16_t t) { return (t & RP_MSI_COL_STRING) && (t & RP_MSI_COL_NONBINARY); }
 static bool is_null(const rp_msi_cell_t *c) { return c->kind == RP_MSI_NULL || (c->kind == RP_MSI_STR && c->len == 0); }
 
@@ -234,7 +233,7 @@ static bool same_columns(const rp_msi_wtable_t *a, const rp_msi_wtable_t *b) {
 static proven_err_t insert_row(wctx_t *w, otab_t *o, const rp_msi_cell_t *row) {
     if (!add_rec(w, o, row, 1u | (uint32_t)o->ncols << 8)) return PROVEN_ERR_NOMEM;
     for (size_t c = 0; c < o->ncols; ++c) {
-        if (is_binary(o->cols[c].type) && !is_null(&row[c])) {
+        if (rp_msi_col_binary(o->cols[c].type) && !is_null(&row[c])) {
             proven_err_t err = add_binary(w, o, row);
             if (err != PROVEN_OK) return err;
         }
@@ -265,7 +264,7 @@ static proven_err_t diff_table(wctx_t *w, const rp_msi_wtable_t *a, const rp_msi
                 uint16_t type = b->columns[k].type;
                 if (type & RP_MSI_COL_KEY) continue;
                 bool same;
-                if (is_binary(type)) {
+                if (rp_msi_col_binary(type)) {
                     same = is_null(&ra[i][k]) == is_null(&rb[j][k]);
                     if (same && !is_null(&ra[i][k])) same = same_binary(w, b->name, b->columns, nc, ra[i], &err);
                 } else {
@@ -292,7 +291,7 @@ static proven_err_t diff_table(wctx_t *w, const rp_msi_wtable_t *a, const rp_msi
             } else {
                 if (!add_rec(w, o, rb[j], mask)) err = PROVEN_ERR_NOMEM;
                 for (size_t k = 0; err == PROVEN_OK && k < nc; ++k) {
-                    if ((mask & (1u << k)) && is_binary(b->columns[k].type) && !is_null(&rb[j][k])) err = add_binary(w, o, rb[j]);
+                    if ((mask & (1u << k)) && rp_msi_col_binary(b->columns[k].type) && !is_null(&rb[j][k])) err = add_binary(w, o, rb[j]);
                 }
             }
         }
@@ -422,7 +421,7 @@ static void put_record(rp_buf_t *b, const pool_t *pool, const otab_t *o, const r
         uint16_t type = o->cols[c].type;
         if (!present(type, c, rec->mask)) continue;
         const rp_msi_cell_t *cell = &rec->cells[c];
-        if (is_binary(type)) rp_buf_u16le(b, is_null(cell) ? 0 : 1);
+        if (rp_msi_col_binary(type)) rp_buf_u16le(b, is_null(cell) ? 0 : 1);
         else if (type & RP_MSI_COL_STRING) put_ref(b, pool, is_null(cell) ? 0 : pool_id(pool, cell->bytes, cell->len));
         else if ((type & RP_MSI_COL_WIDTH) == 4) rp_buf_u32le(b, cell->kind == RP_MSI_INT ? int_stored(cell->i, type) : 0);
         else rp_buf_u16le(b, (uint16_t)(cell->kind == RP_MSI_INT ? int_stored(cell->i, type) : 0));
@@ -761,7 +760,7 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
             v[c] = (lval_t){ .kind = RP_MSI_NULL };
             uint16_t type = cols[c].type;
             if (!present(type, c, mask)) continue;
-            size_t w = (type & RP_MSI_COL_STRING) ? (is_binary(type) ? 2 : ref) : (type & RP_MSI_COL_WIDTH) == 4 ? 4 : 2;
+            size_t w = (type & RP_MSI_COL_STRING) ? (rp_msi_col_binary(type) ? 2 : ref) : (type & RP_MSI_COL_WIDTH) == 4 ? 4 : 2;
             if (n - o < w) {
                 *why = TR_N("a record is cut short");
                 return PROVEN_ERR_INVALID_FORMAT;
@@ -771,7 +770,7 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
                                 : (uint32_t)d[o] | (uint32_t)d[o + 1] << 8;
             o += w;
             if (x == 0) continue;
-            if (is_binary(type)) v[c] = (lval_t){ .kind = RP_MSI_BINARY, .s = x };
+            if (rp_msi_col_binary(type)) v[c] = (lval_t){ .kind = RP_MSI_BINARY, .s = x };
             else if (type & RP_MSI_COL_STRING) {
                 if (x >= l->nstr) {
                     *why = TR_N("a record names a string the pool does not have");
@@ -946,7 +945,7 @@ static void diff_cell(rp_buf_t *out, const rp_cfb_t *cfb, const char *table, con
                       size_t c) {
     const rp_msi_cell_t *v = &row[c];
     if (is_null(v)) return;
-    if (is_binary(cols[c].type)) {
+    if (rp_msi_col_binary(cols[c].type)) {
         char name[128];
         uint16_t packed[32];
         size_t pl;
@@ -1024,7 +1023,7 @@ static proven_err_t diff_rows(proven_allocator_t alloc, const rp_mst_side_t *sa,
                 uint16_t type = b->columns[k].type;
                 if (type & RP_MSI_COL_KEY) continue;
                 bool same;
-                if (is_binary(type)) {
+                if (rp_msi_col_binary(type)) {
                     same = is_null(&ra[i][k]) == is_null(&rb[j][k]);
                     if (same && !is_null(&ra[i][k])) {
                         char name[128];

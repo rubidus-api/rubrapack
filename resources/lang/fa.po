@@ -2132,6 +2132,9 @@ msgstr "یک جدول ModuleSubstitution بدون ستون‌های استاند
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "یک الگوی ModuleSubstitution دارد که موردی را نام می‌برد که ModuleConfiguration ندارد"
 
+msgid "has a Registry table without the standard columns"
+msgstr "یک جدول Registry بدون ستون‌های استاندارد دارد"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "یک مؤلفه با شرط دارد؛ یک MSIX همه چیز را نصب می‌کند"
 

@@ -72,6 +72,10 @@ static const char *vfs_of(const char *prop) {
 static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp_msi_cell_t *key, const char **vfs, char *out, size_t cap,
                      const char **why) {
     int ck = col(dirs, "Directory"), cp = col(dirs, "Directory_Parent"), cd = col(dirs, "DefaultDir");
+    if (ck < 0 || cp < 0 || cd < 0) {
+        *why = TR_N("File, Component or Directory table lacks a standard column");
+        return false;
+    }
     char parts[32][512];
     size_t n = 0;
     const rp_msi_cell_t *k = key;
@@ -189,6 +193,10 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
         if (out->files == NULL) err = PROVEN_ERR_NOMEM;
         int fk = col(files, "File"), fc = col(files, "Component_"), fn = col(files, "FileName");
         int ck = col(comps, "Component"), cdir = col(comps, "Directory_");
+        if (err == PROVEN_OK && (fk < 0 || fc < 0 || fn < 0 || ck < 0 || cdir < 0)) {
+            *why = TR_N("File, Component or Directory table lacks a standard column");
+            err = PROVEN_ERR_INVALID_FORMAT;
+        }
         for (size_t r = 0; err == PROVEN_OK && r < files->row_count; ++r) {
             const rp_msi_cell_t *f = &files->cells[r * files->column_count];
             const rp_msi_cell_t *crow = NULL;
@@ -240,6 +248,10 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
         out->regs = rp_mem_alloc(a, reg->row_count, sizeof *out->regs);
         if (out->regs == NULL) err = PROVEN_ERR_NOMEM;
         int rr = col(reg, "Root"), rk = col(reg, "Key"), rn = col(reg, "Name"), rv = col(reg, "Value");
+        if (err == PROVEN_OK && (rr < 0 || rk < 0 || rn < 0 || rv < 0)) {
+            *why = TR_N("has a Registry table without the standard columns");
+            err = PROVEN_ERR_INVALID_FORMAT;
+        }
         for (size_t r = 0; err == PROVEN_OK && r < reg->row_count; ++r) {
             const rp_msi_cell_t *c = &reg->cells[r * reg->column_count];
             char *name = c[rn].kind == RP_MSI_STR && c[rn].len ? text(a, &c[rn]) : NULL;

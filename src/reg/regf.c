@@ -2,6 +2,7 @@
 
 #include "rubrapack/regf.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/le.h"
 
 #include "rubrapack/buf.h"
 #include "rubrapack/mem.h"
@@ -317,17 +318,6 @@ static bool lay_key(proven_allocator_t a, lay_t *l, key_t *k, bool root, uint32_
 
 // ---- writing -----------------------------------------------------------------------------------------
 
-static void w16(uint8_t *p, uint16_t v) {
-    p[0] = (uint8_t)v;
-    p[1] = (uint8_t)(v >> 8);
-}
-static void w32(uint8_t *p, uint32_t v) {
-    w16(p, (uint16_t)v);
-    w16(p + 2, (uint16_t)(v >> 16));
-}
-
-
-
 typedef struct {
     uint8_t *p;             // the bins (file offset 4096 onward)
     uint32_t sk;
@@ -335,7 +325,7 @@ typedef struct {
 
 // A cell header (negative: in use) at `off`; returns where its payload starts.
 static uint8_t *cell(out_t *o, uint32_t off, uint32_t size) {
-    w32(o->p + off, (uint32_t)-(int32_t)size);
+    rp_wr32(o->p + off, (uint32_t)-(int32_t)size);
     return o->p + off + 4;
 }
 
@@ -343,7 +333,7 @@ static void put_name(uint8_t *p, const uint16_t *s, size_t n) {
     bool comp = compressible(s, n);
     for (size_t i = 0; i < n; ++i) {
         if (comp) p[i] = (uint8_t)s[i];
-        else w16(p + 2 * i, s[i]);
+        else rp_wr16(p + 2 * i, s[i]);
     }
 }
 
@@ -357,50 +347,50 @@ static void write_key(out_t *o, const key_t *k, bool root) {
     size_t nb = name_bytes(k->name, k->nlen);
     uint8_t *p = cell(o, k->nk, cell_size(76 + nb));
     memcpy(p, "nk", 2);
-    w16(p + 2, compressible(k->name, k->nlen) ? NK_COMP : 0);
-    w32(p + 16, root ? NO_CELL : k->parent->nk);
-    w32(p + 20, (uint32_t)k->nsub);
-    w32(p + 28, k->nsub ? k->list : NO_CELL);
-    w32(p + 32, NO_CELL);                              // volatile subkeys
-    w32(p + 36, (uint32_t)k->nval);
-    w32(p + 40, k->nval ? k->vlist : NO_CELL);
-    w32(p + 44, o->sk);
-    w32(p + 48, NO_CELL);                              // class
+    rp_wr16(p + 2, compressible(k->name, k->nlen) ? NK_COMP : 0);
+    rp_wr32(p + 16, root ? NO_CELL : k->parent->nk);
+    rp_wr32(p + 20, (uint32_t)k->nsub);
+    rp_wr32(p + 28, k->nsub ? k->list : NO_CELL);
+    rp_wr32(p + 32, NO_CELL);                              // volatile subkeys
+    rp_wr32(p + 36, (uint32_t)k->nval);
+    rp_wr32(p + 40, k->nval ? k->vlist : NO_CELL);
+    rp_wr32(p + 44, o->sk);
+    rp_wr32(p + 48, NO_CELL);                              // class
     size_t maxsub = 0, maxvname = 0, maxvdata = 0;
     for (size_t i = 0; i < k->nsub; ++i) maxsub = k->subs[i]->nlen * 2 > maxsub ? k->subs[i]->nlen * 2 : maxsub;
     for (size_t i = 0; i < k->nval; ++i) {
         maxvname = k->vals[i].nlen * 2 > maxvname ? k->vals[i].nlen * 2 : maxvname;
         maxvdata = k->vals[i].len > maxvdata ? k->vals[i].len : maxvdata;
     }
-    w32(p + 52, (uint32_t)maxsub);
-    w32(p + 60, (uint32_t)maxvname);
-    w32(p + 64, (uint32_t)maxvdata);
-    w16(p + 72, (uint16_t)nb);
+    rp_wr32(p + 52, (uint32_t)maxsub);
+    rp_wr32(p + 60, (uint32_t)maxvname);
+    rp_wr32(p + 64, (uint32_t)maxvdata);
+    rp_wr16(p + 72, (uint16_t)nb);
     put_name(p + 76, k->name, k->nlen);
     if (root) {
         uint8_t *s = cell(o, o->sk, cell_size(20 + SK_DESC_LEN));
         memcpy(s, "sk", 2);
-        w32(s + 4, o->sk);
-        w32(s + 8, o->sk);
-        w32(s + 16, (uint32_t)SK_DESC_LEN);
+        rp_wr32(s + 4, o->sk);
+        rp_wr32(s + 8, o->sk);
+        rp_wr32(s + 16, (uint32_t)SK_DESC_LEN);
         memcpy(s + 20, SK_DESC, SK_DESC_LEN);
     }
     if (k->nsub) {
         if (k->nlh > 1) {
             uint8_t *r = cell(o, k->list, cell_size(4 + 4 * k->nlh));
             memcpy(r, "ri", 2);
-            w16(r + 2, (uint16_t)k->nlh);
-            for (size_t i = 0; i < k->nlh; ++i) w32(r + 4 + 4 * i, k->lh[i]);
+            rp_wr16(r + 2, (uint16_t)k->nlh);
+            for (size_t i = 0; i < k->nlh; ++i) rp_wr32(r + 4 + 4 * i, k->lh[i]);
         }
         for (size_t i = 0; i < k->nlh; ++i) {
             size_t first = i * LIST_MAX, n = k->nsub - first < LIST_MAX ? k->nsub - first : LIST_MAX;
             uint8_t *l = cell(o, k->lh[i], cell_size(4 + 8 * n));
             memcpy(l, "lh", 2);
-            w16(l + 2, (uint16_t)n);
+            rp_wr16(l + 2, (uint16_t)n);
             for (size_t j = 0; j < n; ++j) {
                 const key_t *s = k->subs[first + j];
-                w32(l + 4 + 8 * j, s->nk);
-                w32(l + 8 + 8 * j, lh_hash(s->name, s->nlen));
+                rp_wr32(l + 4 + 8 * j, s->nk);
+                rp_wr32(l + 8 + 8 * j, lh_hash(s->name, s->nlen));
             }
         }
     }
@@ -408,33 +398,33 @@ static void write_key(out_t *o, const key_t *k, bool root) {
         uint8_t *vl = cell(o, k->vlist, cell_size(4 * k->nval));
         for (size_t i = 0; i < k->nval; ++i) {
             const val_t *v = &k->vals[i];
-            w32(vl + 4 * i, v->vk);
+            rp_wr32(vl + 4 * i, v->vk);
             size_t vb = name_bytes(v->name, v->nlen);
             uint8_t *q = cell(o, v->vk, cell_size(20 + vb));
             memcpy(q, "vk", 2);
-            w16(q + 2, (uint16_t)vb);
-            w32(q + 12, v->type);
-            w16(q + 16, v->nlen && compressible(v->name, v->nlen) ? VK_COMP : 0);
+            rp_wr16(q + 2, (uint16_t)vb);
+            rp_wr32(q + 12, v->type);
+            rp_wr16(q + 16, v->nlen && compressible(v->name, v->nlen) ? VK_COMP : 0);
             put_name(q + 20, v->name, v->nlen);
             if (v->len <= 4) {
-                w32(q + 4, (uint32_t)v->len | INLINE);
+                rp_wr32(q + 4, (uint32_t)v->len | INLINE);
                 memcpy(q + 8, v->data, v->len);
             } else if (v->len <= BIG) {
-                w32(q + 4, (uint32_t)v->len);
-                w32(q + 8, v->dat);
+                rp_wr32(q + 4, (uint32_t)v->len);
+                rp_wr32(q + 8, v->dat);
                 memcpy(cell(o, v->dat, cell_size(v->len)), v->data, v->len);
             } else {
                 size_t nseg = (v->len + BIG - 1) / BIG;
-                w32(q + 4, (uint32_t)v->len);
-                w32(q + 8, v->db);
+                rp_wr32(q + 4, (uint32_t)v->len);
+                rp_wr32(q + 8, v->db);
                 uint8_t *db = cell(o, v->db, cell_size(8));
                 memcpy(db, "db", 2);
-                w16(db + 2, (uint16_t)nseg);
-                w32(db + 4, v->seglist);
+                rp_wr16(db + 2, (uint16_t)nseg);
+                rp_wr32(db + 4, v->seglist);
                 uint8_t *sl = cell(o, v->seglist, cell_size(4 * nseg));
                 for (size_t s = 0; s < nseg; ++s) {
                     size_t take = v->len - s * BIG < BIG ? v->len - s * BIG : BIG;
-                    w32(sl + 4 * s, v->segs[s]);
+                    rp_wr32(sl + 4 * s, v->segs[s]);
                     memcpy(cell(o, v->segs[s], cell_size(BIG)), v->data + s * BIG, take);
                 }
             }
@@ -459,7 +449,7 @@ proven_err_t rp_regf_write(rp_regf_t *h, uint8_t **out, size_t *len) {
     memset(f, 0, total);
     out_t o = { f + BLOCK, sk };
     write_key(&o, &h->root, true);
-    w32(f + BLOCK + sk + 4 + 12, (uint32_t)h->keys);    // the security descriptor's reference count
+    rp_wr32(f + BLOCK + sk + 4 + 12, (uint32_t)h->keys);    // the security descriptor's reference count
     // Bin headers.
     size_t nbins = l.bins.len / 8;
     for (size_t i = 0; i < nbins; ++i) {
@@ -468,8 +458,8 @@ proven_err_t rp_regf_write(rp_regf_t *h, uint8_t **out, size_t *len) {
         memcpy(&size, l.bins.data + 8 * i + 4, 4);
         uint8_t *b = o.p + start;
         memcpy(b, "hbin", 4);
-        w32(b + 4, start);
-        w32(b + 8, size);
+        rp_wr32(b + 4, start);
+        rp_wr32(b + 8, size);
     }
     // Free space: scan every bin for the first byte not covered by a cell.
     for (size_t i = 0; i < nbins; ++i) {
@@ -482,25 +472,25 @@ proven_err_t rp_regf_write(rp_regf_t *h, uint8_t **out, size_t *len) {
             if (c >= 0) break;
             at += (uint32_t)-c;
         }
-        if (at < start + size) w32(o.p + at, start + size - at);
+        if (at < start + size) rp_wr32(o.p + at, start + size - at);
     }
     // Base block (as offreg writes it, times zero).
     memcpy(f, "regf", 4);
-    w32(f + 4, 1);
-    w32(f + 8, 1);
-    w32(f + 20, 1);                                     // format version 1.5
-    w32(f + 24, 5);
-    w32(f + 32, 1);
-    w32(f + 36, h->root.nk);
-    w32(f + 40, (uint32_t)l.bin_end);
-    w32(f + 44, 1);
+    rp_wr32(f + 4, 1);
+    rp_wr32(f + 8, 1);
+    rp_wr32(f + 20, 1);                                     // format version 1.5
+    rp_wr32(f + 24, 5);
+    rp_wr32(f + 32, 1);
+    rp_wr32(f + 36, h->root.nk);
+    rp_wr32(f + 40, (uint32_t)l.bin_end);
+    rp_wr32(f + 44, 1);
     memcpy(f + 0xB0, "OfRg", 4);                       // offreg's mark, as in Windows' MSIX hives
-    w32(f + 0xB4, 1);
+    rp_wr32(f + 0xB4, 1);
     uint32_t sum = 0;
     for (size_t i = 0; i < 508; i += 4) sum ^= (uint32_t)f[i] | (uint32_t)f[i + 1] << 8 | (uint32_t)f[i + 2] << 16 | (uint32_t)f[i + 3] << 24;
     if (sum == 0) sum = 1;
     else if (sum == 0xFFFFFFFF) sum = 0xFFFFFFFE;
-    w32(f + 508, sum);
+    rp_wr32(f + 508, sum);
     rp_buf_free(&l.bins);
     *out = f;
     *len = total;
@@ -509,8 +499,6 @@ proven_err_t rp_regf_write(rp_regf_t *h, uint8_t **out, size_t *len) {
 
 // ---- reading -----------------------------------------------------------------------------------------
 
-static uint16_t r16(const uint8_t *p) { return (uint16_t)(p[0] | p[1] << 8); }
-static uint32_t r32(const uint8_t *p) { return (uint32_t)p[0] | (uint32_t)p[1] << 8 | (uint32_t)p[2] << 16 | (uint32_t)p[3] << 24; }
 
 typedef struct {
     proven_allocator_t       alloc;
@@ -527,7 +515,7 @@ typedef struct {
 // The payload of the cell at `off` (in use), at least `need` bytes; NULL when it is not one.
 static const uint8_t *get(rd_t *r, uint32_t off, size_t need, size_t *avail) {
     if (off & 7 || (size_t)off + 4 > r->blen) return NULL;
-    int32_t size = (int32_t)r32(r->bins + off);
+    int32_t size = (int32_t)rp_rd32(r->bins + off);
     if (size >= 0 || size == INT32_MIN || (size_t)-size < 4 + need || (size_t)off + (size_t)-size > r->blen) return NULL;
     if (avail) *avail = (size_t)-size - 4;
     return r->bins + off + 4;
@@ -549,7 +537,7 @@ static bool append_name(rd_t *r, const uint8_t *p, size_t nb, bool comp) {
     static uint16_t tmp[16384];                         // (not on the stack: keys nest 512 deep)
     size_t n = nb / 2;
     if (n > 16384) return false;
-    for (size_t i = 0; i < n; ++i) tmp[i] = r16(p + 2 * i);
+    for (size_t i = 0; i < n; ++i) tmp[i] = rp_rd16(p + 2 * i);
     rp_text_result_t t = rp_utf16_to_utf8(tmp, n, NULL, 0);
     if (t.err != PROVEN_OK) return false;
     size_t at = r->path.len;
@@ -567,19 +555,19 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
     size_t av;
     const uint8_t *p = get(r, off, 76, &av);
     if (p == NULL || memcmp(p, "nk", 2) != 0) RFAIL("a key cell is not a key");
-    size_t nb = r16(p + 72);
+    size_t nb = rp_rd16(p + 72);
     if (76 + nb > av || (nb == 0 && depth > 0)) RFAIL("a key's name does not fit its cell");
     size_t base = r->path.len;
     if (depth > 0) {
         if (base) rp_buf_byte(&r->path, '\\');
-        if (!append_name(r, p + 76, nb, r16(p + 2) & NK_COMP)) RFAIL("a key name is not valid text");
+        if (!append_name(r, p + 76, nb, rp_rd16(p + 2) & NK_COMP)) RFAIL("a key name is not valid text");
     }
     size_t here = r->path.len;                          // this key's path, without the NUL
     rp_buf_byte(&r->path, 0);
     if (r->path.err != PROVEN_OK) return r->path.err;
     const char *path = (const char *)r->path.data;
     if (r->v && r->v->key) r->v->key(r->v->ctx, depth ? path : "");
-    uint32_t nval = r32(p + 36), vlist = r32(p + 40), nsub = r32(p + 20), list = r32(p + 28);
+    uint32_t nval = rp_rd32(p + 36), vlist = rp_rd32(p + 40), nsub = rp_rd32(p + 20), list = rp_rd32(p + 28);
     if (nval) {
         size_t lav;
         const uint8_t *vl = get(r, vlist, (size_t)nval * 4, &lav);
@@ -590,23 +578,23 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
                 return PROVEN_ERR_OUT_OF_BOUNDS;
             }
             size_t vav;
-            const uint8_t *q = get(r, r32(vl + 4 * i), 20, &vav);
+            const uint8_t *q = get(r, rp_rd32(vl + 4 * i), 20, &vav);
             if (q == NULL || memcmp(q, "vk", 2) != 0) RFAIL("a value cell is not a value");
-            size_t vnb = r16(q + 2);
+            size_t vnb = rp_rd16(q + 2);
             if (20 + vnb > vav) RFAIL("a value's name does not fit its cell");
             size_t save = r->path.len;
-            if (!append_name(r, q + 20, vnb, r16(q + 16) & VK_COMP)) RFAIL("a value name is not valid text");
+            if (!append_name(r, q + 20, vnb, rp_rd16(q + 16) & VK_COMP)) RFAIL("a value name is not valid text");
             rp_buf_byte(&r->path, 0);
             if (r->path.err != PROVEN_OK) return r->path.err;
             const char *name = (const char *)r->path.data + save;
-            uint32_t dsize = r32(q + 4), doff = r32(q + 8), type = r32(q + 12);
+            uint32_t dsize = rp_rd32(q + 4), doff = rp_rd32(q + 8), type = rp_rd32(q + 12);
             uint8_t inl[4];
             const uint8_t *data = NULL;
             uint8_t *big = NULL;
             size_t dl = dsize & ~INLINE;
             if (dsize & INLINE) {
                 if (dl > 4) RFAIL("an inline value longer than 4 bytes");
-                w32(inl, doff);
+                rp_wr32(inl, doff);
                 data = inl;
             } else if (dl > MAX_DATA) {
                 RFAIL("a value longer than 16 MiB");
@@ -614,14 +602,14 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
                 size_t dav;
                 const uint8_t *d = get(r, doff, 8, &dav);
                 if (d && dl > BIG && memcmp(d, "db", 2) == 0) {
-                    size_t nseg = r16(d + 2), sav;
-                    const uint8_t *sl = get(r, r32(d + 4), nseg * 4, &sav);
+                    size_t nseg = rp_rd16(d + 2), sav;
+                    const uint8_t *sl = get(r, rp_rd32(d + 4), nseg * 4, &sav);
                     if (sl == NULL || nseg != (dl + BIG - 1) / BIG) RFAIL("a big value's segment list is damaged");
                     big = rp_mem_alloc(r->alloc, dl, 1);
                     if (big == NULL) return PROVEN_ERR_NOMEM;
                     for (size_t s = 0; s < nseg; ++s) {
                         size_t take = dl - s * BIG < BIG ? dl - s * BIG : BIG, gav;
-                        const uint8_t *g = get(r, r32(sl + 4 * s), take, &gav);
+                        const uint8_t *g = get(r, rp_rd32(sl + 4 * s), take, &gav);
                         if (g == NULL) {
                             rp_mem_free(r->alloc, big);
                             RFAIL("a big value's segment is damaged");
@@ -650,19 +638,19 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
         uint32_t nl = 1;
         if (memcmp(l, "ri", 2) == 0) {
             ri = l;
-            nl = r16(l + 2);
+            nl = rp_rd16(l + 2);
             if (4 + 4 * (size_t)nl > lav) RFAIL("a subkey index is damaged");
         }
         uint64_t seen = 0;
         for (uint32_t i = 0; i < nl; ++i) {
-            const uint8_t *s = ri ? get(r, r32(ri + 4 + 4 * i), 4, &lav) : get(r, list, 4, &lav);
+            const uint8_t *s = ri ? get(r, rp_rd32(ri + 4 + 4 * i), 4, &lav) : get(r, list, 4, &lav);
             if (s == NULL) RFAIL("a subkey list is damaged");
             bool lhf = memcmp(s, "lh", 2) == 0 || memcmp(s, "lf", 2) == 0, li = memcmp(s, "li", 2) == 0;
-            size_t n = r16(s + 2), step = lhf ? 8 : 4;
+            size_t n = rp_rd16(s + 2), step = lhf ? 8 : 4;
             if ((!lhf && !li) || 4 + step * n > lav) RFAIL("a subkey list is damaged");
             for (size_t j = 0; j < n; ++j) {
                 r->path.len = here;
-                proven_err_t err = read_key(r, r32(s + 4 + step * j), depth + 1);
+                proven_err_t err = read_key(r, rp_rd32(s + 4 + step * j), depth + 1);
                 if (err != PROVEN_OK) return err;
                 ++seen;
             }
@@ -680,22 +668,22 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
         return PROVEN_ERR_INVALID_FORMAT;
     }
     uint32_t sum = 0;
-    for (size_t i = 0; i < 508; i += 4) sum ^= r32(hive + i);
+    for (size_t i = 0; i < 508; i += 4) sum ^= rp_rd32(hive + i);
     if (sum == 0) sum = 1;
     else if (sum == 0xFFFFFFFF) sum = 0xFFFFFFFE;
-    if (sum != r32(hive + 508)) {
+    if (sum != rp_rd32(hive + 508)) {
         *why = TR_N("the hive's base block checksum does not match");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    if (r32(hive + 4) != r32(hive + 8)) {
+    if (rp_rd32(hive + 4) != rp_rd32(hive + 8)) {
         *why = TR_N("the hive was not closed cleanly (its log would be needed)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    if (r32(hive + 20) != 1 || r32(hive + 24) < 3 || r32(hive + 24) > 6 || r32(hive + 28) != 0 || r32(hive + 32) != 1) {
+    if (rp_rd32(hive + 20) != 1 || rp_rd32(hive + 24) < 3 || rp_rd32(hive + 24) > 6 || rp_rd32(hive + 28) != 0 || rp_rd32(hive + 32) != 1) {
         *why = TR_N("a hive version or type rubrapack does not read");
         return PROVEN_ERR_UNSUPPORTED;
     }
-    size_t blen = r32(hive + 40);
+    size_t blen = rp_rd32(hive + 40);
     if (blen > len - BLOCK || blen % BLOCK) {
         *why = TR_N("the hive's bins lie outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
@@ -703,13 +691,13 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
     // Every bin must be where its header says, and no cell may cross into the next.
     for (size_t at = 0; at < blen;) {
         const uint8_t *b = hive + BLOCK + at;
-        uint32_t size = r32(b + 8);
-        if (memcmp(b, "hbin", 4) != 0 || r32(b + 4) != at || size < BLOCK || size % BLOCK || size > blen - at) {
+        uint32_t size = rp_rd32(b + 8);
+        if (memcmp(b, "hbin", 4) != 0 || rp_rd32(b + 4) != at || size < BLOCK || size % BLOCK || size > blen - at) {
             *why = TR_N("a damaged hive bin");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t c = at + BIN_HEADER; c < at + size;) {
-            int32_t cs = (int32_t)r32(hive + BLOCK + c);
+            int32_t cs = (int32_t)rp_rd32(hive + BLOCK + c);
             size_t n = cs < 0 ? (size_t)-(int64_t)cs : (size_t)cs;
             if (n < 8 || n & 7 || n > at + size - c) {
                 *why = TR_N("a hive cell crosses its bin");
@@ -720,7 +708,7 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
         at += size;
     }
     rd_t r = { alloc, hive + BLOCK, blen, v, 0, lim->max_entries, why, rp_buf_new(alloc, 1u << 20) };
-    proven_err_t err = read_key(&r, r32(hive + 36), 0);
+    proven_err_t err = read_key(&r, rp_rd32(hive + 36), 0);
     rp_buf_free(&r.path);
     return err;
 }

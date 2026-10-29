@@ -2132,6 +2132,9 @@ msgstr "יש בו טבלת ModuleSubstitution ללא העמודות הסטנדר
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "יש בו תבנית ModuleSubstitution שמציינת פריט שאין ב-ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "יש בו טבלת Registry ללא העמודות הסטנדרטיות"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "יש בו רכיב עם תנאי; MSIX מתקינה הכול"
 

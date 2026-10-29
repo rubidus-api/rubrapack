@@ -1,6 +1,7 @@
 // src/container/cfb.c - compound file reader (include/rubrapack/cfb.h, docs: format notes F1).
 
 #include "rubrapack/cfb.h"
+#include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 
 #include <string.h>
@@ -15,12 +16,6 @@ enum {
 };
 
 static const uint8_t signature[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
-
-static uint16_t rd16(const uint8_t *p) { return (uint16_t)(p[0] | (p[1] << 8)); }
-static uint32_t rd32(const uint8_t *p) {
-    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
-}
-static uint64_t rd64(const uint8_t *p) { return (uint64_t)rd32(p) | ((uint64_t)rd32(p + 4) << 32); }
 
 static const uint8_t *sector(const rp_cfb_t *c, uint32_t s) {
     return c->data + ((size_t)s + 1) * c->sector_size;
@@ -106,27 +101,27 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
     rp_budget_t meta = rp_budget(limits->max_metadata);
 
     if (len < 512 || memcmp(data, signature, 8) != 0) FAIL(PROVEN_ERR_INVALID_FORMAT, "not a compound file");
-    if (rd16(data + 28) != 0xFFFE) FAIL(PROVEN_ERR_INVALID_FORMAT, "bad byte order mark");
-    cfb->major = rd16(data + 26);
-    uint16_t shift = rd16(data + 30);
+    if (rp_rd16(data + 28) != 0xFFFE) FAIL(PROVEN_ERR_INVALID_FORMAT, "bad byte order mark");
+    cfb->major = rp_rd16(data + 26);
+    uint16_t shift = rp_rd16(data + 30);
     if (!((cfb->major == 3 && shift == 9) || (cfb->major == 4 && shift == 12))) {
         FAIL(PROVEN_ERR_UNSUPPORTED, "unsupported version or sector size");
     }
-    if (rd16(data + 32) != 6) FAIL(PROVEN_ERR_INVALID_FORMAT, "mini sector size is not 64");
+    if (rp_rd16(data + 32) != 6) FAIL(PROVEN_ERR_INVALID_FORMAT, "mini sector size is not 64");
     cfb->sector_size = 1u << shift;
     if (len < cfb->sector_size) FAIL(PROVEN_ERR_INVALID_FORMAT, "file shorter than its header");
     size_t sectors = (len - cfb->sector_size) / cfb->sector_size;
     if (sectors > MAXREGSECT) FAIL(PROVEN_ERR_UNSUPPORTED, "file too large");
     cfb->sector_count = (uint32_t)sectors;
-    cfb->mini_cutoff = rd32(data + 56);
+    cfb->mini_cutoff = rp_rd32(data + 56);
     if (cfb->mini_cutoff != 4096) FAIL(PROVEN_ERR_INVALID_FORMAT, "mini stream cutoff is not 4096");
 
-    uint32_t num_fat = rd32(data + 44);
-    uint32_t first_dir = rd32(data + 48);
-    uint32_t first_minifat = rd32(data + 60);
-    uint32_t num_minifat = rd32(data + 64);
-    uint32_t first_difat = rd32(data + 68);
-    uint32_t num_difat = rd32(data + 72);
+    uint32_t num_fat = rp_rd32(data + 44);
+    uint32_t first_dir = rp_rd32(data + 48);
+    uint32_t first_minifat = rp_rd32(data + 60);
+    uint32_t num_minifat = rp_rd32(data + 64);
+    uint32_t first_difat = rp_rd32(data + 68);
+    uint32_t num_difat = rp_rd32(data + 72);
     if (num_fat == 0 || num_fat > cfb->sector_count) FAIL(PROVEN_ERR_INVALID_FORMAT, "bad FAT sector count");
     if (num_difat > cfb->sector_count) FAIL(PROVEN_ERR_INVALID_FORMAT, "bad DIFAT sector count");
 
@@ -134,14 +129,14 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
     fat_sectors = rp_mem_alloc(alloc, num_fat, sizeof *fat_sectors);
     if (fat_sectors == NULL) FAIL(PROVEN_ERR_NOMEM, "out of memory");
     size_t have = 0;
-    for (size_t i = 0; i < HEADER_DIFAT && have < num_fat; ++i) fat_sectors[have++] = rd32(data + 76 + 4 * i);
+    for (size_t i = 0; i < HEADER_DIFAT && have < num_fat; ++i) fat_sectors[have++] = rp_rd32(data + 76 + 4 * i);
     uint32_t per_difat = cfb->sector_size / 4 - 1;
     uint32_t d = first_difat;
     for (uint32_t k = 0; k < num_difat && have < num_fat; ++k) {
         if (d >= cfb->sector_count) FAIL(PROVEN_ERR_INVALID_FORMAT, "DIFAT chain leaves the file");
         const uint8_t *p = sector(cfb, d);
-        for (uint32_t i = 0; i < per_difat && have < num_fat; ++i) fat_sectors[have++] = rd32(p + 4 * i);
-        d = rd32(p + 4 * per_difat);
+        for (uint32_t i = 0; i < per_difat && have < num_fat; ++i) fat_sectors[have++] = rp_rd32(p + 4 * i);
+        d = rp_rd32(p + 4 * per_difat);
     }
     if (have < num_fat) FAIL(PROVEN_ERR_INVALID_FORMAT, "DIFAT lists fewer FAT sectors than the header");
 
@@ -155,7 +150,7 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
     for (uint32_t f = 0; f < num_fat; ++f) {
         if (fat_sectors[f] >= cfb->sector_count) FAIL(PROVEN_ERR_INVALID_FORMAT, "FAT sector outside the file");
         const uint8_t *p = sector(cfb, fat_sectors[f]);
-        for (uint32_t i = 0; i < per_fat; ++i) cfb->fat[(size_t)f * per_fat + i] = rd32(p + 4 * i);
+        for (uint32_t i = 0; i < per_fat; ++i) cfb->fat[(size_t)f * per_fat + i] = rp_rd32(p + 4 * i);
     }
 
     // Directory.
@@ -184,22 +179,22 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
         if (out->type != RP_CFB_STORAGE && out->type != RP_CFB_STREAM && out->type != RP_CFB_ROOT) {
             FAIL(PROVEN_ERR_INVALID_FORMAT, "unknown directory entry type");
         }
-        uint16_t name_bytes = rd16(e + 64);
+        uint16_t name_bytes = rp_rd16(e + 64);
         if (name_bytes < 2 || name_bytes > 64 || name_bytes % 2 != 0) {
             FAIL(PROVEN_ERR_INVALID_FORMAT, "bad directory name length");
         }
         uint32_t units = name_bytes / 2;
-        for (uint32_t k = 0; k < units; ++k) out->name[k] = rd16(e + 2 * k);
+        for (uint32_t k = 0; k < units; ++k) out->name[k] = rp_rd16(e + 2 * k);
         if (out->name[units - 1] != 0) FAIL(PROVEN_ERR_INVALID_FORMAT, "directory name not terminated");
         out->name_len = units - 1;
-        out->left = rd32(e + 68);
-        out->right = rd32(e + 72);
-        out->child = rd32(e + 76);
+        out->left = rp_rd32(e + 68);
+        out->right = rp_rd32(e + 72);
+        out->child = rp_rd32(e + 76);
         memcpy(out->clsid, e + 80, 16);
-        out->state = rd32(e + 96);
+        out->state = rp_rd32(e + 96);
         memcpy(out->times, e + 100, 16);
-        out->start = rd32(e + 116);
-        out->size = cfb->major == 3 ? rd32(e + 120) : rd64(e + 120);
+        out->start = rp_rd32(e + 116);
+        out->size = cfb->major == 3 ? rp_rd32(e + 120) : rp_rd64(e + 120);
         // A stream cannot hold more than the whole file: a larger size is a lie that would reach
         // an allocation before the chain walk refuses it (found by fuzzing, T049).
         if ((out->type == RP_CFB_STREAM || out->type == RP_CFB_ROOT) && out->size > len) FAIL(PROVEN_ERR_INVALID_FORMAT, "a stream larger than the file");
@@ -224,7 +219,7 @@ proven_err_t rp_cfb_open(rp_cfb_t *cfb, proven_allocator_t alloc, const uint8_t 
         if (cfb->minifat == NULL) FAIL(PROVEN_ERR_NOMEM, "out of memory");
         for (size_t f = 0; f < n; ++f) {
             const uint8_t *p = sector(cfb, minifat_sectors[f]);
-            for (uint32_t i = 0; i < per_fat; ++i) cfb->minifat[f * per_fat + i] = rd32(p + 4 * i);
+            for (uint32_t i = 0; i < per_fat; ++i) cfb->minifat[f * per_fat + i] = rp_rd32(p + 4 * i);
         }
     }
     const rp_cfb_entry_t *root = &cfb->entries[0];

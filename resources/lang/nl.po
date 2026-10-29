@@ -2130,6 +2130,9 @@ msgstr "heeft een ModuleSubstitution-tabel zonder de standaardkolommen"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "heeft een ModuleSubstitution-sjabloon dat een item noemt dat ModuleConfiguration niet heeft"
 
+msgid "has a Registry table without the standard columns"
+msgstr "heeft een Registry-tabel zonder de standaardkolommen"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "heeft een onderdeel met een voorwaarde; een MSIX installeert alles"
 

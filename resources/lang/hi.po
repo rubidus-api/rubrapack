@@ -2130,6 +2130,9 @@ msgstr "इसमें मानक स्तंभों के बिना M
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "इसमें ModuleSubstitution टेम्पलेट ऐसा आइटम नामित करता है जो ModuleConfiguration में नहीं है"
 
+msgid "has a Registry table without the standard columns"
+msgstr "इसमें मानक स्तंभों के बिना Registry तालिका है"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "इसमें शर्त वाला घटक है; MSIX सब कुछ इंस्टॉल करता है"
 

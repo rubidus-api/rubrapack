@@ -64,6 +64,7 @@ void rp_hash_init(rp_hash_t *h, rp_hash_alg_t alg) {
 }
 
 void rp_hash_update(rp_hash_t *h, const void *data, size_t len) {
+    if (len == 0) return;                       // data may be NULL then (an empty stream's buffer)
     if (h->alg == RP_HASH_SHA256) {
         proven_sha256_update(&h->u.s256, (proven_mem_view_t){ (const proven_byte_t *)data, len });
         return;
@@ -254,6 +255,7 @@ void rp_sha1_init(rp_sha1_t *s) {
 }
 
 void rp_sha1_update(rp_sha1_t *s, const void *data, size_t len) {
+    if (len == 0) return;
     const uint8_t *p = data;
     size_t fill = (size_t)(s->n % 64);
     s->n += len;

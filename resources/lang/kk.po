@@ -2130,6 +2130,9 @@ msgstr "стандартты бағандары жоқ ModuleSubstitution кес
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration ішінде жоқ элементті атайтын ModuleSubstitution үлгісі бар"
 
+msgid "has a Registry table without the standard columns"
+msgstr "стандартты бағандары жоқ Registry кестесі бар"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "шарты бар құрамдас бөлік бар; MSIX бәрін орнатады"
 

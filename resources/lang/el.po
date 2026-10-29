@@ -2130,6 +2130,9 @@ msgstr "έχει πίνακα ModuleSubstitution χωρίς τις τυπικέ�
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "έχει πρότυπο ModuleSubstitution που ονομάζει στοιχείο που δεν έχει το ModuleConfiguration"
 
+msgid "has a Registry table without the standard columns"
+msgstr "έχει πίνακα Registry χωρίς τις τυπικές στήλες"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "έχει στοιχείο με συνθήκη· ένα MSIX εγκαθιστά τα πάντα"
 

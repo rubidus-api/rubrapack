@@ -2130,6 +2130,9 @@ msgstr "standart sütunları olmayan ModuleSubstitution cədvəli var"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration-da olmayan elementi adlandıran ModuleSubstitution şablonu var"
 
+msgid "has a Registry table without the standard columns"
+msgstr "standart sütunları olmayan Registry cədvəli var"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "şərti olan komponent var; MSIX hər şeyi quraşdırır"
 

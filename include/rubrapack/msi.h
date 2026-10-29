@@ -22,6 +22,9 @@
 #define RP_MSI_COL_NULLABLE    0x1000u
 #define RP_MSI_COL_KEY         0x2000u
 
+// A column of stream names (Binary, Icon, ...): a string column without the non-binary bit.
+static inline bool rp_msi_col_binary(uint16_t type) { return (type & RP_MSI_COL_STRING) && !(type & RP_MSI_COL_NONBINARY); }
+
 typedef struct {
     uint32_t offset;        // into the string data
     uint32_t length;        // bytes

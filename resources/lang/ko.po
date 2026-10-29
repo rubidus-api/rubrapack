@@ -2130,6 +2130,9 @@ msgstr "표준 열이 없는 ModuleSubstitution 표가 있습니다"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration 에 없는 항목을 가리키는 ModuleSubstitution 템플릿이 있습니다"
 
+msgid "has a Registry table without the standard columns"
+msgstr "표준 열이 없는 Registry 표가 있습니다"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "조건이 붙은 구성 요소가 있습니다. MSIX 는 전부 설치합니다"
 

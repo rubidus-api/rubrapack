@@ -54,7 +54,7 @@ static void mont_mul(const rp_mont_t *m, uint32_t *r, const uint32_t *a, const u
     cond_sub(m, r, t, t[k]);
 }
 
-static void from_be(uint32_t *v, size_t k, const uint8_t *b, size_t len) {
+void rp_bn_from_be(uint32_t *v, size_t k, const uint8_t *b, size_t len) {
     memset(v, 0, k * sizeof *v);
     for (size_t i = 0; i < len && i < 4 * k; ++i) v[i / 4] |= (uint32_t)b[len - 1 - i] << (8 * (i % 4));
 }
@@ -67,7 +67,7 @@ bool rp_mont_init(rp_mont_t *m, const uint8_t *mod, size_t len) {
     }
     if (len == 0 || len > 4 * RP_BN_LIMBS || !(mod[len - 1] & 1)) return false;
     m->k = (len + 3) / 4;
-    from_be(m->n, m->k, mod, len);
+    rp_bn_from_be(m->n, m->k, mod, len);
     m->bits = 32 * m->k;
     while (m->bits && !(m->n[(m->bits - 1) / 32] >> ((m->bits - 1) % 32) & 1)) --m->bits;
     // n0inv = -n^-1 mod 2^32 by Newton's iteration (each step doubles the correct bits).
@@ -100,7 +100,7 @@ void rp_mont_reduce_bytes(const rp_mont_t *m, const uint8_t *x, size_t len, uint
     // hi R mod n = mont(hi, R^2), lo mod n = mont(mont(lo, R^2), 1); then one modular addition.
     size_t k = m->k;
     uint32_t full[2 * RP_BN_LIMBS], a[RP_BN_LIMBS], b[RP_BN_LIMBS], one[RP_BN_LIMBS] = { 1 };
-    from_be(full, 2 * k, x, len);
+    rp_bn_from_be(full, 2 * k, x, len);
     mont_mul(m, a, full, m->rr);            // lo R
     mont_mul(m, a, a, one);                 // lo mod n
     mont_mul(m, b, full + k, m->rr);        // hi R mod n

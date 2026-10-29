@@ -222,8 +222,12 @@ static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_par
 static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
     tab_t file, comp, dir, hash;
     int rc = RP_EXIT_OK;
-    if (!load_table(msi, "File", &file) || !load_table(msi, "Component", &comp) || !load_table(msi, "Directory", &dir) ||
-        !load_table(msi, "MsiFileHash", &hash)) {
+    // All four are loaded (each starts empty) even when one fails: every one is read and freed below.
+    bool ok_file = load_table(msi, "File", &file), ok_comp = load_table(msi, "Component", &comp),
+         ok_dir = load_table(msi, "Directory", &dir), ok_hash = load_table(msi, "MsiFileHash", &hash);
+    if (!ok_file || !ok_comp || !ok_dir || !ok_hash) {
+        rp_diag_error(RP_DIAG_BAD_PACKAGE, "table '%s' is unreadable",
+                      !ok_file ? "File" : !ok_comp ? "Component" : !ok_dir ? "Directory" : "MsiFileHash");
         rc = RP_EXIT_IO;
     }
     int f_ver = column_of(msi, &file, "Version"), f_lang = column_of(msi, &file, "Language");
@@ -242,9 +246,15 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
     // One line per file: path, size, File key, Component, version, language, MD5 (MsiFileHash);
     // sorted by bytes.
     size_t n = file.present ? file.rows.row_count : 0;
+    // Every line starts empty, so the ones a broken chain stops before are freed safely.
     rp_buf_t *lines = rp_mem_alloc(alloc, n, sizeof *lines);
+    if (lines == NULL) {
+        rp_diag_error(RP_DIAG_NOMEM, "out of memory");
+        rc = RP_EXIT_IO;
+        n = 0;
+    }
+    for (size_t r = 0; r < n; ++r) lines[r] = rp_buf_new(alloc, 1u << 16);
     for (size_t r = 0; rc == RP_EXIT_OK && r < n; ++r) {
-        lines[r] = rp_buf_new(alloc, 1u << 16);
         rp_msi_value_t compref = cell(&file, r, f_comp);
         size_t crow = SIZE_MAX;
         for (size_t k = 0; k < comp.rows.row_count; ++k) {

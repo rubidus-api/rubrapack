@@ -7,6 +7,7 @@
 
 #include "rubrapack/ui.h"
 #include "rubrapack/lang.h"
+#include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 
 #include <stdio.h>
@@ -1654,24 +1655,21 @@ static void white_bmp(uint8_t out[58]) {
     memcpy(out, bmp, sizeof bmp);
 }
 
-static void put16(uint8_t *p, uint32_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
-static void put32(uint8_t *p, uint32_t v) { put16(p, v); put16(p + 2, v >> 16); }
-
 // The warning icon of the error dialog (K1: no bitmaps of anyone else's): an amber disc with a
 // white exclamation mark, drawn here.
 static void warn_icon(uint8_t out[ICON_SIZE]) {
     memset(out, 0, ICON_SIZE);
-    put16(out + 2, 1);                                  // type: icon
-    put16(out + 4, 1);                                  // one image
+    rp_wr16(out + 2, 1);                                  // type: icon
+    rp_wr16(out + 4, 1);                                  // one image
     uint8_t *e = out + 6;
     e[0] = 32; e[1] = 32;                               // width, height
-    put16(e + 4, 1); put16(e + 6, 32);                  // planes, bits
-    put32(e + 8, 40 + ICON_PIXELS + 32 * 4);            // image size
-    put32(e + 12, 6 + 16);                              // image offset
+    rp_wr16(e + 4, 1); rp_wr16(e + 6, 32);                  // planes, bits
+    rp_wr32(e + 8, 40 + ICON_PIXELS + 32 * 4);            // image size
+    rp_wr32(e + 12, 6 + 16);                              // image offset
     uint8_t *h = out + 22;
-    put32(h, 40); put32(h + 4, 32); put32(h + 8, 64);   // header size, width, height x 2 (image + mask)
-    put16(h + 12, 1); put16(h + 14, 32);
-    put32(h + 20, ICON_PIXELS + 32 * 4);
+    rp_wr32(h, 40); rp_wr32(h + 4, 32); rp_wr32(h + 8, 64);   // header size, width, height x 2 (image + mask)
+    rp_wr16(h + 12, 1); rp_wr16(h + 14, 32);
+    rp_wr32(h + 20, ICON_PIXELS + 32 * 4);
     uint8_t *px = h + 40;
     for (int y = 0; y < 32; ++y) {                      // y from the top; BMP rows go bottom up
         for (int x = 0; x < 32; ++x) {

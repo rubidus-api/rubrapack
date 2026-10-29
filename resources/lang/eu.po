@@ -2130,6 +2130,9 @@ msgstr "zutabe estandarrik gabeko ModuleSubstitution taula bat du"
 msgid "has a ModuleSubstitution template naming an item that ModuleConfiguration does not have"
 msgstr "ModuleConfiguration-ek ez duen elementu bat izendatzen duen ModuleSubstitution txantiloi bat du"
 
+msgid "has a Registry table without the standard columns"
+msgstr "zutabe estandarrik gabeko Registry taula bat du"
+
 msgid "has a component with a condition; an MSIX installs everything"
 msgstr "baldintza bat duen osagai bat du; MSIX batek dena instalatzen du"
 
