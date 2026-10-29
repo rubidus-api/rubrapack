@@ -11,6 +11,7 @@
 // marker 1 and a stream "<Table>.<keys>" in the transform. The summary stream names both packages.
 // This is the layout msi.dll's GenerateTransform writes (tests/fixtures/mst/ref.mst, T108).
 
+#include "rubrapack/in.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/lang.h"
 #include "rubrapack/suminfo.h"
@@ -248,8 +249,8 @@ static proven_err_t diff_table(wctx_t *w, const rp_msi_wtable_t *a, const rp_msi
     const rp_msi_cell_t **ra = rp_mem_alloc(w->alloc, a->row_count + 1, sizeof *ra);
     const rp_msi_cell_t **rb = rp_mem_alloc(w->alloc, b->row_count + 1, sizeof *rb);
     proven_err_t err = ra && rb ? PROVEN_OK : PROVEN_ERR_NOMEM;
-    for (size_t r = 0; err == PROVEN_OK && r < a->row_count; ++r) ra[r] = &a->cells[r * nc];
-    for (size_t r = 0; err == PROVEN_OK && r < b->row_count; ++r) rb[r] = &b->cells[r * nc];
+    for (size_t r = 0; err == PROVEN_OK && r < a->row_count; ++r) ra[r] = rp_msi_wrow(a, r);      // same columns as b
+    for (size_t r = 0; err == PROVEN_OK && r < b->row_count; ++r) rb[r] = rp_msi_wrow(b, r);
     if (err == PROVEN_OK && (!sort_rows(w->alloc, a->columns, nc, ra, a->row_count) || !sort_rows(w->alloc, b->columns, nc, rb, b->row_count))) {
         err = PROVEN_ERR_NOMEM;
     }
@@ -445,11 +446,10 @@ static void property(const rp_msi_wdb_t *db, const char *name, const uint8_t **p
     const rp_msi_wtable_t *t = find_table(db, "Property");
     if (t == NULL || t->column_count < 2) return;
     for (size_t r = 0; r < t->row_count; ++r) {
-        const rp_msi_cell_t *row = &t->cells[r * t->column_count];
-        if (row[0].kind == RP_MSI_STR && row[0].len == strlen(name) && memcmp(row[0].bytes, name, row[0].len) == 0 &&
-            row[1].kind == RP_MSI_STR) {
-            *p = row[1].bytes;
-            *n = row[1].len;
+        const rp_msi_cell_t *k = rp_msi_wcell(t, r, 0), *v = rp_msi_wcell(t, r, 1);
+        if (k->kind == RP_MSI_STR && k->len == strlen(name) && memcmp(k->bytes, name, k->len) == 0 && v->kind == RP_MSI_STR) {
+            *p = v->bytes;
+            *n = v->len;
             return;
         }
     }
@@ -587,7 +587,7 @@ proven_err_t rp_mst_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
             }
             otab_t *o = add_tab(&w, tb->name, tb->columns, tb->column_count);
             if (o == NULL) err = PROVEN_ERR_NOMEM;
-            for (size_t r = 0; err == PROVEN_OK && r < tb->row_count; ++r) err = insert_row(&w, o, &tb->cells[r * tb->column_count]);
+            for (size_t r = 0; err == PROVEN_OK && r < tb->row_count; ++r) err = insert_row(&w, o, rp_msi_wrow(tb, r));
         }
     }
 
@@ -699,6 +699,15 @@ typedef struct {
     size_t             nadded, addcap;
 } lctx_t;
 
+// The bytes of the transform's string `id` (id < nstr, checked when the record was read).
+static const uint8_t *lstr(const lctx_t *l, uint32_t id, size_t *len) {
+    static const uint8_t none[1];
+    rp_in_t in = rp_in(l->data, l->data_len);
+    const uint8_t *p = id < l->nstr ? rp_in_bytes(&in, l->strs[id].off, l->strs[id].len) : NULL;
+    *len = p ? l->strs[id].len : 0;
+    return p ? p : none;
+}
+
 static void put_text(rp_buf_t *b, const uint8_t *p, size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (p[i] < 0x20 || p[i] == 0x7F) {
@@ -744,12 +753,13 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
         *why = TR_N("a table has more than 32 columns");
         return PROVEN_ERR_INVALID_FORMAT;
     }
+    rp_in_t in = rp_in(d, n);
     for (size_t o = 0; o < n;) {
         if (n - o < 2) {
             *why = TR_N("a record is cut short");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        uint32_t mask = (uint32_t)(d[o] | d[o + 1] << 8);
+        uint32_t mask = rp_in16(&in, o);
         o += 2;
         if ((mask & 1) && (mask >> 8) > ncols) {
             *why = TR_N("a record has more columns than its table");
@@ -765,9 +775,11 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
                 *why = TR_N("a record is cut short");
                 return PROVEN_ERR_INVALID_FORMAT;
             }
-            uint32_t x = w == 4 ? (uint32_t)d[o] | (uint32_t)d[o + 1] << 8 | (uint32_t)d[o + 2] << 16 | (uint32_t)d[o + 3] << 24
-                       : w == 3 ? (uint32_t)d[o] | (uint32_t)d[o + 1] << 8 | (uint32_t)d[o + 2] << 16
-                                : (uint32_t)d[o] | (uint32_t)d[o + 1] << 8;
+            uint32_t x = w == 4 ? rp_in32(&in, o) : w == 3 ? rp_in16(&in, o) | (uint32_t)rp_in8(&in, o + 2) << 16 : rp_in16(&in, o);
+            if (in.bad) {
+                *why = TR_N("a record is cut short");
+                return PROVEN_ERR_INVALID_FORMAT;
+            }
             o += w;
             if (x == 0) continue;
             if (rp_msi_col_binary(type)) v[c] = (lval_t){ .kind = RP_MSI_BINARY, .s = x };
@@ -783,10 +795,12 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
         }
         // A new table's columns, for the records of that table.
         if (strcmp(name, "_Columns") == 0 && v[0].kind == RP_MSI_STR && v[2].kind == RP_MSI_STR && v[3].kind == RP_MSI_INT) {
-            schema_t *s = added_schema(l, l->data + l->strs[v[0].s].off, l->strs[v[0].s].len);
-            if (s && s->ncols < 32 && l->strs[v[2].s].len < sizeof s->colnames[0]) {
-                memcpy(s->colnames[s->ncols], l->data + l->strs[v[2].s].off, l->strs[v[2].s].len);
-                s->colnames[s->ncols][l->strs[v[2].s].len] = '\0';
+            size_t tn, cn;
+            const uint8_t *tname = lstr(l, v[0].s, &tn), *cname = lstr(l, v[2].s, &cn);
+            schema_t *s = added_schema(l, tname, tn);
+            if (s && s->ncols < 32 && cn < sizeof s->colnames[0]) {
+                memcpy(s->colnames[s->ncols], cname, cn);
+                s->colnames[s->ncols][cn] = '\0';
                 s->cols[s->ncols] = (rp_msi_wcolumn_t){ s->colnames[s->ncols], (uint16_t)v[3].i };
                 s->ncols++;
             }
@@ -798,7 +812,9 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
         for (size_t c = 0; c < ncols; ++c) {
             if (!(cols[c].type & RP_MSI_COL_KEY)) continue;
             if (v[c].kind == RP_MSI_STR && so < sizeof sname) {
-                so += (size_t)snprintf(sname + so, sizeof sname - so, ".%.*s", (int)l->strs[v[c].s].len, (const char *)l->data + l->strs[v[c].s].off);
+                size_t kn;
+                const uint8_t *kv = lstr(l, v[c].s, &kn);
+                so += (size_t)snprintf(sname + so, sizeof sname - so, ".%.*s", (int)kn, (const char *)kv);
             } else if (so < sizeof sname) {
                 so += (size_t)snprintf(sname + so, sizeof sname - so, ".%ld", v[c].kind == RP_MSI_INT ? (long)v[c].i : 0L);
             }
@@ -811,7 +827,9 @@ static proven_err_t list_table(lctx_t *l, const char *name, const rp_msi_wcolumn
                 rp_buf_byte(out, '=');
             }
             if (v[c].kind == RP_MSI_STR) {
-                put_text(out, l->data + l->strs[v[c].s].off, l->strs[v[c].s].len);
+                size_t sn;
+                const uint8_t *sv = lstr(l, v[c].s, &sn);
+                put_text(out, sv, sn);
             } else if (v[c].kind == RP_MSI_INT) {
                 rp_buf_long(out, v[c].i);
             } else if (v[c].kind == RP_MSI_BINARY) {
@@ -850,17 +868,18 @@ proven_err_t rp_mst_list(proven_allocator_t alloc, const rp_cfb_t *mst, uint32_t
         err = PROVEN_ERR_INVALID_FORMAT;
     }
     if (err == PROVEN_OK) {
-        l.long_refs = (pool[3] & 0x80) != 0;
+        rp_in_t pin = rp_in(pool, pool_len);
+        l.long_refs = (rp_in8(&pin, 3) & 0x80) != 0;
         l.strs = rp_mem_alloc(alloc, pool_len / 4 + 1, sizeof *l.strs);
         if (l.strs == NULL) err = PROVEN_ERR_NOMEM;
         l.nstr = 1;
         uint64_t off = 0;
         for (size_t i = 4; err == PROVEN_OK && i + 4 <= pool_len; i += 4) {
-            uint32_t n = (uint32_t)(pool[i] | pool[i + 1] << 8);
-            uint16_t refs = (uint16_t)(pool[i + 2] | pool[i + 3] << 8);
+            uint32_t n = rp_in16(&pin, i);
+            uint16_t refs = rp_in16(&pin, i + 2);
             if (n == 0 && refs != 0) {
                 if (i + 8 > pool_len) break;
-                n = (uint32_t)pool[i + 4] | (uint32_t)pool[i + 5] << 8 | (uint32_t)pool[i + 6] << 16 | (uint32_t)pool[i + 7] << 24;
+                n = rp_in32(&pin, i + 4);
                 i += 4;
             }
             if (off + n > l.data_len) {
@@ -1007,8 +1026,8 @@ static proven_err_t diff_rows(proven_allocator_t alloc, const rp_mst_side_t *sa,
     const rp_msi_cell_t **rb = rp_mem_alloc(alloc, b->row_count + 1, sizeof *rb);
     size_t na = a ? a->row_count : 0;
     proven_err_t err = ra && rb ? PROVEN_OK : PROVEN_ERR_NOMEM;
-    for (size_t r = 0; err == PROVEN_OK && r < na; ++r) ra[r] = &a->cells[r * nc];
-    for (size_t r = 0; err == PROVEN_OK && r < b->row_count; ++r) rb[r] = &b->cells[r * nc];
+    for (size_t r = 0; err == PROVEN_OK && r < na; ++r) ra[r] = rp_msi_wrow(a, r);              // same columns as b (the caller)
+    for (size_t r = 0; err == PROVEN_OK && r < b->row_count; ++r) rb[r] = rp_msi_wrow(b, r);
     if (err == PROVEN_OK && (!sort_rows(alloc, b->columns, nc, ra, na) || !sort_rows(alloc, b->columns, nc, rb, b->row_count))) err = PROVEN_ERR_NOMEM;
     size_t i = 0, j = 0;
     while (err == PROVEN_OK && (i < na || j < b->row_count)) {

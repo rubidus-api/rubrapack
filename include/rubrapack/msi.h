@@ -144,6 +144,12 @@ static inline const rp_msi_cell_t *rp_msi_wcell(const rp_msi_wtable_t *t, size_t
     return &t->cells[row * t->column_count + (size_t)col];
 }
 
+// A whole row of such a table (column_count cells), NULL past its rows: indexed only below the
+// table's own column_count, as a loop over its columns does; a named column is rp_msi_wcell's.
+static inline const rp_msi_cell_t *rp_msi_wrow(const rp_msi_wtable_t *t, size_t row) {
+    return t != NULL && row < t->row_count ? &t->cells[row * t->column_count] : NULL;
+}
+
 typedef struct {
     const char    *name;    // stream name before packing (e.g. "cab1.cab"); not a table
     const uint8_t *data;

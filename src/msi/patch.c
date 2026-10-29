@@ -92,21 +92,20 @@ static char *cstr(pctx_t *p, const rp_msi_cell_t *c) {
     return s;
 }
 
-// The row of `t` whose first column is `key`, or NULL.
-static const rp_msi_cell_t *row_by_key(const rp_msi_wtable_t *t, const rp_msi_cell_t *key) {
+// The row of `t` whose first column is `key`, or SIZE_MAX.
+static size_t row_by_key(const rp_msi_wtable_t *t, const rp_msi_cell_t *key) {
     for (size_t r = 0; t && r < t->row_count; ++r) {
-        if (same_str(&t->cells[r * t->column_count], key)) return &t->cells[r * t->column_count];
+        if (same_str(rp_msi_wcell(t, r, 0), key)) return r;
     }
-    return NULL;
+    return SIZE_MAX;
 }
 
 // Property.Value of `name`, NUL-terminated ("" when there is none).
 static char *property(pctx_t *p, const rp_msi_wdb_t *db, const char *name) {
     const rp_msi_wtable_t *t = table(db, "Property");
     rp_msi_cell_t key = str_cell(name);
-    const rp_msi_cell_t *row = t && t->column_count >= 2 ? row_by_key(t, &key) : NULL;
-    rp_msi_cell_t none = { .kind = RP_MSI_NULL };
-    return cstr(p, row ? &row[1] : &none);
+    size_t row = t && t->column_count >= 2 ? row_by_key(t, &key) : SIZE_MAX;
+    return cstr(p, rp_msi_wcell(t, row, 1));
 }
 
 static void version(const char *s, long v[4]) {
@@ -159,7 +158,7 @@ static proven_err_t load_files(pctx_t *p, const rp_mst_side_t *side, files_t *ou
     int cab = col(m, "Cabinet");
     if (m == NULL || cab < 0) return PROVEN_OK;
     for (size_t r = 0; r < m->row_count; ++r) {
-        const rp_msi_cell_t *c = &m->cells[r * m->column_count + (size_t)cab];
+        const rp_msi_cell_t *c = rp_msi_wcell(m, r, cab);
         if (c->kind != RP_MSI_STR || c->len == 0) continue;
         if (c->bytes[0] != '#') return refuse(p, (const char *)c->bytes, c->len, "is an external cabinet; a patch is made from packages whose cabinets are embedded");
         char name[80];
@@ -298,18 +297,21 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
 
     // Components and files may change and be added, not removed.
     const rp_msi_wtable_t *ca = table(A, "Component"), *cb = table(B, "Component");
-    int cid = col(cb, "ComponentId");
+    // Each table's own column: the two may lay out Component differently (a damaged base read
+    // past its table's cells with the target's column number until 2026-10-29).
+    int cid = col(cb, "ComponentId"), cid_a = col(ca, "ComponentId");
     for (size_t r = 0; err == PROVEN_OK && ca && r < ca->row_count; ++r) {
-        const rp_msi_cell_t *ra = &ca->cells[r * ca->column_count], *rb = cb ? row_by_key(cb, &ra[0]) : NULL;
-        if (rb == NULL) err = refuse(p, (const char *)ra[0].bytes, ra[0].len, "is a component the target no longer has; a patch cannot remove components");
-        else if (cid >= 0 && !same_str(&ra[cid], &rb[cid])) err = refuse(p, (const char *)ra[0].bytes, ra[0].len, "is a component whose GUID changed");
+        const rp_msi_cell_t *ka = rp_msi_wcell(ca, r, 0);
+        size_t rb = cb ? row_by_key(cb, ka) : SIZE_MAX;
+        if (rb == SIZE_MAX) err = refuse(p, (const char *)ka->bytes, ka->len, "is a component the target no longer has; a patch cannot remove components");
+        else if (cid >= 0 && !same_str(rp_msi_wcell(ca, r, cid_a), rp_msi_wcell(cb, rb, cid))) err = refuse(p, (const char *)ka->bytes, ka->len, "is a component whose GUID changed");
     }
     const rp_msi_wtable_t *fa = table(A, "File"), *fb = table(B, "File");
     int fseq = col(fb, "Sequence"), fattr = col(fb, "Attributes");
     if (err == PROVEN_OK && fb && (fseq < 0 || fattr < 0 || (fa && col(fa, "Sequence") != fseq))) err = refuse(p, "File", 4, "has columns rubrapack does not know");
     for (size_t r = 0; err == PROVEN_OK && fa && r < fa->row_count; ++r) {
-        const rp_msi_cell_t *ra = &fa->cells[r * fa->column_count];
-        if (!fb || row_by_key(fb, &ra[0]) == NULL) err = refuse(p, (const char *)ra[0].bytes, ra[0].len, "is a file the target no longer has; a patch cannot remove files");
+        const rp_msi_cell_t *ka = rp_msi_wcell(fa, r, 0);
+        if (!fb || row_by_key(fb, ka) == SIZE_MAX) err = refuse(p, (const char *)ka->bytes, ka->len, "is a file the target no longer has; a patch cannot remove files");
     }
 
     // The files the patch carries: new ones, and those whose bytes changed.
@@ -323,21 +325,21 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         pick = zalloc(p, fb->row_count, sizeof *pick);
         if (err == PROVEN_OK && pick == NULL) err = PROVEN_ERR_NOMEM;
         for (size_t r = 0; err == PROVEN_OK && r < fb->row_count; ++r) {
-            const rp_msi_cell_t *rb = &fb->cells[r * fb->column_count];
-            const rp_cab_file_t *nb = file_bytes(&bytes_b, &rb[0]);
+            const rp_msi_cell_t *kb = rp_msi_wcell(fb, r, 0);
+            const rp_cab_file_t *nb = file_bytes(&bytes_b, kb);
             if (nb == NULL) {
-                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file whose bytes the target does not hold");
+                err = refuse(p, (const char *)kb->bytes, kb->len, "is a file whose bytes the target does not hold");
                 break;
             }
-            const rp_msi_cell_t *ra = fa ? row_by_key(fa, &rb[0]) : NULL;
-            const rp_cab_file_t *na = ra ? file_bytes(&bytes_a, &rb[0]) : NULL;
-            if (ra && na == NULL) {
-                err = refuse(p, (const char *)rb[0].bytes, rb[0].len, "is a file whose bytes the base does not hold");
+            size_t ra = fa ? row_by_key(fa, kb) : SIZE_MAX;
+            const rp_cab_file_t *na = ra != SIZE_MAX ? file_bytes(&bytes_a, kb) : NULL;
+            if (ra != SIZE_MAX && na == NULL) {
+                err = refuse(p, (const char *)kb->bytes, kb->len, "is a file whose bytes the base does not hold");
                 break;
             }
-            if (ra == NULL || na->size != nb->size || memcmp(na->data, nb->data, nb->size) != 0) {
+            if (ra == SIZE_MAX || na->size != nb->size || memcmp(na->data, nb->data, nb->size) != 0) {
                 size_t k = npick++;      // in the target's Sequence order
-                while (k > 0 && fb->cells[pick[k - 1] * fb->column_count + (size_t)fseq].i > rb[fseq].i) {
+                while (k > 0 && rp_msi_wcell(fb, pick[k - 1], fseq)->i > rp_msi_wcell(fb, r, fseq)->i) {
                     pick[k] = pick[k - 1];
                     --k;
                 }
@@ -351,11 +353,11 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     if (err == PROVEN_OK && tp == NULL) err = PROVEN_ERR_NOMEM;
     const rp_msi_wtable_t *ma = table(A, "Media");
     int32_t max_seq = 0, max_disk = 0;
+    int ls = col(ma, "LastSequence");
     for (size_t r = 0; ma && r < ma->row_count; ++r) {
-        const rp_msi_cell_t *row = &ma->cells[r * ma->column_count];
-        int ls = col(ma, "LastSequence");
-        if (row[0].kind == RP_MSI_INT && row[0].i > max_disk) max_disk = row[0].i;
-        if (ls >= 0 && row[ls].kind == RP_MSI_INT && row[ls].i > max_seq) max_seq = row[ls].i;
+        const rp_msi_cell_t *disk_id = rp_msi_wcell(ma, r, 0), *last = rp_msi_wcell(ma, r, ls);
+        if (disk_id->kind == RP_MSI_INT && disk_id->i > max_disk) max_disk = disk_id->i;
+        if (last->kind == RP_MSI_INT && last->i > max_seq) max_seq = last->i;
     }
     for (size_t t = 0; err == PROVEN_OK && t < B->table_count; ++t) {
         tp[t] = B->tables[t];
@@ -363,9 +365,9 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
             rp_msi_cell_t *cells = grow(p, fb, 0);
             if (cells == NULL) err = PROVEN_ERR_NOMEM;
             for (size_t r = 0; err == PROVEN_OK && r < fb->row_count; ++r) {
-                rp_msi_cell_t *row = &cells[r * fb->column_count];
-                const rp_msi_cell_t *ra = fa ? row_by_key(fa, &row[0]) : NULL;
-                if (ra) row[fseq] = ra[fseq];
+                rp_msi_cell_t *row = &cells[r * fb->column_count];         // our copy of the target's File
+                size_t ra = fa ? row_by_key(fa, &row[0]) : SIZE_MAX;
+                if (ra != SIZE_MAX) row[fseq] = *rp_msi_wcell(fa, ra, fseq);      // fa's Sequence is fb's column (checked)
                 if (row[fseq].kind == RP_MSI_INT && row[fseq].i > max_seq) max_seq = row[fseq].i;
             }
             tp[t].cells = cells;
@@ -437,7 +439,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
             if (*new_comments) put_row(x, cells, names, v3, 2);
         } else if ((strcmp(x->name, "InstallExecuteSequence") == 0 || strcmp(x->name, "AdminExecuteSequence") == 0)) {
             rp_msi_cell_t key = str_cell("PatchFiles");
-            if (row_by_key(x, &key) == NULL) {
+            if (row_by_key(x, &key) == SIZE_MAX) {
                 rp_msi_cell_t *cells = grow(p, x, 1);
                 if (cells == NULL) {
                     err = PROVEN_ERR_NOMEM;
@@ -485,9 +487,9 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         char **keys = zalloc(p, npick, sizeof *keys);
         if (cf == NULL || keys == NULL) err = PROVEN_ERR_NOMEM;
         for (size_t k = 0; err == PROVEN_OK && k < npick; ++k) {
-            const rp_msi_cell_t *rb = &fb->cells[pick[k] * fb->column_count];
-            const rp_cab_file_t *nb = file_bytes(&bytes_b, &rb[0]);
-            keys[k] = cstr(p, &rb[0]);
+            const rp_msi_cell_t *kb = rp_msi_wcell(fb, pick[k], 0);
+            const rp_cab_file_t *nb = file_bytes(&bytes_b, kb);
+            keys[k] = cstr(p, kb);
             if (keys[k] == NULL) err = PROVEN_ERR_NOMEM;
             cf[k] = (rp_cab_file_t){ keys[k], nb->data, nb->size };
         }

@@ -98,7 +98,7 @@ proven_err_t rp_msi_module_open(proven_allocator_t alloc, const char *path, rp_m
         return PROVEN_ERR_INVALID_FORMAT;
     }
     // ModuleID is <name>.<GUID with underscores>
-    const rp_msi_cell_t *id = &sig->cells[0];
+    const rp_msi_cell_t *id = rp_msi_wcell(sig, 0, 0);
     size_t n = id->kind == RP_MSI_STR && id->len < sizeof m->module_id ? id->len : 0;
     if (n) memcpy(m->module_id, id->bytes, n);
     m->module_id[n] = 0;
@@ -184,7 +184,7 @@ static int32_t max_int(const rp_msi_wtable_t *t, const char *col) {
     int c = t ? col_of(t, col) : -1;
     int32_t best = 0;
     for (size_t r = 0; c >= 0 && r < t->row_count; ++r) {
-        const rp_msi_cell_t *x = &t->cells[r * t->column_count + (size_t)c];
+        const rp_msi_cell_t *x = rp_msi_wcell(t, r, c);
         if (x->kind == RP_MSI_INT && x->i > best) best = x->i;
     }
     return best;
@@ -192,9 +192,9 @@ static int32_t max_int(const rp_msi_wtable_t *t, const char *col) {
 
 static bool seq_has(const rp_msi_wtable_t *t, const char *action, int32_t *seq) {
     for (size_t r = 0; t && r < t->row_count; ++r) {
-        const rp_msi_cell_t *row = &t->cells[r * t->column_count];
-        if (cell_is(&row[0], action)) {
-            if (seq) *seq = row[2].kind == RP_MSI_INT ? row[2].i : 0;
+        if (cell_is(rp_msi_wcell(t, r, 0), action)) {
+            const rp_msi_cell_t *n = rp_msi_wcell(t, r, 2);
+            if (seq) *seq = n->kind == RP_MSI_INT ? n->i : 0;
             return true;
         }
     }
@@ -203,7 +203,7 @@ static bool seq_has(const rp_msi_wtable_t *t, const char *action, int32_t *seq) 
 
 static bool seq_taken(const rp_msi_wtable_t *t, int32_t n) {
     for (size_t r = 0; t && r < t->row_count; ++r) {
-        const rp_msi_cell_t *x = &t->cells[r * t->column_count + 2];
+        const rp_msi_cell_t *x = rp_msi_wcell(t, r, 2);
         if (x->kind == RP_MSI_INT && x->i == n) return true;
     }
     return false;
@@ -233,30 +233,31 @@ static proven_err_t merge_sequence(rp_msi_module_t *m, rp_msi_wtable_t *tables, 
         bool moved = false;
         for (size_t r = 0; r < ms->row_count; ++r) {
             if (done[r]) continue;
-            const rp_msi_cell_t *row = &ms->cells[r * ms->column_count];
+            const rp_msi_cell_t *c_a = rp_msi_wcell(ms, r, ca), *c_s = rp_msi_wcell(ms, r, cs), *c_b = rp_msi_wcell(ms, r, cb),
+                                *c_f = rp_msi_wcell(ms, r, cf), *c_c = rp_msi_wcell(ms, r, cc);
             char action[128];
-            if (row[ca].kind != RP_MSI_STR || row[ca].len >= sizeof action) continue;
-            memcpy(action, row[ca].bytes, row[ca].len);
-            action[row[ca].len] = 0;
+            if (c_a->kind != RP_MSI_STR || c_a->len >= sizeof action) continue;
+            memcpy(action, c_a->bytes, c_a->len);
+            action[c_a->len] = 0;
             if (seq_has(ps, action, NULL)) {        // a standard action the package already runs
                 done[r] = moved = true;
                 continue;
             }
             int32_t seq;
-            if (row[cs].kind == RP_MSI_INT) {
-                seq = row[cs].i;
+            if (c_s->kind == RP_MSI_INT) {
+                seq = c_s->i;
             } else {
                 char base[128];
-                if (row[cb].kind != RP_MSI_STR || row[cb].len >= sizeof base) continue;
-                memcpy(base, row[cb].bytes, row[cb].len);
-                base[row[cb].len] = 0;
+                if (c_b->kind != RP_MSI_STR || c_b->len >= sizeof base) continue;
+                memcpy(base, c_b->bytes, c_b->len);
+                base[c_b->len] = 0;
                 int32_t b;
                 if (!seq_has(ps, base, &b)) continue;   // not placed yet: a later pass
-                bool after = row[cf].kind == RP_MSI_INT && row[cf].i != 0;
+                bool after = c_f->kind == RP_MSI_INT && c_f->i != 0;
                 seq = after ? b + 1 : b - 1;
                 while (seq_taken(ps, seq) && seq > 0 && seq < 32767) seq += after ? 1 : -1;
             }
-            rp_msi_cell_t add[3] = { rp_msi_str_cell(keep_str(m, action)), row[cc], { .kind = RP_MSI_INT, .i = seq } };
+            rp_msi_cell_t add[3] = { rp_msi_str_cell(keep_str(m, action)), *c_c, { .kind = RP_MSI_INT, .i = seq } };
             if (add[0].bytes == NULL) return PROVEN_ERR_NOMEM;
             proven_err_t err = append_rows(m, ps, add, 1);
             if (err != PROVEN_OK) return err;
@@ -368,16 +369,17 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
     item_t *items = keep_alloc(m, ni, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     for (size_t r = 0; r < ni; ++r) {
-        const rp_msi_cell_t *c = &cfg->cells[r * cfg->column_count];
         int cn = col_of(cfg, "Name"), cf = col_of(cfg, "Format"), ct = col_of(cfg, "Type"), cx = col_of(cfg, "ContextData"),
             cd = col_of(cfg, "DefaultValue"), ca = col_of(cfg, "Attributes");
         if (cn < 0 || cf < 0 || cd < 0) {
             *why = TR_N("has a ModuleConfiguration table without the standard columns");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        items[r] = (item_t){ .name = cell_text(m, &c[cn]), .format = c[cf].kind == RP_MSI_INT ? c[cf].i : -1,
-                             .type = ct >= 0 ? cell_text(m, &c[ct]) : NULL, .ctx = cx >= 0 ? cell_text(m, &c[cx]) : NULL,
-                             .dflt = cell_text(m, &c[cd]), .attrs = ca >= 0 && c[ca].kind == RP_MSI_INT ? c[ca].i : 0, .declined = true };
+        const rp_msi_cell_t *c_f = rp_msi_wcell(cfg, r, cf), *c_a = rp_msi_wcell(cfg, r, ca);
+        items[r] = (item_t){ .name = cell_text(m, rp_msi_wcell(cfg, r, cn)), .format = c_f->kind == RP_MSI_INT ? c_f->i : -1,
+                             .type = ct >= 0 ? cell_text(m, rp_msi_wcell(cfg, r, ct)) : NULL,
+                             .ctx = cx >= 0 ? cell_text(m, rp_msi_wcell(cfg, r, cx)) : NULL, .dflt = cell_text(m, rp_msi_wcell(cfg, r, cd)),
+                             .attrs = c_a->kind == RP_MSI_INT ? c_a->i : 0, .declined = true };
         if (items[r].name == NULL || items[r].format < 0 || items[r].format > 3) {
             *why = TR_N("has a ModuleConfiguration item without a name or with an unknown format");
             return PROVEN_ERR_INVALID_FORMAT;
@@ -412,14 +414,13 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
     if (orig == NULL) return PROVEN_ERR_NOMEM;
     for (size_t t = 0; t < m->ntabs; ++t) orig[t] = m->tabs[t].cells;
     for (size_t r = 0; sub && r < sub->row_count; ++r) {
-        const rp_msi_cell_t *c = &sub->cells[r * sub->column_count];
         int ctab = col_of(sub, "Table"), crow = col_of(sub, "Row"), ccol = col_of(sub, "Column"), cval = col_of(sub, "Value");
         if (ctab < 0 || crow < 0 || ccol < 0 || cval < 0) {
             *why = TR_N("has a ModuleSubstitution table without the standard columns");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        const char *tname = cell_text(m, &c[ctab]), *row = cell_text(m, &c[crow]), *cname = cell_text(m, &c[ccol]),
-                   *tmpl = cell_text(m, &c[cval]);
+        const char *tname = cell_text(m, rp_msi_wcell(sub, r, ctab)), *row = cell_text(m, rp_msi_wcell(sub, r, crow)),
+                   *cname = cell_text(m, rp_msi_wcell(sub, r, ccol)), *tmpl = cell_text(m, rp_msi_wcell(sub, r, cval));
         size_t ti = m->ntabs;
         for (size_t t = 0; tname && t < m->ntabs; ++t) {
             if (strcmp(m->tabs[t].name, tname) == 0) ti = t;
@@ -563,7 +564,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
         rp_msi_wtable_t *tab = &m->tabs[t];
         bool skip = strcmp(tab->name, "ModuleConfiguration") == 0 || strcmp(tab->name, "ModuleSubstitution") == 0 ||
                     strcmp(tab->name, "ModuleIgnoreTable") == 0;
-        for (size_t r = 0; !skip && r < ignored.row_count; ++r) skip = cell_is(&ignored.cells[r * ignored.column_count], tab->name);
+        for (size_t r = 0; !skip && r < ignored.row_count; ++r) skip = cell_is(rp_msi_wcell(&ignored, r, 0), tab->name);
         if (skip) tab->row_count = 0;
     }
     return PROVEN_OK;
@@ -590,16 +591,18 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
         bool is_dir = strcmp(mt->name, "Directory") == 0, is_file = strcmp(mt->name, "File") == 0,
              is_prop = strcmp(mt->name, "Property") == 0;
         int seq_col = is_file ? col_of(mt, "Sequence") : -1;
+        // Directory_Parent by name: a module's Directory may lack it (a damaged one was read past
+        // its rows as column 1 until 2026-10-29); the package's columns are compared below.
+        int parent_col = is_dir ? col_of(mt, "Directory_Parent") : -1;
         rp_msi_wtable_t *pt = pkg_table(tables, *nt, mt->name);
         for (size_t r = 0; r < mt->row_count; ++r) {
-            const rp_msi_cell_t *src = &mt->cells[r * cc];
-            if (is_dir && cell_is(&src[0], "TARGETDIR")) continue;
+            const rp_msi_cell_t *src = rp_msi_wrow(mt, r), *key = rp_msi_wcell(mt, r, 0);
+            if (is_dir && cell_is(key, "TARGETDIR")) continue;
             if (is_prop && pt) {                    // the package's own value wins
                 bool have = false;
                 for (size_t q = 0; q < pt->row_count && !have; ++q) {
-                    const rp_msi_cell_t *k = &pt->cells[q * pt->column_count];
-                    have = k->kind == RP_MSI_STR && src[0].kind == RP_MSI_STR && k->len == src[0].len &&
-                           memcmp(k->bytes, src[0].bytes, k->len) == 0;
+                    const rp_msi_cell_t *k = rp_msi_wcell(pt, q, 0);
+                    have = k->kind == RP_MSI_STR && key->kind == RP_MSI_STR && k->len == key->len && memcmp(k->bytes, key->bytes, k->len) == 0;
                 }
                 if (have) continue;
             }
@@ -611,7 +614,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
                     if (err != PROVEN_OK) return err;
                 }
             }
-            if (is_dir && cell_is(&dst[1], "TARGETDIR")) dst[1] = rp_msi_str_cell(dir_key);
+            if (parent_col >= 0 && cell_is(&dst[parent_col], "TARGETDIR")) dst[parent_col] = rp_msi_str_cell(dir_key);
             if (seq_col >= 0 && dst[seq_col].kind == RP_MSI_INT) {
                 dst[seq_col].i += base;
                 if (dst[seq_col].i > last) last = dst[seq_col].i;
@@ -651,7 +654,7 @@ proven_err_t rp_msi_module_merge(rp_msi_module_t *m, rp_msi_wtable_t *tables, si
         int c = col_of(mc, "Component");
         for (size_t r = 0; r < mc->row_count; ++r) {
             rows[2 * r] = rp_msi_str_cell(feature);
-            rows[2 * r + 1] = mc->cells[r * mc->column_count + (size_t)(c < 0 ? 0 : c)];
+            rows[2 * r + 1] = *rp_msi_wcell(mc, r, c < 0 ? 0 : c);
         }
         proven_err_t err = append_rows(m, fc, rows, mc->row_count);
         if (err != PROVEN_OK) return err;

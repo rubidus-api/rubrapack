@@ -168,7 +168,7 @@ static bool has_external_cabs(proven_allocator_t alloc, const rp_cfb_t *cfb) {
             for (size_t c = 0; c < tb->column_count; ++c) {
                 if (strcmp(tb->columns[c].name, "Cabinet") != 0) continue;
                 for (size_t r = 0; r < tb->row_count; ++r) {
-                    const rp_msi_cell_t *v = &tb->cells[r * tb->column_count + c];
+                    const rp_msi_cell_t *v = rp_msi_wcell(tb, r, (ptrdiff_t)c);
                     if (v->kind == RP_MSI_STR && v->len && v->bytes[0] != '#') ext = true;
                 }
             }
