@@ -28,6 +28,7 @@
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/suminfo.h"
+#include "rubrapack/text.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@ enum { MAX_INPUT = 1u << 30, MAX_NAME = 255 };
 
 typedef struct {
     char          *rel;         // relative path, '/' separated
-    char          *fold;        // ASCII lower case, for collisions
+    char          *fold;        // as Windows compares names (rp_name_fold), for collisions
     bool           dir;
     const uint8_t *data;
     size_t         size;
@@ -164,11 +165,13 @@ static bool add_item(plan_t *p, char *rel, bool dir, const uint8_t *data, size_t
         p->items = n;
         p->cap = cap;
     }
-    char *fold = dup_n(p, rel, strlen(rel));
-    if (fold == NULL) return false;
-    for (char *c = fold; *c; ++c) {
-        if (*c >= 'A' && *c <= 'Z') *c = (char)(*c + 32);
+    char *fold = NULL;
+    if (rp_name_fold(p->alloc, rel, &fold) != PROVEN_OK) {
+        p->nomem = true;
+        return false;
     }
+    own(p, fold);
+    if (p->nomem) return false;                     // own freed it
     p->items[p->count++] = (item_t){ rel, fold, dir, data, size };
     return true;
 }

@@ -47,7 +47,4 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t len, const rp_limits_t *lim,
                                         const rp_regf_visitor_t *v, const char **why);
 
-// Unicode simple upper case of one UTF-16 unit (src/text/upcase_tables.c).
-uint16_t rp_upcase16(uint16_t c);
-
 #endif // RUBRAPACK_REGF_H

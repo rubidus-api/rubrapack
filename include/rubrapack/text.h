@@ -52,6 +52,14 @@ typedef struct {
 [[nodiscard]] rp_text_result_t rp_utf16_to_u8str(proven_allocator_t alloc, proven_u16str_view_t src,
                                                  proven_u8str_t *out);
 
+// Unicode simple upper case of one UTF-16 unit (src/text/upcase_tables.c): how Windows compares
+// file, package part and registry names.
+uint16_t rp_upcase16(uint16_t c);
+
+// A name as Windows compares it: each UTF-16 unit in upper case (rp_upcase16). Bytes that are not
+// UTF-8 are kept, ASCII ones upper-cased. *out is NUL-terminated, free it with rp_mem_free.
+[[nodiscard]] proven_err_t rp_name_fold(proven_allocator_t alloc, const char *name, char **out);
+
 // Unicode Normalization Form C (UAX #15; RFC-0006 L3), Unicode 17.0 data from the UCD
 // (src/text/nfc_tables.c). The input must be valid UTF-8 (PROVEN_ERR_INVALID_ENCODING otherwise);
 // *out is NUL-terminated, free it with rp_mem_free.

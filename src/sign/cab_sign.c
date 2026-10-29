@@ -200,6 +200,12 @@ void rp_cab_verify(const uint8_t *cab, size_t len, rp_authenticode_check_t *r, c
         *why = TR_N("the signature is not DER");
         return;
     }
+    for (size_t i = ci.whole.n; i < l.sig_size; ++i) {     // after it only zeros: nothing unsigned rides along
+        if (cab[l.sig_off + i] != 0) {
+            *why = "bytes follow the signature that it does not cover";
+            return;
+        }
+    }
     uint8_t digest[32];
     cab_digest(cab, l.cb, digest);
     rp_authenticode_verify(ci.whole.p, ci.whole.n, digest, r, why);

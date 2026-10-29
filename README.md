@@ -28,8 +28,8 @@ rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, u
   write the source, check it, read the errors, fix them and build - and verify its own result.
   Ask an assistant to package your program with rubrapack and it can also turn the steps into a
   release script for you.
-- **Nothing to install.** Download one file - about 1.3 MB for Windows, 1.2 MB for Linux - and run
-  it. No .NET, no Python or other interpreter, no SDK, no libraries. The Linux program needs only
+- **Nothing to install.** Download one file - about 12 MB, most of it the texts of 48 languages - and
+  run it. No .NET, no Python or other interpreter, no SDK, no libraries. The Linux program needs only
   the C library; the Windows program uses only DLLs that are part of Windows (it does not even use
   `msi.dll`). Build Windows packages on a Linux server or CI runner without a Windows machine.
 - **Plain C, small and easy to build.** About 37,000 lines of C23 plus a small vendored base
@@ -163,7 +163,8 @@ gcc -std=c23 -o nob.exe nob.c && nob.exe
 ```
 
 `nob.c` needs nothing but a C23 compiler. Options: `--sanitize` (AddressSanitizer and UBSan),
-`--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers. The helper DLLs that MSI
+`--debug`, `clean`. `CC` and `RUBRAPACK_WIN64_CC` choose the compilers. The normal build is
+hardened (stack protector, `_FORTIFY_SOURCE`, and on Linux read-only relocations). The helper DLLs that MSI
 packages carry for REG_QWORD values are in `resources/bin/` with their SHA-256 sums; they are
 rebuilt from `src/` byte for byte.
 

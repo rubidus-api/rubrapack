@@ -214,10 +214,25 @@ static void object_path(char *out, size_t cap, const char *dir, const char *sour
     snprintf(out, cap, "%s/%s.o", dir, flat);
 }
 
+// A release build is hardened against a file that tries to exploit a defect: the C library checks
+// the copies whose sizes it can see, the stack carries canaries, and (Linux) the relocations are
+// read-only once loaded. The packages it writes are the same bytes either way.
 static const char *opt_flags(const target_t *t) {
     if (t->sanitize) return "-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all";
     if (t->debug) return "-O0 -g";
-    return "-O2";
+    if (t->kind == KIND_WIN32) return "-O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong";
+    return "-O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -fstack-protector-strong -fstack-clash-protection";
+}
+
+// Linker options of a release build on this host.
+static const char *link_flags(const target_t *t) {
+    if (t->sanitize || t->debug) return "";
+    if (t->kind == KIND_WIN32) return "-lssp";
+#ifdef __linux__
+    return "-Wl,-z,relro,-z,now";
+#else
+    return "";
+#endif
 }
 
 static int compile(const target_t *t, const char *flags, const char *source, const char *object) {
@@ -529,6 +544,7 @@ static int build(const target_t *t) {
     if (n < 0 || (size_t)n >= sizeof cmd) return 1;
     size_t len = (size_t)n;
     if (t->kind == KIND_WIN32 && append(&len, "-static -municode -lbcrypt -lws2_32 -lcrypt32 -lncrypt") != 0) return 1;
+    if (link_flags(t)[0] && append(&len, link_flags(t)) != 0) return 1;
     if (run(cmd) != 0) return 1;
     printf("nob: built %s\n", exe);
     return 0;

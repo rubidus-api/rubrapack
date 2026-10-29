@@ -3068,6 +3068,38 @@ void rp_msix_files_free(proven_allocator_t alloc, rp_msix_file_t *files, size_t 
     rp_mem_free(alloc, files);
 }
 
+// A block map name: '\\'-separated parts, none empty, "." or "..".
+static bool package_path_ok(const char *name) {
+    for (const char *p = name;;) {
+        const char *e = strchr(p, '\\');
+        size_t n = e ? (size_t)(e - p) : strlen(p);
+        if (n == 0 || (n == 1 && p[0] == '.') || (n == 2 && p[0] == '.' && p[1] == '.')) return false;
+        if (e == NULL) return true;
+        p = e + 1;
+    }
+}
+
+static int by_text(const void *a, const void *b) { return strcmp(*(char *const *)a, *(char *const *)b); }
+
+// PROVEN_ERR_EXISTS when two of the files have names Windows takes for one.
+static proven_err_t no_twins(proven_allocator_t alloc, const rp_msix_file_t *f, size_t n) {
+    char **folded = rp_mem_alloc(alloc, n ? n : 1, sizeof *folded);
+    if (folded == NULL) return PROVEN_ERR_NOMEM;
+    proven_err_t err = PROVEN_OK;
+    size_t k = 0;
+    for (; k < n && err == PROVEN_OK; ++k) err = rp_name_fold(alloc, f[k].name, &folded[k]);
+    if (err != PROVEN_OK) --k;
+    if (err == PROVEN_OK) {
+        rp_sort(folded, n, sizeof *folded, by_text);
+        for (size_t i = 1; i < n && err == PROVEN_OK; ++i) {
+            if (strcmp(folded[i - 1], folded[i]) == 0) err = PROVEN_ERR_EXISTS;
+        }
+    }
+    for (size_t i = 0; i < k; ++i) rp_mem_free(alloc, folded[i]);
+    rp_mem_free(alloc, folded);
+    return err;
+}
+
 #define BAD(msg) do { *why = (msg); err = PROVEN_ERR_INVALID_FORMAT; goto out; } while (0)
 
 static proven_err_t open_archive(proven_allocator_t alloc, const uint8_t *pkg, size_t len, const rp_limits_t *lim, bool allow_bundle,
@@ -3321,6 +3353,14 @@ static proven_err_t open_archive(proven_allocator_t alloc, const uint8_t *pkg, s
         x.p = file_end;
     }
     if (!used[iman]) BAD("the manifest is not in the block map");
+    // Names Windows refuses (RFC-0009 M1): an empty part, "." or "..", and two files of one name
+    // as Windows compares names - each a way to make one package read as two.
+    for (size_t i = 0; i < nf; ++i) {
+        if (!package_path_ok(f[i].name)) BAD("a file name in the block map is not a package path (an empty part, '.' or '..')");
+    }
+    err = no_twins(alloc, f, nf);
+    if (err == PROVEN_ERR_EXISTS) BAD("two files of the package have one name (Windows compares names without case)");
+    if (err != PROVEN_OK) goto out;
     for (size_t i = 0; i < nf; ++i) {
         if (strcmp(f[i].name, bundle ? BUNDLE_MANIFEST : "AppxManifest.xml") == 0) {
             *manifest = rp_mem_alloc(alloc, (size_t)f[i].size + 1, 1);

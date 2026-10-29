@@ -24,7 +24,7 @@ rubrapack build app.toml -o app.msi       # 제대로 된 설치 파일: 제거 
   표를 글로 보여 주고, 같은 원본은 언제나 같은 바이트가 됩니다. 그래서 스크립트나 CI 작업, AI 코딩 도우미가
   원본을 쓰고, 검사하고, 오류를 읽고, 고치고, 빌드하고, 그 결과를 스스로 확인할 수 있습니다. AI 도우미에게
   "이 프로그램을 rubrapack 으로 패키징해 줘"라고 맡기면 그 과정을 릴리스 스크립트로 만드는 일까지 시킬 수 있습니다.
-- **설치할 것이 없습니다.** 파일 하나 - Windows 용 약 1.3 MB, Linux 용 1.2 MB - 를 내려받아 실행하면 끝입니다.
+- **설치할 것이 없습니다.** 파일 하나(약 12 MB, 대부분 48개 언어의 문구)를 내려받아 실행하면 끝입니다.
   .NET 도, Python 같은 인터프리터도, SDK 도, 라이브러리도 필요 없습니다. Linux 판은 C 라이브러리만, Windows 판은
   Windows 에 들어 있는 DLL 만 씁니다(`msi.dll` 조차 쓰지 않습니다). Windows 컴퓨터 없이 Linux 서버나 CI 에서
   Windows 패키지를 만들 수 있습니다.
@@ -142,7 +142,8 @@ gcc -std=c23 -o nob.exe nob.c && nob.exe
 ```
 
 `nob.c` 는 C23 컴파일러 하나만 있으면 됩니다. 옵션: `--sanitize`(AddressSanitizer 와 UBSan), `--debug`,
-`clean`. `CC` 와 `RUBRAPACK_WIN64_CC` 로 컴파일러를 고릅니다. MSI 패키지가 REG_QWORD 값을 위해 싣는 도우미
+`clean`. `CC` 와 `RUBRAPACK_WIN64_CC` 로 컴파일러를 고릅니다. 보통 빌드는 공격에 대비해 강화됩니다(스택 보호,
+`_FORTIFY_SOURCE`, Linux 에서는 읽기 전용 재배치). MSI 패키지가 REG_QWORD 값을 위해 싣는 도우미
 DLL 은 `resources/bin/` 에 SHA-256 합과 함께 있고, `src/` 에서 바이트까지 똑같이 다시 빌드됩니다.
 
 ## 라이선스

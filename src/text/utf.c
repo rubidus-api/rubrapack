@@ -1,6 +1,7 @@
 // src/text/utf.c - strict UTF-8 <-> UTF-16 conversion (see include/rubrapack/text.h), on
 // proven_c_lib's converters (proven/utf.h); this file adds the offset of the first bad sequence.
 
+#include "rubrapack/mem.h"
 #include "rubrapack/text.h"
 
 #include "proven/utf.h"
@@ -135,4 +136,35 @@ rp_text_result_t rp_utf16_to_u8str(proven_allocator_t alloc, proven_u16str_view_
     }
     alloc.free_fn(alloc.ctx, mem.ptr);
     return r;
+}
+
+proven_err_t rp_name_fold(proven_allocator_t alloc, const char *name, char **out) {
+    *out = NULL;
+    size_t n = strlen(name);
+    rp_text_result_t r = rp_utf8_to_utf16((const uint8_t *)name, n, NULL, 0);
+    if (r.err != PROVEN_OK) {                       // not UTF-8: the bytes, ASCII upper-cased
+        char *s = rp_mem_alloc(alloc, n + 1, 1);
+        if (s == NULL) return PROVEN_ERR_NOMEM;
+        for (size_t i = 0; i <= n; ++i) s[i] = name[i] >= 'a' && name[i] <= 'z' ? (char)(name[i] - 32) : name[i];
+        *out = s;
+        return PROVEN_OK;
+    }
+    size_t units = r.units;
+    proven_u16 *w = rp_mem_alloc(alloc, units ? units : 1, sizeof *w);
+    if (w == NULL) return PROVEN_ERR_NOMEM;
+    proven_err_t err = rp_utf8_to_utf16((const uint8_t *)name, n, w, units).err;
+    for (size_t i = 0; err == PROVEN_OK && i < units; ++i) {
+        if (w[i] < 0xD800 || w[i] > 0xDFFF) w[i] = rp_upcase16(w[i]);
+    }
+    rp_text_result_t b = err == PROVEN_OK ? rp_utf16_to_utf8(w, units, NULL, 0) : (rp_text_result_t){ .err = err };
+    char *s = b.err == PROVEN_OK ? rp_mem_alloc(alloc, b.units + 1, 1) : NULL;
+    if (s != NULL && rp_utf16_to_utf8(w, units, (uint8_t *)s, b.units).err == PROVEN_OK) {
+        s[b.units] = '\0';
+        *out = s;
+    } else {
+        rp_mem_free(alloc, s);
+        err = b.err != PROVEN_OK ? b.err : PROVEN_ERR_NOMEM;
+    }
+    rp_mem_free(alloc, w);
+    return *out ? PROVEN_OK : err;
 }

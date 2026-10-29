@@ -313,6 +313,7 @@ void rp_authenticode_verify(const uint8_t *der, size_t len, const uint8_t *diges
     rp_der_span_t s = { der, len };
     rp_der_t ci, oid, w, sd, ver, algs, encap, ctype, cw, content, e;
     if (!rp_der_get(&s, RP_DER_SEQUENCE, &ci)) STOP("the signature is not a CMS ContentInfo");
+    if (s.n != 0) STOP("bytes follow the signature that it does not cover");    // MSI, MSIX: the stream is the signature
     rp_der_span_t cs = rp_der_inside(&ci);
     if (!rp_der_get(&cs, RP_DER_OID, &oid) || !rp_der_oid_is(&oid, O_SIGNED_DATA, sizeof O_SIGNED_DATA) || !rp_der_get(&cs, RP_DER_CTX0, &w)) {
         STOP("the signature is not CMS SignedData");

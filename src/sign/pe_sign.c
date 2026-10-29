@@ -229,11 +229,20 @@ void rp_pe_verify(const uint8_t *pe, size_t len, rp_authenticode_check_t *r, con
         *why = TR_N("the certificate table does not hold an Authenticode signature");
         return;
     }
-    // The PKCS#7 inside ends where its DER says; the rest is padding.
+    // The PKCS#7 inside ends where its DER says; after it only the zeros that pad the table to
+    // eight bytes. Bytes there would be in a signed file without being signed (CVE-2013-3900:
+    // Windows refuses them when its padding check is on).
     rp_der_span_t s = { w + 8, wl - 8 };
     rp_der_t ci;
     if (!rp_der_read(&s, &ci)) {
         *why = TR_N("the signature is not DER");
+        return;
+    }
+    size_t used = 8 + ci.whole.n, rest = l.cert_size - used;
+    bool zeros = rest < 8;
+    for (size_t i = 0; zeros && i < rest; ++i) zeros = w[used + i] == 0;
+    if (!zeros) {
+        *why = "bytes follow the signature that it does not cover";
         return;
     }
     uint8_t digest[RP_HASH_MAX];
