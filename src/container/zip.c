@@ -5,6 +5,7 @@
 #include "rubrapack/lang.h"
 
 #include "rubrapack/deflate.h"
+#include "rubrapack/in.h"
 #include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 
@@ -206,10 +207,11 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
         *why = TR_N("not a ZIP archive (too short)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
+    rp_in_t in = rp_in(zip, len);
     // The end record: the last one, within the 64 KiB a comment may take.
     size_t eocd = SIZE_MAX;
     for (size_t i = len - 22 + 1; i-- > 0 && len - i <= 22 + 65535;) {
-        if (rp_rd32(zip + i) == 0x06054B50 && i + 22 + rp_rd16(zip + i + 20) == len) {
+        if (rp_in32(&in, i) == 0x06054B50 && i + 22 + rp_in16(&in, i + 20) == len) {
             eocd = i;
             break;
         }
@@ -218,16 +220,16 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
         *why = TR_N("not a ZIP archive (no end record)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    uint64_t entries_n = rp_rd16(zip + eocd + 10), cd_size = rp_rd32(zip + eocd + 12), cd_off = rp_rd32(zip + eocd + 16);
-    if (eocd >= 20 && rp_rd32(zip + eocd - 20) == 0x07064B50) {
-        uint64_t z = rp_rd64(zip + eocd - 20 + 8);
-        if (z > len - 56 || rp_rd32(zip + z) != 0x06064B50) {
+    uint64_t entries_n = rp_in16(&in, eocd + 10), cd_size = rp_in32(&in, eocd + 12), cd_off = rp_in32(&in, eocd + 16);
+    if (eocd >= 20 && rp_in32(&in, eocd - 20) == 0x07064B50) {
+        uint64_t z = rp_in64(&in, eocd - 20 + 8);
+        if (z > len - 56 || rp_in32(&in, (size_t)z) != 0x06064B50) {
             *why = TR_N("a damaged ZIP64 end record");
             return PROVEN_ERR_INVALID_FORMAT;
         }
-        entries_n = rp_rd64(zip + z + 32);
-        cd_size = rp_rd64(zip + z + 40);
-        cd_off = rp_rd64(zip + z + 48);
+        entries_n = rp_in64(&in, (size_t)z + 32);
+        cd_size = rp_in64(&in, (size_t)z + 40);
+        cd_off = rp_in64(&in, (size_t)z + 48);
     }
     if (cd_off > len || cd_size > len - cd_off) {
         *why = TR_N("the ZIP central directory lies outside the file");
@@ -240,59 +242,66 @@ proven_err_t rp_zip_read(proven_allocator_t alloc, const uint8_t *zip, size_t le
     e = rp_mem_alloc(alloc, entries_n ? entries_n : 1, sizeof *e);
     if (e == NULL) return PROVEN_ERR_NOMEM;
     memset(e, 0, (entries_n ? entries_n : 1) * sizeof *e);
-    const uint8_t *p = zip + cd_off, *end = zip + cd_off + cd_size;
+    rp_in_t cd = rp_in_sub(&in, (size_t)cd_off, (size_t)cd_size);
+    size_t at = 0;
     for (; n < entries_n; ++n) {
-        if ((size_t)(end - p) < 46 || rp_rd32(p) != 0x02014B50) NO("a damaged ZIP central directory entry");
-        size_t nl = rp_rd16(p + 28), xl = rp_rd16(p + 30), cl = rp_rd16(p + 32);
-        if ((size_t)(end - p) < 46 + nl + xl + cl) NO("a damaged ZIP central directory entry");
+        if (cd.n - at < 46 || rp_in32(&cd, at) != 0x02014B50) NO("a damaged ZIP central directory entry");
+        size_t nl = rp_in16(&cd, at + 28), xl = rp_in16(&cd, at + 30), cl = rp_in16(&cd, at + 32);
+        if (cd.n - at < 46 + nl + xl + cl) NO("a damaged ZIP central directory entry");
+        rp_in_t p = rp_in_sub(&cd, at, 46 + nl + xl + cl);
         rp_zip_entry_t *x = &e[n];
-        x->method = rp_rd16(p + 10);
-        x->crc = rp_rd32(p + 16);
-        x->csize = rp_rd32(p + 20);
-        x->size = rp_rd32(p + 24);
-        x->lfh_off = rp_rd32(p + 42);
-        if (rp_rd16(p + 8) & 1) NO("an encrypted ZIP entry");
+        x->method = rp_in16(&p, 10);
+        x->crc = rp_in32(&p, 16);
+        x->csize = rp_in32(&p, 20);
+        x->size = rp_in32(&p, 24);
+        x->lfh_off = rp_in32(&p, 42);
+        if (rp_in16(&p, 8) & 1) NO("an encrypted ZIP entry");
         // ZIP64 extra: the fields that were 0xFFFFFFFF, in order.
-        const uint8_t *xp = p + 46 + nl, *xe = xp + xl;
-        while (xe - xp >= 4) {
-            size_t id = rp_rd16(xp), sz = rp_rd16(xp + 2);
-            if ((size_t)(xe - xp - 4) < sz) NO("a damaged ZIP extra field");
+        rp_in_t xv = rp_in_sub(&p, 46 + nl, xl);
+        for (size_t xp = 0; xv.n - xp >= 4;) {
+            size_t id = rp_in16(&xv, xp), sz = rp_in16(&xv, xp + 2);
+            if (xv.n - xp - 4 < sz) NO("a damaged ZIP extra field");
             if (id == 0x0001) {
-                const uint8_t *q = xp + 4, *qe = q + sz;
+                rp_in_t q = rp_in_sub(&xv, xp + 4, sz);
+                size_t qa = 0;
                 if (x->size == 0xFFFFFFFF) {
-                    if (qe - q < 8) NO("a damaged ZIP64 extra");
-                    x->size = rp_rd64(q), q += 8;
+                    if (q.n - qa < 8) NO("a damaged ZIP64 extra");
+                    x->size = rp_in64(&q, qa), qa += 8;
                 }
                 if (x->csize == 0xFFFFFFFF) {
-                    if (qe - q < 8) NO("a damaged ZIP64 extra");
-                    x->csize = rp_rd64(q), q += 8;
+                    if (q.n - qa < 8) NO("a damaged ZIP64 extra");
+                    x->csize = rp_in64(&q, qa), qa += 8;
                 }
                 if (x->lfh_off == 0xFFFFFFFF) {
-                    if (qe - q < 8) NO("a damaged ZIP64 extra");
-                    x->lfh_off = rp_rd64(q);
+                    if (q.n - qa < 8) NO("a damaged ZIP64 extra");
+                    x->lfh_off = rp_in64(&q, qa);
                 }
+                if (q.bad) NO("a damaged ZIP64 extra");
             }
             xp += 4 + sz;
         }
+        if (xv.bad) NO("a damaged ZIP extra field");
         x->name = rp_mem_alloc(alloc, nl + 1, 1);
         if (x->name == NULL) {
             err = PROVEN_ERR_NOMEM;
             goto out;
         }
-        memcpy(x->name, p + 46, nl);
+        if (!rp_in_copy(&p, 46, x->name, nl) || p.bad) NO("a damaged ZIP central directory entry");
         x->name[nl] = 0;
         if (memchr(x->name, 0, nl)) NO("a ZIP entry name with a NUL byte");
         if (x->method != 0 && x->method != 8) NO("a ZIP entry compressed with a method other than stored or deflate");
-        // The local header must agree.
-        if (x->lfh_off > len || len - x->lfh_off < 30 || rp_rd32(zip + x->lfh_off) != 0x04034B50) NO("a ZIP entry's local header is missing");
-        const uint8_t *l = zip + x->lfh_off;
-        size_t lnl = rp_rd16(l + 26), lxl = rp_rd16(l + 28);
+        // The local header must agree, its name included (all of it inside the file).
+        if (x->lfh_off > len || len - x->lfh_off < 30 || rp_in32(&in, (size_t)x->lfh_off) != 0x04034B50) NO("a ZIP entry's local header is missing");
+        rp_in_t l = rp_in_sub(&in, (size_t)x->lfh_off, 30);
+        size_t lnl = rp_in16(&l, 26), lxl = rp_in16(&l, 28);
         x->lfh_size = 30 + lnl + lxl;
-        if (lnl != nl || memcmp(l + 30, x->name, nl) != 0 || rp_rd16(l + 8) != x->method) NO("a ZIP entry's local header does not match the directory");
+        const uint8_t *lname = rp_in_bytes(&in, (size_t)x->lfh_off + 30, lnl);
+        if (lnl != nl || lname == NULL || memcmp(lname, x->name, nl) != 0 || rp_in16(&l, 8) != x->method) NO("a ZIP entry's local header does not match the directory");
         x->data_off = x->lfh_off + x->lfh_size;
         if (x->data_off > len || x->csize > len - x->data_off) NO("a ZIP entry's data lies outside the file");
-        p += 46 + nl + xl + cl;
+        at += 46 + nl + xl + cl;
     }
+    if (cd.bad || in.bad) NO("a damaged ZIP central directory entry");
     // No two entries may share bytes.
     order = rp_mem_alloc(alloc, n ? n : 1, sizeof *order);
     if (order == NULL) {
@@ -327,9 +336,14 @@ proven_err_t rp_zip_data(proven_allocator_t alloc, const uint8_t *zip, size_t le
         *why = TR_N("a ZIP entry's data lies outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
+    rp_in_t in = rp_in(zip, len);
+    const uint8_t *src = rp_in_bytes(&in, (size_t)e->data_off, (size_t)e->csize);
+    if (src == NULL) {
+        *why = TR_N("a ZIP entry's data lies outside the file");
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
     uint8_t *buf = rp_mem_alloc(alloc, (size_t)e->size + 1, 1);
     if (buf == NULL) return PROVEN_ERR_NOMEM;
-    const uint8_t *src = zip + e->data_off;
     if (e->method == 0) {
         if (e->csize != e->size) {
             rp_mem_free(alloc, buf);
@@ -361,38 +375,41 @@ bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, ui
         *why = TR_N("the archive has no ZIP64 end record");
         return false;
     }
+    rp_in_t in = rp_in(zip, len);
     size_t z = len - 22 - 20 - 56;
-    if (rp_rd32(zip + len - 22) != 0x06054B50 || rp_rd32(zip + z) != 0x06064B50) {
+    if (rp_in32(&in, len - 22) != 0x06054B50 || rp_in32(&in, z) != 0x06064B50) {
         *why = TR_N("the archive does not end in ZIP64 end records as MSIX packages do");
         return false;
     }
-    uint64_t cd_size = rp_rd64(zip + z + 40), cd_off = rp_rd64(zip + z + 48);
+    uint64_t cd_size = rp_in64(&in, z + 40), cd_off = rp_in64(&in, z + 48);
     if (cd_off > len || cd_size > len - cd_off) {
         *why = TR_N("the central directory lies outside the archive");
         return false;
     }
+    rp_in_t cd = rp_in_sub(&in, (size_t)cd_off, (size_t)cd_size);
     size_t sl = strlen(skip), count = 0, kept = 0;
     bool found = false;
-    for (uint64_t o = cd_off; o < cd_off + cd_size;) {
-        if (o + 46 > cd_off + cd_size || rp_rd32(zip + o) != 0x02014B50) {
+    for (size_t o = 0; o < cd.n;) {
+        if (cd.n - o < 46 || rp_in32(&cd, o) != 0x02014B50) {
             *why = TR_N("a malformed central directory");
             return false;
         }
-        size_t n = rp_rd16(zip + o + 28), e = rp_rd16(zip + o + 30), c = rp_rd16(zip + o + 32), rl = 46 + n + e + c;
-        if (o + rl > cd_off + cd_size) {
+        size_t n = rp_in16(&cd, o + 28), e = rp_in16(&cd, o + 30), c = rp_in16(&cd, o + 32), rl = 46 + n + e + c;
+        const uint8_t *rec = rp_in_bytes(&cd, o, rl);
+        if (rec == NULL) {
             *why = TR_N("a malformed central directory");
             return false;
         }
-        if (n == sl && memcmp(zip + o + 46, skip, sl) == 0) {
+        if (n == sl && memcmp(rec + 46, skip, sl) == 0) {
             // Windows takes the entry's place from the ZIP32 offset field (measured, RFC-0011): an
             // entry described the ZIP64 way is a hash mismatch there, so it is here.
-            if (rp_rd32(zip + o + 42) == 0xFFFFFFFF || rp_rd32(zip + o + 20) == 0xFFFFFFFF) {
+            if (rp_in32(&cd, o + 42) == 0xFFFFFFFF || rp_in32(&cd, o + 20) == 0xFFFFFFFF) {
                 *why = TR_N("the signature entry is described the ZIP64 way; Windows reads its place from the ZIP32 fields");
                 return false;
             }
             found = true;
         } else {
-            rp_buf_put(out, zip + o, rl);
+            rp_buf_put(out, rec, rl);
             kept += rl;
             ++count;
         }
@@ -404,7 +421,10 @@ bool rp_zip_central_without(const uint8_t *zip, size_t len, const char *skip, ui
     }
     // The file's own end records, with counts, sizes and offsets as if the entry did not exist.
     uint8_t tail[98];
-    memcpy(tail, zip + z, 98);
+    if (!rp_in_copy(&in, z, tail, sizeof tail)) {
+        *why = TR_N("the archive does not end in ZIP64 end records as MSIX packages do");
+        return false;
+    }
     for (int k = 0; k < 2; ++k) {
         for (int b = 0; b < 8; ++b) tail[24 + 8 * k + b] = (uint8_t)((uint64_t)count >> (8 * b));
     }

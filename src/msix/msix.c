@@ -13,6 +13,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/crypto.h"
 #include "rubrapack/deflate.h"
+#include "rubrapack/in.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/num.h"
 #include "rubrapack/pal.h"
@@ -126,10 +127,12 @@ static bool already_compressed(const char *ext) {
 
 static bool png_size(const uint8_t *p, size_t n, uint32_t *w, uint32_t *h) {
     static const uint8_t sig[8] = { 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
-    if (n < 24 || memcmp(p, sig, 8) != 0 || memcmp(p + 12, "IHDR", 4) != 0) return false;
-    *w = (uint32_t)p[16] << 24 | (uint32_t)p[17] << 16 | (uint32_t)p[18] << 8 | p[19];
-    *h = (uint32_t)p[20] << 24 | (uint32_t)p[21] << 16 | (uint32_t)p[22] << 8 | p[23];
-    return true;
+    rp_in_t in = rp_in(p, n);
+    const uint8_t *head = rp_in_bytes(&in, 0, 16);
+    if (n < 24 || head == NULL || memcmp(head, sig, 8) != 0 || memcmp(head + 12, "IHDR", 4) != 0) return false;
+    *w = rp_in32be(&in, 16);
+    *h = rp_in32be(&in, 20);
+    return !in.bad;
 }
 
 static void be32(rp_buf_t *b, uint32_t v) {
@@ -232,22 +235,25 @@ static proven_err_t png_rgba(proven_allocator_t alloc, const uint8_t *rgba, uint
 
 // A PNG of 8-bit RGB or RGBA, not interlaced, at most 1024 pixels a side, as top-down RGBA
 // (RFC-0031 L7: an .ico's PNG images and [arp] logo). PROVEN_ERR_NOT_FOUND for any other kind.
-static uint32_t get_be32(const uint8_t *p) { return (uint32_t)p[0] << 24 | (uint32_t)p[1] << 16 | (uint32_t)p[2] << 8 | p[3]; }
-
 static proven_err_t png_decode(proven_allocator_t alloc, const uint8_t *png, size_t n, uint8_t **out, uint32_t *ow, uint32_t *oh) {
     static const uint8_t sig[8] = { 0x89, 'P', 'N', 'G', 13, 10, 26, 10 };
-    if (n < 33 || memcmp(png, sig, 8) != 0 || memcmp(png + 12, "IHDR", 4) != 0) return PROVEN_ERR_NOT_FOUND;
-    uint32_t w = get_be32(png + 16), h = get_be32(png + 20);
-    uint8_t depth = png[24], type = png[25], interlace = png[28];
-    if (w == 0 || h == 0 || w > 1024 || h > 1024 || depth != 8 || (type != 2 && type != 6) || interlace != 0 || png[26] || png[27])
+    rp_in_t in = rp_in(png, n);
+    const uint8_t *head = rp_in_bytes(&in, 0, 16);
+    if (n < 33 || head == NULL || memcmp(head, sig, 8) != 0 || memcmp(head + 12, "IHDR", 4) != 0) return PROVEN_ERR_NOT_FOUND;
+    uint32_t w = rp_in32be(&in, 16), h = rp_in32be(&in, 20);
+    uint8_t depth = rp_in8(&in, 24), type = rp_in8(&in, 25), interlace = rp_in8(&in, 28);
+    if (w == 0 || h == 0 || w > 1024 || h > 1024 || depth != 8 || (type != 2 && type != 6) || interlace != 0 || rp_in8(&in, 26) ||
+        rp_in8(&in, 27) || in.bad)
         return PROVEN_ERR_NOT_FOUND;
     size_t bpp = type == 6 ? 4 : 3, row = (size_t)w * bpp, raw_len = (row + 1) * h;
     rp_buf_t idat = rp_buf_new(alloc, 1u << 26);
     for (size_t at = 8; at + 12 <= n;) {
-        uint32_t len = get_be32(png + at);
+        uint32_t len = rp_in32be(&in, at);
         if (len > n - at - 12) break;
-        if (memcmp(png + at + 4, "IDAT", 4) == 0) rp_buf_put(&idat, png + at + 8, len);
-        if (memcmp(png + at + 4, "IEND", 4) == 0) break;
+        const uint8_t *type4 = rp_in_bytes(&in, at + 4, 4), *body = rp_in_bytes(&in, at + 8, len);
+        if (type4 == NULL || body == NULL) break;
+        if (memcmp(type4, "IDAT", 4) == 0) rp_buf_put(&idat, body, len);
+        if (memcmp(type4, "IEND", 4) == 0) break;
         at += 12 + (size_t)len;
     }
     uint8_t *raw = rp_mem_alloc(alloc, raw_len ? raw_len : 1, 1);
@@ -330,39 +336,41 @@ static proven_err_t logo_scale(proven_allocator_t alloc, const uint8_t *px, uint
 // The largest image of an .ico file - a 32-bit bitmap or a PNG - as top-down RGBA.
 // PROVEN_ERR_NOT_FOUND when the file has none of those (the caller then makes the plain logo).
 static proven_err_t ico_image(proven_allocator_t alloc, const uint8_t *ico, size_t n, uint8_t **out, uint32_t *ow, uint32_t *oh) {
-    if (n < 6 || ico[0] || ico[1] || ico[2] != 1 || ico[3]) return PROVEN_ERR_NOT_FOUND;
-    size_t count = (size_t)ico[4] | (size_t)ico[5] << 8;
-    const uint8_t *best = NULL;
-    uint32_t bw = 0, bbytes = 0;
+    rp_in_t in = rp_in(ico, n);
+    if (n < 6 || rp_in8(&in, 0) || rp_in8(&in, 1) || rp_in8(&in, 2) != 1 || rp_in8(&in, 3)) return PROVEN_ERR_NOT_FOUND;
+    size_t count = rp_in16(&in, 4);
+    rp_in_t best = rp_in(NULL, 0);
+    uint32_t bw = 0;
     bool bpng = false;
     for (size_t i = 0; i < count && 6 + 16 * (i + 1) <= n; ++i) {
-        const uint8_t *e = ico + 6 + 16 * i;
-        uint32_t bytes = (uint32_t)e[8] | (uint32_t)e[9] << 8 | (uint32_t)e[10] << 16 | (uint32_t)e[11] << 24;
-        uint32_t at = (uint32_t)e[12] | (uint32_t)e[13] << 8 | (uint32_t)e[14] << 16 | (uint32_t)e[15] << 24;
-        if (at > n || bytes > n - at || bytes < 40) continue;
-        const uint8_t *h = ico + at;
-        if (h[0] == 0x89 && bytes >= 24 && memcmp(h + 1, "PNG", 3) == 0) {
-            uint32_t iw = get_be32(h + 16);
-            if (iw > bw && iw <= 1024) { bw = iw; best = h; bbytes = bytes; bpng = true; }
+        rp_in_t e = rp_in_sub(&in, 6 + 16 * i, 16);
+        uint32_t bytes = rp_in32(&e, 8), at = rp_in32(&e, 12);
+        if (e.bad || at > n || bytes > n - at || bytes < 40) continue;
+        rp_in_t h = rp_in_sub(&in, at, bytes);
+        const uint8_t *magic = rp_in_bytes(&h, 0, 4);
+        if (magic != NULL && magic[0] == 0x89 && memcmp(magic + 1, "PNG", 3) == 0) {
+            uint32_t iw = rp_in32be(&h, 16);
+            if (!h.bad && iw > bw && iw <= 1024) { bw = iw; best = h; bpng = true; }
             continue;
         }
-        uint32_t hs = (uint32_t)h[0] | (uint32_t)h[1] << 8 | (uint32_t)h[2] << 16 | (uint32_t)h[3] << 24;
-        uint32_t iw = (uint32_t)h[4] | (uint32_t)h[5] << 8 | (uint32_t)h[6] << 16 | (uint32_t)h[7] << 24;
-        uint32_t ih = (uint32_t)h[8] | (uint32_t)h[9] << 8 | (uint32_t)h[10] << 16 | (uint32_t)h[11] << 24;
-        uint32_t bpp = (uint32_t)h[14] | (uint32_t)h[15] << 8, comp = (uint32_t)h[16] | (uint32_t)h[17] << 8 | (uint32_t)h[18] << 16 | (uint32_t)h[19] << 24;
-        if (hs != 40 || bpp != 32 || comp != 0 || iw == 0 || iw > 256 || ih != 2 * iw) continue;      // the height counts the mask too
+        uint32_t hs = rp_in32(&h, 0), iw = rp_in32(&h, 4), ih = rp_in32(&h, 8);
+        uint32_t bpp = rp_in16(&h, 14), comp = rp_in32(&h, 16);
+        if (h.bad || hs != 40 || bpp != 32 || comp != 0 || iw == 0 || iw > 256 || ih != 2 * iw) continue;      // the height counts the mask too
         if ((uint64_t)40 + (uint64_t)iw * iw * 4 > bytes) continue;
-        if (iw > bw) { bw = iw; best = h; bbytes = bytes; bpng = false; }
+        if (iw > bw) { bw = iw; best = h; bpng = false; }
     }
-    if (best == NULL) return PROVEN_ERR_NOT_FOUND;
-    if (bpng) return png_decode(alloc, best, bbytes, out, ow, oh);
+    if (bw == 0) return PROVEN_ERR_NOT_FOUND;
+    if (bpng) return png_decode(alloc, best.p, best.n, out, ow, oh);
     uint8_t *rgba = rp_mem_alloc(alloc, (size_t)bw * bw, 4);
     if (rgba == NULL) return PROVEN_ERR_NOMEM;
-    const uint8_t *px = best + 40;
     for (uint32_t y = 0; y < bw; ++y) {                 // bottom up BGRA to top down RGBA
         for (uint32_t x = 0; x < bw; ++x) {
-            const uint8_t *s = px + ((size_t)(bw - 1 - y) * bw + x) * 4;
+            const uint8_t *s = rp_in_bytes(&best, 40 + ((size_t)(bw - 1 - y) * bw + x) * 4, 4);
             uint8_t *o = rgba + ((size_t)y * bw + x) * 4;
+            if (s == NULL) {
+                rp_mem_free(alloc, rgba);
+                return PROVEN_ERR_NOT_FOUND;
+            }
             o[0] = s[2]; o[1] = s[1]; o[2] = s[0]; o[3] = s[3];
         }
     }

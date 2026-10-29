@@ -82,16 +82,17 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
     *vfs = NULL;
     for (int depth = 0; depth < 32; ++depth) {
         if (is(k, "TARGETDIR")) break;
-        const rp_msi_cell_t *row = NULL;
-        for (size_t r = 0; r < dirs->row_count && !row; ++r) {
-            const rp_msi_cell_t *c = &dirs->cells[r * dirs->column_count];
-            if (c[ck].kind == RP_MSI_STR && k->kind == RP_MSI_STR && c[ck].len == k->len && memcmp(c[ck].bytes, k->bytes, k->len) == 0) row = c;
+        size_t row = SIZE_MAX;
+        for (size_t r = 0; r < dirs->row_count && row == SIZE_MAX; ++r) {
+            const rp_msi_cell_t *c = rp_msi_wcell(dirs, r, ck);
+            if (c->kind == RP_MSI_STR && k->kind == RP_MSI_STR && c->len == k->len && memcmp(c->bytes, k->bytes, k->len) == 0) row = r;
         }
-        if (row == NULL) {
+        if (row == SIZE_MAX) {
             *why = TR_N("names a folder its Directory table does not have");
             return false;
         }
-        char *name = text(a, &row[ck]);
+        const rp_msi_cell_t *parent = rp_msi_wcell(dirs, row, cp);
+        char *name = text(a, rp_msi_wcell(dirs, row, ck));
         if (name == NULL) return false;
         // A standard folder (its key, before the module's GUID, is the property's name).
         char base[128];
@@ -100,20 +101,20 @@ static bool dir_path(proven_allocator_t a, const rp_msi_wtable_t *dirs, const rp
         if (dot) *dot = '\0';
         const char *v = vfs_of(base);
         rp_mem_free(a, name);
-        if (v && (row[cp].kind != RP_MSI_STR || is(&row[cp], "TARGETDIR"))) {
+        if (v && (parent->kind != RP_MSI_STR || is(parent, "TARGETDIR"))) {
             *vfs = v;
             break;
         }
-        char *dd = text(a, &row[cd]);
+        char *dd = text(a, rp_msi_wcell(dirs, row, cd));
         if (dd == NULL) return false;
         dir_name(dd, parts[n], sizeof parts[n]);
         rp_mem_free(a, dd);
         if (parts[n][0]) ++n;
-        if (row[cp].kind != RP_MSI_STR) {
+        if (parent->kind != RP_MSI_STR) {
             *why = TR_N("has a folder outside its TARGETDIR that an MSIX has no place for");
             return false;
         }
-        k = &row[cp];
+        k = parent;
     }
     size_t o = 0;
     out[0] = '\0';
@@ -167,7 +168,7 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
     if (err == PROVEN_OK && comps) {
         int cc = col(comps, "Condition");
         for (size_t r = 0; cc >= 0 && r < comps->row_count; ++r) {
-            const rp_msi_cell_t *c = &comps->cells[r * comps->column_count + (size_t)cc];
+            const rp_msi_cell_t *c = rp_msi_wcell(comps, r, cc);
             if (c->kind == RP_MSI_STR && c->len) {
                 *why = TR_N("has a component with a condition; an MSIX installs everything");
                 err = PROVEN_ERR_UNSUPPORTED;
@@ -198,28 +199,28 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
             err = PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t r = 0; err == PROVEN_OK && r < files->row_count; ++r) {
-            const rp_msi_cell_t *f = &files->cells[r * files->column_count];
-            const rp_msi_cell_t *crow = NULL;
-            for (size_t q = 0; q < comps->row_count && !crow; ++q) {
-                const rp_msi_cell_t *c = &comps->cells[q * comps->column_count];
-                if (c[ck].kind == RP_MSI_STR && f[fc].kind == RP_MSI_STR && c[ck].len == f[fc].len && memcmp(c[ck].bytes, f[fc].bytes, f[fc].len) == 0) crow = c;
+            const rp_msi_cell_t *f_c = rp_msi_wcell(files, r, fc), *f_k = rp_msi_wcell(files, r, fk);
+            size_t crow = SIZE_MAX;
+            for (size_t q = 0; q < comps->row_count && crow == SIZE_MAX; ++q) {
+                const rp_msi_cell_t *c = rp_msi_wcell(comps, q, ck);
+                if (c->kind == RP_MSI_STR && f_c->kind == RP_MSI_STR && c->len == f_c->len && memcmp(c->bytes, f_c->bytes, f_c->len) == 0) crow = q;
             }
             const rp_cab_file_t *e = NULL;
             for (size_t q = 0; q < nents && !e; ++q) {
-                if (f[fk].kind == RP_MSI_STR && strlen(ents[q].name) == f[fk].len && memcmp(ents[q].name, f[fk].bytes, f[fk].len) == 0) e = &ents[q];
+                if (f_k->kind == RP_MSI_STR && strlen(ents[q].name) == f_k->len && memcmp(ents[q].name, f_k->bytes, f_k->len) == 0) e = &ents[q];
             }
-            if (crow == NULL || e == NULL) {
+            if (crow == SIZE_MAX || e == NULL) {
                 *why = TR_N("has a file whose component or cabinet entry is missing");
                 err = PROVEN_ERR_INVALID_FORMAT;
                 break;
             }
             char dpath[2048], fname[512];
             const char *vfs = NULL;
-            if (!dir_path(a, dirs, &crow[cdir], &vfs, dpath, sizeof dpath, why)) {
+            if (!dir_path(a, dirs, rp_msi_wcell(comps, crow, cdir), &vfs, dpath, sizeof dpath, why)) {
                 err = PROVEN_ERR_UNSUPPORTED;
                 break;
             }
-            char *fnv = text(a, &f[fn]);
+            char *fnv = text(a, rp_msi_wcell(files, r, fn));
             if (fnv == NULL) {
                 err = PROVEN_ERR_NOMEM;
                 break;
@@ -253,18 +254,19 @@ proven_err_t rp_msix_module_read(proven_allocator_t a, const char *path, const c
             err = PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t r = 0; err == PROVEN_OK && r < reg->row_count; ++r) {
-            const rp_msi_cell_t *c = &reg->cells[r * reg->column_count];
-            char *name = c[rn].kind == RP_MSI_STR && c[rn].len ? text(a, &c[rn]) : NULL;
-            if (name && (strcmp(name, "+") == 0 || strcmp(name, "*") == 0 || strcmp(name, "-") == 0) && c[rv].kind != RP_MSI_STR) {
+            const rp_msi_cell_t *c_r = rp_msi_wcell(reg, r, rr), *c_k = rp_msi_wcell(reg, r, rk), *c_n = rp_msi_wcell(reg, r, rn),
+                                *c_v = rp_msi_wcell(reg, r, rv);
+            char *name = c_n->kind == RP_MSI_STR && c_n->len ? text(a, c_n) : NULL;
+            if (name && (strcmp(name, "+") == 0 || strcmp(name, "*") == 0 || strcmp(name, "-") == 0) && c_v->kind != RP_MSI_STR) {
                 rp_mem_free(a, name);           // key creation and removal markers: nothing to carry
                 continue;
             }
             rp_ir_registry_t *x = &out->regs[out->reg_count++];
             memset(x, 0, sizeof *x);
-            x->root = c[rr].kind == RP_MSI_INT ? (rp_reg_root_t)c[rr].i : RP_ROOT_HKLM;
-            x->key = text(a, &c[rk]);
+            x->root = c_r->kind == RP_MSI_INT ? (rp_reg_root_t)c_r->i : RP_ROOT_HKLM;
+            x->key = text(a, c_k);
             x->name = name;
-            char *v = c[rv].kind == RP_MSI_STR ? text(a, &c[rv]) : NULL;
+            char *v = c_v->kind == RP_MSI_STR ? text(a, c_v) : NULL;
             x->type = RP_REG_STRING;
             if (v && v[0] == '#' && v[1] == 'x') {
                 x->type = RP_REG_BINARY;

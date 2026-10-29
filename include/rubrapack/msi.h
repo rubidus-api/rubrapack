@@ -71,6 +71,12 @@ typedef struct {
     rp_msi_value_t *cells;  // row-major: cells[row * column_count + column]
 } rp_msi_rows_t;
 
+// A value of rows read from a file, as rp_msi_wcell: a null value outside the rows.
+static inline rp_msi_value_t rp_msi_rcell(const rp_msi_rows_t *rows, size_t row, ptrdiff_t col) {
+    if (rows == NULL || col < 0 || (size_t)col >= rows->column_count || row >= rows->row_count) return (rp_msi_value_t){ .kind = RP_MSI_NULL };
+    return rows->cells[row * rows->column_count + (size_t)col];
+}
+
 [[nodiscard]] proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t *cfb,
                                        const rp_limits_t *limits, const char **why);
 void rp_msi_close(rp_msi_t *msi);
@@ -128,6 +134,15 @@ typedef struct {
     const rp_msi_cell_t    *cells;      // row-major, row_count * column_count
     size_t                  row_count;
 } rp_msi_wtable_t;
+
+// The cell of a table read from a file: a null cell for a column index < 0 (a column the table
+// lacks) or past the table, or a row past its count. A reader takes cells this way, never by
+// hand-made index, so a damaged table reads as nulls, not as another row's cells.
+static inline const rp_msi_cell_t *rp_msi_wcell(const rp_msi_wtable_t *t, size_t row, ptrdiff_t col) {
+    static const rp_msi_cell_t none = { .kind = RP_MSI_NULL };
+    if (t == NULL || col < 0 || (size_t)col >= t->column_count || row >= t->row_count) return &none;
+    return &t->cells[row * t->column_count + (size_t)col];
+}
 
 typedef struct {
     const char    *name;    // stream name before packing (e.g. "cab1.cab"); not a table
