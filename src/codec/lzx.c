@@ -12,6 +12,8 @@
 #include "rubrapack/lzx.h"
 #include "rubrapack/mem.h"
 
+#include "match_int.h"
+
 #include <string.h>
 
 enum {
@@ -216,20 +218,6 @@ static uint32_t hash3(const uint8_t *p) {
     return (((uint32_t)p[0] << 16 | (uint32_t)p[1] << 8 | p[2]) * 2654435761u) >> (32 - HASH_BITS);
 }
 
-// Bytes a[0..) and b[0..) have in common, up to lim; eight at a time.
-static size_t common(const uint8_t *a, const uint8_t *b, size_t lim) {
-    size_t l = 0;
-    while (l + 8 <= lim) {
-        uint64_t x, y;
-        memcpy(&x, a + l, 8);
-        memcpy(&y, b + l, 8);
-        if (x != y) break;
-        l += 8;
-    }
-    while (l < lim && a[l] == b[l]) ++l;
-    return l;
-}
-
 static void insert(rp_lzx_enc_t *e, size_t p) {
     uint32_t h = hash3(e->buf + p);
     e->prev[p] = e->head[h];
@@ -317,7 +305,7 @@ proven_err_t rp_lzx_enc_frame(rp_lzx_enc_t *e, const uint8_t *in, size_t n, cons
         int rep = -1;
         for (int k = 0; k < 3; ++k) {
             if (r[k] > done + (p - fs) || r[k] > max_dist || (size_t)r[k] > p) continue;
-            size_t l = common(e->buf + p - r[k], e->buf + p, lim);
+            size_t l = rp_match_len(e->buf + p - r[k], e->buf + p, lim);
             if (l > rep_len) {
                 rep_len = l;
                 rep = k;
@@ -331,7 +319,7 @@ proven_err_t rp_lzx_enc_frame(rp_lzx_enc_t *e, const uint8_t *in, size_t n, cons
                 if (d > max_dist) break;
                 // Candidates come nearest first: a farther one must be longer to score higher.
                 if (best && e->buf[c + best] != e->buf[p + best]) continue;
-                size_t l = common(e->buf + c, e->buf + p, lim);
+                size_t l = rp_match_len(e->buf + c, e->buf + p, lim);
                 if (l < 3 || l <= best) continue;
                 int sc = score(l, extra_bits(slot_of((uint32_t)d + 2, e->slots)));
                 if (sc > best_s) {

@@ -387,8 +387,9 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   (`Add-AppxPackage -AllowUnsigned`, 프로그램이 들어 있으면 관리자로). 그런 패키지는 배포용이 아니고
   정체(identity)도 서명판과 다르다. 대신 `--key` 를 주면 패키지(또는 묶음과 그 안의 패키지)에
   서명한다. 아래 `sign` 참고.
-- 파일은 압축한다(`--msix-compress store` 로 끈다). 그림, 압축 파일처럼 이미 압축된 파일은 저장만
-  한다. MSIX 에는 시각이 들어가지 않아, 같은 원본은 Linux 와 Windows 에서 같은 바이트가 된다.
+- 파일은 압축한다(`--msix-compress store` 로 끈다). 압축은 모든 프로세서에서 돈다(덜 쓰려면
+  `--jobs N`). 그림, 압축 파일처럼 이미 압축된 파일은 저장만 한다. MSIX 에는 시각이 들어가지 않아,
+  같은 원본은 Linux 와 Windows 에서, 스레드 수와 상관없이 같은 바이트가 된다.
 - 출력 이름이 `.msixbundle` 로 끝나면 묶음이다: `--arch` 의 아키텍처마다 원본을 한 번씩 짓고
   (목록, `--arch x64,x86,arm64`; 없으면 원본의 아키텍처), 각 패키지는 안에서
   `<identity-name>_<version>_<arch>.msix` 라는 이름을 갖는다. Windows 는 그 가운데 자기 아키텍처의

@@ -29,6 +29,7 @@ typedef struct {
     bool flat;              // --flat: a flat bundle, its packages written beside it (RFC-0031 B23)
     const char *winget;     // --winget DIR: the winget manifest of the output goes there (RFC-0031 B28; build.c)
     bool store;             // --msix-compress store: no payload file is deflated
+    size_t jobs;            // --jobs: threads deflating the payload (0: the processors); the bytes do not change
     // RFC-0019, for a bundle: when not NULL, the texts of languages other than the package's go into
     // resource packages, returned here (free each data and the array with rp_mem_free), and the
     // package's resources.pri keeps its own language's; [msix] language-packs = false keeps them all.

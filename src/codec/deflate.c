@@ -9,6 +9,8 @@
 #include "rubrapack/deflate.h"
 #include "rubrapack/mem.h"
 
+#include "match_int.h"
+
 #include <string.h>
 
 // ---- RFC 1951 3.2.5 tables -------------------------------------------------------------------
@@ -334,6 +336,9 @@ static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, s
         head[h] = (int32_t)q;
     }
     size_t pos = start;
+    // The lazy look at pos + 1, kept when it wins: the next round's look at the same place (the
+    // chains have not changed since - pos was inserted before it) gives the same match.
+    size_t kept_at = SIZE_MAX, kept_len = 0, kept_dist = 0;
     while (pos < n && err == PROVEN_OK) {
         size_t block_start = pos, ns = 0;
         while (pos < n && ns < BLOCK_SYMBOLS) {
@@ -342,14 +347,21 @@ static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, s
             for (int pass = 0; pass < (lazy ? 2 : 1); ++pass) {
                 size_t at = pos + (size_t)pass;
                 size_t found_len = 0, found_dist = 0;
-                if (at + MIN_MATCH <= n) {
+                if (at == kept_at) {
+                    found_len = kept_len;
+                    found_dist = kept_dist;
+                } else if (at + MIN_MATCH <= n) {
                     int32_t cand = head[hash3(in + at)];
                     int chain = max_chain;
                     size_t limit = n - at < MAX_MATCH ? n - at : MAX_MATCH;
                     while (cand >= 0 && chain-- > 0 && at - (size_t)cand <= WINDOW) {
                         const uint8_t *a = in + cand, *b = in + at;
-                        size_t l = 0;
-                        while (l < limit && a[l] == b[l]) ++l;
+                        // Only a longer match counts: one that differs at found_len is not.
+                        if (found_len && (found_len >= limit || a[found_len] != b[found_len])) {
+                            cand = prev[cand % WINDOW];
+                            continue;
+                        }
+                        size_t l = rp_match_len(a, b, limit);
                         if (l > found_len) {
                             found_len = l;
                             found_dist = at - (size_t)cand;
@@ -369,6 +381,9 @@ static proven_err_t run(proven_allocator_t alloc, const uint8_t *in, size_t n, s
                     head[h] = (int32_t)pos;
                 } else if (found_len > best_len) {
                     best_len = 0;       // a better match starts one byte later: emit a literal
+                    kept_at = at;
+                    kept_len = found_len;
+                    kept_dist = found_dist;
                 }
             }
             if (best_len == 0) {

@@ -571,67 +571,156 @@ static bool add_registry(proven_allocator_t alloc, const rp_ir_registry_t *r, rp
     return true;
 }
 
-// Adds one payload file: its data stored or deflated block by block, its block map entry.
+// One payload file made ready to add: its data deflated block by block (or not), its blocks'
+// block map entries and its CRC. Each block is deflated and hashed on its own (a block's deflate
+// stream does not depend on another's), so the blocks of many files are made at once on several
+// threads (prepare_batch) and the bytes are the same whichever thread made them.
+typedef struct {
+    const uint8_t *data;
+    size_t         n;
+    bool           deflate;
+    rp_buf_t       comp, blocks;
+    uint32_t       crc;
+    proven_err_t   err;
+} payload_t;
+
+typedef struct {                // one block of one file
+    payload_t     *x;
+    size_t         index;
+    char           hash[48];
+    uint8_t       *seg;
+    size_t         seg_len;
+    proven_err_t   err;
+} block_job_t;
+
+static void block_run(proven_allocator_t alloc, block_job_t *j) {
+    const payload_t *x = j->x;
+    size_t at = j->index * BLOCK, take = x->n - at < BLOCK ? x->n - at : BLOCK;
+    uint8_t h[32];
+    rp_hash(RP_HASH_SHA256, x->data + at, take, h);
+    base64(h, 32, j->hash);
+    j->err = x->deflate ? rp_deflate_segment(alloc, x->data + at, take, LEVEL, &j->seg, &j->seg_len) : PROVEN_OK;
+}
+
+// The file's own parts once its blocks are made: the block map entries, the deflate stream, the
+// whole file's hash (2021 block map) and its CRC.
+static void file_run(proven_allocator_t alloc, payload_t *x, block_job_t *jobs, size_t nblocks) {
+    x->comp = rp_buf_new(alloc, (size_t)1 << 40);
+    x->blocks = rp_buf_new(alloc, (size_t)1 << 30);
+    x->err = PROVEN_OK;
+    for (size_t i = 0; i < nblocks; ++i) {
+        block_job_t *j = &jobs[i];
+        if (x->err == PROVEN_OK) x->err = j->err;
+        if (x->err == PROVEN_OK) {
+            rp_buf_puts(&x->blocks, "<Block");
+            attr(&x->blocks, "Hash", j->hash);
+            if (x->deflate) {
+                rp_buf_put(&x->comp, j->seg, j->seg_len);
+                attr_u64(&x->blocks, "Size", j->seg_len);
+            }
+            rp_buf_puts(&x->blocks, "/>");
+        }
+        rp_mem_free(alloc, j->seg);
+        j->seg = NULL;
+    }
+    if (nblocks > 1) {
+        uint8_t h[32];
+        char b64[48];
+        rp_hash(RP_HASH_SHA256, x->data, x->n, h);
+        base64(h, 32, b64);
+        rp_buf_puts(&x->blocks, "<b4:FileHash");
+        attr(&x->blocks, "Hash", b64);
+        rp_buf_puts(&x->blocks, "/>");
+    }
+    if (x->deflate) rp_buf_put(&x->comp, RP_DEFLATE_END, 2);
+    x->crc = proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(x->data), x->n });
+    if (x->err == PROVEN_OK) x->err = x->comp.err != PROVEN_OK ? x->comp.err : x->blocks.err;
+}
+
+typedef struct {
+    proven_allocator_t alloc;
+    payload_t         *x;
+    block_job_t       *jobs;
+    size_t            *first;   // each file's first job
+} batch_ctx_t;
+
+static void block_one(void *ctx, size_t i) {
+    batch_ctx_t *c = ctx;
+    block_run(c->alloc, &c->jobs[i]);
+}
+
+static void file_one(void *ctx, size_t k) {
+    batch_ctx_t *c = ctx;
+    file_run(c->alloc, &c->x[k], c->jobs + c->first[k], c->first[k + 1] - c->first[k]);
+}
+
+// Makes files x[0..nx) ready on up to `threads` threads: every block of every file, then each file.
+static proven_err_t prepare_batch(proven_allocator_t alloc, payload_t *x, size_t nx, size_t threads) {
+    size_t *first = rp_mem_alloc(alloc, nx + 1, sizeof *first), total = 0;
+    if (first == NULL) return PROVEN_ERR_NOMEM;
+    for (size_t k = 0; k < nx; ++k) {
+        first[k] = total;
+        total += (x[k].n + BLOCK - 1) / BLOCK;
+    }
+    first[nx] = total;
+    block_job_t *jobs = rp_mem_alloc(alloc, total, sizeof *jobs);
+    if (jobs == NULL) {
+        rp_mem_free(alloc, first);
+        return PROVEN_ERR_NOMEM;
+    }
+    for (size_t k = 0; k < nx; ++k) {
+        for (size_t i = first[k]; i < first[k + 1]; ++i) jobs[i] = (block_job_t){ .x = &x[k], .index = i - first[k] };
+    }
+    batch_ctx_t c = { alloc, x, jobs, first };
+    rp_pal_parallel_for(threads, total, block_one, &c);
+    rp_pal_parallel_for(threads, nx, file_one, &c);
+    rp_mem_free(alloc, jobs);
+    rp_mem_free(alloc, first);
+    return PROVEN_OK;
+}
+
+static void prepare(proven_allocator_t alloc, payload_t *x) {
+    if (prepare_batch(alloc, x, 1, 1) != PROVEN_OK) x->err = PROVEN_ERR_NOMEM;
+}
+
+static void payload_free(payload_t *x) {
+    rp_buf_free(&x->comp);
+    rp_buf_free(&x->blocks);
+}
+
+// Adds a prepared payload file to the archive and its entry to the block map (in order: the
+// archive's bytes are the same whichever thread prepared it).
 // `zip_name` overrides the ZIP entry's name (the footprint file [Content_Types].xml keeps its own).
-static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp_buf_t *bm, const char *path, const char *zip_name,
-                                const uint8_t *data, size_t n, bool deflate) {
+static proven_err_t commit(rp_zip_writer_t *z, rp_buf_t *bm, const char *path, const char *zip_name, const payload_t *x) {
+    if (x->err != PROVEN_OK) return x->err;
     char part[3200];
     if (zip_name) snprintf(part, sizeof part, "%s", zip_name);
     else part_name(path, part, sizeof part);
-    rp_buf_t comp = rp_buf_new(alloc, (size_t)1 << 40);
-    rp_buf_t blocks = rp_buf_new(alloc, (size_t)1 << 30);
-    proven_err_t err = PROVEN_OK;
-    size_t nblocks = (n + BLOCK - 1) / BLOCK;
-    for (size_t i = 0; i < nblocks && err == PROVEN_OK; ++i) {
-        size_t take = n - i * BLOCK < BLOCK ? n - i * BLOCK : BLOCK;
-        uint8_t h[32];
-        char b64[48];
-        rp_hash(RP_HASH_SHA256, data + i * BLOCK, take, h);
-        base64(h, 32, b64);
-        rp_buf_puts(&blocks, "<Block");
-        attr(&blocks, "Hash", b64);
-        if (deflate) {
-            uint8_t *seg = NULL;
-            size_t sl = 0;
-            err = rp_deflate_segment(alloc, data + i * BLOCK, take, LEVEL, &seg, &sl);
-            if (err == PROVEN_OK) {
-                rp_buf_put(&comp, seg, sl);
-                attr_u64(&blocks, "Size", sl);
-                rp_mem_free(alloc, seg);
-            }
-        }
-        rp_buf_puts(&blocks, "/>");
-    }
-    if (nblocks > 1) {                                     // the whole file's hash (2021 block map)
-        uint8_t h[32];
-        char b64[48];
-        rp_hash(RP_HASH_SHA256, data, n, h);
-        base64(h, 32, b64);
-        rp_buf_puts(&blocks, "<b4:FileHash");
-        attr(&blocks, "Hash", b64);
-        rp_buf_puts(&blocks, "/>");
-    }
-    if (deflate) rp_buf_put(&comp, RP_DEFLATE_END, 2);
     size_t lfh = 0;
-    if (err == PROVEN_OK && comp.err == PROVEN_OK && blocks.err == PROVEN_OK) {
-        rp_zip_add(z, part, deflate ? 8 : 0, deflate ? comp.data : data, deflate ? comp.len : n, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(data), n }), n, &lfh);
-        if (bm) {
-            rp_buf_puts(bm, "<File");
-            attr(bm, "Name", path);
-            attr_u64(bm, "Size", n);
-            attr_u64(bm, "LfhSize", lfh);
-            if (blocks.len) {
-                rp_buf_byte(bm, '>');
-                rp_buf_put(bm, blocks.data, blocks.len);
-                rp_buf_puts(bm, "</File>");
-            } else {
-                rp_buf_puts(bm, "/>");
-            }
+    rp_zip_add(z, part, x->deflate ? 8 : 0, x->deflate ? x->comp.data : x->data, x->deflate ? x->comp.len : x->n, x->crc, x->n, &lfh);
+    if (bm) {
+        rp_buf_puts(bm, "<File");
+        attr(bm, "Name", path);
+        attr_u64(bm, "Size", x->n);
+        attr_u64(bm, "LfhSize", lfh);
+        if (x->blocks.len) {
+            rp_buf_byte(bm, '>');
+            rp_buf_put(bm, x->blocks.data, x->blocks.len);
+            rp_buf_puts(bm, "</File>");
+        } else {
+            rp_buf_puts(bm, "/>");
         }
     }
-    if (err == PROVEN_OK) err = comp.err != PROVEN_OK ? comp.err : blocks.err;
-    rp_buf_free(&comp);
-    rp_buf_free(&blocks);
+    return PROVEN_OK;
+}
+
+// Adds one payload file: its data stored or deflated block by block, its block map entry.
+static proven_err_t add_payload(proven_allocator_t alloc, rp_zip_writer_t *z, rp_buf_t *bm, const char *path, const char *zip_name,
+                                const uint8_t *data, size_t n, bool deflate) {
+    payload_t x = { .data = data, .n = n, .deflate = deflate };
+    prepare(alloc, &x);
+    proven_err_t err = commit(z, bm, path, zip_name, &x);
+    payload_free(&x);
     return err;
 }
 
@@ -2800,20 +2889,36 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     rp_buf_puts(&bm, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><BlockMap "
                      "xmlns=\"http://schemas.microsoft.com/appx/2010/blockmap\" xmlns:b4=\"http://schemas.microsoft.com/appx/2021/blockmap\" "
                      "IgnorableNamespaces=\"b4\" HashMethod=\"http://www.w3.org/2001/04/xmlenc#sha256\">");
-    for (size_t i = 0; i < n && err == PROVEN_OK; ++i) {
-        uint8_t *data = items[i].data;
-        size_t dl = items[i].data_len;
-        if (items[i].source) {
-            err = rp_pal_read_file(alloc, items[i].source, (size_t)1 << 32, &data, &dl);
-            if (err != PROVEN_OK) {
-                DERR(items[i].pos, "RP1507", "cannot read '%s'", items[i].source);
-                break;
+    // The payload in batches: up to 64 files or 64 MiB read, deflated on `jobs` threads, added in order.
+    size_t jobs = opt->jobs ? opt->jobs : rp_pal_cpu_count();
+    if (jobs > 64) jobs = 64;
+    payload_t *batch = rp_mem_alloc(alloc, 64, sizeof *batch);
+    if (batch == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i0 = 0; i0 < n && err == PROVEN_OK;) {
+        size_t nb = 0, bytes = 0;
+        while (i0 + nb < n && nb < 64 && bytes < ((size_t)64 << 20)) {
+            const item_t *it = &items[i0 + nb];
+            uint8_t *data = it->data;
+            size_t dl = it->data_len;
+            if (it->source) {
+                err = rp_pal_read_file(alloc, it->source, (size_t)1 << 32, &data, &dl);
+                if (err != PROVEN_OK) {
+                    DERR(it->pos, "RP1507", "cannot read '%s'", it->source);
+                    break;
+                }
             }
+            batch[nb++] = (payload_t){ .data = data, .n = dl, .deflate = !opt->store && !already_compressed(extension(it->path)) };
+            bytes += dl;
         }
-        const char *ext = extension(items[i].path);
-        err = add_payload(alloc, &z, &bm, items[i].path, NULL, data, dl, !opt->store && !already_compressed(ext));
-        if (items[i].source) rp_mem_free(alloc, data);
+        if (err == PROVEN_OK) err = prepare_batch(alloc, batch, nb, jobs);
+        for (size_t k = 0; k < nb; ++k) {
+            if (err == PROVEN_OK) err = commit(&z, &bm, items[i0 + k].path, NULL, &batch[k]);
+            payload_free(&batch[k]);                       // (empty when it was not prepared)
+            if (items[i0 + k].source) rp_mem_free(alloc, (void *)(uintptr_t)batch[k].data);
+        }
+        i0 += nb;
     }
+    rp_mem_free(alloc, batch);
     if (err == PROVEN_OK) {
         manifest(&man, ir, opt, ap, ext, ns, &loc, store_logo);
         err = man.err;

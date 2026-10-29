@@ -536,6 +536,7 @@ static int run(int argc, char **argv, bool lint) {
                 goto done;
             }
             jobs = (size_t)v;
+            msix_opt.jobs = jobs;
             ++i;
         } else if (!lint && (strcmp(a, "--timestamp") == 0 || strcmp(a, "--tsa-trust") == 0 || strcmp(a, "--tls-trust") == 0 ||
                              strcmp(a, "--proxy") == 0) && next) {

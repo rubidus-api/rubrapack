@@ -421,9 +421,9 @@ store-logo = "assets/StoreLogo.png"         # PNG, 50x50
   (`Add-AppxPackage -AllowUnsigned`, as administrator when it contains a program); such a package
   is not for distribution and its identity differs from the signed one. `--key` signs the package
   (or the bundle and its packages) instead; see `sign` below.
-- Files are compressed (`--msix-compress store` turns it off); pictures, archives and other
-  already compressed files are stored. An MSIX holds no time: the same source gives the same
-  bytes on Linux and Windows.
+- Files are compressed (`--msix-compress store` turns it off), on every processor (`--jobs N` to
+  use fewer); pictures, archives and other already compressed files are stored. An MSIX holds no
+  time: the same source gives the same bytes on Linux and Windows, whatever the number of threads.
 - An output ending in `.msixbundle` is a bundle: the source built once for each architecture of
   `--arch` (a list, `--arch x64,x86,arm64`; without it the source's own), each package named
   `<identity-name>_<version>_<arch>.msix` inside. Windows installs the package for its own
