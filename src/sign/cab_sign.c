@@ -17,6 +17,7 @@
 //  - the signed attributes are signtool's: an empty SpcSpOpusInfo.
 
 #include "rubrapack/lang.h"
+#include "rubrapack/in.h"
 #include "rubrapack/le.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/sign.h"
@@ -35,37 +36,40 @@ typedef struct {
     uint16_t nfolders;
 } cab_t;
 
-static bool cab_layout(const uint8_t *c, size_t len, cab_t *l, const char **why) {
+static bool cab_layout(const uint8_t *cab, size_t len, cab_t *l, const char **why) {
     memset(l, 0, sizeof *l);
-    if (len < HEADER || memcmp(c, "MSCF", 4) != 0) {
+    rp_in_t in = rp_in(cab, len);
+    const uint8_t *magic = rp_in_bytes(&in, 0, 4);
+    if (len < HEADER || magic == NULL || memcmp(magic, "MSCF", 4) != 0) {
         *why = TR_N("not a cabinet (no MSCF header)");
         return false;
     }
-    l->cb = rp_rd32(c + 8);
-    l->nfolders = rp_rd16(c + 26);
-    uint16_t flags = rp_rd16(c + 30);
+    l->cb = rp_in32(&in, 8);
+    l->nfolders = rp_in16(&in, 26);
+    uint16_t flags = rp_in16(&in, 30);
     size_t at = HEADER;
     if (l->cb < HEADER || l->cb > len) {
         *why = TR_N("a damaged cabinet header");
         return false;
     }
+    rp_in_t c = rp_in_sub(&in, 0, l->cb);       // the cabinet; a signature may follow it
     if (flags & RESERVE_PRESENT) {
-        if (l->cb < HEADER + 4 || c[38] != 0 || c[39] != 0 || (size_t)rp_rd16(c + 36) + HEADER + 4 > l->cb) {
+        if (l->cb < HEADER + 4 || rp_in8(&c, 38) != 0 || rp_in8(&c, 39) != 0 || (size_t)rp_in16(&c, 36) + HEADER + 4 > l->cb) {
             *why = TR_N("the cabinet has reserved space in its folders or data blocks, which rubrapack does not lay out");
             return false;
         }
-        l->reserve = 4 + (size_t)rp_rd16(c + 36);
-        l->reserved = rp_rd16(c + 36) == RESERVE && rp_rd32(c + 40) == 0x00100000u;
+        l->reserve = 4 + (size_t)rp_in16(&c, 36);
+        l->reserved = rp_in16(&c, 36) == RESERVE && rp_in32(&c, 40) == 0x00100000u;
         if (l->reserved) {
-            l->sig_off = rp_rd32(c + 44);
-            l->sig_size = rp_rd32(c + 48);
+            l->sig_off = rp_in32(&c, 44);
+            l->sig_size = rp_in32(&c, 48);
         }
         at += l->reserve;
     }
     for (int k = 0; k < 2; ++k) {                       // szCabinetPrev/szDiskPrev, szCabinetNext/szDiskNext
         if (!(flags & (k == 0 ? PREV_CABINET : NEXT_CABINET))) continue;
         for (int s = 0; s < 2; ++s) {
-            while (at < l->cb && c[at]) ++at;
+            while (at < l->cb && rp_in8(&c, at)) ++at;
             if (at++ >= l->cb) {
                 *why = TR_N("a damaged cabinet header");
                 return false;
@@ -73,7 +77,7 @@ static bool cab_layout(const uint8_t *c, size_t len, cab_t *l, const char **why)
         }
     }
     l->folders = at;
-    if (l->folders + (size_t)l->nfolders * 8 > l->cb) {
+    if (l->folders + (size_t)l->nfolders * 8 > l->cb || c.bad || in.bad) {
         *why = TR_N("a damaged cabinet header");
         return false;
     }
@@ -130,10 +134,11 @@ proven_err_t rp_cab_prepare(proven_allocator_t alloc, const uint8_t *cab, size_t
     memcpy(o + HEADER + INSERTED, cab + HEADER + l.reserve, l.cb - HEADER - l.reserve);
     o[30] |= RESERVE_PRESENT;
     rp_wr32(o + 8, (uint32_t)n);
-    rp_wr32(o + 16, (uint32_t)((int64_t)rp_rd32(o + 16) + delta));       // coffFiles
+    rp_in_t oi = rp_in(o, (size_t)n);                                 // our copy, read back to move its offsets
+    rp_wr32(o + 16, (uint32_t)((int64_t)rp_in32(&oi, 16) + delta));   // coffFiles
     for (size_t f = 0; f < l.nfolders; ++f) {                         // coffCabStart
-        uint8_t *p = o + (size_t)((int64_t)l.folders + delta) + f * 8;
-        rp_wr32(p, (uint32_t)((int64_t)rp_rd32(p) + delta));
+        size_t at = (size_t)((int64_t)l.folders + delta) + f * 8;
+        rp_wr32(o + at, (uint32_t)((int64_t)rp_in32(&oi, at) + delta));
     }
     *out = o;
     *out_len = (size_t)n;
@@ -194,14 +199,16 @@ void rp_cab_verify(const uint8_t *cab, size_t len, rp_authenticode_check_t *r, c
         *why = TR_N("the signature does not lie where the cabinet says");
         return;
     }
-    rp_der_span_t s = { cab + l.sig_off, l.sig_size };
+    rp_in_t in = rp_in(cab, len);
+    rp_in_t sig = rp_in_sub(&in, l.sig_off, l.sig_size);
+    rp_der_span_t s = { sig.p, sig.n };
     rp_der_t ci;
-    if (!rp_der_read(&s, &ci)) {
+    if (sig.bad || !rp_der_read(&s, &ci)) {
         *why = TR_N("the signature is not DER");
         return;
     }
-    for (size_t i = ci.whole.n; i < l.sig_size; ++i) {     // after it only zeros: nothing unsigned rides along
-        if (cab[l.sig_off + i] != 0) {
+    for (size_t i = ci.whole.n; i < sig.n; ++i) {     // after it only zeros: nothing unsigned rides along
+        if (rp_in8(&sig, i) != 0) {
             *why = "bytes follow the signature that it does not cover";
             return;
         }

@@ -3,6 +3,7 @@
 #include "rubrapack/buf.h"
 #include "rubrapack/cab.h"
 #include "rubrapack/deflate.h"
+#include "rubrapack/in.h"
 #include "rubrapack/le.h"
 #include "rubrapack/lzx.h"
 #include "rubrapack/mem.h"
@@ -25,14 +26,15 @@ enum {
 // MS-CAB checksum: XOR of little-endian 32-bit words; the 1-3 trailing bytes form one more
 // word with the first of them in the highest position used.
 static uint32_t checksum(const uint8_t *p, size_t n, uint32_t seed) {
+    rp_in_t in = rp_in(p, n);
     uint32_t c = seed;
-    size_t words = n / 4;
-    for (size_t k = 0; k < words; ++k, p += 4) c ^= rp_rd32(p);
+    size_t words = n / 4, at = 4 * words;
+    for (size_t k = 0; k < words; ++k) c ^= rp_in32(&in, 4 * k);
     uint32_t tail = 0;
     switch (n % 4) {
-    case 3: tail |= (uint32_t)*p++ << 16; [[fallthrough]];
-    case 2: tail |= (uint32_t)*p++ << 8; [[fallthrough]];
-    case 1: tail |= *p++; break;
+    case 3: tail |= (uint32_t)rp_in8(&in, at++) << 16; [[fallthrough]];
+    case 2: tail |= (uint32_t)rp_in8(&in, at++) << 8; [[fallthrough]];
+    case 1: tail |= rp_in8(&in, at); break;
     default: break;
     }
     return c ^ tail;
@@ -324,26 +326,29 @@ proven_err_t rp_cab_write(proven_allocator_t alloc, const rp_cab_file_t *files, 
 proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t len, const rp_limits_t *limits,
                          rp_cab_file_t **files, size_t *count, uint8_t **arena) {
     if (cab == NULL || limits == NULL || files == NULL || count == NULL || arena == NULL) return PROVEN_ERR_INVALID_ARG;
-    if (len < HEADER || memcmp(cab, "MSCF", 4) != 0 || rp_rd32(cab + 8) > len) return PROVEN_ERR_INVALID_FORMAT;
-    len = rp_rd32(cab + 8);        // an Authenticode signature may follow the cabinet (RFC-0031 B13)
-    uint32_t files_off = rp_rd32(cab + 16);
-    uint16_t nfolders = rp_rd16(cab + 26), nfiles = rp_rd16(cab + 28), flags = rp_rd16(cab + 30);
+    rp_in_t whole = rp_in(cab, len);
+    const uint8_t *magic = rp_in_bytes(&whole, 0, 4);
+    if (len < HEADER || magic == NULL || memcmp(magic, "MSCF", 4) != 0 || rp_in32(&whole, 8) > len) return PROVEN_ERR_INVALID_FORMAT;
+    len = rp_in32(&whole, 8);      // an Authenticode signature may follow the cabinet (RFC-0031 B13)
+    rp_in_t c = rp_in_sub(&whole, 0, len);
+    uint32_t files_off = rp_in32(&c, 16);
+    uint16_t nfolders = rp_in16(&c, 26), nfiles = rp_in16(&c, 28), flags = rp_in16(&c, 30);
     if ((flags & ~RESERVE_PRESENT) != 0 || nfolders == 0 || nfiles > limits->max_entries) return PROVEN_ERR_UNSUPPORTED;
     // Reserved header space (a signature's, or makecab's) is skipped; reserved space in folders
     // or data blocks is not read.
     size_t folders = HEADER;
     if (flags & RESERVE_PRESENT) {
-        if (len < HEADER + 4 || cab[38] != 0 || cab[39] != 0) return PROVEN_ERR_UNSUPPORTED;
-        folders += 4 + (size_t)rp_rd16(cab + 36);
+        if (len < HEADER + 4 || rp_in8(&c, 38) != 0 || rp_in8(&c, 39) != 0) return PROVEN_ERR_UNSUPPORTED;
+        folders += 4 + (size_t)rp_in16(&c, 36);
     }
     if ((uint64_t)folders + (uint64_t)FOLDER * nfolders > len) return PROVEN_ERR_INVALID_FORMAT;
 
     // Uncompressed folder sizes first, to allocate one arena for all data.
     uint64_t total = 0;
     for (uint16_t f = 0; f < nfolders; ++f) {
-        const uint8_t *fo = cab + folders + FOLDER * f;
-        uint32_t off = rp_rd32(fo);
-        uint16_t nblocks = rp_rd16(fo + 4), type = rp_rd16(fo + 6);
+        rp_in_t fo = rp_in_sub(&c, folders + FOLDER * (size_t)f, FOLDER);
+        uint32_t off = rp_in32(&fo, 0);
+        uint16_t nblocks = rp_in16(&fo, 4), type = rp_in16(&fo, 6);
         unsigned wbits = type >> 8 & 0x1F;
         if (type != TYPE_NONE && type != TYPE_MSZIP &&
             ((type & 0xFF) != TYPE_LZX || wbits < RP_LZX_MIN_WBITS || wbits > RP_LZX_MAX_WBITS)) {
@@ -351,17 +356,19 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
         }
         for (uint16_t k = 0; k < nblocks; ++k) {
             if (!rp_range_ok(off, 8, len)) return PROVEN_ERR_INVALID_FORMAT;
-            uint16_t cbd = rp_rd16(cab + off + 4), cbu = rp_rd16(cab + off + 6);
+            uint16_t cbd = rp_in16(&c, (size_t)off + 4), cbu = rp_in16(&c, (size_t)off + 6);
             if ((type == TYPE_NONE && cbd != cbu) || cbu > BLOCK || !rp_range_ok((uint64_t)off + 8, cbd, len)) {
                 return PROVEN_ERR_INVALID_FORMAT;
             }
-            if (rp_rd32(cab + off) != 0 && rp_rd32(cab + off) != block_checksum(cab + off + 8, cbd, cbu)) {
-                return PROVEN_ERR_INVALID_FORMAT;
-            }
+            const uint8_t *data = rp_in_bytes(&c, (size_t)off + 8, cbd);
+            uint32_t sum = rp_in32(&c, off);
+            if (data == NULL || (sum != 0 && sum != block_checksum(data, cbd, cbu))) return PROVEN_ERR_INVALID_FORMAT;
             total += cbu;
             off += 8u + cbd;
         }
+        if (fo.bad) return PROVEN_ERR_INVALID_FORMAT;
     }
+    if (c.bad) return PROVEN_ERR_INVALID_FORMAT;
     if (total > limits->max_output) return PROVEN_ERR_OUT_OF_BOUNDS;
     uint8_t *buf = rp_mem_alloc(alloc, (size_t)total, 1);
     size_t *folder_base = rp_mem_alloc(alloc, nfolders, sizeof *folder_base);
@@ -377,15 +384,19 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
     size_t at = 0;
     proven_err_t err = PROVEN_OK;
     for (uint16_t f = 0; f < nfolders && err == PROVEN_OK; ++f) {
-        const uint8_t *fo = cab + folders + FOLDER * f;
-        uint32_t off = rp_rd32(fo);
-        uint16_t type = rp_rd16(fo + 6);
+        rp_in_t fo = rp_in_sub(&c, folders + FOLDER * (size_t)f, FOLDER);
+        uint32_t off = rp_in32(&fo, 0);
+        uint16_t nblocks = rp_in16(&fo, 4), type = rp_in16(&fo, 6);
         folder_base[f] = at;
         rp_lzx_dec_t *dec = NULL;
         if ((type & 0xFF) == TYPE_LZX) err = rp_lzx_dec_new(alloc, type >> 8 & 0x1F, &dec);
-        for (uint16_t k = 0; k < rp_rd16(fo + 4) && err == PROVEN_OK; ++k) {
-            uint16_t cbd = rp_rd16(cab + off + 4), cbu = rp_rd16(cab + off + 6);
-            const uint8_t *data = cab + off + 8;
+        for (uint16_t k = 0; k < nblocks && err == PROVEN_OK; ++k) {
+            uint16_t cbd = rp_in16(&c, (size_t)off + 4), cbu = rp_in16(&c, (size_t)off + 6);
+            const uint8_t *data = rp_in_bytes(&c, (size_t)off + 8, cbd);
+            if (data == NULL || at + cbu > total) {
+                err = PROVEN_ERR_INVALID_FORMAT;
+                break;
+            }
             if (dec) {
                 if (cbu == 0 || rp_lzx_dec_frame(dec, data, cbd, buf + at, cbu) != PROVEN_OK) {
                     err = PROVEN_ERR_INVALID_FORMAT;
@@ -418,16 +429,16 @@ proven_err_t rp_cab_read(proven_allocator_t alloc, const uint8_t *cab, size_t le
             err = PROVEN_ERR_INVALID_FORMAT;
             break;
         }
-        uint32_t size = rp_rd32(cab + off), start = rp_rd32(cab + off + 4);
-        uint16_t folder = rp_rd16(cab + off + 8);
-        const char *name = (const char *)cab + off + 16;
-        const void *nul = memchr(name, 0, len - off - 16);
+        uint32_t size = rp_in32(&c, off), start = rp_in32(&c, off + 4);
+        uint16_t folder = rp_in16(&c, off + 8);
+        const char *name = (const char *)rp_in_bytes(&c, off + 16, len - off - 16);
+        const void *nul = name ? memchr(name, 0, len - off - 16) : NULL;
         if (nul == NULL || folder >= nfolders || !rp_range_ok(start, size, folder_len[folder])) {
             err = PROVEN_ERR_INVALID_FORMAT;
             break;
         }
         list[k] = (rp_cab_file_t){ name, buf + folder_base[folder] + start, size };
-        off = (size_t)((const char *)nul - (const char *)cab) + 1;
+        off += 16 + (size_t)((const char *)nul - name) + 1;
     }
     rp_mem_free(alloc, folder_base);
     rp_mem_free(alloc, folder_len);
