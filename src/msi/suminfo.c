@@ -1,7 +1,7 @@
 // src/msi/suminfo.c - summary information reader and IDT export (include/rubrapack/suminfo.h).
 
 #include "rubrapack/buf.h"
-#include "rubrapack/le.h"
+#include "rubrapack/in.h"
 #include "rubrapack/suminfo.h"
 
 #include <stdio.h>
@@ -14,38 +14,40 @@ static const uint8_t fmtid_summary[16] = { 0xE0, 0x85, 0x9F, 0xF2, 0xF9, 0x4F, 0
 proven_err_t rp_suminfo_parse(const uint8_t *data, size_t len, rp_suminfo_t *out) {
     if (data == NULL || out == NULL) return PROVEN_ERR_INVALID_ARG;
     memset(out, 0, sizeof *out);
-    if (len < 48 || rp_rd16(data) != 0xFFFE) return PROVEN_ERR_INVALID_FORMAT;
-    if (rp_rd32(data + 24) < 1 || memcmp(data + 28, fmtid_summary, 16) != 0) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t sec = rp_rd32(data + 44);
+    rp_in_t in = rp_in(data, len);
+    const uint8_t *fmtid = rp_in_bytes(&in, 28, 16);
+    if (len < 48 || rp_in16(&in, 0) != 0xFFFE) return PROVEN_ERR_INVALID_FORMAT;
+    if (rp_in32(&in, 24) < 1 || fmtid == NULL || memcmp(fmtid, fmtid_summary, 16) != 0) return PROVEN_ERR_INVALID_FORMAT;
+    uint32_t sec = rp_in32(&in, 44);
     if (sec > len || len - sec < 8) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t sec_size = rp_rd32(data + sec), count = rp_rd32(data + sec + 4);
+    uint32_t sec_size = rp_in32(&in, sec), count = rp_in32(&in, (size_t)sec + 4);
     if (sec_size < 8 || sec_size > len - sec || count > RP_SUMINFO_MAX || (uint64_t)count * 8 > sec_size - 8) {
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    const uint8_t *s = data + sec;
+    rp_in_t s = rp_in_sub(&in, sec, sec_size);
     for (uint32_t k = 0; k < count; ++k) {
-        uint32_t pid = rp_rd32(s + 8 + 8 * k), off = rp_rd32(s + 12 + 8 * k);
+        uint32_t pid = rp_in32(&s, 8 + 8 * (size_t)k), off = rp_in32(&s, 12 + 8 * (size_t)k);
         if (off > sec_size || sec_size - off < 8) return PROVEN_ERR_INVALID_FORMAT;
-        const uint8_t *v = s + off;
         size_t room = sec_size - off - 4;
         rp_suminfo_prop_t *p = &out->props[out->count++];
         p->pid = pid;
-        p->type = rp_rd16(v);
+        p->type = rp_in16(&s, off);
         switch (p->type) {
         case RP_VT_I2:
-            p->i = (int16_t)rp_rd16(v + 4);
+            p->i = (int16_t)rp_in16(&s, (size_t)off + 4);
             break;
         case RP_VT_I4:
-            p->i = (int32_t)rp_rd32(v + 4);
+            p->i = (int32_t)rp_in32(&s, (size_t)off + 4);
             break;
         case RP_VT_FILETIME:
             if (room < 8) return PROVEN_ERR_INVALID_FORMAT;
-            p->filetime = (uint64_t)rp_rd32(v + 4) | ((uint64_t)rp_rd32(v + 8) << 32);
+            p->filetime = rp_in64(&s, (size_t)off + 4);
             break;
         case RP_VT_LPSTR: {
-            uint32_t n = rp_rd32(v + 4);
+            uint32_t n = rp_in32(&s, (size_t)off + 4);
             if (n > room - 4) return PROVEN_ERR_INVALID_FORMAT;
-            p->str = v + 8;
+            p->str = rp_in_bytes(&s, (size_t)off + 8, n);
+            if (p->str == NULL) return PROVEN_ERR_INVALID_FORMAT;
             p->str_len = n;
             while (p->str_len > 0 && p->str[p->str_len - 1] == 0) --p->str_len;   // drop the NUL
             break;
@@ -53,8 +55,9 @@ proven_err_t rp_suminfo_parse(const uint8_t *data, size_t len, rp_suminfo_t *out
         default:
             return PROVEN_ERR_UNSUPPORTED;
         }
+        if (s.bad) return PROVEN_ERR_INVALID_FORMAT;
     }
-    return PROVEN_OK;
+    return in.bad ? PROVEN_ERR_INVALID_FORMAT : PROVEN_OK;
 }
 
 void rp_filetime_text(uint64_t ft, char out[20]) {
