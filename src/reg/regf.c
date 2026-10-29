@@ -5,6 +5,7 @@
 #include "rubrapack/le.h"
 
 #include "rubrapack/buf.h"
+#include "rubrapack/in.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/text.h"
 
@@ -502,8 +503,7 @@ proven_err_t rp_regf_write(rp_regf_t *h, uint8_t **out, size_t *len) {
 
 typedef struct {
     proven_allocator_t       alloc;
-    const uint8_t           *bins;
-    size_t                   blen;
+    rp_in_t                  bins;      // the hive's bins (the file after its base block)
     const rp_regf_visitor_t *v;
     uint64_t                 count, max;
     const char             **why;
@@ -512,23 +512,32 @@ typedef struct {
 
 #define RFAIL(msg) do { *r->why = (msg); return PROVEN_ERR_INVALID_FORMAT; } while (0)
 
-// The payload of the cell at `off` (in use), at least `need` bytes; NULL when it is not one.
-static const uint8_t *get(rd_t *r, uint32_t off, size_t need, size_t *avail) {
-    if (off & 7 || (size_t)off + 4 > r->blen) return NULL;
-    int32_t size = (int32_t)rp_rd32(r->bins + off);
-    if (size >= 0 || size == INT32_MIN || (size_t)-size < 4 + need || (size_t)off + (size_t)-size > r->blen) return NULL;
-    if (avail) *avail = (size_t)-size - 4;
-    return r->bins + off + 4;
+// The payload of the cell at `off` (in use), at least `need` bytes; a bad, empty view when it is
+// not one.
+static rp_in_t get(rd_t *r, uint32_t off, size_t need) {
+    rp_in_t bins = r->bins, none = rp_in(NULL, 0);
+    if (off & 7 || (size_t)off + 4 > bins.n) return rp_in_sub(&none, 1, 0);
+    int32_t size = (int32_t)rp_in32(&bins, off);
+    if (size >= 0 || size == INT32_MIN || (size_t)-size < 4 + need || (size_t)off + (size_t)-size > bins.n) return rp_in_sub(&none, 1, 0);
+    return rp_in_sub(&bins, (size_t)off + 4, (size_t)-size - 4);
 }
 
-static bool append_name(rd_t *r, const uint8_t *p, size_t nb, bool comp) {
+// The cell's signature is `sig` (two letters).
+static bool is_sig(rp_in_t *c, const char *sig) {
+    const uint8_t *p = rp_in_bytes(c, 0, 2);
+    return p != NULL && memcmp(p, sig, 2) == 0;
+}
+
+static bool append_name(rd_t *r, rp_in_t *c, size_t off, size_t nb, bool comp) {
+    const uint8_t *p = rp_in_bytes(c, off, nb);
+    if (p == NULL) return false;
     if (comp) {
         for (size_t i = 0; i < nb; ++i) {
-            uint8_t c = p[i];
-            if (c < 0x80) rp_buf_byte(&r->path, c);
+            uint8_t ch = p[i];
+            if (ch < 0x80) rp_buf_byte(&r->path, ch);
             else {
-                rp_buf_byte(&r->path, (uint8_t)(0xC0 | c >> 6));
-                rp_buf_byte(&r->path, (uint8_t)(0x80 | (c & 63)));
+                rp_buf_byte(&r->path, (uint8_t)(0xC0 | ch >> 6));
+                rp_buf_byte(&r->path, (uint8_t)(0x80 | (ch & 63)));
             }
         }
         return r->path.err == PROVEN_OK;
@@ -537,7 +546,8 @@ static bool append_name(rd_t *r, const uint8_t *p, size_t nb, bool comp) {
     static uint16_t tmp[16384];                         // (not on the stack: keys nest 512 deep)
     size_t n = nb / 2;
     if (n > 16384) return false;
-    for (size_t i = 0; i < n; ++i) tmp[i] = rp_rd16(p + 2 * i);
+    rp_in_t name = rp_in(p, nb);
+    for (size_t i = 0; i < n; ++i) tmp[i] = rp_in16(&name, 2 * i);
     rp_text_result_t t = rp_utf16_to_utf8(tmp, n, NULL, 0);
     if (t.err != PROVEN_OK) return false;
     size_t at = r->path.len;
@@ -552,42 +562,41 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
         *r->why = TR_N("more keys and values than allowed");
         return PROVEN_ERR_OUT_OF_BOUNDS;
     }
-    size_t av;
-    const uint8_t *p = get(r, off, 76, &av);
-    if (p == NULL || memcmp(p, "nk", 2) != 0) RFAIL("a key cell is not a key");
-    size_t nb = rp_rd16(p + 72);
-    if (76 + nb > av || (nb == 0 && depth > 0)) RFAIL("a key's name does not fit its cell");
+    rp_in_t p = get(r, off, 76);
+    if (p.bad || !is_sig(&p, "nk")) RFAIL("a key cell is not a key");
+    size_t nb = rp_in16(&p, 72);
+    if (76 + nb > p.n || (nb == 0 && depth > 0)) RFAIL("a key's name does not fit its cell");
     size_t base = r->path.len;
     if (depth > 0) {
         if (base) rp_buf_byte(&r->path, '\\');
-        if (!append_name(r, p + 76, nb, rp_rd16(p + 2) & NK_COMP)) RFAIL("a key name is not valid text");
+        if (!append_name(r, &p, 76, nb, rp_in16(&p, 2) & NK_COMP)) RFAIL("a key name is not valid text");
     }
     size_t here = r->path.len;                          // this key's path, without the NUL
     rp_buf_byte(&r->path, 0);
     if (r->path.err != PROVEN_OK) return r->path.err;
     const char *path = (const char *)r->path.data;
     if (r->v && r->v->key) r->v->key(r->v->ctx, depth ? path : "");
-    uint32_t nval = rp_rd32(p + 36), vlist = rp_rd32(p + 40), nsub = rp_rd32(p + 20), list = rp_rd32(p + 28);
+    uint32_t nval = rp_in32(&p, 36), vlist = rp_in32(&p, 40), nsub = rp_in32(&p, 20), list = rp_in32(&p, 28);
+    if (p.bad) RFAIL("a key cell is not a key");
     if (nval) {
-        size_t lav;
-        const uint8_t *vl = get(r, vlist, (size_t)nval * 4, &lav);
-        if (vl == NULL || nval > lav / 4) RFAIL("a value list does not fit its cell");
+        rp_in_t vl = get(r, vlist, (size_t)nval * 4);
+        if (vl.bad || nval > vl.n / 4) RFAIL("a value list does not fit its cell");
         for (uint32_t i = 0; i < nval; ++i) {
             if (++r->count > r->max) {
                 *r->why = TR_N("more keys and values than allowed");
                 return PROVEN_ERR_OUT_OF_BOUNDS;
             }
-            size_t vav;
-            const uint8_t *q = get(r, rp_rd32(vl + 4 * i), 20, &vav);
-            if (q == NULL || memcmp(q, "vk", 2) != 0) RFAIL("a value cell is not a value");
-            size_t vnb = rp_rd16(q + 2);
-            if (20 + vnb > vav) RFAIL("a value's name does not fit its cell");
+            rp_in_t q = get(r, rp_in32(&vl, 4 * (size_t)i), 20);
+            if (q.bad || !is_sig(&q, "vk")) RFAIL("a value cell is not a value");
+            size_t vnb = rp_in16(&q, 2);
+            if (20 + vnb > q.n) RFAIL("a value's name does not fit its cell");
             size_t save = r->path.len;
-            if (!append_name(r, q + 20, vnb, rp_rd16(q + 16) & VK_COMP)) RFAIL("a value name is not valid text");
+            if (!append_name(r, &q, 20, vnb, rp_in16(&q, 16) & VK_COMP)) RFAIL("a value name is not valid text");
             rp_buf_byte(&r->path, 0);
             if (r->path.err != PROVEN_OK) return r->path.err;
             const char *name = (const char *)r->path.data + save;
-            uint32_t dsize = rp_rd32(q + 4), doff = rp_rd32(q + 8), type = rp_rd32(q + 12);
+            uint32_t dsize = rp_in32(&q, 4), doff = rp_in32(&q, 8), type = rp_in32(&q, 12);
+            if (q.bad) RFAIL("a value cell is not a value");
             uint8_t inl[4];
             const uint8_t *data = NULL;
             uint8_t *big = NULL;
@@ -599,28 +608,26 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
             } else if (dl > MAX_DATA) {
                 RFAIL("a value longer than 16 MiB");
             } else if (dl) {
-                size_t dav;
-                const uint8_t *d = get(r, doff, 8, &dav);
-                if (d && dl > BIG && memcmp(d, "db", 2) == 0) {
-                    size_t nseg = rp_rd16(d + 2), sav;
-                    const uint8_t *sl = get(r, rp_rd32(d + 4), nseg * 4, &sav);
-                    if (sl == NULL || nseg != (dl + BIG - 1) / BIG) RFAIL("a big value's segment list is damaged");
+                rp_in_t d = get(r, doff, 8);
+                if (!d.bad && dl > BIG && is_sig(&d, "db")) {
+                    size_t nseg = rp_in16(&d, 2);
+                    rp_in_t sl = get(r, rp_in32(&d, 4), nseg * 4);
+                    if (sl.bad || d.bad || nseg != (dl + BIG - 1) / BIG) RFAIL("a big value's segment list is damaged");
                     big = rp_mem_alloc(r->alloc, dl, 1);
                     if (big == NULL) return PROVEN_ERR_NOMEM;
                     for (size_t s = 0; s < nseg; ++s) {
-                        size_t take = dl - s * BIG < BIG ? dl - s * BIG : BIG, gav;
-                        const uint8_t *g = get(r, rp_rd32(sl + 4 * s), take, &gav);
-                        if (g == NULL) {
+                        size_t take = dl - s * BIG < BIG ? dl - s * BIG : BIG;
+                        rp_in_t g = get(r, rp_in32(&sl, 4 * s), take);
+                        if (g.bad || sl.bad || !rp_in_copy(&g, 0, big + s * BIG, take)) {
                             rp_mem_free(r->alloc, big);
                             RFAIL("a big value's segment is damaged");
                         }
-                        memcpy(big + s * BIG, g, take);
                     }
                     data = big;
                 } else {
-                    d = get(r, doff, dl, &dav);
-                    if (d == NULL) RFAIL("a value's data does not fit its cell");
-                    data = d;
+                    d = get(r, doff, dl);
+                    data = rp_in_bytes(&d, 0, dl);
+                    if (data == NULL) RFAIL("a value's data does not fit its cell");
                 }
             }
             if (r->v && r->v->value) r->v->value(r->v->ctx, path, name, type, data, dl);
@@ -630,30 +637,29 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
         }
     }
     if (nsub) {
-        size_t lav;
-        const uint8_t *l = get(r, list, 4, &lav);
-        if (l == NULL) RFAIL("a subkey list is damaged");
+        rp_in_t l = get(r, list, 4);
+        if (l.bad) RFAIL("a subkey list is damaged");
         // An ri index of lh/lf/li lists, or one such list.
-        const uint8_t *ri = NULL;
+        bool ri = is_sig(&l, "ri");
         uint32_t nl = 1;
-        if (memcmp(l, "ri", 2) == 0) {
-            ri = l;
-            nl = rp_rd16(l + 2);
-            if (4 + 4 * (size_t)nl > lav) RFAIL("a subkey index is damaged");
+        if (ri) {
+            nl = rp_in16(&l, 2);
+            if (4 + 4 * (size_t)nl > l.n) RFAIL("a subkey index is damaged");
         }
         uint64_t seen = 0;
         for (uint32_t i = 0; i < nl; ++i) {
-            const uint8_t *s = ri ? get(r, rp_rd32(ri + 4 + 4 * i), 4, &lav) : get(r, list, 4, &lav);
-            if (s == NULL) RFAIL("a subkey list is damaged");
-            bool lhf = memcmp(s, "lh", 2) == 0 || memcmp(s, "lf", 2) == 0, li = memcmp(s, "li", 2) == 0;
-            size_t n = rp_rd16(s + 2), step = lhf ? 8 : 4;
-            if ((!lhf && !li) || 4 + step * n > lav) RFAIL("a subkey list is damaged");
+            rp_in_t s = ri ? get(r, rp_in32(&l, 4 + 4 * (size_t)i), 4) : get(r, list, 4);
+            if (s.bad || l.bad) RFAIL("a subkey list is damaged");
+            bool lhf = is_sig(&s, "lh") || is_sig(&s, "lf"), li = is_sig(&s, "li");
+            size_t n = rp_in16(&s, 2), step = lhf ? 8 : 4;
+            if ((!lhf && !li) || 4 + step * n > s.n) RFAIL("a subkey list is damaged");
             for (size_t j = 0; j < n; ++j) {
                 r->path.len = here;
-                proven_err_t err = read_key(r, rp_rd32(s + 4 + step * j), depth + 1);
+                proven_err_t err = read_key(r, rp_in32(&s, 4 + step * j), depth + 1);
                 if (err != PROVEN_OK) return err;
                 ++seen;
             }
+            if (s.bad) RFAIL("a subkey list is damaged");
         }
         if (seen != nsub) RFAIL("a key's subkey count does not match its lists");
     }
@@ -663,41 +669,44 @@ static proven_err_t read_key(rd_t *r, uint32_t off, int depth) {
 
 proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t len, const rp_limits_t *lim, const rp_regf_visitor_t *v,
                           const char **why) {
-    if (len < BLOCK + BLOCK || memcmp(hive, "regf", 4) != 0) {
+    rp_in_t in = rp_in(hive, len);
+    const uint8_t *magic = rp_in_bytes(&in, 0, 4);
+    if (len < BLOCK + BLOCK || magic == NULL || memcmp(magic, "regf", 4) != 0) {
         *why = TR_N("not a registry hive");
         return PROVEN_ERR_INVALID_FORMAT;
     }
     uint32_t sum = 0;
-    for (size_t i = 0; i < 508; i += 4) sum ^= rp_rd32(hive + i);
+    for (size_t i = 0; i < 508; i += 4) sum ^= rp_in32(&in, i);
     if (sum == 0) sum = 1;
     else if (sum == 0xFFFFFFFF) sum = 0xFFFFFFFE;
-    if (sum != rp_rd32(hive + 508)) {
+    if (sum != rp_in32(&in, 508)) {
         *why = TR_N("the hive's base block checksum does not match");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    if (rp_rd32(hive + 4) != rp_rd32(hive + 8)) {
+    if (rp_in32(&in, 4) != rp_in32(&in, 8)) {
         *why = TR_N("the hive was not closed cleanly (its log would be needed)");
         return PROVEN_ERR_INVALID_FORMAT;
     }
-    if (rp_rd32(hive + 20) != 1 || rp_rd32(hive + 24) < 3 || rp_rd32(hive + 24) > 6 || rp_rd32(hive + 28) != 0 || rp_rd32(hive + 32) != 1) {
+    if (rp_in32(&in, 20) != 1 || rp_in32(&in, 24) < 3 || rp_in32(&in, 24) > 6 || rp_in32(&in, 28) != 0 || rp_in32(&in, 32) != 1) {
         *why = TR_N("a hive version or type rubrapack does not read");
         return PROVEN_ERR_UNSUPPORTED;
     }
-    size_t blen = rp_rd32(hive + 40);
+    size_t blen = rp_in32(&in, 40);
     if (blen > len - BLOCK || blen % BLOCK) {
         *why = TR_N("the hive's bins lie outside the file");
         return PROVEN_ERR_INVALID_FORMAT;
     }
+    rp_in_t bins = rp_in_sub(&in, BLOCK, blen);
     // Every bin must be where its header says, and no cell may cross into the next.
     for (size_t at = 0; at < blen;) {
-        const uint8_t *b = hive + BLOCK + at;
-        uint32_t size = rp_rd32(b + 8);
-        if (memcmp(b, "hbin", 4) != 0 || rp_rd32(b + 4) != at || size < BLOCK || size % BLOCK || size > blen - at) {
+        const uint8_t *hb = rp_in_bytes(&bins, at, 4);
+        uint32_t size = rp_in32(&bins, at + 8);
+        if (hb == NULL || memcmp(hb, "hbin", 4) != 0 || rp_in32(&bins, at + 4) != at || size < BLOCK || size % BLOCK || size > blen - at) {
             *why = TR_N("a damaged hive bin");
             return PROVEN_ERR_INVALID_FORMAT;
         }
         for (size_t c = at + BIN_HEADER; c < at + size;) {
-            int32_t cs = (int32_t)rp_rd32(hive + BLOCK + c);
+            int32_t cs = (int32_t)rp_in32(&bins, c);
             size_t n = cs < 0 ? (size_t)-(int64_t)cs : (size_t)cs;
             if (n < 8 || n & 7 || n > at + size - c) {
                 *why = TR_N("a hive cell crosses its bin");
@@ -707,8 +716,12 @@ proven_err_t rp_regf_read(proven_allocator_t alloc, const uint8_t *hive, size_t 
         }
         at += size;
     }
-    rd_t r = { alloc, hive + BLOCK, blen, v, 0, lim->max_entries, why, rp_buf_new(alloc, 1u << 20) };
-    proven_err_t err = read_key(&r, rp_rd32(hive + 36), 0);
+    if (in.bad || bins.bad) {
+        *why = TR_N("a damaged hive bin");
+        return PROVEN_ERR_INVALID_FORMAT;
+    }
+    rd_t r = { alloc, bins, v, 0, lim->max_entries, why, rp_buf_new(alloc, 1u << 20) };
+    proven_err_t err = read_key(&r, rp_in32(&in, 36), 0);
     rp_buf_free(&r.path);
     return err;
 }
