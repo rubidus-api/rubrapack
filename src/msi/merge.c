@@ -550,7 +550,7 @@ proven_err_t rp_msi_module_configure(rp_msi_module_t *m, const char *const *valu
             if (copy == NULL) return PROVEN_ERR_NOMEM;
             size_t cc = tab->column_count, n = 0;
             for (size_t r = 0; r < tab->row_count; ++r) {
-                if ((long)r != rr) memcpy(&copy[n++ * cc], &tab->cells[r * cc], cc * sizeof *copy);
+                if ((long)r != rr) memcpy(&copy[n++ * cc], rp_msi_wrow(tab, r), cc * sizeof *copy);
             }
             tab->cells = copy;
             tab->row_count = n;

@@ -309,12 +309,13 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
     if (msi->tables == NULL) FAIL(PROVEN_ERR_NOMEM, "out of memory");
     memset(msi->tables, 0, trows.row_count * sizeof *msi->tables);
     for (size_t t = 0; t < trows.row_count; ++t) {
-        rp_msi_value_t name = trows.cells[t];
+        rp_msi_value_t name = rp_msi_rcell(&trows, t, 0);
         if (name.kind != RP_MSI_STR) FAIL(PROVEN_ERR_INVALID_FORMAT, "_Tables row without a name");
         msi->tables[t].name = name.s;
         size_t n = 0;
         for (size_t r = 0; r < crows.row_count; ++r) {
-            if (crows.cells[r * 4].kind == RP_MSI_STR && crows.cells[r * 4].s == name.s) ++n;
+            rp_msi_value_t owner = rp_msi_rcell(&crows, r, 0);
+            if (owner.kind == RP_MSI_STR && owner.s == name.s) ++n;
         }
         if (n == 0) FAIL(PROVEN_ERR_INVALID_FORMAT, "table without columns");
         msi->tables[t].columns = rp_mem_alloc(alloc, n, sizeof *msi->tables[t].columns);
@@ -323,7 +324,8 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
         msi->tables[t].column_count = n;
         size_t filled = 0;
         for (size_t r = 0; r < crows.row_count; ++r) {
-            const rp_msi_value_t *row = &crows.cells[r * 4];
+            rp_msi_value_t row[4] = { rp_msi_rcell(&crows, r, 0), rp_msi_rcell(&crows, r, 1), rp_msi_rcell(&crows, r, 2),
+                                      rp_msi_rcell(&crows, r, 3) };
             if (row[0].kind != RP_MSI_STR || row[0].s != name.s) continue;
             if (row[1].kind != RP_MSI_INT || row[1].i < 1 || (size_t)row[1].i > n || row[2].kind != RP_MSI_STR ||
                 row[3].kind != RP_MSI_INT) {
@@ -403,7 +405,7 @@ static int compare_rows(const sort_ctx_t *ctx, size_t ra, size_t rb) {
     size_t nc = ctx->table->column_count;
     for (size_t c = 0; c < nc; ++c) {
         if (!(ctx->table->columns[c].type & RP_MSI_COL_KEY)) continue;
-        int d = compare_values(ctx->msi, ctx->rows->cells[ra * nc + c], ctx->rows->cells[rb * nc + c]);
+        int d = compare_values(ctx->msi, rp_msi_rcell(ctx->rows, ra, (ptrdiff_t)c), rp_msi_rcell(ctx->rows, rb, (ptrdiff_t)c));
         if (d != 0) return d;
     }
     return 0;
@@ -512,7 +514,7 @@ proven_err_t rp_msi_export_idt(const rp_msi_t *msi, size_t table, uint8_t **out,
     rp_buf_puts(&b, "\r\n");
 
     for (size_t k = 0; k < nr && err == PROVEN_OK; ++k) {
-        const rp_msi_value_t *row = &rows.cells[idx[k] * nc];
+        const rp_msi_value_t *row = &rows.cells[idx[k] * rows.column_count];     // our rows, of nc columns: c < nc below
         for (size_t c = 0; c < nc; ++c) {
             if (c) rp_buf_byte(&b, '\t');
             if (row[c].kind == RP_MSI_BINARY) {
