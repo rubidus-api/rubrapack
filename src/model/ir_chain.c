@@ -6,7 +6,7 @@
 #include "rubrapack/lang.h"
 #include "rubrapack/chain.h"
 #include "rubrapack/crypto.h"
-#include "rubrapack/le.h"
+#include "rubrapack/in.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/suminfo.h"
@@ -177,11 +177,11 @@ static const char *msi_codes(proven_allocator_t alloc, const uint8_t *data, size
             bad = TR_N("has no Property table");
         }
         for (size_t r = 0; bad == NULL && r < rows.row_count; ++r) {
-            const rp_msi_value_t *row = &rows.cells[r * rows.column_count];
+            rp_msi_value_t key = rp_msi_rcell(&rows, r, 0), val = rp_msi_rcell(&rows, r, 1);
             const uint8_t *k, *v;
             size_t kn, vn;
-            if (row[0].kind != RP_MSI_STR || row[1].kind != RP_MSI_STR || rp_msi_string(&msi, row[0].s, &k, &kn) != PROVEN_OK ||
-                rp_msi_string(&msi, row[1].s, &v, &vn) != PROVEN_OK) {
+            if (key.kind != RP_MSI_STR || val.kind != RP_MSI_STR || rp_msi_string(&msi, key.s, &k, &kn) != PROVEN_OK ||
+                rp_msi_string(&msi, val.s, &v, &vn) != PROVEN_OK) {
                 continue;
             }
             char **dst = kn == 11 && memcmp(k, "ProductCode", 11) == 0 ? code : kn == 14 && memcmp(k, "ProductVersion", 14) == 0 ? version : NULL;
@@ -384,23 +384,27 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
     *entries = NULL;
     *count = 0;
     // The payload ends where a signature starts (the PE certificate table), else at the file's end.
+    rp_in_t in = rp_in(exe, len);
     size_t end = len;
-    if (len >= 0x40 && exe[0] == 'M' && exe[1] == 'Z') {
-        uint32_t pe = rp_rd32(exe + 0x3C);
-        if ((uint64_t)pe + 24 + 112 + 40 <= len && memcmp(exe + pe, "PE\0\0", 4) == 0) {
-            uint16_t magic = (uint16_t)(exe[pe + 24] | exe[pe + 25] << 8);
+    if (len >= 0x40 && rp_in8(&in, 0) == 'M' && rp_in8(&in, 1) == 'Z') {
+        uint32_t pe = rp_in32(&in, 0x3C);
+        const uint8_t *sig = (uint64_t)pe + 24 + 112 + 40 <= len ? rp_in_bytes(&in, pe, 4) : NULL;
+        if (sig != NULL && memcmp(sig, "PE\0\0", 4) == 0) {
+            uint16_t magic = rp_in16(&in, (size_t)pe + 24);
             size_t dirs = pe + (magic == 0x20B ? 24 + 112 : 24 + 96);
-            uint32_t cert = rp_rd32(exe + dirs + 32), cert_size = rp_rd32(exe + dirs + 36);
+            uint32_t cert = rp_in32(&in, dirs + 32), cert_size = rp_in32(&in, dirs + 36);
             if (cert && cert_size && cert <= len) end = cert;
         }
     }
-    if (end < TRAILER || memcmp(exe + end - 8, "RPCHAIN!", 8) != 0) return PROVEN_ERR_NOT_FOUND;
-    const uint8_t *t = exe + end - TRAILER;
-    uint64_t start = rp_rd64(t), mat = rp_rd64(t + 8), mlen = rp_rd32(t + 16);
-    if (start > mat || mat > end - TRAILER || mlen > end - TRAILER - mat || mlen < 16) return PROVEN_ERR_INVALID_FORMAT;
-    const uint8_t *m = exe + mat;
-    if (memcmp(m, "RPCHAIN1", 8) != 0) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t n = rp_rd32(m + 8);
+    const uint8_t *mark = end >= TRAILER ? rp_in_bytes(&in, end - 8, 8) : NULL;
+    if (mark == NULL || memcmp(mark, "RPCHAIN!", 8) != 0) return PROVEN_ERR_NOT_FOUND;
+    rp_in_t t = rp_in_sub(&in, end - TRAILER, TRAILER);
+    uint64_t start = rp_in64(&t, 0), mat = rp_in64(&t, 8), mlen = rp_in32(&t, 16);
+    if (t.bad || start > mat || mat > end - TRAILER || mlen > end - TRAILER - mat || mlen < 16) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t mv = rp_in_sub(&in, (size_t)mat, (size_t)mlen);
+    const uint8_t *magic1 = rp_in_bytes(&mv, 0, 8);
+    if (magic1 == NULL || memcmp(magic1, "RPCHAIN1", 8) != 0) return PROVEN_ERR_INVALID_FORMAT;
+    uint32_t n = rp_in32(&mv, 8);
     if (n == 0 || n > RP_CHAIN_MAX) return PROVEN_ERR_INVALID_FORMAT;
     rp_chain_entry_t *e = rp_mem_alloc(alloc, n + 1, sizeof *e + mlen + 16);    // entries, then the strings
     if (e == NULL) return PROVEN_ERR_NOMEM;
@@ -409,9 +413,9 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
     const char *s[4];
 #define TAKE(dst)                                                                         \
     do {                                                                                  \
-        if (mlen - at < 4 || rp_rd32(m + at) > mlen - at - 4) goto bad;                      \
-        uint32_t l_ = rp_rd32(m + at);                                                       \
-        memcpy(sp, m + at + 4, l_);                                                       \
+        if (mlen - at < 4 || rp_in32(&mv, at) > mlen - at - 4) goto bad;                      \
+        uint32_t l_ = rp_in32(&mv, at);                                                       \
+        if (!rp_in_copy(&mv, at + 4, sp, l_)) goto bad;                                   \
         sp[l_] = '\0';                                                                    \
         (dst) = sp;                                                                       \
         sp += l_ + 1;                                                                     \
@@ -427,17 +431,19 @@ proven_err_t rp_chain_read(proven_allocator_t alloc, const uint8_t *exe, size_t 
         TAKE(e[i].product_code);
         TAKE(e[i].version);
         if (mlen - at < 52) goto bad;
-        uint32_t fl = rp_rd32(m + at);
+        uint32_t fl = rp_in32(&mv, at);
         e[i].vital = (fl & FLAG_VITAL) != 0;
         e[i].kind = fl & FLAG_MSP ? RP_CHAIN_MSP : fl & FLAG_MSIX ? RP_CHAIN_MSIX : RP_CHAIN_MSI;
         e[i].ext = fl & FLAG_MSP ? ".msp" : fl & FLAG_BUNDLE ? ".msixbundle" : fl & FLAG_MSIX ? ".msix" : ".msi";
-        uint64_t off = rp_rd64(m + at + 4), size = rp_rd64(m + at + 12);
-        if (off > mat - start || size > mat - start - off) goto bad;
-        e[i].data = exe + start + off;
+        uint64_t off = rp_in64(&mv, at + 4), size = rp_in64(&mv, at + 12);
+        const uint8_t *want = rp_in_bytes(&mv, at + 20, 32);
+        if (want == NULL || off > mat - start || size > mat - start - off) goto bad;
+        e[i].data = rp_in_bytes(&in, (size_t)(start + off), (size_t)size);
+        if (e[i].data == NULL) goto bad;
         e[i].size = size;
         uint8_t sha[32];
         rp_hash(RP_HASH_SHA256, e[i].data, (size_t)size, sha);
-        e[i].hash_ok = memcmp(sha, m + at + 20, 32) == 0;
+        e[i].hash_ok = memcmp(sha, want, 32) == 0;
         at += 52;
     }
 #undef TAKE

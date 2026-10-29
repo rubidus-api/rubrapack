@@ -2,28 +2,29 @@
 // Layout from the Microsoft PE/COFF specification and the VS_VERSIONINFO documentation.
 
 #include "rubrapack/crypto.h"
-#include "rubrapack/le.h"
+#include "rubrapack/in.h"
 #include "rubrapack/limits.h"
 #include "rubrapack/pe.h"
 
 #include <string.h>
 
 typedef struct {
-    const uint8_t *d;
-    size_t         n;
-    const uint8_t *sections;
-    uint16_t       nsections;
+    rp_in_t  in;            // the whole file
+    size_t   sections;      // offset of the section table
+    uint16_t nsections;
 } pe_t;
 
 // File offset of an RVA range, or false when no section holds all of it.
 static bool rva_to_off(const pe_t *pe, uint32_t rva, uint32_t size, size_t *off) {
+    rp_in_t in = pe->in;
     for (uint16_t k = 0; k < pe->nsections; ++k) {
-        const uint8_t *s = pe->sections + 40u * k;
-        uint32_t vsize = rp_rd32(s + 8), va = rp_rd32(s + 12), rawsize = rp_rd32(s + 16), raw = rp_rd32(s + 20);
+        rp_in_t s = rp_in_sub(&in, pe->sections + 40u * k, 40);
+        uint32_t vsize = rp_in32(&s, 8), va = rp_in32(&s, 12), rawsize = rp_in32(&s, 16), raw = rp_in32(&s, 20);
+        if (s.bad) return false;
         uint32_t span = vsize > rawsize ? vsize : rawsize;
         if (rva >= va && (uint64_t)rva - va + size <= span) {
             uint64_t o = (uint64_t)raw + (rva - va);
-            if (!rp_range_ok(o, size, pe->n) || (uint64_t)rva - va + size > rawsize) return false;
+            if (!rp_range_ok(o, size, in.n) || (uint64_t)rva - va + size > rawsize) return false;
             *off = (size_t)o;
             return true;
         }
@@ -35,13 +36,15 @@ static bool rva_to_off(const pe_t *pe, uint32_t rva, uint32_t size, size_t *off)
 // first entry when id < 0. Returns the entry's offset field and sets *lang_id to its ID.
 static bool res_entry(const pe_t *pe, size_t root, size_t dir, uint32_t root_size, int32_t id, uint32_t *target,
                       uint32_t *found_id) {
+    rp_in_t in = pe->in;
     if (!rp_range_ok(dir, 16, root + root_size)) return false;
-    uint16_t named = rp_rd16(pe->d + dir + 12), ids = rp_rd16(pe->d + dir + 14);
+    uint16_t named = rp_in16(&in, dir + 12), ids = rp_in16(&in, dir + 14);
     size_t count = (size_t)named + ids;
     if (!rp_range_ok(dir + 16, count * 8, root + root_size)) return false;
-    for (size_t k = 0; k < count; ++k) {
-        const uint8_t *e = pe->d + dir + 16 + 8 * k;
-        uint32_t name = rp_rd32(e), off = rp_rd32(e + 4);
+    rp_in_t list = rp_in_sub(&in, dir + 16, count * 8);
+    for (size_t k = 0; k < count && !in.bad; ++k) {
+        uint32_t name = rp_in32(&list, 8 * k), off = rp_in32(&list, 8 * k + 4);
+        if (list.bad) return false;
         if (name & 0x80000000u) continue;           // named entries are not what we look for
         if (id < 0 || name == (uint32_t)id) {
             *target = off;
@@ -54,19 +57,21 @@ static bool res_entry(const pe_t *pe, size_t root, size_t dir, uint32_t root_siz
 
 // VarFileInfo\Translation: first language, searched as UTF-16 "Translation" inside the
 // version resource (the block layout nests; a key search inside its bounds is enough).
-static uint16_t translation_language(const uint8_t *p, size_t n) {
+static uint16_t translation_language(rp_in_t *v) {
     static const char key[] = "Translation";
-    for (size_t i = 0; i + 2 * sizeof key + 4 <= n; i += 2) {
+    for (size_t i = 0; i + 2 * sizeof key + 4 <= v->n; i += 2) {
+        const uint8_t *p = rp_in_bytes(v, i, 2 * sizeof key);
+        if (p == NULL) return 0;
         bool hit = true;
         for (size_t k = 0; k < sizeof key; ++k) {       // includes the terminating NUL
-            if (p[i + 2 * k] != (uint8_t)key[k] || p[i + 2 * k + 1] != 0) {
+            if (p[2 * k] != (uint8_t)key[k] || p[2 * k + 1] != 0) {
                 hit = false;
                 break;
             }
         }
         if (!hit) continue;
-        size_t v = (i + 2 * sizeof key + 3) & ~(size_t)3;   // value is 32-bit aligned
-        if (v + 2 <= n) return rp_rd16(p + v);
+        size_t at = (i + 2 * sizeof key + 3) & ~(size_t)3;   // value is 32-bit aligned
+        if (rp_in_has(v, at, 2)) return rp_in16(v, at);
     }
     return 0;
 }
@@ -74,25 +79,29 @@ static uint16_t translation_language(const uint8_t *p, size_t n) {
 proven_err_t rp_pe_read(const uint8_t *data, size_t len, rp_pe_info_t *info) {
     if (info == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
     memset(info, 0, sizeof *info);
-    if (len < 0x40 || data[0] != 'M' || data[1] != 'Z') return PROVEN_OK;
-    uint32_t pe_off = rp_rd32(data + 0x3C);
-    if (!rp_range_ok(pe_off, 24, len) || memcmp(data + pe_off, "PE\0\0", 4) != 0) return PROVEN_OK;
+    rp_in_t in = rp_in(data, len);
+    if (len < 0x40 || rp_in8(&in, 0) != 'M' || rp_in8(&in, 1) != 'Z') return PROVEN_OK;
+    uint32_t pe_off = rp_in32(&in, 0x3C);
+    const uint8_t *sig = rp_range_ok(pe_off, 24, len) ? rp_in_bytes(&in, pe_off, 4) : NULL;
+    if (sig == NULL || memcmp(sig, "PE\0\0", 4) != 0) return PROVEN_OK;
     info->is_pe = true;
-    const uint8_t *coff = data + pe_off + 4;
-    info->machine = rp_rd16(coff);
-    info->is_dll = (rp_rd16(coff + 18) & 0x2000) != 0;
-    uint16_t nsections = rp_rd16(coff + 2), opt_size = rp_rd16(coff + 16);
+    rp_in_t coff = rp_in_sub(&in, (size_t)pe_off + 4, 20);
+    info->machine = rp_in16(&coff, 0);
+    info->is_dll = (rp_in16(&coff, 18) & 0x2000) != 0;
+    uint16_t nsections = rp_in16(&coff, 2), opt_size = rp_in16(&coff, 16);
     size_t opt = pe_off + 24u;
-    if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) return PROVEN_ERR_INVALID_FORMAT;
-    uint16_t magic = rp_rd16(data + opt);
-    if (opt_size >= 70) info->subsystem = rp_rd16(data + opt + 68);     // the same place in PE32 and PE32+
+    if (!rp_range_ok(opt, opt_size, len) || opt_size < 2 || coff.bad) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t oh = rp_in_sub(&in, opt, opt_size);
+    uint16_t magic = rp_in16(&oh, 0);
+    if (opt_size >= 70) info->subsystem = rp_in16(&oh, 68);     // the same place in PE32 and PE32+
     size_t dirs_at = magic == 0x20B ? 112 : magic == 0x10B ? 96 : 0;
     if (dirs_at == 0 || opt_size < dirs_at + 8 * 3) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t ndirs = rp_rd32(data + opt + dirs_at - 4);
+    uint32_t ndirs = rp_in32(&oh, dirs_at - 4);
     if (!rp_range_ok(opt, (size_t)opt_size + 40u * nsections, len)) return PROVEN_ERR_INVALID_FORMAT;
-    pe_t pe = { data, len, data + opt + opt_size, nsections };
+    pe_t pe = { in, opt + opt_size, nsections };
     if (ndirs <= 2) return PROVEN_OK;                       // no resource directory entry
-    uint32_t res_rva = rp_rd32(data + opt + dirs_at + 16), res_size = rp_rd32(data + opt + dirs_at + 20);
+    uint32_t res_rva = rp_in32(&oh, dirs_at + 16), res_size = rp_in32(&oh, dirs_at + 20);
+    if (oh.bad) return PROVEN_ERR_INVALID_FORMAT;
     if (res_rva == 0 || res_size == 0) return PROVEN_OK;
     size_t root;
     if (!rva_to_off(&pe, res_rva, res_size, &root)) return PROVEN_ERR_INVALID_FORMAT;
@@ -107,22 +116,23 @@ proven_err_t rp_pe_read(const uint8_t *data, size_t len, rp_pe_info_t *info) {
         return PROVEN_ERR_INVALID_FORMAT;
     }
     if ((t3 & 0x80000000u) || !rp_range_ok(root + t3, 16, root + res_size)) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t data_rva = rp_rd32(data + root + t3), data_size = rp_rd32(data + root + t3 + 4);
+    uint32_t data_rva = rp_in32(&in, root + t3), data_size = rp_in32(&in, root + t3 + 4);
     size_t vi;
-    if (!rva_to_off(&pe, data_rva, data_size, &vi) || data_size < 6 + 32 + 52) return PROVEN_ERR_INVALID_FORMAT;
+    if (in.bad || !rva_to_off(&pe, data_rva, data_size, &vi) || data_size < 6 + 32 + 52) return PROVEN_ERR_INVALID_FORMAT;
 
     // VS_VERSIONINFO: wLength, wValueLength, wType, "VS_VERSION_INFO\0" (UTF-16), padding,
     // VS_FIXEDFILEINFO (signature FEEF04BD).
-    const uint8_t *v = data + vi;
+    rp_in_t v = rp_in_sub(&in, vi, data_size);
     size_t fixed = (6 + 32 + 3) & ~(size_t)3;               // header + key, 32-bit aligned
-    if (rp_rd16(v + 2) < 52 || rp_rd32(v + fixed) != 0xFEEF04BDu) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t ms = rp_rd32(v + fixed + 8), lsw = rp_rd32(v + fixed + 12);
+    if (rp_in16(&v, 2) < 52 || rp_in32(&v, fixed) != 0xFEEF04BDu) return PROVEN_ERR_INVALID_FORMAT;
+    uint32_t ms = rp_in32(&v, fixed + 8), lsw = rp_in32(&v, fixed + 12);
+    if (v.bad) return PROVEN_ERR_INVALID_FORMAT;
     info->has_version = true;
     info->version[0] = (uint16_t)(ms >> 16);
     info->version[1] = (uint16_t)ms;
     info->version[2] = (uint16_t)(lsw >> 16);
     info->version[3] = (uint16_t)lsw;
-    uint16_t tl = translation_language(v, data_size);
+    uint16_t tl = translation_language(&v);
     info->language = tl ? tl : (uint16_t)lang;
     return PROVEN_OK;
 }
@@ -203,60 +213,71 @@ static unsigned col_size(const md_t *m, uint8_t c) {
     return most < (1u << (16 - coded[c].bits)) ? 2 : 4;
 }
 
-static uint32_t rd_n(const uint8_t *p, unsigned n) { return n == 2 ? rp_rd16(p) : rp_rd32(p); }
+static uint32_t rd_n(rp_in_t *in, size_t off, unsigned n) { return n == 2 ? rp_in16(in, off) : rp_in32(in, off); }
 
 proven_err_t rp_pe_assembly(const uint8_t *data, size_t len, rp_pe_assembly_t *out) {
     if (out == NULL || (data == NULL && len != 0)) return PROVEN_ERR_INVALID_ARG;
     memset(out, 0, sizeof *out);
-    if (len < 0x40 || data[0] != 'M' || data[1] != 'Z') return PROVEN_OK;
-    uint32_t pe_off = rp_rd32(data + 0x3C);
-    if (!rp_range_ok(pe_off, 24, len) || memcmp(data + pe_off, "PE\0\0", 4) != 0) return PROVEN_OK;
-    const uint8_t *coff = data + pe_off + 4;
-    uint16_t machine = rp_rd16(coff), nsections = rp_rd16(coff + 2), opt_size = rp_rd16(coff + 16);
+    rp_in_t in = rp_in(data, len);
+    if (len < 0x40 || rp_in8(&in, 0) != 'M' || rp_in8(&in, 1) != 'Z') return PROVEN_OK;
+    uint32_t pe_off = rp_in32(&in, 0x3C);
+    const uint8_t *sig = rp_range_ok(pe_off, 24, len) ? rp_in_bytes(&in, pe_off, 4) : NULL;
+    if (sig == NULL || memcmp(sig, "PE\0\0", 4) != 0) return PROVEN_OK;
+    rp_in_t coff = rp_in_sub(&in, (size_t)pe_off + 4, 20);
+    uint16_t machine = rp_in16(&coff, 0), nsections = rp_in16(&coff, 2), opt_size = rp_in16(&coff, 16);
     size_t opt = pe_off + 24u;
-    if (!rp_range_ok(opt, opt_size, len) || opt_size < 2) return PROVEN_ERR_INVALID_FORMAT;
-    uint16_t magic = rp_rd16(data + opt);
+    if (!rp_range_ok(opt, opt_size, len) || opt_size < 2 || coff.bad) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t oh = rp_in_sub(&in, opt, opt_size);
+    uint16_t magic = rp_in16(&oh, 0);
     size_t dirs_at = magic == 0x20B ? 112 : magic == 0x10B ? 96 : 0;
-    if (dirs_at == 0 || opt_size < dirs_at + 8 * 15 || rp_rd32(data + opt + dirs_at - 4) < 15) return PROVEN_OK;      // no CLI header entry
+    if (dirs_at == 0 || opt_size < dirs_at + 8 * 15 || rp_in32(&oh, dirs_at - 4) < 15) return PROVEN_OK;      // no CLI header entry
     if (!rp_range_ok(opt, (size_t)opt_size + 40u * nsections, len)) return PROVEN_ERR_INVALID_FORMAT;
-    pe_t pe = { data, len, data + opt + opt_size, nsections };
-    uint32_t cli_rva = rp_rd32(data + opt + dirs_at + 14 * 8), cli_size = rp_rd32(data + opt + dirs_at + 14 * 8 + 4);
+    pe_t pe = { in, opt + opt_size, nsections };
+    uint32_t cli_rva = rp_in32(&oh, dirs_at + 14 * 8), cli_size = rp_in32(&oh, dirs_at + 14 * 8 + 4);
+    if (oh.bad) return PROVEN_ERR_INVALID_FORMAT;
     if (cli_rva == 0 || cli_size < 72) return PROVEN_OK;
     size_t cli, root, tabs = 0, strs = 0, blobs = 0;
     uint32_t tabs_n = 0, strs_n = 0, blobs_n = 0;
     if (!rva_to_off(&pe, cli_rva, 72, &cli)) return PROVEN_ERR_INVALID_FORMAT;
-    uint32_t md_rva = rp_rd32(data + cli + 8), md_size = rp_rd32(data + cli + 12), flags = rp_rd32(data + cli + 16);
-    if (md_size < 32 || !rva_to_off(&pe, md_rva, md_size, &root) || rp_rd32(data + root) != 0x424A5342u) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t ch = rp_in_sub(&in, cli, 72);
+    uint32_t md_rva = rp_in32(&ch, 8), md_size = rp_in32(&ch, 12), flags = rp_in32(&ch, 16);
+    if (ch.bad || md_size < 32 || !rva_to_off(&pe, md_rva, md_size, &root)) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t md = rp_in_sub(&in, root, md_size);
+    if (rp_in32(&md, 0) != 0x424A5342u) return PROVEN_ERR_INVALID_FORMAT;
     // The metadata root: version string, then the stream headers (offset, size, name padded to 4).
-    uint32_t vlen = rp_rd32(data + root + 12);
+    uint32_t vlen = rp_in32(&md, 12);
     size_t at = 16 + (size_t)vlen;
     if (vlen > md_size || at + 4 > md_size) return PROVEN_ERR_INVALID_FORMAT;
-    uint16_t nstreams = rp_rd16(data + root + at + 2);
+    uint16_t nstreams = rp_in16(&md, at + 2);
     at += 4;
     for (uint16_t i = 0; i < nstreams; ++i) {
         if (at + 8 > md_size) return PROVEN_ERR_INVALID_FORMAT;
-        uint32_t off = rp_rd32(data + root + at), size = rp_rd32(data + root + at + 4);
-        const char *name = (const char *)data + root + at + 8;
+        uint32_t off = rp_in32(&md, at), size = rp_in32(&md, at + 4);
         size_t nl = 0;
-        while (at + 8 + nl < md_size && nl < 32 && name[nl]) ++nl;
+        while (at + 8 + nl < md_size && nl < 32 && rp_in8(&md, at + 8 + nl)) ++nl;
         if (at + 8 + nl >= md_size || nl == 32) return PROVEN_ERR_INVALID_FORMAT;
         if ((uint64_t)off + size > md_size) return PROVEN_ERR_INVALID_FORMAT;
+        const uint8_t *name = rp_in_bytes(&md, at + 8, nl);
+        if (name == NULL) return PROVEN_ERR_INVALID_FORMAT;
         if (nl == 2 && memcmp(name, "#~", 2) == 0) tabs = root + off, tabs_n = size;
         else if (nl == 8 && memcmp(name, "#Strings", 8) == 0) strs = root + off, strs_n = size;
         else if (nl == 5 && memcmp(name, "#Blob", 5) == 0) blobs = root + off, blobs_n = size;
         at += 8 + ((nl + 4) & ~(size_t)3);
     }
-    if (tabs == 0 || tabs_n < 24 || strs == 0) return PROVEN_ERR_INVALID_FORMAT;
+    if (md.bad || tabs == 0 || tabs_n < 24 || strs == 0) return PROVEN_ERR_INVALID_FORMAT;
     // The #~ stream: heap sizes, the present tables, their row counts, then the tables.
-    md_t m = { .str = data[tabs + 6] & 1 ? 4 : 2, .guid = data[tabs + 6] & 2 ? 4 : 2, .blob = data[tabs + 6] & 4 ? 4 : 2 };
-    uint64_t valid = (uint64_t)rp_rd32(data + tabs + 8) | (uint64_t)rp_rd32(data + tabs + 12) << 32;
-    size_t row_at = tabs + 24;
+    rp_in_t tb = rp_in_sub(&in, tabs, tabs_n);
+    uint8_t heaps = rp_in8(&tb, 6);
+    md_t m = { .str = heaps & 1 ? 4 : 2, .guid = heaps & 2 ? 4 : 2, .blob = heaps & 4 ? 4 : 2 };
+    uint64_t valid = rp_in64(&tb, 8);
+    size_t row_at = 24;
     for (unsigned t = 0; t < 64; ++t) {
         if (!(valid >> t & 1)) continue;
-        if (row_at + 4 > tabs + tabs_n) return PROVEN_ERR_INVALID_FORMAT;
-        m.rows[t] = rp_rd32(data + row_at);
+        if (row_at + 4 > tabs_n) return PROVEN_ERR_INVALID_FORMAT;
+        m.rows[t] = rp_in32(&tb, row_at);
         row_at += 4;
     }
+    if (tb.bad) return PROVEN_ERR_INVALID_FORMAT;
     if (!(valid >> 0x20 & 1) || m.rows[0x20] == 0) return PROVEN_OK;      // a module without an Assembly row
     uint64_t skip = 0;
     for (unsigned t = 0; t < 0x20; ++t) {
@@ -268,44 +289,46 @@ proven_err_t rp_pe_assembly(const uint8_t *data, size_t len, rp_pe_assembly_t *o
     }
     unsigned arow = 0;
     for (unsigned c = 0; c < 10 && table_cols[0x20][c] != END; ++c) arow += col_size(&m, table_cols[0x20][c]);
-    if (row_at + skip + arow > tabs + tabs_n) return PROVEN_ERR_INVALID_FORMAT;
-    const uint8_t *a = data + row_at + skip;
-    out->version[0] = rp_rd16(a + 4);
-    out->version[1] = rp_rd16(a + 6);
-    out->version[2] = rp_rd16(a + 8);
-    out->version[3] = rp_rd16(a + 10);
-    uint32_t aflags = rp_rd32(a + 12), pk = rd_n(a + 16, m.blob), nm = rd_n(a + 16 + m.blob, m.str), cu = rd_n(a + 16 + m.blob + m.str, m.str);
+    if (row_at + skip + arow > tabs_n) return PROVEN_ERR_INVALID_FORMAT;
+    rp_in_t a = rp_in_sub(&tb, row_at + (size_t)skip, arow);
+    out->version[0] = rp_in16(&a, 4);
+    out->version[1] = rp_in16(&a, 6);
+    out->version[2] = rp_in16(&a, 8);
+    out->version[3] = rp_in16(&a, 10);
+    uint32_t aflags = rp_in32(&a, 12), pk = rd_n(&a, 16, m.blob), nm = rd_n(&a, 16 + m.blob, m.str), cu = rd_n(&a, 16 + m.blob + m.str, m.str);
+    if (a.bad) return PROVEN_ERR_INVALID_FORMAT;
     // Name and Culture from #Strings (NUL-terminated UTF-8).
+    rp_in_t sh = rp_in_sub(&in, strs, strs_n);
     struct { uint32_t idx; char *dst; size_t cap; } s2[2] = { { nm, out->name, sizeof out->name }, { cu, out->culture, sizeof out->culture } };
     for (int k = 0; k < 2; ++k) {
         if (s2[k].idx >= strs_n) return PROVEN_ERR_INVALID_FORMAT;
-        const char *p = (const char *)data + strs + s2[k].idx;
         size_t n = 0;
-        while (s2[k].idx + n < strs_n && p[n]) ++n;
-        if (s2[k].idx + n >= strs_n || n >= s2[k].cap) return PROVEN_ERR_INVALID_FORMAT;
-        memcpy(s2[k].dst, p, n);
+        while (s2[k].idx + n < strs_n && rp_in8(&sh, s2[k].idx + n)) ++n;
+        if (s2[k].idx + n >= strs_n || n >= s2[k].cap || !rp_in_copy(&sh, s2[k].idx, s2[k].dst, n)) return PROVEN_ERR_INVALID_FORMAT;
         s2[k].dst[n] = 0;
     }
     if (out->name[0] == 0) return PROVEN_ERR_INVALID_FORMAT;
     // The public key from #Blob (a compressed length, then the bytes): its token.
     if (pk && blobs && pk < blobs_n) {
-        const uint8_t *b = data + blobs + pk;
-        size_t room = blobs_n - pk, hl, bl;
-        if ((b[0] & 0x80) == 0) hl = 1, bl = b[0];
-        else if ((b[0] & 0xC0) == 0x80 && room >= 2) hl = 2, bl = (size_t)(b[0] & 0x3F) << 8 | b[1];
-        else if ((b[0] & 0xE0) == 0xC0 && room >= 4) hl = 4, bl = (size_t)(b[0] & 0x1F) << 24 | (size_t)b[1] << 16 | (size_t)b[2] << 8 | b[3];
+        rp_in_t b = rp_in_sub(&in, blobs + pk, blobs_n - pk);
+        size_t room = b.n, hl, bl;
+        uint8_t b0 = rp_in8(&b, 0);
+        if ((b0 & 0x80) == 0) hl = 1, bl = b0;
+        else if ((b0 & 0xC0) == 0x80 && room >= 2) hl = 2, bl = (size_t)(b0 & 0x3F) << 8 | rp_in8(&b, 1);
+        else if ((b0 & 0xE0) == 0xC0 && room >= 4) hl = 4, bl = (size_t)(b0 & 0x1F) << 24 | (size_t)rp_in8(&b, 1) << 16 | (size_t)rp_in8(&b, 2) << 8 | rp_in8(&b, 3);
         else return PROVEN_ERR_INVALID_FORMAT;
-        if (hl + bl > room) return PROVEN_ERR_INVALID_FORMAT;
+        const uint8_t *key = hl + bl <= room ? rp_in_bytes(&b, hl, bl) : NULL;
+        if (key == NULL || b.bad) return PROVEN_ERR_INVALID_FORMAT;
         if (bl && (aflags & 1)) {                 // afPublicKey: the whole key
             rp_sha1_t h;
             uint8_t d[20];
             rp_sha1_init(&h);
-            rp_sha1_update(&h, b + hl, bl);
+            rp_sha1_update(&h, key, bl);
             rp_sha1_final(&h, d);
             for (int k = 0; k < 8; ++k) out->token[k] = d[19 - k];
             out->has_token = true;
         } else if (bl == 8) {                     // a token as it is
-            memcpy(out->token, b + hl, 8);
+            memcpy(out->token, key, 8);
             out->has_token = true;
         }
     }
