@@ -1895,7 +1895,8 @@ rubrapack version | help [command]
   정체와 패키지(하나하나 패키지로 열어 확인한 것)와 `AppxBundleManifest.xml` 을 보이고, `extract` 는
   패키지를 꺼내 쓴다.
 - `new <name>` 은 `<name>.toml` 을 쓴다. 프로그램 파일을 `dist/` 에 넣기만 하면 빌드되는 원본이고
-  `upgrade-code` 는 새로 만든다. `new <file>.toml`, 이름 없는 `new`(파일 이름도 묻는다), `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
+  `upgrade-code` 는 새로 만든다. 확장자를 붙여 준 이름(`app.toml`, `app.txt`)은 준 그대로 그 파일을 쓰고,
+  확장자가 없는 이름에만 `.toml` 을 붙인다(`--from` 도 같다). `new <file>.toml`, 이름 없는 `new`(파일 이름도 묻는다), `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
   표준 오류로, 답은 표준 입력에서 한 줄씩 받으므로 파이프로 줄 수 있다; 마지막 답 전에 입력이 끝나면 아무것도
   쓰지 않는다). `new <name>` 에 옵션을 주면 묻지 않고 같은 답을 받는다: `--name`, `--manufacturer`, `--version`,
   `--dist`(기본 `dist`), `--main <파일>|-`, `--arch`, `--install-dir`, `--scope`, `--optional <폴더,...>|-`, `--ui`,

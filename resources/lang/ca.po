@@ -3471,8 +3471,8 @@ msgstr "escriu un pedaç (.msp): els fitxers i les files que actualitzen una bas
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "escriu la definició d'un contenidor de paquets compartit: paquets MSIX que s'executen en un contenidor"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "escriu un fitxer font (.toml; també noms .rpk): fet a partir de respostes, preguntades o donades com a opcions, d'un inicial fix o d'un MSI existent"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "escriu un fitxer font: fet a partir de respostes, preguntades o donades com a opcions, d'un inicial fix o d'un MSI existent"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "escriu una transformació (.mst): el que converteix un paquet en l'altre"

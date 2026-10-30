@@ -3471,8 +3471,8 @@ msgstr "escribe una revisión (.msp): los archivos y filas que actualizan una ba
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "escribe la definición de un contenedor de paquetes compartido: paquetes MSIX que se ejecutan en un contenedor"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "escribe un archivo de origen (.toml; también nombres .rpk): a partir de respuestas, preguntadas o dadas como opciones, de un inicio fijo o de un MSI existente"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "escribe un archivo de origen: a partir de respuestas, preguntadas o dadas como opciones, de un inicio fijo o de un MSI existente"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "escribe una transformación (.mst): lo que convierte un paquete en el otro"

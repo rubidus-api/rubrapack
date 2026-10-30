@@ -3471,8 +3471,8 @@ msgstr "rašyti pataisą (.msp): failai ir eilutės, kurie atnaujina įdiegtą b
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "įrašo bendrinamo paketų konteinerio apibrėžtį: MSIX paketai, veikiantys viename konteineryje"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "rašyti šaltinio failą (.toml; ir .rpk vardai): iš atsakymų, paklaustų ar duotų kaip parinktys, fiksuoto pradinio failo ar esamo MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "rašyti šaltinio failą: iš atsakymų, paklaustų ar duotų kaip parinktys, fiksuoto pradinio failo ar esamo MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "rašyti transformaciją (.mst): tai, kas vieną paketą paverčia kitu"

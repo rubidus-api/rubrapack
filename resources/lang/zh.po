@@ -3471,8 +3471,8 @@ msgstr "写出补丁(.msp): 将已安装的基础版本更新到目标的文件�
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "写出共享包容器的定义：在一个容器中运行的 MSIX 包"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "写出源文件(.toml；也可用 .rpk 名称): 由问答或选项给出的答案、固定模板或现有 MSI 生成"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "写出源文件: 由问答或选项给出的答案、固定模板或现有 MSI 生成"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "写出转换(.mst): 将一个安装包变为另一个的内容"

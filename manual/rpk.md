@@ -2102,7 +2102,8 @@ rubrapack version | help [command]
   For a bundle, the identity and the packages (each opened and checked as a package), and its
   `AppxBundleManifest.xml`; `extract` writes the packages out.
 - `new <name>` writes `<name>.toml`, a source that builds as soon as the program's files are in
-  `dist/`, with a fresh `upgrade-code`. `new <file>.toml`, `new` without a name (which asks for the file name
+  `dist/`, with a fresh `upgrade-code`. A name given with an extension (`app.toml`, `app.txt`) is
+  the file written, as given; only a name without one gets `.toml` (also with `--from`). `new <file>.toml`, `new` without a name (which asks for the file name
   too), or `new <name> -i` asks the questions of
   [A first package](#a-first-package) instead (on stderr; answers from stdin, one per line, so they
   can be piped; the input ending before the last answer writes nothing), and `new <name>` with

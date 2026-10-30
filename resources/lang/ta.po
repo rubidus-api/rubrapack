@@ -3471,8 +3471,8 @@ msgstr "ஒரு திருத்தம் (.msp) எழுதவும்: �
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "பகிர்ந்த தொகுப்புக் கொள்கலனின் வரையறையை எழுதுகிறது: ஒரே கொள்கலனில் இயங்கும் MSIX தொகுப்புகள்"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "ஒரு மூலக் கோப்பை எழுதவும் (.toml; .rpk பெயர்களும்): பதில்களிலிருந்து, கேட்கப்பட்டோ விருப்பங்களாகக் கொடுக்கப்பட்டோ, ஒரு நிலையான தொடக்கம், அல்லது இருக்கும் MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "ஒரு மூலக் கோப்பை எழுதவும்: பதில்களிலிருந்து, கேட்கப்பட்டோ விருப்பங்களாகக் கொடுக்கப்பட்டோ, ஒரு நிலையான தொடக்கம், அல்லது இருக்கும் MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "ஓர் உருமாற்றம் (.mst) எழுதவும்: ஒரு தொகுப்பை மற்றொன்றாக மாற்றுவது"

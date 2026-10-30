@@ -32,7 +32,7 @@ typedef struct {
 } ids_t;
 
 const char *rpn_name_problem(const char *s);
-// The length of a source extension at the end of s: ".toml" (the default) or ".rpk" (read too); 0 for none.
+// The length of the extension at the end of s (".toml", ".txt", any; a source is written as named); 0 for none.
 size_t rpn_source_ext(const char *s);
 char *rpn_join(const char *a, const char *b);
 int rpn_cmp_name(const void *a, const void *b);

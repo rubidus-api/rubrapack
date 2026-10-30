@@ -3471,8 +3471,8 @@ msgstr "adabaki bat idazten du (.msp): instalatutako oinarri bat helburura egune
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "pakete-edukiontzi partekatu baten definizioa idazten du: edukiontzi batean exekutatzen diren MSIX paketeak"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "iturburu-fitxategi bat idazten du (.toml; .rpk izenak ere bai): erantzunetatik, galdetuta edo aukera gisa emanda, hasierako finko batetik edo dagoen MSI batetik egina"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "iturburu-fitxategi bat idazten du: erantzunetatik, galdetuta edo aukera gisa emanda, hasierako finko batetik edo dagoen MSI batetik egina"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "eraldaketa bat idazten du (.mst): pakete bat bestean bihurtzen duena"

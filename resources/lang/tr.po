@@ -3471,8 +3471,8 @@ msgstr "bir yama (.msp) yazar: kurulu bir tabanı hedefe güncelleyen dosyalar v
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "paylaşılan paket kapsayıcısının tanımını yazar: tek kapsayıcıda çalışan MSIX paketleri"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "bir kaynak dosya (.toml; .rpk adları da) yazar: sorulan ya da seçenek olarak verilen yanıtlardan, sabit bir başlangıç dosyasından veya mevcut bir MSI'den"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "bir kaynak dosya yazar: sorulan ya da seçenek olarak verilen yanıtlardan, sabit bir başlangıç dosyasından veya mevcut bir MSI'den"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "bir dönüşüm (.mst) yazar: bir paketi diğerine çeviren şey"

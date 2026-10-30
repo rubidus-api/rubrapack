@@ -3471,8 +3471,8 @@ msgstr "grava um patch (.msp): os arquivos e linhas que atualizam uma base insta
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "escreve a definição de um contêiner de pacotes compartilhado: pacotes MSIX que rodam em um contêiner"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "grava um arquivo de origem (.toml; nomes .rpk também): de respostas, perguntadas ou dadas como opções, de um modelo fixo ou de um MSI existente"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "grava um arquivo de origem: de respostas, perguntadas ou dadas como opções, de um modelo fixo ou de um MSI existente"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "grava uma transformação (.mst): o que transforma um pacote no outro"

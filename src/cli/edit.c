@@ -1,4 +1,4 @@
-// src/cli/edit.c - `rubrapack edit <file>.toml` (or .rpk) (RFC-0015): changes a source in place, through a
+// src/cli/edit.c - `rubrapack edit <file>.toml` (any name) (RFC-0015): changes a source in place, through a
 // menu of questions (the current value is the default) or with --set, --unset and --sync. Only
 // the values it changes are rewritten: every other line - comments, order, hand-written tables -
 // stays as it was. After each change the text is parsed again, so a change that would break the

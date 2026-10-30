@@ -3471,8 +3471,8 @@ msgstr "skriv en oppdatering (.msp): filene og radene som oppdaterer en installe
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "skriv definisjonen av en delt pakkebeholder: MSIX-pakker som kjører i én beholder"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "skriv en kildefil (.toml; også .rpk-navn): laget av svar, spurt eller gitt som alternativer, en fast startfil, eller en eksisterende MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "skriv en kildefil: laget av svar, spurt eller gitt som alternativer, en fast startfil, eller en eksisterende MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "skriv en transformering (.mst): det som gjør den ene pakken til den andre"

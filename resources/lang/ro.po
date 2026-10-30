@@ -3471,8 +3471,8 @@ msgstr "scrie un patch (.msp): fișierele și rândurile care actualizează o ba
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "scrie definiția unui container de pachete partajat: pachete MSIX care rulează într-un container"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "scrie un fișier sursă (.toml; și nume .rpk): din răspunsuri, cerute sau date ca opțiuni, dintr-un fișier de pornire fix sau dintr-un MSI existent"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "scrie un fișier sursă: din răspunsuri, cerute sau date ca opțiuni, dintr-un fișier de pornire fix sau dintr-un MSI existent"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "scrie o transformare (.mst): ce transformă un pachet în celălalt"

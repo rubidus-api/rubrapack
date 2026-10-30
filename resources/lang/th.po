@@ -3471,8 +3471,8 @@ msgstr "เขียนแพตช์ (.msp): ไฟล์และแถวท
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "เขียนนิยามของคอนเทนเนอร์แพ็กเกจที่ใช้ร่วมกัน: แพ็กเกจ MSIX ที่ทำงานในคอนเทนเนอร์เดียว"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "เขียนไฟล์ต้นฉบับ (.toml; ชื่อ .rpk ก็ได้): จากคำตอบที่ถามหรือให้เป็นตัวเลือก ไฟล์เริ่มต้นแบบตายตัว หรือ MSI ที่มีอยู่"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "เขียนไฟล์ต้นฉบับ: จากคำตอบที่ถามหรือให้เป็นตัวเลือก ไฟล์เริ่มต้นแบบตายตัว หรือ MSI ที่มีอยู่"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "เขียนทรานส์ฟอร์ม (.mst): สิ่งที่เปลี่ยนแพ็กเกจหนึ่งเป็นอีกแพ็กเกจ"

@@ -3,7 +3,7 @@
 //   new <file>.toml | new              asks for the answers one by one (stderr / stdin)
 //   new <file>.toml --dist <dir> [...] the same answers as options, for scripts
 //   new [msi] <name>                   a fixed starter source <name>.toml
-// Sources are TOML: .toml by default; the older .rpk name is read and written as given.
+// Sources are TOML: .toml by default; a name given with another extension is written as given.
 //
 // The source made from answers lists the top-level files of the program folder one by one (a
 // shortcut needs a file ID, and a glob cannot leave a file out), each sub folder as a glob, and
@@ -49,11 +49,15 @@ const char *rpn_name_problem(const char *s) {
     return NULL;
 }
 
+// The length of the extension a source's name was given with (".toml", ".txt", any), or 0 when its
+// last part has none: a name is the file to write, kept as given, and only a bare name gets .toml.
 size_t rpn_source_ext(const char *s) {
-    size_t n = strlen(s);
-    if (n > 5 && rpn_ends_ci(s, ".toml")) return 5;
-    if (n > 4 && rpn_ends_ci(s, ".rpk")) return 4;
-    return 0;
+    const char *base = s;
+    for (const char *p = s; *p; ++p) {
+        if (*p == '/' || *p == '\\') base = p + 1;
+    }
+    const char *dot = strrchr(base, '.');
+    return dot && dot > base && dot[1] ? strlen(dot) : 0;
 }
 
 // The summary information is ASCII (RFC-0001 9.10): an ASCII form of the name, when needed.
@@ -702,7 +706,13 @@ static int new_from(int argc, char **argv) {
         else return usage();
     }
     size_t e = source ? rpn_source_ext(source) : 0;
-    if (source == NULL || input == NULL || e == 0 || (dist && (strchr(dist, '/') || strchr(dist, '\\') || dist[0] == '\0'))) {
+    char named[1024];
+    if (source && e == 0) {             // a bare name: .toml added
+        snprintf(named, sizeof named, "%s.toml", source);
+        source = named;
+        e = 5;
+    }
+    if (source == NULL || input == NULL || (dist && (strchr(dist, '/') || strchr(dist, '\\') || dist[0] == '\0'))) {
         if (dist && (strchr(dist, '/') || strchr(dist, '\\'))) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--dist names a new folder beside the source (no path)");
         return usage();
     }
@@ -763,7 +773,8 @@ int rp_cmd_new(int argc, char **argv) {
     } else if (npos == 1) {
         name = pos[0];
     }
-    // `new app.toml` (or app.rpk) names the file to write and asks for the rest, as `edit` names it.
+    // `new app.toml` (or app.txt: any extension) names the file to write and asks for the rest, as
+    // `edit` names it; `new app` writes app.toml.
     char stem_buf[128];
     bool file_named = false;
     snprintf(a->ext, sizeof a->ext, ".toml");

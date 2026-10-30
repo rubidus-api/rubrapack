@@ -3471,8 +3471,8 @@ msgstr "javítócsomag írása (.msp): a fájlok és sorok, amelyek egy telepít
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "megosztott csomagtároló definícióját írja: egy tárolóban futó MSIX-csomagok"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "forrásfájl írása (.toml; .rpk nevek is): válaszokból (kérdezve vagy kapcsolóként megadva), rögzített kezdőfájlból vagy meglévő MSI-ből"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "forrásfájl írása: válaszokból (kérdezve vagy kapcsolóként megadva), rögzített kezdőfájlból vagy meglévő MSI-ből"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "átalakítás írása (.mst): ami az egyik csomagot a másikká alakítja"

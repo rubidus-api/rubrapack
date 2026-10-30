@@ -3471,8 +3471,8 @@ msgstr "menulis tampalan (.msp): fail dan baris yang mengemas kini asas yang dip
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "menulis takrif bekas pakej kongsi: pakej MSIX yang berjalan dalam satu bekas"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "menulis fail sumber (.toml; nama .rpk juga): daripada jawapan, ditanya atau diberikan sebagai pilihan, templat permulaan tetap, atau MSI yang sedia ada"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "menulis fail sumber: daripada jawapan, ditanya atau diberikan sebagai pilihan, templat permulaan tetap, atau MSI yang sedia ada"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "menulis transform (.mst): yang mengubah satu pakej menjadi pakej lain"

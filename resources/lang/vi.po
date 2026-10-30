@@ -3471,8 +3471,8 @@ msgstr "ghi bản vá (.msp): các tệp và hàng cập nhật bản gốc đã
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "ghi định nghĩa của một vùng chứa gói dùng chung: các gói MSIX chạy trong một vùng chứa"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "ghi tệp nguồn (.toml; cả tên .rpk): từ câu trả lời, được hỏi hoặc đưa qua tùy chọn, một tệp khởi đầu cố định, hoặc một MSI có sẵn"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "ghi tệp nguồn: từ câu trả lời, được hỏi hoặc đưa qua tùy chọn, một tệp khởi đầu cố định, hoặc một MSI có sẵn"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "ghi transform (.mst): thứ biến gói này thành gói kia"

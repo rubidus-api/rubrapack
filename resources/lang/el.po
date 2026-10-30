@@ -3471,8 +3471,8 @@ msgstr "εγγραφή ενημέρωσης κώδικα (.msp): τα αρχεί
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "γράφει τον ορισμό ενός κοινόχρηστου κοντέινερ πακέτων: πακέτα MSIX που τρέχουν σε ένα κοντέινερ"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "εγγραφή αρχείου πηγής (.toml· και ονόματα .rpk): από απαντήσεις, που ζητούνται ή δίνονται ως επιλογές, σταθερό αρχικό, ή υπάρχον MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "εγγραφή αρχείου πηγής: από απαντήσεις, που ζητούνται ή δίνονται ως επιλογές, σταθερό αρχικό, ή υπάρχον MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "εγγραφή μετασχηματισμού (.mst): ό,τι μετατρέπει ένα πακέτο στο άλλο"

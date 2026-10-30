@@ -3471,8 +3471,8 @@ msgstr "पैच (.msp) लिखें: वे फ़ाइलें और �
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "साझा पैकेज कंटेनर की परिभाषा लिखता है: एक कंटेनर में चलने वाले MSIX पैकेज"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "स्रोत फ़ाइल लिखें (.toml; .rpk नाम भी): उत्तरों से, पूछे गए या विकल्पों के रूप में दिए गए, एक तय आरंभिक फ़ाइल, या किसी मौजूदा MSI से"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "स्रोत फ़ाइल लिखें: उत्तरों से, पूछे गए या विकल्पों के रूप में दिए गए, एक तय आरंभिक फ़ाइल, या किसी मौजूदा MSI से"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "ट्रांसफ़ॉर्म (.mst) लिखें: जो एक पैकेज को दूसरे में बदलता है"

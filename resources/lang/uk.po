@@ -3471,8 +3471,8 @@ msgstr "записати виправлення (.msp): файли й рядки
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "записує визначення спільного контейнера пакетів: пакети MSIX, що працюють в одному контейнері"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "записати файл джерела (.toml; також імена .rpk): з відповідей, запитаних або вказаних як параметри, з незмінного початкового файлу чи наявного MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "записати файл джерела: з відповідей, запитаних або вказаних як параметри, з незмінного початкового файлу чи наявного MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "записати перетворення (.mst): те, що перетворює один пакет на інший"

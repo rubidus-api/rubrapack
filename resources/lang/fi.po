@@ -3471,8 +3471,8 @@ msgstr "kirjoita korjaustiedosto (.msp): tiedostot ja rivit, jotka päivittävä
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "kirjoittaa jaetun pakettisäilön määrityksen: MSIX-paketit, jotka toimivat yhdessä säilössä"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "kirjoita lähdetiedosto (.toml; myös .rpk-nimet): vastauksista, kysyttyinä tai valitsimina annettuina, kiinteä aloitustiedosto tai olemassa oleva MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "kirjoita lähdetiedosto: vastauksista, kysyttyinä tai valitsimina annettuina, kiinteä aloitustiedosto tai olemassa oleva MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "kirjoita muunnos (.mst): se, mikä muuttaa paketin toiseksi"

@@ -3471,8 +3471,8 @@ msgstr "একটি প্যাচ (.msp) লিখুন: যে ফাইল
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "একটি শেয়ার করা প্যাকেজ কন্টেইনারের সংজ্ঞা লেখে: একটি কন্টেইনারে চলা MSIX প্যাকেজ"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "একটি সোর্স ফাইল লিখুন (.toml; .rpk নামও): উত্তর থেকে তৈরি, জিজ্ঞাসা করা বা বিকল্প হিসেবে দেওয়া, একটি নির্দিষ্ট শুরু, বা একটি বিদ্যমান MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "একটি সোর্স ফাইল লিখুন: উত্তর থেকে তৈরি, জিজ্ঞাসা করা বা বিকল্প হিসেবে দেওয়া, একটি নির্দিষ্ট শুরু, বা একটি বিদ্যমান MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "একটি ট্রান্সফর্ম (.mst) লিখুন: যা একটি প্যাকেজকে অন্যটিতে বদলায়"

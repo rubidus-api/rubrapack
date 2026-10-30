@@ -3471,8 +3471,8 @@ msgstr "түзету жазу (.msp): орнатылған негізді мақ
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "ортақ бума контейнерінің анықтамасын жазады: бір контейнерде жұмыс істейтін MSIX бумалары"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "бастапқы файл жазу (.toml; .rpk атаулары да): сұралған не опция ретінде берілген жауаптардан, тұрақты бастапқы файлдан немесе бар MSI-ден жасалады"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "бастапқы файл жазу: сұралған не опция ретінде берілген жауаптардан, тұрақты бастапқы файлдан немесе бар MSI-ден жасалады"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "түрлендіру жазу (.mst): бір буманы екіншісіне айналдыратын нәрсе"

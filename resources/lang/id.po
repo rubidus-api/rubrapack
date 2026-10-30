@@ -3471,8 +3471,8 @@ msgstr "menulis patch (.msp): file dan baris yang memperbarui basis terinstal ke
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "menulis definisi kontainer paket bersama: paket MSIX yang berjalan dalam satu kontainer"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "menulis file sumber (.toml; nama .rpk juga): dari jawaban, ditanyakan atau diberikan sebagai opsi, templat awal tetap, atau MSI yang ada"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "menulis file sumber: dari jawaban, ditanyakan atau diberikan sebagai opsi, templat awal tetap, atau MSI yang ada"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "menulis transform (.mst): yang mengubah satu paket menjadi paket lain"

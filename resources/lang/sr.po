@@ -3471,8 +3471,8 @@ msgstr "pisanje zakrpe (.msp): datoteke i redovi koji ažuriraju instaliranu osn
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "zapisuje definiciju zajedničkog kontejnera paketa: MSIX paketi koji rade u jednom kontejneru"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "pisanje izvorne datoteke (.toml; i imena .rpk): iz odgovora, pitanih ili datih kao opcije, fiksnog početnog ili postojećeg MSI-ja"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "pisanje izvorne datoteke: iz odgovora, pitanih ili datih kao opcije, fiksnog početnog ili postojećeg MSI-ja"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "pisanje transformacije (.mst): ono što jedan paket pretvara u drugi"

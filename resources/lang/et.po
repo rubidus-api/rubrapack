@@ -3471,8 +3471,8 @@ msgstr "kirjuta paik (.msp): failid ja read, mis uuendavad installitud aluse sih
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "kirjutab jagatud paketikonteineri määratluse: ühes konteineris töötavad MSIX-paketid"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "kirjuta lähtefail (.toml; ka .rpk nimed): vastustest, küsitud või suvanditena antud, fikseeritud algfailist või olemasolevast MSI-st"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "kirjuta lähtefail: vastustest, küsitud või suvanditena antud, fikseeritud algfailist või olemasolevast MSI-st"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "kirjuta teisendus (.mst): see, mis muudab ühe paketi teiseks"

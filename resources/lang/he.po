@@ -3473,8 +3473,8 @@ msgstr "כתיבת תיקון (.msp): הקבצים והשורות שמעדכני
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "כותב הגדרה של מכל חבילות משותף: חבילות MSIX שרצות במכל אחד"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "כתיבת קובץ מקור (.toml; גם שמות .rpk): מתשובות, שנשאלו או ניתנו כאפשרויות, קובץ פתיחה קבוע, או MSI קיים"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "כתיבת קובץ מקור: מתשובות, שנשאלו או ניתנו כאפשרויות, קובץ פתיחה קבוע, או MSI קיים"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "כתיבת טרנספורם (.mst): מה שהופך חבילה אחת לשנייה"

@@ -3471,8 +3471,8 @@ msgstr "zápis opravy (.msp): súbory a riadky, ktoré aktualizujú nainštalova
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "zapíše definíciu zdieľaného kontajnera balíkov: balíky MSIX, ktoré bežia v jednom kontajneri"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "zápis zdrojového súboru (.toml; aj názvy .rpk): z odpovedí, opýtaných alebo zadaných ako možnosti, pevného úvodného alebo existujúceho MSI"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "zápis zdrojového súboru: z odpovedí, opýtaných alebo zadaných ako možnosti, pevného úvodného alebo existujúceho MSI"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "zápis transformácie (.mst): čo mení jeden balík na druhý"

@@ -3471,8 +3471,8 @@ msgstr "패치(.msp)를 씁니다: 설치된 기준 판을 대상 판으로 올�
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "공유 패키지 컨테이너의 정의를 쓴다: 한 컨테이너에서 도는 MSIX 패키지들"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "소스 파일(.toml, .rpk 이름도)을 씁니다: 묻거나 옵션으로 받은 답, 고정된 시작용 틀, 또는 기존 MSI 로부터"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "소스 파일을 씁니다: 묻거나 옵션으로 받은 답, 고정된 시작용 틀, 또는 기존 MSI 로부터"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "변환(.mst)을 씁니다: 한 패키지를 다른 패키지로 바꾸는 것"

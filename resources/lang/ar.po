@@ -3473,8 +3473,8 @@ msgstr "كتابة تصحيح (.msp): الملفات والصفوف التي ت�
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "كتابة تعريف حاوية حزم مشتركة: حزم MSIX تعمل في حاوية واحدة"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "كتابة ملف مصدر (.toml؛ وأسماء .rpk أيضاً): من إجابات، مسؤول عنها أو معطاة كخيارات، أو ملف بداية ثابت، أو MSI موجود"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "كتابة ملف مصدر: من إجابات، مسؤول عنها أو معطاة كخيارات، أو ملف بداية ثابت، أو MSI موجود"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "كتابة تحويل (.mst): ما يحوّل حزمة إلى الأخرى"

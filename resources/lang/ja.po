@@ -3471,8 +3471,8 @@ msgstr "パッチ (.msp) を書きます: インストール済みのベース�
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "共有パッケージ コンテナーの定義を書きます: 1 つのコンテナーで動く MSIX パッケージ"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "ソース ファイル (.toml。.rpk の名前も可) を書きます: 質問かオプションで与えた答え、固定のひな形、既存の MSI から作ります"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "ソース ファイルを書きます: 質問かオプションで与えた答え、固定のひな形、既存の MSI から作ります"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "変換 (.mst) を書きます: あるパッケージを別のパッケージに変えるもの"

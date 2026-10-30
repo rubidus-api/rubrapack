@@ -3471,8 +3471,8 @@ msgstr "yamoq yozish (.msp): o‘rnatilgan asosni maqsadgacha yangilaydigan fayl
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "umumiy paket konteynerining ta’rifini yozadi: bitta konteynerda ishlaydigan MSIX paketlari"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "manba fayl yozish (.toml; .rpk nomlari ham): so‘ralgan yoki parametr sifatida berilgan javoblardan, qat’iy boshlang‘ich fayldan yoki mavjud MSI dan yasaladi"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "manba fayl yozish: so‘ralgan yoki parametr sifatida berilgan javoblardan, qat’iy boshlang‘ich fayldan yoki mavjud MSI dan yasaladi"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "transformatsiya yozish (.mst): bir paketni boshqasiga aylantiradigan narsa"

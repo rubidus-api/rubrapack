@@ -3473,8 +3473,8 @@ msgstr "یک وصله (.msp) بنویسید: فایل‌ها و ردیف‌ها�
 msgid "write a shared package container's definition: MSIX packages that run in one container"
 msgstr "تعریف یک ظرف بستهٔ مشترک را می‌نویسد: بسته‌های MSIX که در یک ظرف اجرا می‌شوند"
 
-msgid "write a source file (.toml; .rpk names too): made from answers, asked or given as options, a fixed starter, or an existing MSI"
-msgstr "یک فایل منبع بنویسید (.toml؛ نام‌های .rpk هم): ساخته از پاسخ‌ها، پرسیده یا داده‌شده به‌صورت گزینه، یک آغازگر ثابت، یا یک MSI موجود"
+msgid "write a source file: made from answers, asked or given as options, a fixed starter, or an existing MSI"
+msgstr "یک فایل منبع بنویسید: ساخته از پاسخ‌ها، پرسیده یا داده‌شده به‌صورت گزینه، یک آغازگر ثابت، یا یک MSI موجود"
 
 msgid "write a transform (.mst): what turns one package into the other"
 msgstr "یک تبدیل (.mst) بنویسید: آنچه یک بسته را به دیگری تبدیل می‌کند"
