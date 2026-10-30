@@ -22,16 +22,16 @@ Put what you ship in a folder `dist/`: the program, and whatever it needs, in `d
 (subfolders are kept). Then let rubrapack write a starting source:
 
 ```sh
-rubrapack new app.toml      # asks, then writes app.toml and checks it
+rubrapack new app -i        # asks, then writes app.toml and checks it
 ```
 
 It asks for the product name, the version, the folder with the files, the main program (its
 architecture is read from the file), the folder under Program Files, who it installs for, which
 sub folders are optional parts, the dialogs, a license (a `LICENSE.txt`, `.md` or `.rtf` next to
 it is offered), Korean dialogs, and the shortcuts. Enter takes the value in brackets. At the end
-it prints the same answers as one command (`rubrapack new app.toml --dist dist --ui features ...`),
+it prints the same answers as one command (`rubrapack new app --dist dist --ui features ...`),
 which a script or an AI assistant can run without questions. `rubrapack new` without a name asks
-for the file name too, and `rubrapack new app` (no extension) writes a fixed starter instead.
+for the file name too, and `rubrapack new app` (no options) writes a fixed starter instead.
 
 Either way, `app.toml` is plain text to read and change - in any text editor, or with
 `rubrapack edit app.toml`, a menu of the same questions with the current values as defaults
@@ -2054,7 +2054,7 @@ rubrapack diff <a.msi> <b.msi>
 rubrapack container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>
 rubrapack try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]
 rubrapack new [msi] <name>
-rubrapack new [<file>.toml] [-i]
+rubrapack new [<name>] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
@@ -2102,9 +2102,9 @@ rubrapack version | help [command]
   For a bundle, the identity and the packages (each opened and checked as a package), and its
   `AppxBundleManifest.xml`; `extract` writes the packages out.
 - `new <name>` writes `<name>.toml`, a source that builds as soon as the program's files are in
-  `dist/`, with a fresh `upgrade-code`. A name given with an extension (`app.toml`, `app.txt`) is
-  the file written, as given; only a name without one gets `.toml` (also with `--from`). `new <file>.toml`, `new` without a name (which asks for the file name
-  too), or `new <name> -i` asks the questions of
+  `dist/`, with a fresh `upgrade-code`. The file written is always the name given with `.toml`
+  added, whatever the name ends with (`app` -> `app.toml`, `app.toml` -> `app.toml.toml`; also
+  with `--from`). `new` without a name (which asks for the file name too) or `new <name> -i` asks the questions of
   [A first package](#a-first-package) instead (on stderr; answers from stdin, one per line, so they
   can be piped; the input ending before the last answer writes nothing), and `new <name>` with
   options takes the same answers without asking: `--name`, `--manufacturer`, `--version`,
@@ -2114,9 +2114,9 @@ rubrapack version | help [command]
   lists the folder's top-level files one by one (a shortcut names a file, and a glob cannot leave
   one out) and each sub folder that holds files as a glob; optional sub folders become features at
   `level = 2` next to a required `Main`. It is checked like `lint` after it is written (exit 1 if
-  that finds a problem). It never replaces an existing file; `new app.toml` over an existing
+  that finds a problem). It never replaces an existing file; `new app` over an existing
   `app.toml` says to use `edit`.
-- `rubrapack new <file>.toml --from <package.msi>` makes a source from an existing package
+- `rubrapack new <name> --from <package.msi>` makes a source from an existing package
   (RFC-0023): its files go into a new folder beside the source (`<stem>-files`, or `--dist <name>`),
   laid out as `extract` lays them out, and the source describes the package with them - name,
   version, architecture, upgrade code, folders, files (with each component's code where the file is

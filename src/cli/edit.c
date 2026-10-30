@@ -11,6 +11,7 @@
 #include "rubrapack/inspect.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/pal.h"
+#include "rubrapack/str.h"
 #include "rubrapack/toml.h"
 
 #include <stdio.h>
@@ -760,7 +761,13 @@ int rp_cmd_edit(int argc, char **argv) {
     size_t len = 0;
     proven_err_t err = rp_pal_read_file(heap(), s.path, (size_t)1 << 22, &data, &len);
     if (err != PROVEN_OK) {
-        rp_diag_error(RP_DIAG_INPUT, err == PROVEN_ERR_NOT_FOUND ? TR_N("cannot find '%s'; make one with `rubrapack new %s`") : TR_N("cannot read '%s'"), s.path, s.path);
+        // `new <name>` writes <name>.toml: it is offered for a missing .toml file, with the name.
+        size_t pl = strlen(s.path);
+        bool toml = pl > 5 && rp_ascii_ieq(s.path + pl - 5, ".toml");
+        char stem[1024];
+        snprintf(stem, sizeof stem, "%.*s", toml ? (int)(pl - 5) : 0, s.path);
+        if (err == PROVEN_ERR_NOT_FOUND && toml) rp_diag_error(RP_DIAG_INPUT, TR_N("cannot find '%s'; make one with `rubrapack new %s`"), s.path, stem);
+        else rp_diag_error(RP_DIAG_INPUT, TR_N("cannot read '%s'"), s.path);
         return RP_EXIT_IO;
     }
     if (len >= 2 && ((data[0] == 0xFF && data[1] == 0xFE) || (data[0] == 0xFE && data[1] == 0xFF))) {

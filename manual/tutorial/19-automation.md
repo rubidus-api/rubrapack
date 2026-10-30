@@ -9,7 +9,7 @@ on your computer, on a build server, or through an AI assistant.
 In a folder that has the program's files in `dist\`:
 
 ```text
-C:\work\hello2> rubrapack new hello.toml
+C:\work\hello2> rubrapack new hello -i
 rubrapack new: a few questions make the source (Enter takes the value in [ ]).
 Product name [hello]: Hello
 Manufacturer (shown in Installed apps) [Hello authors]: Example Software
@@ -29,7 +29,7 @@ Start menu shortcut? [Y/n]:
 Desktop shortcut? [y/N]: y
 wrote hello.toml
 the same without questions:
-  rubrapack new "hello.toml" --name "Hello" --manufacturer "Example Software" --version "1.0.0" --arch "x64" --dist "dist" --main "hello.exe" --install-dir "Hello" --scope "machine" --ui "features" --license "LICENSE.txt" --languages "ko" --optional "samples" --shortcuts "start,desktop"
+  rubrapack new "hello" --name "Hello" --manufacturer "Example Software" --version "1.0.0" --arch "x64" --dist "dist" --main "hello.exe" --install-dir "Hello" --scope "machine" --ui "features" --license "LICENSE.txt" --languages "ko" --optional "samples" --shortcuts "start,desktop"
 lint: no problems
 ```
 
@@ -56,17 +56,17 @@ glob = "dist/samples/**"
 ```
 
 From here on you change it by hand, as in chapters 2-18, or with `edit`. `new` never replaces a
-file that is there: `new hello.toml` a second time says to use `edit`.
+file that is there: `new hello` a second time says to use `edit`.
 
 Three other forms:
 
-- The line `new` prints last - `rubrapack new hello.toml --name ... --shortcuts ...` - gives the
+- The line `new` prints last - `rubrapack new hello --name ... --shortcuts ...` - gives the
   same answers without asking, for scripts. A left-out option takes the default the question would
   offer.
-- `rubrapack new hello` (a name without `.toml`, and no options) writes a short starter source
+- `rubrapack new hello` (no options) writes a short starter source
   without asking anything, for filling in by hand.
 - `rubrapack new hello -i` (or `--interactive`) asks the questions. They go to the error output and the answers are read
-  one per line, so a file of answers can be piped in: `rubrapack new hello.toml < answers.txt`. If
+  one per line, so a file of answers can be piped in: `rubrapack new hello -i < answers.txt`. If
   the answers run out before the last question, nothing is written.
 
 ## From an existing package: `new --from`
@@ -74,7 +74,7 @@ Three other forms:
 A product that already has an MSI - made by another tool - moves to rubrapack in one step:
 
 ```text
-C:\work> rubrapack new hello.toml --from hello-old.msi
+C:\work> rubrapack new hello --from hello-old.msi
 hello-files: 12 files, 3402871 bytes
 wrote hello.toml and hello-files/ (build it with: rubrapack build hello.toml -o <package>.msi)
 C:\work> rubrapack build hello.toml -o hello.msi

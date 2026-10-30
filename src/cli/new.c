@@ -3,7 +3,8 @@
 //   new <file>.toml | new              asks for the answers one by one (stderr / stdin)
 //   new <file>.toml --dist <dir> [...] the same answers as options, for scripts
 //   new [msi] <name>                   a fixed starter source <name>.toml
-// Sources are TOML: .toml by default; a name given with another extension is written as given.
+// Sources are TOML: the file written is the name given and .toml, always (app -> app.toml,
+// app.toml -> app.toml.toml); build, lint and edit read a source by whatever name.
 //
 // The source made from answers lists the top-level files of the program folder one by one (a
 // shortcut needs a file ID, and a glob cannot leave a file out), each sub folder as a glob, and
@@ -30,12 +31,6 @@
 
 #include "new_int.h"
 
-// snprintf into a small field whose value was checked before.
-#define CUTX(out, cap, ...)                                                          \
-    do {                                                                             \
-        if (snprintf((out), (cap), __VA_ARGS__) >= (int)(cap)) (out)[(cap) - 1] = 0; \
-    } while (0)
-
 // A product name that is also a file name and a TOML string without escapes.
 const char *rpn_name_problem(const char *s) {
     size_t n = strlen(s);
@@ -47,17 +42,6 @@ const char *rpn_name_problem(const char *s) {
     }
     if (s[0] == ' ' || s[n - 1] == ' ' || s[n - 1] == '.') return TR_N("may not start with a space or end with a space or a dot");
     return NULL;
-}
-
-// The length of the extension a source's name was given with (".toml", ".txt", any), or 0 when its
-// last part has none: a name is the file to write, kept as given, and only a bare name gets .toml.
-size_t rpn_source_ext(const char *s) {
-    const char *base = s;
-    for (const char *p = s; *p; ++p) {
-        if (*p == '/' || *p == '\\') base = p + 1;
-    }
-    const char *dot = strrchr(base, '.');
-    return dot && dot > base && dot[1] ? strlen(dot) : 0;
 }
 
 // The summary information is ASCII (RFC-0001 9.10): an ASCII form of the name, when needed.
@@ -355,11 +339,6 @@ static const char *check_shortcuts(ans_t *a, char *v) {
 
 static const char *check_stem(ans_t *a, char *v) {
     (void)a;
-    size_t n = strlen(v), e = rpn_source_ext(v);
-    if (e) {                            // the name given keeps its extension
-        CUTX(a->ext, sizeof a->ext, "%s", v + n - e);
-        v[n - e] = '\0';
-    }
     if (rpn_name_problem(v)) return TR_N("a file name without / \\ : * ? \" < > | $");
     char path[160];
     snprintf(path, sizeof path, "%s%s", v, a->ext);
@@ -443,7 +422,7 @@ static void default_arch(ans_t *a, char *out, size_t cap) {
 }
 
 static void default_stem(const ans_t *a, char *out, size_t cap) {
-    snprintf(out, cap, "%s%s", rpn_name_problem(a->name) ? "app" : a->name, a->ext);
+    snprintf(out, cap, "%s", rpn_name_problem(a->name) ? "app" : a->name);       // .toml is added
 }
 
 static int interview(ans_t *a, const char *stem) {
@@ -673,9 +652,7 @@ static void print_command(const ans_t *a) {
                            a->ui, a->license, a->languages, a->optional, a->shortcuts };
     rp_buf_t b = rp_buf_new(proven_heap_allocator(), 1 << 16);
     rp_buf_puts(&b, TR("the same without questions:\n  rubrapack new "));
-    char file[140];
-    snprintf(file, sizeof file, "%s%s", a->stem, a->ext);
-    rpn_toml_str(&b, file);
+    rpn_toml_str(&b, a->stem);          // the name: new adds .toml
     for (size_t i = 0; i < sizeof keys / sizeof keys[0]; ++i) {
         rp_buf_byte(&b, ' ');
         rp_buf_puts(&b, keys[i]);
@@ -705,13 +682,6 @@ static int new_from(int argc, char **argv) {
         else if (argv[i][0] != '-' && source == NULL) source = argv[i];
         else return usage();
     }
-    size_t e = source ? rpn_source_ext(source) : 0;
-    char named[1024];
-    if (source && e == 0) {             // a bare name: .toml added
-        snprintf(named, sizeof named, "%s.toml", source);
-        source = named;
-        e = 5;
-    }
     if (source == NULL || input == NULL || (dist && (strchr(dist, '/') || strchr(dist, '\\') || dist[0] == '\0'))) {
         if (dist && (strchr(dist, '/') || strchr(dist, '\\'))) rp_diag_error(RP_DIAG_EXTRA_ARGUMENT, "--dist names a new folder beside the source (no path)");
         return usage();
@@ -722,10 +692,11 @@ static int new_from(int argc, char **argv) {
     if (bs && (!slash || bs > slash)) slash = bs;
 #endif
     size_t dir = slash ? (size_t)(slash - source) + 1 : 0;
-    char path[1024];
+    char path[1024], file[1024];
     if (dist) snprintf(path, sizeof path, "%.*s%s", (int)dir, source, dist);
-    else snprintf(path, sizeof path, "%.*s-files", (int)(strlen(source) - e), source);
-    return rpn_new_from(source, input, path, publisher);
+    else snprintf(path, sizeof path, "%s-files", source);
+    snprintf(file, sizeof file, "%s.toml", source);       // the name given and .toml, always
+    return rpn_new_from(file, input, path, publisher);
 }
 
 int rp_cmd_new(int argc, char **argv) {
@@ -773,17 +744,10 @@ int rp_cmd_new(int argc, char **argv) {
     } else if (npos == 1) {
         name = pos[0];
     }
-    // `new app.toml` (or app.txt: any extension) names the file to write and asks for the rest, as
-    // `edit` names it; `new app` writes app.toml.
-    char stem_buf[128];
-    bool file_named = false;
+    // `new app` writes app.toml - the name given and .toml, whatever it ends with (app.toml ->
+    // app.toml.toml).
     snprintf(a->ext, sizeof a->ext, ".toml");
-    size_t e = name ? rpn_source_ext(name) : 0;
-    if (rc == RP_EXIT_OK && e && strlen(name) < sizeof stem_buf) {
-        snprintf(a->ext, sizeof a->ext, "%s", name + strlen(name) - e);
-        snprintf(stem_buf, sizeof stem_buf, "%.*s", (int)(strlen(name) - e), name);
-        name = stem_buf;
-        file_named = true;
+    if (rc == RP_EXIT_OK && name) {
         uint64_t size = 0;
         char path[160];
         snprintf(path, sizeof path, "%s%s", name, a->ext);
@@ -807,11 +771,11 @@ int rp_cmd_new(int argc, char **argv) {
         rc = RP_EXIT_USAGE;
     }
     if (rc == RP_EXIT_OK && !interactive && !options) {
-        if (name && !file_named) {                     // `new app`: the fixed starter, as before
+        if (name) {                                     // `new app`: the fixed starter
             rp_mem_free(proven_heap_allocator(), a);
             return fixed_starter(name, ".toml");
         }
-        interactive = true;                             // `new` or `new app.toml` asks
+        interactive = true;                             // `new` asks, the file name too
     }
     if (rc == RP_EXIT_OK && interactive) {
         rc = interview(a, name);

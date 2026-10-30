@@ -32,8 +32,6 @@ typedef struct {
 } ids_t;
 
 const char *rpn_name_problem(const char *s);
-// The length of the extension at the end of s (".toml", ".txt", any; a source is written as named); 0 for none.
-size_t rpn_source_ext(const char *s);
 char *rpn_join(const char *a, const char *b);
 int rpn_cmp_name(const void *a, const void *b);
 // `new <file>.toml --from <package.msi>` (new_from.c, RFC-0023): the files into `dist`, a folder

@@ -9,7 +9,7 @@
 프로그램 파일이 `dist\` 에 있는 폴더에서:
 
 ```text
-C:\work\hello2> rubrapack new hello.toml
+C:\work\hello2> rubrapack new hello -i
 rubrapack new: a few questions make the source (Enter takes the value in [ ]).
 Product name [hello]: Hello
 Manufacturer (shown in Installed apps) [Hello authors]: Example Software
@@ -29,7 +29,7 @@ Start menu shortcut? [Y/n]:
 Desktop shortcut? [y/N]: y
 wrote hello.toml
 the same without questions:
-  rubrapack new "hello.toml" --name "Hello" --manufacturer "Example Software" --version "1.0.0" --arch "x64" --dist "dist" --main "hello.exe" --install-dir "Hello" --scope "machine" --ui "features" --license "LICENSE.txt" --languages "ko" --optional "samples" --shortcuts "start,desktop"
+  rubrapack new "hello" --name "Hello" --manufacturer "Example Software" --version "1.0.0" --arch "x64" --dist "dist" --main "hello.exe" --install-dir "Hello" --scope "machine" --ui "features" --license "LICENSE.txt" --languages "ko" --optional "samples" --shortcuts "start,desktop"
 lint: no problems
 ```
 
@@ -54,24 +54,24 @@ dir = "samples_dir"
 glob = "dist/samples/**"
 ```
 
-여기서부터는 2~18장처럼 손으로 고치거나 `edit` 로 고친다. `new` 는 있는 파일을 절대 바꾸지 않는다: `new hello.toml`
+여기서부터는 2~18장처럼 손으로 고치거나 `edit` 로 고친다. `new` 는 있는 파일을 절대 바꾸지 않는다: `new hello`
 을 한 번 더 하면 `edit` 을 쓰라고 한다.
 
 다른 형태 셋:
 
-- `new` 가 마지막에 출력하는 줄 - `rubrapack new hello.toml --name ... --shortcuts ...` - 은 묻지 않고 같은 답을
+- `new` 가 마지막에 출력하는 줄 - `rubrapack new hello --name ... --shortcuts ...` - 은 묻지 않고 같은 답을
   준다. 스크립트용이다. 빠진 옵션은 질문이 제안했을 기본값을 받는다.
-- `rubrapack new hello`(`.toml` 없는 이름, 옵션 없음)는 아무것도 묻지 않고 짧은 시작용 원본을 쓴다. 손으로 채울
+- `rubrapack new hello`(옵션 없음)는 아무것도 묻지 않고 짧은 시작용 원본을 쓴다. 손으로 채울
   때 쓴다.
 - `rubrapack new hello -i`(또는 `--interactive`)는 질문을 한다. 질문은 오류 출력으로 가고 답은 한 줄에 하나씩 읽으므로, 답을 적은 파일을
-  흘려 넣을 수 있다: `rubrapack new hello.toml < answers.txt`. 마지막 질문 전에 답이 떨어지면 아무것도 쓰지 않는다.
+  흘려 넣을 수 있다: `rubrapack new hello -i < answers.txt`. 마지막 질문 전에 답이 떨어지면 아무것도 쓰지 않는다.
 
 ## 이미 있는 패키지에서: `new --from`
 
 다른 도구로 만든 MSI 가 이미 있는 제품은 한 번에 rubrapack 으로 옮긴다:
 
 ```text
-C:\work> rubrapack new hello.toml --from hello-old.msi
+C:\work> rubrapack new hello --from hello-old.msi
 hello-files: 12 files, 3402871 bytes
 wrote hello.toml and hello-files/ (build it with: rubrapack build hello.toml -o <package>.msi)
 C:\work> rubrapack build hello.toml -o hello.msi

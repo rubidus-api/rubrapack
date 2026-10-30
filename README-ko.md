@@ -7,7 +7,7 @@
 프로그램 파일 하나로 돌아가며, 따로 설치할 것이 없습니다.
 
 ```sh
-rubrapack new app.toml                    # 몇 가지를 묻고 app.toml 을 써서 검사합니다
+rubrapack new app -i                      # 몇 가지를 묻고 app.toml 을 써서 검사합니다
 rubrapack build app.toml -o app.msi       # 제대로 된 설치 파일: 제거 항목, 업그레이드, 복구
 ```
 
@@ -50,7 +50,7 @@ rubrapack build app.toml -o app.msi       # 제대로 된 설치 파일: 제거 
 ## 한눈에 보기
 
 ```sh
-rubrapack new app.toml                               # 물어본 뒤 app.toml 을 씁니다 (또는: new app.toml --dist dist ...)
+rubrapack new app -i                                 # 물어본 뒤 app.toml 을 씁니다 (또는: new app --dist dist ...)
 rubrapack edit app.toml                              # 나중에 고치기: 메뉴, 또는 --set define.VERSION=1.1.0 --sync
 rubrapack build app.toml -o app.msi                  # Windows Installer 패키지
 rubrapack build app.toml -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com

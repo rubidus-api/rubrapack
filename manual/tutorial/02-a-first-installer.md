@@ -162,7 +162,7 @@ hello.msi: 0 errors, 0 warnings
 
 ## The same, with questions instead of a text editor
 
-`rubrapack new hello.toml` asks for the name, the version, the folder with the files and so on, and
+`rubrapack new hello -i` asks for the name, the version, the folder with the files and so on, and
 writes a source like the one above (it also makes up the upgrade code). Chapter 19 describes it and
 its companion `rubrapack edit`. Writing the source by hand once, as here, is the best way to learn
 what each line does.

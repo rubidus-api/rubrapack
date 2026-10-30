@@ -20,14 +20,14 @@ Windows 에서도 Linux 에서도 같은 패키지를 만든다.
 그대로 간다). 그다음 rubrapack 에게 시작할 원본을 쓰게 한다:
 
 ```sh
-rubrapack new app.toml      # 묻고 나서 app.toml 을 쓰고 검사한다
+rubrapack new app -i        # 묻고 나서 app.toml 을 쓰고 검사한다
 ```
 
 제품 이름, 판, 파일이 든 폴더, 주 프로그램(아키텍처는 파일에서 읽는다), Program Files 아래 폴더, 누구를 위해
 설치하는지, 어떤 하위 폴더가 선택 구성요소인지, 대화창, 약관(옆에 `LICENSE.txt`, `.md`, `.rtf` 가 있으면 권한다),
-한국어 대화창, 바로가기를 묻는다. Enter 는 대괄호 안의 값을 쓴다. 끝에는 같은 답을 한 줄 명령(`rubrapack new app.toml
+한국어 대화창, 바로가기를 묻는다. Enter 는 대괄호 안의 값을 쓴다. 끝에는 같은 답을 한 줄 명령(`rubrapack new app
 --dist dist --ui features ...`)으로 보여 주는데, 스크립트나 AI 도우미는 묻지 않고 이것을 돌리면 된다.
-이름 없이 `rubrapack new` 만 주면 파일 이름까지 묻고, `rubrapack new app`(확장자 없이)은 대신 고정된 틀을 쓴다.
+이름 없이 `rubrapack new` 만 주면 파일 이름까지 묻고, `rubrapack new app`(옵션 없이)은 대신 고정된 틀을 쓴다.
 
 어느 쪽이든 `app.toml` 은 읽고 고칠 수 있는 평문이다 - 아무 편집기로나, 또는 `rubrapack edit app.toml` 으로. `edit` 는
 같은 질문을 지금 값을 기본으로 보여 주는 메뉴다(판, 설치 폴더, 대화창과 약관, 선택 구성요소, 바로가기, 그리고
@@ -1850,7 +1850,7 @@ rubrapack diff <a.msi> <b.msi>
 rubrapack container <name> <package.msix|package.msixbundle|family name>... -o <out.xml>
 rubrapack try <package.msi|package.msix|package.msixbundle> [-o <out.wsb>] [--host <folder>] [--network]
 rubrapack new [msi] <name>
-rubrapack new [<file>.toml] [-i]
+rubrapack new [<name>] [-i]
 rubrapack new <name> [--dist <folder>] [--name ...] [--ui ...] [--optional ...] ...
 rubrapack edit <file>.toml [--set <table>.<key>=<value>]... [--unset <table>.<key>]... [--sync]
 rubrapack guid [--from <text>]
@@ -1895,17 +1895,18 @@ rubrapack version | help [command]
   정체와 패키지(하나하나 패키지로 열어 확인한 것)와 `AppxBundleManifest.xml` 을 보이고, `extract` 는
   패키지를 꺼내 쓴다.
 - `new <name>` 은 `<name>.toml` 을 쓴다. 프로그램 파일을 `dist/` 에 넣기만 하면 빌드되는 원본이고
-  `upgrade-code` 는 새로 만든다. 확장자를 붙여 준 이름(`app.toml`, `app.txt`)은 준 그대로 그 파일을 쓰고,
-  확장자가 없는 이름에만 `.toml` 을 붙인다(`--from` 도 같다). `new <file>.toml`, 이름 없는 `new`(파일 이름도 묻는다), `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
+  `upgrade-code` 는 새로 만든다. 쓰는 파일은 언제나 준 이름 뒤에 `.toml` 을 붙인 것이다. 이름이 무엇으로
+  끝나든 같다(`app` -> `app.toml`, `app.toml` -> `app.toml.toml`; `--from` 도 같다). 이름 없는 `new`(파일 이름도
+  묻는다)와 `new <name> -i` 는 대신 [첫 패키지](#첫-패키지)의 질문을 한다(질문은
   표준 오류로, 답은 표준 입력에서 한 줄씩 받으므로 파이프로 줄 수 있다; 마지막 답 전에 입력이 끝나면 아무것도
   쓰지 않는다). `new <name>` 에 옵션을 주면 묻지 않고 같은 답을 받는다: `--name`, `--manufacturer`, `--version`,
   `--dist`(기본 `dist`), `--main <파일>|-`, `--arch`, `--install-dir`, `--scope`, `--optional <폴더,...>|-`, `--ui`,
   `--license <파일>|-`, `--languages ko|-`, `--shortcuts start,desktop|none`; 빠진 것은 질문이 권했을 기본값을 쓴다.
   원본은 폴더 최상위 파일을 하나씩 적고(바로가기는 파일을 가리키고, 글롭은 파일을 뺄 수 없다) 파일이 든 하위
   폴더는 글롭으로 적는다. 선택 하위 폴더는 필수 `Main` 옆에 `level = 2` 기능이 된다. 쓴 뒤에는 `lint` 처럼
-  검사한다(문제가 있으면 종료 코드 1). 있는 파일은 절대 바꾸지 않는다. 이미 있는 `app.toml` 에 `new app.toml` 을
+  검사한다(문제가 있으면 종료 코드 1). 있는 파일은 절대 바꾸지 않는다. 이미 있는 `app.toml` 에 `new app` 을
   주면 `edit` 를 쓰라고 알린다.
-- `rubrapack new <파일>.toml --from <패키지.msi>` 는 이미 있는 패키지로 원본을 만든다(RFC-0023). 파일은 원본 옆
+- `rubrapack new <이름> --from <패키지.msi>` 는 이미 있는 패키지로 원본을 만든다(RFC-0023). 파일은 원본 옆
   새 폴더(`<이름>-files`, 또는 `--dist <이름>`)에 `extract` 와 같은 배치로 풀리고, 원본은 그 파일로 패키지를
   설명한다 - 이름, 판, 아키텍처, 업그레이드 코드, 폴더, 파일(파일이 키 경로인 구성 요소의 코드까지 옮겨 결과물이
   원래 패키지를 업그레이드한다. 제품 코드는 새 판마다 달라야 하므로 옮기지 않고 주석에 적는다), 기능, 레지스트리 값, 바로가기, 환경 변수, INI 값, 서비스, 공개 속성,

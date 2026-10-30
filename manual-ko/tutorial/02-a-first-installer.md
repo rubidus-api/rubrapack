@@ -150,6 +150,6 @@ hello.msi: 0 errors, 0 warnings
 
 ## 편집기 대신 질문으로
 
-`rubrapack new hello.toml` 은 이름, 판, 파일이 든 폴더 등을 물은 뒤 위와 같은 원본을 쓴다(업그레이드 코드도
+`rubrapack new hello -i` 는 이름, 판, 파일이 든 폴더 등을 물은 뒤 위와 같은 원본을 쓴다(업그레이드 코드도
 만든다). 19장이 이 명령과 짝인 `rubrapack edit` 를 설명한다. 여기서처럼 원본을 한 번 손으로 써 보는 것이 각
 줄이 하는 일을 익히는 가장 좋은 방법이다.

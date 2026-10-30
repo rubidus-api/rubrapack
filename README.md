@@ -8,7 +8,7 @@ of your program into a Windows Installer package (`.msi`) or an MSIX package (`.
 and nothing else to install.
 
 ```sh
-rubrapack new app.toml                    # asks a few questions, writes app.toml and checks it
+rubrapack new app -i                      # asks a few questions, writes app.toml and checks it
 rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, upgrades, repair
 ```
 
@@ -57,7 +57,7 @@ rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, u
 ## Quick look
 
 ```sh
-rubrapack new app.toml                               # asks, then writes app.toml (or: new app.toml --dist dist ...)
+rubrapack new app -i                                 # asks, then writes app.toml (or: new app --dist dist ...)
 rubrapack edit app.toml                              # change it later: a menu, or --set define.VERSION=1.1.0 --sync
 rubrapack build app.toml -o app.msi                  # a Windows Installer package
 rubrapack build app.toml -o app.msix --key signer.pfx --pass-env PW --timestamp http://timestamp.digicert.com
