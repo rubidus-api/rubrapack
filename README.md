@@ -70,8 +70,8 @@ A first package, step by step, is the first chapter of the manual:
 
 ## Features in detail
 
-- **One source, both formats.** A declarative `.toml` file (a strict TOML subset; the older
-  `.rpk` name works too) describes the product once; the same source builds an MSI and an MSIX.
+- **One source, both formats.** A declarative `.toml` file (a strict TOML subset) describes the
+  product once; the same source builds an MSI and an MSIX.
   What one format cannot carry is an error that says so, never something left out quietly.
 - **MSI:** files and folders (globs, kept or removed folders), features, registry values (with
   REG_QWORD and the 32-bit view), shortcuts, file types and URL schemes, environment variables,

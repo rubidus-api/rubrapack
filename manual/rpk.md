@@ -1,9 +1,8 @@
 # Source files and the `rubrapack` command
 
 A source file describes a package. It is a strict subset of [TOML 1.0](https://toml.io/en/v1.0.0)
-and is named `*.toml`, so editors, GitHub and AI assistants treat it as TOML (the older `*.rpk`
-name is read the same way). Every source is valid TOML, but rubrapack refuses TOML features
-outside the subset instead of ignoring them.
+and is named `*.toml`, so editors, GitHub and AI assistants treat it as TOML. Every source is
+valid TOML, but rubrapack refuses TOML features outside the subset instead of ignoring them.
 
 ## Getting started
 
