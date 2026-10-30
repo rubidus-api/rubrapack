@@ -134,7 +134,7 @@ dir = "INSTALLDIR"
 ```
 
 The module's cabinet becomes a second cabinet in the package, and `inspect hello.msi Media` shows
-it. [Merge modules](../rpk.md#merge-modules-mergeid) in the reference lists what cannot be merged.
+it. [Merge modules](../reference.md#merge-modules-mergeid) in the reference lists what cannot be merged.
 Some modules ask for settings - a server name, a folder; `config` answers them, one `"Name=value"`
 each (`config = ["ServerName=example.com"]`), and the module's defaults fill in the rest.
 
@@ -164,7 +164,7 @@ glob = "parts/*"
 rubrapack build parts.toml -o hello-parts.msm
 ```
 
-[Writing a merge module](../rpk.md#writing-a-merge-module-module) in the reference says what a
+[Writing a merge module](../reference.md#writing-a-merge-module-module) in the reference says what a
 module may hold.
 
 ## What happened inside

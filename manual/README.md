@@ -2,7 +2,7 @@
 
 Korean: [`../manual-ko/`](../manual-ko/README.md).
 
-- [`rpk.md`](rpk.md) - source files (`.toml`, a strict TOML subset) and the `rubrapack` command line.
+- [`reference.md`](reference.md) - source files (`.toml`, a strict TOML subset) and the `rubrapack` command line.
 - [`formats/`](formats/README.md) - the file format manual: how Windows Installer and MSIX
   packages, their cabinets, registry hives and signatures are built, byte by byte, written so
   that anyone can implement a package writer or reader of their own without reading rubrapack.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """build.py - the rubrapack manual as a book: a PDF (through Typst) and a web edition per language,
 made from the Markdown in manual/ (English, the original) and manual-ko/ (Korean), in the parts
-listed in PARTS: the tutorial (tutorial/), the reference (rpk.md), the background knowledge
+listed in PARTS: the tutorial (tutorial/), the reference (reference.md), the background knowledge
 (basics/) and the file formats (formats/). A part without chapters yet is left out.
 
   python3 manual/book/build.py [--out build/book] [--typst typst] [--font-path DIR] [--no-pdf]
@@ -36,10 +36,12 @@ FORMAT_ORDER = ["README", "cfb", "msi-database", "msi-summary", "msi-package", "
 # of NN-name.md files, one file, or "formats" (FORMAT_ORDER).
 PARTS = [
     ("Tutorial", "따라 하며 배우기", "tutorial"),
-    ("Reference", "참조", "rpk.md"),
+    ("Reference", "참조", "reference.md"),
     ("Background knowledge", "기초 지식", "basics"),
     ("File formats", "파일 형식", "formats"),
 ]
+# Old page names and the pages they became.
+MOVED = {"rpk.html": "reference.html"}
 ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 
 LANGS = {
@@ -915,6 +917,14 @@ def build_html(lang, book, out):
     open(os.path.join(d, "toc.html"), "w", encoding="utf-8").write(
         page(lang, U["toc_full"] + " - " + L["title"], inner, "toc.html", "index.html", first, U["toc_full"]))
     json.dump(index, open(os.path.join(d, "search-index.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    # Pages that moved: the old address forwards to the new one, with its #anchor (links elsewhere
+    # keep working).
+    for was, now in MOVED.items():
+        open(os.path.join(d, was), "w", encoding="utf-8").write(
+            '<!DOCTYPE html>\n<html lang="%s"><head><meta charset="utf-8"><title>%s</title>'
+            '<meta http-equiv="refresh" content="0; url=%s">'
+            '<script>location.replace("%s" + location.hash)</script></head>'
+            '<body><p><a href="%s">%s</a></p></body></html>\n' % (lang, now, now, now, now, now))
 
 
 def build_landing(out):

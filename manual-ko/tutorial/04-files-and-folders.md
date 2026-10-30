@@ -113,7 +113,7 @@ dir 의 `path` 는 Windows 폴더나 다른 dir 을 `$(...)` 로 써서 시작�
 Windows 폴더는 환경 변수의 이름을 그대로 쓴다(`%ProgramData%`, `%LOCALAPPDATA%`). 기초 지식
 [9](../basics/09-folders-and-environment-variables.md)장이 이것들을 설명한다. `$(ProgramFiles)/Hello` 를 되풀이하지
 않고 `INSTALLDIR` 위에 쌓는 것은 사용자가 설치 폴더를 고를 수 있게 되면(6장) 중요해진다: 그러면 `docs` 가
-사용자가 고른 폴더를 따라간다. 전체 목록은 참조 부의 [Windows 이름](../rpk.md#windows-이름)에 있다.
+사용자가 고른 폴더를 따라간다. 전체 목록은 참조 부의 [Windows 이름](../reference.md#windows-이름)에 있다.
 
 ## 파일 하나: `[file.ID]`
 

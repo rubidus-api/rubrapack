@@ -102,7 +102,7 @@ details, and the language's name and font.
 
 Another language - `nl`, `pl`, `tr`, ... - is one more such file: put `nl.po` in a folder `lang`
 beside `hello.toml` and write `languages = ["nl"]`. The reference's
-[Language packs](../rpk.md#language-packs) shows the format, and copying one of the packs that
+[Language packs](../reference.md#language-packs) shows the format, and copying one of the packs that
 come with rubrapack is the quickest start; a file beside the source also replaces a pack of the
 same code. Without a pack (or for a text you want different) the source gives the text itself as
 `text-xx`; the build lists what neither has:

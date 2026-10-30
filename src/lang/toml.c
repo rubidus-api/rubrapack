@@ -1,4 +1,4 @@
-// src/lang/toml.c - the `.rpk` TOML subset parser (include/rubrapack/toml.h, RFC-0002 section 1).
+// src/lang/toml.c - the `.toml` TOML subset parser (include/rubrapack/toml.h, RFC-0002 section 1).
 //
 // Line oriented: a line is blank, a comment, a table header, or `key = value`; only arrays may
 // continue over several lines. Errors are collected (up to the diagnostic limit) and the parse

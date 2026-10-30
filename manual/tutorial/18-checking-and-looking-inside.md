@@ -300,7 +300,7 @@ Messages with this code (* stands for a name or a value):
   - [registry.*]: an MSIX writes all its values (when); use msi-only = true
   ...
 What to do: give [msix] and [msix-app.*] what they need, or keep the item for the MSI with msi-only = true.
-Manual: Reference, "MSIX packages" - https://rubidus-api.github.io/rubrapack/en/rpk.html#msix-packages
+Manual: Reference, "MSIX packages" - https://rubidus-api.github.io/rubrapack/en/reference.html#msix-packages
 ```
 
 `rubrapack explain` without a code lists the ranges (RP13xx values, RP16xx MSIX, ...).

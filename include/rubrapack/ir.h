@@ -1,7 +1,7 @@
 #ifndef RUBRAPACK_IR_H
 #define RUBRAPACK_IR_H
 
-// include/rubrapack/ir.h - the checked package model built from a `.rpk` AST (RFC-0002 section 9).
+// include/rubrapack/ir.h - the checked package model built from a `.toml` AST (RFC-0002 section 9).
 // Everything here has passed the table/key/type/path checks; back ends (MSI lowering) never look
 // at the source text again. Strings are UTF-8 and owned by the IR.
 
@@ -46,8 +46,8 @@ typedef struct {
 typedef struct {
     char    *id;                // logical ID
     char    *dir;               // dir ID
-    char    *source;            // path as written (relative to the .rpk directory, `/`)
-    char    *source_path;       // path to open (joined with the .rpk directory)
+    char    *source;            // path as written (relative to the .toml directory, `/`)
+    char    *source_path;       // path to open (joined with the .toml directory)
     char    *name;              // target file name
     uint64_t size;
     bool     any_arch, keep, vital;
@@ -126,7 +126,7 @@ typedef struct {
 // install. One .bmp each; MSI only.
 typedef struct {
     char    *id;
-    char    *image_source;      // the .bmp to open (joined with the .rpk dir)
+    char    *image_source;      // the .bmp to open (joined with the .toml dir)
     char    *image_shown;       // the path as written
     char    *feature;           // the feature whose installation shows it
     int32_t  order;             // display order within the feature (0 = by ID)
@@ -235,7 +235,7 @@ typedef struct {
     char    *target_file;       // file ID of the program
     char    *icon_file;         // file ID, or NULL (MSI: the program's first icon)
     char    *logo;              // MSIX: the type's PNG (as written), or NULL; an MSI does not use it
-    char    *logo_path;         // to open (joined with the .rpk directory)
+    char    *logo_path;         // to open (joined with the .toml directory)
     char    *args;              // formatted; default "\"%1\""
     char    *content_type;      // "image/png": the extension's Content Type, or NULL
     char    *perceived_type;    // "image", "text", "audio", "video", "compressed", "document", "system", "application", or NULL
@@ -513,7 +513,7 @@ typedef struct {
     char   **values;            // radio, combo, listbox: the property values
     char   **labels;            // their labels (the values when omitted)
     size_t   value_count;
-    char    *image_source;      // bitmap: the .bmp to open (joined with the .rpk dir), or NULL
+    char    *image_source;      // bitmap: the .bmp to open (joined with the .toml dir), or NULL
     char    *image_shown;       // bitmap: the path as written
     rp_ir_ltext_t *text_by_lang;        // text-xx
     size_t   text_by_lang_count;
@@ -563,7 +563,7 @@ typedef struct {
     rp_ir_ltext_t *display_by_lang, *description_by_lang;       // display-name-xx, description-xx (RFC-0016 3)
     size_t   display_by_lang_count, description_by_lang_count;
     char    *logo[3];                   // Square150x150, Square44x44, StoreLogo (as written), or NULL
-    char    *logo_path[3];              // to open (joined with the .rpk directory)
+    char    *logo_path[3];              // to open (joined with the .toml directory)
     char    *background;                // background-color: "transparent" or "#RRGGBB" (RFC-0018), or NULL
     bool     hidden;                    // hidden = true: no entry in the Start menu (AppListEntry="none")
     rp_pos_t pos;
@@ -671,7 +671,7 @@ typedef struct {
     char             *menu_publisher;       // from the options: the signed package's Publisher, or NULL
     // P4 dialogs (RFC-0005)
     int               ui;                   // RP_UI_* (rubrapack/ui.h)
-    char             *license_source;       // path to open (joined with the .rpk directory), or NULL
+    char             *license_source;       // path to open (joined with the .toml directory), or NULL
     char             *license_shown;        // as written
     char             *banner_source;        // [ui] banner BMP, or NULL
     char             *ui_embedded_source;    // RFC-0031 B11: [ui] embedded author UI DLL path, or NULL
@@ -751,7 +751,7 @@ typedef struct {
 } rp_define_t;
 
 typedef struct {
-    const char        *source_dir;      // directory of the .rpk file ("." when none)
+    const char        *source_dir;      // directory of the .toml file ("." when none)
     const rp_define_t *defines;         // -D NAME=VALUE, already checked for duplicates
     size_t             define_count;
     const char        *arch;            // --arch, or NULL

@@ -630,8 +630,8 @@ msgstr "ActionProperty '{1}' nije u SecureCustomProperties"
 msgid "ActionProperty must be a public (upper case) property"
 msgstr "ActionProperty mora biti javno svojstvo (velikim slovima)"
 
-msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
-msgstr "Svi kodovi: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
+msgstr "Svi kodovi: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
 
 msgid "AppxSignature.p7x does not start with PKCX"
 msgstr "AppxSignature.p7x ne počinje sa PKCX"

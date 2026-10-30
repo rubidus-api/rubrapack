@@ -116,7 +116,7 @@ The Windows folders carry the names of their environment variables (`%ProgramDat
 `%LOCALAPPDATA%`); background chapter [9](../basics/09-folders-and-environment-variables.md)
 explains them. Building on `INSTALLDIR` rather than repeating `$(ProgramFiles)/Hello` matters once
 users may choose the install folder (chapter 6): `docs` then follows the folder they chose. The
-full list is in the Reference part ([Windows names](../rpk.md#windows-names)).
+full list is in the Reference part ([Windows names](../reference.md#windows-names)).
 
 ## One file: `[file.ID]`
 

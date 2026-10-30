@@ -630,8 +630,8 @@ msgstr "ActionProperty '{1}' SecureCustomProperties da yo‘q"
 msgid "ActionProperty must be a public (upper case) property"
 msgstr "ActionProperty ochiq xususiyat bo‘lishi kerak (katta harflar bilan)"
 
-msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
-msgstr "Barcha kodlar: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
+msgstr "Barcha kodlar: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
 
 msgid "AppxSignature.p7x does not start with PKCX"
 msgstr "AppxSignature.p7x PKCX bilan boshlanmaydi"

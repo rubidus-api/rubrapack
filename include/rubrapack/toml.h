@@ -1,7 +1,7 @@
 #ifndef RUBRAPACK_TOML_H
 #define RUBRAPACK_TOML_H
 
-// include/rubrapack/toml.h - the strict TOML 1.0 subset that `.rpk` files are written in
+// include/rubrapack/toml.h - the strict TOML 1.0 subset that `.toml` files are written in
 // (RFC-0002 section 1). The parser builds a small AST - tables, keys, values, positions - and
 // reports everything outside the subset with the RFC-0002 codes. Meaning (which tables and keys
 // exist, types, substitution) is checked later, on the AST.

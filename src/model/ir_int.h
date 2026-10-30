@@ -1,4 +1,4 @@
-// src/model/ir_int.h - what the files of the .rpk model (src/model/ir*.c) share; not a public header.
+// src/model/ir_int.h - what the files of the .toml model (src/model/ir*.c) share; not a public header.
 
 #ifndef RUBRAPACK_IR_INT_H
 #define RUBRAPACK_IR_INT_H

@@ -632,8 +632,8 @@ msgstr "ActionProperty '{1}' در SecureCustomProperties نیست"
 msgid "ActionProperty must be a public (upper case) property"
 msgstr "ActionProperty باید یک ویژگی عمومی (با حروف بزرگ) باشد"
 
-msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
-msgstr "همه کدها: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
+msgstr "همه کدها: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
 
 msgid "AppxSignature.p7x does not start with PKCX"
 msgstr "AppxSignature.p7x با PKCX آغاز نمی‌شود"

@@ -686,7 +686,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
             root = r;
         }
         g.root = root;
-        // The source path as written, relative to the .rpk: the literal segments, then rel.
+        // The source path as written, relative to the .toml: the literal segments, then rel.
         char *prefix = ir_dup(c, "");
         for (size_t k = 0; k < lit && prefix; ++k) {
             char *r = ir_join(c, prefix, g.segs[k]);

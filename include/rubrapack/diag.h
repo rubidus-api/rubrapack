@@ -12,7 +12,7 @@
 // Process exit codes.
 enum {
     RP_EXIT_OK = 0,
-    RP_EXIT_SOURCE = 1,     // error in the .rpk source
+    RP_EXIT_SOURCE = 1,     // error in the .toml source
     RP_EXIT_USAGE = 2,      // bad command line, unknown or not yet implemented command
     RP_EXIT_IO = 3,         // input/output, including out of memory
     RP_EXIT_SIGN = 4,       // signing or verification failed

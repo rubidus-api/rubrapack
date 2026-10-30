@@ -159,12 +159,12 @@ value = '$(LOCALAPPDATA)\Hello\log'       # %LOCALAPPDATA%\Hello\log 로 저장�
 ```
 
 `type = "expand"` 가 없으면 같은 값이 설치한 사용자의 폴더를 저장한다. 모든 이름과 그것이 무엇이 되는지는 참조
-부의 [Windows 이름](../rpk.md#windows-이름)에 표로 있다. MSIX 에는 설치할 때가 없다: 그것이 필요한 값은 거기서
+부의 [Windows 이름](../reference.md#windows-이름)에 표로 있다. MSIX 에는 설치할 때가 없다: 그것이 필요한 값은 거기서
 거부하고(RP1612), 실행할 때의 형태는 프로그램이 풀므로 쓸 수 있다.
 
 ## 쓰이는 곳
 
 - 튜토리얼 [4](../tutorial/04-files-and-folders.md)장: 설치 폴더와 그 기준.
 - 튜토리얼 [11](../tutorial/11-registry-environment-ini.md)장: 레지스트리 값, 환경 변수, `%TEMP%`.
-- 참조: [레지스트리 값](../rpk.md#레지스트리-값-registryid), [환경 변수](../rpk.md#환경-변수-envid),
-  [변수](../rpk.md#변수).
+- 참조: [레지스트리 값](../reference.md#레지스트리-값-registryid), [환경 변수](../reference.md#환경-변수-envid),
+  [변수](../reference.md#변수).

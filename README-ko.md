@@ -58,7 +58,7 @@ rubrapack build app.toml -o app.msixbundle --arch x64,x86,arm64
 rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
-첫 패키지를 한 단계씩 만드는 방법은 매뉴얼의 첫 장에 있습니다: [시작하기](manual-ko/rpk.md#시작하기).
+첫 패키지를 한 단계씩 만드는 방법은 매뉴얼의 첫 장에 있습니다: [시작하기](manual-ko/reference.md#시작하기).
 
 ## 자세한 기능
 
@@ -115,7 +115,7 @@ Arm64 컴퓨터가 없습니다), 하드웨어 PKCS#11 토큰(소프트웨어 �
 
 ## 문서
 
-- [`manual-ko/rpk.md`](manual-ko/rpk.md) - 사용자 매뉴얼: 원본(`.toml`) 쓰기와 명령줄.
+- [`manual-ko/reference.md`](manual-ko/reference.md) - 사용자 매뉴얼: 원본(`.toml`) 쓰기와 명령줄.
 - [`manual-ko/formats/`](manual-ko/formats/README.md) - 구현하는 분을 위한 파일 형식 매뉴얼: 복합 파일, MSI
   데이터베이스 인코딩, 요약 정보, 설치하는 표들, 캐비닛/MSZIP/deflate, 결정적 정체, Authenticode 와
   타임스탬프, MSIX 패키지·묶음·서명, 레지스트리 하이브, 그리고 자기 출력을 Windows 와 대조하는 방법.

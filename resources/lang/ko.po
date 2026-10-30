@@ -630,8 +630,8 @@ msgstr "ActionProperty '{1}'이(가) SecureCustomProperties 에 없습니다"
 msgid "ActionProperty must be a public (upper case) property"
 msgstr "ActionProperty 는 공개(대문자) 속성이어야 합니다"
 
-msgid "All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"
-msgstr "모든 코드: https://rubidus-api.github.io/rubrapack/ko/rpk.html#진단-코드\n"
+msgid "All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"
+msgstr "모든 코드: https://rubidus-api.github.io/rubrapack/ko/reference.html#진단-코드\n"
 
 msgid "AppxSignature.p7x does not start with PKCX"
 msgstr "AppxSignature.p7x 가 PKCX 로 시작하지 않습니다"

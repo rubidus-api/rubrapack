@@ -66,7 +66,7 @@ rubrapack lint app.msi && rubrapack verify app.msix --trust root.pem
 ```
 
 A first package, step by step, is the first chapter of the manual:
-[Getting started](manual/rpk.md#getting-started).
+[Getting started](manual/reference.md#getting-started).
 
 ## Features in detail
 
@@ -135,7 +135,7 @@ cross-built with MinGW-w64 and runs on Windows).
 
 ## Documentation
 
-- [`manual/rpk.md`](manual/rpk.md) - the user manual: writing sources (`.toml`) and the command line.
+- [`manual/reference.md`](manual/reference.md) - the user manual: writing sources (`.toml`) and the command line.
 - [`manual/formats/`](manual/formats/README.md) - the file format manual, for implementers: the
   compound file, the MSI database encoding, summary information, the tables that install,
   cabinets/MSZIP/deflate, deterministic identities, Authenticode and timestamps, MSIX packages,

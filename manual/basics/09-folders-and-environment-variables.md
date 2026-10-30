@@ -171,7 +171,7 @@ value = '$(LOCALAPPDATA)\Hello\log'       # stored as %LOCALAPPDATA%\Hello\log
 
 and without `type = "expand"` the same value would store the installing user's folder. The table
 of every name and what it becomes is in the Reference part
-([Windows names](../rpk.md#windows-names)). An MSIX has no install time: a value that needs one
+([Windows names](../reference.md#windows-names)). An MSIX has no install time: a value that needs one
 is refused there (RP1612), while the run-time form works, since the program expands it.
 
 ## Where this is used
@@ -179,5 +179,5 @@ is refused there (RP1612), while the run-time form works, since the program expa
 - Tutorial chapter [4](../tutorial/04-files-and-folders.md): install folders and their bases.
 - Tutorial chapter [11](../tutorial/11-registry-environment-ini.md): registry values, environment
   variables and `%TEMP%`.
-- Reference: [Windows names](../rpk.md#windows-names), [Registry values](../rpk.md#registry-values-registryid),
-  [Environment variables](../rpk.md#environment-variables-envid), [Variables](../rpk.md#variables).
+- Reference: [Windows names](../reference.md#windows-names), [Registry values](../reference.md#registry-values-registryid),
+  [Environment variables](../reference.md#environment-variables-envid), [Variables](../reference.md#variables).

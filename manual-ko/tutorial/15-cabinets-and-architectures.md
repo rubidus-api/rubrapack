@@ -130,7 +130,7 @@ dir = "INSTALLDIR"
 ```
 
 모듈의 캐비닛은 패키지 안의 두 번째 캐비닛이 되고, `inspect hello.msi Media` 에 보인다. 합칠 수
-없는 것은 참고 문서의 [병합 모듈](../rpk.md#병합-모듈-mergeid)에 있다.
+없는 것은 참고 문서의 [병합 모듈](../reference.md#병합-모듈-mergeid)에 있다.
 어떤 모듈은 설정 - 서버 이름, 폴더 - 을 묻는다. `config` 가 항목마다 `"이름=값"` 하나로 답하고
 (`config = ["ServerName=example.com"]`), 나머지는 모듈의 기본값이 채운다.
 
@@ -159,7 +159,7 @@ glob = "parts/*"
 rubrapack build parts.toml -o hello-parts.msm
 ```
 
-모듈에 무엇이 들 수 있는지는 참고 문서의 [병합 모듈 만들기](../rpk.md#병합-모듈-만들기-module)에 있다.
+모듈에 무엇이 들 수 있는지는 참고 문서의 [병합 모듈 만들기](../reference.md#병합-모듈-만들기-module)에 있다.
 
 ## 안에서 무슨 일이 일어났나
 

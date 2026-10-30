@@ -300,7 +300,7 @@ C:\work\suite> setup.exe /passive
 멈춘다. `setup.exe /uninstall` 은 뒤에서부터 다시 지운다. 모두 설치된 상태에서 다시 실행하면 복구할지
 제거할지 묻는다(`/repair`, `/uninstall` 로 미리 정할 수 있다). `[chain]` 의 `elevate = false` 는 관리자 권한을
 묻지 않게 한다(사용자별 패키지용). `source` 는 패치(`hello-1.0.1.msp`, 그것이 고치는 패키지 뒤에)나 MSIX 패키지
-(`hello.msix`)여도 되고, MSIX 는 설치 프로그램이 Windows 의 패키지 관리자로 더한다. 나머지는 [참고 문서](../rpk.md#설치-프로그램-하나에-여러-패키지-chain)에 있다.
+(`hello.msix`)여도 되고, MSIX 는 설치 프로그램이 Windows 의 패키지 관리자로 더한다. 나머지는 [참고 문서](../reference.md#설치-프로그램-하나에-여러-패키지-chain)에 있다.
 
 ## 여기서 어디로
 

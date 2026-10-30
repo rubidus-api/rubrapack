@@ -76,7 +76,7 @@ hello.toml:14:1: error[RP1507]: source file 'dist/hello.ex' not found
 ```
 
 The numbers are the line and the column; the code in brackets (`RP1507`: RP15xx is "the files to
-install") is explained under [Diagnostic codes](../rpk.md#diagnostic-codes) in the Reference part.
+install") is explained under [Diagnostic codes](../reference.md#diagnostic-codes) in the Reference part.
 Fix the line and build again.
 
 ## Installing and removing it

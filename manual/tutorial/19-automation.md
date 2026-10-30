@@ -322,7 +322,7 @@ Started again when everything is installed, it asks whether to repair or remove 
 `elevate = false` in `[chain]` keeps it from asking for administrator rights (for per-user
 packages). A `source` may also be a patch (`hello-1.0.1.msp`, after the package it updates) or an
 MSIX package (`hello.msix`), which the setup program adds through Windows' package manager.
-Everything else is in [the reference](../rpk.md#several-packages-in-one-setup-chain).
+Everything else is in [the reference](../reference.md#several-packages-in-one-setup-chain).
 
 ## Where to go from here
 

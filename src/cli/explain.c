@@ -152,10 +152,10 @@ int rp_cmd_explain(int argc, char **argv) {
             bool page = strstr(r->anchor, ".html") != NULL;     // a tutorial chapter, or a section of the reference
             // The address is part of the text: a language's pack names its own manual (and anchors).
             rp_lang_format(line, sizeof line, "Manual: %s\"%s\" - https://rubidus-api.github.io/rubrapack/en/%s%s\n", page ? "" : TR("Reference, "),
-                           rp_tr(r->section), page ? "" : "rpk.html#", page ? r->anchor : rp_tr(r->anchor));
+                           rp_tr(r->section), page ? "" : "reference.html#", page ? r->anchor : rp_tr(r->anchor));
             out(line);
         }
-        out(TR("All codes: https://rubidus-api.github.io/rubrapack/en/rpk.html#diagnostic-codes\n"));
+        out(TR("All codes: https://rubidus-api.github.io/rubrapack/en/reference.html#diagnostic-codes\n"));
     }
     return RP_EXIT_OK;
 }

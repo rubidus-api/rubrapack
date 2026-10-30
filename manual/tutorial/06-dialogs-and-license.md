@@ -96,7 +96,7 @@ Installer draws a BMP; about 493 x 58 pixels). Without it the strip is plain whi
 ## Your own words: `[ui-text.ID]`
 
 Every text on the built-in pages has an ID; `[ui-text.ID]` replaces one. The IDs are listed in the
-Reference part ([Dialogs](../rpk.md#dialogs-ui)); `WelcomeText` and `ExitText` are the sentences
+Reference part ([Dialogs](../reference.md#dialogs-ui)); `WelcomeText` and `ExitText` are the sentences
 on the first and the last page. Texts are formatted strings: `[ProductName]`, `[ProductVersion]`
 and `[Manufacturer]` are replaced, and a literal square bracket is written `[\[]`. In a button's
 text, `&` marks the letter that works with Alt: `&Next` is Alt+N.

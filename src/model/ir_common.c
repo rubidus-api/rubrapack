@@ -1,5 +1,5 @@
 #include "rubrapack/lang.h"
-// src/model/ir_common.c - shared helpers of the .rpk model: names, keys, values, known folders.
+// src/model/ir_common.c - shared helpers of the .toml model: names, keys, values, known folders.
 
 #include "ir_int.h"
 

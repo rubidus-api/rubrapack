@@ -94,7 +94,7 @@ msiexec /i hello.msi INSTALLDIR="D:\Tools\Hello"
 ## 내 말로: `[ui-text.ID]`
 
 내장 페이지의 모든 글에는 ID 가 있고 `[ui-text.ID]` 가 하나를 바꾼다. ID 목록은 참조 부의
-[대화창](../rpk.md#대화창-ui)에 있다. `WelcomeText` 와 `ExitText` 는 첫 페이지와 마지막 페이지의 문장이다. 글은
+[대화창](../reference.md#대화창-ui)에 있다. `WelcomeText` 와 `ExitText` 는 첫 페이지와 마지막 페이지의 문장이다. 글은
 서식 문자열이다: `[ProductName]`, `[ProductVersion]`, `[Manufacturer]` 는 바뀌고, 대괄호 자체는 `[\[]` 로 쓴다.
 단추 글에서 `&` 는 Alt 와 함께 쓰는 글자를 표시한다: `&Next` 는 Alt+N 이다.
 

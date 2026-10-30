@@ -1,4 +1,4 @@
-// src/model/ir.c - `.rpk` AST -> checked package model (include/rubrapack/ir.h, RFC-0002): the build
+// src/model/ir.c - `.toml` AST -> checked package model (include/rubrapack/ir.h, RFC-0002): the build
 // order and freeing. The table parsers, checks and dump are in the other src/model/ir_*.c files.
 
 #include "ir_int.h"
