@@ -103,6 +103,7 @@ const char *const rp_schema_lines[] = {
     "    \"icon\": {\n",
     "     \"type\": \"string\"\n",
     "    },\n",
+    "    \"logo\": {},\n",
     "    \"msi-only\": {\n",
     "     \"type\": \"boolean\"\n",
     "    },\n",

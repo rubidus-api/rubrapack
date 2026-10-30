@@ -983,6 +983,9 @@ msgstr "[file.{1}] כבר בתיקיית התוכנית שלו; isolate-for מי
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] נמצא בפרופיל המשתמש ויש לו component-guid: נתיב המפתח נשאר הקובץ, בעוד שכללי Windows דורשים שם ערך HKCU (ICE38); השמט את component-guid כדי לקבל אותו"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' אינו הרכבת .NET (אין כותרת CLI עם שורת Assembly)"
 
@@ -998,17 +1001,8 @@ msgstr "[file.{1}]: הרכבת .NET משותפת נכנסת ל-GAC, שמקבל �
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: assembly משותף של Win32 נכנס ל-WinSxS עם קטלוג החתום במפתח שה-publicKeyToken במניפסט מציין; בנה עם --key (או תן assembly-for = \"file:<תוכנית>\" ל-assembly פרטי)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: המניפסט מציין publicKeyToken \"{2}\", אבל האסימון של --key הוא \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: המניפסט '{2}' של assembly משותף של Win32 מציין את החותם: publicKeyToken ב-assemblyIdentity (האסימון של ה---key שאיתו בונים)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "קטלוג של assembly משותף של Win32 דורש מפתח RSA של 2048 סיביות או יותר"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ו-manifest הולכים עם assembly = \"dotnet\" או \"win32\""
@@ -1018,6 +1012,9 @@ msgstr "[file.{1}]: במניפסט שלו '{2}' אין assemblyIdentity עם nam
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: המניפסט שלו '{2}' חייב להיות באותו dir ו-feature (ותחת אותו when): השניים הם רכיב אחד"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: המניפסט מציין publicKeyToken \"{2}\", אבל האסימון של --key הוא \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: המניפסט '{2}' שייך להרכבה אחרת או שהוא עצמו הרכבה"
@@ -1558,6 +1555,9 @@ msgstr "שם שירות לא יכול להכיל '/' או '\\' (לכל היות�
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "קובץ התקנה ‎.exe נבנה ממקור עם [chain]; '{1}' בונה חבילה (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "קטלוג של assembly משותף של Win32 דורש מפתח RSA של 2048 סיביות או יותר"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "מקור מכיל [package] אחד או [module] אחד, לא את שניהם"
@@ -2369,6 +2369,9 @@ msgstr "הלוגו '{1}' בקנה מידה {2} הוא {3}x{4} פיקסלים; ה
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "הלוגו '{1}' בקנה מידה {2} אינו קובץ PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "הסמל '{1}' בגודל {2}x{3} פיקסלים; הסמל של סוג קובץ חייב להיות ריבועי"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "הלוגו '{1}' הוא {2}x{3} פיקסלים; הוא חייב להיות {4}x{5}"
 
@@ -2656,6 +2659,9 @@ msgstr "prog-id ‏'{1}' שייך גם ל-[assoc.{2}]: סוג קובץ ומחל�
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id ‏'{1}' נמצא גם ב-[assoc.{2}] עם תיאור, target, icon או args אחרים"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' מופיע גם ב-[assoc.{2}] עם logo אחר"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id חייב להיות אותיות, ספרות, '.', '_' או '-', לא מתחיל בספרה, לכל היותר 39 (התקבל '{1}')"

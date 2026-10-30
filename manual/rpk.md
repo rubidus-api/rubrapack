@@ -235,7 +235,7 @@ empty or mixed arrays, keys before the first table other than `format`. Table an
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property** (or a dir ID), **kind** (`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file** (`file:ID` of an `.exe`), **name**, display-name, description, start (`auto`, `demand`, `disabled`), account (`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
-| `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), args (default `"%1"`), content-type, perceived-type, default (`false`: only under "Open with") |
+| `[assoc.ID]` | **extension** (`.ext`, lower case), **prog-id**, **target** (`file:ID` of an `.exe`), description, icon (`file:ID`), logo (a square PNG: the type's icon in an MSIX), args (default `"%1"`), content-type, perceived-type, default (`false`: only under "Open with") |
 | `[menu.ID]` | **on** (file types, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`; an item of a sub-menu has none), **text** or text-xx, target (`file:ID` of an `.exe`; none = a sub-menu), args (default `"%1"`), icon (`file:ID`), parent (a sub-menu's ID), multi (`each`, `one`, `single`), extended, windows11 (default `true`), list (with `multi = "one"`: what stands for `%*` when the paths do not fit a command line; `%L` is a file of them), hide-when (`"HKCU\\key\\value"` or `"HKLM\\..."`: the Windows 11 item is hidden while that value exists) - an item of Explorer's right-click menu: see [Explorer's right-click menu](#explorers-right-click-menu-menuid) |
 | `[other-copy.ID]` | **msix** (an app package's identity name) with **publisher**, or **upgrade-code** (another MSI's), action (`warn` default, `refuse`), message or message-xx (`[1]` this product, `[2]` the copy found) - the same program installed another way, looked for before a first install: see [Another copy](#another-copy-other-copyid). MSI only |
 | `[protocol.ID]` | **name** (the scheme, lower case), **target** (`file:ID` of an `.exe`), description, args (default `"%1"`) |
@@ -592,8 +592,16 @@ follows the installation: per machine they land in `HKLM\Software\Classes`, per 
 in it directly; where the user has chosen another program, Windows keeps that choice.
 
 In an MSIX they go into the manifest of the application whose executable is the target (a file
-type association, a protocol), and `args` must be plain text. `icon` is not used there: the
-application's logo stands for the file type.
+type association, a protocol), and `args` must be plain text. `icon` is not used there; `logo`
+gives the file type its own picture, a square PNG of any size (Explorer scales it) that goes into
+the package once per prog-id. Without `logo` the application's logo stands for the file type.
+Files named like the logo with `.scale-100`, `.scale-125`, `.scale-150`, `.scale-200` or
+`.scale-400` before the extension are taken as that picture at those scales, as an application's
+logos are, and with `.targetsize-16`, `-24`, `-32`, `-48` or `-256` (N x N pixels) as the picture
+for that size, which Explorer's small icons use; `.targetsize-16_altform-unplated` and so on are
+the same without the tile's plate behind them (`RP1608`). With such files the logo itself may be
+missing; when it is there too, it is the scale-100 picture. The tables sharing a prog-id give the same `logo` or none (`RP1316`). An MSI
+does not use `logo` (its icon is `icon`), so one source builds both.
 
 A file type may also say what it holds and whether the program takes it:
 

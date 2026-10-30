@@ -981,6 +981,9 @@ msgstr "[file.{1}] je već u fascikli svog programa; isolate-for je za deljenu D
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] nalazi se u korisničkom profilu i ima component-guid: putanja ključa ostaje datoteka, a pravila sistema Windows tu traže HKCU vrednost (ICE38); izostavite component-guid da biste je dobili"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' nije .NET sklop (nema CLI zaglavlja sa redom Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: deljeni .NET sklop ide u GAC, koji prima samo sklopove sa ja
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: deljeni Win32 sklop ide u WinSxS sa katalogom potpisanim ključem koji navodi publicKeyToken u manifestu; napravite ga sa --key (ili za privatni zadajte assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifest navodi publicKeyToken \"{2}\", ali token ključa --key je \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifest '{2}' deljenog Win32 sklopa navodi potpisnika: publicKeyToken u assemblyIdentity (token ključa --key sa kojim se pravi)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "katalog deljenog Win32 sklopa traži RSA ključ od 2048 bita ili više"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for i manifest idu uz assembly = \"dotnet\" ili \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: njegov manifest '{2}' nema assemblyIdentity sa name i versio
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: njegov manifest '{2}' mora biti u istom dir i feature (i pod istim when): oba su jedna komponenta"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest navodi publicKeyToken \"{2}\", ali token ključa --key je \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' pripada drugom sklopu ili je i sam sklop"
@@ -1556,6 +1553,9 @@ msgstr "ime usluge ne sme sadržati '/' ili '\\' (najviše 256 znakova)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe se pravi iz izvora sa [chain]; '{1}' pravi paket (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "katalog deljenog Win32 sklopa traži RSA ključ od 2048 bita ili više"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "izvor sadrži jedan [package] ili jedan [module], ne oba"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' u razmeri {2} ima {3}x{4} piksela; mora biti {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' u razmeri {2} nije datoteka PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' ima {2}x{3} piksela; logo tipa datoteke mora biti kvadratan"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' ima {2}x{3} piksela; mora biti {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' pripada i [assoc.{2}]: tip datoteke i COM klasa traže dva
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' je i u [assoc.{2}] sa drugim opisom, target-om, icon-om ili args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' se nalazi i u [assoc.{2}] sa drugim logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id moraju biti slova, cifre, '.', '_' ili '-', ne počinjati cifrom, najviše 39 (dobijeno '{1}')"

@@ -518,6 +518,7 @@ proven_err_t rp_ir_dump(const rp_ir_t *ir, proven_allocator_t alloc, uint8_t **o
         kv(&b, "description", x->description);
         kv(&b, "target", x->target_file);
         kv(&b, "icon", x->icon_file);
+        if (x->logo) kv(&b, "logo", x->logo);
         kv(&b, "args", x->args);
         if (x->content_type) kv(&b, "content-type", x->content_type);
         if (x->perceived_type) kv(&b, "perceived-type", x->perceived_type);

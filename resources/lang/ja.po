@@ -981,6 +981,9 @@ msgstr "[file.{1}] はすでに自分のプログラムのフォルダーにあ�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] はユーザー プロファイルにあり、component-guid が指定されています。キー パスはファイルのままですが、Windows の規則はそこに HKCU 値を求めます (ICE38)。HKCU 値にするには component-guid を外してください"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' は .NET アセンブリではありません (Assembly 行を持つ CLI ヘッダーがありません)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: 共有 .NET アセンブリは GAC に入りますが、GAC 
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: 共有 Win32 アセンブリは、マニフェストの publicKeyToken が示すキーで署名したカタログと共に WinSxS に入ります。--key でビルドしてください (プライベート アセンブリにするには assembly-for = \"file:<プログラム>\" を指定)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: マニフェストの publicKeyToken は \"{2}\" ですが、--key のトークンは \"{3}\" です"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: 共有 Win32 アセンブリのマニフェスト '{2}' は署名者を示します: assemblyIdentity の publicKeyToken (ビルドに使う --key のトークン)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "共有 Win32 アセンブリのカタログには 2048 ビット以上の RSA キーが必要です"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for と manifest は assembly = \"dotnet\" か \"win32\" と一緒に使います"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: マニフェスト '{2}' に name と version を持つ asse
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: マニフェスト '{2}' は同じ dir と feature に (同じ when で) 置く必要があります。この 2 つは 1 つのコンポーネントです"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: マニフェストの publicKeyToken は \"{2}\" ですが、--key のトークンは \"{3}\" です"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: マニフェスト '{2}' は別のアセンブリのもの、またはそれ自体がアセンブリです"
@@ -1556,6 +1553,9 @@ msgstr "サービス名には '/' や '\\' を使えません (256 文字まで)
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "セットアップ .exe は [chain] のあるソースからビルドします。'{1}' はパッケージ (.msi、.msix) をビルドします"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "共有 Win32 アセンブリのカタログには 2048 ビット以上の RSA キーが必要です"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "ソースには [package] か [module] のどちらか 1 つを書きます。両方は書けません"
@@ -2367,6 +2367,9 @@ msgstr "ロゴ '{1}' の倍率 {2} は {3}x{4} ピクセルです。{5}x{6} で�
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "ロゴ '{1}' の倍率 {2} は PNG ファイルではありません"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "ロゴ '{1}' は {2}x{3} ピクセルです。ファイルの種類のロゴは正方形でなければなりません"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "ロゴ '{1}' は {2}x{3} ピクセルです。{4}x{5} でなければなりません"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' は [assoc.{2}] のものでもあります: ファイル�
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' は [assoc.{2}] にも、別の description、target、icon、args で書かれています"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' は [assoc.{2}] にも、別の logo で書かれています"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id は英字、数字、'.'、'_'、'-' で、数字で始めず 39 文字まででなければなりません ('{1}' でした)"

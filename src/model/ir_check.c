@@ -562,6 +562,8 @@ void ir_class_checks(ctx_t *c) {
                 (ir_cmp_str(x->description, y->description) != 0 || ir_cmp_str(x->target_file, y->target_file) != 0 ||
                  ir_cmp_str(x->icon_file, y->icon_file) != 0 || ir_cmp_str(x->args, y->args) != 0)) {
                 ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args", x->prog_id, y->id);
+            } else if (x->prog_id && y->prog_id && strcmp(x->prog_id, y->prog_id) == 0 && ir_cmp_str(x->logo, y->logo) != 0) {
+                ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another logo", x->prog_id, y->id);
             }
         }
     }

@@ -981,6 +981,9 @@ msgstr "[file.{1}] sudah ada di folder programnya; isolate-for untuk DLL bersama
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] berada di profil pengguna dan memiliki component-guid: jalur kuncinya tetap berkas tersebut, sedangkan aturan Windows menghendaki nilai HKCU di sana (ICE38); hapus component-guid untuk mendapatkannya"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' bukan assembly .NET (tidak ada header CLI dengan baris Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: assembly .NET bersama masuk ke GAC, yang hanya menerima asse
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: assembly Win32 bersama masuk ke WinSxS dengan katalog yang ditandatangani kunci yang disebut publicKeyToken pada manifesnya; bangun dengan --key (atau berikan assembly-for = \"file:<program>\" untuk yang privat)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifes menyebut publicKeyToken \"{2}\", tetapi token --key adalah \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifes '{2}' assembly Win32 bersama menyebut penandatangannya: publicKeyToken di assemblyIdentity (token --key yang dipakai untuk membangun)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "katalog assembly Win32 bersama memerlukan kunci RSA 2048 bit atau lebih"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for dan manifest dipakai bersama assembly = \"dotnet\" atau \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: manifesnya '{2}' tidak memiliki assemblyIdentity dengan name
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: manifesnya '{2}' harus berada di dir dan feature yang sama (dan dengan when yang sama): keduanya satu komponen"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifes menyebut publicKeyToken \"{2}\", tetapi token --key adalah \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifes '{2}' milik assembly lain atau merupakan assembly itu sendiri"
@@ -1556,6 +1553,9 @@ msgstr "nama layanan tidak boleh memuat '/' atau '\\' (paling banyak 256 karakte
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe dibangun dari sumber dengan [chain]; '{1}' membangun paket (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "katalog assembly Win32 bersama memerlukan kunci RSA 2048 bit atau lebih"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "sumber memuat satu [package] atau satu [module], bukan keduanya"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' pada skala {2} berukuran {3}x{4} piksel; harus {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' pada skala {2} bukan file PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' berukuran {2}x{3} piksel; logo jenis berkas harus persegi"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' berukuran {2}x{3} piksel; harus {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' juga milik [assoc.{2}]: jenis file dan kelas COM memerluka
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' juga ada di [assoc.{2}] dengan deskripsi, target, icon atau args yang lain"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' juga ada di [assoc.{2}] dengan logo lain"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id harus huruf, digit, '.', '_' atau '-', tidak diawali digit, paling banyak 39 (didapat '{1}')"

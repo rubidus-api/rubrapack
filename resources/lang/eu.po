@@ -981,6 +981,9 @@ msgstr "[file.{1}] bere programaren karpetan dago jada; isolate-for beste nonbai
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] erabiltzailearen profilean dago eta component-guid du: gako-bidea fitxategia izaten jarraitzen du, Windows-en arauek han HKCU balio bat nahi duten arren (ICE38); kendu component-guid hura lortzeko"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ez da .NET multzo bat (ez dago Assembly errenkadadun CLI goibururik)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: .NET multzo partekatua GACera doa, eta hark izen sendodun mu
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: Win32 multzo partekatua WinSxS-era doa, manifestuko publicKeyToken-ak izendatzen duen gakoarekin sinatutako katalogo batekin; sortu --key erabiliz (edo eman assembly-for = \"file:<programa>\" pribatu baterako)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifestuak publicKeyToken \"{2}\" izendatzen du, baina --key gakoaren tokena \"{3}\" da"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: Win32 multzo partekatuaren '{2}' manifestuak sinatzailea izendatzen du: publicKeyToken assemblyIdentity-n (sortzeko erabiltzen den --key gakoaren tokena)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "Win32 multzo partekatuaren katalogoak 2048 biteko edo gehiagoko RSA gakoa behar du"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for eta manifest assembly = \"dotnet\" edo \"win32\"-rekin doaz"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: bere '{2}' manifestuak ez du name eta version dituen assembl
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: bere '{2}' manifestuak dir eta feature berean egon behar du (when berarekin): biak osagai bakarra dira"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifestuak publicKeyToken \"{2}\" izendatzen du, baina --key gakoaren tokena \"{3}\" da"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: '{2}' manifestua beste multzo batena da edo bera da multzo bat"
@@ -1556,6 +1553,9 @@ msgstr "zerbitzu-izen batek ezin du '/' edo '\\' eduki (gehienez 256 karaktere)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "instalazio-.exe bat [chain] duen iturburu batetik sortzen da; '{1}'-k pakete bat sortzen du (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "Win32 multzo partekatuaren katalogoak 2048 biteko edo gehiagoko RSA gakoa behar du"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "iturburu batek [package] bat edo [module] bat du, ez biak"
@@ -2367,6 +2367,9 @@ msgstr "'{1}' logotipoak {2} eskalan {3}x{4} pixel ditu; {5}x{6} izan behar ditu
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "'{1}' logotipoa {2} eskalan ez da PNG fitxategi bat"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "'{1}' logoak {2}x{3} pixel ditu; fitxategi mota baten logoak karratua izan behar du"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "'{1}' logotipoak {2}x{3} pixel ditu; {4}x{5} izan behar ditu"
 
@@ -2654,6 +2657,9 @@ msgstr "'{1}' prog-id [assoc.{2}]-rena ere bada: fitxategi-mota batek eta COM kl
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "'{1}' prog-id [assoc.{2}]-n ere badago beste deskribapen, target, icon edo args batekin"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "'{1}' prog-id-a [assoc.{2}] taulan ere badago, beste logo batekin"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id letrak, digituak, '.', '_' edo '-' izan behar da, ez digitu batez hasita, gehienez 39 ('{1}' jaso da)"

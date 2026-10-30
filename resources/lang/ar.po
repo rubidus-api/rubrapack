@@ -983,6 +983,9 @@ msgstr "[file.{1}] موجود فعلًا في مجلد برنامجه؛ وisolat
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] موجود في ملف تعريف المستخدم وله component-guid: يبقى مسار المفتاح هو الملف، بينما تريد قواعد Windows قيمة HKCU هناك (ICE38)؛ احذف component-guid للحصول عليها"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ليس تجميع .NET (لا يوجد رأس CLI فيه صف Assembly)"
 
@@ -998,17 +1001,8 @@ msgstr "[file.{1}]: يذهب تجميع .NET المشترك إلى GAC، وهو 
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: يدخل تجميع Win32 المشترك إلى WinSxS مع كتالوج موقّع بالمفتاح الذي يسمّيه publicKeyToken في البيان؛ ابنِ باستخدام --key (أو أعطِ assembly-for = \"file:<البرنامج>\" لتجميع خاص)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: يسمّي البيان publicKeyToken \"{2}\"، لكن رمز المفتاح --key هو \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: يسمّي بيان تجميع Win32 المشترك '{2}' موقّعه: publicKeyToken في assemblyIdentity (رمز المفتاح --key الذي يُبنى به)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "يحتاج كتالوج تجميع Win32 المشترك إلى مفتاح RSA بطول 2048 بت أو أكثر"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: يُستخدم assembly-for وmanifest مع assembly = \"dotnet\" أو \"win32\""
@@ -1018,6 +1012,9 @@ msgstr "[file.{1}]: لا يحتوي بيانه '{2}' على assemblyIdentity ف�
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: يجب أن يكون بيانه '{2}' في نفس dir وfeature (وتحت نفس when): الاثنان مكوّن واحد"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: يسمّي البيان publicKeyToken \"{2}\"، لكن رمز المفتاح --key هو \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: البيان '{2}' يخص تجميعًا آخر أو هو نفسه تجميع"
@@ -1558,6 +1555,9 @@ msgstr "لا يجوز أن يحتوي اسم الخدمة على '/' أو '\\' (
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "يُبنى ملف إعداد .exe من مصدر فيه [chain]؛ '{1}' يبني حزمة (.msi، .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "يحتاج كتالوج تجميع Win32 المشترك إلى مفتاح RSA بطول 2048 بت أو أكثر"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "يحمل المصدر [package] واحداً أو [module] واحداً، وليس كليهما"
@@ -2369,6 +2369,9 @@ msgstr "الشعار '{1}' عند المقياس {2} هو {3}x{4} بكسل؛ ي�
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "الشعار '{1}' عند المقياس {2} ليس ملف PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "الشعار '{1}' هو {2}x{3} بكسل؛ يجب أن يكون شعار نوع الملف مربعاً"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "الشعار '{1}' هو {2}x{3} بكسل؛ يجب أن يكون {4}x{5}"
 
@@ -2656,6 +2659,9 @@ msgstr "prog-id ‏'{1}' تابع أيضاً لـ [assoc.{2}]: يحتاج نوع
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id ‏'{1}' موجود أيضاً في [assoc.{2}] بوصف أو هدف أو أيقونة أو وسيطات أخرى"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id ‏'{1}' موجود أيضاً في [assoc.{2}] بشعار آخر"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "يجب أن يتكون prog-id من حروف وأرقام و'.' و'_' و'-'، لا يبدأ برقم، 39 حرفاً على الأكثر (الموجود '{1}')"

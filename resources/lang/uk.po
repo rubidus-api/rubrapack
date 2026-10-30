@@ -981,6 +981,9 @@ msgstr "[file.{1}] уже в теці своєї програми; isolate-for �
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] розташовано в профілі користувача, і він має component-guid: ключовим шляхом лишається файл, тоді як правила Windows вимагають там значення HKCU (ICE38); приберіть component-guid, щоб його отримати"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' не є збіркою .NET (немає заголовка CLI з рядком Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: спільна збірка .NET потрапляє до GAC
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: спільна збірка Win32 потрапляє до WinSxS з каталогом, підписаним ключем, який називає publicKeyToken у маніфесті; зберіть із --key (або вкажіть assembly-for = \"file:<програма>\" для приватної)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: маніфест називає publicKeyToken \"{2}\", але маркер ключа --key — \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: маніфест '{2}' спільної збірки Win32 називає підписувача: publicKeyToken в assemblyIdentity (маркер ключа --key, з яким збирається пакет)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "каталогу спільної збірки Win32 потрібен ключ RSA довжиною 2048 біт або більше"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for і manifest використовуються з assembly = \"dotnet\" або \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: у маніфесті '{2}' немає assemblyIdentity з n
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: маніфест '{2}' має бути в тому самому dir і feature (і з тим самим when): вони утворюють один компонент"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: маніфест називає publicKeyToken \"{2}\", але маркер ключа --key — \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: маніфест '{2}' належить іншій збірці або сам є збіркою"
@@ -1556,6 +1553,9 @@ msgstr "ім'я служби не може містити '/' або '\\' (що�
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "інсталяційний .exe збирається з джерела з [chain]; '{1}' збирає пакет (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "каталогу спільної збірки Win32 потрібен ключ RSA довжиною 2048 біт або більше"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "джерело містить один [package] або один [module], а не обидва"
@@ -2367,6 +2367,9 @@ msgstr "логотип '{1}' у масштабі {2} має {3}x{4} піксел
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "логотип '{1}' у масштабі {2} не є файлом PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "логотип '{1}' має {2}x{3} пікселів; логотип типу файлу має бути квадратним"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "логотип '{1}' має {2}x{3} пікселів; має бути {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' також належить [assoc.{2}]: тип файлу
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' також є в [assoc.{2}] з іншим description, target, icon або args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' також є в [assoc.{2}] з іншим logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id має складатися з літер, цифр, '.', '_' або '-', не починатися з цифри, щонайбільше 39 (отримано '{1}')"

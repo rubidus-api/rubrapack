@@ -981,6 +981,9 @@ msgstr "[file.{1}] đã ở trong thư mục chương trình của nó; isolate-
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] nằm trong hồ sơ người dùng và có component-guid: đường dẫn khóa vẫn là tệp, trong khi quy tắc của Windows muốn một giá trị HKCU ở đó (ICE38); bỏ component-guid để có giá trị đó"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' không phải assembly .NET (không có tiêu đề CLI với hàng Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: assembly .NET dùng chung vào GAC, nơi chỉ nhận assemb
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: assembly Win32 dùng chung vào WinSxS cùng một catalog được ký bằng khóa mà publicKeyToken trong manifest chỉ ra; hãy tạo bằng --key (hoặc cho assembly-for = \"file:<chương trình>\" để dùng riêng)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifest ghi publicKeyToken \"{2}\", nhưng token của --key là \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifest '{2}' của assembly Win32 dùng chung chỉ ra người ký: publicKeyToken trong assemblyIdentity (token của --key dùng để tạo)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "catalog của assembly Win32 dùng chung cần khóa RSA từ 2048 bit trở lên"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for và manifest đi cùng assembly = \"dotnet\" hoặc \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: manifest '{2}' của nó không có assemblyIdentity với n
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: manifest '{2}' của nó phải ở cùng dir và feature (và cùng when): hai cái là một thành phần"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest ghi publicKeyToken \"{2}\", nhưng token của --key là \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' thuộc về assembly khác hoặc bản thân là một assembly"
@@ -1556,6 +1553,9 @@ msgstr "tên dịch vụ không được chứa '/' hoặc '\\' (tối đa 256 k
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe được tạo từ nguồn có [chain]; '{1}' tạo một gói (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "catalog của assembly Win32 dùng chung cần khóa RSA từ 2048 bit trở lên"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "nguồn chứa một [package] hoặc một [module], không phải cả hai"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' ở tỷ lệ {2} có kích thước {3}x{4} điểm ảnh; p
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' ở tỷ lệ {2} không phải tệp PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' có {2}x{3} điểm ảnh; logo của một loại tệp phải là hình vuông"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' có kích thước {2}x{3} điểm ảnh; phải là {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' cũng thuộc về [assoc.{2}]: loại tệp và lớp COM
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' cũng có trong [assoc.{2}] với mô tả, target, icon hoặc args khác"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' cũng có trong [assoc.{2}] với một logo khác"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id phải là chữ cái, chữ số, '.', '_' hoặc '-', không bắt đầu bằng chữ số, tối đa 39 (nhận được '{1}')"

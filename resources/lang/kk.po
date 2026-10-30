@@ -981,6 +981,9 @@ msgstr "[file.{1}] әлдеқашан өз бағдарламасының қал
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] пайдаланушы профилінде және оның component-guid мәні бар: кілт жолы файл болып қалады, ал Windows ережелері онда HKCU мәнін талап етеді (ICE38); оны алу үшін component-guid алып тастаңыз"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' .NET жинағы емес (Assembly жолы бар CLI тақырыбы жоқ)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: ортақ .NET жинағы GAC-қа түседі, ол т�
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: ортақ Win32 жинағы WinSxS-ке манифесттегі publicKeyToken атайтын кілтпен қол қойылған каталогпен кіреді; --key арқылы жасаңыз (немесе жеке жинақ үшін assembly-for = \"file:<бағдарлама>\" беріңіз)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: манифест publicKeyToken \"{2}\" атайды, бірақ --key таңбалауышы \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: ортақ Win32 жинағының '{2}' манифесі қол қоюшыны атайды: assemblyIdentity ішіндегі publicKeyToken (жасауға қолданылатын --key таңбалауышы)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "ортақ Win32 жинағының каталогына 2048 бит немесе одан көп RSA кілті керек"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for және manifest assembly = \"dotnet\" немесе \"win32\" бірге қолданылады"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: '{2}' манифестінде name мен version бар as
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: '{2}' манифесті сол dir және feature ішінде (сол when астында) болуы керек: екеуі бір құрамдас"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: манифест publicKeyToken \"{2}\" атайды, бірақ --key таңбалауышы \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: '{2}' манифесті басқа жинақтікі немесе өзі жинақ"
@@ -1556,6 +1553,9 @@ msgstr "қызмет атауында '/' не '\\' болмауы керек (�
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "орнату .exe файлы [chain] бар бастапқы файлдан жасалады; '{1}' бума жасайды (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "ортақ Win32 жинағының каталогына 2048 бит немесе одан көп RSA кілті керек"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "бастапқы файлда бір [package] немесе бір [module] болады, екеуі бірге емес"
@@ -2367,6 +2367,9 @@ msgstr "{2} масштабтағы '{1}' логотипі {3}x{4} пиксель
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "{2} масштабтағы '{1}' логотипі PNG файлы емес"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "'{1}' логотипі {2}x{3} пиксель; файл түрінің логотипі шаршы болуы керек"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "'{1}' логотипі {2}x{3} пиксель; ол {4}x{5} болуы керек"
 
@@ -2654,6 +2657,9 @@ msgstr "'{1}' prog-id [assoc.{2}] кестесіне де тиесілі: фай
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "'{1}' prog-id [assoc.{2}] ішінде басқа сипаттама, target, icon не args мәнімен де бар"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' [assoc.{2}] ішінде де басқа logo-мен бар"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id әріптер, сандар, '.', '_' не '-' болуы керек, саннан басталмайды, ең көбі 39 ('{1}' алынды)"

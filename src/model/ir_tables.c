@@ -184,7 +184,7 @@ void ir_parse_msix(ctx_t *c, const rp_ttable_t *t) {
     }
 }
 
-char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown) {
+char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool sizes, char **shown) {
     *shown = ir_get_str(c, t, key, false, NULL);
     if (*shown == NULL) return NULL;
     rp_pos_t p = ir_key_pos(t, key);
@@ -192,14 +192,18 @@ char *ir_logo_path(ctx_t *c, const rp_ttable_t *t, const char *key, char **shown
     char *path = ir_join(c, c->opt->source_dir ? c->opt->source_dir : ".", *shown);
     uint64_t size;
     if (path && rp_pal_stat(c->alloc, path, &size) != RP_FS_FILE) {
-        // RFC-0016 3: scale variants alone (Logo.scale-100.png ...) stand in for Logo.png.
+        // RFC-0016 3: scale variants alone (Logo.scale-100.png ...) stand in for Logo.png; with
+        // `sizes` (a file type's logo) target sizes too (Logo.targetsize-16.png ...).
         bool variant = false;
         const char *dot = strrchr(path, '.'), *slash = strrchr(path, '/');
-        static const char *const scales[] = { "100", "125", "150", "200", "400" };
-        for (size_t k = 0; dot && (!slash || dot > slash) && !variant && k < 5; ++k) {
-            char v[2048];
-            snprintf(v, sizeof v, "%.*s.scale-%s%s", (int)(dot - path), path, scales[k], dot);
-            variant = rp_pal_stat(c->alloc, v, &size) == RP_FS_FILE;
+        static const char *const forms[] = { "scale-100", "scale-125", "scale-150", "scale-200", "scale-400", "targetsize-16",
+                                             "targetsize-24", "targetsize-32", "targetsize-48", "targetsize-256" };
+        for (size_t k = 0; dot && (!slash || dot > slash) && !variant && k < (sizes ? 10u : 5u); ++k) {
+            for (int u = 0; u < (k < 5 ? 1 : 2) && !variant; ++u) {
+                char v[2048];
+                snprintf(v, sizeof v, "%.*s.%s%s%s", (int)(dot - path), path, forms[k], u ? "_altform-unplated" : "", dot);
+                variant = rp_pal_stat(c->alloc, v, &size) == RP_FS_FILE;
+            }
         }
         if (!variant) ERR(c, p, "RP1507", "logo '%s' not found (nor as .scale-100 ... .scale-400 variants)", *shown);
     }
@@ -236,7 +240,7 @@ void ir_parse_msix_app(ctx_t *c, const rp_ttable_t *t) {
     static const char *const logos[3] = { "logo-150", "logo-44", "store-logo" };
     int given = 0;
     for (int i = 0; i < 3; ++i) {
-        a->logo_path[i] = ir_logo_path(c, t, logos[i], &a->logo[i]);
+        a->logo_path[i] = ir_logo_path(c, t, logos[i], false, &a->logo[i]);
         given += a->logo[i] != NULL;
     }
     if (given != 0 && given != 3) ERR(c, t->pos, "RP1608", "give all three logos (logo-150, logo-44, store-logo) or none");
@@ -1096,8 +1100,8 @@ static void check_prog_id(ctx_t *c, const rp_ttable_t *t, const char *p) {
 }
 
 void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
-    static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "args", "content-type", "perceived-type",
-                                        "default", "msi-only", NULL };
+    static const char *const keys[] = { "extension", "prog-id", "description", "target", "icon", "logo", "args", "content-type",
+                                        "perceived-type", "default", "msi-only", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 64);
     x->id = ir_dup(c, t->id);
@@ -1111,6 +1115,7 @@ void ir_parse_assoc(ctx_t *c, const rp_ttable_t *t, rp_ir_assoc_t *x) {
     x->description = ir_get_str(c, t, "description", false, NULL);
     x->target_file = file_ref(c, t, "target", true);
     x->icon_file = file_ref(c, t, "icon", false);
+    x->logo_path = ir_logo_path(c, t, "logo", true, &x->logo);
     x->args = ir_get_fmt(c, t, "args", false, NULL, IR_FMT_INSTALL);
     if (x->args == NULL) x->args = ir_dup(c, "\"%1\"");
     x->no_default = !ir_get_bool(c, t, "default", true);

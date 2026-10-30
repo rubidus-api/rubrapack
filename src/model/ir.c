@@ -680,7 +680,8 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->fonts);
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
-        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->args, x->content_type, x->perceived_type };
+        char *xs[] = { x->id, x->extension, x->prog_id, x->description, x->target_file, x->icon_file, x->logo, x->logo_path, x->args,
+                       x->content_type, x->perceived_type };
         for (size_t j = 0; j < sizeof xs / sizeof xs[0]; ++j) rp_mem_free(a, xs[j]);
     }
     rp_mem_free(a, ir->assocs);

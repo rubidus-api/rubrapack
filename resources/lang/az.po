@@ -981,6 +981,9 @@ msgstr "[file.{1}] artıq öz proqramının qovluğundadır; isolate-for başqa 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] istifadəçi profilindədir və component-guid var: onun açar yolu fayl olaraq qalır, Windows qaydaları isə orada HKCU dəyəri istəyir (ICE38); onu almaq üçün component-guid-i çıxarın"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' .NET assembly deyil (Assembly sətri olan CLI başlığı yoxdur)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: paylaşılan .NET assembly GAC-a gedir, GAC isə yalnız gü
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: paylaşılan Win32 assembly WinSxS-ə manifestin publicKeyToken-inin adlandırdığı açarla imzalanmış kataloqla daxil olur; --key ilə qurun (və ya şəxsi assembly üçün assembly-for = \"file:<proqram>\" verin)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifest publicKeyToken \"{2}\" adlandırır, lakin --key açarının tokeni \"{3}\"-dir"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: paylaşılan Win32 assembly-nin manifesti '{2}' imzalayanını adlandırır: assemblyIdentity-də publicKeyToken (qurulduğu --key açarının tokeni)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "paylaşılan Win32 assembly kataloqu 2048 bit və ya daha böyük RSA açarı tələb edir"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for və manifest assembly = \"dotnet\" və ya \"win32\" ilə gedir"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: '{2}' manifestində name və version olan assemblyIdentity y
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: '{2}' manifesti eyni dir və feature-də (eyni when ilə) olmalıdır: ikisi bir komponentdir"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest publicKeyToken \"{2}\" adlandırır, lakin --key açarının tokeni \"{3}\"-dir"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: '{2}' manifesti başqa assembly-nindir və ya özü assembly-dir"
@@ -1556,6 +1553,9 @@ msgstr "xidmət adında '/' və ya '\\' ola bilməz (ən çoxu 256 simvol)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "quraşdırma .exe-si [chain] olan mənbədən qurulur; '{1}' paket qurur (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "paylaşılan Win32 assembly kataloqu 2048 bit və ya daha böyük RSA açarı tələb edir"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "mənbə bir [package] və ya bir [module] saxlayır, ikisini birlikdə yox"
@@ -2367,6 +2367,9 @@ msgstr "{2} miqyasında '{1}' loqosu {3}x{4} pikseldir; {5}x{6} olmalıdır"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "{2} miqyasında '{1}' loqosu PNG faylı deyil"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "'{1}' loqosu {2}x{3} pikseldir; fayl növünün loqosu kvadrat olmalıdır"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "'{1}' loqosu {2}x{3} pikseldir; {4}x{5} olmalıdır"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' həm də [assoc.{2}]-nindir: fayl növü və COM sinfi iki
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' [assoc.{2}]-də başqa təsvir, target, icon və ya args ilə də var"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' [assoc.{2}] içində də başqa logo ilə var"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id hərflər, rəqəmlər, '.', '_' və ya '-' olmalıdır, rəqəmlə başlamamalı, ən çoxu 39 ('{1}' alındı)"

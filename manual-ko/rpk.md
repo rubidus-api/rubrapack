@@ -224,7 +224,7 @@ BOM 이 있거나 없는 UTF-8, 또는 BOM 이 있는 UTF-16LE. 줄 끝은 LF �
 | `[require.ID]` | **condition**, **message** |
 | `[search.ID]` | **property**(또는 dir ID), **kind**(`registry`: root, key, name, view; `file`: path, file, min-version; `dir`: path; `component`: component-guid) |
 | `[service.ID]` | **file**(`.exe` 를 가리키는 `file:ID`), **name**, display-name, description, start(`auto`, `demand`, `disabled`), account(`LocalSystem`, `LocalService`, `NetworkService`), args, start-on-install |
-| `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), args(기본 `"%1"`), content-type, perceived-type, default(`false`: "연결 프로그램"에만) |
+| `[assoc.ID]` | **extension**(`.ext`, 소문자), **prog-id**, **target**(`.exe` 를 가리키는 `file:ID`), description, icon(`file:ID`), logo(정사각형 PNG: MSIX 에서 그 형식의 아이콘), args(기본 `"%1"`), content-type, perceived-type, default(`false`: "연결 프로그램"에만) |
 | `[menu.ID]` | **on**(파일 형식, `"*"`, `"folder"`, `"background"`, `"drive"`, `"assoc:ID"`. 하위 메뉴의 항목에는 없다), **text** 또는 text-xx, target(`.exe` 를 가리키는 `file:ID`. 없으면 하위 메뉴), args(기본 `"%1"`), icon(`file:ID`), parent(하위 메뉴의 ID), multi(`each`, `one`, `single`), extended, windows11(기본 `true`), list(`multi = "one"` 과 함께: 경로가 명령줄에 다 들어가지 않을 때 `%*` 대신 쓰는 것. `%L` 은 경로를 담은 파일), hide-when(`"HKCU\\key\\value"` 또는 `"HKLM\\..."`: 그 값이 있는 동안 Windows 11 항목을 숨김) - 탐색기 우클릭 메뉴의 항목: [탐색기의 우클릭 메뉴](#탐색기의-우클릭-메뉴-menuid) 참조 |
 | `[other-copy.ID]` | **msix**(앱 패키지의 식별 이름)와 **publisher**, 또는 **upgrade-code**(다른 MSI 의 것), action(`warn` 기본, `refuse`), message 또는 message-xx(`[1]` 이 제품, `[2]` 찾은 사본) - 다른 방식으로 설치된 같은 프로그램을 처음 설치하기 전에 찾는다: [다른 사본](#다른-사본-other-copyid) 참조. MSI 전용 |
 | `[protocol.ID]` | **name**(스킴, 소문자), **target**(`.exe` 를 가리키는 `file:ID`), description, args(기본 `"%1"`) |
@@ -546,7 +546,15 @@ prog-id, prog-id 에는 설명과 `DefaultIcon`(`icon`, 없으면 프로그램�
 Windows 는 그 선택을 지킨다.
 
 MSIX 에서는 대상 실행 파일을 가진 앱의 매니페스트에 들어가고(파일 형식 연결, 프로토콜) `args` 는
-평문이어야 한다. `icon` 은 쓰지 않는다: 앱의 로고가 파일 형식을 나타낸다.
+평문이어야 한다. `icon` 은 쓰지 않는다. `logo` 는 파일 형식에 자기 그림을 준다: 크기는 자유인
+정사각형 PNG 이고(탐색기가 크기를 맞춘다), prog-id 마다 한 번 패키지에 들어간다. `logo` 가 없으면
+앱의 로고가 파일 형식을 나타낸다. 로고 이름의 확장자 앞에 `.scale-100`, `.scale-125`, `.scale-150`,
+`.scale-200`, `.scale-400` 을 붙인 파일들은 앱의 로고처럼 그 배율의 그림으로 쓰고, `.targetsize-16`,
+`-24`, `-32`, `-48`, `-256` 을 붙인 파일(N x N 픽셀)은 그 크기의 그림으로 쓴다. 탐색기의 작은 아이콘이 이것을
+쓴다. `.targetsize-16_altform-unplated` 처럼 붙인 파일은 같은 그림을 타일 바탕 없이 보일 때 쓴다(`RP1608`).
+이런 파일이 있으면 로고 파일 자체는 없어도 되고, 있으면 배율 100 그림이 된다.
+prog-id 를 같이 쓰는 표들은 같은 `logo` 를 주거나 모두 주지 않는다(`RP1316`). MSI 는 `logo` 를 쓰지
+않으므로(MSI 의 아이콘은 `icon`) 한 소스로 둘 다 빌드한다.
 
 파일 형식에는 무엇이 들었는지, 그리고 프로그램이 그 형식을 가져갈지도 적을 수 있다:
 

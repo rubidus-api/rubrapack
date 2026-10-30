@@ -981,6 +981,9 @@ msgstr "[file.{1}] on jo ohjelmansa kansiossa; isolate-for on jaetulle DLL:lle, 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] on käyttäjäprofiilissa ja sillä on component-guid: avainpolku pysyy tiedostona, vaikka Windowsin säännöt haluavat siihen HKCU-arvon (ICE38); jätä component-guid pois saadaksesi sen"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ei ole .NET-kokoonpano (ei CLI-otsaketta, jossa on Assembly-rivi)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: jaettu .NET-kokoonpano menee GAC:iin, joka ottaa vain vahval
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: jaettu Win32-kokoonpano menee WinSxS:ään luettelon kanssa, joka on allekirjoitettu manifestin publicKeyToken-arvon nimeämällä avaimella; rakenna valinnalla --key (tai anna yksityiselle assembly-for = \"file:<ohjelma>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifesti nimeää publicKeyToken-arvon \"{2}\", mutta --key-avaimen tunnus on \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: jaetun Win32-kokoonpanon manifesti '{2}' nimeää allekirjoittajansa: publicKeyToken elementissä assemblyIdentity (sen --key-avaimen tunnus, jolla rakennetaan)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "jaetun Win32-kokoonpanon luettelo tarvitsee vähintään 2048-bittisen RSA-avaimen"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ja manifest kuuluvat yhteen assembly = \"dotnet\" tai \"win32\" kanssa"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: sen luettelossa '{2}' ei ole assemblyIdentity-elementtiä, j
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: sen luettelon '{2}' on oltava samassa dir- ja feature-kohteessa (ja saman when-ehdon alla): ne ovat yksi komponentti"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifesti nimeää publicKeyToken-arvon \"{2}\", mutta --key-avaimen tunnus on \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: luettelo '{2}' kuuluu toiselle kokoonpanolle tai on itse kokoonpano"
@@ -1556,6 +1553,9 @@ msgstr "palvelun nimessä ei saa olla '/' tai '\\' (enintään 256 merkkiä)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "asennus-.exe rakennetaan lähteestä, jossa on [chain]; '{1}' rakentaa paketin (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "jaetun Win32-kokoonpanon luettelo tarvitsee vähintään 2048-bittisen RSA-avaimen"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "lähde sisältää yhden [package]- tai yhden [module]-kohteen, ei molempia"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' skaalassa {2} on {3}x{4} kuvapistettä; sen on oltava {5}x{6}
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' skaalassa {2} ei ole PNG-tiedosto"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' on {2}x{3} pikseliä; tiedostotyypin logon on oltava neliö"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' on {2}x{3} kuvapistettä; sen on oltava {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' kuuluu myös kohteelle [assoc.{2}]: tiedostotyyppi ja COM-
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' on myös kohteessa [assoc.{2}] eri descriptionilla, targetilla, iconilla tai argsilla"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' on myös kohdassa [assoc.{2}] eri logolla"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-idn on oltava kirjaimia, numeroita, '.', '_' tai '-', ei ala numerolla, enintään 39 (saatiin '{1}')"

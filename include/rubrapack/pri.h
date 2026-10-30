@@ -5,7 +5,8 @@
 // string or file a resource name gives for a language or a display scale. Written in the layout
 // Windows SDK's makepri.exe writes (format notes F8 "resources.pri"), for what a package manifest
 // needs: strings under Resources/ (the manifest says ms-resource:NAME) and files under Files/ with
-// scale variants (Assets\Logo.png finds Assets\Logo.scale-200.png).
+// scale variants (Assets\Logo.png finds Assets\Logo.scale-200.png) and target size variants, plated
+// or not (Assets\Logo.targetsize-16.png, Assets\Logo.targetsize-16_altform-unplated.png).
 
 #include <stddef.h>
 #include <stdint.h>
@@ -13,19 +14,20 @@
 #include "proven/allocator.h"
 #include "proven/types.h"
 
-enum { RP_PRI_NONE, RP_PRI_LANGUAGE, RP_PRI_SCALE };
+enum { RP_PRI_NONE, RP_PRI_LANGUAGE, RP_PRI_SCALE, RP_PRI_TARGETSIZE };
 
 typedef struct {
     const char *name;       // "Resources/AppDisplayName" or "Files/Assets/Logo.png": ASCII, '/' between parts
     int         qualifier;  // RP_PRI_*
-    const char *qvalue;     // "en-US", "ko"; "100", "125", "150", "200", "400"; NULL for none
+    const char *qvalue;     // "en-US", "ko"; "100", "125", "150", "200", "400"; "16", "24", "32", "48", "256"; NULL for none
     bool        path;       // the value is a file in the package, else a string
     const char *value;      // UTF-8 string, or the file's package path ("Assets\\Logo.scale-200.png")
+    bool        unplated;   // with RP_PRI_TARGETSIZE: also the alternate form "unplated" (no backplate)
 } rp_pri_candidate_t;
 
 // Writes the index for the package `identity` (its Identity Name). A resource with qualified
-// candidates must not also have an unqualified one; a scale must be one of the five above.
-// Deterministic.
+// candidates must not also have an unqualified one; a scale or target size must be one of those
+// above. Deterministic.
 [[nodiscard]] proven_err_t rp_pri_write(proven_allocator_t alloc, const char *identity, const char *default_language,
                                         const rp_pri_candidate_t *cands, size_t count, uint8_t **out, size_t *len);
 

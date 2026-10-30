@@ -981,6 +981,9 @@ msgstr "[file.{1}] 已在它自己程序的文件夹中；isolate-for 用于安�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] 位于用户配置文件中且指定了 component-guid：其键路径仍为该文件，而 Windows 规则要求此处使用 HKCU 值 (ICE38)；去掉 component-guid 即可获得"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]：{2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]：'{2}' 不是 .NET 程序集（没有带 Assembly 行的 CLI 头）"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]：共享 .NET 程序集进入 GAC，而 GAC 只接受强名�
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]：共享 Win32 程序集随一个由清单中 publicKeyToken 所指密钥签名的编录进入 WinSxS；请用 --key 构建（或为私有程序集指定 assembly-for = \"file:<程序>\"）"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]：清单的 publicKeyToken 为 \"{2}\"，但 --key 的令牌为 \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]：{2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]：共享 Win32 程序集的清单 '{2}' 须指明签名者：assemblyIdentity 中的 publicKeyToken（构建所用 --key 的令牌）"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "共享 Win32 程序集的编录需要 2048 位或以上的 RSA 密钥"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]：assembly-for 和 manifest 要与 assembly = \"dotnet\" 或 \"win32\" 一起使用"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]：清单 '{2}' 没有带 name 和 version 的 assemblyIdentit
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]：清单 '{2}' 必须位于相同的 dir 和 feature（并具有相同的 when）：两者是同一个组件"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]：清单的 publicKeyToken 为 \"{2}\"，但 --key 的令牌为 \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]：清单 '{2}' 属于另一个程序集，或本身就是程序集"
@@ -1556,6 +1553,9 @@ msgstr "服务名不能包含 '/' 或 '\\'(最多 256 个字符)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "安装 .exe 由带 [chain] 的源文件构建；'{1}' 构建的是安装包(.msi、.msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "共享 Win32 程序集的编录需要 2048 位或以上的 RSA 密钥"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "源文件只能包含一个 [package] 或一个 [module]，不能两者都有"
@@ -2367,6 +2367,9 @@ msgstr "徽标 '{1}' 在缩放 {2} 下为 {3}x{4} 像素；必须是 {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "徽标 '{1}' 在缩放 {2} 下不是 PNG 文件"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "徽标 '{1}' 为 {2}x{3} 像素；文件类型的徽标必须是正方形"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "徽标 '{1}' 为 {2}x{3} 像素；必须是 {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' 也属于 [assoc.{2}]: 文件类型和 COM 类需要两个
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 description、target、icon 或 args 不同"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' 也在 [assoc.{2}] 中，但 logo 不同"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id 必须由字母、数字、'.'、'_' 或 '-' 组成，不以数字开头，最多 39 个(实际为 '{1}')"

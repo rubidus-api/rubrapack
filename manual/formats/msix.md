@@ -125,11 +125,16 @@ qualifier and name tables UTF-16 unless noted.
 - **`[mrm_decn_info]`** - the conditions: counts (distinct qualifiers, qualifiers, qualifier
   sets, decisions, index entries, value characters); decisions and qualifier sets as (first index
   entry, count); qualifiers as (distinct qualifier, priority, score as the default x 1000, 0);
-  distinct qualifiers as (2, type, 0, 10, u32 value offset) with types Language 0 and Scale 2; one
-  u16 index table shared by sets (qualifier numbers) and decisions (set numbers); the values. Entry
-  0 of each is empty. Priorities: Language 700, Scale 200. Scores: the default language 1.0, others
-  0; scale 100 1.0, 125 0.937, 150 0.875, 200 0.75, 400 0.437. A decision lists its sets from the
-  lowest score up.
+  distinct qualifiers as (2, type, 0, 10, u32 value offset) with types Language 0, Scale 2,
+  TargetSize 4 and AlternateForm 7; one u16 index table shared by sets (qualifier numbers) and
+  decisions (set numbers); the values. Entry 0 of each is empty. A set has one qualifier, or a
+  target size and the alternate form (`Logo.targetsize-16_altform-unplated.png`: the target size
+  first). Priorities: Language 700, TargetSize 300, Scale 200, AlternateForm 100. Scores: the
+  default language 1.0, others 0; scale 100 1.0, 125 0.937, 150 0.875, 200 0.75, 400 0.437; target
+  size 256 1.0, 16, 24, 32 and 48 0.5; AlternateForm (value `UNPLATED`) 0. A decision lists its sets
+  from the last-numbered to the first (for languages and scales also the lowest score first).
+  makepri numbers qualifiers and sets in the order it meets the files, by name, so target sizes
+  come as 16, 24, 256, 32, 48 and the alternate form after the first target size that has it.
 - **`[mrm_pridescex]`** - which sections hold the schema, the decisions, the resource map and the
   data items.
 - **`[mrm_hschemaex]`** - the names: `ms-appx://<Identity Name>/` and the name, then a tree of
@@ -153,7 +158,7 @@ what was checked by installing a package on Windows 11 (26100). [observed]
 
 | Source | Element (category) | Namespace | Min build | Capability | Checked on Windows 11 |
 |---|---|---|---|---|---|
-| `[assoc]` | `uap:Extension` `windows.fileTypeAssociation` > `uap3:FileTypeAssociation` (Name, Parameters) > `uap:DisplayName`, `uap:SupportedFileTypes` > `uap:FileType` | uap, uap3 | 14393 | runFullTrust | opening a `.rpx`/`.rpy` file starts the program with the file |
+| `[assoc]` | `uap:Extension` `windows.fileTypeAssociation` > `uap3:FileTypeAssociation` (Name, Parameters) > `uap:DisplayName`, `uap:Logo`, `uap:SupportedFileTypes` > `uap:FileType` | uap, uap3 | 14393 | runFullTrust | opening a `.rpx`/`.rpy` file starts the program with the file |
 | `[protocol]` | `uap3:Extension` `windows.protocol` > `uap3:Protocol` (Name, Parameters) | uap3 | 14393 | runFullTrust | starting a `scheme:` URI starts the program with it |
 | `[msix-extension]` alias | `uap3:Extension` `windows.appExecutionAlias` (Executable, EntryPoint) > `uap3:AppExecutionAlias` > `desktop:ExecutionAlias` (Alias) | uap3, desktop | 14393 | runFullTrust | the alias appears in `%LOCALAPPDATA%\Microsoft\WindowsApps` and starts the program |
 | `[msix-extension]` startup task | `desktop:Extension` `windows.startupTask` (Executable, EntryPoint) > `desktop:StartupTask` (TaskId, Enabled, DisplayName) | desktop | 14393 | runFullTrust | registered after the first start |
@@ -167,6 +172,10 @@ what was checked by installing a package on Windows 11 (26100). [observed]
   where `%1` is.
 - `FileTypeAssociation` `Name`: the prog-id in lower case; `[assoc]` tables that share a prog-id
   become one association with several `FileType`s.
+- `uap:Logo` (with `[assoc] logo`): `Assets\Types\<Name>.png`, the source's PNG stored under that
+  name; with variants the files are `Assets\Types\<Name>.scale-NNN.png`,
+  `.targetsize-N.png` and `.targetsize-N_altform-unplated.png`, and resources.pri maps
+  `Files/Assets/Types/<Name>.png` to them, as for the application's logos.
 - Everything goes into the application whose executable the source names as target; a target
   that is not an application's executable is an error.
 

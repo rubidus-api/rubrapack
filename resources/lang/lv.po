@@ -981,6 +981,9 @@ msgstr "[file.{1}] jau ir sava programmas mapē; isolate-for ir koplietotai DLL,
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] atrodas lietotāja profilā, un tam ir component-guid: atslēgas ceļš paliek fails, lai gan Windows noteikumi tur prasa HKCU vērtību (ICE38); izlaidiet component-guid, lai to iegūtu"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' nav .NET komplekts (nav CLI galvenes ar Assembly rindu)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: koplietojams .NET komplekts nonāk GAC, kas pieņem tikai ko
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: koplietots Win32 komplekts nonāk WinSxS ar katalogu, kas parakstīts ar atslēgu, kuru nosauc manifesta publicKeyToken; būvējiet ar --key (vai privātam norādiet assembly-for = \"file:<programma>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifests nosauc publicKeyToken \"{2}\", bet --key atslēgas marķieris ir \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: koplietota Win32 komplekta manifests '{2}' nosauc parakstītāju: publicKeyToken elementā assemblyIdentity (tās --key marķieris, ar kuru būvē)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "koplietota Win32 komplekta katalogam vajag RSA atslēgu ar 2048 bitiem vai vairāk"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for un manifest lieto kopā ar assembly = \"dotnet\" vai \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: tā manifestā '{2}' nav assemblyIdentity ar name un version
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: tā manifestam '{2}' jābūt tajā pašā dir un feature (un ar to pašu when): abi ir viens komponents"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifests nosauc publicKeyToken \"{2}\", bet --key atslēgas marķieris ir \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifests '{2}' pieder citam komplektam vai pats ir komplekts"
@@ -1556,6 +1553,9 @@ msgstr "pakalpojuma nosaukums nedrīkst saturēt '/' vai '\\' (ne vairāk kā 25
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe tiek būvēts no avota ar [chain]; '{1}' būvē pakotni (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "koplietota Win32 komplekta katalogam vajag RSA atslēgu ar 2048 bitiem vai vairāk"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "avots satur vienu [package] vai vienu [module], ne abus"
@@ -2367,6 +2367,9 @@ msgstr "logotips '{1}' mērogā {2} ir {3}x{4} pikseļi; jābūt {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logotips '{1}' mērogā {2} nav PNG fails"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logotips '{1}' ir {2}x{3} pikseļi; faila tipa logotipam jābūt kvadrātveida"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logotips '{1}' ir {2}x{3} pikseļi; jābūt {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' pieder arī [assoc.{2}]: faila tipam un COM klasei vajag d
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' ir arī [assoc.{2}] ar citu aprakstu, target, icon vai args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' ir arī [assoc.{2}] ar citu logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id jābūt burtiem, cipariem, '.', '_' vai '-', nesākoties ar ciparu, ne vairāk kā 39 (saņemts '{1}')"

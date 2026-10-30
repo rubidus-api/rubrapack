@@ -3,8 +3,9 @@
 // A PRI file: "mrm_pri2", its size, a table of contents, sections, "de fa ff de" + size +
 // "mrm_pri2". Every section is a 16-byte name, 16 bytes with its length, the data (to a multiple of
 // 8 bytes), "de fa f5 de" + length. The sections written here, in this order:
-//   [mrm_decn_info]   qualifiers (Language, Scale), qualifier sets (one qualifier each, or none),
-//                     decisions (the ordered sets a resource's candidates have);
+//   [mrm_decn_info]   qualifiers (Language, Scale, TargetSize, AlternateForm), qualifier sets (none,
+//                     one qualifier, or a target size with an alternate form), decisions (the
+//                     ordered sets a resource's candidates have);
 //   [mrm_pridescex]   which section is which;
 //   [mrm_hschemaex]   the resource names as a tree of scopes (Resources, Files, Assets) and items;
 //   [mrm_res_map2_]   per item its decision and candidates, each pointing at a data item;
@@ -22,17 +23,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum { MAX_QUALS = 64, MAX_NAMES = 1024 };
+enum { MAX_QUALS = 64, MAX_SETS = 128, MAX_NAMES = 1024, ALTFORM = 100 };
 
-static const struct { const char *scale; uint16_t score; } scales[] = {
-    { "100", 1000 }, { "125", 937 }, { "150", 875 }, { "200", 750 }, { "400", 437 },
+// The values a scale or target size takes and how well each does as the default, in thousandths
+// (as makepri writes them; format notes F8).
+static const struct { int type; const char *value; uint16_t score; } sized[] = {
+    { RP_PRI_SCALE, "100", 1000 },    { RP_PRI_SCALE, "125", 937 },     { RP_PRI_SCALE, "150", 875 },
+    { RP_PRI_SCALE, "200", 750 },     { RP_PRI_SCALE, "400", 437 },     { RP_PRI_TARGETSIZE, "16", 500 },
+    { RP_PRI_TARGETSIZE, "24", 500 }, { RP_PRI_TARGETSIZE, "32", 500 }, { RP_PRI_TARGETSIZE, "48", 500 },
+    { RP_PRI_TARGETSIZE, "256", 1000 },
 };
 
+// Per qualifier type (RP_PRI_*, ALTFORM): the type number in the file and the priority.
+static uint16_t qual_code(int type) {
+    return type == RP_PRI_LANGUAGE ? 0 : type == RP_PRI_SCALE ? 2 : type == RP_PRI_TARGETSIZE ? 4 : 7;
+}
+static uint16_t qual_priority(int type) {
+    return type == RP_PRI_LANGUAGE ? 700 : type == RP_PRI_SCALE ? 200 : type == RP_PRI_TARGETSIZE ? 300 : 100;
+}
+
 typedef struct {
-    int         type;           // RP_PRI_LANGUAGE or RP_PRI_SCALE
+    int         type;           // RP_PRI_LANGUAGE, RP_PRI_SCALE, RP_PRI_TARGETSIZE or ALTFORM
     const char *value;
     uint16_t    score;          // how well it does as the default, in thousandths
 } qual_t;
+
+typedef struct {
+    int a, b;                   // qualifiers: a alone (b = 0), or a target size a with the alternate form b
+} qset_t;
 
 // A node of the name tree: a scope (with children) or an item.
 typedef struct node {
@@ -158,46 +176,61 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
                                                    : lang && rp_ascii_icmp(cands[i].qvalue, part) == 0);
     }
 
-    // Qualifiers: languages (the default first), then scales from small to large.
+    // Qualifiers: languages (the default first), scales from small to large, then target sizes in
+    // the order of their names ("16", "24", "256", "32", "48": makepri meets the files by name), the
+    // alternate form after the first target size that has it.
     qual_t q[MAX_QUALS + 1];
     int nq = 0;
-    for (int pass = 0; pass < 2; ++pass) {
+    static const int pass_type[] = { RP_PRI_LANGUAGE, RP_PRI_SCALE, RP_PRI_TARGETSIZE, ALTFORM };
+    for (int pass = 0; pass < 4; ++pass) {
+        int from = nq + 1;
         for (size_t i = 0; i < count; ++i) {
             if (cands[i].qualifier == RP_PRI_NONE || !use[i]) continue;
-            if (cands[i].qvalue == NULL) return PROVEN_ERR_INVALID_ARG;
-            bool lang = cands[i].qualifier == RP_PRI_LANGUAGE;
-            if ((pass == 0) != lang) continue;
+            if (cands[i].qvalue == NULL || cands[i].qualifier < RP_PRI_LANGUAGE || cands[i].qualifier > RP_PRI_TARGETSIZE ||
+                (cands[i].unplated && cands[i].qualifier != RP_PRI_TARGETSIZE)) {
+                return PROVEN_ERR_INVALID_ARG;
+            }
+            int type = pass_type[pass];
+            const char *value = cands[i].qvalue;
+            if (type == ALTFORM) {
+                if (!cands[i].unplated) continue;
+                value = "UNPLATED";
+            } else if (cands[i].qualifier != type) {
+                continue;
+            }
             bool have = false;
-            for (int k = 1; k <= nq; ++k) have |= q[k].type == cands[i].qualifier && strcmp(q[k].value, cands[i].qvalue) == 0;
+            for (int k = from; k <= nq; ++k) have |= strcmp(q[k].value, value) == 0;
             if (have) continue;
             if (nq == MAX_QUALS) return PROVEN_ERR_OUT_OF_BOUNDS;
             uint16_t score = 0;
-            if (lang) {
-                score = rp_ascii_icmp(cands[i].qvalue, default_language) == 0 ? 1000 : 0;
-            } else {
+            if (type == RP_PRI_LANGUAGE) {
+                score = rp_ascii_icmp(value, default_language) == 0 ? 1000 : 0;
+            } else if (type != ALTFORM) {
                 bool ok = false;
-                for (size_t s = 0; s < sizeof scales / sizeof scales[0]; ++s) {
-                    if (strcmp(scales[s].scale, cands[i].qvalue) == 0) {
-                        score = scales[s].score;
+                for (size_t s = 0; s < sizeof sized / sizeof sized[0]; ++s) {
+                    if (sized[s].type == type && strcmp(sized[s].value, value) == 0) {
+                        score = sized[s].score;
                         ok = true;
                     }
                 }
                 if (!ok) return PROVEN_ERR_INVALID_ARG;
             }
-            q[++nq] = (qual_t){ cands[i].qualifier, cands[i].qvalue, score };
+            q[++nq] = (qual_t){ type, value, score };
         }
-        if (pass == 0) {        // the default language first
-            for (int k = 2; k <= nq; ++k) {
-                if (q[k].score == 1000 && q[1].score != 1000) {
-                    qual_t s = q[1];
-                    q[1] = q[k];
+        if (pass_type[pass] == RP_PRI_LANGUAGE) {     // the default language first
+            for (int k = from + 1; k <= nq; ++k) {
+                if (q[k].score == 1000 && q[from].score != 1000) {
+                    qual_t s = q[from];
+                    q[from] = q[k];
                     q[k] = s;
                 }
             }
-        } else {                // scales in size order
-            for (int a = 1; a <= nq; ++a) {
+        } else if (pass_type[pass] == RP_PRI_SCALE || pass_type[pass] == RP_PRI_TARGETSIZE) {
+            for (int a = from; a <= nq; ++a) {
                 for (int b = a + 1; b <= nq; ++b) {
-                    if (q[a].type == RP_PRI_SCALE && q[b].type == RP_PRI_SCALE && rp_int_or_zero(q[b].value) < rp_int_or_zero(q[a].value)) {
+                    bool before = pass_type[pass] == RP_PRI_SCALE ? rp_int_or_zero(q[b].value) < rp_int_or_zero(q[a].value)
+                                                                  : strcmp(q[b].value, q[a].value) < 0;
+                    if (before) {
                         qual_t s = q[a];
                         q[a] = q[b];
                         q[b] = s;
@@ -206,12 +239,52 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
             }
         }
     }
+    // The alternate form goes after the first target size with an unplated candidate.
+    int alt = 0;
+    for (int k = 1; k <= nq; ++k) {
+        if (q[k].type == ALTFORM) alt = k;
+    }
+    for (int k = 1; alt && k < alt; ++k) {
+        bool with = false;
+        for (size_t i = 0; i < count && !with; ++i) {
+            with = use[i] && cands[i].unplated && q[k].type == RP_PRI_TARGETSIZE && strcmp(q[k].value, cands[i].qvalue) == 0;
+        }
+        if (!with) continue;
+        qual_t s = q[alt];
+        memmove(&q[k + 2], &q[k + 1], (size_t)(alt - k - 1) * sizeof q[0]);
+        q[k + 1] = s;
+        alt = k + 1;
+        break;
+    }
+    // Qualifier sets: 0 the empty one, then each in use, by its qualifiers.
+    qset_t qs[MAX_SETS + 1] = { { 0, 0 } };
+    int nsets = 0;
     int qindex[4096];
     if (count > sizeof qindex / sizeof qindex[0]) return PROVEN_ERR_OUT_OF_BOUNDS;
     for (size_t i = 0; i < count; ++i) {
         qindex[i] = 0;
+        if (cands[i].qualifier == RP_PRI_NONE || !use[i]) continue;
+        qset_t want = { 0, cands[i].unplated ? alt : 0 };
         for (int k = 1; k <= nq; ++k) {
-            if (cands[i].qualifier != RP_PRI_NONE && q[k].type == cands[i].qualifier && strcmp(q[k].value, cands[i].qvalue) == 0) qindex[i] = k;
+            if (q[k].type == cands[i].qualifier && strcmp(q[k].value, cands[i].qvalue) == 0) want.a = k;
+        }
+        int at = 1;
+        while (at <= nsets && (qs[at].a < want.a || (qs[at].a == want.a && qs[at].b < want.b))) ++at;
+        if (at > nsets || qs[at].a != want.a || qs[at].b != want.b) {
+            if (nsets == MAX_SETS) return PROVEN_ERR_OUT_OF_BOUNDS;
+            memmove(&qs[at + 1], &qs[at], (size_t)(nsets - at + 1) * sizeof qs[0]);
+            qs[at] = want;
+            ++nsets;
+        }
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (cands[i].qualifier == RP_PRI_NONE || !use[i]) continue;
+        int a = 0;
+        for (int k = 1; k <= nq; ++k) {
+            if (q[k].type == cands[i].qualifier && strcmp(q[k].value, cands[i].qvalue) == 0) a = k;
+        }
+        for (int s = 1; s <= nsets; ++s) {
+            if (qs[s].a == a && qs[s].b == (cands[i].unplated ? alt : 0)) qindex[i] = s;
         }
     }
 
@@ -242,10 +315,11 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         }
     }
 
-    // Per item: its candidates in decision order (worst default first; ties: later qualifier first).
+    // Per item: its candidates in decision order, the later set first (as makepri: for languages and
+    // scales that is also the worse default first).
     int *cand_of = rp_mem_alloc(alloc, count + 1, sizeof(int)), *first = rp_mem_alloc(alloc, (size_t)nitems + 1, sizeof(int));
     int *ncand = rp_mem_alloc(alloc, (size_t)nitems + 1, sizeof(int)), *decision = rp_mem_alloc(alloc, (size_t)nitems + 1, sizeof(int));
-    int (*dec_sets)[MAX_QUALS + 1] = rp_mem_alloc(alloc, (size_t)nitems + 3, sizeof *dec_sets);
+    int (*dec_sets)[MAX_SETS + 1] = rp_mem_alloc(alloc, (size_t)nitems + 3, sizeof *dec_sets);
     int *dec_n = rp_mem_alloc(alloc, (size_t)nitems + 3, sizeof(int));
     if (err == PROVEN_OK && (!cand_of || !first || !ncand || !decision || !dec_sets || !dec_n)) err = PROVEN_ERR_NOMEM;
     int nc = 0, ndec = 2;
@@ -255,9 +329,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
             if (node_of[i] != order_items[it] || !use[i]) continue;
             int k = nc++;
             while (k > first[it]) {
-                int a = qindex[cand_of[k - 1]], b = qindex[i];
-                int sa = a ? q[a].score : 0, sb = b ? q[b].score : 0;
-                if (sa < sb || (sa == sb && a > b)) break;
+                if (qindex[cand_of[k - 1]] > qindex[i]) break;
                 cand_of[k] = cand_of[k - 1];
                 --k;
             }
@@ -296,10 +368,10 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
     }
 
     // Data item sections: one per qualifier set in use (by set number, the empty set last).
-    int section_of_set[MAX_QUALS + 1], nsec = 0, set_order[MAX_QUALS + 1];
-    for (int s = 0; s <= nq; ++s) section_of_set[s] = -1;
+    int section_of_set[MAX_SETS + 1], nsec = 0, set_order[MAX_SETS + 1];
+    for (int s = 0; s <= nsets; ++s) section_of_set[s] = -1;
     for (int pass = 0; pass < 2; ++pass) {
-        for (int s = pass ? 0 : 1; pass ? s == 0 : s <= nq; ++s) {
+        for (int s = pass ? 0 : 1; pass ? s == 0 : s <= nsets; ++s) {
             bool used = false;
             for (int k = 0; err == PROVEN_OK && k < nc; ++k) used |= qindex[cand_of[k]] == s;
             if (used) {
@@ -308,7 +380,7 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
             }
         }
     }
-    section_t sec[4 + MAX_QUALS + 1];
+    section_t sec[4 + MAX_SETS + 1];
     size_t nsections = 4 + (size_t)nsec;
     for (size_t s = 0; s < nsections; ++s) sec[s].data = rp_buf_new(alloc, limit);
     sec[0].name = "[mrm_decn_info]\0";
@@ -320,13 +392,15 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
     // [mrm_decn_info]
     if (err == PROVEN_OK) {
         rp_buf_t *b = &sec[0].data;
-        int nidx = 1 + nq;
+        int nidx = 1;
+        for (int s = 1; s <= nsets; ++s) nidx += qs[s].b ? 2 : 1;
+        int sets_end = nidx;
         for (int d = 2; d < ndec; ++d) nidx += dec_n[d];
         size_t chars = 1;
         for (int k = 1; k <= nq; ++k) chars += u16_len(q[k].value) + 1;
-        rp_buf_u16le(b, (uint16_t)(nq + 1));
-        rp_buf_u16le(b, (uint16_t)(nq + 1));
-        rp_buf_u16le(b, (uint16_t)(nq + 1));
+        rp_buf_u16le(b, (uint16_t)(nq + 1));       // distinct qualifiers
+        rp_buf_u16le(b, (uint16_t)(nq + 1));       // qualifiers
+        rp_buf_u16le(b, (uint16_t)(nsets + 1));    // qualifier sets
         rp_buf_u16le(b, (uint16_t)ndec);
         rp_buf_u16le(b, (uint16_t)nidx);
         rp_buf_u16le(b, (uint16_t)chars);
@@ -335,18 +409,19 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         rp_buf_u16le(b, 0);
         rp_buf_u16le(b, 0);
         rp_buf_u16le(b, 1);
-        int at = 1 + nq;
+        int at = sets_end;
         for (int d = 2; d < ndec; ++d) {
             rp_buf_u16le(b, (uint16_t)at);
             rp_buf_u16le(b, (uint16_t)dec_n[d]);
             at += dec_n[d];
         }
-        // qualifier sets: 0 empty, k = qualifier k alone
+        // qualifier sets: 0 empty, then each set's place in the index table and its size
         rp_buf_u16le(b, 0);
         rp_buf_u16le(b, 0);
-        for (int k = 1; k <= nq; ++k) {
-            rp_buf_u16le(b, (uint16_t)k);
-            rp_buf_u16le(b, 1);
+        for (int s = 1, from = 1; s <= nsets; ++s) {
+            rp_buf_u16le(b, (uint16_t)from);
+            rp_buf_u16le(b, (uint16_t)(qs[s].b ? 2 : 1));
+            from += qs[s].b ? 2 : 1;
         }
         // qualifiers: distinct qualifier, priority, score as the default
         rp_buf_u16le(b, 0);
@@ -355,11 +430,12 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         rp_buf_u16le(b, 0);
         for (int k = 1; k <= nq; ++k) {
             rp_buf_u16le(b, (uint16_t)k);
-            rp_buf_u16le(b, q[k].type == RP_PRI_LANGUAGE ? 700 : 200);
+            rp_buf_u16le(b, qual_priority(q[k].type));
             rp_buf_u16le(b, q[k].score);
             rp_buf_u16le(b, 0);
         }
-        // distinct qualifiers: type (Language 0, Scale 2) and the value's place in the strings
+        // distinct qualifiers: type (Language 0, Scale 2, TargetSize 4, AlternateForm 7) and the
+        // value's place in the strings
         rp_buf_u16le(b, 0);
         rp_buf_u16le(b, 0);
         rp_buf_u16le(b, 0);
@@ -368,14 +444,18 @@ proven_err_t rp_pri_write_part(proven_allocator_t alloc, const char *identity, c
         uint32_t off = 1;
         for (int k = 1; k <= nq; ++k) {
             rp_buf_u16le(b, 2);
-            rp_buf_u16le(b, q[k].type == RP_PRI_LANGUAGE ? 0 : 2);
+            rp_buf_u16le(b, qual_code(q[k].type));
             rp_buf_u16le(b, 0);
             rp_buf_u16le(b, 10);
             rp_buf_u32le(b, off);
             off += (uint32_t)u16_len(q[k].value) + 1;
         }
-        // the index table: set 0's entry, one per set, then the decisions' lists
-        for (int k = 0; k <= nq; ++k) rp_buf_u16le(b, (uint16_t)k);
+        // the index table: set 0's entry, each set's qualifiers, then the decisions' lists of sets
+        rp_buf_u16le(b, 0);
+        for (int s = 1; s <= nsets; ++s) {
+            rp_buf_u16le(b, (uint16_t)qs[s].a);
+            if (qs[s].b) rp_buf_u16le(b, (uint16_t)qs[s].b);
+        }
         for (int d = 2; d < ndec; ++d) {
             for (int j = 0; j < dec_n[d]; ++j) rp_buf_u16le(b, (uint16_t)dec_sets[d][j]);
         }

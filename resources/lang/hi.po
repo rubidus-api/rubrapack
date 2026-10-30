@@ -981,6 +981,9 @@ msgstr "[file.{1}] पहले से ही अपने प्रोग्र
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] उपयोगकर्ता प्रोफ़ाइल में है और इसमें component-guid है: इसका कुंजी पथ फ़ाइल ही रहता है, जबकि Windows के नियम वहाँ HKCU मान चाहते हैं (ICE38); वह पाने के लिए component-guid हटाएँ"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' .NET असेंबली नहीं है (Assembly पंक्ति वाला CLI हेडर नहीं)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: साझा .NET असेंबली GAC में जा
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: साझा Win32 असेंबली WinSxS में ऐसे कैटलॉग के साथ जाती है जो मैनिफ़ेस्ट के publicKeyToken द्वारा बताई गई कुंजी से हस्ताक्षरित हो; --key के साथ बनाएँ (या निजी असेंबली के लिए assembly-for = \"file:<प्रोग्राम>\" दें)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: मैनिफ़ेस्ट publicKeyToken \"{2}\" बताता है, पर --key का टोकन \"{3}\" है"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: साझा Win32 असेंबली का मैनिफ़ेस्ट '{2}' अपने हस्ताक्षरकर्ता को बताता है: assemblyIdentity में publicKeyToken (जिस --key से बनाया जाता है उसका टोकन)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "साझा Win32 असेंबली के कैटलॉग के लिए 2048 बिट या अधिक की RSA कुंजी चाहिए"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for और manifest, assembly = \"dotnet\" या \"win32\" के साथ आते हैं"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: इसके मैनिफ़ेस्ट '{2}' में 
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: इसका मैनिफ़ेस्ट '{2}' उसी dir और feature में (उसी when के साथ) होना चाहिए: दोनों एक घटक हैं"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: मैनिफ़ेस्ट publicKeyToken \"{2}\" बताता है, पर --key का टोकन \"{3}\" है"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: मैनिफ़ेस्ट '{2}' किसी दूसरी असेंबली का है या ख़ुद असेंबली है"
@@ -1556,6 +1553,9 @@ msgstr "सेवा नाम में '/' या '\\' नहीं हो स
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "सेटअप .exe [chain] वाले स्रोत से बनता है; '{1}' एक पैकेज (.msi, .msix) बनाता है"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "साझा Win32 असेंबली के कैटलॉग के लिए 2048 बिट या अधिक की RSA कुंजी चाहिए"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "स्रोत में एक [package] या एक [module] होता है, दोनों नहीं"
@@ -2367,6 +2367,9 @@ msgstr "स्केल {2} पर लोगो '{1}' {3}x{4} पिक्से
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "स्केल {2} पर लोगो '{1}' PNG फ़ाइल नहीं है"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "लोगो '{1}' {2}x{3} पिक्सेल का है; फ़ाइल प्रकार का लोगो वर्गाकार होना चाहिए"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "लोगो '{1}' {2}x{3} पिक्सेल है; इसे {4}x{5} होना चाहिए"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' [assoc.{2}] का भी है: फ़ाइल प्�
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' [assoc.{2}] में भी दूसरे विवरण, target, icon या args के साथ है"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' [assoc.{2}] में भी है, दूसरे logo के साथ"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id अक्षर, अंक, '.', '_' या '-' होना चाहिए, अंक से शुरू नहीं, अधिकतम 39 (मिला '{1}')"

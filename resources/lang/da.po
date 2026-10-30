@@ -981,6 +981,9 @@ msgstr "[file.{1}] er allerede i sit programs mappe; isolate-for er til en delt 
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] ligger i brugerprofilen og har component-guid: nøglestien forbliver filen, hvor Windows' regler vil have en HKCU-værdi (ICE38); udelad component-guid for at få en"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' er ikke en .NET-assembly (ingen CLI-header med en Assembly-række)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: en delt .NET-assembly kommer i GAC'en, som kun tager assembl
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: en delt Win32-assembly kommer i WinSxS med et katalog signeret med den nøgle, manifestets publicKeyToken angiver; byg med --key (eller angiv assembly-for = \"file:<program>\" for en privat)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifestet angiver publicKeyToken \"{2}\", men --key-nøglens token er \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifestet '{2}' for en delt Win32-assembly angiver underskriveren: publicKeyToken i assemblyIdentity (tokenet for den --key, den bygges med)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "kataloget for en delt Win32-assembly kræver en RSA-nøgle på 2048 bit eller mere"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for og manifest hører til assembly = \"dotnet\" eller \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: dets manifest '{2}' har ingen assemblyIdentity med name og v
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: dets manifest '{2}' skal være i samme dir og feature (og under samme when): de to er én komponent"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifestet angiver publicKeyToken \"{2}\", men --key-nøglens token er \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifestet '{2}' tilhører en anden assembly eller er selv en assembly"
@@ -1556,6 +1553,9 @@ msgstr "et tjenestenavn må ikke indeholde '/' eller '\\' (højst 256 tegn)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "en setup-.exe bygges fra en kilde med [chain]; '{1}' bygger en pakke (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "kataloget for en delt Win32-assembly kræver en RSA-nøgle på 2048 bit eller mere"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "en kilde indeholder én [package] eller én [module], ikke begge"
@@ -2367,6 +2367,9 @@ msgstr "logoet '{1}' i skala {2} er {3}x{4} pixel; det skal være {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logoet '{1}' i skala {2} er ikke en PNG-fil"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logoet '{1}' er {2}x{3} pixel; en filtypes logo skal være kvadratisk"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logoet '{1}' er {2}x{3} pixel; det skal være {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' tilhører også [assoc.{2}]: en filtype og en COM-klasse k
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' er også i [assoc.{2}] med en anden description, target, icon eller args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' findes også i [assoc.{2}] med et andet logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id skal være bogstaver, cifre, '.', '_' eller '-', ikke begynde med et ciffer, højst 39 (fik '{1}')"

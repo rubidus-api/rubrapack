@@ -234,6 +234,8 @@ typedef struct {
     char    *description;       // literal, or NULL
     char    *target_file;       // file ID of the program
     char    *icon_file;         // file ID, or NULL (MSI: the program's first icon)
+    char    *logo;              // MSIX: the type's PNG (as written), or NULL; an MSI does not use it
+    char    *logo_path;         // to open (joined with the .rpk directory)
     char    *args;              // formatted; default "\"%1\""
     char    *content_type;      // "image/png": the extension's Content Type, or NULL
     char    *perceived_type;    // "image", "text", "audio", "video", "compressed", "document", "system", "application", or NULL

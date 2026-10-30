@@ -981,6 +981,9 @@ msgstr "[file.{1}] 은(는) 이미 자기 프로그램의 폴더에 있습니다
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] 은(는) 사용자 프로필에 있고 component-guid 가 있습니다. 키 경로는 파일 그대로이며, Windows 규칙은 그곳에 HKCU 값을 원합니다(ICE38). HKCU 값을 쓰려면 component-guid 를 빼십시오"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' 은(는) .NET 어셈블리가 아닙니다(Assembly 행이 있는 CLI 헤더가 없음)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: 공유 .NET 어셈블리는 GAC 에 들어가는데 GAC 는 
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: 공유 Win32 어셈블리는 매니페스트의 publicKeyToken 이 가리키는 키로 서명한 카탈로그와 함께 WinSxS 에 들어갑니다. --key 로 빌드하십시오(개인 어셈블리로 하려면 assembly-for = \"file:<프로그램>\" 을 주세요)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: 매니페스트의 publicKeyToken 은 \"{2}\" 인데 --key 의 토큰은 \"{3}\" 입니다"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: 공유 Win32 어셈블리의 매니페스트 '{2}' 는 서명자를 밝혀야 합니다: assemblyIdentity 의 publicKeyToken(빌드에 쓰는 --key 의 토큰)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "공유 Win32 어셈블리의 카탈로그에는 2048비트 이상의 RSA 키가 필요합니다"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for 와 manifest 는 assembly = \"dotnet\" 또는 \"win32\" 와 함께 씁니다"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: 매니페스트 '{2}' 에 name 과 version 이 있는 assemb
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: 매니페스트 '{2}' 은(는) 같은 dir 과 feature 에 (같은 when 으로) 있어야 합니다: 둘은 한 구성 요소입니다"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: 매니페스트의 publicKeyToken 은 \"{2}\" 인데 --key 의 토큰은 \"{3}\" 입니다"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: 매니페스트 '{2}' 은(는) 다른 어셈블리의 것이거나 그 자체가 어셈블리입니다"
@@ -1556,6 +1553,9 @@ msgstr "서비스 이름에는 '/' 나 '\\' 가 들어갈 수 없습니다(256�
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "설치 프로그램 .exe 는 [chain] 이 있는 소스로 만듭니다. '{1}'은(는) 패키지(.msi, .msix)를 만드는 소스입니다"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "공유 Win32 어셈블리의 카탈로그에는 2048비트 이상의 RSA 키가 필요합니다"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "소스 하나에는 [package] 나 [module] 중 하나만 있습니다"
@@ -2367,6 +2367,9 @@ msgstr "로고 '{1}'의 배율 {2} 파일이 {3}x{4} 픽셀입니다. {5}x{6} �
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "로고 '{1}'의 배율 {2} 파일이 PNG 가 아닙니다"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "로고 '{1}'이(가) {2}x{3} 픽셀입니다. 파일 형식의 로고는 정사각형이어야 합니다"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "로고 '{1}'이(가) {2}x{3} 픽셀입니다. {4}x{5} 이어야 합니다"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}'은(는) [assoc.{2}] 의 것이기도 합니다: 파일 형
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}'이(가) [assoc.{2}] 에도 있는데 description, target, icon 또는 args 가 다릅니다"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}'이(가) [assoc.{2}] 에도 있는데 logo 가 다릅니다"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id 는 글자, 숫자, '.', '_', '-' 로 되고 숫자로 시작하지 않으며 39자까지입니다('{1}'을(를) 받음)"

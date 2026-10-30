@@ -981,6 +981,9 @@ msgstr "[file.{1}] on juba oma programmi kaustas; isolate-for on mujale installi
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] on kasutajaprofiilis ja sellel on component-guid: võtmetee jääb failiks, kuigi Windowsi reeglid tahavad sinna HKCU väärtust (ICE38); selle saamiseks jätke component-guid ära"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ei ole .NET-koost (pole Assembly-reaga CLI päist)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: jagatud .NET-koost läheb GAC-i, mis võtab ainult tugeva ni
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: jagatud Win32-komplekt läheb WinSxS-i kataloogiga, mis on allkirjastatud manifesti publicKeyToken-i nimetatud võtmega; koostage suvandiga --key (või privaatse jaoks andke assembly-for = \"file:<programm>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifest nimetab publicKeyToken-i \"{2}\", kuid --key võtme märk on \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: jagatud Win32-komplekti manifest '{2}' nimetab allkirjastaja: publicKeyToken elemendis assemblyIdentity (selle --key märk, millega koostatakse)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "jagatud Win32-komplekti kataloog vajab vähemalt 2048-bitist RSA-võtit"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for ja manifest käivad koos assembly = \"dotnet\" või \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: selle manifestis '{2}' pole name'i ja version'iga assemblyId
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: selle manifest '{2}' peab olema samas dir-is ja feature'is (ja sama when'i all): need on üks komponent"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest nimetab publicKeyToken-i \"{2}\", kuid --key võtme märk on \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' kuulub teisele koostule või on ise koost"
@@ -1556,6 +1553,9 @@ msgstr "teenuse nimi ei tohi sisaldada '/' ega '\\' (kuni 256 märki)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe koostatakse [chain]-iga lähtest; '{1}' koostab paketi (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "jagatud Win32-komplekti kataloog vajab vähemalt 2048-bitist RSA-võtit"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "lähe sisaldab ühte [package]-it või ühte [module]-it, mitte mõlemat"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' skaalal {2} on {3}x{4} pikslit; peab olema {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' skaalal {2} ei ole PNG-fail"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' on {2}x{3} pikslit; failitüübi logo peab olema ruudukujuline"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' on {2}x{3} pikslit; peab olema {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' kuulub ka [assoc.{2}]-le: failitüüp ja COM-klass vajavad
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' on ka [assoc.{2}]-s teise kirjelduse, target'i, icon'i või args'iga"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' on ka tabelis [assoc.{2}] teise logo-ga"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id peab koosnema tähtedest, numbritest, '.', '_' või '-', mitte algama numbriga, kuni 39 (saadi '{1}')"

@@ -981,6 +981,9 @@ msgstr "[file.{1}] อยู่ในโฟลเดอร์ของโปร�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] อยู่ในโปรไฟล์ผู้ใช้และมี component-guid: คีย์พาธยังคงเป็นไฟล์ ขณะที่กฎของ Windows ต้องการค่า HKCU ที่นั่น (ICE38) ให้เอา component-guid ออกเพื่อให้ได้ค่านั้น"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' ไม่ใช่แอสเซมบลี .NET (ไม่มีส่วนหัว CLI ที่มีแถว Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: แอสเซมบลี .NET ที่ใช้ร่ว
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: แอสเซมบลี Win32 แบบใช้ร่วมจะเข้า WinSxS พร้อมแคตตาล็อกที่ลงนามด้วยคีย์ที่ publicKeyToken ในแมนิเฟสต์ระบุ ให้สร้างด้วย --key (หรือระบุ assembly-for = \"file:<โปรแกรม>\" สำหรับแบบส่วนตัว)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: แมนิเฟสต์ระบุ publicKeyToken \"{2}\" แต่โทเค็นของ --key คือ \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ของแอสเซมบลี Win32 แบบใช้ร่วมต้องระบุผู้ลงนาม: publicKeyToken ใน assemblyIdentity (โทเค็นของ --key ที่ใช้สร้าง)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "แคตตาล็อกของแอสเซมบลี Win32 แบบใช้ร่วมต้องใช้คีย์ RSA ขนาด 2048 บิตขึ้นไป"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for และ manifest ใช้คู่กับ assembly = \"dotnet\" หรือ \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ไม่มี assemblyId
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: แมนิเฟสต์ '{2}' ต้องอยู่ใน dir และ feature เดียวกัน (และ when เดียวกัน): ทั้งสองเป็นคอมโพเนนต์เดียว"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: แมนิเฟสต์ระบุ publicKeyToken \"{2}\" แต่โทเค็นของ --key คือ \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: แมนิเฟสต์ '{2}' เป็นของแอสเซมบลีอื่น หรือเป็นแอสเซมบลีเสียเอง"
@@ -1556,6 +1553,9 @@ msgstr "ชื่อบริการต้องไม่มี '/' หรื�
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "setup .exe สร้างจากต้นฉบับที่มี [chain] แต่ '{1}' สร้างแพ็กเกจ (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "แคตตาล็อกของแอสเซมบลี Win32 แบบใช้ร่วมต้องใช้คีย์ RSA ขนาด 2048 บิตขึ้นไป"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "ต้นฉบับมี [package] หนึ่งรายการหรือ [module] หนึ่งรายการ ไม่ใช่ทั้งสอง"
@@ -2367,6 +2367,9 @@ msgstr "โลโก้ '{1}' ที่สเกล {2} มีขนาด {3}x{
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "โลโก้ '{1}' ที่สเกล {2} ไม่ใช่ไฟล์ PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "โลโก้ '{1}' มีขนาด {2}x{3} พิกเซล โลโก้ของชนิดไฟล์ต้องเป็นสี่เหลี่ยมจัตุรัส"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "โลโก้ '{1}' มีขนาด {2}x{3} พิกเซล ต้องเป็น {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' เป็นของ [assoc.{2}] ด้วย ชนิ�
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' อยู่ใน [assoc.{2}] ด้วยแต่มีคำอธิบาย, target, icon หรือ args ต่างกัน"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' อยู่ใน [assoc.{2}] ด้วย แต่ใช้ logo อื่น"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id ต้องเป็นตัวอักษร ตัวเลข '.', '_' หรือ '-' ห้ามขึ้นต้นด้วยตัวเลข ไม่เกิน 39 (ได้ '{1}')"

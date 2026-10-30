@@ -981,6 +981,9 @@ msgstr "[file.{1}] már a saját programja mappájában van; az isolate-for más
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "A(z) [file.{1}] a felhasználói profilban van, és van component-guid értéke: a kulcsútvonal a fájl marad, holott a Windows szabályai ott HKCU-értéket kívánnak (ICE38); hagyja el a component-guid értéket, hogy ilyet kapjon"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: a(z) '{2}' nem .NET-szerelvény (nincs Assembly sort tartalmazó CLI-fejléce)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: a megosztott .NET-szerelvény a GAC-ba kerül, amely csak er
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: egy megosztott Win32-szerelvény olyan katalógussal kerül a WinSxS-be, amelyet a jegyzék publicKeyToken értéke által megnevezett kulcs írt alá; készítse a --key kapcsolóval (vagy privát szerelvényhez adja meg: assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: a jegyzék publicKeyToken értéke \"{2}\", de a --key kulcs tokenje \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: a megosztott Win32-szerelvény '{2}' jegyzéke megnevezi az aláíróját: publicKeyToken az assemblyIdentity elemben (annak a --key kulcsnak a tokenje, amellyel készül)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "a megosztott Win32-szerelvény katalógusához legalább 2048 bites RSA-kulcs kell"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: az assembly-for és a manifest az assembly = \"dotnet\" vagy \"win32\" mellé tartozik"
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: a(z) '{2}' jegyzékben nincs name és version értékkel ren
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: a(z) '{2}' jegyzéknek ugyanabban a dir-ben és feature-ben (ugyanazzal a when-nel) kell lennie: a kettő egy összetevő"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: a jegyzék publicKeyToken értéke \"{2}\", de a --key kulcs tokenje \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: a(z) '{2}' jegyzék egy másik szerelvényé, vagy maga is szerelvény"
@@ -1556,6 +1553,9 @@ msgstr "a szolgáltatás neve nem tartalmazhat '/' vagy '\\' jelet (legfeljebb 2
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "a telepítő .exe [chain] táblát tartalmazó forrásból készül; '{1}' csomagot készít (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "a megosztott Win32-szerelvény katalógusához legalább 2048 bites RSA-kulcs kell"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "egy forrás egy [package] vagy egy [module] táblát tartalmaz, a kettőt együtt nem"
@@ -2367,6 +2367,9 @@ msgstr "a(z) '{1}' embléma {2} méretezésen {3}x{4} képpont; {5}x{6} kell leg
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "a(z) '{1}' embléma {2} méretezésen nem PNG-fájl"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "a(z) '{1}' logó {2}x{3} képpontos; egy fájltípus logójának négyzetesnek kell lennie"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "a(z) '{1}' embléma {2}x{3} képpont; {4}x{5} kell legyen"
 
@@ -2654,6 +2657,9 @@ msgstr "a(z) '{1}' prog-id az [assoc.{2}] táblához is tartozik: egy fájltípu
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "a(z) '{1}' prog-id az [assoc.{2}] táblában is szerepel más description, target, icon vagy args értékkel"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "a(z) '{1}' prog-id a(z) [assoc.{2}] táblában is szerepel, más logo-val"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "a prog-id betűkből, számjegyekből, '.', '_' vagy '-' jelből álljon, ne kezdődjön számjeggyel, legfeljebb 39 (kapott: '{1}')"

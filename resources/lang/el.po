@@ -981,6 +981,9 @@ msgstr "το [file.{1}] είναι ήδη στον φάκελο του προγ�
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "Το [file.{1}] βρίσκεται στο προφίλ του χρήστη και έχει component-guid: η διαδρομή κλειδιού του μένει το αρχείο, ενώ οι κανόνες των Windows θέλουν εκεί μια τιμή HKCU (ICE38)· αφαιρέστε το component-guid για να την αποκτήσει"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: το '{2}' δεν είναι συγκρότηση .NET (καμία κεφαλίδα CLI με γραμμή Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση .NET μπ
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: μια κοινόχρηστη συγκρότηση Win32 μπαίνει στο WinSxS με κατάλογο υπογεγραμμένο με το κλειδί που ορίζει το publicKeyToken του manifest· δημιουργήστε με --key (ή δώστε assembly-for = \"file:<πρόγραμμα>\" για ιδιωτική)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: το manifest ορίζει publicKeyToken \"{2}\", αλλά το token του --key είναι \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: το manifest '{2}' κοινόχρηστης συγκρότησης Win32 ορίζει τον υπογράφοντα: publicKeyToken στο assemblyIdentity (το token του --key με το οποίο δημιουργείται)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "ο κατάλογος κοινόχρηστης συγκρότησης Win32 χρειάζεται κλειδί RSA 2048 bit ή περισσότερο"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: τα assembly-for και manifest πάνε με assembly = \"dotnet\" ή \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: η δήλωσή του '{2}' δεν έχει assemblyIdentit
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: η δήλωσή του '{2}' πρέπει να είναι στο ίδιο dir και feature (και με το ίδιο when): τα δύο είναι ένα στοιχείο"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: το manifest ορίζει publicKeyToken \"{2}\", αλλά το token του --key είναι \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: η δήλωση '{2}' ανήκει σε άλλη συγκρότηση ή είναι η ίδια συγκρότηση"
@@ -1556,6 +1553,9 @@ msgstr "ένα όνομα υπηρεσίας δεν μπορεί να περιέ
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "ένα setup .exe δημιουργείται από πηγή με [chain]· το '{1}' δημιουργεί πακέτο (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "ο κατάλογος κοινόχρηστης συγκρότησης Win32 χρειάζεται κλειδί RSA 2048 bit ή περισσότερο"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "μια πηγή περιέχει ένα [package] ή ένα [module], όχι και τα δύο"
@@ -2367,6 +2367,9 @@ msgstr "το λογότυπο '{1}' στην κλίμακα {2} είναι {3}x{
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "το λογότυπο '{1}' στην κλίμακα {2} δεν είναι αρχείο PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "το λογότυπο '{1}' είναι {2}x{3} εικονοστοιχεία· το λογότυπο ενός τύπου αρχείου πρέπει να είναι τετράγωνο"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "το λογότυπο '{1}' είναι {2}x{3} pixel· πρέπει να είναι {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "το prog-id '{1}' ανήκει επίσης στο [assoc.{2}]: ένα�
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "το prog-id '{1}' είναι επίσης στο [assoc.{2}] με άλλη περιγραφή, target, icon ή args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "το prog-id '{1}' υπάρχει και στο [assoc.{2}] με άλλο logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "το prog-id πρέπει να είναι γράμματα, ψηφία, '.', '_' ή '-', όχι ψηφίο στην αρχή, το πολύ 39 (δόθηκε '{1}')"

@@ -981,6 +981,9 @@ msgstr "[file.{1}] už je ve složce svého programu; isolate-for je pro sdílen
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] je v profilu uživatele a má component-guid: cestou klíče zůstává soubor, kde pravidla Windows chtějí hodnotu HKCU (ICE38); vynechte component-guid, abyste ji získali"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' není sestavení .NET (chybí hlavička CLI s řádkem Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: sdílené sestavení .NET jde do GAC, která přijímá jen 
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: sdílené sestavení Win32 jde do WinSxS s katalogem podepsaným klíčem, který uvádí publicKeyToken v manifestu; sestavte s --key (nebo pro soukromé zadejte assembly-for = \"file:<program>\")"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: manifest uvádí publicKeyToken \"{2}\", ale token klíče --key je \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: manifest '{2}' sdíleného sestavení Win32 uvádí podepisujícího: publicKeyToken v assemblyIdentity (token klíče --key, se kterým se sestavuje)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "katalog sdíleného sestavení Win32 potřebuje klíč RSA o 2048 bitech nebo více"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for a manifest patří k assembly = \"dotnet\" nebo \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: jeho manifest '{2}' nemá assemblyIdentity s name a version"
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: jeho manifest '{2}' musí být ve stejném dir a feature (a pod stejným when): oba tvoří jednu komponentu"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: manifest uvádí publicKeyToken \"{2}\", ale token klíče --key je \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: manifest '{2}' patří jinému sestavení nebo je sám sestavením"
@@ -1556,6 +1553,9 @@ msgstr "název služby nesmí obsahovat '/' ani '\\' (nejvýše 256 znaků)"
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "instalační .exe se sestavuje ze zdroje s [chain]; '{1}' sestavuje balíček (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "katalog sdíleného sestavení Win32 potřebuje klíč RSA o 2048 bitech nebo více"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "zdroj obsahuje jeden [package] nebo jeden [module], ne oba"
@@ -2367,6 +2367,9 @@ msgstr "logo '{1}' v měřítku {2} má {3}x{4} pixelů; musí mít {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "logo '{1}' v měřítku {2} není soubor PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "logo '{1}' má {2}x{3} pixelů; logo typu souboru musí být čtvercové"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "logo '{1}' má {2}x{3} pixelů; musí mít {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "prog-id '{1}' patří také [assoc.{2}]: typ souboru a třída COM potř
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' je také v [assoc.{2}] s jiným description, target, icon nebo args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id '{1}' je také v [assoc.{2}] s jiným logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id musí být písmena, číslice, '.', '_' nebo '-', nezačínat číslicí, nejvýše 39 (zadáno '{1}')"

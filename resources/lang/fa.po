@@ -983,6 +983,9 @@ msgstr "[file.{1}] از پیش در پوشهٔ برنامهٔ خود است؛ is
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] در نمایه کاربر است و component-guid دارد: مسیر کلید آن همان فایل می‌ماند، در حالی که قواعد Windows آنجا یک مقدار HKCU می‌خواهند (ICE38)؛ برای داشتن آن component-guid را بردارید"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' اسمبلی .NET نیست (سرآیند CLI با سطر Assembly ندارد)"
 
@@ -998,17 +1001,8 @@ msgstr "[file.{1}]: اسمبلی مشترک .NET به GAC می‌رود که ف�
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: اسمبلی مشترک Win32 با کاتالوگی وارد WinSxS می‌شود که با کلیدی امضا شده که publicKeyToken در مانیفست نام می‌برد؛ با --key بسازید (یا برای اسمبلی خصوصی assembly-for = \"file:<برنامه>\" بدهید)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: مانیفست publicKeyToken \"{2}\" را نام می‌برد، اما توکن --key برابر \"{3}\" است"
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: مانیفست '{2}' اسمبلی مشترک Win32 امضاکننده را نام می‌برد: publicKeyToken در assemblyIdentity (توکن --key که با آن ساخته می‌شود)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "کاتالوگ اسمبلی مشترک Win32 به کلید RSA با 2048 بیت یا بیشتر نیاز دارد"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for و manifest با assembly = \"dotnet\" یا \"win32\" می‌آیند"
@@ -1018,6 +1012,9 @@ msgstr "[file.{1}]: مانیفست '{2}' هیچ assemblyIdentity با name و ve
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: مانیفست '{2}' باید در همان dir و feature (و زیر همان when) باشد: این دو یک مؤلفه‌اند"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: مانیفست publicKeyToken \"{2}\" را نام می‌برد، اما توکن --key برابر \"{3}\" است"
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: مانیفست '{2}' مال اسمبلی دیگری است یا خودش اسمبلی است"
@@ -1558,6 +1555,9 @@ msgstr "نام سرویس نمی‌تواند '/' یا '\\' داشته باشد 
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "یک .exe نصب از منبعی با [chain] ساخته می‌شود؛ '{1}' بسته می‌سازد (.msi، .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "کاتالوگ اسمبلی مشترک Win32 به کلید RSA با 2048 بیت یا بیشتر نیاز دارد"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "یک منبع یک [package] یا یک [module] دارد، نه هر دو"
@@ -2369,6 +2369,9 @@ msgstr "لوگوی '{1}' در مقیاس {2} برابر {3}x{4} پیکسل اس�
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "لوگوی '{1}' در مقیاس {2} فایل PNG نیست"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "نشان '{1}' اندازهٔ {2}x{3} پیکسل دارد؛ نشان یک نوع پرونده باید مربع باشد"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "لوگوی '{1}' برابر {2}x{3} پیکسل است؛ باید {4}x{5} باشد"
 
@@ -2656,6 +2659,9 @@ msgstr "prog-id '{1}' مال [assoc.{2}] هم هست: یک نوع فایل و ی
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "prog-id '{1}' در [assoc.{2}] هم با توضیح، target، icon یا args دیگری هست"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "prog-id ‏'{1}' در [assoc.{2}] هم هست، با logo دیگری"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id باید حروف، ارقام، '.'، '_' یا '-' باشد، بدون آغاز با رقم، حداکثر 39 ('{1}' دریافت شد)"

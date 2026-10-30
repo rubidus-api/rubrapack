@@ -981,6 +981,9 @@ msgstr "[file.{1}] já está na pasta do seu programa; isolate-for é para uma D
 msgid "[file.%s] is in the user's profile and has component-guid: its key path stays the file, where Windows' rules want an HKCU value (ICE38); leave component-guid out to get one"
 msgstr "[file.{1}] está no perfil do utilizador e tem component-guid: o caminho de chave continua a ser o ficheiro, onde as regras do Windows querem um valor HKCU (ICE38); retire component-guid para o obter"
 
+msgid "[file.%s]: %s"
+msgstr "[file.{1}]: {2}"
+
 msgid "[file.%s]: '%s' is not a .NET assembly (no CLI header with an Assembly row)"
 msgstr "[file.{1}]: '{2}' não é um assembly .NET (sem cabeçalho CLI com uma linha Assembly)"
 
@@ -996,17 +999,8 @@ msgstr "[file.{1}]: um assembly .NET partilhado vai para a GAC, que só aceita a
 msgid "[file.%s]: a shared Win32 assembly goes into WinSxS with a catalog signed by the key its manifest's publicKeyToken names; build with --key (or give assembly-for = \"file:<program>\" for a private one)"
 msgstr "[file.{1}]: um assembly Win32 partilhado vai para o WinSxS com um catálogo assinado pela chave que o publicKeyToken do manifesto indica; crie com --key (ou indique assembly-for = \"file:<programa>\" para um privado)"
 
-msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
-msgstr "[file.{1}]: o manifesto indica publicKeyToken \"{2}\", mas o token da --key é \"{3}\""
-
-msgid "[file.%s]: %s"
-msgstr "[file.{1}]: {2}"
-
 msgid "[file.%s]: a shared Win32 assembly's manifest '%s' names its signer: publicKeyToken in assemblyIdentity (the token of the --key it is built with)"
 msgstr "[file.{1}]: o manifesto '{2}' de um assembly Win32 partilhado indica o signatário: publicKeyToken em assemblyIdentity (o token da --key usada na criação)"
-
-msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
-msgstr "o catálogo de um assembly Win32 partilhado precisa de uma chave RSA de 2048 bits ou mais"
 
 msgid "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\""
 msgstr "[file.{1}]: assembly-for e manifest vão com assembly = \"dotnet\" ou \"win32\""
@@ -1016,6 +1010,9 @@ msgstr "[file.{1}]: o seu manifesto '{2}' não tem assemblyIdentity com name e v
 
 msgid "[file.%s]: its manifest '%s' must be in the same dir and feature (and under the same when): the two are one component"
 msgstr "[file.{1}]: o seu manifesto '{2}' tem de estar no mesmo dir e feature (e com o mesmo when): os dois são um componente"
+
+msgid "[file.%s]: its manifest names publicKeyToken \"%s\", but the --key's token is \"%s\""
+msgstr "[file.{1}]: o manifesto indica publicKeyToken \"{2}\", mas o token da --key é \"{3}\""
 
 msgid "[file.%s]: the manifest '%s' is another assembly's or an assembly itself"
 msgstr "[file.{1}]: o manifesto '{2}' é de outro assembly ou é ele próprio um assembly"
@@ -1556,6 +1553,9 @@ msgstr "um nome de serviço não pode conter '/' ou '\\' (no máximo 256 caracte
 
 msgid "a setup .exe is built from a source with [chain]; '%s' builds a package (.msi, .msix)"
 msgstr "um .exe de instalação é criado de uma origem com [chain]; '{1}' cria um pacote (.msi, .msix)"
+
+msgid "a shared Win32 assembly's catalog needs an RSA key of 2048 bits or more"
+msgstr "o catálogo de um assembly Win32 partilhado precisa de uma chave RSA de 2048 bits ou mais"
 
 msgid "a source holds one [package] or one [module], not both"
 msgstr "uma origem contém um [package] ou um [module], não ambos"
@@ -2367,6 +2367,9 @@ msgstr "o logotipo '{1}' na escala {2} tem {3}x{4} pixels; deve ter {5}x{6}"
 msgid "logo '%s' at scale %s is not a PNG file"
 msgstr "o logotipo '{1}' na escala {2} não é um ficheiro PNG"
 
+msgid "logo '%s' is %ux%u pixels; a file type's logo is square"
+msgstr "o logótipo '{1}' tem {2}x{3} píxeis; o logótipo de um tipo de ficheiro tem de ser quadrado"
+
 msgid "logo '%s' is %ux%u pixels; it must be %ux%u"
 msgstr "o logotipo '{1}' tem {2}x{3} pixels; deve ter {4}x{5}"
 
@@ -2654,6 +2657,9 @@ msgstr "o prog-id '{1}' também é de [assoc.{2}]: um tipo de ficheiro e uma cla
 
 msgid "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args"
 msgstr "o prog-id '{1}' também está em [assoc.{2}] com outra description, target, icon ou args"
+
+msgid "prog-id '%s' is also in [assoc.%s] with another logo"
+msgstr "o prog-id '{1}' também está em [assoc.{2}] com outro logo"
 
 msgid "prog-id must be letters, digits, '.', '_' or '-', not starting with a digit, at most 39 (got '%s')"
 msgstr "prog-id deve ter letras, dígitos, '.', '_' ou '-', sem começar com dígito, no máximo 39 (recebido '{1}')"

@@ -772,9 +772,9 @@ static const char *loc_dup(loc_t *l, const char *fmt, const char *a, const char 
     return s;
 }
 
-static void loc_add(loc_t *l, const char *name, int qualifier, const char *qvalue, bool path, const char *value) {
+static void loc_add(loc_t *l, const char *name, int qualifier, const char *qvalue, bool unplated, bool path, const char *value) {
     for (size_t i = 0; i < l->n; ++i) {        // the same logo for two applications: once
-        if (strcmp(l->c[i].name, name) == 0 && l->c[i].qualifier == qualifier &&
+        if (strcmp(l->c[i].name, name) == 0 && l->c[i].qualifier == qualifier && l->c[i].unplated == unplated &&
             (qvalue == NULL ? l->c[i].qvalue == NULL : l->c[i].qvalue && strcmp(l->c[i].qvalue, qvalue) == 0)) {
             return;
         }
@@ -783,21 +783,21 @@ static void loc_add(loc_t *l, const char *name, int qualifier, const char *qvalu
         l->full = true;
         return;
     }
-    l->c[l->n++] = (rp_pri_candidate_t){ name, qualifier, qvalue, path, value };
+    l->c[l->n++] = (rp_pri_candidate_t){ name, qualifier, qvalue, path, value, unplated };
 }
 
 // A text with -xx variants becomes Resources/<name> in each language; false when it has none.
 static bool loc_text(loc_t *l, const char *name, const char *text, const rp_ir_ltext_t *by_lang, size_t count, rp_pos_t pos, rp_srcdiags_t *d) {
     if (count == 0) return false;
     const char *res = loc_dup(l, "Resources/%s%s", name, "");
-    loc_add(l, res, RP_PRI_LANGUAGE, l->default_lang, false, text);
+    loc_add(l, res, RP_PRI_LANGUAGE, l->default_lang, false, false, text);
     for (size_t k = 0; k < count; ++k) {
         if (strncmp(by_lang[k].lang, l->default_lang, 2) == 0) {
             rp_srcdiag_add(d, pos, "RP1606", false, "'-%s' is the package's own language (%s); give that text without the suffix", by_lang[k].lang,
                            l->default_lang);
             continue;
         }
-        loc_add(l, res, RP_PRI_LANGUAGE, by_lang[k].lang, false, by_lang[k].text);
+        loc_add(l, res, RP_PRI_LANGUAGE, by_lang[k].lang, false, false, by_lang[k].text);
         bool seen = false;
         for (size_t j = 0; j < l->nlangs; ++j) seen |= strcmp(l->langs[j], by_lang[k].lang) == 0;
         if (!seen && l->nlangs < LOC_LANGS) l->langs[l->nlangs++] = by_lang[k].lang;
@@ -1333,6 +1333,13 @@ static void handler_elements(rp_buf_t *b, const rp_ir_t *ir, const char *const *
     handler_list(b, ir, in_exts, &e);
 }
 
+// A file type association's name: its prog-id in lower case (RFC-0010 N4).
+static void type_name(const char *prog_id, char name[64]) {
+    size_t o = 0;
+    for (const char *q = prog_id; *q && o + 1 < 64; ++q) name[o++] = (*q >= 'A' && *q <= 'Z') ? (char)(*q + 32) : *q;
+    name[o] = 0;
+}
+
 static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {
     for (size_t a = 0; file_id && a < ir->msix_app_count; ++a) {
         if (ir->msix_apps[a].exe && strcmp(ir->msix_apps[a].exe, file_id) == 0) return a;
@@ -1385,9 +1392,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         }
         NEED(x->pos, "a file type association", 14393u);
         char name[64];
-        size_t o = 0;
-        for (const char *q = x->prog_id; *q && o + 1 < sizeof name; ++q) name[o++] = (*q >= 'A' && *q <= 'Z') ? (char)(*q + 32) : *q;
-        name[o] = 0;
+        type_name(x->prog_id, name);
         rp_buf_t *b = &ext[a];
         rp_buf_puts(b, "        <uap:Extension Category=\"windows.fileTypeAssociation\">\r\n          <uap3:FileTypeAssociation");
         attr(b, "Name", name);
@@ -1397,6 +1402,11 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             rp_buf_puts(b, "            <uap:DisplayName>");
             xml_text(b, x->description);
             rp_buf_puts(b, "</uap:DisplayName>\r\n");
+        }
+        if (x->logo) {          // packaged by rp_msix_from_ir under this name
+            rp_buf_puts(b, "            <uap:Logo>Assets\\Types\\");
+            xml_text(b, name);
+            rp_buf_puts(b, ".png</uap:Logo>\r\n");
         }
         rp_buf_puts(b, "            <uap:SupportedFileTypes>\r\n");
         const char *exts[64];
@@ -2328,7 +2338,8 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
 
     // The payload.
-    size_t cap = mod_files + ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 7 + npsf + 1, n = 0;     // + copies, INI files, logo scales, launchers, resources.pri, the PSF
+    size_t cap = mod_files + ir->file_count + ir->copy_count + ir->ini_count + 19 * ir->msix_app_count + 15 * ir->assoc_count + 7 + npsf + 1,
+           n = 0;     // + copies, INI files, logo scales, file type logos, launchers, resources.pri, the PSF
     item_t *items = rp_mem_alloc(alloc, cap, sizeof *items);
     if (items == NULL) return PROVEN_ERR_NOMEM;
     memset(items, 0, cap * sizeof *items);
@@ -2573,7 +2584,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                         it->source = loc_dup(&loc, "%s%s", vpath[v], "");
                         it->pos = app->pos;
                     }
-                    loc_add(&loc, res, RP_PRI_SCALE, scale_of[v], true, pp);
+                    loc_add(&loc, res, RP_PRI_SCALE, scale_of[v], false, true, pp);
                 }
                 continue;
             }
@@ -2623,6 +2634,79 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         snprintf(it->path, sizeof it->path, "%s", logo_default[2]);
         it->pos = top;
         if (default_logo(alloc, logo_px[2], &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1608", "cannot make a default logo");
+    }
+    // [assoc] logo (RFC-0010 N4): a file type's own icon, a square PNG of any size, packaged once per
+    // prog-id as Assets\Types\<name>.png. Files beside it named with .scale-NNN, .targetsize-N or
+    // .targetsize-N_altform-unplated (Explorer's small icons, without the tile's plate) are that
+    // picture in those forms, found through resources.pri; the given file itself, when there with
+    // them, is the scale-100 one.
+    static const struct { const char *suffix; int qualifier; const char *qvalue; bool unplated; uint32_t px; } forms[] = {
+        { ".scale-100", RP_PRI_SCALE, "100", false, 0 },
+        { ".scale-125", RP_PRI_SCALE, "125", false, 0 },
+        { ".scale-150", RP_PRI_SCALE, "150", false, 0 },
+        { ".scale-200", RP_PRI_SCALE, "200", false, 0 },
+        { ".scale-400", RP_PRI_SCALE, "400", false, 0 },
+        { ".targetsize-16", RP_PRI_TARGETSIZE, "16", false, 16 },
+        { ".targetsize-24", RP_PRI_TARGETSIZE, "24", false, 24 },
+        { ".targetsize-32", RP_PRI_TARGETSIZE, "32", false, 32 },
+        { ".targetsize-48", RP_PRI_TARGETSIZE, "48", false, 48 },
+        { ".targetsize-256", RP_PRI_TARGETSIZE, "256", false, 256 },
+        { ".targetsize-16_altform-unplated", RP_PRI_TARGETSIZE, "16", true, 16 },
+        { ".targetsize-24_altform-unplated", RP_PRI_TARGETSIZE, "24", true, 24 },
+        { ".targetsize-32_altform-unplated", RP_PRI_TARGETSIZE, "32", true, 32 },
+        { ".targetsize-48_altform-unplated", RP_PRI_TARGETSIZE, "48", true, 48 },
+        { ".targetsize-256_altform-unplated", RP_PRI_TARGETSIZE, "256", true, 256 },
+    };
+    enum { NFORMS = sizeof forms / sizeof forms[0] };
+    for (size_t k = 0; k < ir->assoc_count; ++k) {
+        const rp_ir_assoc_t *x = &ir->assocs[k];
+        bool first = true;
+        for (size_t j = 0; j < k; ++j) first &= strcmp(ir->assocs[j].prog_id, x->prog_id) != 0;
+        if (!first || x->logo_path == NULL || app_of_file(ir, x->target_file) == SIZE_MAX) continue;    // else RP1613
+        char vpath[NFORMS][2048], shown[NFORMS][1100], name[64];
+        bool have[NFORMS] = { false }, any = false;
+        const char *dot = strrchr(x->logo_path, '.'), *sl = strrchr(x->logo_path, '/');
+        const char *sdot = strrchr(x->logo, '.'), *ssl = strrchr(x->logo, '/');
+        uint64_t size;
+        for (int v = 0; dot && (!sl || dot > sl) && sdot && (!ssl || sdot > ssl) && v < NFORMS; ++v) {
+            snprintf(vpath[v], sizeof vpath[v], "%.*s%s%s", (int)(dot - x->logo_path), x->logo_path, forms[v].suffix, dot);
+            snprintf(shown[v], sizeof shown[v], "%.*s%s%s", (int)(sdot - x->logo), x->logo, forms[v].suffix, sdot);
+            have[v] = rp_pal_stat(alloc, vpath[v], &size) == RP_FS_FILE;
+            any |= have[v];
+        }
+        bool base = rp_pal_stat(alloc, x->logo_path, &size) == RP_FS_FILE;
+        if (base && have[0]) {
+            DERR(x->pos, "RP1608", "logo '%s' and its .scale-100 variant are both there: keep one", x->logo);
+            continue;
+        }
+        if (!any && !base) continue;            // RP1507 already
+        if (base) {
+            have[0] = true;
+            snprintf(vpath[0], sizeof vpath[0], "%s", x->logo_path);
+            snprintf(shown[0], sizeof shown[0], "%s", x->logo);
+        }
+        type_name(x->prog_id, name);
+        const char *res = any ? loc_dup(&loc, "Files/Assets/Types/%s%s", name, ".png") : NULL;
+        for (int v = 0; v < NFORMS; ++v) {
+            if (!have[v]) continue;
+            uint8_t *png = NULL;
+            size_t pl = 0;
+            uint32_t w = 0, h = 0;
+            if (rp_pal_read_file(alloc, vpath[v], 16u << 20, &png, &pl) != PROVEN_OK || !png_size(png, pl, &w, &h)) {
+                DERR(x->pos, "RP1608", "logo '%s' is not a PNG file", shown[v]);
+            } else if (forms[v].px && (w != forms[v].px || h != forms[v].px)) {
+                DERR(x->pos, "RP1608", "logo '%s' is %ux%u pixels; it must be %ux%u", shown[v], (unsigned)w, (unsigned)h, (unsigned)forms[v].px,
+                     (unsigned)forms[v].px);
+            } else if (w != h) {
+                DERR(x->pos, "RP1608", "logo '%s' is %ux%u pixels; a file type's logo is square", shown[v], (unsigned)w, (unsigned)h);
+            }
+            rp_mem_free(alloc, png);
+            item_t *it = &items[n++];
+            snprintf(it->path, sizeof it->path, "Assets\\Types\\%s%s.png", name, any ? forms[v].suffix : "");
+            it->source = any ? loc_dup(&loc, "%s%s", vpath[v], "") : x->logo_path;
+            it->pos = x->pos;
+            if (any) loc_add(&loc, res, forms[v].qualifier, forms[v].qvalue, forms[v].unplated, true, loc_dup(&loc, "%s%s", it->path, ""));
+        }
     }
     // Texts in several languages (RFC-0016 3), then resources.pri when anything needs it.
     loc.pkg_display = loc_text(&loc, "PackageDisplayName", ir->msix_display ? ir->msix_display : ir->name, ir->msix_display_by_lang,

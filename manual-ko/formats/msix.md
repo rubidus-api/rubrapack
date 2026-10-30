@@ -111,9 +111,14 @@ Learn 이 말하는 대로 `AppData` 나 `Local AppData` 에는 없다. rubrapac
 - **절**: 16바이트 이름, u32 0, u32 0, u32 길이, u32 0, 자료(8바이트로 채움), `DE FA F5 DE`, u32 길이.
 - **`[mrm_decn_info]`** - 조건: 개수(구별 한정자, 한정자, 한정자 집합, 결정, 색인 항목, 값 글자), 결정과 한정자
   집합은 (첫 색인 항목, 개수), 한정자는 (구별 한정자, 우선순위, 기본값으로서의 점수 x 1000, 0), 구별 한정자는
-  (2, 형식, 0, 10, u32 값 위치)이고 형식은 Language 0, Scale 2. 집합(한정자 번호)과 결정(집합 번호)이 함께 쓰는
-  u16 색인 표, 그리고 값들. 저마다 0번은 비어 있다. 우선순위: Language 700, Scale 200. 점수: 기본 언어 1.0,
-  다른 언어 0, 배율 100 1.0, 125 0.937, 150 0.875, 200 0.75, 400 0.437. 결정은 집합을 점수가 낮은 것부터 적는다.
+  (2, 형식, 0, 10, u32 값 위치)이고 형식은 Language 0, Scale 2, TargetSize 4, AlternateForm 7. 집합(한정자
+  번호)과 결정(집합 번호)이 함께 쓰는 u16 색인 표, 그리고 값들. 저마다 0번은 비어 있다. 집합은 한정자 하나,
+  또는 대상 크기와 대체 형식이다(`Logo.targetsize-16_altform-unplated.png`: 대상 크기가 먼저). 우선순위:
+  Language 700, TargetSize 300, Scale 200, AlternateForm 100. 점수: 기본 언어 1.0, 다른 언어 0, 배율 100 1.0,
+  125 0.937, 150 0.875, 200 0.75, 400 0.437, 대상 크기 256 1.0, 16·24·32·48 0.5, AlternateForm(값 `UNPLATED`) 0.
+  결정은 집합을 번호가 큰 것부터 적는다(언어와 배율은 이것이 점수가 낮은 것부터와 같다). makepri 는 한정자와
+  집합에 파일을 이름순으로 만나는 차례대로 번호를 매긴다. 그래서 대상 크기는 16, 24, 256, 32, 48 순이고, 대체
+  형식은 그것을 가진 첫 대상 크기 바로 뒤에 온다.
 - **`[mrm_pridescex]`** - 스키마, 결정, 자원 지도, 자료 항목이 어느 절에 있는지.
 - **`[mrm_hschemaex]`** - 이름: `ms-appx://<Identity Name>/` 과 이름, 이어 범위와 항목의 나무
   (`Resources/AppDisplayName`, `Files/Assets/Logo.png`)를 12바이트 항목(부모 항목, 전체 경로 길이, 대문자로 바꾼
@@ -133,7 +138,7 @@ rubrapack 이 앱의 `<Extensions>`(`uap:VisualElements` 뒤)에 쓰는 것, 그
 
 | 원본 | 요소(범주) | 네임스페이스 | 최소 빌드 | 기능 | Windows 11 에서 확인한 것 |
 |---|---|---|---|---|---|
-| `[assoc]` | `uap:Extension` `windows.fileTypeAssociation` > `uap3:FileTypeAssociation`(Name, Parameters) > `uap:DisplayName`, `uap:SupportedFileTypes` > `uap:FileType` | uap, uap3 | 14393 | runFullTrust | `.rpx`/`.rpy` 파일을 열면 프로그램이 그 파일과 함께 시작된다 |
+| `[assoc]` | `uap:Extension` `windows.fileTypeAssociation` > `uap3:FileTypeAssociation`(Name, Parameters) > `uap:DisplayName`, `uap:Logo`, `uap:SupportedFileTypes` > `uap:FileType` | uap, uap3 | 14393 | runFullTrust | `.rpx`/`.rpy` 파일을 열면 프로그램이 그 파일과 함께 시작된다 |
 | `[protocol]` | `uap3:Extension` `windows.protocol` > `uap3:Protocol`(Name, Parameters) | uap3 | 14393 | runFullTrust | `scheme:` URI 를 시작하면 프로그램이 그것과 함께 시작된다 |
 | `[msix-extension]` 별칭 | `uap3:Extension` `windows.appExecutionAlias`(Executable, EntryPoint) > `uap3:AppExecutionAlias` > `desktop:ExecutionAlias`(Alias) | uap3, desktop | 14393 | runFullTrust | 별칭이 `%LOCALAPPDATA%\Microsoft\WindowsApps` 에 생기고 프로그램을 시작한다 |
 | `[msix-extension]` 시작 작업 | `desktop:Extension` `windows.startupTask`(Executable, EntryPoint) > `desktop:StartupTask`(TaskId, Enabled, DisplayName) | desktop | 14393 | runFullTrust | 첫 시작 뒤에 등록된다 |
@@ -146,6 +151,10 @@ rubrapack 이 앱의 `<Extensions>`(`uap:VisualElements` 뒤)에 쓰는 것, 그
 - `Parameters`, `Arguments`: 리터럴 글(MSI 의 `[...]` 는 거부). Windows 는 `%1` 자리에 파일이나 URI 를 넣는다.
 - `FileTypeAssociation` 의 `Name`: prog-id 를 소문자로. prog-id 를 같이 쓰는 `[assoc]` 표들은 `FileType` 이
   여럿인 연결 하나가 된다.
+- `uap:Logo`(`[assoc] logo` 가 있을 때): `Assets\Types\<Name>.png`. 원본의 PNG 를 그 이름으로 담는다.
+  다른 형태의 그림이 있으면 파일은 `Assets\Types\<Name>.scale-NNN.png`, `.targetsize-N.png`,
+  `.targetsize-N_altform-unplated.png` 이고, 앱의 로고처럼 resources.pri 가 `Files/Assets/Types/<Name>.png` 를
+  그 파일들로 잇는다.
 - 모든 것은 원본이 대상으로 적은 실행 파일을 가진 앱에 들어간다. 앱의 실행 파일이 아닌 대상은 오류다.
 
 ## 묶음(`.msixbundle`)
