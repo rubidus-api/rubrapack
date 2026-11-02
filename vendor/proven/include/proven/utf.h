@@ -106,6 +106,24 @@ typedef struct {
 proven_utf8_char_t proven_utf8_decode_next(proven_u8str_view_t s, proven_size_t pos);
 
 /**
+ * @brief One code point as UTF-8, into `out[0]` to `out[3]`.
+ * @return its length, 1 to 4; 0 - and nothing written - for a surrogate (U+D800 to U+DFFF) or a
+ *         value above U+10FFFF, which are not characters. Pure computation, freestanding-available.
+ */
+[[nodiscard]]
+proven_size_t proven_utf8_encode_one(proven_u32 cp, proven_byte_t out[4]);
+
+/**
+ * @brief Whether all of `s` is well-formed UTF-8, by the rules of proven_utf8_decode_next; a
+ * character cut off at the end is malformed here (the text is taken as complete).
+ * @return PROVEN_OK; PROVEN_ERR_INVALID_ENCODING with the offset of the first byte that is not
+ *         part of a character in `*bad_at` (NULL: not wanted); PROVEN_ERR_INVALID_ARG for a NULL
+ *         pointer with a nonzero size. Pure computation, freestanding-available.
+ */
+[[nodiscard]]
+proven_err_t proven_utf8_validate(proven_u8str_view_t s, proven_size_t *bad_at);
+
+/**
  * @brief The number of UTF-16 code units `src` converts to.
  * @return PROVEN_ERR_INVALID_ENCODING for malformed input or input that ends mid-character.
  */

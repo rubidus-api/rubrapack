@@ -88,6 +88,41 @@ proven_utf8_char_t proven_utf8_decode_next(proven_u8str_view_t s, proven_size_t 
     return out;
 }
 
+proven_size_t proven_utf8_encode_one(proven_u32 cp, proven_byte_t out[4]) {
+    if (cp < 0x80) { out[0] = (proven_byte_t)cp; return 1; }
+    if (cp < 0x800) {
+        out[0] = (proven_byte_t)(0xC0 | (cp >> 6));
+        out[1] = (proven_byte_t)(0x80 | (cp & 0x3F));
+        return 2;
+    }
+    if (cp >= 0xD800 && cp <= 0xDFFF) return 0;      /* a surrogate is not a character */
+    if (cp < 0x10000) {
+        out[0] = (proven_byte_t)(0xE0 | (cp >> 12));
+        out[1] = (proven_byte_t)(0x80 | ((cp >> 6) & 0x3F));
+        out[2] = (proven_byte_t)(0x80 | (cp & 0x3F));
+        return 3;
+    }
+    if (cp > 0x10FFFF) return 0;
+    out[0] = (proven_byte_t)(0xF0 | (cp >> 18));
+    out[1] = (proven_byte_t)(0x80 | ((cp >> 12) & 0x3F));
+    out[2] = (proven_byte_t)(0x80 | ((cp >> 6) & 0x3F));
+    out[3] = (proven_byte_t)(0x80 | (cp & 0x3F));
+    return 4;
+}
+
+proven_err_t proven_utf8_validate(proven_u8str_view_t s, proven_size_t *bad_at) {
+    if (s.size > 0 && !s.ptr) return PROVEN_ERR_INVALID_ARG;
+    for (proven_size_t pos = 0; pos < s.size;) {
+        const proven_utf8_char_t c = proven_utf8_decode_next(s, pos);
+        if (c.err != PROVEN_OK) {                    /* malformed, or cut off at the end */
+            if (bad_at) *bad_at = pos;
+            return PROVEN_ERR_INVALID_ENCODING;
+        }
+        pos += c.len;
+    }
+    return PROVEN_OK;
+}
+
 static int utf16_decode(const proven_u16 *s, proven_size_t n, proven_u32 *cp_out) {
     proven_u32 u = s[0];
     if (u < 0xD800u || u > 0xDFFFu) {

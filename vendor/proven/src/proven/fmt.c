@@ -275,10 +275,10 @@ static void render_integer(proven_fmt_ctx_t *ctx, unsigned long long mag, bool n
  * library has never seen, without allocating a scratch buffer for it. */
 typedef struct {
     proven_size_t len;
-} fmt_count_sink_t;
+} proven_fmt_count_sink_t;
 
 static proven_err_t fmt_count_sink_write(void *vctx, proven_u8str_view_t chunk) {
-    fmt_count_sink_t *s = (fmt_count_sink_t *)vctx;
+    proven_fmt_count_sink_t *s = (proven_fmt_count_sink_t *)vctx;
     if (chunk.size > 0 && !chunk.ptr) return PROVEN_ERR_INVALID_ARG;
     s->len += chunk.size;
     return PROVEN_OK;
@@ -300,7 +300,7 @@ static void render_custom(proven_fmt_ctx_t *ctx, proven_arg_custom_t c, proven_f
     /* Pass one: how long is it? The renderer must be deterministic; the check below
      * holds it to that, because a renderer that answers differently the second time
      * would silently produce a field of the wrong width. */
-    fmt_count_sink_t count = { .len = 0 };
+    proven_fmt_count_sink_t count = { .len = 0 };
     proven_err_t err = c.render((proven_fmt_sink_t){ .ctx = &count, .write = fmt_count_sink_write }, c.obj);
     if (!proven_is_ok(err)) {
         ctx->err = err;
