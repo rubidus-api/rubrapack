@@ -32,12 +32,13 @@ rubrapack build app.toml -o app.msi       # a real installer: uninstall entry, u
   run it. No .NET, no Python or other interpreter, no SDK, no libraries. The Linux program needs only
   the C library; the Windows program uses only DLLs that are part of Windows (it does not even use
   `msi.dll`). Build Windows packages on a Linux server or CI runner without a Windows machine.
-- **Plain C, small and easy to build.** About 37,000 lines of C23 plus a small vendored base
+- **Plain C, small and easy to build.** About 37,000 lines of C23 plus a vendored base
   library, with no third-party dependencies. Building it needs a C compiler and nothing else:
   `cc -std=c23 -o nob nob.c && ./nob` (under a minute on an ordinary PC; tested with GCC 14,
   Clang 19 and MinGW-w64 GCC 16). Everything - the compound file and MSI database, cabinets and
-  deflate, ZIP and MSIX, registry hives, the cryptography, PKCS#12, HTTP and TLS - is written
-  here from public specifications and checked against Windows.
+  deflate, ZIP and MSIX, registry hives, the signing cryptography, PKCS#12 and HTTP - is written
+  here from public specifications and checked against Windows; the hashes and the TLS engine come
+  from the vendored base library, proven_c_lib.
 - **Output you can trust.** Packages are reproducible byte for byte on Linux and Windows. Every
   feature is tested by installing, running, repairing, upgrading and removing packages on
   Windows 11. `lint` checks any MSI - also one made by another tool - and `lint new.msi --previous
@@ -106,7 +107,7 @@ A first package, step by step, is the first chapter of the manual:
   packages, packages for a program installed elsewhere (external location), flat bundles, Store
   upload files (`.msixupload`) and the Package Support Framework.
 - **Signing:** Authenticode for PE files, MSI and MSIX packages and bundles, RSA or ECDSA, with
-  RFC 3161 timestamps (over HTTP or its own TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
+  RFC 3161 timestamps (over HTTP or TLS 1.3). Keys come from a PFX/PEM file, a PKCS#11
   token (`--pkcs11`), or the Windows certificate store through NCrypt (`--key-store`), so a
   code-signing key that must stay in hardware stays there.
 - **Checking:** `lint` (sources and any MSI or MSIX, and an MSI against the version before it),

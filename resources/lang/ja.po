@@ -1704,9 +1704,6 @@ msgstr "cab は \"embed\" か \"external\" でなければなりません"
 msgid "cannot be read"
 msgstr "読めません"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHello を作れません"
-
 msgid "cannot bundle the packages: %s"
 msgstr "パッケージをバンドルにまとめられません: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' が見つかりません。`rubrapack new {2}` で作ってくだ�
 
 msgid "cannot make a default logo"
 msgstr "既定のロゴを作れません"
-
-msgid "cannot make a key share"
-msgstr "鍵共有を作れません"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "'{1}' から '{2}' へのパッチを作れません"
@@ -3171,14 +3165,8 @@ msgstr "サーバーが HTTP/1.x で応答しませんでした"
 msgid "the server redirected from https to http (refused)"
 msgstr "サーバーが https から http にリダイレクトしました (拒否)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "サーバーの CertificateVerify の署名を検証できません"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "サーバーの証明書は TLS サーバー用ではありません (拡張キー使用法)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "サーバーの署名方式が証明書の鍵と合いません"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "署名がキャビネットの示す位置にありません"

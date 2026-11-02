@@ -20,7 +20,7 @@
 #include "rubrapack/cfb.h"
 #include "rubrapack/diag.h"
 #include "rubrapack/inspect.h"
-#include "rubrapack/md5.h"
+#include "proven/hash_legacy.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
 #include "proven/map.h"
@@ -640,7 +640,7 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
             size_t h = hix.v[q].at;         // every row of the key, in row order
             if (at(&ht, h, 0)->kind != RP_MSI_STR) continue;
             uint8_t md5[16];
-            rp_md5(data, size, md5);
+            proven_md5((proven_mem_view_t){ (const proven_byte_t *)(data), size }, md5);
             bool same = true;
             for (int part = 0; part < 4; ++part) {
                 const rp_msi_cell_t *v = at(&ht, h, (size_t)part + 1);

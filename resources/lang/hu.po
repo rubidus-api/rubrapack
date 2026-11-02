@@ -1704,9 +1704,6 @@ msgstr "a cab értéke \"embed\" vagy \"external\" lehet"
 msgid "cannot be read"
 msgstr "nem olvasható"
 
-msgid "cannot build the ClientHello"
-msgstr "a ClientHello nem állítható össze"
-
 msgid "cannot bundle the packages: %s"
 msgstr "a csomagok nem köthetők kötegbe: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' nem található; hozzon létre egyet ezzel: `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "alapértelmezett embléma nem készíthető"
-
-msgid "cannot make a key share"
-msgstr "kulcsrész nem készíthető"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "nem készíthető javítócsomag '{1}' és '{2}' között"
@@ -3171,14 +3165,8 @@ msgstr "a kiszolgáló nem HTTP/1.x-szel válaszolt"
 msgid "the server redirected from https to http (refused)"
 msgstr "a kiszolgáló https-ről http-re irányított át (elutasítva)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "a kiszolgáló CertificateVerify aláírása nem ellenőrizhető"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "a kiszolgáló tanúsítványa nem TLS-kiszolgálókhoz való (a kibővített kulcshasználata)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "a kiszolgáló aláírási sémája nem illik a tanúsítványa kulcsához"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "az aláírás nem ott van, ahol a cabinet mondja"

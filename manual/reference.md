@@ -2307,8 +2307,8 @@ rubrapack version | help [command]
   `http://time.certum.pl`; `http` is fine, because the answer is itself signed and checked (the
   nonce, the hash of the signature, the server's signature and its time-stamping certificate).
   `--tsa-trust` also requires the server's certificate path to end in one of the given
-  certificates. For an `https` server rubrapack speaks TLS 1.3 itself (AES-GCM, x25519 or P-256,
-  RSA-PSS or ECDSA server keys; not TLS 1.2) and checks the server's certificate - its path to a
+  certificates. For an `https` server rubrapack speaks TLS 1.3 through its vendored proven_c_lib
+  (not TLS 1.2; no client certificate is sent) and checks the server's certificate - its path to a
   root given with `--tls-trust` or found in the operating system's store with `--system-roots`, its
   dates, that it names the server (subjectAltName; no wildcard across dots) and that it is for TLS
   servers; nothing turns these checks off. The three trusts stay apart: `--tls-trust` and

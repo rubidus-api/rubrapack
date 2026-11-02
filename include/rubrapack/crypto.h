@@ -2,14 +2,16 @@
 #define RUBRAPACK_CRYPTO_H
 
 // include/rubrapack/crypto.h - hashes, HMAC, PBKDF2 and AES for signing and key files
-// (RFC-0007 1). SHA-256 is proven's; SHA-384/512 are ported from lowent_lang v1.3.0
-// (impl/src/low_sha512.h, same author, MIT). Code that touches secrets (keys, passwords) does
-// not branch on or index memory by secret values.
+// (RFC-0007 1). The hashes, HMAC and HKDF are proven_c_lib's (proven/hash.h, hash_legacy.h,
+// hmac.h). Code that touches secrets (keys, passwords) does not branch on or index memory by
+// secret values.
 
 #include <stddef.h>
 #include <stdint.h>
 
 #include "proven/hash.h"
+#include "proven/hash_legacy.h"
+#include "proven/hmac.h"
 #include "proven/types.h"
 
 // ---- hashes, one interface --------------------------------------------------------------------
@@ -20,11 +22,7 @@ typedef struct {
     rp_hash_alg_t alg;
     union {
         proven_sha256_t s256;
-        struct {
-            uint64_t h[8];
-            uint8_t  b[128];
-            uint64_t n;         // bytes hashed
-        } s512;
+        proven_sha512_t s512;   // SHA-384 too
     } u;
 } rp_hash_t;
 
@@ -32,11 +30,7 @@ enum { RP_HASH_MAX = 64 };
 
 // SHA-1 (FIPS 180-4), only for identifying files in a catalog, as Windows' catalogs do (never for
 // a signature).
-typedef struct {
-    uint32_t h[5];
-    uint8_t  b[64];
-    uint64_t n;
-} rp_sha1_t;
+typedef proven_sha1_t rp_sha1_t;
 void rp_sha1_init(rp_sha1_t *s);
 void rp_sha1_update(rp_sha1_t *s, const void *data, size_t len);
 void rp_sha1_final(rp_sha1_t *s, uint8_t out[20]);
@@ -51,7 +45,7 @@ void rp_hash(rp_hash_alg_t alg, const void *data, size_t len, uint8_t *out);
 // ---- HMAC (RFC 2104) and PBKDF2 (RFC 8018) ---------------------------------------------------
 
 typedef struct {
-    rp_hash_t inner, outer;
+    proven_hmac_t m;
 } rp_hmac_t;
 
 void rp_hmac_init(rp_hmac_t *m, rp_hash_alg_t alg, const uint8_t *key, size_t key_len);
@@ -62,12 +56,6 @@ void rp_hmac(rp_hash_alg_t alg, const uint8_t *key, size_t key_len, const void *
 // PBKDF2 with HMAC-`alg`. iterations >= 1.
 void rp_pbkdf2(rp_hash_alg_t alg, const uint8_t *pass, size_t pass_len, const uint8_t *salt, size_t salt_len,
                uint32_t iterations, uint8_t *out, size_t out_len);
-
-// HKDF (RFC 5869) with HMAC-`alg`. Extract writes rp_hash_size(alg) bytes (an empty salt is
-// HashLen zeros); Expand gives up to 255 * HashLen bytes and is false beyond that.
-void rp_hkdf_extract(rp_hash_alg_t alg, const uint8_t *salt, size_t salt_len, const uint8_t *ikm, size_t ikm_len, uint8_t *prk);
-[[nodiscard]] bool rp_hkdf_expand(rp_hash_alg_t alg, const uint8_t *prk, size_t prk_len, const uint8_t *info, size_t info_len,
-                                  uint8_t *out, size_t len);
 
 // ---- AES (FIPS 197), CBC (SP 800-38A) --------------------------------------------------------
 
@@ -99,31 +87,6 @@ size_t rp_ec_size(rp_ec_curve_t curve);         // 32 or 48: scalar and coordina
                                          uint8_t *s);
 [[nodiscard]] bool rp_ecdsa_verify(rp_ec_curve_t curve, const uint8_t *qx, const uint8_t *qy, rp_hash_alg_t alg, const uint8_t *digest,
                                    const uint8_t *r, const uint8_t *s);
-
-// ECDH (SP 800-56A): the x coordinate of d * (px, py). False when the peer's point is not on the
-// curve or the result is the point at infinity; d must be in [1, n-1]. Constant time in d.
-[[nodiscard]] bool rp_ecdh(rp_ec_curve_t curve, const uint8_t *d, const uint8_t *px, const uint8_t *py, uint8_t *shared_x);
-
-// ---- X25519 (RFC 7748; src/crypto/x25519.c) ---------------------------------------------------
-
-// out = X25519(scalar, u), 32 bytes each, little-endian as the RFC encodes them. False when the
-// result is all zero (a small-order input, RFC 7748 6.1). Constant time in the scalar.
-[[nodiscard]] bool rp_x25519(uint8_t out[32], const uint8_t scalar[32], const uint8_t u[32]);
-
-// ---- AES-GCM (SP 800-38D; src/crypto/gcm.c), 96-bit IVs and 128-bit tags only --------------
-
-typedef struct {
-    rp_aes_t aes;
-    uint64_t h_hi, h_lo;        // the hash key H = E(K, 0^128)
-} rp_gcm_t;
-
-[[nodiscard]] bool rp_gcm_init(rp_gcm_t *g, const uint8_t *key, size_t key_len);
-// Encrypts `len` bytes (in may equal out) and writes the tag.
-void rp_gcm_seal(const rp_gcm_t *g, const uint8_t iv[12], const uint8_t *aad, size_t aad_len, const uint8_t *in, size_t len,
-                 uint8_t *out, uint8_t tag[16]);
-// Checks the tag first; decrypts into out (in may equal out) only when it matches.
-[[nodiscard]] bool rp_gcm_open(const rp_gcm_t *g, const uint8_t iv[12], const uint8_t *aad, size_t aad_len, const uint8_t *in,
-                               size_t len, const uint8_t tag[16], uint8_t *out);
 
 // Wipes memory that held a secret (not optimised away).
 void rp_wipe(void *p, size_t n);
@@ -182,9 +145,4 @@ typedef struct {
 // Verifies a PKCS#1 v1.5 signature of a digest.
 [[nodiscard]] bool rp_rsa_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_len, rp_hash_alg_t alg,
                                  const uint8_t *digest, const uint8_t *sig, size_t sig_len);
-// Verifies an RSASSA-PSS signature of a digest (RFC 8017 8.1.2, EMSA-PSS with MGF1 over the same
-// hash) with a salt of exactly `salt_len` bytes.
-[[nodiscard]] bool rp_rsa_pss_verify(const uint8_t *n, size_t n_len, const uint8_t *e, size_t e_len, rp_hash_alg_t alg,
-                                     const uint8_t *digest, const uint8_t *sig, size_t sig_len, size_t salt_len);
-
 #endif // RUBRAPACK_CRYPTO_H

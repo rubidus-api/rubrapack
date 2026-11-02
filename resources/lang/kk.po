@@ -1704,9 +1704,6 @@ msgstr "cab \"embed\" немесе \"external\" болуы керек"
 msgid "cannot be read"
 msgstr "оқу мүмкін емес"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHello жасау мүмкін емес"
-
 msgid "cannot bundle the packages: %s"
 msgstr "бумаларды жиынға біріктіру мүмкін емес: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' табылмады; оны `rubrapack new {2}` арқылы жас
 
 msgid "cannot make a default logo"
 msgstr "әдепкі логотип жасау мүмкін емес"
-
-msgid "cannot make a key share"
-msgstr "кілт үлесін жасау мүмкін емес"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "'{1}' файлынан '{2}' файлына түзету жасау мүмкін емес"
@@ -3171,14 +3165,8 @@ msgstr "сервер HTTP/1.x арқылы жауап бермеді"
 msgid "the server redirected from https to http (refused)"
 msgstr "сервер https-тен http-ге қайта бағыттады (қабылданбады)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "сервердің CertificateVerify қолтаңбасы тексерілмейді"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "сервер сертификаты TLS серверлеріне арналмаған (оның кеңейтілген кілт қолданысы)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "сервердің қолтаңба схемасы оның сертификат кілтіне сай емес"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "қолтаңба cabinet айтқан жерде емес"

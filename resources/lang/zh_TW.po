@@ -1704,9 +1704,6 @@ msgstr "cab 必須是 \"embed\" 或 \"external\""
 msgid "cannot be read"
 msgstr "無法讀取"
 
-msgid "cannot build the ClientHello"
-msgstr "無法建置 ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "無法將安裝套件打成套件組合: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "找不到 '{1}'；請用 `rubrapack new {2}` 建立"
 
 msgid "cannot make a default logo"
 msgstr "無法生成預設標誌"
-
-msgid "cannot make a key share"
-msgstr "無法生成金鑰共享"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "無法從 '{1}' 到 '{2}' 生成修補程式"
@@ -3171,14 +3165,8 @@ msgstr "伺服器沒有以 HTTP/1.x 回應"
 msgid "the server redirected from https to http (refused)"
 msgstr "伺服器從 https 重定向到 http(已拒絕)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "伺服器的 CertificateVerify 簽章驗證失敗"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "伺服器的憑證不用於 TLS 伺服器(其擴展金鑰用法)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "伺服器的簽章方案與其憑證的金鑰不符"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "簽章不在 cabinet 所說的位置"

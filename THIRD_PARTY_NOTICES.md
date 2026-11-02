@@ -95,12 +95,9 @@ holder); each file says so in its header:
 
 - `src/crypto/ecdsa.c` - ported from `lib/ecdsa.low` and `lib/p256.low` (deterministic nonces,
   P-256/P-384).
-- `src/crypto/hash.c`, `include/rubrapack/crypto.h` - SHA-384/512 constants and block function
-  ported from lowent_lang; SHA-256 is proven_c_lib's.
 - `src/crypto/bn.c` (Montgomery arithmetic), `src/crypto/x509.c`, `include/rubrapack/der.h`
-  (DER reading rules), `src/net/tls.c` (TLS 1.3 client structure) - written on the design of the
-  corresponding lowent_lang modules.
+  (DER reading rules) - written on the design of the corresponding lowent_lang modules.
 - `src/crypto/rsa.c` - verification written anew; lowent_lang has the same algorithm.
 
-AES, GCM, HMAC, X25519, PKCS#8/#12 and the signing code are new. `src/crypto/x25519.c` uses the
-field representation of the public-domain TweetNaCl design (no code copied).
+AES-CBC, PBKDF2, PKCS#8/#12 and the signing code are new. The hashes (SHA-1, SHA-2, MD5), HMAC
+and the TLS 1.3 client's engine are proven_c_lib's (`vendor/proven/`, below).

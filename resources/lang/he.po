@@ -1706,9 +1706,6 @@ msgstr "cab חייב להיות \"embed\" או \"external\""
 msgid "cannot be read"
 msgstr "לא ניתן לקרוא"
 
-msgid "cannot build the ClientHello"
-msgstr "לא ניתן לבנות את ה-ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "לא ניתן לצרור את החבילות: {1}"
 
@@ -1726,9 +1723,6 @@ msgstr "לא ניתן למצוא את '{1}'; צור אחד עם `rubrapack new {
 
 msgid "cannot make a default logo"
 msgstr "לא ניתן ליצור לוגו ברירת מחדל"
-
-msgid "cannot make a key share"
-msgstr "לא ניתן ליצור key share"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "לא ניתן ליצור תיקון מ-'{1}' ל-'{2}'"
@@ -3173,14 +3167,8 @@ msgstr "השרת לא ענה ב-HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "השרת הפנה מ-https ל-http (נדחה)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "חתימת ה-CertificateVerify של השרת אינה מאומתת"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "האישור של השרת אינו לשרתי TLS (השימוש המורחב במפתח שלו)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "שיטת החתימה של השרת אינה מתאימה למפתח של האישור שלו"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "החתימה אינה במקום שה-cabinet אומר"

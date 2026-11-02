@@ -1704,9 +1704,6 @@ msgstr "cab peab olema \"embed\" või \"external\""
 msgid "cannot be read"
 msgstr "ei saa lugeda"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHello'd ei saa koostada"
-
 msgid "cannot bundle the packages: %s"
 msgstr "pakette ei saa kogumiks liita: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' ei leitud; looge see käsuga `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "vaikelogo ei saa luua"
-
-msgid "cannot make a key share"
-msgstr "key share'i ei saa luua"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "paika '{1}' -> '{2}' ei saa luua"
@@ -3171,14 +3165,8 @@ msgstr "server ei vastanud HTTP/1.x-ga"
 msgid "the server redirected from https to http (refused)"
 msgstr "server suunas https-lt http-le (keeldutud)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "serveri CertificateVerify allkiri ei kinnitu"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "serveri sertifikaat ei ole TLS-serveritele (selle laiendatud võtmekasutus)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "serveri allkirjaskeem ei sobi selle sertifikaadi võtmega"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "allkiri ei asu seal, kus cabinet ütleb"

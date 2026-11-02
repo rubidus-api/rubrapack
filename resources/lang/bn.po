@@ -1704,9 +1704,6 @@ msgstr "cab-কে \"embed\" বা \"external\" হতে হবে"
 msgid "cannot be read"
 msgstr "পড়া যায় না"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHello তৈরি করা যায় না"
-
 msgid "cannot bundle the packages: %s"
 msgstr "প্যাকেজগুলি বান্ডল করা যায় না: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' পাওয়া যায়নি; `rubrapack new {2}` দি�
 
 msgid "cannot make a default logo"
 msgstr "ডিফল্ট লোগো তৈরি করা যায় না"
-
-msgid "cannot make a key share"
-msgstr "কী শেয়ার তৈরি করা যায় না"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "'{1}' থেকে '{2}'-এ প্যাচ তৈরি করা যায় না"
@@ -3171,14 +3165,8 @@ msgstr "সার্ভার HTTP/1.x দিয়ে উত্তর দেয
 msgid "the server redirected from https to http (refused)"
 msgstr "সার্ভার https থেকে http-তে পুনর্নির্দেশ করেছে (প্রত্যাখ্যাত)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "সার্ভারের CertificateVerify স্বাক্ষর যাচাই হয় না"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "সার্ভারের সার্টিফিকেট TLS সার্ভারের জন্য নয় (এর বর্ধিত কী ব্যবহার)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "সার্ভারের স্বাক্ষর পদ্ধতি এর সার্টিফিকেটের কী-এর সাথে মেলে না"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "স্বাক্ষর সেখানে নেই যেখানে cabinet বলে"

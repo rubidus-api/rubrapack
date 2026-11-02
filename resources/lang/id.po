@@ -1704,9 +1704,6 @@ msgstr "cab harus \"embed\" atau \"external\""
 msgid "cannot be read"
 msgstr "tidak dapat dibaca"
 
-msgid "cannot build the ClientHello"
-msgstr "tidak dapat membangun ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "tidak dapat membundel paket: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "tidak menemukan '{1}'; buat dengan `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "tidak dapat membuat logo default"
-
-msgid "cannot make a key share"
-msgstr "tidak dapat membuat key share"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "tidak dapat membuat patch dari '{1}' ke '{2}'"
@@ -3171,14 +3165,8 @@ msgstr "server tidak menjawab dengan HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "server mengalihkan dari https ke http (ditolak)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "tanda tangan CertificateVerify server tidak terverifikasi"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "sertifikat server bukan untuk server TLS (extended key usage-nya)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "skema tanda tangan server tidak sesuai dengan kunci sertifikatnya"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "tanda tangan tidak berada di tempat yang disebut cabinet"

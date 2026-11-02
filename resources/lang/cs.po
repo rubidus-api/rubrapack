@@ -1704,9 +1704,6 @@ msgstr "cab musí být \"embed\" nebo \"external\""
 msgid "cannot be read"
 msgstr "nelze číst"
 
-msgid "cannot build the ClientHello"
-msgstr "nelze sestavit ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "balíčky nelze spojit do sady: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}' nelze najít; vytvořte ho příkazem `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "nelze vytvořit výchozí logo"
-
-msgid "cannot make a key share"
-msgstr "nelze vytvořit sdílení klíče"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "nelze vytvořit opravu z '{1}' na '{2}'"
@@ -3171,14 +3165,8 @@ msgstr "server neodpověděl pomocí HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "server přesměroval z https na http (odmítnuto)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "podpis CertificateVerify serveru se neověřil"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "certifikát serveru není pro servery TLS (jeho rozšířené použití klíče)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "schéma podpisu serveru neodpovídá klíči jeho certifikátu"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "podpis neleží tam, kde cabinet uvádí"

@@ -1704,9 +1704,6 @@ msgstr "cabin on oltava \"embed\" tai \"external\""
 msgid "cannot be read"
 msgstr "ei voi lukea"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHelloa ei voi muodostaa"
-
 msgid "cannot bundle the packages: %s"
 msgstr "paketteja ei voi niputtaa: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "'{1}':tä ei löydy; luo sellainen komennolla `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "oletuslogoa ei voi tehdä"
-
-msgid "cannot make a key share"
-msgstr "avainosuutta ei voi tehdä"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "korjaustiedostoa ei voi tehdä '{1}':stä '{2}':een"
@@ -3171,14 +3165,8 @@ msgstr "palvelin ei vastannut HTTP/1.x:llä"
 msgid "the server redirected from https to http (refused)"
 msgstr "palvelin ohjasi https:stä http:hen (hylätty)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "palvelimen CertificateVerify-allekirjoitus ei tarkistu"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "palvelimen varmenne ei ole TLS-palvelimille (sen laajennettu avainkäyttö)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "palvelimen allekirjoitusmalli ei sovi sen varmenteen avaimeen"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "allekirjoitus ei ole siellä, missä cabinet sanoo"

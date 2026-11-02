@@ -1706,9 +1706,6 @@ msgstr "cab باید \"embed\" یا \"external\" باشد"
 msgid "cannot be read"
 msgstr "خوانده نمی‌شود"
 
-msgid "cannot build the ClientHello"
-msgstr "ClientHello ساخته نمی‌شود"
-
 msgid "cannot bundle the packages: %s"
 msgstr "بسته‌ها در مجموعه گرد نمی‌آیند: {1}"
 
@@ -1726,9 +1723,6 @@ msgstr "'{1}' یافت نشد؛ آن را با `rubrapack new {2}` بسازید"
 
 msgid "cannot make a default logo"
 msgstr "لوگوی پیش‌فرض ساخته نمی‌شود"
-
-msgid "cannot make a key share"
-msgstr "سهم کلید ساخته نمی‌شود"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "وصله‌ای از '{1}' به '{2}' ساخته نمی‌شود"
@@ -3173,14 +3167,8 @@ msgstr "سرور با HTTP/1.x پاسخ نداد"
 msgid "the server redirected from https to http (refused)"
 msgstr "سرور از https به http تغییر مسیر داد (رد شد)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "امضای CertificateVerify سرور تأیید نمی‌شود"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "گواهی سرور برای سرورهای TLS نیست (کاربرد کلید گسترش‌یافته آن)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "طرح امضای سرور با کلید گواهی آن جور نیست"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "امضا جایی نیست که cabinet می‌گوید"

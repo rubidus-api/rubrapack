@@ -1704,9 +1704,6 @@ msgstr "cab должен быть \"embed\" или \"external\""
 msgid "cannot be read"
 msgstr "не удается прочитать"
 
-msgid "cannot build the ClientHello"
-msgstr "не удается построить ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "не удается объединить пакеты в набор: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "не удается найти '{1}'; создайте его через
 
 msgid "cannot make a default logo"
 msgstr "не удается создать логотип по умолчанию"
-
-msgid "cannot make a key share"
-msgstr "не удается создать общий ключ"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "не удается создать исправление из '{1}' в '{2}'"
@@ -3171,14 +3165,8 @@ msgstr "сервер ответил не по HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "сервер перенаправил с https на http (отклонено)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "подпись CertificateVerify сервера не проверяется"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "сертификат сервера не предназначен для TLS-серверов (расширенное использование ключа)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "схема подписи сервера не соответствует ключу его сертификата"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "подпись находится не там, где указывает CAB-файл"

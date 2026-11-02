@@ -1704,9 +1704,6 @@ msgstr "cab deve ser \"embed\" ou \"external\""
 msgid "cannot be read"
 msgstr "não é possível ler"
 
-msgid "cannot build the ClientHello"
-msgstr "não é possível criar o ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "não é possível agrupar os pacotes: {1}"
 
@@ -1724,9 +1721,6 @@ msgstr "não é possível encontrar '{1}'; crie um com `rubrapack new {2}`"
 
 msgid "cannot make a default logo"
 msgstr "não é possível criar um logotipo padrão"
-
-msgid "cannot make a key share"
-msgstr "não é possível criar um compartilhamento de chave"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "não é possível criar um patch de '{1}' para '{2}'"
@@ -3171,14 +3165,8 @@ msgstr "o servidor não respondeu com HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "o servidor redirecionou de https para http (recusado)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "a assinatura CertificateVerify do servidor não é verificada"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "o certificado do servidor não é para servidores TLS (seu uso estendido de chave)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "o esquema de assinatura do servidor não corresponde à chave do seu certificado"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "a assinatura não está onde o cabinet diz"

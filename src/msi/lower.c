@@ -10,7 +10,7 @@
 #include "rubrapack/cfb.h"
 #include "rubrapack/ident.h"
 #include "rubrapack/lint.h"
-#include "rubrapack/md5.h"
+#include "proven/hash_legacy.h"
 #include "rubrapack/mem.h"
 #include "proven/map.h"
 #include "rubrapack/merge.h"
@@ -3273,7 +3273,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             break;
         }
         lf->size = n;
-        rp_md5(lf->data, n, lf->md5);
+        proven_md5((proven_mem_view_t){ (const proven_byte_t *)lf->data, n }, lf->md5);
         // One snapshot (RFC-0001 14.2): the bytes read here are hashed, versioned and packed; the
         // model's earlier look (size, PE machine) must describe the same file.
         rp_pe_info_t snap;
@@ -3506,7 +3506,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     // One snapshot (RFC-0001 14.2) with mapped files: what was packed is still what was hashed.
     for (size_t i = 0; err == PROVEN_OK && files && i < ir->file_count; ++i) {
         uint8_t again[16];
-        rp_md5(files[i].data, files[i].size, again);
+        proven_md5((proven_mem_view_t){ (const proven_byte_t *)(files[i].data), files[i].size }, again);
         if (memcmp(again, files[i].md5, sizeof again) != 0) {
             rp_srcdiag_add(diags, files[i].f->pos, "RP1515", false, "source file '%s' changed while the package was being built",
                            files[i].f->source);

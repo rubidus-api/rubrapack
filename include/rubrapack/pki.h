@@ -41,17 +41,6 @@ typedef struct {
 // Parses one DER certificate; `why` says what is wrong on failure. The spans point into `der`.
 [[nodiscard]] bool rp_cert_parse(const uint8_t *der, size_t len, rp_cert_t *c, const char **why);
 
-// Whether the certificate names `host` (RFC 6125, RFC 9525): a DNS name against the dNSName
-// entries of subjectAltName - ASCII letters compared without case, a trailing dot ignored, "*" only
-// as the whole leftmost label of a name with at least two more labels, standing for exactly one
-// label; an IPv4 or IPv6 literal against the iPAddress entries only. The subject's common name is
-// never used.
-[[nodiscard]] bool rp_cert_names_host(const rp_cert_t *c, const char *host);
-
-// Parses an IPv4 ("192.0.2.1") or IPv6 ("2001:db8::1", no zone) literal into 4 or 16 bytes;
-// 0 when `s` is neither.
-size_t rp_ip_parse(const char *s, uint8_t out[16]);
-
 // A private key with its certificates, loaded from a PKCS#12 (.pfx/.p12), PEM or DER PKCS#8 file.
 typedef struct {
     proven_allocator_t alloc;

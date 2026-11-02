@@ -1706,9 +1706,6 @@ msgstr "يجب أن يكون cab هو \"embed\" أو \"external\""
 msgid "cannot be read"
 msgstr "لا يمكن قراءته"
 
-msgid "cannot build the ClientHello"
-msgstr "لا يمكن بناء ClientHello"
-
 msgid "cannot bundle the packages: %s"
 msgstr "لا يمكن تجميع الحزم: {1}"
 
@@ -1726,9 +1723,6 @@ msgstr "لا يمكن العثور على '{1}'؛ أنشئ واحداً باست
 
 msgid "cannot make a default logo"
 msgstr "لا يمكن إنشاء شعار افتراضي"
-
-msgid "cannot make a key share"
-msgstr "لا يمكن إنشاء مشاركة مفتاح"
 
 msgid "cannot make a patch from '%s' to '%s'"
 msgstr "لا يمكن إنشاء تصحيح من '{1}' إلى '{2}'"
@@ -3173,14 +3167,8 @@ msgstr "لم يُجب الخادم بـ HTTP/1.x"
 msgid "the server redirected from https to http (refused)"
 msgstr "أعاد الخادم التوجيه من https إلى http (مرفوض)"
 
-msgid "the server's CertificateVerify signature does not verify"
-msgstr "توقيع CertificateVerify من الخادم غير سليم"
-
 msgid "the server's certificate is not for TLS servers (its extended key usage)"
 msgstr "شهادة الخادم ليست لخوادم TLS (استخدام المفتاح الموسّع الخاص بها)"
-
-msgid "the server's signature scheme does not fit its certificate's key"
-msgstr "مخطط توقيع الخادم لا يناسب مفتاح شهادته"
 
 msgid "the signature does not lie where the cabinet says"
 msgstr "التوقيع ليس حيث يقول cabinet"

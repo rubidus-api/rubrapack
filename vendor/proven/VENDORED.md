@@ -7,5 +7,6 @@ defect is found, report it to proven_c_lib and resync from a fixed release.
   (`include/`, `src/`, `platform/`, `LICENSE`, `THIRD_PARTY_NOTICES.md`).
 - Build flags: `nob.c` compiles these files with proven's own flag set
   (`-std=c23 -Wall -Wextra -Werror`, no `-pedantic`), because `src/proven/random.c` and
-  `src/proven/float_decimal.c` use `unsigned __int128`. Only the files `nob.c` names are compiled;
-  the rest of the snapshot (TLS, HTTP, compression, ...) is here unbuilt. rubrapack's own sources keep `-pedantic`.
+  `src/proven/float_decimal.c` use `unsigned __int128`. Only the files `nob.c` names are compiled
+  (since 2026-11-02 also the hashes, HMAC, certificates and the TLS engine with its crypto);
+  the rest of the snapshot (HTTP, QUIC, compression, ...) is here unbuilt. rubrapack's own sources keep `-pedantic`.
