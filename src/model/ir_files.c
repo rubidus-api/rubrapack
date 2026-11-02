@@ -341,7 +341,7 @@ void ir_parse_feature(ctx_t *c, const rp_ttable_t *t, rp_ir_feature_t *f) {
     static const char *const keys[] = { "title", "description", "level", "hidden", "parent", "when", "required", "follow-parent", "default-when", "advertise", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 38);
-    f->id = RP_V(ir_dup(c, t->id));
+    f->id = ir_dup_v(c, t->id);
     f->pos = t->pos;
     f->title = RP_V(ir_get_str(c, t, "title", true, NULL));
     f->description = RP_V(ir_get_str(c, t, "description", false, NULL));
@@ -373,9 +373,9 @@ void ir_parse_dir(ctx_t *c, const rp_ttable_t *t, rp_ir_dir_t *d) {
     static const char *const keys[] = { "path", "feature", "guard", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    d->id = RP_V(ir_dup(c, t->id));
+    d->id = ir_dup_v(c, t->id);
     d->pos = t->pos;
-    if (ir_windows_name(t->id)) ERR(c, t->pos, "RP1404", "[dir.%s]: '%s' is a Windows name; give the dir another ID", t->id, t->id);
+    if (ir_windows_name(rp_cs(t->id))) ERR(c, t->pos, "RP1404", "[dir.%s]: '%s' is a Windows name; give the dir another ID", rp_cs(t->id), rp_cs(t->id));
     d->guard = ir_get_bool(c, t, "guard", false);
     d->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
     char *path = ir_get_path(c, t, "path", true);
@@ -435,7 +435,7 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
                                         "component-guid", "when", "isolate-for", "assembly", "assembly-for", "manifest", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    f->id = RP_V(ir_dup(c, t->id));
+    f->id = ir_dup_v(c, t->id);
     char *iso = ir_get_str(c, t, "isolate-for", false, NULL);
     if (iso && (strncmp(iso, "file:", 5) != 0 || iso[5] == 0)) ERR(c, ir_key_pos(t, "isolate-for"), "RP1311", "%s must be \"file:<ID>\" naming a [file.*] of this package", "isolate-for");
     else if (iso) f->isolate_for = RP_V(ir_dup(c, iso + 5));
@@ -455,12 +455,12 @@ void ir_parse_file(ctx_t *c, const rp_ttable_t *t, rp_ir_file_t *f) {
         rp_mem_free(c->alloc, v);
     }
     if ((f->assembly_for.ptr || f->manifest.ptr) && f->assembly == RP_ASM_NONE) {
-        ERR(c, t->pos, "RP1202", "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\"", t->id);
+        ERR(c, t->pos, "RP1202", "[file.%s]: assembly-for and manifest go with assembly = \"dotnet\" or \"win32\"", rp_cs(t->id));
     }
     if (f->assembly == RP_ASM_WIN32 && f->manifest.ptr == NULL) {
-        ERR(c, t->pos, "RP1202", "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", t->id);
+        ERR(c, t->pos, "RP1202", "[file.%s]: a Win32 assembly needs manifest = \"file:<ID>\", its manifest file", rp_cs(t->id));
     } else if (f->assembly == RP_ASM_DOTNET && f->manifest.ptr) {
-        ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", t->id);
+        ERR(c, ir_key_pos(t, "manifest"), "RP1316", "[file.%s]: a .NET assembly carries its manifest itself; manifest is for a Win32 one", rp_cs(t->id));
     }
     f->pos = t->pos;
     f->when = RP_V(ir_get_when(c, t));
@@ -724,7 +724,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
                 at = implicit_dir(c, at, q, gp);
                 if (at == NULL) break;
             }
-            char *logical = ir_join(c, t->id, rel);
+            char *logical = ir_join(c, rp_cs(t->id), rel);
             char key[23];
             if (logical) rp_key_derive('F', logical, key);
             rp_ir_file_t *f = ir_push_file(c);
@@ -770,7 +770,7 @@ void ir_parse_folder(ctx_t *c, const rp_ttable_t *t, rp_ir_folder_t *f) {
     static const char *const keys[] = { "dir", "name", "keep", "feature", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    f->id = RP_V(ir_dup(c, t->id));
+    f->id = ir_dup_v(c, t->id);
     f->pos = t->pos;
     f->dir = RP_V(ir_get_str(c, t, "dir", true, NULL));
     f->name = RP_V(ir_get_str(c, t, "name", true, NULL));

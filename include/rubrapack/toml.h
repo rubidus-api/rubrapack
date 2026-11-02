@@ -11,6 +11,8 @@
 
 #include "proven/allocator.h"
 #include "proven/types.h"
+#include "proven/u8str.h"
+#include "rubrapack/str.h"
 #include "rubrapack/srcdiag.h"
 
 typedef enum {
@@ -23,8 +25,7 @@ typedef enum {
 typedef struct rp_tval {
     rp_tkind_t      kind;
     rp_pos_t        pos;
-    char           *str;        // RP_TV_STRING: UTF-8 after TOML unescaping, NUL-terminated
-    size_t          len;
+    proven_u8str_view_t s;      // RP_TV_STRING: UTF-8 after TOML unescaping (owned; a NUL follows it)
     bool            literal;    // written as '...'
     int64_t         i;          // RP_TV_INT
     bool            b;          // RP_TV_BOOL
@@ -33,14 +34,14 @@ typedef struct rp_tval {
 } rp_tval_t;
 
 typedef struct {
-    char     *key;              // bare key, NUL-terminated
+    proven_u8str_view_t key;    // bare key (owned; a NUL follows it)
     rp_pos_t  pos;
     rp_tval_t val;
 } rp_tkey_t;
 
 typedef struct {
-    char      *kind;            // first header segment
-    char      *id;              // second segment, or NULL for a one-segment header
+    proven_u8str_view_t kind;   // first header segment (owned; a NUL follows each)
+    proven_u8str_view_t id;     // second segment, or absent for a one-segment header
     rp_pos_t   pos;
     rp_tkey_t *keys;            // in file order
     size_t     count;

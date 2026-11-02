@@ -130,14 +130,14 @@ static size_t value_end(const src_t *s, size_t i) {
 static rp_ttable_t *table(const src_t *s, const char *kind, const char *id) {
     for (size_t i = 0; i < s->doc.count; ++i) {
         rp_ttable_t *t = &s->doc.tables[i];
-        if (strcmp(t->kind, kind) == 0 && ((id == NULL && t->id == NULL) || (id && t->id && strcmp(t->id, id) == 0))) return t;
+        if (RP_EQ(t->kind, kind) && ((id == NULL && t->id.ptr == NULL) || (id && t->id.ptr && RP_EQ(t->id, id)))) return t;
     }
     return NULL;
 }
 
 static rp_tkey_t *key(rp_ttable_t *t, const char *k) {
     for (size_t i = 0; t && i < t->count; ++i) {
-        if (strcmp(t->keys[i].key, k) == 0) return &t->keys[i];
+        if (RP_EQ(t->keys[i].key, k)) return &t->keys[i];
     }
     return NULL;
 }
@@ -145,7 +145,7 @@ static rp_tkey_t *key(rp_ttable_t *t, const char *k) {
 // Points into the parse: valid only until the next change.
 static const char *get(const src_t *s, const char *kind, const char *id, const char *k) {
     rp_tkey_t *x = key(table(s, kind, id), k);
-    return x && x->val.kind == RP_TV_STRING ? x->val.str : NULL;
+    return x && x->val.kind == RP_TV_STRING ? rp_cs(x->val.s) : NULL;
 }
 
 static void header(char *out, size_t cap, const char *kind, const char *id) {
@@ -217,7 +217,7 @@ static bool remove_table(src_t *s, const char *kind, const char *id) {
 static void all_ids(const src_t *s, ids_t *ids) {
     ids->n = 0;
     for (size_t i = 0; i < s->doc.count && ids->n < sizeof ids->v / sizeof ids->v[0]; ++i) {
-        if (s->doc.tables[i].id) CUT(ids->v[ids->n++], sizeof ids->v[0], "%s", s->doc.tables[i].id);
+        if (s->doc.tables[i].id.ptr) CUT(ids->v[ids->n++], sizeof ids->v[0], "%s", rp_cs(s->doc.tables[i].id));
     }
 }
 
@@ -226,16 +226,16 @@ static void find_dist(const src_t *s, char *out, size_t cap) {
     CUT(out, cap, "dist");
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        const char *v = strcmp(t->kind, "file") == 0 ? get(s, "file", t->id, "source") : strcmp(t->kind, "files") == 0 ? get(s, "files", t->id, "glob") : NULL;
+        const char *v = RP_EQ(t->kind, "file") ? get(s, "file", rp_cs(t->id), "source") : RP_EQ(t->kind, "files") ? get(s, "files", rp_cs(t->id), "glob") : NULL;
         const char *slash = v ? strchr(v, '/') : NULL;
-        if (slash && !strchr(slash + 1, '/') && strcmp(t->kind, "file") == 0) {
+        if (slash && !strchr(slash + 1, '/') && RP_EQ(t->kind, "file")) {
             CUT(out, cap, "%.*s", (int)(slash - v), v);
             return;
         }
     }
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        const char *v = strcmp(t->kind, "files") == 0 ? get(s, "files", t->id, "glob") : NULL;
+        const char *v = RP_EQ(t->kind, "files") ? get(s, "files", rp_cs(t->id), "glob") : NULL;
         const char *slash = v ? strchr(v, '/') : NULL;
         if (slash) {
             CUT(out, cap, "%.*s", (int)(slash - v), v);
@@ -254,15 +254,15 @@ static size_t sub_folders(const src_t *s, const char *dist, sub_t *out, size_t c
     size_t n = 0;
     for (size_t i = 0; i < s->doc.count && n < cap; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        if (strcmp(t->kind, "files") != 0 || t->id == NULL) continue;
-        const char *glob = get(s, "files", t->id, "glob"), *d = get(s, "files", t->id, "dir");
+        if (!RP_EQ(t->kind, "files") || t->id.ptr == NULL) continue;
+        const char *glob = get(s, "files", rp_cs(t->id), "glob"), *d = get(s, "files", rp_cs(t->id), "dir");
         size_t dl = strlen(dist);
         if (!glob || !d || strncmp(glob, dist, dl) != 0 || glob[dl] != '/') continue;
         const char *name = glob + dl + 1, *end = strstr(name, "/**");
         if (!end || end[3] != '\0' || memchr(name, '/', (size_t)(end - name))) continue;
         CUT(out[n].name, sizeof out[n].name, "%.*s", (int)(end - name), name);
         CUT(out[n].dir, sizeof out[n].dir, "%s", d);
-        CUT(out[n].files, sizeof out[n].files, "%s", t->id);
+        CUT(out[n].files, sizeof out[n].files, "%s", rp_cs(t->id));
         ++n;
     }
     return n;
@@ -271,12 +271,12 @@ static size_t sub_folders(const src_t *s, const char *dist, sub_t *out, size_t c
 static bool feature_used(const src_t *s, const char *f) {
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        if (strcmp(t->kind, "feature") == 0) {
-            const char *p = get(s, "feature", t->id, "parent");
+        if (RP_EQ(t->kind, "feature")) {
+            const char *p = get(s, "feature", rp_cs(t->id), "parent");
             if (p && strcmp(p, f) == 0) return true;
             continue;
         }
-        const char *v = t->id ? get(s, t->kind, t->id, "feature") : NULL;
+        const char *v = t->id.ptr ? get(s, rp_cs(t->kind), rp_cs(t->id), "feature") : NULL;
         if (v && strcmp(v, f) == 0) return true;
     }
     return false;
@@ -341,10 +341,10 @@ static int dialogs(src_t *s, ans_t *a) {
     if (strcmp(a->ui, "none") != 0) {
         rp_tkey_t *langs = key(table(s, "ui", NULL), "languages");
         bool ko = false, others = false;
-        if (langs && langs->val.kind == RP_TV_STRING && strcmp(langs->val.str, "all") == 0) ko = others = true;     // every built-in one
+        if (langs && langs->val.kind == RP_TV_STRING && RP_EQ(langs->val.s, "all")) ko = others = true;     // every built-in one
         for (size_t i = 0; langs && langs->val.kind == RP_TV_ARRAY && i < langs->val.count; ++i) {
             if (langs->val.items[i].kind != RP_TV_STRING) continue;
-            if (strcmp(langs->val.items[i].str, "ko") == 0) ko = true;
+            if (RP_EQ(langs->val.items[i].s, "ko")) ko = true;
             else others = true;
         }
         bool want = ko;
@@ -366,10 +366,10 @@ static void give_main(src_t *s) {
     static const char *const via_dir[] = { "file", "files", "folder", "remove", "ini", NULL };
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        if (t->id == NULL || key((rp_ttable_t *)t, "feature")) continue;
+        if (t->id.ptr == NULL || key((rp_ttable_t *)t, "feature")) continue;
         char kind[64], id[128];
-        CUT(kind, sizeof kind, "%s", t->kind);
-        CUT(id, sizeof id, "%s", t->id);
+        CUT(kind, sizeof kind, "%s", rp_cs(t->kind));
+        CUT(id, sizeof id, "%s", rp_cs(t->id));
         bool need = false;
         for (size_t k = 0; own[k]; ++k) need |= strcmp(kind, own[k]) == 0;
         if (strcmp(kind, "registry") == 0 && key((rp_ttable_t *)t, "with")) need = false;
@@ -462,10 +462,10 @@ static size_t file_tables(const src_t *s, char (*ids)[64], char (*names)[256], s
     size_t n = 0;
     for (size_t i = 0; i < s->doc.count && n < cap; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        const char *src = strcmp(t->kind, "file") == 0 && t->id ? get(s, "file", t->id, "source") : NULL;
+        const char *src = RP_EQ(t->kind, "file") && t->id.ptr ? get(s, "file", rp_cs(t->id), "source") : NULL;
         if (!src) continue;
         const char *base = strrchr(src, '/');
-        CUT(ids[n], 64, "%s", t->id);
+        CUT(ids[n], 64, "%s", rp_cs(t->id));
         CUT(names[n], 256, "%s", base ? base + 1 : src);
         ++n;
     }
@@ -475,7 +475,7 @@ static size_t file_tables(const src_t *s, char (*ids)[64], char (*names)[256], s
 static const rp_ttable_t *shortcut_in(const src_t *s, const char *dir) {
     for (size_t i = 0; i < s->doc.count; ++i) {
         const rp_ttable_t *t = &s->doc.tables[i];
-        const char *d = strcmp(t->kind, "shortcut") == 0 && t->id ? get(s, "shortcut", t->id, "dir") : NULL;
+        const char *d = RP_EQ(t->kind, "shortcut") && t->id.ptr ? get(s, "shortcut", rp_cs(t->id), "dir") : NULL;
         if (d && strcmp(d, dir) == 0) return t;
     }
     return NULL;
@@ -497,8 +497,8 @@ static int shortcuts(src_t *s, ans_t *a) {
     }
     const rp_ttable_t *start = shortcut_in(s, "Programs"), *desk = shortcut_in(s, "Desktop");
     char st_id[64] = "", dk_id[64] = "", cur[256] = "-";
-    if (start) CUT(st_id, sizeof st_id, "%s", start->id);
-    if (desk) CUT(dk_id, sizeof dk_id, "%s", desk->id);
+    if (start) CUT(st_id, sizeof st_id, "%s", rp_cs(start->id));
+    if (desk) CUT(dk_id, sizeof dk_id, "%s", rp_cs(desk->id));
     const char *target = start ? get(s, "shortcut", st_id, "target") : desk ? get(s, "shortcut", dk_id, "target") : NULL;
     for (size_t i = 0; i < n; ++i) {
         if (target && strncmp(target, "file:", 5) == 0 && strcmp(target + 5, ids[i]) == 0) CUT(cur, sizeof cur, "%s", names[i]);
@@ -572,7 +572,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         char tgt[80];
         CUT(tgt, sizeof tgt, "file:%s", ids[i]);
         for (size_t t = 0; t < s->doc.count; ++t) {
-            const char *v = s->doc.tables[t].id ? get(s, s->doc.tables[t].kind, s->doc.tables[t].id, "target") : NULL;
+            const char *v = s->doc.tables[t].id.ptr ? get(s, rp_cs(s->doc.tables[t].kind), rp_cs(s->doc.tables[t].id), "target") : NULL;
             target |= v && strcmp(v, tgt) == 0;
         }
         char m[700];
@@ -601,7 +601,7 @@ static int sync_files(src_t *s, ans_t *a, bool ask) {
         remove_table(s, "files", subs[i].files);
         bool dir_used = false;
         for (size_t t = 0; t < s->doc.count; ++t) {
-            const char *v = s->doc.tables[t].id ? get(s, s->doc.tables[t].kind, s->doc.tables[t].id, "dir") : NULL;
+            const char *v = s->doc.tables[t].id.ptr ? get(s, rp_cs(s->doc.tables[t].kind), rp_cs(s->doc.tables[t].id), "dir") : NULL;
             dir_used |= v && strcmp(v, subs[i].dir) == 0;
         }
         if (!dir_used) remove_table(s, "dir", subs[i].dir);

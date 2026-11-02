@@ -54,11 +54,11 @@ static char *ui_source(ctx_t *c, const char *shown, rp_pos_t pos) {
 void ir_parse_ui_text(ctx_t *c, const rp_ttable_t *t, rp_ir_ui_text_t *x) {
     static const char *const keys[] = { "text", NULL }, *const lkeys[] = { "text", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     ir_get_ltexts(c, t, "text", &x->by_lang, &x->by_lang_count);
     x->text = RP_V(ir_get_str(c, t, "text", x->by_lang_count == 0, NULL));
-    if (!rp_ui_text_known(t->id)) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", t->id);
+    if (!rp_ui_text_known(rp_cs(t->id))) ERR(c, t->pos, "RP1201", "[ui-text.%s]: no dialog text has this ID", rp_cs(t->id));
 }
 
 static bool public_property(const char *s) {
@@ -79,10 +79,10 @@ void ir_parse_dialog(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_t *x) {
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_get_ltexts(c, t, "title", &x->title_by_lang, &x->title_by_lang_count);
     ir_get_ltexts(c, t, "description", &x->description_by_lang, &x->description_by_lang_count);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     if (!ir_check_id(c, t, 72)) return;
-    if (strncmp(t->id, "Rp", 2) == 0 || strcmp(t->id, "FilesInUse") == 0) {
+    if (strncmp(rp_cs(t->id), "Rp", 2) == 0 || RP_EQ(t->id, "FilesInUse")) {
         ERR(c, t->pos, "RP1302", "dialog IDs starting with 'Rp' (and FilesInUse) are rubrapack's own");
     }
     x->title = RP_V(ir_get_str(c, t, "title", false, NULL));         // the banner heading; [ProductName] when omitted
@@ -95,7 +95,7 @@ void ir_parse_billboard(ctx_t *c, const rp_ttable_t *t, rp_ir_billboard_t *x) {
     static const char *const keys[] = { "image", "feature", "order", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 50);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     char *image = ir_get_str(c, t, "image", true, NULL);
     if (image) {
@@ -113,10 +113,10 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
                                         "labels", "image", NULL }, *const lkeys[] = { "text", "labels", NULL };
     ir_check_keys_lang(c, t, keys, lkeys);
     ir_get_ltexts(c, t, "text", &x->text_by_lang, &x->text_by_lang_count);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     if (!ir_check_id(c, t, 50)) return;
-    if (frame_control(t->id)) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", t->id);
+    if (frame_control(rp_cs(t->id))) ERR(c, t->pos, "RP1302", "'%s' is a control of the built-in frame; choose another ID", rp_cs(t->id));
     x->dialog = RP_V(ir_get_str(c, t, "dialog", true, NULL));
     char *type = ir_get_str(c, t, "type", true, NULL);
     static const char *const types[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap", NULL };
@@ -128,7 +128,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     rp_mem_free(c->alloc, type);
     static const char *const req[] = { "x", "y", "width", "height" };
     for (int k = 0; k < 4; ++k) {
-        if (!ir_find_key(t, req[k])) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs '%s'", t->id, req[k]);
+        if (!ir_find_key(t, req[k])) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs '%s'", rp_cs(t->id), req[k]);
     }
     // The body between the banner line (44) and the button line (234) of a 370 x 270 page.
     x->x = (int)ir_get_int(c, t, "x", 0, 0, 369);
@@ -150,14 +150,14 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
             else x->image_source = RP_V(ui_source(c, image, ir_key_pos(t, "image")));
             x->image_shown = RP_V(ir_dup(c, image));
         } else {
-            ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'image'", t->id);
+            ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'image'", rp_cs(t->id));
         }
     } else if (has_image) {
         ERR(c, ir_key_pos(t, "image"), "RP1316", "only a bitmap control takes an image");
     }
     rp_mem_free(c->alloc, image);
     if (x->type == RP_DC_TEXT || x->type == RP_DC_CHECKBOX) {
-        if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", t->id);
+        if (!has_text && x->text_by_lang_count == 0) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'text'", rp_cs(t->id));
     } else if (x->type >= 0 && (has_text || x->text_by_lang_count)) {
         static const char *const noname[] = { "text", "checkbox", "edit", "radio", "combo", "listbox", "bitmap" };
         ERR(c, ir_key_pos(t, "text"), "RP1316", "a %s control has no text; put a text control beside it", noname[x->type]);
@@ -165,7 +165,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     if (x->type == RP_DC_TEXT || x->type == RP_DC_BITMAP) {
         if (x->property.ptr) ERR(c, ir_key_pos(t, "property"), "RP1316", "a %s control has no property", x->type == RP_DC_BITMAP ? "bitmap" : "text");
     } else if (x->type >= 0) {
-        if (x->property.ptr == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", t->id);
+        if (x->property.ptr == NULL) ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'property'", rp_cs(t->id));
         else if (!public_property(rp_cs(x->property)))
             ERR(c, ir_key_pos(t, "property"), "RP1310", "property '%s' must be a public name of your own (upper case)", rp_cs(x->property));
     }
@@ -175,12 +175,12 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         if (vk) ERR(c, vk->pos, "RP1316", "only radio, combo and listbox controls take values");
         if (lk) ERR(c, lk->pos, "RP1316", "only radio, combo and listbox controls take labels");
         for (size_t k = 0; k < t->count; ++k) {
-            if (ir_lang_of_key(t->keys[k].key, "labels")) ERR(c, t->keys[k].pos, "RP1316", "only radio, combo and listbox controls take labels");
+            if (ir_lang_of_key(rp_cs(t->keys[k].key), "labels")) ERR(c, t->keys[k].pos, "RP1316", "only radio, combo and listbox controls take labels");
         }
         return;
     }
     if (vk == NULL) {
-        ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'values'", t->id);
+        ERR(c, t->pos, "RP1202", "[dialog-control.%s] needs 'values'", rp_cs(t->id));
         return;
     }
     if (vk->val.kind != RP_TV_ARRAY || vk->val.count == 0 || vk->val.count > 32) {
@@ -215,7 +215,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
     }
     // labels-xx: the labels in one language, one per value (RFC-0012).
     size_t nl = 0;
-    for (size_t k = 0; k < t->count; ++k) nl += ir_lang_of_key(t->keys[k].key, "labels") != NULL;
+    for (size_t k = 0; k < t->count; ++k) nl += ir_lang_of_key(rp_cs(t->keys[k].key), "labels") != NULL;
     if (nl) {
         x->labels_by_lang = rp_mem_alloc(c->alloc, nl, sizeof *x->labels_by_lang);
         if (x->labels_by_lang == NULL) {
@@ -224,11 +224,11 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         }
     }
     for (size_t k = 0; k < t->count; ++k) {
-        const char *code = ir_lang_of_key(t->keys[k].key, "labels");
+        const char *code = ir_lang_of_key(rp_cs(t->keys[k].key), "labels");
         if (code == NULL) continue;
         const rp_tval_t *a = &t->keys[k].val;
         if (a->kind != RP_TV_ARRAY || a->count != x->value_count) {
-            ERR(c, t->keys[k].pos, "RP1316", "%s is an array of strings, one per value", t->keys[k].key);
+            ERR(c, t->keys[k].pos, "RP1316", "%s is an array of strings, one per value", rp_cs(t->keys[k].key));
             continue;
         }
         char **ls = rp_mem_alloc(c->alloc, a->count, sizeof *ls);
@@ -238,7 +238,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         }
         for (size_t j = 0; j < a->count; ++j) {
             if (a->items[j].kind != RP_TV_STRING) {
-                ERR(c, t->keys[k].pos, "RP1316", "%s holds strings", t->keys[k].key);
+                ERR(c, t->keys[k].pos, "RP1316", "%s holds strings", rp_cs(t->keys[k].key));
                 ls[j] = ir_dup(c, "");
             } else {
                 ls[j] = ir_subst(c, &a->items[j]);
@@ -439,12 +439,12 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
     memcpy(ir->ui_langs[0].code, "en", 3);
     const rp_tkey_t *lk = uit ? ir_find_key(uit, "languages") : NULL;
     if (lk) {
-        bool all = lk->val.kind == RP_TV_STRING && lk->val.str && strcmp(lk->val.str, "all") == 0;
+        bool all = lk->val.kind == RP_TV_STRING && lk->val.s.ptr && RP_EQ(lk->val.s, "all");
         if (all) ui_all_languages(ir);
         else if (lk->val.kind != RP_TV_ARRAY) ERR(c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
         for (size_t k = 0; lk->val.kind == RP_TV_ARRAY && k < lk->val.count; ++k) {
             const rp_tval_t *v = &lk->val.items[k];
-            if (v->kind == RP_TV_STRING && v->str && strcmp(v->str, "all") == 0) {
+            if (v->kind == RP_TV_STRING && v->s.ptr && RP_EQ(v->s, "all")) {
                 ERR(c, lk->pos, "RP1316", "languages = \"all\" stands alone, not in an array: it takes every built-in language");
                 continue;
             }
@@ -471,11 +471,11 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
         const rp_tkey_t *key = &uit->keys[k];
         static const char *const bases[] = { "name", "font", "langid", "license" };
         for (int b = 0; b < 4; ++b) {
-            const char *code = ir_lang_of_key(key->key, bases[b]);
+            const char *code = ir_lang_of_key(rp_cs(key->key), bases[b]);
             if (code == NULL) continue;
             int li = ui_lang_index(ir, code);
             if (li < 0) {
-                ERR(c, key->pos, "RP1316", "'%s': '%s' is not in [ui] languages", key->key, code);
+                ERR(c, key->pos, "RP1316", "'%s': '%s' is not in [ui] languages", rp_cs(key->key), code);
                 continue;
             }
             rp_ir_ui_lang_t *L = &ir->ui_langs[li];
@@ -486,7 +486,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 for (size_t j = 0; j < cnt; ++j) {
                     const rp_tval_t *v = one->kind == RP_TV_ARRAY ? &one->items[j] : one;
                     if (v->kind != RP_TV_INT || v->i < 1 || v->i > 65535) {
-                        ERR(c, key->pos, "RP1308", "%s holds LANGIDs (1..65535), like 1041", key->key);
+                        ERR(c, key->pos, "RP1308", "%s holds LANGIDs (1..65535), like 1041", rp_cs(key->key));
                         break;
                     }
                     if (L->langid_count < RP_UI_LANGID_MAX) L->langids[L->langid_count++] = (uint16_t)v->i;
@@ -494,7 +494,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                 continue;
             }
             if (key->val.kind != RP_TV_STRING) {
-                ERR(c, key->pos, "RP1306", "'%s' must be a string", key->key);
+                ERR(c, key->pos, "RP1306", "'%s' must be a string", rp_cs(key->key));
                 continue;
             }
             char *v = ir_subst(c, &key->val);
@@ -506,7 +506,7 @@ static void ui_languages(ctx_t *c, const rp_ttable_t *uit) {
                     if ((*p & 0xC0) != 0x80) units += *p >= 0xF0 ? 2 : 1;
                 }
                 if (v && (units == 0 || units > 31 || ir_has_control(v))) {
-                    ERR(c, key->pos, "RP1308", "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)", key->key, units);
+                    ERR(c, key->pos, "RP1308", "%s is a typeface name of 1 to 31 characters, like \"Segoe UI\" (got %zu)", rp_cs(key->key), units);
                 }
                 L->font = RP_V(v);
             }

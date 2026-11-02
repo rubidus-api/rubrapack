@@ -87,13 +87,13 @@ static bool reserved_id(const char *s) {
 }
 
 bool ir_check_id(ctx_t *c, const rp_ttable_t *t, size_t max) {
-    if (!ir_valid_id(t->id, max)) {
+    if (!ir_valid_id(rp_cs(t->id), max)) {
         ERR(c, t->pos, "RP1301", "'%s' is not a valid ID (letters, digits and '_', not starting with a digit, at most %zu)",
-            t->id, max);
+            rp_cs(t->id), max);
         return false;
     }
-    if (reserved_id(t->id)) {
-        ERR(c, t->pos, "RP1302", "'%s' is reserved and cannot be used as an ID", t->id);
+    if (reserved_id(rp_cs(t->id))) {
+        ERR(c, t->pos, "RP1302", "'%s' is reserved and cannot be used as an ID", rp_cs(t->id));
         return false;
     }
     return true;
@@ -128,16 +128,16 @@ const char *ir_lang_of_key(const char *key, const char *base) {
 void ir_check_keys_lang(ctx_t *c, const rp_ttable_t *t, const char *const *allowed, const char *const *lang_bases) {
     for (size_t k = 0; k < t->count; ++k) {
         bool known = false;
-        for (size_t j = 0; allowed[j]; ++j) known |= strcmp(t->keys[k].key, allowed[j]) == 0;
-        for (size_t j = 0; lang_bases && lang_bases[j]; ++j) known |= ir_lang_of_key(t->keys[k].key, lang_bases[j]) != NULL;
+        for (size_t j = 0; allowed[j]; ++j) known |= RP_EQ(t->keys[k].key, allowed[j]);
+        for (size_t j = 0; lang_bases && lang_bases[j]; ++j) known |= ir_lang_of_key(rp_cs(t->keys[k].key), lang_bases[j]) != NULL;
         // msi-only (RFC-0009 M6) is read for every item table outside [msix-*] (msix_blockers).
-        known |= t->id && strncmp(t->kind, "msix", 4) != 0 && strcmp(t->keys[k].key, "msi-only") == 0;
+        known |= t->id.ptr && strncmp(rp_cs(t->kind), "msix", 4) != 0 && RP_EQ(t->keys[k].key, "msi-only");
         if (!known) {
-            const char *hint = ir_suggest(t->keys[k].key, allowed);
+            const char *hint = ir_suggest(rp_cs(t->keys[k].key), allowed);
             // Two whole messages, not a hint glued on: a glued phrase stays English in a pack.
-            if (hint) ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s] (did you mean '%s'?)", t->keys[k].key, t->kind,
-                          t->id ? "." : "", t->id ? t->id : "", hint);
-            else ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]", t->keys[k].key, t->kind, t->id ? "." : "", t->id ? t->id : "");
+            if (hint) ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s] (did you mean '%s'?)", rp_cs(t->keys[k].key), rp_cs(t->kind),
+                          t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", hint);
+            else ERR(c, t->keys[k].pos, "RP1201", "unknown key '%s' in [%s%s%s]", rp_cs(t->keys[k].key), rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "");
         }
     }
 }
@@ -146,7 +146,7 @@ void ir_check_keys(ctx_t *c, const rp_ttable_t *t, const char *const *allowed) {
 
 const rp_tkey_t *ir_find_key(const rp_ttable_t *t, const char *key) {
     for (size_t k = 0; k < t->count; ++k) {
-        if (strcmp(t->keys[k].key, key) == 0) return &t->keys[k];
+        if (RP_EQ(t->keys[k].key, key)) return &t->keys[k];
     }
     return NULL;
 }
@@ -224,7 +224,7 @@ bool ir_windows_name(const char *s) { return winname(s) != NULL; }
 static bool is_dir_id(const ctx_t *c, const char *s) {
     for (size_t k = 0; k < c->doc->count; ++k) {
         const rp_ttable_t *t = &c->doc->tables[k];
-        if (t->id && strcmp(t->kind, "dir") == 0 && strcmp(t->id, s) == 0) return true;
+        if (t->id.ptr && RP_EQ(t->kind, "dir") && RP_EQ(t->id, s)) return true;
     }
     return false;
 }
@@ -258,9 +258,9 @@ static const char *builtin_arch(ctx_t *c) {
     if (c->opt->arch.ptr) return rp_cs(c->opt->arch);
     for (size_t k = 0; k < c->doc->count; ++k) {
         const rp_ttable_t *t = &c->doc->tables[k];
-        if (strcmp(t->kind, "package") != 0 || t->id) continue;
+        if (!RP_EQ(t->kind, "package") || t->id.ptr) continue;
         const rp_tkey_t *a = ir_find_key(t, "arch");
-        if (a && a->val.kind == RP_TV_STRING && memchr(a->val.str, '$', a->val.len) == NULL) return a->val.str;
+        if (a && a->val.kind == RP_TV_STRING && memchr(a->val.s.ptr, '$', a->val.s.size) == NULL) return rp_cs(a->val.s);
     }
     return NULL;
 }
@@ -271,7 +271,7 @@ static const char *define_value(ctx_t *c, const char *name) {
     }
     if (c->define) {
         const rp_tkey_t *k = ir_find_key(c->define, name);
-        if (k && k->val.kind == RP_TV_STRING) return k->val.str;
+        if (k && k->val.kind == RP_TV_STRING) return rp_cs(k->val.s);
     }
     if (strcmp(name, "ARCH") == 0) return builtin_arch(c);
     return NULL;
@@ -284,19 +284,19 @@ static const char *define_value(ctx_t *c, const char *name) {
 // since its Windows Installer value ends with one. Values are not re-read.
 char *ir_subst(ctx_t *c, const rp_tval_t *v) {
     rp_buf_t b = rp_buf_new(c->alloc, (size_t)1 << 24);
-    const char *s = v->str;
+    const char *s = rp_cs(v->s);
     bool ok = true;
-    for (size_t i = 0; i < v->len;) {
-        if (s[i] == '$' && i + 1 < v->len && s[i + 1] == '$') {
+    for (size_t i = 0; i < v->s.size;) {
+        if (s[i] == '$' && i + 1 < v->s.size && s[i + 1] == '$') {
             rp_buf_byte(&b, '$');
             i += 2;
             continue;
         }
-        if (s[i] == '$' && i + 1 < v->len && s[i + 1] == '(') {
+        if (s[i] == '$' && i + 1 < v->s.size && s[i + 1] == '(') {
             char name[128];
-            size_t next = read_name(s, v->len, i, name, sizeof name);
+            size_t next = read_name(s, v->s.size, i, name, sizeof name);
             if (next == 0) {
-                ERR(c, v->pos, "RP1403", memchr(s + i, ')', v->len - i) ? TR_N("bad variable name in '$(...)'")
+                ERR(c, v->pos, "RP1403", memchr(s + i, ')', v->s.size - i) ? TR_N("bad variable name in '$(...)'")
                                                                        : TR_N("'$(' is not closed (write '$$(' for the text '$(')"));
                 ok = false;
                 break;
@@ -344,7 +344,7 @@ char *ir_subst(ctx_t *c, const rp_tval_t *v) {
                 ok = false;
                 break;
             }
-            if (folder && i < v->len && s[i] == '\\') ++i;
+            if (folder && i < v->s.size && s[i] == '\\') ++i;
             continue;
         }
         rp_buf_byte(&b, (uint8_t)s[i]);
@@ -380,8 +380,8 @@ char *ir_get_fmt(ctx_t *c, const rp_ttable_t *t, const char *key, bool required,
 char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required) {
     const rp_tkey_t *k = ir_find_key(t, key);
     if (k == NULL || k->val.kind != RP_TV_STRING) return ir_get_str(c, t, key, required, NULL);
-    const char *s = k->val.str;
-    size_t len = k->val.len;
+    const char *s = rp_cs(k->val.s);
+    size_t len = k->val.s.size;
     char name[128];
     size_t next = len >= 2 && s[0] == '$' && s[1] == '(' ? read_name(s, len, 0, name, sizeof name) : 0;
     if (next == 0 || (next < len && s[next] != '/')) {
@@ -401,8 +401,8 @@ char *ir_get_path(ctx_t *c, const rp_ttable_t *t, const char *key, bool required
         return NULL;
     }
     rp_tval_t rest = k->val;
-    rest.str = (char *)s + next;
-    rest.len = len - next;
+    rest.s = RP_V((char *)s + next);
+    rest.s.size = len - next;
     char *r = ir_subst(c, &rest);
     if (r == NULL) return NULL;
     char *out = r[0] == '/' ? ir_join(c, base, r + 1) : ir_dup(c, base);
@@ -416,7 +416,7 @@ char *ir_get_str(ctx_t *c, const rp_ttable_t *t, const char *key, bool required,
     if (present) *present = k != NULL;
     if (k == NULL) {
         if (required) {
-            ERR(c, t->pos, "RP1202", "[%s%s%s] needs '%s'", t->kind, t->id ? "." : "", t->id ? t->id : "", key);
+            ERR(c, t->pos, "RP1202", "[%s%s%s] needs '%s'", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", key);
         }
         return NULL;
     }
@@ -438,7 +438,7 @@ void ir_get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext
     size_t n = 0;
     *out = NULL;
     *count = 0;
-    for (size_t k = 0; k < t->count; ++k) n += ir_lang_of_key(t->keys[k].key, base) != NULL;
+    for (size_t k = 0; k < t->count; ++k) n += ir_lang_of_key(rp_cs(t->keys[k].key), base) != NULL;
     if (n == 0) return;
     *out = rp_mem_alloc(c->alloc, n, sizeof **out);
     if (*out == NULL) {
@@ -446,10 +446,10 @@ void ir_get_ltexts(ctx_t *c, const rp_ttable_t *t, const char *base, rp_ir_ltext
         return;
     }
     for (size_t k = 0; k < t->count; ++k) {
-        const char *code = ir_lang_of_key(t->keys[k].key, base);
+        const char *code = ir_lang_of_key(rp_cs(t->keys[k].key), base);
         if (code == NULL) continue;
         if (t->keys[k].val.kind != RP_TV_STRING) {
-            ERR(c, t->keys[k].pos, "RP1306", "'%s' must be a string", t->keys[k].key);
+            ERR(c, t->keys[k].pos, "RP1306", "'%s' must be a string", rp_cs(t->keys[k].key));
             continue;
         }
         (*out)[*count] = (rp_ir_ltext_t){ RP_V(ir_dup(c, code)), RP_V(ir_subst(c, &t->keys[k].val))};
@@ -605,8 +605,8 @@ void ir_check_format(ctx_t *c) {
     const rp_ttable_t *root = &c->doc->root;
     const rp_tkey_t *f = NULL;
     for (size_t k = 0; k < root->count; ++k) {
-        if (strcmp(root->keys[k].key, "format") == 0) f = &root->keys[k];
-        else ERR(c, root->keys[k].pos, "RP1108", "key '%s' outside a table; only 'format' comes before the first table", root->keys[k].key);
+        if (RP_EQ(root->keys[k].key, "format")) f = &root->keys[k];
+        else ERR(c, root->keys[k].pos, "RP1108", "key '%s' outside a table; only 'format' comes before the first table", rp_cs(root->keys[k].key));
     }
     if (f == NULL) {
         rp_srcdiag_add(c->d, (rp_pos_t){ 1, 1 }, "RP1108", true,

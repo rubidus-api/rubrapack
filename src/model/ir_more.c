@@ -50,7 +50,7 @@ void ir_parse_move(ctx_t *c, const rp_ttable_t *t, rp_ir_move_t *x) {
     static const char *const keys[] = { "from", "name", "to", "new-name", "copy", "with", "feature", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     char *from = ir_get_str(c, t, "from", true, NULL);
     if (from && strncmp(from, "property:", 9) == 0 && from[9]) x->from_prop = RP_V(ir_dup(c, from + 9));
@@ -61,18 +61,18 @@ void ir_parse_move(ctx_t *c, const rp_ttable_t *t, rp_ir_move_t *x) {
     x->new_name = RP_V(ir_get_str(c, t, "new-name", false, NULL));
     if (x->new_name.ptr) ir_target_name_ok(c, rp_cs(x->new_name), ir_key_pos(t, "new-name"));
     if (x->new_name.ptr && x->name.ptr && strpbrk(rp_cs(x->name), "*?"))
-        ERR(c, ir_key_pos(t, "new-name"), "RP1316", "[move.%s]: new-name names one file; name has wildcards", t->id);
+        ERR(c, ir_key_pos(t, "new-name"), "RP1316", "[move.%s]: new-name names one file; name has wildcards", rp_cs(t->id));
     x->copy = ir_get_bool(c, t, "copy", false);
     x->with_file = RP_V(file_ref(c, t, "with", false));
     x->feature = RP_V(ir_get_str(c, t, "feature", false, NULL));
-    if (x->with_file.ptr && x->feature.ptr) ERR(c, ir_key_pos(t, "feature"), "RP1316", "[move.%s]: feature goes with a component of its own, not with", t->id);
+    if (x->with_file.ptr && x->feature.ptr) ERR(c, ir_key_pos(t, "feature"), "RP1316", "[move.%s]: feature goes with a component of its own, not with", rp_cs(t->id));
 }
 
 void ir_parse_odbc_driver(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_driver_t *x) {
     static const char *const keys[] = { "file", "setup", "description", "attributes", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     x->file = RP_V(file_ref(c, t, "file", true));
     x->setup = RP_V(file_ref(c, t, "setup", false));
@@ -84,7 +84,7 @@ void ir_parse_odbc_source(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_source_t *x
     static const char *const keys[] = { "driver", "driver-name", "name", "registration", "attributes", "with", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     x->driver = RP_V(ir_get_str(c, t, "driver", false, NULL));
     x->driver_name = RP_V(ir_get_str(c, t, "driver-name", false, NULL));
@@ -98,16 +98,16 @@ void ir_parse_odbc_source(ctx_t *c, const rp_ttable_t *t, rp_ir_odbc_source_t *x
     key_values(c, t, "attributes", &x->attributes, &x->attribute_count);
     x->with_file = RP_V(file_ref(c, t, "with", false));
     if ((x->driver.ptr == NULL) == (x->driver_name.ptr == NULL))
-        ERR(c, t->pos, "RP1316", "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name", t->id);
+        ERR(c, t->pos, "RP1316", "[odbc-source.%s] names its driver once: driver (an [odbc-driver]) or driver-name", rp_cs(t->id));
     else if (x->driver_name.ptr && x->with_file.ptr == NULL)
-        ERR(c, t->pos, "RP1202", "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with", t->id);
+        ERR(c, t->pos, "RP1202", "[odbc-source.%s] with driver-name needs with = \"file:<ID>\": the component it is installed with", rp_cs(t->id));
 }
 
 void ir_parse_publish(ctx_t *c, const rp_ttable_t *t, rp_ir_publish_t *x) {
     static const char *const keys[] = { "file", "category", "qualifier", "data", NULL };
     ir_check_keys(c, t, keys);
     ir_check_id(c, t, 72);
-    x->id = RP_V(ir_dup(c, t->id));
+    x->id = ir_dup_v(c, t->id);
     x->pos = t->pos;
     x->file = RP_V(file_ref(c, t, "file", true));
     x->category = RP_V(ir_get_str(c, t, "category", true, NULL));

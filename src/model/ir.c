@@ -78,84 +78,84 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     const rp_ttable_t *arp = NULL;
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
-        if (!ir_in_list(t->kind, all_kinds)) {
-            const char *hint = ir_suggest(t->kind, all_kinds);
-            if (hint) ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s] (did you mean [%s]?)", t->kind, t->id ? "." : "", t->id ? t->id : "", hint);
-            else ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s]", t->kind, t->id ? "." : "", t->id ? t->id : "");
+        if (!ir_in_list(rp_cs(t->kind), all_kinds)) {
+            const char *hint = ir_suggest(rp_cs(t->kind), all_kinds);
+            if (hint) ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s] (did you mean [%s]?)", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "", hint);
+            else ERR(&c, t->pos, "RP1201", "unknown table [%s%s%s]", rp_cs(t->kind), t->id.ptr ? "." : "", t->id.ptr ? rp_cs(t->id) : "");
             continue;
         }
-        if (ir_in_list(t->kind, later_kinds)) {
-            ERR(&c, t->pos, "RP1901", "[%s%s] is not supported yet (planned for %s)", t->kind, t->id ? ".*" : "",
-                phase_of(t->kind));
+        if (ir_in_list(rp_cs(t->kind), later_kinds)) {
+            ERR(&c, t->pos, "RP1901", "[%s%s] is not supported yet (planned for %s)", rp_cs(t->kind), t->id.ptr ? ".*" : "",
+                phase_of(rp_cs(t->kind)));
             continue;
         }
-        bool top = ir_in_list(t->kind, top_kinds);
-        if (top && t->id) {
-            ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", t->kind, t->kind);
+        bool top = ir_in_list(rp_cs(t->kind), top_kinds);
+        if (top && t->id.ptr) {
+            ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", rp_cs(t->kind), rp_cs(t->kind));
             continue;
         }
-        if (!top && t->id == NULL) {
-            ERR(&c, t->pos, "RP1201", "[%s] needs an ID: write [%s.ID]", t->kind, t->kind);
+        if (!top && t->id.ptr == NULL) {
+            ERR(&c, t->pos, "RP1201", "[%s] needs an ID: write [%s.ID]", rp_cs(t->kind), rp_cs(t->kind));
             continue;
         }
-        if (strcmp(t->kind, "package") == 0 || strcmp(t->kind, "module") == 0) {
+        if (RP_EQ(t->kind, "package") || RP_EQ(t->kind, "module")) {
             if (package) ERR(&c, t->pos, "RP1201", "a source holds one [package] or one [module], not both");
             package = t;
         }
-        else if (strcmp(t->kind, "define") == 0) c.define = t;
-        else if (strcmp(t->kind, "feature") == 0) ++nfeat;
-        else if (strcmp(t->kind, "dir") == 0) ++ndir;
-        else if (strcmp(t->kind, "file") == 0) ++nfile;
-        else if (strcmp(t->kind, "folder") == 0) ++nfolder;
-        else if (strcmp(t->kind, "property") == 0) ++nprop;
-        else if (strcmp(t->kind, "action") == 0) ++naction;
-        else if (strcmp(t->kind, "registry") == 0) ++nreg;
-        else if (strcmp(t->kind, "shortcut") == 0) ++nshort;
-        else if (strcmp(t->kind, "remove") == 0) ++nrem;
-        else if (strcmp(t->kind, "copy") == 0) ++ncopy;
-        else if (strcmp(t->kind, "env") == 0) ++nenv;
-        else if (strcmp(t->kind, "ini") == 0) ++nini;
-        else if (strcmp(t->kind, "require") == 0) ++nreq;
-        else if (strcmp(t->kind, "search") == 0) ++nsearch;
-        else if (strcmp(t->kind, "service") == 0) ++nsvc;
-        else if (strcmp(t->kind, "font") == 0) ++nfont;
-        else if (strcmp(t->kind, "merge") == 0) ++nmerge;
-        else if (strcmp(t->kind, "assoc") == 0) ++nassoc;
-        else if (strcmp(t->kind, "protocol") == 0) ++nproto;
-        else if (strcmp(t->kind, "com") == 0) ++ncom;
-        else if (strcmp(t->kind, "handler") == 0) {
+        else if (RP_EQ(t->kind, "define")) c.define = t;
+        else if (RP_EQ(t->kind, "feature")) ++nfeat;
+        else if (RP_EQ(t->kind, "dir")) ++ndir;
+        else if (RP_EQ(t->kind, "file")) ++nfile;
+        else if (RP_EQ(t->kind, "folder")) ++nfolder;
+        else if (RP_EQ(t->kind, "property")) ++nprop;
+        else if (RP_EQ(t->kind, "action")) ++naction;
+        else if (RP_EQ(t->kind, "registry")) ++nreg;
+        else if (RP_EQ(t->kind, "shortcut")) ++nshort;
+        else if (RP_EQ(t->kind, "remove")) ++nrem;
+        else if (RP_EQ(t->kind, "copy")) ++ncopy;
+        else if (RP_EQ(t->kind, "env")) ++nenv;
+        else if (RP_EQ(t->kind, "ini")) ++nini;
+        else if (RP_EQ(t->kind, "require")) ++nreq;
+        else if (RP_EQ(t->kind, "search")) ++nsearch;
+        else if (RP_EQ(t->kind, "service")) ++nsvc;
+        else if (RP_EQ(t->kind, "font")) ++nfont;
+        else if (RP_EQ(t->kind, "merge")) ++nmerge;
+        else if (RP_EQ(t->kind, "assoc")) ++nassoc;
+        else if (RP_EQ(t->kind, "protocol")) ++nproto;
+        else if (RP_EQ(t->kind, "com")) ++ncom;
+        else if (RP_EQ(t->kind, "handler")) {
             ++nhandler;
             const rp_tkey_t *tk = ir_find_key(t, "types");
             nhandler_types += tk && tk->val.kind == RP_TV_ARRAY ? tk->val.count : 0;
         }
-        else if (strcmp(t->kind, "menu") == 0) {
+        else if (RP_EQ(t->kind, "menu")) {
             ++nmenu;
             const rp_tkey_t *tk = ir_find_key(t, "on");
             nmenu_on += tk && tk->val.kind == RP_TV_ARRAY ? tk->val.count : 1;
         }
-        else if (strcmp(t->kind, "msix-extension") == 0) ++next_;
-        else if (strcmp(t->kind, "other-copy") == 0) ++nother;
-        else if (strcmp(t->kind, "move") == 0) ++nmove;
-        else if (strcmp(t->kind, "odbc-driver") == 0) ++nodbcd;
-        else if (strcmp(t->kind, "odbc-source") == 0) ++nodbcs;
-        else if (strcmp(t->kind, "publish") == 0) ++npublish;
-        else if (strcmp(t->kind, "permission") == 0) ++nperm;
-        else if (strcmp(t->kind, "ui-text") == 0) ++nuitext;
-        else if (strcmp(t->kind, "dialog") == 0) ++ndlg;
-        else if (strcmp(t->kind, "dialog-control") == 0) ++ndctl;
-        else if (strcmp(t->kind, "billboard") == 0) ++nbboard;
-        else if (strcmp(t->kind, "ui") == 0) uit = t;
-        else if (strcmp(t->kind, "arp") == 0) arp = t;
-        else if (strcmp(t->kind, "msix") == 0) ir_parse_msix(&c, t);
-        else if (strcmp(t->kind, "msix-app") == 0) ir_parse_msix_app(&c, t);
-        else if (strcmp(t->kind, "msix-dependency") == 0) ir_parse_msix_dep(&c, t);
-        else if (strcmp(t->kind, "msix-psf") == 0) ir_parse_msix_psf(&c, t);
-        else if (strcmp(t->kind, "winget") == 0) ir_parse_winget(&c, t);
+        else if (RP_EQ(t->kind, "msix-extension")) ++next_;
+        else if (RP_EQ(t->kind, "other-copy")) ++nother;
+        else if (RP_EQ(t->kind, "move")) ++nmove;
+        else if (RP_EQ(t->kind, "odbc-driver")) ++nodbcd;
+        else if (RP_EQ(t->kind, "odbc-source")) ++nodbcs;
+        else if (RP_EQ(t->kind, "publish")) ++npublish;
+        else if (RP_EQ(t->kind, "permission")) ++nperm;
+        else if (RP_EQ(t->kind, "ui-text")) ++nuitext;
+        else if (RP_EQ(t->kind, "dialog")) ++ndlg;
+        else if (RP_EQ(t->kind, "dialog-control")) ++ndctl;
+        else if (RP_EQ(t->kind, "billboard")) ++nbboard;
+        else if (RP_EQ(t->kind, "ui")) uit = t;
+        else if (RP_EQ(t->kind, "arp")) arp = t;
+        else if (RP_EQ(t->kind, "msix")) ir_parse_msix(&c, t);
+        else if (RP_EQ(t->kind, "msix-app")) ir_parse_msix_app(&c, t);
+        else if (RP_EQ(t->kind, "msix-dependency")) ir_parse_msix_dep(&c, t);
+        else if (RP_EQ(t->kind, "msix-psf")) ir_parse_msix_psf(&c, t);
+        else if (RP_EQ(t->kind, "winget")) ir_parse_winget(&c, t);
         // RFC-0009 M6: what an MSIX cannot carry (yet) is an error there, unless msi-only = true.
         static const char *const msix_ok[] = { "package", "define", "dir", "file", "files", "feature", "property", "ui", "ui-text",
                                                "dialog", "dialog-control", "arp", "msix", "msix-app", "msix-extension", "registry",
                                                "assoc", "protocol", "com", "handler", "menu", "other-copy", "shortcut", "font", "service", "msix-dependency", "msix-psf", "winget", "copy", "ini", "env", "merge", NULL };
-        if (!ir_in_list(t->kind, msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
+        if (!ir_in_list(rp_cs(t->kind), msix_ok) && !ir_get_bool(&c, t, "msi-only", false)) {
             rp_ir_msix_block_t *nb = rp_mem_alloc(alloc, ir->msix_block_count + 1, sizeof *nb);
             if (nb == NULL) {
                 c.nomem = true;
@@ -163,7 +163,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
                 if (ir->msix_block_count) memcpy(nb, ir->msix_blocks, ir->msix_block_count * sizeof *nb);
                 rp_mem_free(alloc, ir->msix_blocks);
                 ir->msix_blocks = nb;
-                nb[ir->msix_block_count++] = (rp_ir_msix_block_t){ RP_V(ir_dup(&c, t->kind)), RP_V(ir_dup(&c, t->id)), t->pos };
+                nb[ir->msix_block_count++] = (rp_ir_msix_block_t){ ir_dup_v(&c, t->kind), ir_dup_v(&c, t->id), t->pos };
             }
         }
     }
@@ -171,12 +171,12 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (c.define) {
         for (size_t k = 0; k < c.define->count; ++k) {
             const rp_tkey_t *key = &c.define->keys[k];
-            if (!ir_valid_id(key->key, 64)) ERR(&c, key->pos, "RP1401", "'%s' is not a valid variable name", key->key);
-            else if (ir_windows_name(key->key)) ERR(&c, key->pos, "RP1404", "'%s' is a Windows name; give the variable another name", key->key);
+            if (!ir_valid_id(rp_cs(key->key), 64)) ERR(&c, key->pos, "RP1401", "'%s' is not a valid variable name", rp_cs(key->key));
+            else if (ir_windows_name(rp_cs(key->key))) ERR(&c, key->pos, "RP1404", "'%s' is a Windows name; give the variable another name", rp_cs(key->key));
             for (size_t j = 0; j < doc->count; ++j) {
                 const rp_ttable_t *dt = &doc->tables[j];
-                if (dt->id && strcmp(dt->kind, "dir") == 0 && strcmp(dt->id, key->key) == 0) {
-                    ERR(&c, key->pos, "RP1404", "'%s' is also a dir ID; give the variable another name", key->key);
+                if (dt->id.ptr && RP_EQ(dt->kind, "dir") && RP_EQ(dt->id, key->key)) {
+                    ERR(&c, key->pos, "RP1404", "'%s' is also a dir ID; give the variable another name", rp_cs(key->key));
                 }
             }
             if (key->val.kind != RP_TV_STRING) ERR(&c, key->pos, "RP1306", "[define] values must be strings");
@@ -191,7 +191,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (package == NULL) {
         rp_pos_t top = { 1, 1 };
         ERR(&c, top, "RP1202", "the file needs a [package] table (or [module] for a merge module)");
-    } else if (strcmp(package->kind, "module") == 0) {
+    } else if (RP_EQ(package->kind, "module")) {
         ir_parse_module(&c, package);
         // A merge module carries files, folders and the settings that go with them; features,
         // dialogs and the rest belong to the package that merges it.
@@ -199,8 +199,8 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
                                                  "remove", "copy", NULL };
         for (size_t k = 0; k < doc->count; ++k) {
             const rp_ttable_t *t = &doc->tables[k];
-            if (ir_in_list(t->kind, all_kinds) && !ir_in_list(t->kind, module_ok)) {
-                ERR(&c, t->pos, "RP1201", "[%s%s] cannot go into a merge module; the package that merges it has it", t->kind, t->id ? ".*" : "");
+            if (ir_in_list(rp_cs(t->kind), all_kinds) && !ir_in_list(rp_cs(t->kind), module_ok)) {
+                ERR(&c, t->pos, "RP1201", "[%s%s] cannot go into a merge module; the package that merges it has it", rp_cs(t->kind), t->id.ptr ? ".*" : "");
             }
         }
     } else {
@@ -263,134 +263,134 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     if (ir->features == NULL || ir->folders == NULL) c.nomem = true;
     for (size_t k = 0; k < doc->count && !c.nomem; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
-        if (t->id == NULL) continue;
-        if (strcmp(t->kind, "feature") == 0) {
+        if (t->id.ptr == NULL) continue;
+        if (RP_EQ(t->kind, "feature")) {
             rp_ir_feature_t *f = &ir->features[ir->feature_count++];
             memset(f, 0, sizeof *f);
             ir_parse_feature(&c, t, f);
-        } else if (strcmp(t->kind, "dir") == 0) {
+        } else if (RP_EQ(t->kind, "dir")) {
             rp_ir_dir_t *d = ir_push_dir(&c);
             if (d) ir_parse_dir(&c, t, d);
-        } else if (strcmp(t->kind, "file") == 0) {
+        } else if (RP_EQ(t->kind, "file")) {
             rp_ir_file_t *f = ir_push_file(&c);
             if (f) ir_parse_file(&c, t, f);
-        } else if (strcmp(t->kind, "folder") == 0) {
+        } else if (RP_EQ(t->kind, "folder")) {
             rp_ir_folder_t *f = &ir->folders[ir->folder_count++];
             memset(f, 0, sizeof *f);
             ir_parse_folder(&c, t, f);
-        } else if (strcmp(t->kind, "property") == 0) {
+        } else if (RP_EQ(t->kind, "property")) {
             rp_ir_property_t *p = &ir->properties[ir->property_count++];
             memset(p, 0, sizeof *p);
             ir_parse_property(&c, t, p);
-        } else if (strcmp(t->kind, "action") == 0) {
+        } else if (RP_EQ(t->kind, "action")) {
             rp_ir_action_t *a = &ir->actions[ir->action_count++];
             memset(a, 0, sizeof *a);
             ir_parse_action(&c, t, a);
-        } else if (strcmp(t->kind, "registry") == 0) {
+        } else if (RP_EQ(t->kind, "registry")) {
             rp_ir_registry_t *r = &ir->registries[ir->registry_count++];
             memset(r, 0, sizeof *r);
             ir_parse_registry(&c, t, r);
-        } else if (strcmp(t->kind, "shortcut") == 0) {
+        } else if (RP_EQ(t->kind, "shortcut")) {
             rp_ir_shortcut_t *sc = &ir->shortcuts[ir->shortcut_count++];
             memset(sc, 0, sizeof *sc);
             ir_parse_shortcut(&c, t, sc);
-        } else if (strcmp(t->kind, "remove") == 0) {
+        } else if (RP_EQ(t->kind, "remove")) {
             rp_ir_remove_t *r = &ir->removes[ir->remove_count++];
             memset(r, 0, sizeof *r);
             ir_parse_remove(&c, t, r);
-        } else if (strcmp(t->kind, "copy") == 0) {
+        } else if (RP_EQ(t->kind, "copy")) {
             rp_ir_copy_t *cp = &ir->copies[ir->copy_count++];
             memset(cp, 0, sizeof *cp);
             ir_parse_copy(&c, t, cp);
-        } else if (strcmp(t->kind, "env") == 0) {
+        } else if (RP_EQ(t->kind, "env")) {
             rp_ir_env_t *e = &ir->envs[ir->env_count++];
             memset(e, 0, sizeof *e);
             ir_parse_env(&c, t, e);
-        } else if (strcmp(t->kind, "ini") == 0) {
+        } else if (RP_EQ(t->kind, "ini")) {
             rp_ir_ini_t *x = &ir->inis[ir->ini_count++];
             memset(x, 0, sizeof *x);
             ir_parse_ini(&c, t, x);
-        } else if (strcmp(t->kind, "require") == 0) {
+        } else if (RP_EQ(t->kind, "require")) {
             rp_ir_require_t *r = &ir->requires[ir->require_count++];
             memset(r, 0, sizeof *r);
             ir_parse_require(&c, t, r);
-        } else if (strcmp(t->kind, "search") == 0) {
+        } else if (RP_EQ(t->kind, "search")) {
             rp_ir_search_t *x = &ir->searches[ir->search_count++];
             memset(x, 0, sizeof *x);
             ir_parse_search(&c, t, x);
-        } else if (strcmp(t->kind, "service") == 0) {
+        } else if (RP_EQ(t->kind, "service")) {
             rp_ir_service_t *x = &ir->services[ir->service_count++];
             memset(x, 0, sizeof *x);
             ir_parse_service(&c, t, x);
-        } else if (strcmp(t->kind, "merge") == 0) {
+        } else if (RP_EQ(t->kind, "merge")) {
             rp_ir_merge_t *x = &ir->merges[ir->merge_count++];
             memset(x, 0, sizeof *x);
             ir_parse_merge(&c, t, x);
-        } else if (strcmp(t->kind, "font") == 0) {
+        } else if (RP_EQ(t->kind, "font")) {
             rp_ir_font_t *x = &ir->fonts[ir->font_count++];
             memset(x, 0, sizeof *x);
             ir_parse_font(&c, t, x);
-        } else if (strcmp(t->kind, "assoc") == 0) {
+        } else if (RP_EQ(t->kind, "assoc")) {
             rp_ir_assoc_t *x = &ir->assocs[ir->assoc_count++];
             memset(x, 0, sizeof *x);
             ir_parse_assoc(&c, t, x);
-        } else if (strcmp(t->kind, "protocol") == 0) {
+        } else if (RP_EQ(t->kind, "protocol")) {
             rp_ir_protocol_t *x = &ir->protocols[ir->protocol_count++];
             memset(x, 0, sizeof *x);
             ir_parse_protocol(&c, t, x);
-        } else if (strcmp(t->kind, "menu") == 0) {
+        } else if (RP_EQ(t->kind, "menu")) {
             rp_ir_menu_t *x = &ir->menus[ir->menu_count++];
             memset(x, 0, sizeof *x);
             ir_parse_menu(&c, t, x);
-        } else if (strcmp(t->kind, "other-copy") == 0) {
+        } else if (RP_EQ(t->kind, "other-copy")) {
             rp_ir_other_t *x = &ir->others[ir->other_count++];
             memset(x, 0, sizeof *x);
             ir_parse_other(&c, t, x);
-        } else if (strcmp(t->kind, "move") == 0) {
+        } else if (RP_EQ(t->kind, "move")) {
             rp_ir_move_t *x = &ir->moves[ir->move_count++];
             memset(x, 0, sizeof *x);
             ir_parse_move(&c, t, x);
-        } else if (strcmp(t->kind, "odbc-driver") == 0) {
+        } else if (RP_EQ(t->kind, "odbc-driver")) {
             rp_ir_odbc_driver_t *x = &ir->odbc_drivers[ir->odbc_driver_count++];
             memset(x, 0, sizeof *x);
             ir_parse_odbc_driver(&c, t, x);
-        } else if (strcmp(t->kind, "odbc-source") == 0) {
+        } else if (RP_EQ(t->kind, "odbc-source")) {
             rp_ir_odbc_source_t *x = &ir->odbc_sources[ir->odbc_source_count++];
             memset(x, 0, sizeof *x);
             ir_parse_odbc_source(&c, t, x);
-        } else if (strcmp(t->kind, "publish") == 0) {
+        } else if (RP_EQ(t->kind, "publish")) {
             rp_ir_publish_t *x = &ir->publishes[ir->publish_count++];
             memset(x, 0, sizeof *x);
             ir_parse_publish(&c, t, x);
-        } else if (strcmp(t->kind, "handler") == 0) {
+        } else if (RP_EQ(t->kind, "handler")) {
             rp_ir_handler_t *x = &ir->handlers[ir->handler_count++];
             memset(x, 0, sizeof *x);
             ir_parse_handler(&c, t, x);
-        } else if (strcmp(t->kind, "com") == 0) {
+        } else if (RP_EQ(t->kind, "com")) {
             rp_ir_com_t *x = &ir->coms[ir->com_count++];
             memset(x, 0, sizeof *x);
             ir_parse_com(&c, t, x);
-        } else if (strcmp(t->kind, "msix-extension") == 0) {
+        } else if (RP_EQ(t->kind, "msix-extension")) {
             rp_ir_msix_ext_t *x = &ir->msix_exts[ir->msix_ext_count++];
             memset(x, 0, sizeof *x);
             ir_parse_msix_ext(&c, t, x);
-        } else if (strcmp(t->kind, "permission") == 0) {
+        } else if (RP_EQ(t->kind, "permission")) {
             rp_ir_permission_t *x = &ir->permissions[ir->permission_count++];
             memset(x, 0, sizeof *x);
             ir_parse_permission(&c, t, x);
-        } else if (strcmp(t->kind, "ui-text") == 0) {
+        } else if (RP_EQ(t->kind, "ui-text")) {
             rp_ir_ui_text_t *x = &ir->ui_texts[ir->ui_text_count++];
             memset(x, 0, sizeof *x);
             ir_parse_ui_text(&c, t, x);
-        } else if (strcmp(t->kind, "dialog") == 0) {
+        } else if (RP_EQ(t->kind, "dialog")) {
             rp_ir_dialog_t *x = &ir->dialogs[ir->dialog_count++];
             memset(x, 0, sizeof *x);
             ir_parse_dialog(&c, t, x);
-        } else if (strcmp(t->kind, "dialog-control") == 0) {
+        } else if (RP_EQ(t->kind, "dialog-control")) {
             rp_ir_dialog_control_t *x = &ir->dialog_controls[ir->dialog_control_count++];
             memset(x, 0, sizeof *x);
             ir_parse_dialog_control(&c, t, x);
-        } else if (strcmp(t->kind, "billboard") == 0) {
+        } else if (RP_EQ(t->kind, "billboard")) {
             rp_ir_billboard_t *x = &ir->billboards[ir->billboard_count++];
             memset(x, 0, sizeof *x);
             ir_parse_billboard(&c, t, x);
@@ -399,7 +399,7 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
     // Wildcards after every dir is known (their feature and the implicit sub folders).
     for (size_t k = 0; k < doc->count && !c.nomem; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
-        if (t->id && strcmp(t->kind, "files") == 0) ir_expand_files(&c, t);
+        if (t->id.ptr && RP_EQ(t->kind, "files")) ir_expand_files(&c, t);
     }
     if (!c.nomem) ir_menu_files(&c);
     if (!c.nomem && ir->feature_count == 0) {       // G2: one hidden default feature
@@ -446,9 +446,9 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         // what needs rubrapack's helper DLL stays with packages.
         for (size_t k = 0; k < doc->count; ++k) {
             const rp_ttable_t *t = &doc->tables[k];
-            if (t->id && strlen(t->id) > 35 && strcmp(t->kind, "define") != 0) {
+            if (t->id.ptr && t->id.size > 35 && !RP_EQ(t->kind, "define")) {
                 ERR(&c, t->pos, "RP1301", "[%s.%s]: an ID in a merge module has at most 35 characters (the module's GUID is added to it)",
-                    t->kind, t->id);
+                    rp_cs(t->kind), rp_cs(t->id));
             }
         }
         for (size_t k = 0; k < ir->dir_count; ++k) {

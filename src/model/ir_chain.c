@@ -17,7 +17,7 @@ enum { TRAILER = 32, FLAG_VITAL = 1, FLAG_MSIX = 2, FLAG_MSP = 4, FLAG_BUNDLE = 
 
 bool rp_chain_is(const rp_tdoc_t *doc) {
     for (size_t k = 0; doc && k < doc->count; ++k) {
-        if (strcmp(doc->tables[k].kind, "chain") == 0) return true;
+        if (RP_EQ(doc->tables[k].kind, "chain")) return true;
     }
     return false;
 }
@@ -49,16 +49,16 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     ir_check_format(&c);
     for (size_t k = 0; k < doc->count; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
-        if (strcmp(t->kind, "chain") == 0 || strcmp(t->kind, "define") == 0) {
-            if (t->id) ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", t->kind, t->kind);
-            else if (strcmp(t->kind, "chain") == 0) chain = t;
+        if (RP_EQ(t->kind, "chain") || RP_EQ(t->kind, "define")) {
+            if (t->id.ptr) ERR(&c, t->pos, "RP1201", "[%s] takes no ID: write [%s]", rp_cs(t->kind), rp_cs(t->kind));
+            else if (RP_EQ(t->kind, "chain")) chain = t;
             else c.define = t;
-        } else if (strcmp(t->kind, "chain-package") == 0) {
-            if (t->id == NULL) ERR(&c, t->pos, "RP1201", "[chain-package] needs an ID: write [chain-package.ID]");
+        } else if (RP_EQ(t->kind, "chain-package")) {
+            if (t->id.ptr == NULL) ERR(&c, t->pos, "RP1201", "[chain-package] needs an ID: write [chain-package.ID]");
             else ++npkg;
         } else {
             ERR(&c, t->pos, "RP1201", "a chain holds [chain], [chain-package.ID] and [define] only, not [%s]; the packages are built from their own sources",
-                t->kind);
+                rp_cs(t->kind));
         }
     }
     if (chain == NULL) {
@@ -96,7 +96,7 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     if (lk && lk->val.kind != RP_TV_ARRAY) ERR(&c, lk->pos, "RP1306", "languages is an array of language codes, like [\"ko\"]");
     for (size_t i = 0; lk && lk->val.kind == RP_TV_ARRAY && i < lk->val.count; ++i) {
         const rp_tval_t *v = &lk->val.items[i];
-        const char *code = v->kind == RP_TV_STRING ? v->str : "";
+        const char *code = v->kind == RP_TV_STRING ? rp_cs(v->s) : "";
         if (strcmp(code, "en") == 0) continue;
         if (rp_langpack_get(code, opt->source_dir.ptr ? rp_cs(opt->source_dir) : ".") == NULL) {
             ERR(&c, lk->pos, "RP1509", "language '%s' has no language pack (lang/%s.po beside the source, or RUBRAPACK_LANG_DIR)", code, code);
@@ -112,14 +112,14 @@ proven_err_t rp_chain_parse(proven_allocator_t alloc, const rp_tdoc_t *doc, cons
     static const char *const pkg_keys[] = { "source", "properties", "vital", NULL };
     for (size_t k = 0; k < doc->count && out->count < npkg; ++k) {
         const rp_ttable_t *t = &doc->tables[k];
-        if (strcmp(t->kind, "chain-package") != 0 || t->id == NULL) continue;
+        if (!RP_EQ(t->kind, "chain-package") || t->id.ptr == NULL) continue;
         rp_chain_pkg_t *p = &out->pkgs[out->count++];
         ir_check_keys(&c, t, pkg_keys);
         ir_check_id(&c, t, 60);
         for (size_t j = 0; j + 1 < out->count; ++j) {
-            if (ir_ascii_casecmp(out->pkgs[j].id, t->id) == 0) ERR(&c, t->pos, "RP1301", "[chain-package.%s] is there twice", t->id);
+            if (ir_ascii_casecmp(out->pkgs[j].id, rp_cs(t->id)) == 0) ERR(&c, t->pos, "RP1301", "[chain-package.%s] is there twice", rp_cs(t->id));
         }
-        p->id = ir_dup(&c, t->id);
+        p->id = ir_dup(&c, rp_cs(t->id));
         p->pos = t->pos;
         p->shown = ir_get_str(&c, t, "source", true, NULL);
         p->properties = ir_get_str(&c, t, "properties", false, NULL);

@@ -290,6 +290,22 @@ proven_err_t rp_msi_open(rp_msi_t *msi, proven_allocator_t alloc, const rp_cfb_t
     }
     if (offset != msi->string_data_len) FAIL(PROVEN_ERR_INVALID_FORMAT, "string data longer than the pool says");
     if (pin.bad) FAIL(PROVEN_ERR_INVALID_FORMAT, "string pool entry cut short");
+    // Each string followed by a NUL, made once: a string read here is then a proven view that ends
+    // in a NUL, so the readers compare it as a view and hand it to the C library without a copy.
+    if (msi->string_data_len + msi->string_count > UINT32_MAX) FAIL(PROVEN_ERR_OUT_OF_BOUNDS, "string data too large");
+    uint8_t *text = rp_mem_alloc(alloc, msi->string_data_len + msi->string_count, 1);
+    if (text == NULL) FAIL(PROVEN_ERR_NOMEM, "out of memory");
+    size_t at = 0;
+    for (size_t id = 1; id < msi->string_count; ++id) {
+        rp_msi_string_t *e = &msi->strings[id];
+        if (e->length) memcpy(text + at, msi->string_data + e->offset, e->length);
+        e->offset = (uint32_t)at;
+        at += e->length;
+        text[at++] = 0;
+    }
+    rp_mem_free(alloc, msi->string_data);
+    msi->string_data = text;
+    msi->string_data_len = at;
 
     // _Tables and _Columns.
     static const uint16_t tables_types[] = { RP_MSI_COL_KEY | RP_MSI_COL_STRING | RP_MSI_COL_NONBINARY | 64 };

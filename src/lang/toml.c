@@ -106,7 +106,7 @@ static size_t read_bare_key(parser_t *p) {
 }
 
 static void free_val(proven_allocator_t alloc, rp_tval_t *v) {
-    rp_mem_free(alloc, v->str);
+    rp_mem_free(alloc, (void *)(v->s).ptr);
     for (size_t k = 0; k < v->count; ++k) free_val(alloc, &v->items[k]);
     rp_mem_free(alloc, v->items);
     memset(v, 0, sizeof *v);
@@ -213,10 +213,10 @@ static bool parse_basic_string(parser_t *p, rp_tval_t *out) {
         return false;
     }
     out->kind = RP_TV_STRING;
-    out->str = copy_str(p, data, len);
-    out->len = len;
+    const char *cp = copy_str(p, data, len);
+    out->s = cp ? (proven_u8str_view_t){ (const proven_byte_t *)cp, len } : RP_NONE;
     rp_mem_free(p->alloc, data);
-    return out->str != NULL;
+    return out->s.ptr != NULL;
 }
 
 static bool parse_literal_string(parser_t *p, rp_tval_t *out) {
@@ -253,9 +253,9 @@ static bool parse_literal_string(parser_t *p, rp_tval_t *out) {
     if (!ok) return false;
     out->kind = RP_TV_STRING;
     out->literal = true;
-    out->str = copy_str(p, p->s + from, to - from);
-    out->len = to - from;
-    return out->str != NULL;
+    const char *cp = copy_str(p, p->s + from, to - from);
+    out->s = cp ? (proven_u8str_view_t){ (const proven_byte_t *)cp, to - from } : RP_NONE;
+    return out->s.ptr != NULL;
 }
 
 static bool value_end(uint8_t c) {
@@ -462,8 +462,8 @@ static bool parse_value(parser_t *p, rp_tval_t *out, bool in_array) {
 static rp_ttable_t *add_table(parser_t *p, char *kind, char *id, rp_pos_t pos) {
     for (size_t t = 0; t < p->doc->count; ++t) {
         rp_ttable_t *x = &p->doc->tables[t];
-        bool same_id = (x->id == NULL && id == NULL) || (x->id && id && strcmp(x->id, id) == 0);
-        if (strcmp(x->kind, kind) == 0 && same_id) {
+        bool same_id = (x->id.ptr == NULL && id == NULL) || (x->id.ptr && id && RP_EQ(x->id, id));
+        if (RP_EQ(x->kind, kind) && same_id) {
             rp_srcdiag_add(p->d, pos, "RP1107", false, "table [%s%s%s] is defined twice (first at line %u)", kind,
                            id ? "." : "", id ? id : "", (unsigned)x->pos.line);
             rp_mem_free(p->alloc, kind);
@@ -487,8 +487,8 @@ static rp_ttable_t *add_table(parser_t *p, char *kind, char *id, rp_pos_t pos) {
     }
     rp_ttable_t *t = &p->doc->tables[p->doc->count++];
     memset(t, 0, sizeof *t);
-    t->kind = kind;
-    t->id = id;
+    t->kind = RP_V(kind);
+    t->id = RP_V(id);
     t->pos = pos;
     return t;
 }
@@ -582,21 +582,21 @@ static void parse_keyval(parser_t *p) {
         return;
     }
     for (size_t j = 0; j < t->count; ++j) {
-        if (strlen(t->keys[j].key) == len && memcmp(t->keys[j].key, p->s + start, len) == 0) {
+        if (t->keys[j].key.size == len && memcmp(t->keys[j].key.ptr, p->s + start, len) == 0) {
             rp_srcdiag_add(p->d, k.pos, "RP1107", false, "key '%.*s' is set twice in this table (first at line %u)",
                            (int)len, (const char *)p->s + start, (unsigned)t->keys[j].pos.line);
             free_val(p->alloc, &k.val);
             return;
         }
     }
-    k.key = copy_str(p, p->s + start, len);
+    k.key = RP_V(copy_str(p, p->s + start, len));
     if (t->count == t->cap) {
         size_t ncap = t->cap ? t->cap * 2 : 8;
         rp_tkey_t *v = rp_mem_alloc(p->alloc, ncap, sizeof *v);
-        if (v == NULL || k.key == NULL) {
+        if (v == NULL || k.key.ptr == NULL) {
             p->nomem = true;
             rp_mem_free(p->alloc, v);
-            rp_mem_free(p->alloc, k.key);
+            rp_mem_free(p->alloc, (void *)(k.key).ptr);
             free_val(p->alloc, &k.val);
             return;
         }
@@ -612,12 +612,12 @@ static void parse_keyval(parser_t *p) {
 
 static void free_table(proven_allocator_t alloc, rp_ttable_t *x) {
     for (size_t k = 0; k < x->count; ++k) {
-        rp_mem_free(alloc, x->keys[k].key);
+        rp_mem_free(alloc, (void *)(x->keys[k].key).ptr);
         free_val(alloc, &x->keys[k].val);
     }
     rp_mem_free(alloc, x->keys);
-    rp_mem_free(alloc, x->kind);
-    rp_mem_free(alloc, x->id);
+    rp_mem_free(alloc, (void *)(x->kind).ptr);
+    rp_mem_free(alloc, (void *)(x->id).ptr);
 }
 
 void rp_toml_free(rp_tdoc_t *doc) {
@@ -781,7 +781,7 @@ static void json_string(rp_buf_t *b, const char *s, size_t n) {
 
 static void json_value(rp_buf_t *b, const rp_tval_t *v) {
     switch (v->kind) {
-    case RP_TV_STRING: json_string(b, v->str, v->len); break;
+    case RP_TV_STRING: json_string(b, rp_cs(v->s), v->s.size); break;
     case RP_TV_INT: rp_buf_long(b, v->i); break;
     case RP_TV_BOOL: rp_buf_puts(b, v->b ? "true" : "false"); break;
     case RP_TV_ARRAY:
@@ -823,16 +823,16 @@ proven_err_t rp_toml_dump_json(const rp_tdoc_t *doc, proven_allocator_t alloc, u
     jnode_t root = { 0 };
     bool nomem = false;
     for (size_t k = 0; k < doc->root.count && !nomem; ++k) {
-        jnode_t *leaf = jchild(alloc, &root, doc->root.keys[k].key);
+        jnode_t *leaf = jchild(alloc, &root, rp_cs(doc->root.keys[k].key));
         if (leaf == NULL) nomem = true;
         else leaf->val = &doc->root.keys[k].val;
     }
     for (size_t t = 0; t < doc->count && !nomem; ++t) {
         const rp_ttable_t *x = &doc->tables[t];
-        jnode_t *n = jchild(alloc, &root, x->kind);
-        if (n && x->id) n = jchild(alloc, n, x->id);
+        jnode_t *n = jchild(alloc, &root, rp_cs(x->kind));
+        if (n && x->id.ptr) n = jchild(alloc, n, rp_cs(x->id));
         for (size_t k = 0; n && k < x->count; ++k) {
-            jnode_t *leaf = jchild(alloc, n, x->keys[k].key);
+            jnode_t *leaf = jchild(alloc, n, rp_cs(x->keys[k].key));
             if (leaf == NULL) break;
             leaf->val = &x->keys[k].val;
         }

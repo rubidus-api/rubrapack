@@ -10,6 +10,7 @@
 
 #include "proven/allocator.h"
 #include "proven/types.h"
+#include "proven/u8str.h"
 #include "rubrapack/cfb.h"
 #include "rubrapack/limits.h"
 
@@ -82,6 +83,7 @@ static inline rp_msi_value_t rp_msi_rcell(const rp_msi_rows_t *rows, size_t row,
 void rp_msi_close(rp_msi_t *msi);
 
 // String bytes for a string id (id 0 gives an empty string).
+// The bytes of string `id`; a NUL follows them (rp_msi_open keeps one after each string).
 [[nodiscard]] proven_err_t rp_msi_string(const rp_msi_t *msi, uint32_t id, const uint8_t **bytes, size_t *len);
 
 // Finds a table by name (UTF-8); *index is into msi->tables.
@@ -114,6 +116,14 @@ typedef struct {
     const uint8_t *bytes;   // RP_MSI_STR: string bytes in the pool code page; RP_MSI_BINARY: stream bytes
     size_t         len;     // an empty string is stored as null, as msi.dll does
 } rp_msi_cell_t;
+
+// The text of a string cell as Windows Installer hands it out (up to a NUL, which a string read by
+// rp_msi_open always has after it, so the view is also a C string); absent for any other cell.
+static inline proven_u8str_view_t rp_msi_cell_text(const rp_msi_cell_t *c) {
+    if (c == NULL || c->kind != RP_MSI_STR) return (proven_u8str_view_t){ 0 };
+    const uint8_t *z = c->len ? (const uint8_t *)memchr(c->bytes, 0, c->len) : NULL;
+    return (proven_u8str_view_t){ c->bytes, z ? (size_t)(z - c->bytes) : c->len };
+}
 
 // A string cell from a C string: NULL yields a NULL cell, otherwise a string cell of strlen(s)
 // bytes (an empty string is a string cell of length 0 - the writer stores it as null, above).
