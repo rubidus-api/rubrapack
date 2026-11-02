@@ -382,8 +382,6 @@ typedef struct {
     size_t       n;
 } shortset_t;
 
-static proven_u8str_view_t u8view(const char *t) { return (proven_u8str_view_t){ (const proven_byte_t *)t, strlen(t) }; }
-
 static void upper_83(const char *in, char out[16]) {
     size_t i = 0;
     for (; in[i] && i < 15; ++i) out[i] = in[i] >= 'a' && in[i] <= 'z' ? (char)(in[i] - 32) : in[i];
@@ -394,7 +392,7 @@ static bool short_taken(const shortset_t *t, const char *cand, size_t self) {
     if (t->ok) {
         char up[16];
         upper_83(cand, up);
-        return PROVEN_MAP_GET_U8_OWNED(&t->taken, bool, u8view(up)) != NULL;
+        return PROVEN_MAP_GET_U8_OWNED(&t->taken, bool, proven_u8str_view_from_cstr(up)) != NULL;
     }
     for (size_t j = 0; j < t->n; ++j) {
         if (j != self && *t->s[j].short_out && rp_ascii_ieq(*t->s[j].short_out, cand)) return true;
@@ -406,7 +404,7 @@ static void short_take(shortset_t *t, const char *name) {
     if (!t->ok) return;
     char up[16];
     upper_83(name, up);
-    if (PROVEN_MAP_SET_U8_OWNED(&t->taken, u8view(up), bool, true) != PROVEN_OK) t->ok = false;
+    if (PROVEN_MAP_SET_U8_OWNED(&t->taken, proven_u8str_view_from_cstr(up), bool, true) != PROVEN_OK) t->ok = false;
 }
 
 // Short names for one folder's children, independent of source order: children sorted by long
@@ -449,7 +447,7 @@ static void assign_short(keep_t *k, sib_t *s, size_t n) {
         ext[en] = '\0';
         char se[16];                        // the stem and extension the number counts for
         snprintf(se, sizeof se, "%s|%s", stem, ext);
-        const unsigned *from = set.ok ? PROVEN_MAP_GET_U8_OWNED(&set.next, unsigned, u8view(se)) : NULL;
+        const unsigned *from = set.ok ? PROVEN_MAP_GET_U8_OWNED(&set.next, unsigned, proven_u8str_view_from_cstr(se)) : NULL;
         for (unsigned num = from ? *from : 1; num < 1000000; ++num) {
             char cand[16], digits[8];
             int dn = snprintf(digits, sizeof digits, "%u", num);
@@ -459,7 +457,7 @@ static void assign_short(keep_t *k, sib_t *s, size_t n) {
             if (!short_taken(&set, cand, i)) {
                 *s[i].short_out = kdup(k, cand);
                 if (*s[i].short_out) short_take(&set, cand);
-                if (set.ok && PROVEN_MAP_SET_U8_OWNED(&set.next, u8view(se), unsigned, num + 1) != PROVEN_OK) set.ok = false;
+                if (set.ok && PROVEN_MAP_SET_U8_OWNED(&set.next, proven_u8str_view_from_cstr(se), unsigned, num + 1) != PROVEN_OK) set.ok = false;
                 break;
             }
         }

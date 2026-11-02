@@ -151,8 +151,6 @@ static bool path_ok(plan_t *p, const char *rel, const char *what) {
     }
 }
 
-static proven_u8str_view_t u8v(const char *s) { return (proven_u8str_view_t){ (const proven_byte_t *)s, strlen(s) }; }
-
 static void plan_maps_free(plan_t *p) {
     if (p->dir_state == 1) proven_map_destroy(&p->dir_seen);
     p->dir_state = 0;
@@ -165,11 +163,11 @@ static bool add_item(plan_t *p, char *rel, bool dir, const uint8_t *data, size_t
         p->dir_state = m.err == PROVEN_OK ? 1 : 2;
         if (m.err == PROVEN_OK) p->dir_seen = m.value;
         for (size_t i = 0; p->dir_state == 1 && i < p->count; ++i) {
-            if (p->items[i].dir && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, u8v(p->items[i].rel), bool, true) != PROVEN_OK) p->dir_state = 2;
+            if (p->items[i].dir && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, proven_u8str_view_from_cstr(p->items[i].rel), bool, true) != PROVEN_OK) p->dir_state = 2;
         }
     }
     if (dir && p->dir_state == 1) {                 // a directory is added once
-        if (PROVEN_MAP_GET_U8_OWNED(&p->dir_seen, bool, u8v(rel)) != NULL) return true;
+        if (PROVEN_MAP_GET_U8_OWNED(&p->dir_seen, bool, proven_u8str_view_from_cstr(rel)) != NULL) return true;
     } else {
         for (size_t i = 0; dir && i < p->count; ++i) {
             if (p->items[i].dir && strcmp(p->items[i].rel, rel) == 0) return true;
@@ -195,7 +193,7 @@ static bool add_item(plan_t *p, char *rel, bool dir, const uint8_t *data, size_t
     own(p, fold);
     if (p->nomem) return false;                     // own freed it
     p->items[p->count++] = (item_t){ rel, fold, dir, data, size };
-    if (dir && p->dir_state == 1 && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, u8v(rel), bool, true) != PROVEN_OK) p->dir_state = 2;
+    if (dir && p->dir_state == 1 && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, proven_u8str_view_from_cstr(rel), bool, true) != PROVEN_OK) p->dir_state = 2;
     return true;
 }
 

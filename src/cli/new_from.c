@@ -261,10 +261,8 @@ static bool standard_key(const char *key) {
 
 // ---- IDs and renames ---------------------------------------------------------------------------
 
-static proven_u8str_view_t u8v(const char *s) { return (proven_u8str_view_t){ (const proven_byte_t *)s, strlen(s) }; }
-
 static bool id_used(const cx_t *c, const char *s) {
-    if (c->id_state == 1) return PROVEN_MAP_GET_U8_OWNED(&c->id_set, bool, u8v(s)) != NULL;
+    if (c->id_state == 1) return PROVEN_MAP_GET_U8_OWNED(&c->id_set, bool, proven_u8str_view_from_cstr(s)) != NULL;
     for (size_t i = 0; i < c->nids; ++i) {
         if (strcmp(c->ids[i], s) == 0) return true;
     }
@@ -301,11 +299,11 @@ static void remember(cx_t *c, const char *id) {
         if (m.err == PROVEN_OK) {
             c->id_set = m.value;
             for (size_t i = 0; c->id_state == 1 && i + 1 < c->nids; ++i) {
-                if (PROVEN_MAP_SET_U8_OWNED(&c->id_set, u8v(c->ids[i]), bool, true) != PROVEN_OK) c->id_state = 2;
+                if (PROVEN_MAP_SET_U8_OWNED(&c->id_set, proven_u8str_view_from_cstr(c->ids[i]), bool, true) != PROVEN_OK) c->id_state = 2;
             }
         }
     }
-    if (c->id_state == 1 && PROVEN_MAP_SET_U8_OWNED(&c->id_set, u8v(id), bool, true) != PROVEN_OK) c->id_state = 2;
+    if (c->id_state == 1 && PROVEN_MAP_SET_U8_OWNED(&c->id_set, proven_u8str_view_from_cstr(id), bool, true) != PROVEN_OK) c->id_state = 2;
 }
 
 static void add_rename(cx_t *c, const char *from, const char *to, int kind) {
@@ -344,8 +342,8 @@ static void add_rename(cx_t *c, const char *from, const char *to, int kind) {
     if (c->ren_state == 1) {
         size_t i = c->nren - 1;             // the first rename of a key wins, as the scan finds it
         char *k = c->ren_from[i] ? ren_key(c, kind, c->ren_from[i]) : NULL;
-        if (k == NULL || (PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, u8v(k)) == NULL &&
-                          PROVEN_MAP_SET_U8_OWNED(&c->ren_map, u8v(k), size_t, i) != PROVEN_OK)) c->ren_state = 2;
+        if (k == NULL || (PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, proven_u8str_view_from_cstr(k)) == NULL &&
+                          PROVEN_MAP_SET_U8_OWNED(&c->ren_map, proven_u8str_view_from_cstr(k), size_t, i) != PROVEN_OK)) c->ren_state = 2;
         rp_mem_free(c->alloc, k);
     }
 }
@@ -388,7 +386,7 @@ static const char *renamed(cx_t *c, const char *key, int kind) {
     if (c->ren_state == 1) {
         char *k = ren_key(c, kind, key);
         if (k) {
-            const size_t *at = PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, u8v(k));
+            const size_t *at = PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, proven_u8str_view_from_cstr(k));
             rp_mem_free(c->alloc, k);
             return at ? c->ren_to[*at] : key;
         }
