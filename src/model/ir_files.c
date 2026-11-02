@@ -642,7 +642,7 @@ static const char *implicit_dir(ctx_t *c, const char *parent, const char *name, 
     char key[23];
     rp_key_derive('D', logical, key);
     rp_mem_free(c->alloc, logical);
-    const rp_ir_dir_t *have = rp_ir_find_dir(c->ir, key);
+    const rp_ir_dir_t *have = rp_ir_find_dir(c->ir, RP_V(key));
     if (have) return rp_cs(have->id);
     rp_ir_dir_t *d = ir_push_dir(c);
     if (d == NULL) return NULL;
@@ -673,7 +673,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
     rp_pos_t gp = ir_key_pos(t, "glob");
     glob_t g = { .c = c, .pos = gp };
     if (dir && pattern && ir_source_path_ok(c, pattern, gp)) {
-        const rp_ir_dir_t *d = rp_ir_find_dir(c->ir, dir);
+        const rp_ir_dir_t *d = rp_ir_find_dir(c->ir, RP_V(dir));
         if (d == NULL) ERR(c, ir_key_pos(t, "dir"), "RP1307", "dir '%s' is not defined", dir);
         if (feature == NULL && d && d->feature.ptr) feature = ir_dup(c, rp_cs(d->feature));
         // Split into segments; the leading ones without wildcards are the root.

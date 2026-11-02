@@ -422,9 +422,9 @@ static rp_msi_cell_t *cell(ctx_t *c, rows_t *r) {
     return x;
 }
 
-static void s_(ctx_t *c, rows_t *r, const char *s) {
+static void s_(ctx_t *c, rows_t *r, proven_u8str_view_t s) {
     rp_msi_cell_t *x = cell(c, r);
-    if (x && s) *x = (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = (const uint8_t *)s, .len = strlen(s) };
+    if (x && s.ptr) *x = (rp_msi_cell_t){ .kind = RP_MSI_STR, .bytes = s.ptr, .len = s.size };
 }
 
 static void i_(ctx_t *c, rows_t *r, int32_t v) {
@@ -629,8 +629,8 @@ static void dialog(ctx_t *c, const char *name, int w, int h, int attrs, const ch
     if (c->rtl && merged(c, name)) return;  // the page has its row already
     if (merged(c, name) && def && c->nmdef < sizeof c->mdef / sizeof c->mdef[0]) c->mdef[c->nmdef++] = (typeof(c->mdef[0])){ name, def };
     if (c->rtl) name = dn(c, name), attrs |= DLG_BIDI;
-    s_(c, r, name); i_(c, r, 50); i_(c, r, 50); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
-    s_(c, r, "[ProductName]"); s_(c, r, first); s_(c, r, def); s_(c, r, cancel);
+    s_(c, r, RP_V(name)); i_(c, r, 50); i_(c, r, 50); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
+    s_(c, r, PROVEN_LIT("[ProductName]")); s_(c, r, RP_V(first)); s_(c, r, RP_V(def)); s_(c, r, RP_V(cancel));
 }
 
 static void control(ctx_t *c, const char *dlg, const char *name, const char *type, int x, int y, int w, int h,
@@ -653,13 +653,13 @@ static void control(ctx_t *c, const char *dlg, const char *name, const char *typ
         else if (strcmp(type, "Line") != 0 && strcmp(type, "Bitmap") != 0 && strcmp(type, "Icon") != 0 && strcmp(type, "ProgressBar") != 0)
             attrs |= CTL_RTLRO | CTL_RIGHT | CTL_LEFTSCROLL;
     }
-    s_(c, r, dlg); s_(c, r, name); s_(c, r, type); i_(c, r, x); i_(c, r, y); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
-    s_(c, r, prop); s_(c, r, text); s_(c, r, next); n_(c, r);
+    s_(c, r, RP_V(dlg)); s_(c, r, RP_V(name)); s_(c, r, RP_V(type)); i_(c, r, x); i_(c, r, y); i_(c, r, w); i_(c, r, h); i_(c, r, attrs);
+    s_(c, r, RP_V(prop)); s_(c, r, RP_V(text)); s_(c, r, RP_V(next)); n_(c, r);
 }
 
 static void event1(ctx_t *c, const char *dlg, const char *ctl, const char *ev, const char *arg, const char *cond, int order) {
     rows_t *r = &c->event;
-    s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, arg); s_(c, r, cond ? cond : "1"); i_(c, r, order);
+    s_(c, r, RP_V(dlg)); s_(c, r, RP_V(ctl)); s_(c, r, RP_V(ev)); s_(c, r, RP_V(arg)); s_(c, r, RP_V(cond ? cond : "1")); i_(c, r, order);
 }
 
 // An event; one that opens a dialog goes to both sets when there are twins.
@@ -688,7 +688,7 @@ static void dseq(ctx_t *c, const char *dlg, const char *cnd, int n) {
 
 static void cond1(ctx_t *c, const char *dlg, const char *ctl, const char *action, const char *expr) {
     rows_t *r = &c->condition;
-    s_(c, r, dlg); s_(c, r, ctl); s_(c, r, action); s_(c, r, expr);
+    s_(c, r, RP_V(dlg)); s_(c, r, RP_V(ctl)); s_(c, r, RP_V(action)); s_(c, r, RP_V(expr));
 }
 
 static void cond(ctx_t *c, const char *dlg, const char *ctl, const char *action, const char *expr) {
@@ -736,7 +736,7 @@ static void mapping(ctx_t *c, const char *dlg, const char *ctl, const char *ev, 
     rows_t *r = &c->mapping;
     ctl = mn(c, dlg, ctl);
     dlg = dn(c, dlg);
-    s_(c, r, dlg); s_(c, r, ctl); s_(c, r, ev); s_(c, r, attr);
+    s_(c, r, RP_V(dlg)); s_(c, r, RP_V(ctl)); s_(c, r, RP_V(ev)); s_(c, r, RP_V(attr));
 }
 
 // Banner (white fill, title, description) and the bottom line, with the texts as given (the title
@@ -875,16 +875,16 @@ static void progress_and_exits(ctx_t *c) {
             for (size_t g = 0; g < c->bbimage_count; ++g) {
                 if (!RP_EQ(c->bbimages[g].control_id, bb->id)) continue;
                 bn = keep(c, "RpBb", rp_cs(bb->id));
-                s_(c, &c->binary, bn);
+                s_(c, &c->binary, RP_V(bn));
                 rp_msi_cell_t *bc = cell(c, &c->binary);
                 if (bc) { bc->bytes = (uint8_t *)c->bbimages[g].bmp; bc->len = c->bbimages[g].len; }
                 break;
             }
-            s_(c, &c->billboard, rp_cs(bb->id)); s_(c, &c->billboard, rp_cs(bb->feature)); s_(c, &c->billboard, "InstallFiles");
+            s_(c, &c->billboard, bb->id); s_(c, &c->billboard, bb->feature); s_(c, &c->billboard, PROVEN_LIT("InstallFiles"));
             i_(c, &c->billboard, bb->order ? bb->order : (int32_t)k + 1);
-            s_(c, &c->bbcontrol, rp_cs(bb->id)); s_(c, &c->bbcontrol, "Img"); s_(c, &c->bbcontrol, "Bitmap");
+            s_(c, &c->bbcontrol, bb->id); s_(c, &c->bbcontrol, PROVEN_LIT("Img")); s_(c, &c->bbcontrol, PROVEN_LIT("Bitmap"));
             i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 0); i_(c, &c->bbcontrol, 320); i_(c, &c->bbcontrol, 44);
-            i_(c, &c->bbcontrol, 1); s_(c, &c->bbcontrol, bn);
+            i_(c, &c->bbcontrol, 1); s_(c, &c->bbcontrol, RP_V(bn));
         }
     }
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), NULL);
@@ -1158,8 +1158,8 @@ static void scope_dlg(ctx_t *c, const char *back, const char *next, const char *
     const char *vals[2] = { "user", "machine" }, *labels[2] = { T(c, "ScopeUser"), T(c, "ScopeMachine") };
     for (int i = 0; i < 2 && !c->rtl; ++i) {      // the twin shares the buttons (they span the group)
         rows_t *r = &c->radio;
-        s_(c, r, "RPSCOPE"); i_(c, r, i + 1); s_(c, r, vals[i]); i_(c, r, 0);
-        i_(c, r, i * 18); i_(c, r, 320); i_(c, r, 16); s_(c, r, labels[i]); n_(c, r);
+        s_(c, r, PROVEN_LIT("RPSCOPE")); i_(c, r, i + 1); s_(c, r, RP_V(vals[i])); i_(c, r, 0);
+        i_(c, r, i * 18); i_(c, r, 320); i_(c, r, 16); s_(c, r, RP_V(labels[i])); n_(c, r);
     }
     buttons(c, d, back, next, next_text, NULL, "Scope");
     event(c, d, "Next", "[ALLUSERS]", "2", "RPSCOPE = \"user\"", 0);
@@ -1250,8 +1250,8 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
             int step = x->value_count ? x->height / (int)x->value_count : x->height;
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->radio;
-                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); i_(c, r, 0);
-                i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, label(c, x, j)); n_(c, r);
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, RP_V(x->values[j])); i_(c, r, 0);
+                i_(c, r, (int32_t)j * step); i_(c, r, x->width); i_(c, r, step < 14 ? step : 14); s_(c, r, RP_V(label(c, x, j))); n_(c, r);
             }
             break;
         }
@@ -1261,14 +1261,14 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                     rp_cs(x->property), NULL, to);
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->combo;
-                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, RP_V(x->values[j])); s_(c, r, RP_V(label(c, x, j)));
             }
             break;
         case RP_DC_LISTBOX:         // a list box: one of the values is picked (no typing); shown in Order
             control(c, rp_cs(d->id), rp_cs(x->id), "ListBox", x->x, x->y, x->width, x->height, VIS | EN | SUNKEN, rp_cs(x->property), NULL, to);
             for (size_t j = 0; j < x->value_count && !c->rtl; ++j) {
                 rows_t *r = &c->listbox;
-                s_(c, r, rp_cs(x->property)); i_(c, r, (int32_t)j + 1); s_(c, r, x->values[j]); s_(c, r, label(c, x, j));
+                s_(c, r, x->property); i_(c, r, (int32_t)j + 1); s_(c, r, RP_V(x->values[j])); s_(c, r, RP_V(label(c, x, j)));
             }
             break;
         case RP_DC_BITMAP: {        // a picture from a Binary stream (the .bmp read by the caller)
@@ -1278,7 +1278,7 @@ static void custom_dlg(ctx_t *c, const rp_ir_dialog_t *d, const char *back, cons
                 bn = keep(c, "RpBmp", rp_cs(x->id));
                 if (!c->rtl) {          // the Binary row is global: add it once, not again for the RTL twin
                     rows_t *r = &c->binary;
-                    s_(c, r, bn);
+                    s_(c, r, RP_V(bn));
                     rp_msi_cell_t *bc = cell(c, r);
                     if (bc) { bc->bytes = (uint8_t *)c->images[g].bmp; bc->len = c->images[g].len; }
                 }
@@ -1353,8 +1353,8 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
         snprintf(name, sizeof name, "LangGroup%d", g);
         if (!c->rtl) {
             rows_t *r = &c->radio;
-            s_(c, r, "RpLangGroup"); i_(c, r, k + 1); s_(c, r, keep(c, val, NULL)); i_(c, r, 0);
-            i_(c, r, k * 14); i_(c, r, 145); i_(c, r, 14); s_(c, r, T(c, keep(c, name, NULL))); n_(c, r);
+            s_(c, r, PROVEN_LIT("RpLangGroup")); i_(c, r, k + 1); s_(c, r, RP_V(keep(c, val, NULL))); i_(c, r, 0);
+            i_(c, r, k * 14); i_(c, r, 145); i_(c, r, 14); s_(c, r, RP_V(T(c, keep(c, name, NULL)))); n_(c, r);
         }
         ++k;
     }
@@ -1373,8 +1373,8 @@ static void grouped_page(ctx_t *c, const char *title, const char *text) {
             if (!c->rtl) {
                 rows_t *r = &c->radio;
                 const char *lname = c->ir->ui_langs[li].name.ptr ? rp_cs(c->ir->ui_langs[li].name) : lang_code(c, li);
-                s_(c, r, ctl); i_(c, r, (int32_t)k + 1); s_(c, r, lang_code(c, li)); i_(c, r, 0);
-                i_(c, r, (int32_t)k * 14); i_(c, r, 165); i_(c, r, 14); s_(c, r, lname); n_(c, r);
+                s_(c, r, RP_V(ctl)); i_(c, r, (int32_t)k + 1); s_(c, r, RP_V(lang_code(c, li))); i_(c, r, 0);
+                i_(c, r, (int32_t)k * 14); i_(c, r, 165); i_(c, r, 14); s_(c, r, RP_V(lname)); n_(c, r);
             }
             ++k;
         }
@@ -1421,8 +1421,8 @@ static void language_dlg(ctx_t *c) {
     for (size_t i = 0; i < c->nlang && !c->rtl; ++i) {
         rows_t *r = &c->radio;
         const char *name = c->ir->ui_langs[i].name.ptr ? rp_cs(c->ir->ui_langs[i].name) : lang_code(c, i);
-        s_(c, r, "RPLANGUAGEUI"); i_(c, r, (int32_t)i + 1); s_(c, r, lang_code(c, i)); i_(c, r, 0);
-        i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, name); n_(c, r);
+        s_(c, r, PROVEN_LIT("RPLANGUAGEUI")); i_(c, r, (int32_t)i + 1); s_(c, r, RP_V(lang_code(c, i))); i_(c, r, 0);
+        i_(c, r, (int32_t)i * 14); i_(c, r, 200); i_(c, r, 14); s_(c, r, RP_V(name)); n_(c, r);
     }
     control(c, d, "Back", "PushButton", 180, 243, 56, 17, VIS, NULL, T(c, "Back"), "Next");
     control(c, d, "Next", "PushButton", 236, 243, 56, 17, VIS | EN, NULL, T(c, "Next"), "Cancel");
@@ -1624,13 +1624,13 @@ static void language_table(ctx_t *c) {
     rows_t *t = &c->rptext;
     for (size_t li = 0; li < c->nlang; ++li) {
         const char *code = lang_code(c, li);
-        s_(c, t, code); s_(c, t, "DefaultUIFont"); s_(c, t, keep(c, "RpNormal_", code)); i_(c, t, 0);
+        s_(c, t, RP_V(code)); s_(c, t, PROVEN_LIT("DefaultUIFont")); s_(c, t, RP_V(keep(c, "RpNormal_", code))); i_(c, t, 0);
         if (c->grouped && c->page) {        // the grouped page opens on the language's region and on it
             char g[16], ctl[24];
             snprintf(g, sizeof g, "%d", lang_group(c, li));
             snprintf(ctl, sizeof ctl, "RpLangG_%d", lang_group(c, li));
-            s_(c, t, code); s_(c, t, "RpLangGroup"); s_(c, t, keep(c, g, NULL)); i_(c, t, 0);
-            s_(c, t, code); s_(c, t, keep(c, ctl, NULL)); s_(c, t, code); i_(c, t, 0);
+            s_(c, t, RP_V(code)); s_(c, t, PROVEN_LIT("RpLangGroup")); s_(c, t, RP_V(keep(c, g, NULL))); i_(c, t, 0);
+            s_(c, t, RP_V(code)); s_(c, t, RP_V(keep(c, ctl, NULL))); s_(c, t, RP_V(code)); i_(c, t, 0);
         }
         for (size_t k = 0; k < c->nreg; ++k) {
             const regtext_t *r = &c->reg[k];
@@ -1640,7 +1640,7 @@ static void language_table(ctx_t *c) {
             const char *target = keep(c, "RpT_", r->key);
             const char *val = keep(c, pre, v ? v : src);
             if (li == 0 && v && val[0]) prop(c, target, val);
-            s_(c, t, code); s_(c, t, target); s_(c, t, val); i_(c, t, v ? 0 : 1);
+            s_(c, t, RP_V(code)); s_(c, t, RP_V(target)); s_(c, t, RP_V(val)); i_(c, t, v ? 0 : 1);
         }
     }
 }
@@ -1789,13 +1789,13 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     for (size_t i = 0; i < c->nlang; ++i) {
         const char *face = ir->ui_lang_count && ir->ui_langs[i].font.ptr ? rp_cs(ir->ui_langs[i].font) : "Segoe UI";
         const char *sfx = c->multi ? keep(c, "_", lang_code(c, i)) : "";
-        s_(c, &c->style, keep(c, "RpNormal", sfx)); s_(c, &c->style, face); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
-        s_(c, &c->style, keep(c, "RpTitle", sfx)); s_(c, &c->style, face); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
+        s_(c, &c->style, RP_V(keep(c, "RpNormal", sfx))); s_(c, &c->style, RP_V(face)); i_(c, &c->style, 9); n_(c, &c->style); n_(c, &c->style);
+        s_(c, &c->style, RP_V(keep(c, "RpTitle", sfx))); s_(c, &c->style, RP_V(face)); i_(c, &c->style, 11); n_(c, &c->style); i_(c, &c->style, 1);
     }
     prop(c, "DefaultUIFont", c->multi ? "RpNormal_en" : "RpNormal");
     // The engine's own texts (sizes, feature tree menus) have one table: English.
     for (size_t i = 0; i < sizeof uitexts / sizeof uitexts[0]; ++i) {
-        s_(c, &c->uitext, uitexts[i].id); s_(c, &c->uitext, uitexts[i].en);
+        s_(c, &c->uitext, RP_V(uitexts[i].id)); s_(c, &c->uitext, RP_V(uitexts[i].en));
     }
     // The status line's texts, when every language has them (English here, another in its pack;
     // a language without them keeps Windows Installer's own, which follow Windows). With several languages the text is a
@@ -1811,9 +1811,9 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
                           : rp_langpack_text(rp_langpack_get(lang_code(c, li), NULL), "installer", keep(c, "Action.", a->action));
             src[li] = t ? t : a->en;
         }
-        s_(c, &c->acttext, a->action);
-        s_(c, &c->acttext, c->multi ? reg_text(c, keep(c, "Act_", a->action), src, false) : src[0]);
-        s_(c, &c->acttext, a->tmpl);
+        s_(c, &c->acttext, RP_V(a->action));
+        s_(c, &c->acttext, RP_V(c->multi ? reg_text(c, keep(c, "Act_", a->action), src, false) : src[0]));
+        s_(c, &c->acttext, RP_V(a->tmpl));
     }
     // The refusals (lower.c's RP_RefuseDowngrade at 30, RP_RefuseOld at 31) in the chosen language:
     // past RP_UI_LANG_ACTIONS RpLangApply at 19 puts them in place; with fewer, lower.c gives each
@@ -1824,7 +1824,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     }
     white_bmp(c->white);
     rp_msi_cell_t *bn = NULL;
-    s_(c, &c->binary, "RpBanner");
+    s_(c, &c->binary, PROVEN_LIT("RpBanner"));
     bn = cell(c, &c->binary);
     if (bn) {
         bn->kind = RP_MSI_BINARY;
@@ -1833,7 +1833,7 @@ proven_err_t rp_ui_build(proven_allocator_t alloc, const rp_ir_t *ir, const rp_u
     }
 
     warn_icon(c->icon);
-    s_(c, &c->binary, "RpWarnIcon");
+    s_(c, &c->binary, PROVEN_LIT("RpWarnIcon"));
     rp_msi_cell_t *ic = cell(c, &c->binary);
     if (ic) *ic = (rp_msi_cell_t){ .kind = RP_MSI_BINARY, .bytes = c->icon, .len = sizeof c->icon };
 

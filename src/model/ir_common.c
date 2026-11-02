@@ -16,6 +16,12 @@ char *ir_dup_n(ctx_t *c, const char *s, size_t n) {
 
 char *ir_dup(ctx_t *c, const char *s) { return s ? ir_dup_n(c, s, strlen(s)) : NULL; }
 
+proven_u8str_view_t ir_dup_v(ctx_t *c, proven_u8str_view_t s) {
+    if (s.ptr == NULL) return RP_NONE;
+    char *r = ir_dup_n(c, (const char *)s.ptr, s.size);
+    return r ? (proven_u8str_view_t){ (const proven_byte_t *)r, s.size } : RP_NONE;
+}
+
 // ---- names and suggestions -------------------------------------------------------------------
 
 static size_t edit_distance(const char *a, const char *b) {

@@ -35,7 +35,7 @@ typedef struct { const char *id; size_t at; } idat_t;      // an element's ID an
 
 static int cmp_idat(const void *x, const void *y) {
     const idat_t *a = x, *b = y;
-    int r = ir_cmp_str(a->id, b->id);
+    int r = ir_cmp_str(RP_V(a->id), RP_V(b->id));
     return r ? r : a->at < b->at ? -1 : a->at > b->at;      // equal IDs keep their order
 }
 

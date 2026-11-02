@@ -117,15 +117,15 @@ void ir_parse_publish(ctx_t *c, const rp_ttable_t *t, rp_ir_publish_t *x) {
     x->data = RP_V(ir_get_str(c, t, "data", false, NULL));
 }
 
-static const rp_ir_file_t *find_file(const rp_ir_t *ir, const char *id) {
-    for (size_t i = 0; id && i < ir->file_count; ++i) {
+static const rp_ir_file_t *find_file(const rp_ir_t *ir, proven_u8str_view_t id) {
+    for (size_t i = 0; id.ptr && i < ir->file_count; ++i) {
         if (RP_EQ(ir->files[i].id, id)) return &ir->files[i];
     }
     return NULL;
 }
 
-static bool find_feature(const rp_ir_t *ir, const char *id) {
-    for (size_t i = 0; id && i < ir->feature_count; ++i) {
+static bool find_feature(const rp_ir_t *ir, proven_u8str_view_t id) {
+    for (size_t i = 0; id.ptr && i < ir->feature_count; ++i) {
         if (RP_EQ(ir->features[i].id, id)) return true;
     }
     return false;
@@ -171,35 +171,35 @@ void ir_more_checks(ctx_t *c) {
         rp_ir_move_t *x = &ir->moves[k];
         // A component of its own takes the destination folder's feature, or Main when none is declared.
         if (x->with_file.ptr == NULL && x->feature.ptr == NULL && x->to_dir.ptr) {
-            const rp_ir_dir_t *d = rp_ir_find_dir(ir, rp_cs(x->to_dir));
+            const rp_ir_dir_t *d = rp_ir_find_dir(ir, x->to_dir);
             bool declared = false;
             for (size_t f = 0; f < ir->feature_count; ++f) declared |= !ir->features[f].implicit;
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
             else if (!declared) x->feature = RP_V(ir_dup(c, "Main"));
             else ERR(c, x->pos, "RP1202", "[move.%s] needs a feature (or with = \"file:<ID>\")", rp_cs(x->id));
         }
-        if (x->from_dir.ptr && !rp_ir_find_dir(ir, rp_cs(x->from_dir))) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->from_dir));
-        if (x->to_dir.ptr && !rp_ir_find_dir(ir, rp_cs(x->to_dir))) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->to_dir));
-        if (x->with_file.ptr && !find_file(ir, rp_cs(x->with_file))) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
-        if (x->feature.ptr && !find_feature(ir, rp_cs(x->feature))) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+        if (x->from_dir.ptr && !rp_ir_find_dir(ir, x->from_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->from_dir));
+        if (x->to_dir.ptr && !rp_ir_find_dir(ir, x->to_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->to_dir));
+        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
+        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
     }
     for (size_t k = 0; k < ir->odbc_driver_count; ++k) {
         const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[k];
-        const rp_ir_file_t *f = find_file(ir, rp_cs(x->file));
+        const rp_ir_file_t *f = find_file(ir, x->file);
         if (x->file.ptr && f == NULL) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", rp_cs(x->file));
-        if (x->setup.ptr && find_file(ir, rp_cs(x->setup)) == NULL) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "setup", rp_cs(x->setup));
+        if (x->setup.ptr && find_file(ir, x->setup) == NULL) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "setup", rp_cs(x->setup));
     }
     for (size_t k = 0; k < ir->odbc_source_count; ++k) {
         const rp_ir_odbc_source_t *x = &ir->odbc_sources[k];
         bool found = x->driver.ptr == NULL;
         for (size_t j = 0; x->driver.ptr && j < ir->odbc_driver_count; ++j) found |= RP_EQ(ir->odbc_drivers[j].id, x->driver);
         if (!found) ERR(c, x->pos, "RP1307", "driver '%s' is not an [odbc-driver.*]", rp_cs(x->driver));
-        if (x->with_file.ptr && !find_file(ir, rp_cs(x->with_file))) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
+        if (x->with_file.ptr && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", rp_cs(x->with_file));
         if (x->user && ir->scope == 0) ERR(c, x->pos, "RP1316", "[odbc-source.%s]: a per-machine package registers data sources for the machine", rp_cs(x->id));
     }
     for (size_t k = 0; k < ir->publish_count; ++k) {
         const rp_ir_publish_t *x = &ir->publishes[k];
-        if (x->file.ptr && !find_file(ir, rp_cs(x->file))) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", rp_cs(x->file));
+        if (x->file.ptr && !find_file(ir, x->file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "file", rp_cs(x->file));
     }
     // RFC-0031 B12: the Windows 11 menu's identity package has one build-time family name, which an
     // instance transform does not change, so two instances would register the same menu package.
@@ -209,14 +209,14 @@ void ir_more_checks(ctx_t *c) {
     // RFC-0031 B10: a billboard names the feature whose installation shows it.
     for (size_t k = 0; k < ir->billboard_count; ++k) {
         const rp_ir_billboard_t *x = &ir->billboards[k];
-        if (x->feature.ptr && !find_feature(ir, rp_cs(x->feature))) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
+        if (x->feature.ptr && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
     }
     // RFC-0031 B8: an advertised shortcut advertises its target file's feature; that feature may
     // not be one marked advertise = "disallow".
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
         const rp_ir_shortcut_t *s = &ir->shortcuts[k];
         if (!s->advertise) continue;
-        const rp_ir_file_t *tf = find_file(ir, rp_cs(s->target_file));
+        const rp_ir_file_t *tf = find_file(ir, s->target_file);
         const rp_ir_feature_t *f = tf ? find_feature_ptr(ir, rp_cs(tf->feature)) : NULL;
         if (f && f->no_advertise)
             ERR(c, s->pos, "RP1316", "[shortcut.%s] advertises feature '%s', which is advertise = \"disallow\"", rp_cs(s->id), rp_cs(f->id));
@@ -224,7 +224,7 @@ void ir_more_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->file_count; ++k) {
         const rp_ir_file_t *f = &ir->files[k];
         if (f->isolate_for.ptr == NULL) continue;
-        const rp_ir_file_t *app = find_file(ir, rp_cs(f->isolate_for));
+        const rp_ir_file_t *app = find_file(ir, f->isolate_for);
         if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "isolate-for", rp_cs(f->isolate_for));
         if (app && f->dir.ptr && app->dir.ptr && RP_EQ(f->dir, app->dir))     // a file without dir is refused elsewhere
             ERR(c, f->pos, "RP1316", "[file.%s] is in its program's folder already; isolate-for is for a shared DLL installed elsewhere", rp_cs(f->id));
@@ -247,7 +247,7 @@ static void asm_identity(ctx_t *c, rp_ir_file_t *f) {
     rp_ir_t *ir = c->ir;
     if (f->assembly == RP_ASM_NONE || f->source_path.ptr == NULL) return;
     if (f->assembly_for.ptr) {
-        const rp_ir_file_t *app = find_file(ir, rp_cs(f->assembly_for));
+        const rp_ir_file_t *app = find_file(ir, f->assembly_for);
         if (app == NULL) ERR(c, f->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "assembly-for", rp_cs(f->assembly_for));
         else if (app->pe_machine == 0 || app->pe_is_dll) ERR(c, f->pos, "RP1316", "%s: '%s' is not a program (.exe)", "assembly-for", rp_cs(f->assembly_for));
     }
@@ -365,11 +365,11 @@ void ir_more_pe_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     for (size_t k = 0; k < ir->odbc_driver_count; ++k) {
         const rp_ir_odbc_driver_t *x = &ir->odbc_drivers[k];
-        const rp_ir_file_t *f = find_file(ir, rp_cs(x->file));
+        const rp_ir_file_t *f = find_file(ir, x->file);
         if (f && !f->pe_is_dll) ERR(c, x->pos, "RP1316", "[odbc-driver.%s]: file '%s' is not a DLL", rp_cs(x->id), rp_cs(x->file));
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
-        const rp_ir_file_t *f = &ir->files[k], *app = f->isolate_for.ptr ? find_file(ir, rp_cs(f->isolate_for)) : NULL;
+        const rp_ir_file_t *f = &ir->files[k], *app = f->isolate_for.ptr ? find_file(ir, f->isolate_for) : NULL;
         if (app && (app->pe_machine == 0 || app->pe_is_dll)) ERR(c, f->pos, "RP1316", "isolate-for: '%s' is not a program (.exe)", rp_cs(f->isolate_for));
     }
     for (size_t k = 0; k < ir->file_count; ++k) asm_identity(c, &ir->files[k]);

@@ -55,18 +55,18 @@ static void xml_text(rp_buf_t *b, const char *s) {
     }
 }
 
-static void attr(rp_buf_t *b, const char *name, const char *value) {
+static void attr(rp_buf_t *b, const char *name, proven_u8str_view_t value) {
     rp_buf_byte(b, ' ');
     rp_buf_puts(b, name);
     rp_buf_puts(b, "=\"");
-    xml_text(b, value);
+    xml_text(b, rp_cs(value));
     rp_buf_byte(b, '"');
 }
 
 static void attr_u64(rp_buf_t *b, const char *name, uint64_t v) {
     char t[24];
     snprintf(t, sizeof t, "%llu", (unsigned long long)v);
-    attr(b, name, t);
+    attr(b, name, RP_V(t));
 }
 
 // Standard padded base64 of n bytes, NUL-terminated; out holds (n + 2) / 3 * 4 + 1 characters.
@@ -381,7 +381,7 @@ static proven_err_t ico_image(proven_allocator_t alloc, const uint8_t *ico, size
 
 // ---- the package root and the paths inside it ----------------------------------------------------
 
-static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) { return id ? rp_ir_find_dir(ir, id) : NULL; }
+static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) { return id ? rp_ir_find_dir(ir, RP_V(id)) : NULL; }
 
 // The top folder of `dir` (the one anchored in a known location) and the path below it
 // (components joined with '\'); false when the chain breaks.
@@ -677,7 +677,7 @@ static void file_run(proven_allocator_t alloc, payload_t *x, block_job_t *jobs, 
         if (x->err == PROVEN_OK) x->err = j->err;
         if (x->err == PROVEN_OK) {
             rp_buf_puts(&x->blocks, "<Block");
-            attr(&x->blocks, "Hash", j->hash);
+            attr(&x->blocks, "Hash", RP_V(j->hash));
             if (x->deflate) {
                 rp_buf_put(&x->comp, j->seg, j->seg_len);
                 attr_u64(&x->blocks, "Size", j->seg_len);
@@ -693,7 +693,7 @@ static void file_run(proven_allocator_t alloc, payload_t *x, block_job_t *jobs, 
         rp_hash(RP_HASH_SHA256, x->data, x->n, h);
         base64(h, 32, b64);
         rp_buf_puts(&x->blocks, "<b4:FileHash");
-        attr(&x->blocks, "Hash", b64);
+        attr(&x->blocks, "Hash", RP_V(b64));
         rp_buf_puts(&x->blocks, "/>");
     }
     if (x->deflate) rp_buf_put(&x->comp, RP_DEFLATE_END, 2);
@@ -764,7 +764,7 @@ static proven_err_t commit(rp_zip_writer_t *z, rp_buf_t *bm, const char *path, c
     rp_zip_add(z, part, x->deflate ? 8 : 0, x->deflate ? x->comp.data : x->data, x->deflate ? x->comp.len : x->n, x->crc, x->n, &lfh);
     if (bm) {
         rp_buf_puts(bm, "<File");
-        attr(bm, "Name", path);
+        attr(bm, "Name", RP_V(path));
         attr_u64(bm, "Size", x->n);
         attr_u64(bm, "LfhSize", lfh);
         if (x->blocks.len) {
@@ -986,7 +986,7 @@ static proven_err_t ini_file(proven_allocator_t alloc, const rp_ir_t *ir, const 
         }
         if (seen) continue;
         rp_buf_puts(&t, "[");
-        rp_buf_puts(&t, rp_cs(x->section));
+        rp_buf_putv(&t, x->section);
         rp_buf_puts(&t, "]\r\n");
         for (size_t k = i; k < ir->ini_count; ++k) {
             const rp_ir_ini_t *z = &ir->inis[k];
@@ -998,7 +998,7 @@ static proven_err_t ini_file(proven_allocator_t alloc, const rp_ir_t *ir, const 
                        RP_EQ(y->key, z->key);
             }
             if (done) continue;
-            rp_buf_puts(&t, rp_cs(z->key));
+            rp_buf_putv(&t, z->key);
             rp_buf_puts(&t, "=");
             bool first = true;
             // set: the last set value; add: every added value after it, comma-separated
@@ -1160,10 +1160,10 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         rp_buf_puts(m, ns_uri[k][0]);
     }
     rp_buf_puts(m, "\">\r\n  <Identity");
-    attr(m, "Name", rp_cs(ir->msix_identity_name));
-    attr(m, "Publisher", publisher);
-    attr(m, "Version", version);
-    attr(m, "ProcessorArchitecture", arch[ir->arch]);
+    attr(m, "Name", ir->msix_identity_name);
+    attr(m, "Publisher", RP_V(publisher));
+    attr(m, "Version", RP_V(version));
+    attr(m, "ProcessorArchitecture", RP_V(arch[ir->arch]));
     rp_buf_puts(m, " />\r\n  <Properties>\r\n");
     if (ir->msix_framework) rp_buf_puts(m, "    <Framework>true</Framework>\r\n");     // first in Properties (RFC-0031 B19)
     rp_buf_puts(m, "    <DisplayName>");
@@ -1179,13 +1179,13 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     if (ir->msix_modification) rp_buf_puts(m, "    <rescap6:ModificationPackage>true</rescap6:ModificationPackage>\r\n");    // RFC-0019
     if (ir->msix_external) rp_buf_puts(m, "    <uap10:AllowExternalContent>true</uap10:AllowExternalContent>\r\n");      // RFC-0031 B20
     rp_buf_puts(m, "  </Properties>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
-    attr(m, "MinVersion", ir->msix_min_version.ptr ? rp_cs(ir->msix_min_version) : "10.0.17763.0");
+    attr(m, "MinVersion", RP_V(ir->msix_min_version.ptr ? rp_cs(ir->msix_min_version) : "10.0.17763.0"));
     rp_buf_puts(m, " MaxVersionTested=\"10.0.26100.0\" />\r\n");
     for (size_t k = 0; k < ir->msix_dep_count; ++k) {         // framework packages (RFC-0018)
         rp_buf_puts(m, "    <PackageDependency");
-        attr(m, "Name", rp_cs(ir->msix_deps[k].name));
-        attr(m, "Publisher", rp_cs(ir->msix_deps[k].publisher));
-        attr(m, "MinVersion", rp_cs(ir->msix_deps[k].min_version));
+        attr(m, "Name", ir->msix_deps[k].name);
+        attr(m, "Publisher", ir->msix_deps[k].publisher);
+        attr(m, "MinVersion", ir->msix_deps[k].min_version);
         rp_buf_puts(m, " />\r\n");
     }
     // RFC-0019: the main package of an optional or modification package (uap4 when it names the
@@ -1193,16 +1193,16 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
     if (ir->msix_main.ptr) {
         bool uap4 = ir->msix_main_publisher.ptr || ir->msix_modification;
         rp_buf_puts(m, uap4 ? "    <uap4:MainPackageDependency" : "    <uap3:MainPackageDependency");
-        attr(m, "Name", rp_cs(ir->msix_main));
-        if (uap4) attr(m, "Publisher", ir->msix_main_publisher.ptr ? rp_cs(ir->msix_main_publisher) : publisher);
+        attr(m, "Name", ir->msix_main);
+        if (uap4) attr(m, "Publisher", RP_V(ir->msix_main_publisher.ptr ? rp_cs(ir->msix_main_publisher) : publisher));
         rp_buf_puts(m, " />\r\n");
     }
     rp_buf_puts(m, "  </Dependencies>\r\n  <Resources>\r\n    <Resource");
-    attr(m, "Language", ir->language == 1042 ? "ko-KR" : "en-US");
+    attr(m, "Language", RP_V(ir->language == 1042 ? "ko-KR" : "en-US"));
     rp_buf_puts(m, " />\r\n");
     for (size_t k = 0; k < loc->nlangs; ++k) {
         rp_buf_puts(m, "    <Resource");
-        attr(m, "Language", loc->langs[k]);
+        attr(m, "Language", RP_V(loc->langs[k]));
         rp_buf_puts(m, " />\r\n");
     }
     rp_buf_puts(m, "  </Resources>\r\n");
@@ -1211,19 +1211,19 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
         const rp_ir_msix_app_t *a = &ir->msix_apps[i];
         const char *display = rp_cs(a->display.ptr ? a->display : ir->name);
         rp_buf_puts(m, "    <Application");
-        attr(m, "Id", rp_cs(a->id));
-        attr(m, "Executable", ap[i].start[0] ? ap[i].start : ap[i].exe);
+        attr(m, "Id", a->id);
+        attr(m, "Executable", RP_V(ap[i].start[0] ? ap[i].start : ap[i].exe));
         // From an external location the program runs as a desktop program of medium integrity (RFC-0031 B20).
         rp_buf_puts(m, ir->msix_external ? " uap10:TrustLevel=\"mediumIL\" uap10:RuntimeBehavior=\"win32App\">\r\n      <uap:VisualElements"
                                          : " EntryPoint=\"Windows.FullTrustApplication\">\r\n      <uap:VisualElements");
         char res[160];
         snprintf(res, sizeof res, "ms-resource:%sDisplayName", rp_cs(a->id));
-        attr(m, "DisplayName", ap[i].loc_display ? res : display);
+        attr(m, "DisplayName", RP_V(ap[i].loc_display ? res : display));
         snprintf(res, sizeof res, "ms-resource:%sDescription", rp_cs(a->id));
-        attr(m, "Description", ap[i].loc_description ? res : a->description.ptr ? rp_cs(a->description) : display);
-        attr(m, "BackgroundColor", a->background.ptr ? rp_cs(a->background) : "transparent");
-        attr(m, "Square150x150Logo", ap[i].logo[0]);
-        attr(m, "Square44x44Logo", ap[i].logo[1]);
+        attr(m, "Description", RP_V(ap[i].loc_description ? res : a->description.ptr ? rp_cs(a->description) : display));
+        attr(m, "BackgroundColor", RP_V(a->background.ptr ? rp_cs(a->background) : "transparent"));
+        attr(m, "Square150x150Logo", RP_V(ap[i].logo[0]));
+        attr(m, "Square44x44Logo", RP_V(ap[i].logo[1]));
         if (a->hidden) rp_buf_puts(m, " AppListEntry=\"none\"");
         rp_buf_puts(m, " />\r\n");
         if (ext[i].len) {
@@ -1270,7 +1270,7 @@ static void manifest(rp_buf_t *m, const rp_ir_t *ir, const rp_msix_options_t *op
             if (dup) continue;
             rp_buf_puts(m, "    <");
             rp_buf_puts(m, cap_elem[kind]);
-            attr(m, "Name", c);
+            attr(m, "Name", RP_V(c));
             rp_buf_puts(m, " />\r\n");
         }
     }
@@ -1297,8 +1297,8 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
         low[l] = 0;
         xml_taken |= strcmp(low, "xml") == 0;
         rp_buf_puts(t, "<Default");
-        attr(t, "Extension", low);
-        attr(t, "ContentType", content_type(low));
+        attr(t, "Extension", RP_V(low));
+        attr(t, "ContentType", RP_V(content_type(low)));
         rp_buf_puts(t, " />");
     }
     if (!xml_taken) rp_buf_puts(t, "<Default Extension=\"xml\" ContentType=\"application/vnd.ms-appx.manifest+xml\" />");
@@ -1307,8 +1307,8 @@ static void content_types(rp_buf_t *t, const item_t *items, size_t n) {
         char part[3200] = "/";
         part_name(items[i].path, part + 1, sizeof part - 1);
         rp_buf_puts(t, "<Override");
-        attr(t, "PartName", part);
-        attr(t, "ContentType", "application/octet-stream");
+        attr(t, "PartName", RP_V(part));
+        attr(t, "ContentType", PROVEN_LIT("application/octet-stream"));
         rp_buf_puts(t, " />");
     }
     if (xml_taken) rp_buf_puts(t, "<Override PartName=\"/AppxManifest.xml\" ContentType=\"application/vnd.ms-appx.manifest+xml\" />");
@@ -1364,7 +1364,7 @@ static void handler_list(rp_buf_t *b, const rp_ir_t *ir, bool (*keep)(const rp_i
             snprintf(guid, sizeof guid, "%.36s", h->clsid.ptr ? rp_cs(h->clsid) + 1 : "");
             rp_buf_puts(b, "            <");
             rp_buf_puts(b, el[h->kind]);
-            attr(b, "Clsid", guid);
+            attr(b, "Clsid", RP_V(guid));
             rp_buf_puts(b, " />\r\n");
         }
     }
@@ -1403,8 +1403,8 @@ static size_t app_of_file(const rp_ir_t *ir, const char *file_id) {
     return SIZE_MAX;
 }
 
-static size_t app_by_id(const rp_ir_t *ir, const char *id) {
-    if (id == NULL) return 0;
+static size_t app_by_id(const rp_ir_t *ir, proven_u8str_view_t id) {
+    if (id.ptr == NULL) return 0;
     for (size_t a = 0; a < ir->msix_app_count; ++a) {
         if (RP_EQ(ir->msix_apps[a].id, id)) return a;
     }
@@ -1412,9 +1412,9 @@ static size_t app_by_id(const rp_ir_t *ir, const char *id) {
 }
 
 // The package path of a [file.*], or NULL when it does not go into the package.
-static const char *item_path(const item_t *items, size_t n, const char *file_id) {
-    for (size_t i = 0; file_id && i < n; ++i) {
-        if (items[i].file_id && strcmp(items[i].file_id, file_id) == 0) return items[i].path;
+static const char *item_path(const item_t *items, size_t n, proven_u8str_view_t file_id) {
+    for (size_t i = 0; file_id.ptr && i < n; ++i) {
+        if (items[i].file_id && RP_EQ(items[i].file_id, file_id)) return items[i].path;
     }
     return NULL;
 }
@@ -1451,8 +1451,8 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         type_name(rp_cs(x->prog_id), name);
         rp_buf_t *b = &ext[a];
         rp_buf_puts(b, "        <uap:Extension Category=\"windows.fileTypeAssociation\">\r\n          <uap3:FileTypeAssociation");
-        attr(b, "Name", name);
-        attr(b, "Parameters", args);
+        attr(b, "Name", RP_V(name));
+        attr(b, "Parameters", RP_V(args));
         rp_buf_puts(b, ">\r\n");
         if (x->description.ptr) {
             rp_buf_puts(b, "            <uap:DisplayName>");
@@ -1470,7 +1470,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         for (size_t j = k; j < ir->assoc_count; ++j) {
             if (!RP_EQ(ir->assocs[j].prog_id, x->prog_id)) continue;
             rp_buf_puts(b, "              <uap:FileType");
-            if (ir->assocs[j].content_type.ptr) attr(b, "ContentType", rp_cs(ir->assocs[j].content_type));
+            if (ir->assocs[j].content_type.ptr) attr(b, "ContentType", ir->assocs[j].content_type);
             rp_buf_byte(b, '>');
             xml_text(b, rp_cs(ir->assocs[j].extension));
             rp_buf_puts(b, "</uap:FileType>\r\n");
@@ -1547,7 +1547,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             name[o] = 0;
             rp_buf_t *b = &ext[0];
             rp_buf_puts(b, "        <uap:Extension Category=\"windows.fileTypeAssociation\">\r\n          <uap3:FileTypeAssociation");
-            attr(b, "Name", name);
+            attr(b, "Name", RP_V(name));
             rp_buf_puts(b, ">\r\n            <uap:SupportedFileTypes>\r\n");
             for (size_t t = 0; t < h->type_count; ++t) {
                 rp_buf_puts(b, "              <uap:FileType>");
@@ -1573,34 +1573,34 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         }
         NEED(x->pos, "a protocol", 14393u);
         rp_buf_puts(&ext[a], "        <uap3:Extension Category=\"windows.protocol\">\r\n          <uap3:Protocol");
-        attr(&ext[a], "Name", rp_cs(x->name));
-        attr(&ext[a], "Parameters", args);
+        attr(&ext[a], "Name", x->name);
+        attr(&ext[a], "Parameters", RP_V(args));
         rp_buf_puts(&ext[a], " />\r\n        </uap3:Extension>\r\n");
         *ns |= NS_UAP3;
     }
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-        size_t a = app_by_id(ir, rp_cs(x->app));
+        size_t a = app_by_id(ir, x->app);
         if (a == SIZE_MAX) continue;                        // the IR said so
         rp_buf_t *b = &ext[a];
         if (x->kind != RP_MSIX_EXT_ALIAS && x->kind != RP_MSIX_EXT_STARTUP) continue;   // below
         if (x->kind == RP_MSIX_EXT_ALIAS) {
             NEED(x->pos, "an execution alias", 14393u);
             rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExecutionAlias\"");
-            attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
+            attr(b, "Executable", RP_V(ap[a].start[0] ? ap[a].start : ap[a].exe));
             rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <uap3:AppExecutionAlias>\r\n            <desktop:ExecutionAlias");
-            attr(b, "Alias", rp_cs(x->alias));
+            attr(b, "Alias", x->alias);
             rp_buf_puts(b, " />\r\n          </uap3:AppExecutionAlias>\r\n        </uap3:Extension>\r\n");
             *ns |= NS_UAP3 | NS_DESKTOP;
         } else {
             NEED(x->pos, "a startup task", 14393u);
             const rp_ir_msix_app_t *app = &ir->msix_apps[a];
             rp_buf_puts(b, "        <desktop:Extension Category=\"windows.startupTask\"");
-            attr(b, "Executable", ap[a].start[0] ? ap[a].start : ap[a].exe);
+            attr(b, "Executable", RP_V(ap[a].start[0] ? ap[a].start : ap[a].exe));
             rp_buf_puts(b, " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <desktop:StartupTask");
-            attr(b, "TaskId", rp_cs(x->task_id));
-            attr(b, "Enabled", x->enabled ? "true" : "false");
-            attr(b, "DisplayName", rp_cs(x->display.ptr ? x->display : app->display.ptr ? app->display : ir->name));
+            attr(b, "TaskId", x->task_id);
+            attr(b, "Enabled", RP_V(x->enabled ? "true" : "false"));
+            attr(b, "DisplayName", x->display.ptr ? x->display : app->display.ptr ? app->display : ir->name);
             rp_buf_puts(b, " />\r\n        </desktop:Extension>\r\n");
             *ns |= NS_DESKTOP;
         }
@@ -1609,7 +1609,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
     // schema reference), per application in ID order.
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-        size_t a = app_by_id(ir, rp_cs(x->app));
+        size_t a = app_by_id(ir, x->app);
         if (a == SIZE_MAX || x->kind < RP_MSIX_EXT_APP_EXTENSION) continue;
         const rp_ir_msix_app_t *app = &ir->msix_apps[a];
         const char *display = rp_cs(x->display.ptr ? x->display : app->display.ptr ? app->display : ir->name);
@@ -1621,11 +1621,11 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         if (x->kind == RP_MSIX_EXT_APP_EXTENSION) {
             NEED(x->pos, "an app extension", 14393u);
             rp_buf_puts(b, "        <uap3:Extension Category=\"windows.appExtension\">\r\n          <uap3:AppExtension");
-            attr(b, "Name", rp_cs(x->name));
-            attr(b, "Id", rp_cs(x->ext_id));
-            if (x->folder.ptr) attr(b, "PublicFolder", rp_cs(x->folder));
-            attr(b, "DisplayName", display);
-            if (x->description.ptr) attr(b, "Description", rp_cs(x->description));
+            attr(b, "Name", x->name);
+            attr(b, "Id", x->ext_id);
+            if (x->folder.ptr) attr(b, "PublicFolder", x->folder);
+            attr(b, "DisplayName", RP_V(display));
+            if (x->description.ptr) attr(b, "Description", x->description);
             rp_buf_puts(b, " />\r\n        </uap3:Extension>\r\n");
             *ns |= NS_UAP3;
         } else if (x->kind == RP_MSIX_EXT_APP_EXTENSION_HOST) {
@@ -1643,9 +1643,9 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             // service without one, Windows.FullTrustApplication included (0x80080204).
             NEED(x->pos, x->multi ? "an app service with multiple-instances" : "an app service", x->multi ? 15063u : 14393u);
             rp_buf_puts(b, "        <uap:Extension Category=\"windows.appService\"");
-            attr(b, "EntryPoint", rp_cs(x->entry));
+            attr(b, "EntryPoint", x->entry);
             rp_buf_puts(b, ">\r\n          <uap:AppService");
-            attr(b, "Name", rp_cs(x->name));
+            attr(b, "Name", x->name);
             if (x->multi) {
                 rp_buf_puts(b, " uap4:SupportsMultipleInstances=\"true\"");
                 *ns |= NS_UAP4;
@@ -1654,7 +1654,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         } else if (x->kind == RP_MSIX_EXT_SHARE_TARGET) {
             NEED(x->pos, "a share target", 19041u);
             rp_buf_puts(b, "        <uap:Extension Category=\"windows.shareTarget\">\r\n          <uap:ShareTarget");
-            if (x->description.ptr) attr(b, "Description", rp_cs(x->description));
+            if (x->description.ptr) attr(b, "Description", x->description);
             rp_buf_puts(b, ">\r\n");
             if (x->type_count) {
                 bool any = false;
@@ -1680,24 +1680,24 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             snprintf(guid, sizeof guid, "%.36s", x->clsid.ptr ? rp_cs(x->clsid) + 1 : "");
             rp_buf_puts(b, "        <desktop3:Extension Category=\"windows.autoPlayHandler\">\r\n          <desktop3:AutoPlayHandler>\r\n"
                            "            <desktop3:InvokeAction");
-            attr(b, "ActionDisplayName", rp_cs(x->action));
-            attr(b, "ProviderDisplayName", display);
+            attr(b, "ActionDisplayName", x->action);
+            attr(b, "ProviderDisplayName", RP_V(display));
             rp_buf_puts(b, ">\r\n");
             for (size_t j = 0; j < x->name_count; ++j) {
                 rp_buf_puts(b, "              <desktop3:Content");
-                attr(b, "ContentEvent", x->names[j]);
-                attr(b, "Verb", rp_cs(x->verb));
+                attr(b, "ContentEvent", RP_V(x->names[j]));
+                attr(b, "Verb", x->verb);
                 // Windows refuses Content with both (0x80080204): a drop-target class takes the
                 // place of the verb's command-line parameters.
-                if (x->clsid.ptr) attr(b, "DropTargetHandler", guid);
-                else if (x->args.ptr) attr(b, "Parameters", args);
+                if (x->clsid.ptr) attr(b, "DropTargetHandler", RP_V(guid));
+                else if (x->args.ptr) attr(b, "Parameters", RP_V(args));
                 rp_buf_puts(b, " />\r\n");
             }
             for (size_t j = 0; j < x->event_count; ++j) {
                 rp_buf_puts(b, "              <desktop3:Device");
-                attr(b, "DeviceEvent", x->events[j]);
-                attr(b, "HWEventHandler", guid);
-                if (x->args.ptr) attr(b, "InitCmdLine", args);
+                attr(b, "DeviceEvent", RP_V(x->events[j]));
+                attr(b, "HWEventHandler", RP_V(guid));
+                if (x->args.ptr) attr(b, "InitCmdLine", RP_V(args));
                 rp_buf_puts(b, " />\r\n");
             }
             rp_buf_puts(b, "            </desktop3:InvokeAction>\r\n          </desktop3:AutoPlayHandler>\r\n        </desktop3:Extension>\r\n");
@@ -1709,8 +1709,8 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
     for (size_t k = 0; k < ir->msix_ext_count; ++k) {
         const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
         if (x->kind != RP_MSIX_EXT_FIREWALL) continue;
-        size_t a = app_by_id(ir, rp_cs(x->app));
-        const char *exe = x->file.ptr ? item_path(items, n, rp_cs(x->file)) : a != SIZE_MAX ? ap[a].exe : NULL;
+        size_t a = app_by_id(ir, x->app);
+        const char *exe = x->file.ptr ? item_path(items, n, x->file) : a != SIZE_MAX ? ap[a].exe : NULL;
         if (exe == NULL) {
             DERR(x->pos, "RP1613", "[msix-extension.%s]: file must name a program that goes into the package", rp_cs(x->id));
             continue;
@@ -1719,32 +1719,32 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
             if (y->kind != RP_MSIX_EXT_FIREWALL) continue;
-            size_t b = app_by_id(ir, rp_cs(y->app));
-            const char *e2 = y->file.ptr ? item_path(items, n, rp_cs(y->file)) : b != SIZE_MAX ? ap[b].exe : NULL;
+            size_t b = app_by_id(ir, y->app);
+            const char *e2 = y->file.ptr ? item_path(items, n, y->file) : b != SIZE_MAX ? ap[b].exe : NULL;
             first &= !(e2 && strcmp(e2, exe) == 0);
         }
         if (!first) continue;
         NEED(x->pos, "a firewall rule", 14393u);
         rp_buf_puts(pk, "    <desktop2:Extension Category=\"windows.firewallRules\">\r\n      <desktop2:FirewallRules");
-        attr(pk, "Executable", exe);
+        attr(pk, "Executable", RP_V(exe));
         rp_buf_puts(pk, ">\r\n");
         for (size_t j = k; j < ir->msix_ext_count; ++j) {
             const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
             if (y->kind != RP_MSIX_EXT_FIREWALL) continue;
-            size_t b = app_by_id(ir, rp_cs(y->app));
-            const char *e2 = y->file.ptr ? item_path(items, n, rp_cs(y->file)) : b != SIZE_MAX ? ap[b].exe : NULL;
+            size_t b = app_by_id(ir, y->app);
+            const char *e2 = y->file.ptr ? item_path(items, n, y->file) : b != SIZE_MAX ? ap[b].exe : NULL;
             if (!(e2 && strcmp(e2, exe) == 0)) continue;
             char port[16];
             rp_buf_puts(pk, "        <desktop2:Rule");
-            attr(pk, "Direction", y->outbound ? "out" : "in");
-            attr(pk, "IPProtocol", y->udp ? "UDP" : "TCP");
+            attr(pk, "Direction", RP_V(y->outbound ? "out" : "in"));
+            attr(pk, "IPProtocol", RP_V(y->udp ? "UDP" : "TCP"));
             if (y->port_min) {
                 snprintf(port, sizeof port, "%u", y->port_min);
-                attr(pk, "LocalPortMin", port);
+                attr(pk, "LocalPortMin", RP_V(port));
                 snprintf(port, sizeof port, "%u", y->port_max);
-                attr(pk, "LocalPortMax", port);
+                attr(pk, "LocalPortMax", RP_V(port));
             }
-            attr(pk, "Profile", y->profile.ptr ? rp_cs(y->profile) : "all");
+            attr(pk, "Profile", RP_V(y->profile.ptr ? rp_cs(y->profile) : "all"));
             rp_buf_puts(pk, " />\r\n");
         }
         rp_buf_puts(pk, "      </desktop2:FirewallRules>\r\n    </desktop2:Extension>\r\n");
@@ -1753,7 +1753,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
     // Services (RFC-0016 2): [service.*] becomes desktop6:Service in the first application.
     for (size_t k = 0; k < ir->service_count; ++k) {
         const rp_ir_service_t *x = &ir->services[k];
-        const char *exe = item_path(items, n, rp_cs(x->file));
+        const char *exe = item_path(items, n, x->file);
         if (exe == NULL) {
             DERR(x->pos, "RP1613", "[service.%s]: file must name a program that goes into the package", rp_cs(x->id));
             continue;
@@ -1766,12 +1766,12 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         static const char *const accounts[] = { "localSystem", "localService", "networkService" };
         const char *start = x->start == 2 ? "auto" : x->start == 4 ? "disabled" : "manual";
         rp_buf_puts(&ext[0], "        <desktop6:Extension Category=\"windows.service\"");
-        attr(&ext[0], "Executable", exe);
+        attr(&ext[0], "Executable", RP_V(exe));
         rp_buf_puts(&ext[0], " EntryPoint=\"Windows.FullTrustApplication\">\r\n          <desktop6:Service");
-        attr(&ext[0], "Name", rp_cs(x->name));
-        attr(&ext[0], "StartupType", start);
-        attr(&ext[0], "StartAccount", accounts[x->account]);
-        if (x->args.ptr) attr(&ext[0], "Arguments", args);
+        attr(&ext[0], "Name", x->name);
+        attr(&ext[0], "StartupType", RP_V(start));
+        attr(&ext[0], "StartAccount", RP_V(accounts[x->account]));
+        if (x->args.ptr) attr(&ext[0], "Arguments", RP_V(args));
         rp_buf_puts(&ext[0], " />\r\n        </desktop6:Extension>\r\n");
         *ns |= NS_DESKTOP6 | CAP_SERVICES | (x->account == 0 ? CAP_SYSTEM_SERVICES : 0);
     }
@@ -1789,8 +1789,8 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                  pid = rp_buf_new(ext[a].alloc, 1u << 20);      // com:ProgId, after the servers (RFC-0022)
         for (size_t k = 0; k < ir->msix_ext_count; ++k) {
             const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-            if ((x->kind != RP_MSIX_EXT_COM && x->kind != RP_MSIX_EXT_TOAST && x->kind != RP_MSIX_EXT_CONTEXT_MENU) || app_by_id(ir, rp_cs(x->app)) != a) continue;
-            const char *path = x->file.ptr ? item_path(items, n, rp_cs(x->file)) : ap[a].exe;
+            if ((x->kind != RP_MSIX_EXT_COM && x->kind != RP_MSIX_EXT_TOAST && x->kind != RP_MSIX_EXT_CONTEXT_MENU) || app_by_id(ir, x->app) != a) continue;
+            const char *path = x->file.ptr ? item_path(items, n, x->file) : ap[a].exe;
             if (path == NULL) {
                 DERR(x->pos, "RP1613", "[msix-extension.%s]: file must name a file that goes into the package", rp_cs(x->id));
                 continue;
@@ -1814,31 +1814,31 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             NEED(x->pos, x->kind == RP_MSIX_EXT_CONTEXT_MENU ? "a context menu" : "a COM class", x->kind == RP_MSIX_EXT_CONTEXT_MENU ? 17134u : 14393u);
             if (x->prog_id.ptr) {
                 rp_buf_puts(&pid, "            <com:ProgId");
-                attr(&pid, "Id", rp_cs(x->prog_id));
-                attr(&pid, "Clsid", guid);
+                attr(&pid, "Id", x->prog_id);
+                attr(&pid, "Clsid", RP_V(guid));
                 rp_buf_puts(&pid, " />\r\n");
             }
             if (exe) {
                 rp_buf_puts(&com, "            <com:ExeServer");
-                attr(&com, "Executable", path);
-                if (x->args.ptr) attr(&com, "Arguments", args);
-                attr(&com, "DisplayName", display);
+                attr(&com, "Executable", RP_V(path));
+                if (x->args.ptr) attr(&com, "Arguments", RP_V(args));
+                attr(&com, "DisplayName", RP_V(display));
                 rp_buf_puts(&com, ">\r\n              <com:Class");
-                attr(&com, "Id", guid);
-                attr(&com, "DisplayName", display);
+                attr(&com, "Id", RP_V(guid));
+                attr(&com, "DisplayName", RP_V(display));
                 rp_buf_puts(&com, " />\r\n            </com:ExeServer>\r\n");
             } else {
                 rp_buf_puts(&sur, "            <com:SurrogateServer");
-                attr(&sur, "DisplayName", display);
+                attr(&sur, "DisplayName", RP_V(display));
                 rp_buf_puts(&sur, ">\r\n              <com:Class");
-                attr(&sur, "Id", guid);
-                attr(&sur, "Path", path);
-                attr(&sur, "ThreadingModel", x->threading.ptr ? rp_cs(x->threading) : "STA");
+                attr(&sur, "Id", RP_V(guid));
+                attr(&sur, "Path", RP_V(path));
+                attr(&sur, "ThreadingModel", RP_V(x->threading.ptr ? rp_cs(x->threading) : "STA"));
                 rp_buf_puts(&sur, " />\r\n            </com:SurrogateServer>\r\n");
             }
             if (x->kind == RP_MSIX_EXT_TOAST) {
                 rp_buf_puts(&ext[a], "        <desktop:Extension Category=\"windows.toastNotificationActivation\">\r\n          <desktop:ToastNotificationActivation");
-                attr(&ext[a], "ToastActivatorCLSID", guid);
+                attr(&ext[a], "ToastActivatorCLSID", RP_V(guid));
                 rp_buf_puts(&ext[a], " />\r\n        </desktop:Extension>\r\n");
                 *ns |= NS_DESKTOP;
             }
@@ -1846,12 +1846,12 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
         // Context menus, grouped by item type: every verb registered for that type.
         for (size_t k = 0; k < ir->msix_ext_count; ++k) {
             const rp_ir_msix_ext_t *x = &ir->msix_exts[k];
-            if (x->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, rp_cs(x->app)) != a) continue;
+            if (x->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, x->app) != a) continue;
             for (size_t t = 0; t < x->type_count; ++t) {
                 bool seen = false;
                 for (size_t j = 0; j <= k && !seen; ++j) {
                     const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
-                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, rp_cs(y->app)) != a) continue;
+                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, y->app) != a) continue;
                     for (size_t u = 0; u < (j == k ? t : y->type_count) && !seen; ++u) seen = strcmp(y->types[u], x->types[t]) == 0;
                 }
                 if (seen) continue;
@@ -1861,11 +1861,11 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                 rp_buf_puts(&menus, "            <");
                 rp_buf_puts(&menus, ins);
                 rp_buf_puts(&menus, ":ItemType");
-                attr(&menus, "Type", x->types[t]);
+                attr(&menus, "Type", RP_V(x->types[t]));
                 rp_buf_puts(&menus, ">\r\n");
                 for (size_t j = k; j < ir->msix_ext_count; ++j) {
                     const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
-                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, rp_cs(y->app)) != a) continue;
+                    if (y->kind != RP_MSIX_EXT_CONTEXT_MENU || app_by_id(ir, y->app) != a) continue;
                     for (size_t u = 0; u < y->type_count; ++u) {
                         if (strcmp(y->types[u], x->types[t]) != 0) continue;
                         char g[37];
@@ -1873,8 +1873,8 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
                         rp_buf_puts(&menus, "              <");
                         rp_buf_puts(&menus, ins);
                         rp_buf_puts(&menus, ":Verb");
-                        attr(&menus, "Id", rp_cs(y->verb));
-                        attr(&menus, "Clsid", g);
+                        attr(&menus, "Id", y->verb);
+                        attr(&menus, "Clsid", RP_V(g));
                         rp_buf_puts(&menus, " />\r\n");
                     }
                 }
@@ -1932,10 +1932,10 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             char file[600];
             snprintf(file, sizeof file, "$(Desktop)\\%s.lnk", rp_cs(x->name));
             rp_buf_puts(&ext[a], "        <desktop7:Extension Category=\"windows.shortcut\">\r\n          <desktop7:Shortcut");
-            attr(&ext[a], "File", file);
-            attr(&ext[a], "Icon", ap[a].exe);
-            if (x->args.ptr) attr(&ext[a], "Arguments", args);
-            if (x->description.ptr) attr(&ext[a], "Description", rp_cs(x->description));
+            attr(&ext[a], "File", RP_V(file));
+            attr(&ext[a], "Icon", RP_V(ap[a].exe));
+            if (x->args.ptr) attr(&ext[a], "Arguments", RP_V(args));
+            if (x->description.ptr) attr(&ext[a], "Description", x->description);
             rp_buf_puts(&ext[a], " />\r\n        </desktop7:Extension>\r\n");
             *ns |= NS_DESKTOP7;
         }
@@ -1948,7 +1948,7 @@ static void build_extensions(const rp_ir_t *ir, const item_t *items, size_t n, c
             for (size_t i = 0; i < n; ++i) {
                 if (items[i].file_id && RP_EQ(items[i].file_id, ir->fonts[k].file)) {
                     rp_buf_puts(&ext[0], "            <uap4:Font");
-                    attr(&ext[0], "File", items[i].path);
+                    attr(&ext[0], "File", RP_V(items[i].path));
                     rp_buf_puts(&ext[0], " />\r\n");
                 }
             }
@@ -1973,19 +1973,19 @@ proven_err_t rp_msix_appinstaller(proven_allocator_t alloc, const rp_ir_t *ir, c
     snprintf(publisher, sizeof publisher, "%s%s%s", rp_cs(ir->msix_publisher), opt->unsigned_test ? ", " : "", opt->unsigned_test ? UNSIGNED_OID : "");
     rp_buf_t b = rp_buf_new(alloc, 1u << 20);
     rp_buf_puts(&b, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<AppInstaller xmlns=\"http://schemas.microsoft.com/appx/appinstaller/2018\"");
-    attr(&b, "Version", version);
-    attr(&b, "Uri", rp_cs(ir->msix_appinstaller_uri));
+    attr(&b, "Version", RP_V(version));
+    attr(&b, "Uri", ir->msix_appinstaller_uri);
     rp_buf_puts(&b, ">\r\n  <");
     rp_buf_puts(&b, bundle ? "MainBundle" : "MainPackage");
-    attr(&b, "Name", rp_cs(ir->msix_identity_name));
-    attr(&b, "Publisher", publisher);
-    attr(&b, "Version", version);
-    if (!bundle) attr(&b, "ProcessorArchitecture", arch[ir->arch]);
-    attr(&b, "Uri", rp_cs(ir->msix_package_uri));
+    attr(&b, "Name", ir->msix_identity_name);
+    attr(&b, "Publisher", RP_V(publisher));
+    attr(&b, "Version", RP_V(version));
+    if (!bundle) attr(&b, "ProcessorArchitecture", RP_V(arch[ir->arch]));
+    attr(&b, "Uri", ir->msix_package_uri);
     rp_buf_puts(&b, " />\r\n  <UpdateSettings>\r\n    <OnLaunch");
-    attr(&b, "HoursBetweenUpdateChecks", hours);
-    if (ir->msix_update_prompt) attr(&b, "ShowPrompt", "true");
-    if (ir->msix_update_blocks) attr(&b, "UpdateBlocksActivation", "true");
+    attr(&b, "HoursBetweenUpdateChecks", RP_V(hours));
+    if (ir->msix_update_prompt) attr(&b, "ShowPrompt", PROVEN_LIT("true"));
+    if (ir->msix_update_blocks) attr(&b, "UpdateBlocksActivation", PROVEN_LIT("true"));
     rp_buf_puts(&b, " />\r\n");
     if (ir->msix_update_background) rp_buf_puts(&b, "    <AutomaticBackgroundTask />\r\n");
     rp_buf_puts(&b, "  </UpdateSettings>\r\n</AppInstaller>\r\n");
@@ -2014,10 +2014,10 @@ static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     "         xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"\r\n"
                     "         xmlns:uap6=\"http://schemas.microsoft.com/appx/manifest/uap/windows10/6\"\r\n"
                     "         IgnorableNamespaces=\"uap uap6\">\r\n  <Identity");
-    attr(&m, "Name", rp_cs(ir->msix_identity_name));
-    attr(&m, "Publisher", publisher);
-    attr(&m, "Version", version);
-    attr(&m, "ResourceId", rid);
+    attr(&m, "Name", ir->msix_identity_name);
+    attr(&m, "Publisher", RP_V(publisher));
+    attr(&m, "Version", RP_V(version));
+    attr(&m, "ResourceId", RP_V(rid));
     rp_buf_puts(&m, " />\r\n  <Properties>\r\n    <ResourcePackage>true</ResourcePackage>\r\n"
                     "    <uap6:AllowExecution>false</uap6:AllowExecution>\r\n    <DisplayName>");
     xml_text(&m, display);
@@ -2026,9 +2026,9 @@ static proven_err_t langpack(proven_allocator_t alloc, const rp_ir_t *ir, const 
     rp_buf_puts(&m, "</PublisherDisplayName>\r\n    <Logo>");
     xml_text(&m, store_logo);
     rp_buf_puts(&m, "</Logo>\r\n  </Properties>\r\n  <Resources>\r\n    <Resource");
-    attr(&m, "Language", lang);
+    attr(&m, "Language", RP_V(lang));
     rp_buf_puts(&m, " />\r\n  </Resources>\r\n  <Dependencies>\r\n    <TargetDeviceFamily Name=\"Windows.Desktop\"");
-    attr(&m, "MinVersion", ir->msix_min_version.ptr ? rp_cs(ir->msix_min_version) : "10.0.17763.0");
+    attr(&m, "MinVersion", RP_V(ir->msix_min_version.ptr ? rp_cs(ir->msix_min_version) : "10.0.17763.0"));
     rp_buf_puts(&m, " MaxVersionTested=\"10.0.26100.0\" />\r\n  </Dependencies>\r\n</Package>\r\n");
     item_t it = { .file_id = NULL, .data = pri, .data_len = pri_len };
     snprintf(it.path, sizeof it.path, "resources.pri");
@@ -2109,10 +2109,10 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
                     "         xmlns:desktop5=\"http://schemas.microsoft.com/appx/manifest/desktop/windows10/5\"\r\n"
                     "         xmlns:com=\"http://schemas.microsoft.com/appx/manifest/com/windows10\"\r\n"
                     "         IgnorableNamespaces=\"uap uap10 rescap desktop4 desktop5 com\">\r\n  <Identity");
-    attr(&m, "Name", name);
-    attr(&m, "Publisher", pub);
-    attr(&m, "Version", version);
-    attr(&m, "ProcessorArchitecture", arch[ir->arch]);
+    attr(&m, "Name", RP_V(name));
+    attr(&m, "Publisher", RP_V(pub));
+    attr(&m, "Version", RP_V(version));
+    attr(&m, "ProcessorArchitecture", RP_V(arch[ir->arch]));
     rp_buf_puts(&m, " />\r\n  <Properties>\r\n    <DisplayName>");
     xml_text(&m, rp_cs(ir->name));
     rp_buf_puts(&m, "</DisplayName>\r\n    <PublisherDisplayName>");
@@ -2124,10 +2124,10 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
                     "  </Dependencies>\r\n  <Capabilities>\r\n    <rescap:Capability Name=\"runFullTrust\" />\r\n"
                     "    <rescap:Capability Name=\"unvirtualizedResources\" />\r\n  </Capabilities>\r\n  <Applications>\r\n"
                     "    <Application Id=\"Menu\"");
-    attr(&m, "Executable", executable);
+    attr(&m, "Executable", RP_V(executable));
     rp_buf_puts(&m, " uap10:TrustLevel=\"mediumIL\" uap10:RuntimeBehavior=\"win32App\">\r\n      <uap:VisualElements AppListEntry=\"none\"");
-    attr(&m, "DisplayName", rp_cs(ir->name));
-    attr(&m, "Description", rp_cs(ir->name));
+    attr(&m, "DisplayName", ir->name);
+    attr(&m, "Description", ir->name);
     rp_buf_puts(&m, " BackgroundColor=\"transparent\" Square150x150Logo=\"Assets\\Square150x150Logo.png\""
                     " Square44x44Logo=\"Assets\\Square44x44Logo.png\" />\r\n      <Extensions>\r\n"
                     "        <desktop4:Extension Category=\"windows.fileExplorerContextMenus\">\r\n          <desktop4:FileExplorerContextMenus>\r\n");
@@ -2171,7 +2171,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
         rp_buf_puts(&m, "            <");
         rp_buf_puts(&m, ns);
         rp_buf_puts(&m, ":ItemType");
-        attr(&m, "Type", types[t]);
+        attr(&m, "Type", RP_V(types[t]));
         rp_buf_puts(&m, ">\r\n");
         for (size_t k = 0; k < ir->menu_count; ++k) {
             const rp_ir_menu_t *x = &ir->menus[k];
@@ -2193,8 +2193,8 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
             rp_buf_puts(&m, "              <");
             rp_buf_puts(&m, ns);
             rp_buf_puts(&m, ":Verb");
-            attr(&m, "Id", rp_cs(x->id));
-            attr(&m, "Clsid", clsid);
+            attr(&m, "Id", x->id);
+            attr(&m, "Clsid", RP_V(clsid));
             rp_buf_puts(&m, " />\r\n");
         }
         rp_buf_puts(&m, "            </");
@@ -2204,7 +2204,7 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
     rp_buf_puts(&m, "          </desktop4:FileExplorerContextMenus>\r\n        </desktop4:Extension>\r\n"
                     "        <com:Extension Category=\"windows.comServer\">\r\n          <com:ComServer>\r\n"
                     "            <com:SurrogateServer");
-    attr(&m, "DisplayName", rp_cs(ir->name));
+    attr(&m, "DisplayName", ir->name);
     rp_buf_puts(&m, ">\r\n");
     for (size_t k = 0; k < ir->menu_count; ++k) {
         const rp_ir_menu_t *x = &ir->menus[k];
@@ -2212,8 +2212,8 @@ proven_err_t rp_msix_sparse(proven_allocator_t alloc, const rp_ir_t *ir, const c
         char clsid[40];
         snprintf(clsid, sizeof clsid, "%.36s", rp_cs(x->clsid) + 1);
         rp_buf_puts(&m, "              <com:Class");
-        attr(&m, "Id", clsid);
-        attr(&m, "Path", dll);
+        attr(&m, "Id", RP_V(clsid));
+        attr(&m, "Path", RP_V(dll));
         rp_buf_puts(&m, " ThreadingModel=\"STA\" />\r\n");
     }
     rp_buf_puts(&m, "            </com:SurrogateServer>\r\n          </com:ComServer>\r\n        </com:Extension>\r\n"
@@ -2825,7 +2825,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
     }
     // [menu.*]: what rubrapack's menu DLL reads (src/menu/rubrapack_menu.c), in the package's own
     // registry; "%PKG%" stands for the package's folder there.
-    if (machine && item_path(items, n, "RpMenuDll")) {
+    if (machine && item_path(items, n, PROVEN_LIT("RpMenuDll"))) {
         for (size_t k = 0; k < ir->menu_count; ++k) {
             const rp_ir_menu_t *x = &ir->menus[k];
             const rp_ir_menu_t *up = NULL;
@@ -2853,12 +2853,12 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                     MENU_SZ(val, x->text_by_lang[w].text);
                 }
             }
-            const char *icon = item_path(items, n, rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file));
+            const char *icon = item_path(items, n, x->icon_file.ptr ? x->icon_file : x->target_file);
             if (icon) {
                 snprintf(val, sizeof val, "%%PKG%%\\%s%s", icon, x->icon_file.ptr ? "" : ",0");
                 MENU_SZ("Icon", val);
             }
-            const char *prog = item_path(items, n, rp_cs(x->target_file));
+            const char *prog = item_path(items, n, x->target_file);
             if (x->target_file.ptr == NULL) {
                 data.len = 0;
                 for (size_t j = 0; j < ir->menu_count; ++j) {
@@ -2915,7 +2915,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         for (size_t a = 0; a < ir->msix_app_count; ++a) {
             const rp_ir_msix_app_t *app = &ir->msix_apps[a];
             rp_buf_puts(&lt, "app ");
-            rp_buf_puts(&lt, rp_cs(app->id));
+            rp_buf_putv(&lt, app->id);
             rp_buf_puts(&lt, "\r\ntarget ");
             rp_buf_puts(&lt, ap[a].exe);
             rp_buf_puts(&lt, "\r\n");
@@ -2924,7 +2924,7 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
                 if (e->msi_only) continue;
                 if (a == 0 && e->when.ptr) DERR(e->pos, "RP1612", "[env.%s]: an MSIX sets all its variables (when); use msi-only = true", rp_cs(e->id));
                 rp_buf_puts(&lt, e->mode == 0 ? "set " : e->mode == 1 ? "append " : "prepend ");
-                rp_buf_puts(&lt, rp_cs(e->name));
+                rp_buf_putv(&lt, e->name);
                 rp_buf_byte(&lt, '=');
                 if (!env_value(ir, root, e->value.ptr ? rp_cs(e->value) : "", &lt) && a == 0) {
                     DERR(e->pos, "RP1612", "[env.%s]: its value names a place an MSIX cannot give (a folder outside the package that "
@@ -3573,7 +3573,7 @@ static void copy_elements(rp_buf_t *m, const char *man, size_t ml, const char *e
         rp_buf_puts(m, out_name);
         for (size_t i = 0; names[i]; ++i) {
             char v[1024];
-            if (attr_value(from, te, names[i], v, sizeof v)) attr(m, names[i], v);
+            if (attr_value(from, te, names[i], v, sizeof v)) attr(m, names[i], RP_V(v));
         }
         rp_buf_puts(m, "/>\r\n");
         x.p = te;
@@ -3661,9 +3661,9 @@ static proven_err_t bundle_write(proven_allocator_t alloc, const rp_msix_part_t 
         rp_buf_puts(&man, "/bundle\" SchemaVersion=\"5.0\" "
                           "xmlns:b4=\"http://schemas.microsoft.com/appx/2018/bundle\" xmlns:b5=\"http://schemas.microsoft.com/appx/2019/bundle\" "
                           "IgnorableNamespaces=\"b4 b5\">\r\n\t<Identity");
-        attr(&man, "Name", ids[0].name);
-        attr(&man, "Publisher", ids[0].publisher);
-        attr(&man, "Version", ids[0].version);
+        attr(&man, "Name", RP_V(ids[0].name));
+        attr(&man, "Publisher", RP_V(ids[0].publisher));
+        attr(&man, "Version", RP_V(ids[0].version));
         rp_buf_puts(&man, "/>\r\n\t<Packages>\r\n");
         static const char *const res[] = { "Language", NULL }, *const tdf[] = { "Name", "MinVersion", "MaxVersionTested", NULL };
         for (size_t i = 0; i < n; ++i) {
@@ -3671,10 +3671,10 @@ static proven_err_t bundle_write(proven_allocator_t alloc, const rp_msix_part_t 
             size_t lfh = 0, before = z.out.len;
             if (!flat) rp_zip_add(&z, zip_names[i], 0, parts[i].data, parts[i].len, proven_crc32((proven_mem_view_t){ (const proven_byte_t *)(parts[i].data), parts[i].len }), parts[i].len, &lfh);
             rp_buf_puts(&man, rids[i][0] ? "\t\t<Package Type=\"resource\"" : "\t\t<Package Type=\"application\"");
-            attr(&man, "Version", ids[i].version);
-            if (rids[i][0]) attr(&man, "ResourceId", rids[i]);
-            else attr(&man, "Architecture", ids[i].arch);
-            attr(&man, "FileName", parts[i].file_name);
+            attr(&man, "Version", RP_V(ids[i].version));
+            if (rids[i][0]) attr(&man, "ResourceId", RP_V(rids[i]));
+            else attr(&man, "Architecture", RP_V(ids[i].arch));
+            attr(&man, "FileName", RP_V(parts[i].file_name));
             if (!flat) {                // a flat bundle's packages are files of their own
                 attr_u64(&man, "Offset", before + lfh);
                 attr_u64(&man, "Size", parts[i].len);

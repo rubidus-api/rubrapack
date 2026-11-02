@@ -35,6 +35,7 @@ enum { IR_FMT_NONE, IR_FMT_INSTALL, IR_FMT_RUNTIME };
 // ir_common.c
 char *ir_dup_n(ctx_t *c, const char *s, size_t n);
 char *ir_dup(ctx_t *c, const char *s);
+proven_u8str_view_t ir_dup_v(ctx_t *c, proven_u8str_view_t s);      // a copy the model owns (absent stays absent)
 const char *ir_suggest(const char *word, const char *const *choices);
 bool ir_valid_id(const char *s, size_t max);
 bool ir_check_id(ctx_t *c, const rp_ttable_t *t, size_t max);
@@ -133,7 +134,7 @@ void ir_nfc_names(ctx_t *c);
 void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg);
 
 // ir_check.c
-int ir_cmp_str(const char *a, const char *b);
+int ir_cmp_str(proven_u8str_view_t a, proven_u8str_view_t b);
 void ir_class_checks(ctx_t *c);
 void ir_cross_checks(ctx_t *c);
 void ir_index_dirs(ctx_t *c);

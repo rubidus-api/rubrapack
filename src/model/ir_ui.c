@@ -250,7 +250,7 @@ void ir_parse_dialog_control(ctx_t *c, const rp_ttable_t *t, rp_ir_dialog_contro
         ERR(c, ir_key_pos(t, "height"), "RP1308", "a radio control stacks its buttons: height must be at least 12 per value (%d)", 12 * (int)x->value_count);
 }
 
-static const rp_ir_dialog_t *find_dialog(const rp_ir_t *ir, const char *id) {
+static const rp_ir_dialog_t *find_dialog(const rp_ir_t *ir, proven_u8str_view_t id) {
     for (size_t k = 0; k < ir->dialog_count; ++k) {
         if (ir->dialogs[k].id.ptr && RP_EQ(ir->dialogs[k].id, id)) return &ir->dialogs[k];
     }
@@ -280,13 +280,13 @@ void ir_dialog_checks(ctx_t *c) {
                        (RP_EQ(d->after, "RpCustomizeDlg") && ir->ui == RP_UI_FEATURES);
         if (builtin) continue;
         // Another author page: it must exist and the chain must reach a built-in page.
-        const rp_ir_dialog_t *p = find_dialog(ir, rp_cs(d->after));
+        const rp_ir_dialog_t *p = find_dialog(ir, d->after);
         size_t steps = 0;
-        while (p && p->after.ptr && find_dialog(ir, rp_cs(p->after)) && steps <= ir->dialog_count) {
-            p = find_dialog(ir, rp_cs(p->after));
+        while (p && p->after.ptr && find_dialog(ir, p->after) && steps <= ir->dialog_count) {
+            p = find_dialog(ir, p->after);
             ++steps;
         }
-        if (find_dialog(ir, rp_cs(d->after)) == NULL) {
+        if (find_dialog(ir, d->after) == NULL) {
             ERR(c, d->pos, "RP1315", "after = '%s' is not a page of this dialog set (RpWelcomeDlg%s%s%s) or a [dialog.*]", rp_cs(d->after),
                 ir->license_shown.ptr ? ", RpLicenseDlg" : "", ir->ui >= RP_UI_INSTALLDIR ? ", RpInstallDirDlg" : "",
                 ir->ui == RP_UI_FEATURES ? ", RpCustomizeDlg" : "");
@@ -296,7 +296,7 @@ void ir_dialog_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->dialog_control_count; ++k) {
         const rp_ir_dialog_control_t *x = &ir->dialog_controls[k];
-        if (x->dialog.ptr && find_dialog(ir, rp_cs(x->dialog)) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", rp_cs(x->dialog));
+        if (x->dialog.ptr && find_dialog(ir, x->dialog) == NULL) ERR(c, x->pos, "RP1315", "dialog '%s' is not a [dialog.*]", rp_cs(x->dialog));
         if (x->property.ptr == NULL || x->type == RP_DC_TEXT) continue;
         const rp_ir_property_t *p = find_property(ir, rp_cs(x->property));
         if (x->type == RP_DC_RADIO || x->type == RP_DC_COMBO) {

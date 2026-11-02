@@ -775,7 +775,7 @@ typedef struct {
 void rp_ir_free(rp_ir_t *ir);
 
 // The first dir whose ID is `id`, or NULL.
-[[nodiscard]] const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, const char *id);
+[[nodiscard]] const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, proven_u8str_view_t id);
 
 // RFC-0031 B9: a shared Win32 assembly (assembly = "win32" without assembly-for) goes into WinSxS
 // with a signed catalog of its manifest, which the build makes with its --key. rp_ir_add_sxs_catalog

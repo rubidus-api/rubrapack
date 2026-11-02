@@ -4,7 +4,7 @@
 
 // ---- cross checks --------------------------------------------------------------------------
 
-const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, const char *id) {
+const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, proven_u8str_view_t id) {
     if (ir->dir_order && ir->dir_order_of == ir->dir_count) {      // the index is of these dirs
         size_t lo = 0, hi = ir->dir_order_len;                      // the first of equal IDs
         while (lo < hi) {
@@ -21,11 +21,11 @@ const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, const char *id) {
     return NULL;
 }
 
-typedef struct { const char *id; size_t at; } dirat_t;
+typedef struct { proven_u8str_view_t id; size_t at; } dirat_t;
 
 static int cmp_dirat(const void *x, const void *y) {
     const dirat_t *a = x, *b = y;
-    int r = strcmp(a->id, b->id);
+    int r = proven_u8str_view_cmp(a->id, b->id);
     return r ? r : a->at < b->at ? -1 : a->at > b->at;
 }
 
@@ -45,7 +45,7 @@ void ir_index_dirs(ctx_t *c) {
     }
     size_t n = 0;
     for (size_t k = 0; k < ir->dir_count; ++k) {
-        if (ir->dirs[k].id.ptr) v[n++] = (dirat_t){ rp_cs(ir->dirs[k].id), k };
+        if (ir->dirs[k].id.ptr) v[n++] = (dirat_t){ ir->dirs[k].id, k };
     }
     rp_sort(v, n, sizeof *v, cmp_dirat);
     for (size_t k = 0; k < n; ++k) order[k] = v[k].at;
@@ -55,7 +55,7 @@ void ir_index_dirs(ctx_t *c) {
     ir->dir_order_of = ir->dir_count;
 }
 
-static const rp_ir_feature_t *find_feature(const rp_ir_t *ir, const char *id) {
+static const rp_ir_feature_t *find_feature(const rp_ir_t *ir, proven_u8str_view_t id) {
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (ir->features[k].id.ptr && RP_EQ(ir->features[k].id, id)) return &ir->features[k];
     }
@@ -69,7 +69,7 @@ static char *dir_full_path(ctx_t *c, const rp_ir_dir_t *d, size_t depth) {
     if (d->base.ptr) {
         head = ir_dup(c, rp_cs(d->base));
     } else {
-        const rp_ir_dir_t *p = d->parent.ptr ? rp_ir_find_dir(c->ir, rp_cs(d->parent)) : NULL;
+        const rp_ir_dir_t *p = d->parent.ptr ? rp_ir_find_dir(c->ir, d->parent) : NULL;
         head = p ? dir_full_path(c, p, depth + 1) : NULL;
     }
     if (head == NULL) return NULL;
@@ -87,10 +87,10 @@ static char *dir_full_path(ctx_t *c, const rp_ir_dir_t *d, size_t depth) {
     return (char *)out;
 }
 
-int ir_cmp_str(const char *a, const char *b) { return strcmp(a ? a : "", b ? b : ""); }
+int ir_cmp_str(proven_u8str_view_t a, proven_u8str_view_t b) { return proven_u8str_view_cmp(a, b); }   // absent sorts as ""
 
-static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, const char *id) {
-    for (size_t j = 0; id && j < ir->file_count; ++j) {
+static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, proven_u8str_view_t id) {
+    for (size_t j = 0; id.ptr && j < ir->file_count; ++j) {
         if (RP_EQ(ir->files[j].id, id)) return &ir->files[j];
     }
     return NULL;
@@ -103,7 +103,7 @@ static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, const char *id) {
 static bool profile_base(const rp_ir_t *ir, const char *id, bool data_only) {
     static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
     for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
-        const rp_ir_dir_t *d = rp_ir_find_dir(ir, id);
+        const rp_ir_dir_t *d = rp_ir_find_dir(ir, RP_V(id));
         if (d == NULL || d->base.ptr) {
             const char *base = d ? rp_cs(d->base) : id;
             for (size_t i = 0; i < (data_only ? 2u : sizeof profile / sizeof profile[0]); ++i) {
@@ -118,7 +118,7 @@ static bool profile_base(const rp_ir_t *ir, const char *id, bool data_only) {
 
 static bool program_ok(ctx_t *c, const char *id, rp_pos_t pos, const char *what) {
     if (id == NULL) return false;
-    const rp_ir_file_t *f = file_by_id(c->ir, id);
+    const rp_ir_file_t *f = file_by_id(c->ir, RP_V(id));
     if (f == NULL) {
         ERR(c, pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", what, id);
         return false;
@@ -132,27 +132,27 @@ static bool program_ok(ctx_t *c, const char *id, rp_pos_t pos, const char *what)
     return true;
 }
 
-static void add_class_value(ctx_t *c, const char *id, const char *suffix, const char *key, const char *name, const char *value,
-                            const char *with, rp_pos_t pos) {
+static void add_class_value(ctx_t *c, proven_u8str_view_t id, proven_u8str_view_t suffix, proven_u8str_view_t key, proven_u8str_view_t name, proven_u8str_view_t value,
+                            proven_u8str_view_t with, rp_pos_t pos) {
     rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
     memset(r, 0, sizeof *r);
     char rid[96];
-    snprintf(rid, sizeof rid, "%s.%s", id, suffix);
+    snprintf(rid, sizeof rid, "%s.%s", rp_cs(id), rp_cs(suffix));
     r->id = RP_V(ir_dup(c, rid));
     r->root = RP_ROOT_HKCR;
-    r->key = RP_V(ir_dup(c, key));
-    r->name = RP_V(name ? ir_dup(c, name) : NULL);
+    r->key = ir_dup_v(c, key);
+    r->name = ir_dup_v(c, name);
     r->type = RP_REG_STRING;
-    r->value = RP_V(ir_dup(c, value));
+    r->value = ir_dup_v(c, value);
     r->msi_only = true;             // an MSIX says the same in its manifest (RFC-0010 N4)
-    r->with_file = RP_V(ir_dup(c, with));
+    r->with_file = ir_dup_v(c, with);
     r->pos = pos;
 }
 
 // The same under another root (RFC-0024: HKLM / HKMU values of an Explorer handler).
 static void add_root_value(ctx_t *c, const char *id, const char *suffix, rp_reg_root_t root, const char *key, const char *name,
                            const char *value, const char *with, rp_pos_t pos) {
-    add_class_value(c, id, suffix, key, name, value, with, pos);
+    add_class_value(c, RP_V(id), RP_V(suffix), RP_V(key), RP_V(name), RP_V(value), RP_V(with), pos);
     c->ir->registries[c->ir->registry_count - 1].root = root;
 }
 
@@ -198,17 +198,17 @@ void ir_menu_files(ctx_t *c) {
     for (size_t k = 0; k < ir->menu_count; ++k) {
         const rp_ir_menu_t *x = &ir->menus[k];
         if (x->parent.ptr || !x->windows11 || x->id.ptr == NULL) continue;
-        if (first == NULL || ir_cmp_str(rp_cs(x->id), rp_cs(first->id)) < 0) first = x;
+        if (first == NULL || ir_cmp_str(x->id, first->id) < 0) first = x;
     }
     if (first == NULL) return;
     const char *exe = rp_cs(first->target_file);
     const rp_ir_menu_t *kid = NULL;
     for (size_t k = 0; exe == NULL && k < ir->menu_count; ++k) {
         const rp_ir_menu_t *y = &ir->menus[k];
-        if (y->parent.ptr && y->id.ptr && y->target_file.ptr && RP_EQ(y->parent, first->id) && (kid == NULL || ir_cmp_str(rp_cs(y->id), rp_cs(kid->id)) < 0)) kid = y;
+        if (y->parent.ptr && y->id.ptr && y->target_file.ptr && RP_EQ(y->parent, first->id) && (kid == NULL || ir_cmp_str(y->id, kid->id) < 0)) kid = y;
     }
     if (exe == NULL && kid) exe = rp_cs(kid->target_file);
-    const rp_ir_file_t *prog = exe ? file_by_id(ir, exe) : NULL;
+    const rp_ir_file_t *prog = exe ? file_by_id(ir, RP_V(exe)) : NULL;
     if (prog == NULL) return;                   // menu_checks says what is wrong
     ir->menu_package = true;
     ir->menu_exe = RP_V(ir_dup(c, exe));
@@ -241,20 +241,20 @@ void ir_menu_files(ctx_t *c) {
 }
 
 // One value of the menu DLL's data: HKLM per machine, HKCU per user (HKMU), msi-only.
-static void add_menu_data(ctx_t *c, const char *id, const char *suffix, const char *key, const char *name, const char *value, int type,
-                          const char *with, rp_pos_t pos) {
+static void add_menu_data(ctx_t *c, proven_u8str_view_t id, proven_u8str_view_t suffix, proven_u8str_view_t key, proven_u8str_view_t name, proven_u8str_view_t value, int type,
+                          proven_u8str_view_t with, rp_pos_t pos) {
     rp_ir_registry_t *r = &c->ir->registries[c->ir->registry_count++];
     memset(r, 0, sizeof *r);
     char rid[96];
-    snprintf(rid, sizeof rid, "%s.%s", id, suffix);
+    snprintf(rid, sizeof rid, "%s.%s", rp_cs(id), rp_cs(suffix));
     r->id = RP_V(ir_dup(c, rid));
     r->root = RP_ROOT_HKMU;
-    r->key = RP_V(ir_dup(c, key));
-    r->name = RP_V(ir_dup(c, name));
+    r->key = ir_dup_v(c, key);
+    r->name = ir_dup_v(c, name);
     r->type = (rp_reg_type_t)type;
-    r->value = RP_V(ir_dup(c, value));
+    r->value = ir_dup_v(c, value);
     r->msi_only = true;
-    r->with_file = RP_V(ir_dup(c, with));
+    r->with_file = ir_dup_v(c, with);
     r->pos = pos;
 }
 
@@ -269,7 +269,7 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
     if (x->text.ptr) {
         char *t = fmt_literal(c, rp_cs(x->text));
         snprintf(rid, sizeof rid, "%sText", tag);
-        if (t) add_menu_data(c, rp_cs(x->id), rid, key, "Text", t, RP_REG_STRING, with, x->pos);
+        if (t) add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Text"), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         rp_mem_free(c->alloc, t);
     }
     for (size_t w = 0; w < x->text_by_lang_count; ++w) {
@@ -278,12 +278,12 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
         bool en = RP_EQ(x->text_by_lang[w].lang, "en");
         if (t && (en || (x->text.ptr == NULL && w == 0))) {
             snprintf(rid, sizeof rid, "%sText", tag);
-            add_menu_data(c, rp_cs(x->id), rid, key, "Text", t, RP_REG_STRING, with, x->pos);
+            add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Text"), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         }
         if (t && !en) {
             snprintf(rid, sizeof rid, "%sText_%s", tag, rp_cs(x->text_by_lang[w].lang));
             snprintf(name, sizeof name, "Text.%s", rp_cs(x->text_by_lang[w].lang));
-            add_menu_data(c, rp_cs(x->id), rid, key, name, t, RP_REG_STRING, with, x->pos);
+            add_menu_data(c, x->id, RP_V(rid), RP_V(key), RP_V(name), RP_V(t), RP_REG_STRING, RP_V(with), x->pos);
         }
         rp_mem_free(c->alloc, t);
     }
@@ -292,19 +292,19 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
         char val[160];
         snprintf(val, sizeof val, x->icon_file.ptr ? "[#%s]" : "[#%s],0", icon);
         snprintf(rid, sizeof rid, "%sIcon", tag);
-        add_menu_data(c, rp_cs(x->id), rid, key, "Icon", val, RP_REG_STRING, with, x->pos);
+        add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Icon"), RP_V(val), RP_REG_STRING, RP_V(with), x->pos);
     }
     if (x->hide_when.ptr) {
         char *h = fmt_literal(c, rp_cs(x->hide_when));
         snprintf(rid, sizeof rid, "%sHideWhen", tag);
-        if (h) add_menu_data(c, rp_cs(x->id), rid, key, "HideWhen", h, RP_REG_STRING, with, x->pos);
+        if (h) add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("HideWhen"), RP_V(h), RP_REG_STRING, RP_V(with), x->pos);
         rp_mem_free(c->alloc, h);
     }
     if (x->target_file.ptr == NULL) {           // a sub-menu: its items' IDs, in ID order
         size_t n = 0;
         for (size_t j = 0; j < ir->menu_count; ++j) n += ir->menus[j].parent.ptr && RP_EQ(ir->menus[j].parent, x->id);
         snprintf(rid, sizeof rid, "%sItems", tag);
-        add_menu_data(c, rp_cs(x->id), rid, key, "Items", "", RP_REG_MULTI, with, x->pos);
+        add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Items"), PROVEN_LIT(""), RP_REG_MULTI, RP_V(with), x->pos);
         rp_ir_registry_t *r = &ir->registries[ir->registry_count - 1];
         r->items = rp_mem_alloc(c->alloc, n ? n : 1, sizeof *r->items);
         if (r->items == NULL) {
@@ -319,14 +319,14 @@ static void menu_data_at(ctx_t *c, const rp_ir_menu_t *x, const char *key, const
     char val[160];
     snprintf(val, sizeof val, "[#%s]", rp_cs(x->target_file));
     snprintf(rid, sizeof rid, "%sCommand", tag);
-    add_menu_data(c, rp_cs(x->id), rid, key, "Command", val, RP_REG_STRING, with, x->pos);
+    add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Command"), RP_V(val), RP_REG_STRING, RP_V(with), x->pos);
     snprintf(rid, sizeof rid, "%sArgs", tag);
-    add_menu_data(c, rp_cs(x->id), rid, key, "Args", rp_cs(x->args), RP_REG_STRING, with, x->pos);
+    add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Args"), x->args, RP_REG_STRING, RP_V(with), x->pos);
     snprintf(rid, sizeof rid, "%sMulti", tag);
-    add_menu_data(c, rp_cs(x->id), rid, key, "Multi", multi[x->multi], RP_REG_STRING, with, x->pos);
+    add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("Multi"), RP_V(multi[x->multi]), RP_REG_STRING, RP_V(with), x->pos);
     if (x->list.ptr) {
         snprintf(rid, sizeof rid, "%sList", tag);
-        add_menu_data(c, rp_cs(x->id), rid, key, "List", rp_cs(x->list), RP_REG_STRING, with, x->pos);
+        add_menu_data(c, x->id, RP_V(rid), RP_V(key), PROVEN_LIT("List"), x->list, RP_REG_STRING, RP_V(with), x->pos);
     }
 }
 
@@ -377,7 +377,7 @@ static void menu_checks(ctx_t *c) {
         }
         if (x->target_file.ptr) {
             program_ok(c, rp_cs(x->target_file), x->pos, "target");
-            if (x->icon_file.ptr && file_by_id(ir, rp_cs(x->icon_file)) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
+            if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
             if (x->args.ptr == NULL) x->args = RP_V(ir_dup(c, "\"%1\""));
         } else {
             size_t kids = 0;
@@ -442,27 +442,27 @@ static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, co
     }
     if (text == NULL) return;
     snprintf(rid, sizeof rid, "Verb%s", suffix);
-    add_class_value(c, rp_cs(x->id), rid, base, "MUIVerb", text, with, x->pos);
+    add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("MUIVerb"), RP_V(text), RP_V(with), x->pos);
     rp_mem_free(c->alloc, text);
     const char *icon = rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file);
     if (icon) {
         char val[160];
         snprintf(val, sizeof val, x->icon_file.ptr ? "[#%s]" : "[#%s],0", icon);
         snprintf(rid, sizeof rid, "Icon%s", suffix);
-        add_class_value(c, rp_cs(x->id), rid, base, "Icon", val, with, x->pos);
+        add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("Icon"), RP_V(val), RP_V(with), x->pos);
     }
     if (x->extended) {
         snprintf(rid, sizeof rid, "Shift%s", suffix);
-        add_class_value(c, rp_cs(x->id), rid, base, "Extended", "", with, x->pos);
+        add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("Extended"), PROVEN_LIT(""), RP_V(with), x->pos);
     }
     if (x->target_file.ptr == NULL) {
         snprintf(rid, sizeof rid, "Sub%s", suffix);
-        add_class_value(c, rp_cs(x->id), rid, base, "SubCommands", "", with, x->pos);
+        add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("SubCommands"), PROVEN_LIT(""), RP_V(with), x->pos);
         return;
     }
     if (x->multi == RP_MENU_SINGLE) {
         snprintf(rid, sizeof rid, "Multi%s", suffix);
-        add_class_value(c, rp_cs(x->id), rid, base, "MultiSelectModel", "Single", with, x->pos);
+        add_class_value(c, x->id, RP_V(rid), RP_V(base), PROVEN_LIT("MultiSelectModel"), PROVEN_LIT("Single"), RP_V(with), x->pos);
     }
     // The command; on the folder background there is no "%1": the folder is "%V".
     size_t al = x->args.size;
@@ -482,7 +482,7 @@ static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, co
     cmd[w] = '\0';
     snprintf(key, sizeof key, "%s\\command", base);
     snprintf(rid, sizeof rid, "Cmd%s", suffix);
-    add_class_value(c, rp_cs(x->id), rid, key, NULL, cmd, with, x->pos);
+    add_class_value(c, x->id, RP_V(rid), RP_V(key), RP_NONE, RP_V(cmd), RP_V(with), x->pos);
     rp_mem_free(c->alloc, cmd);
 }
 
@@ -490,7 +490,7 @@ static void menu_values_at(ctx_t *c, const rp_ir_menu_t *x, const char *base, co
 // [msix-extension] an author's own DLL would get (kind = "context-menu").
 static void menu_msix_exts(ctx_t *c) {
     rp_ir_t *ir = c->ir;
-    if (file_by_id(ir, "RpMenuDll") == NULL) return;
+    if (file_by_id(ir, PROVEN_LIT("RpMenuDll")) == NULL) return;
     for (size_t k = 0; k < ir->menu_count && !c->nomem; ++k) {
         const rp_ir_menu_t *x = &ir->menus[k];
         if (x->parent.ptr || !x->windows11 || x->clsid.ptr == NULL) continue;
@@ -596,17 +596,17 @@ void ir_class_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->assoc_count; ++k) {
         rp_ir_assoc_t *x = &ir->assocs[k];
         program_ok(c, rp_cs(x->target_file), x->pos, "target");
-        if (x->icon_file.ptr && file_by_id(ir, rp_cs(x->icon_file)) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
+        if (x->icon_file.ptr && file_by_id(ir, x->icon_file) == NULL) ERR(c, x->pos, "RP1315", "icon: file '%s' is not a [file.*] of this package", rp_cs(x->icon_file));
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_assoc_t *y = &ir->assocs[j];
             if (x->extension.ptr && y->extension.ptr && RP_EQ(x->extension, y->extension)) {
                 ERR(c, x->pos, "RP1301", "extension '%s' already has a program ([assoc.%s])", rp_cs(x->extension), rp_cs(y->id));
             }
             if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id) &&
-                (ir_cmp_str(rp_cs(x->description), rp_cs(y->description)) != 0 || ir_cmp_str(rp_cs(x->target_file), rp_cs(y->target_file)) != 0 ||
-                 ir_cmp_str(rp_cs(x->icon_file), rp_cs(y->icon_file)) != 0 || ir_cmp_str(rp_cs(x->args), rp_cs(y->args)) != 0)) {
+                (ir_cmp_str(x->description, y->description) != 0 || ir_cmp_str(x->target_file, y->target_file) != 0 ||
+                 ir_cmp_str(x->icon_file, y->icon_file) != 0 || ir_cmp_str(x->args, y->args) != 0)) {
                 ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another description, target, icon or args", rp_cs(x->prog_id), rp_cs(y->id));
-            } else if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id) && ir_cmp_str(rp_cs(x->logo), rp_cs(y->logo)) != 0) {
+            } else if (x->prog_id.ptr && y->prog_id.ptr && RP_EQ(x->prog_id, y->prog_id) && ir_cmp_str(x->logo, y->logo) != 0) {
                 ERR(c, x->pos, "RP1316", "prog-id '%s' is also in [assoc.%s] with another logo", rp_cs(x->prog_id), rp_cs(y->id));
             }
         }
@@ -627,10 +627,10 @@ void ir_class_checks(ctx_t *c) {
         if (!found) ERR(c, x->pos, "RP1315", "app '%s' is not an [msix-app.*]", rp_cs(x->app));
         for (size_t j = 0; j < k; ++j) {
             const rp_ir_msix_ext_t *y = &ir->msix_exts[j];
-            if (x->kind == RP_MSIX_EXT_ALIAS && y->kind == RP_MSIX_EXT_ALIAS && ir_cmp_str(rp_cs(x->app), rp_cs(y->app)) == 0) {
+            if (x->kind == RP_MSIX_EXT_ALIAS && y->kind == RP_MSIX_EXT_ALIAS && ir_cmp_str(x->app, y->app) == 0) {
                 ERR(c, x->pos, "RP1301", "an application has one alias ([msix-extension.%s] is one already)", rp_cs(y->id));
             }
-            if (x->kind == RP_MSIX_EXT_SHARE_TARGET && y->kind == RP_MSIX_EXT_SHARE_TARGET && ir_cmp_str(rp_cs(x->app), rp_cs(y->app)) == 0) {
+            if (x->kind == RP_MSIX_EXT_SHARE_TARGET && y->kind == RP_MSIX_EXT_SHARE_TARGET && ir_cmp_str(x->app, y->app) == 0) {
                 ERR(c, x->pos, "RP1301", "an application has one share target ([msix-extension.%s] is one already)", rp_cs(y->id));
             }
             if (x->kind == RP_MSIX_EXT_STARTUP && y->kind == RP_MSIX_EXT_STARTUP && RP_EQ(x->task_id, y->task_id)) {
@@ -641,7 +641,7 @@ void ir_class_checks(ctx_t *c) {
     // [com.*] (RFC-0022): a served class of this package, each class and prog-id once.
     for (size_t k = 0; k < ir->com_count; ++k) {
         rp_ir_com_t *x = &ir->coms[k];
-        const rp_ir_file_t *f = file_by_id(ir, rp_cs(x->file));
+        const rp_ir_file_t *f = file_by_id(ir, x->file);
         const char *n = f && f->name.ptr ? rp_cs(f->name) : "";
         size_t l = strlen(n);
         bool exe = l >= 4 && (strcmp(n + l - 4, ".exe") == 0 || strcmp(n + l - 4, ".EXE") == 0);
@@ -652,7 +652,7 @@ void ir_class_checks(ctx_t *c) {
         if (exe && x->threading.ptr) ERR(c, x->pos, "RP1316", "[com.%s]: threading is for a DLL; a program sets its own apartment", rp_cs(x->id));
         if (exe && x->surrogate) ERR(c, x->pos, "RP1316", "[com.%s]: surrogate runs a DLL in dllhost; '%s' is a program", rp_cs(x->id), rp_cs(x->file));
         if (dll && x->args.ptr) ERR(c, x->pos, "RP1316", "[com.%s]: args are a program's; a DLL is loaded, not started", rp_cs(x->id));
-        if (x->typelib_file.ptr && file_by_id(ir, rp_cs(x->typelib_file)) == NULL) {
+        if (x->typelib_file.ptr && file_by_id(ir, x->typelib_file) == NULL) {
             ERR(c, x->pos, "RP1315", "typelib-file: '%s' is not a [file.*] of this package", rp_cs(x->typelib_file));
         }
         for (size_t j = 0; j < k; ++j) {
@@ -705,18 +705,18 @@ void ir_class_checks(ctx_t *c) {
         // among those that open it ("Open with"); Windows 10 and 11 let only the user pick the default.
         char okey[96];
         snprintf(okey, sizeof okey, "%s\\OpenWithProgids", rp_cs(x->extension));
-        if (!x->no_default) add_class_value(c, rp_cs(x->id), "Ext", rp_cs(x->extension), NULL, rp_cs(x->prog_id), rp_cs(x->target_file), x->pos);
-        add_class_value(c, rp_cs(x->id), "With", okey, rp_cs(x->prog_id), "", rp_cs(x->target_file), x->pos);
-        if (x->content_type.ptr) add_class_value(c, rp_cs(x->id), "Type", rp_cs(x->extension), "Content Type", rp_cs(x->content_type), rp_cs(x->target_file), x->pos);
-        if (x->perceived_type.ptr) add_class_value(c, rp_cs(x->id), "Kind", rp_cs(x->extension), "PerceivedType", rp_cs(x->perceived_type), rp_cs(x->target_file), x->pos);
+        if (!x->no_default) add_class_value(c, x->id, PROVEN_LIT("Ext"), x->extension, RP_NONE, x->prog_id, x->target_file, x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("With"), RP_V(okey), x->prog_id, PROVEN_LIT(""), x->target_file, x->pos);
+        if (x->content_type.ptr) add_class_value(c, x->id, PROVEN_LIT("Type"), x->extension, PROVEN_LIT("Content Type"), x->content_type, x->target_file, x->pos);
+        if (x->perceived_type.ptr) add_class_value(c, x->id, PROVEN_LIT("Kind"), x->extension, PROVEN_LIT("PerceivedType"), x->perceived_type, x->target_file, x->pos);
         bool first = true;              // a prog-id shared by several extensions is written once
         for (size_t j = 0; j < k; ++j) first &= !RP_EQ(ir->assocs[j].prog_id, x->prog_id);
         if (!first) continue;
         char key[160], val[512];
-        add_class_value(c, rp_cs(x->id), "Prog", rp_cs(x->prog_id), NULL, rp_cs(x->description.ptr ? x->description : ir->name), rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Prog"), x->prog_id, RP_NONE, x->description.ptr ? x->description : ir->name, x->target_file, x->pos);
         snprintf(key, sizeof key, "%s\\DefaultIcon", rp_cs(x->prog_id));
         snprintf(val, sizeof val, "[#%s],0", rp_cs(x->icon_file.ptr ? x->icon_file : x->target_file));
-        add_class_value(c, rp_cs(x->id), "Icon", key, NULL, val, rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Icon"), RP_V(key), RP_NONE, RP_V(val), x->target_file, x->pos);
         snprintf(key, sizeof key, "%s\\shell\\open\\command", rp_cs(x->prog_id));
         char *cmd = rp_mem_alloc(c->alloc, x->target_file.size + x->args.size + 16, 1);
         if (cmd == NULL) {
@@ -724,18 +724,18 @@ void ir_class_checks(ctx_t *c) {
             return;
         }
         sprintf(cmd, "\"[#%s]\" %s", rp_cs(x->target_file), rp_cs(x->args));
-        add_class_value(c, rp_cs(x->id), "Cmd", key, NULL, cmd, rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Cmd"), RP_V(key), RP_NONE, RP_V(cmd), x->target_file, x->pos);
         rp_mem_free(c->alloc, cmd);
     }
     for (size_t k = 0; k < ir->protocol_count && !c->nomem; ++k) {
         const rp_ir_protocol_t *x = &ir->protocols[k];
         char key[160], val[512];
         snprintf(val, sizeof val, "URL:%s", rp_cs(x->description.ptr ? x->description : x->name));
-        add_class_value(c, rp_cs(x->id), "Url", rp_cs(x->name), NULL, val, rp_cs(x->target_file), x->pos);
-        add_class_value(c, rp_cs(x->id), "Proto", rp_cs(x->name), "URL Protocol", "", rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Url"), x->name, RP_NONE, RP_V(val), x->target_file, x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Proto"), x->name, PROVEN_LIT("URL Protocol"), PROVEN_LIT(""), x->target_file, x->pos);
         snprintf(key, sizeof key, "%s\\DefaultIcon", rp_cs(x->name));
         snprintf(val, sizeof val, "[#%s],0", rp_cs(x->target_file));
-        add_class_value(c, rp_cs(x->id), "Icon", key, NULL, val, rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Icon"), RP_V(key), RP_NONE, RP_V(val), x->target_file, x->pos);
         snprintf(key, sizeof key, "%s\\shell\\open\\command", rp_cs(x->name));
         char *cmd = rp_mem_alloc(c->alloc, x->target_file.size + x->args.size + 16, 1);
         if (cmd == NULL) {
@@ -743,7 +743,7 @@ void ir_class_checks(ctx_t *c) {
             return;
         }
         sprintf(cmd, "\"[#%s]\" %s", rp_cs(x->target_file), rp_cs(x->args));
-        add_class_value(c, rp_cs(x->id), "Cmd", key, NULL, cmd, rp_cs(x->target_file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Cmd"), RP_V(key), RP_NONE, RP_V(cmd), x->target_file, x->pos);
         rp_mem_free(c->alloc, cmd);
     }
     // [handler.*]: Explorer finds a handler under the file type's ShellEx key (preview, thumbnail),
@@ -762,15 +762,15 @@ void ir_class_checks(ctx_t *c) {
             } else {
                 snprintf(key, sizeof key, "%s\\ShellEx\\%s", x->types[t],
                          x->kind == RP_HANDLER_PREVIEW ? "{8895B1C6-B41F-4C1C-A562-0D564250836F}" : "{E357FCCD-A995-4576-B01F-234630154E96}");
-                add_class_value(c, rp_cs(x->id), suffix, key, NULL, rp_cs(x->clsid), rp_cs(cm->file), x->pos);
+                add_class_value(c, x->id, RP_V(suffix), RP_V(key), RP_NONE, x->clsid, cm->file, x->pos);
             }
         }
         if (x->kind == RP_HANDLER_PREVIEW) {
             snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
             // prevhost.exe: the 64-bit one for an x64 or Arm64 package, the 32-bit one for x86.
-            add_class_value(c, rp_cs(x->id), "App", key, "AppID",
-                            ir->arch == RP_ARCH_X86 ? "{534A1E02-D58F-44F0-B58B-36CBED287C7C}" : "{6D2B5079-2F0B-48DD-AB7F-97CEC514D30B}", rp_cs(cm->file), x->pos);
-            add_class_value(c, rp_cs(x->id), "Name", key, "DisplayName", desc, rp_cs(cm->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("App"), RP_V(key), PROVEN_LIT("AppID"),
+                            RP_V(ir->arch == RP_ARCH_X86 ? "{534A1E02-D58F-44F0-B58B-36CBED287C7C}" : "{6D2B5079-2F0B-48DD-AB7F-97CEC514D30B}"), cm->file, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Name"), RP_V(key), PROVEN_LIT("DisplayName"), RP_V(desc), cm->file, x->pos);
             add_root_value(c, rp_cs(x->id), "List", RP_ROOT_HKMU, "Software\\Microsoft\\Windows\\CurrentVersion\\PreviewHandlers", rp_cs(x->clsid), desc,
                            rp_cs(cm->file), x->pos);
         }
@@ -781,7 +781,7 @@ void ir_class_checks(ctx_t *c) {
         const char *desc = rp_cs(x->description.ptr ? x->description : ir->name);
         char key[200], val[512];
         snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
-        add_class_value(c, rp_cs(x->id), "Cls", key, NULL, desc, rp_cs(x->file), x->pos);
+        add_class_value(c, x->id, PROVEN_LIT("Cls"), RP_V(key), RP_NONE, RP_V(desc), x->file, x->pos);
         if (x->exe) {
             snprintf(key, sizeof key, "CLSID\\%s\\LocalServer32", rp_cs(x->clsid));
             char *cmd = rp_mem_alloc(c->alloc, x->file.size + (x->args.ptr ? x->args.size : 0) + 16, 1);
@@ -790,44 +790,44 @@ void ir_class_checks(ctx_t *c) {
                 return;
             }
             sprintf(cmd, x->args.ptr ? "\"[#%s]\" %s" : "\"[#%s]\"", rp_cs(x->file), rp_cs(x->args));
-            add_class_value(c, rp_cs(x->id), "Srv", key, NULL, cmd, rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Srv"), RP_V(key), RP_NONE, RP_V(cmd), x->file, x->pos);
             rp_mem_free(c->alloc, cmd);
         } else {
             snprintf(key, sizeof key, "CLSID\\%s\\InprocServer32", rp_cs(x->clsid));
             snprintf(val, sizeof val, "[#%s]", rp_cs(x->file));
-            add_class_value(c, rp_cs(x->id), "Srv", key, NULL, val, rp_cs(x->file), x->pos);
-            add_class_value(c, rp_cs(x->id), "Thr", key, "ThreadingModel", x->threading.ptr ? rp_cs(x->threading) : "Apartment", rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Srv"), RP_V(key), RP_NONE, RP_V(val), x->file, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Thr"), RP_V(key), PROVEN_LIT("ThreadingModel"), RP_V(x->threading.ptr ? rp_cs(x->threading) : "Apartment"), x->file, x->pos);
         }
         if (x->prog_id.ptr) {
             snprintf(key, sizeof key, "CLSID\\%s\\ProgID", rp_cs(x->clsid));
-            add_class_value(c, rp_cs(x->id), "PidC", key, NULL, rp_cs(x->prog_id), rp_cs(x->file), x->pos);
-            add_class_value(c, rp_cs(x->id), "Pid", rp_cs(x->prog_id), NULL, desc, rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("PidC"), RP_V(key), RP_NONE, x->prog_id, x->file, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Pid"), x->prog_id, RP_NONE, RP_V(desc), x->file, x->pos);
             snprintf(key, sizeof key, "%s\\CLSID", rp_cs(x->prog_id));
-            add_class_value(c, rp_cs(x->id), "PidK", key, NULL, rp_cs(x->clsid), rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("PidK"), RP_V(key), RP_NONE, x->clsid, x->file, x->pos);
         }
         const char *app = x->app_id.ptr ? rp_cs(x->app_id) : x->surrogate ? rp_cs(x->clsid) : NULL;
         if (app) {
             snprintf(key, sizeof key, "CLSID\\%s", rp_cs(x->clsid));
-            add_class_value(c, rp_cs(x->id), "App", key, "AppID", app, rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("App"), RP_V(key), PROVEN_LIT("AppID"), RP_V(app), x->file, x->pos);
             snprintf(key, sizeof key, "AppID\\%s", app);
-            add_class_value(c, rp_cs(x->id), "AppK", key, NULL, desc, rp_cs(x->file), x->pos);
-            if (x->surrogate) add_class_value(c, rp_cs(x->id), "Sur", key, "DllSurrogate", "", rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("AppK"), RP_V(key), RP_NONE, RP_V(desc), x->file, x->pos);
+            if (x->surrogate) add_class_value(c, x->id, PROVEN_LIT("Sur"), RP_V(key), PROVEN_LIT("DllSurrogate"), PROVEN_LIT(""), x->file, x->pos);
         }
         if (x->typelib.ptr) {
             const char *tf = rp_cs(x->typelib_file.ptr ? x->typelib_file : x->file);
             snprintf(key, sizeof key, "CLSID\\%s\\TypeLib", rp_cs(x->clsid));
-            add_class_value(c, rp_cs(x->id), "Tlb", key, NULL, rp_cs(x->typelib), rp_cs(x->file), x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("Tlb"), RP_V(key), RP_NONE, x->typelib, x->file, x->pos);
             snprintf(key, sizeof key, "TypeLib\\%s\\%s", rp_cs(x->typelib), rp_cs(x->typelib_version));
-            add_class_value(c, rp_cs(x->id), "TlbV", key, NULL, desc, tf, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("TlbV"), RP_V(key), RP_NONE, RP_V(desc), RP_V(tf), x->pos);
             snprintf(key, sizeof key, "TypeLib\\%s\\%s\\0\\%s", rp_cs(x->typelib), rp_cs(x->typelib_version), ir->arch == RP_ARCH_X86 ? "win32" : "win64");
             snprintf(val, sizeof val, "[#%s]", tf);
-            add_class_value(c, rp_cs(x->id), "TlbP", key, NULL, val, tf, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("TlbP"), RP_V(key), RP_NONE, RP_V(val), RP_V(tf), x->pos);
             snprintf(key, sizeof key, "TypeLib\\%s\\%s\\FLAGS", rp_cs(x->typelib), rp_cs(x->typelib_version));
-            add_class_value(c, rp_cs(x->id), "TlbF", key, NULL, "0", tf, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("TlbF"), RP_V(key), RP_NONE, PROVEN_LIT("0"), RP_V(tf), x->pos);
             snprintf(key, sizeof key, "TypeLib\\%s\\%s\\HELPDIR", rp_cs(x->typelib), rp_cs(x->typelib_version));
-            const rp_ir_file_t *tff = file_by_id(ir, tf);
+            const rp_ir_file_t *tff = file_by_id(ir, RP_V(tf));
             snprintf(val, sizeof val, "[%s]", tff ? rp_cs(tff->dir) : "INSTALLDIR");
-            add_class_value(c, rp_cs(x->id), "TlbH", key, NULL, val, tf, x->pos);
+            add_class_value(c, x->id, PROVEN_LIT("TlbH"), RP_V(key), RP_NONE, RP_V(val), RP_V(tf), x->pos);
         }
         if (x->msi_only) continue;
         rp_ir_msix_ext_t *e = &ir->msix_exts[ir->msix_ext_count++];
@@ -965,8 +965,8 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->feature_count; ++k) {
         const rp_ir_feature_t *f = &ir->features[k];
         size_t steps = 0;
-        for (const rp_ir_feature_t *p = f; p && p->parent.ptr; p = find_feature(ir, rp_cs(p->parent))) {
-            if (!find_feature(ir, rp_cs(p->parent))) {
+        for (const rp_ir_feature_t *p = f; p && p->parent.ptr; p = find_feature(ir, p->parent)) {
+            if (!find_feature(ir, p->parent)) {
                 ERR(c, p->pos, "RP1307", "feature parent '%s' is not defined", rp_cs(p->parent));
                 break;
             }
@@ -987,7 +987,7 @@ void ir_cross_checks(ctx_t *c) {
         const rp_ir_dir_t *d = &ir->dirs[k];
         dir_paths[k] = NULL;
         if (d->parts == NULL) continue;
-        if (d->parent.ptr && !rp_ir_find_dir(ir, rp_cs(d->parent))) {
+        if (d->parent.ptr && !rp_ir_find_dir(ir, d->parent)) {
             ERR(c, d->pos, "RP1307", "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, "
                 "ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, "
                 "Windows, System, Fonts, Temp)", rp_cs(d->parent));
@@ -995,7 +995,7 @@ void ir_cross_checks(ctx_t *c) {
         }
         dir_paths[k] = dir_full_path(c, d, 0);
         if (dir_paths[k] == NULL && d->parent.ptr) ERR(c, d->pos, "RP1303", "dir '%s' is inside itself (path loop)", rp_cs(d->id));
-        if (d->feature.ptr && !find_feature(ir, rp_cs(d->feature))) {
+        if (d->feature.ptr && !find_feature(ir, d->feature)) {
             ERR(c, d->pos, "RP1307", "feature '%s' is not defined", rp_cs(d->feature));
         }
     }
@@ -1015,12 +1015,12 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, rp_cs(f->dir)) : NULL;
+        const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir.ptr && d == NULL) {
             ERR(c, f->pos, "RP1307", "dir '%s' is not defined", rp_cs(f->dir));
             continue;
         }
-        if (f->feature.ptr && !find_feature(ir, rp_cs(f->feature))) {
+        if (f->feature.ptr && !find_feature(ir, f->feature)) {
             ERR(c, f->pos, "RP1307", "feature '%s' is not defined", rp_cs(f->feature));
         } else if (f->feature.ptr == NULL) {
             if (d && d->feature.ptr) f->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
@@ -1074,12 +1074,12 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
         rp_ir_folder_t *f = &ir->folders[k];
-        const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, rp_cs(f->dir)) : NULL;
+        const rp_ir_dir_t *d = f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir.ptr && d == NULL) {
             ERR(c, f->pos, "RP1307", "dir '%s' is not defined", rp_cs(f->dir));
             continue;
         }
-        if (f->feature.ptr && !find_feature(ir, rp_cs(f->feature))) {
+        if (f->feature.ptr && !find_feature(ir, f->feature)) {
             ERR(c, f->pos, "RP1307", "feature '%s' is not defined", rp_cs(f->feature));
         } else if (f->feature.ptr == NULL) {
             if (d && d->feature.ptr) f->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
@@ -1104,7 +1104,7 @@ void ir_cross_checks(ctx_t *c) {
     // Properties: not a dir/file/feature/folder ID (every directory is a property too).
     for (size_t k = 0; k < ir->property_count; ++k) {
         const rp_ir_property_t *p = &ir->properties[k];
-        if (rp_ir_find_dir(ir, rp_cs(p->id)) || find_feature(ir, rp_cs(p->id))) {
+        if (rp_ir_find_dir(ir, p->id) || find_feature(ir, p->id)) {
             ERR(c, p->pos, "RP1310", "property '%s' has the name of a dir or feature", rp_cs(p->id));
         }
         for (size_t j = 0; j < k; ++j) {
@@ -1127,7 +1127,7 @@ void ir_cross_checks(ctx_t *c) {
                 // a component has one bitness: a 32-bit view value cannot share a 64-bit file's component
                 if (r->view32) ERR(c, r->pos, "RP1316", "view = \"32\" cannot go 'with' a file of a 64-bit package");
             }
-        } else if (r->feature.ptr && !find_feature(ir, rp_cs(r->feature))) {
+        } else if (r->feature.ptr && !find_feature(ir, r->feature)) {
             ERR(c, r->pos, "RP1307", "feature '%s' is not defined", rp_cs(r->feature));
         } else if (r->feature.ptr == NULL) {
             if (!declared) r->feature = RP_V(ir_dup(c, "Main"));
@@ -1137,7 +1137,7 @@ void ir_cross_checks(ctx_t *c) {
     // Removals and copies: folders and files exist; a removal's feature resolves like a file's.
     for (size_t k = 0; k < ir->remove_count; ++k) {
         rp_ir_remove_t *r = &ir->removes[k];
-        const rp_ir_dir_t *d = r->dir.ptr ? rp_ir_find_dir(ir, rp_cs(r->dir)) : NULL;
+        const rp_ir_dir_t *d = r->dir.ptr ? rp_ir_find_dir(ir, r->dir) : NULL;
         if (r->dir.ptr && d == NULL) {
             ERR(c, r->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(r->dir));
             continue;
@@ -1146,7 +1146,7 @@ void ir_cross_checks(ctx_t *c) {
             // Whatever it is below: Windows' own folders are never emptied.
             const rp_ir_dir_t *top = d;
             for (int hop = 0; top->parent.ptr && hop < 64; ++hop) {
-                const rp_ir_dir_t *up = rp_ir_find_dir(ir, rp_cs(top->parent));
+                const rp_ir_dir_t *up = rp_ir_find_dir(ir, top->parent);
                 if (up == NULL) break;
                 top = up;
             }
@@ -1160,7 +1160,7 @@ void ir_cross_checks(ctx_t *c) {
         if (r->users_all && (!r->recursive || !d || !profile_base(ir, rp_cs(r->dir), true) || ir->scope != 0)) {
             ERR(c, r->pos, "RP1316", "[remove.%s]: users = \"all\" is for recursive = true on a folder in AppData or LocalAppData, in a per-machine package", rp_cs(r->id));
         }
-        if (r->feature.ptr && !find_feature(ir, rp_cs(r->feature))) {
+        if (r->feature.ptr && !find_feature(ir, r->feature)) {
             ERR(c, r->pos, "RP1307", "feature '%s' is not defined", rp_cs(r->feature));
         } else if (r->feature.ptr == NULL) {
             if (d && d->feature.ptr) r->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
@@ -1215,7 +1215,7 @@ void ir_cross_checks(ctx_t *c) {
     // Dialogs: the folder the user may change is a dir of this package (default: INSTALLDIR).
     if (ir->ui >= 3) {
         const char *d = ir->ui_install_dir.ptr ? rp_cs(ir->ui_install_dir) : "INSTALLDIR";
-        if (!rp_ir_find_dir(ir, d)) {
+        if (!rp_ir_find_dir(ir, RP_V(d))) {
             rp_pos_t top = { 1, 1 };
             ERR(c, top, "RP1315", "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)",
                 ir->ui == 3 ? "installdir" : "features", d);
@@ -1235,7 +1235,7 @@ void ir_cross_checks(ctx_t *c) {
         if (x->target.ptr == NULL) continue;
         bool found = false;
         if (x->kind == 0) {
-            const rp_ir_dir_t *d = rp_ir_find_dir(ir, rp_cs(x->target));
+            const rp_ir_dir_t *d = rp_ir_find_dir(ir, x->target);
             found = d != NULL;
             if (d && d->part_count == 0) ERR(c, x->pos, "RP1316", "a known folder itself ('%s') cannot get permissions", rp_cs(x->target));
             if (d) x->feature = RP_V(ir_dup(c, d->feature.ptr ? rp_cs(d->feature) : declared ? NULL : "Main"));
@@ -1264,7 +1264,7 @@ void ir_cross_checks(ctx_t *c) {
         for (size_t j = 0; x->file.ptr && j < ir->file_count; ++j) {
             if (RP_EQ(ir->files[j].id, x->file)) f = &ir->files[j];
         }
-        const rp_ir_dir_t *d = f && f->dir.ptr ? rp_ir_find_dir(ir, rp_cs(f->dir)) : NULL;
+        const rp_ir_dir_t *d = f && f->dir.ptr ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (x->file.ptr && f == NULL) {
             ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", rp_cs(x->file));
         } else if (f && !(d && d->part_count == 0 && d->base.ptr && RP_EQ(d->base, "Fonts"))) {
@@ -1319,7 +1319,7 @@ void ir_cross_checks(ctx_t *c) {
         }
         // A search may give a dir its default (RFC-0012 V5): a folder from the registry or from a
         // folder search, never a file's path.
-        if (rp_ir_find_dir(ir, rp_cs(x->property))) {
+        if (rp_ir_find_dir(ir, x->property)) {
             if (x->kind != RP_SEARCH_REGISTRY && x->kind != RP_SEARCH_DIR) {
                 ERR(c, x->pos, "RP1310", "'%s' is the name of a dir: only a registry or dir search can fill a dir", rp_cs(x->property));
             } else {
@@ -1329,12 +1329,12 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
-        const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, rp_cs(x->dir)) : NULL;
+        const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, x->dir) : NULL;
         if (x->dir.ptr && d == NULL) {
             ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->dir));
             continue;
         }
-        if (x->feature.ptr && !find_feature(ir, rp_cs(x->feature))) {
+        if (x->feature.ptr && !find_feature(ir, x->feature)) {
             ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
         } else if (x->feature.ptr == NULL) {
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
@@ -1344,9 +1344,9 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->merge_count; ++k) {
         rp_ir_merge_t *x = &ir->merges[k];
-        if (x->dir.ptr && rp_ir_find_dir(ir, rp_cs(x->dir)) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->dir));
-        const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, rp_cs(x->dir)) : NULL;
-        if (x->feature.ptr && !find_feature(ir, rp_cs(x->feature))) {
+        if (x->dir.ptr && rp_ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(x->dir));
+        const rp_ir_dir_t *d = x->dir.ptr ? rp_ir_find_dir(ir, x->dir) : NULL;
+        if (x->feature.ptr && !find_feature(ir, x->feature)) {
             ERR(c, x->pos, "RP1307", "feature '%s' is not defined", rp_cs(x->feature));
         } else if (x->feature.ptr == NULL) {
             if (d && d->feature.ptr) x->feature = RP_V(ir_dup(c, rp_cs(d->feature)));
@@ -1356,7 +1356,7 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->env_count; ++k) {
         rp_ir_env_t *e = &ir->envs[k];
-        if (e->feature.ptr && !find_feature(ir, rp_cs(e->feature))) {
+        if (e->feature.ptr && !find_feature(ir, e->feature)) {
             ERR(c, e->pos, "RP1307", "feature '%s' is not defined", rp_cs(e->feature));
         } else if (e->feature.ptr == NULL) {
             if (!declared) e->feature = RP_V(ir_dup(c, "Main"));
@@ -1368,7 +1368,7 @@ void ir_cross_checks(ctx_t *c) {
         bool found = false;
         for (size_t j = 0; cp->source_file.ptr && j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, cp->source_file);
         if (cp->source_file.ptr && !found) ERR(c, cp->pos, "RP1315", "source: file '%s' is not a [file.*] of this package", rp_cs(cp->source_file));
-        if (cp->dir.ptr && !rp_ir_find_dir(ir, rp_cs(cp->dir))) ERR(c, cp->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(cp->dir));
+        if (cp->dir.ptr && !rp_ir_find_dir(ir, cp->dir)) ERR(c, cp->pos, "RP1315", "dir '%s' is not a dir ID", rp_cs(cp->dir));
     }
     // Shortcuts: target file and folders exist.
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
@@ -1376,10 +1376,10 @@ void ir_cross_checks(ctx_t *c) {
         bool found = false;
         for (size_t j = 0; sc->target_file.ptr && j < ir->file_count; ++j) found |= RP_EQ(ir->files[j].id, sc->target_file);
         if (sc->target_file.ptr && !found) ERR(c, sc->pos, "RP1315", "target: file '%s' is not a [file.*] of this package", rp_cs(sc->target_file));
-        if (sc->dir.ptr && !ir_shortcut_folder(rp_cs(sc->dir)) && !rp_ir_find_dir(ir, rp_cs(sc->dir))) {
+        if (sc->dir.ptr && !ir_shortcut_folder(rp_cs(sc->dir)) && !rp_ir_find_dir(ir, sc->dir)) {
             ERR(c, sc->pos, "RP1315", "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup", rp_cs(sc->dir));
         }
-        if (sc->working_dir.ptr && !rp_ir_find_dir(ir, rp_cs(sc->working_dir))) {
+        if (sc->working_dir.ptr && !rp_ir_find_dir(ir, sc->working_dir)) {
             ERR(c, sc->pos, "RP1315", "working-dir '%s' is not a dir ID", rp_cs(sc->working_dir));
         }
     }
