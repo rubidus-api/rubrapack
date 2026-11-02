@@ -26,8 +26,11 @@ struct rp_tls {
     bool                 eof, failed;
     rp_buf_t             app;            // application data received and not read yet
     size_t               app_pos;
-    char                 msg[400];       // the last failure, when it names something
 };
+
+// The last failure's sentence when it names something. Not in rp_tls_t: the caller reports it after
+// rp_tls_free (as rubrapack's own client kept it, in static storage).
+static thread_local char msg[400];
 
 static proven_mem_view_t mv(const void *p, size_t n) { return (proven_mem_view_t){ (const proven_byte_t *)p, n }; }
 
@@ -49,8 +52,8 @@ static const char *why_of(rp_tls_t *t, proven_err_t err) {
     case PROVEN_CERT_FAULT_EXPIRED:
     case PROVEN_CERT_FAULT_NOT_YET_VALID: return "a certificate in the path is expired or not valid yet";
     case PROVEN_CERT_FAULT_NAME_MISMATCH:
-        snprintf(t->msg, sizeof t->msg, "the server's certificate is not for '%s' (subjectAltName)", t->host);
-        return t->msg;
+        snprintf(msg, sizeof msg, "the server's certificate is not for '%s' (subjectAltName)", t->host);
+        return msg;
     case PROVEN_CERT_FAULT_USAGE: return TR_N("the server's certificate is not for TLS servers (its extended key usage)");
     case PROVEN_CERT_FAULT_MALFORMED: return "the server's certificate is malformed";
     default: return "the server's certificate path does not reach a trusted certificate (--tls-trust, --system-roots)";
@@ -60,14 +63,14 @@ static const char *why_of(rp_tls_t *t, proven_err_t err) {
     if (got > 0) {
         const char *name = alert_name(got);
         bool early = !proven_tls_is_established(t->conn) && (got == 40 || got == 70 || got == 71);
-        snprintf(t->msg, sizeof t->msg, "the server ended the handshake with TLS alert %u%s%s%s%s", (unsigned)got, *name ? " (" : "", name,
+        snprintf(msg, sizeof msg, "the server ended the handshake with TLS alert %u%s%s%s%s", (unsigned)got, *name ? " (" : "", name,
                  *name ? ")" : "", early ? " - it may not speak TLS 1.3, which rubrapack needs" : "");
-        return t->msg;
+        return msg;
     }
     if (proven_tls_alert_sent(t->conn) == 70) return "the server does not speak TLS 1.3 (TLS 1.2 and older are not supported)";
     if (err == PROVEN_ERR_UNTRUSTED) return "the server's certificate path does not reach a trusted certificate (--tls-trust, --system-roots)";
-    snprintf(t->msg, sizeof t->msg, "the server broke the TLS protocol (alert %d)", proven_tls_alert_sent(t->conn));
-    return t->msg;
+    snprintf(msg, sizeof msg, "the server broke the TLS protocol (alert %d)", proven_tls_alert_sent(t->conn));
+    return msg;
 }
 
 proven_err_t rp_tls_new(proven_allocator_t alloc, const rp_tls_config_t *cfg, rp_tls_t **out, const char **why) {
