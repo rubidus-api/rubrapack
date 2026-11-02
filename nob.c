@@ -74,6 +74,7 @@ static const char *const core_sources[] = {
     "src/model/ir_ui.c", "src/model/ir_more.c", "src/model/ir_check.c", "src/model/ir_dump.c", "src/model/ir_chain.c",
     "src/msi/db.c",
     "src/msi/db_write.c",
+    "src/msi/index.c",
     "src/msi/lint.c",
     "src/msi/lint_prev.c",
     "src/msi/merge.c",
@@ -142,6 +143,7 @@ static const char *const proven_sources[] = {
     "src/proven/fs.c",
     "src/proven/hash.c",
     "src/proven/heap.c",
+    "src/proven/map.c",
     "src/proven/memory.c",
     "src/proven/mmap.c",
     "src/proven/random.c",
@@ -154,6 +156,7 @@ static const char *const proven_sources[] = {
     "platform/proven_sys_io.c",
     "platform/proven_sys_mem.c",
     "platform/proven_sys_random.c",
+    "platform/proven_sys_thread.c",
     "platform/proven_sys_time.c",
 };
 

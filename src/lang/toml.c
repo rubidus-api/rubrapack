@@ -370,7 +370,6 @@ static bool parse_array(parser_t *p, rp_tval_t *out) {
         rp_tval_t item = { 0 };
         item.pos = pos_at(p, p->i);
         if (!parse_value(p, &item, true)) {
-            ok = false;
             skip_line(p);
             return false;
         }

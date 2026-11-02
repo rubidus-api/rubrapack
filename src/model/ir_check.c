@@ -4,11 +4,55 @@
 
 // ---- cross checks --------------------------------------------------------------------------
 
-const rp_ir_dir_t *ir_find_dir(const rp_ir_t *ir, const char *id) {
+const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, const char *id) {
+    if (ir->dir_order && ir->dir_order_of == ir->dir_count) {      // the index is of these dirs
+        size_t lo = 0, hi = ir->dir_order_len;                      // the first of equal IDs
+        while (lo < hi) {
+            size_t mid = lo + (hi - lo) / 2;
+            if (strcmp(ir->dirs[ir->dir_order[mid]].id, id) < 0) lo = mid + 1;
+            else hi = mid;
+        }
+        if (lo < ir->dir_order_len && strcmp(ir->dirs[ir->dir_order[lo]].id, id) == 0) return &ir->dirs[ir->dir_order[lo]];
+        return NULL;
+    }
     for (size_t k = 0; k < ir->dir_count; ++k) {
         if (ir->dirs[k].id && strcmp(ir->dirs[k].id, id) == 0) return &ir->dirs[k];
     }
     return NULL;
+}
+
+typedef struct { const char *id; size_t at; } dirat_t;
+
+static int cmp_dirat(const void *x, const void *y) {
+    const dirat_t *a = x, *b = y;
+    int r = strcmp(a->id, b->id);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;
+}
+
+// rp_ir_find_dir's index, once every dir is known: the dirs with an ID by ID, then by place.
+void ir_index_dirs(ctx_t *c) {
+    rp_ir_t *ir = c->ir;
+    rp_mem_free(c->alloc, ir->dir_order);
+    ir->dir_order = NULL;
+    ir->dir_order_len = ir->dir_order_of = 0;
+    dirat_t *v = rp_mem_alloc(c->alloc, ir->dir_count ? ir->dir_count : 1, sizeof *v);
+    size_t *order = rp_mem_alloc(c->alloc, ir->dir_count ? ir->dir_count : 1, sizeof *order);
+    if (v == NULL || order == NULL) {
+        rp_mem_free(c->alloc, v);
+        rp_mem_free(c->alloc, order);
+        c->nomem = true;
+        return;
+    }
+    size_t n = 0;
+    for (size_t k = 0; k < ir->dir_count; ++k) {
+        if (ir->dirs[k].id) v[n++] = (dirat_t){ ir->dirs[k].id, k };
+    }
+    rp_sort(v, n, sizeof *v, cmp_dirat);
+    for (size_t k = 0; k < n; ++k) order[k] = v[k].at;
+    rp_mem_free(c->alloc, v);
+    ir->dir_order = order;
+    ir->dir_order_len = n;
+    ir->dir_order_of = ir->dir_count;
 }
 
 static const rp_ir_feature_t *find_feature(const rp_ir_t *ir, const char *id) {
@@ -25,7 +69,7 @@ static char *dir_full_path(ctx_t *c, const rp_ir_dir_t *d, size_t depth) {
     if (d->base) {
         head = ir_dup(c, d->base);
     } else {
-        const rp_ir_dir_t *p = d->parent ? ir_find_dir(c->ir, d->parent) : NULL;
+        const rp_ir_dir_t *p = d->parent ? rp_ir_find_dir(c->ir, d->parent) : NULL;
         head = p ? dir_full_path(c, p, depth + 1) : NULL;
     }
     if (head == NULL) return NULL;
@@ -59,7 +103,7 @@ static const rp_ir_file_t *file_by_id(const rp_ir_t *ir, const char *id) {
 static bool profile_base(const rp_ir_t *ir, const char *id, bool data_only) {
     static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
     for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
-        const rp_ir_dir_t *d = ir_find_dir(ir, id);
+        const rp_ir_dir_t *d = rp_ir_find_dir(ir, id);
         if (d == NULL || d->base) {
             const char *base = d ? d->base : id;
             for (size_t i = 0; i < (data_only ? 2u : sizeof profile / sizeof profile[0]); ++i) {
@@ -803,13 +847,72 @@ void ir_class_checks(ctx_t *c) {
     }
 }
 
+typedef struct { const char *id; rp_pos_t pos; } idpos_t;
+typedef struct { const char *id; size_t at; } idat_t;     // an ID and its place in the list
+typedef struct { size_t a, b; } dup_t;                      // two places of one ID, a before b
+
+static int cmp_idat(const void *x, const void *y) {
+    const idat_t *a = x, *b = y;
+    int r = strcmp(a->id, b->id);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;
+}
+
+static int cmp_dup(const void *x, const void *y) {
+    const dup_t *a = x, *b = y;
+    if (a->a != b->a) return a->a < b->a ? -1 : 1;
+    return a->b < b->b ? -1 : a->b > b->b;
+}
+
+// Every pair a < b with v[a] equal to v[b] (NULLs left out), ordered by a then b; NULL with
+// nothing in *out when there is none. Sorting first keeps this n log n for many distinct strings.
+static size_t equal_pairs(ctx_t *c, const char *const *v, size_t n, dup_t **out) {
+    *out = NULL;
+    idat_t *by = rp_mem_alloc(c->alloc, n ? n : 1, sizeof *by);
+    if (by == NULL) {
+        c->nomem = true;
+        return 0;
+    }
+    size_t m = 0;
+    for (size_t k = 0; k < n; ++k) {
+        if (v[k]) by[m++] = (idat_t){ v[k], k };
+    }
+    rp_sort(by, m, sizeof *by, cmp_idat);
+    dup_t *dups = NULL;
+    size_t nd = 0, cap = 0;
+    for (size_t g = 0; g < m && !c->nomem;) {
+        size_t e = g + 1;
+        while (e < m && strcmp(by[g].id, by[e].id) == 0) ++e;
+        for (size_t a = g; a < e && !c->nomem; ++a) {
+            for (size_t b = a + 1; b < e; ++b) {
+                if (nd == cap) {
+                    size_t nc = cap ? cap * 2 : 8;
+                    dup_t *w = rp_mem_alloc(c->alloc, nc, sizeof *w);
+                    if (w == NULL) {
+                        c->nomem = true;
+                        break;
+                    }
+                    if (nd) memcpy(w, dups, nd * sizeof *w);
+                    rp_mem_free(c->alloc, dups);
+                    dups = w;
+                    cap = nc;
+                }
+                dups[nd++] = (dup_t){ by[a].at, by[b].at };
+            }
+        }
+        g = e;
+    }
+    rp_mem_free(c->alloc, by);
+    rp_sort(dups, nd, sizeof *dups, cmp_dup);
+    *out = dups;
+    return nd;
+}
+
 void ir_cross_checks(ctx_t *c) {
     rp_ir_t *ir = c->ir;
     // [arp] no-remove leaves Modify as the way to remove the product: it needs dialogs and Modify.
     if (ir->arp_no_remove && ir->arp_no_modify)
         ERR(c, ir->arp_no_remove_pos, "RP1316", "no-remove leaves Modify (its Remove) as the only way to remove the product: it cannot go with no-modify");
     // IDs unique across dir, file and feature (RFC-0002 2).
-    typedef struct { const char *id; rp_pos_t pos; } idpos_t;
     size_t n = ir->dir_count + ir->file_count + ir->feature_count + ir->folder_count + ir->registry_count +
                ir->shortcut_count + ir->remove_count + ir->copy_count + ir->env_count + ir->ini_count +
                ir->require_count + ir->search_count + ir->service_count + ir->font_count + ir->permission_count +
@@ -842,14 +945,20 @@ void ir_cross_checks(ctx_t *c) {
     for (size_t k = 0; k < ir->feature_count; ++k) {
         if (!ir->features[k].implicit) ids[m++] = (idpos_t){ ir->features[k].id, ir->features[k].pos };
     }
-    for (size_t a = 0; a < m; ++a) {
-        for (size_t b = a + 1; b < m; ++b) {
-            if (ids[a].id && ids[b].id && strcmp(ids[a].id, ids[b].id) == 0) {
-                ERR(c, ids[b].pos, "RP1301", "ID '%s' is already used (line %u); IDs must differ across all tables",
-                    ids[b].id, (unsigned)ids[a].pos.line);
-            }
-        }
+    const char **idv = rp_mem_alloc(c->alloc, m ? m : 1, sizeof *idv);
+    dup_t *dups = NULL;
+    size_t ndup = 0;
+    if (idv == NULL) c->nomem = true;
+    else {
+        for (size_t k = 0; k < m; ++k) idv[k] = ids[k].id;
+        ndup = equal_pairs(c, idv, m, &dups);
     }
+    for (size_t k = 0; k < ndup; ++k) {
+        ERR(c, ids[dups[k].b].pos, "RP1301", "ID '%s' is already used (line %u); IDs must differ across all tables",
+            ids[dups[k].b].id, (unsigned)ids[dups[k].a].pos.line);
+    }
+    rp_mem_free(c->alloc, dups);
+    rp_mem_free(c->alloc, idv);
     rp_mem_free(c->alloc, ids);
 
     // Features: parents exist, no loops.
@@ -878,7 +987,7 @@ void ir_cross_checks(ctx_t *c) {
         const rp_ir_dir_t *d = &ir->dirs[k];
         dir_paths[k] = NULL;
         if (d->parts == NULL) continue;
-        if (d->parent && !ir_find_dir(ir, d->parent)) {
+        if (d->parent && !rp_ir_find_dir(ir, d->parent)) {
             ERR(c, d->pos, "RP1307", "'%s' is neither a known folder nor a dir ID (known folders: ProgramFiles, "
                 "ProgramFiles32, CommonFiles, AppData, LocalAppData, CommonAppData, StartMenu, Programs, Desktop, "
                 "Windows, System, Fonts, Temp)", d->parent);
@@ -906,7 +1015,7 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->file_count; ++k) {
         rp_ir_file_t *f = &ir->files[k];
-        const rp_ir_dir_t *d = f->dir ? ir_find_dir(ir, f->dir) : NULL;
+        const rp_ir_dir_t *d = f->dir ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir && d == NULL) {
             ERR(c, f->pos, "RP1307", "dir '%s' is not defined", f->dir);
             continue;
@@ -965,7 +1074,7 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->folder_count; ++k) {
         rp_ir_folder_t *f = &ir->folders[k];
-        const rp_ir_dir_t *d = f->dir ? ir_find_dir(ir, f->dir) : NULL;
+        const rp_ir_dir_t *d = f->dir ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (f->dir && d == NULL) {
             ERR(c, f->pos, "RP1307", "dir '%s' is not defined", f->dir);
             continue;
@@ -995,7 +1104,7 @@ void ir_cross_checks(ctx_t *c) {
     // Properties: not a dir/file/feature/folder ID (every directory is a property too).
     for (size_t k = 0; k < ir->property_count; ++k) {
         const rp_ir_property_t *p = &ir->properties[k];
-        if (ir_find_dir(ir, p->id) || find_feature(ir, p->id)) {
+        if (rp_ir_find_dir(ir, p->id) || find_feature(ir, p->id)) {
             ERR(c, p->pos, "RP1310", "property '%s' has the name of a dir or feature", p->id);
         }
         for (size_t j = 0; j < k; ++j) {
@@ -1028,7 +1137,7 @@ void ir_cross_checks(ctx_t *c) {
     // Removals and copies: folders and files exist; a removal's feature resolves like a file's.
     for (size_t k = 0; k < ir->remove_count; ++k) {
         rp_ir_remove_t *r = &ir->removes[k];
-        const rp_ir_dir_t *d = r->dir ? ir_find_dir(ir, r->dir) : NULL;
+        const rp_ir_dir_t *d = r->dir ? rp_ir_find_dir(ir, r->dir) : NULL;
         if (r->dir && d == NULL) {
             ERR(c, r->pos, "RP1315", "dir '%s' is not a dir ID", r->dir);
             continue;
@@ -1037,7 +1146,7 @@ void ir_cross_checks(ctx_t *c) {
             // Whatever it is below: Windows' own folders are never emptied.
             const rp_ir_dir_t *top = d;
             for (int hop = 0; top->parent && hop < 64; ++hop) {
-                const rp_ir_dir_t *up = ir_find_dir(ir, top->parent);
+                const rp_ir_dir_t *up = rp_ir_find_dir(ir, top->parent);
                 if (up == NULL) break;
                 top = up;
             }
@@ -1106,7 +1215,7 @@ void ir_cross_checks(ctx_t *c) {
     // Dialogs: the folder the user may change is a dir of this package (default: INSTALLDIR).
     if (ir->ui >= 3) {
         const char *d = ir->ui_install_dir ? ir->ui_install_dir : "INSTALLDIR";
-        if (!ir_find_dir(ir, d)) {
+        if (!rp_ir_find_dir(ir, d)) {
             rp_pos_t top = { 1, 1 };
             ERR(c, top, "RP1315", "ui = \"%s\" lets the user choose the folder of dir '%s', which does not exist (set [ui] install-dir)",
                 ir->ui == 3 ? "installdir" : "features", d);
@@ -1126,7 +1235,7 @@ void ir_cross_checks(ctx_t *c) {
         if (x->target == NULL) continue;
         bool found = false;
         if (x->kind == 0) {
-            const rp_ir_dir_t *d = ir_find_dir(ir, x->target);
+            const rp_ir_dir_t *d = rp_ir_find_dir(ir, x->target);
             found = d != NULL;
             if (d && d->part_count == 0) ERR(c, x->pos, "RP1316", "a known folder itself ('%s') cannot get permissions", x->target);
             if (d) x->feature = ir_dup(c, d->feature ? d->feature : declared ? NULL : "Main");
@@ -1155,7 +1264,7 @@ void ir_cross_checks(ctx_t *c) {
         for (size_t j = 0; x->file && j < ir->file_count; ++j) {
             if (strcmp(ir->files[j].id, x->file) == 0) f = &ir->files[j];
         }
-        const rp_ir_dir_t *d = f && f->dir ? ir_find_dir(ir, f->dir) : NULL;
+        const rp_ir_dir_t *d = f && f->dir ? rp_ir_find_dir(ir, f->dir) : NULL;
         if (x->file && f == NULL) {
             ERR(c, x->pos, "RP1315", "file '%s' is not a [file.*] of this package", x->file);
         } else if (f && !(d && d->part_count == 0 && d->base && strcmp(d->base, "Fonts") == 0)) {
@@ -1210,7 +1319,7 @@ void ir_cross_checks(ctx_t *c) {
         }
         // A search may give a dir its default (RFC-0012 V5): a folder from the registry or from a
         // folder search, never a file's path.
-        if (ir_find_dir(ir, x->property)) {
+        if (rp_ir_find_dir(ir, x->property)) {
             if (x->kind != RP_SEARCH_REGISTRY && x->kind != RP_SEARCH_DIR) {
                 ERR(c, x->pos, "RP1310", "'%s' is the name of a dir: only a registry or dir search can fill a dir", x->property);
             } else {
@@ -1220,7 +1329,7 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->ini_count; ++k) {
         rp_ir_ini_t *x = &ir->inis[k];
-        const rp_ir_dir_t *d = x->dir ? ir_find_dir(ir, x->dir) : NULL;
+        const rp_ir_dir_t *d = x->dir ? rp_ir_find_dir(ir, x->dir) : NULL;
         if (x->dir && d == NULL) {
             ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->dir);
             continue;
@@ -1235,8 +1344,8 @@ void ir_cross_checks(ctx_t *c) {
     }
     for (size_t k = 0; k < ir->merge_count; ++k) {
         rp_ir_merge_t *x = &ir->merges[k];
-        if (x->dir && ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->dir);
-        const rp_ir_dir_t *d = x->dir ? ir_find_dir(ir, x->dir) : NULL;
+        if (x->dir && rp_ir_find_dir(ir, x->dir) == NULL) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->dir);
+        const rp_ir_dir_t *d = x->dir ? rp_ir_find_dir(ir, x->dir) : NULL;
         if (x->feature && !find_feature(ir, x->feature)) {
             ERR(c, x->pos, "RP1307", "feature '%s' is not defined", x->feature);
         } else if (x->feature == NULL) {
@@ -1259,7 +1368,7 @@ void ir_cross_checks(ctx_t *c) {
         bool found = false;
         for (size_t j = 0; cp->source_file && j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, cp->source_file) == 0;
         if (cp->source_file && !found) ERR(c, cp->pos, "RP1315", "source: file '%s' is not a [file.*] of this package", cp->source_file);
-        if (cp->dir && !ir_find_dir(ir, cp->dir)) ERR(c, cp->pos, "RP1315", "dir '%s' is not a dir ID", cp->dir);
+        if (cp->dir && !rp_ir_find_dir(ir, cp->dir)) ERR(c, cp->pos, "RP1315", "dir '%s' is not a dir ID", cp->dir);
     }
     // Shortcuts: target file and folders exist.
     for (size_t k = 0; k < ir->shortcut_count; ++k) {
@@ -1267,10 +1376,10 @@ void ir_cross_checks(ctx_t *c) {
         bool found = false;
         for (size_t j = 0; sc->target_file && j < ir->file_count; ++j) found |= strcmp(ir->files[j].id, sc->target_file) == 0;
         if (sc->target_file && !found) ERR(c, sc->pos, "RP1315", "target: file '%s' is not a [file.*] of this package", sc->target_file);
-        if (sc->dir && !ir_shortcut_folder(sc->dir) && !ir_find_dir(ir, sc->dir)) {
+        if (sc->dir && !ir_shortcut_folder(sc->dir) && !rp_ir_find_dir(ir, sc->dir)) {
             ERR(c, sc->pos, "RP1315", "dir '%s' is neither a dir ID nor Programs, Desktop, StartMenu or Startup", sc->dir);
         }
-        if (sc->working_dir && !ir_find_dir(ir, sc->working_dir)) {
+        if (sc->working_dir && !rp_ir_find_dir(ir, sc->working_dir)) {
             ERR(c, sc->pos, "RP1315", "working-dir '%s' is not a dir ID", sc->working_dir);
         }
     }
@@ -1301,14 +1410,13 @@ void ir_cross_checks(ctx_t *c) {
     }
     ir_action_checks(c);
 
-    for (size_t a = 0; folded && a < nf; ++a) {
-        for (size_t b = a + 1; b < nf; ++b) {
-            if (folded[a] && folded[b] && strcmp(folded[a], folded[b]) == 0) {
-                ERR(c, where[b], "RP1511", "installs to the same path as line %u (Windows ignores case in names%s)",
-                    (unsigned)where[a].line, c->opt->nfc ? "; --nfc made their Unicode forms the same" : "");
-            }
-        }
+    dup_t *same = NULL;
+    size_t nsame = folded ? equal_pairs(c, (const char *const *)folded, nf, &same) : 0;
+    for (size_t k = 0; k < nsame; ++k) {
+        ERR(c, where[same[k].b], "RP1511", "installs to the same path as line %u (Windows ignores case in names%s)",
+            (unsigned)where[same[k].a].line, c->opt->nfc ? "; --nfc made their Unicode forms the same" : "");
     }
+    rp_mem_free(c->alloc, same);
     for (size_t a = 0; folded && a < nf; ++a) rp_mem_free(c->alloc, folded[a]);
     rp_mem_free(c->alloc, folded);
     rp_mem_free(c->alloc, where);

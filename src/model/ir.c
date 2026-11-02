@@ -31,6 +31,38 @@ static const char *phase_of(const char *kind) {
 
 // ---- build -----------------------------------------------------------------------------------
 
+typedef struct { const char *id; size_t at; } idat_t;      // an element's ID and place
+
+static int cmp_idat(const void *x, const void *y) {
+    const idat_t *a = x, *b = y;
+    int r = ir_cmp_str(a->id, b->id);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;      // equal IDs keep their order
+}
+
+// Sorts n elements of `size` bytes by the `const char *` ID at id_off (NULL as ""), stably.
+static void sort_by_id(ctx_t *c, void *base, size_t n, size_t size, size_t id_off) {
+    if (c->nomem || n < 2) return;
+    idat_t *ord = rp_mem_alloc(c->alloc, n, sizeof *ord);
+    unsigned char *tmp = rp_mem_alloc(c->alloc, n, size), *b = base;
+    if (ord == NULL || tmp == NULL) {
+        rp_mem_free(c->alloc, ord);
+        rp_mem_free(c->alloc, tmp);
+        c->nomem = true;
+        return;
+    }
+    for (size_t i = 0; i < n; ++i) {
+        memcpy(&ord[i].id, b + i * size + id_off, sizeof ord[i].id);
+        ord[i].at = i;
+    }
+    rp_sort(ord, n, sizeof *ord, cmp_idat);
+    for (size_t i = 0; i < n; ++i) memcpy(tmp + i * size, b + ord[i].at * size, size);
+    memcpy(b, tmp, n * size);
+    rp_mem_free(c->alloc, ord);
+    rp_mem_free(c->alloc, tmp);
+}
+
+#define SORT_BY_ID(arr, count, type) sort_by_id(&c, (arr), (count), sizeof(type), offsetof(type, id))
+
 
 proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt, rp_ir_t *ir,
                          rp_srcdiags_t *diags) {
@@ -380,141 +412,31 @@ proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const r
         f->implicit = true;
     }
     // Properties and actions in ID order: the output never depends on the order of tables.
-    for (size_t i = 1; !c.nomem && i < ir->property_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->properties[j - 1].id, ir->properties[j].id) > 0; --j) {
-            rp_ir_property_t t = ir->properties[j];
-            ir->properties[j] = ir->properties[j - 1];
-            ir->properties[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->action_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->actions[j - 1].id, ir->actions[j].id) > 0; --j) {
-            rp_ir_action_t t = ir->actions[j];
-            ir->actions[j] = ir->actions[j - 1];
-            ir->actions[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->permission_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->permissions[j - 1].id, ir->permissions[j].id) > 0; --j) {
-            rp_ir_permission_t t = ir->permissions[j];
-            ir->permissions[j] = ir->permissions[j - 1];
-            ir->permissions[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->font_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->fonts[j - 1].id, ir->fonts[j].id) > 0; --j) {
-            rp_ir_font_t t = ir->fonts[j];
-            ir->fonts[j] = ir->fonts[j - 1];
-            ir->fonts[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->service_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->services[j - 1].id, ir->services[j].id) > 0; --j) {
-            rp_ir_service_t t = ir->services[j];
-            ir->services[j] = ir->services[j - 1];
-            ir->services[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->require_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->requires[j - 1].id, ir->requires[j].id) > 0; --j) {
-            rp_ir_require_t t = ir->requires[j];
-            ir->requires[j] = ir->requires[j - 1];
-            ir->requires[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->search_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->searches[j - 1].id, ir->searches[j].id) > 0; --j) {
-            rp_ir_search_t t = ir->searches[j];
-            ir->searches[j] = ir->searches[j - 1];
-            ir->searches[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->ini_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->inis[j - 1].id, ir->inis[j].id) > 0; --j) {
-            rp_ir_ini_t t = ir->inis[j];
-            ir->inis[j] = ir->inis[j - 1];
-            ir->inis[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->env_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->envs[j - 1].id, ir->envs[j].id) > 0; --j) {
-            rp_ir_env_t t = ir->envs[j];
-            ir->envs[j] = ir->envs[j - 1];
-            ir->envs[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->remove_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->removes[j - 1].id, ir->removes[j].id) > 0; --j) {
-            rp_ir_remove_t t = ir->removes[j];
-            ir->removes[j] = ir->removes[j - 1];
-            ir->removes[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->copy_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->copies[j - 1].id, ir->copies[j].id) > 0; --j) {
-            rp_ir_copy_t t = ir->copies[j];
-            ir->copies[j] = ir->copies[j - 1];
-            ir->copies[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->shortcut_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->shortcuts[j - 1].id, ir->shortcuts[j].id) > 0; --j) {
-            rp_ir_shortcut_t t = ir->shortcuts[j];
-            ir->shortcuts[j] = ir->shortcuts[j - 1];
-            ir->shortcuts[j - 1] = t;
-        }
-    }
-#define SORT_BY_ID(arr, count, type)                                                                \
-    for (size_t i = 1; !c.nomem && i < (count); ++i) {                                              \
-        for (size_t j = i; j > 0 && ir_cmp_str((arr)[j - 1].id, (arr)[j].id) > 0; --j) {               \
-            type t = (arr)[j];                                                                      \
-            (arr)[j] = (arr)[j - 1];                                                                \
-            (arr)[j - 1] = t;                                                                       \
-        }                                                                                           \
-    }
-    SORT_BY_ID(ir->assocs, ir->assoc_count, rp_ir_assoc_t)
-    SORT_BY_ID(ir->protocols, ir->protocol_count, rp_ir_protocol_t)
-    SORT_BY_ID(ir->coms, ir->com_count, rp_ir_com_t)
-    SORT_BY_ID(ir->handlers, ir->handler_count, rp_ir_handler_t)
-    SORT_BY_ID(ir->menus, ir->menu_count, rp_ir_menu_t)
-    SORT_BY_ID(ir->msix_exts, ir->msix_ext_count, rp_ir_msix_ext_t)
-#undef SORT_BY_ID
-    for (size_t i = 1; !c.nomem && i < ir->registry_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->registries[j - 1].id, ir->registries[j].id) > 0; --j) {
-            rp_ir_registry_t t = ir->registries[j];
-            ir->registries[j] = ir->registries[j - 1];
-            ir->registries[j - 1] = t;
-        }
-    }
+    SORT_BY_ID(ir->properties, ir->property_count, rp_ir_property_t);
+    SORT_BY_ID(ir->actions, ir->action_count, rp_ir_action_t);
+    SORT_BY_ID(ir->permissions, ir->permission_count, rp_ir_permission_t);
+    SORT_BY_ID(ir->fonts, ir->font_count, rp_ir_font_t);
+    SORT_BY_ID(ir->services, ir->service_count, rp_ir_service_t);
+    SORT_BY_ID(ir->requires, ir->require_count, rp_ir_require_t);
+    SORT_BY_ID(ir->searches, ir->search_count, rp_ir_search_t);
+    SORT_BY_ID(ir->inis, ir->ini_count, rp_ir_ini_t);
+    SORT_BY_ID(ir->envs, ir->env_count, rp_ir_env_t);
+    SORT_BY_ID(ir->removes, ir->remove_count, rp_ir_remove_t);
+    SORT_BY_ID(ir->copies, ir->copy_count, rp_ir_copy_t);
+    SORT_BY_ID(ir->shortcuts, ir->shortcut_count, rp_ir_shortcut_t);
+    SORT_BY_ID(ir->assocs, ir->assoc_count, rp_ir_assoc_t);
+    SORT_BY_ID(ir->protocols, ir->protocol_count, rp_ir_protocol_t);
+    SORT_BY_ID(ir->coms, ir->com_count, rp_ir_com_t);
+    SORT_BY_ID(ir->handlers, ir->handler_count, rp_ir_handler_t);
+    SORT_BY_ID(ir->menus, ir->menu_count, rp_ir_menu_t);
+    SORT_BY_ID(ir->msix_exts, ir->msix_ext_count, rp_ir_msix_ext_t);
+    SORT_BY_ID(ir->registries, ir->registry_count, rp_ir_registry_t);
     if (!c.nomem && package) ir_ui_checks(&c, uit, package);
-    for (size_t i = 1; !c.nomem && i < ir->ui_text_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->ui_texts[j - 1].id, ir->ui_texts[j].id) > 0; --j) {
-            rp_ir_ui_text_t t = ir->ui_texts[j];
-            ir->ui_texts[j] = ir->ui_texts[j - 1];
-            ir->ui_texts[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->dialog_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->dialogs[j - 1].id, ir->dialogs[j].id) > 0; --j) {
-            rp_ir_dialog_t t = ir->dialogs[j];
-            ir->dialogs[j] = ir->dialogs[j - 1];
-            ir->dialogs[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->dialog_control_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->dialog_controls[j - 1].id, ir->dialog_controls[j].id) > 0; --j) {
-            rp_ir_dialog_control_t t = ir->dialog_controls[j];
-            ir->dialog_controls[j] = ir->dialog_controls[j - 1];
-            ir->dialog_controls[j - 1] = t;
-        }
-    }
-    for (size_t i = 1; !c.nomem && i < ir->billboard_count; ++i) {
-        for (size_t j = i; j > 0 && ir_cmp_str(ir->billboards[j - 1].id, ir->billboards[j].id) > 0; --j) {
-            rp_ir_billboard_t t = ir->billboards[j];
-            ir->billboards[j] = ir->billboards[j - 1];
-            ir->billboards[j - 1] = t;
-        }
-    }
+    SORT_BY_ID(ir->ui_texts, ir->ui_text_count, rp_ir_ui_text_t);
+    SORT_BY_ID(ir->dialogs, ir->dialog_count, rp_ir_dialog_t);
+    SORT_BY_ID(ir->dialog_controls, ir->dialog_control_count, rp_ir_dialog_control_t);
+    SORT_BY_ID(ir->billboards, ir->billboard_count, rp_ir_billboard_t);
+    if (!c.nomem) ir_index_dirs(&c);
     if (!c.nomem && opt->nfc) ir_nfc_names(&c);
     if (!c.nomem) ir_dialog_checks(&c);
     if (!c.nomem) ir_class_checks(&c);
@@ -860,6 +782,7 @@ void rp_ir_free(rp_ir_t *ir) {
     rp_mem_free(a, ir->folders);
     rp_mem_free(a, ir->features);
     rp_mem_free(a, ir->dirs);
+    rp_mem_free(a, ir->dir_order);
     rp_mem_free(a, ir->files);
     memset(ir, 0, sizeof *ir);
     ir->alloc = a;

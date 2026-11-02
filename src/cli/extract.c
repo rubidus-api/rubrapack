@@ -23,6 +23,7 @@
 #include "rubrapack/md5.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "proven/map.h"
 #include "rubrapack/msix.h"
 #include "rubrapack/str.h"
 #include "rubrapack/num.h"
@@ -57,6 +58,8 @@ typedef struct {
     bool               nomem;
     const char        *path;    // the input, for messages
     bool               by_key;  // rp_pkg_files: items named by File key, no folders
+    proven_map_t       dir_seen;    // the folders among items (add_item), so each file does not
+    int                dir_state;   // look through all of them: 0 not made, 1 in use, 2 failed (scan)
 } plan_t;
 
 static void own(plan_t *p, void *ptr) {
@@ -148,10 +151,29 @@ static bool path_ok(plan_t *p, const char *rel, const char *what) {
     }
 }
 
+static proven_u8str_view_t u8v(const char *s) { return (proven_u8str_view_t){ (const proven_byte_t *)s, strlen(s) }; }
+
+static void plan_maps_free(plan_t *p) {
+    if (p->dir_state == 1) proven_map_destroy(&p->dir_seen);
+    p->dir_state = 0;
+}
+
 static bool add_item(plan_t *p, char *rel, bool dir, const uint8_t *data, size_t size) {
     if (rel == NULL) return false;
-    for (size_t i = 0; i < p->count; ++i) {         // a directory is added once
-        if (dir && p->items[i].dir && strcmp(p->items[i].rel, rel) == 0) return true;
+    if (dir && p->dir_state == 0) {
+        proven_result_map_t m = PROVEN_MAP_INIT_U8_OWNED(p->alloc, bool, 64);
+        p->dir_state = m.err == PROVEN_OK ? 1 : 2;
+        if (m.err == PROVEN_OK) p->dir_seen = m.value;
+        for (size_t i = 0; p->dir_state == 1 && i < p->count; ++i) {
+            if (p->items[i].dir && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, u8v(p->items[i].rel), bool, true) != PROVEN_OK) p->dir_state = 2;
+        }
+    }
+    if (dir && p->dir_state == 1) {                 // a directory is added once
+        if (PROVEN_MAP_GET_U8_OWNED(&p->dir_seen, bool, u8v(rel)) != NULL) return true;
+    } else {
+        for (size_t i = 0; dir && i < p->count; ++i) {
+            if (p->items[i].dir && strcmp(p->items[i].rel, rel) == 0) return true;
+        }
     }
     if (p->count == p->cap) {
         size_t cap = p->cap ? p->cap * 2 : 64;
@@ -173,6 +195,7 @@ static bool add_item(plan_t *p, char *rel, bool dir, const uint8_t *data, size_t
     own(p, fold);
     if (p->nomem) return false;                     // own freed it
     p->items[p->count++] = (item_t){ rel, fold, dir, data, size };
+    if (dir && p->dir_state == 1 && PROVEN_MAP_SET_U8_OWNED(&p->dir_seen, u8v(rel), bool, true) != PROVEN_OK) p->dir_state = 2;
     return true;
 }
 
@@ -396,14 +419,19 @@ typedef struct {
     int   state;                // 0 new, 1 resolving, 2 done
 } dir_t;
 
-static dir_t *find_dir(dir_t *d, size_t n, const char *key) {
+// The first dir of that key: through ix (the dirs by key) when there is one, else by a scan.
+static dir_t *find_dir(dir_t *d, size_t n, const rp_msi_index_t *ix, const char *key) {
+    if (ix && ix->v) {
+        size_t at = rp_msi_index_find(ix, key, strlen(key));
+        return at == SIZE_MAX ? NULL : &d[at];
+    }
     for (size_t i = 0; i < n; ++i) {
         if (strcmp(d[i].key, key) == 0) return &d[i];
     }
     return NULL;
 }
 
-static bool resolve(plan_t *p, dir_t *d, size_t n, dir_t *x, unsigned depth, bool short_src) {
+static bool resolve(plan_t *p, dir_t *d, size_t n, const rp_msi_index_t *ix, dir_t *x, unsigned depth, bool short_src) {
     if (x->state == 2) return true;
     if (x->state == 1 || depth > p->limits.max_depth) {
         rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': directory '%s' is its own ancestor or nested too deep", p->path, x->key);
@@ -415,12 +443,12 @@ static bool resolve(plan_t *p, dir_t *d, size_t n, dir_t *x, unsigned depth, boo
         x->target = dup_n(p, "", 0);
         x->source = dup_n(p, "", 0);
     } else {
-        dir_t *parent = find_dir(d, n, x->parent);
+        dir_t *parent = find_dir(d, n, ix, x->parent);
         if (parent == NULL) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': directory '%s' has a parent '%s' that is not there", p->path, x->key, x->parent);
             return false;
         }
-        if (!resolve(p, d, n, parent, depth + 1, short_src)) return false;
+        if (!resolve(p, d, n, ix, parent, depth + 1, short_src)) return false;
         bool parent_root = parent->parent[0] == '\0' || strcmp(parent->parent, parent->key) == 0;
         char *t = pick_name(p, x->dd, true, false, false), *s = pick_name(p, x->dd, true, true, short_src);
         if (t == NULL || s == NULL) return false;
@@ -486,18 +514,26 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
         dirs[r] = (dir_t){ cell_str(p, at(&dt, r, 0)), cell_str(p, at(&dt, r, 1)), cell_str(p, at(&dt, r, 2)), NULL, NULL, 0 };
         if (p->nomem) goto out;
     }
+    // Lookups by key, so a large package is not read in time that grows with its rows squared:
+    // the dirs, the components and the file hashes by key, each cabinet's files by name.
+    rp_msi_index_t dix = { 0 }, cix = { 0 }, hix = { 0 };
+    if (rp_msi_index_new(p->alloc, nd, &dix) != PROVEN_OK || (own(p, dix.v), p->nomem)) goto out;
+    for (size_t r = 0; r < nd; ++r) dix.v[r] = (rp_msi_key_t){ (const uint8_t *)dirs[r].key, strlen(dirs[r].key), r };
+    rp_msi_index_sort(&dix);
+    if (rp_msi_index(p->alloc, ct.t, (ptrdiff_t)ct.cols[0], &cix) != PROVEN_OK || (own(p, cix.v), p->nomem)) goto out;
+    if (has_hash && (rp_msi_index(p->alloc, ht.t, (ptrdiff_t)ht.cols[0], &hix) != PROVEN_OK || (own(p, hix.v), p->nomem))) goto out;
     for (size_t r = 0; r < nd; ++r) {
-        if (!resolve(p, dirs, nd, &dirs[r], 0, word_count & 1)) goto out;
+        if (!resolve(p, dirs, nd, &dix, &dirs[r], 0, word_count & 1)) goto out;
     }
     // Media in LastSequence order: a file belongs to the first media whose LastSequence >= it.
     size_t nm = mt.t->row_count;
-    typedef struct { int32_t last; char *cab; rp_cab_file_t *files; size_t count; bool loaded; } media_t;
+    typedef struct { int32_t last; char *cab; rp_cab_file_t *files; size_t count; bool loaded; rp_msi_index_t by_name; } media_t;
     media_t *media = rp_mem_alloc(p->alloc, nm + 1, sizeof *media);
     if (media == NULL) goto out;
     own(p, media);
     for (size_t r = 0; r < nm; ++r) {
         const rp_msi_cell_t *last = at(&mt, r, 1);
-        media[r] = (media_t){ last->kind == RP_MSI_INT ? last->i : 0, at(&mt, r, 2)->kind == RP_MSI_STR ? cell_str(p, at(&mt, r, 2)) : NULL, NULL, 0, false };
+        media[r] = (media_t){ last->kind == RP_MSI_INT ? last->i : 0, at(&mt, r, 2)->kind == RP_MSI_STR ? cell_str(p, at(&mt, r, 2)) : NULL, NULL, 0, false, { 0 } };
     }
     for (size_t i = 1; i < nm; ++i) {
         for (size_t j = i; j > 0 && media[j - 1].last > media[j].last; --j) {
@@ -511,11 +547,11 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
         const rp_msi_cell_t *fsize = at(&ft, r, 3), *fattr = at(&ft, r, 4), *fseq = at(&ft, r, 5);
         if (p->nomem) goto out;
         const char *dkey = NULL;
-        for (size_t c = 0; c < ct.t->row_count && dkey == NULL; ++c) {
-            const rp_msi_cell_t *k = at(&ct, c, 0);
-            if (k->kind == RP_MSI_STR && k->len == strlen(comp) && memcmp(k->bytes, comp, k->len) == 0) dkey = cell_str(p, at(&ct, c, 1));
+        size_t comp_len = strlen(comp);
+        for (size_t q = rp_msi_index_first(&cix, comp, comp_len); dkey == NULL && rp_msi_index_is(&cix, q, comp, comp_len); ++q) {
+            if (at(&ct, cix.v[q].at, 0)->kind == RP_MSI_STR) dkey = cell_str(p, at(&ct, cix.v[q].at, 1));     // not a null key
         }
-        dir_t *dir = dkey ? find_dir(dirs, nd, dkey) : NULL;
+        dir_t *dir = dkey ? find_dir(dirs, nd, &dix, dkey) : NULL;
         if (dir == NULL) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' has no component or directory", p->path, key);
             goto out;
@@ -572,11 +608,13 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                 }
                 own(p, m->files);
                 own(p, arena);
+                if (p->nomem || rp_msi_index_new(p->alloc, m->count, &m->by_name) != PROVEN_OK || (own(p, m->by_name.v), p->nomem)) goto out;
+                for (size_t k = 0; k < m->count; ++k) m->by_name.v[k] = (rp_msi_key_t){ (const uint8_t *)m->files[k].name, strlen(m->files[k].name), k };
+                rp_msi_index_sort(&m->by_name);
                 m->loaded = true;
             }
-            size_t k = 0;
-            while (k < m->count && strcmp(m->files[k].name, key) != 0) ++k;
-            if (k == m->count) {
+            size_t k = rp_msi_index_find(&m->by_name, key, strlen(key));
+            if (k == SIZE_MAX) {
                 rp_diag_error(RP_DIAG_BAD_PACKAGE, "'%s': file '%s' is not in cabinet '%s'", p->path, key, m->cab);
                 goto out;
             }
@@ -599,9 +637,10 @@ static int plan_msi(plan_t *p, const rp_cfb_t *cfb, const char *msi_dir) {
                           (unsigned long)(uint32_t)fsize->i);
             goto out;
         }
-        for (size_t h = 0; has_hash && h < ht.t->row_count; ++h) {
-            const rp_msi_cell_t *hk = at(&ht, h, 0);
-            if (hk->kind != RP_MSI_STR || hk->len != strlen(key) || memcmp(hk->bytes, key, hk->len) != 0) continue;
+        size_t key_len = strlen(key);
+        for (size_t q = has_hash ? rp_msi_index_first(&hix, key, key_len) : 0; has_hash && rp_msi_index_is(&hix, q, key, key_len); ++q) {
+            size_t h = hix.v[q].at;         // every row of the key, in row order
+            if (at(&ht, h, 0)->kind != RP_MSI_STR) continue;
             uint8_t md5[16];
             rp_md5(data, size, md5);
             bool same = true;
@@ -659,6 +698,7 @@ void rp_pkg_files_free(proven_allocator_t heap, rp_pkg_files_t *f) {
         for (size_t i = 0; i < p->nowned; ++i) rp_mem_free(heap, p->owned[i]);
         rp_mem_free(heap, p->owned);
         rp_mem_free(heap, p->items);
+        plan_maps_free(p);
         rp_mem_free(heap, p);
     }
     rp_mem_free(heap, f->v);
@@ -737,6 +777,7 @@ done:
     for (size_t i = 0; i < p.nowned; ++i) rp_mem_free(heap, p.owned[i]);
     rp_mem_free(heap, p.owned);
     rp_mem_free(heap, p.items);
+    plan_maps_free(&p);
     rp_mem_free(heap, data);
     return rc;
 }

@@ -150,6 +150,34 @@ static inline const rp_msi_cell_t *rp_msi_wrow(const rp_msi_wtable_t *t, size_t 
     return t != NULL && row < t->row_count ? &t->cells[row * t->column_count] : NULL;
 }
 
+// Rows (or anything else with a byte-string key) sorted by key, then by place, so a lookup is a
+// binary search (src/msi/index.c). The entries of one key come in the order of their places: the
+// first is the one a scan from the top would find. A string cell's key is its bytes; any other
+// cell's key is empty, as same-string comparisons of cells treat them.
+typedef struct {
+    const uint8_t *key;
+    size_t         len;
+    size_t         at;      // the row (or place)
+} rp_msi_key_t;
+
+typedef struct {
+    rp_msi_key_t *v;
+    size_t        n;
+} rp_msi_index_t;
+
+// The rows of t by column col (rp_msi_wcell's: a column the table lacks gives empty keys).
+[[nodiscard]] proven_err_t rp_msi_index(proven_allocator_t alloc, const rp_msi_wtable_t *t, ptrdiff_t col, rp_msi_index_t *out);
+// n entries to be filled in by the caller (key, len, at), then rp_msi_index_sort.
+[[nodiscard]] proven_err_t rp_msi_index_new(proven_allocator_t alloc, size_t n, rp_msi_index_t *out);
+void rp_msi_index_sort(rp_msi_index_t *ix);
+// The position in ix->v of the first entry whose key is (key, len), or ix->n; the entries of that
+// key follow it (rp_msi_index_is tells where they stop).
+[[nodiscard]] size_t rp_msi_index_first(const rp_msi_index_t *ix, const void *key, size_t len);
+[[nodiscard]] bool rp_msi_index_is(const rp_msi_index_t *ix, size_t pos, const void *key, size_t len);
+// The place of the first entry of that key, or SIZE_MAX.
+[[nodiscard]] size_t rp_msi_index_find(const rp_msi_index_t *ix, const void *key, size_t len);
+void rp_msi_index_free(proven_allocator_t alloc, rp_msi_index_t *ix);
+
 typedef struct {
     const char    *name;    // stream name before packing (e.g. "cab1.cab"); not a table
     const uint8_t *data;

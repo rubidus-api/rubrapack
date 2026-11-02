@@ -12,6 +12,7 @@
 #include "rubrapack/lint.h"
 #include "rubrapack/md5.h"
 #include "rubrapack/mem.h"
+#include "proven/map.h"
 #include "rubrapack/merge.h"
 #include "rubrapack/msi.h"
 #include "rubrapack/msix.h"
@@ -335,10 +336,7 @@ static char *ir_dir_logical(dirs_t *d, const rp_ir_dir_t *dir, size_t depth) {
     if (dir->base) {
         head = standard_folder(dir->base, d->ir->arch);
     } else {
-        const rp_ir_dir_t *p = NULL;
-        for (size_t i = 0; i < d->ir->dir_count; ++i) {
-            if (strcmp(d->ir->dirs[i].id, dir->parent) == 0) p = &d->ir->dirs[i];
-        }
+        const rp_ir_dir_t *p = rp_ir_find_dir(d->ir, dir->parent);
         head = p ? ir_dir_logical(d, p, depth + 1) : NULL;
     }
     if (head == NULL) return NULL;
@@ -364,19 +362,68 @@ static bool valid_83(const char *name) {
 typedef struct {
     const char *long_name;
     char      **short_out;
+    size_t      at;             // place before sorting (assign_short)
 } sib_t;
+
+static int cmp_sib(const void *x, const void *y) {
+    const sib_t *a = x, *b = y;
+    int r = strcmp(a->long_name, b->long_name);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;      // equal names keep their order
+}
+
+// The short names a folder has taken, upper cased (8.3 names are ASCII), and for each stem and
+// extension the number its next STEM~N.EXT starts from. Names are only ever added, so every
+// number below the last one a stem took is still taken. Without the maps (out of memory) the
+// names are compared one by one, as before.
+typedef struct {
+    proven_map_t taken, next;
+    bool         ok;
+    sib_t       *s;
+    size_t       n;
+} shortset_t;
+
+static proven_u8str_view_t u8view(const char *t) { return (proven_u8str_view_t){ (const proven_byte_t *)t, strlen(t) }; }
+
+static void upper_83(const char *in, char out[16]) {
+    size_t i = 0;
+    for (; in[i] && i < 15; ++i) out[i] = in[i] >= 'a' && in[i] <= 'z' ? (char)(in[i] - 32) : in[i];
+    out[i] = '\0';
+}
+
+static bool short_taken(const shortset_t *t, const char *cand, size_t self) {
+    if (t->ok) {
+        char up[16];
+        upper_83(cand, up);
+        return PROVEN_MAP_GET_U8_OWNED(&t->taken, bool, u8view(up)) != NULL;
+    }
+    for (size_t j = 0; j < t->n; ++j) {
+        if (j != self && *t->s[j].short_out && rp_ascii_ieq(*t->s[j].short_out, cand)) return true;
+    }
+    return false;
+}
+
+static void short_take(shortset_t *t, const char *name) {
+    if (!t->ok) return;
+    char up[16];
+    upper_83(name, up);
+    if (PROVEN_MAP_SET_U8_OWNED(&t->taken, u8view(up), bool, true) != PROVEN_OK) t->ok = false;
+}
 
 // Short names for one folder's children, independent of source order: children sorted by long
 // name; a valid 8.3 long name is its own short name; others get STEM~N.EXT, unique in the folder.
 static void assign_short(keep_t *k, sib_t *s, size_t n) {
-    for (size_t i = 1; i < n; ++i) {
-        for (size_t j = i; j > 0 && strcmp(s[j - 1].long_name, s[j].long_name) > 0; --j) {
-            sib_t t = s[j];
-            s[j] = s[j - 1];
-            s[j - 1] = t;
-        }
+    for (size_t i = 0; i < n; ++i) s[i].at = i;
+    rp_sort(s, n, sizeof *s, cmp_sib);
+    shortset_t set = { .s = s, .n = n };
+    proven_result_map_t rt = PROVEN_MAP_INIT_U8_OWNED(k->alloc, bool, n ? n : 1);
+    proven_result_map_t rn = PROVEN_MAP_INIT_U8_OWNED(k->alloc, unsigned, 16);
+    set.ok = rt.err == PROVEN_OK && rn.err == PROVEN_OK;
+    if (rt.err == PROVEN_OK) set.taken = rt.value;
+    if (rn.err == PROVEN_OK) set.next = rn.value;
+    for (size_t i = 0; i < n; ++i) {
+        *s[i].short_out = valid_83(s[i].long_name) ? kdup(k, s[i].long_name) : NULL;
+        if (*s[i].short_out) short_take(&set, *s[i].short_out);
     }
-    for (size_t i = 0; i < n; ++i) *s[i].short_out = valid_83(s[i].long_name) ? kdup(k, s[i].long_name) : NULL;
     for (size_t i = 0; i < n; ++i) {
         if (*s[i].short_out) continue;
         const char *nm = s[i].long_name, *dot = strrchr(nm, '.');
@@ -400,22 +447,25 @@ static void assign_short(keep_t *k, sib_t *s, size_t n) {
         }
         stem[sn] = '\0';
         ext[en] = '\0';
-        for (unsigned num = 1; num < 1000000; ++num) {
+        char se[16];                        // the stem and extension the number counts for
+        snprintf(se, sizeof se, "%s|%s", stem, ext);
+        const unsigned *from = set.ok ? PROVEN_MAP_GET_U8_OWNED(&set.next, unsigned, u8view(se)) : NULL;
+        for (unsigned num = from ? *from : 1; num < 1000000; ++num) {
             char cand[16], digits[8];
             int dn = snprintf(digits, sizeof digits, "%u", num);
             size_t keepn = sn;
             if (keepn + 1 + (size_t)dn > 8) keepn = 8 - 1 - (size_t)dn;
             snprintf(cand, sizeof cand, "%.*s~%s%s%s", (int)keepn, stem, digits, en ? "." : "", ext);
-            bool clash = false;
-            for (size_t j = 0; j < n && !clash; ++j) {
-                if (j != i && *s[j].short_out && rp_ascii_ieq(*s[j].short_out, cand)) clash = true;
-            }
-            if (!clash) {
+            if (!short_taken(&set, cand, i)) {
                 *s[i].short_out = kdup(k, cand);
+                if (*s[i].short_out) short_take(&set, cand);
+                if (set.ok && PROVEN_MAP_SET_U8_OWNED(&set.next, u8view(se), unsigned, num + 1) != PROVEN_OK) set.ok = false;
                 break;
             }
         }
     }
+    if (rt.err == PROVEN_OK) proven_map_destroy(&set.taken);
+    if (rn.err == PROVEN_OK) proven_map_destroy(&set.next);
 }
 
 // ---- lowering --------------------------------------------------------------------------------
@@ -467,7 +517,53 @@ static const char *shortcut_dir_key(const rp_ir_t *ir, const rp_ir_shortcut_t *s
     return known && std ? std : dkey(ir, sc->dir);
 }
 
-static int cmp_keys(const lfile_t *a, const lfile_t *b) { return strcmp(a->key, b->key); }
+typedef struct { const char *key; size_t at; } keyat_t;
+
+static int cmp_keyat(const void *x, const void *y) {
+    const keyat_t *a = x, *b = y;
+    int r = strcmp(a->key, b->key);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;      // equal keys keep their order
+}
+
+// The index in v (sorted by cmp_keyat) of the first element whose key is not below `key`.
+static size_t first_with(const keyat_t *v, size_t n, const char *key) {
+    size_t lo = 0, hi = n;
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        if (strcmp(v[mid].key, key) < 0) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+
+// The place of the last element of v (sorted by cmp_keyat) whose key is `key`, or SIZE_MAX.
+static size_t last_with(const keyat_t *v, size_t n, const char *key) {
+    size_t lo = 0, hi = n;                  // the first element after the keys <= key
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        if (strcmp(v[mid].key, key) <= 0) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo > 0 && strcmp(v[lo - 1].key, key) == 0 ? v[lo - 1].at : SIZE_MAX;
+}
+
+// The files in File key byte order.
+static proven_err_t sort_by_key(proven_allocator_t alloc, lfile_t *files, size_t n) {
+    keyat_t *ord = rp_mem_alloc(alloc, n, sizeof *ord);
+    lfile_t *tmp = rp_mem_alloc(alloc, n, sizeof *tmp);
+    if (ord == NULL || tmp == NULL) {
+        rp_mem_free(alloc, ord);
+        rp_mem_free(alloc, tmp);
+        return PROVEN_ERR_NOMEM;
+    }
+    for (size_t i = 0; i < n; ++i) ord[i] = (keyat_t){ files[i].key, i };
+    rp_sort(ord, n, sizeof *ord, cmp_keyat);
+    for (size_t i = 0; i < n; ++i) tmp[i] = files[ord[i].at];
+    memcpy(files, tmp, n * sizeof *files);
+    rp_mem_free(alloc, ord);
+    rp_mem_free(alloc, tmp);
+    return PROVEN_OK;
+}
 
 static const char *arch_text(rp_arch_t a) { return a == RP_ARCH_X64 ? "x64" : a == RP_ARCH_ARM64 ? "arm64" : "x86"; }
 
@@ -747,10 +843,7 @@ static void lower_features(pkg_t *pk) {
 static bool dir_in_profile(const rp_ir_t *ir, const char *id) {
     static const char *const profile[] = { "AppData", "LocalAppData", "StartMenu", "Programs", "Desktop", "Startup" };
     for (size_t depth = 0; id && depth <= ir->dir_count; ++depth) {
-        const rp_ir_dir_t *d = NULL;
-        for (size_t i = 0; i < ir->dir_count; ++i) {
-            if (strcmp(ir->dirs[i].id, id) == 0) d = &ir->dirs[i];
-        }
+        const rp_ir_dir_t *d = rp_ir_find_dir(ir, id);     // IDs are unique once the model is built
         const char *base = d ? d->base : id;
         if (d == NULL || d->base) {
             for (size_t i = 0; i < sizeof profile / sizeof profile[0]; ++i) {
@@ -3096,6 +3189,14 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     char **final_logical = rp_mem_alloc(alloc, ir->dir_count, sizeof *final_logical);
     if (final_logical == NULL) err = PROVEN_ERR_NOMEM;
     for (size_t i = 0; err == PROVEN_OK && i < ir->dir_count; ++i) final_logical[i] = ir_dir_logical(&dirs, &ir->dirs[i], 0);
+    // The dirs by their folder's logical path, to find which dir a folder on the way is.
+    keyat_t *by_logical = err == PROVEN_OK ? rp_mem_alloc(alloc, ir->dir_count ? ir->dir_count : 1, sizeof *by_logical) : NULL;
+    size_t nlogical = 0;
+    if (err == PROVEN_OK && by_logical == NULL) err = PROVEN_ERR_NOMEM;
+    for (size_t i = 0; err == PROVEN_OK && i < ir->dir_count; ++i) {
+        if (final_logical[i]) by_logical[nlogical++] = (keyat_t){ final_logical[i], i };
+    }
+    if (err == PROVEN_OK) rp_sort(by_logical, nlogical, sizeof *by_logical, cmp_keyat);
     for (size_t i = 0; err == PROVEN_OK && i < ir->dir_count; ++i) {
         const rp_ir_dir_t *d = &ir->dirs[i];
         if (final_logical[i] == NULL) {
@@ -3124,10 +3225,8 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             memcpy(name, name_start, name_len);
             name[name_len] = '\0';
             // Is this logical folder some dir's own folder?
-            const char *key = NULL;
-            for (size_t j = 0; j < ir->dir_count; ++j) {
-                if (final_logical[j] && strcmp(final_logical[j], logical) == 0) key = ir->dirs[j].id;
-            }
+            size_t at = last_with(by_logical, nlogical, logical);       // the last such dir
+            const char *key = at == SIZE_MAX ? NULL : ir->dirs[at].id;
             char derived[23];
             if (key == NULL) {
                 rp_key_derive('D', logical, derived);
@@ -3139,6 +3238,8 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             p = next ? next : p + strlen(p);
         }
     }
+
+    rp_mem_free(alloc, by_logical);
 
     // Folders to create are directory nodes below their dir.
     for (size_t i = 0; err == PROVEN_OK && i < ir->folder_count; ++i) {
@@ -3190,13 +3291,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
         }
     }
     // Sequence order = File key byte order.
-    for (size_t i = 1; err == PROVEN_OK && i < ir->file_count; ++i) {
-        for (size_t j = i; j > 0 && cmp_keys(&files[j - 1], &files[j]) > 0; --j) {
-            lfile_t t = files[j];
-            files[j] = files[j - 1];
-            files[j - 1] = t;
-        }
-    }
+    if (err == PROVEN_OK && ir->file_count > 1) err = sort_by_key(alloc, files, ir->file_count);
 
     // Shortcuts into a known folder need that folder's Directory row.
     dirs.sc_short = rp_mem_alloc(alloc, ir->shortcut_count + 1, sizeof *dirs.sc_short);
@@ -3212,11 +3307,25 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
     }
 
     // Short names per folder: its sub folders, its files and its shortcuts share one namespace.
+    // The sub folders and the files are found through lists sorted by their folder (then place).
+    keyat_t *sub_by = rp_mem_alloc(alloc, dirs.count ? dirs.count : 1, sizeof *sub_by);
+    keyat_t *file_by = rp_mem_alloc(alloc, ir->file_count ? ir->file_count : 1, sizeof *file_by);
+    size_t nsub = 0;
+    if (err == PROVEN_OK && (sub_by == NULL || file_by == NULL)) err = PROVEN_ERR_NOMEM;
+    if (err == PROVEN_OK) {
+        for (size_t j = 0; j < dirs.count; ++j) {
+            if (dirs.v[j].parent && dirs.v[j].long_name) sub_by[nsub++] = (keyat_t){ dirs.v[j].parent, j };
+        }
+        for (size_t j = 0; j < ir->file_count; ++j) file_by[j] = (keyat_t){ files[j].dir_key, j };
+        rp_sort(sub_by, nsub, sizeof *sub_by, cmp_keyat);
+        rp_sort(file_by, ir->file_count, sizeof *file_by, cmp_keyat);
+    }
     for (size_t i = 0; err == PROVEN_OK && i < dirs.count; ++i) {
         const char *folder = dirs.v[i].key;
-        size_t n = 0;
-        for (size_t j = 0; j < dirs.count; ++j) n += dirs.v[j].parent && dirs.v[j].long_name && strcmp(dirs.v[j].parent, folder) == 0;
-        for (size_t j = 0; j < ir->file_count; ++j) n += strcmp(files[j].dir_key, folder) == 0;
+        size_t sub0 = first_with(sub_by, nsub, folder), sub1 = sub0, file0 = first_with(file_by, ir->file_count, folder), file1 = file0;
+        while (sub1 < nsub && strcmp(sub_by[sub1].key, folder) == 0) ++sub1;
+        while (file1 < ir->file_count && strcmp(file_by[file1].key, folder) == 0) ++file1;
+        size_t n = (sub1 - sub0) + (file1 - file0);
         for (size_t j = 0; j < ir->shortcut_count; ++j) n += strcmp(shortcut_dir_key(ir, &ir->shortcuts[j]), folder) == 0;
         for (size_t j = 0; j < ir->copy_count; ++j) n += strcmp(dkey(ir, ir->copies[j].dir), folder) == 0;
         for (size_t j = 0; j < ir->ini_count; ++j) n += strcmp(dkey(ir, ir->inis[j].dir), folder) == 0;
@@ -3227,17 +3336,17 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             break;
         }
         size_t m = 0;
-        for (size_t j = 0; j < dirs.count; ++j) {
-            if (dirs.v[j].parent && dirs.v[j].long_name && strcmp(dirs.v[j].parent, folder) == 0) {
-                s[m++] = (sib_t){ dirs.v[j].long_name, &dirs.v[j].short_name };
-            }
+        for (size_t q = sub0; q < sub1; ++q) {
+            dnode_t *x = &dirs.v[sub_by[q].at];
+            s[m++] = (sib_t){ x->long_name, &x->short_name, 0 };
         }
-        for (size_t j = 0; j < ir->file_count; ++j) {
-            if (strcmp(files[j].dir_key, folder) == 0) s[m++] = (sib_t){ files[j].f->name, &files[j].short_name };
+        for (size_t q = file0; q < file1; ++q) {
+            lfile_t *x = &files[file_by[q].at];
+            s[m++] = (sib_t){ x->f->name, &x->short_name, 0 };
         }
         for (size_t j = 0; j < ir->shortcut_count; ++j) {
             if (strcmp(shortcut_dir_key(ir, &ir->shortcuts[j]), folder) == 0) {
-                s[m++] = (sib_t){ ir->shortcuts[j].name, &dirs.sc_short[j] };
+                s[m++] = (sib_t){ ir->shortcuts[j].name, &dirs.sc_short[j], 0 };
             }
         }
         for (size_t j = 0; j < ir->copy_count; ++j) {
@@ -3246,7 +3355,7 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             for (size_t f = 0; longn == NULL && f < ir->file_count; ++f) {
                 if (strcmp(ir->files[f].id, ir->copies[j].source_file) == 0) longn = ir->files[f].name;
             }
-            s[m++] = (sib_t){ longn ? longn : ir->copies[j].id, &dirs.cp_short[j] };
+            s[m++] = (sib_t){ longn ? longn : ir->copies[j].id, &dirs.cp_short[j], 0 };
         }
         // An INI file that is also installed here, or named by an earlier entry, shares that short name
         // (filled in below); only new INI files take part in the assignment.
@@ -3256,11 +3365,13 @@ proven_err_t rp_msi_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const r
             bool shared = false;
             for (size_t f = 0; f < ir->file_count; ++f) shared |= strcmp(files[f].dir_key, folder) == 0 && strcmp(files[f].f->name, x->file) == 0;
             for (size_t e = 0; e < j; ++e) shared |= strcmp(dkey(ir, ir->inis[e].dir), folder) == 0 && strcmp(ir->inis[e].file, x->file) == 0;
-            if (!shared) s[m++] = (sib_t){ x->file, &dirs.ini_short[j] };
+            if (!shared) s[m++] = (sib_t){ x->file, &dirs.ini_short[j], 0 };
         }
         assign_short(&k, s, m);
         rp_mem_free(alloc, s);
     }
+    rp_mem_free(alloc, sub_by);
+    rp_mem_free(alloc, file_by);
 
     for (size_t j = 0; err == PROVEN_OK && j < ir->ini_count; ++j) {     // the shared INI short names
         const rp_ir_ini_t *x = &ir->inis[j];

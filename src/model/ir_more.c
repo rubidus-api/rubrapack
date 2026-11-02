@@ -171,15 +171,15 @@ void ir_more_checks(ctx_t *c) {
         rp_ir_move_t *x = &ir->moves[k];
         // A component of its own takes the destination folder's feature, or Main when none is declared.
         if (x->with_file == NULL && x->feature == NULL && x->to_dir) {
-            const rp_ir_dir_t *d = ir_find_dir(ir, x->to_dir);
+            const rp_ir_dir_t *d = rp_ir_find_dir(ir, x->to_dir);
             bool declared = false;
             for (size_t f = 0; f < ir->feature_count; ++f) declared |= !ir->features[f].implicit;
             if (d && d->feature) x->feature = ir_dup(c, d->feature);
             else if (!declared) x->feature = ir_dup(c, "Main");
             else ERR(c, x->pos, "RP1202", "[move.%s] needs a feature (or with = \"file:<ID>\")", x->id);
         }
-        if (x->from_dir && !ir_find_dir(ir, x->from_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->from_dir);
-        if (x->to_dir && !ir_find_dir(ir, x->to_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->to_dir);
+        if (x->from_dir && !rp_ir_find_dir(ir, x->from_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->from_dir);
+        if (x->to_dir && !rp_ir_find_dir(ir, x->to_dir)) ERR(c, x->pos, "RP1315", "dir '%s' is not a dir ID", x->to_dir);
         if (x->with_file && !find_file(ir, x->with_file)) ERR(c, x->pos, "RP1315", "%s: file '%s' is not a [file.*] of this package", "with", x->with_file);
         if (x->feature && !find_feature(ir, x->feature)) ERR(c, x->pos, "RP1307", "feature '%s' is not defined", x->feature);
     }

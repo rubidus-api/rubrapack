@@ -21,6 +21,7 @@
 #include "rubrapack/limits.h"
 #include "rubrapack/mem.h"
 #include "rubrapack/msi.h"
+#include "proven/map.h"
 #include "rubrapack/pal.h"
 #include "rubrapack/pe.h"
 #include "rubrapack/str.h"
@@ -50,6 +51,10 @@ typedef struct {
     char             **ren_from, **ren_to;
     int               *ren_kind;    // 'd' directory, 'f' file
     size_t             nren, capren;
+    // The same as maps (an ID given out; kind and key -> its first rename), so a large package is
+    // not looked through once per ID. 0 not made yet, 1 in use, 2 failed (the arrays are scanned).
+    proven_map_t       id_set, ren_map;
+    int                id_state, ren_state;
     rp_buf_t           notes;       // "# ..." lines for the end of the source
     const char        *subject;     // the summary's Subject (PID 3), or NULL
     const char        *publisher;   // --publisher: also write [msix] and [msix-app], or NULL
@@ -117,9 +122,11 @@ static int col(table_t t, const char *name) {
 }
 
 // The cell as a string ("" for null), or NULL for a missing column.
+// A cell as text ("" for a null cell, and for a column the table lacks: a damaged package reads as
+// nulls, never as a NULL pointer handed on to strcmp).
 static const char *str(cx_t *c, table_t t, size_t r, const char *name) {
     int k = col(t, name);
-    if (k < 0) return NULL;
+    if (k < 0) return "";
     const rp_msi_cell_t *v = rp_msi_wcell(t.t, r, k);
     if (v->kind == RP_MSI_INT) {
         char num[16];
@@ -128,6 +135,44 @@ static const char *str(cx_t *c, table_t t, size_t r, const char *name) {
     }
     if (v->kind != RP_MSI_STR) return cx_dup(c, "");
     return dupn(c, (const char *)v->bytes, v->len);
+}
+
+// The texts (str) of one column of a table, sorted, for membership by binary search.
+typedef struct {
+    const char **v;
+    size_t       n;
+} textset_t;
+
+static int cmp_cstr(const void *a, const void *b) { return strcmp(*(const char *const *)a, *(const char *const *)b); }
+
+static textset_t textset(cx_t *c, table_t t, const char *name) {
+    textset_t s = { own(c, rp_mem_alloc(c->alloc, rows(t) + 1, sizeof *s.v)), 0 };
+    if (s.v == NULL) {
+        c->nomem = true;
+        return s;
+    }
+    for (size_t r = 0; r < rows(t); ++r) {
+        const char *x = str(c, t, r, name);
+        if (x == NULL) {
+            c->nomem = true;
+            return s;
+        }
+        s.v[s.n++] = x;
+    }
+    rp_sort(s.v, s.n, sizeof *s.v, cmp_cstr);
+    return s;
+}
+
+static bool textset_has(const textset_t *s, const char *x) {
+    size_t lo = 0, hi = s->n;
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        int r = strcmp(s->v[mid], x);
+        if (r == 0) return true;
+        if (r < 0) lo = mid + 1;
+        else hi = mid;
+    }
+    return false;
 }
 
 static bool is_null(table_t t, size_t r, const char *name) {
@@ -144,7 +189,7 @@ static int32_t num(table_t t, size_t r, const char *name, int32_t dflt) {
 
 // The row whose first column is `key`, or SIZE_MAX.
 static size_t find(cx_t *c, table_t t, const char *keycol, const char *key) {
-    for (size_t r = 0; key && r < rows(t); ++r) {
+    for (size_t r = 0; key && col(t, keycol) >= 0 && r < rows(t); ++r) {
         const char *k = str(c, t, r, keycol);
         if (k && strcmp(k, key) == 0) return r;
     }
@@ -216,11 +261,24 @@ static bool standard_key(const char *key) {
 
 // ---- IDs and renames ---------------------------------------------------------------------------
 
+static proven_u8str_view_t u8v(const char *s) { return (proven_u8str_view_t){ (const proven_byte_t *)s, strlen(s) }; }
+
 static bool id_used(const cx_t *c, const char *s) {
+    if (c->id_state == 1) return PROVEN_MAP_GET_U8_OWNED(&c->id_set, bool, u8v(s)) != NULL;
     for (size_t i = 0; i < c->nids; ++i) {
         if (strcmp(c->ids[i], s) == 0) return true;
     }
     return false;
+}
+
+// The rename key of the maps: the kind's byte, then the original key.
+static char *ren_key(cx_t *c, int kind, const char *key) {
+    size_t n = strlen(key);
+    char *k = rp_mem_alloc(c->alloc, n + 2, 1);
+    if (k == NULL) return NULL;
+    k[0] = (char)kind;
+    memcpy(k + 1, key, n + 1);
+    return k;
 }
 
 static void remember(cx_t *c, const char *id) {
@@ -237,6 +295,17 @@ static void remember(cx_t *c, const char *id) {
         c->capids = cap;
     }
     c->ids[c->nids++] = (char *)id;
+    if (c->id_state == 0) {
+        proven_result_map_t m = PROVEN_MAP_INIT_U8_OWNED(c->alloc, bool, 256);
+        c->id_state = m.err == PROVEN_OK ? 1 : 2;
+        if (m.err == PROVEN_OK) {
+            c->id_set = m.value;
+            for (size_t i = 0; c->id_state == 1 && i + 1 < c->nids; ++i) {
+                if (PROVEN_MAP_SET_U8_OWNED(&c->id_set, u8v(c->ids[i]), bool, true) != PROVEN_OK) c->id_state = 2;
+            }
+        }
+    }
+    if (c->id_state == 1 && PROVEN_MAP_SET_U8_OWNED(&c->id_set, u8v(id), bool, true) != PROVEN_OK) c->id_state = 2;
 }
 
 static void add_rename(cx_t *c, const char *from, const char *to, int kind) {
@@ -267,6 +336,18 @@ static void add_rename(cx_t *c, const char *from, const char *to, int kind) {
     c->ren_from[c->nren] = cx_dup(c, from);
     c->ren_to[c->nren] = (char *)to;
     c->ren_kind[c->nren++] = kind;
+    if (c->ren_state == 0) {
+        proven_result_map_t m = PROVEN_MAP_INIT_U8_OWNED(c->alloc, size_t, 64);
+        c->ren_state = m.err == PROVEN_OK ? 1 : 2;
+        if (m.err == PROVEN_OK) c->ren_map = m.value;       // made with the first rename
+    }
+    if (c->ren_state == 1) {
+        size_t i = c->nren - 1;             // the first rename of a key wins, as the scan finds it
+        char *k = c->ren_from[i] ? ren_key(c, kind, c->ren_from[i]) : NULL;
+        if (k == NULL || (PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, u8v(k)) == NULL &&
+                          PROVEN_MAP_SET_U8_OWNED(&c->ren_map, u8v(k), size_t, i) != PROVEN_OK)) c->ren_state = 2;
+        rp_mem_free(c->alloc, k);
+    }
 }
 
 // Names rubrapack keeps for itself: the standard folders, and the shape of its generated keys
@@ -303,7 +384,15 @@ static const char *make_id(cx_t *c, const char *key, int kind) {
     return out;
 }
 
-static const char *renamed(const cx_t *c, const char *key, int kind) {
+static const char *renamed(cx_t *c, const char *key, int kind) {
+    if (c->ren_state == 1) {
+        char *k = ren_key(c, kind, key);
+        if (k) {
+            const size_t *at = PROVEN_MAP_GET_U8_OWNED(&c->ren_map, size_t, u8v(k));
+            rp_mem_free(c->alloc, k);
+            return at ? c->ren_to[*at] : key;
+        }
+    }
     for (size_t i = 0; i < c->nren; ++i) {
         if (c->ren_kind[i] == kind && strcmp(c->ren_from[i], key) == 0) return c->ren_to[i];
     }
@@ -434,11 +523,16 @@ typedef struct {
 } dir_t;
 
 typedef struct {
-    dir_t *d;
-    size_t n;
+    dir_t         *d;
+    size_t         n;
+    rp_msi_index_t ix;      // the dirs by key once they are all read (ix.v NULL until then)
 } dirs_t;
 
 static dir_t *dir_find(dirs_t *ds, const char *key) {
+    if (key && ds->ix.v) {
+        size_t at = rp_msi_index_find(&ds->ix, key, strlen(key));
+        return at == SIZE_MAX ? NULL : &ds->d[at];
+    }
     for (size_t i = 0; key && i < ds->n; ++i) {
         if (strcmp(ds->d[i].key, key) == 0) return &ds->d[i];
     }
@@ -512,11 +606,10 @@ typedef struct {
     const char *keyfile;    // the ID of its key file, or NULL
 } comp_t;
 
-static comp_t *comp_find(comp_t *v, size_t n, const char *key) {
-    for (size_t i = 0; key && i < n; ++i) {
-        if (strcmp(v[i].key, key) == 0) return &v[i];
-    }
-    return NULL;
+// The first component of that key, through ix (the components by key).
+static comp_t *comp_find(comp_t *v, const rp_msi_index_t *ix, const char *key) {
+    size_t at = key ? rp_msi_index_find(ix, key, strlen(key)) : SIZE_MAX;
+    return at == SIZE_MAX ? NULL : &v[at];
 }
 
 static uint16_t arch_machine(int arch) { return arch == 1 ? 0x14C : arch == 2 ? 0xAA64 : 0x8664; }
@@ -662,11 +755,19 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
 
     // ---- folders
     table_t dt = table(c, "Directory");
-    dirs_t ds = { own(c, rp_mem_alloc(c->alloc, rows(dt) + 1, sizeof(dir_t))), rows(dt) };
+    dirs_t ds = { own(c, rp_mem_alloc(c->alloc, rows(dt) + 1, sizeof(dir_t))), rows(dt), { 0 } };
     if (ds.d == NULL) return RP_EXIT_IO;
     for (size_t r = 0; r < ds.n; ++r) {
         ds.d[r] = (dir_t){ str(c, dt, r, "Directory"), str(c, dt, r, "Directory_Parent"), str(c, dt, r, "DefaultDir"), NULL, NULL, NULL, NULL, 0 };
     }
+    rp_msi_index_t dix;
+    if (rp_msi_index_new(c->alloc, ds.n, &dix) != PROVEN_OK || own(c, dix.v) == NULL) return RP_EXIT_IO;
+    for (size_t r = 0; r < ds.n; ++r) {
+        if (ds.d[r].key == NULL) return RP_EXIT_IO;        // out of memory
+        dix.v[r] = (rp_msi_key_t){ (const uint8_t *)ds.d[r].key, strlen(ds.d[r].key), r };
+    }
+    rp_msi_index_sort(&dix);
+    ds.ix = dix;
     // Which folders something names: a component's, a shortcut's, an INI file's, a removal's, a
     // copy's, a working folder, a permission's - and the parent of an empty folder ([folder]).
     // A folder rubrapack itself made for a path (D_ and 20 hex digits) needs no [dir] of its own
@@ -677,12 +778,13 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     if (named == NULL || empty == NULL) return RP_EXIT_IO;
     memset(named, 0, (ds.n + 1) * sizeof *named);
     memset(empty, 0, (ds.n + 1) * sizeof *empty);
+    // Which components have files, registry values or a folder to create: each table's
+    // Component_ column once, sorted, instead of a scan of it for every component.
+    textset_t with_files = textset(c, ft_, "Component_"), with_values = textset(c, rt_, "Component_"), with_folder = textset(c, cf_, "Component_");
+    if (c->nomem) return RP_EXIT_IO;
     for (size_t r = 0; r < rows(ct_); ++r) {
         const char *ck = str(c, ct_, r, "Component"), *cd = str(c, ct_, r, "Directory_");
-        bool files = false, values = false, folder = false;
-        for (size_t f = 0; f < rows(ft_) && !files; ++f) files = strcmp(str(c, ft_, f, "Component_"), ck) == 0;
-        for (size_t f = 0; f < rows(rt_) && !values; ++f) values = strcmp(str(c, rt_, f, "Component_"), ck) == 0;
-        for (size_t f = 0; f < rows(cf_) && !folder; ++f) folder = strcmp(str(c, cf_, f, "Component_"), ck) == 0;
+        bool files = textset_has(&with_files, ck), values = textset_has(&with_values, ck), folder = textset_has(&with_folder, ck);
         dir_t *d = dir_find(&ds, cd);
         if (d == NULL) continue;
         if (folder && !files && !values) {
@@ -760,6 +862,13 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
                              str(c, ct, r, "KeyPath"), is_null(ct, r, "Condition") ? NULL : str(c, ct, r, "Condition"),
                              num(ct, r, "Attributes", 0), NULL, NULL };
     }
+    rp_msi_index_t comp_ix;
+    if (rp_msi_index_new(c->alloc, ncomp, &comp_ix) != PROVEN_OK || own(c, comp_ix.v) == NULL) return RP_EXIT_IO;
+    for (size_t r = 0; r < ncomp; ++r) {
+        if (comps[r].key == NULL) return RP_EXIT_IO;        // out of memory
+        comp_ix.v[r] = (rp_msi_key_t){ (const uint8_t *)comps[r].key, strlen(comps[r].key), r };
+    }
+    rp_msi_index_sort(&comp_ix);
     // Features: their IDs, then the components' first feature.
     const char **feat_ids = own(c, rp_mem_alloc(c->alloc, rows(fe) + 1, sizeof *feat_ids));
     if (feat_ids == NULL) return RP_EXIT_IO;
@@ -772,7 +881,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         features_out = false;
     }
     for (size_t r = 0; r < rows(fct); ++r) {
-        comp_t *k = comp_find(comps, ncomp, str(c, fct, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, fct, r, "Component_"));
         size_t fr = find(c, fe, "Feature", str(c, fct, r, "Feature_"));
         if (k && k->feature == NULL && fr != SIZE_MAX) k->feature = feat_ids[fr];
     }
@@ -829,13 +938,13 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     for (size_t r = 0; r < nf; ++r) {
         const char *key = str(c, ft, r, "File");
         const char *id = make_id(c, key, 'f');
-        comp_t *k = comp_find(comps, ncomp, str(c, ft, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, ft, r, "Component_"));
         if (k && k->keypath && strcmp(k->keypath, key) == 0) k->keyfile = id;
     }
     for (size_t r = 0; r < nf; ++r) {
         const char *key = str(c, ft, r, "File");
         const char *id = renamed(c, key, 'f');
-        comp_t *k = comp_find(comps, ncomp, str(c, ft, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, ft, r, "Component_"));
         dir_t *d = k ? dir_find(&ds, k->dir) : NULL;
         if (d && d->alias) d = dir_find(&ds, d->parent);
         const char *fname = long_name(c, str(c, ft, r, "FileName"), false);
@@ -886,7 +995,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     for (size_t r = 0; r < rows(rt); ++r) {
         const char *key = str(c, rt, r, "Registry"), *rk = str(c, rt, r, "Key"), *rn = str(c, rt, r, "Name");
         int32_t root = num(rt, r, "Root", 2);
-        comp_t *k = comp_find(comps, ncomp, str(c, rt, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, rt, r, "Component_"));
         bool null_value = is_null(rt, r, "Value");
         const char *v = null_value ? NULL : str(c, rt, r, "Value");
         if (null_value && (rn[0] == '\0' || strcmp(rn, "+") == 0 || strcmp(rn, "-") == 0 || strcmp(rn, "*") == 0)) {
@@ -964,7 +1073,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     // ---- shortcuts
     for (size_t r = 0; r < rows(st); ++r) {
         const char *key = str(c, st, r, "Shortcut"), *sd = str(c, st, r, "Directory_"), *target = str(c, st, r, "Target");
-        comp_t *k = comp_find(comps, ncomp, str(c, st, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, st, r, "Component_"));
         const char *dir = strcmp(sd, "ProgramMenuFolder") == 0 ? "Programs" : strcmp(sd, "DesktopFolder") == 0 ? "Desktop"
                         : strcmp(sd, "StartMenuFolder") == 0   ? "StartMenu" : strcmp(sd, "StartupFolder") == 0 ? "Startup" : NULL;
         if (dir == NULL) {
@@ -982,7 +1091,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             if (close && close[1] && !strchr(close + 1, '[') && !strchr(close + 1, '\\')) {
                 const char *dkey = dupn(c, target + 1, (size_t)(close - target - 1));
                 for (size_t f = 0; f < nf && tfile == NULL; ++f) {
-                    comp_t *fk = comp_find(comps, ncomp, str(c, ft, f, "Component_"));
+                    comp_t *fk = comp_find(comps, &comp_ix, str(c, ft, f, "Component_"));
                     if (fk == NULL) continue;
                     dir_t *fd = dir_find(&ds, fk->dir), *td = dir_find(&ds, dkey);
                     if (fd && td && (fd == td || (fd->alias && dir_find(&ds, fd->parent) == td) || (td->alias && dir_find(&ds, td->parent) == fd)) &&
@@ -1038,7 +1147,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             mode = "prepend";
             v = dupn(c, v, strlen(v) - 4);
         }
-        comp_t *k = comp_find(comps, ncomp, str(c, et, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, et, r, "Component_"));
         head(b, "env", make_id(c, key, 0));
         kv(b, "name", n);
         kv(b, "value", follow(c, v));
@@ -1061,7 +1170,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
                 continue;
             }
             int32_t action = num(t, r, "Action", 0);
-            comp_t *k = comp_find(comps, ncomp, str(c, t, r, "Component_"));
+            comp_t *k = comp_find(comps, &comp_ix, str(c, t, r, "Component_"));
             head(b, "ini", make_id(c, key, 0));
             kv(b, "dir", d->id);
             kv(b, "file", long_name(c, str(c, t, r, "FileName"), false));
@@ -1080,7 +1189,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     table_t sv = table(c, "ServiceInstall"), sc = table(c, "ServiceControl");
     for (size_t r = 0; r < rows(sv); ++r) {
         const char *key = str(c, sv, r, "ServiceInstall"), *sname = str(c, sv, r, "Name");
-        comp_t *k = comp_find(comps, ncomp, str(c, sv, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, sv, r, "Component_"));
         if (k == NULL || k->keyfile == NULL) {
             note(c, "Service '%s' has no program as its component's key file; left out.", sname, NULL);
             continue;
@@ -1182,7 +1291,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
             if (!ok) break;
             char qid[32];
             snprintf(qid, sizeof qid, "Qword%d", ++nq);
-            comp_t *k = comp_find(comps, ncomp, f[5]);
+            comp_t *k = comp_find(comps, &comp_ix, f[5]);
             head(b, "registry", make_id(c, qid, 0));
             kv(b, "root", f[0]);
             kv(b, "key", follow(c, f[2]));
@@ -1224,7 +1333,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
                 if (!under) continue;
             }
             const char *tg = str(c, st, r, "Target");
-            comp_t *k = comp_find(comps, ncomp, str(c, st, r, "Component_"));
+            comp_t *k = comp_find(comps, &comp_ix, str(c, st, r, "Component_"));
             if (tg[0] == '[' && (tg[1] == '#' || tg[1] == '!')) {
                 const char *close = strchr(tg, ']');
                 if (close) app = renamed(c, dupn(c, tg + 2, (size_t)(close - tg - 2)), 'f');
@@ -1299,7 +1408,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
     table_t dup_t = table(c, "DuplicateFile");
     for (size_t r = 0; r < rows(dup_t); ++r) {
         const char *key = str(c, dup_t, r, "FileKey"), *src = renamed(c, str(c, dup_t, r, "File_"), 'f'), *df = str(c, dup_t, r, "DestFolder");
-        comp_t *k = comp_find(comps, ncomp, str(c, dup_t, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, dup_t, r, "Component_"));
         dir_t *d = dir_find(&ds, df && df[0] ? df : (k ? k->dir : NULL));
         if (d && d->alias) d = dir_find(&ds, d->parent);
         if (d == NULL || d->id == NULL) {
@@ -1337,7 +1446,7 @@ static int write_source(cx_t *c, rp_buf_t *b, const char *input, const char *dis
         kv(b, "dir", d->id);
         if (!is_null(rf, r, "FileName")) kv(b, "name", long_name(c, str(c, rf, r, "FileName"), false));
         kv(b, "on", mode == 1 ? "install" : mode == 3 ? "both" : "uninstall");
-        comp_t *k = comp_find(comps, ncomp, str(c, rf, r, "Component_"));
+        comp_t *k = comp_find(comps, &comp_ix, str(c, rf, r, "Component_"));
         if (k && k->feature && features_out) kv(b, "feature", k->feature);
     }
     table_t fo = table(c, "Font");
@@ -1542,6 +1651,8 @@ int rpn_new_from(const char *source, const char *input, const char *dist, const 
     rp_mem_free(heap, c.ren_from);
     rp_mem_free(heap, c.ren_to);
     rp_mem_free(heap, c.ren_kind);
+    if (c.id_state == 1) proven_map_destroy(&c.id_set);
+    if (c.ren_state == 1) proven_map_destroy(&c.ren_map);
     rp_msi_view_free(&msi, &view);
     rp_msi_close(&msi);
     rp_cfb_close(&cfb);

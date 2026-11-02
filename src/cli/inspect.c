@@ -190,7 +190,50 @@ static bool standard_folder(const uint8_t *p, size_t n) {
 
 // Appends the target path of directory row `row` (parents first). Roots - TARGETDIR and the
 // system folder properties - print as [Name].
-static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_parent, int c_default, size_t row,
+// A table's rows by the string in one column (its id in the string pool; string cells only),
+// then by row: --files looks up a component and a directory for every file, and a parent for
+// every directory, which a scan of the table made quadratic in its rows.
+typedef struct { uint32_t s; size_t row; } sidrow_t;
+typedef struct { sidrow_t *v; size_t n; } sidx_t;
+
+static int cmp_sidrow(const void *x, const void *y) {
+    const sidrow_t *a = x, *b = y;
+    if (a->s != b->s) return a->s < b->s ? -1 : 1;
+    return a->row < b->row ? -1 : a->row > b->row;
+}
+
+static bool sidx_make(proven_allocator_t alloc, const tab_t *t, int col, sidx_t *out) {
+    *out = (sidx_t){ 0 };
+    size_t rows = t->present ? t->rows.row_count : 0;
+    out->v = rp_mem_alloc(alloc, rows ? rows : 1, sizeof *out->v);
+    if (out->v == NULL) return false;
+    for (size_t r = 0; col >= 0 && r < rows; ++r) {
+        rp_msi_value_t v = cell(t, r, col);
+        if (v.kind == RP_MSI_STR) out->v[out->n++] = (sidrow_t){ v.s, r };
+    }
+    rp_sort(out->v, out->n, sizeof *out->v, cmp_sidrow);
+    return true;
+}
+
+// The position of the first entry of string s (or past the entries below it).
+static size_t sidx_first(const sidx_t *x, uint32_t s) {
+    size_t lo = 0, hi = x->n;
+    while (lo < hi) {
+        size_t mid = lo + (hi - lo) / 2;
+        if (x->v[mid].s < s) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+
+// The last row whose cell is string s, as a scan that keeps the last match finds it; SIZE_MAX if none.
+static size_t sidx_last(const sidx_t *x, uint32_t s) {
+    size_t at = sidx_first(x, s), row = SIZE_MAX;
+    for (; at < x->n && x->v[at].s == s; ++at) row = x->v[at].row;
+    return row;
+}
+
+static bool dir_path(const rp_msi_t *msi, const tab_t *dir, const sidx_t *by_key, int c_key, int c_parent, int c_default, size_t row,
                      rp_buf_t *b, size_t depth) {
     if (depth > dir->rows.row_count) return false;      // the parent chain loops
     rp_msi_value_t parent = cell(dir, row, c_parent), key = cell(dir, row, c_key);
@@ -204,19 +247,22 @@ static bool dir_path(const rp_msi_t *msi, const tab_t *dir, int c_key, int c_par
         rp_buf_byte(b, ']');
         return true;
     }
-    size_t prow = SIZE_MAX;
-    for (size_t r = 0; r < dir->rows.row_count; ++r) {
-        rp_msi_value_t k = cell(dir, r, c_key);
-        if (k.kind == RP_MSI_STR && k.s == parent.s) prow = r;
-    }
+    size_t prow = sidx_last(by_key, parent.s);
     if (prow == SIZE_MAX) return false;
-    if (!dir_path(msi, dir, c_key, c_parent, c_default, prow, b, depth + 1)) return false;
+    if (!dir_path(msi, dir, by_key, c_key, c_parent, c_default, prow, b, depth + 1)) return false;
     long_name(msi, cell(dir, row, c_default), true, &p, &n);
     if (!(n == 1 && p[0] == '.')) {
         rp_buf_byte(b, '\\');
         rp_buf_put(b, p, n);
     }
     return true;
+}
+
+static int cmp_line(const void *x, const void *y) {
+    const rp_buf_t *a = x, *b = y;
+    size_t m = a->len < b->len ? a->len : b->len;
+    int c = m ? memcmp(a->data, b->data, m) : 0;
+    return c ? c : a->len < b->len ? -1 : a->len > b->len;
 }
 
 static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
@@ -254,22 +300,21 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         n = 0;
     }
     for (size_t r = 0; r < n; ++r) lines[r] = rp_buf_new(alloc, 1u << 16);
+    sidx_t comp_by = { 0 }, dir_by = { 0 }, hash_by = { 0 };
+    if (rc == RP_EXIT_OK && (!sidx_make(alloc, &comp, c_key, &comp_by) || !sidx_make(alloc, &dir, d_key, &dir_by) ||
+                             !sidx_make(alloc, &hash, h_part >= 0 ? h_key : -1, &hash_by))) {
+        rp_diag_error(RP_DIAG_NOMEM, "out of memory");
+        rc = RP_EXIT_IO;
+    }
     for (size_t r = 0; rc == RP_EXIT_OK && r < n; ++r) {
         rp_msi_value_t compref = cell(&file, r, f_comp);
-        size_t crow = SIZE_MAX;
-        for (size_t k = 0; k < comp.rows.row_count; ++k) {
-            rp_msi_value_t v = cell(&comp, k, c_key);
-            if (v.kind == RP_MSI_STR && compref.kind == RP_MSI_STR && v.s == compref.s) crow = k;
-        }
+        size_t crow = compref.kind == RP_MSI_STR ? sidx_last(&comp_by, compref.s) : SIZE_MAX;
         size_t drow = SIZE_MAX;
         if (crow != SIZE_MAX) {
             rp_msi_value_t dref = cell(&comp, crow, c_dir);
-            for (size_t k = 0; k < dir.rows.row_count; ++k) {
-                rp_msi_value_t v = cell(&dir, k, d_key);
-                if (v.kind == RP_MSI_STR && dref.kind == RP_MSI_STR && v.s == dref.s) drow = k;
-            }
+            if (dref.kind == RP_MSI_STR) drow = sidx_last(&dir_by, dref.s);
         }
-        if (drow == SIZE_MAX || !dir_path(msi, &dir, d_key, d_parent, d_default, drow, &lines[r], 0)) {
+        if (drow == SIZE_MAX || !dir_path(msi, &dir, &dir_by, d_key, d_parent, d_default, drow, &lines[r], 0)) {
             rp_diag_error(RP_DIAG_BAD_PACKAGE, "a file's component or directory chain is broken");
             rc = RP_EXIT_IO;
             break;
@@ -296,9 +341,8 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         }
         rp_buf_byte(&lines[r], '\t');
         rp_msi_value_t fkey = cell(&file, r, f_key);
-        for (size_t h = 0; h_key >= 0 && h_part >= 0 && h < hash.rows.row_count; ++h) {
-            rp_msi_value_t hk = cell(&hash, h, h_key);
-            if (hk.kind != RP_MSI_STR || hk.s != fkey.s) continue;
+        for (size_t q = fkey.kind == RP_MSI_STR ? sidx_first(&hash_by, fkey.s) : hash_by.n; q < hash_by.n && hash_by.v[q].s == fkey.s; ++q) {
+            size_t h = hash_by.v[q].row;        // every hash row of the file, in row order
             static const char hex[] = "0123456789abcdef";
             for (int part = 0; part < 4; ++part) {
                 rp_msi_value_t v = cell(&hash, h, h_part + part);
@@ -313,24 +357,16 @@ static int files(const rp_msi_t *msi, proven_allocator_t alloc) {
         rp_buf_byte(&lines[r], '\n');
     }
     if (rc == RP_EXIT_OK) {
-        // insertion sort by bytes (file counts are modest)
-        for (size_t i = 1; i < n; ++i) {
-            for (size_t j = i; j > 0; --j) {
-                rp_buf_t *a = &lines[j - 1], *b = &lines[j];
-                size_t m = a->len < b->len ? a->len : b->len;
-                int c = memcmp(a->data, b->data, m);
-                if (c < 0 || (c == 0 && a->len <= b->len)) break;
-                rp_buf_t t = *a;
-                *a = *b;
-                *b = t;
-            }
-        }
+        rp_sort(lines, n, sizeof *lines, cmp_line);       // by bytes (equal lines print the same)
         rp_buf_t out = rp_buf_new(alloc, (size_t)1 << 26);
         for (size_t i = 0; i < n; ++i) rp_buf_put(&out, lines[i].data, lines[i].len);
         rc = emit_buf(&out);
     }
     for (size_t i = 0; lines && i < n; ++i) rp_buf_free(&lines[i]);
     rp_mem_free(alloc, lines);
+    rp_mem_free(alloc, comp_by.v);
+    rp_mem_free(alloc, dir_by.v);
+    rp_mem_free(alloc, hash_by.v);
     rp_msi_rows_free(msi, &file.rows);
     rp_msi_rows_free(msi, &comp.rows);
     rp_msi_rows_free(msi, &dir.rows);

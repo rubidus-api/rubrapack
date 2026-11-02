@@ -100,6 +100,28 @@ static size_t row_by_key(const rp_msi_wtable_t *t, const rp_msi_cell_t *key) {
     return SIZE_MAX;
 }
 
+// A table's rows (or a package's files) by key (rp_msi_index_t): a patch of a large package looks
+// up every row of one in the other. Without memory (no index) the lookups scan.
+typedef struct {
+    const rp_cab_file_t *v;
+    size_t               count;
+} files_t;
+
+typedef struct { const rp_msi_wtable_t *t; const files_t *f; rp_msi_index_t ix; } keyidx_t;
+
+static keyidx_t row_index(pctx_t *p, const rp_msi_wtable_t *t) {
+    keyidx_t x = { .t = t };
+    if (t && rp_msi_index(p->alloc, t, 0, &x.ix) == PROVEN_OK) x.ix.v = own(p, x.ix.v);
+    if (x.ix.v == NULL) x.ix = (rp_msi_index_t){ 0 };
+    return x;
+}
+
+static size_t row_find(const keyidx_t *x, const rp_msi_cell_t *key) {
+    if (x->t == NULL) return SIZE_MAX;
+    if (x->ix.v == NULL) return row_by_key(x->t, key);
+    return key->kind == RP_MSI_STR ? rp_msi_index_find(&x->ix, key->bytes, key->len) : rp_msi_index_find(&x->ix, NULL, 0);
+}
+
 // Property.Value of `name`, NUL-terminated ("" when there is none).
 static char *property(pctx_t *p, const rp_msi_wdb_t *db, const char *name) {
     const rp_msi_wtable_t *t = table(db, "Property");
@@ -146,11 +168,6 @@ static int32_t sum_int(const rp_msi_wdb_t *db, uint32_t pid, int32_t dflt) {
 
 // ---- the packages' files --------------------------------------------------------------------
 
-typedef struct {
-    const rp_cab_file_t *v;
-    size_t               count;
-} files_t;
-
 // Every file of the package's embedded cabinets.
 static proven_err_t load_files(pctx_t *p, const rp_mst_side_t *side, files_t *out) {
     *out = (files_t){ 0 };
@@ -196,6 +213,28 @@ static const rp_cab_file_t *file_bytes(const files_t *f, const rp_msi_cell_t *ke
         }
     }
     return NULL;
+}
+
+static keyidx_t file_index(pctx_t *p, const files_t *f) {
+    keyidx_t x = { .f = f };
+    if (f->count == 0 || rp_msi_index_new(p->alloc, f->count, &x.ix) != PROVEN_OK) {
+        x.ix = (rp_msi_index_t){ 0 };
+        return x;
+    }
+    if ((x.ix.v = own(p, x.ix.v)) == NULL) {
+        x.ix = (rp_msi_index_t){ 0 };
+        return x;
+    }
+    for (size_t i = 0; i < f->count; ++i) x.ix.v[i] = (rp_msi_key_t){ (const uint8_t *)f->v[i].name, strlen(f->v[i].name), i };
+    rp_msi_index_sort(&x.ix);
+    return x;
+}
+
+static const rp_cab_file_t *file_find(const keyidx_t *x, const rp_msi_cell_t *key) {
+    if (x->ix.v == NULL) return file_bytes(x->f, key);
+    if (key->kind != RP_MSI_STR) return NULL;
+    size_t at = rp_msi_index_find(&x->ix, key->bytes, key->len);
+    return at == SIZE_MAX ? NULL : &x->f->v[at];
 }
 
 // ---- tables built for the transforms ---------------------------------------------------------
@@ -284,7 +323,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     char *ver_a = property(p, A, "ProductVersion"), *ver_b = property(p, B, "ProductVersion");
     char *name = property(p, B, "ProductName"), *maker = property(p, B, "Manufacturer");
     if (!pc_a || !pc_b || !uc_a || !uc_b || !ver_a || !ver_b || !name || !maker) err = PROVEN_ERR_NOMEM;
-    long va[4], vb[4];
+    long va[4] = { 0 }, vb[4] = { 0 };     // read below even when an earlier step failed (the sequence text)
     if (err == PROVEN_OK) {
         version(ver_a, va);
         version(ver_b, vb);
@@ -300,22 +339,25 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
     // Each table's own column: the two may lay out Component differently (a damaged base read
     // past its table's cells with the target's column number until 2026-10-29).
     int cid = col(cb, "ComponentId"), cid_a = col(ca, "ComponentId");
+    keyidx_t icb = row_index(p, cb);
     for (size_t r = 0; err == PROVEN_OK && ca && r < ca->row_count; ++r) {
         const rp_msi_cell_t *ka = rp_msi_wcell(ca, r, 0);
-        size_t rb = cb ? row_by_key(cb, ka) : SIZE_MAX;
+        size_t rb = row_find(&icb, ka);
         if (rb == SIZE_MAX) err = refuse(p, (const char *)ka->bytes, ka->len, "is a component the target no longer has; a patch cannot remove components");
         else if (cid >= 0 && !same_str(rp_msi_wcell(ca, r, cid_a), rp_msi_wcell(cb, rb, cid))) err = refuse(p, (const char *)ka->bytes, ka->len, "is a component whose GUID changed");
     }
     const rp_msi_wtable_t *fa = table(A, "File"), *fb = table(B, "File");
+    keyidx_t ifa = row_index(p, fa), ifb = row_index(p, fb);
     int fseq = col(fb, "Sequence"), fattr = col(fb, "Attributes");
     if (err == PROVEN_OK && fb && (fseq < 0 || fattr < 0 || (fa && col(fa, "Sequence") != fseq))) err = refuse(p, "File", 4, "has columns rubrapack does not know");
     for (size_t r = 0; err == PROVEN_OK && fa && r < fa->row_count; ++r) {
         const rp_msi_cell_t *ka = rp_msi_wcell(fa, r, 0);
-        if (!fb || row_by_key(fb, ka) == SIZE_MAX) err = refuse(p, (const char *)ka->bytes, ka->len, "is a file the target no longer has; a patch cannot remove files");
+        if (!fb || row_find(&ifb, ka) == SIZE_MAX) err = refuse(p, (const char *)ka->bytes, ka->len, "is a file the target no longer has; a patch cannot remove files");
     }
 
     // The files the patch carries: new ones, and those whose bytes changed.
     files_t bytes_a = { 0 }, bytes_b = { 0 };
+    keyidx_t ia = { .f = &bytes_a }, ib = { .f = &bytes_b };
     size_t *pick = NULL, npick = 0;
     if (err == PROVEN_OK && fb && fb->row_count) {
         if (o->base_files) bytes_a = (files_t){ o->base_files, o->base_count };
@@ -324,15 +366,17 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         else if (err == PROVEN_OK) err = load_files(p, target, &bytes_b);
         pick = zalloc(p, fb->row_count, sizeof *pick);
         if (err == PROVEN_OK && pick == NULL) err = PROVEN_ERR_NOMEM;
+        ia = file_index(p, &bytes_a);
+        ib = file_index(p, &bytes_b);
         for (size_t r = 0; err == PROVEN_OK && r < fb->row_count; ++r) {
             const rp_msi_cell_t *kb = rp_msi_wcell(fb, r, 0);
-            const rp_cab_file_t *nb = file_bytes(&bytes_b, kb);
+            const rp_cab_file_t *nb = file_find(&ib, kb);
             if (nb == NULL) {
                 err = refuse(p, (const char *)kb->bytes, kb->len, "is a file whose bytes the target does not hold");
                 break;
             }
-            size_t ra = fa ? row_by_key(fa, kb) : SIZE_MAX;
-            const rp_cab_file_t *na = ra != SIZE_MAX ? file_bytes(&bytes_a, kb) : NULL;
+            size_t ra = row_find(&ifa, kb);
+            const rp_cab_file_t *na = ra != SIZE_MAX ? file_find(&ia, kb) : NULL;
             if (ra != SIZE_MAX && na == NULL) {
                 err = refuse(p, (const char *)kb->bytes, kb->len, "is a file whose bytes the base does not hold");
                 break;
@@ -366,7 +410,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
             if (cells == NULL) err = PROVEN_ERR_NOMEM;
             for (size_t r = 0; err == PROVEN_OK && r < fb->row_count; ++r) {
                 rp_msi_cell_t *row = &cells[r * fb->column_count];         // our copy of the target's File
-                size_t ra = fa ? row_by_key(fa, &row[0]) : SIZE_MAX;
+                size_t ra = row_find(&ifa, &row[0]);
                 if (ra != SIZE_MAX) row[fseq] = *rp_msi_wcell(fa, ra, fseq);      // fa's Sequence is fb's column (checked)
                 if (row[fseq].kind == RP_MSI_INT && row[fseq].i > max_seq) max_seq = row[fseq].i;
             }
@@ -488,7 +532,7 @@ proven_err_t rp_msp_write(proven_allocator_t alloc, const rp_mst_side_t *base, c
         if (cf == NULL || keys == NULL) err = PROVEN_ERR_NOMEM;
         for (size_t k = 0; err == PROVEN_OK && k < npick; ++k) {
             const rp_msi_cell_t *kb = rp_msi_wcell(fb, pick[k], 0);
-            const rp_cab_file_t *nb = file_bytes(&bytes_b, kb);
+            const rp_cab_file_t *nb = file_find(&ib, kb);
             keys[k] = cstr(p, kb);
             if (keys[k] == NULL) err = PROVEN_ERR_NOMEM;
             cf[k] = (rp_cab_file_t){ keys[k], nb->data, nb->size };

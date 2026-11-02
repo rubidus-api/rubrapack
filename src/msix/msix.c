@@ -381,12 +381,7 @@ static proven_err_t ico_image(proven_allocator_t alloc, const uint8_t *ico, size
 
 // ---- the package root and the paths inside it ----------------------------------------------------
 
-static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) {
-    for (size_t i = 0; id && i < ir->dir_count; ++i) {
-        if (strcmp(ir->dirs[i].id, id) == 0) return &ir->dirs[i];
-    }
-    return NULL;
-}
+static const rp_ir_dir_t *find_dir(const rp_ir_t *ir, const char *id) { return id ? rp_ir_find_dir(ir, id) : NULL; }
 
 // The top folder of `dir` (the one anchored in a known location) and the path below it
 // (components joined with '\'); false when the chain breaks.
@@ -421,6 +416,67 @@ typedef struct {
     size_t      data_len;
     rp_pos_t    pos;
 } item_t;
+
+typedef struct { const char *path; size_t at; } pathat_t;
+typedef struct { size_t a, b; } pathpair_t;
+
+static int cmp_pathat(const void *x, const void *y) {
+    const pathat_t *a = x, *b = y;
+    int r = rp_ascii_icmp(a->path, b->path);
+    return r ? r : a->at < b->at ? -1 : a->at > b->at;
+}
+
+static int cmp_pathpair(const void *x, const void *y) {
+    const pathpair_t *a = x, *b = y;
+    if (a->a != b->a) return a->a < b->a ? -1 : 1;
+    return a->b < b->b ? -1 : a->b > b->b;
+}
+
+#define DERR(pos, code, ...) rp_srcdiag_add(d, (pos), (code), false, __VA_ARGS__)
+
+// RP1611 for every two items whose paths differ only in the case of ASCII letters.
+static void same_paths(proven_allocator_t alloc, const item_t *items, size_t n, rp_srcdiags_t *d, rp_pos_t top) {
+    pathat_t *by = rp_mem_alloc(alloc, n ? n : 1, sizeof *by);
+    if (by == NULL) {
+        DERR(top, "RP1612", "out of memory");
+        return;
+    }
+    for (size_t i = 0; i < n; ++i) by[i] = (pathat_t){ items[i].path, i };
+    rp_sort(by, n, sizeof *by, cmp_pathat);
+    pathpair_t *pairs = NULL;
+    size_t np = 0, cap = 0;
+    bool nomem = false;
+    for (size_t g = 0; g < n && !nomem;) {
+        size_t e = g + 1;
+        while (e < n && rp_ascii_icmp(by[g].path, by[e].path) == 0) ++e;
+        for (size_t a = g; a < e && !nomem; ++a) {
+            for (size_t b = a + 1; b < e; ++b) {
+                if (np == cap) {
+                    size_t nc = cap ? cap * 2 : 8;
+                    pathpair_t *w = rp_mem_alloc(alloc, nc, sizeof *w);
+                    if (w == NULL) {
+                        nomem = true;
+                        break;
+                    }
+                    if (np) memcpy(w, pairs, np * sizeof *w);
+                    rp_mem_free(alloc, pairs);
+                    pairs = w;
+                    cap = nc;
+                }
+                pairs[np++] = (pathpair_t){ by[a].at, by[b].at };
+            }
+        }
+        g = e;
+    }
+    rp_mem_free(alloc, by);
+    if (nomem) DERR(top, "RP1612", "out of memory");
+    rp_sort(pairs, np, sizeof *pairs, cmp_pathpair);
+    for (size_t k = 0; k < np; ++k) {
+        DERR(items[pairs[k].b].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[pairs[k].a].path, items[pairs[k].b].path);
+    }
+    rp_mem_free(alloc, pairs);
+}
+#undef DERR
 
 #define DERR(pos, code, ...) rp_srcdiag_add(d, (pos), (code), false, __VA_ARGS__)
 
@@ -2909,12 +2965,9 @@ proven_err_t rp_msix_from_ir(proven_allocator_t alloc, const rp_ir_t *ir, const 
         it->pos = top;
         if (rp_buf_take(&lt, &it->data, &it->data_len) != PROVEN_OK) DERR(top, "RP1612", "out of memory");
     }
-    // Two paths that Windows would take for one (letters compared without case).
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t k = i + 1; k < n; ++k) {
-            if (rp_ascii_ieq(items[i].path, items[k].path)) DERR(items[k].pos, "RP1611", "'%s' and '%s' are the same path in the package", items[i].path, items[k].path);
-        }
-    }
+    // Two paths that Windows would take for one (letters compared without case): sorted that way,
+    // they sit together; each pair is reported in the order of the items.
+    same_paths(alloc, items, n, d, top);
     rp_buf_t *ext = rp_mem_alloc(alloc, ir->msix_app_count + 1, sizeof *ext);    // + package level
     unsigned ns = 0;
     if (ext == NULL) {

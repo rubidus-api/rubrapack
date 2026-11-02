@@ -614,6 +614,8 @@ typedef struct {
     size_t           feature_count;
     rp_ir_dir_t     *dirs;
     size_t           dir_count;
+    size_t          *dir_order;         // dirs with an ID, by ID then place (rp_ir_find_dir)
+    size_t           dir_order_len, dir_order_of;   // its length; dir_count when it was made
     rp_ir_file_t    *files;
     size_t           file_count;
     rp_ir_folder_t  *folders;
@@ -769,6 +771,9 @@ typedef struct {
 [[nodiscard]] proven_err_t rp_ir_build(proven_allocator_t alloc, const rp_tdoc_t *doc, const rp_ir_options_t *opt,
                                        rp_ir_t *ir, rp_srcdiags_t *diags);
 void rp_ir_free(rp_ir_t *ir);
+
+// The first dir whose ID is `id`, or NULL.
+[[nodiscard]] const rp_ir_dir_t *rp_ir_find_dir(const rp_ir_t *ir, const char *id);
 
 // RFC-0031 B9: a shared Win32 assembly (assembly = "win32" without assembly-for) goes into WinSxS
 // with a signed catalog of its manifest, which the build makes with its --key. rp_ir_add_sxs_catalog

@@ -528,13 +528,11 @@ typedef struct {
     char       **found;         // relative paths below root
     size_t       count, cap;
     rp_pos_t     pos;
-    bool         failed;
+    bool         failed, full;
 } glob_t;
 
+// "**" can reach a file twice: the duplicates go when the paths are sorted (glob_sort).
 static void glob_add(glob_t *g, const char *rel) {
-    for (size_t k = 0; k < g->count; ++k) {
-        if (strcmp(g->found[k], rel) == 0) return;          // "**" can reach a file twice
-    }
     if (g->count == g->cap) {
         size_t cap = g->cap ? g->cap * 2 : 32;
         char **v = rp_mem_alloc(g->c->alloc, cap, sizeof *v);
@@ -548,6 +546,22 @@ static void glob_add(glob_t *g, const char *rel) {
         g->cap = cap;
     }
     g->found[g->count++] = ir_dup(g->c, rel);
+}
+
+static int cmp_path(const void *a, const void *b) {
+    return strcmp(*(char *const *)a, *(char *const *)b);
+}
+
+// The paths in byte order, each once.
+static void glob_sort(glob_t *g) {
+    if (g->count < 2) return;
+    rp_sort(g->found, g->count, sizeof *g->found, cmp_path);
+    size_t w = 1;
+    for (size_t k = 1; k < g->count; ++k) {
+        if (strcmp(g->found[k], g->found[w - 1]) == 0) rp_mem_free(g->c->alloc, g->found[k]);
+        else g->found[w++] = g->found[k];
+    }
+    g->count = w;
 }
 
 char *ir_join(ctx_t *c, const char *a, const char *b) {
@@ -564,7 +578,11 @@ char *ir_join(ctx_t *c, const char *a, const char *b) {
 
 static void glob_walk(glob_t *g, const char *rel, size_t seg, size_t depth) {
     ctx_t *c = g->c;
-    if (g->failed || c->nomem || depth > 64 || g->count >= 100000) return;     // RFC-0001 14.3 limits
+    if (!g->full && g->count >= 100000) {       // RFC-0001 14.3 limits: 100,000 paths, duplicates not counted
+        glob_sort(g);
+        g->full = g->count >= 100000;
+    }
+    if (g->failed || c->nomem || depth > 64 || g->full) return;
     char *dir = rel[0] ? ir_join(c, g->root, rel) : ir_dup(c, g->root);
     char **names = NULL;
     size_t n = 0;
@@ -577,14 +595,9 @@ static void glob_walk(glob_t *g, const char *rel, size_t seg, size_t depth) {
         rp_mem_free(c->alloc, dir);
         return;
     }
-    // Sorted by bytes, so the result does not depend on the file system's order.
-    for (size_t i = 1; i < n; ++i) {
-        for (size_t j = i; j > 0 && strcmp(names[j - 1], names[j]) > 0; --j) {
-            char *t = names[j];
-            names[j] = names[j - 1];
-            names[j - 1] = t;
-        }
-    }
+    // Sorted by bytes, so the result does not depend on the file system's order (a folder's
+    // names differ, so the order is the same whichever sort gives it).
+    rp_sort(names, n, sizeof *names, cmp_path);
     const char *pat = g->segs[seg];
     bool last = seg + 1 == g->nseg;
     if (strcmp(pat, "**") == 0) {
@@ -628,7 +641,7 @@ static const char *implicit_dir(ctx_t *c, const char *parent, const char *name, 
     char key[23];
     rp_key_derive('D', logical, key);
     rp_mem_free(c->alloc, logical);
-    const rp_ir_dir_t *have = ir_find_dir(c->ir, key);
+    const rp_ir_dir_t *have = rp_ir_find_dir(c->ir, key);
     if (have) return have->id;
     rp_ir_dir_t *d = ir_push_dir(c);
     if (d == NULL) return NULL;
@@ -659,7 +672,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
     rp_pos_t gp = ir_key_pos(t, "glob");
     glob_t g = { .c = c, .pos = gp };
     if (dir && pattern && ir_source_path_ok(c, pattern, gp)) {
-        const rp_ir_dir_t *d = ir_find_dir(c->ir, dir);
+        const rp_ir_dir_t *d = rp_ir_find_dir(c->ir, dir);
         if (d == NULL) ERR(c, ir_key_pos(t, "dir"), "RP1307", "dir '%s' is not defined", dir);
         if (feature == NULL && d && d->feature) feature = ir_dup(c, d->feature);
         // Split into segments; the leading ones without wildcards are the root.
@@ -698,13 +711,7 @@ void ir_expand_files(ctx_t *c, const rp_ttable_t *t) {
         g.nseg -= lit;
         if (root && g.nseg > 0) glob_walk(&g, "", 0, 0);
         if (!g.failed && g.count == 0) ERR(c, gp, "RP1503", "glob '%s' matches no file", pattern);
-        for (size_t k = 1; k < g.count; ++k) {
-            for (size_t j = k; j > 0 && strcmp(g.found[j - 1], g.found[j]) > 0; --j) {
-                char *tmp = g.found[j];
-                g.found[j] = g.found[j - 1];
-                g.found[j - 1] = tmp;
-            }
-        }
+        glob_sort(&g);
         for (size_t k = 0; k < g.count && !c->nomem; ++k) {
             const char *rel = g.found[k];
             // Sub folders below the wildcard become implicit dirs.

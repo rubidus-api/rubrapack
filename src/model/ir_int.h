@@ -133,10 +133,10 @@ void ir_nfc_names(ctx_t *c);
 void ir_ui_checks(ctx_t *c, const rp_ttable_t *uit, const rp_ttable_t *pkg);
 
 // ir_check.c
-const rp_ir_dir_t *ir_find_dir(const rp_ir_t *ir, const char *id);
 int ir_cmp_str(const char *a, const char *b);
 void ir_class_checks(ctx_t *c);
 void ir_cross_checks(ctx_t *c);
+void ir_index_dirs(ctx_t *c);
 
 // ir.c
 bool ir_in_list(const char *s, const char *const *list);
